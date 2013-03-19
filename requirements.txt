@@ -1,3 +1,9 @@
 django
 django-grappelli
 django-tastypie
+django-reversion
+git+https://github.com/toastdriven/django-haystack.git@master#egg=django-haystack
+django-celery
+south
+py-bcrypt
+Whoosh

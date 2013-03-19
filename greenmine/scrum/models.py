@@ -13,10 +13,9 @@ from django.contrib.auth.models import UserManager
 
 from greenmine.core.utils.slug import slugify_uniquely, ref_uniquely
 from greenmine.core.fields import DictField, ListField
-from greenmine.wiki.fields import WikiField
 from greenmine.core.utils import iter_points
 from greenmine.taggit.managers import TaggableManager
-import reversion
+#import reversion
 
 from .choices import *
 
@@ -60,7 +59,7 @@ class Project(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
     name = models.CharField(max_length=250, unique=True)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
-    description = WikiField(blank=False)
+    description = models.TextField(blank=False)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True)
@@ -429,7 +428,7 @@ class UserStory(models.Model):
     tested = models.BooleanField(default=False)
 
     subject = models.CharField(max_length=500)
-    description = WikiField()
+    description = models.TextField()
     finish_date = models.DateTimeField(null=True, blank=True)
 
     watchers = models.ManyToManyField('auth.User',
@@ -683,7 +682,7 @@ class Task(models.Model):
         choices=TASK_STATUS_CHOICES, null=True, blank=True)
 
     subject = models.CharField(max_length=500)
-    description = WikiField(blank=True)
+    description = models.TextField(blank=True)
     assigned_to = models.ForeignKey('auth.User',
         related_name='user_storys_assigned_to_me',
         blank=True, null=True, default=None)
@@ -797,13 +796,13 @@ class Task(models.Model):
         return self_dict
 
 
-reversion.register(ProjectExtras)
-reversion.register(Project)
-reversion.register(ProjectUserRole)
-reversion.register(Milestone)
-reversion.register(UserStory)
-reversion.register(Change)
-reversion.register(ChangeAttachment)
-reversion.register(Task)
+#reversion.register(ProjectExtras)
+#reversion.register(Project)
+#reversion.register(ProjectUserRole)
+#reversion.register(Milestone)
+#reversion.register(UserStory)
+#reversion.register(Change)
+#reversion.register(ChangeAttachment)
+#reversion.register(Task)
 
 from . import sigdispatch

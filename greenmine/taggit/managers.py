@@ -9,7 +9,6 @@ from django.db.models.related import RelatedObject
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 
-from .forms import TagField
 from .models import TaggedItem, GenericTaggedItemBase, Tag
 from .utils import require_instance_manager
 
@@ -77,15 +76,6 @@ class TaggableManager(RelatedField):
 
     def save_form_data(self, instance, value):
         getattr(instance, self.name).set(*value)
-
-    def formfield(self, form_class=TagField, **kwargs):
-        defaults = {
-            "label": capfirst(self.verbose_name),
-            "help_text": self.help_text,
-            "required": not self.blank
-        }
-        defaults.update(kwargs)
-        return form_class(**defaults)
 
     def value_from_object(self, instance):
         if instance.pk:

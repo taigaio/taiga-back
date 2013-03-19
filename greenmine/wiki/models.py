@@ -1,10 +1,9 @@
 from django.db import models
-from .fields import WikiField
 
 class WikiPage(models.Model):
     project = models.ForeignKey('scrum.Project', related_name='wiki_pages')
     slug = models.SlugField(max_length=500, db_index=True)
-    content = WikiField(blank=False, null=True)
+    content = models.TextField(blank=False, null=True)
     owner = models.ForeignKey("auth.User", related_name="wiki_pages", null=True)
 
     watchers = models.ManyToManyField('auth.User',
@@ -41,7 +40,7 @@ class WikiPage(models.Model):
 
 class WikiPageHistory(models.Model):
     wikipage = models.ForeignKey("WikiPage", related_name="history_entries")
-    content = WikiField(blank=True, null=True)
+    content = models.TextField(blank=True, null=True)
     created_date = models.DateTimeField()
     owner = models.ForeignKey("auth.User", related_name="wiki_page_historys")
 

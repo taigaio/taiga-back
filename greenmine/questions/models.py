@@ -1,13 +1,12 @@
 from django.db import models
 from greenmine.core.utils.slug import slugify_uniquely
-from greenmine.wiki.fields import WikiField
 from greenmine.taggit.managers import TaggableManager
 
 
 class Question(models.Model):
     subject = models.CharField(max_length=150)
     slug = models.SlugField(unique=True, max_length=250, blank=True)
-    content = WikiField(blank=True)
+    content = models.TextField(blank=True)
     closed = models.BooleanField(default=False)
     attached_file = models.FileField(upload_to="messages",
         max_length=500, null=True, blank=True)
@@ -53,7 +52,7 @@ class Question(models.Model):
 
 
 class QuestionResponse(models.Model):
-    content = WikiField()
+    content = models.TextField()
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True)
     attached_file = models.FileField(upload_to="messages",

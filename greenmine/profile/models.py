@@ -11,7 +11,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 
 from greenmine.core.fields import DictField, ListField
-from greenmine.wiki.fields import WikiField
 from greenmine.core.utils import iter_points
 
 import datetime
@@ -20,7 +19,7 @@ import re
 
 class Profile(models.Model):
     user = models.OneToOneField("auth.User", related_name='profile')
-    description = WikiField(blank=True)
+    description = models.TextField(blank=True)
     photo = models.FileField(upload_to="files/msg",
         max_length=500, null=True, blank=True)
 

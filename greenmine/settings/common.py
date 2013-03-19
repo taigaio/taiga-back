@@ -100,14 +100,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 
-GREENQUEUE_BACKEND = 'greenqueue.backends.sync.SyncService'
-GREENQUEUE_WORKER_MANAGER = 'greenqueue.worker.sync.SyncManager'
-
-GREENQUEUE_TASK_MODULES = [
-    'greenmine.core.mail.async_tasks',
-]
-
-
 SV_CSS_MENU_ACTIVE = 'selected'
 SV_CONTEXT_VARNAME = 'menu'
 
@@ -183,7 +175,6 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    "greenmine.core.context.main",
 ]
 
 ROOT_URLCONF = 'greenmine.urls'
@@ -198,6 +189,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'grappelli',
+    'django.contrib.admin',
     'django.contrib.staticfiles',
 
     'greenmine.base',
@@ -209,11 +202,7 @@ INSTALLED_APPS = [
     'greenmine.questions',
     'greenmine.search',
 
-    'django_gravatar',
-    'rawinclude',
-    'greenqueue',
     'south',
-    'superview',
     'haystack',
     'reversion',
 ]
@@ -287,11 +276,6 @@ LOGGING = {
         'asyncmail': {
             'handlers': ['console'],
             'level':'INFO',
-            'propagate': False,
-        },
-        'greenqueue': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
             'propagate': False,
         },
     }

@@ -4,7 +4,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.contrib.auth.models import User
 
-from greenmine.wiki.fields import WikiField
 from greenmine.core.utils.slug import slugify_uniquely as slugify
 from greenmine.taggit.managers import TaggableManager
 
@@ -12,7 +11,7 @@ from greenmine.taggit.managers import TaggableManager
 class Document(models.Model):
     title = models.CharField(max_length=150)
     slug = models.SlugField(unique=True, max_length=200, blank=True)
-    description = WikiField(blank=True)
+    description = models.TextField(blank=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True)

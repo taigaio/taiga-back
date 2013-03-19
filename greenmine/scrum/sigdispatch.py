@@ -11,7 +11,6 @@ from greenmine.core.utils import normalize_tagname
 from greenmine.core import signals
 from greenmine.core.utils.auth import set_token
 
-from greenqueue import send_task
 from django.conf import settings
 from django.utils.translation import ugettext
 from django.template.loader import render_to_string
@@ -25,7 +24,8 @@ def mail_new_user(sender, user, **kwargs):
     })
 
     subject = ugettext("Greenmine: wellcome!")
-    send_task("send-mail", args = [subject, template, [user.email]])
+    # TODO: convert to celery
+    #send_task("send-mail", args = [subject, template, [user.email]])
 
 @receiver(signals.mail_recovery_password)
 def mail_recovery_password(sender, user, **kwargs):
@@ -35,7 +35,8 @@ def mail_recovery_password(sender, user, **kwargs):
         "current_host": settings.HOST,
     })
     subject = ugettext("Greenmine: password recovery.")
-    send_task("send-mail", args = [subject, template, [user.email]])
+    # TODO: convert to celery
+    #send_task("send-mail", args = [subject, template, [user.email]])
 
 
 @receiver(signals.mail_milestone_created)
@@ -58,7 +59,8 @@ def mail_milestone_created(sender, milestone, user, **kwargs):
 
         emails_list.append([subject, template, [person.email]])
 
-    send_task("send-bulk-mail", args=[emails_list])
+    # TODO: convert to celery
+    #send_task("send-bulk-mail", args=[emails_list])
 
 @receiver(signals.mail_userstory_created)
 def mail_userstory_created(sender, us, user, **kwargs):
@@ -81,7 +83,8 @@ def mail_userstory_created(sender, us, user, **kwargs):
 
         emails_list.append([subject, template, [person.email]])
 
-    send_task("send-bulk-mail", args=[emails_list])
+    # TODO: convert to celery
+    #send_task("send-bulk-mail", args=[emails_list])
 
 
 @receiver(signals.mail_task_created)
@@ -105,7 +108,8 @@ def mail_task_created(sender, task, user, **kwargs):
 
         emails_list.append([subject, template, [person.email]])
 
-    send_task("send-bulk-mail", args=[emails_list])
+    # TODO: convert to celery
+    #send_task("send-bulk-mail", args=[emails_list])
 
 
 @receiver(signals.mail_task_assigned)
@@ -118,4 +122,5 @@ def mail_task_assigned(sender, task, user, **kwargs):
     })
 
     subject = ugettext("Greenmine: task assigned")
-    send_task("send-mail", args = [subject, template, [task.assigned_to.email]])
+    # TODO: convert to celery
+    #send_task("send-mail", args = [subject, template, [task.assigned_to.email]])
