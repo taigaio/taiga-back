@@ -6,6 +6,11 @@ admin.autodiscover()
 from tastypie.api import Api
 
 from scrum.api import *
+from questions.api import *
+from documents.api import *
+from profile.api import *
+from taggit.api import *
+from wiki.api import *
 
 v1_api = Api(api_name='v1')
 v1_api.register(ProjectResource())
@@ -15,6 +20,15 @@ v1_api.register(UserStoryResource())
 v1_api.register(ChangeResource())
 v1_api.register(ChangeAttachmentResource())
 v1_api.register(TaskResource())
+v1_api.register(QuestionResource())
+v1_api.register(QuestionResponseResource())
+v1_api.register(DocumentResource())
+v1_api.register(ProfileResource())
+v1_api.register(TagResource())
+v1_api.register(TaggedItemResource())
+v1_api.register(WikiPageResource())
+v1_api.register(WikiPageHistoryResource())
+v1_api.register(WikiPageAttachmentResource())
 
 urlpatterns = patterns('',
     url(r'^api/', include(v1_api.urls)),
