@@ -85,8 +85,9 @@ SESSION_ENGINE='django.contrib.sessions.backends.cache'
 #SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 #SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_AGE = 1209600 # (2 weeks)
+SESSION_HEADER_NAME = "HTTP_X_SESSION_TOKEN"
 
-HOST = 'http://localhost:8000'
+hOST = 'http://localhost:8000'
 
 # MAIL OPTIONS
 #EMAIL_USE_TLS = False
@@ -156,7 +157,7 @@ TEMPLATE_LOADERS = [
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'greenmine.middleware.GreenmineSessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
