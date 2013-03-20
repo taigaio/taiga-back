@@ -3,6 +3,8 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
+from base.api_actions import Login, Logout
+
 from tastypie.api import Api
 
 from scrum.api import *
@@ -12,7 +14,7 @@ from profile.api import *
 from taggit.api import *
 from wiki.api import *
 
-v1_api = Api(api_name='v1')
+v1_api = Api(api_name='gm')
 v1_api.register(ProjectResource())
 v1_api.register(ProjectUserRoleResource())
 v1_api.register(MilestoneResource())
@@ -31,6 +33,8 @@ v1_api.register(WikiPageHistoryResource())
 v1_api.register(WikiPageAttachmentResource())
 
 urlpatterns = patterns('',
+    url(r'^api/gm/actions/login/', Login.as_view(), name="login"),
+    url(r'^api/gm/actions/logout/', Logout.as_view(), name="logout"),
     url(r'^api/', include(v1_api.urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^grappelli/', include('grappelli.urls')),
