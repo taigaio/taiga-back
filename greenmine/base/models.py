@@ -2,12 +2,12 @@
 
 from django.db.models import signals
 from django.dispatch import receiver
-from django.db import models
 from django.utils.timezone import now
 
-from ..scrum.models import Project, UserStory, Task
+from greenmine.scrum.models import Project, UserStory, Task
 
 import uuid
+
 
 # Centralized uuid attachment and ref generation
 @receiver(signals.pre_save)

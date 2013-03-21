@@ -1,28 +1,23 @@
 # -*- coding: utf-8 -*-
 
+import re
+
 from django.conf import settings
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext
 
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.contrib.auth.models import User
-from django.contrib.auth.models import UserManager
 
 from greenmine.core.utils.slug import slugify_uniquely, ref_uniquely
-from greenmine.core.fields import DictField, ListField
+from greenmine.core.fields import DictField
 from greenmine.core.utils import iter_points
 from greenmine.taggit.managers import TaggableManager
-#import reversion
 
-from .choices import *
+from greenmine.scrum.choices import *
+from greenmine.scrum.utils import SCRUM_STATES
 
-import datetime
-import re
-
-from .utils import SCRUM_STATES
 
 class ProjectManager(models.Manager):
     def get_by_natural_key(self, slug):
@@ -66,8 +61,10 @@ class Project(models.Model):
 
     owner = models.ForeignKey("auth.User", related_name="projects")
     participants = models.ManyToManyField('auth.User',
-        related_name="projects_participant", through="ProjectUserRole",
-        null=True, blank=True)
+                                          related_name="projects_participant",
+                                          through="ProjectUserRole",
+                                          null=True,
+                                          blank=True)
 
     public = models.BooleanField(default=True)
     markup = models.CharField(max_length=10, choices=MARKUP_TYPE, default='md')
@@ -118,108 +115,10 @@ class Project(models.Model):
     def add_user(self, user, role):
         from greenmine.core import permissions
         return ProjectUserRole.objects.create(
-            project = self,
-            user = user,
-            role = permissions.get_role(role),
+            project=self,
+            user=user,
+            role=permissions.get_role(role),
         )
-
-
-    """ Permalinks """
-    @models.permalink
-    def get_absolute_url(self):
-        return ('project-backlog', (),
-            {'pslug': self.slug})
-
-    @models.permalink
-    def get_dashboard_url(self):
-        return ('dashboard', (), {'pslug': self.slug})
-
-    @models.permalink
-    def get_backlog_url(self):
-        return ('project-backlog', (),
-            {'pslug': self.slug})
-
-    @models.permalink
-    def get_backlog_stats_url(self):
-        return ('project-backlog-stats', (),
-            {'pslug': self.slug})
-
-    @models.permalink
-    def get_backlog_left_block_url(self):
-        return ('project-backlog-left-block', (),
-            {'pslug': self.slug})
-
-    @models.permalink
-    def get_backlog_right_block_url(self):
-        return ('project-backlog-right-block', (),
-            {'pslug': self.slug})
-
-    @models.permalink
-    def get_backlog_burndown_url(self):
-        return ('project-backlog-burndown', (),
-            {'pslug': self.slug})
-
-    @models.permalink
-    def get_backlog_burnup_url(self):
-        return ('project-backlog-burnup', (),
-            {'pslug': self.slug})
-
-    @models.permalink
-    def get_milestone_create_url(self):
-        return ('milestone-create', (),
-            {'pslug': self.slug})
-
-    @models.permalink
-    def get_userstory_create_url(self):
-        return ('user-story-create', (), {'pslug': self.slug})
-
-    @models.permalink
-    def get_edit_url(self):
-        return ('project-edit', (), {'pslug': self.slug})
-
-    @models.permalink
-    def get_delete_url(self):
-        return ('project-delete', (), {'pslug': self.slug})
-
-    @models.permalink
-    def get_export_url(self):
-        return ('project-export-settings', (), {'pslug': self.slug})
-
-    @models.permalink
-    def get_export_now_url(self):
-        return ('project-export-settings-now', (), {'pslug': self.slug})
-
-    @models.permalink
-    def get_export_rehash_url(self):
-        return ('project-export-settings-rehash', (), {'pslug': self.slug})
-
-    @models.permalink
-    def get_issues_url(self):
-        return ('issues-list', (), {'pslug': self.slug})
-
-    @models.permalink
-    def get_settings_url(self):
-        return ('project-personal-settings', (), {'pslug': self.slug})
-
-    @models.permalink
-    def get_general_settings_url(self):
-        return ('project-general-settings', (), {'pslug': self.slug})
-
-    @models.permalink
-    def get_questions_url(self):
-        return ('questions', (), {'pslug': self.slug})
-
-    @models.permalink
-    def get_questions_create_url(self):
-        return ('questions-create', (), {'pslug': self.slug})
-
-    @models.permalink
-    def get_documents_url(self):
-        return ('documents', (), {'pslug': self.slug})
-
-    @models.permalink
-    def get_wiki_url(self):
-        return ('wiki-page', (), {'pslug': self.slug, 'wslug': 'index'})
 
 
 class ProjectUserRole(models.Model):
@@ -321,75 +220,6 @@ class Milestone(models.Model):
             (float(self.completed_points) * 100) / float(self.total_points)
         )
 
-    @models.permalink
-    def get_absolute_url(self):
-        return ('dashboard', (),
-            {'pslug': self.project.slug, 'mid': self.id})
-
-    @models.permalink
-    def get_edit_url(self):
-        return ('milestone-edit', (),
-            {'pslug': self.project.slug, 'mid': self.id})
-
-    @models.permalink
-    def get_delete_url(self):
-        return ('milestone-delete', (),
-            {'pslug': self.project.slug, 'mid': self.id})
-
-    @models.permalink
-    def get_dashboard_url(self):
-        return ('dashboard', (),
-            {'pslug': self.project.slug, 'mid': self.id})
-
-    @models.permalink
-    def get_stats_url(self):
-        return ('dashboard-api-stats', (),
-            {'pslug': self.project.slug, 'mid': self.id})
-
-    @models.permalink
-    def get_user_story_create_url(self):
-        return ('user-story-create', (),
-            {'pslug': self.project.slug, 'mid': self.id})
-
-    @models.permalink
-    def get_ml_detail_url(self):
-        return ('milestone-dashboard', (),
-            {'pslug': self.project.slug, 'mid': self.id})
-
-    @models.permalink
-    def get_create_task_url(self):
-        # TODO: deprecated
-        return ('api:task-create', (),
-            {'pslug': self.project.slug, 'mid': self.id})
-
-    @models.permalink
-    def get_stats_api_url(self):
-        return ('api:stats-milestone', (),
-            {'pslug': self.project.slug, 'mid': self.id})
-
-    @models.permalink
-    def get_tasks_url(self):
-        return ('tasks-view', (),
-            {'pslug': self.project.slug, 'mid': self.id})
-
-    @models.permalink
-    def get_tasks_url_filter_by_task(self):
-        return ('tasks-view', (),
-            {'pslug': self.project.slug, 'mid': self.id, 'filter_by':'task'})
-
-    @models.permalink
-    def get_tasks_url_filter_by_bug(self):
-        return ('tasks-view', (),
-            {'pslug': self.project.slug, 'mid': self.id, 'filter_by':'bug'})
-
-    @models.permalink
-    def get_task_create_url(self):
-        return ('task-create', (),
-            {'pslug': self.project.slug, 'mid': self.id})
-
-    class Meta(object):
-        unique_together = ('name', 'project')
-
     def natural_key(self):
         return (self.name,) + self.project.natural_key()
 
@@ -412,14 +242,16 @@ class UserStory(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
     ref = models.CharField(max_length=200, db_index=True, null=True, default=None)
     milestone = models.ForeignKey("Milestone", blank=True,
-        related_name="user_stories", null=True, default=None)
+                                  related_name="user_stories", null=True,
+                                  default=None)
     project = models.ForeignKey("Project", related_name="user_stories")
-    owner = models.ForeignKey("auth.User", null=True,
-        default=None, related_name="user_stories")
+    owner = models.ForeignKey("auth.User", null=True, default=None,
+                              related_name="user_stories")
     priority = models.IntegerField(default=1)
     points = models.IntegerField(choices=POINTS_CHOICES, default=-1)
     status = models.CharField(max_length=50,
-        choices=SCRUM_STATES.get_us_choices(), db_index=True, default="open")
+                              choices=SCRUM_STATES.get_us_choices(),
+                              db_index=True, default="open")
 
     tags = TaggableManager()
 
@@ -431,24 +263,14 @@ class UserStory(models.Model):
     description = models.TextField()
     finish_date = models.DateTimeField(null=True, blank=True)
 
-    watchers = models.ManyToManyField('auth.User',
-        related_name='us_watch', null=True)
+    watchers = models.ManyToManyField('auth.User', related_name='us_watch',
+                                      null=True)
 
     client_requirement = models.BooleanField(default=False)
     team_requirement = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('ref', 'project')
-
-    def to_dict(self):
-        return {
-            "id": self.pk,
-            "ref": self.ref,
-            "subject": self.subject,
-            "viewUrl": self.get_view_url(),
-            "pointsDisplay": self.get_points_display(),
-            "tags": [ {'id': tag.id, 'name': tag.name} for tag in self.tags.all() ]
-        }
 
     def __repr__(self):
         return u"<UserStory %s>" % (self.id)
@@ -464,52 +286,6 @@ class UserStory(models.Model):
 
         super(UserStory, self).save(*args, **kwargs)
 
-    @models.permalink
-    def get_absolute_url(self):
-        return ('user-story', (),
-            {'pslug': self.project.slug, 'iref': self.ref})
-
-    @models.permalink
-    def get_assign_url(self):
-        return ('assign-us', (),
-            {'pslug': self.project.slug, 'iref': self.ref})
-
-    @models.permalink
-    def get_unassign_url(self):
-        return ('unassign-us', (),
-            {'pslug': self.project.slug, 'iref': self.ref})
-
-    @models.permalink
-    def get_drop_api_url(self):
-        # TODO: check if this url is used.
-        return ('api:user-story-drop', (),
-            {'pslug': self.project.slug, 'iref': self.ref})
-
-    @models.permalink
-    def get_view_url(self):
-        return ('user-story', (),
-            {'pslug': self.project.slug, 'iref': self.ref})
-
-    @models.permalink
-    def get_edit_url(self):
-        return ('user-story-edit', (),
-            {'pslug': self.project.slug, 'iref': self.ref})
-
-    @models.permalink
-    def get_edit_inline_url(self):
-        return ('user-story-edit-inline', (),
-            {'pslug': self.project.slug, 'iref': self.ref})
-
-    @models.permalink
-    def get_delete_url(self):
-        return ('user-story-delete', (),
-            {'pslug': self.project.slug, 'iref': self.ref})
-
-    @models.permalink
-    def get_task_create_url(self):
-        return ('task-create', (),
-            {'pslug': self.project.slug, 'usref': self.ref})
-
     """ Propertys """
     def update_status(self):
         tasks = self.tasks.all()
@@ -519,7 +295,6 @@ class UserStory(models.Model):
             used_states.append(task.fake_status)
         used_states = set(used_states)
 
-        all_completed = True
         for state in SCRUM_STATES.ordered_us_states():
             for task_state in used_states:
                 if task_state == state:
@@ -564,8 +339,8 @@ class ChangeAttachment(models.Model):
     owner = models.ForeignKey("auth.User", related_name="change_attachments")
 
     created_date = models.DateTimeField(auto_now_add=True)
-    attached_file = models.FileField(upload_to="files/msg",
-        max_length=500, null=True, blank=True)
+    attached_file = models.FileField(upload_to="files/msg", max_length=500,
+                                     null=True, blank=True)
 
 
 class TaskQuerySet(models.query.QuerySet):
@@ -614,12 +389,12 @@ class TaskQuerySet(models.query.QuerySet):
 
         return{
             'list': task_list,
-            'filters' : {
-                'milestones' : self._get_category(milestones),
-                'status' : self._get_category(status),
-                'tags' : self._get_category(tags),
-                'assigned_to' : self._get_category(assigned_to),
-                'severity' : self._get_category(severity),
+            'filters': {
+                'milestones': self._get_category(milestones),
+                'status': self._get_category(status),
+                'tags': self._get_category(tags),
+                'assigned_to': self._get_category(assigned_to),
+                'severity': self._get_category(severity),
             }
         }
 
@@ -627,21 +402,20 @@ class TaskQuerySet(models.query.QuerySet):
 
         queryset = self
         if milestone:
-            queryset = queryset.filter(milestone = milestone)
+            queryset = queryset.filter(milestone=milestone)
 
         if status:
-            queryset = queryset.filter(status = status)
+            queryset = queryset.filter(status=status)
 
         if tags:
             for tag in tags:
                 queryset = queryset.filter(tags__in=[tag])
 
         if assigned_to:
-            queryset = queryset.filter(assigned_to = assigned_to)
+            queryset = queryset.filter(assigned_to=assigned_to)
 
         if severity:
-            queryset = queryset.filter(severity = severity)
-
+            queryset = queryset.filter(severity=severity)
 
         milestone_id = milestone and milestone.id
         status_id = status
@@ -650,6 +424,7 @@ class TaskQuerySet(models.query.QuerySet):
         severity_id = severity
 
         return self._get_filter_and_build_filter_dict(queryset, milestone_id, status_id, tags_ids, assigned_to_id, severity_id)
+
 
 class TaskManager(models.Manager):
     def get_query_set(self):
@@ -661,34 +436,34 @@ class Task(models.Model):
     user_story = models.ForeignKey('UserStory', related_name='tasks', null=True, blank=True)
     last_user_story = models.ForeignKey('UserStory', null=True, blank=True)
     ref = models.CharField(max_length=200, db_index=True, null=True, default=None)
-    status = models.CharField(max_length=50,
-        choices=TASK_STATUS_CHOICES, default='open')
-    owner = models.ForeignKey("auth.User", null=True,
-        default=None, related_name="tasks")
+    status = models.CharField(max_length=50, choices=TASK_STATUS_CHOICES,
+                              default='open')
+    owner = models.ForeignKey("auth.User", null=True, default=None,
+                              related_name="tasks")
 
     severity = models.IntegerField(choices=TASK_SEVERITY_CHOICES, default=3)
     priority = models.IntegerField(choices=TASK_PRIORITY_CHOICES, default=3)
-    milestone = models.ForeignKey('Milestone', related_name='tasks',
-        null=True, default=None, blank=True)
+    milestone = models.ForeignKey('Milestone', related_name='tasks', null=True,
+                                  default=None, blank=True)
 
     project = models.ForeignKey('Project', related_name='tasks')
-    type = models.CharField(max_length=10,
-        choices=TASK_TYPE_CHOICES, default='task')
+    type = models.CharField(max_length=10, choices=TASK_TYPE_CHOICES,
+                            default='task')
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True)
     finished_date = models.DateTimeField(null=True, blank=True)
-    last_status = models.CharField(max_length=50,
-        choices=TASK_STATUS_CHOICES, null=True, blank=True)
+    last_status = models.CharField(max_length=50, choices=TASK_STATUS_CHOICES,
+                                   null=True, blank=True)
 
     subject = models.CharField(max_length=500)
     description = models.TextField(blank=True)
     assigned_to = models.ForeignKey('auth.User',
-        related_name='user_storys_assigned_to_me',
-        blank=True, null=True, default=None)
+                                    related_name='user_storys_assigned_to_me',
+                                    blank=True, null=True, default=None)
 
-    watchers = models.ManyToManyField('auth.User',
-        related_name='task_watch', null=True)
+    watchers = models.ManyToManyField('auth.User', related_name='task_watch',
+                                      null=True)
 
     changes = generic.GenericRelation(Change)
 
@@ -705,39 +480,6 @@ class Task(models.Model):
     @property
     def fake_status(self):
         return SCRUM_STATES.get_us_state_for_task_state(self.status)
-
-    @models.permalink
-    def get_absolute_url(self):
-        if self.type == "bug":
-            return ('issues-view', (), {'pslug':self.project.slug, 'tref': self.ref})
-        else:
-            return ('tasks-view', (), {'pslug':self.project.slug, 'tref': self.ref})
-
-    @models.permalink
-    def get_edit_url(self):
-        if self.type == 'bug':
-            return ('issues-edit', (),
-                {'pslug': self.project.slug, 'tref': self.ref})
-        else:
-            #TODO: make this url
-            return ('issues-edit', (),
-                {'pslug': self.project.slug, 'tref': self.ref})
-            #return ('tasks-edit', (),
-                #{'pslug': self.project.slug, 'tref': self.ref})
-
-    @models.permalink
-    def get_view_url(self):
-        if self.type == "bug":
-            return ('issues-view', (), {'pslug':self.project.slug, 'tref': self.ref})
-        else:
-            return ('tasks-view', (), {'pslug':self.project.slug, 'tref': self.ref})
-
-    @models.permalink
-    def get_delete_url(self):
-        if self.type == "bug":
-            return ('issues-delete', (), {'pslug':self.project.slug, 'tref': self.ref})
-        else:
-            return ('tasks-delete', (), {'pslug':self.project.slug, 'tref': self.ref})
 
     def save(self, *args, **kwargs):
         last_user_story = None
@@ -768,41 +510,5 @@ class Task(models.Model):
         if self.user_story:
             self.user_story.update_status()
 
-
-    def to_dict(self):
-        self_dict = {
-            'id': self.pk,
-            'editUrl': self.get_edit_url(),
-            'viewUrl': self.get_view_url(),
-            'deleteUrl': self.get_delete_url(),
-            'subject': self.subject,
-            'type': self.get_type_display(),
-            'statusDisplay': self.get_status_display(),
-            'status': self.status,
-            'fakeStatus': self.fake_status,
-            'us': self.user_story and self.user_story.pk or None,
-            'assignedTo': self.assigned_to and self.assigned_to.pk or None,
-            'tags': [tag.to_dict() for tag in self.tags.all()],
-            'priority': self.priority,
-            'priorityDisplay': self.get_priority_display(),
-            'severity': self.severity,
-            'severityDisplay': self.get_severity_display(),
-        }
-
-        if self_dict['assignedTo']:
-            self_dict['assignedToDisplay'] = self.assigned_to.get_full_name()
-        else:
-            self_dict['assignedToDisplay'] = ugettext("Unassigned")
-        return self_dict
-
-
-#reversion.register(ProjectExtras)
-#reversion.register(Project)
-#reversion.register(ProjectUserRole)
-#reversion.register(Milestone)
-#reversion.register(UserStory)
-#reversion.register(Change)
-#reversion.register(ChangeAttachment)
-#reversion.register(Task)
 
 from . import sigdispatch
