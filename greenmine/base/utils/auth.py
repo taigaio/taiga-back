@@ -2,6 +2,7 @@
 
 import uuid
 
+
 def set_token(user):
     """
     Set new token for user profile.
@@ -14,4 +15,3 @@ def set_token(user):
     user.save()
     profile.save()
     return token
-

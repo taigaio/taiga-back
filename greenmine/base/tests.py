@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from django.conf import settings
+import json
+
 from django.test import TestCase
 from django.core import mail
 from django.core.urlresolvers import reverse
 
 from django.contrib.auth.models import User
-from ..models import *
-
-from django.utils import timezone
-import datetime
-import json
 
 from greenqueue import send_task
 
@@ -20,11 +16,11 @@ class LowLevelEmailTests(TestCase):
         mail.outbox = []
 
     def test_send_one_mail(self):
-        send_task("send-mail", args = ["subject", "template", ["hola@niwi.be"]])
+        send_task("send-mail", args=["subject", "template", ["hola@niwi.be"]])
         self.assertEqual(len(mail.outbox), 1)
 
     def test_send_bulk_mail(self):
-        send_task("send-bulk-mail", args = [[
+        send_task("send-bulk-mail", args=[[
             ('s1', 't1', ['hola@niwi.be']),
             ('s2', 't2', ['hola@niwi.be']),
         ]])
@@ -35,19 +31,19 @@ class LowLevelEmailTests(TestCase):
 class UserMailTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create(
-            username = 'test1',
-            email = 'test1@test.com',
-            is_active = True,
-            is_staff = True,
-            is_superuser = True,
+            username='test1',
+            email='test1@test.com',
+            is_active=True,
+            is_staff=True,
+            is_superuser=True,
         )
 
         self.user2 = User.objects.create(
-            username = 'test2',
-            email = 'test2@test.com',
-            is_active = True,
-            is_staff = False,
-            is_superuser = False,
+            username='test2',
+            email='test2@test.com',
+            is_active=True,
+            is_staff=False,
+            is_superuser=False,
         )
 
         self.user1.set_password("test")
@@ -123,4 +119,3 @@ class UserMailTests(TestCase):
 
         ok = self.client.login(username="test2", password="123123")
         self.assertTrue(ok)
-

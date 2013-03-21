@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+from haystack.query import EmptySearchQuerySet
+
 from django.core.paginator import Paginator, InvalidPage
 from django.conf import settings
 from django.http import Http404
-from haystack.query import EmptySearchQuerySet
+from django.utils.translation import ugettext as _
 
 from greenmine.base.decorators import login_required
 from greenmine.base.generic import GenericView
@@ -53,4 +55,3 @@ class SearchView(GenericView):
         }
 
         return self.render_to_response(self.template_path, context)
-

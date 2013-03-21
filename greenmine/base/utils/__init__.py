@@ -2,6 +2,7 @@
 
 import unicodedata
 
+
 class Singleton(type):
     """ Singleton metaclass. """
     def __init__(cls, name, bases, dct):
@@ -10,7 +11,7 @@ class Singleton(type):
 
     def __call__(cls, *args, **kw):
         if cls.__instance is None:
-            cls.__instance = type.__call__(cls, *args,**kw)
+            cls.__instance = type.__call__(cls, *args, **kw)
         return cls.__instance
 
 

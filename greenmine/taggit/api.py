@@ -3,7 +3,8 @@ from tastypie.resources import ModelResource
 from tastypie.authentication import SessionAuthentication
 from tastypie.authorization import DjangoAuthorization
 
-from greenmine.taggit.models import *
+from greenmine.taggit.models import Tag, TaggedItem
+
 
 class TagResource(ModelResource):
     class Meta:
@@ -11,6 +12,7 @@ class TagResource(ModelResource):
         resource_name = 'tag'
         authentication = SessionAuthentication()
         authorization = DjangoAuthorization()
+
 
 class TaggedItemResource(ModelResource):
     class Meta:

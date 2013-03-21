@@ -6,11 +6,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.fields.related import ManyToManyRel, RelatedField, add_lazy_relation
 from django.db.models.related import RelatedObject
-from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 
-from .models import TaggedItem, GenericTaggedItemBase, Tag
-from .utils import require_instance_manager
+from greenmine.taggit.models import TaggedItem, GenericTaggedItemBase
+from greenmine.taggit.utils import require_instance_manager
 
 
 class TaggableRel(ManyToManyRel):
@@ -24,7 +23,8 @@ class TaggableRel(ManyToManyRel):
 
 class TaggableManager(RelatedField):
     def __init__(self, verbose_name=_("Tags"),
-        help_text=_("A comma-separated list of tags."), through=None, blank=False):
+                 help_text=_("A comma-separated list of tags."), through=None,
+                 blank=False):
         self.through = through or TaggedItem
         self.rel = TaggableRel()
         self.verbose_name = verbose_name
@@ -43,7 +43,7 @@ class TaggableManager(RelatedField):
     def __get__(self, instance, model):
         if instance is not None and instance.pk is None:
             raise ValueError("%s objects need to have a primary key value "
-                "before you can access their tags." % model.__name__)
+                             "before you can access their tags." % model.__name__)
         manager = _TaggableManager(
             through=self.through, model=model, instance=instance
         )
@@ -216,7 +216,6 @@ def _get_subclasses(model):
     subclasses = [model]
     for f in model._meta.get_all_field_names():
         field = model._meta.get_field_by_name(f)[0]
-        if (isinstance(field, RelatedObject) and
-            getattr(field.field.rel, "parent_link", None)):
+        if (isinstance(field, RelatedObject) and getattr(field.field.rel, "parent_link", None)):
             subclasses.extend(_get_subclasses(field.model))
     return subclasses

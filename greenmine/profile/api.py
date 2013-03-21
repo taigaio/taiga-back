@@ -3,7 +3,8 @@ from tastypie.resources import ModelResource
 from tastypie.authentication import SessionAuthentication
 from tastypie.authorization import DjangoAuthorization
 
-from greenmine.profile.models import *
+from greenmine.profile.models import Profile
+
 
 class ProfileResource(ModelResource):
     class Meta:

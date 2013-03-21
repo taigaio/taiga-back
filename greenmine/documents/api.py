@@ -3,7 +3,8 @@ from tastypie.resources import ModelResource
 from tastypie.authentication import SessionAuthentication
 from tastypie.authorization import DjangoAuthorization
 
-from greenmine.documents.models import *
+from greenmine.documents.models import Document
+
 
 class DocumentResource(ModelResource):
     class Meta:

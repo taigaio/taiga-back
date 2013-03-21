@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
-from greenmine.scrum.models import Project, ProjectExtras, ProjectUserRole, Milestone, UserStory, Change, ChangeAttachment, Task
+from greenmine.scrum.models import Project, ProjectExtras, ProjectUserRole, \
+    Milestone, UserStory, Change, ChangeAttachment, Task
 
 
 class ProjectAdmin(admin.ModelAdmin):

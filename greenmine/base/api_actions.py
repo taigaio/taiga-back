@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 
 import json
 
+
 class Login(View):
     def post(self, request):
         username = request.POST.get('username', None)
@@ -29,6 +30,7 @@ class Login(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(Login, self).dispatch(*args, **kwargs)
+
 
 class Logout(View):
     def post(self, request):

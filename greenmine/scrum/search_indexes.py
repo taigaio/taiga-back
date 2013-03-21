@@ -1,6 +1,6 @@
 # -* coding: utf-8 -*-
 from haystack import indexes
-from .models import Project, Milestone, UserStory, Task
+from greenmine.scrum.models import UserStory, Task
 
 
 class UserStoryIndex(indexes.SearchIndex, indexes.Indexable):

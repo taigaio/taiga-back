@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 
 from .models import Profile
 
+
 @receiver(post_save, sender=User)
 def user_post_save(sender, instance, created, **kwargs):
     """

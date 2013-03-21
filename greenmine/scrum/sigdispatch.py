@@ -1,20 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
-from django.utils import timezone
 from django.utils.translation import ugettext
 from django.template.loader import render_to_string
 
 from django.contrib.auth.models import User
 
-from greenmine.profile.models import Profile
-from greenmine.scrum.models import UserStory, Task, ProjectUserRole
+from greenmine.scrum.models import ProjectUserRole
 from greenmine.base import signals
-from greenmine.base.utils import normalize_tagname
 from greenmine.base.utils.auth import set_token
-from greenmine.base.mail.tasks import send_email, send_bulk_email
+from greenmine.base.mail.tasks import send_mail, send_bulk_mail
 
 
 @receiver(signals.mail_new_user)
@@ -61,6 +57,7 @@ def mail_milestone_created(sender, milestone, user, **kwargs):
         emails_list.append([subject, template, [person.email]])
 
     send_bulk_mail.delay(emails_list)
+
 
 @receiver(signals.mail_userstory_created)
 def mail_userstory_created(sender, us, user, **kwargs):

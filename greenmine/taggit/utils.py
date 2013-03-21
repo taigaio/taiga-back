@@ -5,8 +5,6 @@ from django.utils.encoding import force_unicode
 from django.utils.functional import wraps
 from django.db.models import Count
 
-from .models import TaggedItem
-
 
 def get_tags_for_queryset(queryset, tags_attribute='tags'):
     """

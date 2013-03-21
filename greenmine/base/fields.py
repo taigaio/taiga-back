@@ -14,6 +14,7 @@ import logging
 
 logger = logging.getLogger("niwi")
 
+
 class DictField(models.Field):
     """ Dictionary pickled field. """
     __metaclass__ = models.SubfieldBase
@@ -64,7 +65,7 @@ class ListField(models.Field):
     __pickleproto__ = -1
 
     def to_python(self, value):
-        if isinstance(value, (list,tuple)):
+        if isinstance(value, (list, tuple)):
             return value
 
         if isinstance(value, (str, unicode)) and value.startswith(self.__prefix__):
@@ -75,7 +76,7 @@ class ListField(models.Field):
 
     def get_db_prep_value(self, value, connection, prepared=False):
         if value is not None:
-            if isinstance(value, (list,tuple)):
+            if isinstance(value, (list, tuple)):
                 value = self.__prefix__ + b64encode(pickle.dumps(value, protocol=self.__pickleproto__))
             else:
                 raise TypeError('This field can only store list or tuple objects')
@@ -109,13 +110,15 @@ class CSVField(models.TextField):
         super(CSVField, self).__init__(*args, **kwargs)
 
     def to_python(self, value):
-        if not value: return
+        if not value:
+            return
         if isinstance(value, list):
             return value
         return value.split(self.token)
 
     def get_db_prep_value(self, value):
-        if not value: return
+        if not value:
+            return
         assert(isinstance(value, list) or isinstance(value, tuple))
         return self.token.join([unicode(s) for s in value])
 

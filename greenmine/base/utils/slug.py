@@ -5,6 +5,7 @@ from django.template.defaultfilters import slugify
 
 import time
 
+
 def slugify_uniquely(value, model, slugfield="slug"):
     """
     Returns a slug on a name which is unique within a model's table

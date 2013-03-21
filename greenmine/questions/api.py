@@ -3,7 +3,8 @@ from tastypie.resources import ModelResource
 from tastypie.authentication import SessionAuthentication
 from tastypie.authorization import DjangoAuthorization
 
-from greenmine.questions.models import *
+from greenmine.questions.models import Question, QuestionResponse
+
 
 class QuestionResource(ModelResource):
     class Meta:
@@ -11,6 +12,7 @@ class QuestionResource(ModelResource):
         resource_name = 'question'
         authentication = SessionAuthentication()
         authorization = DjangoAuthorization()
+
 
 class QuestionResponseResource(ModelResource):
     class Meta:

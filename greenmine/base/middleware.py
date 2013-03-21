@@ -5,6 +5,7 @@ from django.utils.cache import patch_vary_headers
 from django.utils.http import cookie_date
 from django.utils.importlib import import_module
 
+
 class GreenmineSessionMiddleware(object):
     def process_request(self, request):
         engine = import_module(settings.SESSION_ENGINE)
@@ -39,9 +40,11 @@ class GreenmineSessionMiddleware(object):
                 if response.status_code != 500:
                     request.session.save()
                     response.set_cookie(settings.SESSION_COOKIE_NAME,
-                            request.session.session_key, max_age=max_age,
-                            expires=expires, domain=settings.SESSION_COOKIE_DOMAIN,
-                            path=settings.SESSION_COOKIE_PATH,
-                            secure=settings.SESSION_COOKIE_SECURE or None,
-                            httponly=settings.SESSION_COOKIE_HTTPONLY or None)
+                                        request.session.session_key,
+                                        max_age=max_age,
+                                        expires=expires,
+                                        domain=settings.SESSION_COOKIE_DOMAIN,
+                                        path=settings.SESSION_COOKIE_PATH,
+                                        secure=settings.SESSION_COOKIE_SECURE or None,
+                                        httponly=settings.SESSION_COOKIE_HTTPONLY or None)
         return response

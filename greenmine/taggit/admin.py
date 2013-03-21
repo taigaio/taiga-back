@@ -9,6 +9,7 @@ from .models import Tag, TaggedItem
 class TaggedItemInline(admin.StackedInline):
     model = TaggedItem
 
+
 class TagAdmin(admin.ModelAdmin):
     list_display = ["name"]
     inlines = [

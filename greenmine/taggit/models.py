@@ -5,10 +5,10 @@ import django
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.db import connection, models, IntegrityError, transaction
-from django.db.models.query import QuerySet
 from django.template.defaultfilters import slugify as default_slugify
 from django.utils.translation import ugettext_lazy as _, ugettext
 qn = connection.ops.quote_name
+
 
 class TagBase(models.Model):
     name = models.CharField(verbose_name=_('Name'), max_length=100)
@@ -82,14 +82,13 @@ class TagManager(models.Manager):
             extra_criteria = ''
         return self._get_usage(queryset.model, counts, min_count, extra_joins, extra_criteria, params)
 
-
-
     def _get_usage(self, model, counts=False, min_count=None, extra_joins=None, extra_criteria=None, params=None):
         """
         Perform the custom SQL query for ``usage_for_model`` and
         ``usage_for_queryset``.
         """
-        if min_count is not None: counts = True
+        if min_count is not None:
+            counts = True
 
         model_table = qn(model._meta.db_table)
         model_pk = '%s.%s' % (model_table, qn(model._meta.pk.column))
@@ -216,7 +215,7 @@ class GenericTaggedItemBase(ItemBase):
     content_object = GenericForeignKey()
 
     class Meta:
-        abstract=True
+        abstract = True
 
     @classmethod
     def lookup_kwargs(cls, instance):

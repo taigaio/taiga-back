@@ -3,7 +3,8 @@ from tastypie.resources import ModelResource
 from tastypie.authentication import SessionAuthentication
 from tastypie.authorization import DjangoAuthorization
 
-from greenmine.wiki.models import *
+from greenmine.wiki.models import WikiPage, WikiPageHistory, WikiPageAttachment
+
 
 class WikiPageResource(ModelResource):
     class Meta:

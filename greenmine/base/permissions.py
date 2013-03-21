@@ -7,6 +7,7 @@ from __future__ import absolute_import
 from greenmine.profile.models import Role
 from greenmine.scrum.models import ProjectUserRole
 
+
 def get_role(name):
     """
     Helper method for a get role object
@@ -27,8 +28,7 @@ def has_perm(user, project, loc, perm, pur=None):
         except ProjectUserRole.DoesNotExist:
             return False
 
-    return getattr(pur.role, \
-            '%s_%s' % (loc.lower(), perm.lower()), False)
+    return getattr(pur.role, '%s_%s' % (loc.lower(), perm.lower()), False)
 
 
 def has_perms(user, project, perms=[]):
@@ -56,8 +56,8 @@ def has_perms(user, project, perms=[]):
         if not isinstance(locperms, (list, tuple)):
             locperms = [locperms]
 
-        valid = False not in [has_perm(user, project, loc, locperm, pur=pur)\
-            for locperm in locperms]
+        valid = False not in [has_perm(user, project, loc, locperm, pur=pur)
+                              for locperm in locperms]
 
         if not valid:
             break

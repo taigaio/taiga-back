@@ -2,6 +2,7 @@ from django.conf import settings
 
 __all__ = ('SCRUM_STATES',)
 
+
 class GmScrumStates(object):
     def __init__(self):
         self._states = settings.GM_SCRUM_STATES
@@ -23,14 +24,14 @@ class GmScrumStates(object):
         for us_state in self._states.values():
             if us_state['is_finished']:
                 finished_task_states += us_state['task_states']
-        return [ x[0] for x in finished_task_states ]
+        return [x[0] for x in finished_task_states]
 
     def get_unfinished_task_states(self):
         unfinished_task_states = []
         for us_state in self._states.values():
             if not us_state['is_finished']:
                 unfinished_task_states += us_state['task_states']
-        return [ x[0] for x in unfinished_task_states ]
+        return [x[0] for x in unfinished_task_states]
 
     def get_finished_us_states(self):
         finished_us_states = []
@@ -48,17 +49,17 @@ class GmScrumStates(object):
 
     def get_us_state_for_task_state(self, state):
         for key, value in self._states.iteritems():
-            if state in [ x[0] for x in value['task_states'] ]:
+            if state in [x[0] for x in value['task_states']]:
                 return key
         return None
 
     def get_task_states_for_us_state(self, state):
         if state in self._states.keys():
-            return [ x[0] for x in self._states[state]['task_states'] ]
+            return [x[0] for x in self._states[state]['task_states']]
         return None
 
     def ordered_us_states(self):
-        ordered = sorted([ (value['order'], key) for key, value in self._states.iteritems() ])
-        return [ x[1] for x in ordered ]
+        ordered = sorted([(value['order'], key) for key, value in self._states.iteritems()])
+        return [x[1] for x in ordered]
 
 SCRUM_STATES = GmScrumStates()
