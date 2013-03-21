@@ -210,6 +210,7 @@ INSTALLED_APPS = [
     'south',
     'haystack',
     'reversion',
+    'guardian',
 ]
 
 WSGI_APPLICATION = 'greenmine.wsgi.application'
@@ -295,6 +296,10 @@ DATE_INPUT_FORMATS = (
     '%B %d, %Y', '%d %B %Y', '%d %B, %Y'
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # default
+    'guardian.backends.ObjectPermissionBackend',
+)
 
 HAYSTACK_CONNECTIONS = {
     'default': {
