@@ -161,7 +161,7 @@ TEMPLATE_LOADERS = [
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
-    'greenmine.middleware.GreenmineSessionMiddleware',
+    'greenmine.base.middleware.GreenmineSessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -198,6 +198,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'greenmine.base',
+    'greenmine.base.mail',
     'greenmine.profile',
     'greenmine.scrum',
     'greenmine.wiki',
