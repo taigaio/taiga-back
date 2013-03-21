@@ -75,6 +75,55 @@ class Project(models.Model):
 
     objects = ProjectManager()
 
+    class Meta:
+        permissions = (
+            # global permissions
+            ('list_projects', 'Can list projects'),
+            ('list_my_projects', 'Can list my projects'),
+
+            # per project permissions
+            ('view_projects', 'Can view projects'),
+
+            ('create_tasks', 'Can create tasks'),
+            ('comment_tasks', 'Can comment tasks'),
+            ('modify_tasks', 'Can modify tasks'),
+            ('delete_task', 'Can delete tasks'),
+            ('modify_owned_tasks', 'Can modify owned tasks'),
+            ('modify_assigned_tasks', 'Can modify assigned tasks'),
+            ('assign_tasks_to_others', 'Can assign tasks to others'),
+            ('assign_tasks_to_myself', 'Can assign tasks to myself'),
+            ('change_tasks_state', 'Can change the task state'),
+            ('add_tasks_to_us', 'Can add tasks to a user story'),
+
+            ('create_us', 'Can create user stories'),
+            ('comment_us', 'Can comment user stories'),
+            ('modify_us', 'Can modify user stories'),
+            ('delete_us', 'Can delete user stories'),
+            ('modify_owned_us', 'Can modify owned user stories'),
+            ('add_us_to_milestones', 'Can add user stories to milestones'),
+
+            ('create_questions', 'Can create questions'),
+            ('reply_questions', 'Can reply questions'),
+            ('modify_questions', 'Can modify questions'),
+            ('delete_questions', 'Can delete questions'),
+            ('modify_owned_questions', 'Can modify owned questions'),
+
+            ('create_wiki_page', 'Can create wiki pages'),
+            ('modify_wiki_page', 'Can modify wiki pages'),
+            ('delete_wiki_page', 'Can delete wiki pages'),
+            ('modify_owned_wiki_page', 'Can modify owned wiki pages'),
+
+            ('create_documents', 'Can create documents'),
+            ('modify_documents', 'Can modify documents'),
+            ('delete_documents', 'Can delete documents'),
+            ('modify_owned_documents', 'Can modify owned documents'),
+
+            ('create_milestone', 'Can create milestones'),
+            ('modify_milestone', 'Can modify milestones'),
+
+            ('manage_users', 'Can manage users'),
+        )
+
     def __unicode__(self):
         return self.name
 
