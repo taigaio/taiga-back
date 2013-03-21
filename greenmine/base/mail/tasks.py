@@ -2,22 +2,21 @@
 
 import logging
 
-from greenqueue.core import Library
-register = Library()
+from celery import task
 
 from django.template import loader
 from django.utils import translation
 from django.core import mail
 
-from greenmine.core.utils.auth import set_token
+from greenmine.base.utils.auth import set_token
 
-@register.task(name='send-mail')
+@task(name='send-mail')
 def send_mail(subject, body, to):
     email_message = mail.EmailMessage(body=body, subject=subject, to=to)
     email_message.content_subtype = "html"
     email_message.send()
 
-@register.task(name='send-bulk-mail')
+@task(name='send-bulk-mail')
 def send_bulk_mail(emails):
     emessages = [mail.EmailMessage(body=body, subject=subject, to=to)
         for subject, body, to in emails]

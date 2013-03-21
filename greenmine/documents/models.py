@@ -1,7 +1,7 @@
 # -* coding: utf-8 -*-
 from django.db import models
 
-from greenmine.core.utils.slug import slugify_uniquely as slugify
+from greenmine.base.utils.slug import slugify_uniquely as slugify
 from greenmine.taggit.managers import TaggableManager
 
 

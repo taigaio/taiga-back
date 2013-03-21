@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from django.utils.translation import ugettext_lazy as _
 import os.path, sys, os
+import djcelery
+
+from django.utils.translation import ugettext_lazy as _
+
+djcelery.setup_loader()
 
 PROJECT_ROOT = os.path.abspath(
     os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
@@ -163,7 +167,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'greenmine.core.middleware.PermissionMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
     'reversion.middleware.RevisionMiddleware',
 ]
@@ -284,7 +287,7 @@ LOGGING = {
 
 
 AUTH_PROFILE_MODULE = 'profile.Profile'
-FORMAT_MODULE_PATH = 'greenmine.core.formats'
+FORMAT_MODULE_PATH = 'greenmine.base.formats'
 DATE_INPUT_FORMATS = (
     '%Y-%m-%d', '%m/%d/%Y', '%d/%m/%Y', '%b %d %Y',
     '%b %d, %Y', '%d %b %Y', '%d %b, %Y', '%B %d %Y',

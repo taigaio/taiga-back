@@ -10,9 +10,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.contrib.auth.models import User
 
-from greenmine.core.utils.slug import slugify_uniquely, ref_uniquely
-from greenmine.core.fields import DictField
-from greenmine.core.utils import iter_points
+from greenmine.base.utils.slug import slugify_uniquely, ref_uniquely
+from greenmine.base.fields import DictField
+from greenmine.base.utils import iter_points
 from greenmine.taggit.managers import TaggableManager
 
 from greenmine.scrum.choices import *
@@ -113,7 +113,7 @@ class Project(models.Model):
         super(Project, self).save(*args, **kwargs)
 
     def add_user(self, user, role):
-        from greenmine.core import permissions
+        from greenmine.base import permissions
         return ProjectUserRole.objects.create(
             project=self,
             user=user,

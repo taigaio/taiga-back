@@ -4,10 +4,10 @@ from django.conf import settings
 from django.http import Http404
 from haystack.query import EmptySearchQuerySet
 
-from greenmine.core.decorators import login_required
-from greenmine.core.generic import GenericView
+from greenmine.base.decorators import login_required
+from greenmine.base.generic import GenericView
 from greenmine.scrum.models import Project
-from .forms import SearchForm
+from greenmine.search.forms import SearchForm
 
 
 SEARCH_RESULTS_PER_PAGE = getattr(settings, 'SEARCH_RESULTS_PER_PAGE', 20)

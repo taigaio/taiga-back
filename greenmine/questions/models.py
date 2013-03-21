@@ -1,5 +1,5 @@
 from django.db import models
-from greenmine.core.utils.slug import slugify_uniquely
+from greenmine.base.utils.slug import slugify_uniquely
 from greenmine.taggit.managers import TaggableManager
 
 

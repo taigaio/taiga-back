@@ -10,8 +10,8 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 
-from greenmine.core.fields import DictField, ListField
-from greenmine.core.utils import iter_points
+from greenmine.base.fields import DictField, ListField
+from greenmine.base.utils import iter_points
 
 import datetime
 import re
