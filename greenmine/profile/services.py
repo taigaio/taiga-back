@@ -12,13 +12,13 @@ class RoleGroupsService(object):
 
     def replicate_all_roles_on_one_project(self, project):
         for role in Role.objects.all():
-            group = Group(name="p%d-r%d" % (project.pk, role.pk), role=role)
+            group = Group(name="p%d-r%d" % (project.pk, role.pk), role=role, project=project)
             group.save()
             self._replicate_role_permissions_on_group(role, group)
 
     def _replicate_role_on_project_if_needed(self, role, project):
         if project.groups.filter(role=role).count() == 0:
-            group = Group(name="p%d-r%d" % (project.pk, role.pk), role=role)
+            group = Group(name="p%d-r%d" % (project.pk, role.pk), role=role, project=project)
             group.save()
             self._replicate_role_permissions_on_group(role, group)
 
@@ -27,4 +27,3 @@ class RoleGroupsService(object):
         for permission in role.permissions.all():
             group.permissions.add(permission)
         group.save()
-

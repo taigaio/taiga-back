@@ -24,27 +24,6 @@ class ProjectManager(models.Manager):
         return self.get(slug=slug)
 
 
-class ProjectExtras(models.Model):
-    task_parser_re = models.CharField(max_length=1000, blank=True, null=True, default=None)
-    sprints = models.IntegerField(default=1, blank=True, null=True)
-    show_burndown = models.BooleanField(default=False, blank=True)
-    show_burnup = models.BooleanField(default=False, blank=True)
-    show_sprint_burndown = models.BooleanField(default=False, blank=True)
-    total_story_points = models.FloatField(default=None, null=True)
-
-    def get_task_parse_re(self):
-        re_str = settings.DEFAULT_TASK_PARSER_RE
-        if self.task_parser_re:
-            re_str = self.task_parser_re
-        return re.compile(re_str, flags=re.U+re.M)
-
-    def parse_ustext(self, text):
-        rx = self.get_task_parse_re()
-        texts = rx.findall(text)
-        for text in texts:
-            yield text
-
-
 class Project(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
     name = models.CharField(max_length=250, unique=True)
@@ -55,16 +34,18 @@ class Project(models.Model):
     modified_date = models.DateTimeField(auto_now_add=True)
 
     owner = models.ForeignKey("auth.User", related_name="projects")
-    groups = models.ManyToManyField('auth.Group',
-                                          related_name="projects",
-                                          null=True,
-                                          blank=True)
     public = models.BooleanField(default=True)
     markup = models.CharField(max_length=10, choices=MARKUP_TYPE, default='md')
-    extras = models.OneToOneField("ProjectExtras", related_name="project", null=True, default=None)
 
     last_us_ref = models.BigIntegerField(null=True, default=0)
     last_task_ref = models.BigIntegerField(null=True, default=0)
+
+    task_parser_re = models.CharField(max_length=1000, blank=True, null=True, default=None)
+    sprints = models.IntegerField(default=1, blank=True, null=True)
+    show_burndown = models.BooleanField(default=False, blank=True)
+    show_burnup = models.BooleanField(default=False, blank=True)
+    show_sprint_burndown = models.BooleanField(default=False, blank=True)
+    total_story_points = models.FloatField(default=None, null=True)
 
     objects = ProjectManager()
 
@@ -119,13 +100,6 @@ class Project(models.Model):
 
     def __unicode__(self):
         return self.name
-
-    def get_extras(self):
-        if self.extras is None:
-            self.extras = ProjectExtras.objects.create()
-            self.__class__.objects.filter(pk=self.pk).update(extras=self.extras)
-
-        return self.extras
 
     def natural_key(self):
         return (self.slug,)
