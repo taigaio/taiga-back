@@ -8,7 +8,7 @@ from greenmine.scrum.models import Project, Milestone, UserStory, Change, \
     ChangeAttachment, Task
 
 
-class ProjectAdmin(GuardedModelAdmin, reversion.VersionAdmin):
+class ProjectAdmin(reversion.VersionAdmin):
     list_display = ["name", "owner"]
 
 admin.site.register(Project, ProjectAdmin)
