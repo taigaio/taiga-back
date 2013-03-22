@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import Permission, Group
-
+from django.contrib.auth.models import User, Group
 
 class Profile(models.Model):
     user = models.OneToOneField("auth.User", related_name='profile')
@@ -23,7 +24,7 @@ class Profile(models.Model):
 class Role(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
-    permissions = models.ManyToManyField(Permission,
+    permissions = models.ManyToManyField('auth.Permission',
         verbose_name=_('permissions'), blank=True)
 
     def __unicode__(self):
@@ -34,4 +35,19 @@ if not hasattr(Group, 'role'):
     field.contribute_to_class(Group, 'role')
 
 
-from . import sigdispatch
+@receiver(post_save, sender=User)
+def user_post_save(sender, instance, created, **kwargs):
+    """
+    Create void user profile if instance is a new user.
+    """
+    if created and not Profile.objects.filter(user=instance).exists():
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=Role)
+def role_post_save(sender, instance, **kwargs):
+    from greenmine.profile.services import RoleGroupsService
+
+    """
+    Recalculate projects groups
+    """
+    RoleGroupsService().replicate_role_on_all_projects(instance)

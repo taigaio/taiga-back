@@ -4,12 +4,15 @@ from django.dispatch import receiver
 from django.conf import settings
 from django.utils.translation import ugettext
 from django.template.loader import render_to_string
+from django.db.models.signals import post_save
 
 from django.contrib.auth.models import User
 
 from greenmine.base import signals
 from greenmine.base.utils.auth import set_token
 from greenmine.base.mail.tasks import send_mail, send_bulk_mail
+from greenmine.scrum.models import Project
+from greenmine.profile.services import RoleGroupsService
 
 
 @receiver(signals.mail_new_user)
@@ -105,3 +108,11 @@ def mail_task_assigned(sender, task, user, **kwargs):
 
     subject = ugettext("Greenmine: task assigned")
     send_mail.delay(subject, template, [task.assigned_to.email])
+
+@receiver(post_save, sender=Project)
+def project_post_save(sender, instance, created, **kwargs):
+    """
+    Recalculate project groups
+    """
+    if created:
+        RoleGroupsService().replicate_all_roles_on_one_project(instance)
