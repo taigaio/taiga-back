@@ -13,15 +13,8 @@ from django.contrib.auth.models import User
 from greenmine.base.utils.slug import slugify_uniquely, ref_uniquely
 from greenmine.base.fields import DictField
 from greenmine.base.utils import iter_points
-from greenmine.taggit.managers import TaggableManager
-
 from greenmine.scrum.choices import *
 from greenmine.scrum.utils import SCRUM_STATES
-
-
-class ProjectManager(models.Manager):
-    def get_by_natural_key(self, slug):
-        return self.get(slug=slug)
 
 
 class Project(models.Model):
@@ -31,7 +24,7 @@ class Project(models.Model):
     description = models.TextField(blank=False)
 
     created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
 
     owner = models.ForeignKey("auth.User", related_name="projects")
     public = models.BooleanField(default=True)
@@ -47,7 +40,7 @@ class Project(models.Model):
     show_sprint_burndown = models.BooleanField(default=False, blank=True)
     total_story_points = models.FloatField(default=None, null=True)
 
-    objects = ProjectManager()
+    tags = DictField(blank=True, null=True)
 
     class Meta:
         permissions = (
@@ -101,36 +94,14 @@ class Project(models.Model):
     def __unicode__(self):
         return self.name
 
-    def natural_key(self):
-        return (self.slug,)
-
-    @property
-    def unasociated_user_stories(self):
-        return self.user_stories.filter(milestone__isnull=True)
-
-    @property
-    def all_participants(self):
-        return User.objects.filter(group__in=self.groups)
-
-    @property
-    def default_milestone(self):
-        return self.milestones.order_by('-created_date')[0]
-
     def __repr__(self):
         return u"<Project %s>" % (self.slug)
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify_uniquely(self.name, self.__class__)
-        else:
-            self.modified_date = timezone.now()
 
         super(Project, self).save(*args, **kwargs)
-
-
-class MilestoneManager(models.Manager):
-    def get_by_natural_key(self, name, project):
-        return self.get(name=name, project__slug=project)
 
 
 class Milestone(models.Model):
@@ -143,11 +114,13 @@ class Milestone(models.Model):
     estimated_finish = models.DateField(null=True, default=None)
 
     created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
     closed = models.BooleanField(default=False)
 
     disponibility = models.FloatField(null=True, default=0.0)
-    objects = MilestoneManager()
+    order = models.PositiveSmallIntegerField("Order")
+
+    tags = DictField(blank=True, null=True)
 
     class Meta:
         ordering = ['-created_date']
@@ -162,57 +135,11 @@ class Milestone(models.Model):
         total = sum(iter_points(self.user_stories.all()))
         return "{0:.1f}".format(total)
 
-    def get_points_done_at_date(self, date):
-        """
-        Get completed story points for this milestone before the date.
-        """
-        total = 0.0
-
-        for item in self.user_stories.filter(status__in=SCRUM_STATES.get_finished_us_states()):
-            if item.tasks.filter(finished_date__lt=date).count() > 0:
-                if item.points == -1:
-                    continue
-
-                if item.points == -2:
-                    total += 0.5
-                    continue
-
-                total += item.points
-
-        return "{0:.1f}".format(total)
-
-    @property
-    def completed_points(self):
-        """
-        Get a total of completed points.
-        """
-
-        queryset = self.user_stories.filter(status__in=SCRUM_STATES.get_finished_us_states())
-        total = sum(iter_points(queryset))
-        return "{0:.1f}".format(total)
-
-    @property
-    def percentage_completed(self):
-        return "{0:.1f}".format(
-            (float(self.completed_points) * 100) / float(self.total_points)
-        )
-
-    def natural_key(self):
-        return (self.name,) + self.project.natural_key()
-
-    natural_key.dependencies = ['greenmine.Project']
-
     def __unicode__(self):
         return self.name
 
     def __repr__(self):
         return u"<Milestone %s>" % (self.id)
-
-    def save(self, *args, **kwargs):
-        if self.id:
-            self.modified_date = timezone.now()
-
-        super(Milestone, self).save(*args, **kwargs)
 
 
 class UserStory(models.Model):
@@ -230,10 +157,8 @@ class UserStory(models.Model):
                               choices=SCRUM_STATES.get_us_choices(),
                               db_index=True, default="open")
 
-    tags = TaggableManager()
-
     created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
     tested = models.BooleanField(default=False)
 
     subject = models.CharField(max_length=500)
@@ -247,6 +172,8 @@ class UserStory(models.Model):
     team_requirement = models.BooleanField(default=False)
     order = models.PositiveSmallIntegerField("Order")
 
+    tags = DictField(blank=True, null=True)
+
     class Meta:
         ordering = ['order']
         unique_together = ('ref', 'project')
@@ -258,45 +185,10 @@ class UserStory(models.Model):
         return u"{0} ({1})".format(self.subject, self.ref)
 
     def save(self, *args, **kwargs):
-        if self.id:
-            self.modified_date = timezone.now()
         if not self.ref:
             self.ref = ref_uniquely(self.project, self.__class__)
 
         super(UserStory, self).save(*args, **kwargs)
-
-    """ Propertys """
-    def update_status(self):
-        tasks = self.tasks.all()
-        used_states = []
-
-        for task in tasks:
-            used_states.append(task.fake_status)
-        used_states = set(used_states)
-
-        for state in SCRUM_STATES.ordered_us_states():
-            for task_state in used_states:
-                if task_state == state:
-                    self.status = state
-                    self.save()
-                    return None
-        return None
-
-    @property
-    def tasks_new(self):
-        return self.tasks.filter(status__in=SCRUM_STATES.get_task_states_for_us_state('open'))
-
-    @property
-    def tasks_progress(self):
-        return self.tasks.filter(status__in=SCRUM_STATES.get_task_states_for_us_state('progress'))
-
-    @property
-    def tasks_completed(self):
-        return self.tasks.filter(status__in=SCRUM_STATES.get_task_states_for_us_state('completed'))
-
-    @property
-    def tasks_closed(self):
-        return self.tasks.filter(status__in=SCRUM_STATES.get_task_states_for_us_state('closed'))
 
 
 class Change(models.Model):
@@ -310,7 +202,8 @@ class Change(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
-    data = DictField()
+    data = DictField(blank=True, null=True)
+    tags = DictField(blank=True, null=True)
 
 
 class ChangeAttachment(models.Model):
@@ -320,6 +213,7 @@ class ChangeAttachment(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     attached_file = models.FileField(upload_to="files/msg", max_length=500,
                                      null=True, blank=True)
+    tags = DictField(blank=True, null=True)
 
 
 class TaskQuerySet(models.query.QuerySet):
@@ -445,8 +339,7 @@ class Task(models.Model):
                                       null=True)
 
     changes = generic.GenericRelation(Change)
-
-    tags = TaggableManager()
+    tags = DictField(blank=True, null=True)
 
     objects = TaskManager()
 

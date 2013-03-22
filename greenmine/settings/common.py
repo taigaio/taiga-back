@@ -205,7 +205,6 @@ INSTALLED_APPS = [
     'greenmine.scrum',
     'greenmine.wiki',
     'greenmine.documents',
-    'greenmine.taggit',
     'greenmine.questions',
     'greenmine.search',
 

@@ -2,7 +2,7 @@
 from django.db import models
 
 from greenmine.base.utils.slug import slugify_uniquely as slugify
-from greenmine.taggit.managers import TaggableManager
+from greenmine.base.fields import DictField
 
 
 class Document(models.Model):
@@ -18,8 +18,7 @@ class Document(models.Model):
     owner = models.ForeignKey('auth.User', related_name='documents')
     attached_file = models.FileField(upload_to="documents", max_length=1000,
                                      null=True, blank=True)
-
-    tags = TaggableManager()
+    tags = DictField()
 
     def save(self, *args, **kwargs):
         if not self.slug:

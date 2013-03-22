@@ -1,6 +1,7 @@
 from django.db import models
+
 from greenmine.base.utils.slug import slugify_uniquely
-from greenmine.taggit.managers import TaggableManager
+from greenmine.base.fields import DictField
 
 
 class Question(models.Model):
@@ -23,8 +24,7 @@ class Question(models.Model):
     watchers = models.ManyToManyField('auth.User',
                                       related_name='question_watch', null=True,
                                       blank=True)
-
-    tags = TaggableManager()
+    tags = DictField()
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -41,3 +41,4 @@ class QuestionResponse(models.Model):
 
     question = models.ForeignKey('Question', related_name='responses')
     owner = models.ForeignKey('auth.User', related_name='questions_responses')
+    tags = DictField()

@@ -1,5 +1,7 @@
 from django.db import models
 
+from greenmine.base.fields import DictField
+
 
 class WikiPage(models.Model):
     project = models.ForeignKey('scrum.Project', related_name='wiki_pages')
@@ -12,13 +14,7 @@ class WikiPage(models.Model):
                                       null=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
-
-
-class WikiPageHistory(models.Model):
-    wikipage = models.ForeignKey("WikiPage", related_name="history_entries")
-    content = models.TextField(blank=True, null=True)
-    created_date = models.DateTimeField()
-    owner = models.ForeignKey("auth.User", related_name="wiki_page_historys")
+    tags = DictField()
 
 
 class WikiPageAttachment(models.Model):
@@ -28,3 +24,4 @@ class WikiPageAttachment(models.Model):
     modified_date = models.DateTimeField(auto_now_add=True)
     attached_file = models.FileField(upload_to="files/wiki", max_length=500,
                                      null=True, blank=True)
+    tags = DictField()
