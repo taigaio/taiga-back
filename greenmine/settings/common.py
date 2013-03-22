@@ -206,7 +206,6 @@ INSTALLED_APPS = [
     'greenmine.wiki',
     'greenmine.documents',
     'greenmine.questions',
-    'greenmine.search',
 
     'south',
     'haystack',
