@@ -7,7 +7,6 @@ from django.template.loader import render_to_string
 
 from django.contrib.auth.models import User
 
-from greenmine.scrum.models import ProjectUserRole
 from greenmine.base import signals
 from greenmine.base.utils.auth import set_token
 from greenmine.base.mail.tasks import send_mail, send_bulk_mail
@@ -38,11 +37,7 @@ def mail_recovery_password(sender, user, **kwargs):
 
 @receiver(signals.mail_milestone_created)
 def mail_milestone_created(sender, milestone, user, **kwargs):
-    participants_ids = ProjectUserRole.objects\
-        .filter(user=user, mail_milestone_created=True, project=milestone.project)\
-        .values_list('user__pk', flat=True)
-
-    participants = User.objects.filter(pk__in=participants_ids)
+    participants = milestone.project.all_participants()
 
     emails_list = []
     subject = ugettext("Greenmine: sprint created")
@@ -61,11 +56,7 @@ def mail_milestone_created(sender, milestone, user, **kwargs):
 
 @receiver(signals.mail_userstory_created)
 def mail_userstory_created(sender, us, user, **kwargs):
-    participants_ids = ProjectUserRole.objects\
-        .filter(user=user, mail_userstory_created=True, project=us.project)\
-        .values_list('user__pk', flat=True)
-
-    participants = User.objects.filter(pk__in=participants_ids)
+    participants = us.milestone.project.all_participants()
 
     emails_list = []
     subject = ugettext("Greenmine: user story created")
@@ -85,11 +76,7 @@ def mail_userstory_created(sender, us, user, **kwargs):
 
 @receiver(signals.mail_task_created)
 def mail_task_created(sender, task, user, **kwargs):
-    participants_ids = ProjectUserRole.objects\
-        .filter(user=user, mail_task_created=True, project=task.project)\
-        .values_list('user__pk', flat=True)
-
-    participants = User.objects.filter(pk__in=participants_ids)
+    participants = task.us.milestone.project.all_participants()
 
     emails_list = []
     subject = ugettext("Greenmine: task created")

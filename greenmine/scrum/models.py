@@ -23,11 +23,6 @@ class ProjectManager(models.Manager):
     def get_by_natural_key(self, slug):
         return self.get(slug=slug)
 
-    def can_view(self, user):
-        queryset = ProjectUserRole.objects.filter(user=user)\
-            .values_list('project', flat=True)
-        return Project.objects.filter(pk__in=queryset)
-
 
 class ProjectExtras(models.Model):
     task_parser_re = models.CharField(max_length=1000, blank=True, null=True, default=None)
@@ -60,12 +55,10 @@ class Project(models.Model):
     modified_date = models.DateTimeField(auto_now_add=True)
 
     owner = models.ForeignKey("auth.User", related_name="projects")
-    participants = models.ManyToManyField('auth.User',
-                                          related_name="projects_participant",
-                                          through="ProjectUserRole",
+    groups = models.ManyToManyField('auth.Group',
+                                          related_name="projects",
                                           null=True,
                                           blank=True)
-
     public = models.BooleanField(default=True)
     markup = models.CharField(max_length=10, choices=MARKUP_TYPE, default='md')
     extras = models.OneToOneField("ProjectExtras", related_name="project", null=True, default=None)
@@ -143,8 +136,7 @@ class Project(models.Model):
 
     @property
     def all_participants(self):
-        qs = ProjectUserRole.objects.filter(project=self)
-        return User.objects.filter(id__in=qs.values_list('user__pk', flat=True))
+        return User.objects.filter(group__in=self.groups)
 
     @property
     def default_milestone(self):
@@ -160,44 +152,6 @@ class Project(models.Model):
             self.modified_date = timezone.now()
 
         super(Project, self).save(*args, **kwargs)
-
-    def add_user(self, user, role):
-        from greenmine.base import permissions
-        return ProjectUserRole.objects.create(
-            project=self,
-            user=user,
-            role=permissions.get_role(role),
-        )
-
-
-class ProjectUserRole(models.Model):
-    project = models.ForeignKey("Project", related_name="user_roles")
-    user = models.ForeignKey("auth.User", related_name="user_roles")
-    role = models.ForeignKey("profile.Role", related_name="user_roles")
-
-    mail_milestone_created = models.BooleanField(default=True)
-    mail_milestone_modified = models.BooleanField(default=False)
-    mail_milestone_deleted = models.BooleanField(default=False)
-    mail_userstory_created = models.BooleanField(default=True)
-    mail_userstory_modified = models.BooleanField(default=False)
-    mail_userstory_deleted = models.BooleanField(default=False)
-    mail_task_created = models.BooleanField(default=True)
-    mail_task_assigned = models.BooleanField(default=False)
-    mail_task_deleted = models.BooleanField(default=False)
-    mail_question_created = models.BooleanField(default=False)
-    mail_question_assigned = models.BooleanField(default=True)
-    mail_question_deleted = models.BooleanField(default=False)
-    mail_document_created = models.BooleanField(default=True)
-    mail_document_deleted = models.BooleanField(default=False)
-    mail_wiki_created = models.BooleanField(default=False)
-    mail_wiki_modified = models.BooleanField(default=False)
-    mail_wiki_deleted = models.BooleanField(default=False)
-
-    def __repr__(self):
-        return u"<Project-User-Relation-%s>" % (self.id)
-
-    class Meta:
-        unique_together = ('project', 'user')
 
 
 class MilestoneManager(models.Manager):
@@ -317,8 +271,10 @@ class UserStory(models.Model):
 
     client_requirement = models.BooleanField(default=False)
     team_requirement = models.BooleanField(default=False)
+    order = models.PositiveSmallIntegerField("Order")
 
     class Meta:
+        ordering = ['order']
         unique_together = ('ref', 'project')
 
     def __repr__(self):

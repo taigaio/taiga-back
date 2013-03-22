@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
-from greenmine.scrum.models import Project, ProjectExtras, ProjectUserRole, \
+from guardian.admin import GuardedModelAdmin
+
+from greenmine.scrum.models import Project, ProjectExtras, \
     Milestone, UserStory, Change, ChangeAttachment, Task
 
 
-class ProjectAdmin(admin.ModelAdmin):
+class ProjectAdmin(GuardedModelAdmin):
     list_display = ["name", "owner"]
 
 admin.site.register(Project, ProjectAdmin)
@@ -15,12 +17,6 @@ class ProjectExtrasAdmin(admin.ModelAdmin):
     list_display = ["project"]
 
 admin.site.register(ProjectExtras, ProjectExtrasAdmin)
-
-
-class ProjectUserRoleAdmin(admin.ModelAdmin):
-    list_display = ["project", "user", "role"]
-
-admin.site.register(ProjectUserRole, ProjectUserRoleAdmin)
 
 
 class MilestoneAdmin(admin.ModelAdmin):

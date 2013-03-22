@@ -2,7 +2,7 @@
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 
 
 class Profile(models.Model):
@@ -25,6 +25,13 @@ class Role(models.Model):
     slug = models.SlugField(max_length=250, unique=True, blank=True)
     permissions = models.ManyToManyField(Permission,
         verbose_name=_('permissions'), blank=True)
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+if not hasattr(Group, 'role'):
+    field = models.ForeignKey(Role, blank=False, null=False, related_name='groups')
+    field.contribute_to_class(Group, 'role')
 
 
 from . import sigdispatch

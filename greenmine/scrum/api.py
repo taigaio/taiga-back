@@ -3,7 +3,7 @@ from tastypie.resources import ModelResource
 from tastypie.authentication import SessionAuthentication
 from tastypie.authorization import DjangoAuthorization
 
-from greenmine.scrum.models import Project, ProjectUserRole, \
+from greenmine.scrum.models import Project, \
     Milestone, UserStory, Change, ChangeAttachment, Task
 
 
@@ -11,14 +11,6 @@ class ProjectResource(ModelResource):
     class Meta:
         queryset = Project.objects.all()
         resource_name = 'project'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
-
-
-class ProjectUserRoleResource(ModelResource):
-    class Meta:
-        queryset = ProjectUserRole.objects.all()
-        resource_name = 'projectuserrole'
         authentication = SessionAuthentication()
         authorization = DjangoAuthorization()
 

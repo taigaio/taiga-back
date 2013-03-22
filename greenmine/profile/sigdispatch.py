@@ -6,7 +6,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 
-from .models import Profile
+from .models import Profile, Role
+from .services import RoleGroupsService
 
 
 @receiver(post_save, sender=User)
@@ -16,3 +17,10 @@ def user_post_save(sender, instance, created, **kwargs):
     """
     if created and not Profile.objects.filter(user=instance).exists():
         Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=Role)
+def role_post_save(sender, instance, created, **kwargs):
+    """
+    Recalculate projects groups
+    """
+    RoleGroupsService().replicate_role_on_all_projects(instance)

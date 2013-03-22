@@ -16,7 +16,6 @@ from wiki.api import *
 
 v1_api = Api(api_name='gm')
 v1_api.register(ProjectResource())
-v1_api.register(ProjectUserRoleResource())
 v1_api.register(MilestoneResource())
 v1_api.register(UserStoryResource())
 v1_api.register(ChangeResource())
