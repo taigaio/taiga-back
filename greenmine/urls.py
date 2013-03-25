@@ -3,15 +3,14 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-from base.api_actions import Login, Logout
-
 from tastypie.api import Api
 
-from scrum.api import *
-from questions.api import *
-from documents.api import *
-from profile.api import *
-from wiki.api import *
+from .base.api_actions import Login, Logout
+from .scrum.api import *
+from .questions.api import *
+from .documents.api import *
+from .profile.api import *
+from .wiki.api import *
 
 v1_api = Api(api_name='gm')
 v1_api.register(ProjectResource())
