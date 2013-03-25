@@ -84,14 +84,16 @@ LOGIN_URL='/auth/login/'
 USE_TZ = True
 
 #SESSION BACKEND
-#SESSION_ENGINE='django.contrib.sessions.backends.db'
-SESSION_ENGINE='django.contrib.sessions.backends.cache'
+SESSION_ENGINE='django.contrib.sessions.backends.db'
+#SESSION_ENGINE='django.contrib.sessions.backends.cache'
 #SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 #SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_AGE = 1209600 # (2 weeks)
 SESSION_HEADER_NAME = "HTTP_X_SESSION_TOKEN"
 
-hOST = 'http://localhost:8000'
+API_LIMIT_PER_PAGE = 0
+
+HOST = 'http://localhost:8000'
 
 # MAIL OPTIONS
 #EMAIL_USE_TLS = False
