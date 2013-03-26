@@ -25,6 +25,13 @@ v1_api.register(DocumentResource())
 v1_api.register(ProfileResource())
 v1_api.register(WikiPageResource())
 v1_api.register(WikiPageAttachmentResource())
+v1_api.register(SeverityResource())
+v1_api.register(IssueStatusResource())
+v1_api.register(TaskStatusResource())
+v1_api.register(UserStoryStatusResource())
+v1_api.register(PriorityResource())
+v1_api.register(IssueTypeResource())
+v1_api.register(PointsResource())
 
 urlpatterns = patterns('',
     url(r'^api/gm/actions/login/', Login.as_view(), name="login"),
