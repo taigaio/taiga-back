@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
+
 from django.contrib import admin
-
 from guardian.admin import GuardedModelAdmin
+from greenmine.scrum import models
 import reversion
-
-from greenmine.scrum.models import Project, Milestone, UserStory, Change, \
-    ChangeAttachment, Task
 
 
 class MilestoneInline(admin.TabularInline):
-    model = Milestone
+    model = models.Milestone
     fields = ('name', 'owner', 'estimated_start', 'estimated_finish', 'closed', 'disponibility', 'order')
     sortable_field_name = 'order'
     extra = 0
 
+
 class UserStoryInline(admin.TabularInline):
-    model = UserStory
+    model = models.UserStory
     fields = ('subject', 'order')
     sortable_field_name = 'order'
     extra = 0
@@ -24,40 +23,76 @@ class UserStoryInline(admin.TabularInline):
         if obj:
             return obj.user_stories.filter(mileston__isnone=True)
         else:
-            return UserStory.objects.none()
+            return models.UserStory.objects.none()
 
 class ProjectAdmin(reversion.VersionAdmin):
     list_display = ["name", "owner"]
     inlines = [MilestoneInline, UserStoryInline]
 
-admin.site.register(Project, ProjectAdmin)
+admin.site.register(models.Project, ProjectAdmin)
 
 
 class MilestoneAdmin(reversion.VersionAdmin):
     list_display = ["name", "project", "owner", "closed", "estimated_start", "estimated_finish"]
 
-admin.site.register(Milestone, MilestoneAdmin)
+admin.site.register(models.Milestone, MilestoneAdmin)
 
 
 class UserStoryAdmin(reversion.VersionAdmin):
     list_display = ["ref", "milestone", "project", "owner"]
 
-admin.site.register(UserStory, UserStoryAdmin)
+admin.site.register(models.UserStory, UserStoryAdmin)
 
 
 class ChangeAdmin(reversion.VersionAdmin):
     list_display = ["id", "change_type", "project", "owner"]
 
-admin.site.register(Change, ChangeAdmin)
+admin.site.register(models.Change, ChangeAdmin)
 
 
 class ChangeAttachmentAdmin(reversion.VersionAdmin):
     list_display = ["id", "change", "owner"]
 
-admin.site.register(ChangeAttachment, ChangeAttachmentAdmin)
+admin.site.register(models.ChangeAttachment, ChangeAttachmentAdmin)
 
 
 class TaskAdmin(reversion.VersionAdmin):
-    list_display = ["subject", "type", "user_story"]
+    list_display = ["subject", "user_story"]
 
-admin.site.register(Task, TaskAdmin)
+
+class IssueAdmin(reversion.VersionAdmin):
+    list_display = ["subject", "type"]
+
+
+class SeverityAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "project"]
+
+class PriorityAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "project"]
+
+class PointsAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "project"]
+
+class IssueTypeAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "project"]
+
+class IssueStatusAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "is_closed", "project"]
+
+class TaskStatusAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "is_closed", "project"]
+
+class UserStoryStatusAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "is_closed", "project"]
+
+admin.site.register(models.Task, TaskAdmin)
+admin.site.register(models.Issue, IssueAdmin)
+
+admin.site.register(models.Severity, SeverityAdmin)
+admin.site.register(models.IssueStatus, IssueStatusAdmin)
+admin.site.register(models.TaskStatus, TaskStatusAdmin)
+admin.site.register(models.UserStoryStatus, UserStoryStatusAdmin)
+admin.site.register(models.Priority, PriorityAdmin)
+admin.site.register(models.IssueType, IssueTypeAdmin)
+admin.site.register(models.Points, PointsAdmin)
+

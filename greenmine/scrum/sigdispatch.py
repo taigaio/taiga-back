@@ -106,12 +106,3 @@ def mail_task_assigned(sender, task, user, **kwargs):
 
     subject = ugettext("Greenmine: task assigned")
     send_mail.delay(subject, template, [task.assigned_to.email])
-
-
-@receiver(post_save, sender=Project)
-def project_post_save(sender, instance, created, **kwargs):
-    """
-    Recalculate project groups
-    """
-    if created:
-        RoleGroupsService().replicate_all_roles_on_one_project(instance)

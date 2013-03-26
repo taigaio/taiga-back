@@ -23,19 +23,21 @@ def slugify_uniquely(value, model, slugfield="slug"):
         suffix += 1
 
 
-def ref_uniquely(project, model, field='ref'):
+
+def ref_uniquely(p, seq_field,  model, field='ref'):
     """
     Returns a unique reference code based on base64 and time.
     """
+    project = project.__class__.objects.select_for_update().get(pk=p.pk)
 
-    # this prevents concurrent and inconsistent references.
-    time.sleep(0.001)
+    ref = getattr(project, seq_field) + 1
 
-    new_timestamp = lambda: int("".join(str(time.time()).split(".")))
     while True:
-        potential = baseconv.base62.encode(new_timestamp())
-        params = {field: potential, 'project': project}
+        params = {field: ref, 'project': _project}
         if not model.objects.filter(**params).exists():
-            return potential
+            setattr(_project, seq_field, ref)
+            _project.save(update_fields=[seq_field])
+            return ref
 
         time.sleep(0.0002)
+        ref += 1
