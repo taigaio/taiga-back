@@ -3,40 +3,11 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-from tastypie.api import Api
-
-from .base.api_actions import Login, Logout
-from .scrum.api import *
-from .questions.api import *
-from .documents.api import *
-from .profile.api import *
-from .wiki.api import *
-
-v1_api = Api(api_name='gm')
-v1_api.register(ProjectResource())
-v1_api.register(MilestoneResource())
-v1_api.register(UserStoryResource())
-v1_api.register(ChangeResource())
-v1_api.register(ChangeAttachmentResource())
-v1_api.register(TaskResource())
-v1_api.register(QuestionResource())
-v1_api.register(QuestionResponseResource())
-v1_api.register(DocumentResource())
-v1_api.register(ProfileResource())
-v1_api.register(WikiPageResource())
-v1_api.register(WikiPageAttachmentResource())
-v1_api.register(SeverityResource())
-v1_api.register(IssueStatusResource())
-v1_api.register(TaskStatusResource())
-v1_api.register(UserStoryStatusResource())
-v1_api.register(PriorityResource())
-v1_api.register(IssueTypeResource())
-v1_api.register(PointsResource())
-
 urlpatterns = patterns('',
-    url(r'^api/gm/actions/login/', Login.as_view(), name="login"),
-    url(r'^api/gm/actions/logout/', Logout.as_view(), name="logout"),
-    url(r'^api/', include(v1_api.urls)),
+    url(r'^api/auth/', include('rest_framework.urls',
+        namespace='rest_framework')),
+    url(r'^api/$', 'greenmine.base.views.api_root'),
+    url(r'^api/scrum/', include('greenmine.scrum.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^grappelli/', include('grappelli.urls')),
 )

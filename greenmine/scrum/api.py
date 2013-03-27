@@ -1,115 +1,134 @@
-# myapp/api.py
-from tastypie.resources import ModelResource
-from tastypie.authentication import SessionAuthentication
-from tastypie.authorization import DjangoAuthorization
-from tastypie import fields
+from rest_framework import generics
 
-from greenmine.scrum import models
+from greenmine.scrum.serializers import *
+from greenmine.scrum.models import *
 
 
-class ProjectResource(ModelResource):
-    class Meta:
-        queryset = models.Project.objects.all()
-        resource_name = 'project'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+class ProjectList(generics.ListCreateAPIView):
+    model = Project
+    serializer_class = ProjectSerializer
 
 
-class MilestoneResource(ModelResource):
-    class Meta:
-        queryset = models.Milestone.objects.all()
-        resource_name = 'milestone'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Project
+    serializer_class = ProjectSerializer
 
 
-class UserStoryResource(ModelResource):
-    class Meta:
-        queryset = models.UserStory.objects.all()
-        resource_name = 'userstory'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+class MilestoneList(generics.ListCreateAPIView):
+    model = Milestone
+    serializer_class = MilestoneSerializer
 
 
-class ChangeResource(ModelResource):
-    class Meta:
-        queryset = models.Change.objects.all()
-        resource_name = 'change'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+class MilestoneDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Milestone
+    serializer_class = MilestoneSerializer
 
 
-class ChangeAttachmentResource(ModelResource):
-    class Meta:
-        queryset = models.ChangeAttachment.objects.all()
-        resource_name = 'changeattachment'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+class UserStoryList(generics.ListCreateAPIView):
+    model = UserStory
+    serializer_class = UserStorySerializer
 
 
-class TaskResource(ModelResource):
-    class Meta:
-        queryset = models.Task.objects.all()
-        resource_name = 'task'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+class UserStoryDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = UserStory
+    serializer_class = UserStorySerializer
 
 
-class SeverityResource(ModelResource):
-    class Meta:
-        queryset = models.Severity.objects.all()
-        resource_name = 'choices/severity'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+class ChangeList(generics.ListCreateAPIView):
+    model = Change
+    serializer_class = ChangeSerializer
 
 
-class IssueStatusResource(ModelResource):
-    class Meta:
-        queryset = models.IssueStatus.objects.all()
-        resource_name = 'choices/issue-status'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
-
-from tastypie.constants import ALL, ALL_WITH_RELATIONS
-
-class TaskStatusResource(ModelResource):
-    project = fields.ForeignKey(ProjectResource, 'project')
-
-    class Meta:
-        queryset = models.TaskStatus.objects.all()
-        resource_name = 'choices/task-status'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
-        filtering = {
-            "project": ALL_WITH_RELATIONS,
-        }
-
-class UserStoryStatusResource(ModelResource):
-    class Meta:
-        queryset = models.UserStoryStatus.objects.all()
-        resource_name = 'choices/us-status'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
-
-class PriorityResource(ModelResource):
-    class Meta:
-        queryset = models.Priority.objects.all()
-        resource_name = 'choices/priority'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+class ChangeDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Change
+    serializer_class = ChangeSerializer
 
 
-class IssueTypeResource(ModelResource):
-    class Meta:
-        queryset = models.IssueType.objects.all()
-        resource_name = 'choices/issue-type'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+class ChangeAttachmentList(generics.ListCreateAPIView):
+    model = ChangeAttachment
+    serializer_class = ChangeAttachmentSerializer
 
 
-class PointsResource(ModelResource):
-    class Meta:
-        queryset = models.Points.objects.all()
-        resource_name = 'choices/story-points'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+class ChangeAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = ChangeAttachment
+    serializer_class = ChangeAttachmentSerializer
+
+
+class TaskList(generics.ListCreateAPIView):
+    model = Task
+    serializer_class = TaskSerializer
+
+
+class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Task
+    serializer_class = TaskSerializer
+
+
+class SeverityList(generics.ListCreateAPIView):
+    model = Severity
+    serializer_class = SeveritySerializer
+
+
+class SeverityDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Severity
+    serializer_class = SeveritySerializer
+
+
+class IssueStatusList(generics.ListCreateAPIView):
+    model = IssueStatus
+    serializer_class = IssueStatusSerializer
+
+
+class IssueStatusDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = IssueStatus
+    serializer_class = IssueStatusSerializer
+
+
+class TaskStatusList(generics.ListCreateAPIView):
+    model = TaskStatus
+    serializer_class = TaskStatusSerializer
+
+
+class TaskStatusDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = TaskStatus
+    serializer_class = TaskStatusSerializer
+
+
+class UserStoryStatusList(generics.ListCreateAPIView):
+    model = UserStoryStatus
+    serializer_class = UserStoryStatusSerializer
+
+
+class UserStoryStatusDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = UserStoryStatus
+    serializer_class = UserStoryStatusSerializer
+
+
+class PriorityList(generics.ListCreateAPIView):
+    model = Priority
+    serializer_class = PrioritySerializer
+
+
+class PriorityDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Priority
+    serializer_class = PrioritySerializer
+
+
+class IssueTypeList(generics.ListCreateAPIView):
+    model = IssueType
+    serializer_class = IssueTypeSerializer
+
+
+class IssueTypeDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = IssueType
+    serializer_class = IssueTypeSerializer
+
+
+class PointsList(generics.ListCreateAPIView):
+    model = Points
+    serializer_class = PointsSerializer
+
+
+class PointsDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Points
+    serializer_class = PointsSerializer

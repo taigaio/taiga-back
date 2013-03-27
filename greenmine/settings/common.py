@@ -213,6 +213,7 @@ INSTALLED_APPS = [
     'haystack',
     'reversion',
     'guardian',
+    'rest_framework',
 ]
 
 WSGI_APPLICATION = 'greenmine.wsgi.application'
