@@ -415,8 +415,8 @@ def project_post_save(sender, instance, created, **kwargs):
         IssueStatus.objects.create(name=name, order=order,
                                     is_closed=is_closed, project=instance)
 
-    for order, name, is_closed in TASKSTATUSES:
-        TaskStatus.objects.create(name=name, order=order,
+    for order, name, is_closed, color in TASKSTATUSES:
+        TaskStatus.objects.create(name=name, order=order, color=color,
                                     is_closed=is_closed, project=instance)
 
     for order, name, is_closed in USSTATUSES:

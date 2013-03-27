@@ -17,11 +17,11 @@ SEVERITY_CHOICES = (
 )
 
 TASKSTATUSES = (
-    (1, _(u"New"), False),
-    (2, _(u"In progress"), False),
-    (3, _(u"Ready for test"), True),
-    (4, _(u"Closed"), True),
-    (5, _(u"Needs Info"), False),
+    (1, _(u"New"), False, "#999999"),
+    (2, _(u"In progress"), False, "#ff9900"),
+    (3, _(u"Ready for test"), True, "#ffcc00"),
+    (4, _(u"Closed"), True, "#669900"),
+    (5, _(u"Needs Info"), False, "#999999"),
 )
 
 ISSUESTATUSES = (
