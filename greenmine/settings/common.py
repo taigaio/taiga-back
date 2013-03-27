@@ -164,6 +164,7 @@ TEMPLATE_LOADERS = [
 MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'greenmine.base.middleware.GreenmineSessionMiddleware',
+    'greenmine.base.middleware.CoorsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
