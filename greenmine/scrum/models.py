@@ -48,6 +48,7 @@ class TaskStatus(models.Model):
     name = models.CharField(max_length=255, unique=True)
     order = models.IntegerField(default=10)
     is_closed = models.BooleanField(default=False)
+    color = models.CharField(max_length=20, default="#999999")
     project = models.ForeignKey("Project", related_name="taskstatuses")
 
     class Meta:
