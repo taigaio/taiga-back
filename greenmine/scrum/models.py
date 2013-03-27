@@ -19,7 +19,7 @@ from greenmine.scrum.choices import *
 
 
 class Severity(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     order = models.IntegerField(default=10)
     project = models.ForeignKey("Project", related_name="severities")
 
@@ -31,7 +31,7 @@ class Severity(models.Model):
 
 
 class IssueStatus(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     order = models.IntegerField(default=10)
     is_closed = models.BooleanField(default=False)
     project = models.ForeignKey("Project", related_name="issuestatuses")
@@ -44,7 +44,7 @@ class IssueStatus(models.Model):
 
 
 class TaskStatus(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     order = models.IntegerField(default=10)
     is_closed = models.BooleanField(default=False)
     color = models.CharField(max_length=20, default="#999999")
@@ -58,7 +58,7 @@ class TaskStatus(models.Model):
 
 
 class UserStoryStatus(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     order = models.IntegerField(default=10)
     is_closed = models.BooleanField(default=False)
     project = models.ForeignKey("Project", related_name="usstatuses")
@@ -205,7 +205,7 @@ class Milestone(models.Model):
     closed = models.BooleanField(default=False)
 
     disponibility = models.FloatField(null=True, default=0.0)
-    order = models.PositiveSmallIntegerField("Order")
+    order = models.PositiveSmallIntegerField("Order", default=1)
 
     tags = DictField(blank=True, null=True)
 
@@ -245,8 +245,8 @@ class UserStory(models.Model):
     owner = models.ForeignKey("base.User", null=True, default=None,
                               related_name="user_stories")
 
-    status = models.ForeignKey("UserStoryStatus", related_name="userstories", default=1)
-    points = models.ForeignKey("Points", related_name="userstories", default= -1)
+    status = models.ForeignKey("UserStoryStatus", related_name="userstories")
+    points = models.ForeignKey("Points", related_name="userstories")
     order = models.PositiveSmallIntegerField(default=100)
 
     created_date = models.DateTimeField(auto_now_add=True)
