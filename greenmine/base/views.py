@@ -32,6 +32,7 @@ class ApiRoot(APIView):
             'priorities': reverse('priority-list', request=request, format=format),
             'issue-types': reverse('issue-type-list', request=request, format=format),
             'points': reverse('points-list', request=request, format=format),
+            'documents': reverse('document-list', request=request, format=format),
         })
 
 

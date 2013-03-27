@@ -1,14 +1,14 @@
-# myapp/api.py
-from tastypie.resources import ModelResource
-from tastypie.authentication import SessionAuthentication
-from tastypie.authorization import DjangoAuthorization
+from rest_framework import generics
 
+from greenmine.documents.serializers import DocumentSerializer
 from greenmine.documents.models import Document
 
 
-class DocumentResource(ModelResource):
-    class Meta:
-        queryset = Document.objects.all()
-        resource_name = 'document'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+class DocumentList(generics.ListCreateAPIView):
+    model = Document
+    serializer_class = DocumentSerializer
+
+
+class DocumentDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Document
+    serializer_class = DocumentSerializer
