@@ -47,7 +47,7 @@ class Login(APIView):
                 login(request, user)
 
                 return_data = LoginSerializer(UserLogged(**{
-                    'session_token': request.session.session_key,
+                    'token': request.session.session_key,
                     'username': request.user.username,
                     'first_name': request.user.first_name,
                     'last_name': request.user.last_name,
@@ -57,7 +57,6 @@ class Login(APIView):
                     'description': request.user.description,
                     'default_language': request.user.default_language,
                     'default_timezone': request.user.default_timezone,
-                    'token': request.user.token,
                     'colorize_tags': request.user.colorize_tags,
                 }))
 

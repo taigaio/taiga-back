@@ -2,8 +2,8 @@ from rest_framework import serializers
 
 
 class UserLogged(object):
-    def __init__(self, session_token, username, first_name, last_name, email, last_login, color, description, default_language, default_timezone, token, colorize_tags):
-        self.session_token = session_token
+    def __init__(self, token, username, first_name, last_name, email, last_login, color, description, default_language, default_timezone, colorize_tags):
+        self.token = token
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
@@ -13,7 +13,6 @@ class UserLogged(object):
         self.description = description
         self.default_language = default_language
         self.default_timezone = default_timezone
-        self.token = token
         self.colorize_tags = colorize_tags
 
 
@@ -28,7 +27,6 @@ class LoginSerializer(serializers.Serializer):
     description = serializers.CharField()
     default_language = serializers.CharField(max_length=20)
     default_timezone = serializers.CharField(max_length=20)
-    token = serializers.CharField(max_length=200)
     colorize_tags = serializers.BooleanField()
 
     def restore_object(self, attrs, instance=None):
@@ -47,7 +45,6 @@ class LoginSerializer(serializers.Serializer):
             instance.description = attrs.get('description', instance.description)
             instance.default_language = attrs.get('default_language', instance.default_language)
             instance.default_timezone = attrs.get('default_timezone', instance.default_timezone)
-            instance.token = attrs.get('token', instance.token)
             instance.colorize_tags = attrs.get('colorize_tags', instance.colorize_tags)
             return instance
         return UserLogged(**attrs)
