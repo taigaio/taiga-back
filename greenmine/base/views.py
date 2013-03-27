@@ -33,6 +33,8 @@ class ApiRoot(APIView):
             'issue-types': reverse('issue-type-list', request=request, format=format),
             'points': reverse('points-list', request=request, format=format),
             'documents': reverse('document-list', request=request, format=format),
+            'questions': reverse('question-list', request=request, format=format),
+            'question_responses': reverse('question-response-list', request=request, format=format),
         })
 
 
@@ -61,9 +63,7 @@ class Login(APIView):
                     'colorize_tags': request.user.colorize_tags,
                 }))
 
-                return http.HttpResponse(JSONRenderer().render(return_data.data),
-                                         content_type="application/json",
-                                         status=201)
+                return Response(return_data.data)
         except User.DoesNotExist:
             pass
 

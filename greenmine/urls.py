@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     url(r'^api/', include('greenmine.base.urls')),
     url(r'^api/scrum/', include('greenmine.scrum.urls')),
     url(r'^api/documents/', include('greenmine.documents.urls')),
+    url(r'^api/questions/', include('greenmine.questions.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^grappelli/', include('grappelli.urls')),
 )
