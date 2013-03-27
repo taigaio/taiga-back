@@ -16,12 +16,12 @@ class Question(models.Model):
     milestone = models.ForeignKey('scrum.Milestone', related_name='questions',
                                   null=True, default=None, blank=True)
 
-    assigned_to = models.ForeignKey("auth.User")
+    assigned_to = models.ForeignKey("base.User")
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey('auth.User', related_name='questions')
+    owner = models.ForeignKey('base.User', related_name='questions')
 
-    watchers = models.ManyToManyField('auth.User',
+    watchers = models.ManyToManyField('base.User',
                                       related_name='question_watch', null=True,
                                       blank=True)
     tags = DictField()
@@ -40,5 +40,5 @@ class QuestionResponse(models.Model):
                                      null=True, blank=True)
 
     question = models.ForeignKey('Question', related_name='responses')
-    owner = models.ForeignKey('auth.User', related_name='questions_responses')
+    owner = models.ForeignKey('base.User', related_name='questions_responses')
     tags = DictField()

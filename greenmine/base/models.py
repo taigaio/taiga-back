@@ -60,7 +60,7 @@ class User(AbstractUser):
     token = models.CharField(max_length=200, unique=True, null=True,
                              blank=True, default=None)
     colorize_tags = models.BooleanField(default=False)
-    objects = UserManager
+    objects = UserManager()
 
 class Role(models.Model):
     name = models.CharField(max_length=200)

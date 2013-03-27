@@ -1,7 +1,7 @@
 [
     {
         "pk": 1,
-        "model": "profile.role",
+        "model": "base.role",
         "fields": {
             "name": "Developer",
             "slug": "developer"
@@ -9,7 +9,7 @@
     },
     {
         "pk": 2,
-        "model": "profile.role",
+        "model": "base.role",
         "fields": {
             "name": "Product Owner",
             "slug": "product-owner"
@@ -17,7 +17,7 @@
     },
     {
         "pk": 3,
-        "model": "profile.role",
+        "model": "base.role",
         "fields": {
             "name": "Observer",
             "slug": "observer"

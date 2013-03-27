@@ -15,7 +15,7 @@ class Document(models.Model):
     modified_date = models.DateTimeField(auto_now_add=True)
 
     project = models.ForeignKey('scrum.Project', related_name='documents')
-    owner = models.ForeignKey('auth.User', related_name='documents')
+    owner = models.ForeignKey('base.User', related_name='documents')
     attached_file = models.FileField(upload_to="documents", max_length=1000,
                                      null=True, blank=True)
     tags = DictField()

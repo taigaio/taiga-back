@@ -291,7 +291,7 @@ LOGGING = {
 }
 
 
-AUTH_USER_MODEL = 'greenmine.base.User'
+AUTH_USER_MODEL = 'base.User'
 FORMAT_MODULE_PATH = 'greenmine.base.formats'
 DATE_INPUT_FORMATS = (
     '%Y-%m-%d', '%m/%d/%Y', '%d/%m/%Y', '%b %d %Y',

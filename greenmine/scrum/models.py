@@ -9,7 +9,6 @@ from django.utils import timezone
 from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.contrib.auth.models import User
 
 from picklefield.fields import PickledObjectField
 
@@ -118,7 +117,7 @@ class Project(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
 
-    owner = models.ForeignKey("auth.User", related_name="projects")
+    owner = models.ForeignKey("base.User", related_name="projects")
     public = models.BooleanField(default=True)
 
     last_us_ref = models.BigIntegerField(null=True, default=1)
@@ -195,7 +194,7 @@ class Milestone(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
     name = models.CharField(max_length=200, db_index=True)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
-    owner = models.ForeignKey('auth.User', related_name="milestones")
+    owner = models.ForeignKey('base.User', related_name="milestones")
     project = models.ForeignKey('Project', related_name="milestones")
 
     estimated_start = models.DateField(null=True, default=None)
@@ -243,7 +242,7 @@ class UserStory(models.Model):
                                   related_name="user_stories", null=True,
                                   default=None)
     project = models.ForeignKey("Project", related_name="user_stories")
-    owner = models.ForeignKey("auth.User", null=True, default=None,
+    owner = models.ForeignKey("base.User", null=True, default=None,
                               related_name="user_stories")
 
     status = models.ForeignKey("UserStoryStatus", related_name="userstories", default=1)
@@ -257,7 +256,7 @@ class UserStory(models.Model):
     subject = models.CharField(max_length=500)
     description = models.TextField()
 
-    watchers = models.ManyToManyField('auth.User', related_name='us_watch', null=True)
+    watchers = models.ManyToManyField('base.User', related_name='us_watch', null=True)
 
     client_requirement = models.BooleanField(default=False)
     team_requirement = models.BooleanField(default=False)
@@ -282,7 +281,7 @@ class UserStory(models.Model):
 
 class Change(models.Model):
     change_type = models.IntegerField(choices=TASK_CHANGE_CHOICES)
-    owner = models.ForeignKey('auth.User', related_name='changes')
+    owner = models.ForeignKey('base.User', related_name='changes')
     created_date = models.DateTimeField(auto_now_add=True)
 
     project = models.ForeignKey("Project", related_name="changes")
@@ -297,7 +296,7 @@ class Change(models.Model):
 
 class ChangeAttachment(models.Model):
     change = models.ForeignKey("Change", related_name="attachments")
-    owner = models.ForeignKey("auth.User", related_name="change_attachments")
+    owner = models.ForeignKey("base.User", related_name="change_attachments")
 
     created_date = models.DateTimeField(auto_now_add=True)
     attached_file = models.FileField(upload_to="files/msg", max_length=500,
@@ -309,7 +308,7 @@ class Task(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
     user_story = models.ForeignKey('UserStory', related_name='tasks')
     ref = models.BigIntegerField(db_index=True, null=True, default=None)
-    owner = models.ForeignKey("auth.User", null=True, default=None,
+    owner = models.ForeignKey("base.User", null=True, default=None,
                               related_name="tasks")
 
     severity = models.ForeignKey("Severity", related_name="tasks")
@@ -326,11 +325,11 @@ class Task(models.Model):
 
     subject = models.CharField(max_length=500)
     description = models.TextField(blank=True)
-    assigned_to = models.ForeignKey('auth.User',
+    assigned_to = models.ForeignKey('base.User',
                                     related_name='user_storys_assigned_to_me',
                                     blank=True, null=True, default=None)
 
-    watchers = models.ManyToManyField('auth.User', related_name='task_watch',
+    watchers = models.ManyToManyField('base.User', related_name='task_watch',
                                       null=True)
 
     changes = generic.GenericRelation(Change)
@@ -355,7 +354,7 @@ class Task(models.Model):
 class Issue(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
     ref = models.BigIntegerField(db_index=True, null=True, default=None)
-    owner = models.ForeignKey("auth.User", null=True, default=None,
+    owner = models.ForeignKey("base.User", null=True, default=None,
                               related_name="issues")
 
     severity = models.ForeignKey("Severity", related_name="issues")
@@ -373,11 +372,11 @@ class Issue(models.Model):
 
     subject = models.CharField(max_length=500)
     description = models.TextField(blank=True)
-    assigned_to = models.ForeignKey('auth.User',
+    assigned_to = models.ForeignKey('base.User',
                                     related_name='issues_assigned_to_me',
                                     blank=True, null=True, default=None)
 
-    watchers = models.ManyToManyField('auth.User', related_name='issue_watch',
+    watchers = models.ManyToManyField('base.User', related_name='issue_watch',
                                       null=True)
 
     changes = generic.GenericRelation(Change)
