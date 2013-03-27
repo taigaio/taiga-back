@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib.auth import logout, login, authenticate
-from django.contrib.auth.models import User
 from django.contrib.auth.views import login as auth_login, logout as auth_logout
 from django import http
 
@@ -12,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from greenmine.base.serializers import LoginSerializer, UserLogged
+from greenmine.base.models import User
 
 
 class ApiRoot(APIView):
@@ -47,12 +47,18 @@ class Login(APIView):
                 login(request, user)
 
                 return_data = LoginSerializer(UserLogged(**{
-                    'token': request.session.session_key,
+                    'session_token': request.session.session_key,
                     'username': request.user.username,
                     'first_name': request.user.first_name,
                     'last_name': request.user.last_name,
                     'email': request.user.email,
                     'last_login': request.user.last_login,
+                    'color': request.user.color,
+                    'description': request.user.description,
+                    'default_language': request.user.default_language,
+                    'default_timezone': request.user.default_timezone,
+                    'token': request.user.token,
+                    'colorize_tags': request.user.colorize_tags,
                 }))
 
                 return http.HttpResponse(JSONRenderer().render(return_data.data),

@@ -2,13 +2,19 @@ from rest_framework import serializers
 
 
 class UserLogged(object):
-    def __init__(self, token, username, first_name, last_name, email, last_login):
-        self.token = token
+    def __init__(self, session_token, username, first_name, last_name, email, last_login, color, description, default_language, default_timezone, token, colorize_tags):
+        self.session_token = session_token
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.last_login = last_login
+        self.color = color
+        self.description = description
+        self.default_language = default_language
+        self.default_timezone = default_timezone
+        self.token = token
+        self.colorize_tags = colorize_tags
 
 
 class LoginSerializer(serializers.Serializer):
@@ -18,6 +24,12 @@ class LoginSerializer(serializers.Serializer):
     last_name = serializers.CharField(max_length=30)
     email = serializers.EmailField()
     last_login = serializers.DateTimeField()
+    color = serializers.CharField(max_length=9)
+    description = serializers.CharField()
+    default_language = serializers.CharField(max_length=20)
+    default_timezone = serializers.CharField(max_length=20)
+    token = serializers.CharField(max_length=200)
+    colorize_tags = serializers.BooleanField()
 
     def restore_object(self, attrs, instance=None):
         """
@@ -31,5 +43,11 @@ class LoginSerializer(serializers.Serializer):
             instance.last_name = attrs.get('last_name', instance.last_name)
             instance.email = attrs.get('email', instance.email)
             instance.last_login = attrs.get('last_login', instance.last_login)
+            instance.color = attrs.get('color', instance.color)
+            instance.description = attrs.get('description', instance.description)
+            instance.default_language = attrs.get('default_language', instance.default_language)
+            instance.default_timezone = attrs.get('default_timezone', instance.default_timezone)
+            instance.token = attrs.get('token', instance.token)
+            instance.colorize_tags = attrs.get('colorize_tags', instance.colorize_tags)
             return instance
         return UserLogged(**attrs)
