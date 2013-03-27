@@ -433,7 +433,6 @@ def project_post_save(sender, instance, created, **kwargs):
         Points.objects.create(project=instance, name=name, order=order)
 
 
-
 # Email alerts signals handlers
 # TODO: temporary commented (Pending refactor)
 # from . import sigdispatch
