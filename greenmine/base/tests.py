@@ -86,7 +86,7 @@ class UserMailTests(TestCase):
 
         # pre test
         self.assertTrue(self.user2.is_active)
-        self.assertEqual(self.user2.get_profile().token, None)
+        self.assertEqual(self.user2.token, None)
 
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -102,9 +102,9 @@ class UserMailTests(TestCase):
         self.user2 = User.objects.get(pk=self.user2.pk)
         self.assertTrue(self.user2.is_active)
         self.assertFalse(self.user2.has_usable_password())
-        self.assertNotEqual(self.user2.get_profile().token, None)
+        self.assertNotEqual(self.user2.token, None)
 
-        url = reverse('password-recovery', args=[self.user2.get_profile().token])
+        url = reverse('password-recovery', args=[self.user2.token])
 
         post_params = {
             'password': '123123',

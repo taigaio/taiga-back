@@ -10,7 +10,7 @@ from greenmine.base import signals
 from greenmine.base.utils.auth import set_token
 from greenmine.base.mail.tasks import send_mail, send_bulk_mail
 from greenmine.scrum.models import Project
-from greenmine.profile.services import RoleGroupsService
+from greenmine.base.services import RoleGroupsService
 
 
 @receiver(signals.mail_new_user)

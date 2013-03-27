@@ -1,7 +1,8 @@
 from django.contrib.auth.models import Group
 
 from greenmine.scrum.models import Project
-from greenmine.profile.models import Role
+from greenmine.base.models import Role
+
 
 class RoleGroupsService(object):
     def replicate_role_on_all_projects(self, role):

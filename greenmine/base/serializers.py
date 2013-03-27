@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+
 class UserLogged(object):
     def __init__(self, token, username, first_name, last_name, email, last_login):
         self.token = token

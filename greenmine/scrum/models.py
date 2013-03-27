@@ -402,7 +402,7 @@ class Issue(models.Model):
 
 @receiver(models.signals.post_save, sender=Project, dispatch_uid="project_post_save")
 def project_post_save(sender, instance, created, **kwargs):
-    from greenmine.profile.services import RoleGroupsService
+    from greenmine.base.services import RoleGroupsService
 
     if not created:
         return

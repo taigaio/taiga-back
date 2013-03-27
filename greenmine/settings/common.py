@@ -204,7 +204,6 @@ INSTALLED_APPS = [
 
     'greenmine.base',
     'greenmine.base.mail',
-    'greenmine.profile',
     'greenmine.scrum',
     'greenmine.wiki',
     'greenmine.documents',
@@ -292,7 +291,7 @@ LOGGING = {
 }
 
 
-AUTH_PROFILE_MODULE = 'profile.Profile'
+AUTH_USER_MODEL = 'greenmine.base.User'
 FORMAT_MODULE_PATH = 'greenmine.base.formats'
 DATE_INPUT_FORMATS = (
     '%Y-%m-%d', '%m/%d/%Y', '%d/%m/%Y', '%b %d %Y',

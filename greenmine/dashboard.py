@@ -26,7 +26,7 @@ class CustomIndexDashboard(Dashboard):
                 _('Administration'),
                 column=1,
                 collapsible=False,
-                models=('django.contrib.*', 'greenmine.profile.*',),
+                models=('django.contrib.*', 'greenmine.base.*',),
             ),
         )
 

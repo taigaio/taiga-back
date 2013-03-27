@@ -9,9 +9,6 @@ def set_token(user):
     """
 
     token = unicode(uuid.uuid4())
-    profile = user.get_profile()
-    profile.token = token
-
+    user.token = token
     user.save()
-    profile.save()
     return token
