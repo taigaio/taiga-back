@@ -204,7 +204,7 @@ class Milestone(models.Model):
     disponibility = models.FloatField(null=True, default=0.0)
     order = models.PositiveSmallIntegerField("Order", default=1)
 
-    tags = DictField(blank=True, null=True)
+    tags = PickledObjectField()
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -287,8 +287,8 @@ class Change(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
-    data = DictField(blank=True, null=True)
-    tags = DictField(blank=True, null=True)
+    data = PickledObjectField()
+    tags = PickledObjectField()
 
 
 class ChangeAttachment(models.Model):
@@ -298,7 +298,7 @@ class ChangeAttachment(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     attached_file = models.FileField(upload_to="files/msg", max_length=500,
                                      null=True, blank=True)
-    tags = DictField(blank=True, null=True)
+    tags = PickledObjectField()
 
 
 class Task(models.Model):

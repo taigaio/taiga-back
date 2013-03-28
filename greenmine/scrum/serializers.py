@@ -1,40 +1,74 @@
 from rest_framework import serializers
 
 from greenmine.scrum.models import *
+from picklefield.fields import dbsafe_encode, dbsafe_decode
+
+import json
+
+class PickleField(serializers.WritableField):
+    """
+    Pickle objects serializer.
+    """
+    def to_native(self, obj):
+        return obj
+
+    def from_native(self, data):
+        return json.loads(data)
+
 
 class ProjectSerializer(serializers.ModelSerializer):
+    tags = PickleField()
+
     class Meta:
         model = Project
         fields = ()
 
 
 class MilestoneSerializer(serializers.ModelSerializer):
+    tags = PickleField()
+
     class Meta:
         model = Milestone
         fields = ()
 
 
 class UserStorySerializer(serializers.ModelSerializer):
+    tags = PickleField()
+
     class Meta:
         model = UserStory
         fields = ()
 
 
 class ChangeSerializer(serializers.ModelSerializer):
+    tags = PickleField()
+
     class Meta:
         model = Change
         fields = ()
 
 
 class ChangeAttachmentSerializer(serializers.ModelSerializer):
+    tags = PickleField()
+
     class Meta:
         model = ChangeAttachment
         fields = ()
 
 
 class TaskSerializer(serializers.ModelSerializer):
+    tags = PickleField()
+
     class Meta:
         model = Task
+        fields = ()
+
+
+class IssueSerializer(serializers.ModelSerializer):
+    tags = PickleField()
+
+    class Meta:
+        model = Issue
         fields = ()
 
 
