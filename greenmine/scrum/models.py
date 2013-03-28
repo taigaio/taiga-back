@@ -308,6 +308,7 @@ class Task(models.Model):
     owner = models.ForeignKey("base.User", null=True, default=None,
                               related_name="tasks")
 
+    status = models.ForeignKey("TaskStatus", related_name="tasks")
     severity = models.ForeignKey("Severity", related_name="tasks")
     priority = models.ForeignKey("Priority", related_name="tasks")
     status = models.ForeignKey("TaskStatus", related_name="tasks")
@@ -355,6 +356,7 @@ class Issue(models.Model):
     owner = models.ForeignKey("base.User", null=True, default=None,
                               related_name="issues")
 
+    status = models.ForeignKey("IssueStatus", related_name="issues")
     severity = models.ForeignKey("Severity", related_name="issues")
     priority = models.ForeignKey("Priority", related_name="issues")
     type = models.ForeignKey("IssueType", related_name="issues")
