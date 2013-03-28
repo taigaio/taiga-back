@@ -17,7 +17,7 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
 class MilestoneList(generics.ListCreateAPIView):
     model = Milestone
     serializer_class = MilestoneSerializer
-    filter_fields = ('project')
+    filter_fields = ('project',)
 
 
 class MilestoneDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -70,7 +70,7 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
 class SeverityList(generics.ListCreateAPIView):
     model = Severity
     serializer_class = SeveritySerializer
-    filter_fields = ('project')
+    filter_fields = ('project',)
 
 
 class SeverityDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -81,7 +81,7 @@ class SeverityDetail(generics.RetrieveUpdateDestroyAPIView):
 class IssueStatusList(generics.ListCreateAPIView):
     model = IssueStatus
     serializer_class = IssueStatusSerializer
-    filter_fields = ('project')
+    filter_fields = ('project',)
 
 
 class IssueStatusDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -92,7 +92,7 @@ class IssueStatusDetail(generics.RetrieveUpdateDestroyAPIView):
 class TaskStatusList(generics.ListCreateAPIView):
     model = TaskStatus
     serializer_class = TaskStatusSerializer
-    filter_fields = ('project')
+    filter_fields = ('project',)
 
 
 class TaskStatusDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -103,7 +103,7 @@ class TaskStatusDetail(generics.RetrieveUpdateDestroyAPIView):
 class UserStoryStatusList(generics.ListCreateAPIView):
     model = UserStoryStatus
     serializer_class = UserStoryStatusSerializer
-    filter_fields = ('project')
+    filter_fields = ('project',)
 
 
 class UserStoryStatusDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -114,7 +114,7 @@ class UserStoryStatusDetail(generics.RetrieveUpdateDestroyAPIView):
 class PriorityList(generics.ListCreateAPIView):
     model = Priority
     serializer_class = PrioritySerializer
-    filter_fields = ('project')
+    filter_fields = ('project',)
 
 
 class PriorityDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -125,7 +125,7 @@ class PriorityDetail(generics.RetrieveUpdateDestroyAPIView):
 class IssueTypeList(generics.ListCreateAPIView):
     model = IssueType
     serializer_class = IssueTypeSerializer
-    filter_fields = ('project')
+    filter_fields = ('project',)
 
 
 class IssueTypeDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -136,7 +136,7 @@ class IssueTypeDetail(generics.RetrieveUpdateDestroyAPIView):
 class PointsList(generics.ListCreateAPIView):
     model = Points
     serializer_class = PointsSerializer
-    filter_fields = ('project')
+    filter_fields = ('project',)
 
 
 class PointsDetail(generics.RetrieveUpdateDestroyAPIView):
