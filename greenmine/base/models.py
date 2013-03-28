@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import uuid
+
 from django.db.models import signals
 from django.db import models
 from django.db.models.signals import post_save, m2m_changed
 from django.utils.timezone import now
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
-
 from django.contrib.auth.models import UserManager, AbstractUser, Group
 
 from greenmine.scrum.models import Project, UserStory, Task
@@ -64,9 +65,11 @@ class Role(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
+
 if not hasattr(Group, 'role'):
     field = models.ForeignKey(Role, blank=False, null=False, related_name='groups')
     field.contribute_to_class(Group, 'role')
+
 
 if not hasattr(Group, 'project'):
     field = models.ForeignKey(Project, blank=False, null=False, related_name='groups')
