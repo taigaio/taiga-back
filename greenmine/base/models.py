@@ -13,9 +13,6 @@ from greenmine.scrum.models import Project, UserStory, Task
 
 import uuid
 
-from greenmine.scrum.models import Project
-
-
 
 # Centralized uuid attachment and ref generation
 @receiver(signals.pre_save)
@@ -50,17 +47,13 @@ def attach_unique_reference(sender, instance, **kwargs):
 class User(AbstractUser):
     color = models.CharField(max_length=9)
     description = models.TextField(blank=True)
-    photo = models.FileField(upload_to="files/msg", max_length=500, null=True,
-                             blank=True)
-
-    default_language = models.CharField(max_length=20, null=True, blank=True,
-                                        default=None)
-    default_timezone = models.CharField(max_length=20, null=True, blank=True,
-                                        default=None)
-    token = models.CharField(max_length=200, unique=True, null=True,
-                             blank=True, default=None)
+    photo = models.FileField(upload_to="files/msg", max_length=500, null=True, blank=True)
+    default_language = models.CharField(max_length=20, null=True, blank=True, default=None)
+    default_timezone = models.CharField(max_length=20, null=True, blank=True, default=None)
+    token = models.CharField(max_length=200, unique=True, null=True, blank=True, default=None)
     colorize_tags = models.BooleanField(default=False)
     objects = UserManager()
+
 
 class Role(models.Model):
     name = models.CharField(max_length=200)
@@ -87,6 +80,7 @@ def role_post_save(sender, instance, **kwargs):
     """
     from greenmine.base.services import RoleGroupsService
     RoleGroupsService().replicate_role_on_all_projects(instance)
+
 
 @receiver(m2m_changed, sender=Role.permissions.through)
 def role_m2m_changed(sender, instance, **kwargs):

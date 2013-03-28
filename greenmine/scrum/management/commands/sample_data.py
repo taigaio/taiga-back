@@ -8,8 +8,8 @@ from django.db import transaction
 from django.utils.timezone import now
 
 from django.contrib.webdesign import lorem_ipsum
-from django.contrib.auth.models import User
 
+from greenmine.base.models import User
 from greenmine.scrum.models import *
 
 subjects = [
@@ -31,8 +31,6 @@ subjects = [
 class Command(BaseCommand):
     @transaction.commit_on_success
     def handle(self, *args, **options):
-        users_counter = 0
-
         def create_user(counter):
             user = User(
                 username='user%d' % (counter),
@@ -87,7 +85,7 @@ class Command(BaseCommand):
                         milestone=milestone,
                         status=UserStoryStatus.objects.get(project=project, order=2),
                         points=Points.objects.get(project=project, order=3),
-                        tags = []
+                        tags=[]
                     )
 
                     for tag in lorem_ipsum.words(random.randint(1, 5), common=True).split(" "):
@@ -111,15 +109,13 @@ class Command(BaseCommand):
             for y in xrange(10):
                 us = UserStory.objects.create(
                     subject=lorem_ipsum.words(random.randint(4, 9), common=False),
-                    points=3,
-                    status='open',
                     status=UserStoryStatus.objects.get(project=project, order=2),
                     points=Points.objects.get(project=project, order=3),
                     owner=random.choice(users),
                     description=lorem_ipsum.words(30, common=False),
                     milestone=None,
                     project=project,
-                    tags = [],
+                    tags=[],
                 )
 
                 for tag in lorem_ipsum.words(random.randint(1, 5), common=True).split(" "):
@@ -137,7 +133,6 @@ class Command(BaseCommand):
                     owner=project.owner,
                     tags=[],
                 )
-
 
                 for tag in lorem_ipsum.words(random.randint(1, 5), common=True).split(" "):
                     bug.tags.append(tag)
