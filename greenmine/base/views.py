@@ -35,6 +35,8 @@ class ApiRoot(APIView):
             'documents': reverse('document-list', request=request, format=format),
             'questions': reverse('question-list', request=request, format=format),
             'question_responses': reverse('question-response-list', request=request, format=format),
+            'wiki_pages': reverse('wiki-page-list', request=request, format=format),
+            'wiki_page_attachments': reverse('wiki-page-attachment-list', request=request, format=format),
         })
 
 

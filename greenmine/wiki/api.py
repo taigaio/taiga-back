@@ -1,22 +1,24 @@
-# myapp/api.py
-from tastypie.resources import ModelResource
-from tastypie.authentication import SessionAuthentication
-from tastypie.authorization import DjangoAuthorization
+from rest_framework import generics
 
+from greenmine.wiki.serializers import WikiPageSerializer, WikiPageAttachmentSerializer
 from greenmine.wiki.models import WikiPage, WikiPageAttachment
 
 
-class WikiPageResource(ModelResource):
-    class Meta:
-        queryset = WikiPage.objects.all()
-        resource_name = 'wikipage'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+class WikiPageList(generics.ListCreateAPIView):
+    model = WikiPage
+    serializer_class = WikiPageSerializer
 
 
-class WikiPageAttachmentResource(ModelResource):
-    class Meta:
-        queryset = WikiPageAttachment.objects.all()
-        resource_name = 'wikipageattachment'
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+class WikiPageDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = WikiPage
+    serializer_class = WikiPageSerializer
+
+
+class WikiPageAttachmentList(generics.ListCreateAPIView):
+    model = WikiPageAttachment
+    serializer_class = WikiPageAttachmentSerializer
+
+
+class WikiPageAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = WikiPageAttachment
+    serializer_class = WikiPageAttachmentSerializer
