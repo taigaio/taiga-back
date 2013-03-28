@@ -9,6 +9,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
 
 from greenmine.base.serializers import LoginSerializer, UserLogged
 from greenmine.base.models import User
@@ -69,10 +70,10 @@ class Login(APIView):
         except User.DoesNotExist:
             pass
 
-        return http.HttpResponseBadRequest()
+        return Response({"detail": "Invalid username or password"}, status.HTTP_400_BAD_REQUEST)
 
 
 class Logout(APIView):
     def post(self, request, format=None):
         logout(request)
-        return http.HttpResponse()
+        return Response()

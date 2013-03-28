@@ -3,8 +3,6 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-from greenmine.base.views import ApiRoot
-
 urlpatterns = patterns('',
     url(r'^api/', include('greenmine.base.urls')),
     url(r'^api/scrum/', include('greenmine.scrum.urls')),
