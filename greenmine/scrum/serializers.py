@@ -24,14 +24,6 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = ()
 
 
-class MilestoneSerializer(serializers.ModelSerializer):
-    tags = PickleField()
-
-    class Meta:
-        model = Milestone
-        fields = ()
-
-
 class UserStorySerializer(serializers.ModelSerializer):
     tags = PickleField()
 
@@ -39,6 +31,15 @@ class UserStorySerializer(serializers.ModelSerializer):
         model = UserStory
         fields = ()
         depth = 0
+
+
+class MilestoneSerializer(serializers.ModelSerializer):
+    tags = PickleField()
+    user_stories = UserStorySerializer(many=True)
+
+    class Meta:
+        model = Milestone
+        fields = ()
 
 
 class ChangeSerializer(serializers.ModelSerializer):
