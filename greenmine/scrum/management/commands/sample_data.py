@@ -29,22 +29,22 @@ subjects = [
 
 
 class Command(BaseCommand):
+    def create_user(self, counter):
+        user = User.objects.create(
+            username='user%d' % (counter),
+            first_name='user%d' % (counter),
+            email='foouser%d@domain.com' % (counter),
+        )
+
+        user.set_password('user%d' % (counter))
+        user.save()
+        return user
+
     @transaction.commit_on_success
     def handle(self, *args, **options):
-        def create_user(counter):
-            user = User(
-                username='user%d' % (counter),
-                first_name='user%d' % (counter),
-                email='foouser%d@domain.com' % (counter),
-            )
-
-            user.set_password('user%d' % (counter))
-            user.save()
-            return user
-
         users = []
         for x in range(10):
-            users.append(create_user(x))
+            users.append(self.create_user(x))
 
         # projects
         for x in xrange(3):
@@ -128,12 +128,13 @@ class Command(BaseCommand):
             for y in xrange(20):
                 bug = Issue.objects.create(
                     project=project,
-                    severity=Severity.objects.get(project=project, order=2),
-                    priority=Priority.objects.get(project=project, order=3),
-                    type=IssueType.objects.get(project=project, order=1),
                     subject=lorem_ipsum.words(random.randint(1, 5), common=False),
                     description=lorem_ipsum.words(random.randint(1, 15), common=False),
                     owner=project.owner,
+                    severity=Severity.objects.get(project=project, order=2),
+                    status=IssueStatus.objects.get(project=project, order=4),
+                    priority=Priority.objects.get(project=project, order=2),
+                    type=IssueType.objects.get(project=project, order=1),
                     tags=[],
                 )
 

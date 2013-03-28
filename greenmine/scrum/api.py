@@ -4,6 +4,34 @@ from greenmine.scrum.serializers import *
 from greenmine.scrum.models import *
 
 
+class SimpleFilterMixin(object):
+    filter_fields = []
+    filter_special_fields = []
+
+    _special_values_dict = {
+        'true': True,
+        'false': False,
+        'null': None,
+    }
+
+    def get_queryset(self):
+        queryset = super(SimpleFilterMixin, self).get_queryset()
+        query_params = {}
+
+        for field_name in self.filter_fields:
+            if field_name in self.request.QUERY_PARAMS:
+                field_data = self.request.QUERY_PARAMS[field_name]
+                if field_data in self._special_values_dict:
+                    query_params[field_name] = self._special_values_dict[field_data]
+                else:
+                    query_params[field_name] = field_data
+
+        if query_params:
+            queryset = queryset.filter(**query_params)
+
+        return queryset
+
+
 class ProjectList(generics.ListCreateAPIView):
     model = Project
     serializer_class = ProjectSerializer
@@ -14,7 +42,7 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectSerializer
 
 
-class MilestoneList(generics.ListCreateAPIView):
+class MilestoneList(SimpleFilterMixin, generics.ListCreateAPIView):
     model = Milestone
     serializer_class = MilestoneSerializer
     filter_fields = ('project',)
@@ -25,7 +53,7 @@ class MilestoneDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MilestoneSerializer
 
 
-class UserStoryList(generics.ListCreateAPIView):
+class UserStoryList(SimpleFilterMixin, generics.ListCreateAPIView):
     model = UserStory
     serializer_class = UserStorySerializer
     filter_fields = ('project', 'milestone')
@@ -89,7 +117,7 @@ class IssueStatusDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = IssueStatusSerializer
 
 
-class TaskStatusList(generics.ListCreateAPIView):
+class TaskStatusList(SimpleFilterMixin, generics.ListCreateAPIView):
     model = TaskStatus
     serializer_class = TaskStatusSerializer
     filter_fields = ('project',)

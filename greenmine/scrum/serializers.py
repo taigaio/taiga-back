@@ -38,6 +38,7 @@ class UserStorySerializer(serializers.ModelSerializer):
     class Meta:
         model = UserStory
         fields = ()
+        depth = 0
 
 
 class ChangeSerializer(serializers.ModelSerializer):
