@@ -28,15 +28,15 @@ def ref_uniquely(p, seq_field,  model, field='ref'):
     """
     Returns a unique reference code based on base64 and time.
     """
-    project = project.__class__.objects.select_for_update().get(pk=p.pk)
+    project = p.__class__.objects.select_for_update().get(pk=p.pk)
 
     ref = getattr(project, seq_field) + 1
 
     while True:
-        params = {field: ref, 'project': _project}
+        params = {field: ref, 'project': project}
         if not model.objects.filter(**params).exists():
-            setattr(_project, seq_field, ref)
-            _project.save(update_fields=[seq_field])
+            setattr(project, seq_field, ref)
+            project.save(update_fields=[seq_field])
             return ref
 
         time.sleep(0.0002)

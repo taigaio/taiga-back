@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import re
-
-from django.conf import settings
 from django.db import models
 
 from django.utils import timezone
@@ -273,7 +270,7 @@ class UserStory(models.Model):
         return u"{0} ({1})".format(self.subject, self.ref)
 
     def save(self, *args, **kwargs):
-        if not self.ref:
+        if not self.ref and self.project:
             self.ref = ref_uniquely(self.project, "last_us_ref", self.__class__)
 
         super(UserStory, self).save(*args, **kwargs)
@@ -313,6 +310,7 @@ class Task(models.Model):
 
     severity = models.ForeignKey("Severity", related_name="tasks")
     priority = models.ForeignKey("Priority", related_name="tasks")
+    status = models.ForeignKey("TaskStatus", related_name="tasks")
 
     milestone = models.ForeignKey('Milestone', related_name='tasks', null=True,
                                   default=None, blank=True)
@@ -395,10 +393,10 @@ class Issue(models.Model):
         if not self.ref:
             self.ref = ref_uniquely(self.project, "last_issue_ref", self.__class__)
 
-        super(Task, self).save(*args, **kwargs)
+        super(Issue, self).save(*args, **kwargs)
+
 
 # Model related signals handlers
-
 @receiver(models.signals.post_save, sender=Project, dispatch_uid="project_post_save")
 def project_post_save(sender, instance, created, **kwargs):
     from greenmine.base.services import RoleGroupsService
@@ -430,6 +428,9 @@ def project_post_save(sender, instance, created, **kwargs):
 
     for order, name in POINTS_CHOICES:
         Points.objects.create(project=instance, name=name, order=order)
+
+    for order, name in ISSUETYPES:
+        IssueType.objects.create(project=instance, name=name, order=order)
 
 
 # Email alerts signals handlers

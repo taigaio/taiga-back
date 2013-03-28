@@ -103,6 +103,7 @@ class Command(BaseCommand):
                             user_story=us,
                             severity=Severity.objects.get(project=project, order=2),
                             status=TaskStatus.objects.get(project=project, order=4),
+                            priority=Priority.objects.get(project=project, order=3),
                         )
 
             # created unassociated uss.
@@ -127,7 +128,9 @@ class Command(BaseCommand):
             for y in xrange(20):
                 bug = Issue.objects.create(
                     project=project,
-                    severity=random.randint(1, 5),
+                    severity=Severity.objects.get(project=project, order=2),
+                    priority=Priority.objects.get(project=project, order=3),
+                    type=IssueType.objects.get(project=project, order=1),
                     subject=lorem_ipsum.words(random.randint(1, 5), common=False),
                     description=lorem_ipsum.words(random.randint(1, 15), common=False),
                     owner=project.owner,
