@@ -73,6 +73,7 @@ class UserStoryList(SimpleFilterMixin, generics.ListCreateAPIView):
 class UserStoryDetail(generics.RetrieveUpdateDestroyAPIView):
     model = UserStory
     serializer_class = UserStorySerializer
+    permission_classes = (UserStoryDetailPermission,)
 
 
 class ChangeList(generics.ListCreateAPIView):
@@ -86,6 +87,7 @@ class ChangeList(generics.ListCreateAPIView):
 class ChangeDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Change
     serializer_class = ChangeSerializer
+    permission_classes = (ChangeDetailPermission,)
 
 
 class ChangeAttachmentList(generics.ListCreateAPIView):
@@ -99,6 +101,7 @@ class ChangeAttachmentList(generics.ListCreateAPIView):
 class ChangeAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
     model = ChangeAttachment
     serializer_class = ChangeAttachmentSerializer
+    permission_classes = (ChangeAttachmentDetailPermission,)
 
 
 class IssueList(generics.ListCreateAPIView):
@@ -113,6 +116,7 @@ class IssueList(generics.ListCreateAPIView):
 class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Issue
     serializer_class = IssueSerializer
+    permission_classes = (IssueDetailPermission,)
 
 
 class TaskList(generics.ListCreateAPIView):
@@ -127,6 +131,7 @@ class TaskList(generics.ListCreateAPIView):
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Task
     serializer_class = TaskSerializer
+    permission_classes = (TaskDetailPermission,)
 
 
 class SeverityList(generics.ListCreateAPIView):
@@ -141,6 +146,7 @@ class SeverityList(generics.ListCreateAPIView):
 class SeverityDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Severity
     serializer_class = SeveritySerializer
+    permission_classes = (SeverityDetailPermission,)
 
 
 class IssueStatusList(generics.ListCreateAPIView):
@@ -155,6 +161,7 @@ class IssueStatusList(generics.ListCreateAPIView):
 class IssueStatusDetail(generics.RetrieveUpdateDestroyAPIView):
     model = IssueStatus
     serializer_class = IssueStatusSerializer
+    permission_classes = (IssueStatusDetailPermission,)
 
 
 class TaskStatusList(SimpleFilterMixin, generics.ListCreateAPIView):
@@ -169,6 +176,7 @@ class TaskStatusList(SimpleFilterMixin, generics.ListCreateAPIView):
 class TaskStatusDetail(generics.RetrieveUpdateDestroyAPIView):
     model = TaskStatus
     serializer_class = TaskStatusSerializer
+    permission_classes = (TaskStatusDetailPermission,)
 
 
 class UserStoryStatusList(generics.ListCreateAPIView):
@@ -183,6 +191,7 @@ class UserStoryStatusList(generics.ListCreateAPIView):
 class UserStoryStatusDetail(generics.RetrieveUpdateDestroyAPIView):
     model = UserStoryStatus
     serializer_class = UserStoryStatusSerializer
+    permission_classes = (UserStoryStatusDetailPermission,)
 
 
 class PriorityList(generics.ListCreateAPIView):
@@ -197,6 +206,7 @@ class PriorityList(generics.ListCreateAPIView):
 class PriorityDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Priority
     serializer_class = PrioritySerializer
+    permission_classes = (PriorityDetailPermission,)
 
 
 class IssueTypeList(generics.ListCreateAPIView):
@@ -211,6 +221,7 @@ class IssueTypeList(generics.ListCreateAPIView):
 class IssueTypeDetail(generics.RetrieveUpdateDestroyAPIView):
     model = IssueType
     serializer_class = IssueTypeSerializer
+    permission_classes = (IssueTypeDetailPermission,)
 
 
 class PointsList(generics.ListCreateAPIView):
@@ -225,3 +236,4 @@ class PointsList(generics.ListCreateAPIView):
 class PointsDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Points
     serializer_class = PointsSerializer
+    permission_classes = (PointsDetailPermission,)

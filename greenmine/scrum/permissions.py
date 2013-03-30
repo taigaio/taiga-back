@@ -1,43 +1,4 @@
-from rest_framework import permissions
-
-from greenmine.scrum.models import Membership
-
-def has_project_perm(user, project, perm):
-    if user.is_authenticated():
-        try:
-            membership = Membership.objects.get(project=project, user=user)
-            if membership.role.permissions.filter(codename=perm).count() > 0:
-                return True
-        except Membership.DoesNotExist:
-            pass
-    return False
-
-
-class BaseDetailPermission(permissions.BasePermission):
-    get_permission = None
-    put_permission = None
-    delete_permission = None
-    safe_methods = ['HEAD', 'OPTIONS']
-    path_to_project =  []
-
-    def has_object_permission(self, request, view, obj):
-        if request.method in self.safe_methods:
-            return True
-
-        project_obj = obj
-        for attrib in self.path_to_project:
-            project_obj = getattr(project_obj, attrib)
-
-        if request.method == "GET":
-            return has_project_perm(request.user, project_obj, self.get_permission)
-
-        elif request.method == "PUT":
-            return has_project_perm(request.user, project_obj, self.put_permission)
-
-        elif request.method == "DELETE":
-            return has_project_perm(request.user, project_obj, self.delete_permission)
-
-        return False
+from greenmine.base.permissions import BaseDetailPermission
 
 class ProjectDetailPermission(BaseDetailPermission):
     get_permission = "can_view_project"
@@ -57,5 +18,82 @@ class UserStoryDetailPermission(BaseDetailPermission):
     get_permission = "can_view_userstory"
     put_permission = "can_change_userstory"
     delete_permission = "can_delete_userstory"
+    safe_methods = ['HEAD', 'OPTIONS']
+    path_to_project =  ['project']
+
+class TaskDetailPermission(BaseDetailPermission):
+    get_permission = "can_view_task"
+    put_permission = "can_change_task"
+    delete_permission = "can_delete_task"
+    safe_methods = ['HEAD', 'OPTIONS']
+    path_to_project =  ['project']
+
+class IssueDetailPermission(BaseDetailPermission):
+    get_permission = "can_view_issue"
+    put_permission = "can_change_issue"
+    delete_permission = "can_delete_issue"
+    safe_methods = ['HEAD', 'OPTIONS']
+    path_to_project =  ['project']
+
+class ChangeDetailPermission(BaseDetailPermission):
+    get_permission = "can_view_change"
+    put_permission = "can_change_change"
+    delete_permission = "can_delete_change"
+    safe_methods = ['HEAD', 'OPTIONS']
+    path_to_project =  ['project']
+
+class ChangeAttachmentDetailPermission(BaseDetailPermission):
+    get_permission = "can_view_changeattachment"
+    put_permission = "can_change_changeattachment"
+    delete_permission = "can_delete_changeattachment"
+    safe_methods = ['HEAD', 'OPTIONS']
+    path_to_project =  ['change', 'project']
+
+class SeverityDetailPermission(BaseDetailPermission):
+    get_permission = "can_view_severity"
+    put_permission = "can_severity_severity"
+    delete_permission = "can_delete_severity"
+    safe_methods = ['HEAD', 'OPTIONS']
+    path_to_project =  ['project']
+
+class IssueStatusDetailPermission(BaseDetailPermission):
+    get_permission = "can_view_issuestatus"
+    put_permission = "can_severity_issuestatus"
+    delete_permission = "can_delete_issuestatus"
+    safe_methods = ['HEAD', 'OPTIONS']
+    path_to_project =  ['project']
+
+class TaskStatusDetailPermission(BaseDetailPermission):
+    get_permission = "can_view_taskstatus"
+    put_permission = "can_severity_taskstatus"
+    delete_permission = "can_delete_taskstatus"
+    safe_methods = ['HEAD', 'OPTIONS']
+    path_to_project =  ['project']
+
+class UserStoryStatusDetailPermission(BaseDetailPermission):
+    get_permission = "can_view_userstorystatus"
+    put_permission = "can_severity_userstorystatus"
+    delete_permission = "can_delete_userstorystatus"
+    safe_methods = ['HEAD', 'OPTIONS']
+    path_to_project =  ['project']
+
+class PriorityDetailPermission(BaseDetailPermission):
+    get_permission = "can_view_priority"
+    put_permission = "can_severity_priority"
+    delete_permission = "can_delete_priority"
+    safe_methods = ['HEAD', 'OPTIONS']
+    path_to_project =  ['project']
+
+class IssueTypeDetailPermission(BaseDetailPermission):
+    get_permission = "can_view_issuetype"
+    put_permission = "can_severity_issuetype"
+    delete_permission = "can_delete_issuetype"
+    safe_methods = ['HEAD', 'OPTIONS']
+    path_to_project =  ['project']
+
+class PointsDetailPermission(BaseDetailPermission):
+    get_permission = "can_view_points"
+    put_permission = "can_severity_points"
+    delete_permission = "can_delete_points"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
