@@ -16,6 +16,12 @@ class PickleField(serializers.WritableField):
         return data
 
 
+class PointsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Points
+        fields = ()
+
+
 class ProjectSerializer(serializers.ModelSerializer):
     tags = PickleField()
 
@@ -111,7 +117,3 @@ class IssueTypeSerializer(serializers.ModelSerializer):
         fields = ()
 
 
-class PointsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Points
-        fields = ()
