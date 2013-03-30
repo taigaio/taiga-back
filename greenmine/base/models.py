@@ -64,31 +64,3 @@ class Role(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
-
-
-if not hasattr(Group, 'role'):
-    field = models.ForeignKey(Role, blank=False, null=False, related_name='groups')
-    field.contribute_to_class(Group, 'role')
-
-
-if not hasattr(Group, 'project'):
-    field = models.ForeignKey(Project, blank=False, null=False, related_name='groups')
-    field.contribute_to_class(Group, 'project')
-
-
-@receiver(post_save, sender=Role)
-def role_post_save(sender, instance, **kwargs):
-    """
-    Recalculate projects groups
-    """
-    from greenmine.base.services import RoleGroupsService
-    RoleGroupsService().replicate_role_on_all_projects(instance)
-
-
-@receiver(m2m_changed, sender=Role.permissions.through)
-def role_m2m_changed(sender, instance, **kwargs):
-    """
-    Recalculate projects groups
-    """
-    from greenmine.base.services import RoleGroupsService
-    RoleGroupsService().replicate_role_on_all_projects(instance)

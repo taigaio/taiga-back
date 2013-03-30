@@ -7,7 +7,6 @@ billiard==2.7.3.23
 celery==3.0.17
 django-celery==3.0.11
 django-grappelli==2.4.4
-django-guardian==1.1.0.beta
 django-reversion==1.7
 git+git://github.com/toastdriven/django-haystack.git
 django-picklefield==0.3.0

@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
+from django.contrib.auth.admin import UserAdmin
 
-from greenmine.base.models import Role
+from greenmine.base.models import Role, User
 
 admin.site.unregister(Group)
 
@@ -19,3 +20,4 @@ class RoleAdmin(admin.ModelAdmin):
             db_field, request=request, **kwargs)
 
 admin.site.register(Role, RoleAdmin)
+admin.site.register(User, UserAdmin)

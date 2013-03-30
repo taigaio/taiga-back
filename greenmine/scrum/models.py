@@ -105,6 +105,14 @@ class Points(models.Model):
         return u"project({0})/point({1})".format(self.project.id, self.name)
 
 
+class Membership(models.Model):
+    user = models.ForeignKey("base.User")
+    project = models.ForeignKey("Project")
+    role = models.ForeignKey("base.Role")
+
+    class Meta:
+        unique_together = ('user', 'project')
+
 class Project(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
     name = models.CharField(max_length=250, unique=True)
@@ -114,7 +122,8 @@ class Project(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
 
-    owner = models.ForeignKey("base.User", related_name="projects")
+    owner = models.ForeignKey("base.User", related_name="owned_projects")
+    members = models.ManyToManyField("base.User", related_name="projects", through='Membership')
     public = models.BooleanField(default=True)
 
     last_us_ref = models.BigIntegerField(null=True, default=1)
@@ -170,6 +179,8 @@ class Project(models.Model):
 
             ('create_milestone', 'Can create milestones'),
             ('modify_milestone', 'Can modify milestones'),
+            ('view_milestone', 'Can view milestones'),
+            ('delete_milestone', 'Can delete milestones'),
 
             ('manage_users', 'Can manage users'),
         )

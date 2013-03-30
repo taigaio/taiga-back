@@ -6,6 +6,12 @@ from greenmine.scrum import models
 import reversion
 
 
+class MembershipInline(admin.TabularInline):
+    model = models.Membership
+    fields = ('user', 'project', 'role')
+    extra = 0
+
+
 class MilestoneInline(admin.TabularInline):
     model = models.Milestone
     fields = ('name', 'owner', 'estimated_start', 'estimated_finish', 'closed', 'disponibility', 'order')
@@ -27,7 +33,7 @@ class UserStoryInline(admin.TabularInline):
 
 class ProjectAdmin(reversion.VersionAdmin):
     list_display = ["name", "owner"]
-    inlines = [MilestoneInline, UserStoryInline]
+    inlines = [MembershipInline, MilestoneInline, UserStoryInline]
 
 admin.site.register(models.Project, ProjectAdmin)
 
