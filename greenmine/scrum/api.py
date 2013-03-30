@@ -42,7 +42,7 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectSerializer
 
 
-class MilestoneList(SimpleFilterMixin, generics.ListCreateAPIView):
+class MilestoneList(generics.ListCreateAPIView):
     model = Milestone
     serializer_class = MilestoneSerializer
     filter_fields = ('project',)
@@ -53,7 +53,7 @@ class MilestoneDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MilestoneSerializer
 
 
-class UserStoryList(SimpleFilterMixin, generics.ListCreateAPIView):
+class UserStoryList(generics.ListCreateAPIView):
     model = UserStory
     serializer_class = UserStorySerializer
     filter_fields = ('project', 'milestone')
