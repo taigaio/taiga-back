@@ -212,7 +212,6 @@ INSTALLED_APPS = [
     'south',
     'haystack',
     'reversion',
-    'guardian',
     'rest_framework',
 ]
 
