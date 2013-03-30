@@ -46,7 +46,7 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (ProjectDetailPermission,)
 
 
-class MilestoneList(SimpleFilterMixin, generics.ListCreateAPIView):
+class MilestoneList(generics.ListCreateAPIView):
     model = Milestone
     serializer_class = MilestoneSerializer
     filter_fields = ('project',)
@@ -61,7 +61,7 @@ class MilestoneDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (MilestoneDetailPermission,)
 
 
-class UserStoryList(SimpleFilterMixin, generics.ListCreateAPIView):
+class UserStoryList(generics.ListCreateAPIView):
     model = UserStory
     serializer_class = UserStorySerializer
     filter_fields = ('project', 'milestone')

@@ -45,7 +45,7 @@ admin.site.register(models.Milestone, MilestoneAdmin)
 
 
 class UserStoryAdmin(reversion.VersionAdmin):
-    list_display = ["ref", "milestone", "project", "owner"]
+    list_display = ["ref", "milestone", "project", "owner", 'status', 'is_closed']
 
 admin.site.register(models.UserStory, UserStoryAdmin)
 

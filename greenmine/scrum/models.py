@@ -247,8 +247,12 @@ class UserStory(models.Model):
     def __unicode__(self):
         return u"{0} ({1})".format(self.subject, self.ref)
 
+    @property
+    def is_closed(self):
+        return self.status.is_closed
+
     def save(self, *args, **kwargs):
-        if not self.ref and self.project:
+        if self.ref is None and self.project:
             self.ref = ref_uniquely(self.project, "last_us_ref", self.__class__)
 
         super(UserStory, self).save(*args, **kwargs)

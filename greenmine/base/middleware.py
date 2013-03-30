@@ -54,7 +54,7 @@ class GreenmineSessionMiddleware(object):
 
 COORS_ALLOWED_ORIGINS = getattr(settings, 'COORS_ALLOWED_ORIGINS', '*')
 COORS_ALLOWED_METHODS = getattr(settings, 'COORS_ALLOWED_METHODS',
-                            ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE'])
+                            ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE', 'PATCH'])
 COORS_ALLOWED_HEADERS = getattr(settings, 'COORS_ALLOWED_HEADERS',
                             ['Content-Type', 'X-Requested-With',
                              'X-Session-Token', 'Accept-Encoding'])

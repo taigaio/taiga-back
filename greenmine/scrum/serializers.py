@@ -13,7 +13,7 @@ class PickleField(serializers.WritableField):
         return obj
 
     def from_native(self, data):
-        return json.loads(data)
+        return data
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -26,6 +26,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class UserStorySerializer(serializers.ModelSerializer):
     tags = PickleField()
+    is_closed = serializers.BooleanField()
 
     class Meta:
         model = UserStory
