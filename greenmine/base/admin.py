@@ -1,8 +1,11 @@
+from django.utils.translation import ugettext_lazy as _
+
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 from greenmine.base.models import Role, User
+from greenmine.base.forms import UserChangeForm, UserCreationForm
 
 admin.site.unregister(Group)
 
@@ -20,4 +23,17 @@ class RoleAdmin(admin.ModelAdmin):
             db_field, request=request, **kwargs)
 
 admin.site.register(Role, RoleAdmin)
+
+class UserAdmin(DjangoUserAdmin):
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'description', 'photo')}),
+        (_('Extra info'), {'fields': ('color', 'default_language', 'default_timezone', 'token', 'colorize_tags')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
+                                       'groups', 'user_permissions')}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+    )
+    form = UserChangeForm
+    add_form = UserCreationForm
+
 admin.site.register(User, UserAdmin)
