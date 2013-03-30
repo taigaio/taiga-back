@@ -273,12 +273,6 @@ class UserStory(models.Model):
     def is_closed(self):
         return self.status.is_closed
 
-    def save(self, *args, **kwargs):
-        if self.ref is None and self.project:
-            self.ref = ref_uniquely(self.project, "last_us_ref", self.__class__)
-
-        super(UserStory, self).save(*args, **kwargs)
-
 
 class Change(models.Model):
     change_type = models.IntegerField(choices=TASK_CHANGE_CHOICES)
@@ -403,8 +397,14 @@ class Issue(models.Model):
 
 
 # Model related signals handlers
+
 @receiver(models.signals.post_save, sender=Project, dispatch_uid="project_post_save")
 def project_post_save(sender, instance, created, **kwargs):
+    """
+    Create all project model depences on project is
+    created.
+    """
+
     from greenmine.base.services import RoleGroupsService
 
     if not created:
@@ -437,6 +437,17 @@ def project_post_save(sender, instance, created, **kwargs):
 
     for order, name in ISSUETYPES:
         IssueType.objects.create(project=instance, name=name, order=order)
+
+
+@receiver(models.signals.pre_save, sender=UserStory, dispatch_uid="user_story_ref_handler")
+def user_story_ref_handler(sender, instance, **kwargs):
+    """
+    Automatically assignes a seguent reference code to a
+    user story if that is not created.
+    """
+
+    if not instance.id and instance.project:
+        instance.ref = ref_uniquely(instance.project, "last_us_ref", instance.__class__)
 
 
 # Email alerts signals handlers

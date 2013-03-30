@@ -26,7 +26,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class UserStorySerializer(serializers.ModelSerializer):
     tags = PickleField()
-    is_closed = serializers.BooleanField()
+    is_closed = serializers.Field(source='is_closed')
 
     class Meta:
         model = UserStory
