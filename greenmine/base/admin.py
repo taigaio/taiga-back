@@ -29,8 +29,7 @@ class UserAdmin(DjangoUserAdmin):
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'description', 'photo')}),
         (_('Extra info'), {'fields': ('color', 'default_language', 'default_timezone', 'token', 'colorize_tags')}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
-                                       'groups', 'user_permissions')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
     form = UserChangeForm

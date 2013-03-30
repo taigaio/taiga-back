@@ -4,13 +4,10 @@ from django.dispatch import receiver
 from django.conf import settings
 from django.utils.translation import ugettext
 from django.template.loader import render_to_string
-from django.db.models.signals import post_save
 
 from greenmine.base import signals
 from greenmine.base.utils.auth import set_token
 from greenmine.base.mail.tasks import send_mail, send_bulk_mail
-from greenmine.scrum.models import Project
-from greenmine.base.services import RoleGroupsService
 
 
 @receiver(signals.mail_new_user)

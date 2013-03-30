@@ -10,9 +10,10 @@ from django.contrib.contenttypes import generic
 from picklefield.fields import PickledObjectField
 
 from greenmine.base.utils.slug import slugify_uniquely, ref_uniquely
-from greenmine.base.fields import DictField
 from greenmine.base.utils import iter_points
-from greenmine.scrum.choices import *
+from greenmine.scrum.choices import (ISSUESTATUSES, TASKSTATUSES, USSTATUSES,
+                                     POINTS_CHOICES, SEVERITY_CHOICES,
+                                     ISSUETYPES, TASK_CHANGE_CHOICES)
 
 
 class Severity(models.Model):
@@ -112,6 +113,7 @@ class Membership(models.Model):
 
     class Meta:
         unique_together = ('user', 'project')
+
 
 class Project(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
@@ -239,7 +241,6 @@ class UserStory(models.Model):
             ('can_add_userstory_to_milestones', 'Can add user stories to milestones'),
         )
 
-
     def __repr__(self):
         return u"<UserStory %s>" % (self.id)
 
@@ -313,7 +314,7 @@ class Task(models.Model):
 
     class Meta:
         unique_together = ('ref', 'project')
-        permissions = [
+        permissions = (
             ('can_comment_task', 'Can comment tasks'),
             ('can_change_owned_task', 'Can modify owned tasks'),
             ('can_change_assigned_task', 'Can modify assigned tasks'),
@@ -321,8 +322,7 @@ class Task(models.Model):
             ('can_assign_task_to_myself', 'Can assign tasks to myself'),
             ('can_change_task_state', 'Can change the task state'),
             ('can_add_task_to_us', 'Can add tasks to a user story'),
-        ]
-
+        )
 
     def __unicode__(self):
         return self.subject
@@ -371,14 +371,14 @@ class Issue(models.Model):
 
     class Meta:
         unique_together = ('ref', 'project')
-        permissions = [
+        permissions = (
             ('can_comment_issue', 'Can comment issues'),
             ('can_change_owned_issue', 'Can modify owned issues'),
             ('can_change_assigned_issue', 'Can modify assigned issues'),
             ('can_assign_issue_to_other', 'Can assign issues to others'),
             ('can_assign_issue_to_myself', 'Can assign issues to myself'),
             ('can_change_issue_state', 'Can change the issue state'),
-        ]
+        )
 
     def __unicode__(self):
         return self.subject
@@ -396,26 +396,21 @@ class Issue(models.Model):
 # Model related signals handlers
 @receiver(models.signals.post_save, sender=Project, dispatch_uid="project_post_save")
 def project_post_save(sender, instance, created, **kwargs):
-    from greenmine.base.services import RoleGroupsService
-
     if not created:
         return
 
-    RoleGroupsService().replicate_all_roles_on_one_project(instance)
-
     # Populate new project dependen default data
-
     for order, name, is_closed in ISSUESTATUSES:
         IssueStatus.objects.create(name=name, order=order,
-                                    is_closed=is_closed, project=instance)
+                                   is_closed=is_closed, project=instance)
 
     for order, name, is_closed, color in TASKSTATUSES:
         TaskStatus.objects.create(name=name, order=order, color=color,
-                                    is_closed=is_closed, project=instance)
+                                  is_closed=is_closed, project=instance)
 
     for order, name, is_closed in USSTATUSES:
         UserStoryStatus.objects.create(name=name, order=order,
-                                    is_closed=is_closed, project=instance)
+                                       is_closed=is_closed, project=instance)
 
     for order, name in POINTS_CHOICES:
         Priority.objects.create(project=instance, name=name, order=order)
