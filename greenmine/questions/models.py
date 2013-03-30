@@ -26,6 +26,12 @@ class Question(models.Model):
                                       blank=True)
     tags = DictField()
 
+    class Meta:
+        permissions = (
+            ('can_reply_question', 'Can reply questions'),
+            ('can_change_owned_question', 'Can modify owned questions'),
+        )
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify_uniquely(self.subject, self.__class__)

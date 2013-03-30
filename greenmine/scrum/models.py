@@ -136,53 +136,9 @@ class Project(models.Model):
 
     class Meta:
         permissions = (
-            # global permissions
-            ('list_projects', 'Can list projects'),
-            ('list_my_projects', 'Can list my projects'),
-
-            # per project permissions
-            ('view_projects', 'Can view projects'),
-
-            ('create_tasks', 'Can create tasks'),
-            ('comment_tasks', 'Can comment tasks'),
-            ('modify_tasks', 'Can modify tasks'),
-            ('delete_task', 'Can delete tasks'),
-            ('modify_owned_tasks', 'Can modify owned tasks'),
-            ('modify_assigned_tasks', 'Can modify assigned tasks'),
-            ('assign_tasks_to_others', 'Can assign tasks to others'),
-            ('assign_tasks_to_myself', 'Can assign tasks to myself'),
-            ('change_tasks_state', 'Can change the task state'),
-            ('add_tasks_to_us', 'Can add tasks to a user story'),
-
-            ('create_us', 'Can create user stories'),
-            ('comment_us', 'Can comment user stories'),
-            ('modify_us', 'Can modify user stories'),
-            ('delete_us', 'Can delete user stories'),
-            ('modify_owned_us', 'Can modify owned user stories'),
-            ('add_us_to_milestones', 'Can add user stories to milestones'),
-
-            ('create_questions', 'Can create questions'),
-            ('reply_questions', 'Can reply questions'),
-            ('modify_questions', 'Can modify questions'),
-            ('delete_questions', 'Can delete questions'),
-            ('modify_owned_questions', 'Can modify owned questions'),
-
-            ('create_wiki_page', 'Can create wiki pages'),
-            ('modify_wiki_page', 'Can modify wiki pages'),
-            ('delete_wiki_page', 'Can delete wiki pages'),
-            ('modify_owned_wiki_page', 'Can modify owned wiki pages'),
-
-            ('create_documents', 'Can create documents'),
-            ('modify_documents', 'Can modify documents'),
-            ('delete_documents', 'Can delete documents'),
-            ('modify_owned_documents', 'Can modify owned documents'),
-
-            ('create_milestone', 'Can create milestones'),
-            ('modify_milestone', 'Can modify milestones'),
-            ('view_milestone', 'Can view milestones'),
-            ('delete_milestone', 'Can delete milestones'),
-
-            ('manage_users', 'Can manage users'),
+            ('can_list_projects', 'Can list projects'),
+            ('can_view_project', 'Can view project'),
+            ('can_manage_users', 'Can manage users'),
         )
 
     def __unicode__(self):
@@ -226,6 +182,9 @@ class Milestone(models.Model):
     class Meta:
         ordering = ['-created_date']
         unique_together = ('name', 'project')
+        permissions = (
+            ('can_view_milestone', 'Can view milestones'),
+        )
 
     @property
     def total_points(self):
@@ -273,6 +232,13 @@ class UserStory(models.Model):
     class Meta:
         ordering = ['order']
         unique_together = ('ref', 'project')
+        permissions = (
+            ('can_comment_userstory', 'Can comment user stories'),
+            ('can_view_userstory', 'Can view user stories'),
+            ('can_change_owned_userstory', 'Can modify owned user stories'),
+            ('can_add_userstory_to_milestones', 'Can add user stories to milestones'),
+        )
+
 
     def __repr__(self):
         return u"<UserStory %s>" % (self.id)
@@ -347,6 +313,16 @@ class Task(models.Model):
 
     class Meta:
         unique_together = ('ref', 'project')
+        permissions = [
+            ('can_comment_task', 'Can comment tasks'),
+            ('can_change_owned_task', 'Can modify owned tasks'),
+            ('can_change_assigned_task', 'Can modify assigned tasks'),
+            ('can_assign_task_to_other', 'Can assign tasks to others'),
+            ('can_assign_task_to_myself', 'Can assign tasks to myself'),
+            ('can_change_task_state', 'Can change the task state'),
+            ('can_add_task_to_us', 'Can add tasks to a user story'),
+        ]
+
 
     def __unicode__(self):
         return self.subject
@@ -395,6 +371,14 @@ class Issue(models.Model):
 
     class Meta:
         unique_together = ('ref', 'project')
+        permissions = [
+            ('can_comment_issue', 'Can comment issues'),
+            ('can_change_owned_issue', 'Can modify owned issues'),
+            ('can_change_assigned_issue', 'Can modify assigned issues'),
+            ('can_assign_issue_to_other', 'Can assign issues to others'),
+            ('can_assign_issue_to_myself', 'Can assign issues to myself'),
+            ('can_change_issue_state', 'Can change the issue state'),
+        ]
 
     def __unicode__(self):
         return self.subject

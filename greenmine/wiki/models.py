@@ -16,6 +16,12 @@ class WikiPage(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     tags = DictField()
 
+    class Meta:
+        permissions = (
+            ('can_view_wikipage', 'Can modify owned wiki pages'),
+            ('can_change_owned_wikipage', 'Can modify owned wiki pages'),
+        )
+
 
 class WikiPageAttachment(models.Model):
     wikipage = models.ForeignKey('WikiPage', related_name='attachments')
