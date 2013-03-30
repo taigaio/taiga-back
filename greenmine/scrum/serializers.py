@@ -13,7 +13,7 @@ class PickleField(serializers.WritableField):
         return obj
 
     def from_native(self, data):
-        return json.loads(data)
+        return data
 
 
 class ProjectSerializer(serializers.ModelSerializer):
