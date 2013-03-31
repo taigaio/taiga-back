@@ -416,7 +416,7 @@ def project_post_save(sender, instance, created, **kwargs):
         UserStoryStatus.objects.create(name=name, order=order,
                                     is_closed=is_closed, project=instance)
 
-    for order, name in POINTS_CHOICES:
+    for order, name in PRIORITY_CHOICES:
         Priority.objects.create(project=instance, name=name, order=order)
 
     for order, name in SEVERITY_CHOICES:

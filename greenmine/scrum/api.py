@@ -124,7 +124,6 @@ class IssueList(generics.ListCreateAPIView):
 class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Issue
     serializer_class = IssueSerializer
-    filter_fields = ('project',)
 
 
 class SeverityList(generics.ListCreateAPIView):
