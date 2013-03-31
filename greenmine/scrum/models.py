@@ -191,7 +191,8 @@ class Milestone(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
     name = models.CharField(max_length=200, db_index=True)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
-    owner = models.ForeignKey('base.User', related_name="milestones", blank=True)
+    owner = models.ForeignKey('base.User', related_name="milestones",
+                              null=True, blank=True)
     project = models.ForeignKey('Project', related_name="milestones")
 
     estimated_start = models.DateField(null=True, default=None)
@@ -204,8 +205,6 @@ class Milestone(models.Model):
     disponibility = models.FloatField(null=True, default=0.0)
     order = models.PositiveSmallIntegerField("Order", default=1)
 
-    tags = PickledObjectField()
-
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify_uniquely(self.name, self.__class__)
@@ -215,15 +214,6 @@ class Milestone(models.Model):
     class Meta:
         ordering = ['-created_date']
         unique_together = ('name', 'project')
-
-    @property
-    def total_points(self):
-        """
-        Get total story points for this milestone.
-        """
-
-        total = sum(iter_points(self.user_stories.all()))
-        return "{0:.1f}".format(total)
 
     def __unicode__(self):
         return self.name

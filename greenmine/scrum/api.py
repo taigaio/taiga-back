@@ -36,6 +36,8 @@ class ProjectList(generics.ListCreateAPIView):
     model = Project
     serializer_class = ProjectSerializer
 
+    def pre_save(self, obj):
+        obj.owner = self.request.user
 
 class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Project
@@ -46,6 +48,9 @@ class MilestoneList(generics.ListCreateAPIView):
     model = Milestone
     serializer_class = MilestoneSerializer
     filter_fields = ('project',)
+
+    def pre_save(self, obj):
+        obj.owner = self.request.user
 
 
 class MilestoneDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -71,6 +76,9 @@ class ChangeList(generics.ListCreateAPIView):
     model = Change
     serializer_class = ChangeSerializer
 
+    def pre_save(self, obj):
+        obj.owner = self.request.user
+
 
 class ChangeDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Change
@@ -80,6 +88,9 @@ class ChangeDetail(generics.RetrieveUpdateDestroyAPIView):
 class ChangeAttachmentList(generics.ListCreateAPIView):
     model = ChangeAttachment
     serializer_class = ChangeAttachmentSerializer
+
+    def pre_save(self, obj):
+        obj.owner = self.request.user
 
 
 class ChangeAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -91,6 +102,9 @@ class TaskList(generics.ListCreateAPIView):
     model = Task
     serializer_class = TaskSerializer
     filter_fields = ('user_story', 'milestone', 'project')
+
+    def pre_save(self, obj):
+        obj.owner = self.request.user
 
 
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):

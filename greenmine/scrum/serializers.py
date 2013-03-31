@@ -41,8 +41,7 @@ class UserStorySerializer(serializers.ModelSerializer):
 
 
 class MilestoneSerializer(serializers.ModelSerializer):
-    tags = PickleField()
-    user_stories = UserStorySerializer(many=True)
+    user_stories = UserStorySerializer(many=True, required=False)
 
     class Meta:
         model = Milestone
