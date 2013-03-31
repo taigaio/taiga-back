@@ -114,7 +114,7 @@ class Project(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
 
-    owner = models.ForeignKey("base.User", related_name="projects")
+    owner = models.ForeignKey("base.User", related_name="projects", blank=True)
     public = models.BooleanField(default=True)
 
     last_us_ref = models.BigIntegerField(null=True, default=1)
@@ -191,7 +191,7 @@ class Milestone(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
     name = models.CharField(max_length=200, db_index=True)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
-    owner = models.ForeignKey('base.User', related_name="milestones")
+    owner = models.ForeignKey('base.User', related_name="milestones", blank=True)
     project = models.ForeignKey('Project', related_name="milestones")
 
     estimated_start = models.DateField(null=True, default=None)
@@ -234,12 +234,12 @@ class Milestone(models.Model):
 
 class UserStory(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
-    ref = models.BigIntegerField(db_index=True, null=True, default=None)
+    ref = models.BigIntegerField(db_index=True, null=True, default=None, blank=True)
     milestone = models.ForeignKey("Milestone", blank=True,
                                   related_name="user_stories", null=True,
                                   default=None)
     project = models.ForeignKey("Project", related_name="user_stories")
-    owner = models.ForeignKey("base.User", null=True, default=None,
+    owner = models.ForeignKey("base.User", blank=True, null=True,
                               related_name="user_stories")
 
     status = models.ForeignKey("UserStoryStatus", related_name="userstories")

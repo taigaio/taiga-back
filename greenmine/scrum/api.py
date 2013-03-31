@@ -58,6 +58,9 @@ class UserStoryList(generics.ListCreateAPIView):
     serializer_class = UserStorySerializer
     filter_fields = ('project', 'milestone')
 
+    def pre_save(self, obj):
+        obj.owner = self.request.user
+
 
 class UserStoryDetail(generics.RetrieveUpdateDestroyAPIView):
     model = UserStory
