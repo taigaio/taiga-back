@@ -98,6 +98,21 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TaskSerializer
 
 
+class IssueList(generics.ListCreateAPIView):
+    model = Issue
+    serializer_class = IssueSerializer
+    #filter_fields = ('project')
+
+    def pre_save(self, obj):
+        obj.owner = self.request.user
+
+
+class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Issue
+    serializer_class = IssueSerializer
+    filter_fields = ('project',)
+
+
 class SeverityList(generics.ListCreateAPIView):
     model = Severity
     serializer_class = SeveritySerializer

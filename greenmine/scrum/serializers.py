@@ -81,6 +81,14 @@ class IssueSerializer(serializers.ModelSerializer):
         fields = ()
 
 
+class IssueSerializer(serializers.ModelSerializer):
+    tags = PickleField()
+
+    class Meta:
+        model = Issue
+        fields = ()
+
+
 class SeveritySerializer(serializers.ModelSerializer):
     class Meta:
         model = Severity
