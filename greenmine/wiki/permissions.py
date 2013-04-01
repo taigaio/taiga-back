@@ -6,7 +6,7 @@ class WikiPageDetailPermission(BaseDetailPermission):
     patch_permission = "change_wikipage"
     delete_permission = "can_delete_wikipage"
     safe_methods = ['HEAD', 'OPTIONS']
-    path_to_document =  []
+    path_to_project =  ['project']
 
 class WikiPageAttachmentDetailPermission(BaseDetailPermission):
     get_permission = "can_view_wikipageattachment"
@@ -14,4 +14,4 @@ class WikiPageAttachmentDetailPermission(BaseDetailPermission):
     patch_permission = "change_wikipageattachment"
     delete_permission = "can_delete_wikipageattachment"
     safe_methods = ['HEAD', 'OPTIONS']
-    path_to_document =  []
+    path_to_project =  ['project']
