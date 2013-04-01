@@ -124,7 +124,7 @@ class Project(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
 
-    owner = models.ForeignKey("base.User", related_name="owned_projects")
+    owner = models.ForeignKey("base.User", related_name="owned_projects", blank=True)
     members = models.ManyToManyField("base.User", related_name="projects", through='Membership')
     public = models.BooleanField(default=True)
 
@@ -160,7 +160,8 @@ class Milestone(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
     name = models.CharField(max_length=200, db_index=True)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
-    owner = models.ForeignKey('base.User', related_name="milestones")
+    owner = models.ForeignKey('base.User', related_name="milestones",
+                              null=True, blank=True)
     project = models.ForeignKey('Project', related_name="milestones")
 
     estimated_start = models.DateField(null=True, default=None)
@@ -172,8 +173,6 @@ class Milestone(models.Model):
 
     disponibility = models.FloatField(null=True, default=0.0)
     order = models.PositiveSmallIntegerField("Order", default=1)
-
-    tags = PickledObjectField()
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -188,15 +187,6 @@ class Milestone(models.Model):
             ('can_view_milestone', 'Can view milestones'),
         )
 
-    @property
-    def total_points(self):
-        """
-        Get total story points for this milestone.
-        """
-
-        total = sum(iter_points(self.user_stories.all()))
-        return "{0:.1f}".format(total)
-
     def __unicode__(self):
         return self.name
 
@@ -206,12 +196,12 @@ class Milestone(models.Model):
 
 class UserStory(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
-    ref = models.BigIntegerField(db_index=True, null=True, default=None)
+    ref = models.BigIntegerField(db_index=True, null=True, default=None, blank=True)
     milestone = models.ForeignKey("Milestone", blank=True,
                                   related_name="user_stories", null=True,
                                   default=None)
     project = models.ForeignKey("Project", related_name="user_stories")
-    owner = models.ForeignKey("base.User", null=True, default=None,
+    owner = models.ForeignKey("base.User", blank=True, null=True,
                               related_name="user_stories")
 
     status = models.ForeignKey("UserStoryStatus", related_name="userstories")
@@ -250,12 +240,6 @@ class UserStory(models.Model):
     @property
     def is_closed(self):
         return self.status.is_closed
-
-    def save(self, *args, **kwargs):
-        if self.ref is None and self.project:
-            self.ref = ref_uniquely(self.project, "last_us_ref", self.__class__)
-
-        super(UserStory, self).save(*args, **kwargs)
 
 
 class Change(models.Model):
@@ -398,8 +382,14 @@ class Issue(models.Model):
 
 
 # Model related signals handlers
+
 @receiver(models.signals.post_save, sender=Project, dispatch_uid="project_post_save")
 def project_post_save(sender, instance, created, **kwargs):
+    """
+    Create all project model depences on project is
+    created.
+    """
+
     if not created:
         return
 
@@ -416,7 +406,7 @@ def project_post_save(sender, instance, created, **kwargs):
         UserStoryStatus.objects.create(name=name, order=order,
                                        is_closed=is_closed, project=instance)
 
-    for order, name in POINTS_CHOICES:
+    for order, name in PRIORITY_CHOICES:
         Priority.objects.create(project=instance, name=name, order=order)
 
     for order, name in SEVERITY_CHOICES:
@@ -427,6 +417,17 @@ def project_post_save(sender, instance, created, **kwargs):
 
     for order, name in ISSUETYPES:
         IssueType.objects.create(project=instance, name=name, order=order)
+
+
+@receiver(models.signals.pre_save, sender=UserStory, dispatch_uid="user_story_ref_handler")
+def user_story_ref_handler(sender, instance, **kwargs):
+    """
+    Automatically assignes a seguent reference code to a
+    user story if that is not created.
+    """
+
+    if not instance.id and instance.project:
+        instance.ref = ref_uniquely(instance.project, "last_us_ref", instance.__class__)
 
 
 # Email alerts signals handlers

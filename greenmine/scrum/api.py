@@ -39,6 +39,8 @@ class ProjectList(generics.ListCreateAPIView):
     def get_queryset(self):
         return self.model.objects.filter(members=self.request.user)
 
+    def pre_save(self, obj):
+        obj.owner = self.request.user
 
 class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Project
@@ -53,6 +55,9 @@ class MilestoneList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
+
+    def pre_save(self, obj):
+        obj.owner = self.request.user
 
 
 class MilestoneDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -69,6 +74,9 @@ class UserStoryList(generics.ListCreateAPIView):
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
 
+    def pre_save(self, obj):
+        obj.owner = self.request.user
+
 
 class UserStoryDetail(generics.RetrieveUpdateDestroyAPIView):
     model = UserStory
@@ -83,6 +91,9 @@ class ChangeList(generics.ListCreateAPIView):
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
 
+    def pre_save(self, obj):
+        obj.owner = self.request.user
+
 
 class ChangeDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Change
@@ -96,6 +107,9 @@ class ChangeAttachmentList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         return self.model.objects.filter(change__project__members=self.request.user)
+
+    def pre_save(self, obj):
+        obj.owner = self.request.user
 
 
 class ChangeAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -127,11 +141,28 @@ class TaskList(generics.ListCreateAPIView):
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
 
+    def pre_save(self, obj):
+        obj.owner = self.request.user
+
 
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Task
     serializer_class = TaskSerializer
     permission_classes = (TaskDetailPermission,)
+
+
+class IssueList(generics.ListCreateAPIView):
+    model = Issue
+    serializer_class = IssueSerializer
+    #filter_fields = ('project')
+
+    def pre_save(self, obj):
+        obj.owner = self.request.user
+
+
+class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Issue
+    serializer_class = IssueSerializer
 
 
 class SeverityList(generics.ListCreateAPIView):

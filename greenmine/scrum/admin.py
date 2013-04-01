@@ -45,7 +45,8 @@ admin.site.register(models.Milestone, MilestoneAdmin)
 
 
 class UserStoryAdmin(reversion.VersionAdmin):
-    list_display = ["ref", "milestone", "project", "owner", 'status', 'is_closed']
+    list_display = ["id", "ref", "milestone", "project", "owner", 'status', 'is_closed']
+    list_filter = ["milestone", "project"]
 
 admin.site.register(models.UserStory, UserStoryAdmin)
 
@@ -63,7 +64,11 @@ admin.site.register(models.ChangeAttachment, ChangeAttachmentAdmin)
 
 
 class TaskAdmin(reversion.VersionAdmin):
-    list_display = ["subject", "user_story"]
+    list_display = ["subject", "user_story", "milestone", "project", "user_story_id"]
+    list_filter = ["user_story", "milestone", "project"]
+
+    def user_story_id(self, instance):
+        return instance.user_story.id
 
 
 class IssueAdmin(reversion.VersionAdmin):

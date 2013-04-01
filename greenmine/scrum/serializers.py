@@ -16,6 +16,12 @@ class PickleField(serializers.WritableField):
         return data
 
 
+class PointsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Points
+        fields = ()
+
+
 class ProjectSerializer(serializers.ModelSerializer):
     tags = PickleField()
 
@@ -26,7 +32,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class UserStorySerializer(serializers.ModelSerializer):
     tags = PickleField()
-    is_closed = serializers.BooleanField()
+    is_closed = serializers.Field(source='is_closed')
 
     class Meta:
         model = UserStory
@@ -35,8 +41,7 @@ class UserStorySerializer(serializers.ModelSerializer):
 
 
 class MilestoneSerializer(serializers.ModelSerializer):
-    tags = PickleField()
-    user_stories = UserStorySerializer(many=True)
+    user_stories = UserStorySerializer(many=True, required=False)
 
     class Meta:
         model = Milestone
@@ -64,6 +69,14 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
+        fields = ()
+
+
+class IssueSerializer(serializers.ModelSerializer):
+    tags = PickleField()
+
+    class Meta:
+        model = Issue
         fields = ()
 
 
@@ -111,7 +124,3 @@ class IssueTypeSerializer(serializers.ModelSerializer):
         fields = ()
 
 
-class PointsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Points
-        fields = ()

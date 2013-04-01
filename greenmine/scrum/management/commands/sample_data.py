@@ -133,7 +133,7 @@ class Command(BaseCommand):
                     owner=project.owner,
                     severity=Severity.objects.get(project=project, order=2),
                     status=IssueStatus.objects.get(project=project, order=4),
-                    priority=Priority.objects.get(project=project, order=2),
+                    priority=Priority.objects.get(project=project, order=3),
                     type=IssueType.objects.get(project=project, order=1),
                     tags=[],
                 )
