@@ -7,7 +7,7 @@ class WikiPage(models.Model):
     project = models.ForeignKey('scrum.Project', related_name='wiki_pages')
     slug = models.SlugField(max_length=500, db_index=True)
     content = models.TextField(blank=False, null=True)
-    owner = models.ForeignKey("base.User", related_name="wiki_pages", null=True)
+    owner = models.ForeignKey("base.User", related_name="wiki_pages", null=True, blank=True)
 
     watchers = models.ManyToManyField('base.User',
                                       related_name='wikipage_watchers',
