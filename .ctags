@@ -1,5 +1,5 @@
---language-force=python
---exclude=".git" 
+--languages=python
+--exclude=".git"
 --exclude="tags"
 --exclude="*.pyc"
 -R
