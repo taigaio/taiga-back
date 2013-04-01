@@ -11,10 +11,9 @@ class WikiPage(models.Model):
 
     watchers = models.ManyToManyField('base.User',
                                       related_name='wikipage_watchers',
-                                      null=True)
+                                      null=True, blank=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
-    tags = DictField()
 
     class Meta:
         permissions = (
@@ -30,4 +29,3 @@ class WikiPageAttachment(models.Model):
     modified_date = models.DateTimeField(auto_now_add=True)
     attached_file = models.FileField(upload_to="files/wiki", max_length=500,
                                      null=True, blank=True)
-    tags = DictField()

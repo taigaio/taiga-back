@@ -2,56 +2,56 @@ from greenmine.base.permissions import BaseDetailPermission
 
 class ProjectDetailPermission(BaseDetailPermission):
     get_permission = "can_view_project"
-    put_permission = "can_change_project"
-    patch_permission = "can_change_project"
-    delete_permission = "can_delete_project"
+    put_permission = "change_project"
+    patch_permission = "change_project"
+    delete_permission = "delete_project"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  []
 
 class MilestoneDetailPermission(BaseDetailPermission):
     get_permission = "can_view_milestone"
-    put_permission = "can_change_milestone"
-    patch_permission = "can_change_milestone"
-    delete_permission = "can_delete_milestone"
+    put_permission = "change_milestone"
+    patch_permission = "change_milestone"
+    delete_permission = "delete_milestone"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
 
 class UserStoryDetailPermission(BaseDetailPermission):
     get_permission = "can_view_userstory"
-    put_permission = "can_change_userstory"
-    patch_permission = "can_change_userstory"
-    delete_permission = "can_delete_userstory"
+    put_permission = "change_userstory"
+    patch_permission = "change_userstory"
+    delete_permission = "delete_userstory"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
 
 class TaskDetailPermission(BaseDetailPermission):
     get_permission = "can_view_task"
-    put_permission = "can_change_task"
-    patch_permission = "can_change_task"
-    delete_permission = "can_delete_task"
+    put_permission = "change_task"
+    patch_permission = "change_task"
+    delete_permission = "delete_task"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
 
 class IssueDetailPermission(BaseDetailPermission):
     get_permission = "can_view_issue"
-    put_permission = "can_change_issue"
-    patch_permission = "can_change_issue"
+    put_permission = "change_issue"
+    patch_permission = "change_issue"
     delete_permission = "can_delete_issue"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
 
 class ChangeDetailPermission(BaseDetailPermission):
     get_permission = "can_view_change"
-    put_permission = "can_change_change"
-    patch_permission = "can_change_change"
+    put_permission = "change_change"
+    patch_permission = "change_change"
     delete_permission = "can_delete_change"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
 
 class ChangeAttachmentDetailPermission(BaseDetailPermission):
     get_permission = "can_view_changeattachment"
-    put_permission = "can_change_changeattachment"
-    patch_permission = "can_change_changeattachment"
+    put_permission = "change_changeattachment"
+    patch_permission = "change_changeattachment"
     delete_permission = "can_delete_changeattachment"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['change', 'project']

@@ -250,11 +250,6 @@
                 "issue"
             ], 
             [
-                "can_change_issue", 
-                "scrum", 
-                "issue"
-            ], 
-            [
                 "can_change_issue_state", 
                 "scrum", 
                 "issue"
@@ -266,11 +261,6 @@
             ], 
             [
                 "can_comment_issue", 
-                "scrum", 
-                "issue"
-            ], 
-            [
-                "can_delete_issue", 
                 "scrum", 
                 "issue"
             ], 
@@ -340,16 +330,6 @@
                 "milestone"
             ], 
             [
-                "can_change_milestone", 
-                "scrum", 
-                "milestone"
-            ], 
-            [
-                "can_delete_milestone", 
-                "scrum", 
-                "milestone"
-            ], 
-            [
                 "can_view_milestone", 
                 "scrum", 
                 "milestone"
@@ -396,16 +376,6 @@
             ], 
             [
                 "add_project", 
-                "scrum", 
-                "project"
-            ], 
-            [
-                "can_change_project", 
-                "scrum", 
-                "project"
-            ], 
-            [
-                "can_delete_project", 
                 "scrum", 
                 "project"
             ], 
@@ -480,22 +450,12 @@
                 "task"
             ], 
             [
-                "can_change_task", 
-                "scrum", 
-                "task"
-            ], 
-            [
                 "can_change_task_state", 
                 "scrum", 
                 "task"
             ], 
             [
                 "can_comment_task", 
-                "scrum", 
-                "task"
-            ], 
-            [
-                "can_delete_task", 
                 "scrum", 
                 "task"
             ], 
@@ -541,11 +501,6 @@
             ], 
             [
                 "can_change_owned_userstory", 
-                "scrum", 
-                "userstory"
-            ], 
-            [
-                "can_change_userstory", 
                 "scrum", 
                 "userstory"
             ], 
