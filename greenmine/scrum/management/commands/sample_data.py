@@ -9,7 +9,7 @@ from django.utils.timezone import now
 
 from django.contrib.webdesign import lorem_ipsum
 
-from greenmine.base.models import User
+from greenmine.base.models import User, Role
 from greenmine.scrum.models import *
 
 subjects = [
@@ -42,9 +42,11 @@ class Command(BaseCommand):
 
     @transaction.commit_on_success
     def handle(self, *args, **options):
-        users = []
+        users = [User.objects.get(is_superuser=True)]
         for x in range(10):
             users.append(self.create_user(x))
+
+        role = Role.objects.all()[0]
 
         # projects
         for x in xrange(3):
@@ -57,6 +59,9 @@ class Command(BaseCommand):
             )
 
             project.save()
+
+            for user in users:
+                Membership.objects.create(project=project, role=role, user=user)
 
             now_date = now() - datetime.timedelta(30)
 
