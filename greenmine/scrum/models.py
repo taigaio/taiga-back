@@ -229,6 +229,7 @@ class UserStory(models.Model):
             ('can_comment_userstory', 'Can comment user stories'),
             ('can_view_userstory', 'Can view user stories'),
             ('can_change_owned_userstory', 'Can modify owned user stories'),
+            ('can_change_userstory', 'Can modify user stories'),
             ('can_add_userstory_to_milestones', 'Can add user stories to milestones'),
         )
 

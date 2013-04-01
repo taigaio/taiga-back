@@ -16,6 +16,7 @@ def has_project_perm(user, project, perm):
 class BaseDetailPermission(permissions.BasePermission):
     get_permission = None
     put_permission = None
+    patch_permission = None
     delete_permission = None
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  []
@@ -36,6 +37,9 @@ class BaseDetailPermission(permissions.BasePermission):
 
         elif request.method == "DELETE":
             return has_project_perm(request.user, project_obj, self.delete_permission)
+
+        elif request.method == "PATCH":
+            return has_project_perm(request.user, project_obj, self.patch_permission)
 
         return False
 
