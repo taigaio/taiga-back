@@ -168,37 +168,7 @@
                 "delete_questionresponse", 
                 "questions", 
                 "questionresponse"
-            ], 
-            [
-                "add_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "change_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "delete_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "add_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "change_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "delete_version", 
-                "reversion", 
-                "version"
-            ], 
+            ],  
             [
                 "add_change", 
                 "scrum", 
