@@ -13,7 +13,8 @@ from greenmine.base.utils.slug import slugify_uniquely, ref_uniquely
 from greenmine.base.utils import iter_points
 from greenmine.scrum.choices import (ISSUESTATUSES, TASKSTATUSES, USSTATUSES,
                                      POINTS_CHOICES, SEVERITY_CHOICES,
-                                     ISSUETYPES, TASK_CHANGE_CHOICES)
+                                     ISSUETYPES, TASK_CHANGE_CHOICES,
+                                     PRIORITY_CHOICES)
 
 
 class Severity(models.Model):
