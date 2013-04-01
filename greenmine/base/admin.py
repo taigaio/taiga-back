@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 
 from django.contrib import admin
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 from greenmine.base.models import Role, User
@@ -35,4 +35,11 @@ class UserAdmin(DjangoUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
+
+class PermissionAdmin(admin.ModelAdmin):
+    list_display = ['name', 'content_type', 'codename']
+    list_filter = ['content_type']
+
+
 admin.site.register(User, UserAdmin)
+admin.site.register(Permission, PermissionAdmin)

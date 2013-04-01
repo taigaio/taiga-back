@@ -70,10 +70,12 @@ class TaskAdmin(reversion.VersionAdmin):
     def user_story_id(self, instance):
         return instance.user_story.id
 
+class MembershipAdmin(admin.ModelAdmin):
+    list_display = ['project', 'role', 'user']
+    list_filter = ['project', 'role']
 
 class IssueAdmin(reversion.VersionAdmin):
     list_display = ["subject", "type"]
-
 
 class SeverityAdmin(admin.ModelAdmin):
     list_display = ["name", "order", "project"]
@@ -106,4 +108,5 @@ admin.site.register(models.UserStoryStatus, UserStoryStatusAdmin)
 admin.site.register(models.Priority, PriorityAdmin)
 admin.site.register(models.IssueType, IssueTypeAdmin)
 admin.site.register(models.Points, PointsAdmin)
+admin.site.register(models.Membership, MembershipAdmin)
 
