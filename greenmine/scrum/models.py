@@ -141,6 +141,8 @@ class Project(models.Model):
         permissions = (
             ('can_list_projects', 'Can list projects'),
             ('can_view_project', 'Can view project'),
+            ('can_change_project', 'Can change project'),
+            ('can_delete_project', 'Can delete project'),
             ('can_manage_users', 'Can manage users'),
         )
 
@@ -184,8 +186,11 @@ class Milestone(models.Model):
     class Meta:
         ordering = ['-created_date']
         unique_together = ('name', 'project')
+
         permissions = (
             ('can_view_milestone', 'Can view milestones'),
+            ('can_change_milestone', 'Can change milestones'),
+            ('can_delete_milestone', 'Can delete milestones'),
         )
 
     def __unicode__(self):
@@ -230,6 +235,7 @@ class UserStory(models.Model):
             ('can_view_userstory', 'Can view user stories'),
             ('can_change_owned_userstory', 'Can modify owned user stories'),
             ('can_change_userstory', 'Can modify user stories'),
+            ('can_delete_userstory', 'Can delete user stories'),
             ('can_add_userstory_to_milestones', 'Can add user stories to milestones'),
         )
 
@@ -311,6 +317,9 @@ class Task(models.Model):
             ('can_assign_task_to_other', 'Can assign tasks to others'),
             ('can_assign_task_to_myself', 'Can assign tasks to myself'),
             ('can_change_task_state', 'Can change the task state'),
+            ('can_view_task', 'Can view the task'),
+            ('can_change_task', 'Can change the task'),
+            ('can_delete_task', 'Can delete the task'),
             ('can_add_task_to_us', 'Can add tasks to a user story'),
         )
 
@@ -368,6 +377,9 @@ class Issue(models.Model):
             ('can_assign_issue_to_other', 'Can assign issues to others'),
             ('can_assign_issue_to_myself', 'Can assign issues to myself'),
             ('can_change_issue_state', 'Can change the issue state'),
+            ('can_view_issue', 'Can view the issue'),
+            ('can_change_issue', 'Can change the issue'),
+            ('can_delete_issue', 'Can delete the issue'),
         )
 
     def __unicode__(self):
