@@ -25,7 +25,6 @@ class ApiRoot(APIView):
             'user-stories': reverse('user-story-list', request=request, format=format),
             'changes': reverse('change-list', request=request, format=format),
             'change-attachments': reverse('change-attachment-list', request=request, format=format),
-            'issues': reverse('issue-list', request=request, format=format),
             'tasks': reverse('task-list', request=request, format=format),
             'issues': reverse('issue-list', request=request, format=format),
             'severities': reverse('severity-list', request=request, format=format),
