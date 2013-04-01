@@ -12,6 +12,9 @@ class WikiPageList(generics.ListCreateAPIView):
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
 
+    def pre_save(self, obj):
+        obj.owner = self.request.user
+
 
 class WikiPageDetail(generics.RetrieveUpdateDestroyAPIView):
     model = WikiPage
