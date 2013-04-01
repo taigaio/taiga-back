@@ -1,6 +1,7 @@
 import django_filters
 
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
 from greenmine.scrum.serializers import *
 from greenmine.scrum.models import *
@@ -12,6 +13,7 @@ class UserStoryFilter(django_filters.FilterSet):
     class Meta:
         model = UserStory
         fields = ['project', 'milestone', 'no_milestone']
+
 
 class SimpleFilterMixin(object):
     filter_fields = []
@@ -44,6 +46,7 @@ class SimpleFilterMixin(object):
 class ProjectList(generics.ListCreateAPIView):
     model = Project
     serializer_class = ProjectSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(members=self.request.user)
@@ -51,16 +54,18 @@ class ProjectList(generics.ListCreateAPIView):
     def pre_save(self, obj):
         obj.owner = self.request.user
 
+
 class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Project
     serializer_class = ProjectSerializer
-    permission_classes = (ProjectDetailPermission,)
+    permission_classes = (IsAuthenticated, ProjectDetailPermission,)
 
 
 class MilestoneList(generics.ListCreateAPIView):
     model = Milestone
     serializer_class = MilestoneSerializer
     filter_fields = ('project',)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -72,13 +77,14 @@ class MilestoneList(generics.ListCreateAPIView):
 class MilestoneDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Milestone
     serializer_class = MilestoneSerializer
-    permission_classes = (MilestoneDetailPermission,)
+    permission_classes = (IsAuthenticated, MilestoneDetailPermission,)
 
 
 class UserStoryList(generics.ListCreateAPIView):
     model = UserStory
     serializer_class = UserStorySerializer
     filter_class = UserStoryFilter
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -90,12 +96,13 @@ class UserStoryList(generics.ListCreateAPIView):
 class UserStoryDetail(generics.RetrieveUpdateDestroyAPIView):
     model = UserStory
     serializer_class = UserStorySerializer
-    permission_classes = (UserStoryDetailPermission,)
+    permission_classes = (IsAuthenticated, UserStoryDetailPermission,)
 
 
 class ChangeList(generics.ListCreateAPIView):
     model = Change
     serializer_class = ChangeSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -107,12 +114,13 @@ class ChangeList(generics.ListCreateAPIView):
 class ChangeDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Change
     serializer_class = ChangeSerializer
-    permission_classes = (ChangeDetailPermission,)
+    permission_classes = (IsAuthenticated, ChangeDetailPermission,)
 
 
 class ChangeAttachmentList(generics.ListCreateAPIView):
     model = ChangeAttachment
     serializer_class = ChangeAttachmentSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(change__project__members=self.request.user)
@@ -124,13 +132,14 @@ class ChangeAttachmentList(generics.ListCreateAPIView):
 class ChangeAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
     model = ChangeAttachment
     serializer_class = ChangeAttachmentSerializer
-    permission_classes = (ChangeAttachmentDetailPermission,)
+    permission_classes = (IsAuthenticated, ChangeAttachmentDetailPermission,)
 
 
 class IssueList(generics.ListCreateAPIView):
     model = Issue
     serializer_class = IssueSerializer
     filter_fields = ('project',)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -139,13 +148,14 @@ class IssueList(generics.ListCreateAPIView):
 class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Issue
     serializer_class = IssueSerializer
-    permission_classes = (IssueDetailPermission,)
+    permission_classes = (IsAuthenticated, IssueDetailPermission,)
 
 
 class TaskList(generics.ListCreateAPIView):
     model = Task
     serializer_class = TaskSerializer
     filter_fields = ('user_story', 'milestone', 'project')
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -157,13 +167,14 @@ class TaskList(generics.ListCreateAPIView):
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Task
     serializer_class = TaskSerializer
-    permission_classes = (TaskDetailPermission,)
+    permission_classes = (IsAuthenticated, TaskDetailPermission,)
 
 
 class IssueList(generics.ListCreateAPIView):
     model = Issue
     serializer_class = IssueSerializer
     filter_fields = ('project',)
+    permission_classes = (IsAuthenticated,)
 
     def pre_save(self, obj):
         obj.owner = self.request.user
@@ -178,6 +189,7 @@ class SeverityList(generics.ListCreateAPIView):
     model = Severity
     serializer_class = SeveritySerializer
     filter_fields = ('project',)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -186,13 +198,14 @@ class SeverityList(generics.ListCreateAPIView):
 class SeverityDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Severity
     serializer_class = SeveritySerializer
-    permission_classes = (SeverityDetailPermission,)
+    permission_classes = (IsAuthenticated, SeverityDetailPermission,)
 
 
 class IssueStatusList(generics.ListCreateAPIView):
     model = IssueStatus
     serializer_class = IssueStatusSerializer
     filter_fields = ('project',)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -201,13 +214,14 @@ class IssueStatusList(generics.ListCreateAPIView):
 class IssueStatusDetail(generics.RetrieveUpdateDestroyAPIView):
     model = IssueStatus
     serializer_class = IssueStatusSerializer
-    permission_classes = (IssueStatusDetailPermission,)
+    permission_classes = (IsAuthenticated, IssueStatusDetailPermission,)
 
 
 class TaskStatusList(SimpleFilterMixin, generics.ListCreateAPIView):
     model = TaskStatus
     serializer_class = TaskStatusSerializer
     filter_fields = ('project',)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -216,13 +230,14 @@ class TaskStatusList(SimpleFilterMixin, generics.ListCreateAPIView):
 class TaskStatusDetail(generics.RetrieveUpdateDestroyAPIView):
     model = TaskStatus
     serializer_class = TaskStatusSerializer
-    permission_classes = (TaskStatusDetailPermission,)
+    permission_classes = (IsAuthenticated, TaskStatusDetailPermission,)
 
 
 class UserStoryStatusList(generics.ListCreateAPIView):
     model = UserStoryStatus
     serializer_class = UserStoryStatusSerializer
     filter_fields = ('project',)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -231,13 +246,14 @@ class UserStoryStatusList(generics.ListCreateAPIView):
 class UserStoryStatusDetail(generics.RetrieveUpdateDestroyAPIView):
     model = UserStoryStatus
     serializer_class = UserStoryStatusSerializer
-    permission_classes = (UserStoryStatusDetailPermission,)
+    permission_classes = (IsAuthenticated, UserStoryStatusDetailPermission,)
 
 
 class PriorityList(generics.ListCreateAPIView):
     model = Priority
     serializer_class = PrioritySerializer
     filter_fields = ('project',)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -246,13 +262,14 @@ class PriorityList(generics.ListCreateAPIView):
 class PriorityDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Priority
     serializer_class = PrioritySerializer
-    permission_classes = (PriorityDetailPermission,)
+    permission_classes = (IsAuthenticated, PriorityDetailPermission,)
 
 
 class IssueTypeList(generics.ListCreateAPIView):
     model = IssueType
     serializer_class = IssueTypeSerializer
     filter_fields = ('project',)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -261,13 +278,14 @@ class IssueTypeList(generics.ListCreateAPIView):
 class IssueTypeDetail(generics.RetrieveUpdateDestroyAPIView):
     model = IssueType
     serializer_class = IssueTypeSerializer
-    permission_classes = (IssueTypeDetailPermission,)
+    permission_classes = (IsAuthenticated, IssueTypeDetailPermission,)
 
 
 class PointsList(generics.ListCreateAPIView):
     model = Points
     serializer_class = PointsSerializer
     filter_fields = ('project',)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -276,4 +294,4 @@ class PointsList(generics.ListCreateAPIView):
 class PointsDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Points
     serializer_class = PointsSerializer
-    permission_classes = (PointsDetailPermission,)
+    permission_classes = (IsAuthenticated, PointsDetailPermission,)
