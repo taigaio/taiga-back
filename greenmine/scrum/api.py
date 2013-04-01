@@ -1,8 +1,17 @@
+import django_filters
+
 from rest_framework import generics
 
 from greenmine.scrum.serializers import *
 from greenmine.scrum.models import *
 from greenmine.scrum.permissions import *
+
+class UserStoryFilter(django_filters.FilterSet):
+    no_milestone = django_filters.NumberFilter(name="milestone", lookup_type='isnull')
+
+    class Meta:
+        model = UserStory
+        fields = ['project', 'milestone', 'no_milestone']
 
 class SimpleFilterMixin(object):
     filter_fields = []
@@ -69,7 +78,7 @@ class MilestoneDetail(generics.RetrieveUpdateDestroyAPIView):
 class UserStoryList(generics.ListCreateAPIView):
     model = UserStory
     serializer_class = UserStorySerializer
-    filter_fields = ('project', 'milestone')
+    filter_class = UserStoryFilter
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -154,7 +163,7 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
 class IssueList(generics.ListCreateAPIView):
     model = Issue
     serializer_class = IssueSerializer
-    #filter_fields = ('project')
+    filter_fields = ('project',)
 
     def pre_save(self, obj):
         obj.owner = self.request.user
