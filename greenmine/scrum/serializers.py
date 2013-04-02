@@ -71,9 +71,11 @@ class TaskSerializer(serializers.ModelSerializer):
         model = Task
         fields = ()
 
-class BaseIssueSerializer(serializers.ModelSerializer):
+
+class IssueSerializer(serializers.ModelSerializer):
     tags = PickleField()
     comment = serializers.SerializerMethodField('get_comment')
+    history = serializers.SerializerMethodField('get_history')
 
     class Meta:
         model = Issue
@@ -82,45 +84,40 @@ class BaseIssueSerializer(serializers.ModelSerializer):
     def get_comment(self, obj):
         return ''
 
-
-class IssueSerializer(BaseIssueSerializer):
-    tags = PickleField()
-    comment = serializers.SerializerMethodField('get_comment')
-    history = serializers.SerializerMethodField('get_history')
-
-    def get_issues_diff(self, old_data, new_data, by, comment):
+    def get_issues_diff(self, old_issue_version, new_issue_version):
+        old_obj = old_issue_version.field_dict
+        new_obj = new_issue_version.field_dict
 
         diff_dict = {
-            'modified_date': new_data['modified_date'],
-            'by': by,
-            'comment': comment,
+            'modified_date': new_obj['modified_date'],
+            'by': old_issue_version.revision.user,
+            'comment': old_issue_version.revision.comment,
         }
 
-        for key in old_data.keys():
-            if key in ['modified_date', 'created_date', 'comment']:
+        for key in old_obj.keys():
+            if key == 'modified_date':
                 continue
 
-            if old_data[key] == new_data[key]:
+            if old_obj[key] == new_obj[key]:
                 continue
 
             diff_dict[key] = {
-                'old': old_data[key],
-                'new': new_data[key],
+                'old': old_obj[key],
+                'new': new_obj[key],
             }
 
         return diff_dict
 
     def get_history(self, obj):
         diff_list = []
-        current_data = BaseIssueSerializer(obj).data
+        current = None
 
         for version in reversed(list(reversion.get_for_object(obj))):
-            version_data = version.field_dict
-            by = version.revision.user
-            comment = version.revision.comment
-            issues_diff = self.get_issues_diff(current_data, version_data, by, comment)
-            diff_list.append(issues_diff)
-            current_data = version.field_dict
+            if current:
+                issues_diff = self.get_issues_diff(version, current)
+                diff_list.append(issues_diff)
+
+            current = version
 
         return diff_list
 

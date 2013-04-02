@@ -172,7 +172,7 @@ class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = IssueSerializer
     permission_classes = (IsAuthenticated, IssueDetailPermission,)
 
-    def pre_save(self, obj, created=False):
+    def post_save(self, obj, created=False):
         with reversion.create_revision():
             #Update the comment in the last version
             reversion.set_comment(self.request.DATA['comment'])
