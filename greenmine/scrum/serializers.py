@@ -83,7 +83,11 @@ class IssueSerializer(serializers.ModelSerializer):
     def get_issues_diff(self, old_issue_version, new_issue_version):
         old_obj = old_issue_version.field_dict
         new_obj = new_issue_version.field_dict
-        diff_dict = {'modified_date':new_obj['modified_date']}
+
+        diff_dict = {
+            'modified_date': new_obj['modified_date'],
+            'by': old_issue_version.revision.user,
+        }
 
         for key in old_obj.keys():
             if key == 'modified_date':
