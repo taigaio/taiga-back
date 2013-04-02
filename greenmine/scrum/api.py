@@ -135,22 +135,6 @@ class ChangeAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, ChangeAttachmentDetailPermission,)
 
 
-class IssueList(generics.ListCreateAPIView):
-    model = Issue
-    serializer_class = IssueSerializer
-    filter_fields = ('project',)
-    permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
-
-
-class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Issue
-    serializer_class = IssueSerializer
-    permission_classes = (IsAuthenticated, IssueDetailPermission,)
-
-
 class TaskList(generics.ListCreateAPIView):
     model = Task
     serializer_class = TaskSerializer
@@ -179,10 +163,19 @@ class IssueList(generics.ListCreateAPIView):
     def pre_save(self, obj):
         obj.owner = self.request.user
 
+    def get_queryset(self):
+        return self.model.objects.filter(project__members=self.request.user)
+
 
 class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Issue
     serializer_class = IssueSerializer
+    permission_classes = (IsAuthenticated, IssueDetailPermission,)
+
+    def pre_save(self, obj, created=False):
+        with reversion.create_revision():
+            #Update the comment in the last version
+            reversion.set_comment(self.request.DATA['comment'])
 
 
 class SeverityList(generics.ListCreateAPIView):
