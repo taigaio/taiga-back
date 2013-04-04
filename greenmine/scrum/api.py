@@ -174,8 +174,9 @@ class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():
-            #Update the comment in the last version
-            reversion.set_comment(self.request.DATA['comment'])
+            if "comment" in self.request.DATA:
+                # Update the comment in the last version
+                reversion.set_comment(self.request.DATA['comment'])
 
 
 class SeverityList(generics.ListCreateAPIView):

@@ -64,3 +64,9 @@ class Role(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
+
+
+
+# Patch api view for correctly return 401 responses on
+# request is authenticated instead of 403
+from .monkey import patch_api_view; patch_api_view()
