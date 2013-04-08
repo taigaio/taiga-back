@@ -100,13 +100,14 @@ class UserStoryDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, UserStoryDetailPermission,)
 
 
-class AttachmentList(generics.ListCreateAPIView):
+class IssuesAttachmentList(generics.ListCreateAPIView):
     model = Attachment
     serializer_class = AttachmentSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        return super(IssueAttachmentList, self).get_queryset()\
+                    .filter(project__members=self.request.user)
 
     def pre_save(self, obj):
         obj.owner = self.request.user
