@@ -49,11 +49,17 @@ class MilestoneSerializer(serializers.ModelSerializer):
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
-    issue = serializers.Field(source='object_id')
+    url = serializers.SerializerMethodField('get_url')
+
+    def get_url(self, obj):
+        # FIXME: add sites or correct url.
+        return "http://localhost:8000{0}".format(obj.attached_file.url)
 
     class Meta:
         model = Attachment
-        fields = ('id', 'project', 'owner', 'attached_file', 'created_date', 'issue')
+        fields = ('id', 'project', 'owner', 'attached_file',
+                  'created_date', 'object_id', 'url')
+        read_only_fields = ('owner',)
 
 
 class TaskSerializer(serializers.ModelSerializer):

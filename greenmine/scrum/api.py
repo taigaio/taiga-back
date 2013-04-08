@@ -121,6 +121,7 @@ class IssuesAttachmentList(generics.ListCreateAPIView):
                     .filter(content_type=ct)
 
     def pre_save(self, obj):
+        obj.content_type = ContentType.objects.get_for_model(Issue)
         obj.owner = self.request.user
 
 
