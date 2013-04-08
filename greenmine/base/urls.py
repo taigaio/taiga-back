@@ -9,5 +9,6 @@ urlpatterns = format_suffix_patterns(patterns('',
     url(r'^auth/login/$', api.Login.as_view(), name='login'),
     url(r'^auth/logout/$', api.Logout.as_view(), name='logout'),
     url(r'^users/$', api.UserList.as_view(), name="user-list"),
+    url(r'^roles/$', api.RoleList.as_view(), name="user-roles"),
     url(r'^$', api.ApiRoot.as_view(), name='api_root'),
 ))

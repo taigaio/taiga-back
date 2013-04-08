@@ -13,9 +13,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework import generics
 
-from greenmine.base.serializers import LoginSerializer, UserLogged, UserSerializer
-from greenmine.base.models import User
+from greenmine.base.serializers import LoginSerializer, UserLogged, UserSerializer, RoleSerializer
+from greenmine.base.models import User, Role
 from greenmine.scrum import models
+
+import django_filters
 
 
 class ApiRoot(APIView):
@@ -41,8 +43,17 @@ class ApiRoot(APIView):
             'question_responses': reverse('question-response-list', request=request, format=format),
             'wiki/pages': reverse('wiki-page-list', request=request, format=format),
             'users': reverse('user-list', request=request, format=format),
+            'roles': reverse('user-roles', request=request, format=format),
         })
 
+
+class RoleList(generics.ListCreateAPIView):
+    model = Role
+    serializer_class = RoleSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return self.model.objects.all()
 
 
 #class UserFilter(django_filters.FilterSet):
@@ -53,13 +64,28 @@ class ApiRoot(APIView):
 #        fields = ['project', 'milestone', 'no_milestone']
 
 
+class UserFilter(django_filters.FilterSet):
+    is_active = django_filters.BooleanFilter(name="is_active")
+
+    class Meta:
+        model = User
+        fields = ['is_active',]
+
+
 class UserList(generics.ListCreateAPIView):
     model = User
     serializer_class = UserSerializer
+    filter_class = UserFilter
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         projects = models.Project.objects.filter(members=self.request.user)
+
+        #Project filtering
+        project = self.request.QUERY_PARAMS.get('project', None)
+        if project is not None:
+            projects = projects.filter(id=project)
+
         return super(UserList, self).get_queryset().filter(projects__in=projects)\
                     .order_by('id').distinct()
 

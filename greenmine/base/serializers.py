@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from rest_framework import serializers
-from greenmine.base.models import User
+from greenmine.base.models import User, Role
 
 
 class UserLogged(object):
@@ -56,5 +56,10 @@ class LoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        exclude = ('password',)
-        #fields = ('id', 'username')
+        fields = ('id', 'username', 'first_name', 'last_name', 'color', 'is_active',)
+
+
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = ('id', 'name', 'slug', 'permissions',)
