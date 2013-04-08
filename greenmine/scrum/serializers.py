@@ -49,9 +49,11 @@ class MilestoneSerializer(serializers.ModelSerializer):
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
+    issue = serializers.Field(source='object_id')
+
     class Meta:
         model = Attachment
-        fields = ('id', 'project', 'owner', 'attached_file', 'created_date',)
+        fields = ('id', 'project', 'owner', 'attached_file', 'created_date', 'issue')
 
 
 class TaskSerializer(serializers.ModelSerializer):

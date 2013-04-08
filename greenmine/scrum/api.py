@@ -100,20 +100,29 @@ class UserStoryDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, UserStoryDetailPermission,)
 
 
+class IssuesAttachmentFilter(django_filters.FilterSet):
+    issue = django_filters.NumberFilter(name="object_id", lookup_type='exact')
+
+    class Meta:
+        model = Attachment
+        fields = ['project', 'issue']
+
+
 class IssuesAttachmentList(generics.ListCreateAPIView):
     model = Attachment
     serializer_class = AttachmentSerializer
     permission_classes = (IsAuthenticated,)
+    filter_class = IssuesAttachmentFilter
 
     def get_queryset(self):
-        return super(IssueAttachmentList, self).get_queryset()\
+        return super(IssuesAttachmentList, self).get_queryset()\
                     .filter(project__members=self.request.user)
 
     def pre_save(self, obj):
         obj.owner = self.request.user
 
 
-class AttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
+class IssuesAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Attachment
     serializer_class = AttachmentSerializer
     permission_classes = (IsAuthenticated, AttachmentDetailPermission,)
