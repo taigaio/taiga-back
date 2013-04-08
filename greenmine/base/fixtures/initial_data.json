@@ -170,36 +170,6 @@
                 "questionresponse"
             ],  
             [
-                "add_change", 
-                "scrum", 
-                "change"
-            ], 
-            [
-                "change_change", 
-                "scrum", 
-                "change"
-            ], 
-            [
-                "delete_change", 
-                "scrum", 
-                "change"
-            ], 
-            [
-                "add_changeattachment", 
-                "scrum", 
-                "changeattachment"
-            ], 
-            [
-                "change_changeattachment", 
-                "scrum", 
-                "changeattachment"
-            ], 
-            [
-                "delete_changeattachment", 
-                "scrum", 
-                "changeattachment"
-            ], 
-            [
                 "add_issue", 
                 "scrum", 
                 "issue"

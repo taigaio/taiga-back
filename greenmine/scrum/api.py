@@ -7,6 +7,7 @@ from greenmine.scrum.serializers import *
 from greenmine.scrum.models import *
 from greenmine.scrum.permissions import *
 
+
 class UserStoryFilter(django_filters.FilterSet):
     no_milestone = django_filters.NumberFilter(name="milestone", lookup_type='isnull')
 
@@ -99,9 +100,9 @@ class UserStoryDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, UserStoryDetailPermission,)
 
 
-class ChangeList(generics.ListCreateAPIView):
-    model = Change
-    serializer_class = ChangeSerializer
+class AttachmentList(generics.ListCreateAPIView):
+    model = Attachment
+    serializer_class = AttachmentSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
@@ -111,28 +112,10 @@ class ChangeList(generics.ListCreateAPIView):
         obj.owner = self.request.user
 
 
-class ChangeDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Change
-    serializer_class = ChangeSerializer
-    permission_classes = (IsAuthenticated, ChangeDetailPermission,)
-
-
-class ChangeAttachmentList(generics.ListCreateAPIView):
-    model = ChangeAttachment
-    serializer_class = ChangeAttachmentSerializer
-    permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self):
-        return self.model.objects.filter(change__project__members=self.request.user)
-
-    def pre_save(self, obj):
-        obj.owner = self.request.user
-
-
-class ChangeAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = ChangeAttachment
-    serializer_class = ChangeAttachmentSerializer
-    permission_classes = (IsAuthenticated, ChangeAttachmentDetailPermission,)
+class AttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Attachment
+    serializer_class = AttachmentSerializer
+    permission_classes = (IsAuthenticated, AttachmentDetailPermission,)
 
 
 class TaskList(generics.ListCreateAPIView):

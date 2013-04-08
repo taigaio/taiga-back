@@ -48,19 +48,9 @@ class MilestoneSerializer(serializers.ModelSerializer):
         fields = ()
 
 
-class ChangeSerializer(serializers.ModelSerializer):
-    tags = PickleField()
-
+class AttachmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Change
-        fields = ()
-
-
-class ChangeAttachmentSerializer(serializers.ModelSerializer):
-    tags = PickleField()
-
-    class Meta:
-        model = ChangeAttachment
+        model = Attachment
         fields = ()
 
 

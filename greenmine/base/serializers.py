@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from rest_framework import serializers
+from greenmine.base.models import User
 
 
 class UserLogged(object):
@@ -48,3 +51,10 @@ class LoginSerializer(serializers.Serializer):
             instance.colorize_tags = attrs.get('colorize_tags', instance.colorize_tags)
             return instance
         return UserLogged(**attrs)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        exclude = ('password',)
+        #fields = ('id', 'username')

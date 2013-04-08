@@ -9,10 +9,13 @@ from rest_framework.parsers import JSONParser
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from rest_framework import generics
 
-from greenmine.base.serializers import LoginSerializer, UserLogged
+from greenmine.base.serializers import LoginSerializer, UserLogged, UserSerializer
 from greenmine.base.models import User
+from greenmine.scrum import models
 
 
 class ApiRoot(APIView):
@@ -23,8 +26,7 @@ class ApiRoot(APIView):
             'projects': reverse('project-list', request=request, format=format),
             'milestones': reverse('milestone-list', request=request, format=format),
             'user-stories': reverse('user-story-list', request=request, format=format),
-            'changes': reverse('change-list', request=request, format=format),
-            'change-attachments': reverse('change-attachment-list', request=request, format=format),
+            'attachments': reverse('attachment-list', request=request, format=format),
             'tasks': reverse('task-list', request=request, format=format),
             'issues': reverse('issue-list', request=request, format=format),
             'severities': reverse('severity-list', request=request, format=format),
@@ -39,7 +41,31 @@ class ApiRoot(APIView):
             'question_responses': reverse('question-response-list', request=request, format=format),
             'wiki_pages': reverse('wiki-page-list', request=request, format=format),
             'wiki_page_attachments': reverse('wiki-page-attachment-list', request=request, format=format),
+            'users': reverse('user-list', request=request, format=format),
         })
+
+
+
+#class UserFilter(django_filters.FilterSet):
+#    no_milestone = django_filters.NumberFilter(name="mileston", lookup_type='isnull')
+#
+#    class Meta:
+#        model = UserStory
+#        fields = ['project', 'milestone', 'no_milestone']
+
+
+class UserList(generics.ListCreateAPIView):
+    model = User
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        projects = models.Project.objects.filter(members=self.request.user)
+        return super(UserList, self).get_queryset().filter(projects__in=projects)\
+                    .order_by('id').distinct()
+
+    def pre_save(self, obj):
+        pass
 
 
 class Login(APIView):

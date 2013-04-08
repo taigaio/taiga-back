@@ -50,16 +50,10 @@ class UserStoryAdmin(reversion.VersionAdmin):
 admin.site.register(models.UserStory, UserStoryAdmin)
 
 
-class ChangeAdmin(reversion.VersionAdmin):
-    list_display = ["id", "change_type", "project", "owner"]
+class AttachmentAdmin(reversion.VersionAdmin):
+    list_display = ["id", "owner"]
 
-admin.site.register(models.Change, ChangeAdmin)
-
-
-class ChangeAttachmentAdmin(reversion.VersionAdmin):
-    list_display = ["id", "change", "owner"]
-
-admin.site.register(models.ChangeAttachment, ChangeAttachmentAdmin)
+admin.site.register(models.Attachment, AttachmentAdmin)
 
 
 class TaskAdmin(reversion.VersionAdmin):

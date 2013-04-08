@@ -1,5 +1,6 @@
 from greenmine.base.permissions import BaseDetailPermission
 
+
 class ProjectDetailPermission(BaseDetailPermission):
     get_permission = "can_view_project"
     put_permission = "change_project"
@@ -7,6 +8,7 @@ class ProjectDetailPermission(BaseDetailPermission):
     delete_permission = "delete_project"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  []
+
 
 class MilestoneDetailPermission(BaseDetailPermission):
     get_permission = "can_view_milestone"
@@ -16,6 +18,7 @@ class MilestoneDetailPermission(BaseDetailPermission):
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
 
+
 class UserStoryDetailPermission(BaseDetailPermission):
     get_permission = "can_view_userstory"
     put_permission = "change_userstory"
@@ -23,6 +26,7 @@ class UserStoryDetailPermission(BaseDetailPermission):
     delete_permission = "delete_userstory"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
+
 
 class TaskDetailPermission(BaseDetailPermission):
     get_permission = "can_view_task"
@@ -32,6 +36,7 @@ class TaskDetailPermission(BaseDetailPermission):
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
 
+
 class IssueDetailPermission(BaseDetailPermission):
     get_permission = "can_view_issue"
     put_permission = "change_issue"
@@ -40,21 +45,15 @@ class IssueDetailPermission(BaseDetailPermission):
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
 
-class ChangeDetailPermission(BaseDetailPermission):
-    get_permission = "can_view_change"
-    put_permission = "change_change"
-    patch_permission = "change_change"
-    delete_permission = "can_delete_change"
-    safe_methods = ['HEAD', 'OPTIONS']
-    path_to_project =  ['project']
 
-class ChangeAttachmentDetailPermission(BaseDetailPermission):
+class AttachmentDetailPermission(BaseDetailPermission):
     get_permission = "can_view_changeattachment"
     put_permission = "change_changeattachment"
     patch_permission = "change_changeattachment"
     delete_permission = "can_delete_changeattachment"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['change', 'project']
+
 
 class SeverityDetailPermission(BaseDetailPermission):
     get_permission = "can_view_severity"
@@ -64,6 +63,7 @@ class SeverityDetailPermission(BaseDetailPermission):
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
 
+
 class IssueStatusDetailPermission(BaseDetailPermission):
     get_permission = "can_view_issuestatus"
     put_permission = "can_severity_issuestatus"
@@ -71,6 +71,7 @@ class IssueStatusDetailPermission(BaseDetailPermission):
     delete_permission = "can_delete_issuestatus"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
+
 
 class TaskStatusDetailPermission(BaseDetailPermission):
     get_permission = "can_view_taskstatus"
@@ -80,6 +81,7 @@ class TaskStatusDetailPermission(BaseDetailPermission):
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
 
+
 class UserStoryStatusDetailPermission(BaseDetailPermission):
     get_permission = "can_view_userstorystatus"
     put_permission = "can_severity_userstorystatus"
@@ -87,6 +89,7 @@ class UserStoryStatusDetailPermission(BaseDetailPermission):
     delete_permission = "can_delete_userstorystatus"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
+
 
 class PriorityDetailPermission(BaseDetailPermission):
     get_permission = "can_view_priority"
@@ -96,6 +99,7 @@ class PriorityDetailPermission(BaseDetailPermission):
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
 
+
 class IssueTypeDetailPermission(BaseDetailPermission):
     get_permission = "can_view_issuetype"
     put_permission = "can_severity_issuetype"
@@ -103,6 +107,7 @@ class IssueTypeDetailPermission(BaseDetailPermission):
     delete_permission = "can_delete_issuetype"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
+
 
 class PointsDetailPermission(BaseDetailPermission):
     get_permission = "can_view_points"

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-
 from django.utils import timezone
 from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
@@ -245,29 +244,18 @@ class UserStory(models.Model):
         return self.status.is_closed
 
 
-class Change(models.Model):
-    change_type = models.IntegerField(choices=TASK_CHANGE_CHOICES)
-    owner = models.ForeignKey('base.User', related_name='changes')
-    created_date = models.DateTimeField(auto_now_add=True)
-
-    project = models.ForeignKey("Project", related_name="changes")
+class Attachment(models.Model):
+    owner = models.ForeignKey("base.User", related_name="change_attachments")
+    project = models.ForeignKey("Project", related_name="attachments")
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
-    data = PickledObjectField()
-    tags = PickledObjectField()
-
-
-class ChangeAttachment(models.Model):
-    change = models.ForeignKey("Change", related_name="attachments")
-    owner = models.ForeignKey("base.User", related_name="change_attachments")
-
     created_date = models.DateTimeField(auto_now_add=True)
     attached_file = models.FileField(upload_to="files/msg", max_length=500,
                                      null=True, blank=True)
-    tags = PickledObjectField()
+
 
 
 class Task(models.Model):
@@ -300,7 +288,6 @@ class Task(models.Model):
     watchers = models.ManyToManyField('base.User', related_name='task_watch',
                                       null=True)
 
-    changes = generic.GenericRelation(Change)
     tags = PickledObjectField()
 
     class Meta:
@@ -358,7 +345,6 @@ class Issue(models.Model):
     watchers = models.ManyToManyField('base.User', related_name='issue_watch',
                                       null=True)
 
-    changes = generic.GenericRelation(Change)
     tags = PickledObjectField()
 
     class Meta:
