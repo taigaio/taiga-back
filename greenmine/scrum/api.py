@@ -101,11 +101,9 @@ class UserStoryDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class IssuesAttachmentFilter(django_filters.FilterSet):
-    issue = django_filters.NumberFilter(name="object_id", lookup_type='exact')
-
     class Meta:
         model = Attachment
-        fields = ['project', 'issue']
+        fields = ['project', 'object_id']
 
 
 class IssuesAttachmentList(generics.ListCreateAPIView):
