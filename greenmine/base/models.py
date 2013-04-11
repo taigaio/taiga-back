@@ -62,9 +62,13 @@ class Role(models.Model):
     permissions = models.ManyToManyField('auth.Permission',
         verbose_name=_('permissions'), blank=True)
 
-    def __unicode__(self):
-        return unicode(self.name)
+    class Meta:
+        verbose_name = u'role'
+        verbose_name_plural = u'roles'
+        ordering = ['slug']
 
+    def __unicode__(self):
+        return self.name
 
 
 # Patch api view for correctly return 401 responses on

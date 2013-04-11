@@ -27,10 +27,16 @@ class Question(models.Model):
     tags = DictField()
 
     class Meta:
+        verbose_name = u'question'
+        verbose_name_plural = u'questions'
+        ordering = ['project', 'subject', 'id']
         permissions = (
             ('can_reply_question', 'Can reply questions'),
             ('can_change_owned_question', 'Can modify owned questions'),
         )
+
+    def __unicode__(self):
+        return self.subject
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -48,3 +54,12 @@ class QuestionResponse(models.Model):
     question = models.ForeignKey('Question', related_name='responses')
     owner = models.ForeignKey('base.User', related_name='questions_responses')
     tags = DictField()
+
+    class Meta:
+        verbose_name = u'question response'
+        verbose_name_plural = u'question responses'
+        ordering = ['question', 'created_date']
+
+    def __unicode__(self):
+        return u'{0} - response {1}'.format(unicode(self.question), self.id)
+

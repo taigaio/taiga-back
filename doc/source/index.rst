@@ -30,6 +30,7 @@ Contents:
    
    overview.rst
    settings.rst
+   coding_rules.rst
 
 
 

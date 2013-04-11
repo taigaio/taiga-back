@@ -20,16 +20,22 @@ class Document(models.Model):
                                      null=True, blank=True)
     tags = DictField()
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title, self.__class__)
-        super(Document, self).save(*args, **kwargs)
-
     class Meta:
-        ordering = ['title']
+        verbose_name = u'document'
+        verbose_name_plural = u'document'
+        ordering = ['project', 'title', 'id']
         permissions = (
             ('can_download_from_my_projects', 'Can download the documents from my projects'),
             ('can_download_from_other_projects', 'Can download the documents from other projects'),
             ('can_change_owned_documents', 'Can modify owned documents'),
             ('can_view_documents', 'Can modify owned documents'),
         )
+
+    def __unicode__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title, self.__class__)
+        super(Document, self).save(*args, **kwargs)
+

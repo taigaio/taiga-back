@@ -22,10 +22,13 @@ class Severity(models.Model):
     project = models.ForeignKey("Project", related_name="severities")
 
     class Meta:
+        verbose_name = u'severity'
+        verbose_name_plural = u'severities'
+        ordering = ['project', 'name']
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project({0})/severity({1})".format(self.project.id, self.name)
+        return u"project {0} - {1}".format(self.project_id, self.name)
 
 
 class IssueStatus(models.Model):
@@ -35,10 +38,13 @@ class IssueStatus(models.Model):
     project = models.ForeignKey("Project", related_name="issuestatuses")
 
     class Meta:
+        verbose_name = u'issue status'
+        verbose_name_plural = u'issue statuses'
+        ordering = ['project', 'name']
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project({0})/issue-status({1})".format(self.project.id, self.name)
+        return u"project {0} - {1}".format(self.project_id, self.name)
 
 
 class TaskStatus(models.Model):
@@ -49,10 +55,13 @@ class TaskStatus(models.Model):
     project = models.ForeignKey("Project", related_name="taskstatuses")
 
     class Meta:
+        verbose_name = u'task status'
+        verbose_name_plural = u'task statuses'
+        ordering = ['project', 'name']
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project({0})/task-status({1})".format(self.project.id, self.name)
+        return u"project {0} - {1}".format(self.project_id, self.name)
 
 
 class UserStoryStatus(models.Model):
@@ -62,10 +71,13 @@ class UserStoryStatus(models.Model):
     project = models.ForeignKey("Project", related_name="usstatuses")
 
     class Meta:
+        verbose_name = u'user story status'
+        verbose_name_plural = u'user story statuses'
+        ordering = ['project', 'name']
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project({0})/us-status({1})".format(self.project.id, self.name)
+        return u"project {0} - {1}".format(self.project_id, self.name)
 
 
 class Priority(models.Model):
@@ -74,10 +86,13 @@ class Priority(models.Model):
     project = models.ForeignKey("Project", related_name="priorities")
 
     class Meta:
+        verbose_name = u'priority'
+        verbose_name_plural = u'priorities'
+        ordering = ['project', 'name']
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project({0})/priority({1})".format(self.project.id, self.name)
+        return u"project {0} - {1}".format(self.project_id, self.name)
 
 
 class IssueType(models.Model):
@@ -87,10 +102,13 @@ class IssueType(models.Model):
     project = models.ForeignKey("Project", related_name="issuetypes")
 
     class Meta:
+        verbose_name = u'issue type'
+        verbose_name_plural = u'issue types'
+        ordering = ['project', 'name']
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project({0})/type({1})".format(self.project.id, self.name)
+        return u"project {0} - {1}".format(self.project_id, self.name)
 
 
 class Points(models.Model):
@@ -100,10 +118,13 @@ class Points(models.Model):
     project = models.ForeignKey("Project", related_name="points")
 
     class Meta:
+        verbose_name = u'point'
+        verbose_name_plural = u'points'
+        ordering = ['project', 'name']
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project({0})/point({1})".format(self.project.id, self.name)
+        return u"project {0} - {1}".format(self.project_id, self.name)
 
 
 class Membership(models.Model):
@@ -137,6 +158,9 @@ class Project(models.Model):
     tags = PickledObjectField()
 
     class Meta:
+        verbose_name = u'project'
+        verbose_name_plural = u'projects'
+        ordering = ['name']
         permissions = (
             ('can_list_projects', 'Can list projects'),
             ('can_view_project', 'Can view project'),
@@ -147,7 +171,7 @@ class Project(models.Model):
         return self.name
 
     def __repr__(self):
-        return u"<Project %s>" % (self.slug)
+        return u"<Project {0}>".format(self.id)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -174,16 +198,11 @@ class Milestone(models.Model):
     disponibility = models.FloatField(null=True, default=0.0)
     order = models.PositiveSmallIntegerField("Order", default=1)
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify_uniquely(self.name, self.__class__)
-
-        super(Milestone, self).save(*args, **kwargs)
-
     class Meta:
-        ordering = ['-created_date']
+        verbose_name = u'milestone'
+        verbose_name_plural = u'milestones'
+        ordering = ['project', '-created_date']
         unique_together = ('name', 'project')
-
         permissions = (
             ('can_view_milestone', 'Can view milestones'),
         )
@@ -192,7 +211,13 @@ class Milestone(models.Model):
         return self.name
 
     def __repr__(self):
-        return u"<Milestone %s>" % (self.id)
+        return u"<Milestone {0}>".format(self.id)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify_uniquely(self.name, self.__class__)
+
+        super(Milestone, self).save(*args, **kwargs)
 
 
 class UserStory(models.Model):
@@ -223,7 +248,9 @@ class UserStory(models.Model):
     tags = PickledObjectField()
 
     class Meta:
-        ordering = ['order']
+        verbose_name = u'user story'
+        verbose_name_plural = u'user stories'
+        ordering = ['project', 'order']
         unique_together = ('ref', 'project')
         permissions = (
             ('can_comment_userstory', 'Can comment user stories'),
@@ -233,11 +260,11 @@ class UserStory(models.Model):
             ('can_add_userstory_to_milestones', 'Can add user stories to milestones'),
         )
 
+    def __unicode__(self):
+        return u"({1}) {0}".format(self.ref, self.subject)
+
     def __repr__(self):
         return u"<UserStory %s>" % (self.id)
-
-    def __unicode__(self):
-        return u"{0} ({1})".format(self.subject, self.ref)
 
     @property
     def is_closed(self):
@@ -256,7 +283,15 @@ class Attachment(models.Model):
     attached_file = models.FileField(upload_to="files/msg", max_length=500,
                                      null=True, blank=True)
 
+    class Meta:
+        verbose_name = u'attachment'
+        verbose_name_plural = u'attachments'
+        ordering = ['project', 'created_date']
 
+    def __unicode__(self):
+        return u'content_type {0} - object_id {1} - attachment {2}'.format(
+                self.content_type, self.object_id, self.id
+        )
 
 class Task(models.Model):
     uuid = models.CharField(max_length=40, unique=True, blank=True)
@@ -291,6 +326,9 @@ class Task(models.Model):
     tags = PickledObjectField()
 
     class Meta:
+        verbose_name = u'task'
+        verbose_name_plural = u'tasks'
+        ordering = ['project', 'created_date']
         unique_together = ('ref', 'project')
         permissions = (
             ('can_comment_task', 'Can comment tasks'),
@@ -304,7 +342,7 @@ class Task(models.Model):
         )
 
     def __unicode__(self):
-        return self.subject
+        return u"({1}) {0}".format(self.ref, self.subject)
 
     def save(self, *args, **kwargs):
         if self.id:
@@ -348,6 +386,9 @@ class Issue(models.Model):
     tags = PickledObjectField()
 
     class Meta:
+        verbose_name = u'issue'
+        verbose_name_plural = u'issues'
+        ordering = ['project', 'created_date']
         unique_together = ('ref', 'project')
         permissions = (
             ('can_comment_issue', 'Can comment issues'),
@@ -360,7 +401,7 @@ class Issue(models.Model):
         )
 
     def __unicode__(self):
-        return self.subject
+        return u"({1}) {0}".format(self.ref, self.subject)
 
     def save(self, *args, **kwargs):
         if self.id:
