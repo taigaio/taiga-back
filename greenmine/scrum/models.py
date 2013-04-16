@@ -17,9 +17,13 @@ from greenmine.scrum.choices import (ISSUESTATUSES, TASKSTATUSES, USSTATUSES,
 
 
 class Severity(models.Model):
-    name = models.CharField(max_length=255)
-    order = models.IntegerField(default=10)
-    project = models.ForeignKey("Project", related_name="severities")
+    name = models.CharField(max_length=255, null=False, blank=False,
+                verbose_name=_('name'))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                verbose_name=_('order'))
+    project = models.ForeignKey('Project', null=False, blank=False,
+                related_name='severities',
+                verbose_name=_('project'))
 
     class Meta:
         verbose_name = u'severity'
@@ -28,14 +32,19 @@ class Severity(models.Model):
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return u'project {0} - {1}'.format(self.project_id, self.name)
 
 
 class IssueStatus(models.Model):
-    name = models.CharField(max_length=255)
-    order = models.IntegerField(default=10)
-    is_closed = models.BooleanField(default=False)
-    project = models.ForeignKey("Project", related_name="issuestatuses")
+    name = models.CharField(max_length=255, null=False, blank=False,
+                verbose_name=_('name'))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                verbose_name=_('order'))
+    is_closed = models.BooleanField(default=False, null=False, blank=True,
+                verbose_name=_('is closed'))
+    project = models.ForeignKey('Project', null=False, blank=False,
+                related_name='issue_statuses',
+                verbose_name=_('project'))
 
     class Meta:
         verbose_name = u'issue status'
@@ -44,15 +53,21 @@ class IssueStatus(models.Model):
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return u'project {0} - {1}'.format(self.project_id, self.name)
 
 
 class TaskStatus(models.Model):
-    name = models.CharField(max_length=255)
-    order = models.IntegerField(default=10)
-    is_closed = models.BooleanField(default=False)
-    color = models.CharField(max_length=20, default="#999999")
-    project = models.ForeignKey("Project", related_name="taskstatuses")
+    name = models.CharField(max_length=255, null=False, blank=False,
+                verbose_name=_('name'))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                verbose_name=_('order'))
+    is_closed = models.BooleanField(default=False, null=False, blank=True,
+                verbose_name=_('is closed'))
+    color = models.CharField(max_length=20, null=False, blank=False, default='#999999',
+                verbose_name=_('color'))
+    project = models.ForeignKey('Project', null=False, blank=False,
+                related_name='task_statuses',
+                verbose_name=_('project'))
 
     class Meta:
         verbose_name = u'task status'
@@ -61,14 +76,19 @@ class TaskStatus(models.Model):
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return u'project {0} - {1}'.format(self.project_id, self.name)
 
 
 class UserStoryStatus(models.Model):
-    name = models.CharField(max_length=255)
-    order = models.IntegerField(default=10)
-    is_closed = models.BooleanField(default=False)
-    project = models.ForeignKey("Project", related_name="usstatuses")
+    name = models.CharField(max_length=255, null=False, blank=False,
+                verbose_name=_('name'))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                verbose_name=_('order'))
+    is_closed = models.BooleanField(default=False, null=False, blank=True,
+                verbose_name=_('is closed'))
+    project = models.ForeignKey('Project', null=False, blank=False,
+                related_name='us_statuses',
+                verbose_name=_('project'))
 
     class Meta:
         verbose_name = u'user story status'
@@ -77,13 +97,17 @@ class UserStoryStatus(models.Model):
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return u'project {0} - {1}'.format(self.project_id, self.name)
 
 
 class Priority(models.Model):
-    name = models.CharField(max_length=255)
-    order = models.IntegerField(default=10)
-    project = models.ForeignKey("Project", related_name="priorities")
+    name = models.CharField(max_length=255, null=False, blank=False,
+                verbose_name=_('name'))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                verbose_name=_('order'))
+    project = models.ForeignKey('Project', null=False, blank=False,
+                related_name='priorities',
+                verbose_name=_('project'))
 
     class Meta:
         verbose_name = u'priority'
@@ -92,14 +116,17 @@ class Priority(models.Model):
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return u'project {0} - {1}'.format(self.project_id, self.name)
 
 
 class IssueType(models.Model):
-    name = models.CharField(max_length=255)
-    order = models.IntegerField(default=10)
-
-    project = models.ForeignKey("Project", related_name="issuetypes")
+    name = models.CharField(max_length=255, null=False, blank=False,
+                verbose_name=_('name'))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                verbose_name=_('order'))
+    project = models.ForeignKey('Project', null=False, blank=False,
+                related_name='issue_types',
+                verbose_name=_('project'))
 
     class Meta:
         verbose_name = u'issue type'
@@ -108,14 +135,17 @@ class IssueType(models.Model):
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return u'project {0} - {1}'.format(self.project_id, self.name)
 
 
 class Points(models.Model):
-    name = models.CharField(max_length=255)
-    order = models.IntegerField(default=10)
-
-    project = models.ForeignKey("Project", related_name="points")
+    name = models.CharField(max_length=255, null=False, blank=False,
+                verbose_name=_('name'))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                verbose_name=_('order'))
+    project = models.ForeignKey('Project', null=False, blank=False,
+                related_name='points',
+                verbose_name=_('project'))
 
     class Meta:
         verbose_name = u'point'
@@ -124,38 +154,50 @@ class Points(models.Model):
         unique_together = ('project', 'name')
 
     def __unicode__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return u'project {0} - {1}'.format(self.project_id, self.name)
 
 
 class Membership(models.Model):
-    user = models.ForeignKey("base.User")
-    project = models.ForeignKey("Project")
-    role = models.ForeignKey("base.Role")
+    user = models.ForeignKey('base.User', null=False, blank=False)
+    project = models.ForeignKey('Project', null=False, blank=False)
+    role = models.ForeignKey('base.Role', null=False, blank=False)
 
     class Meta:
         unique_together = ('user', 'project')
 
 
 class Project(models.Model):
-    uuid = models.CharField(max_length=40, unique=True, blank=True)
-    name = models.CharField(max_length=250, unique=True)
-    slug = models.SlugField(max_length=250, unique=True, blank=True)
-    description = models.TextField(blank=False)
-
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
-
-    owner = models.ForeignKey("base.User", related_name="owned_projects", blank=True)
-    members = models.ManyToManyField("base.User", related_name="projects", through='Membership')
-    public = models.BooleanField(default=True)
-
-    last_us_ref = models.BigIntegerField(null=True, default=1)
-    last_task_ref = models.BigIntegerField(null=True, default=1)
-    last_issue_ref = models.BigIntegerField(null=True, default=1)
-
-    sprints = models.IntegerField(default=1, blank=True, null=True)
-    total_story_points = models.FloatField(default=None, null=True)
-    tags = PickledObjectField()
+    uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
+                verbose_name=_('uuid'))
+    name = models.CharField(max_length=250, unique=True, null=False, blank=False,
+                verbose_name=_('name'))
+    slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
+                verbose_name=_('slug'))
+    description = models.TextField(null=False, blank=False,
+                verbose_name=_('description'))
+    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+                verbose_name=_('created date'))
+    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+                verbose_name=_('modified date'))
+    owner = models.ForeignKey('base.User', null=False, blank=True,
+                related_name='owned_projects',
+                verbose_name=_('owner'))
+    members = models.ManyToManyField('base.User', related_name='projects', through='Membership',
+                verbose_name=_('members'))
+    public = models.BooleanField(default=True, null=False, blank=True,
+                verbose_name=_('public'))
+    last_us_ref = models.BigIntegerField(null=True, blank=False, default=1,
+                verbose_name=_('last us ref'))
+    last_task_ref = models.BigIntegerField(null=True, blank=False, default=1,
+                verbose_name=_('last task ref'))
+    last_issue_ref = models.BigIntegerField(null=True, blank=False, default=1,
+                verbose_name=_('last issue ref'))
+    sprints = models.IntegerField(default=1, null=True, blank=True,
+                verbose_name=_('number of sprints'))
+    total_story_points = models.FloatField(default=None, null=True, blank=False,
+                verbose_name=_('total story points'))
+    tags = PickledObjectField(null=False, blank=True,
+                verbose_name=_('tags'))
 
     class Meta:
         verbose_name = u'project'
@@ -171,7 +213,7 @@ class Project(models.Model):
         return self.name
 
     def __repr__(self):
-        return u"<Project {0}>".format(self.id)
+        return u'<Project {0}>'.format(self.id)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -181,22 +223,32 @@ class Project(models.Model):
 
 
 class Milestone(models.Model):
-    uuid = models.CharField(max_length=40, unique=True, blank=True)
-    name = models.CharField(max_length=200, db_index=True)
-    slug = models.SlugField(max_length=250, unique=True, blank=True)
-    owner = models.ForeignKey('base.User', related_name="milestones",
-                              null=True, blank=True)
-    project = models.ForeignKey('Project', related_name="milestones")
-
-    estimated_start = models.DateField(null=True, default=None)
-    estimated_finish = models.DateField(null=True, default=None)
-
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
-    closed = models.BooleanField(default=False)
-
-    disponibility = models.FloatField(null=True, default=0.0)
-    order = models.PositiveSmallIntegerField("Order", default=1)
+    uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
+                verbose_name=_('uuid'))
+    name = models.CharField(max_length=200, db_index=True, null=False, blank=False,
+                verbose_name=_('name'))
+    slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
+                verbose_name=_('slug'))
+    owner = models.ForeignKey('base.User', null=True, blank=False,
+                related_name='owned_milestones',
+                verbose_name=_('owner'))
+    project = models.ForeignKey('Project', null=False, blank=False,
+                related_name='milestones',
+                verbose_name=_('project'))
+    estimated_start = models.DateField(null=True, blank=True, default=None,
+                verbose_name=_('estimated start'))
+    estimated_finish = models.DateField(null=True, blank=True, default=None,
+                verbose_name=_('estimated finish'))
+    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+                verbose_name=_('created date'))
+    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+                verbose_name=_('modified date'))
+    closed = models.BooleanField(default=False, null=False, blank=True,
+                verbose_name=_('is closed'))
+    disponibility = models.FloatField(default=0.0, null=True, blank=True,
+                verbose_name=_('disponibility'))
+    order = models.PositiveSmallIntegerField('Order', default=1, null=False, blank=False,
+                verbose_name=_('order'))
 
     class Meta:
         verbose_name = u'milestone'
@@ -211,7 +263,7 @@ class Milestone(models.Model):
         return self.name
 
     def __repr__(self):
-        return u"<Milestone {0}>".format(self.id)
+        return u'<Milestone {0}>'.format(self.id)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -221,31 +273,46 @@ class Milestone(models.Model):
 
 
 class UserStory(models.Model):
-    uuid = models.CharField(max_length=40, unique=True, blank=True)
-    ref = models.BigIntegerField(db_index=True, null=True, default=None, blank=True)
-    milestone = models.ForeignKey("Milestone", blank=True,
-                                  related_name="user_stories", null=True,
-                                  default=None)
-    project = models.ForeignKey("Project", related_name="user_stories")
-    owner = models.ForeignKey("base.User", blank=True, null=True,
-                              related_name="user_stories")
-
-    status = models.ForeignKey("UserStoryStatus", related_name="userstories")
-    points = models.ForeignKey("Points", related_name="userstories")
-    order = models.PositiveSmallIntegerField(default=100)
-
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True, auto_now=True)
-    finish_date = models.DateTimeField(null=True, blank=True)
-
-    subject = models.CharField(max_length=500)
-    description = models.TextField()
-
-    watchers = models.ManyToManyField('base.User', related_name='us_watch', null=True)
-
-    client_requirement = models.BooleanField(default=False)
-    team_requirement = models.BooleanField(default=False)
-    tags = PickledObjectField()
+    uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
+                verbose_name=_('uuid'))
+    ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
+                verbose_name=_('ref'))
+    milestone = models.ForeignKey('Milestone', null=True, blank=True, default=None,
+                related_name='user_stories',
+                verbose_name=_('milestone'))
+    project = models.ForeignKey('Project', null=False, blank=False,
+                related_name='user_stories',
+                verbose_name=_('project'))
+    owner = models.ForeignKey('base.User', null=True, blank=True,
+                related_name='owned_user_stories',
+                verbose_name=_('owner'))
+    status = models.ForeignKey('UserStoryStatus', null=False, blank=False,
+                related_name='user_stories',
+                verbose_name=_('status'))
+    points = models.ForeignKey('Points', null=False, blank=False,
+                related_name='userstories',
+                verbose_name=_('points'))
+    order = models.PositiveSmallIntegerField(null=False, blank=False, default=100,
+                verbose_name=_('order'))
+    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+                verbose_name=_('created date'))
+    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+                verbose_name=_('modified date'))
+    finish_date = models.DateTimeField(null=True, blank=True,
+                verbose_name=_('finish date'))
+    subject = models.CharField(max_length=500, null=False, blank=False,
+                verbose_name=_('subject'))
+    description = models.TextField(null=False, blank=True,
+                verbose_name=_('description'))
+    watchers = models.ManyToManyField('base.User', null=True, blank=True,
+                related_name='watched_us',
+                verbose_name=_('watchers'))
+    client_requirement = models.BooleanField(default=False, null=False, blank=True,
+                verbose_name=_('is client requirement'))
+    team_requirement = models.BooleanField(default=False, null=False, blank=True,
+                verbose_name=_('is team requirement'))
+    tags = PickledObjectField(null=False, blank=True,
+                verbose_name=_('tags'))
 
     class Meta:
         verbose_name = u'user story'
@@ -261,10 +328,10 @@ class UserStory(models.Model):
         )
 
     def __unicode__(self):
-        return u"({1}) {0}".format(self.ref, self.subject)
+        return u'({1}) {0}'.format(self.ref, self.subject)
 
     def __repr__(self):
-        return u"<UserStory %s>" % (self.id)
+        return u'<UserStory %s>' % (self.id)
 
     @property
     def is_closed(self):
@@ -272,16 +339,24 @@ class UserStory(models.Model):
 
 
 class Attachment(models.Model):
-    owner = models.ForeignKey("base.User", related_name="change_attachments")
-    project = models.ForeignKey("Project", related_name="attachments")
-
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
+    owner = models.ForeignKey('base.User', null=False, blank=False,
+                related_name='change_attachments',
+                verbose_name=_('owner'))
+    project = models.ForeignKey('Project', null=False, blank=False,
+                related_name='attachments',
+                verbose_name=_('project'))
+    content_type = models.ForeignKey(ContentType, null=False, blank=False,
+                verbose_name=_('content type'))
+    object_id = models.PositiveIntegerField(null=False, blank=False,
+                verbose_name=_('object id'))
     content_object = generic.GenericForeignKey('content_type', 'object_id')
-
-    created_date = models.DateTimeField(auto_now_add=True)
-    attached_file = models.FileField(upload_to="files/msg", max_length=500,
-                                     null=True, blank=True)
+    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+                verbose_name=_('created date'))
+    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+                verbose_name=_('modified date'))
+    attached_file = models.FileField(max_length=500, null=True, blank=True,
+                upload_to='files/msg',
+                verbose_name=_('attached file'))
 
     class Meta:
         verbose_name = u'attachment'
@@ -293,37 +368,51 @@ class Attachment(models.Model):
                 self.content_type, self.object_id, self.id
         )
 
+
 class Task(models.Model):
-    uuid = models.CharField(max_length=40, unique=True, blank=True)
-    user_story = models.ForeignKey('UserStory', related_name='tasks')
-    ref = models.BigIntegerField(db_index=True, null=True, default=None)
-    owner = models.ForeignKey("base.User", null=True, default=None,
-                              related_name="tasks")
-
-    status = models.ForeignKey("TaskStatus", related_name="tasks")
-    severity = models.ForeignKey("Severity", related_name="tasks")
-    priority = models.ForeignKey("Priority", related_name="tasks")
-    status = models.ForeignKey("TaskStatus", related_name="tasks")
-
-    milestone = models.ForeignKey('Milestone', related_name='tasks', null=True,
-                                  default=None, blank=True)
-
-    project = models.ForeignKey('Project', related_name='tasks')
-
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True)
-    finished_date = models.DateTimeField(null=True, blank=True)
-
-    subject = models.CharField(max_length=500)
-    description = models.TextField(blank=True)
-    assigned_to = models.ForeignKey('base.User',
-                                    related_name='user_storys_assigned_to_me',
-                                    blank=True, null=True, default=None)
-
-    watchers = models.ManyToManyField('base.User', related_name='task_watch',
-                                      null=True)
-
-    tags = PickledObjectField()
+    uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
+                verbose_name=_('uuid'))
+    user_story = models.ForeignKey('UserStory', null=False, blank=False,
+                related_name='tasks',
+                verbose_name=_('user story'))
+    ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
+                verbose_name=_('ref'))
+    owner = models.ForeignKey('base.User', null=True, blank=True, default=None,
+                related_name='owned_tasks',
+                verbose_name=_('owner'))
+    severity = models.ForeignKey('Severity', null=False, blank=False,
+                related_name='tasks',
+                verbose_name=_('severity'))
+    priority = models.ForeignKey('Priority', null=False, blank=False,
+                related_name='tasks',
+                verbose_name=_('priority'))
+    status = models.ForeignKey('TaskStatus', null=False, blank=False,
+                related_name='tasks',
+                verbose_name=_('status'))
+    milestone = models.ForeignKey('Milestone', null=True, blank=True, default=None,
+                related_name='tasks',
+                verbose_name=_('milestone'))
+    project = models.ForeignKey('Project', null=False, blank=False,
+                related_name='tasks',
+                verbose_name=_('project'))
+    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+                verbose_name=_('created date'))
+    modified_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+                verbose_name=_('modified date'))
+    finished_date = models.DateTimeField(null=True, blank=True,
+                verbose_name=_('finished date'))
+    subject = models.CharField(max_length=500, null=False, blank=False,
+                verbose_name=_('subject'))
+    description = models.TextField(null=False, blank=True,
+                verbose_name=_('description'))
+    assigned_to = models.ForeignKey('base.User', blank=True, null=True, default=None,
+                related_name='user_storys_assigned_to_me',
+                verbose_name=_('assigned to'))
+    watchers = models.ManyToManyField('base.User', null=True, blank=True,
+                related_name='watched_tasks',
+                verbose_name=_('watchers'))
+    tags = PickledObjectField(null=False, blank=True,
+                verbose_name=_('tags'))
 
     class Meta:
         verbose_name = u'task'
@@ -342,48 +431,62 @@ class Task(models.Model):
         )
 
     def __unicode__(self):
-        return u"({1}) {0}".format(self.ref, self.subject)
+        return u'({1}) {0}'.format(self.ref, self.subject)
 
     def save(self, *args, **kwargs):
         if self.id:
             self.modified_date = timezone.now()
 
         if not self.ref:
-            self.ref = ref_uniquely(self.project, "last_task_ref", self.__class__)
+            self.ref = ref_uniquely(self.project, 'last_task_ref', self.__class__)
 
         super(Task, self).save(*args, **kwargs)
 
 
 class Issue(models.Model):
-    uuid = models.CharField(max_length=40, unique=True, blank=True)
-    ref = models.BigIntegerField(db_index=True, null=True, default=None)
-    owner = models.ForeignKey("base.User", null=True, default=None,
-                              related_name="issues")
-
-    status = models.ForeignKey("IssueStatus", related_name="issues")
-    severity = models.ForeignKey("Severity", related_name="issues")
-    priority = models.ForeignKey("Priority", related_name="issues")
-    type = models.ForeignKey("IssueType", related_name="issues")
-
-    milestone = models.ForeignKey('Milestone', related_name='issues', null=True,
-                                  default=None, blank=True)
-
-    project = models.ForeignKey('Project', related_name='issues')
-
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True)
-    finished_date = models.DateTimeField(null=True, blank=True)
-
-    subject = models.CharField(max_length=500)
-    description = models.TextField(blank=True)
-    assigned_to = models.ForeignKey('base.User',
-                                    related_name='issues_assigned_to_me',
-                                    blank=True, null=True, default=None)
-
-    watchers = models.ManyToManyField('base.User', related_name='issue_watch',
-                                      null=True)
-
-    tags = PickledObjectField()
+    uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
+                verbose_name=_('uuid'))
+    ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
+                verbose_name=_('ref'))
+    owner = models.ForeignKey('base.User', null=True, blank=True, default=None,
+                related_name='owned_issues',
+                verbose_name=_('owner'))
+    status = models.ForeignKey('IssueStatus', null=False, blank=False,
+                related_name='issues',
+                verbose_name=_('status'))
+    severity = models.ForeignKey('Severity', null=False, blank=False,
+                related_name='issues',
+                verbose_name=_('severity'))
+    priority = models.ForeignKey('Priority', null=False, blank=False,
+                related_name='issues',
+                verbose_name=_('priority'))
+    type = models.ForeignKey('IssueType', null=False, blank=False,
+                related_name='issues',
+                verbose_name=_('type'))
+    milestone = models.ForeignKey('Milestone', null=True, blank=True, default=None,
+                related_name='issues',
+                verbose_name=_('milestone'))
+    project = models.ForeignKey('Project', null=False, blank=False,
+                related_name='issues',
+                verbose_name=_('project'))
+    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+                verbose_name=_('created date'))
+    modified_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+                verbose_name=_('modified date'))
+    finished_date = models.DateTimeField(null=True, blank=True,
+                verbose_name=_('finished date'))
+    subject = models.CharField(max_length=500, null=False, blank=False,
+                verbose_name=_('subject'))
+    description = models.TextField(null=False, blank=True,
+                verbose_name=_('description'))
+    assigned_to = models.ForeignKey('base.User', blank=True, null=True, default=None,
+                related_name='issues_assigned_to_me',
+                verbose_name=_('assigned to'))
+    watchers = models.ManyToManyField('base.User', null=True, blank=True,
+                related_name='watched_issues',
+                verbose_name=_('watchers'))
+    tags = PickledObjectField(null=False, blank=True,
+                verbose_name=_('tags'))
 
     class Meta:
         verbose_name = u'issue'
@@ -401,21 +504,21 @@ class Issue(models.Model):
         )
 
     def __unicode__(self):
-        return u"({1}) {0}".format(self.ref, self.subject)
+        return u'({1}) {0}'.format(self.ref, self.subject)
 
     def save(self, *args, **kwargs):
         if self.id:
             self.modified_date = timezone.now()
 
         if not self.ref:
-            self.ref = ref_uniquely(self.project, "last_issue_ref", self.__class__)
+            self.ref = ref_uniquely(self.project, 'last_issue_ref', self.__class__)
 
         super(Issue, self).save(*args, **kwargs)
 
 
 # Model related signals handlers
 
-@receiver(models.signals.post_save, sender=Project, dispatch_uid="project_post_save")
+@receiver(models.signals.post_save, sender=Project, dispatch_uid='project_post_save')
 def project_post_save(sender, instance, created, **kwargs):
     """
     Create all project model depences on project is
@@ -451,7 +554,7 @@ def project_post_save(sender, instance, created, **kwargs):
         IssueType.objects.create(project=instance, name=name, order=order)
 
 
-@receiver(models.signals.pre_save, sender=UserStory, dispatch_uid="user_story_ref_handler")
+@receiver(models.signals.pre_save, sender=UserStory, dispatch_uid='user_story_ref_handler')
 def user_story_ref_handler(sender, instance, **kwargs):
     """
     Automatically assignes a seguent reference code to a
@@ -459,7 +562,7 @@ def user_story_ref_handler(sender, instance, **kwargs):
     """
 
     if not instance.id and instance.project:
-        instance.ref = ref_uniquely(instance.project, "last_us_ref", instance.__class__)
+        instance.ref = ref_uniquely(instance.project, 'last_us_ref', instance.__class__)
 
 
 # Email alerts signals handlers

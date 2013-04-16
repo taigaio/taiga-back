@@ -6,19 +6,27 @@ from greenmine.base.fields import DictField
 
 
 class Document(models.Model):
-    slug = models.SlugField(unique=True, max_length=200, blank=True)
-
-    title = models.CharField(max_length=150)
-    description = models.TextField(blank=True)
-
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True)
-
-    project = models.ForeignKey('scrum.Project', related_name='documents')
-    owner = models.ForeignKey('base.User', related_name='documents')
-    attached_file = models.FileField(upload_to="documents", max_length=1000,
-                                     null=True, blank=True)
-    tags = DictField()
+    slug = models.SlugField(unique=True, max_length=200, null=False, blank=True,
+                verbose_name=_('slug'))
+    title = models.CharField(max_length=150, null=False, blank=False,
+                verbose_name=_('title'))
+    description = models.TextField(null=False, blank=True,
+                verbose_name=_('description'))
+    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+                verbose_name=_('created date'))
+    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+                verbose_name=_('modified date'))
+    project = models.ForeignKey('scrum.Project', null=False, blank=False,
+                related_name='documents',
+                verbose_name=_('project'))
+    owner = models.ForeignKey('base.User', null=False, blank=False,
+                related_name='owned_documents',
+                verbose_name=_('owner'))
+    attached_file = models.FileField(max_length=1000, null=True, blank=True,
+                upload_to='documents',
+                verbose_name=_('attached_file'))
+    tags = DictField(null=False, blank=True,
+                verbose_name=_('tags'))
 
     class Meta:
         verbose_name = u'document'

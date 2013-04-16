@@ -21,11 +21,11 @@ def attach_uuid(sender, instance, **kwargs):
     fields = sender._meta.init_name_map()
     #fields = sender._meta.get_all_field_names()
 
-    if "modified_date" in fields:
+    if 'modified_date' in fields:
         instance.modified_date = now()
 
     # if sender class does not have uuid field.
-    if "uuid" in fields:
+    if 'uuid' in fields:
         if not instance.uuid:
             instance.uuid = unicode(uuid.uuid1())
 
@@ -46,21 +46,31 @@ def attach_unique_reference(sender, instance, **kwargs):
 
 
 class User(AbstractUser):
-    color = models.CharField(max_length=9)
-    description = models.TextField(blank=True)
-    photo = models.FileField(upload_to="files/msg", max_length=500, null=True, blank=True)
-    default_language = models.CharField(max_length=20, null=True, blank=True, default=None)
-    default_timezone = models.CharField(max_length=20, null=True, blank=True, default=None)
-    token = models.CharField(max_length=200, unique=True, null=True, blank=True, default=None)
-    colorize_tags = models.BooleanField(default=False)
+    color = models.CharField(max_length=9, null=False, blank=False,
+                verbose_name=_('color'))
+    description = models.TextField(null=False, blank=True,
+                verbose_name=_('description'))
+    photo = models.FileField(upload_to='files/msg', max_length=500, null=True, blank=True,
+                verbose_name=_('photo'))
+    default_language = models.CharField(max_length=20, null=False, blank=True, default='',
+                verbose_name=_('default language'))
+    default_timezone = models.CharField(max_length=20, null=False, blank=True, default='',
+                verbose_name=_('default timezone'))
+    token = models.CharField(max_length=200, unique=True, null=False, blank=True, default='',
+                verbose_name=_('token'))
+    colorize_tags = models.BooleanField(null=False, blank=True, default=False,
+                verbose_name=_('colorize tags'))
     objects = UserManager()
 
 
 class Role(models.Model):
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=250, unique=True, blank=True)
+    name = models.CharField(max_length=200, null=False, blank=False,
+                verbose_name=_('name'))
+    slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
+                verbose_name=_('slug'))
     permissions = models.ManyToManyField('auth.Permission',
-        verbose_name=_('permissions'), blank=True)
+                related_name='roles')
+                verbose_name=_('permissions'))
 
     class Meta:
         verbose_name = u'role'
