@@ -1,8 +1,8 @@
 .*.sw*
 *.log
-src/greenmine/settings/local.py
-src/database.sqlite
-src/logs
-src/media
+greenmine/settings/local.py
+database.sqlite
+logs
+media
 *.pyc
 *.mo
