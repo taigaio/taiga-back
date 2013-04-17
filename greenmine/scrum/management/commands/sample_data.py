@@ -34,6 +34,7 @@ class Command(BaseCommand):
             username='user%d' % (counter),
             first_name='user%d' % (counter),
             email='foouser%d@domain.com' % (counter),
+            token=''.join(random.sample('abcdef0123456789', 10)),
         )
 
         user.set_password('user%d' % (counter))
