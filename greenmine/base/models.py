@@ -69,7 +69,7 @@ class Role(models.Model):
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
                 verbose_name=_('slug'))
     permissions = models.ManyToManyField('auth.Permission',
-                related_name='roles')
+                related_name='roles',
                 verbose_name=_('permissions'))
 
     class Meta:

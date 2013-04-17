@@ -1,5 +1,6 @@
 # -* coding: utf-8 -*-
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from greenmine.base.utils.slug import slugify_uniquely as slugify
 from greenmine.base.fields import DictField

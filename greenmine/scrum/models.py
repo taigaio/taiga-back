@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.utils.translation import ugettext_lazy as _
 
 from picklefield.fields import PickledObjectField
 
@@ -247,7 +248,7 @@ class Milestone(models.Model):
                 verbose_name=_('is closed'))
     disponibility = models.FloatField(default=0.0, null=True, blank=True,
                 verbose_name=_('disponibility'))
-    order = models.PositiveSmallIntegerField('Order', default=1, null=False, blank=False,
+    order = models.PositiveSmallIntegerField(default=1, null=False, blank=False,
                 verbose_name=_('order'))
 
     class Meta:
