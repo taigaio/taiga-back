@@ -63,7 +63,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    tags = PickleField()
+    tags = PickleField(blank=True, default=[])
 
     class Meta:
         model = Task

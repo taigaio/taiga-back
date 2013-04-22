@@ -65,11 +65,9 @@ class RoleList(generics.ListCreateAPIView):
 
 
 class UserFilter(django_filters.FilterSet):
-    is_active = django_filters.BooleanFilter(name="is_active")
-
     class Meta:
         model = User
-        fields = ['is_active',]
+        fields = ['is_active']
 
 
 class UserList(generics.ListCreateAPIView):

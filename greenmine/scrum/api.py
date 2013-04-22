@@ -140,6 +140,7 @@ class TaskList(generics.ListCreateAPIView):
 
     def pre_save(self, obj):
         obj.owner = self.request.user
+        obj.milestone = obj.user_story.milestone
 
 
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):

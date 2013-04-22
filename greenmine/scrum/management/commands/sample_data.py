@@ -107,9 +107,7 @@ class Command(BaseCommand):
                             owner=random.choice(users),
                             milestone=milestone,
                             user_story=us,
-                            severity=Severity.objects.get(project=project, order=2),
                             status=TaskStatus.objects.get(project=project, order=4),
-                            priority=Priority.objects.get(project=project, order=3),
                         )
 
             # created unassociated uss.

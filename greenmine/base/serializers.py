@@ -54,10 +54,15 @@ class LoginSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    projects = serializers.SerializerMethodField('get_projects')
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'color', 'is_active',)
+        fields = ('id', 'username', 'first_name', 'last_name', 'color', 'is_active', 'projects')
 
+
+    def get_projects(self, obj):
+        return [x.id for x in obj.projects.all()]
 
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
