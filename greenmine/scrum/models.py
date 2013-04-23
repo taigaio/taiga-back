@@ -391,12 +391,6 @@ class Task(models.Model):
     owner = models.ForeignKey('base.User', null=True, blank=True, default=None,
                 related_name='owned_tasks',
                 verbose_name=_('owner'))
-    severity = models.ForeignKey('Severity', null=False, blank=False,
-                related_name='tasks',
-                verbose_name=_('severity'))
-    priority = models.ForeignKey('Priority', null=False, blank=False,
-                related_name='tasks',
-                verbose_name=_('priority'))
     status = models.ForeignKey('TaskStatus', null=False, blank=False,
                 related_name='tasks',
                 verbose_name=_('status'))
