@@ -13,9 +13,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework import generics
 
+from haystack.query import SearchQuerySet
+
 from greenmine.base.serializers import LoginSerializer, UserLogged, UserSerializer, RoleSerializer
+from greenmine.base.serializers import SearchSerializer
 from greenmine.base.models import User, Role
 from greenmine.scrum import models
+from django.conf import settings
 
 import django_filters
 
@@ -44,6 +48,7 @@ class ApiRoot(APIView):
             'wiki/pages': reverse('wiki-page-list', request=request, format=format),
             'users': reverse('user-list', request=request, format=format),
             'roles': reverse('user-roles', request=request, format=format),
+            'search': reverse('search', request=request, format=format),
         })
 
 
@@ -127,3 +132,17 @@ class Logout(APIView):
     def post(self, request, format=None):
         logout(request)
         return Response()
+
+
+class Search(APIView):
+    def get(self, request, format=None):
+        text = request.QUERY_PARAMS.get('text', None)
+
+        if text:
+            #TODO: permission check
+            results = SearchQuerySet().filter(content=text)[:settings.MAX_SEARCH_RESULTS]
+            return_data = SearchSerializer(results)
+            return Response(return_data.data)
+
+        return Response({"detail": "Parameter text can't be empty"}, status.HTTP_400_BAD_REQUEST)
+
