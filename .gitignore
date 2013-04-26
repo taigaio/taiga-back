@@ -1,5 +1,6 @@
 .*.sw*
 *.log
+greenmine/search
 greenmine/settings/local.py
 database.sqlite
 logs
