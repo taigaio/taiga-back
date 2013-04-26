@@ -59,5 +59,5 @@ class WikiPageAttachment(models.Model):
         ordering = ['wikipage', 'created_date']
 
     def __unicode__(self):
-        return u'project {0} - page {1} - attachment {2}'.format(self.wikipage.project_id, self.wikipage.subject, self.id)
-
+        return u'project {0} - page {1} - attachment {2}'.format(self.wikipage.project_id,
+                                                                 self.wikipage.subject, self.id)

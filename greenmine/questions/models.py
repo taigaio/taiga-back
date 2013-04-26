@@ -102,9 +102,7 @@ class Question(models.Model):
         super(Question, self).save(*args, **kwargs)
 
 
-
 # Model related signals handlers
-
 @receiver(models.signals.post_save, sender=Project, dispatch_uid='project_post_save_add_question_states')
 def project_post_save_add_question_states(sender, instance, created, **kwargs):
     """

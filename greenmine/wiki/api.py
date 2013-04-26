@@ -37,8 +37,8 @@ class WikiPageDetail(generics.RetrieveUpdateDestroyAPIView):
             # Get the single item from the filtered queryset
             obj = queryset.get()
         except ObjectDoesNotExist:
-            raise Http404(_("No %(verbose_name)s found matching the query") %
-                          {'verbose_name': queryset.model._meta.verbose_name})
+            raise Http404(_("No {verbose_name} found matching the query").format(
+                          verbose_name=queryset.model._meta.verbose_name))
         return obj
 
 

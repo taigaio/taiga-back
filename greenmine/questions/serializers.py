@@ -2,10 +2,11 @@
 
 from rest_framework import serializers
 
-from greenmine.questions.models import Question
+import reversion
+
 from greenmine.scrum.serializers import PickleField
 
-import reversion
+from . import models
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -14,7 +15,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     history = serializers.SerializerMethodField('get_history')
 
     class Meta:
-        model = Question
+        model = models.Question
         fields = ()
 
     def get_comment(self, obj):

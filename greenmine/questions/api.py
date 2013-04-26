@@ -3,29 +3,31 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from greenmine.questions.serializers import QuestionSerializer
-from greenmine.questions.models import Question
-from greenmine.questions.permissions import QuestionDetailPermission
+from . import serializers
+from . import models
+from . import permissions
 
 import reversion
 
+
 class QuestionList(generics.ListCreateAPIView):
-    model = Question
-    serializer_class = QuestionSerializer
+    model = models.Question
+    serializer_class = serializers.QuestionSerializer
     filter_fields = ('project',)
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        return super(QuestionList, self).filter(project__members=self.request.user)
+
 
     def pre_save(self, obj):
         obj.owner = self.request.user
 
 
 class QuestionDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Question
-    serializer_class = QuestionSerializer
-    permission_classes = (IsAuthenticated, QuestionDetailPermission,)
+    model = models.Question
+    serializer_class = serializers.QuestionSerializer
+    permission_classes = (IsAuthenticated, permissions.QuestionDetailPermission,)
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():

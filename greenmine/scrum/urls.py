@@ -5,6 +5,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from greenmine.scrum import api
 
+
 urlpatterns = format_suffix_patterns(patterns('',
     url(r'^projects/$', api.ProjectList.as_view(), name='project-list'),
     url(r'^projects/(?P<pk>[0-9]+)/$', api.ProjectDetail.as_view(), name='project-detail'),

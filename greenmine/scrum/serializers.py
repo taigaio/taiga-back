@@ -7,6 +7,7 @@ from picklefield.fields import dbsafe_encode, dbsafe_decode
 
 import json, reversion
 
+
 class PickleField(serializers.WritableField):
     """
     Pickle objects serializer.

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from django.contrib import admin
 
 from greenmine.wiki.models import WikiPage, WikiPageAttachment

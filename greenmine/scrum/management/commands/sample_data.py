@@ -13,6 +13,7 @@ from greenmine.base.models import User, Role
 from greenmine.scrum.models import *
 from greenmine.questions.models import *
 
+
 subjects = [
     "Fixing templates for Django 1.2.",
     "get_actions() does not check for 'delete_selected' in actions",
@@ -32,13 +33,13 @@ subjects = [
 class Command(BaseCommand):
     def create_user(self, counter):
         user = User.objects.create(
-            username='user%d' % (counter),
-            first_name='user%d' % (counter),
-            email='foouser%d@domain.com' % (counter),
+            username='useri{0}'.format(counter),
+            first_name='user{0}'.format(counter),
+            email='foouser{0}@domain.com'.format(counter),
             token=''.join(random.sample('abcdef0123456789', 10)),
         )
 
-        user.set_password('user%d' % (counter))
+        user.set_password('user{0}'.format(counter))
         user.save()
         return user
 
@@ -54,8 +55,8 @@ class Command(BaseCommand):
         for x in xrange(3):
             # create project
             project = Project(
-                name='Project Example 1 %s' % (x),
-                description='Project example %s description' % (x),
+                name='Project Example 1 {0}'.format(x),
+                description='Project example {0} description'.format(x),
                 owner=random.choice(users),
                 public=True,
             )
@@ -71,7 +72,7 @@ class Command(BaseCommand):
             for y in xrange(2):
                 milestone = Milestone.objects.create(
                     project=project,
-                    name='Sprint %s' % (y),
+                    name='Sprint {0}'.format(y),
                     owner=project.owner,
                     created_date=now_date,
                     modified_date=now_date,
@@ -102,7 +103,7 @@ class Command(BaseCommand):
 
                     for w in xrange(3):
                         Task.objects.create(
-                            subject="Task %s" % (w),
+                            subject="Task %s".format(w),
                             description=lorem_ipsum.words(30, common=False),
                             project=project,
                             owner=random.choice(users),

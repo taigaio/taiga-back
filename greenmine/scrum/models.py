@@ -376,8 +376,7 @@ class Attachment(models.Model):
 
     def __unicode__(self):
         return u'content_type {0} - object_id {1} - attachment {2}'.format(
-                self.content_type, self.object_id, self.id
-        )
+                self.content_type, self.object_id, self.id)
 
 
 class Task(models.Model):

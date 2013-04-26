@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 from django.conf.urls import patterns, url
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from greenmine.wiki import api
+
 
 urlpatterns = format_suffix_patterns(patterns('',
     url(r'^pages/$', api.WikiPageList.as_view(), name='wiki-page-list'),
