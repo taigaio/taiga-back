@@ -44,7 +44,6 @@ class ApiRoot(APIView):
             'priorities': reverse('priority-list', request=request, format=format),
             'documents': reverse('document-list', request=request, format=format),
             'questions': reverse('question-list', request=request, format=format),
-            'question_responses': reverse('question-response-list', request=request, format=format),
             'wiki/pages': reverse('wiki-page-list', request=request, format=format),
             'users': reverse('user-list', request=request, format=format),
             'roles': reverse('user-roles', request=request, format=format),

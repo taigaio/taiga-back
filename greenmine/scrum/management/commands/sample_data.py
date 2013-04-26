@@ -11,6 +11,7 @@ from django.contrib.webdesign import lorem_ipsum
 
 from greenmine.base.models import User, Role
 from greenmine.scrum.models import *
+from greenmine.questions.models import *
 
 subjects = [
     "Fixing templates for Django 1.2.",
@@ -146,3 +147,19 @@ class Command(BaseCommand):
                     bug.tags.append(tag)
 
                 bug.save()
+
+            # create questions.
+            for y in xrange(20):
+                question = Question.objects.create(
+                    project=project,
+                    subject=lorem_ipsum.words(random.randint(1, 5), common=False),
+                    content=lorem_ipsum.words(random.randint(1, 15), common=False),
+                    owner=project.owner,
+                    status=QuestionStatus.objects.get(project=project, order=1),
+                    tags=[],
+                )
+
+                for tag in lorem_ipsum.words(random.randint(1, 5), common=True).split(" "):
+                    question.tags.append(tag)
+
+                question.save()

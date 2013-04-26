@@ -1,561 +1,601 @@
 [
 {
-    "pk": 1, 
-    "model": "base.role", 
+    "pk": 1,
+    "model": "base.role",
     "fields": {
         "permissions": [
             [
-                "add_logentry", 
-                "admin", 
+                "add_logentry",
+                "admin",
                 "logentry"
-            ], 
+            ],
             [
-                "change_logentry", 
-                "admin", 
+                "change_logentry",
+                "admin",
                 "logentry"
-            ], 
+            ],
             [
-                "delete_logentry", 
-                "admin", 
+                "delete_logentry",
+                "admin",
                 "logentry"
-            ], 
+            ],
             [
-                "add_group", 
-                "auth", 
+                "add_group",
+                "auth",
                 "group"
-            ], 
+            ],
             [
-                "change_group", 
-                "auth", 
+                "change_group",
+                "auth",
                 "group"
-            ], 
+            ],
             [
-                "delete_group", 
-                "auth", 
+                "delete_group",
+                "auth",
                 "group"
-            ], 
+            ],
             [
-                "add_permission", 
-                "auth", 
+                "add_permission",
+                "auth",
                 "permission"
-            ], 
+            ],
             [
-                "change_permission", 
-                "auth", 
+                "change_permission",
+                "auth",
                 "permission"
-            ], 
+            ],
             [
-                "delete_permission", 
-                "auth", 
+                "delete_permission",
+                "auth",
                 "permission"
-            ], 
+            ],
             [
-                "add_role", 
-                "base", 
+                "add_role",
+                "base",
                 "role"
-            ], 
+            ],
             [
-                "change_role", 
-                "base", 
+                "change_role",
+                "base",
                 "role"
-            ], 
+            ],
             [
-                "delete_role", 
-                "base", 
+                "delete_role",
+                "base",
                 "role"
-            ], 
+            ],
             [
-                "add_user", 
-                "base", 
+                "add_user",
+                "base",
                 "user"
-            ], 
+            ],
             [
-                "change_user", 
-                "base", 
+                "change_user",
+                "base",
                 "user"
-            ], 
+            ],
             [
-                "delete_user", 
-                "base", 
+                "delete_user",
+                "base",
                 "user"
-            ], 
+            ],
             [
-                "add_contenttype", 
-                "contenttypes", 
+                "add_contenttype",
+                "contenttypes",
                 "contenttype"
-            ], 
+            ],
             [
-                "change_contenttype", 
-                "contenttypes", 
+                "change_contenttype",
+                "contenttypes",
                 "contenttype"
-            ], 
+            ],
             [
-                "delete_contenttype", 
-                "contenttypes", 
+                "delete_contenttype",
+                "contenttypes",
                 "contenttype"
-            ], 
+            ],
             [
-                "add_document", 
-                "documents", 
+                "add_document",
+                "documents",
                 "document"
-            ], 
+            ],
             [
-                "can_change_owned_documents", 
-                "documents", 
+                "can_change_owned_documents",
+                "documents",
                 "document"
-            ], 
+            ],
             [
-                "can_download_from_my_projects", 
-                "documents", 
+                "can_download_from_my_projects",
+                "documents",
                 "document"
-            ], 
+            ],
             [
-                "can_download_from_other_projects", 
-                "documents", 
+                "can_download_from_other_projects",
+                "documents",
                 "document"
-            ], 
+            ],
             [
-                "can_view_documents", 
-                "documents", 
+                "can_view_documents",
+                "documents",
                 "document"
-            ], 
+            ],
             [
-                "change_document", 
-                "documents", 
+                "change_document",
+                "documents",
                 "document"
-            ], 
+            ],
             [
-                "delete_document", 
-                "documents", 
+                "delete_document",
+                "documents",
                 "document"
-            ], 
+            ],
             [
-                "add_question", 
-                "questions", 
+                "add_question",
+                "questions",
                 "question"
-            ], 
+            ],
             [
-                "can_change_owned_question", 
-                "questions", 
+                "can_assign_question_to_myself",
+                "questions",
                 "question"
-            ], 
+            ],
             [
-                "can_reply_question", 
-                "questions", 
+                "can_assign_question_to_other",
+                "questions",
                 "question"
-            ], 
+            ],
             [
-                "change_question", 
-                "questions", 
+                "can_change_assigned_question",
+                "questions",
                 "question"
-            ], 
+            ],
             [
-                "delete_question", 
-                "questions", 
+                "can_change_owned_question",
+                "questions",
                 "question"
-            ], 
+            ],
             [
-                "add_questionresponse", 
-                "questions", 
-                "questionresponse"
-            ], 
+                "can_change_question_state",
+                "questions",
+                "question"
+            ],
             [
-                "change_questionresponse", 
-                "questions", 
-                "questionresponse"
-            ], 
+                "can_reply_question",
+                "questions",
+                "question"
+            ],
             [
-                "delete_questionresponse", 
-                "questions", 
-                "questionresponse"
-            ],  
+                "can_view_question",
+                "questions",
+                "question"
+            ],
             [
-                "add_issue", 
-                "scrum", 
+                "change_question",
+                "questions",
+                "question"
+            ],
+            [
+                "delete_question",
+                "questions",
+                "question"
+            ],
+            [
+                "add_questionstatus",
+                "questions",
+                "questionstatus"
+            ],
+            [
+                "change_questionstatus",
+                "questions",
+                "questionstatus"
+            ],
+            [
+                "delete_questionstatus",
+                "questions",
+                "questionstatus"
+            ],
+            [
+                "add_attachment",
+                "scrum",
+                "attachment"
+            ],
+            [
+                "change_attachment",
+                "scrum",
+                "attachment"
+            ],
+            [
+                "delete_attachment",
+                "scrum",
+                "attachment"
+            ],
+            [
+                "add_issue",
+                "scrum",
                 "issue"
-            ], 
+            ],
             [
-                "can_assign_issue_to_myself", 
-                "scrum", 
+                "can_assign_issue_to_myself",
+                "scrum",
                 "issue"
-            ], 
+            ],
             [
-                "can_assign_issue_to_other", 
-                "scrum", 
+                "can_assign_issue_to_other",
+                "scrum",
                 "issue"
-            ], 
+            ],
             [
-                "can_change_assigned_issue", 
-                "scrum", 
+                "can_change_assigned_issue",
+                "scrum",
                 "issue"
-            ], 
+            ],
             [
-                "can_change_issue_state", 
-                "scrum", 
+                "can_change_issue_state",
+                "scrum",
                 "issue"
-            ], 
+            ],
             [
-                "can_change_owned_issue", 
-                "scrum", 
+                "can_change_owned_issue",
+                "scrum",
                 "issue"
-            ], 
+            ],
             [
-                "can_comment_issue", 
-                "scrum", 
+                "can_comment_issue",
+                "scrum",
                 "issue"
-            ], 
+            ],
             [
-                "can_view_issue", 
-                "scrum", 
+                "can_view_issue",
+                "scrum",
                 "issue"
-            ], 
+            ],
             [
-                "change_issue", 
-                "scrum", 
+                "change_issue",
+                "scrum",
                 "issue"
-            ], 
+            ],
             [
-                "delete_issue", 
-                "scrum", 
+                "delete_issue",
+                "scrum",
                 "issue"
-            ], 
+            ],
             [
-                "add_issuestatus", 
-                "scrum", 
+                "add_issuestatus",
+                "scrum",
                 "issuestatus"
-            ], 
+            ],
             [
-                "change_issuestatus", 
-                "scrum", 
+                "change_issuestatus",
+                "scrum",
                 "issuestatus"
-            ], 
+            ],
             [
-                "delete_issuestatus", 
-                "scrum", 
+                "delete_issuestatus",
+                "scrum",
                 "issuestatus"
-            ], 
+            ],
             [
-                "add_issuetype", 
-                "scrum", 
+                "add_issuetype",
+                "scrum",
                 "issuetype"
-            ], 
+            ],
             [
-                "change_issuetype", 
-                "scrum", 
+                "change_issuetype",
+                "scrum",
                 "issuetype"
-            ], 
+            ],
             [
-                "delete_issuetype", 
-                "scrum", 
+                "delete_issuetype",
+                "scrum",
                 "issuetype"
-            ], 
+            ],
             [
-                "add_membership", 
-                "scrum", 
+                "add_membership",
+                "scrum",
                 "membership"
-            ], 
+            ],
             [
-                "change_membership", 
-                "scrum", 
+                "change_membership",
+                "scrum",
                 "membership"
-            ], 
+            ],
             [
-                "delete_membership", 
-                "scrum", 
+                "delete_membership",
+                "scrum",
                 "membership"
-            ], 
+            ],
             [
-                "add_milestone", 
-                "scrum", 
+                "add_milestone",
+                "scrum",
                 "milestone"
-            ], 
+            ],
             [
-                "can_view_milestone", 
-                "scrum", 
+                "can_view_milestone",
+                "scrum",
                 "milestone"
-            ], 
+            ],
             [
-                "change_milestone", 
-                "scrum", 
+                "change_milestone",
+                "scrum",
                 "milestone"
-            ], 
+            ],
             [
-                "delete_milestone", 
-                "scrum", 
+                "delete_milestone",
+                "scrum",
                 "milestone"
-            ], 
+            ],
             [
-                "add_points", 
-                "scrum", 
+                "add_points",
+                "scrum",
                 "points"
-            ], 
+            ],
             [
-                "change_points", 
-                "scrum", 
+                "change_points",
+                "scrum",
                 "points"
-            ], 
+            ],
             [
-                "delete_points", 
-                "scrum", 
+                "delete_points",
+                "scrum",
                 "points"
-            ], 
+            ],
             [
-                "add_priority", 
-                "scrum", 
+                "add_priority",
+                "scrum",
                 "priority"
-            ], 
+            ],
             [
-                "change_priority", 
-                "scrum", 
+                "change_priority",
+                "scrum",
                 "priority"
-            ], 
+            ],
             [
-                "delete_priority", 
-                "scrum", 
+                "delete_priority",
+                "scrum",
                 "priority"
-            ], 
+            ],
             [
-                "add_project", 
-                "scrum", 
+                "add_project",
+                "scrum",
                 "project"
-            ], 
+            ],
             [
-                "can_list_projects", 
-                "scrum", 
+                "can_list_projects",
+                "scrum",
                 "project"
-            ], 
+            ],
             [
-                "can_manage_users", 
-                "scrum", 
+                "can_manage_users",
+                "scrum",
                 "project"
-            ], 
+            ],
             [
-                "can_view_project", 
-                "scrum", 
+                "can_view_project",
+                "scrum",
                 "project"
-            ], 
+            ],
             [
-                "change_project", 
-                "scrum", 
+                "change_project",
+                "scrum",
                 "project"
-            ], 
+            ],
             [
-                "delete_project", 
-                "scrum", 
+                "delete_project",
+                "scrum",
                 "project"
-            ], 
+            ],
             [
-                "add_severity", 
-                "scrum", 
+                "add_severity",
+                "scrum",
                 "severity"
-            ], 
+            ],
             [
-                "change_severity", 
-                "scrum", 
+                "change_severity",
+                "scrum",
                 "severity"
-            ], 
+            ],
             [
-                "delete_severity", 
-                "scrum", 
+                "delete_severity",
+                "scrum",
                 "severity"
-            ], 
+            ],
             [
-                "add_task", 
-                "scrum", 
+                "add_task",
+                "scrum",
                 "task"
-            ], 
+            ],
             [
-                "can_add_task_to_us", 
-                "scrum", 
+                "can_add_task_to_us",
+                "scrum",
                 "task"
-            ], 
+            ],
             [
-                "can_assign_task_to_myself", 
-                "scrum", 
+                "can_assign_task_to_myself",
+                "scrum",
                 "task"
-            ], 
+            ],
             [
-                "can_assign_task_to_other", 
-                "scrum", 
+                "can_assign_task_to_other",
+                "scrum",
                 "task"
-            ], 
+            ],
             [
-                "can_change_assigned_task", 
-                "scrum", 
+                "can_change_assigned_task",
+                "scrum",
                 "task"
-            ], 
+            ],
             [
-                "can_change_owned_task", 
-                "scrum", 
+                "can_change_owned_task",
+                "scrum",
                 "task"
-            ], 
+            ],
             [
-                "can_change_task_state", 
-                "scrum", 
+                "can_change_task_state",
+                "scrum",
                 "task"
-            ], 
+            ],
             [
-                "can_comment_task", 
-                "scrum", 
+                "can_comment_task",
+                "scrum",
                 "task"
-            ], 
+            ],
             [
-                "can_view_task", 
-                "scrum", 
+                "can_view_task",
+                "scrum",
                 "task"
-            ], 
+            ],
             [
-                "change_task", 
-                "scrum", 
+                "change_task",
+                "scrum",
                 "task"
-            ], 
+            ],
             [
-                "delete_task", 
-                "scrum", 
+                "delete_task",
+                "scrum",
                 "task"
-            ], 
+            ],
             [
-                "add_taskstatus", 
-                "scrum", 
+                "add_taskstatus",
+                "scrum",
                 "taskstatus"
-            ], 
+            ],
             [
-                "change_taskstatus", 
-                "scrum", 
+                "change_taskstatus",
+                "scrum",
                 "taskstatus"
-            ], 
+            ],
             [
-                "delete_taskstatus", 
-                "scrum", 
+                "delete_taskstatus",
+                "scrum",
                 "taskstatus"
-            ], 
+            ],
             [
-                "add_userstory", 
-                "scrum", 
+                "add_userstory",
+                "scrum",
                 "userstory"
-            ], 
+            ],
             [
-                "can_add_userstory_to_milestones", 
-                "scrum", 
+                "can_add_userstory_to_milestones",
+                "scrum",
                 "userstory"
-            ], 
+            ],
             [
-                "can_change_owned_userstory", 
-                "scrum", 
+                "can_change_owned_userstory",
+                "scrum",
                 "userstory"
-            ], 
+            ],
             [
-                "can_comment_userstory", 
-                "scrum", 
+                "can_comment_userstory",
+                "scrum",
                 "userstory"
-            ], 
+            ],
             [
-                "can_delete_userstory", 
-                "scrum", 
+                "can_delete_userstory",
+                "scrum",
                 "userstory"
-            ], 
+            ],
             [
-                "can_view_userstory", 
-                "scrum", 
+                "can_view_userstory",
+                "scrum",
                 "userstory"
-            ], 
+            ],
             [
-                "change_userstory", 
-                "scrum", 
+                "change_userstory",
+                "scrum",
                 "userstory"
-            ], 
+            ],
             [
-                "delete_userstory", 
-                "scrum", 
+                "delete_userstory",
+                "scrum",
                 "userstory"
-            ], 
+            ],
             [
-                "add_userstorystatus", 
-                "scrum", 
+                "add_userstorystatus",
+                "scrum",
                 "userstorystatus"
-            ], 
+            ],
             [
-                "change_userstorystatus", 
-                "scrum", 
+                "change_userstorystatus",
+                "scrum",
                 "userstorystatus"
-            ], 
+            ],
             [
-                "delete_userstorystatus", 
-                "scrum", 
+                "delete_userstorystatus",
+                "scrum",
                 "userstorystatus"
-            ], 
+            ],
             [
-                "add_session", 
-                "sessions", 
+                "add_session",
+                "sessions",
                 "session"
-            ], 
+            ],
             [
-                "change_session", 
-                "sessions", 
+                "change_session",
+                "sessions",
                 "session"
-            ], 
+            ],
             [
-                "delete_session", 
-                "sessions", 
+                "delete_session",
+                "sessions",
                 "session"
-            ], 
+            ],
             [
-                "add_migrationhistory", 
-                "south", 
+                "add_migrationhistory",
+                "south",
                 "migrationhistory"
-            ], 
+            ],
             [
-                "change_migrationhistory", 
-                "south", 
+                "change_migrationhistory",
+                "south",
                 "migrationhistory"
-            ], 
+            ],
             [
-                "delete_migrationhistory", 
-                "south", 
+                "delete_migrationhistory",
+                "south",
                 "migrationhistory"
-            ], 
+            ],
             [
-                "add_wikipage", 
-                "wiki", 
+                "add_wikipage",
+                "wiki",
                 "wikipage"
-            ], 
+            ],
             [
-                "can_change_owned_wikipage", 
-                "wiki", 
+                "can_change_owned_wikipage",
+                "wiki",
                 "wikipage"
-            ], 
+            ],
             [
-                "can_view_wikipage", 
-                "wiki", 
+                "can_view_wikipage",
+                "wiki",
                 "wikipage"
-            ], 
+            ],
             [
-                "change_wikipage", 
-                "wiki", 
+                "change_wikipage",
+                "wiki",
                 "wikipage"
-            ], 
+            ],
             [
-                "delete_wikipage", 
-                "wiki", 
+                "delete_wikipage",
+                "wiki",
                 "wikipage"
-            ], 
+            ],
             [
-                "add_wikipageattachment", 
-                "wiki", 
+                "add_wikipageattachment",
+                "wiki",
                 "wikipageattachment"
-            ], 
+            ],
             [
-                "change_wikipageattachment", 
-                "wiki", 
+                "change_wikipageattachment",
+                "wiki",
                 "wikipageattachment"
-            ], 
+            ],
             [
-                "delete_wikipageattachment", 
-                "wiki", 
+                "delete_wikipageattachment",
+                "wiki",
                 "wikipageattachment"
             ]
-        ], 
-        "name": "Developer", 
+        ],
+        "name": "Developer",
         "slug": ""
     }
 }
