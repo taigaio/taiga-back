@@ -58,7 +58,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'color', 'is_active', 'projects')
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'color', 'description',
+                  'default_language', 'default_timezone', 'is_active', 'photo', 'projects')
 
     def get_projects(self, obj):
         return [x.id for x in obj.projects.all()]

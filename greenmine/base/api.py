@@ -96,6 +96,12 @@ class UserList(generics.ListCreateAPIView):
         pass
 
 
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = User
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated,)
+
+
 class Login(APIView):
     def post(self, request, format=None):
         username = request.DATA.get('username', None)
