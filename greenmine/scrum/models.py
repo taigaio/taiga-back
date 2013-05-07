@@ -159,6 +159,15 @@ class Points(models.Model):
     def __unicode__(self):
         return u'project {0} - {1}'.format(self.project_id, self.name)
 
+    @property
+    def value(self):
+        if self.order == -2:
+            return 0.5
+        elif self.order == -1:
+            return 1
+        else:
+            return self.order
+
 
 class Membership(models.Model):
     user = models.ForeignKey('base.User', null=False, blank=False)
@@ -224,6 +233,16 @@ class Project(models.Model):
 
         super(Project, self).save(*args, **kwargs)
 
+    @property
+    def list_of_milestones(self):
+        return [
+                {
+                    'name': milestone.name,
+                    'finish_date': milestone.estimated_finish,
+                    'closed_points': milestone.closed_points
+                } for milestone in self.milestones.all().order_by('estimated_start')
+         ]
+
 
 class Milestone(models.Model):
     uuid = models.CharField(
@@ -283,6 +302,11 @@ class Milestone(models.Model):
             self.slug = slugify_uniquely(self.name, self.__class__)
 
         super(Milestone, self).save(*args, **kwargs)
+
+    @property
+    def closed_points(self):
+        points = [ us.points.value for us in self.user_stories.all() if us.is_closed ]
+        return sum(points)
 
 
 class UserStory(models.Model):
@@ -578,11 +602,19 @@ def tasks_close_handler(sender, instance, **kwargs):
     user story if that is not created.
     """
 
-    if instance.id and sender.objects.get(id=instance.id).status.is_closed == False and instance.status.is_closed == True:
-        instance.finished_date = datetime.now()
-        if all([task.status.is_closed for task in instance.user_story.tasks.exclude(id=instance.id)]):
-            instance.user_story.finish_date = datetime.now()
+    if instance.id:
+        if sender.objects.get(id=instance.id).status.is_closed == False and instance.status.is_closed == True:
+            instance.finished_date = datetime.now()
+            if all([task.status.is_closed for task in instance.user_story.tasks.exclude(id=instance.id)]):
+                instance.user_story.finish_date = datetime.now()
+                instance.user_story.save()
+        elif sender.objects.get(id=instance.id).status.is_closed == True and instance.status.is_closed == False:
+            instance.finished_date = None
+            instance.user_story.finish_date = None
             instance.user_story.save()
+    else:
+        instance.user_story.finish_date = None
+        instance.user_story.save()
 
 # Email alerts signals handlers
 # TODO: temporary commented (Pending refactor)

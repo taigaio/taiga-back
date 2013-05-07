@@ -27,6 +27,7 @@ class PointsSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     tags = PickleField()
+    list_of_milestones = serializers.Field(source='list_of_milestones')
 
     class Meta:
         model = Project
