@@ -239,7 +239,9 @@ class Project(models.Model):
                 {
                     'name': milestone.name,
                     'finish_date': milestone.estimated_finish,
-                    'closed_points': milestone.closed_points
+                    'closed_points': milestone.closed_points,
+                    'client_increment_points': milestone.client_increment_points,
+                    'team_increment_points': milestone.team_increment_points
                 } for milestone in self.milestones.all().order_by('estimated_start')
          ]
 
@@ -306,6 +308,39 @@ class Milestone(models.Model):
     @property
     def closed_points(self):
         points = [ us.points.value for us in self.user_stories.all() if us.is_closed ]
+        return sum(points)
+
+    @property
+    def client_increment_points(self):
+        user_stories = UserStory.objects.filter(
+            created_date__gt=self.estimated_start,
+            created_date__lt=self.estimated_finish,
+            client_requirement=True,
+            team_requirement=False
+        )
+        points = [ us.points.value for us in user_stories ]
+        return sum(points) + (self.shared_increment_points / 2)
+
+    @property
+    def team_increment_points(self):
+        user_stories = UserStory.objects.filter(
+            created_date__gt=self.estimated_start,
+            created_date__lt=self.estimated_finish,
+            client_requirement=False,
+            team_requirement=True
+        )
+        points = [ us.points.value for us in user_stories ]
+        return sum(points) + (self.shared_increment_points / 2)
+
+    @property
+    def shared_increment_points(self):
+        user_stories = UserStory.objects.filter(
+            created_date__gt=self.estimated_start,
+            created_date__lt=self.estimated_finish,
+            client_requirement=True,
+            team_requirement=True
+        )
+        points = [ us.points.value for us in user_stories ]
         return sum(points)
 
 
