@@ -313,8 +313,9 @@ class Milestone(models.Model):
     @property
     def client_increment_points(self):
         user_stories = UserStory.objects.filter(
-            created_date__gt=self.estimated_start,
+            created_date__gte=self.estimated_start,
             created_date__lt=self.estimated_finish,
+            project_id = self.project_id,
             client_requirement=True,
             team_requirement=False
         )
@@ -324,8 +325,9 @@ class Milestone(models.Model):
     @property
     def team_increment_points(self):
         user_stories = UserStory.objects.filter(
-            created_date__gt=self.estimated_start,
+            created_date__gte=self.estimated_start,
             created_date__lt=self.estimated_finish,
+            project_id = self.project_id,
             client_requirement=False,
             team_requirement=True
         )
@@ -335,8 +337,9 @@ class Milestone(models.Model):
     @property
     def shared_increment_points(self):
         user_stories = UserStory.objects.filter(
-            created_date__gt=self.estimated_start,
+            created_date__gte=self.estimated_start,
             created_date__lt=self.estimated_finish,
+            project_id = self.project_id,
             client_requirement=True,
             team_requirement=True
         )
