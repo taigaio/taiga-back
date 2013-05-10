@@ -479,6 +479,8 @@ class Task(models.Model):
                 verbose_name=_('watchers'))
     tags = PickledObjectField(null=False, blank=True,
                 verbose_name=_('tags'))
+    is_iocaine = models.BooleanField(default=False, null=False, blank=True,
+                verbose_name=_('is iocaine'))
 
     class Meta:
         verbose_name = u'task'
