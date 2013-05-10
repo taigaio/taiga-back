@@ -583,6 +583,10 @@ class Issue(models.Model):
 
         super(Issue, self).save(*args, **kwargs)
 
+    @property
+    def is_closed(self):
+        return self.status.is_closed
+
 
 # Model related signals handlers
 

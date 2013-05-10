@@ -78,6 +78,7 @@ class IssueSerializer(serializers.ModelSerializer):
     tags = PickleField()
     comment = serializers.SerializerMethodField('get_comment')
     history = serializers.SerializerMethodField('get_history')
+    is_closed = serializers.Field(source='is_closed')
 
     class Meta:
         model = Issue
