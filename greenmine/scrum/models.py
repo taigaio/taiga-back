@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
-
 from django.db import models
 from django.utils import timezone
 from django.dispatch import receiver
@@ -646,9 +644,9 @@ def tasks_close_handler(sender, instance, **kwargs):
 
     if instance.id:
         if sender.objects.get(id=instance.id).status.is_closed == False and instance.status.is_closed == True:
-            instance.finished_date = datetime.now()
+            instance.finished_date = timezone.now()
             if all([task.status.is_closed for task in instance.user_story.tasks.exclude(id=instance.id)]):
-                instance.user_story.finish_date = datetime.now()
+                instance.user_story.finish_date = timezone.now()
                 instance.user_story.save()
         elif sender.objects.get(id=instance.id).status.is_closed == True and instance.status.is_closed == False:
             instance.finished_date = None
