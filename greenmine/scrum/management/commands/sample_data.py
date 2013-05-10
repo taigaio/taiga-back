@@ -3,6 +3,8 @@
 import random
 import datetime
 
+from sampledatahelper.helper import SampleDataHelper
+
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.timezone import now
@@ -31,136 +33,167 @@ subjects = [
 
 
 class Command(BaseCommand):
+    sd = SampleDataHelper(seed=12345678901)
+
+    @transaction.commit_on_success
+    def handle(self, *args, **options):
+        self.users = [User.objects.get(is_superuser=True)]
+        for x in range(10):
+            self.users.append(self.create_user(x))
+
+        role = Role.objects.all()[0]
+
+        # projects
+        for x in xrange(3):
+            project = self.create_project(x)
+
+            for user in self.users:
+                Membership.objects.create(project=project, role=role, user=user)
+
+            start_date = now() - datetime.timedelta(35)
+
+            # create random milestones
+            for y in xrange(self.sd.int(1, 5)):
+                end_date = start_date + datetime.timedelta(15)
+                milestone = self.create_milestone(project, start_date, end_date)
+
+                # create uss asociated to milestones
+                for z in xrange(self.sd.int(3, 7)):
+                    us = self.create_us(project, milestone)
+
+                    for w in xrange(self.sd.int(0,6)):
+                        if start_date <= now() and end_date <= now():
+                            task = self.create_task(project, milestone, us, start_date, end_date, closed=True)
+                        elif start_date <= now() and end_date >= now():
+                            task = self.create_task(project, milestone, us, start_date, now())
+                        else:
+                            # No task on not initiated sprints
+                            pass
+
+                start_date = end_date
+
+            # created unassociated uss.
+            for y in xrange(self.sd.int(8,15)):
+                us = self.create_us(project)
+
+            # create bugs.
+            for y in xrange(self.sd.int(15,25)):
+                bug = self.create_bug(project)
+
+            # create questions.
+            for y in xrange(self.sd.int(15,25)):
+                question = self.create_question(project)
+
+    def create_question(self, project):
+        question = Question.objects.create(
+            project=project,
+            subject=self.sd.words(1,5),
+            content=self.sd.paragraph(),
+            owner=project.owner,
+            status=self.sd.db_object_from_queryset(QuestionStatus.objects.filter(project=project)),
+            tags=[],
+        )
+
+        for tag in self.sd.words(1,5).split(" "):
+            question.tags.append(tag)
+
+        question.save()
+
+    def create_bug(self, project):
+        bug = Issue.objects.create(
+            project=project,
+            subject=self.sd.words(1, 5),
+            description=self.sd.paragraph(),
+            owner=project.owner,
+            severity=self.sd.db_object_from_queryset(Severity.objects.filter(project=project)),
+            status=self.sd.db_object_from_queryset(IssueStatus.objects.filter(project=project)),
+            priority=self.sd.db_object_from_queryset(Priority.objects.filter(project=project)),
+            type=self.sd.db_object_from_queryset(IssueType.objects.filter(project=project)),
+            tags=[],
+        )
+
+        for tag in self.sd.words(1, 5).split(" "):
+            bug.tags.append(tag)
+
+        bug.save()
+        return bug
+
+    def create_task(self, project, milestone, us, min_date, max_date, closed=False):
+        task = Task(
+            subject="Task {0}".format(self.sd.words(3,4)),
+            description=self.sd.paragraph(),
+            project=project,
+            owner=self.sd.choice(self.users),
+            milestone=milestone,
+            user_story=us,
+            finished_date=None,
+        )
+        if closed:
+            task.status = TaskStatus.objects.get(project=project, order=4)
+        else:
+            task.status = self.sd.db_object_from_queryset(TaskStatus.objects.filter(project=project))
+
+        if task.status.is_closed:
+            task.finished_date = self.sd.datetime_between(min_date, max_date)
+
+        task.save()
+        return task
+
+    def create_us(self, project, milestone=None):
+        us = UserStory(
+            subject=self.sd.words(4,9),
+            project=project,
+            owner=self.sd.choice(self.users),
+            description=self.sd.paragraph(),
+            milestone=milestone,
+            status=UserStoryStatus.objects.get(project=project, order=2),
+            points=self.sd.db_object_from_queryset(Points.objects.filter(project=project)),
+            tags=[]
+        )
+
+        for tag in self.sd.words().split(" "):
+            us.tags.append(tag)
+
+        us.save()
+        return us
+
+    def create_milestone(self, project, start_date, end_date):
+        milestone = Milestone(
+            project=project,
+            name='Sprint {0}'.format(start_date),
+            owner=project.owner,
+            created_date=start_date,
+            modified_date=start_date,
+            estimated_start=start_date,
+            estimated_finish=end_date,
+            order=10
+        )
+        milestone.save()
+        return milestone
+
+    def create_project(self, counter):
+        # create project
+        project = Project(
+            name='Project Example 1 {0}'.format(counter),
+            description='Project example {0} description'.format(counter),
+            owner=random.choice(self.users),
+            public=True,
+            total_story_points=60,
+            sprints=4
+        )
+
+        project.save()
+        return project
+
     def create_user(self, counter):
         user = User.objects.create(
-            username='useri{0}'.format(counter),
-            first_name='user{0}'.format(counter),
-            email='foouser{0}@domain.com'.format(counter),
+            username='user-{0}-{1}'.format(counter, self.sd.word()),
+            first_name=self.sd.name('es'),
+            last_name=self.sd.surname('es'),
+            email=self.sd.email(),
             token=''.join(random.sample('abcdef0123456789', 10)),
         )
 
         user.set_password('user{0}'.format(counter))
         user.save()
         return user
-
-    @transaction.commit_on_success
-    def handle(self, *args, **options):
-        users = [User.objects.get(is_superuser=True)]
-        for x in range(10):
-            users.append(self.create_user(x))
-
-        role = Role.objects.all()[0]
-
-        # projects
-        for x in xrange(3):
-            # create project
-            project = Project(
-                name='Project Example 1 {0}'.format(x),
-                description='Project example {0} description'.format(x),
-                owner=random.choice(users),
-                public=True,
-            )
-
-            project.save()
-
-            for user in users:
-                Membership.objects.create(project=project, role=role, user=user)
-
-            now_date = now() - datetime.timedelta(30)
-
-            # create random milestones
-            for y in xrange(2):
-                milestone = Milestone.objects.create(
-                    project=project,
-                    name='Sprint {0}'.format(y),
-                    owner=project.owner,
-                    created_date=now_date,
-                    modified_date=now_date,
-                    estimated_start=now_date,
-                    estimated_finish=now_date + datetime.timedelta(15),
-                    order=10
-                )
-
-                now_date = now_date + datetime.timedelta(15)
-
-                # create uss asociated to milestones
-                for z in xrange(5):
-                    us = UserStory.objects.create(
-                        subject=lorem_ipsum.words(random.randint(4, 9), common=False),
-                        project=project,
-                        owner=random.choice(users),
-                        description=lorem_ipsum.words(30, common=False),
-                        milestone=milestone,
-                        status=UserStoryStatus.objects.get(project=project, order=2),
-                        points=Points.objects.get(project=project, order=3),
-                        tags=[]
-                    )
-
-                    for tag in lorem_ipsum.words(random.randint(1, 5), common=True).split(" "):
-                        us.tags.append(tag)
-
-                    us.save()
-
-                    for w in xrange(3):
-                        Task.objects.create(
-                            subject="Task %s".format(w),
-                            description=lorem_ipsum.words(30, common=False),
-                            project=project,
-                            owner=random.choice(users),
-                            milestone=milestone,
-                            user_story=us,
-                            status=TaskStatus.objects.get(project=project, order=4),
-                        )
-
-            # created unassociated uss.
-            for y in xrange(10):
-                us = UserStory.objects.create(
-                    subject=lorem_ipsum.words(random.randint(4, 9), common=False),
-                    status=UserStoryStatus.objects.get(project=project, order=2),
-                    points=Points.objects.get(project=project, order=3),
-                    owner=random.choice(users),
-                    description=lorem_ipsum.words(30, common=False),
-                    milestone=None,
-                    project=project,
-                    tags=[],
-                )
-
-                for tag in lorem_ipsum.words(random.randint(1, 5), common=True).split(" "):
-                    us.tags.append(tag)
-
-                us.save()
-
-            # create bugs.
-            for y in xrange(20):
-                bug = Issue.objects.create(
-                    project=project,
-                    subject=lorem_ipsum.words(random.randint(1, 5), common=False),
-                    description=lorem_ipsum.words(random.randint(1, 15), common=False),
-                    owner=project.owner,
-                    severity=Severity.objects.get(project=project, order=2),
-                    status=IssueStatus.objects.get(project=project, order=4),
-                    priority=Priority.objects.get(project=project, order=3),
-                    type=IssueType.objects.get(project=project, order=1),
-                    tags=[],
-                )
-
-                for tag in lorem_ipsum.words(random.randint(1, 5), common=True).split(" "):
-                    bug.tags.append(tag)
-
-                bug.save()
-
-            # create questions.
-            for y in xrange(20):
-                question = Question.objects.create(
-                    project=project,
-                    subject=lorem_ipsum.words(random.randint(1, 5), common=False),
-                    content=lorem_ipsum.words(random.randint(1, 15), common=False),
-                    owner=project.owner,
-                    status=QuestionStatus.objects.get(project=project, order=1),
-                    tags=[],
-                )
-
-                for tag in lorem_ipsum.words(random.randint(1, 5), common=True).split(" "):
-                    question.tags.append(tag)
-
-                question.save()
