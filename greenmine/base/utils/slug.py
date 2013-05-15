@@ -25,9 +25,6 @@ def slugify_uniquely(value, model, slugfield="slug"):
 
 
 def ref_uniquely(p, seq_field,  model, field='ref'):
-    """
-    Returns a unique reference code based on base64 and time.
-    """
     project = p.__class__.objects.select_for_update().get(pk=p.pk)
     ref = getattr(project, seq_field) + 1
 

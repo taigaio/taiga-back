@@ -505,9 +505,6 @@ class Task(models.Model):
         if self.id:
             self.modified_date = timezone.now()
 
-        if not self.ref:
-            self.ref = ref_uniquely(self.project, 'last_task_ref', self.__class__)
-
         super(Task, self).save(*args, **kwargs)
 
 
@@ -578,9 +575,6 @@ class Issue(models.Model):
         if self.id:
             self.modified_date = timezone.now()
 
-        if not self.ref:
-            self.ref = ref_uniquely(self.project, 'last_issue_ref', self.__class__)
-
         super(Issue, self).save(*args, **kwargs)
 
     @property
@@ -626,13 +620,20 @@ def project_post_save(sender, instance, created, **kwargs):
         IssueType.objects.create(project=instance, name=name, order=order)
 
 
-@receiver(models.signals.pre_save, sender=UserStory, dispatch_uid='user_story_ref_handler')
-def user_story_ref_handler(sender, instance, **kwargs):
-    """
-    Automatically assignes a seguent reference code to a
-    user story if that is not created.
-    """
+@receiver(models.signals.pre_save, sender=Task, dispatch_uid='task_ref_handler')
+def task_ref_handler(sender, instance, **kwargs):
+    if not instance.id and instance.project:
+        instance.ref = ref_uniquely(instance.project, 'last_task_ref', instance.__class__)
 
+
+@receiver(models.signals.pre_save, sender=Issue, dispatch_uid='issue_ref_handler')
+def issue_ref_handler(sender, instance, **kwargs):
+    if not instance.id and instance.project:
+        instance.ref = ref_uniquely(instance.project, 'last_issue_ref', instance.__class__)
+
+
+@receiver(models.signals.pre_save, sender=UserStory, dispatch_uid='user_story_ref_handler')
+def us_ref_handler(sender, instance, **kwargs):
     if not instance.id and instance.project:
         instance.ref = ref_uniquely(instance.project, 'last_us_ref', instance.__class__)
 
