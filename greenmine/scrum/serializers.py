@@ -117,7 +117,7 @@ class IssueSerializer(serializers.ModelSerializer):
 
         for version in reversed(list(reversion.get_for_object(obj))):
             if current:
-                issues_diff = self.get_issues_diff(version, current)
+                issues_diff = self.get_issues_diff(current, version)
                 diff_list.append(issues_diff)
 
             current = version
