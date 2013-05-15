@@ -68,10 +68,52 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
     tags = PickleField(blank=True, default=[])
+    comment = serializers.SerializerMethodField('get_comment')
+    history = serializers.SerializerMethodField('get_history')
 
     class Meta:
         model = Task
         fields = ()
+
+    def get_comment(self, obj):
+        return ''
+
+    def get_issues_diff(self, old_issue_version, new_issue_version):
+        old_obj = old_issue_version.field_dict
+        new_obj = new_issue_version.field_dict
+
+        diff_dict = {
+            'modified_date': new_obj['modified_date'],
+            'by': old_issue_version.revision.user,
+            'comment': old_issue_version.revision.comment,
+        }
+
+        for key in old_obj.keys():
+            if key == 'modified_date':
+                continue
+
+            if old_obj[key] == new_obj[key]:
+                continue
+
+            diff_dict[key] = {
+                'old': old_obj[key],
+                'new': new_obj[key],
+            }
+
+        return diff_dict
+
+    def get_history(self, obj):
+        diff_list = []
+        current = None
+
+        for version in reversed(list(reversion.get_for_object(obj))):
+            if current:
+                issues_diff = self.get_issues_diff(current, version)
+                diff_list.append(issues_diff)
+
+            current = version
+
+        return diff_list
 
 
 class IssueSerializer(serializers.ModelSerializer):

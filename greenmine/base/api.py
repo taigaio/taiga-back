@@ -40,6 +40,7 @@ class ApiRoot(APIView):
             'issues': reverse('issues-list', request=request, format=format),
             'tasks': reverse('tasks-list', request=request, format=format),
             'tasks/statuses': reverse('tasks-status-list', request=request, format=format),
+            'tasks/attachments': reverse('tasks-attachment-list', request=request, format=format),
             'severities': reverse('severity-list', request=request, format=format),
             'priorities': reverse('priority-list', request=request, format=format),
             'documents': reverse('document-list', request=request, format=format),

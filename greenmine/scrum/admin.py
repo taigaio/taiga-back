@@ -58,7 +58,7 @@ admin.site.register(models.Attachment, AttachmentAdmin)
 
 
 class TaskAdmin(reversion.VersionAdmin):
-    list_display = ["subject", "user_story", "milestone", "project", "user_story_id"]
+    list_display = ["subject", "ref", "user_story", "milestone", "project", "user_story_id"]
     list_filter = ["user_story", "milestone", "project"]
 
     def user_story_id(self, instance):
