@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import django_filters
+from django.db.models import Q
 
+import django_filters
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
@@ -52,7 +53,9 @@ class ProjectList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.model.objects.filter(members=self.request.user)
+        return self.model.objects.filter(
+            Q(owner=self.request.user) | Q(members=self.request.user)
+        )
 
     def pre_save(self, obj):
         obj.owner = self.request.user
