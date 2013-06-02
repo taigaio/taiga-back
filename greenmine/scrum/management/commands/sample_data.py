@@ -146,10 +146,13 @@ class Command(BaseCommand):
             owner=self.sd.choice(self.users),
             description=self.sd.paragraph(),
             milestone=milestone,
-            status=UserStoryStatus.objects.get(project=project, order=2),
-            points=self.sd.db_object_from_queryset(Points.objects.filter(project=project)),
+            status=self.sd.db_object_from_queryset(UserStoryStatus.objects.filter(project=project)),
             tags=[]
         )
+        if milestone:
+            us.points=self.sd.db_object_from_queryset(Points.objects.filter(project=project).exclude(order=0))
+        else:
+            us.points=self.sd.db_object_from_queryset(Points.objects.filter(project=project))
 
         for tag in self.sd.words().split(" "):
             us.tags.append(tag)
@@ -178,8 +181,8 @@ class Command(BaseCommand):
             description='Project example {0} description'.format(counter),
             owner=random.choice(self.users),
             public=True,
-            total_story_points=60,
-            sprints=4
+            total_story_points=self.sd.int(100, 150),
+            sprints=self.sd.int(5,10)
         )
 
         project.save()
