@@ -189,7 +189,7 @@ class Project(models.Model):
                 verbose_name=_('created date'))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
                 verbose_name=_('modified date'))
-    owner = models.ForeignKey('base.User', null=False, blank=True,
+    owner = models.ForeignKey('base.User', null=False, blank=False,
                 related_name='owned_projects',
                 verbose_name=_('owner'))
     members = models.ManyToManyField('base.User', related_name='projects', through='Membership',
