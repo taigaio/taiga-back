@@ -268,47 +268,34 @@ class Project(models.Model, WatchedMixin):
                 .delete()
 
     def _get_watchers_by_role(self):
-        return {
-            'owner': self.owner,
-        }
+        return {'owner': self.owner}
 
 
 class Milestone(models.Model, WatchedMixin):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
-                verbose_name=_('uuid'))
-
-    name = models.CharField(
-                max_length=200, db_index=True, null=False, blank=False,
-                verbose_name=_('name'))
-
+                            verbose_name=_('uuid'))
+    name = models.CharField(max_length=200, db_index=True, null=False, blank=False,
+                            verbose_name=_('name'))
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
-                verbose_name=_('slug'))
-
-    owner = models.ForeignKey(
-                'base.User',
-                null=True, blank=True,
-                related_name='owned_milestones', verbose_name=_('owner'))
-
-    project = models.ForeignKey(
-                'Project',
-                null=False, blank=False,
-                related_name='milestones',
-                verbose_name=_('project'))
-
+                            verbose_name=_('slug'))
+    owner = models.ForeignKey('base.User', null=True, blank=True, related_name='owned_milestones',
+                              verbose_name=_('owner'))
+    project = models.ForeignKey('Project', null=False, blank=False, related_name='milestones',
+                                verbose_name=_('project'))
     estimated_start = models.DateField(null=True, blank=True, default=None,
-                verbose_name=_('estimated start'))
+                                       verbose_name=_('estimated start'))
     estimated_finish = models.DateField(null=True, blank=True, default=None,
-                verbose_name=_('estimated finish'))
+                                        verbose_name=_('estimated finish'))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                verbose_name=_('created date'))
+                                        verbose_name=_('created date'))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
-                verbose_name=_('modified date'))
+                                         verbose_name=_('modified date'))
     closed = models.BooleanField(default=False, null=False, blank=True,
-                verbose_name=_('is closed'))
+                                 verbose_name=_('is closed'))
     disponibility = models.FloatField(default=0.0, null=True, blank=True,
-                verbose_name=_('disponibility'))
+                                      verbose_name=_('disponibility'))
     order = models.PositiveSmallIntegerField(default=1, null=False, blank=False,
-                verbose_name=_('order'))
+                                             verbose_name=_('order'))
 
     class Meta:
         verbose_name = u'milestone'
@@ -397,6 +384,20 @@ class RolePoints(models.Model):
 
     class Meta:
         unique_together = ('user_story', 'role')
+
+    def _get_watchers_by_role(self):
+        return {
+            'owner': self.owner,
+            'project_owner': (self.project, self.project.owner),
+        }
+
+    def _get_attributes_to_notify(self):
+        return {
+            'name': self.name,
+            'slug': self.slug,
+            'owner': self.owner.get_full_name(),
+            'modified_date': self.modified_date,
+        }
 
 
 class UserStory(WatchedMixin, models.Model):
