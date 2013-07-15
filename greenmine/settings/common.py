@@ -204,6 +204,8 @@ INSTALLED_APPS = [
 
     'greenmine.base',
     'greenmine.base.mail',
+    'greenmine.base.notifications',
+    'greenmine.base.notifications.email',
     'greenmine.scrum',
     'greenmine.wiki',
     'greenmine.documents',

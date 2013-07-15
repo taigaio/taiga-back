@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import UserManager, AbstractUser, Group
 
 from greenmine.scrum.models import Project, UserStory, Task
+from greenmine.base.notifications.models import WatcherMixin
 
 import uuid
 
@@ -45,7 +46,7 @@ def attach_unique_reference(sender, instance, **kwargs):
     project.save()
 
 
-class User(AbstractUser):
+class User(AbstractUser, WatcherMixin):
     color = models.CharField(max_length=9, null=False, blank=False,
                 verbose_name=_('color'))
     description = models.TextField(null=False, blank=True,
