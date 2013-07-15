@@ -63,18 +63,15 @@ CACHES = {
 }
 
 PASSWORD_HASHERS = [
-    'django.contrib.auth.hashers.BCryptPasswordHasher',
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
-    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
-    'django.contrib.auth.hashers.SHA1PasswordHasher',
-    'django.contrib.auth.hashers.MD5PasswordHasher',
-    'django.contrib.auth.hashers.CryptPasswordHasher',
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 SEND_BROKEN_LINK_EMAILS = True
 IGNORABLE_404_ENDS = ('.php', '.cgi')
 IGNORABLE_404_STARTS = ('/phpmyadmin/',)
+
+ATOMIC_REQUESTS = True
 
 TIME_ZONE = 'Europe/Madrid'
 LANGUAGE_CODE = 'en'
@@ -170,7 +167,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     #'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
+    #'django.middleware.transaction.TransactionMiddleware',
     'reversion.middleware.RevisionMiddleware',
 ]
 
