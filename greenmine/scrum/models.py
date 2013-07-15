@@ -233,9 +233,7 @@ class Project(models.Model, WatchedMixin):
         super(Project, self).save(*args, **kwargs)
 
     def _get_watchers_by_role(self):
-        return {
-            'owner': self.owner,
-        }
+        return {'owner': self.owner}
 
     def _get_attributes_to_notify(self):
         return {
@@ -263,28 +261,22 @@ class Project(models.Model, WatchedMixin):
 
 
 class Milestone(models.Model, WatchedMixin):
-    uuid = models.CharField(
-                max_length=40, unique=True, null=False, blank=True,
-                verbose_name=_('uuid'))
-
+    uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
+                            verbose_name=_('uuid'))
     name = models.CharField(
                 max_length=200, db_index=True, null=False, blank=False,
                 verbose_name=_('name'))
-
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
                 verbose_name=_('slug'))
-
     owner = models.ForeignKey(
                 'base.User',
                 null=True, blank=True,
                 related_name='owned_milestones', verbose_name=_('owner'))
-
     project = models.ForeignKey(
                 'Project',
                 null=False, blank=False,
                 related_name='milestones',
                 verbose_name=_('project'))
-
     estimated_start = models.DateField(null=True, blank=True, default=None,
                 verbose_name=_('estimated start'))
     estimated_finish = models.DateField(null=True, blank=True, default=None,
@@ -375,6 +367,20 @@ class Milestone(models.Model, WatchedMixin):
         )
         points = [ us.points.value for us in user_stories ]
         return sum(points)
+
+    def _get_watchers_by_role(self):
+        return {
+            'owner': self.owner,
+            'project_owner': (self.project, self.project.owner),
+        }
+
+    def _get_attributes_to_notify(self):
+        return {
+            'name': self.name,
+            'slug': self.slug,
+            'owner': self.owner.get_full_name(),
+            'modified_date': self.modified_date,
+        }
 
 
 class UserStory(WatchedMixin, models.Model):
@@ -640,6 +646,10 @@ class Issue(models.Model, WatchedMixin):
 
         super(Issue, self).save(*args, **kwargs)
 
+    @property
+    def is_closed(self):
+        return self.status.is_closed
+
     def _get_watchers_by_role(self):
         return {
             'owner': self.owner,
@@ -647,10 +657,6 @@ class Issue(models.Model, WatchedMixin):
             'suscribed_watchers': self.watchers.all(),
             'project_owner': (self.project, self.project.owner),
         }
-
-    @property
-    def is_closed(self):
-        return self.status.is_closed
 
 
 # Model related signals handlers

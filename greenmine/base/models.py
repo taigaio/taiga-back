@@ -30,7 +30,6 @@ def attach_uuid(sender, instance, **kwargs):
             instance.uuid = unicode(uuid.uuid1())
 
 
-
 class User(AbstractUser, WatcherMixin):
     color = models.CharField(max_length=9, null=False, blank=False, default="#669933",
                 verbose_name=_('color'))
