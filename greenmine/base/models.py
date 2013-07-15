@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import UserManager, AbstractUser, Group
 
 from greenmine.scrum.models import Project, UserStory, Task
+from greenmine.base.notifications.models import WatcherMixin
 
 import uuid
 
@@ -19,7 +20,6 @@ import uuid
 @receiver(signals.pre_save)
 def attach_uuid(sender, instance, **kwargs):
     fields = sender._meta.init_name_map()
-    #fields = sender._meta.get_all_field_names()
 
     if 'modified_date' in fields:
         instance.modified_date = now()
@@ -30,9 +30,8 @@ def attach_uuid(sender, instance, **kwargs):
             instance.uuid = unicode(uuid.uuid1())
 
 
-
-class User(AbstractUser):
-    color = models.CharField(max_length=9, null=False, blank=False, default="#669933",
+class User(AbstractUser, WatcherMixin):
+    color = models.CharField(max_length=9, null=False, blank=False,
                 verbose_name=_('color'))
     description = models.TextField(null=False, blank=True,
                 verbose_name=_('description'))

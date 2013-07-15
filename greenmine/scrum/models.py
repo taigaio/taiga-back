@@ -12,6 +12,7 @@ from picklefield.fields import PickledObjectField
 
 from greenmine.base.utils.slug import slugify_uniquely, ref_uniquely
 from greenmine.base.utils import iter_points
+from greenmine.base.notifications.models import WatchedMixin
 from greenmine.scrum.choices import (ISSUESTATUSES, TASKSTATUSES, USSTATUSES,
                                      POINTS_CHOICES, SEVERITY_CHOICES,
                                      ISSUETYPES, TASK_CHANGE_CHOICES,
@@ -173,7 +174,7 @@ class Membership(models.Model):
         unique_together = ('user', 'project')
 
 
-class Project(models.Model):
+class Project(models.Model, WatchedMixin):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
                 verbose_name=_('uuid'))
     name = models.CharField(max_length=250, unique=True, null=False, blank=False,
@@ -230,15 +231,13 @@ class Project(models.Model):
 
     @property
     def list_of_milestones(self):
-        return [
-                {
-                    'name': milestone.name,
-                    'finish_date': milestone.estimated_finish,
-                    'closed_points': milestone.closed_points,
-                    'client_increment_points': milestone.client_increment_points,
-                    'team_increment_points': milestone.team_increment_points
-                } for milestone in self.milestones.all().order_by('estimated_start')
-         ]
+        return [{
+            'name': milestone.name,
+            'finish_date': milestone.estimated_finish,
+            'closed_points': milestone.closed_points,
+            'client_increment_points': milestone.client_increment_points,
+            'team_increment_points': milestone.team_increment_points
+        } for milestone in self.milestones.all().order_by('estimated_start')]
 
     @property
     def list_roles(self):
@@ -268,9 +267,14 @@ class Project(models.Model):
                 .exclude(role__id__in=role_ids)\
                 .delete()
 
-class Milestone(models.Model):
-    uuid = models.CharField(
-                max_length=40, unique=True, null=False, blank=True,
+    def _get_watchers_by_role(self):
+        return {
+            'owner': self.owner,
+        }
+
+
+class Milestone(models.Model, WatchedMixin):
+    uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
                 verbose_name=_('uuid'))
 
     name = models.CharField(
@@ -373,6 +377,12 @@ class Milestone(models.Model):
         #return sum(points)
         return 0
 
+    def _get_watchers_by_role(self):
+        return {
+            'owner': self.owner,
+            'project_owner': (self.project, self.project.owner),
+        }
+
 
 class RolePoints(models.Model):
     user_story = models.ForeignKey('UserStory', null=False, blank=False,
@@ -389,7 +399,7 @@ class RolePoints(models.Model):
         unique_together = ('user_story', 'role')
 
 
-class UserStory(models.Model):
+class UserStory(WatchedMixin, models.Model):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
                 verbose_name=_('uuid'))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
@@ -455,6 +465,29 @@ class UserStory(models.Model):
     def is_closed(self):
         return self.status.is_closed
 
+    def _get_watchers_by_role(self):
+        return {
+            'owner': self.owner,
+            'suscribed_watchers': self.watchers.all(),
+            'project_owner': (self.project, self.project.owner),
+        }
+
+    def _get_attributes_to_notify(self):
+        return {
+            'milestone': self.milestone.name,
+            'owner': self.owner.get_full_name(),
+            'status': self.status.name,
+            'points': self.points.name,
+            'order': self.order,
+            'modified_date': self.modified_date,
+            'finish_date': self.finish_date,
+            'subject': self.subject,
+            'description': self.description,
+            'client_requirement': self.client_requirement,
+            'team_requirement': self.team_requirement,
+            'tags': self.tags,
+        }
+
 
 class Attachment(models.Model):
     owner = models.ForeignKey('base.User', null=False, blank=False,
@@ -486,7 +519,7 @@ class Attachment(models.Model):
                 self.content_type, self.object_id, self.id)
 
 
-class Task(models.Model):
+class Task(models.Model, WatchedMixin):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
                 verbose_name=_('uuid'))
     user_story = models.ForeignKey('UserStory', null=True, blank=False,
@@ -552,8 +585,16 @@ class Task(models.Model):
 
         super(Task, self).save(*args, **kwargs)
 
+    def _get_watchers_by_role(self):
+        return {
+            'owner': self.owner,
+            'assigned_to': self.assigned_to,
+            'suscribed_watchers': self.watchers.all(),
+            'project_owner': (self.project, self.project.owner),
+        }
 
-class Issue(models.Model):
+
+class Issue(models.Model, WatchedMixin):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
                 verbose_name=_('uuid'))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
@@ -625,6 +666,14 @@ class Issue(models.Model):
     @property
     def is_closed(self):
         return self.status.is_closed
+
+    def _get_watchers_by_role(self):
+        return {
+            'owner': self.owner,
+            'assigned_to': self.assigned_to,
+            'suscribed_watchers': self.watchers.all(),
+            'project_owner': (self.project, self.project.owner),
+        }
 
 
 # Model related signals handlers
