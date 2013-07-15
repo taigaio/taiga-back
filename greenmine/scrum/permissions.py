@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from greenmine.base.permissions import BaseDetailPermission
 
 
@@ -41,7 +43,7 @@ class IssueDetailPermission(BaseDetailPermission):
     get_permission = "can_view_issue"
     put_permission = "change_issue"
     patch_permission = "change_issue"
-    delete_permission = "can_delete_issue"
+    delete_permission = "delete_issue"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']
 

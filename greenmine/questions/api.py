@@ -1,32 +1,36 @@
+# -*- coding: utf-8 -*-
 
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
-from greenmine.questions.serializers import QuestionSerializer, QuestionResponseSerializer
-from greenmine.questions.models import Question, QuestionResponse
-from greenmine.questions.permissions import QuestionDetailPermission, QuestionResponseDetailPermission
+from . import serializers
+from . import models
+from . import permissions
+
+import reversion
 
 
 class QuestionList(generics.ListCreateAPIView):
-    model = Question
-    serializer_class = QuestionSerializer
+    model = models.Question
+    serializer_class = serializers.QuestionSerializer
+    filter_fields = ('project',)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        return super(QuestionList, self).filter(project__members=self.request.user)
+
+
+    def pre_save(self, obj):
+        obj.owner = self.request.user
+
 
 class QuestionDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Question
-    serializer_class = QuestionSerializer
-    permission_classes = (QuestionDetailPermission,)
+    model = models.Question
+    serializer_class = serializers.QuestionSerializer
+    permission_classes = (IsAuthenticated, permissions.QuestionDetailPermission,)
 
-
-class QuestionResponseList(generics.ListCreateAPIView):
-    model = QuestionResponse
-    serializer_class = QuestionResponseSerializer
-
-    def get_queryset(self):
-        return self.model.objects.filter(question__project__members=self.request.user)
-
-class QuestionResponseDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = QuestionResponse
-    serializer_class = QuestionResponseSerializer
-    permission_classes = (QuestionResponseDetailPermission,)
+    def post_save(self, obj, created=False):
+        with reversion.create_revision():
+            if "comment" in self.request.DATA:
+                # Update the comment in the last version
+                reversion.set_comment(self.request.DATA['comment'])

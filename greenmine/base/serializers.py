@@ -54,12 +54,39 @@ class LoginSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    projects = serializers.SerializerMethodField('get_projects')
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'color', 'is_active',)
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'color', 'description',
+                  'default_language', 'default_timezone', 'is_active', 'photo', 'projects')
+
+    def get_projects(self, obj):
+        return [x.id for x in obj.projects.all()]
 
 
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = ('id', 'name', 'slug', 'permissions',)
+
+
+class SearchSerializer(serializers.Serializer):
+    id = serializers.CharField(max_length=255)
+    model_name = serializers.CharField(max_length=255)
+    pk = serializers.IntegerField()
+    score = serializers.FloatField()
+    stored_fields = serializers.SerializerMethodField('get_stored_fields')
+
+    def get_stored_fields(self, obj):
+        return obj.get_stored_fields()
+
+    def restore_object(self, attrs, instance=None):
+        """
+        Given a dictionary of deserialized field values, either update
+        an existing model instance, or create a new model instance.
+        """
+        if instance is not None:
+            return instance
+
+        return attrs

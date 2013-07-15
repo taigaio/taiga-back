@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
-from greenmine.base.fields import DictField
 
 
 class WikiPage(models.Model):
@@ -27,6 +27,8 @@ class WikiPage(models.Model):
         verbose_name = u'wiki page'
         verbose_name_plural = u'wiki pages'
         ordering = ['project', 'slug']
+        unique_together = ('project', 'slug',)
+
         permissions = (
             ('can_view_wikipage', 'Can modify owned wiki pages'),
             ('can_change_owned_wikipage', 'Can modify owned wiki pages'),
@@ -57,5 +59,5 @@ class WikiPageAttachment(models.Model):
         ordering = ['wikipage', 'created_date']
 
     def __unicode__(self):
-        return u'project {0} - page {1} - attachment {2}'.format(self.wikipage.project_id, self.wikipage.subject, self.id)
-
+        return u'project {0} - page {1} - attachment {2}'.format(self.wikipage.project_id,
+                                                                 self.wikipage.subject, self.id)

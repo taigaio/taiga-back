@@ -31,23 +31,9 @@ def attach_uuid(sender, instance, **kwargs):
             instance.uuid = unicode(uuid.uuid1())
 
 
-# Centraliced reference assignation.
-@receiver(signals.pre_save, sender=Task)
-@receiver(signals.pre_save, sender=UserStory)
-def attach_unique_reference(sender, instance, **kwargs):
-    project = Project.objects.select_for_update().filter(pk=instance.project_id).get()
-    if isinstance(instance, Task):
-        project.last_task_ref += 1
-        instance.ref = project.last_task_ref
-    else:
-        project.last_us_ref += 1
-        instance.ref = project.last_us_ref
-
-    project.save()
-
 
 class User(AbstractUser, WatcherMixin):
-    color = models.CharField(max_length=9, null=False, blank=False,
+    color = models.CharField(max_length=9, null=False, blank=False, default="#669933",
                 verbose_name=_('color'))
     description = models.TextField(null=False, blank=True,
                 verbose_name=_('description'))

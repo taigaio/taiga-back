@@ -2,6 +2,7 @@
 
 from django.utils.translation import ugettext_lazy as _
 
+
 PRIORITY_CHOICES = (
     (1, _(u'Low')),
     (3, _(u'Normal')),

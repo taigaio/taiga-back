@@ -5,6 +5,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from greenmine.scrum import api
 
+
 urlpatterns = format_suffix_patterns(patterns('',
     url(r'^projects/$', api.ProjectList.as_view(), name='project-list'),
     url(r'^projects/(?P<pk>[0-9]+)/$', api.ProjectDetail.as_view(), name='project-detail'),
@@ -26,6 +27,8 @@ urlpatterns = format_suffix_patterns(patterns('',
     url(r'^issues/types/(?P<pk>[0-9]+)/$', api.IssueTypeDetail.as_view(), name='issues-type-detail'),
     url(r'^tasks/$', api.TaskList.as_view(), name='tasks-list'),
     url(r'^tasks/(?P<pk>[0-9]+)/$', api.TaskDetail.as_view(), name='tasks-detail'),
+    url(r'^tasks/attachments/$', api.TasksAttachmentList.as_view(), name='tasks-attachment-list'),
+    url(r'^tasks/attachments/(?P<pk>[0-9]+)/$', api.TasksAttachmentDetail.as_view(), name='tasks-attachment-detail'),
     url(r'^severities/$', api.SeverityList.as_view(), name='severity-list'),
     url(r'^severities/(?P<pk>[0-9]+)/$', api.SeverityDetail.as_view(), name='severity-detail'),
     url(r'^tasks/statuses/$', api.TaskStatusList.as_view(), name='tasks-status-list'),
@@ -33,4 +36,3 @@ urlpatterns = format_suffix_patterns(patterns('',
     url(r'^priorities/$', api.PriorityList.as_view(), name='priority-list'),
     url(r'^priorities/(?P<pk>[0-9]+)/$', api.PriorityDetail.as_view(), name='priority-detail'),
 ))
-

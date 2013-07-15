@@ -158,6 +158,15 @@ class Points(models.Model):
     def __unicode__(self):
         return u'project {0} - {1}'.format(self.project_id, self.name)
 
+    @property
+    def value(self):
+        if self.order == -2:
+            return 0.5
+        elif self.order == -1:
+            return 1
+        else:
+            return self.order
+
 
 class Membership(models.Model):
     user = models.ForeignKey('base.User', null=False, blank=False)
@@ -181,7 +190,7 @@ class Project(models.Model, WatchedMixin):
                 verbose_name=_('created date'))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
                 verbose_name=_('modified date'))
-    owner = models.ForeignKey('base.User', null=False, blank=True,
+    owner = models.ForeignKey('base.User', null=False, blank=False,
                 related_name='owned_projects',
                 verbose_name=_('owner'))
     members = models.ManyToManyField('base.User', related_name='projects', through='Membership',
@@ -240,20 +249,42 @@ class Project(models.Model, WatchedMixin):
             'tags': self.tags,
         }
 
+    @property
+    def list_of_milestones(self):
+        return [
+                {
+                    'name': milestone.name,
+                    'finish_date': milestone.estimated_finish,
+                    'closed_points': milestone.closed_points,
+                    'client_increment_points': milestone.client_increment_points,
+                    'team_increment_points': milestone.team_increment_points
+                } for milestone in self.milestones.all().order_by('estimated_start')
+         ]
+
 
 class Milestone(models.Model, WatchedMixin):
-    uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
+    uuid = models.CharField(
+                max_length=40, unique=True, null=False, blank=True,
                 verbose_name=_('uuid'))
-    name = models.CharField(max_length=200, db_index=True, null=False, blank=False,
+
+    name = models.CharField(
+                max_length=200, db_index=True, null=False, blank=False,
                 verbose_name=_('name'))
+
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
                 verbose_name=_('slug'))
-    owner = models.ForeignKey('base.User', null=True, blank=False,
-                related_name='owned_milestones',
-                verbose_name=_('owner'))
-    project = models.ForeignKey('Project', null=False, blank=False,
+
+    owner = models.ForeignKey(
+                'base.User',
+                null=True, blank=True,
+                related_name='owned_milestones', verbose_name=_('owner'))
+
+    project = models.ForeignKey(
+                'Project',
+                null=False, blank=False,
                 related_name='milestones',
                 verbose_name=_('project'))
+
     estimated_start = models.DateField(null=True, blank=True, default=None,
                 verbose_name=_('estimated start'))
     estimated_finish = models.DateField(null=True, blank=True, default=None,
@@ -303,6 +334,47 @@ class Milestone(models.Model, WatchedMixin):
             'owner': self.owner.get_full_name(),
             'modified_date': self.modified_date,
         }
+
+    @property
+    def closed_points(self):
+        points = [ us.points.value for us in self.user_stories.all() if us.is_closed ]
+        return sum(points)
+
+    @property
+    def client_increment_points(self):
+        user_stories = UserStory.objects.filter(
+            created_date__gte=self.estimated_start,
+            created_date__lt=self.estimated_finish,
+            project_id = self.project_id,
+            client_requirement=True,
+            team_requirement=False
+        )
+        points = [ us.points.value for us in user_stories ]
+        return sum(points) + (self.shared_increment_points / 2)
+
+    @property
+    def team_increment_points(self):
+        user_stories = UserStory.objects.filter(
+            created_date__gte=self.estimated_start,
+            created_date__lt=self.estimated_finish,
+            project_id = self.project_id,
+            client_requirement=False,
+            team_requirement=True
+        )
+        points = [ us.points.value for us in user_stories ]
+        return sum(points) + (self.shared_increment_points / 2)
+
+    @property
+    def shared_increment_points(self):
+        user_stories = UserStory.objects.filter(
+            created_date__gte=self.estimated_start,
+            created_date__lt=self.estimated_finish,
+            project_id = self.project_id,
+            client_requirement=True,
+            team_requirement=True
+        )
+        points = [ us.points.value for us in user_stories ]
+        return sum(points)
 
 
 class UserStory(WatchedMixin, models.Model):
@@ -421,8 +493,7 @@ class Attachment(models.Model):
 
     def __unicode__(self):
         return u'content_type {0} - object_id {1} - attachment {2}'.format(
-                self.content_type, self.object_id, self.id
-        )
+                self.content_type, self.object_id, self.id)
 
 
 class Task(models.Model, WatchedMixin):
@@ -436,12 +507,6 @@ class Task(models.Model, WatchedMixin):
     owner = models.ForeignKey('base.User', null=True, blank=True, default=None,
                 related_name='owned_tasks',
                 verbose_name=_('owner'))
-    severity = models.ForeignKey('Severity', null=False, blank=False,
-                related_name='tasks',
-                verbose_name=_('severity'))
-    priority = models.ForeignKey('Priority', null=False, blank=False,
-                related_name='tasks',
-                verbose_name=_('priority'))
     status = models.ForeignKey('TaskStatus', null=False, blank=False,
                 related_name='tasks',
                 verbose_name=_('status'))
@@ -469,6 +534,8 @@ class Task(models.Model, WatchedMixin):
                 verbose_name=_('watchers'))
     tags = PickledObjectField(null=False, blank=True,
                 verbose_name=_('tags'))
+    is_iocaine = models.BooleanField(default=False, null=False, blank=True,
+                verbose_name=_('is iocaine'))
 
     class Meta:
         verbose_name = u'task'
@@ -492,9 +559,6 @@ class Task(models.Model, WatchedMixin):
     def save(self, *args, **kwargs):
         if self.id:
             self.modified_date = timezone.now()
-
-        if not self.ref:
-            self.ref = ref_uniquely(self.project, 'last_task_ref', self.__class__)
 
         super(Task, self).save(*args, **kwargs)
 
@@ -574,9 +638,6 @@ class Issue(models.Model, WatchedMixin):
         if self.id:
             self.modified_date = timezone.now()
 
-        if not self.ref:
-            self.ref = ref_uniquely(self.project, 'last_issue_ref', self.__class__)
-
         super(Issue, self).save(*args, **kwargs)
 
     def _get_watchers_by_role(self):
@@ -586,6 +647,10 @@ class Issue(models.Model, WatchedMixin):
             'suscribed_watchers': self.watchers.all(),
             'project_owner': (self.project, self.project.owner),
         }
+
+    @property
+    def is_closed(self):
+        return self.status.is_closed
 
 
 # Model related signals handlers
@@ -626,16 +691,44 @@ def project_post_save(sender, instance, created, **kwargs):
         IssueType.objects.create(project=instance, name=name, order=order)
 
 
+@receiver(models.signals.pre_save, sender=Task, dispatch_uid='task_ref_handler')
+def task_ref_handler(sender, instance, **kwargs):
+    if not instance.id and instance.project:
+        instance.ref = ref_uniquely(instance.project, 'last_task_ref', instance.__class__)
+
+
+@receiver(models.signals.pre_save, sender=Issue, dispatch_uid='issue_ref_handler')
+def issue_ref_handler(sender, instance, **kwargs):
+    if not instance.id and instance.project:
+        instance.ref = ref_uniquely(instance.project, 'last_issue_ref', instance.__class__)
+
+
 @receiver(models.signals.pre_save, sender=UserStory, dispatch_uid='user_story_ref_handler')
-def user_story_ref_handler(sender, instance, **kwargs):
+def us_ref_handler(sender, instance, **kwargs):
+    if not instance.id and instance.project:
+        instance.ref = ref_uniquely(instance.project, 'last_us_ref', instance.__class__)
+
+
+@receiver(models.signals.pre_save, sender=Task, dispatch_uid='tasks_close_handler')
+def tasks_close_handler(sender, instance, **kwargs):
     """
     Automatically assignes a seguent reference code to a
     user story if that is not created.
     """
 
-    if not instance.id and instance.project:
-        instance.ref = ref_uniquely(instance.project, 'last_us_ref', instance.__class__)
-
+    if instance.id:
+        if sender.objects.get(id=instance.id).status.is_closed == False and instance.status.is_closed == True:
+            instance.finished_date = timezone.now()
+            if all([task.status.is_closed for task in instance.user_story.tasks.exclude(id=instance.id)]):
+                instance.user_story.finish_date = timezone.now()
+                instance.user_story.save()
+        elif sender.objects.get(id=instance.id).status.is_closed == True and instance.status.is_closed == False:
+            instance.finished_date = None
+            instance.user_story.finish_date = None
+            instance.user_story.save()
+    else:
+        instance.user_story.finish_date = None
+        instance.user_story.save()
 
 # Email alerts signals handlers
 # TODO: temporary commented (Pending refactor)

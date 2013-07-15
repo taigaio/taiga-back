@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from greenmine.base.permissions import BaseDetailPermission
+
 
 class DocumentDetailPermission(BaseDetailPermission):
     get_permission = "can_view_document"

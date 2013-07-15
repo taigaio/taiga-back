@@ -30,6 +30,7 @@ class UserStoryInline(admin.TabularInline):
         else:
             return models.UserStory.objects.none()
 
+
 class ProjectAdmin(reversion.VersionAdmin):
     list_display = ["name", "owner"]
     inlines = [MembershipInline, MilestoneInline, UserStoryInline]
@@ -57,7 +58,7 @@ admin.site.register(models.Attachment, AttachmentAdmin)
 
 
 class TaskAdmin(reversion.VersionAdmin):
-    list_display = ["subject", "user_story", "milestone", "project", "user_story_id"]
+    list_display = ["subject", "ref", "user_story", "milestone", "project", "user_story_id"]
     list_filter = ["user_story", "milestone", "project"]
 
     def user_story_id(self, instance):
@@ -67,29 +68,38 @@ class MembershipAdmin(admin.ModelAdmin):
     list_display = ['project', 'role', 'user']
     list_filter = ['project', 'role']
 
+
 class IssueAdmin(reversion.VersionAdmin):
     list_display = ["subject", "type"]
+
 
 class SeverityAdmin(admin.ModelAdmin):
     list_display = ["name", "order", "project"]
 
+
 class PriorityAdmin(admin.ModelAdmin):
     list_display = ["name", "order", "project"]
+
 
 class PointsAdmin(admin.ModelAdmin):
     list_display = ["name", "order", "project"]
 
+
 class IssueTypeAdmin(admin.ModelAdmin):
     list_display = ["name", "order", "project"]
+
 
 class IssueStatusAdmin(admin.ModelAdmin):
     list_display = ["name", "order", "is_closed", "project"]
 
+
 class TaskStatusAdmin(admin.ModelAdmin):
     list_display = ["name", "order", "is_closed", "project"]
 
+
 class UserStoryStatusAdmin(admin.ModelAdmin):
     list_display = ["name", "order", "is_closed", "project"]
+
 
 admin.site.register(models.Task, TaskAdmin)
 admin.site.register(models.Issue, IssueAdmin)

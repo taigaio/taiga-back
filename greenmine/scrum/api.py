@@ -1,5 +1,8 @@
-import django_filters
+# -*- coding: utf-8 -*-
 
+from django.db.models import Q
+
+import django_filters
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
@@ -50,7 +53,9 @@ class ProjectList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.model.objects.filter(members=self.request.user)
+        return self.model.objects.filter(
+            Q(owner=self.request.user) | Q(members=self.request.user)
+        )
 
     def pre_save(self, obj):
         obj.owner = self.request.user
@@ -100,7 +105,7 @@ class UserStoryDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, UserStoryDetailPermission,)
 
 
-class IssuesAttachmentFilter(django_filters.FilterSet):
+class AttachmentFilter(django_filters.FilterSet):
     class Meta:
         model = Attachment
         fields = ['project', 'object_id']
@@ -110,7 +115,7 @@ class IssuesAttachmentList(generics.ListCreateAPIView):
     model = Attachment
     serializer_class = AttachmentSerializer
     permission_classes = (IsAuthenticated,)
-    filter_class = IssuesAttachmentFilter
+    filter_class = AttachmentFilter
 
     def get_queryset(self):
         ct = ContentType.objects.get_for_model(Issue)
@@ -129,6 +134,29 @@ class IssuesAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, AttachmentDetailPermission,)
 
 
+class TasksAttachmentList(generics.ListCreateAPIView):
+    model = Attachment
+    serializer_class = AttachmentSerializer
+    permission_classes = (IsAuthenticated,)
+    filter_class = AttachmentFilter
+
+    def get_queryset(self):
+        ct = ContentType.objects.get_for_model(Task)
+        return super(TasksAttachmentList, self).get_queryset()\
+                    .filter(project__members=self.request.user)\
+                    .filter(content_type=ct)
+
+    def pre_save(self, obj):
+        obj.content_type = ContentType.objects.get_for_model(Task)
+        obj.owner = self.request.user
+
+
+class TasksAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Attachment
+    serializer_class = AttachmentSerializer
+    permission_classes = (IsAuthenticated, AttachmentDetailPermission,)
+
+
 class TaskList(generics.ListCreateAPIView):
     model = Task
     serializer_class = TaskSerializer
@@ -140,12 +168,19 @@ class TaskList(generics.ListCreateAPIView):
 
     def pre_save(self, obj):
         obj.owner = self.request.user
+        obj.milestone = obj.user_story.milestone
 
 
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Task
     serializer_class = TaskSerializer
     permission_classes = (IsAuthenticated, TaskDetailPermission,)
+
+    def post_save(self, obj, created=False):
+        with reversion.create_revision():
+            if "comment" in self.request.DATA:
+                # Update the comment in the last version
+                reversion.set_comment(self.request.DATA['comment'])
 
 
 class IssueList(generics.ListCreateAPIView):

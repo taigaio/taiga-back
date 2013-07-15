@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 from django.conf.urls import patterns, url
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from greenmine.documents import api
+from . import api
+
 
 urlpatterns = format_suffix_patterns(patterns('',
     url(r'^documents/$', api.DocumentList.as_view(), name='document-list'),
