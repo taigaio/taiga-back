@@ -20,7 +20,6 @@ import uuid
 @receiver(signals.pre_save)
 def attach_uuid(sender, instance, **kwargs):
     fields = sender._meta.init_name_map()
-    #fields = sender._meta.get_all_field_names()
 
     if 'modified_date' in fields:
         instance.modified_date = now()
