@@ -10,13 +10,24 @@ from django.db.models.loading import get_model
 
 from picklefield.fields import PickledObjectField
 
-from greenmine.base.utils.slug import slugify_uniquely, ref_uniquely
+from greenmine.base.utils.slug import (
+    slugify_uniquely,
+    ref_uniquely
+)
 from greenmine.base.utils import iter_points
 from greenmine.base.notifications.models import WatchedMixin
-from greenmine.scrum.choices import (ISSUESTATUSES, TASKSTATUSES, USSTATUSES,
-                                     POINTS_CHOICES, SEVERITY_CHOICES,
-                                     ISSUETYPES, TASK_CHANGE_CHOICES,
-                                     PRIORITY_CHOICES)
+from greenmine.scrum.choices import (
+    ISSUESTATUSES,
+    TASKSTATUSES,
+    USSTATUSES,
+    POINTS_CHOICES,
+    SEVERITY_CHOICES,
+    ISSUETYPES,
+    TASK_CHANGE_CHOICES,
+    PRIORITY_CHOICES
+)
+
+import reversion
 
 
 class Severity(models.Model):
@@ -232,7 +243,7 @@ class Project(models.Model, WatchedMixin):
     def _get_watchers_by_role(self):
         return {'owner': self.owner}
 
-    def _get_attributes_to_notify(self):
+    def eget_attrinutes_to_notify(self):
         return {
             'name': self.name,
             'slug': self.slug,
@@ -385,7 +396,6 @@ class Milestone(models.Model, WatchedMixin):
             'project_owner': (self.project, self.project.owner),
         }
 
-
 class RolePoints(models.Model):
     user_story = models.ForeignKey('UserStory', null=False, blank=False,
                 related_name='role_points',
@@ -472,22 +482,6 @@ class UserStory(WatchedMixin, models.Model):
             'owner': self.owner,
             'suscribed_watchers': self.watchers.all(),
             'project_owner': (self.project, self.project.owner),
-        }
-
-    def _get_attributes_to_notify(self):
-        return {
-            'milestone': self.milestone.name,
-            'owner': self.owner.get_full_name(),
-            'status': self.status.name,
-            'points': self.points.name,
-            'order': self.order,
-            'modified_date': self.modified_date,
-            'finish_date': self.finish_date,
-            'subject': self.subject,
-            'description': self.description,
-            'client_requirement': self.client_requirement,
-            'team_requirement': self.team_requirement,
-            'tags': self.tags,
         }
 
 
@@ -678,6 +672,15 @@ class Issue(models.Model, WatchedMixin):
         }
 
 
+# Reversion registration (usufull for base.notification and for meke a historical)
+
+reversion.register(Project)
+reversion.register(Milestone)
+reversion.register(UserStory)
+reversion.register(Task)
+reversion.register(Issue)
+
+
 # Model related signals handlers
 
 @receiver(models.signals.post_save, sender=Project, dispatch_uid='project_post_save')
@@ -764,7 +767,3 @@ def tasks_close_handler(sender, instance, **kwargs):
     else:
         instance.user_story.finish_date = None
         instance.user_story.save()
-
-# Email alerts signals handlers
-# TODO: temporary commented (Pending refactor)
-# from . import sigdispatch

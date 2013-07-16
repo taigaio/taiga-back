@@ -6,6 +6,8 @@ import django_filters
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
+from greenmine.base.notifications.api import NotificationSenderMixin
+
 from greenmine.scrum.serializers import *
 from greenmine.scrum.models import *
 from greenmine.scrum.permissions import *
@@ -47,7 +49,7 @@ class SimpleFilterMixin(object):
         return queryset
 
 
-class ProjectList(generics.ListCreateAPIView):
+class ProjectList(NotificationSenderMixin, generics.ListCreateAPIView):
     model = Project
     serializer_class = ProjectSerializer
     permission_classes = (IsAuthenticated,)
@@ -61,13 +63,13 @@ class ProjectList(generics.ListCreateAPIView):
         obj.owner = self.request.user
 
 
-class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
+class ProjectDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
     model = Project
     serializer_class = ProjectSerializer
     permission_classes = (IsAuthenticated, ProjectDetailPermission,)
 
 
-class MilestoneList(generics.ListCreateAPIView):
+class MilestoneList(NotificationSenderMixin, generics.ListCreateAPIView):
     model = Milestone
     serializer_class = MilestoneSerializer
     filter_fields = ('project',)
@@ -80,13 +82,13 @@ class MilestoneList(generics.ListCreateAPIView):
         obj.owner = self.request.user
 
 
-class MilestoneDetail(generics.RetrieveUpdateDestroyAPIView):
+class MilestoneDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
     model = Milestone
     serializer_class = MilestoneSerializer
     permission_classes = (IsAuthenticated, MilestoneDetailPermission,)
 
 
-class UserStoryList(generics.ListCreateAPIView):
+class UserStoryList(NotificationSenderMixin, generics.ListCreateAPIView):
     model = UserStory
     serializer_class = UserStorySerializer
     filter_class = UserStoryFilter
@@ -99,7 +101,7 @@ class UserStoryList(generics.ListCreateAPIView):
         obj.owner = self.request.user
 
 
-class UserStoryDetail(generics.RetrieveUpdateDestroyAPIView):
+class UserStoryDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
     model = UserStory
     serializer_class = UserStorySerializer
     permission_classes = (IsAuthenticated, UserStoryDetailPermission,)
@@ -157,7 +159,7 @@ class TasksAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, AttachmentDetailPermission,)
 
 
-class TaskList(generics.ListCreateAPIView):
+class TaskList(NotificationSenderMixin, generics.ListCreateAPIView):
     model = Task
     serializer_class = TaskSerializer
     filter_fields = ('user_story', 'milestone', 'project')
@@ -171,7 +173,7 @@ class TaskList(generics.ListCreateAPIView):
         obj.milestone = obj.user_story.milestone
 
 
-class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
+class TaskDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
     model = Task
     serializer_class = TaskSerializer
     permission_classes = (IsAuthenticated, TaskDetailPermission,)
@@ -181,9 +183,10 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
             if "comment" in self.request.DATA:
                 # Update the comment in the last version
                 reversion.set_comment(self.request.DATA['comment'])
+        super(TaskDetail, self).post_save(obj, created)
 
 
-class IssueList(generics.ListCreateAPIView):
+class IssueList(NotificationSenderMixin, generics.ListCreateAPIView):
     model = Issue
     serializer_class = IssueSerializer
     filter_fields = ('project',)
@@ -196,7 +199,7 @@ class IssueList(generics.ListCreateAPIView):
         return self.model.objects.filter(project__members=self.request.user)
 
 
-class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
+class IssueDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
     model = Issue
     serializer_class = IssueSerializer
     permission_classes = (IsAuthenticated, IssueDetailPermission,)
@@ -206,6 +209,7 @@ class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
             if "comment" in self.request.DATA:
                 # Update the comment in the last version
                 reversion.set_comment(self.request.DATA['comment'])
+        super(IssueDetail, self).post_save(obj, created)
 
 
 class SeverityList(generics.ListCreateAPIView):

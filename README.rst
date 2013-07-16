@@ -11,6 +11,7 @@ Setup development environment.
     python manage.py syncdb --migrate --noinput
     python manage.py loaddata initial_user
     python manage.py sample_data
+    python manage.py createinitialrevisions
 
 
 Auth: admin/123123
