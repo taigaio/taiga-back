@@ -229,6 +229,21 @@ class Project(models.Model, WatchedMixin):
 
         super(Project, self).save(*args, **kwargs)
 
+    def _get_watchers_by_role(self):
+        return {'owner': self.owner}
+
+    def _get_attributes_to_notify(self):
+        return {
+            'name': self.name,
+            'slug': self.slug,
+            'description': self.description,
+            'modified_date': self.modified_date,
+            'owner': self.owner.get_full_name(),
+            'members': ', '.join([member.get_full_name() for member in self.members.all()]),
+            'public': self.public,
+            'tags': self.tags,
+        }
+
     @property
     def list_of_milestones(self):
         return [{
@@ -384,20 +399,6 @@ class RolePoints(models.Model):
 
     class Meta:
         unique_together = ('user_story', 'role')
-
-    def _get_watchers_by_role(self):
-        return {
-            'owner': self.owner,
-            'project_owner': (self.project, self.project.owner),
-        }
-
-    def _get_attributes_to_notify(self):
-        return {
-            'name': self.name,
-            'slug': self.slug,
-            'owner': self.owner.get_full_name(),
-            'modified_date': self.modified_date,
-        }
 
 
 class UserStory(WatchedMixin, models.Model):
