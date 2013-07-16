@@ -150,21 +150,22 @@ class Command(BaseCommand):
             tags=[]
         )
 
+        us.save()
+
         for role in project.list_roles:
             if milestone:
                 points=self.sd.db_object_from_queryset(Points.objects.filter(project=project).exclude(order=0))
             else:
                 points=self.sd.db_object_from_queryset(Points.objects.filter(project=project))
 
-                RolePoints.objects.create(
-                    user_story=us,
-                    points=points,
-                    role=role)
+            RolePoints.objects.create(
+                user_story=us,
+                points=points,
+                role=role)
 
         for tag in self.sd.words().split(" "):
             us.tags.append(tag)
 
-        us.save()
         return us
 
     def create_milestone(self, project, start_date, end_date):

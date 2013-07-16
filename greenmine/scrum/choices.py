@@ -36,8 +36,8 @@ ISSUESTATUSES = (
 )
 
 USSTATUSES = (
-    (1, _("Open"), False),
-    (2, _("Closed"), True),
+    (1, _(u"Open"), False),
+    (2, _(u"Closed"), True),
 )
 
 ISSUETYPES = (
