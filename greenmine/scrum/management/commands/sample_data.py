@@ -149,10 +149,17 @@ class Command(BaseCommand):
             status=self.sd.db_object_from_queryset(UserStoryStatus.objects.filter(project=project)),
             tags=[]
         )
-        if milestone:
-            us.points=self.sd.db_object_from_queryset(Points.objects.filter(project=project).exclude(order=0))
-        else:
-            us.points=self.sd.db_object_from_queryset(Points.objects.filter(project=project))
+
+        for role in project.list_roles:
+            if milestone:
+                points=self.sd.db_object_from_queryset(Points.objects.filter(project=project).exclude(order=0))
+            else:
+                points=self.sd.db_object_from_queryset(Points.objects.filter(project=project))
+
+                RolePoints.objects.create(
+                    user_story=us,
+                    points=points,
+                    role=role)
 
         for tag in self.sd.words().split(" "):
             us.tags.append(tag)

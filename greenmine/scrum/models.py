@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.loading import get_model
 
 from picklefield.fields import PickledObjectField
 
@@ -144,6 +145,8 @@ class Points(models.Model):
                 verbose_name=_('name'))
     order = models.IntegerField(default=10, null=False, blank=False,
                 verbose_name=_('order'))
+    value = models.FloatField(default=None, null=True, blank=True,
+                verbose_name=_('value'))
     project = models.ForeignKey('Project', null=False, blank=False,
                 related_name='points',
                 verbose_name=_('project'))
@@ -169,7 +172,8 @@ class Points(models.Model):
 
 class Membership(models.Model):
     user = models.ForeignKey('base.User', null=False, blank=False)
-    project = models.ForeignKey('Project', null=False, blank=False)
+    project = models.ForeignKey('Project', null=False, blank=False,
+            related_name="memberships")
     role = models.ForeignKey('base.Role', null=False, blank=False)
 
     class Meta:
@@ -242,6 +246,11 @@ class Project(models.Model):
                     'team_increment_points': milestone.team_increment_points
                 } for milestone in self.milestones.all().order_by('estimated_start')
          ]
+
+    @property
+    def list_roles(self):
+        role_model = get_model('base', 'Role')
+        return role_model.objects.filter(id__in=list(self.memberships.values_list('role', flat=True)))
 
 
 class Milestone(models.Model):
@@ -345,6 +354,18 @@ class Milestone(models.Model):
         return sum(points)
 
 
+class RolePoints(models.Model):
+    user_story = models.ForeignKey('UserStory', null=False, blank=False,
+                related_name='role_points',
+                verbose_name=_('user story'))
+    role = models.ForeignKey('base.Role', null=False, blank=False,
+                related_name='role_points',
+                verbose_name=_('role'))
+    points = models.ForeignKey('Points', null=False, blank=False,
+                related_name='role_points',
+                verbose_name=_('points'))
+
+
 class UserStory(models.Model):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
                 verbose_name=_('uuid'))
@@ -362,9 +383,10 @@ class UserStory(models.Model):
     status = models.ForeignKey('UserStoryStatus', null=False, blank=False,
                 related_name='user_stories',
                 verbose_name=_('status'))
-    points = models.ForeignKey('Points', null=False, blank=False,
+    points = models.ManyToManyField('Points', null=False, blank=False,
                 related_name='userstories',
-                verbose_name=_('points'))
+                verbose_name=_('points'),
+                through="RolePoints")
     order = models.PositiveSmallIntegerField(null=False, blank=False, default=100,
                 verbose_name=_('order'))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
@@ -613,8 +635,9 @@ def project_post_save(sender, instance, created, **kwargs):
     for order, name in SEVERITY_CHOICES:
         Severity.objects.create(project=instance, name=name, order=order)
 
-    for order, name in POINTS_CHOICES:
-        Points.objects.create(project=instance, name=name, order=order)
+    for order, name, value in POINTS_CHOICES:
+
+        Points.objects.create(project=instance, name=name, order=order, value=value)
 
     for order, name in ISSUETYPES:
         IssueType.objects.create(project=instance, name=name, order=order)
