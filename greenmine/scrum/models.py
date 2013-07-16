@@ -313,20 +313,6 @@ class Milestone(models.Model, WatchedMixin):
 
         super(Milestone, self).save(*args, **kwargs)
 
-    def _get_watchers_by_role(self):
-        return {
-            'owner': self.owner,
-            'project_owner': (self.project, self.project.owner),
-        }
-
-    def _get_attributes_to_notify(self):
-        return {
-            'name': self.name,
-            'slug': self.slug,
-            'owner': self.owner.get_full_name(),
-            'modified_date': self.modified_date,
-        }
-
     @property
     def closed_points(self):
         points = [ us.points.value for us in self.user_stories.all() if us.is_closed ]
