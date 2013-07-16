@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+import sys
 
 from rest_framework import views
 from rest_framework import status, exceptions
@@ -27,5 +29,5 @@ def patch_api_view():
             view.cls_instance = cls(**initkwargs)
             return view
 
-    print "Patching APIView"
+    print("Patching APIView", file=sys.stderr)
     views.APIView = APIView
