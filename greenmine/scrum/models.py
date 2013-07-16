@@ -329,44 +329,49 @@ class Milestone(models.Model):
 
     @property
     def closed_points(self):
-        points = [ us.points.value for us in self.user_stories.all() if us.is_closed ]
-        return sum(points)
+        # TODO: refactor
+        #points = [ us.points.value for us in self.user_stories.all() if us.is_closed ]
+        #return sum(points)
+        return 0
 
     @property
     def client_increment_points(self):
-        user_stories = UserStory.objects.filter(
-            created_date__gte=self.estimated_start,
-            created_date__lt=self.estimated_finish,
-            project_id = self.project_id,
-            client_requirement=True,
-            team_requirement=False
-        )
-        points = [ us.points.value for us in user_stories ]
-        return sum(points) + (self.shared_increment_points / 2)
+        #user_stories = UserStory.objects.filter(
+        #    created_date__gte=self.estimated_start,
+        #    created_date__lt=self.estimated_finish,
+        #    project_id = self.project_id,
+        #    client_requirement=True,
+        #    team_requirement=False
+        #)
+        #points = [ us.points.value for us in user_stories ]
+        #return sum(points) + (self.shared_increment_points / 2)
+        return 0
 
     @property
     def team_increment_points(self):
-        user_stories = UserStory.objects.filter(
-            created_date__gte=self.estimated_start,
-            created_date__lt=self.estimated_finish,
-            project_id = self.project_id,
-            client_requirement=False,
-            team_requirement=True
-        )
-        points = [ us.points.value for us in user_stories ]
-        return sum(points) + (self.shared_increment_points / 2)
+        #user_stories = UserStory.objects.filter(
+        #    created_date__gte=self.estimated_start,
+        #    created_date__lt=self.estimated_finish,
+        #    project_id = self.project_id,
+        #    client_requirement=False,
+        #    team_requirement=True
+        #)
+        #points = [ us.points.value for us in user_stories ]
+        #return sum(points) + (self.shared_increment_points / 2)
+        return 0
 
     @property
     def shared_increment_points(self):
-        user_stories = UserStory.objects.filter(
-            created_date__gte=self.estimated_start,
-            created_date__lt=self.estimated_finish,
-            project_id = self.project_id,
-            client_requirement=True,
-            team_requirement=True
-        )
-        points = [ us.points.value for us in user_stories ]
-        return sum(points)
+        #user_stories = UserStory.objects.filter(
+        #    created_date__gte=self.estimated_start,
+        #    created_date__lt=self.estimated_finish,
+        #    project_id = self.project_id,
+        #    client_requirement=True,
+        #    team_requirement=True
+        #)
+        #points = [ us.points.value for us in user_stories ]
+        #return sum(points)
+        return 0
 
 
 class RolePoints(models.Model):
