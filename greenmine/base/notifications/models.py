@@ -5,7 +5,7 @@ from django.dispatch import Signal
 from django.utils.translation import ugettext_lazy as _
 
 
-watched_changed = Signal(providing_args = ['changed_attributes'])
+watched_changed = Signal(providing_args=['changed_attributes'])
 
 
 class WatcherMixin(object):
@@ -56,7 +56,6 @@ class WatcherMixin(object):
 
 
 class WatchedMixin(object):
-
     class Meta:
         abstract = True
 
@@ -70,32 +69,28 @@ class WatchedMixin(object):
 
     def complete_change(self):
         changed_attributes = self._get_changed_attributes()
-        del self._changer
-        del self._saved_attributes
-        watched_changed.send(sender = self, changed_attributes = changed_attributes)
+        self.cancel_change()
+        watched_changed.send(sender=self, changed_attributes=changed_attributes)
 
     def get_watchers_to_notify(self):
         watchers_to_notify = set()
         watchers_by_role = self._get_watchers_by_role()
 
         owner = watchers_by_role.get('owner')
-        if owner \
-           and owner.allow_notify_owned() \
-           and owner.allow_notify_by_me(self._changer):
+        if (owner and owner.allow_notify_owned()
+                and owner.allow_notify_by_me(self._changer)):
             watchers_to_notify.add(owner)
 
         assigned_to = watchers_by_role.get('assigned_to')
-        if (assigned_to 
-                and assigned_to.allow_notify_assigned_to()
+        if (assigned_to and assigned_to.allow_notify_assigned_to()
                 and assigned_to.allow_notify_by_me(self._changer)):
             watchers_to_notify.add(assigned_to)
 
         suscribed_watchers = watchers_by_role.get('suscribed_watchers')
         if suscribed_watchers:
             for suscribed_watcher in suscribed_watchers:
-                if suscribed_watcher \
-                   and suscribed_watcher.allow_notify_suscribed() \
-                   and suscribed_watcher.allow_notify_by_me(self._changer):
+                if (suscribed_watcher and suscribed_watcher.allow_notify_suscribed()
+                        and suscribed_watcher.allow_notify_by_me(self._changer)):
                     watchers_to_notify.add(suscribed_watcher)
 
         #(project, project_owner) = watchers_by_role.get('project_owner')
