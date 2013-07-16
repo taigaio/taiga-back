@@ -44,9 +44,16 @@ class MilestoneAdmin(reversion.VersionAdmin):
 admin.site.register(models.Milestone, MilestoneAdmin)
 
 
+class RolePointsInline(admin.TabularInline):
+    model = models.RolePoints
+    sortable_field_name = 'role'
+    extra = 0
+
+
 class UserStoryAdmin(reversion.VersionAdmin):
     list_display = ["id", "ref", "milestone", "project", "owner", 'status', 'is_closed']
     list_filter = ["milestone", "project"]
+    inlines = [RolePointsInline]
 
 admin.site.register(models.UserStory, UserStoryAdmin)
 
