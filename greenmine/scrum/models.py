@@ -160,21 +160,14 @@ class Points(models.Model):
     def __unicode__(self):
         return u'project {0} - {1}'.format(self.project_id, self.name)
 
-    @property
-    def value(self):
-        if self.order == -2:
-            return 0.5
-        elif self.order == -1:
-            return 1
-        else:
-            return self.order
-
 
 class Membership(models.Model):
-    user = models.ForeignKey('base.User', null=False, blank=False)
+    user = models.ForeignKey('base.User', null=False, blank=False,
+            related_name="memberships")
     project = models.ForeignKey('Project', null=False, blank=False,
             related_name="memberships")
-    role = models.ForeignKey('base.Role', null=False, blank=False)
+    role = models.ForeignKey('base.Role', null=False, blank=False,
+            related_name="memberships")
 
     class Meta:
         unique_together = ('user', 'project')
@@ -252,6 +245,28 @@ class Project(models.Model):
         role_model = get_model('base', 'Role')
         return role_model.objects.filter(id__in=list(self.memberships.values_list('role', flat=True)))
 
+    @property
+    def list_users(self):
+        user_model = get_model('base', 'User')
+        return user_model.objects.filter(id__in=list(self.memberships.values_list('user', flat=True)))
+
+    def update_role_points(self):
+        roles = self.list_roles
+        role_ids = roles.values_list('id', flat=True)
+        null_points = self.points.get(value=None)
+        for us in self.user_stories.all():
+            for role in roles:
+                try:
+                    sp = us.role_points.get(role=role, user_story=us)
+                except RolePoints.DoesNotExist:
+                    sp = RolePoints.objects.create(role=role,
+                            user_story=us,
+                            points=null_points)
+
+        #Remove unnecesary Role points
+        RolePoints.objects.filter(user_story__in=self.user_stories.all())\
+                .exclude(role__id__in=role_ids)\
+                .delete()
 
 class Milestone(models.Model):
     uuid = models.CharField(
@@ -364,6 +379,9 @@ class RolePoints(models.Model):
     points = models.ForeignKey('Points', null=False, blank=False,
                 related_name='role_points',
                 verbose_name=_('points'))
+
+    class Meta:
+        unique_together = ('user_story', 'role')
 
 
 class UserStory(models.Model):
@@ -636,11 +654,20 @@ def project_post_save(sender, instance, created, **kwargs):
         Severity.objects.create(project=instance, name=name, order=order)
 
     for order, name, value in POINTS_CHOICES:
-
         Points.objects.create(project=instance, name=name, order=order, value=value)
 
     for order, name in ISSUETYPES:
         IssueType.objects.create(project=instance, name=name, order=order)
+
+
+@receiver(models.signals.post_save, sender=Membership, dispatch_uid='membership_post_save')
+def membership_post_save(sender, instance, created, **kwargs):
+    instance.project.update_role_points()
+
+
+@receiver(models.signals.post_delete, sender=Membership, dispatch_uid='membership_pre_delete')
+def membership_post_delete(sender, instance, using, **kwargs):
+    instance.project.update_role_points()
 
 
 @receiver(models.signals.pre_save, sender=Task, dispatch_uid='task_ref_handler')
