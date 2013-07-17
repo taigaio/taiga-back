@@ -23,9 +23,11 @@ class NotificationSenderMixin(object):
         }
 
         if created:
-            self._send_notification_email(self.create_notification_template, users=users, context=context)
+            #self._send_notification_email(self.create_notification_template, users=users, context=context)
+            print "TODO: Send the notification email of object creation"
         else:
-            self._send_notification_email(self.update_notification_template, users=users, context=context)
+            #self._send_notification_email(self.update_notification_template, users=users, context=context)
+            print "TODO: Send the notification email of object modification"
 
     def destroy(self, request, *args, **kwargs):
         users = obj.get_watchers_to_notify(self.request.user)
@@ -33,5 +35,7 @@ class NotificationSenderMixin(object):
             'changer': self.request.user,
             'object': obj
         }
-        self._send_notification_email(self.destroy_notification_template, users=users, context=context)
+        #self._send_notification_email(self.destroy_notification_template, users=users, context=context)
+        print "TODO: Send the notification email of object deletion"
+
         return super(NotificationSenderMixin, self).destroy(request, *args, **kwargs)
