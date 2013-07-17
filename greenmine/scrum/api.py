@@ -353,18 +353,3 @@ class PointsDetail(generics.RetrieveUpdateDestroyAPIView):
     model = Points
     serializer_class = PointsSerializer
     permission_classes = (IsAuthenticated, PointsDetailPermission,)
-
-
-class RoleList(generics.ListAPIView):
-    model = Role
-    serializer_class = RoleSerializer
-    permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self):
-        return self.model.objects.all()
-
-
-class RoleDetail(generics.RetrieveAPIView):
-    model = Role
-    serializer_class = RoleSerializer
-    permission_classes = (IsAuthenticated,)

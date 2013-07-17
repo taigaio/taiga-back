@@ -35,6 +35,4 @@ urlpatterns = format_suffix_patterns(patterns('',
     url(r'^tasks/statuses/(?P<pk>[0-9]+)/$', api.TaskStatusDetail.as_view(), name='tasks-status-detail'),
     url(r'^priorities/$', api.PriorityList.as_view(), name='priority-list'),
     url(r'^priorities/(?P<pk>[0-9]+)/$', api.PriorityDetail.as_view(), name='priority-detail'),
-    url(r'^roles/$', api.RoleList.as_view(), name='role-list'),
-    url(r'^roles/(?P<pk>[0-9]+)/$', api.RoleDetail.as_view(), name='role-detail'),
 ))

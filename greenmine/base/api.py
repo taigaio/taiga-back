@@ -61,6 +61,12 @@ class RoleList(generics.ListCreateAPIView):
         return self.model.objects.all()
 
 
+class RoleDetail(generics.RetrieveAPIView):
+    model = Role
+    serializer_class = RoleSerializer
+    permission_classes = (IsAuthenticated,)
+
+
 #class UserFilter(django_filters.FilterSet):
 #    no_milestone = django_filters.NumberFilter(name="mileston", lookup_type='isnull')
 #
@@ -151,4 +157,7 @@ class Search(APIView):
             return Response(return_data.data)
 
         return Response({"detail": "Parameter text can't be empty"}, status.HTTP_400_BAD_REQUEST)
+
+
+
 
