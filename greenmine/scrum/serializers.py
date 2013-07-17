@@ -2,6 +2,7 @@
 
 from rest_framework import serializers
 
+from greenmine.base.models import *
 from greenmine.scrum.models import *
 from picklefield.fields import dbsafe_encode, dbsafe_decode
 
@@ -220,4 +221,9 @@ class IssueTypeSerializer(serializers.ModelSerializer):
         model = IssueType
         fields = ()
 
+
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = ()
 
