@@ -81,8 +81,8 @@ class Command(BaseCommand):
                 bug = self.create_bug(project)
 
             # create questions.
-            for y in xrange(self.sd.int(15,25)):
-                question = self.create_question(project)
+            #for y in xrange(self.sd.int(15,25)):
+            #    question = self.create_question(project)
 
     def create_question(self, project):
         question = Question.objects.create(
@@ -163,9 +163,10 @@ class Command(BaseCommand):
                 points=points,
                 role=role)
 
-        for tag in self.sd.words().split(" "):
+        for tag in self.sd.words(1, 3).split(" "):
             us.tags.append(tag)
 
+        us.save()
         return us
 
     def create_milestone(self, project, start_date, end_date):

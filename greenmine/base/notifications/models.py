@@ -64,8 +64,8 @@ class WatchedMixin(object):
         return version_list and version_list[0] or None
 
     def get_changed_fields_dict(self, data_dict):
-        if self.notified_fields:
-            changed_data = dict((k, d[k]) for k in data_dict if k in self.notifiable_fields)
+        if self.notifiable_fields:
+            changed_data = dict((k, v) for k, v in data_dict.items() if k in self.notifiable_fields)
         else:
             changed_data = data_dict
 

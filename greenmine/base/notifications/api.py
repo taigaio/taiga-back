@@ -8,7 +8,7 @@ class NotificationSenderMixin(object):
     update_notification_template = None
     destroy_notification_template = None
 
-    def _send_notification_email(template_method, users=None, context=None):
+    def _send_notification_email(self, template_method, users=None, context=None):
         mails = template_mail.MagicMailBuilder()
         for user in users:
             email = getattr(mails, template_method)(user, context)
@@ -28,6 +28,7 @@ class NotificationSenderMixin(object):
             self._send_notification_email(self.update_notification_template, users=users, context=context)
 
     def destroy(self, request, *args, **kwargs):
+        obj = self.get_object()
         users = obj.get_watchers_to_notify(self.request.user)
         context = {
             'changer': self.request.user,
