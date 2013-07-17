@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework import generics
 
-from haystack.query import SearchQuerySet
+from haystack import query, inputs
 
 from greenmine.base.serializers import LoginSerializer, UserLogged, UserSerializer, RoleSerializer
 from greenmine.base.serializers import SearchSerializer
@@ -149,11 +149,15 @@ class Logout(APIView):
 class Search(APIView):
     def get(self, request, format=None):
         text = request.QUERY_PARAMS.get('text', None)
+        project = request.QUERY_PARAMS.get('project', None)
 
-        if text:
+        if text and project:
             #TODO: permission check
-            results = SearchQuerySet().filter(content=text)[:settings.MAX_SEARCH_RESULTS]
-            return_data = SearchSerializer(results)
+            queryset = query.SearchQuerySet()
+            queryset = queryset.filter(text=inputs.AutoQuery(text))
+            queryset = queryset.filter(project_id=project)
+
+            return_data = SearchSerializer(queryset)
             return Response(return_data.data)
 
         return Response({"detail": "Parameter text can't be empty"}, status.HTTP_400_BAD_REQUEST)

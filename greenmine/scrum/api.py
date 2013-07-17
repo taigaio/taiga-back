@@ -59,9 +59,10 @@ class ProjectList(NotificationSenderMixin, generics.ListCreateAPIView):
     destroy_notification_template = "destroy_project_notification"
 
     def get_queryset(self):
-        return self.model.objects.filter(
+        qs = self.model.objects.filter(
             Q(owner=self.request.user) | Q(members=self.request.user)
         )
+        return qs.distinct()
 
     def pre_save(self, obj):
         obj.owner = self.request.user
@@ -86,7 +87,8 @@ class MilestoneList(NotificationSenderMixin, generics.ListCreateAPIView):
     destroy_notification_template = "destroy_milestone_notification"
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        qs = self.model.objects.filter(project__members=self.request.user)
+        return qs.distinct()
 
     def pre_save(self, obj):
         obj.owner = self.request.user
@@ -111,7 +113,8 @@ class UserStoryList(NotificationSenderMixin, generics.ListCreateAPIView):
     destroy_notification_template = "destroy_user_story_notification"
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        qs = self.model.objects.filter(project__members=self.request.user)
+        return qs.distinct()
 
     def pre_save(self, obj):
         obj.owner = self.request.user
@@ -140,9 +143,11 @@ class IssuesAttachmentList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         ct = ContentType.objects.get_for_model(Issue)
-        return super(IssuesAttachmentList, self).get_queryset()\
-                    .filter(project__members=self.request.user)\
-                    .filter(content_type=ct)
+        qs = super(IssuesAttachmentList, self).get_queryset()\
+                   .filter(project__members=self.request.user)\
+                   .filter(content_type=ct)
+
+        return qs.distinct()
 
     def pre_save(self, obj):
         obj.content_type = ContentType.objects.get_for_model(Issue)
@@ -163,9 +168,11 @@ class TasksAttachmentList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         ct = ContentType.objects.get_for_model(Task)
-        return super(TasksAttachmentList, self).get_queryset()\
-                    .filter(project__members=self.request.user)\
-                    .filter(content_type=ct)
+        qs = super(TasksAttachmentList, self).get_queryset()\
+                   .filter(project__members=self.request.user)\
+                   .filter(content_type=ct)
+
+        return qs.distinct()
 
     def pre_save(self, obj):
         obj.content_type = ContentType.objects.get_for_model(Task)
@@ -188,7 +195,8 @@ class TaskList(NotificationSenderMixin, generics.ListCreateAPIView):
     destroy_notification_template = "destroy_task_notification"
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        qs = self.model.objects.filter(project__members=self.request.user)
+        return qs.distinct()
 
     def pre_save(self, obj):
         obj.owner = self.request.user
@@ -224,7 +232,8 @@ class IssueList(NotificationSenderMixin, generics.ListCreateAPIView):
         obj.owner = self.request.user
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        qs = self.model.objects.filter(project__members=self.request.user)
+        return qs.distinct()
 
 
 class IssueDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
@@ -250,7 +259,8 @@ class SeverityList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        qs = self.model.objects.filter(project__members=self.request.user)
+        return qs.distinct()
 
 
 class SeverityDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -266,7 +276,8 @@ class IssueStatusList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        qs = self.model.objects.filter(project__members=self.request.user)
+        return qs.distinct()
 
 
 class IssueStatusDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -282,7 +293,8 @@ class TaskStatusList(SimpleFilterMixin, generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        qs = self.model.objects.filter(project__members=self.request.user)
+        return qs.distinct()
 
 
 class TaskStatusDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -298,7 +310,8 @@ class UserStoryStatusList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        qs = self.model.objects.filter(project__members=self.request.user)
+        return qs.distinct()
 
 
 class UserStoryStatusDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -314,7 +327,8 @@ class PriorityList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        qs = self.model.objects.filter(project__members=self.request.user)
+        return qs.distinct()
 
 
 class PriorityDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -330,7 +344,8 @@ class IssueTypeList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        qs = self.model.objects.filter(project__members=self.request.user)
+        return qs.distinct()
 
 
 class IssueTypeDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -346,7 +361,8 @@ class PointsList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        qs = self.model.objects.filter(project__members=self.request.user)
+        return qs.distinct()
 
 
 class PointsDetail(generics.RetrieveUpdateDestroyAPIView):

@@ -30,8 +30,8 @@ class WikiPage(models.Model):
         unique_together = ('project', 'slug',)
 
         permissions = (
-            ('can_view_wikipage', 'Can modify owned wiki pages'),
-            ('can_change_owned_wikipage', 'Can modify owned wiki pages'),
+            ('view_wikipage', 'Can modify owned wiki pages'),
+            ('change_owned_wikipage', 'Can modify owned wiki pages'),
         )
 
     def __unicode__(self):

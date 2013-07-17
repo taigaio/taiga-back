@@ -100,22 +100,22 @@
                 "document"
             ],
             [
-                "can_change_owned_documents",
+                "change_owned_documents",
                 "documents",
                 "document"
             ],
             [
-                "can_download_from_my_projects",
+                "download_from_my_projects",
                 "documents",
                 "document"
             ],
             [
-                "can_download_from_other_projects",
+                "download_from_other_projects",
                 "documents",
                 "document"
             ],
             [
-                "can_view_documents",
+                "view_documents",
                 "documents",
                 "document"
             ],
@@ -135,37 +135,37 @@
                 "question"
             ],
             [
-                "can_assign_question_to_myself",
+                "assign_question_to_myself",
                 "questions",
                 "question"
             ],
             [
-                "can_assign_question_to_other",
+                "assign_question_to_other",
                 "questions",
                 "question"
             ],
             [
-                "can_change_assigned_question",
+                "change_assigned_question",
                 "questions",
                 "question"
             ],
             [
-                "can_change_owned_question",
+                "change_owned_question",
                 "questions",
                 "question"
             ],
             [
-                "can_change_question_state",
+                "change_question_state",
                 "questions",
                 "question"
             ],
             [
-                "can_reply_question",
+                "reply_question",
                 "questions",
                 "question"
             ],
             [
-                "can_view_question",
+                "view_question",
                 "questions",
                 "question"
             ],
@@ -215,37 +215,37 @@
                 "issue"
             ],
             [
-                "can_assign_issue_to_myself",
+                "assign_issue_to_myself",
                 "scrum",
                 "issue"
             ],
             [
-                "can_assign_issue_to_other",
+                "assign_issue_to_other",
                 "scrum",
                 "issue"
             ],
             [
-                "can_change_assigned_issue",
+                "change_assigned_issue",
                 "scrum",
                 "issue"
             ],
             [
-                "can_change_issue_state",
+                "change_issue_state",
                 "scrum",
                 "issue"
             ],
             [
-                "can_change_owned_issue",
+                "change_owned_issue",
                 "scrum",
                 "issue"
             ],
             [
-                "can_comment_issue",
+                "comment_issue",
                 "scrum",
                 "issue"
             ],
             [
-                "can_view_issue",
+                "view_issue",
                 "scrum",
                 "issue"
             ],
@@ -310,7 +310,7 @@
                 "milestone"
             ],
             [
-                "can_view_milestone",
+                "view_milestone",
                 "scrum",
                 "milestone"
             ],
@@ -360,17 +360,17 @@
                 "project"
             ],
             [
-                "can_list_projects",
+                "list_projects",
                 "scrum",
                 "project"
             ],
             [
-                "can_manage_users",
+                "manage_users",
                 "scrum",
                 "project"
             ],
             [
-                "can_view_project",
+                "view_project",
                 "scrum",
                 "project"
             ],
@@ -405,42 +405,42 @@
                 "task"
             ],
             [
-                "can_add_task_to_us",
+                "add_task_to_us",
                 "scrum",
                 "task"
             ],
             [
-                "can_assign_task_to_myself",
+                "assign_task_to_myself",
                 "scrum",
                 "task"
             ],
             [
-                "can_assign_task_to_other",
+                "assign_task_to_other",
                 "scrum",
                 "task"
             ],
             [
-                "can_change_assigned_task",
+                "change_assigned_task",
                 "scrum",
                 "task"
             ],
             [
-                "can_change_owned_task",
+                "change_owned_task",
                 "scrum",
                 "task"
             ],
             [
-                "can_change_task_state",
+                "change_task_state",
                 "scrum",
                 "task"
             ],
             [
-                "can_comment_task",
+                "comment_task",
                 "scrum",
                 "task"
             ],
             [
-                "can_view_task",
+                "view_task",
                 "scrum",
                 "task"
             ],
@@ -475,27 +475,27 @@
                 "userstory"
             ],
             [
-                "can_add_userstory_to_milestones",
+                "add_userstory_to_milestones",
                 "scrum",
                 "userstory"
             ],
             [
-                "can_change_owned_userstory",
+                "change_owned_userstory",
                 "scrum",
                 "userstory"
             ],
             [
-                "can_comment_userstory",
+                "comment_userstory",
                 "scrum",
                 "userstory"
             ],
             [
-                "can_delete_userstory",
+                "delete_userstory",
                 "scrum",
                 "userstory"
             ],
             [
-                "can_view_userstory",
+                "view_userstory",
                 "scrum",
                 "userstory"
             ],
@@ -560,12 +560,12 @@
                 "wikipage"
             ],
             [
-                "can_change_owned_wikipage",
+                "change_owned_wikipage",
                 "wiki",
                 "wikipage"
             ],
             [
-                "can_view_wikipage",
+                "view_wikipage",
                 "wiki",
                 "wikipage"
             ],

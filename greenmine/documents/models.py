@@ -35,10 +35,10 @@ class Document(models.Model):
         verbose_name_plural = u'document'
         ordering = ['project', 'title', 'id']
         permissions = (
-            ('can_download_from_my_projects', 'Can download the documents from my projects'),
-            ('can_download_from_other_projects', 'Can download the documents from other projects'),
-            ('can_change_owned_documents', 'Can modify owned documents'),
-            ('can_view_documents', 'Can modify owned documents'),
+            ('download_from_my_projects', 'Can download the documents from my projects'),
+            ('download_from_other_projects', 'Can download the documents from other projects'),
+            ('change_owned_documents', 'Can modify owned documents'),
+            ('view_documents', 'Can modify owned documents'),
         )
 
     def __unicode__(self):

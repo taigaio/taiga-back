@@ -80,13 +80,13 @@ class Question(models.Model):
         ordering = ['project', 'subject', 'id']
         #TODO: permissions
         permissions = (
-            ('can_reply_question', 'Can reply questions'),
-            ('can_change_owned_question', 'Can modify owned questions'),
-            ('can_change_assigned_question', 'Can modify assigned questions'),
-            ('can_assign_question_to_other', 'Can assign questions to others'),
-            ('can_assign_question_to_myself', 'Can assign questions to myself'),
-            ('can_change_question_state', 'Can change the question state'),
-            ('can_view_question', 'Can view the question'),
+            ('reply_question', 'Can reply questions'),
+            ('change_owned_question', 'Can modify owned questions'),
+            ('change_assigned_question', 'Can modify assigned questions'),
+            ('assign_question_to_other', 'Can assign questions to others'),
+            ('assign_question_to_myself', 'Can assign questions to myself'),
+            ('change_question_state', 'Can change the question state'),
+            ('view_question', 'Can view the question'),
         )
 
     def __unicode__(self):

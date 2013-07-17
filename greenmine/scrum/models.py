@@ -232,9 +232,9 @@ class Project(models.Model, WatchedMixin):
         verbose_name_plural = u'projects'
         ordering = ['name']
         permissions = (
-            ('can_list_projects', 'Can list projects'),
-            ('can_view_project', 'Can view project'),
-            ('can_manage_users', 'Can manage users'),
+            ('list_projects', 'Can list projects'),
+            ('view_project', 'Can view project'),
+            ('manage_users', 'Can manage users'),
         )
 
     def __unicode__(self):
@@ -332,7 +332,7 @@ class Milestone(models.Model, WatchedMixin):
         ordering = ['project', '-created_date']
         unique_together = ('name', 'project')
         permissions = (
-            ('can_view_milestone', 'Can view milestones'),
+            ('view_milestone', 'Can view milestones'),
         )
 
     def __unicode__(self):
@@ -476,11 +476,10 @@ class UserStory(WatchedMixin, models.Model):
         ordering = ['project', 'order']
         unique_together = ('ref', 'project')
         permissions = (
-            ('can_comment_userstory', 'Can comment user stories'),
-            ('can_view_userstory', 'Can view user stories'),
-            ('can_change_owned_userstory', 'Can modify owned user stories'),
-            ('can_delete_userstory', 'Can delete user stories'),
-            ('can_add_userstory_to_milestones', 'Can add user stories to milestones'),
+            ('comment_userstory', 'Can comment user stories'),
+            ('view_userstory', 'Can view user stories'),
+            ('change_owned_userstory', 'Can modify owned user stories'),
+            ('add_userstory_to_milestones', 'Can add user stories to milestones'),
         )
 
     def __unicode__(self):
@@ -592,14 +591,14 @@ class Task(models.Model, WatchedMixin):
         ordering = ['project', 'created_date']
         unique_together = ('ref', 'project')
         permissions = (
-            ('can_comment_task', 'Can comment tasks'),
-            ('can_change_owned_task', 'Can modify owned tasks'),
-            ('can_change_assigned_task', 'Can modify assigned tasks'),
-            ('can_assign_task_to_other', 'Can assign tasks to others'),
-            ('can_assign_task_to_myself', 'Can assign tasks to myself'),
-            ('can_change_task_state', 'Can change the task state'),
-            ('can_view_task', 'Can view the task'),
-            ('can_add_task_to_us', 'Can add tasks to a user story'),
+            ('comment_task', 'Can comment tasks'),
+            ('change_owned_task', 'Can modify owned tasks'),
+            ('change_assigned_task', 'Can modify assigned tasks'),
+            ('assign_task_to_other', 'Can assign tasks to others'),
+            ('assign_task_to_myself', 'Can assign tasks to myself'),
+            ('change_task_state', 'Can change the task state'),
+            ('view_task', 'Can view the task'),
+            ('add_task_to_us', 'Can add tasks to a user story'),
         )
 
     def __unicode__(self):
@@ -685,13 +684,13 @@ class Issue(models.Model, WatchedMixin):
         ordering = ['project', 'created_date']
         unique_together = ('ref', 'project')
         permissions = (
-            ('can_comment_issue', 'Can comment issues'),
-            ('can_change_owned_issue', 'Can modify owned issues'),
-            ('can_change_assigned_issue', 'Can modify assigned issues'),
-            ('can_assign_issue_to_other', 'Can assign issues to others'),
-            ('can_assign_issue_to_myself', 'Can assign issues to myself'),
-            ('can_change_issue_state', 'Can change the issue state'),
-            ('can_view_issue', 'Can view the issue'),
+            ('comment_issue', 'Can comment issues'),
+            ('change_owned_issue', 'Can modify owned issues'),
+            ('change_assigned_issue', 'Can modify assigned issues'),
+            ('assign_issue_to_other', 'Can assign issues to others'),
+            ('assign_issue_to_myself', 'Can assign issues to myself'),
+            ('change_issue_state', 'Can change the issue state'),
+            ('view_issue', 'Can view the issue'),
         )
 
     def __unicode__(self):
