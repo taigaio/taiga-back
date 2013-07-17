@@ -536,7 +536,7 @@ class Attachment(models.Model):
 class Task(models.Model, WatchedMixin):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
                 verbose_name=_('uuid'))
-    user_story = models.ForeignKey('UserStory', null=True, blank=False,
+    user_story = models.ForeignKey('UserStory', null=True, blank=True,
                 related_name='tasks',
                 verbose_name=_('user story'))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
