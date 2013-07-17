@@ -34,14 +34,32 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = ()
 
 
+class RolePointsField(serializers.WritableField):
+    def to_native(self, obj):
+        return {str(o.role.id): o.points.order for o in obj.all()}
+
+    def from_native(self, obj):
+        return json.loads(obj)
+
+
 class UserStorySerializer(serializers.ModelSerializer):
     tags = PickleField()
     is_closed = serializers.Field(source='is_closed')
+    points = RolePointsField(source='role_points')
 
     class Meta:
         model = UserStory
         fields = ()
         depth = 0
+
+    def save_object(self, obj, **kwargs):
+        role_points = obj._related_data.pop('role_points')
+        super(UserStorySerializer, self).save_object(obj, **kwargs)
+
+        for role_id, points_order in role_points.items():
+            role_points = obj.role_points.get(role__id=role_id)
+            role_points.points.order = points_order
+            role_points.points.save()
 
 
 class MilestoneSerializer(serializers.ModelSerializer):

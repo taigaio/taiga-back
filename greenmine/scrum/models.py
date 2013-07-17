@@ -455,6 +455,9 @@ class UserStory(models.Model):
     def is_closed(self):
         return self.status.is_closed
 
+    def get_role_points(self):
+        return self.role_points
+
 
 class Attachment(models.Model):
     owner = models.ForeignKey('base.User', null=False, blank=False,
