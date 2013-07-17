@@ -23,8 +23,8 @@ class MilestoneDetailPermission(BaseDetailPermission):
 
 class UserStoryDetailPermission(BaseDetailPermission):
     get_permission = "can_view_userstory"
-    put_permission = "can_change_userstory"
-    patch_permission = "can_change_userstory"
+    put_permission = "change_userstory"
+    patch_permission = "change_userstory"
     delete_permission = "can_delete_userstory"
     safe_methods = ['HEAD', 'OPTIONS']
     path_to_project =  ['project']

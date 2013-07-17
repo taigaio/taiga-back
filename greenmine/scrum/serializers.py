@@ -54,13 +54,14 @@ class UserStorySerializer(serializers.ModelSerializer):
         depth = 0
 
     def save_object(self, obj, **kwargs):
-        role_points = obj._related_data.pop('role_points')
+        role_points = obj._related_data.pop('role_points', None)
         super(UserStorySerializer, self).save_object(obj, **kwargs)
 
-        for role_id, points_order in role_points.items():
-            role_points = obj.role_points.get(role__id=role_id)
-            role_points.points.order = points_order
-            role_points.points.save()
+        if role_points:
+            for role_id, points_order in role_points.items():
+                role_points = obj.role_points.get(role__id=role_id)
+                role_points.points.order = points_order
+                role_points.points.save()
 
 
 class MilestoneSerializer(serializers.ModelSerializer):
