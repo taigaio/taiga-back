@@ -1,0 +1,8 @@
+<p>Updated fields by {{ changer }}:</p>
+<ul>
+{% for field in changed_fields %}
+    <li><b>{{ field.verbose_name}}</b>: from "{{ field.old_value}}" to "{{ field.new_value}}".</li>
+{% endfor %}
+</ul>
+{# TODO Print the "object" details #}
+

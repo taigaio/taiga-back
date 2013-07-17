@@ -1,0 +1,8 @@
+Updated fields by {{ changer }}:
+
+{% for field in changed_fields %}
+    ** {{ field.verbose_name}}: from "{{ field.old_value}}" to "{{ field.new_value}}".
+{% endfor %}
+
+{# TODO Print the "object" details #}
+

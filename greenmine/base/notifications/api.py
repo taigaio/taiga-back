@@ -17,17 +17,15 @@ class NotificationSenderMixin(object):
     def post_save(self, obj, created=False):
         users = obj.get_watchers_to_notify(self.request.user)
         context = {
-            'changer': self.request.user,
-            'changed_fields_dict': obj.get_changed_fields_dict(self.request.DATA),
-            'object': obj
+            "changer": self.request.user,
+            "object": obj
         }
 
         if created:
-            #self._send_notification_email(self.create_notification_template, users=users, context=context)
-            print "TODO: Send the notification email of object creation"
+            self._send_notification_email(self.create_notification_template, users=users, context=context)
         else:
-            #self._send_notification_email(self.update_notification_template, users=users, context=context)
-            print "TODO: Send the notification email of object modification"
+            context["changed_fields_dict"] = obj.get_changed_fields_dict(self.request.DATA)
+            self._send_notification_email(self.update_notification_template, users=users, context=context)
 
     def destroy(self, request, *args, **kwargs):
         users = obj.get_watchers_to_notify(self.request.user)
@@ -35,7 +33,6 @@ class NotificationSenderMixin(object):
             'changer': self.request.user,
             'object': obj
         }
-        #self._send_notification_email(self.destroy_notification_template, users=users, context=context)
-        print "TODO: Send the notification email of object deletion"
+        self._send_notification_email(self.destroy_notification_template, users=users, context=context)
 
         return super(NotificationSenderMixin, self).destroy(request, *args, **kwargs)

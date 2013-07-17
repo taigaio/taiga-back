@@ -53,6 +53,8 @@ class WatcherMixin(object):
 
 
 class WatchedMixin(object):
+    notifiable_fields = []
+
     class Meta:
         abstract = True
 
@@ -62,6 +64,11 @@ class WatchedMixin(object):
         return version_list and version_list[0] or None
 
     def get_changed_fields_dict(self, data_dict):
+        if self.notified_fields:
+            changed_data = dict((k, d[k]) for k in data_dict if k in self.notifiable_fields)
+        else:
+            changed_data = data_dict
+
         field_dict = {}
         for field_name, data_value in data_dict.items():
             field_dict.update(self._get_changed_field(field_name, data_value))

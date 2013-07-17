@@ -218,6 +218,15 @@ class Project(models.Model, WatchedMixin):
     tags = PickledObjectField(null=False, blank=True,
                 verbose_name=_('tags'))
 
+    notifiable_fields = [
+        "name",
+        "description",
+        "owner",
+        "members",
+        "public",
+        "tags",
+    ]
+
     class Meta:
         verbose_name = u'project'
         verbose_name_plural = u'projects'
@@ -242,18 +251,6 @@ class Project(models.Model, WatchedMixin):
 
     def _get_watchers_by_role(self):
         return {'owner': self.owner}
-
-    def eget_attrinutes_to_notify(self):
-        return {
-            'name': self.name,
-            'slug': self.slug,
-            'description': self.description,
-            'modified_date': self.modified_date,
-            'owner': self.owner.get_full_name(),
-            'members': ', '.join([member.get_full_name() for member in self.members.all()]),
-            'public': self.public,
-            'tags': self.tags,
-        }
 
     @property
     def list_of_milestones(self):
@@ -293,9 +290,6 @@ class Project(models.Model, WatchedMixin):
                 .exclude(role__id__in=role_ids)\
                 .delete()
 
-    def _get_watchers_by_role(self):
-        return {'owner': self.owner}
-
 
 class Milestone(models.Model, WatchedMixin):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
@@ -322,6 +316,15 @@ class Milestone(models.Model, WatchedMixin):
                                       verbose_name=_('disponibility'))
     order = models.PositiveSmallIntegerField(default=1, null=False, blank=False,
                                              verbose_name=_('order'))
+
+    notifiable_fields = [
+        "name",
+        "owner",
+        "estimated_start",
+        "estimated_finish",
+        "closed",
+        "disponibility",
+    ]
 
     class Meta:
         verbose_name = u'milestone'
@@ -454,6 +457,19 @@ class UserStory(WatchedMixin, models.Model):
     tags = PickledObjectField(null=False, blank=True,
                 verbose_name=_('tags'))
 
+    notifiable_fields = [
+        "milestone",
+        "owner",
+        "status",
+        "points",
+        "finish_date",
+        "subject",
+        "description",
+        "client_requirement",
+        "team_requirement",
+        "tags",
+    ]
+
     class Meta:
         verbose_name = u'user story'
         verbose_name_plural = u'user stories'
@@ -559,6 +575,17 @@ class Task(models.Model, WatchedMixin):
     is_iocaine = models.BooleanField(default=False, null=False, blank=True,
                 verbose_name=_('is iocaine'))
 
+    notifiable_fields = [
+        "owner",
+        "status",
+        "finished_date",
+        "subject",
+        "description",
+        "assigned_to",
+        "tags",
+        "is_iocaine",
+    ]
+
     class Meta:
         verbose_name = u'task'
         verbose_name_plural = u'tasks'
@@ -637,6 +664,20 @@ class Issue(models.Model, WatchedMixin):
                 verbose_name=_('watchers'))
     tags = PickledObjectField(null=False, blank=True,
                 verbose_name=_('tags'))
+
+    notifiable_fields = [
+         "owner",
+         "status",
+         "severity",
+         "priority",
+         "type",
+         "milestone",
+         "finished_date",
+         "subject",
+         "description",
+         "assigned_to",
+         "tags",
+    ]
 
     class Meta:
         verbose_name = u'issue'
