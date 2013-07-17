@@ -7,9 +7,12 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
 from greenmine.base.models import *
+from greenmine.base.notifications.api import NotificationSenderMixin
+
 from greenmine.scrum.serializers import *
 from greenmine.scrum.models import *
 from greenmine.scrum.permissions import *
+
 
 class UserStoryFilter(django_filters.FilterSet):
     no_milestone = django_filters.NumberFilter(name="milestone", lookup_type='isnull')
@@ -47,10 +50,13 @@ class SimpleFilterMixin(object):
         return queryset
 
 
-class ProjectList(generics.ListCreateAPIView):
+class ProjectList(NotificationSenderMixin, generics.ListCreateAPIView):
     model = Project
     serializer_class = ProjectSerializer
     permission_classes = (IsAuthenticated,)
+    create_notification_template = "create_project_notification"
+    update_notification_template = "update_project_notification"
+    destroy_notification_template = "destroy_project_notification"
 
     def get_queryset(self):
         return self.model.objects.filter(
@@ -61,17 +67,23 @@ class ProjectList(generics.ListCreateAPIView):
         obj.owner = self.request.user
 
 
-class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
+class ProjectDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
     model = Project
     serializer_class = ProjectSerializer
     permission_classes = (IsAuthenticated, ProjectDetailPermission,)
+    create_notification_template = "create_project_notification"
+    update_notification_template = "update_project_notification"
+    destroy_notification_template = "destroy_project_notification"
 
 
-class MilestoneList(generics.ListCreateAPIView):
+class MilestoneList(NotificationSenderMixin, generics.ListCreateAPIView):
     model = Milestone
     serializer_class = MilestoneSerializer
     filter_fields = ('project',)
     permission_classes = (IsAuthenticated,)
+    create_notification_template = "create_milestone_notification"
+    update_notification_template = "update_milestone_notification"
+    destroy_notification_template = "destroy_milestone_notification"
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -80,17 +92,23 @@ class MilestoneList(generics.ListCreateAPIView):
         obj.owner = self.request.user
 
 
-class MilestoneDetail(generics.RetrieveUpdateDestroyAPIView):
+class MilestoneDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
     model = Milestone
     serializer_class = MilestoneSerializer
     permission_classes = (IsAuthenticated, MilestoneDetailPermission,)
+    create_notification_template = "create_milestone_notification"
+    update_notification_template = "update_milestone_notification"
+    destroy_notification_template = "destroy_milestone_notification"
 
 
-class UserStoryList(generics.ListCreateAPIView):
+class UserStoryList(NotificationSenderMixin, generics.ListCreateAPIView):
     model = UserStory
     serializer_class = UserStorySerializer
     filter_class = UserStoryFilter
     permission_classes = (IsAuthenticated,)
+    create_notification_template = "create_user_story_notification"
+    update_notification_template = "update_user_story_notification"
+    destroy_notification_template = "destroy_user_story_notification"
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -99,10 +117,13 @@ class UserStoryList(generics.ListCreateAPIView):
         obj.owner = self.request.user
 
 
-class UserStoryDetail(generics.RetrieveUpdateDestroyAPIView):
+class UserStoryDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
     model = UserStory
     serializer_class = UserStorySerializer
     permission_classes = (IsAuthenticated, UserStoryDetailPermission,)
+    create_notification_template = "create_user_story_notification"
+    update_notification_template = "update_user_story_notification"
+    destroy_notification_template = "destroy_user_story_notification"
 
 
 class AttachmentFilter(django_filters.FilterSet):
@@ -157,11 +178,14 @@ class TasksAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, AttachmentDetailPermission,)
 
 
-class TaskList(generics.ListCreateAPIView):
+class TaskList(NotificationSenderMixin, generics.ListCreateAPIView):
     model = Task
     serializer_class = TaskSerializer
     filter_fields = ('user_story', 'milestone', 'project')
     permission_classes = (IsAuthenticated,)
+    create_notification_template = "create_task_notification"
+    update_notification_template = "update_task_notification"
+    destroy_notification_template = "destroy_task_notification"
 
     def get_queryset(self):
         return self.model.objects.filter(project__members=self.request.user)
@@ -171,23 +195,30 @@ class TaskList(generics.ListCreateAPIView):
         obj.milestone = obj.user_story.milestone
 
 
-class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
+class TaskDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
     model = Task
     serializer_class = TaskSerializer
     permission_classes = (IsAuthenticated, TaskDetailPermission,)
+    create_notification_template = "create_task_notification"
+    update_notification_template = "update_task_notification"
+    destroy_notification_template = "destroy_task_notification"
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():
             if "comment" in self.request.DATA:
                 # Update the comment in the last version
                 reversion.set_comment(self.request.DATA['comment'])
+        super(TaskDetail, self).post_save(obj, created)
 
 
-class IssueList(generics.ListCreateAPIView):
+class IssueList(NotificationSenderMixin, generics.ListCreateAPIView):
     model = Issue
     serializer_class = IssueSerializer
     filter_fields = ('project',)
     permission_classes = (IsAuthenticated,)
+    create_notification_template = "create_issue_notification"
+    update_notification_template = "update_issue_notification"
+    destroy_notification_template = "destroy_issue_notification"
 
     def pre_save(self, obj):
         obj.owner = self.request.user
@@ -196,16 +227,20 @@ class IssueList(generics.ListCreateAPIView):
         return self.model.objects.filter(project__members=self.request.user)
 
 
-class IssueDetail(generics.RetrieveUpdateDestroyAPIView):
+class IssueDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
     model = Issue
     serializer_class = IssueSerializer
     permission_classes = (IsAuthenticated, IssueDetailPermission,)
+    create_notification_template = "create_issue_notification"
+    update_notification_template = "update_issue_notification"
+    destroy_notification_template = "destroy_issue_notification"
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():
             if "comment" in self.request.DATA:
                 # Update the comment in the last version
                 reversion.set_comment(self.request.DATA['comment'])
+        super(IssueDetail, self).post_save(obj, created)
 
 
 class SeverityList(generics.ListCreateAPIView):
