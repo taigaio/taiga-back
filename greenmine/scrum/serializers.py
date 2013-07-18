@@ -40,7 +40,9 @@ class RolePointsField(serializers.WritableField):
         return {str(o.role.id): o.points.order for o in obj.all()}
 
     def from_native(self, obj):
-        return obj
+        if isinstance(obj, dict):
+            return obj
+        return json.loads(obj)
 
 
 class UserStorySerializer(serializers.ModelSerializer):
@@ -62,8 +64,8 @@ class UserStorySerializer(serializers.ModelSerializer):
         if role_points:
             for role_id, points_order in role_points.items():
                 role_points = obj.role_points.get(role__id=role_id)
-                role_points.points.order = points_order
-                role_points.points.save()
+                role_points.points = Points.objects.get(project=obj.project, order=points_order)
+                role_points.save()
 
     def get_comment(self, obj):
         return ''
