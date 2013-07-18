@@ -102,6 +102,10 @@ DEFAULT_FROM_EMAIL = "niwi@niwi.be"
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DJMAIL_REAL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DJMAIL_SEND_ASYNC = False
+DJMAIL_MAX_RETRY_NUMBER = 3
+DJMAIL_TEMPLATE_EXTENSION = 'jinja'
 
 
 SV_CSS_MENU_ACTIVE = 'selected'
