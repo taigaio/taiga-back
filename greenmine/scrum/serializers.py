@@ -140,14 +140,14 @@ class TaskSerializer(serializers.ModelSerializer):
     def get_comment(self, obj):
         return ''
 
-    def get_issues_diff(self, old_issue_version, new_issue_version):
-        old_obj = old_issue_version.field_dict
-        new_obj = new_issue_version.field_dict
+    def get_task_diff(self, old_task_version, new_task_version):
+        old_obj = old_task_version.field_dict
+        new_obj = new_task_version.field_dict
 
         diff_dict = {
             'modified_date': new_obj['modified_date'],
-            'by': new_us_version.revision.user,
-            'comment': new_us_version.revision.comment,
+            'by': new_task_version.revision.user,
+            'comment': new_task_version.revision.comment,
         }
 
         for key in old_obj.keys():
@@ -170,8 +170,8 @@ class TaskSerializer(serializers.ModelSerializer):
 
         for version in reversed(list(reversion.get_for_object(obj))):
             if current:
-                issues_diff = self.get_issues_diff(current, version)
-                diff_list.append(issues_diff)
+                task_diff = self.get_task_diff(current, version)
+                diff_list.append(task_diff)
 
             current = version
 
