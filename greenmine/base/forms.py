@@ -1,5 +1,7 @@
+from django import forms
 from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm, UserChangeForm as DjangoUserChangeForm
 from greenmine.base.models import User
+
 
 class UserCreationForm(DjangoUserCreationForm):
     def clean_username(self):
@@ -16,7 +18,11 @@ class UserCreationForm(DjangoUserCreationForm):
         model = User
         fields = ('username',)
 
+
 class UserChangeForm(DjangoUserChangeForm):
+    notify_level = forms.ChoiceField(choices=User.NOTIFY_LEVEL_CHOICES)
+    notify_changes_by_me = forms.BooleanField()
+
     class Meta:
         model = User
 

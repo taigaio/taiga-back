@@ -29,6 +29,7 @@ class UserAdmin(DjangoUserAdmin):
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'description', 'photo')}),
         (_('Extra info'), {'fields': ('color', 'default_language', 'default_timezone', 'token', 'colorize_tags')}),
+        (_('Notifications info'), {'fields': ("notify_level", "notify_changes_by_me",)}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
