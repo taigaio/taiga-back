@@ -128,6 +128,13 @@ class UserStoryDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPI
     update_notification_template = "update_user_story_notification"
     destroy_notification_template = "destroy_user_story_notification"
 
+    def post_save(self, obj, created=False):
+        with reversion.create_revision():
+            if "comment" in self.request.DATA:
+                # Update the comment in the last version
+                reversion.set_comment(self.request.DATA['comment'])
+        super(UserStoryDetail, self).post_save(obj, created)
+
 
 class AttachmentFilter(django_filters.FilterSet):
     class Meta:
