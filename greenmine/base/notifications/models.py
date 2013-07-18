@@ -16,9 +16,9 @@ class WatcherMixin(object):
         ("no_events", _(u"No events")),
     )
 
-    notify_level = models.CharField(max_length=32, null=False, blank=False, default="only_watching",
+    notify_level = models.CharField(max_length=32, null=False, blank=False, default="all_owned_projects",
                                     choices=NOTIFY_LEVEL_CHOICES, verbose_name=_(u"notify level"))
-    notify_changes_by_me = models.BooleanField(null=False, blank=True,
+    notify_changes_by_me = models.BooleanField(null=False, blank=True, default=True,
                 verbose_name=_(u"notify changes made by me"))
 
     class Meta:
@@ -95,11 +95,14 @@ class WatchedMixin(object):
                         and suscribed_watcher.allow_notify_by_me(changer)):
                     watchers_to_notify.add(suscribed_watcher)
 
-        #(project, project_owner) = watchers_by_role.get("project_owner")
-        #if project_owner \
-        #   and project_owner.allow_notify_project(project) \
-        #   and project_owner.allow_notify_by_me(self._changer):
-        #    watchers_to_notify.add(project_owner)
+        (project, project_owner) = watchers_by_role.get("project_owner")
+        if project_owner \
+           and project_owner.allow_notify_project(project) \
+           and project_owner.allow_notify_by_me(self._changer):
+            watchers_to_notify.add(project_owner)
+
+        if changer.notify_changes_by_me:
+            watchers_to_notify.add(changer)
 
         return watchers_to_notify
 
