@@ -46,7 +46,7 @@ class RolePointsField(serializers.WritableField):
 
 
 class UserStorySerializer(serializers.ModelSerializer):
-    tags = PickleField()
+    tags = PickleField(blank=True, default=[])
     is_closed = serializers.Field(source='is_closed')
     points = RolePointsField(source='role_points')
     comment = serializers.SerializerMethodField('get_comment')
@@ -60,6 +60,7 @@ class UserStorySerializer(serializers.ModelSerializer):
     def save_object(self, obj, **kwargs):
         role_points = obj._related_data.pop('role_points', None)
         super(UserStorySerializer, self).save_object(obj, **kwargs)
+        obj.project.update_role_points()
 
         if role_points:
             for role_id, points_order in role_points.items():
