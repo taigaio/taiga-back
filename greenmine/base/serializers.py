@@ -65,6 +65,7 @@ class UserSerializer(serializers.ModelSerializer):
         return [x.id for x in obj.projects.all()]
 
 
+
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
@@ -88,5 +89,4 @@ class SearchSerializer(serializers.Serializer):
         """
         if instance is not None:
             return instance
-
         return attrs

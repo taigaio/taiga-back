@@ -67,14 +67,6 @@ class RoleDetail(generics.RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
 
 
-#class UserFilter(django_filters.FilterSet):
-#    no_milestone = django_filters.NumberFilter(name="mileston", lookup_type='isnull')
-#
-#    class Meta:
-#        model = UserStory
-#        fields = ['project', 'milestone', 'no_milestone']
-
-
 class UserFilter(django_filters.FilterSet):
     class Meta:
         model = User
@@ -107,6 +99,33 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
 
+import uuid
+from django.db.models import Q
+from djmail.template_mail import MagicMailBuilder
+
+
+class RecoveryPassword(APIView):
+    def post(self, request):
+        username_or_email = request.DATA.get('username', None)
+
+        if not username_or_email:
+            return Response({"detail": "Invalid username or password"}, status.HTTP_400_BAD_REQUEST)
+
+        try:
+            queryset = User.objects.all()
+            user = queryset.get(Q(username=username_or_email) |
+                                    Q(email=username_or_email))
+        except User.DoesNotExist:
+            return Response({"detail": "Invalid username or password"}, status.HTTP_400_BAD_REQUEST)
+
+        user.token = str(uuid.uuid1())
+        user.save(update_fields=["token"])
+
+        mbuilder = MagicMailBuilder()
+        email = mbuilder.password_recovery(user.email, {"user": user})
+
+        return Response({"detail": "Mail sended successful!"})
+
 
 class Login(APIView):
     def post(self, request, format=None):
@@ -138,6 +157,8 @@ class Login(APIView):
             pass
 
         return Response({"detail": "Invalid username or password"}, status.HTTP_400_BAD_REQUEST)
+
+
 
 
 class Logout(APIView):

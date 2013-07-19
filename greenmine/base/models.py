@@ -30,21 +30,21 @@ def attach_uuid(sender, instance, **kwargs):
             instance.uuid = unicode(uuid.uuid1())
 
 
-class User(AbstractUser, WatcherMixin):
+class User(WatcherMixin, AbstractUser):
     color = models.CharField(max_length=9, null=False, blank=False, default="#669933",
-                verbose_name=_('color'))
+                             verbose_name=_('color'))
     description = models.TextField(null=False, blank=True,
-                verbose_name=_('description'))
+                                   verbose_name=_('description'))
     photo = models.FileField(upload_to='files/msg', max_length=500, null=True, blank=True,
-                verbose_name=_('photo'))
+                             verbose_name=_('photo'))
     default_language = models.CharField(max_length=20, null=False, blank=True, default='',
-                verbose_name=_('default language'))
+                                        verbose_name=_('default language'))
     default_timezone = models.CharField(max_length=20, null=False, blank=True, default='',
-                verbose_name=_('default timezone'))
+                                        verbose_name=_('default timezone'))
     token = models.CharField(max_length=200, null=False, blank=True, default='',
-                verbose_name=_('token'))
+                             verbose_name=_('token'))
     colorize_tags = models.BooleanField(null=False, blank=True, default=False,
-                verbose_name=_('colorize tags'))
+                                        verbose_name=_('colorize tags'))
     objects = UserManager()
 
 

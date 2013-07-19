@@ -15,7 +15,6 @@ OUT_PROJECT_ROOT = os.path.abspath(
     os.path.join(PROJECT_ROOT, "..")
 )
 
-
 LOGS_PATH = os.path.join(OUT_PROJECT_ROOT, 'logs')
 BACKUP_PATH = os.path.join(OUT_PROJECT_ROOT, 'exports')
 
@@ -106,10 +105,6 @@ DJMAIL_REAL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DJMAIL_SEND_ASYNC = False
 DJMAIL_MAX_RETRY_NUMBER = 3
 DJMAIL_TEMPLATE_EXTENSION = 'jinja'
-
-
-SV_CSS_MENU_ACTIVE = 'selected'
-SV_CONTEXT_VARNAME = 'menu'
 
 # Message System
 #MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
