@@ -29,4 +29,5 @@ pytz==2013b
 six==1.3.0
 djmail>=0.1
 jinja2==2.7
+django-jinja==0.19
 pygments==1.6
