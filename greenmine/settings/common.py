@@ -215,6 +215,7 @@ INSTALLED_APPS = [
     'haystack',
     'reversion',
     'rest_framework',
+    'djmail'
 ]
 
 WSGI_APPLICATION = 'greenmine.wsgi.application'
