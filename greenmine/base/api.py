@@ -11,17 +11,17 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, generics, viewsets
-from rest_framework import exceptions as excp
 
 import django_filters
 from haystack import query, inputs
 from djmail.template_mail import MagicMailBuilder
 
 from greenmine.base.serializers import (LoginSerializer, UserLogged,
-                                        UserSerializer, RoleSerializer)
+                                        UserSerializer, RoleSerializer,
+                                        SearchSerializer)
 
-from greenmine.base.serializers import SearchSerializer
 from greenmine.base.models import User, Role
+from greenmine.base import exceptions as excp
 from greenmine.scrum import models
 
 
@@ -35,7 +35,11 @@ class RolesViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        role = Role.objects.get(pk=pk)
+        try:
+            role = Role.objects.get(pk=pk)
+        except Role.DoesNotExist:
+            raise excp.NotFound()
+
         serializer = self.serializer_class(role)
         return Response(serializer.data)
 
@@ -111,20 +115,23 @@ class UsersViewSet(viewsets.ViewSet):
         return Response({"detail": "Mail sended successful!"})
 
     @action(methods=["GET", "POST"])
-    def logout(self, request, pk=None)
+    def logout(self, request, pk=None):
         logout(request)
         return Response()
 
 
 class Search(viewsets.ViewSet):
     def list(self, request, **kwargs):
-        text = request.QUERY_PARAMS.get('text', None)
+        text = request.QUERY_PARAMS.get('text', "")
         project_id = request.QUERY_PARAMS.get('project', None)
 
         try:
             project = self._get_project(project_id)
         except models.Project.DoesNotExist:
             raise excp.PermissionDenied({"detail": "Wrong project id"})
+
+        #if not text:
+        #    raise excp.BadRequest("text parameter must be contains text")
 
         queryset = query.SearchQuerySet()
         queryset = queryset.filter(text=inputs.AutoQuery(text))
