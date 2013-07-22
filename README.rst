@@ -1,7 +1,6 @@
 Greenmine Backend
 =================
 
-
 Setup development environment.
 ------------------------------
 
@@ -17,9 +16,10 @@ Setup development environment.
 Auth: admin/123123
 
 
-Polyfill's
+Polyfills
 ----------
 
 Django-Rest Framework by default returns 403 for not authenticated requests and permission denied
-requests. On ``base.__init__`` has a monky patch for this bug. On its solved on django rest framework,
-this patch must be removed.
+requests. The file ``greenmine/base/monkey.py`` contains a temporary fix for this bug. 
+
+This patch is applied when the module ``base.models`` it's loaded. Once it's solved on django rest framework,this patch can be removed.
