@@ -1,111 +1,95 @@
 # -*- coding: utf-8 -*-
+import uuid
 
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.views import login as auth_login, logout as auth_logout
+from django.conf import settings
+from django.db.models import Q
 from django import http
 
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
-from rest_framework.reverse import reverse
-from rest_framework.views import APIView
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from rest_framework import generics
+from rest_framework import status, generics, viewsets
+from rest_framework import exceptions as excp
 
+import django_filters
 from haystack import query, inputs
+from djmail.template_mail import MagicMailBuilder
 
-from greenmine.base.serializers import LoginSerializer, UserLogged, UserSerializer, RoleSerializer
+from greenmine.base.serializers import (LoginSerializer, UserLogged,
+                                        UserSerializer, RoleSerializer)
+
 from greenmine.base.serializers import SearchSerializer
 from greenmine.base.models import User, Role
 from greenmine.scrum import models
-from django.conf import settings
-
-import django_filters
 
 
-class ApiRoot(APIView):
-    def get(self, request, format=None):
-        return Response({
-            'login': reverse('login', request=request, format=format),
-            'logout': reverse('logout', request=request, format=format),
-            'projects': reverse('project-list', request=request, format=format),
-            'milestones': reverse('milestone-list', request=request, format=format),
-            'user-stories': reverse('user-story-list', request=request, format=format),
-            'user-stories/statuses': reverse('user-story-status-list', request=request, format=format),
-            'user-stories/points': reverse('points-list', request=request, format=format),
-            'issues/attachments': reverse('issues-attachment-list', request=request, format=format),
-            'issues/statuses': reverse('issues-status-list', request=request, format=format),
-            'issues/types': reverse('issues-type-list', request=request, format=format),
-            'issues': reverse('issues-list', request=request, format=format),
-            'tasks': reverse('tasks-list', request=request, format=format),
-            'tasks/statuses': reverse('tasks-status-list', request=request, format=format),
-            'tasks/attachments': reverse('tasks-attachment-list', request=request, format=format),
-            'severities': reverse('severity-list', request=request, format=format),
-            'priorities': reverse('priority-list', request=request, format=format),
-            'documents': reverse('document-list', request=request, format=format),
-            'questions': reverse('question-list', request=request, format=format),
-            'wiki/pages': reverse('wiki-page-list', request=request, format=format),
-            'users': reverse('user-list', request=request, format=format),
-            'roles': reverse('user-roles', request=request, format=format),
-            'search': reverse('search', request=request, format=format),
-        })
-
-
-class RoleList(generics.ListCreateAPIView):
-    model = Role
+class RolesViewSet(viewsets.ViewSet):
+    permission_classes = (IsAuthenticated,)
     serializer_class = RoleSerializer
+
+    def list(self, request, pk=None):
+        queryset = Role.objects.all()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        role = Role.objects.get(pk=pk)
+        serializer = self.serializer_class(role)
+        return Response(serializer.data)
+
+
+class UsersViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
-    def get_queryset(self):
-        return self.model.objects.all()
+    def get_list_queryset(self):
+        own_projects = (models.Project.objects
+                            .filter(members=self.request.user))
 
-
-class RoleDetail(generics.RetrieveAPIView):
-    model = Role
-    serializer_class = RoleSerializer
-    permission_classes = (IsAuthenticated,)
-
-
-class UserFilter(django_filters.FilterSet):
-    class Meta:
-        model = User
-        fields = ['is_active']
-
-
-class UserList(generics.ListCreateAPIView):
-    model = User
-    serializer_class = UserSerializer
-    filter_class = UserFilter
-    permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self):
-        projects = models.Project.objects.filter(members=self.request.user)
-
-        #Project filtering
         project = self.request.QUERY_PARAMS.get('project', None)
         if project is not None:
-            projects = projects.filter(id=project)
+            own_projects = own_projects.filter(pk=project)
 
-        return super(UserList, self).get_queryset().filter(projects__in=projects)\
-                    .order_by('id').distinct()
+        queryset = (User.objects.filter(projects__in=own_projects)
+                        .order_by('username').distinct())
 
-    def pre_save(self, obj):
-        pass
+        return queryset
 
+    def list(self, request, pk=None):
+        queryset = self.get_list_queryset()
+        serializer = UserSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-class UserDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = User
-    serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated,)
+    def retrieve(self, request, pk=None):
+        return Response({})
 
-import uuid
-from django.db.models import Q
-from djmail.template_mail import MagicMailBuilder
+    @action(methods=["POST"], permission_classes=[])
+    def login(self, request, pk=None):
+        username = request.DATA.get('username', None)
+        password = request.DATA.get('password', None)
 
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({"detail": "Invalid username or password"},
+                                            status.HTTP_400_BAD_REQUEST)
 
-class RecoveryPassword(APIView):
-    def post(self, request):
+        if not user.check_password(password):
+            return Response({"detail": "Invalid username or password"},
+                                            status.HTTP_400_BAD_REQUEST)
+
+        user = authenticate(username=username, password=password)
+        login(request, user)
+
+        serializer = UserSerializer(user)
+        response_data = serializer.data
+        response_data["token"] = request.session.session_key
+
+        return Response(response_data)
+
+    @action(methods=["POST"], permission_classes=[])
+    def password_recovery(self, request, pk=None):
         username_or_email = request.DATA.get('username', None)
 
         if not username_or_email:
@@ -126,63 +110,31 @@ class RecoveryPassword(APIView):
 
         return Response({"detail": "Mail sended successful!"})
 
-
-class Login(APIView):
-    def post(self, request, format=None):
-        username = request.DATA.get('username', None)
-        password = request.DATA.get('password', None)
-
-        try:
-            user = User.objects.get(username=username)
-            if user.check_password(password):
-                user = authenticate(username=username, password=password)
-                login(request, user)
-
-                return_data = LoginSerializer(UserLogged(**{
-                    'token': request.session.session_key,
-                    'username': request.user.username,
-                    'first_name': request.user.first_name,
-                    'last_name': request.user.last_name,
-                    'email': request.user.email,
-                    'last_login': request.user.last_login,
-                    'color': request.user.color,
-                    'description': request.user.description,
-                    'default_language': request.user.default_language,
-                    'default_timezone': request.user.default_timezone,
-                    'colorize_tags': request.user.colorize_tags,
-                }))
-
-                return Response(return_data.data)
-        except User.DoesNotExist:
-            pass
-
-        return Response({"detail": "Invalid username or password"}, status.HTTP_400_BAD_REQUEST)
-
-
-
-
-class Logout(APIView):
-    def post(self, request, format=None):
+    @action(methods=["GET", "POST"])
+    def logout(self, request, pk=None)
         logout(request)
         return Response()
 
 
-class Search(APIView):
-    def get(self, request, format=None):
+class Search(viewsets.ViewSet):
+    def list(self, request, **kwargs):
         text = request.QUERY_PARAMS.get('text', None)
-        project = request.QUERY_PARAMS.get('project', None)
+        project_id = request.QUERY_PARAMS.get('project', None)
 
-        if text and project:
-            #TODO: permission check
-            queryset = query.SearchQuerySet()
-            queryset = queryset.filter(text=inputs.AutoQuery(text))
-            queryset = queryset.filter(project_id=project)
+        try:
+            project = self._get_project(project_id)
+        except models.Project.DoesNotExist:
+            raise excp.PermissionDenied({"detail": "Wrong project id"})
 
-            return_data = SearchSerializer(queryset)
-            return Response(return_data.data)
+        queryset = query.SearchQuerySet()
+        queryset = queryset.filter(text=inputs.AutoQuery(text))
+        queryset = queryset.filter(project_id=project_id)
 
-        return Response({"detail": "Parameter text can't be empty"}, status.HTTP_400_BAD_REQUEST)
+        return_data = SearchSerializer(queryset)
+        return Response(return_data.data)
 
+    def _get_project(self, project_id):
+        own_projects = (models.Project.objects
+                            .filter(members=self.request.user))
 
-
-
+        return own_projects.get(pk=project_id)

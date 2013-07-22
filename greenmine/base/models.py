@@ -47,6 +47,9 @@ class User(WatcherMixin, AbstractUser):
                                         verbose_name=_('colorize tags'))
     objects = UserManager()
 
+    class Meta:
+        ordering = ["username"]
+
 
 class Role(models.Model):
     name = models.CharField(max_length=200, null=False, blank=False,

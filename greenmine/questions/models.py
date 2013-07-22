@@ -6,7 +6,6 @@ from django.utils import timezone
 from django.dispatch import receiver
 
 from greenmine.base.utils.slug import slugify_uniquely, ref_uniquely
-from greenmine.base.fields import DictField
 from greenmine.scrum.models import Project
 
 from picklefield.fields import PickledObjectField

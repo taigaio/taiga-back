@@ -3,8 +3,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from picklefield.fields import PickledObjectField
 from greenmine.base.utils.slug import slugify_uniquely as slugify
-from greenmine.base.fields import DictField
 
 
 class Document(models.Model):
@@ -27,7 +27,7 @@ class Document(models.Model):
     attached_file = models.FileField(max_length=1000, null=True, blank=True,
                 upload_to='documents',
                 verbose_name=_('attached_file'))
-    tags = DictField(null=False, blank=True,
+    tags = PickledObjectField(null=False, blank=True,
                 verbose_name=_('tags'))
 
     class Meta:

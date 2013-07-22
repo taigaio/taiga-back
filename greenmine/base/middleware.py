@@ -18,6 +18,7 @@ class GreenmineSessionMiddleware(SessionMiddleware):
         request.session = engine.SessionStore(session_key)
 
 
+
 COORS_ALLOWED_ORIGINS = getattr(settings, 'COORS_ALLOWED_ORIGINS', '*')
 COORS_ALLOWED_METHODS = getattr(settings, 'COORS_ALLOWED_METHODS',
                             ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE', 'PATCH'])

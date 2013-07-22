@@ -16,7 +16,7 @@ git+git://github.com/toastdriven/django-haystack.git
 django-picklefield==0.3.0
 django-reversion==1.7
 django-sampledatahelper==0.0.1
-djangorestframework==2.2.5
+djangorestframework==2.3.6
 gunicorn==17.5
 kombu==2.5.12
 mimeparse==0.1.3

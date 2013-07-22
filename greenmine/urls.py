@@ -6,7 +6,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^api/', include('greenmine.base.urls')),
+    url(r'^api/core/', include('greenmine.base.urls')),
     url(r'^api/scrum/', include('greenmine.scrum.urls')),
     url(r'^api/documents/', include('greenmine.documents.urls')),
     url(r'^api/questions/', include('greenmine.questions.urls')),

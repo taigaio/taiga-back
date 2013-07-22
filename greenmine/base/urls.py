@@ -1,17 +1,21 @@
 # -*- coding: utf-8 -*-
 
 from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework import routers
+
 from django.conf.urls import patterns, url
 from greenmine.base import api
 
+# Special router for actions.
+actions_router = routers.Route(url=r'^{prefix}/actions/{methodname}{trailing_slash}$',
+                               mapping={'{httpmethod}': '{methodname}'},
+                               name='{basename}-{methodnamehyphen}',
+                               initkwargs={})
 
-urlpatterns = format_suffix_patterns(patterns('',
-    url(r'^auth/login/$', api.Login.as_view(), name='login'),
-    url(r'^auth/logout/$', api.Logout.as_view(), name='logout'),
-    url(r'^users/$', api.UserList.as_view(), name="user-list"),
-    url(r'^users/(?P<pk>[0-9]+)/$', api.UserDetail.as_view(), name="user-detail"),
-    url(r'^roles/$', api.RoleList.as_view(), name="roles"),
-    url(r'^roles/(?P<pk>[0-9]+)/$', api.RoleDetail.as_view(), name='role-detail'),
-    url(r'^search/$', api.Search.as_view(), name="search"),
-    url(r'^$', api.ApiRoot.as_view(), name='api_root'),
-))
+router = routers.DefaultRouter(trailing_slash=False)
+router.routes.append(actions_router)
+router.register("users", api.UsersViewSet, base_name="users")
+router.register("roles", api.RolesViewSet, base_name="roles")
+router.register("search", api.Search, base_name="search")
+
+urlpatterns = router.urls
