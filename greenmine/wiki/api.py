@@ -5,27 +5,32 @@ from django.utils.translation import ugettext as _
 from django.http import Http404
 
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
-from greenmine.wiki.serializers import WikiPageSerializer, WikiPageAttachmentSerializer
-from greenmine.wiki.models import WikiPage, WikiPageAttachment
-from greenmine.wiki.permissions import WikiPageDetailPermission, WikiPageAttachmentDetailPermission
+
+from . import models
+from . import serializers
+from . import permissions
 
 
 class WikiPageList(generics.ListCreateAPIView):
-    model = WikiPage
-    serializer_class = WikiPageSerializer
+    model = models.WikiPage
+    serializer_class = serializers.WikiPageSerializer
+    permission_classes = (IsAuthenticated,)
+    filter_fields = ["project"]
 
     def get_queryset(self):
-        return self.model.objects.filter(project__members=self.request.user)
+        qs = super(WikiPageList, self).get_queryset()
+        return qs.filter(project__members=self.request.user)
 
     def pre_save(self, obj):
         obj.owner = self.request.user
 
 
 class WikiPageDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = WikiPage
-    serializer_class = WikiPageSerializer
-    permission_classes = (WikiPageDetailPermission,)
+    model = models.WikiPage
+    serializer_class = serializers.WikiPageSerializer
+    permission_classes = (IsAuthenticated, permissions.WikiPageDetailPermission,)
 
     def get_object(self, queryset=None):
         if queryset is None:
@@ -42,15 +47,15 @@ class WikiPageDetail(generics.RetrieveUpdateDestroyAPIView):
         return obj
 
 
-class WikiPageAttachmentList(generics.ListCreateAPIView):
-    model = WikiPageAttachment
-    serializer_class = WikiPageAttachmentSerializer
-
-    def get_queryset(self):
-        return self.model.objects.filter(wikipage__project__members=self.request.user)
-
-
-class WikiPageAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = WikiPageAttachment
-    serializer_class = WikiPageAttachmentSerializer
-    permission_classes = (WikiPageAttachmentDetailPermission,)
+#class WikiPageAttachmentList(generics.ListCreateAPIView):
+#    model = WikiPageAttachment
+#    serializer_class = WikiPageAttachmentSerializer
+#
+#    def get_queryset(self):
+#        return self.model.objects.filter(wikipage__project__members=self.request.user)
+#
+#
+#class WikiPageAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
+#    model = WikiPageAttachment
+#    serializer_class = WikiPageAttachmentSerializer
+#    permission_classes = (WikiPageAttachmentDetailPermission,)
