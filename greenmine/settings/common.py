@@ -17,6 +17,7 @@ OUT_PROJECT_ROOT = os.path.abspath(
 
 LOGS_PATH = os.path.join(OUT_PROJECT_ROOT, 'logs')
 BACKUP_PATH = os.path.join(OUT_PROJECT_ROOT, 'exports')
+APPEND_SLASH = False
 
 if not os.path.exists(LOGS_PATH):
     os.mkdir(LOGS_PATH)
@@ -188,13 +189,13 @@ TEMPLATE_DIRS = [
 ]
 
 INSTALLED_APPS = [
-    # Django base applications
+    'grappelli.dashboard',
+    'grappelli',
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'grappelli.dashboard',
-    'grappelli',
     'django.contrib.admin',
     'django.contrib.staticfiles',
 
@@ -203,8 +204,7 @@ INSTALLED_APPS = [
     'greenmine.base.notifications',
     'greenmine.scrum',
     'greenmine.wiki',
-    'greenmine.documents',
-    'greenmine.questions',
+    #'greenmine.questions',
 
     'south',
     'haystack',
