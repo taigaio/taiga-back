@@ -2,8 +2,7 @@
 
 from django.db.models import Q
 
-import django_filters
-from rest_framework import generics
+from rest_framework import mixins, viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from greenmine.base.models import *
@@ -13,366 +12,306 @@ from greenmine.scrum.serializers import *
 from greenmine.scrum.models import *
 from greenmine.scrum.permissions import *
 
+# Generic viewset subclasses for this module
 
-class UserStoryFilter(django_filters.FilterSet):
-    no_milestone = django_filters.NumberFilter(name="milestone", lookup_type='isnull')
-
-    class Meta:
-        model = UserStory
-        fields = ['project', 'milestone', 'no_milestone']
-
-
-class SimpleFilterMixin(object):
-    filter_fields = []
-    filter_special_fields = []
-
-    _special_values_dict = {
-        'true': True,
-        'false': False,
-        'null': None,
-    }
-
-    def get_queryset(self):
-        queryset = super(SimpleFilterMixin, self).get_queryset()
-        query_params = {}
-
-        for field_name in self.filter_fields:
-            if field_name in self.request.QUERY_PARAMS:
-                field_data = self.request.QUERY_PARAMS[field_name]
-                if field_data in self._special_values_dict:
-                    query_params[field_name] = self._special_values_dict[field_data]
-                else:
-                    query_params[field_name] = field_data
-
-        if query_params:
-            queryset = queryset.filter(**query_params)
-
-        return queryset
+class ModelCrudViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
+                       mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
+                       mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    pass
 
 
-class ProjectList(NotificationSenderMixin, generics.ListCreateAPIView):
-    model = Project
-    serializer_class = ProjectSerializer
-    permission_classes = (IsAuthenticated,)
-    create_notification_template = "create_project_notification"
-    update_notification_template = "update_project_notification"
-    destroy_notification_template = "destroy_project_notification"
-
-    def get_queryset(self):
-        qs = self.model.objects.filter(
-            Q(owner=self.request.user) | Q(members=self.request.user)
-        )
-        return qs.distinct()
-
-    def pre_save(self, obj):
-        obj.owner = self.request.user
+class ModelListViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                                                viewsets.GenericViewSet):
+    pass
 
 
-class ProjectDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
-    model = Project
+
+# ViewSets definition
+
+class ProjectViewSet(NotificationSenderMixin, ModelCrudViewSet):
+    queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     permission_classes = (IsAuthenticated, ProjectDetailPermission,)
+
     create_notification_template = "create_project_notification"
     update_notification_template = "update_project_notification"
     destroy_notification_template = "destroy_project_notification"
 
-
-class MilestoneList(NotificationSenderMixin, generics.ListCreateAPIView):
-    model = Milestone
-    serializer_class = MilestoneSerializer
-    filter_fields = ('project',)
-    permission_classes = (IsAuthenticated,)
-    create_notification_template = "create_milestone_notification"
-    update_notification_template = "update_milestone_notification"
-    destroy_notification_template = "destroy_milestone_notification"
-
     def get_queryset(self):
-        qs = self.model.objects.filter(project__members=self.request.user)
+        qs = super(ProjectViewSet, self).get_queryset()
+        qs = qs.filter(Q(owner=self.request.user) |
+                       Q(members=self.request.user))
         return qs.distinct()
 
     def pre_save(self, obj):
+        super(ProjectViewSet, self).pre_save(obj)
         obj.owner = self.request.user
 
 
-class MilestoneDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
-    model = Milestone
+
+class MilestoneViewSet(NotificationSenderMixin, ModelCrudViewSet):
+    queryset = Milestone.objects.all()
     serializer_class = MilestoneSerializer
     permission_classes = (IsAuthenticated, MilestoneDetailPermission,)
     create_notification_template = "create_milestone_notification"
     update_notification_template = "update_milestone_notification"
     destroy_notification_template = "destroy_milestone_notification"
 
-
-class UserStoryList(NotificationSenderMixin, generics.ListCreateAPIView):
-    model = UserStory
-    serializer_class = UserStorySerializer
-    filter_class = UserStoryFilter
-    permission_classes = (IsAuthenticated,)
-    create_notification_template = "create_user_story_notification"
-    update_notification_template = "update_user_story_notification"
-    destroy_notification_template = "destroy_user_story_notification"
+    filter_fields = ('project',)
 
     def get_queryset(self):
-        qs = self.model.objects.filter(project__members=self.request.user)
-        return qs.distinct()
+        qs = super(MilestoneViewSet, self).get_queryset()
+        return qs.filter(project__members=self.request.user).distinct()
 
     def pre_save(self, obj):
+        super(MilestoneViewSet, self).pre_save(obj)
         obj.owner = self.request.user
 
 
-class UserStoryDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
-    model = UserStory
+class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
+    queryset = UserStory.objects.all()
     serializer_class = UserStorySerializer
     permission_classes = (IsAuthenticated, UserStoryDetailPermission,)
+
     create_notification_template = "create_user_story_notification"
     update_notification_template = "update_user_story_notification"
     destroy_notification_template = "destroy_user_story_notification"
+
+    filter_fields = ['project', 'milestone', 'milestone__isnull']
+
+    def get_queryset(self):
+        qs = super(UserStoryViewSet, self).get_queryset()
+        return qs.filter(project__members=self.request.user).distinct()
+
+    def pre_save(self, obj):
+        super(UserStoryViewSet, self).pre_save(obj)
+        obj.owner = self.request.user
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():
             if "comment" in self.request.DATA:
                 # Update the comment in the last version
                 reversion.set_comment(self.request.DATA['comment'])
-        super(UserStoryDetail, self).post_save(obj, created)
+        super(UserStoryViewSet, self).post_save(obj, created)
 
 
-class AttachmentFilter(django_filters.FilterSet):
-    class Meta:
-        model = Attachment
-        fields = ['project', 'object_id']
 
 
-class IssuesAttachmentList(generics.ListCreateAPIView):
+class IssuesAttachmentViewSet(ModelCrudViewSet):
     model = Attachment
     serializer_class = AttachmentSerializer
-    permission_classes = (IsAuthenticated,)
-    filter_class = AttachmentFilter
+    permission_classes = (IsAuthenticated, AttachmentDetailPermission,)
+
+    filter_fields = ["project", "object_id"]
 
     def get_queryset(self):
         ct = ContentType.objects.get_for_model(Issue)
-        qs = super(IssuesAttachmentList, self).get_queryset()\
-                   .filter(project__members=self.request.user)\
-                   .filter(content_type=ct)
+        qs = super(IssuesAttachmentViewSet, self).get_queryset()
+
+        qs = qs.filter(project__members=self.request.user)
+        qs = qs.filter(content_type=ct)
 
         return qs.distinct()
 
     def pre_save(self, obj):
+        super(IssuesAttachmentViewSet, self).pre_save(obj)
         obj.content_type = ContentType.objects.get_for_model(Issue)
         obj.owner = self.request.user
 
 
-class IssuesAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
+class TasksAttachmentViewSet(ModelCrudViewSet):
     model = Attachment
     serializer_class = AttachmentSerializer
     permission_classes = (IsAuthenticated, AttachmentDetailPermission,)
-
-
-class TasksAttachmentList(generics.ListCreateAPIView):
-    model = Attachment
-    serializer_class = AttachmentSerializer
-    permission_classes = (IsAuthenticated,)
-    filter_class = AttachmentFilter
+    filter_fields = ["project", "object_id"]
 
     def get_queryset(self):
         ct = ContentType.objects.get_for_model(Task)
-        qs = super(TasksAttachmentList, self).get_queryset()\
-                   .filter(project__members=self.request.user)\
-                   .filter(content_type=ct)
+        qs = super(TasksAttachmentViewSet, self).get_queryset()
+
+        qs = qs.filter(project__members=self.request.user)
+        qs = qs.filter(content_type=ct)
 
         return qs.distinct()
 
     def pre_save(self, obj):
+        super(TasksAttachmentViewSet, self).pre_save(obj)
         obj.content_type = ContentType.objects.get_for_model(Task)
         obj.owner = self.request.user
 
 
-class TasksAttachmentDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Attachment
-    serializer_class = AttachmentSerializer
-    permission_classes = (IsAuthenticated, AttachmentDetailPermission,)
+class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
+    queryset = Task.objects.all()
 
-
-class TaskList(NotificationSenderMixin, generics.ListCreateAPIView):
-    model = Task
     serializer_class = TaskSerializer
-    filter_fields = ('user_story', 'milestone', 'project')
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, TaskDetailPermission,)
+
     create_notification_template = "create_task_notification"
     update_notification_template = "update_task_notification"
     destroy_notification_template = "destroy_task_notification"
+    filter_fields = ['user_story', 'milestone', 'project']
 
     def get_queryset(self):
-        qs = self.model.objects.filter(project__members=self.request.user)
+        qs = super(TaskViewSet, self).get_queryset()
+        qs = qs.filter(project__members=self.request.user)
         return qs.distinct()
 
     def pre_save(self, obj):
+        super(TaskViewSet, self).pre_save(obj)
         obj.owner = self.request.user
         obj.milestone = obj.user_story.milestone
 
-
-class TaskDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
-    model = Task
-    serializer_class = TaskSerializer
-    permission_classes = (IsAuthenticated, TaskDetailPermission,)
-    create_notification_template = "create_task_notification"
-    update_notification_template = "update_task_notification"
-    destroy_notification_template = "destroy_task_notification"
-
     def post_save(self, obj, created=False):
         with reversion.create_revision():
             if "comment" in self.request.DATA:
                 # Update the comment in the last version
                 reversion.set_comment(self.request.DATA['comment'])
-        super(TaskDetail, self).post_save(obj, created)
+        super(TaskViewSet, self).post_save(obj, created)
 
 
-class IssueList(NotificationSenderMixin, generics.ListCreateAPIView):
-    model = Issue
-    serializer_class = IssueSerializer
-    filter_fields = ('project',)
-    permission_classes = (IsAuthenticated,)
-    create_notification_template = "create_issue_notification"
-    update_notification_template = "update_issue_notification"
-    destroy_notification_template = "destroy_issue_notification"
 
-    def pre_save(self, obj):
-        obj.owner = self.request.user
-
-    def get_queryset(self):
-        qs = self.model.objects.filter(project__members=self.request.user)
-        return qs.distinct()
-
-
-class IssueDetail(NotificationSenderMixin, generics.RetrieveUpdateDestroyAPIView):
-    model = Issue
+class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
+    queryset = Issue.objects.all()
     serializer_class = IssueSerializer
     permission_classes = (IsAuthenticated, IssueDetailPermission,)
+
     create_notification_template = "create_issue_notification"
     update_notification_template = "update_issue_notification"
     destroy_notification_template = "destroy_issue_notification"
+
+    filter_fields = ('project',)
+
+    def pre_save(self, obj):
+        super(IssueViewSet, self).pre_save(obj)
+        obj.owner = self.request.user
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():
             if "comment" in self.request.DATA:
                 # Update the comment in the last version
                 reversion.set_comment(self.request.DATA['comment'])
-        super(IssueDetail, self).post_save(obj, created)
-
-
-class SeverityList(generics.ListCreateAPIView):
-    model = Severity
-    serializer_class = SeveritySerializer
-    filter_fields = ('project',)
-    permission_classes = (IsAuthenticated,)
+        super(IssueViewSet, self).post_save(obj, created)
 
     def get_queryset(self):
-        qs = self.model.objects.filter(project__members=self.request.user)
+        qs = super(IssueViewSet, self).get_queryset()
+        qs = qs.filter(project__members=self.request.user)
         return qs.distinct()
 
 
-class SeverityDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Severity
+class SeverityViewSet(ModelListViewSet):
+    queryset = Severity.objects.all()
     serializer_class = SeveritySerializer
-    permission_classes = (IsAuthenticated, SeverityDetailPermission,)
+    permission_classes = (IsAuthenticated,)
+    filter_fields = ('project',)
+
+    def get_queryset(self):
+        qs = super(SeverityViewSet, self).get_queryset()
+        qs = qs.filter(project__members=self.request.user)
+        return qs.distinct()
 
 
-class IssueStatusList(generics.ListCreateAPIView):
-    model = IssueStatus
+#class SeverityDetail(generics.RetrieveUpdateDestroyAPIView):
+#    model = Severity
+#    serializer_class = SeveritySerializer
+#    permission_classes = (IsAuthenticated, SeverityDetailPermission,)
+
+class IssueStatusViewSet(ModelListViewSet):
+    queryset = IssueStatus.objects.all()
+
     serializer_class = IssueStatusSerializer
     filter_fields = ('project',)
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        qs = self.model.objects.filter(project__members=self.request.user)
+        qs = super(IssueStatusViewSet, self).get_queryset()
+        qs = qs.filter(project__members=self.request.user)
         return qs.distinct()
 
 
-class IssueStatusDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = IssueStatus
-    serializer_class = IssueStatusSerializer
-    permission_classes = (IsAuthenticated, IssueStatusDetailPermission,)
-
-
-class TaskStatusList(SimpleFilterMixin, generics.ListCreateAPIView):
+class TaskStatusViewSet(ModelListViewSet):
     model = TaskStatus
     serializer_class = TaskStatusSerializer
-    filter_fields = ('project',)
     permission_classes = (IsAuthenticated,)
+    filter_fields = ('project',)
 
     def get_queryset(self):
-        qs = self.model.objects.filter(project__members=self.request.user)
+        qs = super(TaskStatusViewSet, self).get_queryset()
+        qs = qs.filter(project__members=self.request.user)
         return qs.distinct()
 
 
-class TaskStatusDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = TaskStatus
-    serializer_class = TaskStatusSerializer
-    permission_classes = (IsAuthenticated, TaskStatusDetailPermission,)
+#class TaskStatusDetail(generics.RetrieveUpdateDestroyAPIView):
+#    model = TaskStatus
+#    serializer_class = TaskStatusSerializer
+#    permission_classes = (IsAuthenticated, TaskStatusDetailPermission,)
 
 
-class UserStoryStatusList(generics.ListCreateAPIView):
+class UserStoryStatusViewSet(ModelListViewSet):
     model = UserStoryStatus
     serializer_class = UserStoryStatusSerializer
-    filter_fields = ('project',)
     permission_classes = (IsAuthenticated,)
+    filter_fields = ('project',)
 
     def get_queryset(self):
-        qs = self.model.objects.filter(project__members=self.request.user)
+        qs = super(UserStoryStatusViewSet, self).get_queryset()
+        qs = qs.filter(project__members=self.request.user)
         return qs.distinct()
 
 
-class UserStoryStatusDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = UserStoryStatus
-    serializer_class = UserStoryStatusSerializer
-    permission_classes = (IsAuthenticated, UserStoryStatusDetailPermission,)
+#class UserStoryStatusDetail(generics.RetrieveUpdateDestroyAPIView):
+#    model = UserStoryStatus
+#    serializer_class = UserStoryStatusSerializer
+#    permission_classes = (IsAuthenticated, UserStoryStatusDetailPermission,)
 
 
-class PriorityList(generics.ListCreateAPIView):
+class PriorityViewSet(ModelListViewSet):
     model = Priority
     serializer_class = PrioritySerializer
-    filter_fields = ('project',)
     permission_classes = (IsAuthenticated,)
+    filter_fields = ('project',)
 
     def get_queryset(self):
-        qs = self.model.objects.filter(project__members=self.request.user)
+        qs = super(PriorityViewSet, self).get_queryset()
+        qs = qs.filter(project__members=self.request.user)
         return qs.distinct()
 
 
-class PriorityDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Priority
-    serializer_class = PrioritySerializer
-    permission_classes = (IsAuthenticated, PriorityDetailPermission,)
+#class PriorityDetail(generics.RetrieveUpdateDestroyAPIView):
+#    model = Priority
+#    serializer_class = PrioritySerializer
+#    permission_classes = (IsAuthenticated, PriorityDetailPermission,)
 
 
-class IssueTypeList(generics.ListCreateAPIView):
+class IssueTypeViewSet(ModelListViewSet):
     model = IssueType
     serializer_class = IssueTypeSerializer
-    filter_fields = ('project',)
     permission_classes = (IsAuthenticated,)
+    filter_fields = ('project',)
 
     def get_queryset(self):
-        qs = self.model.objects.filter(project__members=self.request.user)
+        qs = super(IssueTypeViewSet, self).get_queryset()
+        qs = qs.filter(project__members=self.request.user)
+        return qs.distinct()
+
+#class IssueTypeDetail(generics.RetrieveUpdateDestroyAPIView):
+#    model = IssueType
+#    serializer_class = IssueTypeSerializer
+#    permission_classes = (IsAuthenticated, IssueTypeDetailPermission,)
+
+
+class PointsViewSet(ModelListViewSet):
+    model = Points
+    serializer_class = PointsSerializer
+    permission_classes = (IsAuthenticated,)
+    filter_fields = ('project',)
+
+    def get_queryset(self):
+        qs = super(PointsViewSet, self).get_queryset()
+        qs = qs.filter(project__members=self.request.user)
         return qs.distinct()
 
 
-class IssueTypeDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = IssueType
-    serializer_class = IssueTypeSerializer
-    permission_classes = (IsAuthenticated, IssueTypeDetailPermission,)
-
-
-class PointsList(generics.ListCreateAPIView):
-    model = Points
-    serializer_class = PointsSerializer
-    filter_fields = ('project',)
-    permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self):
-        qs = self.model.objects.filter(project__members=self.request.user)
-        return qs.distinct()
-
-
-class PointsDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Points
-    serializer_class = PointsSerializer
-    permission_classes = (IsAuthenticated, PointsDetailPermission,)
+#class PointsDetail(generics.RetrieveUpdateDestroyAPIView):
+#    model = Points
+#    serializer_class = PointsSerializer
+#    permission_classes = (IsAuthenticated, PointsDetailPermission,)

@@ -321,7 +321,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'greenmine.base.auth.SessionAuthentication',
     ),
-    'FILTER_BACKEND': 'rest_framework.filters.DjangoFilterBackend',
+    'FILTER_BACKEND': 'greenmine.base.filters.SimpleFilterBackend',
 }
 
 from .appdefaults import *
