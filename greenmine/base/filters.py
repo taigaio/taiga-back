@@ -13,6 +13,9 @@ class SimpleFilterBackend(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         query_params = {}
 
+        if not hasattr(view, "filter_fields"):
+            return queryset
+
         for field_name in view.filter_fields:
             if field_name in request.QUERY_PARAMS:
                 field_data = request.QUERY_PARAMS[field_name]
