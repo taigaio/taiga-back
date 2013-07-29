@@ -236,17 +236,6 @@ LOGGING = {
             'level':'DEBUG',
             'class':'django.utils.log.NullHandler',
         },
-        'fileout': {
-            'level':'DEBUG',
-            'class':'logging.FileHandler',
-            'filename': os.path.join(LOGS_PATH, 'greenmine.log'),
-            'formatter': 'simple',
-        },
-        'queryhandler': {
-            'level':'DEBUG',
-            'class':'logging.FileHandler',
-            'filename': os.path.join(LOGS_PATH, 'greenmine-querys.log'),
-        },
         'console':{
             'level':'DEBUG',
             'class':'logging.StreamHandler',
@@ -269,21 +258,11 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
-        'django.db.backends':{
-            'handlers': ['queryhandler'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
         'main': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
-        },
-        'asyncmail': {
-            'handlers': ['console'],
-            'level':'INFO',
-            'propagate': False,
-        },
+        }
     }
 }
 
