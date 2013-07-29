@@ -10,9 +10,8 @@ from django import http
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import status, generics, viewsets
+from rest_framework import status, generics, viewsets, views
 
-import django_filters
 from haystack import query, inputs
 from djmail.template_mail import MagicMailBuilder
 
@@ -145,3 +144,10 @@ class Search(viewsets.ViewSet):
                             .filter(members=self.request.user))
 
         return own_projects.get(pk=project_id)
+
+
+class ApiRoot(views.APIView):
+    def get(self, request, **kwargs):
+        return Response({"name": "Greenmine Api",
+                         "version": 1,
+                         "info": "build with django-rest-framework"})

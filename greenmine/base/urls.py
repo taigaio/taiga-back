@@ -9,3 +9,4 @@ router.register("roles", api.RolesViewSet, base_name="roles")
 router.register("search", api.Search, base_name="search")
 
 urlpatterns = router.urls
+
