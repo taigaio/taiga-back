@@ -9,7 +9,7 @@ from django import http
 
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status, generics, viewsets, views
 
 from haystack import query, inputs
@@ -68,7 +68,32 @@ class UsersViewSet(viewsets.ViewSet):
         return Response({})
 
     @action(methods=["POST"], permission_classes=[])
-    def login(self, request, pk=None):
+    def password_recovery(self, request, pk=None):
+        username_or_email = request.DATA.get('username', None)
+
+        if not username_or_email:
+            return Response({"detail": "Invalid username or password"}, status.HTTP_400_BAD_REQUEST)
+
+        try:
+            queryset = User.objects.all()
+            user = queryset.get(Q(username=username_or_email) |
+                                    Q(email=username_or_email))
+        except User.DoesNotExist:
+            return Response({"detail": "Invalid username or password"}, status.HTTP_400_BAD_REQUEST)
+
+        user.token = str(uuid.uuid1())
+        user.save(update_fields=["token"])
+
+        mbuilder = MagicMailBuilder()
+        email = mbuilder.password_recovery(user.email, {"user": user})
+
+        return Response({"detail": "Mail sended successful!"})
+
+
+class Login(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    def create(self, request, **kwargs):
         username = request.DATA.get('username', None)
         password = request.DATA.get('password', None)
 
@@ -91,32 +116,19 @@ class UsersViewSet(viewsets.ViewSet):
 
         return Response(response_data)
 
-    @action(methods=["POST"], permission_classes=[])
-    def password_recovery(self, request, pk=None):
-        username_or_email = request.DATA.get('username', None)
 
-        if not username_or_email:
-            return Response({"detail": "Invalid username or password"}, status.HTTP_400_BAD_REQUEST)
+class Logout(viewsets.ViewSet):
+    permission_classes = (IsAuthenticated,)
 
-        try:
-            queryset = User.objects.all()
-            user = queryset.get(Q(username=username_or_email) |
-                                    Q(email=username_or_email))
-        except User.DoesNotExist:
-            return Response({"detail": "Invalid username or password"}, status.HTTP_400_BAD_REQUEST)
+    def list(self, request, **kwargs):
+        return self.logout(request)
 
-        user.token = str(uuid.uuid1())
-        user.save(update_fields=["token"])
+    def create(self, request, **kwargs):
+        return self.logout(request)
 
-        mbuilder = MagicMailBuilder()
-        email = mbuilder.password_recovery(user.email, {"user": user})
-
-        return Response({"detail": "Mail sended successful!"})
-
-    @action(methods=["GET", "POST"])
-    def logout(self, request, pk=None):
+    def logout(self, request):
         logout(request)
-        return Response()
+        return Response({})
 
 
 class Search(viewsets.ViewSet):
@@ -126,7 +138,7 @@ class Search(viewsets.ViewSet):
 
         try:
             project = self._get_project(project_id)
-        except models.Project.DoesNotExist:
+        except (models.Project.DoesNotExist, TypeError):
             raise excp.PermissionDenied({"detail": "Wrong project id"})
 
         #if not text:
