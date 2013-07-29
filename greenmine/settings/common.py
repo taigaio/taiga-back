@@ -15,15 +15,8 @@ OUT_PROJECT_ROOT = os.path.abspath(
     os.path.join(PROJECT_ROOT, "..")
 )
 
-LOGS_PATH = os.path.join(OUT_PROJECT_ROOT, 'logs')
-BACKUP_PATH = os.path.join(OUT_PROJECT_ROOT, 'exports')
 APPEND_SLASH = False
 
-if not os.path.exists(LOGS_PATH):
-    os.mkdir(LOGS_PATH)
-
-if not os.path.exists(BACKUP_PATH):
-    os.mkdir(BACKUP_PATH)
 
 ADMINS = (
     ('Andrei Antoukh', 'niwi@niwi.be'),
@@ -166,8 +159,6 @@ MIDDLEWARE_CLASSES = [
     #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    #'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #'django.middleware.transaction.TransactionMiddleware',
     'reversion.middleware.RevisionMiddleware',
 ]
 
