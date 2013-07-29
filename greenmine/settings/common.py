@@ -204,7 +204,7 @@ INSTALLED_APPS = [
     'greenmine.base.notifications',
     'greenmine.scrum',
     'greenmine.wiki',
-    #'greenmine.questions',
+    'greenmine.questions',
 
     'south',
     'haystack',
