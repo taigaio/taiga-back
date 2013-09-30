@@ -7,7 +7,7 @@ from greenmine.scrum import api
 from greenmine.base import routers
 
 
-router = routers.Router(trailing_slash=False)
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"projects", api.ProjectViewSet, base_name="projects")
 router.register(r"milestones", api.MilestoneViewSet, base_name="milestones")
 router.register(r"userstories", api.UserStoryViewSet, base_name="userstories")

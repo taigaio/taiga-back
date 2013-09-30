@@ -9,12 +9,22 @@ actions_router = routers.Route(url=r'^{prefix}/{methodname}{trailing_slash}$',
                                initkwargs={})
 
 
-class Router(routers.DefaultRouter):
+class DefaultRouter(routers.DefaultRouter):
     routes = [
         routers.DefaultRouter.routes[0],
         actions_router,
         routers.DefaultRouter.routes[2],
-        routers.DefaultRouter.routes[1]]
+        routers.DefaultRouter.routes[1]
+    ]
 
 
-__all__ = ["Router"]
+class SimpleRouter(routers.SimpleRouter):
+    routes = [
+        routers.SimpleRouter.routes[0],
+        actions_router,
+        routers.SimpleRouter.routes[2],
+        routers.SimpleRouter.routes[1]
+    ]
+
+
+__all__ = ["DefaultRouter", "SimpleRouter"]
