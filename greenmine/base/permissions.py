@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
 from rest_framework import permissions
 
 from greenmine.scrum.models import Membership
+
 
 def has_project_perm(user, project, perm):
     if user.is_authenticated():
@@ -8,8 +11,10 @@ def has_project_perm(user, project, perm):
             membership = Membership.objects.get(project=project, user=user)
             if membership.role.permissions.filter(codename=perm).count() > 0:
                 return True
+
         except Membership.DoesNotExist:
             pass
+
     return False
 
 
