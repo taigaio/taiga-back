@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, url
-from rest_framework.urlpatterns import format_suffix_patterns
+from greenmine.base import routers
 
 from . import api
 
 
-urlpatterns = format_suffix_patterns(patterns('',
-    url(r'^documents/$', api.DocumentList.as_view(), name='document-list'),
-    url(r'^documents/(?P<pk>[0-9]+)/$', api.DocumentDetail.as_view(), name='document-detail'),
-))
+router = routers.SimpleRouter(trailing_slash=False)
+router.register(r"documents", api.DocumentsViewSet, base_name="documents")
 
+urlpatterns = router.urls
