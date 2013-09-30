@@ -28,3 +28,15 @@ class SimpleFilterBackend(filters.BaseFilterBackend):
             queryset = queryset.filter(**query_params)
 
         return queryset
+
+
+class IsProjectMemberFilterBackend(SimpleFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        queryset = super(IsProjectMemberFilterBackend, self).filter_queryset(
+                                                      request, queryset, view)
+        user = request.user
+
+        if user.is_authenticated():
+            queryset = queryset.filter(project__members=request.user)
+
+        return queryset
