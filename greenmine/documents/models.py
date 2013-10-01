@@ -1,6 +1,7 @@
 # -* coding: utf-8 -*-
 
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from picklefield.fields import PickledObjectField
@@ -21,7 +22,7 @@ class Document(models.Model):
     project = models.ForeignKey('scrum.Project', null=False, blank=False,
                 related_name='documents',
                 verbose_name=_('project'))
-    owner = models.ForeignKey('base.User', null=False, blank=False,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
                 related_name='owned_documents',
                 verbose_name=_('owner'))
     attached_file = models.FileField(max_length=1000, null=True, blank=True,

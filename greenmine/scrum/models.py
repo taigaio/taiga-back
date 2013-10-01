@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.conf import settings
 from django.utils import timezone
 from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.loading import get_model
 
@@ -174,11 +176,11 @@ class Points(models.Model):
 
 
 class Membership(models.Model):
-    user = models.ForeignKey('base.User', null=False, blank=False,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
             related_name="memberships")
     project = models.ForeignKey('Project', null=False, blank=False,
             related_name="memberships")
-    role = models.ForeignKey('base.Role', null=False, blank=False,
+    role = models.ForeignKey('users.Role', null=False, blank=False,
             related_name="memberships")
 
     class Meta:
@@ -198,10 +200,10 @@ class Project(models.Model, WatchedMixin):
                 verbose_name=_('created date'))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
                 verbose_name=_('modified date'))
-    owner = models.ForeignKey('base.User', null=False, blank=False,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
                 related_name='owned_projects',
                 verbose_name=_('owner'))
-    members = models.ManyToManyField('base.User', related_name='projects', through='Membership',
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='projects', through='Membership',
                 verbose_name=_('members'))
     public = models.BooleanField(default=True, null=False, blank=True,
                 verbose_name=_('public'))
@@ -264,12 +266,12 @@ class Project(models.Model, WatchedMixin):
 
     @property
     def list_roles(self):
-        role_model = get_model('base', 'Role')
+        role_model = get_model('users', 'Role')
         return role_model.objects.filter(id__in=list(self.memberships.values_list('role', flat=True)))
 
     @property
     def list_users(self):
-        user_model = get_model('base', 'User')
+        user_model = get_user_model()
         return user_model.objects.filter(id__in=list(self.memberships.values_list('user', flat=True)))
 
     def update_role_points(self):
@@ -298,7 +300,7 @@ class Milestone(models.Model, WatchedMixin):
                             verbose_name=_('name'))
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
                             verbose_name=_('slug'))
-    owner = models.ForeignKey('base.User', null=True, blank=True, related_name='owned_milestones',
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='owned_milestones',
                               verbose_name=_('owner'))
     project = models.ForeignKey('Project', null=False, blank=False, related_name='milestones',
                                 verbose_name=_('project'))
@@ -403,7 +405,7 @@ class RolePoints(models.Model):
     user_story = models.ForeignKey('UserStory', null=False, blank=False,
                 related_name='role_points',
                 verbose_name=_('user story'))
-    role = models.ForeignKey('base.Role', null=False, blank=False,
+    role = models.ForeignKey('users.Role', null=False, blank=False,
                 related_name='role_points',
                 verbose_name=_('role'))
     points = models.ForeignKey('Points', null=False, blank=False,
@@ -425,7 +427,7 @@ class UserStory(WatchedMixin, models.Model):
     project = models.ForeignKey('Project', null=False, blank=False,
                 related_name='user_stories',
                 verbose_name=_('project'))
-    owner = models.ForeignKey('base.User', null=True, blank=True,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                 related_name='owned_user_stories',
                 verbose_name=_('owner'))
     status = models.ForeignKey('UserStoryStatus', null=False, blank=False,
@@ -447,7 +449,7 @@ class UserStory(WatchedMixin, models.Model):
                 verbose_name=_('subject'))
     description = models.TextField(null=False, blank=True,
                 verbose_name=_('description'))
-    watchers = models.ManyToManyField('base.User', null=True, blank=True,
+    watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
                 related_name='watched_us',
                 verbose_name=_('watchers'))
     client_requirement = models.BooleanField(default=False, null=False, blank=True,
@@ -504,7 +506,7 @@ class UserStory(WatchedMixin, models.Model):
 
 
 class Attachment(models.Model):
-    owner = models.ForeignKey('base.User', null=False, blank=False,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
                 related_name='change_attachments',
                 verbose_name=_('owner'))
     project = models.ForeignKey('Project', null=False, blank=False,
@@ -541,7 +543,7 @@ class Task(models.Model, WatchedMixin):
                 verbose_name=_('user story'))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                 verbose_name=_('ref'))
-    owner = models.ForeignKey('base.User', null=True, blank=True, default=None,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
                 related_name='owned_tasks',
                 verbose_name=_('owner'))
     status = models.ForeignKey('TaskStatus', null=False, blank=False,
@@ -563,10 +565,10 @@ class Task(models.Model, WatchedMixin):
                 verbose_name=_('subject'))
     description = models.TextField(null=False, blank=True,
                 verbose_name=_('description'))
-    assigned_to = models.ForeignKey('base.User', blank=True, null=True, default=None,
+    assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, default=None,
                 related_name='user_storys_assigned_to_me',
                 verbose_name=_('assigned to'))
-    watchers = models.ManyToManyField('base.User', null=True, blank=True,
+    watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
                 related_name='watched_tasks',
                 verbose_name=_('watchers'))
     tags = PickledObjectField(null=False, blank=True,
@@ -624,7 +626,7 @@ class Issue(models.Model, WatchedMixin):
                 verbose_name=_('uuid'))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                 verbose_name=_('ref'))
-    owner = models.ForeignKey('base.User', null=True, blank=True, default=None,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
                 related_name='owned_issues',
                 verbose_name=_('owner'))
     status = models.ForeignKey('IssueStatus', null=False, blank=False,
@@ -655,10 +657,10 @@ class Issue(models.Model, WatchedMixin):
                 verbose_name=_('subject'))
     description = models.TextField(null=False, blank=True,
                 verbose_name=_('description'))
-    assigned_to = models.ForeignKey('base.User', blank=True, null=True, default=None,
+    assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, default=None,
                 related_name='issues_assigned_to_me',
                 verbose_name=_('assigned to'))
-    watchers = models.ManyToManyField('base.User', null=True, blank=True,
+    watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
                 related_name='watched_issues',
                 verbose_name=_('watchers'))
     tags = PickledObjectField(null=False, blank=True,

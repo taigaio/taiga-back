@@ -191,8 +191,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'greenmine.base',
-    'greenmine.base.mail',
     'greenmine.base.notifications',
+    'greenmine.base.users',
+    'greenmine.base.mail',
+    'greenmine.base.searches',
     'greenmine.scrum',
     'greenmine.wiki',
     'greenmine.questions',
@@ -258,7 +260,7 @@ LOGGING = {
 }
 
 
-AUTH_USER_MODEL = 'base.User'
+AUTH_USER_MODEL = 'users.User'
 FORMAT_MODULE_PATH = 'greenmine.base.formats'
 DATE_INPUT_FORMATS = (
     '%Y-%m-%d', '%m/%d/%Y', '%d/%m/%Y', '%b %d %Y',
@@ -289,7 +291,7 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'greenmine.base.auth.SessionAuthentication',
+        'greenmine.base.users.auth.SessionAuthentication',
     ),
     'FILTER_BACKEND': 'greenmine.base.filters.SimpleFilterBackend',
 }

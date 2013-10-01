@@ -5,7 +5,7 @@ from django.db.models import Q
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from greenmine.base.models import *
+from greenmine.base.users.models import *
 from greenmine.base.notifications.api import NotificationSenderMixin
 
 from greenmine.scrum.serializers import *

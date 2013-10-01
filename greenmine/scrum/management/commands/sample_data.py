@@ -11,7 +11,7 @@ from django.utils.timezone import now
 
 from django.contrib.webdesign import lorem_ipsum
 
-from greenmine.base.models import User, Role
+from greenmine.base.users.models import User, Role
 from greenmine.scrum.models import *
 from greenmine.questions.models import *
 

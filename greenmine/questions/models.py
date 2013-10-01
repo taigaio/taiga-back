@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from django.utils import timezone
 from django.dispatch import receiver
 
@@ -37,7 +38,7 @@ class Question(models.Model):
 
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                 verbose_name=_('ref'))
-    owner = models.ForeignKey('base.User', null=True, blank=True, default=None,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
                 related_name='owned_questions',
                 verbose_name=_('owner'))
     status = models.ForeignKey('QuestionStatus', null=False, blank=False,
@@ -60,14 +61,14 @@ class Question(models.Model):
                 verbose_name=_('milestone'))
     finished_date = models.DateTimeField(null=True, blank=True,
                 verbose_name=_('finished date'))
-    assigned_to = models.ForeignKey('base.User', null=True, blank=True, default=None,
+    assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
                 related_name='questions_assigned_to_me',
                 verbose_name=_('assigned_to'))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
                 verbose_name=_('created date'))
     modified_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
                 verbose_name=_('modified date'))
-    watchers = models.ManyToManyField('base.User', null=True, blank=True,
+    watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
                 related_name='watched_questions',
                 verbose_name=_('watchers'))
     tags = PickledObjectField(null=False, blank=True,

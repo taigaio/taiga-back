@@ -18,13 +18,4 @@ class DefaultRouter(routers.DefaultRouter):
     ]
 
 
-class SimpleRouter(routers.SimpleRouter):
-    routes = [
-        routers.SimpleRouter.routes[0],
-        actions_router,
-        routers.SimpleRouter.routes[2],
-        routers.SimpleRouter.routes[1]
-    ]
-
-
-__all__ = ["DefaultRouter", "SimpleRouter"]
+__all__ = ["DefaultRouter"]

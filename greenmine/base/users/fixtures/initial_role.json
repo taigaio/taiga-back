@@ -1,7 +1,7 @@
 [
 {
     "pk": 1, 
-    "model": "base.role", 
+    "model": "users.role", 
     "fields": {
         "permissions": [
             [
@@ -51,32 +51,32 @@
             ], 
             [
                 "add_role", 
-                "base", 
+                "users", 
                 "role"
             ], 
             [
                 "change_role", 
-                "base", 
+                "users", 
                 "role"
             ], 
             [
                 "delete_role", 
-                "base", 
+                "users", 
                 "role"
             ], 
             [
                 "add_user", 
-                "base", 
+                "users", 
                 "user"
             ], 
             [
                 "change_user", 
-                "base", 
+                "users", 
                 "user"
             ], 
             [
                 "delete_user", 
-                "base", 
+                "users", 
                 "user"
             ], 
             [

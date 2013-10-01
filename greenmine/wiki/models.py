@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -12,10 +13,10 @@ class WikiPage(models.Model):
                 verbose_name=_('slug'))
     content = models.TextField(null=False, blank=True,
                 verbose_name=_('content'))
-    owner = models.ForeignKey('base.User', null=True, blank=True,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                 related_name='owned_wiki_pages',
                 verbose_name=_('owner'))
-    watchers = models.ManyToManyField('base.User', null=True, blank=True,
+    watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
                 related_name='watched_wiki_pages',
                 verbose_name=_('watchers'))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
@@ -42,7 +43,7 @@ class WikiPageAttachment(models.Model):
     wikipage = models.ForeignKey('WikiPage', null=False, blank=False,
                 related_name='attachments',
                 verbose_name=_('wiki page'))
-    owner = models.ForeignKey('base.User', null=False, blank=False,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
                 related_name='owned_wiki_attachments',
                 verbose_name=_('owner'))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,

@@ -1,13 +1,17 @@
+# -*- coding: utf-8 -*-
+
 from django.utils.translation import ugettext_lazy as _
 
 from django.contrib import admin
 from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
-from greenmine.base.models import Role, User
-from greenmine.base.forms import UserChangeForm, UserCreationForm
+from .models import Role, User
+from .forms import UserChangeForm, UserCreationForm
+
 
 admin.site.unregister(Group)
+
 
 class RoleAdmin(admin.ModelAdmin):
     list_display = ["name"]
@@ -22,7 +26,9 @@ class RoleAdmin(admin.ModelAdmin):
         return super(RoleAdmin, self).formfield_for_manytomany(
             db_field, request=request, **kwargs)
 
+
 admin.site.register(Role, RoleAdmin)
+
 
 class UserAdmin(DjangoUserAdmin):
     fieldsets = (

@@ -22,3 +22,5 @@ class SessionAuthentication(BaseAuthentication):
 
         return (user, None)
 
+
+

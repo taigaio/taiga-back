@@ -6,7 +6,7 @@ from django.utils.translation import ugettext
 from django.template.loader import render_to_string
 
 from greenmine.base import signals
-from greenmine.base.utils.auth import set_token
+from greenmine.base.users.utils import set_token
 from greenmine.base.mail.tasks import send_mail, send_bulk_mail
 
 
