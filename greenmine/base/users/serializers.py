@@ -5,7 +5,8 @@ from .models import User, Role
 
 
 class UserLogged(object):
-    def __init__(self, token, username, first_name, last_name, email, last_login, color, description, default_language, default_timezone, colorize_tags):
+    def __init__(self, token, username, first_name, last_name, email, last_login, color,
+                 description, default_language, default_timezone, colorize_tags):
         self.token = token
         self.username = username
         self.first_name = first_name
@@ -46,10 +47,13 @@ class LoginSerializer(serializers.Serializer):
             instance.last_login = attrs.get('last_login', instance.last_login)
             instance.color = attrs.get('color', instance.color)
             instance.description = attrs.get('description', instance.description)
-            instance.default_language = attrs.get('default_language', instance.default_language)
-            instance.default_timezone = attrs.get('default_timezone', instance.default_timezone)
+            instance.default_language = attrs.get('default_language',
+                                                  instance.default_language)
+            instance.default_timezone = attrs.get('default_timezone',
+                                                  instance.default_timezone)
             instance.colorize_tags = attrs.get('colorize_tags', instance.colorize_tags)
             return instance
+
         return UserLogged(**attrs)
 
 
@@ -58,12 +62,12 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'color', 'description',
-                  'default_language', 'default_timezone', 'is_active', 'photo', 'projects')
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'color',
+                  'description', 'default_language', 'default_timezone', 'is_active',
+                  'photo', 'projects')
 
     def get_projects(self, obj):
         return [x.id for x in obj.projects.all()]
-
 
 
 class RoleSerializer(serializers.ModelSerializer):

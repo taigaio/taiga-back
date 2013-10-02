@@ -18,7 +18,7 @@ def has_project_perm(user, project, perm):
     return False
 
 
-class BaseDetailPermission(permissions.BasePermission):
+class BasePermission(permissions.BasePermission):
     get_permission = None
     put_permission = None
     patch_permission = None

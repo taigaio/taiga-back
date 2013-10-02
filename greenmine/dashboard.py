@@ -13,6 +13,8 @@ from grappelli.dashboard import modules, Dashboard
 from grappelli.dashboard.utils import get_admin_site_name
 
 
+# TODO: Fix me
+
 class CustomIndexDashboard(Dashboard):
     """
     Custom index dashboard for www.
@@ -46,7 +48,6 @@ class CustomIndexDashboard(Dashboard):
                 models=(
                     'greenmine.documents.*',
                     'greenmine.questions.*',
-                    'greenmine.taggit.*',
                     'greenmine.wiki.*',
                 ),
             ),
