@@ -28,28 +28,20 @@ class CustomIndexDashboard(Dashboard):
                 _('Administration'),
                 column=1,
                 collapsible=False,
-                models=('django.contrib.*', 'greenmine.base.*',),
+                models=('django.contrib.*', 'greenmine.base.users.*',),
             ),
         )
 
         # append a group for "Administration" & "Applications"
         self.children.append(modules.ModelList(
-                _('Scrum'),
+                _('Projects'),
                 column=1,
                 collapsible=False,
-                models=('greenmine.scrum.*',),
-            ),
-        )
-
-        self.children.append(modules.ModelList(
-                _('Extra Apps'),
-                column=1,
-                collapsible=False,
-                models=(
-                    'greenmine.documents.*',
-                    'greenmine.questions.*',
-                    'greenmine.wiki.*',
-                ),
+                models=('greenmine.projects.*',
+                        'greenmine.projects.milestones.*',
+                        'greenmine.projects.issues.*',
+                        'greenmine.projects.tasks.*',
+                        'greenmine.projects.wiki.*',),
             ),
         )
 
