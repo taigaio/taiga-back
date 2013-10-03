@@ -2,6 +2,11 @@
 #git+https://github.com/django/django.git@stable/1.6.x
 #django-reversion==1.7.1
 
+
+#djangorestframework==2.3.8
+git+https://github.com/tomchristie/django-rest-framework.git@2.4.0
+git+https://github.com/etianen/django-reversion.git@django-1.6
+
 Fabric==1.6.0
 Flask==0.10.1
 South==0.8.2
@@ -18,7 +23,6 @@ django-guardian==1.1.0.beta
 django-haystack==2.1.0
 django-picklefield==0.3.0
 django-sampledatahelper==0.2.1
-djangorestframework==2.3.8
 gunicorn==17.5
 kombu==2.5.14
 mimeparse==0.1.3
