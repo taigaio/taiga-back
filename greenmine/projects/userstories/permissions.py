@@ -3,7 +3,7 @@
 from greenmine.base.permissions import BasePermission
 
 
-class PointsDetailPermission(BasePermission):
+class PointsPermission(BasePermission):
     get_permission = "view_points"
     put_permission = "severity_points"
     patch_permission = "severity_points"
@@ -12,7 +12,7 @@ class PointsDetailPermission(BasePermission):
     path_to_project =  ["project"]
 
 
-class UserStoryStatusDetailPermission(BasePermission):
+class UserStoryStatusPermission(BasePermission):
     get_permission = "view_userstorystatus"
     put_permission = "change_userstorystatus"
     patch_permission = "change_userstorystatus"

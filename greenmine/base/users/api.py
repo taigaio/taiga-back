@@ -42,7 +42,7 @@ class UsersViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_list_queryset(self):
-        project_model = get_model("scrum", "Project")
+        project_model = get_model("projects", "Project")
         own_projects = (project_model.objects
                             .filter(members=self.request.user))
 

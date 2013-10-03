@@ -14,7 +14,7 @@ from .serializers import SearchSerializer
 
 class SearchViewSet(viewsets.ViewSet):
     def list(self, request, **kwargs):
-        project_model = get_model("scrum", "Project")
+        project_model = get_model("projects", "Project")
         text = request.QUERY_PARAMS.get('text', "")
         project_id = request.QUERY_PARAMS.get('project', None)
 
@@ -34,7 +34,7 @@ class SearchViewSet(viewsets.ViewSet):
         return Response(return_data.data)
 
     def _get_project(self, project_id):
-        project_model = get_model("scrum", "Project")
+        project_model = get_model("projects", "Project")
         own_projects = (project_model.objects
                             .filter(members=self.request.user))
 

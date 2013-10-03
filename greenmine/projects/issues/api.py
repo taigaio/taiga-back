@@ -9,6 +9,7 @@ from greenmine.base.api import ModelCrudViewSet, ModelListViewSet
 from greenmine.base.notifications.api import NotificationSenderMixin
 from greenmine.projects.permissions import AttachmentPermission
 from greenmine.projects.serializers import AttachmentSerializer
+from greenmine.projects.models import Attachment
 
 from . import models
 from . import permissions
@@ -18,14 +19,14 @@ from . import serializers
 class SeverityViewSet(ModelListViewSet):
     model = models.Severity
     serializer_class = serializers.SeveritySerializer
-    permission_classes = (IsAuthenticated, permissions.SeverityiPermission)
+    permission_classes = (IsAuthenticated, permissions.SeverityPermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ("project",)
 
 
 class PriorityViewSet(ModelListViewSet):
     model = models.Priority
-    serializer_class = serializer.PrioritySerializer
+    serializer_class = serializers.PrioritySerializer
     permission_classes = (IsAuthenticated, permissions.PriorityPermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ("project",)
@@ -33,7 +34,7 @@ class PriorityViewSet(ModelListViewSet):
 
 class IssueTypeViewSet(ModelListViewSet):
     model = models.IssueType
-    serializer_class = serializer.IssueTypeSerializer
+    serializer_class = serializers.IssueTypeSerializer
     permission_classes = (IsAuthenticated, permissions.IssueTypePermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ("project",)

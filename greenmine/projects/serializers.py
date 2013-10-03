@@ -17,7 +17,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
         return None
 
     class Meta:
-        model = Attachment
+        model = models.Attachment
         fields = ("id", "project", "owner", "attached_file",
                   "created_date", "object_id", "url")
         read_only_fields = ("owner",)
@@ -29,4 +29,4 @@ class ProjectSerializer(serializers.ModelSerializer):
     list_of_milestones = serializers.Field(source="list_of_milestones")
 
     class Meta:
-        model = Project
+        model = models.Project

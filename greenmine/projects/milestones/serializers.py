@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import json
+import reversion
+
 from rest_framework import serializers
 
-from greenmine.projects.userstories.serializers import user_stories
-
+from ..userstories.serializers import UserStorySerializer
 from . import models
 
-import json, reversion
 
 
 class MilestoneSerializer(serializers.ModelSerializer):

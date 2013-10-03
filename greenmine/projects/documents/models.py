@@ -19,7 +19,7 @@ class Document(models.Model):
                 verbose_name=_('created date'))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
                 verbose_name=_('modified date'))
-    project = models.ForeignKey('scrum.Project', null=False, blank=False,
+    project = models.ForeignKey('projects.Project', null=False, blank=False,
                 related_name='documents',
                 verbose_name=_('project'))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,

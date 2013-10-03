@@ -2,7 +2,7 @@
 
 from rest_framework import permissions
 
-from greenmine.scrum.models import Membership
+from greenmine.projects.models import Membership
 
 
 def has_project_perm(user, project, perm):

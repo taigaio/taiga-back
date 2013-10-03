@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 
-from greenmine.wiki.models import WikiPage, WikiPageAttachment
+from greenmine.projects.wiki.models import WikiPage, WikiPageAttachment
 
 
 class WikiPageAdmin(admin.ModelAdmin):

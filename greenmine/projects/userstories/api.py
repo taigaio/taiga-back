@@ -3,10 +3,7 @@
 from rest_framework.permissions import IsAuthenticated
 
 from greenmine.base import filters
-from greenmine.base.api import (
-    ModelCrudViewSet,
-    ModelListViewSet
-)
+from greenmine.base.api import ModelCrudViewSet, ModelListViewSet
 from greenmine.base.notifications.api import NotificationSenderMixin
 
 from . import serializers
@@ -16,7 +13,7 @@ from . import permissions
 
 class PointsViewSet(ModelListViewSet):
     model = models.Points
-    serializer_class = serializer.PointsSerializer
+    serializer_class = serializers.PointsSerializer
     permission_classes = (IsAuthenticated, permissions.PointsPermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ('project',)
@@ -32,7 +29,7 @@ class UserStoryStatusViewSet(ModelListViewSet):
 
 class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
     model = models.UserStory
-    serializer_class = serializersUserStorySerializer
+    serializer_class = serializers.UserStorySerializer
     permission_classes = (IsAuthenticated, permissions.UserStoryPermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ['project', 'milestone', 'milestone__isnull']
