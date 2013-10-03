@@ -294,7 +294,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'greenmine.base.users.auth.SessionAuthentication',
     ),
-    'FILTER_BACKEND': 'greenmine.base.filters.SimpleFilterBackend',
+    'FILTER_BACKEND': 'greenmine.base.filters.FilterBackend',
 }
 
 from .appdefaults import *

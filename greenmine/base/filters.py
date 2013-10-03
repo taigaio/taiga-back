@@ -2,8 +2,7 @@
 
 from rest_framework import filters
 
-
-class SimpleFilterBackend(filters.BaseFilterBackend):
+class QueryParamsFilterMixin(object):
     _special_values_dict = {
         'true': True,
         'false': False,
@@ -30,7 +29,15 @@ class SimpleFilterBackend(filters.BaseFilterBackend):
         return queryset
 
 
-class IsProjectMemberFilterBackend(SimpleFilterBackend):
+class FilterBackend(QueryParamsFilterMixin,
+                    filters.BaseFilterBackend):
+    """
+    Default filter backend.
+    """
+    pass
+
+
+class IsProjectMemberFilterBackend(FilterBackend):
     def filter_queryset(self, request, queryset, view):
         queryset = super(IsProjectMemberFilterBackend, self).filter_queryset(
                                                       request, queryset, view)
