@@ -23,6 +23,7 @@ class MilestoneViewSet(NotificationSenderMixin, ModelCrudViewSet):
 
     def pre_save(self, obj):
         super(MilestoneViewSet, self).pre_save(obj)
-        obj.owner = self.request.user
+        if not obj.id:
+            obj.owner = self.request.user
 
 

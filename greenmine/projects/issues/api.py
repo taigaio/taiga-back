@@ -63,8 +63,9 @@ class IssuesAttachmentViewSet(ModelCrudViewSet):
 
     def pre_save(self, obj):
         super(IssuesAttachmentViewSet, self).pre_save(obj)
-        obj.content_type = ContentType.objects.get_for_model(Issue)
-        obj.owner = self.request.user
+        if not obj.id:
+            obj.content_type = ContentType.objects.get_for_model(Issue)
+            obj.owner = self.request.user
 
 
 class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
@@ -79,7 +80,8 @@ class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
 
     def pre_save(self, obj):
         super(IssueViewSet, self).pre_save(obj)
-        obj.owner = self.request.user
+        if not obj.id:
+            obj.owner = self.request.user
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():

@@ -39,8 +39,9 @@ class TasksAttachmentViewSet(ModelCrudViewSet):
 
     def pre_save(self, obj):
         super(TasksAttachmentViewSet, self).pre_save(obj)
-        obj.content_type = ContentType.objects.get_for_model(Task)
-        obj.owner = self.request.user
+        if not obj.id:
+            obj.content_type = ContentType.objects.get_for_model(Task)
+            obj.owner = self.request.user
 
 
 class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
@@ -55,8 +56,9 @@ class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
 
     def pre_save(self, obj):
         super(TaskViewSet, self).pre_save(obj)
-        obj.owner = self.request.user
         obj.milestone = obj.user_story.milestone
+        if not obj.id:
+            obj.owner = self.request.user
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():

@@ -39,7 +39,8 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
 
     def pre_save(self, obj):
         super(UserStoryViewSet, self).pre_save(obj)
-        obj.owner = self.request.user
+        if not obj.id:
+            obj.owner = self.request.user
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():

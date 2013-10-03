@@ -19,9 +19,9 @@ class QuestionList(generics.ListCreateAPIView):
     def get_queryset(self):
         return super(QuestionList, self).filter(project__members=self.request.user)
 
-
     def pre_save(self, obj):
-        obj.owner = self.request.user
+        if not obj.id:
+            obj.owner = self.request.user
 
 
 class QuestionDetail(generics.RetrieveUpdateDestroyAPIView):
