@@ -9,16 +9,23 @@ from greenmine.base.serializers import PickleField
 from . import models
 
 
+class QuestionStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.QuestionStatus
+
+
 class QuestionSerializer(serializers.ModelSerializer):
     tags = PickleField()
     comment = serializers.SerializerMethodField("get_comment")
     history = serializers.SerializerMethodField("get_history")
+    is_closed = serializers.Field(source="is_closed")
 
     class Meta:
         model = models.Question
         fields = ()
 
     def get_comment(self, obj):
+        # TODO
         return ""
 
     def get_questions_diff(self, old_question_version, new_question_version):
@@ -49,11 +56,12 @@ class QuestionSerializer(serializers.ModelSerializer):
         diff_list = []
         current = None
 
-        for version in reversed(list(reversion.get_for_object(obj))):
-            if current:
-                questions_diff = self.get_questions_diff(version, current)
-                diff_list.append(questions_diff)
+        if obj:
+            for version in reversed(list(reversion.get_for_object(obj))):
+                if current:
+                    questions_diff = self.get_questions_diff(current, version)
+                    diff_list.append(questions_diff)
 
-            current = version
+                current = version
 
         return diff_list
