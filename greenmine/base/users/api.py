@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import uuid
+
 from django.db.models.loading import get_model
 from django.contrib.auth import logout, login, authenticate
 
@@ -10,18 +12,11 @@ from rest_framework import status, viewsets
 
 from djmail.template_mail import MagicMailBuilder
 
-from greenmine.base import exceptions as excp
-
-from .serializers import (
-    LoginSerializer,
-    UserLogged,
-    UserSerializer,
-    RoleSerializer,
-)
+from greenmine.base import exceptions as exc
 
 from .models import User, Role
-
-import uuid
+from .serializers import (LoginSerializer, UserLogged,
+                          UserSerializer, RoleSerializer,)
 
 
 class RolesViewSet(viewsets.ViewSet):
