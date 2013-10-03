@@ -32,7 +32,7 @@ class RolesViewSet(viewsets.ViewSet):
         try:
             role = Role.objects.get(pk=pk)
         except Role.DoesNotExist:
-            raise excp.NotFound()
+            raise exc.NotFound()
 
         serializer = self.serializer_class(role)
         return Response(serializer.data)
@@ -88,7 +88,7 @@ class UsersViewSet(viewsets.ViewSet):
         return Response({"detail": "Mail sended successful!"})
 
 
-class LoginViewSet(viewsets.ViewSet):
+class AuthViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
 
     def create(self, request, **kwargs):
@@ -98,12 +98,10 @@ class LoginViewSet(viewsets.ViewSet):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            return Response({"detail": "Invalid username or password"},
-                                            status.HTTP_400_BAD_REQUEST)
+            raise exc.BadRequest("Invalid username or password")
 
         if not user.check_password(password):
-            return Response({"detail": "Invalid username or password"},
-                                            status.HTTP_400_BAD_REQUEST)
+            raise exc.BadRequest("Invalid username or password")
 
         user = authenticate(username=username, password=password)
         login(request, user)
@@ -111,19 +109,8 @@ class LoginViewSet(viewsets.ViewSet):
         serializer = UserSerializer(user)
         response_data = serializer.data
         response_data["token"] = request.session.session_key
-
         return Response(response_data)
 
-
-class LogoutViewSet(viewsets.ViewSet):
-    permission_classes = (IsAuthenticated,)
-
-    def list(self, request, **kwargs):
-        return self.logout(request)
-
-    def create(self, request, **kwargs):
-        return self.logout(request)
-
-    def logout(self, request):
+    def destroy(self, request, pk=None):
         logout(request)
         return Response({})
