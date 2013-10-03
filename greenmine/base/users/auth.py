@@ -5,7 +5,8 @@ from rest_framework.authentication import BaseAuthentication
 
 class SessionAuthentication(BaseAuthentication):
     """
-    Use Django's session framework for authentication without csrf.
+    Same as rest_framework.authentication.SessionAuthentication
+    but without csrf.
     """
 
     def authenticate(self, request):
@@ -21,6 +22,3 @@ class SessionAuthentication(BaseAuthentication):
             return None
 
         return (user, None)
-
-
-
