@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from rest_framework.response import Response
-from rest_framework import views
+from rest_framework import (
+    mixins,
+    viewsets
+)
 
 
-class ApiRoot(views.APIView):
-    def get(self, request, **kwargs):
-        return Response({"name": "Greenmine Api",
-                         "version": 1,
-                         "info": "build with django-rest-framework"})
+class ModelCrudViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
+                       mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
+                       mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    pass
+
+
+class ModelListViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                       viewsets.GenericViewSet):
+    pass

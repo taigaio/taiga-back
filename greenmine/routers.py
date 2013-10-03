@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from greenmine.base import routers
-from greenmine.base.api import ApiRoot
 from greenmine.base.users.api import AuthViewSet, RolesViewSet, UsersViewSet
 from greenmine.base.searches.api import SearchViewSet
 from greenmine.projects.api import ProjectViewSet

@@ -10,7 +10,6 @@ from .routers import router
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^api/v1$', ApiRoot.as_view()),
     url(r'^api/v1/', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^grappelli/', include('grappelli.urls')),
