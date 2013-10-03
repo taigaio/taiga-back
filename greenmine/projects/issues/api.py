@@ -15,6 +15,7 @@ from . import models
 from . import permissions
 from . import serializers
 
+import reversion
 
 class SeverityViewSet(ModelListViewSet):
     model = models.Severity

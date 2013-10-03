@@ -39,6 +39,7 @@ class IssueSerializer(serializers.ModelSerializer):
         model = models.Issue
 
     def get_comment(self, obj):
+        # TODO
         return ""
 
     def get_issues_diff(self, old_issue_version, new_issue_version):
