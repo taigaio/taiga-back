@@ -10,8 +10,6 @@ from greenmine.base.utils.slug import ref_uniquely
 
 from picklefield.fields import PickledObjectField
 
-from . import choices
-
 
 class QuestionStatus(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False,
