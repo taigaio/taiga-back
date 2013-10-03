@@ -2,33 +2,16 @@
 
 from greenmine.base import routers
 from greenmine.base.api import ApiRoot
-from greenmine.base.users.api import (
-    LoginViewSet,
-    LogoutViewSet,
-    RolesViewSet,
-    UsersViewSet
-)
+from greenmine.base.users.api import AuthViewSet, RolesViewSet, UsersViewSet
 from greenmine.base.searches.api import SearchViewSet
 from greenmine.projects.api import ProjectViewSet
 from greenmine.projects.milestones.api import MilestoneViewSet
-from greenmine.projects.userstories.api import (
-    PointsViewSet,
-    UserStoryStatusViewSet,
-    UserStoryViewSet
-)
-from greenmine.projects.tasks.api import (
-    TaskStatusViewSet,
-    TaskViewSet,
-    TasksAttachmentViewSet
-)
-from greenmine.projects.issues.api import (
-    PriorityViewSet,
-    SeverityViewSet,
-    IssueStatusViewSet,
-    IssueTypeViewSet,
-    IssueViewSet,
-    IssuesAttachmentViewSet
-)
+from greenmine.projects.userstories.api import (PointsViewSet, UserStoryStatusViewSet,
+                                                UserStoryViewSet,)
+from greenmine.projects.tasks.api import TaskStatusViewSet, TaskViewSet, TasksAttachmentViewSet
+from greenmine.projects.issues.api import (PriorityViewSet, SeverityViewSet,
+                                           IssueStatusViewSet, IssueTypeViewSet,
+                                           IssueViewSet, IssuesAttachmentViewSet,)
 
 
 router = routers.DefaultRouter(trailing_slash=False)
@@ -36,8 +19,7 @@ router = routers.DefaultRouter(trailing_slash=False)
 # greenmine.base.users
 router.register(r"users", UsersViewSet, base_name="users")
 router.register(r"roles", RolesViewSet, base_name="roles")
-router.register(r"auth/login", LoginViewSet, base_name="auth-login")
-router.register(r"auth/logout", LogoutViewSet, base_name="auth-logout")
+router.register(r"auth", AuthViewSet, base_name="auth")
 
 # greenmine.base.searches
 router.register(r"search", SearchViewSet, base_name="search")
@@ -72,5 +54,3 @@ router.register(r"issues", IssueViewSet, base_name="issues")
 # TODO
 #greenmine.projects.documents
 # TODO
-
-
