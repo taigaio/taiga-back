@@ -18,7 +18,7 @@ def attach_uuid(sender, instance, **kwargs):
     # if sender class does not have uuid field.
     if 'uuid' in fields:
         if not instance.uuid:
-            instance.uuid = unicode(uuid.uuid1())
+            instance.uuid = str(uuid.uuid1())
 
 
 # Patch api view for correctly return 401 responses on

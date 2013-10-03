@@ -305,7 +305,7 @@ from .appdefaults import *
 # Test conditions
 if 'test' in sys.argv:
     if "settings" not in ",".join(sys.argv):
-        print "\033[1;91mNot settings specified.\033[0m"
+        print ("\033[1;91mNot settings specified.\033[0m")
         print ("Try: \033[1;33mpython manage.py test --settings="
                "greenmine.settings.testing -v2\033[0m")
         sys.exit(0)

@@ -50,7 +50,7 @@ class Command(BaseCommand):
         role = Role.objects.all()[0]
 
         # projects
-        for x in xrange(3):
+        for x in range(3):
             project = self.create_project(x)
 
             for user in self.users:
@@ -59,15 +59,15 @@ class Command(BaseCommand):
             start_date = now() - datetime.timedelta(35)
 
             # create random milestones
-            for y in xrange(self.sd.int(1, 5)):
+            for y in range(self.sd.int(1, 5)):
                 end_date = start_date + datetime.timedelta(15)
                 milestone = self.create_milestone(project, start_date, end_date)
 
                 # create uss asociated to milestones
-                for z in xrange(self.sd.int(3, 7)):
+                for z in range(self.sd.int(3, 7)):
                     us = self.create_us(project, milestone)
 
-                    for w in xrange(self.sd.int(0,6)):
+                    for w in range(self.sd.int(0,6)):
                         if start_date <= now() and end_date <= now():
                             task = self.create_task(project, milestone, us, start_date, end_date, closed=True)
                         elif start_date <= now() and end_date >= now():
@@ -79,15 +79,15 @@ class Command(BaseCommand):
                 start_date = end_date
 
             # created unassociated uss.
-            for y in xrange(self.sd.int(8,15)):
+            for y in range(self.sd.int(8,15)):
                 us = self.create_us(project)
 
             # create bugs.
-            for y in xrange(self.sd.int(15,25)):
+            for y in range(self.sd.int(15,25)):
                 bug = self.create_bug(project)
 
             # create questions.
-            #for y in xrange(self.sd.int(15,25)):
+            #for y in range(self.sd.int(15,25)):
             #    question = self.create_question(project)
 
     def create_question(self, project):
