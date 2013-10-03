@@ -70,11 +70,12 @@ class IssueSerializer(serializers.ModelSerializer):
         diff_list = []
         current = None
 
-        for version in reversed(list(reversion.get_for_object(obj))):
-            if current:
-                issues_diff = self.get_issues_diff(current, version)
-                diff_list.append(issues_diff)
+        if obj:
+            for version in reversed(list(reversion.get_for_object(obj))):
+                if current:
+                    issues_diff = self.get_issues_diff(current, version)
+                    diff_list.append(issues_diff)
 
-            current = version
+                current = version
 
         return diff_list

@@ -53,11 +53,12 @@ class TaskSerializer(serializers.ModelSerializer):
         diff_list = []
         current = None
 
-        for version in reversed(list(reversion.get_for_object(obj))):
-            if current:
-                task_diff = self.get_task_diff(current, version)
-                diff_list.append(task_diff)
+        if obj:
+            for version in reversed(list(reversion.get_for_object(obj))):
+                if current:
+                    task_diff = self.get_task_diff(current, version)
+                    diff_list.append(task_diff)
 
-            current = version
+                current = version
 
         return diff_list
