@@ -5,17 +5,14 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework.permissions import IsAuthenticated
 
 from greenmine.base import filters
-from greenmine.base.api import (
-    ModelCrudViewSet,
-    ModelListViewSet
-)
+from greenmine.base.api import ModelCrudViewSet, ModelListViewSet
 from greenmine.base.notifications.api import NotificationSenderMixin
 from greenmine.projects.permissions import AttachmentPermission
 from greenmine.projects.serializers import AttachmentSerializer
 
-from . import serializers
 from . import models
 from . import permissions
+from . import serializers
 
 
 class SeverityViewSet(ModelListViewSet):
