@@ -7,22 +7,20 @@ from django.utils.translation import ugettext_lazy as _
 
 class WikiPage(models.Model):
     project = models.ForeignKey('projects.Project', null=False, blank=False,
-                related_name='wiki_pages',
-                verbose_name=_('project'))
+                                related_name='wiki_pages', verbose_name=_('project'))
     slug = models.SlugField(max_length=500, db_index=True, null=False, blank=False,
-                verbose_name=_('slug'))
+                            verbose_name=_('slug'))
     content = models.TextField(null=False, blank=True,
-                verbose_name=_('content'))
+                               verbose_name=_('content'))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
-                related_name='owned_wiki_pages',
-                verbose_name=_('owner'))
+                              related_name='owned_wiki_pages', verbose_name=_('owner'))
     watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
-                related_name='watched_wiki_pages',
-                verbose_name=_('watchers'))
+                                      related_name='watched_wiki_pages',
+                                      verbose_name=_('watchers'))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                verbose_name=_('created date'))
+                                        verbose_name=_('created date'))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
-                verbose_name=_('modified date'))
+                                         verbose_name=_('modified date'))
 
     class Meta:
         verbose_name = u'wiki page'

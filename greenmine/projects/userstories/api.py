@@ -2,6 +2,8 @@
 
 from rest_framework.permissions import IsAuthenticated
 
+import reversion
+
 from greenmine.base import filters
 from greenmine.base.api import ModelCrudViewSet, ModelListViewSet
 from greenmine.base.notifications.api import NotificationSenderMixin

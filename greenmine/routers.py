@@ -11,6 +11,7 @@ from greenmine.projects.tasks.api import TaskStatusViewSet, TaskViewSet, TasksAt
 from greenmine.projects.issues.api import (PriorityViewSet, SeverityViewSet,
                                            IssueStatusViewSet, IssueTypeViewSet,
                                            IssueViewSet, IssuesAttachmentViewSet,)
+from greenmine.projects.wiki.api import WikiViewSet
 
 
 router = routers.DefaultRouter(trailing_slash=False)
@@ -47,9 +48,10 @@ router.register(r"issue-types", IssueTypeViewSet, base_name="issue-types")
 router.register(r"issue-attachments", IssuesAttachmentViewSet, base_name="issue-attachments")
 router.register(r"issues", IssueViewSet, base_name="issues")
 
+# greenmine.projects.wiki
+router.register(r"wiki", WikiViewSet, base_name="wiki")
+
 #greenmine.projects.questions
-# TODO
-#greenmine.projects.wiki
 # TODO
 #greenmine.projects.documents
 # TODO
