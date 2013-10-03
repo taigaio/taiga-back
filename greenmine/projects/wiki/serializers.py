@@ -8,8 +8,3 @@ from . import models
 class WikiPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.WikiPage
-
-
-class WikiPageAttachmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.WikiPageAttachment
