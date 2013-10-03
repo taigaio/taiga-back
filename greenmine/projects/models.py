@@ -146,6 +146,7 @@ class Project(models.Model, WatchedMixin):
                                                                  "user", flat=True)))
 
     def update_role_points(self):
+        rolepoints_model = get_model("userstories", "RolePoints")
         roles = self.list_roles
         role_ids = roles.values_list("id", flat=True)
         null_points = self.points.get(value=None)
@@ -153,13 +154,13 @@ class Project(models.Model, WatchedMixin):
             for role in roles:
                 try:
                     sp = us.role_points.get(role=role, user_story=us)
-                except RolePoints.DoesNotExist:
-                    sp = RolePoints.objects.create(role=role,
+                except rolepoints_model.DoesNotExist:
+                    sp = rolepoints_model.objects.create(role=role,
                                                    user_story=us,
                                                    points=null_points)
 
         #Remove unnecesary Role points
-        rp_query = RolePoints.objects.filter(user_story__in=self.user_stories.all())
+        rp_query = rolepoints_model.objects.filter(user_story__in=self.user_stories.all())
         rp_query = rp_query.exclude(role__id__in=role_ids)
         rp_query.delete()
 
@@ -189,31 +190,40 @@ def project_post_save(sender, instance, created, **kwargs):
     if not created:
         return
 
+    points_model = get_model("userstories", "Points")
+    userstorystatus_model = get_model("userstories", "UserStoryStatus")
+    taskstatus_model = get_model("tasks", "TaskStatus")
+    severity_model = get_model("issues", "Severity")
+    priority_model = get_model("issues", "Priority")
+    issuestatus_model = get_model("issues", "IssueStatus")
+    issuetype_model = get_model("issues", "IssueType")
+    questionstatus_model = get_model("questions", "QuestionStatus")
+
     # Populate new project dependen default data
     for order, name in choices.PRIORITY_CHOICES:
-        Priority.objects.create(project=instance, name=name, order=order)
+        priority_model.objects.create(project=instance, name=name, order=order)
 
     for order, name in choices.SEVERITY_CHOICES:
-        Severity.objects.create(project=instance, name=name, order=order)
+        severity_model.objects.create(project=instance, name=name, order=order)
 
     for order, name, value in choices.POINTS_CHOICES:
-        Points.objects.create(project=instance, name=name, order=order, value=value)
+        points_model.objects.create(project=instance, name=name, order=order, value=value)
 
-    for order, name, is_closed in choices.USSTATUSES:
-        UserStoryStatus.objects.create(name=name, order=order,
-                                       is_closed=is_closed, project=instance)
+    for order, name, is_closed in choices.US_STATUSES:
+        userstorystatus_model.objects.create(name=name, order=order,
+                                             is_closed=is_closed, project=instance)
 
-    for order, name, is_closed, color in choices.TASKSTATUSES:
-        TaskStatus.objects.create(name=name, order=order, color=color,
-                                  is_closed=is_closed, project=instance)
+    for order, name, is_closed, color in choices.TASK_STATUSES:
+        taskstatus_model.objects.create(name=name, order=order, color=color,
+                                        is_closed=is_closed, project=instance)
 
-    for order, name, is_closed in choices.ISSUESTATUSES:
-        IssueStatus.objects.create(name=name, order=order,
-                                   is_closed=is_closed, project=instance)
+    for order, name, is_closed in choices.ISSUE_STATUSES:
+        issuestatus_model.objects.create(name=name, order=order,
+                                         is_closed=is_closed, project=instance)
 
-    for order, name in choices.ISSUETYPES:
-        IssueType.objects.create(project=instance, name=name, order=order)
+    for order, name in choices.ISSUE_TYPES:
+        issuetype_model.objects.create(project=instance, name=name, order=order)
 
     for order, name, is_closed in choices.QUESTION_STATUS:
-        QuestionStatus.objects.create(name=name, order=order,
-                                   is_closed=is_closed, project=instance)
+        questionstatus_model.objects.create(name=name, order=order,
+                                            is_closed=is_closed, project=instance)

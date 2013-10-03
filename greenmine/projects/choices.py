@@ -59,6 +59,12 @@ ISSUE_TYPES = (
     (1, _(u'Bug')),
 )
 
+QUESTION_STATUS = (
+    (1, _(u"New"), False),
+    (2, _(u"Pending"), False),
+    (3, _(u"Answered"), True),
+)
+
 # TODO: pending to refactor
 
 TASK_COMMENT = 1

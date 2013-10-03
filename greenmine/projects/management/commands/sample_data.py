@@ -11,9 +11,15 @@ from django.utils.timezone import now
 
 from django.contrib.webdesign import lorem_ipsum
 
-from greenmine.base.users.models import User, Role
-from greenmine.scrum.models import *
-from greenmine.questions.models import *
+from greenmine.base.users.models import *
+from greenmine.projects.models import *
+from greenmine.projects.milestones.models import *
+from greenmine.projects.userstories.models import *
+from greenmine.projects.tasks.models import *
+from greenmine.projects.issues.models import *
+from greenmine.projects.questions.models import *
+from greenmine.projects.documents.models import *
+from greenmine.projects.wiki.models import *
 
 
 subjects = [
@@ -191,7 +197,7 @@ class Command(BaseCommand):
             owner=random.choice(self.users),
             public=True,
             total_story_points=self.sd.int(100, 150),
-            milestones=self.sd.int(5,10)
+            total_milestones=self.sd.int(5,10)
         )
 
         project.save()
