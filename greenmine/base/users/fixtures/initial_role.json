@@ -141,342 +141,342 @@
             ], 
             [
                 "add_attachment", 
-                "scrum", 
+                "projects", 
                 "attachment"
             ], 
             [
                 "change_attachment", 
-                "scrum", 
+                "projects", 
                 "attachment"
             ], 
             [
                 "delete_attachment", 
-                "scrum", 
+                "projects", 
                 "attachment"
             ], 
             [
                 "add_issue", 
-                "scrum", 
+                "issues", 
                 "issue"
             ], 
             [
                 "assign_issue_to_myself", 
-                "scrum", 
+                "issues", 
                 "issue"
             ], 
             [
                 "assign_issue_to_other", 
-                "scrum", 
+                "issues", 
                 "issue"
             ], 
             [
                 "change_assigned_issue", 
-                "scrum", 
+                "issues", 
                 "issue"
             ], 
             [
                 "change_issue", 
-                "scrum", 
+                "issues", 
                 "issue"
             ], 
             [
                 "change_issue_state", 
-                "scrum", 
+                "issues", 
                 "issue"
             ], 
             [
                 "change_owned_issue", 
-                "scrum", 
+                "issues", 
                 "issue"
             ], 
             [
                 "comment_issue", 
-                "scrum", 
+                "issues", 
                 "issue"
             ], 
             [
                 "delete_issue", 
-                "scrum", 
+                "issues", 
                 "issue"
             ], 
             [
                 "view_issue", 
-                "scrum", 
+                "issues", 
                 "issue"
             ], 
             [
                 "add_issuestatus", 
-                "scrum", 
+                "issues", 
                 "issuestatus"
             ], 
             [
                 "change_issuestatus", 
-                "scrum", 
+                "issues", 
                 "issuestatus"
             ], 
             [
                 "delete_issuestatus", 
-                "scrum", 
+                "issues", 
                 "issuestatus"
             ], 
             [
                 "add_issuetype", 
-                "scrum", 
+                "issues", 
                 "issuetype"
             ], 
             [
                 "change_issuetype", 
-                "scrum", 
+                "issues", 
                 "issuetype"
             ], 
             [
                 "delete_issuetype", 
-                "scrum", 
+                "issues", 
                 "issuetype"
             ], 
             [
                 "add_membership", 
-                "scrum", 
+                "projects", 
                 "membership"
             ], 
             [
                 "change_membership", 
-                "scrum", 
+                "projects", 
                 "membership"
             ], 
             [
                 "delete_membership", 
-                "scrum", 
+                "projects", 
                 "membership"
             ], 
             [
                 "add_milestone", 
-                "scrum", 
+                "milestones", 
                 "milestone"
             ], 
             [
                 "change_milestone", 
-                "scrum", 
+                "milestones", 
                 "milestone"
             ], 
             [
                 "delete_milestone", 
-                "scrum", 
+                "milestones", 
                 "milestone"
             ], 
             [
                 "view_milestone", 
-                "scrum", 
+                "milestones", 
                 "milestone"
             ], 
             [
                 "add_points", 
-                "scrum", 
+                "userstories", 
                 "points"
             ], 
             [
                 "change_points", 
-                "scrum", 
+                "userstories", 
                 "points"
             ], 
             [
                 "delete_points", 
-                "scrum", 
+                "userstories", 
                 "points"
             ], 
             [
                 "add_priority", 
-                "scrum", 
+                "issues", 
                 "priority"
             ], 
             [
                 "change_priority", 
-                "scrum", 
+                "issues", 
                 "priority"
             ], 
             [
                 "delete_priority", 
-                "scrum", 
+                "issues", 
                 "priority"
             ], 
             [
                 "add_project", 
-                "scrum", 
+                "projects", 
                 "project"
             ], 
             [
                 "change_project", 
-                "scrum", 
+                "projects", 
                 "project"
             ], 
             [
                 "delete_project", 
-                "scrum", 
+                "projects", 
                 "project"
             ], 
             [
                 "list_projects", 
-                "scrum", 
+                "projects", 
                 "project"
             ], 
             [
                 "manage_users", 
-                "scrum", 
+                "projects", 
                 "project"
             ], 
             [
                 "view_project", 
-                "scrum", 
+                "projects", 
                 "project"
             ], 
             [
                 "add_rolepoints", 
-                "scrum", 
+                "userstories", 
                 "rolepoints"
             ], 
             [
                 "change_rolepoints", 
-                "scrum", 
+                "userstories", 
                 "rolepoints"
             ], 
             [
                 "delete_rolepoints", 
-                "scrum", 
+                "userstories", 
                 "rolepoints"
             ], 
             [
                 "add_severity", 
-                "scrum", 
+                "issues", 
                 "severity"
             ], 
             [
                 "change_severity", 
-                "scrum", 
+                "issues", 
                 "severity"
             ], 
             [
                 "delete_severity", 
-                "scrum", 
+                "issues", 
                 "severity"
             ], 
             [
                 "add_task", 
-                "scrum", 
+                "tasks", 
                 "task"
             ], 
             [
                 "add_task_to_us", 
-                "scrum", 
+                "tasks", 
                 "task"
             ], 
             [
                 "assign_task_to_myself", 
-                "scrum", 
+                "tasks", 
                 "task"
             ], 
             [
                 "assign_task_to_other", 
-                "scrum", 
+                "tasks", 
                 "task"
             ], 
             [
                 "change_assigned_task", 
-                "scrum", 
+                "tasks", 
                 "task"
             ], 
             [
                 "change_owned_task", 
-                "scrum", 
+                "tasks", 
                 "task"
             ], 
             [
                 "change_task", 
-                "scrum", 
+                "tasks", 
                 "task"
             ], 
             [
                 "change_task_state", 
-                "scrum", 
+                "tasks", 
                 "task"
             ], 
             [
                 "comment_task", 
-                "scrum", 
+                "tasks", 
                 "task"
             ], 
             [
                 "delete_task", 
-                "scrum", 
+                "tasks", 
                 "task"
             ], 
             [
                 "view_task", 
-                "scrum", 
+                "tasks", 
                 "task"
             ], 
             [
                 "add_taskstatus", 
-                "scrum", 
+                "tasks", 
                 "taskstatus"
             ], 
             [
                 "change_taskstatus", 
-                "scrum", 
+                "tasks", 
                 "taskstatus"
             ], 
             [
                 "delete_taskstatus", 
-                "scrum", 
+                "tasks", 
                 "taskstatus"
             ], 
             [
                 "add_userstory", 
-                "scrum", 
+                "userstories", 
                 "userstory"
             ], 
             [
                 "add_userstory_to_milestones", 
-                "scrum", 
+                "userstories", 
                 "userstory"
             ], 
             [
                 "change_owned_userstory", 
-                "scrum", 
+                "userstories", 
                 "userstory"
             ], 
             [
                 "change_userstory", 
-                "scrum", 
+                "userstories", 
                 "userstory"
             ], 
             [
                 "comment_userstory", 
-                "scrum", 
+                "userstories", 
                 "userstory"
             ], 
             [
                 "delete_userstory", 
-                "scrum", 
+                "userstories", 
                 "userstory"
             ], 
             [
                 "view_userstory", 
-                "scrum", 
+                "userstories", 
                 "userstory"
             ], 
             [
                 "add_userstorystatus", 
-                "scrum", 
+                "userstories", 
                 "userstorystatus"
             ], 
             [
                 "change_userstorystatus", 
-                "scrum", 
+                "userstories", 
                 "userstorystatus"
             ], 
             [
                 "delete_userstorystatus", 
-                "scrum", 
+                "userstories", 
                 "userstorystatus"
             ], 
             [
