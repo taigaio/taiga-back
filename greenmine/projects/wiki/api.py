@@ -1,31 +1,47 @@
 # -*- coding: utf-8 -*-
 
-from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
-from django.utils.translation import ugettext as _
-from django.http import Http404
+from django.contrib.contenttypes.models import ContentType
 
-from rest_framework import generics
-from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated
 
-from greenmine.base import api as api_views
 from greenmine.base import filters
+from greenmine.base.api import ModelCrudViewSet, ModelListViewSet
+from greenmine.base.notifications.api import NotificationSenderMixin
+from greenmine.projects.permissions import AttachmentPermission
+from greenmine.projects.serializers import AttachmentSerializer
+from greenmine.projects.models import Attachment
 
 from . import models
-from . import serializers
 from . import permissions
+from . import serializers
 
 
-class WikiViewSet(api_views.ModelCrudViewSet):
+class WikiAttachmentViewSet(ModelCrudViewSet):
+    model = Attachment
+    serializer_class = AttachmentSerializer
+    permission_classes = (IsAuthenticated, AttachmentPermission)
+    filter_backends = (filters.IsProjectMemberFilterBackend,)
+    filter_fields = ["project", "object_id"]
+
+    def get_queryset(self):
+        ct = ContentType.objects.get_for_model(models.Wiki)
+        qs = super(WikiAttachmentViewSet, self).get_queryset()
+        qs = qs.filter(content_type=ct)
+        return qs.distinct()
+
+    def pre_save(self, obj):
+        super(WikiAttachmentViewSet, self).pre_save(obj)
+        if not obj.id:
+            obj.content_type = ContentType.objects.get_for_model(models.Wiki)
+            obj.owner = self.request.user
+
+
+class WikiViewSet(ModelCrudViewSet):
     model = models.WikiPage
     serializer_class = serializers.WikiPageSerializer
     permission_classes = (IsAuthenticated,)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ["project", "slug"]
-
-    def get_queryset(self):
-        qs = super(WikiViewSet, self).get_queryset()
-        return qs.filter(project__members=self.request.user)
 
     def pre_save(self, obj):
         if not obj.owner:

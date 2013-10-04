@@ -24,7 +24,7 @@ class TaskStatusViewSet(ModelListViewSet):
     filter_fields = ("project",)
 
 
-class TasksAttachmentViewSet(ModelCrudViewSet):
+class TaskAttachmentViewSet(ModelCrudViewSet):
     model = Attachment
     serializer_class = AttachmentSerializer
     permission_classes = (IsAuthenticated, AttachmentPermission,)
@@ -33,14 +33,14 @@ class TasksAttachmentViewSet(ModelCrudViewSet):
 
     def get_queryset(self):
         ct = ContentType.objects.get_for_model(models.Task)
-        qs = super(TasksAttachmentViewSet, self).get_queryset()
+        qs = super(TaskAttachmentViewSet, self).get_queryset()
         qs = qs.filter(content_type=ct)
         return qs.distinct()
 
     def pre_save(self, obj):
-        super(TasksAttachmentViewSet, self).pre_save(obj)
+        super(TaskAttachmentViewSet, self).pre_save(obj)
         if not obj.id:
-            obj.content_type = ContentType.objects.get_for_model(Task)
+            obj.content_type = ContentType.objects.get_for_model(models.Task)
             obj.owner = self.request.user
 
 

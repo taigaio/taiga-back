@@ -49,7 +49,7 @@ class IssueStatusViewSet(ModelListViewSet):
     filter_fields = ("project",)
 
 
-class IssuesAttachmentViewSet(ModelCrudViewSet):
+class IssueAttachmentViewSet(ModelCrudViewSet):
     model = Attachment
     serializer_class = AttachmentSerializer
     permission_classes = (IsAuthenticated, AttachmentPermission)
@@ -58,14 +58,14 @@ class IssuesAttachmentViewSet(ModelCrudViewSet):
 
     def get_queryset(self):
         ct = ContentType.objects.get_for_model(models.Issue)
-        qs = super(IssuesAttachmentViewSet, self).get_queryset()
+        qs = super(IssueAttachmentViewSet, self).get_queryset()
         qs = qs.filter(content_type=ct)
         return qs.distinct()
 
     def pre_save(self, obj):
-        super(IssuesAttachmentViewSet, self).pre_save(obj)
+        super(IssueAttachmentViewSet, self).pre_save(obj)
         if not obj.id:
-            obj.content_type = ContentType.objects.get_for_model(Issue)
+            obj.content_type = ContentType.objects.get_for_model(models.Issue)
             obj.owner = self.request.user
 
 

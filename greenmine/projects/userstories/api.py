@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from rest_framework.permissions import IsAuthenticated
+from django.contrib.contenttypes.models import ContentType
 
-import reversion
+from rest_framework.permissions import IsAuthenticated
 
 from greenmine.base import filters
 from greenmine.base.api import ModelCrudViewSet, ModelListViewSet
 from greenmine.base.notifications.api import NotificationSenderMixin
+from greenmine.projects.permissions import AttachmentPermission
+from greenmine.projects.serializers import AttachmentSerializer
+from greenmine.projects.models import Attachment
 
 from . import serializers
 from . import models
 from . import permissions
+
+import reversion
 
 
 class PointsViewSet(ModelListViewSet):
@@ -27,6 +32,26 @@ class UserStoryStatusViewSet(ModelListViewSet):
     permission_classes = (IsAuthenticated, permissions.UserStoryStatusPermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ('project',)
+
+
+class UserStoryAttachmentViewSet(ModelCrudViewSet):
+    model = Attachment
+    serializer_class = AttachmentSerializer
+    permission_classes = (IsAuthenticated, AttachmentPermission,)
+    filter_backends = (filters.IsProjectMemberFilterBackend,)
+    filter_fields = ["project", "object_id"]
+
+    def get_queryset(self):
+        ct = ContentType.objects.get_for_model(models.UserStory)
+        qs = super(UserStoryAttachmentViewSet, self).get_queryset()
+        qs = qs.filter(content_type=ct)
+        return qs.distinct()
+
+    def pre_save(self, obj):
+        super(UserStoryAttachmentViewSet, self).pre_save(obj)
+        if not obj.id:
+            obj.content_type = ContentType.objects.get_for_model(models.UserStory)
+            obj.owner = self.request.user
 
 
 class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
