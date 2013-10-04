@@ -533,21 +533,6 @@
                 "view_wikipage", 
                 "wiki", 
                 "wikipage"
-            ], 
-            [
-                "add_wikipageattachment", 
-                "wiki", 
-                "wikipageattachment"
-            ], 
-            [
-                "change_wikipageattachment", 
-                "wiki", 
-                "wikipageattachment"
-            ], 
-            [
-                "delete_wikipageattachment", 
-                "wiki", 
-                "wikipageattachment"
             ]
         ], 
         "name": "Dev", 
