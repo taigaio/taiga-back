@@ -30,7 +30,7 @@ class SearchViewSet(viewsets.ViewSet):
         queryset = queryset.filter(text=inputs.AutoQuery(text))
         queryset = queryset.filter(project_id=project_id)
 
-        return_data = SearchSerializer(queryset)
+        return_data = SearchSerializer(queryset, many=True)
         return Response(return_data.data)
 
     def _get_project(self, project_id):
