@@ -37,6 +37,8 @@ You need to install django 1.6,...
     python manage.py sample_data
     python manage.py createinitialrevisions
 
+Also, greenmine only runs over python 3.3+.
+
 
 Auth: admin/123123
 
