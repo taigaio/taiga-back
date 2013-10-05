@@ -8,6 +8,7 @@ createdb greenmine
 
 echo "-> Remove the search index"
 rm -rf greenmine/search/index/*
+rm -f database.sqlite
 
 
 echo "-> Run syncdb"
