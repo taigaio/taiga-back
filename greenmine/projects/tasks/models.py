@@ -30,7 +30,7 @@ class TaskStatus(models.Model):
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
-    def __unicode__(self):
+    def __str__(self):
         return u"project {0} - {1}".format(self.project_id, self.name)
 
 
@@ -94,7 +94,7 @@ class Task(models.Model, WatchedMixin):
             ("add_task_to_us", "Can add tasks to a user story"),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return u"({1}) {0}".format(self.ref, self.subject)
 
     def save(self, *args, **kwargs):

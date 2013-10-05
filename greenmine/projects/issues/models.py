@@ -26,7 +26,7 @@ class Priority(models.Model):
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
-    def __unicode__(self):
+    def __str__(self):
         return u"project {0} - {1}".format(self.project_id, self.name)
 
 
@@ -42,7 +42,7 @@ class Severity(models.Model):
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
-    def __unicode__(self):
+    def __str__(self):
         return u"project {0} - {1}".format(self.project_id, self.name)
 
 
@@ -60,7 +60,7 @@ class IssueStatus(models.Model):
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
-    def __unicode__(self):
+    def __str__(self):
         return u"project {0} - {1}".format(self.project_id, self.name)
 
 
@@ -76,7 +76,7 @@ class IssueType(models.Model):
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
-    def __unicode__(self):
+    def __str__(self):
         return u"project {0} - {1}".format(self.project_id, self.name)
 
 
@@ -145,7 +145,7 @@ class Issue(models.Model, WatchedMixin):
             ("view_issue", "Can view the issue"),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return u"({1}) {0}".format(self.ref, self.subject)
 
     def save(self, *args, **kwargs):

@@ -31,7 +31,7 @@ class QuestionStatus(models.Model):
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
-    def __unicode__(self):
+    def __str__(self):
         return u"project {0} - {1}".format(self.project_id, self.name)
 
 
@@ -92,7 +92,7 @@ class Question(models.Model, WatchedMixin):
             ("view_question", _(u"Can view the question")),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.subject
 
     def save(self, *args, **kwargs):

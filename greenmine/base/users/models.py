@@ -42,5 +42,5 @@ class Role(models.Model):
         verbose_name_plural = u'roles'
         ordering = ['slug']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name

@@ -42,7 +42,7 @@ class Document(models.Model):
             ('view_documents', 'Can modify owned documents'),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def save(self, *args, **kwargs):

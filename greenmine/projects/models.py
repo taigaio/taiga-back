@@ -40,7 +40,7 @@ class Attachment(models.Model):
         verbose_name_plural = u"attachments"
         ordering = ["project", "created_date"]
 
-    def __unicode__(self):
+    def __str__(self):
         return u"content_type {0} - object_id {1} - attachment {2}".format(
                 self.content_type, self.object_id, self.id)
 
@@ -108,7 +108,7 @@ class Project(models.Model, WatchedMixin):
             ("manage_users", "Can manage users"),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def __repr__(self):
