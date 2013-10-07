@@ -6,12 +6,9 @@ from rest_framework import (
 )
 
 
-class ModelCrudViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
-                       mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
-                       mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class ModelCrudViewSet(viewsets.ModelViewSet):
     pass
 
 
-class ModelListViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin,
-                       viewsets.GenericViewSet):
+class ModelListViewSet(viewsets.ReadOnlyModelViewSet):
     pass
