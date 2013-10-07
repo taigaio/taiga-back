@@ -15,6 +15,8 @@ from . import models
 from . import permissions
 from . import serializers
 
+import reversion
+
 
 class TaskStatusViewSet(ModelListViewSet):
     model = models.TaskStatus
