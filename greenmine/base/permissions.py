@@ -27,13 +27,23 @@ class BasePermission(permissions.BasePermission):
     path_to_project =  []
 
     def has_object_permission(self, request, view, obj):
+        # Safe method
         if request.method in self.safe_methods:
+            return True
+
+        # Object owner
+        if getattr(obj, "owner", None) == request.user:
             return True
 
         project_obj = obj
         for attrib in self.path_to_project:
             project_obj = getattr(project_obj, attrib)
 
+        # Project owner
+        if project_obj.owner == request.user:
+            return True
+
+        # Members permissions
         if request.method == "GET":
             return has_project_perm(request.user, project_obj, self.get_permission)
 
