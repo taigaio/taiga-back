@@ -11,25 +11,22 @@ class AttachmentSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField("get_url")
 
     def get_url(self, obj):
-        # FIXME: add sites or correct url.
-        if obj.attached_file:
-            return "http://localhost:8000{0}".format(obj.attached_file.url)
-        return None
+        return obj.attached_file.url if obj and obj.attached_file else ""
 
     class Meta:
         model = models.Attachment
-        fields = ("id", "project", "owner", "attached_file",
-                  "created_date", "object_id", "url")
+        fields = ("id", "project", "owner", "attached_file", "created_date",
+                  "modified_date", "object_id", "url")
         read_only_fields = ("owner",)
-        fields = ()
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    tags = PickleField()
+    tags = PickleField(required=False)
     list_of_milestones = serializers.Field(source="list_of_milestones")
 
     class Meta:
         model = models.Project
+        read_only_fields = ("owner",)
 
 
 # User Stories common serializers
