@@ -7,7 +7,11 @@ from django.utils.translation import ugettext_lazy as _
 from greenmine.base.utils.slug import slugify_uniquely
 from greenmine.base.notifications.models import WatchedMixin
 
+from greenmine.projects.userstories.models import UserStory
+
 import reversion
+import itertools
+import copy
 
 
 class Milestone(models.Model, WatchedMixin):
@@ -66,54 +70,69 @@ class Milestone(models.Model, WatchedMixin):
 
         super(Milestone, self).save(*args, **kwargs)
 
+    def _get_user_stories_points(self, user_stories):
+        role_points = [us.role_points.all() for us in user_stories]
+        flat_role_points = itertools.chain(*role_points)
+
+        result = {}
+        for role_point in flat_role_points:
+            if role_point.points.value is not None:
+                if role_point.role_id in result:
+                    result[role_point.role_id] += float(role_point.points.value)
+                else:
+                    result[role_point.role_id] = float(role_point.points.value)
+
+        return result
+
+    def _dict_sum(self, dict1, dict2):
+        dict_result = copy.copy(dict2)
+        for key, value in dict1:
+            if key in dict_result:
+                dict_result[key] += value
+            else:
+                dict_result[key] = value
+        return dict_result
+
     @property
     def closed_points(self):
-        # TODO: refactor or remove
-        #points = [ us.points.value for us in self.user_stories.all() if us.is_closed ]
-        #return sum(points)
-        return 0
+        return self._get_user_stories_points([us for us in self.user_stories.all() if us.is_closed])
 
     @property
     def client_increment_points(self):
-        # TODO: refactor or remove
-        #user_stories = UserStory.objects.filter(
-        #    created_date__gte=self.estimated_start,
-        #    created_date__lt=self.estimated_finish,
-        #    project_id = self.project_id,
-        #    client_requirement=True,
-        #    team_requirement=False
-        #)
-        #points = [ us.points.value for us in user_stories ]
-        #return sum(points) + (self.shared_increment_points / 2)
-        return 0
+        user_stories = UserStory.objects.filter(
+            created_date__gte=self.estimated_start,
+            created_date__lt=self.estimated_finish,
+            project_id=self.project_id,
+            client_requirement=True,
+            team_requirement=False
+        )
+        client_increment = self._get_user_stories_points(user_stories)
+        shared_increment = {key: value/2 for key, value in self.shared_increment_points.items()}
+        return self._dict_sum(client_increment, shared_increment)
 
     @property
     def team_increment_points(self):
-        # TODO: refactor or remove
-        #user_stories = UserStory.objects.filter(
-        #    created_date__gte=self.estimated_start,
-        #    created_date__lt=self.estimated_finish,
-        #    project_id = self.project_id,
-        #    client_requirement=False,
-        #    team_requirement=True
-        #)
-        #points = [ us.points.value for us in user_stories ]
-        #return sum(points) + (self.shared_increment_points / 2)
-        return 0
+        user_stories = UserStory.objects.filter(
+            created_date__gte=self.estimated_start,
+            created_date__lt=self.estimated_finish,
+            project_id=self.project_id,
+            client_requirement=False,
+            team_requirement=True
+        )
+        team_increment = self._get_user_stories_points(user_stories)
+        shared_increment = {key: value/2 for key, value in self.shared_increment_points.items()}
+        return self._dict_sum(team_increment, shared_increment)
 
     @property
     def shared_increment_points(self):
-        # TODO: refactor or remove
-        #user_stories = UserStory.objects.filter(
-        #    created_date__gte=self.estimated_start,
-        #    created_date__lt=self.estimated_finish,
-        #    project_id = self.project_id,
-        #    client_requirement=True,
-        #    team_requirement=True
-        #)
-        #points = [ us.points.value for us in user_stories ]
-        #return sum(points)
-        return 0
+        user_stories = UserStory.objects.filter(
+            created_date__gte=self.estimated_start,
+            created_date__lt=self.estimated_finish,
+            project_id=self.project_id,
+            client_requirement=True,
+            team_requirement=True
+        )
+        return self._get_user_stories_points(user_stories)
 
     def _get_watchers_by_role(self):
         return {
