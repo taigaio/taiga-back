@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ParseError
 
 from greenmine.base import filters
 from greenmine.base.api import ModelCrudViewSet
@@ -52,6 +54,13 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
         super(UserStoryViewSet, self).pre_save(obj)
         if not obj.id:
             obj.owner = self.request.user
+
+        if (obj.project.owner != self.request.user and
+                obj.project.memberships.filter(user=self.request.user).count() == 0):
+            raise ParseError(detail=_("You must not add a new user story to this project."))
+
+        if obj.milestone and obj.milestone.project != obj.project:
+            raise ParseError(detail=_("You must not add a new user story to this milestone."))
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():

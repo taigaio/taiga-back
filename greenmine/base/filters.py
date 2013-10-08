@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from django.db.models import Q
+
 from rest_framework import filters
+
 
 class QueryParamsFilterMixin(object):
     _special_values_dict = {
@@ -44,6 +47,6 @@ class IsProjectMemberFilterBackend(FilterBackend):
         user = request.user
 
         if user.is_authenticated():
-            queryset = queryset.filter(project__members=request.user)
-
-        return queryset
+            queryset = queryset.filter(Q(project__members=request.user) |
+                                       Q(project__owner=request.user))
+        return queryset.distinct()

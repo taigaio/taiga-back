@@ -99,39 +99,45 @@ class Milestone(models.Model, WatchedMixin):
 
     @property
     def client_increment_points(self):
-        user_stories = UserStory.objects.filter(
-            created_date__gte=self.estimated_start,
-            created_date__lt=self.estimated_finish,
-            project_id=self.project_id,
-            client_requirement=True,
-            team_requirement=False
-        )
+        user_stories = UserStory.objects.none()
+        if self.estimated_start and self.estimated_finish:
+            user_stories = UserStory.objects.filter(
+                created_date__gte=self.estimated_start,
+                created_date__lt=self.estimated_finish,
+                project_id=self.project_id,
+                client_requirement=True,
+                team_requirement=False
+            )
         client_increment = self._get_user_stories_points(user_stories)
         shared_increment = {key: value/2 for key, value in self.shared_increment_points.items()}
         return self._dict_sum(client_increment, shared_increment)
 
     @property
     def team_increment_points(self):
-        user_stories = UserStory.objects.filter(
-            created_date__gte=self.estimated_start,
-            created_date__lt=self.estimated_finish,
-            project_id=self.project_id,
-            client_requirement=False,
-            team_requirement=True
-        )
+        user_stories = UserStory.objects.none()
+        if self.estimated_start and self.estimated_finish:
+            user_stories = UserStory.objects.filter(
+                created_date__gte=self.estimated_start,
+                created_date__lt=self.estimated_finish,
+                project_id=self.project_id,
+                client_requirement=False,
+                team_requirement=True
+            )
         team_increment = self._get_user_stories_points(user_stories)
         shared_increment = {key: value/2 for key, value in self.shared_increment_points.items()}
         return self._dict_sum(team_increment, shared_increment)
 
     @property
     def shared_increment_points(self):
-        user_stories = UserStory.objects.filter(
-            created_date__gte=self.estimated_start,
-            created_date__lt=self.estimated_finish,
-            project_id=self.project_id,
-            client_requirement=True,
-            team_requirement=True
-        )
+        user_stories = UserStory.objects.none()
+        if self.estimated_start and self.estimated_finish:
+            user_stories = UserStory.objects.filter(
+                created_date__gte=self.estimated_start,
+                created_date__lt=self.estimated_finish,
+                project_id=self.project_id,
+                client_requirement=True,
+                team_requirement=True
+            )
         return self._get_user_stories_points(user_stories)
 
     def _get_watchers_by_role(self):
