@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
+import reversion
 
 from greenmine.projects.milestones.admin import MilestoneInline
-from greenmine.projects.userstories.admin import UserStoryInline
-
 from . import models
 
-import reversion
 
 
 class AttachmentAdmin(reversion.VersionAdmin):
@@ -31,6 +29,8 @@ class MembershipInline(admin.TabularInline):
 
 class ProjectAdmin(reversion.VersionAdmin):
     list_display = ["name", "owner"]
-    inlines = [MembershipInline, MilestoneInline, UserStoryInline]
+    # FIXME: commented because on save it raise strange
+    # error 500 (seems bug in django)
+    # inlines = [MembershipInline, MilestoneInline]
 
 admin.site.register(models.Project, ProjectAdmin)

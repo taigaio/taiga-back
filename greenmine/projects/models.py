@@ -88,16 +88,6 @@ class Project(models.Model):
                                            verbose_name=_("total story points"))
     tags = PickledObjectField(null=False, blank=True,
                               verbose_name=_("tags"))
-
-    notifiable_fields = [
-        "name",
-        "description",
-        "owner",
-        "members",
-        "public",
-        "tags",
-    ]
-
     class Meta:
         verbose_name = u"project"
         verbose_name_plural = u"projects"
