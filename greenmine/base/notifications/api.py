@@ -16,24 +16,22 @@ class NotificationSenderMixin(object):
 
     def post_save(self, obj, created=False):
         users = obj.get_watchers_to_notify(self.request.user)
-        context = {
-            "changer": self.request.user,
-            "object": obj
-        }
+        context = {'changer': self.request.user, 'object': obj}
 
         if created:
-            self._send_notification_email(self.create_notification_template, users=users, context=context)
+            self._send_notification_email(self.create_notification_template,
+                                          users=users, context=context)
         else:
             context["changed_fields_dict"] = obj.get_changed_fields_dict(self.request.DATA)
-            self._send_notification_email(self.update_notification_template, users=users, context=context)
+            self._send_notification_email(self.update_notification_template,
+                                          users=users, context=context)
 
     def destroy(self, request, *args, **kwargs):
         obj = self.get_object()
         users = obj.get_watchers_to_notify(self.request.user)
-        context = {
-            'changer': self.request.user,
-            'object': obj
-        }
-        self._send_notification_email(self.destroy_notification_template, users=users, context=context)
+
+        context = {'changer': self.request.user, 'object': obj}
+        self._send_notification_email(self.destroy_notification_template,
+                                      users=users, context=context)
 
         return super(NotificationSenderMixin, self).destroy(request, *args, **kwargs)

@@ -16,8 +16,9 @@ class WatcherMixin(object):
         ("no_events", _(u"No events")),
     )
 
-    notify_level = models.CharField(max_length=32, null=False, blank=False, default="all_owned_projects",
-                                    choices=NOTIFY_LEVEL_CHOICES, verbose_name=_(u"notify level"))
+    notify_level = models.CharField(max_length=32, null=False, blank=False,
+                                    default="all_owned_projects", choices=NOTIFY_LEVEL_CHOICES,
+                                    verbose_name=_(u"notify level"))
     notify_changes_by_me = models.BooleanField(null=False, blank=True, default=True,
                 verbose_name=_(u"notify changes made by me"))
 
@@ -65,7 +66,8 @@ class WatchedMixin(object):
 
     def get_changed_fields_dict(self, data_dict):
         if self.notifiable_fields:
-            changed_data = dict((k, v) for k, v in data_dict.items() if k in self.notifiable_fields)
+            changed_data = {k: v for k, v in data_dict.items()
+                                    if k in self.notifiable_fields}
         else:
             changed_data = data_dict
 
