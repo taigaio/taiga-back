@@ -57,7 +57,7 @@ class Membership(models.Model):
         unique_together = ("user", "project")
 
 
-class Project(models.Model, WatchedMixin):
+class Project(models.Model):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
                             verbose_name=_("uuid"))
     name = models.CharField(max_length=250, unique=True, null=False, blank=False,
@@ -120,9 +120,6 @@ class Project(models.Model, WatchedMixin):
 
         super(Project, self).save(*args, **kwargs)
 
-    def _get_watchers_by_role(self):
-        return {"owner": self.owner}
-
     @property
     def list_of_milestones(self):
         return [{
@@ -138,13 +135,11 @@ class Project(models.Model, WatchedMixin):
         role_model = get_model("users", "Role")
         return role_model.objects.filter(id__in=list(self.memberships.values_list(
                                                                  "role", flat=True)))
-
     @property
     def list_users(self):
         user_model = get_user_model()
         return user_model.objects.filter(id__in=list(self.memberships.values_list(
                                                                  "user", flat=True)))
-
     def update_role_points(self):
         rolepoints_model = get_model("userstories", "RolePoints")
         roles = self.list_roles

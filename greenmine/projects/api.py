@@ -13,13 +13,10 @@ from . import models
 from . import permissions
 
 
-class ProjectViewSet(NotificationSenderMixin, ModelCrudViewSet):
+class ProjectViewSet(ModelCrudViewSet):
     model = models.Project
     serializer_class = serializers.ProjectSerializer
     permission_classes = (IsAuthenticated, permissions.ProjectPermission)
-    create_notification_template = "create_project_notification"
-    update_notification_template = "update_project_notification"
-    destroy_notification_template = "destroy_project_notification"
 
     def get_queryset(self):
         qs = super(ProjectViewSet, self).get_queryset()
