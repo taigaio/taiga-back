@@ -19,9 +19,9 @@ class RolePointsField(serializers.WritableField):
 
 
 class UserStorySerializer(serializers.ModelSerializer):
-    tags = PickleField(blank=True, default=[])
+    tags = PickleField(default=[], required=False)
     is_closed = serializers.Field(source="is_closed")
-    points = RolePointsField(source="role_points")
+    points = RolePointsField(source="role_points", required=False )
     total_points = serializers.SerializerMethodField("get_total_points")
     comment = serializers.SerializerMethodField("get_comment")
     history = serializers.SerializerMethodField("get_history")

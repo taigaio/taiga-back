@@ -40,6 +40,14 @@ class UserStoryAttachmentViewSet(ModelCrudViewSet):
 
         super().pre_save(obj)
 
+    def pre_conditions_on_save(self, obj):
+        super().pre_conditions_on_save(obj)
+
+        if (obj.project.owner != self.request.user and
+                obj.project.memberships.filter(user=self.request.user).count() == 0):
+            raise exc.PreconditionError("You must not add a new user story attachment "
+                                        "to this project.")
+
 
 class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
     model = models.UserStory
@@ -52,21 +60,26 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
     update_notification_template = "update_userstory_notification"
     destroy_notification_template = "destroy_userstory_notification"
 
-    def pre_conditions_on_save(self, obj):
-        super().pre_conditions_on_save(obj)
-
-        if (obj.project.owner != self.request.user and
-                obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PreconditionError("You must not add a new user story to this project.")
-
-        if obj.milestone and obj.milestone.project != obj.project:
-            raise exc.PreconditionError("You must not add a new user story to this milestone.")
-
     def pre_save(self, obj):
         if not obj.id:
             obj.owner = self.request.user
 
         super().pre_save(obj)
+
+    def pre_conditions_on_save(self, obj):
+        super().pre_conditions_on_save(obj)
+
+        if (obj.project.owner != self.request.user and
+                obj.project.memberships.filter(user=self.request.user).count() == 0):
+            raise exc.PreconditionError("You must not add a new user story to this "
+                                        "project.")
+
+        if obj.milestone and obj.milestone.project != obj.project:
+            raise exc.PreconditionError("You must not add a new user story to this "
+                                        "milestone.")
+
+        if obj.status and obj.status.project != obj.project:
+            raise exc.PreconditionError("You must not use a status from other project.")
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():
