@@ -25,8 +25,8 @@ class ProjectViewSet(ModelCrudViewSet):
         return qs.distinct()
 
     def pre_save(self, obj):
-        super(ProjectViewSet, self).pre_save(obj)
         obj.owner = self.request.user
+        super(ProjectViewSet, self).pre_save(obj)
 
 
 # User Stories commin ViewSets

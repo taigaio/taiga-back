@@ -3,9 +3,9 @@
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import ParseError
 
 from greenmine.base import filters
+from greenmine.base import exceptions as exc
 from greenmine.base.api import ModelCrudViewSet
 from greenmine.base.notifications.api import NotificationSenderMixin
 
@@ -24,11 +24,16 @@ class MilestoneViewSet(NotificationSenderMixin, ModelCrudViewSet):
     update_notification_template = "update_milestone_notification"
     destroy_notification_template = "destroy_milestone_notification"
 
-    def pre_save(self, obj):
-        super(MilestoneViewSet, self).pre_save(obj)
-        if not obj.id:
-            obj.owner = self.request.user
+    def pre_conditions_on_save(self, obj):
+        super().pre_conditions_on_save(obj)
 
         if (obj.project.owner != self.request.user and
                 obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise ParseError(detail=_("You must not add a new milestone to this project."))
+            raise exc.PreconditionError("You must not add a new milestone to this project.")
+
+    def pre_save(self, obj):
+        if not obj.id:
+            obj.owner = self.request.user
+
+        super().pre_save(obj)
+

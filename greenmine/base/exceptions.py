@@ -45,6 +45,13 @@ class PermissionDenied(exceptions.PermissionDenied):
     pass
 
 
+class PreconditionError(BaseException):
+    """
+    Error raised on precondition method on viewset.
+    """
+    default_detail = "Precondition error"
+
+
 class InternalError(BaseException):
     """
     Exception for internal errors.
