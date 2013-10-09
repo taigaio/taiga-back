@@ -10,12 +10,3 @@ class TaskPermission(BasePermission):
     delete_permission = "delete_task"
     safe_methods = ["HEAD", "OPTIONS"]
     path_to_project =  ["project"]
-
-
-class TaskStatusPermission(BasePermission):
-    get_permission = "view_taskstatus"
-    put_permission = "change_taskstatus"
-    patch_permission = "change_taskstatus"
-    delete_permission = "delete_taskstatus"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]

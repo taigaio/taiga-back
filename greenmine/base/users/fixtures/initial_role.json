@@ -206,32 +206,32 @@
             ], 
             [
                 "add_issuestatus", 
-                "issues", 
+                "projects", 
                 "issuestatus"
             ], 
             [
                 "change_issuestatus", 
-                "issues", 
+                "projects", 
                 "issuestatus"
             ], 
             [
                 "delete_issuestatus", 
-                "issues", 
+                "projects", 
                 "issuestatus"
             ], 
             [
                 "add_issuetype", 
-                "issues", 
+                "projects", 
                 "issuetype"
             ], 
             [
                 "change_issuetype", 
-                "issues", 
+                "projects", 
                 "issuetype"
             ], 
             [
                 "delete_issuetype", 
-                "issues", 
+                "projects", 
                 "issuetype"
             ], 
             [
@@ -271,32 +271,32 @@
             ], 
             [
                 "add_points", 
-                "userstories", 
+                "projects", 
                 "points"
             ], 
             [
                 "change_points", 
-                "userstories", 
+                "projects", 
                 "points"
             ], 
             [
                 "delete_points", 
-                "userstories", 
+                "projects", 
                 "points"
             ], 
             [
                 "add_priority", 
-                "issues", 
+                "projects", 
                 "priority"
             ], 
             [
                 "change_priority", 
-                "issues", 
+                "projects", 
                 "priority"
             ], 
             [
                 "delete_priority", 
-                "issues", 
+                "projects", 
                 "priority"
             ], 
             [
@@ -346,17 +346,17 @@
             ], 
             [
                 "add_severity", 
-                "issues", 
+                "projects", 
                 "severity"
             ], 
             [
                 "change_severity", 
-                "issues", 
+                "projects", 
                 "severity"
             ], 
             [
                 "delete_severity", 
-                "issues", 
+                "projects", 
                 "severity"
             ], 
             [
@@ -416,17 +416,17 @@
             ], 
             [
                 "add_taskstatus", 
-                "tasks", 
+                "projects", 
                 "taskstatus"
             ], 
             [
                 "change_taskstatus", 
-                "tasks", 
+                "projects", 
                 "taskstatus"
             ], 
             [
                 "delete_taskstatus", 
-                "tasks", 
+                "projects", 
                 "taskstatus"
             ], 
             [
@@ -466,17 +466,17 @@
             ], 
             [
                 "add_userstorystatus", 
-                "userstories", 
+                "projects", 
                 "userstorystatus"
             ], 
             [
                 "change_userstorystatus", 
-                "userstories", 
+                "projects", 
                 "userstorystatus"
             ], 
             [
                 "delete_userstorystatus", 
-                "userstories", 
+                "projects", 
                 "userstorystatus"
             ], 
             [

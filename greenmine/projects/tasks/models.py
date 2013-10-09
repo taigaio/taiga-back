@@ -14,26 +14,6 @@ from greenmine.base.notifications.models import WatchedMixin
 import reversion
 
 
-class TaskStatus(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
-    is_closed = models.BooleanField(default=False, null=False, blank=True,
-                                    verbose_name=_("is closed"))
-    color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
-                             verbose_name=_("color"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="task_statuses", verbose_name=_("project"))
-
-    class Meta:
-        verbose_name = u"task status"
-        verbose_name_plural = u"task statuses"
-        ordering = ["project", "name"]
-        unique_together = ("project", "name")
-
-    def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
-
-
 class Task(models.Model, WatchedMixin):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
                             verbose_name=_("uuid"))
@@ -43,7 +23,7 @@ class Task(models.Model, WatchedMixin):
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
                               related_name="owned_tasks", verbose_name=_("owner"))
-    status = models.ForeignKey("TaskStatus", null=False, blank=False,
+    status = models.ForeignKey("projects.TaskStatus", null=False, blank=False,
                                related_name="tasks", verbose_name=_("status"))
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="tasks", verbose_name=_("project"))

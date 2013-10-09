@@ -9,11 +9,6 @@ from . import models
 import reversion
 
 
-class TaskStatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.TaskStatus
-
-
 class TaskSerializer(serializers.ModelSerializer):
     tags = PickleField(blank=True, default=[])
     comment = serializers.SerializerMethodField("get_comment")

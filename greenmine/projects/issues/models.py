@@ -14,72 +14,6 @@ from greenmine.base.notifications.models import WatchedMixin
 import reversion
 
 
-class Priority(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="priorities", verbose_name=_("project"))
-
-    class Meta:
-        verbose_name = u"priority"
-        verbose_name_plural = u"priorities"
-        ordering = ["project", "name"]
-        unique_together = ("project", "name")
-
-    def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
-
-
-class Severity(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="severities", verbose_name=_("project"))
-
-    class Meta:
-        verbose_name = u"severity"
-        verbose_name_plural = u"severities"
-        ordering = ["project", "name"]
-        unique_together = ("project", "name")
-
-    def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
-
-
-class IssueStatus(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
-    is_closed = models.BooleanField(default=False, null=False, blank=True,
-                                    verbose_name=_("is closed"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="issue_statuses", verbose_name=_("project"))
-
-    class Meta:
-        verbose_name = u"issue status"
-        verbose_name_plural = u"issue statuses"
-        ordering = ["project", "name"]
-        unique_together = ("project", "name")
-
-    def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
-
-
-class IssueType(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="issue_types", verbose_name=_("project"))
-
-    class Meta:
-        verbose_name = u"issue type"
-        verbose_name_plural = u"issue types"
-        ordering = ["project", "name"]
-        unique_together = ("project", "name")
-
-    def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
-
-
 class Issue(models.Model, WatchedMixin):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
                             verbose_name=_("uuid"))
@@ -87,16 +21,17 @@ class Issue(models.Model, WatchedMixin):
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
                               related_name="owned_issues", verbose_name=_("owner"))
-    status = models.ForeignKey("IssueStatus", null=False, blank=False, related_name="issues",
-                               verbose_name=_("status"))
-    severity = models.ForeignKey("Severity", null=False, blank=False, related_name="issues",
-                                 verbose_name=_("severity"))
-    priority = models.ForeignKey("Priority", null=False, blank=False, related_name="issues",
-                                 verbose_name=_("priority"))
-    type = models.ForeignKey("IssueType", null=False, blank=False, related_name="issues",
-                             verbose_name=_("type"))
-    milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True, default=None,
-                               related_name="issues", verbose_name=_("milestone"))
+    status = models.ForeignKey("projects.IssueStatus", null=False, blank=False,
+                               related_name="issues", verbose_name=_("status"))
+    severity = models.ForeignKey("projects.Severity", null=False, blank=False,
+                                 related_name="issues", verbose_name=_("severity"))
+    priority = models.ForeignKey("projects.Priority", null=False, blank=False,
+                                 related_name="issues", verbose_name=_("priority"))
+    type = models.ForeignKey("projects.IssueType", null=False, blank=False,
+                             related_name="issues", verbose_name=_("type"))
+    milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
+                                  default=None, related_name="issues",
+                                  verbose_name=_("milestone"))
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="issues", verbose_name=_("project"))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,

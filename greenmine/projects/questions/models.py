@@ -14,33 +14,12 @@ from picklefield.fields import PickledObjectField
 import reversion
 
 
-class QuestionStatus(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False,
-                            verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False,
-                                verbose_name=_("order"))
-    is_closed = models.BooleanField(default=False, null=False, blank=True,
-                                    verbose_name=_("is closed"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="question_status",
-                                verbose_name=_("project"))
-
-    class Meta:
-        verbose_name = u"question status"
-        verbose_name_plural = u"question status"
-        ordering = ["project", "name"]
-        unique_together = ("project", "name")
-
-    def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
-
-
 class Question(models.Model, WatchedMixin):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
                               related_name="owned_questions", verbose_name=_("owner"))
-    status = models.ForeignKey("QuestionStatus", null=False, blank=False,
+    status = models.ForeignKey("projects.QuestionStatus", null=False, blank=False,
                                related_name="questions", verbose_name=_("status"))
     subject = models.CharField(max_length=250, null=False, blank=False,
                                verbose_name=_("subject"))

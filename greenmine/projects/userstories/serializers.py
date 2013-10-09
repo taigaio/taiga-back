@@ -7,12 +7,6 @@ from greenmine.base.serializers import PickleField
 from . import models
 
 
-
-class PointsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Points
-
-
 class RolePointsField(serializers.WritableField):
     def to_native(self, obj):
         return {str(o.role.id): o.points.order for o in obj.all()}
@@ -21,11 +15,6 @@ class RolePointsField(serializers.WritableField):
         if isinstance(obj, dict):
             return obj
         return json.loads(obj)
-
-
-class UserStoryStatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.UserStoryStatus
 
 
 class UserStorySerializer(serializers.ModelSerializer):

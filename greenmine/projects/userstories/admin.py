@@ -20,18 +20,6 @@ class UserStoryInline(admin.TabularInline):
             return models.UserStory.objects.none()
 
 
-class PointsAdmin(admin.ModelAdmin):
-    list_display = ["name", "order", "project"]
-
-admin.site.register(models.Points, PointsAdmin)
-
-
-class UserStoryStatusAdmin(admin.ModelAdmin):
-    list_display = ["name", "order", "is_closed", "project"]
-
-admin.site.register(models.UserStoryStatus, UserStoryStatusAdmin)
-
-
 class RolePointsInline(admin.TabularInline):
     model = models.RolePoints
     sortable_field_name = 'role'

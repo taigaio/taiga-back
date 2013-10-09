@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework.permissions import IsAuthenticated
 
 from greenmine.base import filters
-from greenmine.base.api import ModelCrudViewSet, ModelListViewSet
+from greenmine.base.api import ModelCrudViewSet
 from greenmine.base.notifications.api import NotificationSenderMixin
 from greenmine.projects.permissions import AttachmentPermission
 from greenmine.projects.serializers import AttachmentSerializer
@@ -16,22 +16,6 @@ from . import models
 from . import permissions
 
 import reversion
-
-
-class PointsViewSet(ModelListViewSet):
-    model = models.Points
-    serializer_class = serializers.PointsSerializer
-    permission_classes = (IsAuthenticated, permissions.PointsPermission)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
-    filter_fields = ('project',)
-
-
-class UserStoryStatusViewSet(ModelListViewSet):
-    model = models.UserStoryStatus
-    serializer_class = serializers.UserStoryStatusSerializer
-    permission_classes = (IsAuthenticated, permissions.UserStoryStatusPermission)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
-    filter_fields = ('project',)
 
 
 class UserStoryAttachmentViewSet(ModelCrudViewSet):

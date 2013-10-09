@@ -151,6 +151,161 @@ class Project(models.Model):
         rp_query.delete()
 
 
+# User Stories common Models
+
+class UserStoryStatus(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False,
+                            verbose_name=_("name"))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
+    is_closed = models.BooleanField(default=False, null=False, blank=True,
+                                    verbose_name=_("is closed"))
+    project = models.ForeignKey("Project", null=False, blank=False,
+                                related_name="us_statuses", verbose_name=_("project"))
+
+    class Meta:
+        verbose_name = u"user story status"
+        verbose_name_plural = u"user story statuses"
+        ordering = ["project", "name"]
+        unique_together = ("project", "name")
+
+    def __str__(self):
+        return u"project {0} - {1}".format(self.project_id, self.name)
+
+
+class Points(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False,
+                            verbose_name=_("name"))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
+    value = models.FloatField(default=None, null=True, blank=True,
+                              verbose_name=_("value"))
+    project = models.ForeignKey("Project", null=False, blank=False,
+                                related_name="points", verbose_name=_("project"))
+
+    class Meta:
+        verbose_name = u"point"
+        verbose_name_plural = u"points"
+        ordering = ["project", "name"]
+        unique_together = ("project", "name")
+
+    def __str__(self):
+        return u"project {0} - {1}".format(self.project_id, self.name)
+
+
+# Tasks common models
+
+class TaskStatus(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
+    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
+    is_closed = models.BooleanField(default=False, null=False, blank=True,
+                                    verbose_name=_("is closed"))
+    color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
+                             verbose_name=_("color"))
+    project = models.ForeignKey("Project", null=False, blank=False,
+                                related_name="task_statuses", verbose_name=_("project"))
+
+    class Meta:
+        verbose_name = u"task status"
+        verbose_name_plural = u"task statuses"
+        ordering = ["project", "name"]
+        unique_together = ("project", "name")
+
+    def __str__(self):
+        return u"project {0} - {1}".format(self.project_id, self.name)
+
+
+# Issue common Models
+
+class Priority(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
+    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
+    project = models.ForeignKey("Project", null=False, blank=False,
+                                related_name="priorities", verbose_name=_("project"))
+
+    class Meta:
+        verbose_name = u"priority"
+        verbose_name_plural = u"priorities"
+        ordering = ["project", "name"]
+        unique_together = ("project", "name")
+
+    def __str__(self):
+        return u"project {0} - {1}".format(self.project_id, self.name)
+
+
+class Severity(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
+    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
+    project = models.ForeignKey("Project", null=False, blank=False,
+                                related_name="severities", verbose_name=_("project"))
+
+    class Meta:
+        verbose_name = u"severity"
+        verbose_name_plural = u"severities"
+        ordering = ["project", "name"]
+        unique_together = ("project", "name")
+
+    def __str__(self):
+        return u"project {0} - {1}".format(self.project_id, self.name)
+
+
+class IssueStatus(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
+    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
+    is_closed = models.BooleanField(default=False, null=False, blank=True,
+                                    verbose_name=_("is closed"))
+    project = models.ForeignKey("Project", null=False, blank=False,
+                                related_name="issue_statuses", verbose_name=_("project"))
+
+    class Meta:
+        verbose_name = u"issue status"
+        verbose_name_plural = u"issue statuses"
+        ordering = ["project", "name"]
+        unique_together = ("project", "name")
+
+    def __str__(self):
+        return u"project {0} - {1}".format(self.project_id, self.name)
+
+
+class IssueType(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
+    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
+    project = models.ForeignKey("Project", null=False, blank=False,
+                                related_name="issue_types", verbose_name=_("project"))
+
+    class Meta:
+        verbose_name = u"issue type"
+        verbose_name_plural = u"issue types"
+        ordering = ["project", "name"]
+        unique_together = ("project", "name")
+
+    def __str__(self):
+        return u"project {0} - {1}".format(self.project_id, self.name)
+
+
+# Questions common models
+
+class QuestionStatus(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False,
+                            verbose_name=_("name"))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
+    is_closed = models.BooleanField(default=False, null=False, blank=True,
+                                    verbose_name=_("is closed"))
+    project = models.ForeignKey("Project", null=False, blank=False,
+                                related_name="question_status",
+                                verbose_name=_("project"))
+
+    class Meta:
+        verbose_name = u"question status"
+        verbose_name_plural = u"question status"
+        ordering = ["project", "name"]
+        unique_together = ("project", "name")
+
+    def __str__(self):
+        return u"project {0} - {1}".format(self.project_id, self.name)
+
+
 # Reversion registration (usufull for base.notification and for meke a historical)
 reversion.register(Project)
 
@@ -178,40 +333,36 @@ def project_post_save(sender, instance, created, **kwargs):
     if not created:
         return
 
-    points_model = get_model("userstories", "Points")
-    userstorystatus_model = get_model("userstories", "UserStoryStatus")
-    taskstatus_model = get_model("tasks", "TaskStatus")
-    severity_model = get_model("issues", "Severity")
-    priority_model = get_model("issues", "Priority")
-    issuestatus_model = get_model("issues", "IssueStatus")
-    issuetype_model = get_model("issues", "IssueType")
-    questionstatus_model = get_model("questions", "QuestionStatus")
-
     # Populate new project dependen default data
-    for order, name in choices.PRIORITY_CHOICES:
-        priority_model.objects.create(project=instance, name=name, order=order)
 
-    for order, name in choices.SEVERITY_CHOICES:
-        severity_model.objects.create(project=instance, name=name, order=order)
-
+    # USs
     for order, name, value in choices.POINTS_CHOICES:
-        points_model.objects.create(project=instance, name=name, order=order, value=value)
+        Points.objects.create(project=instance, name=name, order=order, value=value)
 
     for order, name, is_closed in choices.US_STATUSES:
-        userstorystatus_model.objects.create(name=name, order=order,
+        UserStoryStatus.objects.create(name=name, order=order,
                                              is_closed=is_closed, project=instance)
 
+    # Tasks
     for order, name, is_closed, color in choices.TASK_STATUSES:
-        taskstatus_model.objects.create(name=name, order=order, color=color,
+        TaskStatus.objects.create(name=name, order=order, color=color,
                                         is_closed=is_closed, project=instance)
 
+    # Issues
+    for order, name in choices.PRIORITY_CHOICES:
+        Priority.objects.create(project=instance, name=name, order=order)
+
+    for order, name in choices.SEVERITY_CHOICES:
+        Severity.objects.create(project=instance, name=name, order=order)
+
     for order, name, is_closed in choices.ISSUE_STATUSES:
-        issuestatus_model.objects.create(name=name, order=order,
+        IssueStatus.objects.create(name=name, order=order,
                                          is_closed=is_closed, project=instance)
 
     for order, name in choices.ISSUE_TYPES:
-        issuetype_model.objects.create(project=instance, name=name, order=order)
+        IssueType.objects.create(project=instance, name=name, order=order)
 
+    # Questions
     for order, name, is_closed in choices.QUESTION_STATUS:
-        questionstatus_model.objects.create(name=name, order=order,
+        QuestionStatus.objects.create(name=name, order=order,
                                             is_closed=is_closed, project=instance)

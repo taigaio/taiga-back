@@ -34,3 +34,59 @@ class ProjectAdmin(reversion.VersionAdmin):
     # inlines = [MembershipInline, MilestoneInline]
 
 admin.site.register(models.Project, ProjectAdmin)
+
+
+# User Stories common admins
+
+class PointsAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "project"]
+
+admin.site.register(models.Points, PointsAdmin)
+
+
+class UserStoryStatusAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "is_closed", "project"]
+
+admin.site.register(models.UserStoryStatus, UserStoryStatusAdmin)
+
+
+# Tasks common admins
+
+class TaskStatusAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "is_closed", "project"]
+
+admin.site.register(models.TaskStatus, TaskStatusAdmin)
+
+
+# Issues common admins
+
+class SeverityAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "project"]
+
+admin.site.register(models.Severity, SeverityAdmin)
+
+
+class PriorityAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "project"]
+
+admin.site.register(models.Priority, PriorityAdmin)
+
+
+class IssueTypeAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "project"]
+
+admin.site.register(models.IssueType, IssueTypeAdmin)
+
+
+class IssueStatusAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "is_closed", "project"]
+
+admin.site.register(models.IssueStatus, IssueStatusAdmin)
+
+
+# Questions common admins
+
+class QuestionStatusAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "is_closed", "project"]
+
+admin.site.register(models.QuestionStatus, QuestionStatusAdmin)

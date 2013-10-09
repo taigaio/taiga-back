@@ -9,11 +9,6 @@ from greenmine.base.serializers import PickleField
 from . import models
 
 
-class QuestionStatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.QuestionStatus
-
-
 class QuestionSerializer(serializers.ModelSerializer):
     tags = PickleField()
     comment = serializers.SerializerMethodField("get_comment")

@@ -13,46 +13,6 @@ from greenmine.base.notifications.models import WatchedMixin
 import reversion
 
 
-class UserStoryStatus(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False,
-                            verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False,
-                                verbose_name=_("order"))
-    is_closed = models.BooleanField(default=False, null=False, blank=True,
-                                    verbose_name=_("is closed"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="us_statuses", verbose_name=_("project"))
-
-    class Meta:
-        verbose_name = u"user story status"
-        verbose_name_plural = u"user story statuses"
-        ordering = ["project", "name"]
-        unique_together = ("project", "name")
-
-    def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
-
-
-class Points(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False,
-                            verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False,
-                                verbose_name=_("order"))
-    value = models.FloatField(default=None, null=True, blank=True,
-                              verbose_name=_("value"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                related_name="points", verbose_name=_("project"))
-
-    class Meta:
-        verbose_name = u"point"
-        verbose_name_plural = u"points"
-        ordering = ["project", "name"]
-        unique_together = ("project", "name")
-
-    def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
-
-
 class RolePoints(models.Model):
     user_story = models.ForeignKey("UserStory", null=False, blank=False,
                                    related_name="role_points",
@@ -60,7 +20,7 @@ class RolePoints(models.Model):
     role = models.ForeignKey("users.Role", null=False, blank=False,
                              related_name="role_points",
                              verbose_name=_("role"))
-    points = models.ForeignKey("Points", null=False, blank=False,
+    points = models.ForeignKey("projects.Points", null=False, blank=False,
                                related_name="role_points",
                                verbose_name=_("points"))
 
@@ -79,9 +39,9 @@ class UserStory(WatchedMixin, models.Model):
                                 related_name="user_stories", verbose_name=_("project"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                               related_name="owned_user_stories", verbose_name=_("owner"))
-    status = models.ForeignKey("UserStoryStatus", null=False, blank=False,
+    status = models.ForeignKey("projects.UserStoryStatus", null=False, blank=False,
                                related_name="user_stories", verbose_name=_("status"))
-    points = models.ManyToManyField("Points", null=False, blank=False,
+    points = models.ManyToManyField("projects.Points", null=False, blank=False,
                                     related_name="userstories", through="RolePoints",
                                     verbose_name=_("points"))
     order = models.PositiveSmallIntegerField(null=False, blank=False, default=100,

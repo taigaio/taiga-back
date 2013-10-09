@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework.permissions import IsAuthenticated
 
 from greenmine.base import filters
-from greenmine.base.api import ModelCrudViewSet, ModelListViewSet
+from greenmine.base.api import ModelCrudViewSet
 from greenmine.base.notifications.api import NotificationSenderMixin
 from greenmine.projects.permissions import AttachmentPermission
 from greenmine.projects.serializers import AttachmentSerializer
@@ -16,37 +16,6 @@ from . import permissions
 from . import serializers
 
 import reversion
-
-class SeverityViewSet(ModelListViewSet):
-    model = models.Severity
-    serializer_class = serializers.SeveritySerializer
-    permission_classes = (IsAuthenticated, permissions.SeverityPermission)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
-    filter_fields = ("project",)
-
-
-class PriorityViewSet(ModelListViewSet):
-    model = models.Priority
-    serializer_class = serializers.PrioritySerializer
-    permission_classes = (IsAuthenticated, permissions.PriorityPermission)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
-    filter_fields = ("project",)
-
-
-class IssueTypeViewSet(ModelListViewSet):
-    model = models.IssueType
-    serializer_class = serializers.IssueTypeSerializer
-    permission_classes = (IsAuthenticated, permissions.IssueTypePermission)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
-    filter_fields = ("project",)
-
-
-class IssueStatusViewSet(ModelListViewSet):
-    model = models.IssueStatus
-    serializer_class = serializers.IssueStatusSerializer
-    permission_classes = (IsAuthenticated, permissions.IssueStatusPermission)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
-    filter_fields = ("project",)
 
 
 class IssueAttachmentViewSet(ModelCrudViewSet):

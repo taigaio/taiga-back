@@ -9,26 +9,6 @@ from . import models
 import reversion
 
 
-class SeveritySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Severity
-
-
-class PrioritySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Priority
-
-
-class IssueStatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.IssueStatus
-
-
-class IssueTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.IssueType
-
-
 class IssueSerializer(serializers.ModelSerializer):
     tags = PickleField()
     comment = serializers.SerializerMethodField("get_comment")
