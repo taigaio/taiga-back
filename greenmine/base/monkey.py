@@ -2,12 +2,11 @@
 from __future__ import print_function
 import sys
 
-from rest_framework import views
-from rest_framework import status, exceptions
-from rest_framework.response import Response
 
 def patch_api_view():
-    from django.views.generic import View
+    from rest_framework import views
+    from rest_framework import status, exceptions
+    from rest_framework.response import Response
 
     if hasattr(views, "_patched"):
         return
@@ -31,3 +30,31 @@ def patch_api_view():
 
     print("Patching APIView", file=sys.stderr)
     views.APIView = APIView
+
+
+def patch_serializer():
+    from rest_framework import serializers
+    if hasattr(serializers.BaseSerializer, "_patched"):
+        return
+
+    def to_native(self, obj):
+        """
+        Serialize objects -> primitives.
+        """
+        ret = self._dict_class()
+        ret.fields = self._dict_class()
+        ret.empty = obj is None
+
+        for field_name, field in self.fields.items():
+            field.initialize(parent=self, field_name=field_name)
+            key = self.get_field_key(field_name)
+            ret.fields[key] = field
+
+            if obj is not None:
+                value = field.field_to_native(obj, field_name)
+                ret[key] = value
+
+        return ret
+
+    serializers.BaseSerializer._patched = True
+    serializers.BaseSerializer.to_native = to_native
