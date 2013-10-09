@@ -32,6 +32,7 @@ class UserStorySerializer(serializers.ModelSerializer):
     tags = PickleField(blank=True, default=[])
     is_closed = serializers.Field(source="is_closed")
     points = RolePointsField(source="role_points")
+    total_points = serializers.SerializerMethodField("get_total_points")
     comment = serializers.SerializerMethodField("get_comment")
     history = serializers.SerializerMethodField("get_history")
 
@@ -50,6 +51,9 @@ class UserStorySerializer(serializers.ModelSerializer):
                 role_points.points = models.Points.objects.get(project=obj.project,
                                                                order=points_order)
                 role_points.save()
+
+    def get_total_points(self, obj):
+        return obj.get_total_points()
 
     def get_comment(self, obj):
         # TODO

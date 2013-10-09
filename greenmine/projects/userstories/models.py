@@ -142,6 +142,14 @@ class UserStory(WatchedMixin, models.Model):
     def get_role_points(self):
         return self.role_points
 
+    def get_total_points(self):
+        total = 0.0
+        for rp in self.role_points.select_related("points"):
+            if rp.points.value:
+                total += rp.points.value
+
+        return total
+
     def _get_watchers_by_role(self):
         return {
             "owner": self.owner,
