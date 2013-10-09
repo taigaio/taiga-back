@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import json, reversion
 from rest_framework import serializers
 
 from greenmine.base.serializers import PickleField
-
 from . import models
 
-import json, reversion
 
 
 class PointsSerializer(serializers.ModelSerializer):

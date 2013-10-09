@@ -120,47 +120,50 @@ class Project(models.Model):
             "team_increment_points": milestone.team_increment_points
         } for milestone in self.milestones.all().order_by("estimated_start")]
 
-    @property
-    def list_roles(self):
+    def get_roles(self):
         role_model = get_model("users", "Role")
         return role_model.objects.filter(id__in=list(self.memberships.values_list(
                                                                  "role", flat=True)))
-    @property
-    def list_users(self):
+    def get_users(self):
         user_model = get_user_model()
         return user_model.objects.filter(id__in=list(self.memberships.values_list(
                                                                  "user", flat=True)))
     def update_role_points(self):
         rolepoints_model = get_model("userstories", "RolePoints")
-        roles = self.list_roles
-        role_ids = roles.values_list("id", flat=True)
-        null_points = self.points.get(value=None)
+
+        # Get all available roles on this project
+        roles = self.get_roles()
+
+        # Get point instance that represent a null/undefined
+        null_points_value = self.points.get(value=None)
+
+        # Iter over all project user stories and create
+        # role point instance for new created roles.
         for us in self.user_stories.all():
             for role in roles:
-                try:
-                    sp = us.role_points.get(role=role, user_story=us)
-                except rolepoints_model.DoesNotExist:
-                    sp = rolepoints_model.objects.create(role=role,
-                                                   user_story=us,
-                                                   points=null_points)
+                if not us.role_points.filter(role=role).exists():
+                    sp = rolepoints_model.objects.create(role=role, user_story=us,
+                                                         points=null_points_value)
 
-        #Remove unnecesary Role points
+        # Now remove rolepoints associated with not existing roles.
         rp_query = rolepoints_model.objects.filter(user_story__in=self.user_stories.all())
-        rp_query = rp_query.exclude(role__id__in=role_ids)
+        rp_query = rp_query.exclude(role__id__in=roles.values_list("id", flat=True))
         rp_query.delete()
 
 
 # Reversion registration (usufull for base.notification and for meke a historical)
 reversion.register(Project)
 
-# Signals dispatches
+# On membership object is created/changed, update
+# role-points relation.
 @receiver(models.signals.post_save, sender=Membership,
           dispatch_uid='membership_post_save')
 def membership_post_save(sender, instance, created, **kwargs):
     instance.project.update_role_points()
 
 
-@receiver(models.signals.post_delete, sender=Membership,
+# On membership object is deleted, update role-points relation.
+@receiver(models.signals.pre_delete, sender=Membership,
           dispatch_uid='membership_pre_delete')
 def membership_post_delete(sender, instance, using, **kwargs):
     instance.project.update_role_points()

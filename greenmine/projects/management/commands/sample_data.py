@@ -158,7 +158,7 @@ class Command(BaseCommand):
 
         us.save()
 
-        for role in project.list_roles:
+        for role in project.get_roles():
             if milestone:
                 points=self.sd.db_object_from_queryset(Points.objects.filter(project=project).exclude(order=0))
             else:
