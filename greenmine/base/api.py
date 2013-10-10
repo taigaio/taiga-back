@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from rest_framework import (
-    mixins,
-    viewsets
-)
+from rest_framework import viewsets
+from .pagination import HeadersPaginationMixin, ConditionalPaginationMixin
 
 
-class ModelCrudViewSet(viewsets.ModelViewSet):
+class ModelCrudViewSet(HeadersPaginationMixin,
+                       ConditionalPaginationMixin,
+                       viewsets.ModelViewSet):
     pass
 
 
-class ModelListViewSet(viewsets.ReadOnlyModelViewSet):
+class ModelListViewSet(HeadersPaginationMixin,
+                       ConditionalPaginationMixin,
+                       viewsets.ReadOnlyModelViewSet):
     pass

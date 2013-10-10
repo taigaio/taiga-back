@@ -24,7 +24,8 @@ COORS_ALLOWED_METHODS = getattr(settings, 'COORS_ALLOWED_METHODS',
                             ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE', 'PATCH'])
 COORS_ALLOWED_HEADERS = getattr(settings, 'COORS_ALLOWED_HEADERS',
                             ['Content-Type', 'X-Requested-With',
-                             'X-Session-Token', 'Accept-Encoding'])
+                             'X-Session-Token', 'Accept-Encoding',
+                             'X-Disable-Pagination'])
 COORS_ALLOWED_CREDENTIALS = getattr(settings, 'COORS_ALLOWED_CREDENTIALS',  True)
 
 
