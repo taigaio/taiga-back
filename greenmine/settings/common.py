@@ -294,6 +294,8 @@ REST_FRAMEWORK = {
         'greenmine.base.users.auth.SessionAuthentication',
     ),
     'FILTER_BACKEND': 'greenmine.base.filters.FilterBackend',
+    'PAGINATE_BY': 50,
+    'MAX_PAGINATE_BY': 1000,
 }
 
 from .appdefaults import *
