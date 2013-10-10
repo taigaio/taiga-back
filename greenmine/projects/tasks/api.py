@@ -44,6 +44,7 @@ class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
     permission_classes = (IsAuthenticated, permissions.TaskPermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ["user_story", "milestone", "project"]
+
     create_notification_template = "create_task_notification"
     update_notification_template = "update_task_notification"
     destroy_notification_template = "destroy_task_notification"

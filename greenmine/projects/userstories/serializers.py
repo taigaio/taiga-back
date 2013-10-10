@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json, reversion
+from django.db.models import get_model
 from rest_framework import serializers
 
 from greenmine.base.serializers import PickleField
@@ -32,13 +33,15 @@ class UserStorySerializer(serializers.ModelSerializer):
     def save_object(self, obj, **kwargs):
         role_points = obj._related_data.pop("role_points", None)
         super(UserStorySerializer, self).save_object(obj, **kwargs)
-        obj.project.update_role_points()
 
+        points_modelcls = get_model("projects", "Points")
+
+        obj.project.update_role_points()
         if role_points:
             for role_id, points_order in role_points.items():
                 role_points = obj.role_points.get(role__id=role_id)
-                role_points.points = models.Points.objects.get(project=obj.project,
-                                                               order=points_order)
+                role_points.points = points_modelcls.objects.get(project=obj.project,
+                                                                 order=points_order)
                 role_points.save()
 
     def get_total_points(self, obj):
