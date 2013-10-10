@@ -120,8 +120,9 @@ def tasks_close_handler(sender, instance, **kwargs):
         elif (sender.objects.get(id=instance.id).status.is_closed == True and
                 instance.status.is_closed == False):
             instance.finished_date = None
-            instance.user_story.finish_date = None
-            instance.user_story.save()
-    else:
+            if instance.user_story:
+                instance.user_story.finish_date = None
+                instance.user_story.save()
+    elif instance.user_story:
         instance.user_story.finish_date = None
         instance.user_story.save()

@@ -10,7 +10,7 @@ import reversion
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    tags = PickleField(blank=True, default=[])
+    tags = PickleField(required=False, default=[])
     comment = serializers.SerializerMethodField("get_comment")
     history = serializers.SerializerMethodField("get_history")
 
