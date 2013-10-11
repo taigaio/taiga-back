@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework.permissions import IsAuthenticated
 
 from greenmine.base import filters
+from greenmine.base import exceptions as exc
 from greenmine.base.api import ModelCrudViewSet, ModelListViewSet
 from greenmine.base.notifications.api import NotificationSenderMixin
 from greenmine.projects.permissions import AttachmentPermission
@@ -29,11 +30,20 @@ class WikiAttachmentViewSet(ModelCrudViewSet):
         qs = qs.filter(content_type=ct)
         return qs.distinct()
 
+    def pre_conditions_on_save(self, obj):
+        super().pre_conditions_on_save(obj)
+
+        if (obj.project.owner != self.request.user and
+                obj.project.memberships.filter(user=self.request.user).count() == 0):
+            raise exc.PreconditionError("You must not add a new wiki page to this "
+                                        "project.")
+
     def pre_save(self, obj):
-        super(WikiAttachmentViewSet, self).pre_save(obj)
         if not obj.id:
             obj.content_type = ContentType.objects.get_for_model(models.Wiki)
             obj.owner = self.request.user
+
+        super(WikiAttachmentViewSet, self).pre_save(obj)
 
 
 class WikiViewSet(ModelCrudViewSet):
@@ -43,6 +53,16 @@ class WikiViewSet(ModelCrudViewSet):
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ["project", "slug"]
 
+    def pre_conditions_on_save(self, obj):
+        super().pre_conditions_on_save(obj)
+
+        if (obj.project.owner != self.request.user and
+                obj.project.memberships.filter(user=self.request.user).count() == 0):
+            raise exc.PreconditionError("You must not add a new wiki page to this "
+                                        "project.")
+
     def pre_save(self, obj):
         if not obj.owner:
             obj.owner = self.request.user
+
+        super().pre_save(obj)
