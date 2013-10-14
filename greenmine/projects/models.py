@@ -113,6 +113,7 @@ class Project(models.Model):
     @property
     def list_of_milestones(self):
         return [{
+            "id": milestone.id,
             "name": milestone.name,
             "finish_date": milestone.estimated_finish,
             "closed_points": milestone.closed_points,
