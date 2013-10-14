@@ -19,16 +19,6 @@ class AttachmentSerializer(serializers.ModelSerializer):
                   "modified_date", "object_id", "url")
         read_only_fields = ("owner",)
 
-
-class ProjectSerializer(serializers.ModelSerializer):
-    tags = PickleField(required=False)
-    list_of_milestones = serializers.Field(source="list_of_milestones")
-
-    class Meta:
-        model = models.Project
-        read_only_fields = ("owner",)
-
-
 # User Stories common serializers
 
 class PointsSerializer(serializers.ModelSerializer):
@@ -75,3 +65,22 @@ class IssueTypeSerializer(serializers.ModelSerializer):
 class QuestionStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.QuestionStatus
+
+
+# Projects
+
+class ProjectSerializer(serializers.ModelSerializer):
+    tags = PickleField(required=False)
+    list_of_milestones = serializers.Field(source="list_of_milestones")
+    us_statuses = UserStoryStatusSerializer(many=True)          # User Stories
+    points = PointsSerializer(many=True)
+    task_statuses = TaskStatusSerializer(many=True)             # Tasks
+    priorities = PrioritySerializer(many=True)                  # Issues
+    severities = SeveritySerializer(many=True)
+    issue_statuses = IssueStatusSerializer(many=True)
+    issue_types = IssueTypeSerializer(many=True)
+    #question_statuses = QuestionStatusSerializer(many=True)    # Questions
+
+    class Meta:
+        model = models.Project
+        read_only_fields = ("owner",)

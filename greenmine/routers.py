@@ -3,10 +3,7 @@
 from greenmine.base import routers
 from greenmine.base.users.api import AuthViewSet, RolesViewSet, UsersViewSet
 from greenmine.base.searches.api import SearchViewSet
-from greenmine.projects.api import (ProjectViewSet, PointsViewSet, UserStoryStatusViewSet,
-                                    TaskStatusViewSet,PriorityViewSet, SeverityViewSet,
-                                    IssueStatusViewSet, IssueTypeViewSet,
-                                    QuestionStatusViewSet, )
+from greenmine.projects.api import ProjectViewSet
 from greenmine.projects.milestones.api import MilestoneViewSet
 from greenmine.projects.userstories.api import UserStoryViewSet, UserStoryAttachmentViewSet
 from greenmine.projects.tasks.api import  TaskViewSet, TaskAttachmentViewSet
@@ -27,15 +24,6 @@ router.register(r"search", SearchViewSet, base_name="search")
 
 # greenmine.projects
 router.register(r"projects", ProjectViewSet, base_name="projects")
-router.register(r"points", PointsViewSet, base_name="points")
-router.register(r"userstory-statuses", UserStoryStatusViewSet,
-                base_name="userstory-statuses")
-router.register(r"task-statuses", TaskStatusViewSet, base_name="task-statuses")
-router.register(r"severities", SeverityViewSet, base_name="severities")
-router.register(r"priorities", PriorityViewSet, base_name="priorities")
-router.register(r"issue-statuses", IssueStatusViewSet, base_name="issue-statuses")
-router.register(r"issue-types", IssueTypeViewSet, base_name="issue-types")
-router.register(r"question-statuses", QuestionStatusViewSet, base_name="question-statuses")
 
 # greenmine.projects.milestones
 router.register(r"milestones", MilestoneViewSet, base_name="milestones")
