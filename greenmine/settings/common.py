@@ -276,18 +276,7 @@ ANONYMOUS_USER_ID = -1
 
 GRAPPELLI_INDEX_DASHBOARD = 'greenmine.dashboard.CustomIndexDashboard'
 
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-        'PATH': os.path.join(os.path.dirname(__file__), '../search/index'),
-    },
-}
-
-HAYSTACK_DEFAULT_OPERATOR = 'AND'
-
 MAX_SEARCH_RESULTS = 100
-
-HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

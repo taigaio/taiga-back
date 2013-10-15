@@ -6,11 +6,11 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
 from picklefield.fields import PickledObjectField
+import reversion
 
 from greenmine.base.utils.slug import ref_uniquely
 from greenmine.base.notifications.models import WatchedMixin
 
-import reversion
 
 
 class RolePoints(models.Model):
