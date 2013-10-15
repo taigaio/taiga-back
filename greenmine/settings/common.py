@@ -200,7 +200,6 @@ INSTALLED_APPS = [
     'greenmine.projects.wiki',
 
     'south',
-    'haystack',
     'reversion',
     'rest_framework',
     'djmail'
