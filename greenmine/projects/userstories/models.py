@@ -41,7 +41,7 @@ class UserStory(WatchedMixin, models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                               related_name="owned_user_stories", verbose_name=_("owner"),
                               on_delete=models.SET_NULL)
-    status = models.ForeignKey("projects.UserStoryStatus", null=False, blank=False,
+    status = models.ForeignKey("projects.UserStoryStatus", null=True, blank=True,
                                related_name="user_stories", verbose_name=_("status"),
                                on_delete=models.SET_NULL)
     points = models.ManyToManyField("projects.Points", null=False, blank=False,
