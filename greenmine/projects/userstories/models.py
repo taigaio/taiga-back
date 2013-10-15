@@ -34,13 +34,16 @@ class UserStory(WatchedMixin, models.Model):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True, default=None,
-                                  related_name="user_stories", verbose_name=_("milestone"))
+                                  related_name="user_stories", verbose_name=_("milestone"),
+                                  on_delete=models.SET_NULL)
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="user_stories", verbose_name=_("project"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
-                              related_name="owned_user_stories", verbose_name=_("owner"))
+                              related_name="owned_user_stories", verbose_name=_("owner"),
+                              on_delete=models.SET_NULL)
     status = models.ForeignKey("projects.UserStoryStatus", null=False, blank=False,
-                               related_name="user_stories", verbose_name=_("status"))
+                               related_name="user_stories", verbose_name=_("status"),
+                               on_delete=models.SET_NULL)
     points = models.ManyToManyField("projects.Points", null=False, blank=False,
                                     related_name="userstories", through="RolePoints",
                                     verbose_name=_("points"))
