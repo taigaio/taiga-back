@@ -2,11 +2,15 @@ language: python
 python:
   - "2.7"
   - "3.3"
+services:
+  - rabbitmq # will start rabbitmq-server
+before_script:
+  - psql -c 'create database greenmine;' -U postgres
 install:
   - pip install -r requirements.txt --use-mirrors
   - pip install coveralls --use-mirrors
 script:
-  - coverage run --source=greenmine manage.py test --settings=greenmine.settings.testing greenmine
+  - coverage run --source=greenmine manage.py test --settings=greenmine.settings.travis greenmine
 notifications:
   email:
     recipients:
