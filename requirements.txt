@@ -1,5 +1,6 @@
 # We use Django 1.6,
 #git+https://github.com/django/django.git@stable/1.6.x
+https://www.djangoproject.com/download/1.6b4/tarball/
 git+https://github.com/tomchristie/django-rest-framework.git@2.4.0
 git+https://github.com/etianen/django-reversion.git@django-1.6
 
