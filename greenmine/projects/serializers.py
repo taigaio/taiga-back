@@ -72,14 +72,14 @@ class QuestionStatusSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     tags = PickleField(required=False)
     list_of_milestones = serializers.Field(source="list_of_milestones")
-    us_statuses = UserStoryStatusSerializer(many=True)          # User Stories
-    points = PointsSerializer(many=True)
-    task_statuses = TaskStatusSerializer(many=True)             # Tasks
-    priorities = PrioritySerializer(many=True)                  # Issues
-    severities = SeveritySerializer(many=True)
-    issue_statuses = IssueStatusSerializer(many=True)
-    issue_types = IssueTypeSerializer(many=True)
-    #question_statuses = QuestionStatusSerializer(many=True)    # Questions
+    us_statuses = UserStoryStatusSerializer(many=True, required=False)          # User Stories
+    points = PointsSerializer(many=True, required=False)
+    task_statuses = TaskStatusSerializer(many=True, required=False)             # Tasks
+    priorities = PrioritySerializer(many=True, required=False)                  # Issues
+    severities = SeveritySerializer(many=True, required=False)
+    issue_statuses = IssueStatusSerializer(many=True, required=False)
+    issue_types = IssueTypeSerializer(many=True, required=False)
+    #question_statuses = QuestionStatusSerializer(many=True, required=False)    # Questions
 
     class Meta:
         model = models.Project
