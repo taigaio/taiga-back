@@ -26,6 +26,7 @@ def patch_api_view():
         def as_view(cls, **initkwargs):
             view = super(views._APIView, cls).as_view(**initkwargs)
             view.cls_instance = cls(**initkwargs)
+            view.cls = cls
             return view
 
     print("Patching APIView", file=sys.stderr)
