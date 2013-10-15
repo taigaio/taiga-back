@@ -6,24 +6,17 @@ git+https://github.com/etianen/django-reversion.git@django-1.6
 
 South==0.8.2
 Werkzeug==0.9.4
-Whoosh==2.5.4
-amqp==1.2.1
-anyjson==0.3.3
-billiard==2.7.3.32
 celery==3.0.23
 django-celery==3.0.23
 django-filter==0.7
 django-grappelli==2.4.6
-django-haystack==2.1.0
 django-picklefield==0.3.0
 django-sampledatahelper==0.2.1
 gunicorn>=17.5
-kombu==2.5.14
 psycopg2==2.5.1
-pycrypto==2.6
-pytz==2013d
+pytz>=2013d
 six>=1.4.1
 djmail>=0.3
-django-jinja==0.21
+django-jinja>=0.21
 jinja2==2.7.1
 pygments>=1.6
