@@ -1,6 +1,5 @@
 language: python
 python:
-  - "2.7"
   - "3.3"
 services:
   - rabbitmq # will start rabbitmq-server
