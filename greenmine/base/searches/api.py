@@ -5,11 +5,10 @@ from django.db.models.loading import get_model
 from rest_framework.response import Response
 from rest_framework import viewsets
 
-from haystack import query, inputs
-
 from greenmine.base import exceptions as excp
-
-from .serializers import SearchSerializer
+from greenmine.projects.userstories.serializers import UserStorySerializer
+from greenmine.projects.tasks.serializers import TaskSerializer
+from greenmine.projects.issues.serializers import IssueSerializer
 
 
 class SearchViewSet(viewsets.ViewSet):
@@ -23,15 +22,14 @@ class SearchViewSet(viewsets.ViewSet):
         except (project_model.DoesNotExist, TypeError):
             raise excp.PermissionDenied({"detail": "Wrong project id"})
 
-        #if not text:
-        #    raise excp.BadRequest("text parameter must be contains text")
+        result = {
+            "userstories": self._search_user_stories(project, text),
+            "tasks": self._search_tasks(project, text),
+            "issues": self._search_issues(project, text)
+        }
 
-        queryset = query.SearchQuerySet()
-        queryset = queryset.filter(text=inputs.AutoQuery(text))
-        queryset = queryset.filter(project_id=project_id)
-
-        return_data = SearchSerializer(queryset, many=True)
-        return Response(return_data.data)
+        result["count"] = sum(map(lambda x: len(x), result.values()))
+        return Response(result)
 
     def _get_project(self, project_id):
         project_model = get_model("projects", "Project")
@@ -39,3 +37,39 @@ class SearchViewSet(viewsets.ViewSet):
                             .filter(members=self.request.user))
 
         return own_projects.get(pk=project_id)
+
+    def _search_user_stories(self, project, text):
+        where_clause = ("to_tsvector(userstories_userstory.subject || "
+                        "userstories_userstory.description) @@ plainto_tsquery(%s)")
+
+        model_cls = get_model("userstories", "UserStory")
+        queryset = (model_cls.objects
+                        .extra(where=[where_clause], params=[text])
+                        .filter(project_id=project.pk)[:50])
+
+        serializer = UserStorySerializer(queryset, many=True)
+        return serializer.data
+
+    def _search_tasks(self, project, text):
+        where_clause = ("to_tsvector(tasks_task.subject || tasks_task.description) "
+                        "@@ plainto_tsquery(%s)")
+
+        model_cls = get_model("tasks", "Task")
+        queryset = (model_cls.objects
+                        .extra(where=[where_clause], params=[text])
+                        .filter(project_id=project.pk)[:50])
+
+        serializer = TaskSerializer(queryset, many=True)
+        return serializer.data
+
+    def _search_issues(self, project, text):
+        where_clause = ("to_tsvector(issues_issue.subject || issues_issue.description) "
+                        "@@ plainto_tsquery(%s)")
+
+        model_cls = get_model("issues", "Issue")
+        queryset = (model_cls.objects
+                        .extra(where=[where_clause], params=[text])
+                        .filter(project_id=project.pk)[:50])
+
+        serializer = IssueSerializer(queryset, many=True)
+        return serializer.data
