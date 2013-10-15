@@ -1,8 +1,0 @@
-{{ object.project }}
-{{ object.slug }}
-{{ object.content }}
-{{ object.owner }}
-{{ object.created_date }}
-{% for watcher in object.watchers.all %}
-    {{ watcher }}
-{% endfor %}

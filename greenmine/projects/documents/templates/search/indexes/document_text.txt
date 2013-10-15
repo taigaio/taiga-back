@@ -1,8 +1,0 @@
-{{ object.title }}
-{{ object.slug }}
-{{ object.description }}
-{{ object.created_date }}
-{{ object.modified_date }}
-{{ object.project }}
-{{ object.owner }}
-{{ object.attached_file }}
