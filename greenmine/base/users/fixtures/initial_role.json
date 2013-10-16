@@ -536,7 +536,8 @@
             ]
         ], 
         "name": "Back", 
-        "slug": "back"
+        "slug": "back", 
+        "order": 40
     }
 },
 {
@@ -1076,7 +1077,8 @@
             ]
         ], 
         "name": "Front", 
-        "slug": "front"
+        "slug": "front", 
+        "order": 30
     }
 },
 {
@@ -1616,7 +1618,8 @@
             ]
         ], 
         "name": "UX", 
-        "slug": "ux"
+        "slug": "ux", 
+        "order": 10
     }
 },
 {
@@ -2156,7 +2159,8 @@
             ]
         ], 
         "name": "Design", 
-        "slug": "design"
+        "slug": "design", 
+        "order": 20
     }
 }
 ]

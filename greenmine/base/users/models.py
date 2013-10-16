@@ -30,17 +30,18 @@ class User(WatcherMixin, AbstractUser):
 
 class Role(models.Model):
     name = models.CharField(max_length=200, null=False, blank=False,
-                verbose_name=_('name'))
+                            verbose_name=_('name'))
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
-                verbose_name=_('slug'))
-    permissions = models.ManyToManyField('auth.Permission',
-                related_name='roles',
-                verbose_name=_('permissions'))
+                            verbose_name=_('slug'))
+    permissions = models.ManyToManyField('auth.Permission', related_name='roles',
+                                         verbose_name=_('permissions'))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
 
     class Meta:
-        verbose_name = u'role'
-        verbose_name_plural = u'roles'
-        ordering = ['slug']
+        verbose_name = 'role'
+        verbose_name_plural = 'roles'
+        ordering = ['order', 'slug']
 
     def __str__(self):
         return self.name
