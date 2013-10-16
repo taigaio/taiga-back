@@ -18,9 +18,7 @@ from greenmine.base.filters import FilterBackend
 from greenmine.base.api import ModelCrudViewSet
 
 from .models import User, Role
-from .serializers import (LoginSerializer, UserLogged,
-                          UserSerializer, RoleSerializer,
-                          RecoverySerializer)
+from .serializers import UserSerializer, RoleSerializer, RecoverySerializer
 
 
 class RolesViewSet(viewsets.ViewSet):
