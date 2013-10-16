@@ -6,7 +6,7 @@ import datetime
 from sampledatahelper.helper import SampleDataHelper
 
 from django.core.management.base import BaseCommand
--from django.db import transaction
+from django.db import transaction
 from django.utils.timezone import now
 
 from django.contrib.webdesign import lorem_ipsum
