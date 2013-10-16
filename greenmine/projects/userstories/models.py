@@ -133,7 +133,7 @@ def us_ref_handler(sender, instance, **kwargs):
 
 
 @receiver(models.signals.post_save, sender=UserStory, dispatch_uid="user_story_create_role_points_handler")
-def us_ref_handler(sender, instance, **kwargs):
+def us_create_role_points_handler(sender, instance, **kwargs):
     created_roles_ids = instance.role_points.all().values_list("role__id", flat=True)
     null_points_value = instance.project.points.get(value=None)
 
