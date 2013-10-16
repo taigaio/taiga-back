@@ -54,16 +54,16 @@ class Command(BaseCommand):
         role = Role.objects.all()[0]
 
         # projects
-        for x in range(3):
+        for x in range(7):
             project = self.create_project(x)
 
             for user in self.users:
                 Membership.objects.create(project=project, role=role, user=user)
 
-            start_date = now() - datetime.timedelta(35)
+            start_date = now() - datetime.timedelta(70)
 
             # create random milestones
-            for y in range(self.sd.int(1, 5)):
+            for y in range(self.sd.int(1, 10)):
                 end_date = start_date + datetime.timedelta(15)
                 milestone = self.create_milestone(project, start_date, end_date)
 
@@ -71,7 +71,8 @@ class Command(BaseCommand):
                 for z in range(self.sd.int(3, 7)):
                     us = self.create_us(project, milestone)
 
-                    for w in range(self.sd.int(0,6)):
+                    rang = (1, 6) if start_date <= now() and end_date <= now() else (0, 6)
+                    for w in range(self.sd.int(*rang)):
                         if start_date <= now() and end_date <= now():
                             task = self.create_task(project, milestone, us, start_date, end_date, closed=True)
                         elif start_date <= now() and end_date >= now():
@@ -149,7 +150,7 @@ class Command(BaseCommand):
             owner=self.sd.choice(self.users),
             description=self.sd.paragraph(),
             milestone=milestone,
-            status=self.sd.db_object_from_queryset(project.us_statuses.all()),
+            status=self.sd.db_object_from_queryset(project.us_statuses.filter(is_closed=False)),
             tags=self.sd.words(1, 3).split(" ")
         )
 

@@ -99,30 +99,51 @@ reversion.register(Task)
 # Model related signals handlers
 @receiver(models.signals.pre_save, sender=Task, dispatch_uid="task_ref_handler")
 def task_ref_handler(sender, instance, **kwargs):
+    """
+    Automatically assignes a seguent reference code to a
+    user story if that is not created.
+    """
     if not instance.id and instance.project:
         instance.ref = ref_uniquely(instance.project, "last_task_ref", instance.__class__)
 
 
 @receiver(models.signals.pre_save, sender=Task, dispatch_uid="tasks_close_handler")
 def tasks_close_handler(sender, instance, **kwargs):
-    """
-    Automatically assignes a seguent reference code to a
-    user story if that is not created.
-    """
-    if instance.id:
+    if instance.id:                                                             # Edit task
         if (sender.objects.get(id=instance.id).status.is_closed == False and
-                instance.status.is_closed == True):
+                instance.status.is_closed == True):                             # Closed task
             instance.finished_date = timezone.now()
-            if (all([task.status.is_closed for task in
-                    instance.user_story.tasks.exclude(id=instance.id)])):
+            if instance.user_story and (all([task.status.is_closed for task in
+                    instance.user_story.tasks.exclude(id=instance.id)])):       # All us's tasks are close
+                us_closed_status = instance.project.us_statuses.filter(is_closed=True).order_by("order")[0]
+                instance.user_story.status = us_closed_status
                 instance.user_story.finish_date = timezone.now()
                 instance.user_story.save()
         elif (sender.objects.get(id=instance.id).status.is_closed == True and
-                instance.status.is_closed == False):
+                instance.status.is_closed == False):                            # Opened task
             instance.finished_date = None
-            if instance.user_story:
+            if instance.user_story and instance.user_story.status.is_closed == True:    # Us is close
+                us_opened_status = instance.project.us_statuses.filter(is_closed=False).order_by("-order")[0]
+                instance.user_story.status = us_opened_status
                 instance.user_story.finish_date = None
                 instance.user_story.save()
-    elif instance.user_story:
-        instance.user_story.finish_date = None
-        instance.user_story.save()
+    else:                                                                       # Create Task
+        if instance.status.is_closed == True:                                   # Task is close
+            instance.finished_date = timezone.now()
+            if instance.user_story:
+                if instance.user_story.status.is_closed == True: # Us is close
+                    instance.user_story.finish_date = timezone.now()
+                    instance.user_story.save()
+                elif all([task.status.is_closed for task in instance.user_story.tasks.all()]):  # All us's tasks are close
+                    # if any stupid robot/machine/user/alien create an open US
+                    us_closed_status = instance.project.us_statuses.filter(is_closed=True).order_by("order")[0]
+                    instance.user_story.status = us_closed_status
+                    instance.user_story.finish_date = timezone.now()
+                    instance.user_story.save()
+        else:                                                                   # Task is opene
+            instance.finished_date = None
+            if instance.user_story and instance.user_story.status.is_closed == True: # US is close
+                us_opened_status = instance.project.us_statuses.filter(is_closed=False).order_by("-order")[0]
+                instance.user_story.status = us_opened_status
+                instance.user_story.finish_date = None
+                instance.user_story.save()
