@@ -23,7 +23,6 @@ def slugify_uniquely(value, model, slugfield="slug"):
         suffix += 1
 
 
-
 def ref_uniquely(p, seq_field,  model, field='ref'):
     project = p.__class__.objects.select_for_update().get(pk=p.pk)
     ref = getattr(project, seq_field) + 1
