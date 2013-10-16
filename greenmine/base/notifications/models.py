@@ -17,10 +17,11 @@ class WatcherMixin(object):
     )
 
     notify_level = models.CharField(max_length=32, null=False, blank=False,
-                                    default="all_owned_projects", choices=NOTIFY_LEVEL_CHOICES,
+                                    default="all_owned_projects",
+                                    choices=NOTIFY_LEVEL_CHOICES,
                                     verbose_name=_(u"notify level"))
-    notify_changes_by_me = models.BooleanField(null=False, blank=True, default=True,
-                verbose_name=_(u"notify changes made by me"))
+    notify_changes_by_me = models.BooleanField(null=True, blank=True, default=True,
+                                               verbose_name=_(u"notify changes by me"))
 
     class Meta:
         abstract = True
