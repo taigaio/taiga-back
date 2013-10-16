@@ -150,7 +150,7 @@ class AuthViewSet(viewsets.ViewSet):
 
         serializer = UserSerializer(user)
         response_data = serializer.data
-        response_data["token"] = request.session.session_key
+        response_data["auth_token"] = request.session.session_key
         return Response(response_data)
 
     def destroy(self, request, pk=None):

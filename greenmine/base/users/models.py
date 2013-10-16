@@ -8,7 +8,7 @@ from greenmine.base.notifications.models import WatcherMixin
 
 
 class User(WatcherMixin, AbstractUser):
-    color = models.CharField(max_length=9, null=False, blank=False, default="#669933",
+    color = models.CharField(max_length=9, null=False, blank=True, default="#669933",
                              verbose_name=_('color'))
     description = models.TextField(null=False, blank=True,
                                    verbose_name=_('description'))
