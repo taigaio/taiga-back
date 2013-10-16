@@ -8,7 +8,8 @@ from greenmine.projects.milestones.api import MilestoneViewSet
 from greenmine.projects.userstories.api import UserStoryViewSet, UserStoryAttachmentViewSet
 from greenmine.projects.tasks.api import  TaskViewSet, TaskAttachmentViewSet
 from greenmine.projects.issues.api import IssueViewSet, IssueAttachmentViewSet
-from greenmine.projects.questions.api import QuestionViewSet, QuestionAttachmentViewSet
+#from greenmine.projects.questions.api import QuestionViewSet, QuestionAttachmentViewSet
+#from greenmine.projects.documents.api import DocumentViewSet, DocumentAttachmentViewSet
 from greenmine.projects.wiki.api import WikiViewSet, WikiAttachmentViewSet
 
 
@@ -42,12 +43,16 @@ router.register(r"issues", IssueViewSet, base_name="issues")
 router.register(r"issue-attachments", IssueAttachmentViewSet, base_name="issue-attachments")
 
 #greenmine.projects.questions
-router.register(r"questions", QuestionViewSet, base_name="questions")
-router.register(r"question-attachments", QuestionAttachmentViewSet,
-                base_name="question-attachments")
+# TODO
+#router.register(r"questions", QuestionViewSet, base_name="questions")
+#router.register(r"question-attachments", QuestionAttachmentViewSet,
+#                base_name="question-attachments")
 
 #greenmine.projects.documents
 # TODO
+#router.register(r"documents", DocumentViewSet, base_name="documents")
+#router.register(r"document-attachments", DocumentAttachmentViewSet,
+#                base_name="document-attachments")
 
 # greenmine.projects.wiki
 router.register(r"wiki", WikiViewSet, base_name="wiki")

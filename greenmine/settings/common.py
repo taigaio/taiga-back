@@ -195,7 +195,7 @@ INSTALLED_APPS = [
     'greenmine.projects.userstories',
     'greenmine.projects.tasks',
     'greenmine.projects.issues',
-    'greenmine.projects.questions',
+    #'greenmine.projects.questions',
     #'greenmine.projects.documents',
     'greenmine.projects.wiki',
 
