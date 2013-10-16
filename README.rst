@@ -1,6 +1,13 @@
 Greenmine Backend
 =================
 
+.. image:: https://travis-ci.org/kaleidos/greenmine-back.png?branch=master
+    :target: https://travis-ci.org/kaleidos/greenmine-back
+
+.. image:: https://coveralls.io/repos/kaleidos/greenmine-back/badge.png?branch=master
+    :target: https://coveralls.io/r/kaleidos/greenmine-back?branch=master
+
+
 Setup development environment.
 ------------------------------
 
