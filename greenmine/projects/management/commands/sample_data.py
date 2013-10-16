@@ -155,10 +155,10 @@ class Command(BaseCommand):
 
         for role_points in us.role_points.all():
             if milestone:
-                role_points.point = self.sd.db_object_from_queryset(
+                role_points.points = self.sd.db_object_from_queryset(
                                us.project.points.exclude(value=None))
             else:
-                role_points.point = self.sd.db_object_from_queryset(
+                role_points.points = self.sd.db_object_from_queryset(
                                             us.project.points.all())
 
             role_points.save()
