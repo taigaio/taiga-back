@@ -6,7 +6,7 @@ import datetime
 from sampledatahelper.helper import SampleDataHelper
 
 from django.core.management.base import BaseCommand
-from django.db import transaction
+-from django.db import transaction
 from django.utils.timezone import now
 
 from django.contrib.webdesign import lorem_ipsum
@@ -17,8 +17,8 @@ from greenmine.projects.milestones.models import *
 from greenmine.projects.userstories.models import *
 from greenmine.projects.tasks.models import *
 from greenmine.projects.issues.models import *
-from greenmine.projects.questions.models import *
-from greenmine.projects.documents.models import *
+#from greenmine.projects.questions.models import *
+#from greenmine.projects.documents.models import *
 from greenmine.projects.wiki.models import *
 
 
@@ -51,19 +51,20 @@ class Command(BaseCommand):
         for x in range(10):
             self.users.append(self.create_user(x))
 
-        role = Role.objects.all()[0]
-
         # projects
-        for x in range(7):
+        for x in range(4):
             project = self.create_project(x)
 
             for user in self.users:
-                Membership.objects.create(project=project, role=role, user=user)
+                Membership.objects.create(
+                        project=project,
+                        role=self.sd.db_object_from_queryset(Role.objects.all()),
+                        user=user)
 
-            start_date = now() - datetime.timedelta(70)
+            start_date = now() - datetime.timedelta(55)
 
             # create random milestones
-            for y in range(self.sd.int(1, 10)):
+            for y in range(self.sd.int(1, 5)):
                 end_date = start_date + datetime.timedelta(15)
                 milestone = self.create_milestone(project, start_date, end_date)
 
@@ -71,7 +72,7 @@ class Command(BaseCommand):
                 for z in range(self.sd.int(3, 7)):
                     us = self.create_us(project, milestone)
 
-                    rang = (1, 6) if start_date <= now() and end_date <= now() else (0, 6)
+                    rang = (1, 4) if start_date <= now() and end_date <= now() else (0, 6)
                     for w in range(self.sd.int(*rang)):
                         if start_date <= now() and end_date <= now():
                             task = self.create_task(project, milestone, us, start_date, end_date, closed=True)
@@ -95,17 +96,17 @@ class Command(BaseCommand):
             #for y in range(self.sd.int(15,25)):
             #    question = self.create_question(project)
 
-    def create_question(self, project):
-        question = Question.objects.create(
-            project=project,
-            subject=self.sd.choice(SUBJECT_CHOICES),
-            content=self.sd.paragraph(),
-            owner=project.owner,
-            status=self.sd.db_object_from_queryset(project.question_status.all()),
-            tags=self.sd.words(1,5).split(" "),
-        )
+    #def create_question(self, project):
+    #    question = Question.objects.create(
+    #        project=project,
+    #        subject=self.sd.choice(SUBJECT_CHOICES),
+    #        content=self.sd.paragraph(),
+    #        owner=project.owner,
+    #        status=self.sd.db_object_from_queryset(project.question_status.all()),
+    #        tags=self.sd.words(1,5).split(" "),
+    #    )
 
-        return question
+    #    return question
 
     def create_bug(self, project):
         bug = Issue.objects.create(
