@@ -130,3 +130,12 @@ reversion.register(UserStory)
 def us_ref_handler(sender, instance, **kwargs):
     if not instance.id and instance.project:
         instance.ref = ref_uniquely(instance.project, "last_us_ref", instance.__class__)
+
+
+@receiver(models.signals.post_save, sender=UserStory, dispatch_uid="user_story_create_role_points_handler")
+def us_ref_handler(sender, instance, **kwargs):
+    created_roles_ids = instance.role_points.all().values_list("role__id", flat=True)
+    null_points_value = instance.project.points.get(value=None)
+
+    for role in instance.project.get_roles().exclude(id__in=created_roles_ids):
+        instance.role_points.create(role=role, points=null_points_value)

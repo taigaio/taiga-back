@@ -22,7 +22,7 @@ from greenmine.projects.documents.models import *
 from greenmine.projects.wiki.models import *
 
 
-subjects = [
+SUBJECT_CHOICES = [
     "Fixing templates for Django 1.2.",
     "get_actions() does not check for 'delete_selected' in actions",
     "Experimental: modular file types",
@@ -93,40 +93,33 @@ class Command(BaseCommand):
     def create_question(self, project):
         question = Question.objects.create(
             project=project,
-            subject=self.sd.words(1,5),
+            subject=self.sd.choice(SUBJECT_CHOICES),
             content=self.sd.paragraph(),
             owner=project.owner,
-            status=self.sd.db_object_from_queryset(QuestionStatus.objects.filter(project=project)),
-            tags=[],
+            status=self.sd.db_object_from_queryset(project.question_status.all()),
+            tags=self.sd.words(1,5).split(" "),
         )
 
-        for tag in self.sd.words(1,5).split(" "):
-            question.tags.append(tag)
-
-        question.save()
+        return question
 
     def create_bug(self, project):
         bug = Issue.objects.create(
             project=project,
-            subject=self.sd.words(1, 5),
+            subject=self.sd.choice(SUBJECT_CHOICES),
             description=self.sd.paragraph(),
             owner=project.owner,
             severity=self.sd.db_object_from_queryset(Severity.objects.filter(project=project)),
             status=self.sd.db_object_from_queryset(IssueStatus.objects.filter(project=project)),
             priority=self.sd.db_object_from_queryset(Priority.objects.filter(project=project)),
             type=self.sd.db_object_from_queryset(IssueType.objects.filter(project=project)),
-            tags=[],
+            tags=self.sd.words(1, 5).split(" "),
         )
 
-        for tag in self.sd.words(1, 5).split(" "):
-            bug.tags.append(tag)
-
-        bug.save()
         return bug
 
     def create_task(self, project, milestone, us, min_date, max_date, closed=False):
         task = Task(
-            subject="Task {0}".format(self.sd.words(3,4)),
+            subject=self.sd.choice(SUBJECT_CHOICES),
             description=self.sd.paragraph(),
             project=project,
             owner=self.sd.choice(self.users),
@@ -135,9 +128,9 @@ class Command(BaseCommand):
             finished_date=None,
         )
         if closed:
-            task.status = TaskStatus.objects.get(project=project, order=4)
+            task.status = project.task_statuses.get(order=4)
         else:
-            task.status = self.sd.db_object_from_queryset(TaskStatus.objects.filter(project=project))
+            task.status = self.sd.db_object_from_queryset(project.task_statuses.all())
 
         if task.status.is_closed:
             task.finished_date = self.sd.datetime_between(min_date, max_date)
@@ -146,39 +139,34 @@ class Command(BaseCommand):
         return task
 
     def create_us(self, project, milestone=None):
-        us = UserStory(
-            subject=self.sd.words(4,9),
+        us = UserStory.objects.create(
+            subject=self.sd.choice(SUBJECT_CHOICES),
             project=project,
             owner=self.sd.choice(self.users),
             description=self.sd.paragraph(),
             milestone=milestone,
-            status=self.sd.db_object_from_queryset(UserStoryStatus.objects.filter(project=project)),
-            tags=[]
+            status=self.sd.db_object_from_queryset(project.us_statuses.all()),
+            tags=self.sd.words(1, 3).split(" ")
         )
 
-        us.save()
-
-        for role in project.get_roles():
+        for role_points in us.role_points.all():
             if milestone:
-                points=self.sd.db_object_from_queryset(Points.objects.filter(project=project).exclude(order=0))
+                role_points.point = self.sd.db_object_from_queryset(
+                               us.project.points.exclude(value=None))
             else:
-                points=self.sd.db_object_from_queryset(Points.objects.filter(project=project))
+                role_points.point = self.sd.db_object_from_queryset(
+                                            us.project.points.all())
 
-            RolePoints.objects.create(
-                user_story=us,
-                points=points,
-                role=role)
+            role_points.save()
 
-        for tag in self.sd.words(1, 3).split(" "):
-            us.tags.append(tag)
-
-        us.save()
         return us
 
     def create_milestone(self, project, start_date, end_date):
-        milestone = Milestone(
+        milestone = Milestone.objects.create(
             project=project,
-            name='Sprint {0}'.format(start_date),
+            name='Sprint {0}-{1}-{2}'.format(start_date.year,
+                                             start_date.month,
+                                             start_date.day),
             owner=project.owner,
             created_date=start_date,
             modified_date=start_date,
@@ -186,13 +174,12 @@ class Command(BaseCommand):
             estimated_finish=end_date,
             order=10
         )
-        milestone.save()
         return milestone
 
     def create_project(self, counter):
         # create project
-        project = Project(
-            name='Project Example 1 {0}'.format(counter),
+        project = Project.objects.create(
+            name='Project Example {0}'.format(counter),
             description='Project example {0} description'.format(counter),
             owner=random.choice(self.users),
             public=True,
@@ -200,12 +187,11 @@ class Command(BaseCommand):
             total_milestones=self.sd.int(5,10)
         )
 
-        project.save()
         return project
 
     def create_user(self, counter):
         user = User.objects.create(
-            username='user-{0}-{1}'.format(counter, self.sd.word()),
+            username='user-{0}'.format(counter),
             first_name=self.sd.name('es'),
             last_name=self.sd.surname('es'),
             email=self.sd.email(),
