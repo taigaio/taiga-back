@@ -23,18 +23,22 @@ from greenmine.projects.wiki.models import *
 
 
 SUBJECT_CHOICES = [
-    "Fixing templates for Django 1.2.",
+    "Create the user model",
+    "Implement the form",
+    "Create the html template",
+    "Fixing templates for Django 1.6.",
     "get_actions() does not check for 'delete_selected' in actions",
     "Experimental: modular file types",
     "Add setting to allow regular users to create folders at the root level.",
-    "add tests for bulk operations",
-    "create testsuite with matrix builds",
+    "Add tests for bulk operations",
+    "Create testsuite with matrix builds",
     "Lighttpd support",
     "Lighttpd x-sendfile support",
     "Added file copying and processing of images (resizing)",
     "Exception is thrown if trying to add a folder with existing name",
     "Feature/improved image admin",
     "Support for bulk actions",
+    "Migrate to Python 3 and milk a beautiful cow"
 ]
 
 
