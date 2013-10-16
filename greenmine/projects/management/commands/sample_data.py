@@ -21,6 +21,28 @@ from greenmine.projects.issues.models import *
 #from greenmine.projects.documents.models import *
 from greenmine.projects.wiki.models import *
 
+COLOR_CHOICES = [
+    "#FC8EAC",
+    "#A5694F",
+    "#002e33",
+    "#67CF00",
+    "#71A6D2",
+    "#FFF8E7",
+    "#4B0082",
+    "#007000",
+    "#40826D",
+    "#708090",
+    "#761CEC",
+    "#0F0F0F",
+    "#D70A53",
+    "#CC0000",
+    "#FFCC00",
+    "#FFFF00",
+    "#C0FF33",
+    "#B6DA55",
+    "#2099DB",
+]
+
 
 SUBJECT_CHOICES = [
     "Create the user model",
@@ -132,6 +154,8 @@ class Command(BaseCommand):
             milestone=milestone,
             user_story=us,
             finished_date=None,
+            assigned_to = self.sd.db_object_from_queryset(
+                                   project.memberships.all()).user
         )
         if closed:
             task.status = project.task_statuses.get(order=4)
@@ -202,6 +226,7 @@ class Command(BaseCommand):
             last_name=self.sd.surname('es'),
             email=self.sd.email(),
             token=''.join(random.sample('abcdef0123456789', 10)),
+            color=self.sd.choice(COLOR_CHOICES)
         )
 
         user.set_password('user{0}'.format(counter))
