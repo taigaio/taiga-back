@@ -59,7 +59,7 @@ SEND_BROKEN_LINK_EMAILS = True
 IGNORABLE_404_ENDS = ('.php', '.cgi')
 IGNORABLE_404_STARTS = ('/phpmyadmin/',)
 
-ATOMIC_REQUESTS = True
+ATOMIC_REQUESTS = False
 
 TIME_ZONE = 'Europe/Madrid'
 LANGUAGE_CODE = 'en'

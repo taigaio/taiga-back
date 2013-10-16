@@ -18,7 +18,7 @@ class User(WatcherMixin, AbstractUser):
                                         verbose_name=_('default language'))
     default_timezone = models.CharField(max_length=20, null=False, blank=True, default='',
                                         verbose_name=_('default timezone'))
-    token = models.CharField(max_length=200, null=False, blank=True, default='',
+    token = models.CharField(max_length=200, null=True, blank=True, default=None,
                              verbose_name=_('token'))
     colorize_tags = models.BooleanField(null=False, blank=True, default=False,
                                         verbose_name=_('colorize tags'))

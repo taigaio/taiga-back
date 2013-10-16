@@ -69,6 +69,20 @@ class UserSerializer(serializers.ModelSerializer):
         return [{"id": x.id, "name": x.name} for x in obj.projects.all()]
 
 
+class RecoverySerializer(serializers.Serializer):
+    token = serializers.CharField(max_length=200)
+    password = serializers.CharField(min_length=6)
+
+    def validate_token(self, attrs, source):
+        token = attrs[source]
+        try:
+            user = User.objects.get(token=token)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("invalid token")
+
+        return attrs
+
+
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
