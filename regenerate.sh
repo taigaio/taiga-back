@@ -6,11 +6,6 @@ dropdb greenmine
 echo "-> Create greenmine DB"
 createdb greenmine
 
-echo "-> Remove the search index"
-rm -rf greenmine/search/index/*
-rm -f database.sqlite
-
-
 echo "-> Run syncdb"
 python manage.py syncdb --migrate --noinput --traceback
 echo "-> Load initial user"
