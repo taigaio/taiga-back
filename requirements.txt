@@ -5,6 +5,7 @@ git+https://github.com/tomchristie/django-rest-framework.git@2.4.0
 git+https://github.com/etianen/django-reversion.git@django-1.6
 
 South==0.8.2
+anyjson==0.3.3
 Werkzeug==0.9.4
 celery==3.0.23
 django-celery==3.0.23
