@@ -82,7 +82,7 @@ class Project(models.Model):
                                            verbose_name=_("last task ref"))
     last_issue_ref = models.BigIntegerField(null=True, blank=False, default=1,
                                             verbose_name=_("last issue ref"))
-    total_milestones = models.IntegerField(default=1, null=True, blank=True,
+    total_milestones = models.IntegerField(default=0, null=True, blank=True,
                                            verbose_name=_("total of milestones"))
     total_story_points = models.FloatField(default=None, null=True, blank=False,
                                            verbose_name=_("total story points"))
