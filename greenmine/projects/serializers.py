@@ -69,9 +69,18 @@ class QuestionStatusSerializer(serializers.ModelSerializer):
 
 # Projects
 
+class MembershipSerializer(serializers.ModelSerializer):
+    role_name = serializers.CharField(source='role.name', required=False)
+    full_name = serializers.CharField(source='user.get_full_name', required=False)
+
+    class Meta:
+        model = models.Membership
+
+
 class ProjectSerializer(serializers.ModelSerializer):
     tags = PickleField(required=False)
     list_of_milestones = serializers.SerializerMethodField("get_list_of_milestones")
+    memberships = MembershipSerializer(many=True, required=False)
     us_statuses = UserStoryStatusSerializer(many=True, required=False)          # User Stories
     points = PointsSerializer(many=True, required=False)
     task_statuses = TaskStatusSerializer(many=True, required=False)             # Tasks
