@@ -1,6 +1,9 @@
 Greenmine Backend
 =================
 
+.. image:: http://kaleidos.net/static/img/badge.png
+    :target: http://kaleidos.net/community/greenmine/
+
 .. image:: https://travis-ci.org/kaleidos/greenmine-back.png?branch=master
     :target: https://travis-ci.org/kaleidos/greenmine-back
 
