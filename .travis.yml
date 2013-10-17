@@ -9,7 +9,7 @@ install:
   - pip install -r requirements.txt --use-mirrors
   - pip install coveralls --use-mirrors
 script:
-  - coverage run --source=greenmine manage.py test --settings=greenmine.settings.travis greenmine
+    - coverage run --source=greenmine --omit='*tests*,*commands*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*' manage.py test --settings=greenmine.settings.travis greenmine
 notifications:
   email:
     recipients:
