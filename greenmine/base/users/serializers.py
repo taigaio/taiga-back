@@ -33,4 +33,4 @@ class RecoverySerializer(serializers.Serializer):
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        fields = ('id', 'name', 'slug', 'permissions',)
+        fields = ('id', 'name', 'slug', 'permissions', 'computable')

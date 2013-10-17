@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import UserManager, AbstractUser
 
@@ -37,6 +38,7 @@ class Role(models.Model):
                                          verbose_name=_('permissions'))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
+    computable = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = 'role'
@@ -45,3 +47,18 @@ class Role(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# On Role object is changed, update all membership
+# related to current role.
+@receiver(models.signals.post_save, sender=Role,
+          dispatch_uid='role_post_save')
+def role_post_save(sender, instance, created, **kwargs):
+    # ignore if object is just created
+    if created:
+        return
+
+    unique_projects = set(map(lambda x: x.project, instance.memberships.all()))
+    for project in unique_projects:
+        project.update_role_points()
+

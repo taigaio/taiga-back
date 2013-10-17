@@ -133,7 +133,7 @@ class Project(models.Model):
         rolepoints_model = get_model("userstories", "RolePoints")
 
         # Get all available roles on this project
-        roles = self.get_roles()
+        roles = self.get_roles().filter(computable=True)
 
         # Get point instance that represent a null/undefined
         null_points_value = self.points.get(value=None)
