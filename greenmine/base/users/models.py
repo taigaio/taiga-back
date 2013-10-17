@@ -28,6 +28,9 @@ class User(WatcherMixin, AbstractUser):
     class Meta:
         ordering = ["username"]
 
+    def get_full_name(self):
+        return super().get_full_name() or self.username or self.email
+
 
 class Role(models.Model):
     name = models.CharField(max_length=200, null=False, blank=False,
