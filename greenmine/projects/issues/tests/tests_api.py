@@ -24,8 +24,8 @@ class IssuesTestCase(test.TestCase):
         self.user4 = create_user(4) # No Membership
 
         self.project1 = create_project(1, self.user1)
-        add_membership(self.project1, self.user2, "dev")
-        add_membership(self.project1, self.user3, "dev")
+        add_membership(self.project1, self.user2)
+        add_membership(self.project1, self.user3)
         self.milestone1 = create_milestone(1, self.user2, self.project1)
         self.issue1 = create_issue(1, self.user2, self.project1, self.milestone1)
         self.issue2 = create_issue(2, self.user2, self.project1, self.milestone1)

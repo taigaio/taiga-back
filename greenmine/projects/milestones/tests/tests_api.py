@@ -23,8 +23,8 @@ class MilestonesTestCase(test.TestCase):
         self.user4 = create_user(4)
 
         self.project1 = create_project(1, self.user1)
-        add_membership(self.project1, self.user2, "dev")
-        add_membership(self.project1, self.user3, "dev")
+        add_membership(self.project1, self.user2)
+        add_membership(self.project1, self.user3)
 
         self.project2 = create_project(2, self.user4)
 
