@@ -110,16 +110,6 @@ class Project(models.Model):
 
         super(Project, self).save(*args, **kwargs)
 
-    @property
-    def list_of_milestones(self):
-        return [{
-            "id": milestone.id,
-            "name": milestone.name,
-            "finish_date": milestone.estimated_finish,
-            "closed_points": milestone.closed_points,
-            "client_increment_points": milestone.client_increment_points,
-            "team_increment_points": milestone.team_increment_points
-        } for milestone in self.milestones.all().order_by("estimated_start")]
 
     def get_roles(self):
         role_model = get_model("users", "Role")

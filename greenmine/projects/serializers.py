@@ -71,7 +71,7 @@ class QuestionStatusSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     tags = PickleField(required=False)
-    list_of_milestones = serializers.Field(source="list_of_milestones")
+    list_of_milestones = serializers.SerializerMethodField("get_list_of_milestones")
     us_statuses = UserStoryStatusSerializer(many=True, required=False)          # User Stories
     points = PointsSerializer(many=True, required=False)
     task_statuses = TaskStatusSerializer(many=True, required=False)             # Tasks
@@ -84,3 +84,18 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Project
         read_only_fields = ("owner",)
+
+    def get_list_of_milestones(self, obj):
+        milestones_list = []
+
+        if obj and obj.memberships:
+            milestones_list = [{
+                "id": milestone.id,
+                "name": milestone.name,
+                "finish_date": milestone.estimated_finish,
+                "closed_points": milestone.closed_points,
+                "client_increment_points": milestone.client_increment_points,
+                "team_increment_points": milestone.team_increment_points
+            } for milestone in obj.milestones.all().order_by("estimated_start")]
+
+        return milestones_list
