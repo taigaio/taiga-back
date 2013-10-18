@@ -23,17 +23,10 @@ ADMINS = (
 )
 
 LANGUAGES = (
-    ('es', _('Spanish')),
     ('en', _('English')),
-    ('ru', _('Russian')),
 )
 
-
-
 MANAGERS = ADMINS
-
-DISABLE_REGISTRATION = False
-DEFAULT_TASK_PARSER_RE = "^\s*Task\:(.+)$"
 
 DATABASES = {
     'default': {
@@ -42,7 +35,6 @@ DATABASES = {
     }
 }
 
-# CACHE CONFIG
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -61,7 +53,7 @@ IGNORABLE_404_STARTS = ('/phpmyadmin/',)
 
 ATOMIC_REQUESTS = False
 
-TIME_ZONE = 'Europe/Madrid'
+TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'en'
 USE_I18N = True
 USE_L10N = True
@@ -151,7 +143,6 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.locale.LocaleMiddleware',
     'greenmine.base.middleware.GreenmineSessionMiddleware',
     'greenmine.base.middleware.CoorsMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'reversion.middleware.RevisionMiddleware',
