@@ -19,6 +19,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
                   "modified_date", "object_id", "url")
         read_only_fields = ("owner",)
 
+
 # User Stories common serializers
 
 class PointsSerializer(serializers.ModelSerializer):
@@ -79,20 +80,24 @@ class MembershipSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     tags = PickleField(required=False)
-    list_of_milestones = serializers.SerializerMethodField("get_list_of_milestones")
-    memberships = MembershipSerializer(many=True, required=False)
-    us_statuses = UserStoryStatusSerializer(many=True, required=False)          # User Stories
-    points = PointsSerializer(many=True, required=False)
-    task_statuses = TaskStatusSerializer(many=True, required=False)             # Tasks
-    priorities = PrioritySerializer(many=True, required=False)                  # Issues
-    severities = SeveritySerializer(many=True, required=False)
-    issue_statuses = IssueStatusSerializer(many=True, required=False)
-    issue_types = IssueTypeSerializer(many=True, required=False)
-    #question_statuses = QuestionStatusSerializer(many=True, required=False)    # Questions
 
     class Meta:
         model = models.Project
-        read_only_fields = ("owner",)
+        read_only_fields = ("uuid", "created_date", "modified_date", "owner")
+        exclude = ("last_us_ref", "last_task_ref", "last_issue_ref")
+
+
+class ProjectDetailSerializer(ProjectSerializer):
+    list_of_milestones = serializers.SerializerMethodField("get_list_of_milestones")
+    memberships = MembershipSerializer(many=True, required=False)
+    us_statuses = UserStoryStatusSerializer(many=True, required=False)       # User Stories
+    points = PointsSerializer(many=True, required=False)
+    task_statuses = TaskStatusSerializer(many=True, required=False)          # Tasks
+    priorities = PrioritySerializer(many=True, required=False)               # Issues
+    severities = SeveritySerializer(many=True, required=False)
+    issue_statuses = IssueStatusSerializer(many=True, required=False)
+    issue_types = IssueTypeSerializer(many=True, required=False)
+    #question_statuses = QuestionStatusSerializer(many=True, required=False) # Questions
 
     def get_list_of_milestones(self, obj):
         milestones_list = []

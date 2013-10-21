@@ -15,7 +15,8 @@ from . import permissions
 
 class ProjectViewSet(ModelCrudViewSet):
     model = models.Project
-    serializer_class = serializers.ProjectSerializer
+    serializer_class = serializers.ProjectDetailSerializer
+    list_serializer_class = serializers.ProjectSerializer
     permission_classes = (IsAuthenticated, permissions.ProjectPermission)
 
     def get_queryset(self):
