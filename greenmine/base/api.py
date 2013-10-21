@@ -60,7 +60,20 @@ class PreconditionMixin(object):
         self.pre_conditions_on_delete(obj)
 
 
+class DetailAndListSerializersMixin(object):
+    """
+    Use a diferent serializer class to the list action.
+    """
+    list_serializer_class = None
+
+    def get_serializer_class(self):
+        if self.action == "list" and self.list_serializer_class:
+            return self.list_serializer_class
+        return super().get_serializer_class()
+
+
 class ModelCrudViewSet(AtomicMixin,
+                       DetailAndListSerializersMixin,
                        PreconditionMixin,
                        HeadersPaginationMixin,
                        ConditionalPaginationMixin,
@@ -74,6 +87,7 @@ class ModelCrudViewSet(AtomicMixin,
 
 
 class ModelListViewSet(AtomicMixin,
+                       DetailAndListSerializersMixin,
                        PreconditionMixin,
                        HeadersPaginationMixin,
                        ConditionalPaginationMixin,
