@@ -55,6 +55,7 @@ class Membership(models.Model):
 
     class Meta:
         unique_together = ("user", "project")
+        ordering = ["project", "role", "user"]
 
 
 class Project(models.Model):
