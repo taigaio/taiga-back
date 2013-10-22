@@ -1,17 +1,24 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-import reversion
+from django.contrib.contenttypes import generic
 
 from greenmine.projects.milestones.admin import MilestoneInline
 from . import models
 
+import reversion
 
 
 class AttachmentAdmin(reversion.VersionAdmin):
-    list_display = ["id", "owner"]
+    list_display = ["project", "attached_file", "owner"]
 
 admin.site.register(models.Attachment, AttachmentAdmin)
+
+
+class AttachmentInline(generic.GenericTabularInline):
+     model = models.Attachment
+     fields = ("attached_file", "owner")
+     extra = 0
 
 
 class MembershipAdmin(admin.ModelAdmin):

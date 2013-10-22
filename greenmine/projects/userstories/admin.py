@@ -2,6 +2,8 @@
 
 from django.contrib import admin
 
+from greenmine.projects.admin import AttachmentInline
+
 from .  import models
 
 import reversion
@@ -29,6 +31,6 @@ class RolePointsInline(admin.TabularInline):
 class UserStoryAdmin(reversion.VersionAdmin):
     list_display = ["id", "ref", "milestone", "project", "owner", 'status', 'is_closed']
     list_filter = ["milestone", "project"]
-    inlines = [RolePointsInline]
+    inlines = [RolePointsInline, AttachmentInline]
 
 admin.site.register(models.UserStory, UserStoryAdmin)
