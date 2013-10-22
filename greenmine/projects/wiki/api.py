@@ -25,7 +25,7 @@ class WikiAttachmentViewSet(ModelCrudViewSet):
     filter_fields = ["project", "object_id"]
 
     def get_queryset(self):
-        ct = ContentType.objects.get_for_model(models.Wiki)
+        ct = ContentType.objects.get_for_model(models.WikiPage)
         qs = super(WikiAttachmentViewSet, self).get_queryset()
         qs = qs.filter(content_type=ct)
         return qs.distinct()
@@ -40,7 +40,7 @@ class WikiAttachmentViewSet(ModelCrudViewSet):
 
     def pre_save(self, obj):
         if not obj.id:
-            obj.content_type = ContentType.objects.get_for_model(models.Wiki)
+            obj.content_type = ContentType.objects.get_for_model(models.WikiPage)
             obj.owner = self.request.user
 
         super(WikiAttachmentViewSet, self).pre_save(obj)
