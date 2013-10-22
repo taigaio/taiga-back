@@ -30,6 +30,12 @@ class ProjectViewSet(ModelCrudViewSet):
         super(ProjectViewSet, self).pre_save(obj)
 
 
+class MembershipViewSet(ModelCrudViewSet):
+    model = models.Membership
+    serializer_class = serializers.MembershipSerializer
+    permission_classes = (IsAuthenticated, permissions.MembershipPermission)
+
+
 # User Stories commin ViewSets
 
 class PointsViewSet(ModelListViewSet):

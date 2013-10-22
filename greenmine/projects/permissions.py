@@ -12,6 +12,15 @@ class ProjectPermission(BasePermission):
     path_to_project =  []
 
 
+class MembershipPermission(BasePermission):
+    get_permission = "view_membership"
+    put_permission = "change_membership"
+    patch_permission = "change_membership"
+    delete_permission = "delete_membership"
+    safe_methods = ["HEAD", "OPTIONS"]
+    path_to_project =  ["project"]
+
+
 class AttachmentPermission(BasePermission):
     get_permission = "view_attachment"
     put_permission = "change_attachment"
