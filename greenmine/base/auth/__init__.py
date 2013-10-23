@@ -37,8 +37,13 @@ def get_token_for_user(user):
 
 
 def get_user_for_token(token):
-    data = signing.loads(token)
+    try:
+        data = signing.loads(token)
+    except signing.BadSignature:
+        raise exc.BadRequest("Invalid token")
+
     model_cls = get_model("users", "User")
+
     try:
         user = model_cls.objects.get(pk=data["user_id"])
     except model_cls.DoesNotExist:
