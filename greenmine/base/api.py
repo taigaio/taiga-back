@@ -10,25 +10,31 @@ from rest_framework.response import Response
 from .pagination import HeadersPaginationMixin, ConditionalPaginationMixin
 
 
-class AtomicMixin(object):
+class CreateModelMixin(mixins.CreateModelMixin):
     @transaction.atomic
-    def post(self, *args, **kwargs):
-        return super().post(*args, **kwargs)
+    def create(self, *args, **kwargs):
+        return super().create(*args, **kwargs)
 
+
+class RetrieveModelMixin(mixins.RetrieveModelMixin):
     @transaction.atomic
-    def delete(self, *args, **kwargs):
-        return super().delete(*args, **kwargs)
+    def retrieve(self, *args, **kwargs):
+        return super().retrieve(*args, **kwargs)
 
+
+class UpdateModelMixin(mixins.UpdateModelMixin):
     @transaction.atomic
-    def put(self, *args, **kwargs):
-        return super().put(*args, **kwargs)
+    def update(self, *args, **kwargs):
+        return super().update(*args, **kwargs)
 
+
+class ListModelMixin(mixins.ListModelMixin):
     @transaction.atomic
-    def patch(self, *args, **kwargs):
-        return super().patch(*args, **kwargs)
+    def list(self, *args, **kwargs):
+        return super().list(*args, **kwargs)
 
 
-class DestroyModelMixin(object):
+class DestroyModelMixin(mixins.DestroyModelMixin):
     """
     Self version of DestroyModelMixin with
     pre_delete hook method.
@@ -37,6 +43,7 @@ class DestroyModelMixin(object):
     def pre_delete(self, obj):
         pass
 
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         obj = self.get_object()
         self.pre_delete(obj)
@@ -72,24 +79,24 @@ class DetailAndListSerializersMixin(object):
         return super().get_serializer_class()
 
 
-class ModelCrudViewSet(AtomicMixin,
-                       DetailAndListSerializersMixin,
+class ModelCrudViewSet(DetailAndListSerializersMixin,
                        PreconditionMixin,
                        HeadersPaginationMixin,
                        ConditionalPaginationMixin,
-                       mixins.CreateModelMixin,
-                       mixins.RetrieveModelMixin,
-                       mixins.UpdateModelMixin,
+                       CreateModelMixin,
+                       RetrieveModelMixin,
+                       UpdateModelMixin,
                        DestroyModelMixin,
-                       mixins.ListModelMixin,
+                       ListModelMixin,
                        viewsets.GenericViewSet):
     pass
 
 
-class ModelListViewSet(AtomicMixin,
-                       DetailAndListSerializersMixin,
+class ModelListViewSet(DetailAndListSerializersMixin,
                        PreconditionMixin,
                        HeadersPaginationMixin,
                        ConditionalPaginationMixin,
-                       viewsets.ReadOnlyModelViewSet):
+                       RetrieveModelMixin,
+                       ListModelMixin,
+                       viewsets.GenericViewSet):
     pass
