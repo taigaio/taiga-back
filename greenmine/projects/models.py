@@ -41,7 +41,7 @@ class Attachment(models.Model):
         ordering = ["project", "created_date"]
 
     def __str__(self):
-        return u"Attachment {2}".format(self.id)
+        return u"Attachment: {}".format(self.id)
 
 
 class Membership(models.Model):
@@ -318,13 +318,10 @@ def membership_post_delete(sender, instance, using, **kwargs):
 @receiver(models.signals.post_save, sender=Project, dispatch_uid='project_post_save')
 def project_post_save(sender, instance, created, **kwargs):
     """
-    Create all project model depences on project is
-    created.
+    Populate new project dependen default data
     """
     if not created:
         return
-
-    # Populate new project dependen default data
 
     # USs
     for order, name, value in choices.POINTS_CHOICES:
