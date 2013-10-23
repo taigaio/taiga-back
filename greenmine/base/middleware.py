@@ -24,7 +24,7 @@ COORS_ALLOWED_METHODS = getattr(settings, 'COORS_ALLOWED_METHODS',
                             ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE', 'PATCH'])
 COORS_ALLOWED_HEADERS = getattr(settings, 'COORS_ALLOWED_HEADERS',
                             ['Content-Type', 'X-Requested-With',
-                             'X-Session-Token', 'Accept-Encoding',
+                             'Authorization', 'Accept-Encoding',
                              'X-Disable-Pagination'])
 COORS_ALLOWED_CREDENTIALS = getattr(settings, 'COORS_ALLOWED_CREDENTIALS',  True)
 
@@ -43,7 +43,6 @@ class CoorsMiddleware(object):
             response = http.HttpResponse()
             self._populate_response(response)
             return response
-
         return None
 
     def process_response(self, request, response):

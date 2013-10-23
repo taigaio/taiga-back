@@ -139,12 +139,17 @@ TEMPLATE_LOADERS = [
 ]
 
 MIDDLEWARE_CLASSES = [
+    # Common middlewares
     'django.middleware.common.CommonMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    'greenmine.base.middleware.GreenmineSessionMiddleware',
     'greenmine.base.middleware.CoorsMiddleware',
+
+    # Only needed by django admin
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+
+    # 'greenmine.base.middleware.GreenmineSessionMiddleware',
     'reversion.middleware.RevisionMiddleware',
 ]
 
@@ -270,7 +275,8 @@ MAX_SEARCH_RESULTS = 100
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'greenmine.base.users.auth.SessionAuthentication',
+        'greenmine.base.auth.Token',
+        'greenmine.base.auth.Session',
     ),
     'FILTER_BACKEND': 'greenmine.base.filters.FilterBackend',
     'PAGINATE_BY': 50,

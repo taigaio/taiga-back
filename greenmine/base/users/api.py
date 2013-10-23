@@ -128,31 +128,3 @@ class UsersViewSet(ModelCrudViewSet):
         request.user.set_password(password)
         request.user.save(update_fields=["password"])
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class AuthViewSet(viewsets.ViewSet):
-    permission_classes = (AllowAny,)
-
-    def create(self, request, **kwargs):
-        username = request.DATA.get('username', None)
-        password = request.DATA.get('password', None)
-
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            raise exc.BadRequest("Invalid username or password")
-
-        if not user.check_password(password):
-            raise exc.BadRequest("Invalid username or password")
-
-        user = authenticate(username=username, password=password)
-        login(request, user)
-
-        serializer = UserSerializer(user)
-        response_data = serializer.data
-        response_data["auth_token"] = request.session.session_key
-        return Response(response_data)
-
-    def destroy(self, request, pk=None):
-        logout(request)
-        return Response({})
