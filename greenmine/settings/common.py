@@ -178,8 +178,8 @@ TEMPLATE_DIRS = [
 ]
 
 INSTALLED_APPS = [
-    'grappelli.dashboard',
-    'grappelli',
+    # 'grappelli.dashboard',
+    # 'grappelli',
 
     'django.contrib.auth',
     'django.contrib.contenttypes',
