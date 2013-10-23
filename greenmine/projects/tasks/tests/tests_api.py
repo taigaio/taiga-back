@@ -51,7 +51,13 @@ class TasksTestCase(test.TestCase):
         response = self.client.login(username=self.user1.username,
                                      password=self.user1.username)
         self.assertTrue(response)
-        response = self.client.get(reverse("tasks-list"))
+        response = self.client.get(reverse("tasks-list"), HTTP_X_DISABLE_PAGINATION=True)
+        self.assertEqual(response.status_code, 200)
+        tasks_list = response.data
+        self.assertEqual(len(tasks_list), 4)
+
+        response = self.client.get(reverse("tasks-list"), {"page": 2},
+                                   HTTP_X_DISABLE_PAGINATION=True)
         self.assertEqual(response.status_code, 200)
         tasks_list = response.data
         self.assertEqual(len(tasks_list), 4)
