@@ -9,15 +9,21 @@ from . import models
 
 class AttachmentSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField("get_url")
+    size = serializers.SerializerMethodField("get_size")
+
+    class Meta:
+        model = models.Attachment
+        fields = ("id", "project", "owner", "attached_file", "size", "created_date",
+                  "modified_date", "object_id", "url")
+        read_only_fields = ("owner",)
 
     def get_url(self, obj):
         return obj.attached_file.url if obj and obj.attached_file else ""
 
-    class Meta:
-        model = models.Attachment
-        fields = ("id", "project", "owner", "attached_file", "created_date",
-                  "modified_date", "object_id", "url")
-        read_only_fields = ("owner",)
+    def get_size(self, obj):
+        if obj.attached_file:
+            return obj.attached_file.size
+        return None
 
 
 # User Stories common serializers
