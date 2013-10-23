@@ -51,7 +51,7 @@ SEND_BROKEN_LINK_EMAILS = True
 IGNORABLE_404_ENDS = ('.php', '.cgi')
 IGNORABLE_404_STARTS = ('/phpmyadmin/',)
 
-ATOMIC_REQUESTS = False
+ATOMIC_REQUESTS = True
 
 TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'en'
@@ -150,6 +150,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'greenmine.base.middleware.CoorsMiddleware',
+    'reversion.middleware.RevisionMiddleware',
 
     # Only needed by django admin
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -157,7 +158,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
 
     # 'greenmine.base.middleware.GreenmineSessionMiddleware',
-    'reversion.middleware.RevisionMiddleware',
 ]
 
 TEMPLATE_CONTEXT_PROCESSORS = [
