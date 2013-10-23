@@ -21,3 +21,4 @@ djmail>=0.3
 django-jinja>=0.21
 jinja2==2.7.1
 pygments>=1.6
+django-sites>=0.4

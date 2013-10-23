@@ -60,13 +60,18 @@ USE_L10N = True
 LOGIN_URL='/auth/login/'
 USE_TZ = True
 
+SITES = {
+    1: {"domain": "localhost:8000", "scheme": "http"},
+}
+
+SITE_ID = 1
+
 #SESSION BACKEND
 SESSION_ENGINE='django.contrib.sessions.backends.db'
 #SESSION_ENGINE='django.contrib.sessions.backends.cache'
 #SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 #SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_AGE = 1209600 # (2 weeks)
-SESSION_HEADER_NAME = "HTTP_X_SESSION_TOKEN"
 
 API_LIMIT_PER_PAGE = 0
 
@@ -114,6 +119,8 @@ STATIC_URL = '/static/'
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
 ADMIN_MEDIA_PREFIX = '/static/admin/'
+
+DEFAULT_FILE_STORAGE = 'greenmine.base.storage.FileSystemStorage'
 
 
 # Additional locations of static files
@@ -198,7 +205,8 @@ INSTALLED_APPS = [
     'south',
     'reversion',
     'rest_framework',
-    'djmail'
+    'djmail',
+    'django_sites',
 ]
 
 WSGI_APPLICATION = 'greenmine.wsgi.application'
