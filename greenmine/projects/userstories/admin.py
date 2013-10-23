@@ -25,6 +25,7 @@ class UserStoryInline(admin.TabularInline):
 class RolePointsInline(admin.TabularInline):
     model = models.RolePoints
     sortable_field_name = 'role'
+    readonly_fields = ["id"]
     extra = 0
 
 

@@ -10,7 +10,7 @@ from . import models
 
 class RolePointsField(serializers.WritableField):
     def to_native(self, obj):
-        return {str(o.role.id): o.points.order for o in obj.all()}
+        return {str(o.role.id): o.points.id for o in obj.all()}
 
     def from_native(self, obj):
         if isinstance(obj, dict):
