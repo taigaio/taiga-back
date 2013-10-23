@@ -36,13 +36,12 @@ class Attachment(models.Model):
                                      upload_to="files/msg", verbose_name=_("attached file"))
 
     class Meta:
-        verbose_name = u"attachment"
-        verbose_name_plural = u"attachments"
+        verbose_name = u"Attachment"
+        verbose_name_plural = u"Attachments"
         ordering = ["project", "created_date"]
 
     def __str__(self):
-        return u"content_type {0} - object_id {1} - attachment {2}".format(
-                self.content_type, self.object_id, self.id)
+        return u"Attachment {2}".format(self.id)
 
 
 class Membership(models.Model):
@@ -156,13 +155,13 @@ class UserStoryStatus(models.Model):
                                 related_name="us_statuses", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = u"user story status"
-        verbose_name_plural = u"user story statuses"
+        verbose_name = u"Userstory status"
+        verbose_name_plural = u"Userstory statuses"
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
     def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return u"Userstory status: {}".format(self.name)
 
 
 class Points(models.Model):
@@ -176,13 +175,13 @@ class Points(models.Model):
                                 related_name="points", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = u"point"
-        verbose_name_plural = u"points"
+        verbose_name = u"Point"
+        verbose_name_plural = u"Points"
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
     def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return self.name
 
 
 # Tasks common models
@@ -204,7 +203,7 @@ class TaskStatus(models.Model):
         unique_together = ("project", "name")
 
     def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return "Task status: {}".format(self.name)
 
 
 # Issue common Models
@@ -216,13 +215,13 @@ class Priority(models.Model):
                                 related_name="priorities", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = u"priority"
-        verbose_name_plural = u"priorities"
+        verbose_name = u"Priority"
+        verbose_name_plural = u"Priorities"
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
     def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return u"Priority {}".format(self.name)
 
 
 class Severity(models.Model):
@@ -232,13 +231,13 @@ class Severity(models.Model):
                                 related_name="severities", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = u"severity"
-        verbose_name_plural = u"severities"
+        verbose_name = u"Severity"
+        verbose_name_plural = u"Severities"
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
     def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return u"Severity: {}".format(self.name)
 
 
 class IssueStatus(models.Model):
@@ -250,13 +249,13 @@ class IssueStatus(models.Model):
                                 related_name="issue_statuses", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = u"issue status"
-        verbose_name_plural = u"issue statuses"
+        verbose_name = "Issue status"
+        verbose_name_plural = "Issue statuses"
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
     def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return u"Issue status: {}".format(self.name)
 
 
 class IssueType(models.Model):
@@ -266,13 +265,13 @@ class IssueType(models.Model):
                                 related_name="issue_types", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = u"issue type"
-        verbose_name_plural = u"issue types"
+        verbose_name = "Issue type"
+        verbose_name_plural = "Issue types"
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
     def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return "Issue type: {}".format(self.name)
 
 
 # Questions common models
@@ -289,13 +288,13 @@ class QuestionStatus(models.Model):
                                 verbose_name=_("project"))
 
     class Meta:
-        verbose_name = u"question status"
-        verbose_name_plural = u"question status"
+        verbose_name = "Question status"
+        verbose_name_plural = "Question status"
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
     def __str__(self):
-        return u"project {0} - {1}".format(self.project_id, self.name)
+        return u"Quiestion status: {}".format(self.name)
 
 
 # Reversion registration (usufull for base.notification and for meke a historical)

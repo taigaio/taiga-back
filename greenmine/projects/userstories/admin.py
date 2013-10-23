@@ -29,9 +29,18 @@ class RolePointsInline(admin.TabularInline):
     extra = 0
 
 
+class RolePointsAdmin(admin.ModelAdmin):
+    list_display = ["user_story", "role", "points"]
+    list_display_links = list_display
+    list_filter = ["role", "user_story__project"]
+
+
 class UserStoryAdmin(reversion.VersionAdmin):
     list_display = ["id", "ref", "milestone", "project", "owner", 'status', 'is_closed']
     list_filter = ["milestone", "project"]
+    list_display_links = list_display
+    readonly_fields = ["project", "status"]
     inlines = [RolePointsInline, AttachmentInline]
 
 admin.site.register(models.UserStory, UserStoryAdmin)
+admin.site.register(models.RolePoints, RolePointsAdmin)

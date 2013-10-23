@@ -26,6 +26,8 @@ class RolePoints(models.Model):
 
     class Meta:
         unique_together = ("user_story", "role")
+        verbose_name = "Role Point"
+        verbose_name_plural = "Role Points"
 
 
 class UserStory(WatchedMixin, models.Model):
