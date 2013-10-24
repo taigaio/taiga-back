@@ -12,7 +12,8 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'first_name', 'last_name', 'full_name', 'email',
                   'color', 'description', 'default_language', 'default_timezone',
-                  'is_active', 'photo', 'projects')
+                  'is_active', 'photo', 'projects', 'notify_level',
+                  'notify_changes_by_me')
 
     def get_projects(self, obj):
         return [{"id": x.id, "name": x.name} for x in obj.projects.all()]
