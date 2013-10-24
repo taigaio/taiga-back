@@ -64,6 +64,11 @@ SITES = {
     1: {"domain": "localhost:8000", "scheme": "http"},
 }
 
+SITES_FRONT = {
+    1: {"domain": "localhost:9001", "scheme": "http"},
+}
+
+
 SITE_ID = 1
 
 #SESSION BACKEND
@@ -198,6 +203,7 @@ INSTALLED_APPS = [
     'greenmine.projects.userstories',
     'greenmine.projects.tasks',
     'greenmine.projects.issues',
+    'greenmine.front',
     #'greenmine.projects.questions',
     #'greenmine.projects.documents',
     'greenmine.projects.wiki',
