@@ -31,7 +31,7 @@ class MembershipAdmin(admin.ModelAdmin):
 class MembershipInline(admin.TabularInline):
     model = models.Membership
     fields = ['user', 'project', 'role']
-    readonly_fields = ["user", "project", "role"]
+    readonly_fields = ["project", "role"]
     extra = 0
     max_num = 0
     can_delete = False
@@ -40,7 +40,6 @@ class MembershipInline(admin.TabularInline):
 class ProjectAdmin(reversion.VersionAdmin):
     list_display = ["name", "owner", "created_date", "total_milestones", "total_story_points"]
     list_display_links = list_display
-    readonly_fields = ["owner"]
     inlines = [MembershipInline, MilestoneInline]
 
 

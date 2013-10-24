@@ -9,6 +9,7 @@ from . import models
 
 class WikiPageAdmin(admin.ModelAdmin):
     list_display = ["project", "slug", "owner"]
+    list_display_links = list_display
     inlines = [AttachmentInline]
 
 admin.site.register(models.WikiPage, WikiPageAdmin)

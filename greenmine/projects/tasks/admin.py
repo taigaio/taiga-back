@@ -12,7 +12,7 @@ class TaskAdmin(reversion.VersionAdmin):
     list_display = ["subject", "ref", "user_story", "milestone", "project", "user_story_id"]
     list_filter = ["project"]
     list_display_links = list_display
-    readonly_fields = ["project", "milestone", "user_story", "status", "owner", "assigned_to"]
+    readonly_fields = ["milestone", "user_story", "status"]
     inlines = [AttachmentInline]
 
     def user_story_id(self, instance):

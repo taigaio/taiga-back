@@ -29,7 +29,7 @@ class UserStoryAdmin(reversion.VersionAdmin):
     list_display = ["id", "ref", "milestone", "project", "owner", 'status', 'is_closed']
     list_filter = ["project"]
     list_display_links = list_display
-    readonly_fields = ["project", "status"]
+    readonly_fields = ["status", "milestone"]
     inlines = [RolePointsInline, AttachmentInline]
 
 
