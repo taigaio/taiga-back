@@ -59,3 +59,10 @@ def patch_serializer():
 
     serializers.BaseSerializer._patched = True
     serializers.BaseSerializer.to_native = to_native
+
+
+def patch_import_module():
+    from django.utils import importlib as django_importlib
+    import importlib
+
+    django_importlib.import_module = importlib.import_module

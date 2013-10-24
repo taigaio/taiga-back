@@ -26,3 +26,4 @@ def attach_uuid(sender, instance, **kwargs):
 from . import monkey
 monkey.patch_api_view()
 monkey.patch_serializer()
+monkey.patch_import_module()
