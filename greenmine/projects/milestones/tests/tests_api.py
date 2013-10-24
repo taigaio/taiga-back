@@ -144,7 +144,7 @@ class MilestonesTestCase(test.TestCase):
             content_type="application/json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Milestone.objects.all().count(), 3)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 0)
         self.client.logout()
 
     def test_create_milestone_by_membership(self):
@@ -312,7 +312,7 @@ class MilestonesTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["name"], response.data["name"])
         self.assertEqual(Milestone.objects.all().count(), 2)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_edit_milestone_by_membership_with_wron_project(self):

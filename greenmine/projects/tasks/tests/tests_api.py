@@ -176,7 +176,7 @@ class TasksTestCase(test.TestCase):
             content_type="application/json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Task.objects.all().count(), 6)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 0)
         self.client.logout()
 
     def test_create_task_by_project_owner_with_wron_project(self):
@@ -624,7 +624,7 @@ class TasksTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["subject"], response.data["subject"])
         self.assertEqual(Task.objects.all().count(), 5)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_edit_task_by_membership_with_wron_project(self):

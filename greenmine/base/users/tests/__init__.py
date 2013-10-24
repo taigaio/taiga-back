@@ -8,7 +8,7 @@ def create_user(id, save=True, is_superuser=False):
 
     instance = model(
        username="user{0}".format(id),
-       email="user{0}@greenmine.com",
+       email="user{0}@greenmine.com".format(id),
        first_name="Foo{0}".format(id),
        last_name="Bar{0}".format(id)
     )
