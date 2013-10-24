@@ -20,7 +20,7 @@ class WatcherMixin(models.Model):
                                     default="all_owned_projects",
                                     choices=NOTIFY_LEVEL_CHOICES,
                                     verbose_name=_(u"notify level"))
-    notify_changes_by_me = models.BooleanField(blank=True, default=False,
+    notify_changes_by_me = models.NullBooleanField(null=True, blank=True, default=False,
                                                verbose_name=_(u"notify changes by me"))
 
     class Meta:
@@ -101,7 +101,7 @@ class WatchedMixin(models.Model):
         (project, project_owner) = watchers_by_role.get("project_owner", (None, None))
         if project_owner \
            and project_owner.allow_notify_project(project) \
-           and project_owner.allow_notify_by_me(self._changer):
+           and project_owner.allow_notify_by_me(changer):
             watchers_to_notify.add(project_owner)
 
         if changer.notify_changes_by_me:
