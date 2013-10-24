@@ -20,7 +20,7 @@ class WatcherMixin(models.Model):
                                     default="all_owned_projects",
                                     choices=NOTIFY_LEVEL_CHOICES,
                                     verbose_name=_(u"notify level"))
-    notify_changes_by_me = models.NullBooleanField(null=True, blank=True, default=False,
+    notify_changes_by_me = models.BooleanField(blank=True, default=False,
                                                verbose_name=_(u"notify changes by me"))
 
     class Meta:
