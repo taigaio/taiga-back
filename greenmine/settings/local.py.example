@@ -22,7 +22,7 @@ from .development import *
 #EMAIL_HOST_USER = 'user'
 #EMAIL_HOST_PASSWORD = 'password'
 #EMAIL_PORT = 25
-#DEFAULT_FROM_EMAIL = "niwi@niwi.be"
+#DEFAULT_FROM_EMAIL = "john@doe.com"
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # GMAIL SETTINGS EXAMPLE

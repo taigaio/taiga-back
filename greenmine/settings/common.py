@@ -19,7 +19,7 @@ APPEND_SLASH = False
 
 
 ADMINS = (
-    ('Andrei Antoukh', 'niwi@niwi.be'),
+    ('Admin', 'example@example.com'),
 )
 
 LANGUAGES = (
@@ -88,7 +88,7 @@ HOST = 'http://localhost:8000'
 #EMAIL_HOST_USER = 'user'
 #EMAIL_HOST_PASSWORD = 'password'
 #EMAIL_PORT = 25
-DEFAULT_FROM_EMAIL = "niwi@niwi.be"
+DEFAULT_FROM_EMAIL = "john@doe.com"
 EMAIL_BACKEND = 'djmail.backends.default.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
