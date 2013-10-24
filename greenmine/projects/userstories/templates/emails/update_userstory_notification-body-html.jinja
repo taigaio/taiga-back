@@ -1,8 +1,16 @@
-<p>Updated fields by {{ changer }}:</p>
-<ul>
-{% for field in changed_fields_dict.values() %}
-    <li><b>{{ field.verbose_name}}</b>: from "{{ field.old_value}}" to "{{ field.new_value}}".</li>
-{% endfor %}
-</ul>
-{# TODO Print the "object" details #}
+{% extends "emails/base.jinja" %}
+
+{% set final_url = resolve_front_url("userstory", object.project.id, object.id) %}
+
+{% block body %}
+<table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
+    <tr>
+        <td>
+            <h1>{{ object.project.name }}</h1>
+            <h2>User story: {{ object.subject }}</h2>
+            <p>Updated by <b>{{ changer.get_full_name() }}</b></p>
+        </td>
+    </tr>
+</table>
+{% endblock %}
 
