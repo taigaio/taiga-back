@@ -30,7 +30,7 @@ class RolePoints(models.Model):
         verbose_name_plural = "Role Points"
 
 
-class UserStory(WatchedMixin, models.Model):
+class UserStory(WatchedMixin):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
                             verbose_name=_("uuid"))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,

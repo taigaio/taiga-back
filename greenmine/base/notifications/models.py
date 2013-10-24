@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 import reversion
 
 
-class WatcherMixin(object):
+class WatcherMixin(models.Model):
     NOTIFY_LEVEL_CHOICES = (
         ("all_owned_projects", _(u"All events on my projects")),
         ("only_watching", _(u"Only events for objects i watch")),
@@ -20,7 +20,7 @@ class WatcherMixin(object):
                                     default="all_owned_projects",
                                     choices=NOTIFY_LEVEL_CHOICES,
                                     verbose_name=_(u"notify level"))
-    notify_changes_by_me = models.BooleanField(null=True, blank=True, default=False,
+    notify_changes_by_me = models.BooleanField(blank=True, default=False,
                                                verbose_name=_(u"notify changes by me"))
 
     class Meta:
@@ -54,7 +54,7 @@ class WatcherMixin(object):
         return (changer.pk != self.pk) or self.notify_changes_by_me
 
 
-class WatchedMixin(object):
+class WatchedMixin(models.Model):
     notifiable_fields = []
 
     class Meta:

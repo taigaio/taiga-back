@@ -14,7 +14,7 @@ from greenmine.base.notifications.models import WatchedMixin
 import reversion
 
 
-class Task(models.Model, WatchedMixin):
+class Task(WatchedMixin):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
                             verbose_name=_("uuid"))
     user_story = models.ForeignKey("userstories.UserStory", null=True, blank=True,

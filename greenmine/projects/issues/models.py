@@ -14,7 +14,7 @@ from greenmine.base.notifications.models import WatchedMixin
 import reversion
 
 
-class Issue(models.Model, WatchedMixin):
+class Issue(WatchedMixin):
     uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
                             verbose_name=_("uuid"))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,

@@ -8,7 +8,7 @@ from django.contrib.auth.models import UserManager, AbstractUser
 from greenmine.base.notifications.models import WatcherMixin
 
 
-class User(WatcherMixin, AbstractUser):
+class User(AbstractUser, WatcherMixin):
     color = models.CharField(max_length=9, null=False, blank=True, default="#669933",
                              verbose_name=_('color'))
     description = models.TextField(null=False, blank=True,

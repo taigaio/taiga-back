@@ -14,7 +14,7 @@ from picklefield.fields import PickledObjectField
 import reversion
 
 
-class Question(models.Model, WatchedMixin):
+class Question(WatchedMixin):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
