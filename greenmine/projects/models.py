@@ -36,12 +36,12 @@ class Attachment(models.Model):
                                      upload_to="files/msg", verbose_name=_("attached file"))
 
     class Meta:
-        verbose_name = u"Attachment"
-        verbose_name_plural = u"Attachments"
+        verbose_name = "Attachment"
+        verbose_name_plural = "Attachments"
         ordering = ["project", "created_date"]
 
     def __str__(self):
-        return u"Attachment: {}".format(self.id)
+        return "Attachment: {}".format(self.id)
 
 
 class Membership(models.Model):
@@ -89,8 +89,8 @@ class Project(models.Model):
     tags = PickledObjectField(null=False, blank=True,
                               verbose_name=_("tags"))
     class Meta:
-        verbose_name = u"project"
-        verbose_name_plural = u"projects"
+        verbose_name = "Project"
+        verbose_name_plural = "Projects"
         ordering = ["name"]
         permissions = (
             ("list_projects", "Can list projects"),
@@ -102,7 +102,7 @@ class Project(models.Model):
         return self.name
 
     def __repr__(self):
-        return u"<Project {0}>".format(self.id)
+        return "<Project {0}>".format(self.id)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -155,13 +155,13 @@ class UserStoryStatus(models.Model):
                                 related_name="us_statuses", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = u"Userstory status"
-        verbose_name_plural = u"Userstory statuses"
+        verbose_name = "Userstory status"
+        verbose_name_plural = "Userstory statuses"
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
     def __str__(self):
-        return u"Userstory status: {}".format(self.name)
+        return "Userstory status: {}".format(self.name)
 
 
 class Points(models.Model):
@@ -175,8 +175,8 @@ class Points(models.Model):
                                 related_name="points", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = u"Point"
-        verbose_name_plural = u"Points"
+        verbose_name = "Point"
+        verbose_name_plural = "Points"
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
@@ -197,8 +197,8 @@ class TaskStatus(models.Model):
                                 related_name="task_statuses", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = u"task status"
-        verbose_name_plural = u"task statuses"
+        verbose_name = "task status"
+        verbose_name_plural = "task statuses"
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
@@ -215,13 +215,13 @@ class Priority(models.Model):
                                 related_name="priorities", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = u"Priority"
-        verbose_name_plural = u"Priorities"
+        verbose_name = "Priority"
+        verbose_name_plural = "Priorities"
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
     def __str__(self):
-        return u"Priority {}".format(self.name)
+        return "Priority {}".format(self.name)
 
 
 class Severity(models.Model):
@@ -231,13 +231,13 @@ class Severity(models.Model):
                                 related_name="severities", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = u"Severity"
-        verbose_name_plural = u"Severities"
+        verbose_name = "Severity"
+        verbose_name_plural = "Severities"
         ordering = ["project", "name"]
         unique_together = ("project", "name")
 
     def __str__(self):
-        return u"Severity: {}".format(self.name)
+        return "Severity: {}".format(self.name)
 
 
 class IssueStatus(models.Model):
@@ -255,7 +255,7 @@ class IssueStatus(models.Model):
         unique_together = ("project", "name")
 
     def __str__(self):
-        return u"Issue status: {}".format(self.name)
+        return "Issue status: {}".format(self.name)
 
 
 class IssueType(models.Model):
@@ -294,7 +294,7 @@ class QuestionStatus(models.Model):
         unique_together = ("project", "name")
 
     def __str__(self):
-        return u"Quiestion status: {}".format(self.name)
+        return "Quiestion status: {}".format(self.name)
 
 
 # Reversion registration (usufull for base.notification and for meke a historical)

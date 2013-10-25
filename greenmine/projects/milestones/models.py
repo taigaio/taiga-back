@@ -50,8 +50,8 @@ class Milestone(WatchedMixin):
     ]
 
     class Meta:
-        verbose_name = u"milestone"
-        verbose_name_plural = u"milestones"
+        verbose_name = "milestone"
+        verbose_name_plural = "milestones"
         ordering = ["project", "-created_date"]
         unique_together = ("name", "project")
         permissions = (
@@ -62,7 +62,7 @@ class Milestone(WatchedMixin):
         return self.name
 
     def __repr__(self):
-        return u"<Milestone {0}>".format(self.id)
+        return "<Milestone {0}>".format(self.id)
 
     def save(self, *args, **kwargs):
         if not self.slug:

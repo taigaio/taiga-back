@@ -83,8 +83,8 @@ class UserStory(WatchedMixin):
     ]
 
     class Meta:
-        verbose_name = u"user story"
-        verbose_name_plural = u"user stories"
+        verbose_name = "user story"
+        verbose_name_plural = "user stories"
         ordering = ["project", "order"]
         unique_together = ("ref", "project")
         permissions = (
@@ -95,10 +95,10 @@ class UserStory(WatchedMixin):
         )
 
     def __str__(self):
-        return u"({1}) {0}".format(self.ref, self.subject)
+        return "({1}) {0}".format(self.ref, self.subject)
 
     def __repr__(self):
-        return u"<UserStory %s>" % (self.id)
+        return "<UserStory %s>" % (self.id)
 
     @property
     def is_closed(self):

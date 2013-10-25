@@ -4,16 +4,16 @@ from django.utils.translation import ugettext_lazy as _
 
 
 US_STATUSES = (
-    (1, _(u"Open"), False),
-    (2, _(u"Closed"), True),
+    (1, _("Open"), False),
+    (2, _("Closed"), True),
 )
 
 TASK_STATUSES = (
-    (1, _(u"New"), False, "#999999"),
-    (2, _(u"In progress"), False, "#ff9900"),
-    (3, _(u"Ready for test"), True, "#ffcc00"),
-    (4, _(u"Closed"), True, "#669900"),
-    (5, _(u"Needs Info"), False, "#999999"),
+    (1, _("New"), False, "#999999"),
+    (2, _("In progress"), False, "#ff9900"),
+    (3, _("Ready for test"), True, "#ffcc00"),
+    (4, _("Closed"), True, "#669900"),
+    (5, _("Needs Info"), False, "#999999"),
 )
 
 POINTS_CHOICES = (
@@ -46,13 +46,13 @@ SEVERITY_CHOICES = (
 )
 
 ISSUE_STATUSES = (
-    (1, _(u"New"), False),
-    (2, _(u"In progress"), False),
-    (3, _(u"Ready for test"), True),
-    (4, _(u"Closed"), True),
-    (5, _(u"Needs Info"), False),
-    (6, _(u"Rejected"), True),
-    (7, _(u"Postponed"), False),
+    (1, _("New"), False),
+    (2, _("In progress"), False),
+    (3, _("Ready for test"), True),
+    (4, _("Closed"), True),
+    (5, _("Needs Info"), False),
+    (6, _("Rejected"), True),
+    (7, _("Postponed"), False),
 )
 
 ISSUE_TYPES = (
@@ -60,9 +60,9 @@ ISSUE_TYPES = (
 )
 
 QUESTION_STATUS = (
-    (1, _(u"New"), False),
-    (2, _(u"Pending"), False),
-    (3, _(u"Answered"), True),
+    (1, _("New"), False),
+    (2, _("Pending"), False),
+    (3, _("Answered"), True),
 )
 
 # TODO: pending to refactor
@@ -73,8 +73,8 @@ TASK_PRIORITY_CHANGE = 3
 TASK_ASSIGNATION_CHANGE = 4
 
 TASK_CHANGE_CHOICES = (
-    (TASK_COMMENT, _(u"Task comment")),
-    (TASK_STATUS_CHANGE, _(u"Task status change")),
-    (TASK_PRIORITY_CHANGE, _(u"Task prioriy change")),
-    (TASK_ASSIGNATION_CHANGE, _(u"Task assignation change")),
+    (TASK_COMMENT, _("Task comment")),
+    (TASK_STATUS_CHANGE, _("Task status change")),
+    (TASK_PRIORITY_CHANGE, _("Task prioriy change")),
+    (TASK_ASSIGNATION_CHANGE, _("Task assignation change")),
 )

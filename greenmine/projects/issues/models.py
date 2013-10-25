@@ -66,8 +66,8 @@ class Issue(WatchedMixin):
     ]
 
     class Meta:
-        verbose_name = u"issue"
-        verbose_name_plural = u"issues"
+        verbose_name = "issue"
+        verbose_name_plural = "issues"
         ordering = ["project", "created_date"]
         unique_together = ("ref", "project")
         permissions = (
@@ -81,7 +81,7 @@ class Issue(WatchedMixin):
         )
 
     def __str__(self):
-        return u"({1}) {0}".format(self.ref, self.subject)
+        return "({1}) {0}".format(self.ref, self.subject)
 
     def save(self, *args, **kwargs):
         if self.id:

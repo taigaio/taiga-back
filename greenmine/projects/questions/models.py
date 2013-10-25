@@ -57,18 +57,18 @@ class Question(WatchedMixin):
     ]
 
     class Meta:
-        verbose_name = u"question"
-        verbose_name_plural = u"questions"
+        verbose_name = "question"
+        verbose_name_plural = "questions"
         ordering = ["project", "created_date", "subject"]
         unique_together = ("ref", "project")
         permissions = (
-            ("reply_question", _(u"Can reply questions")),
-            ("change_owned_question", _(u"Can modify owned questions")),
-            ("change_assigned_question", _(u"Can modify assigned questions")),
-            ("assign_question_to_other", _(u"Can assign questions to others")),
-            ("assign_question_to_myself", _(u"Can assign questions to myself")),
-            ("change_question_state", _(u"Can change the question state")),
-            ("view_question", _(u"Can view the question")),
+            ("reply_question", _("Can reply questions")),
+            ("change_owned_question", _("Can modify owned questions")),
+            ("change_assigned_question", _("Can modify assigned questions")),
+            ("assign_question_to_other", _("Can assign questions to others")),
+            ("assign_question_to_myself", _("Can assign questions to myself")),
+            ("change_question_state", _("Can change the question state")),
+            ("view_question", _("Can view the question")),
         )
 
     def __str__(self):
