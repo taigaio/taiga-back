@@ -9,6 +9,7 @@ URLS = {
     "userstory": "/#/project/{0}/user-story/{1}",
     "task": "/#/project/{0}/tasks/{1}",
     "issue": "/#/project/{0}/issues/{1}",
+    "change-password": "/#/change-password/{0}",
 }
 
 
@@ -21,10 +22,10 @@ def get_current_site():
 
 
 @lib.global_function(name="resolve_front_url")
-def resolve(type, projectId, itemId):
+def resolve(type, *args):
     site = get_current_site()
     url_tmpl = "{scheme}//{domain}{url}"
 
     scheme = site.scheme and "{0}:".format(site.scheme) or ""
-    url = URLS[type].format(projectId, itemId)
+    url = URLS[type].format(*args)
     return url_tmpl.format(scheme=scheme, domain=site.domain, url=url)
