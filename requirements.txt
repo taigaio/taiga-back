@@ -17,7 +17,7 @@ gunicorn>=17.5
 psycopg2==2.5.1
 pytz>=2013d
 six>=1.4.1
-djmail>=0.3
+djmail>=0.4
 django-jinja>=0.21
 jinja2==2.7.1
 pygments>=1.6
