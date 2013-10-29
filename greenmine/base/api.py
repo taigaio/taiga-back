@@ -95,7 +95,7 @@ class ReversionMixin(object):
             revision_context_manager.set_user(self.request.user)
 
         if response.status_code > 206:
-            self._invalidare_revision()
+            revision_context_manager.invalidate()
 
         revision_context_manager.end()
         return response
