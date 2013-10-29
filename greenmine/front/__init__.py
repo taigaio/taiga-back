@@ -5,10 +5,15 @@ import django_sites as sites
 
 from django_jinja import library
 
+
 URLS = {
+    "home": "/",
+    "backlog": "/#/project/{0}/backlog/",
+    "taskboard": "/#/project/{0}/taskboard/{1}",
     "userstory": "/#/project/{0}/user-story/{1}",
     "task": "/#/project/{0}/tasks/{1}",
     "issue": "/#/project/{0}/issues/{1}",
+    "project-admin": "/#/project/{0}/admin",
     "change-password": "/#/change-password/{0}",
 }
 
