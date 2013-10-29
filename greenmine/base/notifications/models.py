@@ -67,13 +67,13 @@ class WatchedMixin(models.Model):
 
     def get_changed_fields_dict(self, data_dict):
         if self.notifiable_fields:
-            changed_data = {k: v for k, v in data_dict.items()
+            changed_data = {k:v for k, v in data_dict.items()
                                     if k in self.notifiable_fields}
         else:
             changed_data = data_dict
 
         field_dict = {}
-        for field_name, data_value in data_dict.items():
+        for field_name, data_value in changed_data.items():
             field_dict.update(self._get_changed_field(field_name, data_value))
         return field_dict
 

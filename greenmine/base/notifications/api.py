@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-i
+# -*- coding: utf-8 -*-
 
 from djmail import template_mail
 
@@ -15,14 +15,17 @@ class NotificationSenderMixin(object):
             email.send()
 
     def post_save(self, obj, created=False):
+        super().post_save(obj, created)
+
         users = obj.get_watchers_to_notify(self.request.user)
         context = {'changer': self.request.user, 'object': obj}
+        changed_fields_dict = obj.get_changed_fields_dict(self.request.DATA)
 
         if created:
             self._send_notification_email(self.create_notification_template,
                                           users=users, context=context)
-        else:
-            context["changed_fields_dict"] = obj.get_changed_fields_dict(self.request.DATA)
+        elif changed_fields_dict:
+            context["changed_fields_dict"] = changed_fields_dict
             self._send_notification_email(self.update_notification_template,
                                           users=users, context=context)
 
@@ -34,4 +37,4 @@ class NotificationSenderMixin(object):
         self._send_notification_email(self.destroy_notification_template,
                                       users=users, context=context)
 
-        return super(NotificationSenderMixin, self).destroy(request, *args, **kwargs)
+        return super().destroy(request, *args, **kwargs)
