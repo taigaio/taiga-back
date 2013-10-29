@@ -19,7 +19,6 @@ class IssueSerializer(serializers.ModelSerializer):
         model = models.Issue
 
     def get_comment(self, obj):
-        # TODO
         return ""
 
     def get_issues_diff(self, old_issue_version, new_issue_version):
@@ -28,8 +27,8 @@ class IssueSerializer(serializers.ModelSerializer):
 
         diff_dict = {
             "modified_date": new_obj["modified_date"],
-            "by": old_issue_version.revision.user,
-            "comment": old_issue_version.revision.comment,
+            "by": new_issue_version.revision.user,
+            "comment": new_issue_version.revision.comment,
         }
 
         for key in old_obj.keys():
@@ -51,7 +50,7 @@ class IssueSerializer(serializers.ModelSerializer):
         current = None
 
         if obj:
-            for version in reversed(list(reversion.get_for_object(obj))):
+            for version in reversion.get_for_object(obj).order_by("revision__date_created"):
                 if current:
                     issues_diff = self.get_issues_diff(current, version)
                     diff_list.append(issues_diff)

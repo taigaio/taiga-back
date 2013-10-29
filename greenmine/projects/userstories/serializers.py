@@ -48,11 +48,7 @@ class UserStorySerializer(serializers.ModelSerializer):
         return obj.get_total_points()
 
     def get_comment(self, obj):
-        version_list = reversion.get_for_object(obj)
-        if len(version_list) > 0:
-            return version_list[0].revision.comment
-        else:
-            return None
+        return ""
 
     def get_user_stories_diff(self, old_us_version, new_us_version):
         old_obj = old_us_version.field_dict
@@ -83,7 +79,7 @@ class UserStorySerializer(serializers.ModelSerializer):
         current = None
 
         if obj:
-            for version in reversed(list(reversion.get_for_object(obj))):
+            for version in reversion.get_for_object(obj).order_by("revision__date_created"):
                 if current:
                     us_diff = self.get_user_stories_diff(current, version)
                     diff_list.append(us_diff)

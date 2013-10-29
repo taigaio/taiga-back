@@ -89,4 +89,4 @@ class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
             if "comment" in self.request.DATA:
                 # Update the comment in the last version
                 reversion.set_comment(self.request.DATA["comment"])
-        super(IssueViewSet, self).post_save(obj, created)
+        super().post_save(obj, created)
