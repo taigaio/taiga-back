@@ -38,10 +38,10 @@ class UserStorySerializer(serializers.ModelSerializer):
 
         obj.project.update_role_points()
         if role_points:
-            for role_id, points_order in role_points.items():
+            for role_id, points_id in role_points.items():
                 role_points = obj.role_points.get(role__id=role_id)
                 role_points.points = points_modelcls.objects.get(project=obj.project,
-                                                                 order=points_order)
+                                                                 id=points_id)
                 role_points.save()
 
     def get_total_points(self, obj):
