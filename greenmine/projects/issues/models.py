@@ -15,8 +15,6 @@ import reversion
 
 
 class Issue(WatchedMixin):
-    uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
-                            verbose_name=_("uuid"))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
@@ -36,7 +34,7 @@ class Issue(WatchedMixin):
                                 related_name="issues", verbose_name=_("project"))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
                                         verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
                                          verbose_name=_("modified date"))
     finished_date = models.DateTimeField(null=True, blank=True,
                                          verbose_name=_("finished date"))
@@ -82,11 +80,6 @@ class Issue(WatchedMixin):
 
     def __str__(self):
         return "({1}) {0}".format(self.ref, self.subject)
-
-    def save(self, *args, **kwargs):
-        if self.id:
-            self.modified_date = timezone.now()
-        super(Issue, self).save(*args, **kwargs)
 
     @property
     def is_closed(self):

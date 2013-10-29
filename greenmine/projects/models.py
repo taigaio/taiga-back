@@ -58,8 +58,6 @@ class Membership(models.Model):
 
 
 class Project(models.Model):
-    uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
-                            verbose_name=_("uuid"))
     name = models.CharField(max_length=250, unique=True, null=False, blank=False,
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
@@ -109,7 +107,6 @@ class Project(models.Model):
             self.slug = slugify_uniquely(self.name, self.__class__)
 
         super(Project, self).save(*args, **kwargs)
-
 
     def get_roles(self):
         role_model = get_model("users", "Role")

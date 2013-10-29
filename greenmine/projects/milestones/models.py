@@ -15,8 +15,6 @@ import copy
 
 
 class Milestone(WatchedMixin):
-    uuid = models.CharField(max_length=40, unique=True, null=False, blank=True,
-                            verbose_name=_("uuid"))
     name = models.CharField(max_length=200, db_index=True, null=False, blank=False,
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
