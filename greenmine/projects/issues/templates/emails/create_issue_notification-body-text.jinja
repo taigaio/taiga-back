@@ -1,2 +1,8 @@
-# TODO: {{ changer }} {{ object }}
+{% set final_url = resolve_front_url("issue", object.project.id, object.id) %}
+{% set final_url_name = "Greenmine - View issue #{0}".format(object.ref) %}
 
+- Project: {{ object.project.name }}
+- US #{{ object.ref }}: {{ object.subject }}
+- Created by {{ changer.get_full_name() }}
+
+** More info at {{ final_url_name }} ({{ final_url }}) **

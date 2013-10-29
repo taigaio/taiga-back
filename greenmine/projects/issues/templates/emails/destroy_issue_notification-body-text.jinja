@@ -1,2 +1,3 @@
-# TODO: {{ changer }} {{ object }}
-
+- Project: {{ object.project.name }}
+- Issue #{{ object.ref }}: {{ object.subject }}
+- Deleted by {{ changer.get_full_name() }}
