@@ -1,2 +1,4 @@
-# TODO: {{ changer }} {{ object }}
+- Project: {{ object.project.name }}
+- Task #{{ object.ref }}: {{ object.subject }}
+- Deleted by {{ changer.get_full_name() }}
 
