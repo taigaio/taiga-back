@@ -155,7 +155,6 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'greenmine.base.middleware.CoorsMiddleware',
-    'reversion.middleware.RevisionMiddleware',
 
     # Only needed by django admin
     'django.contrib.sessions.middleware.SessionMiddleware',

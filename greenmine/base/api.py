@@ -2,6 +2,7 @@
 
 from django.db import transaction
 
+from reversion.revisions import revision_context_manager
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework import mixins
@@ -79,7 +80,29 @@ class DetailAndListSerializersMixin(object):
         return super().get_serializer_class()
 
 
+class ReversionMixin(object):
+    def dispatch(self, request, *args, **kwargs):
+        revision_context_manager.start()
+
+        try:
+            response = super().dispatch(request, *args, **kwargs)
+        except Exception as e:
+            revision_context_manager.invalidate()
+            revision_context_manager.end()
+            raise
+
+        if self.request.user.is_authenticated():
+            revision_context_manager.set_user(self.request.user)
+
+        if response.status_code > 206:
+            self._invalidare_revision()
+
+        revision_context_manager.end()
+        return response
+
+
 class ModelCrudViewSet(DetailAndListSerializersMixin,
+                       ReversionMixin,
                        PreconditionMixin,
                        HeadersPaginationMixin,
                        ConditionalPaginationMixin,
@@ -93,6 +116,7 @@ class ModelCrudViewSet(DetailAndListSerializersMixin,
 
 
 class ModelListViewSet(DetailAndListSerializersMixin,
+                       ReversionMixin,
                        PreconditionMixin,
                        HeadersPaginationMixin,
                        ConditionalPaginationMixin,
