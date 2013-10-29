@@ -1,8 +1,40 @@
-<p>Updated fields by {{ changer }}:</p>
-<ul>
-{% for field in changed_fields_dict.values() %}
-    <li><b>{{ field.verbose_name}}</b>: from "{{ field.old_value}}" to "{{ field.new_value}}".</li>
-{% endfor %}
-</ul>
-{# TODO Print the "object" details #}
+{% extends "emails/base.jinja" %}
 
+{% set final_url = resolve_front_url("taskboard", object.project.id, object.id) %}
+{% set final_url_name = "Greenmine - View milestone #{0}".format(object.slug) %}
+
+{% block body %}
+<table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
+    <tr>
+        <td>
+            <h1>Project: {{ object.project.name }}</h1>
+            <h2>Milestone #{{ object.slug }}: {{ object.name }}</h2>
+            <p>Updated by <b>{{ changer.get_full_name() }}</b>.</p>
+            <p>Updated fields:
+            {% for field in changed_fields_dict.values() %}
+                <b>{{ field.verbose_name }}</b>{% if not loop.last %},{% endif %}
+            {% endfor %}
+            </p>
+
+        {# TODO: Improvemments in some methods to use that:  #}
+        {#         - WatchedMixin._get_changed_field_old_value() #}
+        {#         - WatchedMixin._get_changed_field_new_value() #}
+        {#
+            <ul>
+            {% for field in changed_fields_dict.values() %}
+                <li>
+                    <b>{{ field.verbose_name}}</b>: from <i>{{ field.old_value}}</i>
+                                                      to <i>{{ field.new_value}}</i>.
+                </li>
+            {% endfor %}
+            </ul>
+        #}
+        </td>
+    </tr>
+</table>
+{% endblock %}
+{% block footer %}
+<p style="padding: 10px; border-top: 1px solid #eee;">
+    More info at: <a href="{{ final_url }}" style="color: #666;">{{ final_url_name }}</a>
+</p>
+{% endblock %}
