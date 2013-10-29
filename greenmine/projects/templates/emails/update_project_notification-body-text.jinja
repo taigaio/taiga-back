@@ -1,9 +1,20 @@
-Updated fields by {{ changer }}:
+{% set final_url = resolve_front_url("project-admin", object.id) %}
+{% set final_url_name = "Greenmine - View Project #{0}".format(object.slug) %}
 
+- Project #{{ object.slug }}: {{ object.name }}
+- Updated by {{ changer.get_full_name() }}
+- Updated fields:
 {% for field in changed_fields_dict.values() %}
-    ** {{ field.verbose_name}}: from "{{ field.old_value}}" to "{{ field.new_value}}".
+    {{ field.verbose_name }}{% if not loop.last %}, {% endif %}
 {% endfor %}
 
-{# TODO Print the "object" details #}
+{# TODO: Improvemments in some methods to use that:  #}
+{#         - WatchedMixin._get_changed_field_old_value() #}
+{#         - WatchedMixin._get_changed_field_new_value() #}
+{#
+{% for field in changed_fields_dict.values() %}
+    * {{ field.verbose_name}}</b>: from '{{ field.old_value}}' to '{{ field.new_value }}'.
+{% endfor %}
+#}
 
-
+** More info at {{ final_url_name }} ({{ final_url }}) **
