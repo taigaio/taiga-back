@@ -9,6 +9,7 @@ from greenmine.base import exceptions as excp
 from greenmine.projects.userstories.serializers import UserStorySerializer
 from greenmine.projects.tasks.serializers import TaskSerializer
 from greenmine.projects.issues.serializers import IssueSerializer
+from greenmine.projects.wiki.serializers import WikiPageSerializer
 
 
 class SearchViewSet(viewsets.ViewSet):
@@ -25,7 +26,8 @@ class SearchViewSet(viewsets.ViewSet):
         result = {
             "userstories": self._search_user_stories(project, text),
             "tasks": self._search_tasks(project, text),
-            "issues": self._search_issues(project, text)
+            "issues": self._search_issues(project, text),
+            "wikipages": self._search_wiki_pages(project, text)
         }
 
         result["count"] = sum(map(lambda x: len(x), result.values()))
@@ -73,3 +75,17 @@ class SearchViewSet(viewsets.ViewSet):
 
         serializer = IssueSerializer(queryset, many=True)
         return serializer.data
+
+    def _search_wiki_pages(self, project, text):
+        where_clause = ("to_tsvector(wiki_wikipage.slug || wiki_wikipage.content) "
+                        "@@ plainto_tsquery(%s)")
+
+        model_cls = get_model("wiki", "WikiPage")
+        queryset = (model_cls.objects
+                        .extra(where=[where_clause], params=[text])
+                        .filter(project_id=project.pk)[:50])
+
+        serializer = WikiPageSerializer(queryset, many=True)
+        return serializer.data
+
+
