@@ -116,7 +116,8 @@ class WatchedMixin(models.Model):
             return field_name
 
     def _get_changed_field_old_value(self, field_name, data_value):
-        return (self.last_version and self.last_version.field_dict.get(field_name, data_value) or None)
+        return (self.last_version and self.last_version.field_dict.get(field_name,
+                                                                       data_value) or None)
 
     def _get_changed_field_new_value(self, field_name, data_value):
         return getattr(self, field_name, data_value)
@@ -144,4 +145,5 @@ class WatchedMixin(models.Model):
                "project_owner": (self.project, self.project.owner),
            }
         """
-        raise NotImplementedError("You must subclass WatchedMixin and provide _get_watchers_by_role method")
+        raise NotImplementedError("You must subclass WatchedMixin and provide "
+                                  "_get_watchers_by_role method")
