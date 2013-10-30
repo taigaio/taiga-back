@@ -69,13 +69,7 @@ class Issue(WatchedMixin):
         ordering = ["project", "created_date"]
         unique_together = ("ref", "project")
         permissions = (
-            ("comment_issue", "Can comment issues"),
-            ("change_owned_issue", "Can modify owned issues"),
-            ("change_assigned_issue", "Can modify assigned issues"),
-            ("assign_issue_to_other", "Can assign issues to others"),
-            ("assign_issue_to_myself", "Can assign issues to myself"),
-            ("change_issue_state", "Can change the issue state"),
-            ("view_issue", "Can view the issue"),
+            ("view_issue", "Can view issue"),
         )
 
     def __str__(self):
