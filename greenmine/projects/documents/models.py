@@ -10,36 +10,33 @@ from greenmine.base.utils.slug import slugify_uniquely as slugify
 
 class Document(models.Model):
     slug = models.SlugField(unique=True, max_length=200, null=False, blank=True,
-                verbose_name=_('slug'))
+                verbose_name=_("slug"))
     title = models.CharField(max_length=150, null=False, blank=False,
-                verbose_name=_('title'))
+                verbose_name=_("title"))
     description = models.TextField(null=False, blank=True,
-                verbose_name=_('description'))
+                verbose_name=_("description"))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                verbose_name=_('created date'))
+                verbose_name=_("created date"))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
-                verbose_name=_('modified date'))
-    project = models.ForeignKey('projects.Project', null=False, blank=False,
-                related_name='documents',
-                verbose_name=_('project'))
+                verbose_name=_("modified date"))
+    project = models.ForeignKey("projects.Project", null=False, blank=False,
+                related_name="documents",
+                verbose_name=_("project"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
-                related_name='owned_documents',
-                verbose_name=_('owner'))
+                related_name="owned_documents",
+                verbose_name=_("owner"))
     attached_file = models.FileField(max_length=1000, null=True, blank=True,
-                upload_to='documents',
-                verbose_name=_('attached_file'))
+                upload_to="documents",
+                verbose_name=_("attached_file"))
     tags = PickledObjectField(null=False, blank=True,
-                verbose_name=_('tags'))
+                verbose_name=_("tags"))
 
     class Meta:
-        verbose_name = u'document'
-        verbose_name_plural = u'document'
-        ordering = ['project', 'title', 'id']
+        verbose_name = u"Document"
+        verbose_name_plural = u"Documents"
+        ordering = ["project", "title",]
         permissions = (
-            ('download_from_my_projects', 'Can download the documents from my projects'),
-            ('download_from_other_projects', 'Can download the documents from other projects'),
-            ('change_owned_documents', 'Can modify owned documents'),
-            ('view_documents', 'Can modify owned documents'),
+            ("view_document", "Can view document"),
         )
 
     def __str__(self):
