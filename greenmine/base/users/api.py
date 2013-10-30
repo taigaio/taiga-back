@@ -64,6 +64,7 @@ class UsersViewSet(ModelCrudViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
     filter_backends = (ProjectMembershipFilter,)
+    filter_fields = [("project", "memberships__project__pk")]
 
     def pre_conditions_on_save(self, obj):
         if not self.request.user.is_superuser and obj.id != self.request.user.id:
