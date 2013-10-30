@@ -18,9 +18,14 @@ class QueryParamsFilterMixin(object):
         if not hasattr(view, "filter_fields"):
             return queryset
 
-        for field_name in view.filter_fields:
-            if field_name in request.QUERY_PARAMS:
-                field_data = request.QUERY_PARAMS[field_name]
+        for field in view.filter_fields:
+            if isinstance(field, (tuple, list)):
+                param_name, field_name = field
+            else:
+                param_name, field_name = field, field
+
+            if param_name in request.QUERY_PARAMS:
+                field_data = request.QUERY_PARAMS[param_name]
                 if field_data in self._special_values_dict:
                     query_params[field_name] = self._special_values_dict[field_data]
                 else:
