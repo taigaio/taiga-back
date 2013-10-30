@@ -1,99 +1,10 @@
 [
 {
-    "pk": 1, 
     "model": "users.role", 
+    "pk": 1, 
     "fields": {
+        "name": "Back", 
         "permissions": [
-            [
-                "add_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "change_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "delete_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "add_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "change_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "delete_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "add_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "change_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "delete_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "add_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "change_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "delete_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "add_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "change_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "delete_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "add_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
-            [
-                "change_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
-            [
-                "delete_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
             [
                 "add_message", 
                 "djmail", 
@@ -110,87 +21,12 @@
                 "message"
             ], 
             [
-                "add_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "change_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "delete_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "add_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "change_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "delete_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "add_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
-                "change_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
-                "delete_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
                 "add_issue", 
                 "issues", 
                 "issue"
             ], 
             [
-                "assign_issue_to_myself", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "assign_issue_to_other", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_assigned_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
                 "change_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_issue_state", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_owned_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "comment_issue", 
                 "issues", 
                 "issue"
             ], 
@@ -203,51 +39,6 @@
                 "view_issue", 
                 "issues", 
                 "issue"
-            ], 
-            [
-                "add_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "change_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "delete_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "add_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "change_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "delete_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "add_membership", 
-                "projects", 
-                "membership"
-            ], 
-            [
-                "change_membership", 
-                "projects", 
-                "membership"
-            ], 
-            [
-                "delete_membership", 
-                "projects", 
-                "membership"
             ], 
             [
                 "add_milestone", 
@@ -270,6 +61,86 @@
                 "milestone"
             ], 
             [
+                "add_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "change_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "delete_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "view_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "add_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "change_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "delete_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "view_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "add_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "change_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "delete_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "view_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "add_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "change_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "delete_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "view_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
                 "add_points", 
                 "projects", 
                 "points"
@@ -281,6 +152,11 @@
             ], 
             [
                 "delete_points", 
+                "projects", 
+                "points"
+            ], 
+            [
+                "view_points", 
                 "projects", 
                 "points"
             ], 
@@ -300,6 +176,11 @@
                 "priority"
             ], 
             [
+                "view_priority", 
+                "projects", 
+                "priority"
+            ], 
+            [
                 "add_project", 
                 "projects", 
                 "project"
@@ -315,34 +196,29 @@
                 "project"
             ], 
             [
-                "list_projects", 
-                "projects", 
-                "project"
-            ], 
-            [
-                "manage_users", 
-                "projects", 
-                "project"
-            ], 
-            [
                 "view_project", 
                 "projects", 
                 "project"
             ], 
             [
-                "add_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "add_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
-                "change_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "change_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
-                "delete_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "delete_questionstatus", 
+                "projects", 
+                "questionstatus"
+            ], 
+            [
+                "view_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
                 "add_severity", 
@@ -360,59 +236,9 @@
                 "severity"
             ], 
             [
-                "add_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "add_task_to_us", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "assign_task_to_myself", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "assign_task_to_other", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_assigned_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_owned_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_task_state", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "comment_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "delete_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "view_task", 
-                "tasks", 
-                "task"
+                "view_severity", 
+                "projects", 
+                "severity"
             ], 
             [
                 "add_taskstatus", 
@@ -430,39 +256,9 @@
                 "taskstatus"
             ], 
             [
-                "add_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "add_userstory_to_milestones", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "change_owned_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "change_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "comment_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "delete_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "view_userstory", 
-                "userstories", 
-                "userstory"
+                "view_taskstatus", 
+                "projects", 
+                "taskstatus"
             ], 
             [
                 "add_userstorystatus", 
@@ -480,42 +276,112 @@
                 "userstorystatus"
             ], 
             [
-                "add_session", 
-                "sessions", 
-                "session"
+                "view_userstorystatus", 
+                "projects", 
+                "userstorystatus"
             ], 
             [
-                "change_session", 
-                "sessions", 
-                "session"
+                "add_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "delete_session", 
-                "sessions", 
-                "session"
+                "change_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "add_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "delete_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "change_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "view_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "delete_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "add_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "change_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "delete_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "view_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "add_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "change_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "delete_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "view_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "add_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "change_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "delete_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "view_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "add_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "change_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "delete_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "view_userstory", 
+                "userstories", 
+                "userstory"
             ], 
             [
                 "add_wikipage", 
-                "wiki", 
-                "wikipage"
-            ], 
-            [
-                "change_owned_wikipage", 
                 "wiki", 
                 "wikipage"
             ], 
@@ -535,107 +401,17 @@
                 "wikipage"
             ]
         ], 
-        "name": "Back", 
-        "slug": "back", 
         "computable": true, 
+        "slug": "back", 
         "order": 40
     }
 },
 {
-    "pk": 2, 
     "model": "users.role", 
+    "pk": 2, 
     "fields": {
+        "name": "Front", 
         "permissions": [
-            [
-                "add_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "change_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "delete_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "add_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "change_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "delete_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "add_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "change_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "delete_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "add_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "change_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "delete_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "add_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "change_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "delete_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "add_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
-            [
-                "change_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
-            [
-                "delete_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
             [
                 "add_message", 
                 "djmail", 
@@ -652,87 +428,12 @@
                 "message"
             ], 
             [
-                "add_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "change_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "delete_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "add_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "change_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "delete_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "add_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
-                "change_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
-                "delete_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
                 "add_issue", 
                 "issues", 
                 "issue"
             ], 
             [
-                "assign_issue_to_myself", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "assign_issue_to_other", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_assigned_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
                 "change_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_issue_state", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_owned_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "comment_issue", 
                 "issues", 
                 "issue"
             ], 
@@ -745,51 +446,6 @@
                 "view_issue", 
                 "issues", 
                 "issue"
-            ], 
-            [
-                "add_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "change_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "delete_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "add_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "change_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "delete_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "add_membership", 
-                "projects", 
-                "membership"
-            ], 
-            [
-                "change_membership", 
-                "projects", 
-                "membership"
-            ], 
-            [
-                "delete_membership", 
-                "projects", 
-                "membership"
             ], 
             [
                 "add_milestone", 
@@ -812,6 +468,86 @@
                 "milestone"
             ], 
             [
+                "add_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "change_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "delete_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "view_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "add_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "change_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "delete_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "view_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "add_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "change_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "delete_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "view_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "add_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "change_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "delete_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "view_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
                 "add_points", 
                 "projects", 
                 "points"
@@ -823,6 +559,11 @@
             ], 
             [
                 "delete_points", 
+                "projects", 
+                "points"
+            ], 
+            [
+                "view_points", 
                 "projects", 
                 "points"
             ], 
@@ -842,6 +583,11 @@
                 "priority"
             ], 
             [
+                "view_priority", 
+                "projects", 
+                "priority"
+            ], 
+            [
                 "add_project", 
                 "projects", 
                 "project"
@@ -857,34 +603,29 @@
                 "project"
             ], 
             [
-                "list_projects", 
-                "projects", 
-                "project"
-            ], 
-            [
-                "manage_users", 
-                "projects", 
-                "project"
-            ], 
-            [
                 "view_project", 
                 "projects", 
                 "project"
             ], 
             [
-                "add_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "add_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
-                "change_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "change_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
-                "delete_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "delete_questionstatus", 
+                "projects", 
+                "questionstatus"
+            ], 
+            [
+                "view_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
                 "add_severity", 
@@ -902,59 +643,9 @@
                 "severity"
             ], 
             [
-                "add_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "add_task_to_us", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "assign_task_to_myself", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "assign_task_to_other", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_assigned_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_owned_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_task_state", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "comment_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "delete_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "view_task", 
-                "tasks", 
-                "task"
+                "view_severity", 
+                "projects", 
+                "severity"
             ], 
             [
                 "add_taskstatus", 
@@ -972,39 +663,9 @@
                 "taskstatus"
             ], 
             [
-                "add_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "add_userstory_to_milestones", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "change_owned_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "change_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "comment_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "delete_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "view_userstory", 
-                "userstories", 
-                "userstory"
+                "view_taskstatus", 
+                "projects", 
+                "taskstatus"
             ], 
             [
                 "add_userstorystatus", 
@@ -1022,42 +683,112 @@
                 "userstorystatus"
             ], 
             [
-                "add_session", 
-                "sessions", 
-                "session"
+                "view_userstorystatus", 
+                "projects", 
+                "userstorystatus"
             ], 
             [
-                "change_session", 
-                "sessions", 
-                "session"
+                "add_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "delete_session", 
-                "sessions", 
-                "session"
+                "change_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "add_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "delete_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "change_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "view_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "delete_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "add_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "change_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "delete_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "view_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "add_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "change_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "delete_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "view_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "add_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "change_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "delete_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "view_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "add_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "change_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "delete_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "view_userstory", 
+                "userstories", 
+                "userstory"
             ], 
             [
                 "add_wikipage", 
-                "wiki", 
-                "wikipage"
-            ], 
-            [
-                "change_owned_wikipage", 
                 "wiki", 
                 "wikipage"
             ], 
@@ -1077,107 +808,17 @@
                 "wikipage"
             ]
         ], 
-        "name": "Front", 
-        "slug": "front", 
         "computable": true, 
+        "slug": "front", 
         "order": 30
     }
 },
 {
-    "pk": 3, 
     "model": "users.role", 
+    "pk": 3, 
     "fields": {
+        "name": "UX", 
         "permissions": [
-            [
-                "add_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "change_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "delete_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "add_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "change_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "delete_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "add_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "change_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "delete_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "add_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "change_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "delete_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "add_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "change_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "delete_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "add_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
-            [
-                "change_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
-            [
-                "delete_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
             [
                 "add_message", 
                 "djmail", 
@@ -1194,87 +835,12 @@
                 "message"
             ], 
             [
-                "add_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "change_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "delete_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "add_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "change_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "delete_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "add_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
-                "change_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
-                "delete_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
                 "add_issue", 
                 "issues", 
                 "issue"
             ], 
             [
-                "assign_issue_to_myself", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "assign_issue_to_other", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_assigned_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
                 "change_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_issue_state", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_owned_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "comment_issue", 
                 "issues", 
                 "issue"
             ], 
@@ -1287,51 +853,6 @@
                 "view_issue", 
                 "issues", 
                 "issue"
-            ], 
-            [
-                "add_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "change_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "delete_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "add_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "change_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "delete_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "add_membership", 
-                "projects", 
-                "membership"
-            ], 
-            [
-                "change_membership", 
-                "projects", 
-                "membership"
-            ], 
-            [
-                "delete_membership", 
-                "projects", 
-                "membership"
             ], 
             [
                 "add_milestone", 
@@ -1354,6 +875,86 @@
                 "milestone"
             ], 
             [
+                "add_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "change_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "delete_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "view_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "add_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "change_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "delete_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "view_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "add_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "change_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "delete_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "view_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "add_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "change_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "delete_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "view_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
                 "add_points", 
                 "projects", 
                 "points"
@@ -1365,6 +966,11 @@
             ], 
             [
                 "delete_points", 
+                "projects", 
+                "points"
+            ], 
+            [
+                "view_points", 
                 "projects", 
                 "points"
             ], 
@@ -1384,6 +990,11 @@
                 "priority"
             ], 
             [
+                "view_priority", 
+                "projects", 
+                "priority"
+            ], 
+            [
                 "add_project", 
                 "projects", 
                 "project"
@@ -1399,34 +1010,29 @@
                 "project"
             ], 
             [
-                "list_projects", 
-                "projects", 
-                "project"
-            ], 
-            [
-                "manage_users", 
-                "projects", 
-                "project"
-            ], 
-            [
                 "view_project", 
                 "projects", 
                 "project"
             ], 
             [
-                "add_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "add_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
-                "change_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "change_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
-                "delete_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "delete_questionstatus", 
+                "projects", 
+                "questionstatus"
+            ], 
+            [
+                "view_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
                 "add_severity", 
@@ -1444,59 +1050,9 @@
                 "severity"
             ], 
             [
-                "add_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "add_task_to_us", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "assign_task_to_myself", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "assign_task_to_other", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_assigned_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_owned_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_task_state", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "comment_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "delete_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "view_task", 
-                "tasks", 
-                "task"
+                "view_severity", 
+                "projects", 
+                "severity"
             ], 
             [
                 "add_taskstatus", 
@@ -1514,39 +1070,9 @@
                 "taskstatus"
             ], 
             [
-                "add_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "add_userstory_to_milestones", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "change_owned_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "change_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "comment_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "delete_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "view_userstory", 
-                "userstories", 
-                "userstory"
+                "view_taskstatus", 
+                "projects", 
+                "taskstatus"
             ], 
             [
                 "add_userstorystatus", 
@@ -1564,42 +1090,112 @@
                 "userstorystatus"
             ], 
             [
-                "add_session", 
-                "sessions", 
-                "session"
+                "view_userstorystatus", 
+                "projects", 
+                "userstorystatus"
             ], 
             [
-                "change_session", 
-                "sessions", 
-                "session"
+                "add_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "delete_session", 
-                "sessions", 
-                "session"
+                "change_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "add_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "delete_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "change_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "view_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "delete_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "add_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "change_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "delete_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "view_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "add_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "change_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "delete_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "view_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "add_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "change_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "delete_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "view_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "add_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "change_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "delete_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "view_userstory", 
+                "userstories", 
+                "userstory"
             ], 
             [
                 "add_wikipage", 
-                "wiki", 
-                "wikipage"
-            ], 
-            [
-                "change_owned_wikipage", 
                 "wiki", 
                 "wikipage"
             ], 
@@ -1619,107 +1215,17 @@
                 "wikipage"
             ]
         ], 
-        "name": "UX", 
-        "slug": "ux", 
         "computable": true, 
+        "slug": "ux", 
         "order": 10
     }
 },
 {
-    "pk": 4, 
     "model": "users.role", 
+    "pk": 4, 
     "fields": {
+        "name": "Design", 
         "permissions": [
-            [
-                "add_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "change_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "delete_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "add_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "change_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "delete_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "add_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "change_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "delete_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "add_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "change_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "delete_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "add_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "change_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "delete_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "add_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
-            [
-                "change_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
-            [
-                "delete_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
             [
                 "add_message", 
                 "djmail", 
@@ -1736,87 +1242,12 @@
                 "message"
             ], 
             [
-                "add_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "change_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "delete_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "add_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "change_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "delete_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "add_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
-                "change_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
-                "delete_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
                 "add_issue", 
                 "issues", 
                 "issue"
             ], 
             [
-                "assign_issue_to_myself", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "assign_issue_to_other", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_assigned_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
                 "change_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_issue_state", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_owned_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "comment_issue", 
                 "issues", 
                 "issue"
             ], 
@@ -1829,51 +1260,6 @@
                 "view_issue", 
                 "issues", 
                 "issue"
-            ], 
-            [
-                "add_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "change_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "delete_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "add_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "change_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "delete_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "add_membership", 
-                "projects", 
-                "membership"
-            ], 
-            [
-                "change_membership", 
-                "projects", 
-                "membership"
-            ], 
-            [
-                "delete_membership", 
-                "projects", 
-                "membership"
             ], 
             [
                 "add_milestone", 
@@ -1896,6 +1282,86 @@
                 "milestone"
             ], 
             [
+                "add_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "change_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "delete_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "view_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "add_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "change_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "delete_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "view_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "add_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "change_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "delete_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "view_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "add_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "change_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "delete_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "view_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
                 "add_points", 
                 "projects", 
                 "points"
@@ -1907,6 +1373,11 @@
             ], 
             [
                 "delete_points", 
+                "projects", 
+                "points"
+            ], 
+            [
+                "view_points", 
                 "projects", 
                 "points"
             ], 
@@ -1926,6 +1397,11 @@
                 "priority"
             ], 
             [
+                "view_priority", 
+                "projects", 
+                "priority"
+            ], 
+            [
                 "add_project", 
                 "projects", 
                 "project"
@@ -1941,34 +1417,29 @@
                 "project"
             ], 
             [
-                "list_projects", 
-                "projects", 
-                "project"
-            ], 
-            [
-                "manage_users", 
-                "projects", 
-                "project"
-            ], 
-            [
                 "view_project", 
                 "projects", 
                 "project"
             ], 
             [
-                "add_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "add_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
-                "change_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "change_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
-                "delete_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "delete_questionstatus", 
+                "projects", 
+                "questionstatus"
+            ], 
+            [
+                "view_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
                 "add_severity", 
@@ -1986,59 +1457,9 @@
                 "severity"
             ], 
             [
-                "add_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "add_task_to_us", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "assign_task_to_myself", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "assign_task_to_other", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_assigned_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_owned_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_task_state", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "comment_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "delete_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "view_task", 
-                "tasks", 
-                "task"
+                "view_severity", 
+                "projects", 
+                "severity"
             ], 
             [
                 "add_taskstatus", 
@@ -2056,39 +1477,9 @@
                 "taskstatus"
             ], 
             [
-                "add_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "add_userstory_to_milestones", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "change_owned_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "change_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "comment_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "delete_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "view_userstory", 
-                "userstories", 
-                "userstory"
+                "view_taskstatus", 
+                "projects", 
+                "taskstatus"
             ], 
             [
                 "add_userstorystatus", 
@@ -2106,42 +1497,112 @@
                 "userstorystatus"
             ], 
             [
-                "add_session", 
-                "sessions", 
-                "session"
+                "view_userstorystatus", 
+                "projects", 
+                "userstorystatus"
             ], 
             [
-                "change_session", 
-                "sessions", 
-                "session"
+                "add_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "delete_session", 
-                "sessions", 
-                "session"
+                "change_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "add_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "delete_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "change_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "view_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "delete_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "add_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "change_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "delete_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "view_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "add_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "change_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "delete_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "view_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "add_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "change_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "delete_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "view_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "add_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "change_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "delete_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "view_userstory", 
+                "userstories", 
+                "userstory"
             ], 
             [
                 "add_wikipage", 
-                "wiki", 
-                "wikipage"
-            ], 
-            [
-                "change_owned_wikipage", 
                 "wiki", 
                 "wikipage"
             ], 
@@ -2161,107 +1622,17 @@
                 "wikipage"
             ]
         ], 
-        "name": "Design", 
-        "slug": "design", 
         "computable": true, 
+        "slug": "design", 
         "order": 20
     }
 },
 {
-    "pk": 5, 
     "model": "users.role", 
+    "pk": 5, 
     "fields": {
+        "name": "Product Owner", 
         "permissions": [
-            [
-                "add_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "change_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "delete_logentry", 
-                "admin", 
-                "logentry"
-            ], 
-            [
-                "add_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "change_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "delete_group", 
-                "auth", 
-                "group"
-            ], 
-            [
-                "add_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "change_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "delete_permission", 
-                "auth", 
-                "permission"
-            ], 
-            [
-                "add_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "change_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "delete_role", 
-                "users", 
-                "role"
-            ], 
-            [
-                "add_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "change_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "delete_user", 
-                "users", 
-                "user"
-            ], 
-            [
-                "add_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
-            [
-                "change_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
-            [
-                "delete_contenttype", 
-                "contenttypes", 
-                "contenttype"
-            ], 
             [
                 "add_message", 
                 "djmail", 
@@ -2278,87 +1649,12 @@
                 "message"
             ], 
             [
-                "add_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "change_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "delete_revision", 
-                "reversion", 
-                "revision"
-            ], 
-            [
-                "add_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "change_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "delete_version", 
-                "reversion", 
-                "version"
-            ], 
-            [
-                "add_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
-                "change_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
-                "delete_attachment", 
-                "projects", 
-                "attachment"
-            ], 
-            [
                 "add_issue", 
                 "issues", 
                 "issue"
             ], 
             [
-                "assign_issue_to_myself", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "assign_issue_to_other", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_assigned_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
                 "change_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_issue_state", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_owned_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "comment_issue", 
                 "issues", 
                 "issue"
             ], 
@@ -2371,51 +1667,6 @@
                 "view_issue", 
                 "issues", 
                 "issue"
-            ], 
-            [
-                "add_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "change_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "delete_issuestatus", 
-                "projects", 
-                "issuestatus"
-            ], 
-            [
-                "add_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "change_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "delete_issuetype", 
-                "projects", 
-                "issuetype"
-            ], 
-            [
-                "add_membership", 
-                "projects", 
-                "membership"
-            ], 
-            [
-                "change_membership", 
-                "projects", 
-                "membership"
-            ], 
-            [
-                "delete_membership", 
-                "projects", 
-                "membership"
             ], 
             [
                 "add_milestone", 
@@ -2438,6 +1689,86 @@
                 "milestone"
             ], 
             [
+                "add_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "change_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "delete_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "view_attachment", 
+                "projects", 
+                "attachment"
+            ], 
+            [
+                "add_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "change_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "delete_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "view_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "add_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "change_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "delete_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "view_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "add_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "change_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "delete_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "view_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
                 "add_points", 
                 "projects", 
                 "points"
@@ -2449,6 +1780,11 @@
             ], 
             [
                 "delete_points", 
+                "projects", 
+                "points"
+            ], 
+            [
+                "view_points", 
                 "projects", 
                 "points"
             ], 
@@ -2468,6 +1804,11 @@
                 "priority"
             ], 
             [
+                "view_priority", 
+                "projects", 
+                "priority"
+            ], 
+            [
                 "add_project", 
                 "projects", 
                 "project"
@@ -2483,34 +1824,29 @@
                 "project"
             ], 
             [
-                "list_projects", 
-                "projects", 
-                "project"
-            ], 
-            [
-                "manage_users", 
-                "projects", 
-                "project"
-            ], 
-            [
                 "view_project", 
                 "projects", 
                 "project"
             ], 
             [
-                "add_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "add_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
-                "change_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "change_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
-                "delete_rolepoints", 
-                "userstories", 
-                "rolepoints"
+                "delete_questionstatus", 
+                "projects", 
+                "questionstatus"
+            ], 
+            [
+                "view_questionstatus", 
+                "projects", 
+                "questionstatus"
             ], 
             [
                 "add_severity", 
@@ -2528,59 +1864,9 @@
                 "severity"
             ], 
             [
-                "add_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "add_task_to_us", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "assign_task_to_myself", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "assign_task_to_other", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_assigned_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_owned_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "change_task_state", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "comment_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "delete_task", 
-                "tasks", 
-                "task"
-            ], 
-            [
-                "view_task", 
-                "tasks", 
-                "task"
+                "view_severity", 
+                "projects", 
+                "severity"
             ], 
             [
                 "add_taskstatus", 
@@ -2598,39 +1884,9 @@
                 "taskstatus"
             ], 
             [
-                "add_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "add_userstory_to_milestones", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "change_owned_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "change_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "comment_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "delete_userstory", 
-                "userstories", 
-                "userstory"
-            ], 
-            [
-                "view_userstory", 
-                "userstories", 
-                "userstory"
+                "view_taskstatus", 
+                "projects", 
+                "taskstatus"
             ], 
             [
                 "add_userstorystatus", 
@@ -2648,42 +1904,112 @@
                 "userstorystatus"
             ], 
             [
-                "add_session", 
-                "sessions", 
-                "session"
+                "view_userstorystatus", 
+                "projects", 
+                "userstorystatus"
             ], 
             [
-                "change_session", 
-                "sessions", 
-                "session"
+                "add_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "delete_session", 
-                "sessions", 
-                "session"
+                "change_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "add_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "delete_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "change_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "view_task", 
+                "tasks", 
+                "task"
             ], 
             [
-                "delete_migrationhistory", 
-                "south", 
-                "migrationhistory"
+                "add_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "change_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "delete_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "view_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "add_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "change_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "delete_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "view_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "add_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "change_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "delete_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "view_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
+                "add_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "change_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "delete_userstory", 
+                "userstories", 
+                "userstory"
+            ], 
+            [
+                "view_userstory", 
+                "userstories", 
+                "userstory"
             ], 
             [
                 "add_wikipage", 
-                "wiki", 
-                "wikipage"
-            ], 
-            [
-                "change_owned_wikipage", 
                 "wiki", 
                 "wikipage"
             ], 
@@ -2703,41 +2029,41 @@
                 "wikipage"
             ]
         ], 
-        "name": "Product Owner", 
-        "slug": "product-ouner", 
         "computable": false, 
+        "slug": "product-ouner", 
         "order": 50
     }
 },
 {
-    "pk": 6, 
     "model": "users.role", 
+    "pk": 6, 
     "fields": {
+        "name": "Stakeholder", 
         "permissions": [
             [
-                "change_revision", 
-                "reversion", 
-                "revision"
+                "add_issue", 
+                "issues", 
+                "issue"
             ], 
             [
-                "delete_revision", 
-                "reversion", 
-                "revision"
+                "change_issue", 
+                "issues", 
+                "issue"
             ], 
             [
-                "add_version", 
-                "reversion", 
-                "version"
+                "delete_issue", 
+                "issues", 
+                "issue"
             ], 
             [
-                "change_version", 
-                "reversion", 
-                "version"
+                "view_issue", 
+                "issues", 
+                "issue"
             ], 
             [
-                "delete_version", 
-                "reversion", 
-                "version"
+                "view_milestone", 
+                "milestones", 
+                "milestone"
             ], 
             [
                 "add_attachment", 
@@ -2755,34 +2081,34 @@
                 "attachment"
             ], 
             [
-                "add_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "change_owned_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "comment_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "view_issue", 
-                "issues", 
-                "issue"
-            ], 
-            [
-                "view_milestone", 
-                "milestones", 
-                "milestone"
-            ], 
-            [
-                "list_projects", 
+                "view_attachment", 
                 "projects", 
-                "project"
+                "attachment"
+            ], 
+            [
+                "view_issuestatus", 
+                "projects", 
+                "issuestatus"
+            ], 
+            [
+                "view_issuetype", 
+                "projects", 
+                "issuetype"
+            ], 
+            [
+                "view_membership", 
+                "projects", 
+                "membership"
+            ], 
+            [
+                "view_points", 
+                "projects", 
+                "points"
+            ], 
+            [
+                "view_priority", 
+                "projects", 
+                "priority"
             ], 
             [
                 "view_project", 
@@ -2790,24 +2116,74 @@
                 "project"
             ], 
             [
+                "add_questionstatus", 
+                "projects", 
+                "questionstatus"
+            ], 
+            [
+                "change_questionstatus", 
+                "projects", 
+                "questionstatus"
+            ], 
+            [
+                "delete_questionstatus", 
+                "projects", 
+                "questionstatus"
+            ], 
+            [
+                "view_questionstatus", 
+                "projects", 
+                "questionstatus"
+            ], 
+            [
+                "view_severity", 
+                "projects", 
+                "severity"
+            ], 
+            [
+                "view_taskstatus", 
+                "projects", 
+                "taskstatus"
+            ], 
+            [
+                "view_userstorystatus", 
+                "projects", 
+                "userstorystatus"
+            ], 
+            [
+                "view_task", 
+                "tasks", 
+                "task"
+            ], 
+            [
+                "view_role", 
+                "users", 
+                "role"
+            ], 
+            [
+                "change_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "view_user", 
+                "users", 
+                "user"
+            ], 
+            [
+                "view_rolepoints", 
+                "userstories", 
+                "rolepoints"
+            ], 
+            [
                 "view_userstory", 
                 "userstories", 
                 "userstory"
             ], 
             [
-                "add_session", 
-                "sessions", 
-                "session"
-            ], 
-            [
-                "change_session", 
-                "sessions", 
-                "session"
-            ], 
-            [
-                "delete_session", 
-                "sessions", 
-                "session"
+                "change_wikipage", 
+                "wiki", 
+                "wikipage"
             ], 
             [
                 "view_wikipage", 
@@ -2815,9 +2191,8 @@
                 "wikipage"
             ]
         ], 
-        "name": "Stakeholder", 
-        "slug": "stakeholder", 
         "computable": false, 
+        "slug": "stakeholder", 
         "order": 60
     }
 }
