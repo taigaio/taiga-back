@@ -25,8 +25,9 @@ class Task(WatchedMixin):
                                related_name="tasks", verbose_name=_("status"))
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="tasks", verbose_name=_("project"))
-    milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True, default=None,
-                               related_name="tasks", verbose_name=_("milestone"))
+    milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
+                                  default=None, related_name="tasks",
+                                  verbose_name=_("milestone"))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
                                         verbose_name=_("created date"))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
@@ -62,14 +63,7 @@ class Task(WatchedMixin):
         ordering = ["project", "created_date"]
         unique_together = ("ref", "project")
         permissions = (
-            ("comment_task", "Can comment tasks"),
-            ("change_owned_task", "Can modify owned tasks"),
-            ("change_assigned_task", "Can modify assigned tasks"),
-            ("assign_task_to_other", "Can assign tasks to others"),
-            ("assign_task_to_myself", "Can assign tasks to myself"),
-            ("change_task_state", "Can change the task state"),
-            ("view_task", "Can view the task"),
-            ("add_task_to_us", "Can add tasks to a user story"),
+            ("view_task", "Can view task"),
         )
 
     def __str__(self):
@@ -103,39 +97,46 @@ def task_ref_handler(sender, instance, **kwargs):
 def tasks_close_handler(sender, instance, **kwargs):
     if instance.id:                                                             # Edit task
         if (sender.objects.get(id=instance.id).status.is_closed == False and
-                instance.status.is_closed == True):                             # Closed task
+                instance.status.is_closed == True):                             # Close task
             instance.finished_date = timezone.now()
             if instance.user_story and (all([task.status.is_closed for task in
-                    instance.user_story.tasks.exclude(id=instance.id)])):       # All us's tasks are close
-                us_closed_status = instance.project.us_statuses.filter(is_closed=True).order_by("order")[0]
+                    instance.user_story.tasks.exclude(id=instance.id)])):       # All close
+                us_closed_status = instance.project.us_statuses.filter(
+                                                         is_closed=True).order_by(
+                                                                           "order")[0]
                 instance.user_story.status = us_closed_status
                 instance.user_story.finish_date = timezone.now()
                 instance.user_story.save()
         elif (sender.objects.get(id=instance.id).status.is_closed == True and
-                instance.status.is_closed == False):                            # Opened task
+                instance.status.is_closed == False):                            # Opene task
             instance.finished_date = None
-            if instance.user_story and instance.user_story.status.is_closed == True:    # Us is close
-                us_opened_status = instance.project.us_statuses.filter(is_closed=False).order_by("-order")[0]
+            if instance.user_story and instance.user_story.status.is_closed == True: # Us close
+                us_opened_status = instance.project.us_statuses.filter(
+                                                        is_closed=False).order_by(
+                                                                          "-order")[0]
                 instance.user_story.status = us_opened_status
                 instance.user_story.finish_date = None
                 instance.user_story.save()
-    else:                                                                       # Create Task
-        if instance.status.is_closed == True:                                   # Task is close
+    else:                                                                      # Create Task
+        if instance.status.is_closed == True:                                # Task is close
             instance.finished_date = timezone.now()
             if instance.user_story:
                 if instance.user_story.status.is_closed == True: # Us is close
                     instance.user_story.finish_date = timezone.now()
                     instance.user_story.save()
-                elif all([task.status.is_closed for task in instance.user_story.tasks.all()]):  # All us's tasks are close
+                elif all([task.status.is_closed for task in
+                                                    instance.user_story.tasks.all()]):  # All us's tasks are close
                     # if any stupid robot/machine/user/alien create an open US
                     us_closed_status = instance.project.us_statuses.filter(is_closed=True).order_by("order")[0]
                     instance.user_story.status = us_closed_status
                     instance.user_story.finish_date = timezone.now()
                     instance.user_story.save()
-        else:                                                                   # Task is opene
+        else:                                                               # Task is opene
             instance.finished_date = None
             if instance.user_story and instance.user_story.status.is_closed == True: # US is close
-                us_opened_status = instance.project.us_statuses.filter(is_closed=False).order_by("-order")[0]
+                us_opened_status = instance.project.us_statuses.filter(
+                                                        is_closed=False).order_by(
+                                                                          "-order")[0]
                 instance.user_story.status = us_opened_status
                 instance.user_story.finish_date = None
                 instance.user_story.save()
