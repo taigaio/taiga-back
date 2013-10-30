@@ -25,17 +25,21 @@ class RolePoints(models.Model):
                                verbose_name=_("points"))
 
     class Meta:
+        verbose_name = "role points"
+        verbose_name_plural = "role points"
         unique_together = ("user_story", "role")
-        verbose_name = "Role Point"
-        verbose_name_plural = "Role Points"
+        ordering = ["user_story", "role"]
+        permissions = (
+            ("view_rolepoints", "Can view role points"),
+        )
 
 
 class UserStory(WatchedMixin):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
-    milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True, default=None,
-                                  related_name="user_stories", verbose_name=_("milestone"),
-                                  on_delete=models.SET_NULL)
+    milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
+                                  default=None, related_name="user_stories",
+                                  on_delete=models.SET_NULL, verbose_name=_("milestone"))
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="user_stories", verbose_name=_("project"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
@@ -86,10 +90,7 @@ class UserStory(WatchedMixin):
         ordering = ["project", "order"]
         unique_together = ("ref", "project")
         permissions = (
-            ("comment_userstory", "Can comment user stories"),
-            ("view_userstory", "Can view user stories"),
-            ("change_owned_userstory", "Can modify owned user stories"),
-            ("add_userstory_to_milestones", "Can add user stories to milestones"),
+            ("view_userstory", "Can view user story"),
         )
 
     def __str__(self):
