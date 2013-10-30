@@ -132,6 +132,14 @@ def us_ref_handler(sender, instance, **kwargs):
         instance.ref = ref_uniquely(instance.project, "last_us_ref", instance.__class__)
 
 
-@receiver(models.signals.post_save, sender=UserStory, dispatch_uid="user_story_create_role_points_handler")
+@receiver(models.signals.post_save, sender=UserStory,
+          dispatch_uid="user_story_create_role_points_handler")
 def us_create_role_points_handler(sender, instance, **kwargs):
     instance.project.update_role_points()
+
+
+@receiver(models.signals.post_save, sender=UserStory,
+          dispatch_uid="user_story_tasks_reassignation")
+def us_task_reassignation(sender, instance, created, **kwargs):
+    if not created:
+        instance.tasks.update(milestone=instance.milestone)
