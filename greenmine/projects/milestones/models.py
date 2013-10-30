@@ -50,10 +50,10 @@ class Milestone(WatchedMixin):
     class Meta:
         verbose_name = "milestone"
         verbose_name_plural = "milestones"
-        ordering = ["project", "-created_date"]
+        ordering = ["project", "created_date"]
         unique_together = ("name", "project")
         permissions = (
-            ("view_milestone", "Can view milestones"),
+            ("view_milestone", "Can view milestone"),
         )
 
     def __str__(self):
@@ -93,7 +93,8 @@ class Milestone(WatchedMixin):
 
     @property
     def closed_points(self):
-        return self._get_user_stories_points([us for us in self.user_stories.all() if us.is_closed])
+        return self._get_user_stories_points([us for us in self.user_stories.all()
+                                                  if us.is_closed])
 
     @property
     def client_increment_points(self):
@@ -107,7 +108,8 @@ class Milestone(WatchedMixin):
                 team_requirement=False
             )
         client_increment = self._get_user_stories_points(user_stories)
-        shared_increment = {key: value/2 for key, value in self.shared_increment_points.items()}
+        shared_increment = {key: value/2 for key, value in
+                                             self.shared_increment_points.items()}
         return self._dict_sum(client_increment, shared_increment)
 
     @property
@@ -122,7 +124,8 @@ class Milestone(WatchedMixin):
                 team_requirement=True
             )
         team_increment = self._get_user_stories_points(user_stories)
-        shared_increment = {key: value/2 for key, value in self.shared_increment_points.items()}
+        shared_increment = {key: value/2 for key, value in
+                                             self.shared_increment_points.items()}
         return self._dict_sum(team_increment, shared_increment)
 
     @property
