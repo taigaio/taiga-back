@@ -38,7 +38,7 @@ class Question(WatchedMixin):
                                     verbose_name=_("assigned_to"))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
                                         verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
                                          verbose_name=_("modified date"))
     watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
                                       related_name="watched_questions",
@@ -59,25 +59,14 @@ class Question(WatchedMixin):
     class Meta:
         verbose_name = "question"
         verbose_name_plural = "questions"
-        ordering = ["project", "created_date", "subject"]
+        ordering = ["project", "created_date"]
         unique_together = ("ref", "project")
         permissions = (
-            ("reply_question", _("Can reply questions")),
-            ("change_owned_question", _("Can modify owned questions")),
-            ("change_assigned_question", _("Can modify assigned questions")),
-            ("assign_question_to_other", _("Can assign questions to others")),
-            ("assign_question_to_myself", _("Can assign questions to myself")),
-            ("change_question_state", _("Can change the question state")),
-            ("view_question", _("Can view the question")),
+            ("view_question", "Can view question"),
         )
 
     def __str__(self):
         return self.subject
-
-    def save(self, *args, **kwargs):
-        if self.id:
-            self.modified_date = timezone.now()
-        super(Question, self).save(*args, **kwargs)
 
     @property
     def is_closed(self):
