@@ -27,10 +27,8 @@ class WikiPage(models.Model):
         verbose_name_plural = "wiki pages"
         ordering = ["project", "slug"]
         unique_together = ("project", "slug",)
-
         permissions = (
-            ("view_wikipage", "Can modify owned wiki pages"),
-            ("change_owned_wikipage", "Can modify owned wiki pages"),
+            ("view_wikipage", "Can view wiki page"),
         )
 
     def __str__(self):
