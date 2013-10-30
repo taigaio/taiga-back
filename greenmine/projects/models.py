@@ -36,9 +36,12 @@ class Attachment(models.Model):
                                      upload_to="files/msg", verbose_name=_("attached file"))
 
     class Meta:
-        verbose_name = "Attachment"
-        verbose_name_plural = "Attachments"
+        verbose_name = "attachment"
+        verbose_name_plural = "attachments"
         ordering = ["project", "created_date"]
+        permissions = (
+            ("view_attachment", "Can view attachment"),
+        )
 
     def __str__(self):
         return "Attachment: {}".format(self.id)
@@ -53,8 +56,13 @@ class Membership(models.Model):
                              related_name="memberships")
 
     class Meta:
+        verbose_name = "membership"
+        verbose_name_plural = "membershipss"
         unique_together = ("user", "project")
         ordering = ["project", "role", "user"]
+        permissions = (
+            ("view_membership", "Can view membership"),
+        )
 
 
 class Project(models.Model):
@@ -87,13 +95,11 @@ class Project(models.Model):
     tags = PickledObjectField(null=False, blank=True,
                               verbose_name=_("tags"))
     class Meta:
-        verbose_name = "Project"
-        verbose_name_plural = "Projects"
+        verbose_name = "project"
+        verbose_name_plural = "projects"
         ordering = ["name"]
         permissions = (
-            ("list_projects", "Can list projects"),
             ("view_project", "Can view project"),
-            ("manage_users", "Can manage users"),
         )
 
     def __str__(self):
@@ -157,10 +163,13 @@ class UserStoryStatus(models.Model):
                                 related_name="us_statuses", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = "Userstory status"
-        verbose_name_plural = "Userstory statuses"
-        ordering = ["project", "name"]
+        verbose_name = "user story status"
+        verbose_name_plural = "user story statuses"
+        ordering = ["project", "order", "name"]
         unique_together = ("project", "name")
+        permissions = (
+            ("view_userstorystatus", "Can view user story status"),
+        )
 
     def __str__(self):
         return "Userstory status: {}".format(self.name)
@@ -177,10 +186,13 @@ class Points(models.Model):
                                 related_name="points", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = "Point"
-        verbose_name_plural = "Points"
-        ordering = ["project", "name"]
+        verbose_name = "points"
+        verbose_name_plural = "points"
+        ordering = ["project", "order", "name"]
         unique_together = ("project", "name")
+        permissions = (
+            ("view_points", "Can view points"),
+        )
 
     def __str__(self):
         return self.name
@@ -189,8 +201,10 @@ class Points(models.Model):
 # Tasks common models
 
 class TaskStatus(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
+    name = models.CharField(max_length=255, null=False, blank=False,
+                            verbose_name=_("name"))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
     is_closed = models.BooleanField(default=False, null=False, blank=True,
                                     verbose_name=_("is closed"))
     color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
@@ -201,8 +215,11 @@ class TaskStatus(models.Model):
     class Meta:
         verbose_name = "task status"
         verbose_name_plural = "task statuses"
-        ordering = ["project", "name"]
+        ordering = ["project", "order", "name"]
         unique_together = ("project", "name")
+        permissions = (
+            ("view_taskstatus", "Can view task status"),
+        )
 
     def __str__(self):
         return "Task status: {}".format(self.name)
@@ -211,66 +228,86 @@ class TaskStatus(models.Model):
 # Issue common Models
 
 class Priority(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
+    name = models.CharField(max_length=255, null=False, blank=False,
+                            verbose_name=_("name"))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
     project = models.ForeignKey("Project", null=False, blank=False,
                                 related_name="priorities", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = "Priority"
-        verbose_name_plural = "Priorities"
-        ordering = ["project", "name"]
+        verbose_name = "priority"
+        verbose_name_plural = "priorities"
+        ordering = ["project", "order", "name"]
         unique_together = ("project", "name")
+        permissions = (
+            ("view_priority", "Can view priority"),
+        )
 
     def __str__(self):
         return "Priority {}".format(self.name)
 
 
 class Severity(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
+    name = models.CharField(max_length=255, null=False, blank=False,
+                            verbose_name=_("name"))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
     project = models.ForeignKey("Project", null=False, blank=False,
                                 related_name="severities", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = "Severity"
-        verbose_name_plural = "Severities"
-        ordering = ["project", "name"]
+        verbose_name = "severity"
+        verbose_name_plural = "severities"
+        ordering = ["project", "order", "name"]
         unique_together = ("project", "name")
+        permissions = (
+            ("view_severity", "Can view severity"),
+        )
 
     def __str__(self):
         return "Severity: {}".format(self.name)
 
 
 class IssueStatus(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
+    name = models.CharField(max_length=255, null=False, blank=False,
+                            verbose_name=_("name"))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
     is_closed = models.BooleanField(default=False, null=False, blank=True,
                                     verbose_name=_("is closed"))
     project = models.ForeignKey("Project", null=False, blank=False,
                                 related_name="issue_statuses", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = "Issue status"
-        verbose_name_plural = "Issue statuses"
-        ordering = ["project", "name"]
+        verbose_name = "issue status"
+        verbose_name_plural = "issue statuses"
+        ordering = ["project", "order", "name"]
         unique_together = ("project", "name")
+        permissions = (
+            ("view_issuestatus", "Can view issue status"),
+        )
 
     def __str__(self):
         return "Issue status: {}".format(self.name)
 
 
 class IssueType(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False, verbose_name=_("order"))
+    name = models.CharField(max_length=255, null=False, blank=False,
+                            verbose_name=_("name"))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
     project = models.ForeignKey("Project", null=False, blank=False,
                                 related_name="issue_types", verbose_name=_("project"))
 
     class Meta:
-        verbose_name = "Issue type"
-        verbose_name_plural = "Issue types"
-        ordering = ["project", "name"]
+        verbose_name = "issue type"
+        verbose_name_plural = "issue types"
+        ordering = ["project", "order", "name"]
         unique_together = ("project", "name")
+        permissions = (
+            ("view_issuetype", "Can view issue type"),
+        )
 
     def __str__(self):
         return "Issue type: {}".format(self.name)
@@ -290,10 +327,13 @@ class QuestionStatus(models.Model):
                                 verbose_name=_("project"))
 
     class Meta:
-        verbose_name = "Question status"
-        verbose_name_plural = "Question status"
-        ordering = ["project", "name"]
+        verbose_name = "question status"
+        verbose_name_plural = "question statuses"
+        ordering = ["project", "order", "name"]
         unique_together = ("project", "name")
+        permissions = (
+            ("view_questionstatus", "Can view question status"),
+        )
 
     def __str__(self):
         return "Quiestion status: {}".format(self.name)

@@ -34,8 +34,8 @@ class AttachmentPermission(BasePermission):
 
 class PointsPermission(BasePermission):
     get_permission = "view_points"
-    put_permission = "severity_points"
-    patch_permission = "severity_points"
+    put_permission = "change_points"
+    patch_permission = "change_points"
     delete_permission = "delete_points"
     safe_methods = ["HEAD", "OPTIONS"]
     path_to_project =  ["project"]
@@ -92,8 +92,8 @@ class IssueStatusPermission(BasePermission):
 
 class IssueTypePermission(BasePermission):
     get_permission = "view_issuetype"
-    put_permission = "severity_issuetype"
-    patch_permission = "severity_issuetype"
+    put_permission = "change_issuetype"
+    patch_permission = "change_issuetype"
     delete_permission = "delete_issuetype"
     safe_methods = ["HEAD", "OPTIONS"]
     path_to_project =  ["project"]
