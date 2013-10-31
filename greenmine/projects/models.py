@@ -116,7 +116,7 @@ class Project(models.Model):
 
     def get_roles(self):
         role_model = get_model("users", "Role")
-        return role_model.objects.filter(computable=True)
+        return role_model.objects.all()
 
         # TODO: do not remove this
         # return role_model.objects.filter(id__in=list(self.memberships.values_list(
@@ -134,7 +134,6 @@ class Project(models.Model):
 
         # Get point instance that represent a null/undefined
         null_points_value = self.points.get(value=None)
-
 
         # Iter over all project user stories and create
         # role point instance for new created roles.
