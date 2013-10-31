@@ -84,7 +84,7 @@ class Milestone(WatchedMixin):
 
     def _dict_sum(self, dict1, dict2):
         dict_result = copy.copy(dict2)
-        for key, value in dict1:
+        for key, value in dict1.items():
             if key in dict_result:
                 dict_result[key] += value
             else:
