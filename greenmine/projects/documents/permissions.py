@@ -5,6 +5,7 @@ from greenmine.base.permissions import BasePermission
 
 class DocumentPermission(BasePermission):
     get_permission = "view_document"
+    post_permission = "add_document"
     put_permission = "change_document"
     patch_permission = "change_document"
     delete_permission = "delete_document"

@@ -5,6 +5,7 @@ from greenmine.base.permissions import BasePermission
 
 class UserStoryPermission(BasePermission):
     get_permission = "view_userstory"
+    post_permission = "add_userstory"
     put_permission = "change_userstory"
     patch_permission = "change_userstory"
     delete_permission = "delete_userstory"

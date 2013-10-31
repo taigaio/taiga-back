@@ -20,6 +20,7 @@ def has_project_perm(user, project, perm):
 
 class BasePermission(permissions.BasePermission):
     get_permission = None
+    post_permission = None
     put_permission = None
     patch_permission = None
     delete_permission = None
@@ -46,15 +47,14 @@ class BasePermission(permissions.BasePermission):
         # Members permissions
         if request.method == "GET":
             return has_project_perm(request.user, project_obj, self.get_permission)
-
+        elif request.method == "POST":
+            return has_project_perm(request.user, project_obj, self.post_permission)
         elif request.method == "PUT":
             return has_project_perm(request.user, project_obj, self.put_permission)
-
-        elif request.method == "DELETE":
-            return has_project_perm(request.user, project_obj, self.delete_permission)
-
         elif request.method == "PATCH":
             return has_project_perm(request.user, project_obj, self.patch_permission)
+        elif request.method == "DELETE":
+            return has_project_perm(request.user, project_obj, self.delete_permission)
 
         return False
 
