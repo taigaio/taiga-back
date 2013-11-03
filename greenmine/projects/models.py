@@ -18,9 +18,17 @@ from . import choices
 import reversion
 
 
+def get_attachment_file_path(instance, filename):
+    return "attachment-files/{project}/{model}/{filename}".format(
+                project=instance.project.slug,
+                model=instance.content_type.model,
+                filename=filename)
+
+
 class Attachment(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
-                              related_name="change_attachments", verbose_name=_("owner"))
+                              related_name="change_attachments",
+                              verbose_name=_("owner"))
     project = models.ForeignKey("Project", null=False, blank=False,
                                 related_name="attachments", verbose_name=_("project"))
     content_type = models.ForeignKey(ContentType, null=False, blank=False,
@@ -33,7 +41,8 @@ class Attachment(models.Model):
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
                                          verbose_name=_("modified date"))
     attached_file = models.FileField(max_length=500, null=True, blank=True,
-                                     upload_to="files/msg", verbose_name=_("attached file"))
+                                     upload_to=get_attachment_file_path,
+                                     verbose_name=_("attached file"))
 
     class Meta:
         verbose_name = "attachment"
