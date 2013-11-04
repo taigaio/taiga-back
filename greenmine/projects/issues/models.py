@@ -93,6 +93,13 @@ reversion.register(Issue)
 
 
 # Model related signals handlers
+@receiver(models.signals.pre_save, sender=Issue, dispatch_uid="issue_finished_date_handler")
+def issue_finished_date_handler(sender, instance, **kwargs):
+    if instance.status.is_closed and not instance.finished_date:
+        instance.finished_date = timezone.now()
+    elif not instance.status.is_closed and instance.finished_date:
+        instance.finished_date = None
+
 @receiver(models.signals.pre_save, sender=Issue, dispatch_uid="issue_ref_handler")
 def issue_ref_handler(sender, instance, **kwargs):
     if not instance.id and instance.project:
