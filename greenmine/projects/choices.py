@@ -62,7 +62,8 @@ ISSUE_TYPES = (
 QUESTION_STATUS = (
     (1, _("New"), False),
     (2, _("Pending"), False),
-    (3, _("Answered"), True),
+    (3, _("Answered"), False),
+    (4, _("Closed"), True),
 )
 
 # TODO: pending to refactor
