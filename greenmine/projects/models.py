@@ -413,7 +413,7 @@ class QuestionStatus(models.Model):
         )
 
     def __str__(self):
-        return "Quiestion status: {}".format(self.name)
+        return "Question status: {}".format(self.name)
 
 
 # Reversion registration (usufull for base.notification and for meke a historical)
