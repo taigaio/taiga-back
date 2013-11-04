@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.decorators import detail_route
 
 from greenmine.base import filters
 from greenmine.base.api import ModelCrudViewSet, ModelListViewSet
@@ -18,6 +21,53 @@ class ProjectViewSet(ModelCrudViewSet):
     serializer_class = serializers.ProjectDetailSerializer
     list_serializer_class = serializers.ProjectSerializer
     permission_classes = (IsAuthenticated, permissions.ProjectPermission)
+
+    @detail_route(methods=['get'])
+    def stats(self, request, pk=None):
+        project = get_object_or_404(models.Project, pk=pk)
+        project_stats = {
+            'name': project.name,
+            'total_milestones': project.total_milestones,
+            'total_points': project.total_story_points,
+            'milestones': []
+        }
+
+        current_milestone = 0
+        current_evolution = 0
+        current_team_increment = 0
+        current_client_increment = 0
+        optimal_points_per_sprint = project.total_story_points / (project.total_milestones - 1)
+
+        for ml in project.milestones.all():
+            optimal_points = project.total_story_points - (optimal_points_per_sprint * current_milestone)
+            project_stats['milestones'].append({
+                'name': ml.name,
+                'optimal': optimal_points,
+                'evolution': project.total_story_points - current_evolution,
+                'team-increment': current_team_increment,
+                'client-increment': current_client_increment,
+            })
+            current_milestone += 1
+            current_evolution += sum(ml.closed_points.values())
+            current_team_increment += sum(ml.team_increment_points.values())
+            current_client_increment += sum(ml.client_increment_points.values())
+
+        if project.total_milestones > project.milestones.all().count():
+            for x in range(project.milestones.all().count(), project.total_milestones):
+                optimal_points = project.total_story_points - (optimal_points_per_sprint * current_milestone)
+                if current_evolution is not None:
+                    current_evolution = project.total_story_points - current_evolution
+                project_stats['milestones'].append({
+                    'name': "Future sprint",
+                    'optimal': optimal_points,
+                    'evolution': current_evolution,
+                    'team-increment': current_team_increment + sum(project.future_team_increment.values()),
+                    'client-increment': current_client_increment + sum(project.future_client_increment.values()),
+                })
+                current_milestone += 1
+                current_evolution = None
+
+        return Response(project_stats)
 
     def get_queryset(self):
         qs = super(ProjectViewSet, self).get_queryset()

@@ -13,9 +13,12 @@ from picklefield.fields import PickledObjectField
 
 from greenmine.base.utils.slug import slugify_uniquely
 from greenmine.base.notifications.models import WatchedMixin
+from greenmine.projects.userstories.models import UserStory
 from . import choices
 
 import reversion
+import itertools
+import copy
 
 
 def get_attachment_file_path(instance, filename):
@@ -157,6 +160,72 @@ class Project(models.Model):
         rp_query = rp_query.exclude(role__id__in=roles.values_list("id", flat=True))
         rp_query.delete()
 
+    def _get_user_stories_points(self, user_stories):
+        role_points = [us.role_points.all() for us in user_stories]
+        flat_role_points = itertools.chain(*role_points)
+
+        result = {}
+        for role_point in flat_role_points:
+            if role_point.points.value is not None:
+                if role_point.role_id in result:
+                    result[role_point.role_id] += float(role_point.points.value)
+                else:
+                    result[role_point.role_id] = float(role_point.points.value)
+
+        return result
+
+    def _dict_sum(self, dict1, dict2):
+        dict_result = copy.copy(dict2)
+        for key, value in dict1.items():
+            if key in dict_result:
+                dict_result[key] += value
+            else:
+                dict_result[key] = value
+        return dict_result
+
+
+    @property
+    def future_team_increment(self):
+        user_stories = UserStory.objects.none()
+        last_milestones = self.milestones.order_by('-estimated_finish')
+        last_milestone = last_milestones[1] if last_milestones else None
+        user_stories = UserStory.objects.filter(
+            created_date__gte=last_milestone.estimated_finish if last_milestones else None,
+            project_id=self.id,
+            client_requirement=False,
+            team_requirement=True
+        )
+        team_increment = self._get_user_stories_points(user_stories)
+        shared_increment = {key: value/2 for key, value in self.future_shared_increment.items()}
+        return self._dict_sum(team_increment, shared_increment)
+
+    @property
+    def future_client_increment(self):
+        user_stories = UserStory.objects.none()
+        last_milestones = self.milestones.order_by('-estimated_finish')
+        last_milestone = last_milestones[1] if last_milestones else None
+        user_stories = UserStory.objects.filter(
+            created_date__gte=last_milestone.estimated_finish if last_milestones else None,
+            project_id=self.id,
+            client_requirement=True,
+            team_requirement=False
+        )
+        client_increment = self._get_user_stories_points(user_stories)
+        shared_increment = {key: value/2 for key, value in self.future_shared_increment.items()}
+        return self._dict_sum(client_increment, shared_increment)
+
+    @property
+    def future_shared_increment(self):
+        user_stories = UserStory.objects.none()
+        last_milestones = self.milestones.order_by('-estimated_finish')
+        last_milestone = last_milestones[1] if last_milestones else None
+        user_stories = UserStory.objects.filter(
+            created_date__gte=last_milestone.estimated_finish if last_milestones else None,
+            project_id=self.id,
+            client_requirement=True,
+            team_requirement=True
+        )
+        return self._get_user_stories_points(user_stories)
 
 # User Stories common Models
 
