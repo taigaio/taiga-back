@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
@@ -70,6 +71,7 @@ class UserStory(WatchedMixin):
                                            verbose_name=_("is team requirement"))
     tags = PickledObjectField(null=False, blank=True,
                               verbose_name=_("tags"))
+    attachments = generic.GenericRelation("projects.Attachment")
 
     notifiable_fields = [
         "milestone",

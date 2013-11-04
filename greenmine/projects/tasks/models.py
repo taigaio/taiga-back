@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.utils import timezone
 from django.dispatch import receiver
@@ -43,6 +44,7 @@ class Task(WatchedMixin):
     watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
                 related_name="watched_tasks", verbose_name=_("watchers"))
     tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
+    attachments = generic.GenericRelation("projects.Attachment")
     is_iocaine = models.BooleanField(default=False, null=False, blank=True,
                                      verbose_name=_("is iocaine"))
 

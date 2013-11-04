@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.utils import timezone
 from django.dispatch import receiver
@@ -48,6 +49,7 @@ class Issue(WatchedMixin):
                                       related_name="watched_issues",
                                       verbose_name=_("watchers"))
     tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
+    attachments = generic.GenericRelation("projects.Attachment")
 
     notifiable_fields = [
          "owner",

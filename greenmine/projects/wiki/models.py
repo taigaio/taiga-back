@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
@@ -21,6 +22,7 @@ class WikiPage(models.Model):
                                         verbose_name=_("created date"))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
                                          verbose_name=_("modified date"))
+    attachments = generic.GenericRelation("projects.Attachment")
 
     class Meta:
         verbose_name = "wiki page"
