@@ -24,8 +24,6 @@ class Question(WatchedMixin):
     subject = models.CharField(max_length=250, null=False, blank=False,
                                verbose_name=_("subject"))
     content = models.TextField(null=False, blank=True, verbose_name=_("content"))
-    closed = models.BooleanField(default=False, null=False, blank=True,
-                                 verbose_name=_("closed"))
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="questions", verbose_name=_("project"))
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
@@ -86,8 +84,16 @@ reversion.register(Question)
 
 
 # Model related signals handlers
+@receiver(models.signals.pre_save, sender=Issue, dispatch_uid="question_finished_date_handler")
+def question_finished_date_handler(sender, instance, **kwargs):
+    if instance.status.is_closed and not instance.finished_date:
+        instance.finished_date = timezone.now()
+    elif not instance.status.is_closed and instance.finished_date:
+        instance.finished_date = None
 @receiver(models.signals.pre_save, sender=Question, dispatch_uid="question_ref_handler")
 def question_ref_handler(sender, instance, **kwargs):
     if not instance.id and instance.project:
         instance.ref = ref_uniquely(instance.project,"last_question_ref",
                                     instance.__class__)
+
+
