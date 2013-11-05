@@ -72,20 +72,14 @@ class Milestone(WatchedMixin):
     def _get_user_stories_points(self, user_stories):
         role_points = [us.role_points.all() for us in user_stories]
         flat_role_points = itertools.chain(*role_points)
-
-        result = {}
-        for role_point in flat_role_points:
-            if role_point.points.value is not None:
-                if role_point.role_id in result:
-                    result[role_point.role_id] += float(role_point.points.value)
-                else:
-                    result[role_point.role_id] = float(role_point.points.value)
-
-        return result
+        flat_role_dicts = map(lambda x: {x.role_id: x.points.value if x.points.value else 0}, flat_role_points)
+        return dict_sum(*flat_role_dicts)
 
     @property
     def total_points(self):
-        return self._get_user_stories_points([us for us in self.user_stories.all()])
+        return self._get_user_stories_points(
+            [us for us in self.user_stories.all()]
+        )
 
     @property
     def closed_points(self):
@@ -93,18 +87,21 @@ class Milestone(WatchedMixin):
             [us for us in self.user_stories.all() if us.is_closed]
         )
 
-    @property
-    def client_increment_points(self):
+    def _get_points_increment(self, client_requirement, team_requirement):
         user_stories = UserStory.objects.none()
         if self.estimated_start and self.estimated_finish:
             user_stories = UserStory.objects.filter(
                 created_date__gte=self.estimated_start,
                 created_date__lt=self.estimated_finish,
                 project_id=self.project_id,
-                client_requirement=True,
-                team_requirement=False
+                client_requirement=client_requirement,
+                team_requirement=team_requirement
             )
-        client_increment = self._get_user_stories_points(user_stories)
+        return self._get_user_stories_points(user_stories)
+
+    @property
+    def client_increment_points(self):
+        client_increment = self._get_points_increment(True, False)
         shared_increment = {
             key: value/2 for key, value in self.shared_increment_points.items()
         }
@@ -112,16 +109,7 @@ class Milestone(WatchedMixin):
 
     @property
     def team_increment_points(self):
-        user_stories = UserStory.objects.none()
-        if self.estimated_start and self.estimated_finish:
-            user_stories = UserStory.objects.filter(
-                created_date__gte=self.estimated_start,
-                created_date__lt=self.estimated_finish,
-                project_id=self.project_id,
-                client_requirement=False,
-                team_requirement=True
-            )
-        team_increment = self._get_user_stories_points(user_stories)
+        team_increment = self._get_points_increment(False, True)
         shared_increment = {
             key: value/2 for key, value in self.shared_increment_points.items()
         }
@@ -129,16 +117,7 @@ class Milestone(WatchedMixin):
 
     @property
     def shared_increment_points(self):
-        user_stories = UserStory.objects.none()
-        if self.estimated_start and self.estimated_finish:
-            user_stories = UserStory.objects.filter(
-                created_date__gte=self.estimated_start,
-                created_date__lt=self.estimated_finish,
-                project_id=self.project_id,
-                client_requirement=True,
-                team_requirement=True
-            )
-        return self._get_user_stories_points(user_stories)
+        return self._get_points_increment(True, True)
 
     def _get_watchers_by_role(self):
         return {
