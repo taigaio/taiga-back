@@ -12,6 +12,7 @@ from greenmine.projects.userstories.models import UserStory
 import reversion
 import itertools
 import copy
+import datetime
 
 
 class Milestone(WatchedMixin):
@@ -152,7 +153,7 @@ class Milestone(WatchedMixin):
         }
 
     def closed_points_by_date(self, date):
-        return self._get_user_stories_points([us for us in self.user_stories.filter(finish_date__lte=date)
+        return self._get_user_stories_points([us for us in self.user_stories.filter(finish_date__lt=date + datetime.timedelta(days=1))
                                                   if us.is_closed])
 
 
