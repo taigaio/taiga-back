@@ -229,10 +229,7 @@ class Project(models.Model):
 
     @property
     def closed_points(self):
-        closed_points = 0
-        for ml in self.milestones.all():
-            closed_points = ml.closed_points
-        return closed_points
+        return dict_sum(*[ml.closed_points for ml in self.milestones.all()])
 
     @property
     def defined_points(self):
