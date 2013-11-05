@@ -37,7 +37,7 @@ class ProjectViewSet(ModelCrudViewSet):
         current_evolution = 0
         current_team_increment = 0
         current_client_increment = 0
-        optimal_points_per_sprint = project.total_story_points / (project.total_milestones - 1)
+        optimal_points_per_sprint = project.total_story_points / (project.total_milestones)
         future_team_increment = sum(project.future_team_increment.values())
         future_client_increment = sum(project.future_client_increment.values())
 
@@ -69,6 +69,14 @@ class ProjectViewSet(ModelCrudViewSet):
                 'team-increment': team_increment,
                 'client-increment': client_increment,
             }
+        optimal_points -= optimal_points_per_sprint
+        yield {
+            'name': 'Project End',
+            'optimal': optimal_points,
+            'evolution': evolution,
+            'team-increment': team_increment,
+            'client-increment': client_increment,
+        }
 
     def get_queryset(self):
         qs = super(ProjectViewSet, self).get_queryset()
