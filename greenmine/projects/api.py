@@ -29,45 +29,46 @@ class ProjectViewSet(ModelCrudViewSet):
             'name': project.name,
             'total_milestones': project.total_milestones,
             'total_points': project.total_story_points,
-            'milestones': []
+            'milestones': self._milestones_stats(project)
         }
+        return Response(project_stats)
 
-        current_milestone = 0
+    def _milestones_stats(self, project):
         current_evolution = 0
         current_team_increment = 0
         current_client_increment = 0
         optimal_points_per_sprint = project.total_story_points / (project.total_milestones - 1)
+        future_team_increment = sum(project.future_team_increment.values())
+        future_client_increment = sum(project.future_client_increment.values())
 
-        for ml in project.milestones.all():
+        milestones = project.milestones.order_by('estimated_start')
+
+        for current_milestone in range(0, max(milestones.count(), project.total_milestones)):
             optimal_points = project.total_story_points - (optimal_points_per_sprint * current_milestone)
-            project_stats['milestones'].append({
-                'name': ml.name,
-                'optimal': optimal_points,
-                'evolution': project.total_story_points - current_evolution,
-                'team-increment': current_team_increment,
-                'client-increment': current_client_increment,
-            })
-            current_milestone += 1
-            current_evolution += sum(ml.closed_points.values())
-            current_team_increment += sum(ml.team_increment_points.values())
-            current_client_increment += sum(ml.client_increment_points.values())
+            evolution = project.total_story_points - current_evolution if current_evolution is not None else None
 
-        if project.total_milestones > project.milestones.all().count():
-            for x in range(project.milestones.all().count(), project.total_milestones):
-                optimal_points = project.total_story_points - (optimal_points_per_sprint * current_milestone)
-                if current_evolution is not None:
-                    current_evolution = project.total_story_points - current_evolution
-                project_stats['milestones'].append({
-                    'name': "Future sprint",
-                    'optimal': optimal_points,
-                    'evolution': current_evolution,
-                    'team-increment': current_team_increment + sum(project.future_team_increment.values()),
-                    'client-increment': current_client_increment + sum(project.future_client_increment.values()),
-                })
-                current_milestone += 1
+            if current_milestone < milestones.count():
+                ml = milestones[current_milestone]
+                milestone_name = ml.name
+                team_increment = current_team_increment
+                client_increment = current_client_increment
+
+                current_evolution += sum(ml.closed_points.values())
+                current_team_increment += sum(ml.team_increment_points.values())
+                current_client_increment += sum(ml.client_increment_points.values())
+            else:
+                milestone_name = "Future sprint"
+                team_increment = current_team_increment + future_team_increment,
+                client_increment = current_client_increment + future_client_increment,
                 current_evolution = None
 
-        return Response(project_stats)
+            yield {
+                'name': milestone_name,
+                'optimal': optimal_points,
+                'evolution': evolution,
+                'team-increment': team_increment,
+                'client-increment': client_increment,
+            }
 
     def get_queryset(self):
         qs = super(ProjectViewSet, self).get_queryset()
