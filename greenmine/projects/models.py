@@ -104,8 +104,45 @@ class Project(models.Model):
                                            verbose_name=_("total of milestones"))
     total_story_points = models.FloatField(default=None, null=True, blank=False,
                                            verbose_name=_("total story points"))
-    tags = PickledObjectField(null=False, blank=True,
-                              verbose_name=_("tags"))
+    tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
+    default_points = models.OneToOneField("projects.Points", on_delete=models.PROTECT,
+                                          related_name="+", null=True, blank=True,
+                                          limit_choices_to={'project': id},
+                                          verbose_name=_("default points"))
+    default_us_status = models.OneToOneField("projects.UserStoryStatus",
+                                             on_delete=models.PROTECT, related_name="+",
+                                             null=True, blank=True,
+                                             limit_choices_to={'project': id},
+                                             verbose_name=_("default US status"))
+    default_task_status = models.OneToOneField("projects.TaskStatus",
+                                               on_delete=models.PROTECT, related_name="+",
+                                               null=True, blank=True,
+                                               limit_choices_to={'project': id},
+                                               verbose_name=_("default task status"))
+    default_priority = models.OneToOneField("projects.Priority", on_delete=models.PROTECT,
+                                            related_name="+", null=True, blank=True,
+                                            limit_choices_to={'project': id},
+                                            verbose_name=_("default priority"))
+    default_severity = models.OneToOneField("projects.Severity", on_delete=models.PROTECT,
+                                            related_name="+", null=True, blank=True,
+                                            limit_choices_to={'project': id},
+                                            verbose_name=_("default severity"))
+    default_issue_status = models.OneToOneField("projects.IssueStatus",
+                                                on_delete=models.PROTECT, related_name="+",
+                                                null=True, blank=True,
+                                                limit_choices_to={'project': id},
+                                                verbose_name=_("default issue status"))
+    default_issue_type = models.OneToOneField("projects.IssueType",
+                                              on_delete=models.PROTECT, related_name="+",
+                                              null=True, blank=True,
+                                              limit_choices_to={'project': id},
+                                              verbose_name=_("default issue type"))
+    default_question_status = models.OneToOneField("projects.QuestionStatus",
+                                                   on_delete=models.PROTECT,
+                                                   related_name="+", null=True, blank=True,
+                                                   limit_choices_to={'project': id},
+                                                   verbose_name=_("default questions "
+                                                                  "status"))
 
     class Meta:
         verbose_name = "project"
@@ -415,9 +452,12 @@ def project_post_save(sender, instance, created, **kwargs):
         return
 
     # USs
-    for order, name, value in choices.POINTS_CHOICES:
-        Points.objects.create(project=instance, name=name, order=order, value=value)
+    for order, name, value, is_default in choices.POINTS_CHOICES:
+        obj = Points.objects.create(project=instance, name=name, order=order, value=value)
+        if is_default:
+            instance.default_points = obj
 
+<<<<<<< HEAD
     for order, name, is_closed in choices.US_STATUSES:
         UserStoryStatus.objects.create(name=name, order=order,
                                        is_closed=is_closed, project=instance)
@@ -437,11 +477,54 @@ def project_post_save(sender, instance, created, **kwargs):
     for order, name, is_closed in choices.ISSUE_STATUSES:
         IssueStatus.objects.create(name=name, order=order,
                                    is_closed=is_closed, project=instance)
+=======
+    for order, name, is_closed, is_default in choices.US_STATUSES:
+        obj = UserStoryStatus.objects.create(name=name, order=order,
+                                             is_closed=is_closed, project=instance)
+        if is_default:
+            instance.default_us_status = obj
 
-    for order, name in choices.ISSUE_TYPES:
-        IssueType.objects.create(project=instance, name=name, order=order)
+    # Tasks
+    for order, name, is_closed, is_default, color in choices.TASK_STATUSES:
+        obj = TaskStatus.objects.create(name=name, order=order, color=color,
+                                        is_closed=is_closed, project=instance)
+        if is_default:
+            instance.default_task_status = obj
+
+    # Issues
+    for order, name, is_default in choices.PRIORITY_CHOICES:
+        obj = Priority.objects.create(project=instance, name=name, order=order)
+        if is_default:
+            instance.default_priority = obj
+
+    for order, name, is_default in choices.SEVERITY_CHOICES:
+        obj = Severity.objects.create(project=instance, name=name, order=order)
+        if is_default:
+            instance.default_severity = obj
+
+    for order, name, is_closed, is_default in choices.ISSUE_STATUSES:
+        obj = IssueStatus.objects.create(name=name, order=order,
+                                         is_closed=is_closed, project=instance)
+        if is_default:
+            instance.default_issue_status = obj
+>>>>>>> Set a default value per project for all statuses, types, points, priorities, sverityes...
+
+    for order, name, is_default in choices.ISSUE_TYPES:
+        obj = IssueType.objects.create(project=instance, name=name, order=order)
+        if is_default:
+            instance.default_issue_type = obj
 
     # Questions
+<<<<<<< HEAD
     for order, name, is_closed in choices.QUESTION_STATUS:
         QuestionStatus.objects.create(name=name, order=order,
                                       is_closed=is_closed, project=instance)
+=======
+    for order, name, is_closed, is_default in choices.QUESTION_STATUS:
+        obj = QuestionStatus.objects.create(name=name, order=order,
+                                            is_closed=is_closed, project=instance)
+        if is_default:
+            instance.default_question_status = obj
+
+    instance.save()
+>>>>>>> Set a default value per project for all statuses, types, points, priorities, sverityes...
