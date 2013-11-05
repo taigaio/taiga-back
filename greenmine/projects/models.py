@@ -235,6 +235,10 @@ class Project(models.Model):
     def defined_points(self):
         return self._get_user_stories_points(self.user_stories.all())
 
+    @property
+    def assigned_points(self):
+        return self._get_user_stories_points(self.user_stories.filter(milestone__isnull=False))
+
 
 # User Stories common Models
 class UserStoryStatus(models.Model):
