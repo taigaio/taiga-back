@@ -5,13 +5,13 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from greenmine.base.utils.slug import slugify_uniquely
+from greenmine.base.utils.dicts import dict_sum
 from greenmine.base.notifications.models import WatchedMixin
 
 from greenmine.projects.userstories.models import UserStory
 
 import reversion
 import itertools
-import copy
 import datetime
 
 
@@ -83,23 +83,15 @@ class Milestone(WatchedMixin):
 
         return result
 
-    def _dict_sum(self, dict1, dict2):
-        dict_result = copy.copy(dict2)
-        for key, value in dict1.items():
-            if key in dict_result:
-                dict_result[key] += value
-            else:
-                dict_result[key] = value
-        return dict_result
-
     @property
     def total_points(self):
         return self._get_user_stories_points([us for us in self.user_stories.all()])
 
     @property
     def closed_points(self):
-        return self._get_user_stories_points([us for us in self.user_stories.all()
-                                                  if us.is_closed])
+        return self._get_user_stories_points(
+            [us for us in self.user_stories.all() if us.is_closed]
+        )
 
     @property
     def client_increment_points(self):
@@ -113,9 +105,10 @@ class Milestone(WatchedMixin):
                 team_requirement=False
             )
         client_increment = self._get_user_stories_points(user_stories)
-        shared_increment = {key: value/2 for key, value in
-                                             self.shared_increment_points.items()}
-        return self._dict_sum(client_increment, shared_increment)
+        shared_increment = {
+            key: value/2 for key, value in self.shared_increment_points.items()
+        }
+        return dict_sum(client_increment, shared_increment)
 
     @property
     def team_increment_points(self):
@@ -129,9 +122,10 @@ class Milestone(WatchedMixin):
                 team_requirement=True
             )
         team_increment = self._get_user_stories_points(user_stories)
-        shared_increment = {key: value/2 for key, value in
-                                             self.shared_increment_points.items()}
-        return self._dict_sum(team_increment, shared_increment)
+        shared_increment = {
+            key: value/2 for key, value in self.shared_increment_points.items()
+        }
+        return dict_sum(team_increment, shared_increment)
 
     @property
     def shared_increment_points(self):
@@ -153,8 +147,11 @@ class Milestone(WatchedMixin):
         }
 
     def closed_points_by_date(self, date):
-        return self._get_user_stories_points([us for us in self.user_stories.filter(finish_date__lt=date + datetime.timedelta(days=1))
-                                                  if us.is_closed])
+        return self._get_user_stories_points([
+            us for us in self.user_stories.filter(
+                finish_date__lt=date + datetime.timedelta(days=1)
+            ) if us.is_closed
+        ])
 
 
 # Reversion registration (usufull for base.notification and for meke a historical)

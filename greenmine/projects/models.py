@@ -12,20 +12,20 @@ from django.utils.translation import ugettext_lazy as _
 from picklefield.fields import PickledObjectField
 
 from greenmine.base.utils.slug import slugify_uniquely
-from greenmine.base.notifications.models import WatchedMixin
+from greenmine.base.utils.dicts import dict_sum
 from greenmine.projects.userstories.models import UserStory
 from . import choices
 
 import reversion
 import itertools
-import copy
 
 
 def get_attachment_file_path(instance, filename):
     return "attachment-files/{project}/{model}/{filename}".format(
-                project=instance.project.slug,
-                model=instance.content_type.model,
-                filename=filename)
+        project=instance.project.slug,
+        model=instance.content_type.model,
+        filename=filename
+    )
 
 
 class Attachment(models.Model):
@@ -106,6 +106,7 @@ class Project(models.Model):
                                            verbose_name=_("total story points"))
     tags = PickledObjectField(null=False, blank=True,
                               verbose_name=_("tags"))
+
     class Meta:
         verbose_name = "project"
         verbose_name_plural = "projects"
@@ -136,8 +137,10 @@ class Project(models.Model):
 
     def get_users(self):
         user_model = get_user_model()
-        return user_model.objects.filter(id__in=list(self.memberships.values_list(
-                                                                 "user", flat=True)))
+        return user_model.objects.filter(
+            id__in=list(self.memberships.values_list("user", flat=True))
+        )
+
     def update_role_points(self):
         rolepoints_model = get_model("userstories", "RolePoints")
 
@@ -152,8 +155,8 @@ class Project(models.Model):
         for us in self.user_stories.all():
             for role in roles:
                 if not us.role_points.filter(role=role).exists():
-                    sp = rolepoints_model.objects.create(role=role, user_story=us,
-                                                         points=null_points_value)
+                    rolepoints_model.objects.create(role=role, user_story=us,
+                                                    points=null_points_value)
 
         # Now remove rolepoints associated with not existing roles.
         rp_query = rolepoints_model.objects.filter(user_story__in=self.user_stories.all())
@@ -174,16 +177,6 @@ class Project(models.Model):
 
         return result
 
-    def _dict_sum(self, dict1, dict2):
-        dict_result = copy.copy(dict2)
-        for key, value in dict1.items():
-            if key in dict_result:
-                dict_result[key] += value
-            else:
-                dict_result[key] = value
-        return dict_result
-
-
     @property
     def future_team_increment(self):
         user_stories = UserStory.objects.none()
@@ -197,7 +190,7 @@ class Project(models.Model):
         )
         team_increment = self._get_user_stories_points(user_stories)
         shared_increment = {key: value/2 for key, value in self.future_shared_increment.items()}
-        return self._dict_sum(team_increment, shared_increment)
+        return dict_sum(team_increment, shared_increment)
 
     @property
     def future_client_increment(self):
@@ -212,7 +205,7 @@ class Project(models.Model):
         )
         client_increment = self._get_user_stories_points(user_stories)
         shared_increment = {key: value/2 for key, value in self.future_shared_increment.items()}
-        return self._dict_sum(client_increment, shared_increment)
+        return dict_sum(client_increment, shared_increment)
 
     @property
     def future_shared_increment(self):
@@ -227,8 +220,8 @@ class Project(models.Model):
         )
         return self._get_user_stories_points(user_stories)
 
-# User Stories common Models
 
+# User Stories common Models
 class UserStoryStatus(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False,
                             verbose_name=_("name"))
@@ -420,6 +413,7 @@ class QuestionStatus(models.Model):
 reversion.register(Project)
 reversion.register(Attachment)
 
+
 # On membership object is created/changed, update
 # role-points relation.
 @receiver(models.signals.post_save, sender=Membership,
@@ -449,12 +443,12 @@ def project_post_save(sender, instance, created, **kwargs):
 
     for order, name, is_closed in choices.US_STATUSES:
         UserStoryStatus.objects.create(name=name, order=order,
-                                             is_closed=is_closed, project=instance)
+                                       is_closed=is_closed, project=instance)
 
     # Tasks
     for order, name, is_closed, color in choices.TASK_STATUSES:
         TaskStatus.objects.create(name=name, order=order, color=color,
-                                        is_closed=is_closed, project=instance)
+                                  is_closed=is_closed, project=instance)
 
     # Issues
     for order, name in choices.PRIORITY_CHOICES:
@@ -465,7 +459,7 @@ def project_post_save(sender, instance, created, **kwargs):
 
     for order, name, is_closed in choices.ISSUE_STATUSES:
         IssueStatus.objects.create(name=name, order=order,
-                                         is_closed=is_closed, project=instance)
+                                   is_closed=is_closed, project=instance)
 
     for order, name in choices.ISSUE_TYPES:
         IssueType.objects.create(project=instance, name=name, order=order)
@@ -473,4 +467,4 @@ def project_post_save(sender, instance, created, **kwargs):
     # Questions
     for order, name, is_closed in choices.QUESTION_STATUS:
         QuestionStatus.objects.create(name=name, order=order,
-                                            is_closed=is_closed, project=instance)
+                                      is_closed=is_closed, project=instance)
