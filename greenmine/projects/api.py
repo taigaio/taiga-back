@@ -29,6 +29,8 @@ class ProjectViewSet(ModelCrudViewSet):
             'name': project.name,
             'total_milestones': project.total_milestones,
             'total_points': project.total_story_points,
+            'closed_points': sum(project.closed_points.values()),
+            'defined_points': sum(project.defined_points.values()),
             'milestones': self._milestones_stats(project)
         }
         return Response(project_stats)

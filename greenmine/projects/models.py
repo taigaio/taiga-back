@@ -18,6 +18,7 @@ from . import choices
 
 import reversion
 import itertools
+import collections
 
 
 def get_attachment_file_path(instance, filename):
@@ -233,6 +234,17 @@ class Project(models.Model):
     @property
     def future_shared_increment(self):
         return self._get_points_increment(True, True)
+
+    @property
+    def closed_points(self):
+        closed_points = 0
+        for ml in self.milestones.all():
+            closed_points = ml.closed_points
+        return closed_points
+
+    @property
+    def defined_points(self):
+        return self._get_user_stories_points(self.user_stories.all())
 
 
 # User Stories common Models
