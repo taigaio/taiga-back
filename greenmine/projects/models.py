@@ -418,6 +418,7 @@ class QuestionStatus(models.Model):
 
 # Reversion registration (usufull for base.notification and for meke a historical)
 reversion.register(Project)
+reversion.register(Attachment)
 
 # On membership object is created/changed, update
 # role-points relation.
