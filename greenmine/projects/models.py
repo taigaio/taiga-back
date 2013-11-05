@@ -106,42 +106,34 @@ class Project(models.Model):
     total_story_points = models.FloatField(default=None, null=True, blank=False,
                                            verbose_name=_("total story points"))
     tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
-    default_points = models.OneToOneField("projects.Points", on_delete=models.PROTECT,
+    default_points = models.OneToOneField("projects.Points", on_delete=models.SET_NULL,
                                           related_name="+", null=True, blank=True,
-                                          limit_choices_to={'project': id},
                                           verbose_name=_("default points"))
     default_us_status = models.OneToOneField("projects.UserStoryStatus",
-                                             on_delete=models.PROTECT, related_name="+",
+                                             on_delete=models.SET_NULL, related_name="+",
                                              null=True, blank=True,
-                                             limit_choices_to={'project': id},
                                              verbose_name=_("default US status"))
     default_task_status = models.OneToOneField("projects.TaskStatus",
-                                               on_delete=models.PROTECT, related_name="+",
+                                               on_delete=models.SET_NULL, related_name="+",
                                                null=True, blank=True,
-                                               limit_choices_to={'project': id},
                                                verbose_name=_("default task status"))
-    default_priority = models.OneToOneField("projects.Priority", on_delete=models.PROTECT,
+    default_priority = models.OneToOneField("projects.Priority", on_delete=models.SET_NULL,
                                             related_name="+", null=True, blank=True,
-                                            limit_choices_to={'project': id},
                                             verbose_name=_("default priority"))
-    default_severity = models.OneToOneField("projects.Severity", on_delete=models.PROTECT,
+    default_severity = models.OneToOneField("projects.Severity", on_delete=models.SET_NULL,
                                             related_name="+", null=True, blank=True,
-                                            limit_choices_to={'project': id},
                                             verbose_name=_("default severity"))
     default_issue_status = models.OneToOneField("projects.IssueStatus",
-                                                on_delete=models.PROTECT, related_name="+",
+                                                on_delete=models.SET_NULL, related_name="+",
                                                 null=True, blank=True,
-                                                limit_choices_to={'project': id},
                                                 verbose_name=_("default issue status"))
     default_issue_type = models.OneToOneField("projects.IssueType",
-                                              on_delete=models.PROTECT, related_name="+",
+                                              on_delete=models.SET_NULL, related_name="+",
                                               null=True, blank=True,
-                                              limit_choices_to={'project': id},
                                               verbose_name=_("default issue type"))
     default_question_status = models.OneToOneField("projects.QuestionStatus",
-                                                   on_delete=models.PROTECT,
+                                                   on_delete=models.SET_NULL,
                                                    related_name="+", null=True, blank=True,
-                                                   limit_choices_to={'project': id},
                                                    verbose_name=_("default questions "
                                                                   "status"))
 
