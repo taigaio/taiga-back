@@ -65,16 +65,3 @@ QUESTION_STATUS = (
     (3, _("Closed"), True, False),
 )
 
-# TODO: pending to refactor
-
-TASK_COMMENT = 1
-TASK_STATUS_CHANGE = 2
-TASK_PRIORITY_CHANGE = 3
-TASK_ASSIGNATION_CHANGE = 4
-
-TASK_CHANGE_CHOICES = (
-    (TASK_COMMENT, _("Task comment")),
-    (TASK_STATUS_CHANGE, _("Task status change")),
-    (TASK_PRIORITY_CHANGE, _("Task prioriy change")),
-    (TASK_ASSIGNATION_CHANGE, _("Task assignation change")),
-)
