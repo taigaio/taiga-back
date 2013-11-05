@@ -20,7 +20,7 @@ import datetime
 
 
 class MilestoneViewSet(NotificationSenderMixin, ModelCrudViewSet):
-    model= models.Milestone
+    queryset = models.Milestone.objects.all().order_by("-estimated_start")
     serializer_class = serializers.MilestoneSerializer
     permission_classes = (IsAuthenticated, permissions.MilestonePermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
