@@ -457,27 +457,6 @@ def project_post_save(sender, instance, created, **kwargs):
         if is_default:
             instance.default_points = obj
 
-<<<<<<< HEAD
-    for order, name, is_closed in choices.US_STATUSES:
-        UserStoryStatus.objects.create(name=name, order=order,
-                                       is_closed=is_closed, project=instance)
-
-    # Tasks
-    for order, name, is_closed, color in choices.TASK_STATUSES:
-        TaskStatus.objects.create(name=name, order=order, color=color,
-                                  is_closed=is_closed, project=instance)
-
-    # Issues
-    for order, name in choices.PRIORITY_CHOICES:
-        Priority.objects.create(project=instance, name=name, order=order)
-
-    for order, name in choices.SEVERITY_CHOICES:
-        Severity.objects.create(project=instance, name=name, order=order)
-
-    for order, name, is_closed in choices.ISSUE_STATUSES:
-        IssueStatus.objects.create(name=name, order=order,
-                                   is_closed=is_closed, project=instance)
-=======
     for order, name, is_closed, is_default in choices.US_STATUSES:
         obj = UserStoryStatus.objects.create(name=name, order=order,
                                              is_closed=is_closed, project=instance)
@@ -507,7 +486,6 @@ def project_post_save(sender, instance, created, **kwargs):
                                          is_closed=is_closed, project=instance)
         if is_default:
             instance.default_issue_status = obj
->>>>>>> Set a default value per project for all statuses, types, points, priorities, sverityes...
 
     for order, name, is_default in choices.ISSUE_TYPES:
         obj = IssueType.objects.create(project=instance, name=name, order=order)
@@ -515,11 +493,6 @@ def project_post_save(sender, instance, created, **kwargs):
             instance.default_issue_type = obj
 
     # Questions
-<<<<<<< HEAD
-    for order, name, is_closed in choices.QUESTION_STATUS:
-        QuestionStatus.objects.create(name=name, order=order,
-                                      is_closed=is_closed, project=instance)
-=======
     for order, name, is_closed, is_default in choices.QUESTION_STATUS:
         obj = QuestionStatus.objects.create(name=name, order=order,
                                             is_closed=is_closed, project=instance)
@@ -527,4 +500,3 @@ def project_post_save(sender, instance, created, **kwargs):
             instance.default_question_status = obj
 
     instance.save()
->>>>>>> Set a default value per project for all statuses, types, points, priorities, sverityes...
