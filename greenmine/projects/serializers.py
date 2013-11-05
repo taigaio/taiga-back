@@ -22,8 +22,11 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
     def get_size(self, obj):
         if obj.attached_file:
-            return obj.attached_file.size
-        return None
+            try:
+                return obj.attached_file.size
+            except FileNotFoundError:
+                pass
+        return 0
 
 
 # User Stories common serializers
