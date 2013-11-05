@@ -92,6 +92,10 @@ class Milestone(WatchedMixin):
         return dict_result
 
     @property
+    def total_points(self):
+        return self._get_user_stories_points([us for us in self.user_stories.all()])
+
+    @property
     def closed_points(self):
         return self._get_user_stories_points([us for us in self.user_stories.all()
                                                   if us.is_closed])
@@ -146,6 +150,10 @@ class Milestone(WatchedMixin):
             "owner": self.owner,
             "project_owner": (self.project, self.project.owner),
         }
+
+    def closed_points_by_date(self, date):
+        return self._get_user_stories_points([us for us in self.user_stories.filter(finish_date__lte=date)
+                                                  if us.is_closed])
 
 
 # Reversion registration (usufull for base.notification and for meke a historical)
