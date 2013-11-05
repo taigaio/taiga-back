@@ -106,3 +106,8 @@ def issue_finished_date_handler(sender, instance, **kwargs):
 def issue_ref_handler(sender, instance, **kwargs):
     if not instance.id and instance.project:
         instance.ref = ref_uniquely(instance.project, "last_issue_ref", instance.__class__)
+
+@receiver(models.signals.pre_save, sender=Issue, dispatch_uid="issue-tags-normalization")
+def issue_tags_normalization(sender, instance, **kwargs):
+    if isinstance(instance.tags, (list, tuple)):
+        instance.tags = list(map(lambda x: x.lower(), instance.tags))

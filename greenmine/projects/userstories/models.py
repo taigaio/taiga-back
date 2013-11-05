@@ -146,3 +146,8 @@ def us_create_role_points_handler(sender, instance, **kwargs):
 def us_task_reassignation(sender, instance, created, **kwargs):
     if not created:
         instance.tasks.update(milestone=instance.milestone)
+
+@receiver(models.signals.pre_save, sender=UserStory, dispatch_uid="us-tags-normalization")
+def us_tags_normalization(sender, instance, **kwargs):
+    if isinstance(instance.tags, (list, tuple)):
+        instance.tags = list(map(lambda x: x.lower(), instance.tags))
