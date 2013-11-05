@@ -188,7 +188,7 @@ class Project(models.Model):
     def future_team_increment(self):
         user_stories = UserStory.objects.none()
         last_milestones = self.milestones.order_by('-estimated_finish')
-        last_milestone = last_milestones[1] if last_milestones else None
+        last_milestone = last_milestones[0] if last_milestones else None
         user_stories = UserStory.objects.filter(
             created_date__gte=last_milestone.estimated_finish if last_milestones else None,
             project_id=self.id,
@@ -203,7 +203,7 @@ class Project(models.Model):
     def future_client_increment(self):
         user_stories = UserStory.objects.none()
         last_milestones = self.milestones.order_by('-estimated_finish')
-        last_milestone = last_milestones[1] if last_milestones else None
+        last_milestone = last_milestones[0] if last_milestones else None
         user_stories = UserStory.objects.filter(
             created_date__gte=last_milestone.estimated_finish if last_milestones else None,
             project_id=self.id,
@@ -218,7 +218,7 @@ class Project(models.Model):
     def future_shared_increment(self):
         user_stories = UserStory.objects.none()
         last_milestones = self.milestones.order_by('-estimated_finish')
-        last_milestone = last_milestones[1] if last_milestones else None
+        last_milestone = last_milestones[0] if last_milestones else None
         user_stories = UserStory.objects.filter(
             created_date__gte=last_milestone.estimated_finish if last_milestones else None,
             project_id=self.id,
