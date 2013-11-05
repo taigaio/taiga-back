@@ -295,8 +295,6 @@ REST_FRAMEWORK = {
     'MAX_PAGINATE_BY': 1000,
 }
 
-from .appdefaults import *
-
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 
