@@ -54,8 +54,8 @@ class MilestoneViewSet(NotificationSenderMixin, ModelCrudViewSet):
             'completed_points': milestone.closed_points.values(),
             'total_userstories': milestone.user_stories.count(),
             'completed_userstories': len([us for us in milestone.user_stories.all() if us.is_closed]),
-            'total_tasks': sum([us.tasks.count() for us in milestone.user_stories.all()]),
-            'completed_tasks': sum([us.tasks.filter(status__is_closed=True).count() for us in milestone.user_stories.all()]),
+            'total_tasks': milestone.tasks.all().count(),
+            'completed_tasks': milestone.tasks.all().filter(status__is_closed=True).count(),
             'days': []
         }
         current_date = milestone.estimated_start
