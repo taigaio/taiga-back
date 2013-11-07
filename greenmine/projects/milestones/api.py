@@ -62,8 +62,8 @@ class MilestoneViewSet(NotificationSenderMixin, ModelCrudViewSet):
         sumTotalPoints = sum(total_points.values())
         optimal_points = sumTotalPoints
         milestone_days = (milestone.estimated_finish - milestone.estimated_start).days
-        optimal_points_per_day = sumTotalPoints / (milestone_days + 1) if milestone_days else 0
-        while current_date <= (milestone.estimated_finish + datetime.timedelta(days=1)):
+        optimal_points_per_day = sumTotalPoints / milestone_days if milestone_days else 0
+        while current_date <= milestone.estimated_finish:
             milestone_stats['days'].append({
                 'day': current_date,
                 'name': current_date.day,
