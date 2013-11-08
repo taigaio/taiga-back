@@ -17,8 +17,10 @@ class HeadersPaginationMixin(object):
         if page is None:
             return page
 
-        self.headers["X-Pagination-Count"] = page.paginator.count
-        self.headers["X-Paginated"] = "true"
+        self.headers["x-pagination-count"] = page.paginator.count
+        self.headers["x-paginated"] = "true"
+        self.headers["x-paginated-by"] = page.paginator.per_page
+        self.headers["x-pagination-current"] = page.number
 
         if page.has_next():
             num = page.next_page_number()
