@@ -73,6 +73,7 @@ class ProjectViewSet(ModelCrudViewSet):
                 'client-increment': client_increment,
             }
         optimal_points -= optimal_points_per_sprint
+        evolution = project.total_story_points - current_evolution if current_evolution is not None else None
         yield {
             'name': 'Project End',
             'optimal': optimal_points,
