@@ -19,24 +19,24 @@ class GreenmineSessionMiddleware(SessionMiddleware):
 
 
 
-COORS_ALLOWED_ORIGINS = getattr(settings, 'COORS_ALLOWED_ORIGINS', '*')
-COORS_ALLOWED_METHODS = getattr(settings, 'COORS_ALLOWED_METHODS',
-                            ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE', 'PATCH'])
-COORS_ALLOWED_HEADERS = getattr(settings, 'COORS_ALLOWED_HEADERS',
-                            ['Content-Type', 'X-Requested-With',
-                             'Authorization', 'Accept-Encoding',
-                             'X-Disable-Pagination'])
-COORS_ALLOWED_CREDENTIALS = getattr(settings, 'COORS_ALLOWED_CREDENTIALS',  True)
+COORS_ALLOWED_ORIGINS = '*'
+COORS_ALLOWED_METHODS = ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE', 'PATCH']
+COORS_ALLOWED_HEADERS = ['Content-Type', 'X-Requested-With',
+                         'Authorization', 'Accept-Encoding',
+                         'X-Disable-Pagination']
+COORS_ALLOWED_CREDENTIALS = True
+COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated", "x-paginated-by"]
 
 
 class CoorsMiddleware(object):
     def _populate_response(self, response):
-        response['Access-Control-Allow-Origin']  = COORS_ALLOWED_ORIGINS
-        response['Access-Control-Allow-Methods'] = ",".join(COORS_ALLOWED_METHODS)
-        response['Access-Control-Allow-Headers'] = ",".join(COORS_ALLOWED_HEADERS)
+        response["Access-Control-Allow-Origin"]  = COORS_ALLOWED_ORIGINS
+        response["Access-Control-Allow-Methods"] = ",".join(COORS_ALLOWED_METHODS)
+        response["Access-Control-Allow-Headers"] = ",".join(COORS_ALLOWED_HEADERS)
+        response["Access-Control-Expose-Headers"] = ",".join(COORS_EXPOSE_HEADERS)
 
         if COORS_ALLOWED_CREDENTIALS:
-            response['Access-Control-Allow-Credentials'] = 'true'
+            response["Access-Control-Allow-Credentials"] = 'true'
 
     def process_request(self, request):
         if 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' in request.META:
