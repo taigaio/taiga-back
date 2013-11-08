@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.db.models import Q, Count
-from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,7 +13,9 @@ from greenmine.base.notifications.api import NotificationSenderMixin
 from . import serializers
 from . import models
 from . import permissions
+
 from .aggregates import stats
+from .aggregates import filters as filters_aggr
 
 
 class ProjectViewSet(ModelCrudViewSet):
@@ -32,6 +33,11 @@ class ProjectViewSet(ModelCrudViewSet):
     def issues_stats(self, request, pk=None):
         project = self.get_object()
         return Response(stats.get_stats_for_project_issues(project))
+
+    @detail_route(methods=['get'])
+    def issue_filters_data(self, request, pk=None):
+        project = self.get_object()
+        return Response(filters_aggr.get_issues_filters_data(project))
 
     def get_queryset(self):
         qs = super(ProjectViewSet, self).get_queryset()

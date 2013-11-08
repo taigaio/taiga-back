@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import reversion
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import list_route
+from rest_framework.response import Response
+from rest_framework import status
 
 from greenmine.base import filters
 from greenmine.base import exceptions as exc
@@ -15,8 +19,6 @@ from greenmine.projects.models import Attachment
 from . import models
 from . import permissions
 from . import serializers
-
-import reversion
 
 
 class IssueAttachmentViewSet(ModelCrudViewSet):
@@ -90,3 +92,4 @@ class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
                 # Update the comment in the last version
                 reversion.set_comment(self.request.DATA["comment"])
         super().post_save(obj, created)
+

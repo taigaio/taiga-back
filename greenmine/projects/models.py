@@ -161,10 +161,6 @@ class Project(models.Model):
         role_model = get_model("users", "Role")
         return role_model.objects.all()
 
-        # TODO: do not remove this
-        # return role_model.objects.filter(id__in=list(self.memberships.values_list(
-        #                                                          "role", flat=True)))
-
     def get_users(self):
         user_model = get_user_model()
         return user_model.objects.filter(
