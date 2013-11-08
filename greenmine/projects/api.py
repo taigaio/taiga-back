@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated
@@ -81,6 +81,35 @@ class ProjectViewSet(ModelCrudViewSet):
             'team-increment': team_increment,
             'client-increment': client_increment,
         }
+
+    @detail_route(methods=['get'])
+    def issues_stats(self, request, pk=None):
+        project = get_object_or_404(models.Project, pk=pk)
+        project_issues_stats = {
+            'total_issues': project.issues.all().count(),
+            'issues_per_type': self._get_issues_counter_per_field(project.issues.all(), "type__name"),
+            'issues_per_status': self._get_issues_counter_per_field(project.issues.all(), "status__name"),
+            'issues_per_priority': self._get_issues_counter_per_field(project.issues.all(), "priority__name"),
+            'issues_per_severity': self._get_issues_counter_per_field(project.issues.all(), "severity__name"),
+            'issues_per_owner': self._get_issues_counter_per_field(project.issues.all(), "owner"),
+            'issues_per_assigned_to': self._get_issues_assigned_to_counter(project.issues.all()),
+        }
+        return Response(project_issues_stats)
+
+    def _get_issues_assigned_to_counter(self, issues):
+        issues_per_assigned_to = self._get_issues_counter_per_field(issues, "assigned_to")
+        if None in issues_per_assigned_to:
+            del issues_per_assigned_to[None]
+        issues_per_assigned_to["Unassigned"] = issues.count() - sum(issues_per_assigned_to.values())
+        return issues_per_assigned_to
+
+    def _get_issues_counter_per_field(self, issues, field):
+        return dict(
+            map(
+                lambda x: (x[field], x[field+'__count']),
+                issues.values(field).order_by().annotate(Count(field))
+            )
+        )
 
     def get_queryset(self):
         qs = super(ProjectViewSet, self).get_queryset()
