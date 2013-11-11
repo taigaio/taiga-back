@@ -97,6 +97,7 @@ def task_ref_handler(sender, instance, **kwargs):
 
 @receiver(models.signals.pre_save, sender=Task, dispatch_uid="tasks_close_handler")
 def tasks_close_handler(sender, instance, **kwargs):
+    # USs
     if instance.id:                                                             # Edit task
         if (sender.objects.get(id=instance.id).status.is_closed == False and
                 instance.status.is_closed == True):                             # Close task
@@ -142,3 +143,13 @@ def tasks_close_handler(sender, instance, **kwargs):
                 instance.user_story.status = us_opened_status
                 instance.user_story.finish_date = None
                 instance.user_story.save()
+
+    # Milestone
+    if instance.milestone:
+        if instance.status.is_closed and not instance.milestone.closed and all([
+                t.status.is_closed for t in instance.milestone.tasks.all()]):
+            instance.milestone.closed = True
+            instance.milestone.save()
+        elif not instance.status.is_closed and instance.milestone.closed:
+            instance.milestone.closed = False
+            instance.milestone.save()
