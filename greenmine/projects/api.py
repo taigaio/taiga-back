@@ -84,7 +84,7 @@ class TaskStatusViewSet(ModelListViewSet):
     filter_fields = ("project",)
 
 
-# Issues commin ViewSets
+# Issues common ViewSets
 
 class SeverityViewSet(ModelListViewSet):
     model = models.Severity
