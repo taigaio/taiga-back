@@ -146,8 +146,9 @@ def tasks_close_handler(sender, instance, **kwargs):
 
     # Milestone
     if instance.milestone:
-        if instance.status.is_closed and not instance.milestone.closed and all([
-                t.status.is_closed for t in instance.milestone.tasks.all()]):
+        if (instance.status.is_closed and not instance.milestone.closed and
+                all([t.status.is_closed for t in instance.milestone.tasks.all()]) and
+                all([us.status.is_closed for us in instance.milestone.user_stories.all()])):
             instance.milestone.closed = True
             instance.milestone.save()
         elif not instance.status.is_closed and instance.milestone.closed:
