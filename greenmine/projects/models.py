@@ -257,7 +257,7 @@ class UserStoryStatus(models.Model):
         )
 
     def __str__(self):
-        return "Userstory status: {}".format(self.name)
+        return self.name
 
 
 class Points(models.Model):
@@ -307,7 +307,7 @@ class TaskStatus(models.Model):
         )
 
     def __str__(self):
-        return "Task status: {}".format(self.name)
+        return self.name
 
 
 # Issue common Models
@@ -330,7 +330,7 @@ class Priority(models.Model):
         )
 
     def __str__(self):
-        return "Priority {}".format(self.name)
+        return self.name
 
 
 class Severity(models.Model):
@@ -351,7 +351,7 @@ class Severity(models.Model):
         )
 
     def __str__(self):
-        return "Severity: {}".format(self.name)
+        return self.name
 
 
 class IssueStatus(models.Model):
@@ -374,7 +374,7 @@ class IssueStatus(models.Model):
         )
 
     def __str__(self):
-        return "Issue status: {}".format(self.name)
+        return self.name
 
 
 class IssueType(models.Model):
@@ -395,7 +395,7 @@ class IssueType(models.Model):
         )
 
     def __str__(self):
-        return "Issue type: {}".format(self.name)
+        return self.name
 
 
 # Questions common models
@@ -421,7 +421,7 @@ class QuestionStatus(models.Model):
         )
 
     def __str__(self):
-        return "Question status: {}".format(self.name)
+        return self.name
 
 
 # Reversion registration (usufull for base.notification and for meke a historical)
