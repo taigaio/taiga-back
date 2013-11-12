@@ -10,6 +10,10 @@
             <h1>Project: {{ object.project.name }}</h1>
             <h2>Task #{{ object.ref }}: {{ object.subject }}</h2>
             <p>Updated by <b>{{ changer.get_full_name() }}</b>.</p>
+        {% if comment %}
+            <p>Comment <b>{{ comment|linebreaksbr }}</b></p>
+        {% endif %}
+        {% if changed_fields %}
             <p>Updated fields:
             <dl>
             {% for field in changed_fields %}
@@ -28,6 +32,7 @@
                 {% endif %}
             {% endfor %}
             </dl>
+        {% endif %}
         </td>
     </tr>
 </table>

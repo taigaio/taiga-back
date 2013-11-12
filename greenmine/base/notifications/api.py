@@ -18,7 +18,8 @@ class NotificationSenderMixin(object):
         super().post_save(obj, created)
 
         users = obj.get_watchers_to_notify(self.request.user)
-        context = {'changer': self.request.user, 'object': obj}
+        comment = self.request.DATA.get("comment", None)
+        context = {'changer': self.request.user, "comment": comment, 'object': obj}
 
         if created:
             self._send_notification_email(self.create_notification_template,
