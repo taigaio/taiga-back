@@ -33,6 +33,9 @@ class User(AbstractUser, WatcherMixin):
             ("view_user", "Can view user"),
         )
 
+    def __str__(self):
+        return self.get_full_name()
+
     def get_full_name(self):
         return super().get_full_name() or self.username or self.email
 
