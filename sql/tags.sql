@@ -1,3 +1,5 @@
+CREATE LANGUAGE plpythonu;
+
 CREATE OR REPLACE FUNCTION unpickle (data text)
   RETURNS text[]
 AS $$

@@ -24,6 +24,29 @@ Just execute these commands in your virtualenv(wrapper):
     python manage.py sample_data
     python manage.py createinitialrevisions
 
+You have to load the sql sentences of the file ``sql/tags.sql`` and your database
+ust support PL/Python. You use an user with privileges in the database,
+'greenmine' for example, to do this.
+
+.. code-block:: console
+
+    psql greenmine
+
+.. code-block:: sql
+
+    CREATE LANGUAGE plpythonu;
+
+    CREATE OR REPLACE FUNCTION unpickle (data text)
+        RETURNS text[]
+    AS $$
+        import base64
+        import pickle
+
+        return pickle.loads(base64.b64decode(data))
+    $$ LANGUAGE plpythonu IMMUTABLE;
+
+    CREATE INDEX issues_unpickle_tags_index ON issues_issue USING btree (unpickle(tags));
+
 
 Note: greenmine only runs with python 3.3+.
 
