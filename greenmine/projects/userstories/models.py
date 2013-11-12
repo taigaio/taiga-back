@@ -33,6 +33,8 @@ class RolePoints(models.Model):
         permissions = (
             ("view_rolepoints", "Can view role points"),
         )
+    def __str__(self):
+        return "{}: {}".format(role.name, point.name)
 
 
 class UserStory(WatchedMixin):
@@ -74,16 +76,16 @@ class UserStory(WatchedMixin):
     attachments = generic.GenericRelation("projects.Attachment")
 
     notifiable_fields = [
+        "subject",
         "milestone",
         "owner",
-        "status",
-        "points",
         "finish_date",
-        "subject",
-        "description",
         "client_requirement",
         "team_requirement",
+        "status",
+        "points",
         "tags",
+        "description",
     ]
 
     class Meta:
@@ -115,6 +117,11 @@ class UserStory(WatchedMixin):
                 total += rp.points.value
 
         return total
+
+    def get_notifiable_tags_display(self, value):
+        if type(value) is list:
+            return ", ".join(value)
+        return value
 
     def _get_watchers_by_role(self):
         return {

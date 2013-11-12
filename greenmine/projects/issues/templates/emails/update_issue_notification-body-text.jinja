@@ -5,17 +5,8 @@
 - Issue #{{ object.ref }}: {{ object.subject }}
 - Updated by {{ changer.get_full_name() }}
 - Updated fields:
-{% for field in changed_fields_dict.values() %}
-    {{ field.verbose_name }}{% if not loop.last %}, {% endif %}
-{% endfor %}
-
-{# TODO: Improvemments in some methods to use that:  #}
-{#         - WatchedMixin._get_changed_field_old_value() #}
-{#         - WatchedMixin._get_changed_field_new_value() #}
-{#
-{% for field in changed_fields_dict.values() %}
+{% for field in changed_fields %}
     * {{ field.verbose_name}}</b>: from '{{ field.old_value}}' to '{{ field.new_value }}'.
 {% endfor %}
-#}
 
 ** More info at {{ final_url_name }} ({{ final_url }}) **

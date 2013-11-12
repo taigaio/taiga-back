@@ -137,6 +137,21 @@ class Project(models.Model):
                                                    verbose_name=_("default questions "
                                                                   "status"))
 
+    notifiable_fields = [
+        "name",
+        "total_milestones",
+        "total_story_points",
+        "default_points",
+        "default_us_status",
+        "default_task_status",
+        "default_priority",
+        "default_severity",
+        "default_issue_status",
+        "default_issue_type",
+        "default_question_status",
+        "description"
+    ]
+
     class Meta:
         verbose_name = "project"
         verbose_name_plural = "projects"

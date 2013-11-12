@@ -52,17 +52,17 @@ class Issue(WatchedMixin):
     attachments = generic.GenericRelation("projects.Attachment")
 
     notifiable_fields = [
+         "subject",
+         "milestone",
          "owner",
+         "assigned_to",
+         "finished_date",
+         "type",
          "status",
          "severity",
          "priority",
-         "type",
-         "milestone",
-         "finished_date",
-         "subject",
-         "description",
-         "assigned_to",
          "tags",
+         "description",
     ]
 
     class Meta:
@@ -80,6 +80,16 @@ class Issue(WatchedMixin):
     @property
     def is_closed(self):
         return self.status.is_closed
+
+    def get_notifiable_assigned_to_display(self, value):
+        if not value:
+            return _("Unassigned")
+        return value.get_full_name()
+
+    def get_notifiable_tags_display(self, value):
+        if type(value) is list:
+            return ", ".join(value)
+        return value
 
     def _get_watchers_by_role(self):
         return {

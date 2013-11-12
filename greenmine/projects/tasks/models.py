@@ -49,14 +49,14 @@ class Task(WatchedMixin):
                                      verbose_name=_("is iocaine"))
 
     notifiable_fields = [
-        "owner",
-        "status",
-        "finished_date",
         "subject",
-        "description",
+        "owner",
         "assigned_to",
-        "tags",
+        "finished_date",
         "is_iocaine",
+        "status",
+        "description",
+        "tags",
     ]
 
     class Meta:
@@ -70,6 +70,16 @@ class Task(WatchedMixin):
 
     def __str__(self):
         return "({1}) {0}".format(self.ref, self.subject)
+
+    def get_notifiable_assigned_to_display(self, value):
+        if not value:
+            return _("Unassigned")
+        return value.get_full_name()
+
+    def get_notifiable_tags_display(self, value):
+        if type(value) is list:
+            return ", ".join(value)
+        return value
 
     def _get_watchers_by_role(self):
         return {

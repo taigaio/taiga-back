@@ -10,24 +10,23 @@
             <h2>Project #{{ object.slug }}: {{ object.name }}</h2>
             <p>Updated by <b>{{ changer.get_full_name() }}</b>.</p>
             <p>Updated fields:
-            {% for field in changed_fields_dict.values() %}
-                <b>{{ field.verbose_name }}</b>{% if not loop.last %},{% endif %}
+            <dl>
+            {% for field in changed_fields %}
+                <dt style="background: #669933; padding: 5px 15px; color: #fff">
+                    <b>{{ field.verbose_name}}</b>
+                </dt>
+                {% if field.new_value %}
+                <dd style="background: #eee; padding: 5px 15px; color: #444">
+                    <b>to:</b> <i>{{ field.new_value|linebreaksbr }}</i>
+                </dd>
+                {% endif %}
+                {% if field.old_value %}
+                <dd style="padding: 5px 15px; color: #bbb">
+                    <b>from:</b> <i>{{ field.old_value|linebreaksbr }}</i>
+                </dd>
+                {% endif %}
             {% endfor %}
-            </p>
-
-        {# TODO: Improvemments in some methods to use that:  #}
-        {#         - WatchedMixin._get_changed_field_old_value() #}
-        {#         - WatchedMixin._get_changed_field_new_value() #}
-        {#
-            <ul>
-            {% for field in changed_fields_dict.values() %}
-                <li>
-                    <b>{{ field.verbose_name}}</b>: from <i>{{ field.old_value}}</i>
-                                                      to <i>{{ field.new_value}}</i>.
-                </li>
-            {% endfor %}
-            </ul>
-        #}
+            </dl>
         </td>
     </tr>
 </table>

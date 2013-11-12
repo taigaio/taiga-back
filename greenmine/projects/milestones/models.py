@@ -42,10 +42,10 @@ class Milestone(WatchedMixin):
     notifiable_fields = [
         "name",
         "owner",
+        "disponibility",
+        "closed",
         "estimated_start",
         "estimated_finish",
-        "closed",
-        "disponibility",
     ]
 
     class Meta:
