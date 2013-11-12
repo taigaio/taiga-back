@@ -1,5 +1,3 @@
-CREATE INDEX issues_unpickle_tags_index ON issues_issue USING btree (unpickle(tags));
-
 CREATE OR REPLACE FUNCTION unpickle (data text)
   RETURNS text[]
 AS $$
@@ -7,7 +5,9 @@ AS $$
     import pickle
 
     return pickle.loads(base64.b64decode(data))
-$$ LANGUAGE plpythonu;
+$$ LANGUAGE plpythonu IMMUTABLE;
+
+CREATE INDEX issues_unpickle_tags_index ON issues_issue USING btree (unpickle(tags));
 
 -- CREATE OR REPLACE FUNCTION array_uniq_join (data text[], data2 text[])
 --   RETURNS text[]
