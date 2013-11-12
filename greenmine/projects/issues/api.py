@@ -62,7 +62,8 @@ class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
 
     filter_backends = (filters.IsProjectMemberFilterBackend, IssuesFilter)
     filter_fields = ("project",)
-    order_by_fields = ("created_date", "modified_date")
+    order_by_fields = ("created_date", "modified_date", "status",
+                       "severity", "priority",)
 
     create_notification_template = "create_issue_notification"
     update_notification_template = "update_issue_notification"
