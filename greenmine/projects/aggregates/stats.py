@@ -59,35 +59,56 @@ def _get_milestones_stats_for_backlog(project):
     }
 
 
-def _get_issues_assigned_to_counter(issues):
-    issues_per_assigned_to = _get_issues_counter_per_field(issues, "assigned_to")
-    if None in issues_per_assigned_to:
-        del issues_per_assigned_to[None]
+def _count_status_object(status_obj, counting_storage):
+    if status_obj.id in counting_storage:
+        counting_storage[status_obj.id]['count'] += 1
+    else:
+        counting_storage[status_obj.id] = {}
+        counting_storage[status_obj.id]['count'] = 1
+        counting_storage[status_obj.id]['name'] = status_obj.name
+        counting_storage[status_obj.id]['id'] = status_obj.id
+        counting_storage[status_obj.id]['color'] = status_obj.color
 
-    issues_per_assigned_to["Unassigned"] = issues.count() - sum(issues_per_assigned_to.values())
-    return issues_per_assigned_to
-
-
-def _get_issues_counter_per_field(issues, field):
-    return dict(
-        map(
-            lambda x: (x[field], x[field+'__count']),
-            issues.values(field).order_by().annotate(Count(field))
-        )
-    )
-
+def _count_owned_object(user_obj, counting_storage):
+    if user_obj:
+        if user_obj.id in counting_storage:
+            counting_storage[user_obj.id]['count'] += 1
+        else:
+            counting_storage[user_obj.id] = {}
+            counting_storage[user_obj.id]['count'] = 1
+            counting_storage[user_obj.id]['username'] = user_obj.username
+            counting_storage[user_obj.id]['id'] = user_obj.id
+            counting_storage[user_obj.id]['color'] = user_obj.color
+    else:
+        if 0 in counting_storage:
+            counting_storage[0]['count'] += 1
+        else:
+            counting_storage[0] = {}
+            counting_storage[0]['count'] = 1
+            counting_storage[0]['username'] = 'Unassigned'
+            counting_storage[0]['id'] = 0
+            counting_storage[0]['color'] = 'black'
 
 def get_stats_for_project_issues(project):
-    queryset = project.issues.all()
     project_issues_stats = {
-        'total_issues': queryset.count(),
-        'issues_per_type': _get_issues_counter_per_field(queryset, "type__name"),
-        'issues_per_status': _get_issues_counter_per_field(queryset, "status__name"),
-        'issues_per_priority': _get_issues_counter_per_field(queryset, "priority__name"),
-        'issues_per_severity': _get_issues_counter_per_field(queryset, "severity__name"),
-        'issues_per_owner': _get_issues_counter_per_field(queryset, "owner"),
-        'issues_per_assigned_to': _get_issues_assigned_to_counter(queryset),
+        'total_issues': 0,
+        'issues_per_type': {},
+        'issues_per_status': {},
+        'issues_per_priority': {},
+        'issues_per_severity': {},
+        'issues_per_owner': {},
+        'issues_per_assigned_to': {},
     }
+
+    for issue in project.issues.all():
+        project_issues_stats['total_issues'] += 1
+        _count_status_object(issue.type, project_issues_stats['issues_per_type'])
+        _count_status_object(issue.status, project_issues_stats['issues_per_status'])
+        _count_status_object(issue.priority, project_issues_stats['issues_per_priority'])
+        _count_status_object(issue.severity, project_issues_stats['issues_per_severity'])
+        _count_owned_object(issue.owner, project_issues_stats['issues_per_owner'])
+        _count_owned_object(issue.assigned_to, project_issues_stats['issues_per_assigned_to'])
+
     return project_issues_stats
 
 
