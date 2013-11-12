@@ -188,6 +188,10 @@ class Command(BaseCommand):
         for i in range(self.sd.int(0, 4)):
             attachment = self.create_attachment(bug)
 
+        if bug.status.order != 1:
+            bug.assigned_to = self.sd.db_object_from_queryset(project.memberships.all()).user
+            bug.save()
+
         return bug
 
     def create_task(self, project, milestone, us, min_date, max_date, closed=False):
