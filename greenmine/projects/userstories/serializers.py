@@ -56,7 +56,7 @@ class UserStorySerializer(serializers.ModelSerializer):
 
         diff_dict = {
             "modified_date": new_obj["modified_date"],
-            "by": new_us_version.revision.user,
+            "by": new_us_version.revision.user.get_full_name(),
             "comment": new_us_version.revision.comment,
         }
 
