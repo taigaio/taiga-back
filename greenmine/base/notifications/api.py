@@ -19,15 +19,17 @@ class NotificationSenderMixin(object):
 
         users = obj.get_watchers_to_notify(self.request.user)
         context = {'changer': self.request.user, 'object': obj}
-        changed_fields_dict = obj.get_changed_fields_dict(self.request.DATA)
 
         if created:
             self._send_notification_email(self.create_notification_template,
                                           users=users, context=context)
-        elif changed_fields_dict:
-            context["changed_fields_dict"] = changed_fields_dict
-            self._send_notification_email(self.update_notification_template,
-                                          users=users, context=context)
+        else:
+            changed_fields = obj.get_changed_fields_list(self.request.DATA)
+
+            if changed_fields:
+                context["changed_fields"] = changed_fields
+                self._send_notification_email(self.update_notification_template,
+                                              users=users, context=context)
 
     def destroy(self, request, *args, **kwargs):
         obj = self.get_object()
