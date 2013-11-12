@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import filters
 
 from greenmine.base import filters
 from greenmine.base import exceptions as exc
@@ -20,13 +21,46 @@ from . import models
 from . import permissions
 from . import serializers
 
+class IssuesFilter(filters.FilterBackend):
+    filter_fields = ("assigned_to", "status", "severity",
+                     "priority", "tags")
+
+    def _prepare_filters_data(self, request):
+        data = {}
+        for filtername in self.filter_fields:
+            if filtername not in request.QUERY_PARAMS:
+                continue
+
+            raw_value = request.QUERY_PARAMS[filtername]
+            values = (x.strip() for x in raw_value.split(","))
+
+            if filtername != "tags":
+                values = map(int, values)
+
+            data[filtername] = list(values)
+        return data
+
+    def filter_queryset(self, request, queryset, view):
+        filterdata = self._prepare_filters_data(request)
+
+        if "tags" in filterdata:
+            where_sql = ["unpickle(issues_issue.tags) @> %s"]
+            params = [filterdata["tags"]]
+            queryset = queryset.extra(where=where_sql, params=params)
+
+        for name, value in filter(lambda x: x[0] != "tags", filterdata.items()):
+            qs_kwargs = {"{0}_id__in".format(name): value}
+            queryset = queryset.filter(**qs_kwargs)
+
+        return queryset
+
 
 class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
     model = models.Issue
     serializer_class = serializers.IssueSerializer
     permission_classes = (IsAuthenticated, permissions.IssuePermission)
 
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
+    filter_backends = (filters.IsProjectMemberFilterBackend, IssuesFilter)
     filter_fields = ("project",)
     order_by_fields = ("created_date", "modified_date")
 
