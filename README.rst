@@ -25,7 +25,7 @@ Just execute these commands in your virtualenv(wrapper):
     python manage.py createinitialrevisions
 
 You have to load the sql sentences of the file ``sql/tags.sql`` and your database
-ust support PL/Python. You use an user with privileges in the database,
+must support PL/Python. You use a dbuser with privileges in the database,
 'greenmine' for example, to do this.
 
 .. code-block:: console
