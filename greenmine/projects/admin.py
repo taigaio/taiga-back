@@ -23,24 +23,43 @@ class AttachmentInline(generic.GenericTabularInline):
 
 class MembershipAdmin(admin.ModelAdmin):
     list_display = ['project', 'role', 'user']
-    list_filter = ['project', 'role']
     list_display_links = list_display
-    list_filter = ["project"]
+    list_filter = ['project', 'role']
 
 
 class MembershipInline(admin.TabularInline):
     model = models.Membership
-    fields = ['user', 'project', 'role']
-    readonly_fields = ["project", "role"]
     extra = 0
-    max_num = 0
-    can_delete = False
 
 
 class ProjectAdmin(reversion.VersionAdmin):
-    list_display = ["name", "owner", "created_date", "total_milestones", "total_story_points"]
+    list_display = ["name", "owner", "created_date", "total_milestones",
+                    "total_story_points"]
     list_display_links = list_display
     inlines = [MembershipInline, MilestoneInline]
+
+    def get_object(self, *args, **kwargs):
+        self.obj = super().get_object(*args, **kwargs)
+        return self.obj
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if (db_field.name in ["default_points", "default_us_status", "default_task_status",
+                              "default_priority", "default_severity",
+                              "default_issue_status", "default_issue_type",
+                              "default_question_status"]
+                and getattr(self, 'obj', None)):
+            kwargs["queryset"] = db_field.related.parent_model.objects.filter(
+                                                      project=self.obj.project)
+        else:
+            kwargs["queryset"] = db_field.related.parent_model.objects.none()
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if (db_field.name in ["watchers"]
+                and getattr(self, 'obj', None)):
+            kwargs["queryset"] = db_field.related.parent_model.objects.filter(
+                                         memberships__project=self.obj.project)
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 
 # User Stories common admins

@@ -8,15 +8,7 @@ from . import models
 
 class MilestoneInline(admin.TabularInline):
     model = models.Milestone
-
-    fields = ['name', 'owner', 'estimated_start', 'estimated_finish', 'closed',
-              'disponibility', 'order']
-    readonly_fields = ["owner"]
-
-    sortable_field_name = 'order'
     extra = 0
-    max_num = 0
-    can_delete = False
 
 
 class MilestoneAdmin(reversion.VersionAdmin):
