@@ -332,6 +332,8 @@ class Priority(models.Model):
                             verbose_name=_("name"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
+    color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
+                             verbose_name=_("color"))
     project = models.ForeignKey("Project", null=False, blank=False,
                                 related_name="priorities", verbose_name=_("project"))
 
@@ -353,6 +355,8 @@ class Severity(models.Model):
                             verbose_name=_("name"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
+    color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
+                             verbose_name=_("color"))
     project = models.ForeignKey("Project", null=False, blank=False,
                                 related_name="severities", verbose_name=_("project"))
 
@@ -376,6 +380,8 @@ class IssueStatus(models.Model):
                                 verbose_name=_("order"))
     is_closed = models.BooleanField(default=False, null=False, blank=True,
                                     verbose_name=_("is closed"))
+    color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
+                             verbose_name=_("color"))
     project = models.ForeignKey("Project", null=False, blank=False,
                                 related_name="issue_statuses", verbose_name=_("project"))
 
@@ -397,6 +403,8 @@ class IssueType(models.Model):
                             verbose_name=_("name"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
+    color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
+                             verbose_name=_("color"))
     project = models.ForeignKey("Project", null=False, blank=False,
                                 related_name="issue_types", verbose_name=_("project"))
 
@@ -422,6 +430,8 @@ class QuestionStatus(models.Model):
                                 verbose_name=_("order"))
     is_closed = models.BooleanField(default=False, null=False, blank=True,
                                     verbose_name=_("is closed"))
+    color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
+                             verbose_name=_("color"))
     project = models.ForeignKey("Project", null=False, blank=False,
                                 related_name="question_status",
                                 verbose_name=_("project"))
@@ -487,31 +497,31 @@ def project_post_save(sender, instance, created, **kwargs):
             instance.default_task_status = obj
 
     # Issues
-    for order, name, is_default in choices.PRIORITY_CHOICES:
-        obj = Priority.objects.create(project=instance, name=name, order=order)
+    for order, name, color, is_default in choices.PRIORITY_CHOICES:
+        obj = Priority.objects.create(project=instance, name=name, order=order, color=color)
         if is_default:
             instance.default_priority = obj
 
-    for order, name, is_default in choices.SEVERITY_CHOICES:
-        obj = Severity.objects.create(project=instance, name=name, order=order)
+    for order, name, color, is_default in choices.SEVERITY_CHOICES:
+        obj = Severity.objects.create(project=instance, name=name, order=order, color=color)
         if is_default:
             instance.default_severity = obj
 
-    for order, name, is_closed, is_default in choices.ISSUE_STATUSES:
+    for order, name, is_closed, color, is_default in choices.ISSUE_STATUSES:
         obj = IssueStatus.objects.create(name=name, order=order,
-                                         is_closed=is_closed, project=instance)
+                                         is_closed=is_closed, project=instance, color=color)
         if is_default:
             instance.default_issue_status = obj
 
-    for order, name, is_default in choices.ISSUE_TYPES:
-        obj = IssueType.objects.create(project=instance, name=name, order=order)
+    for order, name, color, is_default in choices.ISSUE_TYPES:
+        obj = IssueType.objects.create(project=instance, name=name, order=order, color=color)
         if is_default:
             instance.default_issue_type = obj
 
     # Questions
-    for order, name, is_closed, is_default in choices.QUESTION_STATUS:
+    for order, name, is_closed, color, is_default in choices.QUESTION_STATUS:
         obj = QuestionStatus.objects.create(name=name, order=order,
-                                            is_closed=is_closed, project=instance)
+                                            is_closed=is_closed, project=instance, color=color)
         if is_default:
             instance.default_question_status = obj
 
