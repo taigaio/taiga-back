@@ -137,7 +137,8 @@ class Command(BaseCommand):
                 content_type=ContentType.objects.get_for_model(object.__class__),
                 content_object=object,
                 object_id=object.id,
-                owner=object.project.owner,
+                owner=self.sd.db_object_from_queryset(
+                          object.project.memberships.all()).user,
                 attached_file=self.sd.image_from_directory(*ATTACHMENT_SAMPLE_DATA))
 
         return attachment
@@ -147,7 +148,7 @@ class Command(BaseCommand):
                 project=project,
                 slug=slug,
                 content=self.sd.paragraphs(3,15),
-                owner=project.owner)
+                owner=self.sd.db_object_from_queryset(project.memberships.all()).user)
 
         for i in range(self.sd.int(0, 4)):
             attachment = self.create_attachment(wiki_page)
@@ -159,7 +160,7 @@ class Command(BaseCommand):
     #            project=project,
     #            subject=self.sd.choice(SUBJECT_CHOICES),
     #            content=self.sd.paragraph(),
-    #            owner=project.owner,
+    #            owner=self.sd.db_object_from_queryset(project.memberships.all()).user,
     #            status=self.sd.db_object_from_queryset(project.question_status.all()),
     #            tags=self.sd.words(1,5).split(" "))
     #
@@ -173,7 +174,7 @@ class Command(BaseCommand):
                 project=project,
                 subject=self.sd.choice(SUBJECT_CHOICES),
                 description=self.sd.paragraph(),
-                owner=project.owner,
+                owner=self.sd.db_object_from_queryset(project.memberships.all()).user,
                 severity=self.sd.db_object_from_queryset(Severity.objects.filter(
                                                                   project=project)),
                 status=self.sd.db_object_from_queryset(IssueStatus.objects.filter(
@@ -194,12 +195,11 @@ class Command(BaseCommand):
                 subject=self.sd.choice(SUBJECT_CHOICES),
                 description=self.sd.paragraph(),
                 project=project,
-                owner=self.sd.choice(self.users),
+                owner=self.sd.db_object_from_queryset(project.memberships.all()).user,
                 milestone=milestone,
                 user_story=us,
                 finished_date=None,
-                assigned_to = self.sd.db_object_from_queryset(
-                                     project.memberships.all()).user)
+                assigned_to = self.sd.db_object_from_queryset(project.memberships.all()).user)
 
         if closed:
             task.status = project.task_statuses.get(order=4)
@@ -220,7 +220,7 @@ class Command(BaseCommand):
         us = UserStory.objects.create(
                 subject=self.sd.choice(SUBJECT_CHOICES),
                 project=project,
-                owner=self.sd.choice(self.users),
+                owner=self.sd.db_object_from_queryset(project.memberships.all()).user,
                 description=self.sd.paragraph(),
                 milestone=milestone,
                 status=self.sd.db_object_from_queryset(project.us_statuses.filter(
@@ -249,7 +249,7 @@ class Command(BaseCommand):
                 name='Sprint {0}-{1}-{2}'.format(start_date.year,
                                                  start_date.month,
                                                  start_date.day),
-                owner=project.owner,
+                owner=self.sd.db_object_from_queryset(project.memberships.all()).user,
                 created_date=start_date,
                 modified_date=start_date,
                 estimated_start=start_date,
