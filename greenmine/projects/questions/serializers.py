@@ -29,7 +29,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
         diff_dict = {
             "modified_date": new_obj["modified_date"],
-            "by": old_question_version.revision.user.get_full_name(),
+            "by": old_question_version.revision.user,
             "comment": old_question_version.revision.comment,
         }
 
