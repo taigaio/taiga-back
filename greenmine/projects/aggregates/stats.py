@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from django.db.models import Q, Count
-from greenmine.projects.models import IssueStatus
 import datetime
 import copy
 
@@ -129,11 +128,6 @@ def get_stats_for_project_issues(project):
         del(project_issues_stats['last_four_weeks_days']['by_priority'][priority['id']]['count'])
         project_issues_stats['last_four_weeks_days']['by_priority'][priority['id']]['data'] = []
 
-    for status in project_issues_stats['issues_per_status'].values():
-        project_issues_stats['last_four_weeks_days']['by_status'][status['id']] = copy.copy(status)
-        del(project_issues_stats['last_four_weeks_days']['by_status'][status['id']]['count'])
-        project_issues_stats['last_four_weeks_days']['by_status'][status['id']]['data'] = []
-
     for x in range(27, -1, -1):
         day = datetime.date.today() - datetime.timedelta(days=x)
         next_day = day + datetime.timedelta(days=1)
@@ -143,9 +137,7 @@ def get_stats_for_project_issues(project):
         project_issues_stats['last_four_weeks_days']['by_open_closed']['closed'].append(
             project.issues.filter(finished_date__gte=day, finished_date__lt=next_day).count()
         )
-        list_of_closed_status_ids = IssueStatus.objects.filter(is_closed=True).values('id')
-        open_this_day = project.issues.filter(status_id__in=list_of_closed_status_ids)
-        open_this_day = open_this_day.filter(created_date__lt=next_day)
+        open_this_day = project.issues.filter(created_date__lt=next_day)
         open_this_day = open_this_day.filter(Q(finished_date__gt=day) | Q(finished_date__isnull=True))
         for severity in project_issues_stats['last_four_weeks_days']['by_severity']:
             project_issues_stats['last_four_weeks_days']['by_severity'][severity]['data'].append(
@@ -155,11 +147,6 @@ def get_stats_for_project_issues(project):
         for priority in project_issues_stats['last_four_weeks_days']['by_priority']:
             project_issues_stats['last_four_weeks_days']['by_priority'][priority]['data'].append(
                 open_this_day.filter(priority_id=priority).count()
-            )
-
-        for status in project_issues_stats['last_four_weeks_days']['by_status']:
-            project_issues_stats['last_four_weeks_days']['by_status'][status]['data'].append(
-                open_this_day.filter(status_id=status).count()
             )
 
     return project_issues_stats
