@@ -147,7 +147,7 @@ class WatchedMixin(models.Model):
 
     def _get_changed_field(self, field_name, data_value):
         verbose_name = self._get_changed_field_verbose_name(field_name)
-        old_value = self._get_changed_field_old_value(field_name, data_value)
+        old_value = self._get_changed_field_old_value(field_name, None)
         new_value = self._get_changed_field_new_value(field_name, data_value)
 
         return {

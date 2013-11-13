@@ -123,6 +123,13 @@ class UserStory(WatchedMixin):
             return ", ".join(value)
         return value
 
+    def get_notifiable_points_display(self, value):
+        if isinstance(value, models.manager.Manager):
+            return ", ".join(["{}: {}".format(rp.role.name,rp.points.name)
+                              for rp in self.role_points.all().order_by("role")])
+
+        return None
+
     def _get_watchers_by_role(self):
         return {
             "owner": self.owner,
