@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from django.db.models import Q, Count
+import datetime
+import copy
 
 
 def _get_milestones_stats_for_backlog(project):
@@ -98,9 +100,16 @@ def get_stats_for_project_issues(project):
         'issues_per_severity': {},
         'issues_per_owner': {},
         'issues_per_assigned_to': {},
+        'last_four_weeks_days': {
+            'by_open_closed': {'open': [], 'closed': []},
+            'by_severity': {},
+            'by_priority': {},
+            'open_progress': [],
+        }
+
     }
 
-    for issue in project.issues.all():
+    for issue in project.issues.all().prefetch_related('status', 'priority', 'type', 'severity', 'owner', 'assigned_to'):
         project_issues_stats['total_issues'] += 1
         _count_status_object(issue.type, project_issues_stats['issues_per_type'])
         _count_status_object(issue.status, project_issues_stats['issues_per_status'])
@@ -108,6 +117,40 @@ def get_stats_for_project_issues(project):
         _count_status_object(issue.severity, project_issues_stats['issues_per_severity'])
         _count_owned_object(issue.owner, project_issues_stats['issues_per_owner'])
         _count_owned_object(issue.assigned_to, project_issues_stats['issues_per_assigned_to'])
+
+    for severity in project_issues_stats['issues_per_severity'].values():
+        project_issues_stats['last_four_weeks_days']['by_severity'][severity['id']] = copy.copy(severity)
+        del(project_issues_stats['last_four_weeks_days']['by_severity'][severity['id']]['count'])
+        project_issues_stats['last_four_weeks_days']['by_severity'][severity['id']]['data'] = []
+
+    for priority in project_issues_stats['issues_per_priority'].values():
+        project_issues_stats['last_four_weeks_days']['by_priority'][priority['id']] = copy.copy(priority)
+        del(project_issues_stats['last_four_weeks_days']['by_priority'][priority['id']]['count'])
+        project_issues_stats['last_four_weeks_days']['by_priority'][priority['id']]['data'] = []
+
+    for x in range(27, -1, -1):
+        day = datetime.date.today() - datetime.timedelta(days=x)
+        next_day = day + datetime.timedelta(days=1)
+        project_issues_stats['last_four_weeks_days']['by_open_closed']['open'].append(
+            project.issues.filter(created_date__gte=day, created_date__lt=next_day).count()
+        )
+        project_issues_stats['last_four_weeks_days']['by_open_closed']['closed'].append(
+            project.issues.filter(finished_date__gte=day, finished_date__lt=next_day).count()
+        )
+        open_this_day = project.issues.filter(created_date__lt=next_day).filter(Q(finished_date__gt=day) | Q(finished_date__isnull=True))
+        for severity in project_issues_stats['last_four_weeks_days']['by_severity']:
+            project_issues_stats['last_four_weeks_days']['by_severity'][severity]['data'].append(
+                open_this_day.filter(severity_id=severity).count()
+            )
+
+        for priority in project_issues_stats['last_four_weeks_days']['by_priority']:
+            project_issues_stats['last_four_weeks_days']['by_priority'][priority]['data'].append(
+                open_this_day.filter(priority_id=priority).count()
+            )
+
+        project_issues_stats['last_four_weeks_days']['open_progress'].append(
+            open_this_day.count()
+        )
 
     return project_issues_stats
 
