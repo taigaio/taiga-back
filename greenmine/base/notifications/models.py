@@ -78,11 +78,13 @@ class WatchedMixin(models.Model):
         else:
             changed_data = data_dict
 
-        field_list = []
+        fields_list = []
         for field_name, data_value in changed_data.items():
-            field_list.append(self._get_changed_field(field_name, data_value))
+            field_dict = self._get_changed_field(field_name, data_value)
+            if field_dict["old_value"] != field_dict["new_value"]:
+                fields_list.append(field_dict)
 
-        return sorted(field_list, key=_key_by_notifiable_field)
+        return sorted(fields_list, key=_key_by_notifiable_field)
 
     def get_watchers_to_notify(self, changer):
         watchers_to_notify = set()
