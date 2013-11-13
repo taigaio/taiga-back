@@ -2,13 +2,18 @@
 
 from django.db import transaction
 
-from reversion.revisions import revision_context_manager
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework import mixins
+from rest_framework import decorators as rf_decorators
 from rest_framework.response import Response
 
-from .pagination import HeadersPaginationMixin, ConditionalPaginationMixin
+from reversion.revisions import revision_context_manager
+from reversion.models import Version
+import  reversion
+
+from . import pagination
+from . import serializers
 
 
 class CreateModelMixin(mixins.CreateModelMixin):
@@ -81,6 +86,69 @@ class DetailAndListSerializersMixin(object):
 
 
 class ReversionMixin(object):
+    historical_model = Version
+    historical_serializer_class = serializers.VersionSerializer
+
+    def get_historical_queryset(self):
+        return reversion.get_unique_for_object(self.get_object())
+
+    def get_historical_serializer_class(self):
+        serializer_class = self.historical_serializer_class
+        if serializer_class is not None:
+            return serializer_class
+
+        assert self.historical_model is not None, \
+            "'%s' should either include a 'serializer_class' attribute, " \
+            "or use the 'model' attribute as a shortcut for " \
+            "automatically generating a serializer class." \
+            % self.__class__.__name__
+
+        class DefaultSerializer(self.model_serializer_class):
+            class Meta:
+                model = self.historical_model
+        return DefaultSerializer
+
+    def get_historical_serializer(self, instance=None, data=None, files=None,
+                                  many=False, partial=False):
+        serializer_class = self.get_historical_serializer_class()
+        return serializer_class(instance, data=data, files=files,
+                                many=many, partial=partial)
+
+    def get_historical_pagination_serializer(self, page):
+        return self.get_historical_serializer(page.object_list, many=True)
+
+    @rf_decorators.link()
+    def historical(self, request, *args, **kwargs):
+        obj = self.get_object()
+
+        self.historical_object_list = self.get_historical_queryset()
+
+        # Switch between paginated or standard style responses
+        page = self.paginate_queryset(self.historical_object_list)
+        if page is not None:
+            serializer = self.get_historical_pagination_serializer(page)
+        else:
+            serializer = self.get_historical_serializer(self.historical_object_list,
+                                                        many=True)
+
+        return Response(serializer.data)
+
+    @rf_decorators.action()
+    def revert(self, request, vpk=None, *args, **kwargs):
+        if not vpk:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            version = reversion.get_for_object(self.get_object()).get(pk=vpk)
+            version.revision.revert(delete=True)
+
+            serializer = self.get_serializer(self.get_object())
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED,
+                            headers=headers)
+        except Version.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
     def dispatch(self, request, *args, **kwargs):
         revision_context_manager.start()
 
@@ -101,11 +169,12 @@ class ReversionMixin(object):
         return response
 
 
+
 class ModelCrudViewSet(DetailAndListSerializersMixin,
                        ReversionMixin,
                        PreconditionMixin,
-                       HeadersPaginationMixin,
-                       ConditionalPaginationMixin,
+                       pagination.HeadersPaginationMixin,
+                       pagination.ConditionalPaginationMixin,
                        CreateModelMixin,
                        RetrieveModelMixin,
                        UpdateModelMixin,
@@ -118,8 +187,8 @@ class ModelCrudViewSet(DetailAndListSerializersMixin,
 class ModelListViewSet(DetailAndListSerializersMixin,
                        ReversionMixin,
                        PreconditionMixin,
-                       HeadersPaginationMixin,
-                       ConditionalPaginationMixin,
+                       pagination.HeadersPaginationMixin,
+                       pagination.ConditionalPaginationMixin,
                        RetrieveModelMixin,
                        ListModelMixin,
                        viewsets.GenericViewSet):
