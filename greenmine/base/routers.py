@@ -4,7 +4,13 @@ from rest_framework import routers
 
 
 class DefaultRouter(routers.DefaultRouter):
-    pass
-
+    routes = [
+        routers.Route(
+            url=r'^{prefix}/(?P<pk>\d+)/revert/(?P<vpk>\d+)$',
+            mapping={'post': 'revert'},
+            name='{basename}-revert',
+            initkwargs={}
+        )
+    ] + routers.DefaultRouter.routes
 
 __all__ = ["DefaultRouter"]
