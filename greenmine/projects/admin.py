@@ -10,9 +10,9 @@ import reversion
 
 
 class AttachmentAdmin(reversion.VersionAdmin):
-    list_display = ["project", "attached_file", "owner"]
-    list_display_links = list_display
-    list_filter = ["project"]
+    list_display = ["id", "project", "attached_file", "owner", "content_type", "content_object"]
+    list_display_links = ["id", "attached_file",]
+    list_filter = ["project", "content_type"]
 
 
 class AttachmentInline(generic.GenericTabularInline):
@@ -65,44 +65,58 @@ class ProjectAdmin(reversion.VersionAdmin):
 # User Stories common admins
 
 class PointsAdmin(admin.ModelAdmin):
-    list_display = ["name", "order", "project"]
-    list_display_links = list_display
+    list_display = ["project", "order", "name", "value"]
+    list_display_links = ["name"]
     list_filter = ["project"]
 
 
 class UserStoryStatusAdmin(admin.ModelAdmin):
-    list_display = ["name", "order", "is_closed", "project"]
-    list_display_links = list_display
+    list_display = ["project", "order", "name", "is_closed"]
+    list_display_links = ["name"]
     list_filter = ["project"]
 
 
 # Tasks common admins
 
 class TaskStatusAdmin(admin.ModelAdmin):
-    list_display = ["name", "order", "is_closed", "project"]
-    list_display_links = list_display
+    list_display = ["project", "order", "name", "is_closed", "color"]
+    list_display_links = ["name"]
+    list_filter = ["project"]
 
 
 # Issues common admins
 
 class SeverityAdmin(admin.ModelAdmin):
-    list_display = ["name", "order", "project"]
-    list_display_links = list_display
+    list_display = ["project", "order", "name", "color"]
+    list_display_links = ["name"]
+    list_filter = ["project"]
 
 
 class PriorityAdmin(admin.ModelAdmin):
-    list_display = ["name", "order", "project"]
-    list_display_links = list_display
+    list_display = ["project", "order", "name", "color"]
+    list_display_links = ["name"]
+    list_filter = ["project"]
 
 
 class IssueTypeAdmin(admin.ModelAdmin):
-    list_display = ["name", "order", "project"]
-    list_display_links = list_display
+    list_display = ["project", "order", "name", "color"]
+    list_display_links = ["name"]
+    list_filter = ["project"]
 
 
 class IssueStatusAdmin(admin.ModelAdmin):
-    list_display = ["name", "order", "is_closed", "project"]
-    list_display_links = list_display
+    list_display = ["project", "order", "name", "is_closed", "color"]
+    list_display_links = ["name"]
+    list_filter = ["project"]
+
+
+# Questions common admins
+
+class QuestionStatusAdmin(admin.ModelAdmin):
+    list_display = ["project", "order", "name", "is_closed", "color"]
+    list_display_links = ["name"]
+    list_filter = ["project"]
+
 
 
 admin.site.register(models.IssueStatus, IssueStatusAdmin)
@@ -115,11 +129,5 @@ admin.site.register(models.Membership, MembershipAdmin)
 admin.site.register(models.Severity, SeverityAdmin)
 admin.site.register(models.Priority, PriorityAdmin)
 admin.site.register(models.IssueType, IssueTypeAdmin)
-
-# Questions common admins
-
-class QuestionStatusAdmin(admin.ModelAdmin):
-    list_display = ["name", "order", "is_closed", "project"]
-    list_display_links = list_display
 
 admin.site.register(models.QuestionStatus, QuestionStatusAdmin)
