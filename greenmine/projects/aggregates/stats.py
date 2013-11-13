@@ -104,7 +104,7 @@ def get_stats_for_project_issues(project):
             'by_open_closed': {'open': [], 'closed': []},
             'by_severity': {},
             'by_priority': {},
-            'open_progress': [],
+            'by_status': {},
         }
 
     }
@@ -128,6 +128,11 @@ def get_stats_for_project_issues(project):
         del(project_issues_stats['last_four_weeks_days']['by_priority'][priority['id']]['count'])
         project_issues_stats['last_four_weeks_days']['by_priority'][priority['id']]['data'] = []
 
+    for status in project_issues_stats['issues_per_status'].values():
+        project_issues_stats['last_four_weeks_days']['by_status'][status['id']] = copy.copy(status)
+        del(project_issues_stats['last_four_weeks_days']['by_status'][status['id']]['count'])
+        project_issues_stats['last_four_weeks_days']['by_status'][status['id']]['data'] = []
+
     for x in range(27, -1, -1):
         day = datetime.date.today() - datetime.timedelta(days=x)
         next_day = day + datetime.timedelta(days=1)
@@ -148,9 +153,10 @@ def get_stats_for_project_issues(project):
                 open_this_day.filter(priority_id=priority).count()
             )
 
-        project_issues_stats['last_four_weeks_days']['open_progress'].append(
-            open_this_day.count()
-        )
+        for status in project_issues_stats['last_four_weeks_days']['by_status']:
+            project_issues_stats['last_four_weeks_days']['by_status'][status]['data'].append(
+                open_this_day.filter(status_id=status).count()
+            )
 
     return project_issues_stats
 
