@@ -34,7 +34,7 @@ class RolePoints(models.Model):
             ("view_rolepoints", "Can view role points"),
         )
     def __str__(self):
-        return "{}: {}".format(role.name, point.name)
+        return "{}: {}".format(self.role.name, self.points.name)
 
 
 class UserStory(WatchedMixin):
