@@ -79,6 +79,7 @@ def _count_owned_object(user_obj, counting_storage):
             counting_storage[user_obj.id] = {}
             counting_storage[user_obj.id]['count'] = 1
             counting_storage[user_obj.id]['username'] = user_obj.username
+            counting_storage[user_obj.id]['name'] = user_obj.get_full_name()
             counting_storage[user_obj.id]['id'] = user_obj.id
             counting_storage[user_obj.id]['color'] = user_obj.color
     else:
@@ -88,6 +89,7 @@ def _count_owned_object(user_obj, counting_storage):
             counting_storage[0] = {}
             counting_storage[0]['count'] = 1
             counting_storage[0]['username'] = 'Unassigned'
+            counting_storage[0]['name'] = 'Unassigned'
             counting_storage[0]['id'] = 0
             counting_storage[0]['color'] = 'black'
 
