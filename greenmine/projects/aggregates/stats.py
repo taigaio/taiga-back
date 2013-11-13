@@ -142,7 +142,9 @@ def get_stats_for_project_issues(project):
         project_issues_stats['last_four_weeks_days']['by_open_closed']['closed'].append(
             project.issues.filter(finished_date__gte=day, finished_date__lt=next_day).count()
         )
-        open_this_day = project.issues.filter(created_date__lt=next_day).filter(Q(finished_date__gt=day) | Q(finished_date__isnull=True))
+        open_this_day = project.issues.filter(created_date__lt=next_day)
+        open_this_day = open_this_day.filter(Q(finished_date__gt=day) | Q(finished_date__isnull=True))
+        open_this_day = open_this_day.filter(status__is_closed=False)
         for severity in project_issues_stats['last_four_weeks_days']['by_severity']:
             project_issues_stats['last_four_weeks_days']['by_severity'][severity]['data'].append(
                 open_this_day.filter(severity_id=severity).count()
