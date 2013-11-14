@@ -9,6 +9,7 @@ from rest_framework.decorators import detail_route
 from greenmine.base import filters
 from greenmine.base.api import ModelCrudViewSet, ModelListViewSet
 from greenmine.base.notifications.api import NotificationSenderMixin
+from greenmine.projects.aggregates.tags import get_all_tags
 
 from . import serializers
 from . import models
@@ -38,6 +39,11 @@ class ProjectViewSet(ModelCrudViewSet):
     def issue_filters_data(self, request, pk=None):
         project = self.get_object()
         return Response(filters_aggr.get_issues_filters_data(project))
+
+    @detail_route(methods=['get'])
+    def tags(self, request, pk=None):
+        project = self.get_object()
+        return Response(get_all_tags(project))
 
     def get_queryset(self):
         qs = super(ProjectViewSet, self).get_queryset()
