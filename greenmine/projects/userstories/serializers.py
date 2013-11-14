@@ -24,7 +24,6 @@ class UserStorySerializer(serializers.ModelSerializer):
     points = RolePointsField(source="role_points", required=False )
     total_points = serializers.SerializerMethodField("get_total_points")
     comment = serializers.SerializerMethodField("get_comment")
-    history = serializers.SerializerMethodField("get_history")
 
     class Meta:
         model = models.UserStory
@@ -49,41 +48,3 @@ class UserStorySerializer(serializers.ModelSerializer):
 
     def get_comment(self, obj):
         return ""
-
-    def get_user_stories_diff(self, old_us_version, new_us_version):
-        old_obj = old_us_version.field_dict
-        new_obj = new_us_version.field_dict
-
-        diff_dict = {
-            "modified_date": new_obj["modified_date"],
-            "by": new_us_version.revision.user,
-            "comment": new_us_version.revision.comment,
-        }
-
-        for key in old_obj.keys():
-            if key == "modified_date":
-                continue
-
-            if old_obj[key] == new_obj[key]:
-                continue
-
-            diff_dict[key] = {
-                "old": old_obj[key],
-                "new": new_obj[key],
-            }
-
-        return diff_dict
-
-    def get_history(self, obj):
-        diff_list = []
-        current = None
-
-        if obj:
-            for version in reversion.get_for_object(obj).order_by("revision__date_created"):
-                if current:
-                    us_diff = self.get_user_stories_diff(current, version)
-                    diff_list.append(us_diff)
-
-                current = version
-
-        return diff_list
