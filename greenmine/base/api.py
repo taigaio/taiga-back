@@ -12,9 +12,10 @@ from reversion.revisions import revision_context_manager
 from reversion.models import Version
 import  reversion
 
+
 from . import pagination
 from . import serializers
-
+from . import decorators
 
 class CreateModelMixin(mixins.CreateModelMixin):
     @transaction.atomic
@@ -88,7 +89,7 @@ class DetailAndListSerializersMixin(object):
 class ReversionMixin(object):
     historical_model = Version
     historical_serializer_class = serializers.VersionSerializer
-    paginate_by = 5
+    historical_paginate_by = 5
 
     def get_historical_queryset(self):
         return reversion.get_unique_for_object(self.get_object())
@@ -119,6 +120,7 @@ class ReversionMixin(object):
         return self.get_historical_serializer(page.object_list, many=True)
 
     @rf_decorators.link()
+    @decorators.change_instance_attr("paginate_by", historical_paginate_by)
     def historical(self, request, *args, **kwargs):
         obj = self.get_object()
 
