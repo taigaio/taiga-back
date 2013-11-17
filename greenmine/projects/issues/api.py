@@ -22,8 +22,7 @@ from . import permissions
 from . import serializers
 
 class IssuesFilter(filters.FilterBackend):
-    filter_fields = ("assigned_to", "status", "severity",
-                     "priority", "tags")
+    filter_fields = ( "status", "severity", "priority", "owner", "assigned_to", "tags")
 
     def _prepare_filters_data(self, request):
         data = {}
@@ -62,8 +61,8 @@ class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
 
     filter_backends = (filters.IsProjectMemberFilterBackend, IssuesFilter)
     filter_fields = ("project",)
-    order_by_fields = ("created_date", "modified_date", "status",
-                       "severity", "priority",)
+    order_by_fields = ("severity", "status", "priority", "created_date", "modified_date", "owner",
+                       "assigned_to")
 
     create_notification_template = "create_issue_notification"
     update_notification_template = "update_issue_notification"
