@@ -291,7 +291,7 @@ REST_FRAMEWORK = {
         'greenmine.base.auth.Session',
     ),
     'FILTER_BACKEND': 'greenmine.base.filters.FilterBackend',
-    'PAGINATE_BY': 50,
+    'PAGINATE_BY': 30,
     'MAX_PAGINATE_BY': 1000,
 }
 
