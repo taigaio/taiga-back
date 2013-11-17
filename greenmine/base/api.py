@@ -88,6 +88,7 @@ class DetailAndListSerializersMixin(object):
 class ReversionMixin(object):
     historical_model = Version
     historical_serializer_class = serializers.VersionSerializer
+    paginate_by = 5
 
     def get_historical_queryset(self):
         return reversion.get_unique_for_object(self.get_object())
