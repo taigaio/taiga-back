@@ -25,7 +25,8 @@ COORS_ALLOWED_HEADERS = ['Content-Type', 'X-Requested-With',
                          'Authorization', 'Accept-Encoding',
                          'X-Disable-Pagination']
 COORS_ALLOWED_CREDENTIALS = True
-COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated", "x-paginated-by"]
+COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated",
+                        "x-paginated-by", "x-pagination-current"]
 
 
 class CoorsMiddleware(object):
