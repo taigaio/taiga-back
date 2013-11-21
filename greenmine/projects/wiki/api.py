@@ -53,6 +53,9 @@ class WikiViewSet(ModelCrudViewSet):
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ["project", "slug"]
 
+    def get_historical_queryset(self):
+        return super().get_historical_queryset()[1:]
+
     def pre_conditions_on_save(self, obj):
         super().pre_conditions_on_save(obj)
 
