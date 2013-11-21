@@ -59,26 +59,25 @@ class VersionSerializer(serializers.ModelSerializer):
         try:
             return versions[versions.index(obj) + 1].field_dict
         except IndexError:
-            return None
+            return {}
 
     def get_changed_fields(self, obj):
         new_fields = self.get_object_fields(obj)
         old_fields = self.get_object_old_fields(obj)
 
         changed_fields = {}
-        if old_fields:
-            for key in new_fields.keys() | old_fields.keys():
-                if key == "modified_date":
-                    continue
+        for key in new_fields.keys() | old_fields.keys():
+            if key == "modified_date":
+                continue
 
-                if old_fields.get(key, None) == new_fields.get(key, None):
-                    continue
+            if old_fields.get(key, "") == new_fields.get(key, ""):
+                continue
 
-                changed_fields[key] = {
-                     "name": obj.object.__class__._meta.get_field_by_name(
-                                                       key)[0].verbose_name,
-                     "old": old_fields.get(key, None),
-                     "new": new_fields.get(key, None),
-                  }
+            changed_fields[key] = {
+                 "name": obj.object.__class__._meta.get_field_by_name(
+                                                   key)[0].verbose_name,
+                 "old": old_fields.get(key, None),
+                 "new": new_fields.get(key, None),
+              }
 
         return changed_fields
