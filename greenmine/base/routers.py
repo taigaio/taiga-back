@@ -6,9 +6,9 @@ from rest_framework import routers
 class DefaultRouter(routers.DefaultRouter):
     routes = [
         routers.Route(
-            url=r'^{prefix}/(?P<pk>\d+)/revert/(?P<vpk>\d+)$',
-            mapping={'post': 'revert'},
-            name='{basename}-revert',
+            url=r'^{prefix}/(?P<pk>\d+)/restore/(?P<vpk>\d+)$',
+            mapping={'post': 'restore'},
+            name='{basename}-restore',
             initkwargs={}
         )
     ] + routers.DefaultRouter.routes
