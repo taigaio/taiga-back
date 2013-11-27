@@ -23,7 +23,7 @@ class RoleAdmin(admin.ModelAdmin):
             # Avoid a major performance hit resolving permission names which
             # triggers a content_type load:
             kwargs['queryset'] = qs.select_related('content_type')
-        return super(RoleAdmin, self).formfield_for_manytomany(
+        return super().formfield_for_manytomany(
             db_field, request=request, **kwargs)
 
 

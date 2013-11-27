@@ -67,7 +67,7 @@ class Milestone(WatchedMixin):
         if not self.slug:
             self.slug = slugify_uniquely(self.name, self.__class__)
 
-        super(Milestone, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def _get_user_stories_points(self, user_stories):
         role_points = [us.role_points.all() for us in user_stories]

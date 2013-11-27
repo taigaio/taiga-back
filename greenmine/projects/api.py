@@ -46,14 +46,14 @@ class ProjectViewSet(ModelCrudViewSet):
         return Response(get_all_tags(project))
 
     def get_queryset(self):
-        qs = super(ProjectViewSet, self).get_queryset()
+        qs = super().get_queryset()
         qs = qs.filter(Q(owner=self.request.user) |
                        Q(members=self.request.user))
         return qs.distinct()
 
     def pre_save(self, obj):
         obj.owner = self.request.user
-        super(ProjectViewSet, self).pre_save(obj)
+        super().pre_save(obj)
 
 
 class MembershipViewSet(ModelCrudViewSet):

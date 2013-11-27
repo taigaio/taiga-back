@@ -45,5 +45,5 @@ class Document(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title, self.__class__)
-        super(Document, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 

@@ -27,12 +27,12 @@ class QuestionAttachmentViewSet(ModelCrudViewSet):
 
     def get_queryset(self):
         ct = ContentType.objects.get_for_model(models.Question)
-        qs = super(QuestionAttachmentViewSet, self).get_queryset()
+        qs = super().get_queryset()
         qs = qs.filter(content_type=ct)
         return qs.distinct()
 
     def pre_save(self, obj):
-        super(QuestionAttachmentViewSet, self).pre_save(obj)
+        super().pre_save(obj)
         if not obj.id:
             obj.content_type = ContentType.objects.get_for_model(models.Question)
             obj.owner = self.request.user
@@ -49,7 +49,7 @@ class QuestionViewSet(NotificationSenderMixin, ModelCrudViewSet):
     destroy_notification_template = "destroy_question_notification"
 
     def pre_save(self, obj):
-        super(QuestionViewSet, self).pre_save(obj)
+        super().pre_save(obj)
         if not obj.id:
             obj.owner = self.request.user
 
@@ -58,4 +58,4 @@ class QuestionViewSet(NotificationSenderMixin, ModelCrudViewSet):
             if "comment" in self.request.DATA:
                 # Update the comment in the last version
                 reversion.set_comment(self.request.DATA["comment"])
-        super(QuestionViewSet, self).post_save(obj, created)
+        super().post_save(obj, created)

@@ -170,7 +170,7 @@ class Project(models.Model):
         if not self.slug:
             self.slug = slugify_uniquely(self.name, self.__class__)
 
-        super(Project, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def get_roles(self):
         role_model = get_model("users", "Role")

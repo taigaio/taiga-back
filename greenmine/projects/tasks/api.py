@@ -29,7 +29,7 @@ class TaskAttachmentViewSet(ModelCrudViewSet):
 
     def get_queryset(self):
         ct = ContentType.objects.get_for_model(models.Task)
-        qs = super(TaskAttachmentViewSet, self).get_queryset()
+        qs = super().get_queryset()
         qs = qs.filter(content_type=ct)
         return qs.distinct()
 
@@ -37,7 +37,7 @@ class TaskAttachmentViewSet(ModelCrudViewSet):
         if not obj.id:
             obj.content_type = ContentType.objects.get_for_model(models.Task)
             obj.owner = self.request.user
-        super(TaskAttachmentViewSet, self).pre_save(obj)
+        super().pre_save(obj)
 
     def pre_conditions_on_save(self, obj):
         super().pre_conditions_on_save(obj)
@@ -65,7 +65,7 @@ class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
             obj.milestone = obj.user_story.milestone
         if not obj.id:
             obj.owner = self.request.user
-        super(TaskViewSet, self).pre_save(obj)
+        super().pre_save(obj)
 
     def pre_conditions_on_save(self, obj):
         super().pre_conditions_on_save(obj)
@@ -88,4 +88,4 @@ class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
             if "comment" in self.request.DATA:
                 # Update the comment in the last version
                 reversion.set_comment(self.request.DATA["comment"])
-        super(TaskViewSet, self).post_save(obj, created)
+        super().post_save(obj, created)

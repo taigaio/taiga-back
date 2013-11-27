@@ -20,7 +20,7 @@ def patch_api_view():
                 return Response({'detail': 'Not authenticated'},
                                 status=status.HTTP_401_UNAUTHORIZED,
                                 exception=True)
-            return super(APIView, self).handle_exception(exc)
+            return super().handle_exception(exc)
 
         @classmethod
         def as_view(cls, **initkwargs):

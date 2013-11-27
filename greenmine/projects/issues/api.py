@@ -71,7 +71,7 @@ class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
     def pre_save(self, obj):
         if not obj.id:
             obj.owner = self.request.user
-        super(IssueViewSet, self).pre_save(obj)
+        super().pre_save(obj)
 
     def pre_conditions_on_save(self, obj):
         super().pre_conditions_on_save(obj)
@@ -112,7 +112,7 @@ class IssueAttachmentViewSet(ModelCrudViewSet):
 
     def get_queryset(self):
         ct = ContentType.objects.get_for_model(models.Issue)
-        qs = super(IssueAttachmentViewSet, self).get_queryset()
+        qs = super().get_queryset()
         qs = qs.filter(content_type=ct)
         return qs.distinct()
 
@@ -120,7 +120,7 @@ class IssueAttachmentViewSet(ModelCrudViewSet):
         if not obj.id:
             obj.content_type = ContentType.objects.get_for_model(models.Issue)
             obj.owner = self.request.user
-        super(IssueAttachmentViewSet, self).pre_save(obj)
+        super().pre_save(obj)
 
     def pre_conditions_on_save(self, obj):
         super().pre_conditions_on_save(obj)
