@@ -2,22 +2,29 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import list_route, action
+from rest_framework.exceptions import ParseError
+from rest_framework.response import Response
 
 from greenmine.base import filters
 from greenmine.base import exceptions as exc
+from greenmine.base.permissions import has_project_perm
 from greenmine.base.api import ModelCrudViewSet
 from greenmine.base.notifications.api import NotificationSenderMixin
 from greenmine.projects.permissions import AttachmentPermission
 from greenmine.projects.serializers import AttachmentSerializer
 from greenmine.projects.models import Attachment
+from greenmine.projects.models import Project
 
 from . import serializers
 from . import models
 from . import permissions
 
 import reversion
+
 
 
 class UserStoryAttachmentViewSet(ModelCrudViewSet):
@@ -59,6 +66,31 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
     create_notification_template = "create_userstory_notification"
     update_notification_template = "update_userstory_notification"
     destroy_notification_template = "destroy_userstory_notification"
+
+    @list_route(methods=["POST"])
+    def bulk_create(self, request):
+        bulk_stories = request.DATA.get('bulkStories', None)
+        if bulk_stories is None:
+            raise ParseError(detail='You need bulkStories data')
+
+        project_id = request.DATA.get('projectId', None)
+        if project_id is None:
+            raise ParseError(detail='You need projectId data')
+
+        project = get_object_or_404(Project, id=project_id)
+
+        if not has_project_perm(request.user, project, 'add_userstory'):
+            raise PermissionDenied("You don't have permision to create user stories")
+
+        result_stories = []
+        bulk_stories = bulk_stories.split("\n")
+        for bulk_story in bulk_stories:
+            bulk_story = bulk_story.strip()
+            if len(bulk_story) > 0:
+                result_stories.append(models.UserStory.objects.create(subject=bulk_story, project=project, status=project.default_us_status))
+
+        data = map(lambda x: serializers.UserStorySerializer(x).data, result_stories)
+        return Response(data)
 
     def pre_save(self, obj):
         if not obj.id:
