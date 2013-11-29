@@ -6,16 +6,24 @@ from greenmine.base.serializers import PickleField
 
 from . import models
 
+from os import path
+
 
 class AttachmentSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField("get_name")
     url = serializers.SerializerMethodField("get_url")
     size = serializers.SerializerMethodField("get_size")
 
     class Meta:
         model = models.Attachment
-        fields = ("id", "project", "owner", "attached_file", "size", "created_date",
-                  "modified_date", "object_id", "url")
+        fields = ("id", "project", "owner", "name", "attached_file", "size",
+                  "created_date", "modified_date", "object_id", "url")
         read_only_fields = ("owner",)
+
+    def get_name(self, obj):
+        if obj.attached_file:
+            return path.basename(obj.attached_file.path)
+        return ""
 
     def get_url(self, obj):
         return obj.attached_file.url if obj and obj.attached_file else ""
