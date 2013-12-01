@@ -87,7 +87,10 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
         for bulk_story in bulk_stories:
             bulk_story = bulk_story.strip()
             if len(bulk_story) > 0:
-                result_stories.append(models.UserStory.objects.create(subject=bulk_story, project=project, status=project.default_us_status))
+                result_stories.append(models.UserStory.objects.create(subject=bulk_story,
+                                                                      project=project,
+                                                                      owner=request.user,
+                                                                      status=project.default_us_status))
 
         data = map(lambda x: serializers.UserStorySerializer(x).data, result_stories)
         return Response(data)
