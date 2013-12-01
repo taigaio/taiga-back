@@ -3,6 +3,7 @@
 from rest_framework import serializers
 
 from greenmine.base.serializers import PickleField
+from greenmine.base.users.serializers import RoleSerializer
 
 from . import models
 
@@ -106,6 +107,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class ProjectDetailSerializer(ProjectSerializer):
     list_of_milestones = serializers.SerializerMethodField("get_list_of_milestones")
+    roles = serializers.SerializerMethodField("get_list_of_roles")
     memberships = MembershipSerializer(many=True, required=False)
     us_statuses = UserStoryStatusSerializer(many=True, required=False)       # User Stories
     points = PointsSerializer(many=True, required=False)
@@ -116,17 +118,35 @@ class ProjectDetailSerializer(ProjectSerializer):
     issue_types = IssueTypeSerializer(many=True, required=False)
     #question_statuses = QuestionStatusSerializer(many=True, required=False) # Questions
 
+    def get_list_of_roles(self, obj):
+        roles_list = []
+
+        if obj and obj.memberships:
+            roles_list = [{
+                "id": role["role__id"],
+                "name": role["role__name"],
+                "slug": role["role__slug"],
+                "order": role["role__order"],
+                "computable": role["role__computable"],
+            } for role in obj.memberships.values("role__id", "role__name", "role__slug", "role__order",
+                                                 "role__computable")
+                                         .order_by("role__order", "role__id")
+                                         .distinct("role__order", "role__id")]
+
+        return roles_list
+
     def get_list_of_milestones(self, obj):
         milestones_list = []
 
-        if obj and obj.memberships:
+        if obj and obj.milestones:
             milestones_list = [{
                 "id": milestone.id,
                 "name": milestone.name,
                 "finish_date": milestone.estimated_finish,
                 "closed_points": milestone.closed_points,
                 "client_increment_points": milestone.client_increment_points,
-                "team_increment_points": milestone.team_increment_points
+                "team_increment_points": milestone.team_increment_points,
+                "closed": milestone.closed
             } for milestone in obj.milestones.all().order_by("estimated_start")]
 
         return milestones_list
