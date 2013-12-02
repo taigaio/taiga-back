@@ -84,11 +84,17 @@ class Command(BaseCommand):
             project = self.create_project(x)
 
             # added memberships
+            computable_project_roles = set()
             for user in self.users:
+                role = self.sd.db_object_from_queryset(Role.objects.all())
+
                 Membership.objects.create(
                         project=project,
-                        role=self.sd.db_object_from_queryset(Role.objects.all()),
+                        role=role,
                         user=user)
+
+                if role.computable:
+                    computable_project_roles.add(role)
 
             start_date = now() - datetime.timedelta(55)
 
@@ -99,7 +105,7 @@ class Command(BaseCommand):
 
                 # create uss asociated to milestones
                 for z in range(self.sd.int(3, 7)):
-                    us = self.create_us(project, milestone)
+                    us = self.create_us(project, milestone, computable_project_roles)
 
                     # create tasks
                     rang = (1, 4) if start_date <= now() and end_date <= now() else (0, 6)
@@ -118,7 +124,7 @@ class Command(BaseCommand):
 
             # created unassociated uss.
             for y in range(self.sd.int(8,15)):
-                us = self.create_us(project)
+                us = self.create_us(project, None, computable_project_roles)
 
             # create bugs.
             for y in range(self.sd.int(15,25)):
@@ -220,7 +226,7 @@ class Command(BaseCommand):
 
         return task
 
-    def create_us(self, project, milestone=None):
+    def create_us(self, project, milestone=None, computable_project_roles=list(Role.objects.all())):
         us = UserStory.objects.create(
                 subject=self.sd.choice(SUBJECT_CHOICES),
                 project=project,
@@ -232,7 +238,7 @@ class Command(BaseCommand):
                 tags=self.sd.words(1, 3).split(" ")
         )
 
-        for role_points in us.role_points.all():
+        for role_points in us.role_points.filter(role__in=computable_project_roles):
             if milestone:
                 role_points.points = self.sd.db_object_from_queryset(
                                 us.project.points.exclude(value=None))
