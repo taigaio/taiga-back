@@ -21,3 +21,14 @@ def create_user(id, save=True, is_superuser=False):
     if save:
         instance.save()
     return instance
+
+
+def create_site(name, public_register=False):
+    site_model = get_model("base", "Site")
+
+    instance = site_model(name=name,
+                          domain=name,
+                          public_register=public_register)
+
+    instance.save()
+    return instance

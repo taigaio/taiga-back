@@ -13,6 +13,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/v1/sites', "greenmine.base.apiviews.sitestatus"),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^grappelli/', include('grappelli.urls')),
 )

@@ -15,55 +15,17 @@ from djmail.template_mail import MagicMailBuilder
 
 from greenmine.base import exceptions as exc
 from greenmine.base.filters import FilterBackend
-from greenmine.base.api import ModelCrudViewSet
+from greenmine.base.api import ModelCrudViewSet, RetrieveModelMixin
 
 from .models import User, Role
 from .serializers import UserSerializer, RoleSerializer, RecoverySerializer
 
-
-class RolesViewSet(viewsets.ViewSet):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = RoleSerializer
-
-    def list(self, request, pk=None):
-        queryset = Role.objects.all()
-        serializer = self.serializer_class(queryset, many=True)
-        return Response(serializer.data)
-
-    def retrieve(self, request, pk=None):
-        try:
-            role = Role.objects.get(pk=pk)
-        except Role.DoesNotExist:
-            raise exc.NotFound()
-
-        serializer = self.serializer_class(role)
-        return Response(serializer.data)
-
-
-class ProjectMembershipFilter(FilterBackend):
-    def filter_queryset(self, request, queryset, view):
-        queryset = super().filter_queryset(request, queryset, view)
-
-        if request.user.is_superuser:
-            return queryset
-
-        project_model = get_model("projects", "Project")
-        own_projects = project_model.objects.filter(members=request.user)
-
-        project = request.QUERY_PARAMS.get('project', None)
-        if project is not None:
-            own_projects = own_projects.filter(pk=project)
-
-        queryset = (queryset.filter(projects__in=own_projects)
-                            .order_by('username').distinct())
-        return queryset
 
 
 class UsersViewSet(ModelCrudViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    filter_backends = (ProjectMembershipFilter,)
     filter_fields = [("project", "memberships__project__pk")]
 
     def pre_conditions_on_save(self, obj):
@@ -129,3 +91,22 @@ class UsersViewSet(ModelCrudViewSet):
         request.user.set_password(password)
         request.user.save(update_fields=["password"])
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RolesViewSet(viewsets.ViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = RoleSerializer
+
+    def list(self, request, pk=None):
+        queryset = Role.objects.all()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        try:
+            role = Role.objects.get(pk=pk)
+        except Role.DoesNotExist:
+            raise exc.NotFound()
+
+        serializer = self.serializer_class(role)
+        return Response(serializer.data)

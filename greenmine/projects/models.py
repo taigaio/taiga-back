@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import itertools
+import collections
+
 from django.db import models
 from django.db.models.loading import get_model
 from django.conf import settings
@@ -8,104 +11,47 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 from picklefield.fields import PickledObjectField
+import reversion
+
 
 from greenmine.base.utils.slug import slugify_uniquely
 from greenmine.base.utils.dicts import dict_sum
 from greenmine.projects.userstories.models import UserStory
 from . import choices
 
-import reversion
-import itertools
-import collections
-
-
-def get_attachment_file_path(instance, filename):
-    return "attachment-files/{project}/{model}/{filename}".format(
-        project=instance.project.slug,
-        model=instance.content_type.model,
-        filename=filename
-    )
-
-
-class Attachment(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
-                              related_name="change_attachments",
-                              verbose_name=_("owner"))
-    project = models.ForeignKey("Project", null=False, blank=False,
-                                related_name="attachments", verbose_name=_("project"))
-    content_type = models.ForeignKey(ContentType, null=False, blank=False,
-                                     verbose_name=_("content type"))
-    object_id = models.PositiveIntegerField(null=False, blank=False,
-                                            verbose_name=_("object id"))
-    content_object = generic.GenericForeignKey("content_type", "object_id")
-    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                                        verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
-                                         verbose_name=_("modified date"))
-    attached_file = models.FileField(max_length=500, null=True, blank=True,
-                                     upload_to=get_attachment_file_path,
-                                     verbose_name=_("attached file"))
-
-    class Meta:
-        verbose_name = "attachment"
-        verbose_name_plural = "attachments"
-        ordering = ["project", "created_date"]
-        permissions = (
-            ("view_attachment", "Can view attachment"),
-        )
-
-    def __str__(self):
-        return "Attachment: {}".format(self.id)
-
 
 class Membership(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
+    # This model stores all project memberships. Also
+    # stores invitations to memberships that does not have
+    # assigned user.
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
                              related_name="memberships")
     project = models.ForeignKey("Project", null=False, blank=False,
                                 related_name="memberships")
     role = models.ForeignKey("users.Role", null=False, blank=False,
                              related_name="memberships")
 
+    # Invitation metadata
+    email = models.EmailField(max_length=255, default=None, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, default=timezone.now)
+    token = models.CharField(max_length=60, unique=True, blank=True, null=True,
+                             default=None)
+
     class Meta:
         verbose_name = "membership"
         verbose_name_plural = "membershipss"
-        unique_together = ("user", "project")
-        ordering = ["project", "role", "user"]
+        ordering = ["project", "role"]
         permissions = (
             ("view_membership", "Can view membership"),
         )
 
 
-class Project(models.Model):
-    name = models.CharField(max_length=250, unique=True, null=False, blank=False,
-                            verbose_name=_("name"))
-    slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
-                            verbose_name=_("slug"))
-    description = models.TextField(null=False, blank=False,
-                                   verbose_name=_("description"))
-    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                                        verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
-                                         verbose_name=_("modified date"))
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
-                              related_name="owned_projects", verbose_name=_("owner"))
-    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="projects",
-                                     through="Membership", verbose_name=_("members"))
-    public = models.BooleanField(default=True, null=False, blank=True,
-                                 verbose_name=_("public"))
-    last_us_ref = models.BigIntegerField(null=True, blank=False, default=1,
-                                         verbose_name=_("last us ref"))
-    last_task_ref = models.BigIntegerField(null=True, blank=False, default=1,
-                                           verbose_name=_("last task ref"))
-    last_issue_ref = models.BigIntegerField(null=True, blank=False, default=1,
-                                            verbose_name=_("last issue ref"))
-    total_milestones = models.IntegerField(default=0, null=True, blank=True,
-                                           verbose_name=_("total of milestones"))
-    total_story_points = models.FloatField(default=None, null=True, blank=False,
-                                           verbose_name=_("total story points"))
-    tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
+
+class ProjectDefaults(models.Model):
     default_points = models.OneToOneField("projects.Points", on_delete=models.SET_NULL,
                                           related_name="+", null=True, blank=True,
                                           verbose_name=_("default points"))
@@ -136,19 +82,53 @@ class Project(models.Model):
                                                    related_name="+", null=True, blank=True,
                                                    verbose_name=_("default questions "
                                                                   "status"))
+    class Meta:
+        abstract = True
+
+
+class Project(ProjectDefaults, models.Model):
+    name = models.CharField(max_length=250, unique=True, null=False, blank=False,
+                            verbose_name=_("name"))
+    slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
+                            verbose_name=_("slug"))
+    description = models.TextField(null=False, blank=False,
+                                   verbose_name=_("description"))
+    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+                                        verbose_name=_("created date"))
+    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+                                         verbose_name=_("modified date"))
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
+                              related_name="owned_projects", verbose_name=_("owner"))
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="projects",
+                                     through="Membership", verbose_name=_("members"))
+    public = models.BooleanField(default=True, null=False, blank=True,
+                                 verbose_name=_("public"))
+    last_us_ref = models.BigIntegerField(null=True, blank=False, default=1,
+                                         verbose_name=_("last us ref"))
+    last_task_ref = models.BigIntegerField(null=True, blank=False, default=1,
+                                           verbose_name=_("last task ref"))
+    last_issue_ref = models.BigIntegerField(null=True, blank=False, default=1,
+                                            verbose_name=_("last issue ref"))
+    total_milestones = models.IntegerField(default=0, null=True, blank=True,
+                                           verbose_name=_("total of milestones"))
+    total_story_points = models.FloatField(default=None, null=True, blank=False,
+                                           verbose_name=_("total story points"))
+    tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
+    site = models.ForeignKey("base.Site", related_name="projects", null=True, default=None)
 
     notifiable_fields = [
         "name",
         "total_milestones",
         "total_story_points",
-        "default_points",
-        "default_us_status",
-        "default_task_status",
-        "default_priority",
-        "default_severity",
-        "default_issue_status",
-        "default_issue_type",
-        "default_question_status",
+        # This realy should be in this list?
+        # "default_points",
+        # "default_us_status",
+        # "default_task_status",
+        # "default_priority",
+        # "default_severity",
+        # "default_issue_status",
+        # "default_issue_type",
+        # "default_question_status",
         "description"
     ]
 
@@ -178,9 +158,8 @@ class Project(models.Model):
 
     def get_users(self):
         user_model = get_user_model()
-        return user_model.objects.filter(
-            id__in=list(self.memberships.values_list("user", flat=True))
-        )
+        members = self.memberships.values_list("user", flat=True)
+        return user_model.objects.filter(id__in=list(members))
 
     def update_role_points(self):
         rolepoints_model = get_model("userstories", "RolePoints")
@@ -249,6 +228,45 @@ class Project(models.Model):
     @property
     def assigned_points(self):
         return self._get_user_stories_points(self.user_stories.filter(milestone__isnull=False))
+
+
+def get_attachment_file_path(instance, filename):
+    return "attachment-files/{project}/{model}/{filename}".format(
+        project=instance.project.slug,
+        model=instance.content_type.model,
+        filename=filename
+    )
+
+
+class Attachment(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
+                              related_name="change_attachments",
+                              verbose_name=_("owner"))
+    project = models.ForeignKey("Project", null=False, blank=False,
+                                related_name="attachments", verbose_name=_("project"))
+    content_type = models.ForeignKey(ContentType, null=False, blank=False,
+                                     verbose_name=_("content type"))
+    object_id = models.PositiveIntegerField(null=False, blank=False,
+                                            verbose_name=_("object id"))
+    content_object = generic.GenericForeignKey("content_type", "object_id")
+    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+                                        verbose_name=_("created date"))
+    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+                                         verbose_name=_("modified date"))
+    attached_file = models.FileField(max_length=500, null=True, blank=True,
+                                     upload_to=get_attachment_file_path,
+                                     verbose_name=_("attached file"))
+
+    class Meta:
+        verbose_name = "attachment"
+        verbose_name_plural = "attachments"
+        ordering = ["project", "created_date"]
+        permissions = (
+            ("view_attachment", "Can view attachment"),
+        )
+
+    def __str__(self):
+        return "Attachment: {}".format(self.id)
 
 
 # User Stories common Models

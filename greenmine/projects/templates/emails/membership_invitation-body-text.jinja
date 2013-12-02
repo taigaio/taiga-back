@@ -1,0 +1,11 @@
+{% set final_url = resolve_front_url("invitation", membership.token) %}
+{% set final_url_name = "Greenmine - Invitation to join on {0} project.".format(membership.project) %}
+
+Hi,
+
+you have been invited to the project '{{ membership.project }}'.
+
+If you want to join to this project go to {{ final_url }} for accept this invitation.
+
+
+** More info at ({{ final_url }}) **

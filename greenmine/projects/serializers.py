@@ -89,6 +89,12 @@ class QuestionStatusSerializer(serializers.ModelSerializer):
 # Projects
 
 class MembershipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Membership
+        read_only_fields = ("user",)
+
+
+class ProjectMembershipSerializer(serializers.ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False)
     full_name = serializers.CharField(source='user.get_full_name', required=False)
 
@@ -101,14 +107,14 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Project
-        read_only_fields = ("created_date", "modified_date", "owner")
+        read_only_fields = ("created_date", "modified_date", "owner", "site")
         exclude = ("last_us_ref", "last_task_ref", "last_issue_ref")
 
 
 class ProjectDetailSerializer(ProjectSerializer):
     list_of_milestones = serializers.SerializerMethodField("get_list_of_milestones")
     roles = serializers.SerializerMethodField("get_list_of_roles")
-    memberships = MembershipSerializer(many=True, required=False)
+    memberships = ProjectMembershipSerializer(many=True, required=False)
     us_statuses = UserStoryStatusSerializer(many=True, required=False)       # User Stories
     points = PointsSerializer(many=True, required=False)
     task_statuses = TaskStatusSerializer(many=True, required=False)          # Tasks

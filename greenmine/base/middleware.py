@@ -1,32 +1,22 @@
-import time
+# -*- coding: utf-8 -*-
 
-from django.conf import settings
+import json
+
 from django import http
-from django.utils.cache import patch_vary_headers
-from django.utils.http import cookie_date
-from django.utils.importlib import import_module
-
-from django.contrib.sessions.middleware import SessionMiddleware
-
-
-class GreenmineSessionMiddleware(SessionMiddleware):
-    def process_request(self, request):
-        engine = import_module(settings.SESSION_ENGINE)
-        session_key = request.META.get(settings.SESSION_HEADER_NAME, None)
-        if not session_key:
-            session_key = request.COOKIES.get(settings.SESSION_COOKIE_NAME, None)
-        request.session = engine.SessionStore(session_key)
-
+from greenmine.base import sites
 
 
 COORS_ALLOWED_ORIGINS = '*'
-COORS_ALLOWED_METHODS = ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE', 'PATCH']
-COORS_ALLOWED_HEADERS = ['Content-Type', 'X-Requested-With',
-                         'Authorization', 'Accept-Encoding',
-                         'X-Disable-Pagination']
+COORS_ALLOWED_METHODS = ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE', 'PATCH', 'HEAD']
+COORS_ALLOWED_HEADERS = ['content-type', 'x-requested-with',
+                         'authorization', 'accept-encoding',
+                         'x-disable-pagination', 'x-host']
 COORS_ALLOWED_CREDENTIALS = True
-COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated",
-                        "x-paginated-by", "x-pagination-current"]
+COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated", "x-paginated-by",
+                        "x-paginated-by", "x-pagination-current", "x-site-host",
+                        "x-site-register"]
+
+from .exceptions import format_exception
 
 
 class CoorsMiddleware(object):
@@ -48,4 +38,29 @@ class CoorsMiddleware(object):
 
     def process_response(self, request, response):
         self._populate_response(response)
+        return response
+
+
+class SitesMiddleware(object):
+    def process_request(self, request):
+        domain = request.META.get("HTTP_X_HOST", None)
+        if domain is not None:
+            try:
+                site = sites.get_site_for_domain(domain)
+            except sites.SiteNotFound as e:
+                detail = format_exception(e)
+                return http.HttpResponseBadRequest(json.dumps(detail))
+        else:
+            site = sites.get_default_site()
+
+        request.site = site
+        sites.activate(site)
+
+    def process_response(self, request, response):
+        sites.deactivate()
+
+        if hasattr(request, "site"):
+            response["X-Site-Host"] = request.site.domain
+            response["X-Site-Register"] = "on" if request.site.public_register else "off"
+
         return response

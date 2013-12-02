@@ -2,7 +2,7 @@ git+https://github.com/tomchristie/django-rest-framework.git@2.4.0
 git+https://github.com/etianen/django-reversion.git@django-1.6
 
 Django==1.6.0
-South==0.8.2
+South==0.8.3
 anyjson==0.3.3
 Werkzeug==0.9.4
 celery==3.0.24
@@ -19,4 +19,3 @@ djmail>=0.4
 django-jinja>=0.21
 jinja2==2.7.1
 pygments>=1.6
-django-sites>=0.4

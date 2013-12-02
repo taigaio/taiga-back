@@ -8,12 +8,12 @@ from django.core import mail
 from django.db.models import get_model
 
 from greenmine.base.users.tests import create_user
-from greenmine.projects.models import Project
+from greenmine.projects.models import Project, Membership
 
 from . import create_project, add_membership
 
 class ProfileTestCase(test.TestCase):
-    fixtures = ["initial_role.json", ]
+    fixtures = ["initial_role.json", "initial_site.json"]
 
     def setUp(self):
         self.user1 = create_user(1, is_superuser=True)
@@ -24,9 +24,10 @@ class ProfileTestCase(test.TestCase):
         self.project2 = create_project(2, self.user1)
         self.project3 = create_project(3, self.user2)
 
-        add_membership(self.project1, self.user3, "dev")
-        add_membership(self.project3, self.user3, "dev")
-        add_membership(self.project3, self.user2, "dev")
+        add_membership(self.project1, self.user3, "back")
+        add_membership(self.project3, self.user3, "back")
+        add_membership(self.project3, self.user2, "back")
+
 
     def test_list_users(self):
         response = self.client.login(username=self.user3.username,
@@ -37,7 +38,7 @@ class ProfileTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
 
         users_list = response.data
-        self.assertEqual(len(users_list), 2)
+        self.assertEqual(len(users_list), 3)
 
 
     def test_update_users(self):
@@ -153,19 +154,79 @@ class ProfileTestCase(test.TestCase):
 
 
 class ProjectsTestCase(test.TestCase):
-    fixtures = ["initial_role.json", ]
+    fixtures = ["initial_role.json", "initial_site.json"]
 
     def setUp(self):
         self.user1 = create_user(1)
         self.user2 = create_user(2)
         self.user3 = create_user(3)
+        self.user3 = create_user(4)
 
         self.project1 = create_project(1, self.user1)
         self.project2 = create_project(2, self.user1)
         self.project3 = create_project(3, self.user2)
+        self.project4 = create_project(4, self.user2)
 
-        add_membership(self.project1, self.user3, "dev")
-        add_membership(self.project3, self.user3, "dev")
+        add_membership(self.project1, self.user3, "back")
+        add_membership(self.project3, self.user3, "back")
+
+        self.dev_role = get_model("users", "Role").objects.get(slug="back")
+
+    def test_send_invitations_01(self):
+        response = self.client.login(username=self.user1.username,
+                                     password=self.user1.username)
+        self.assertTrue(response)
+
+        url = reverse("memberships-list")
+        data = {"role": self.dev_role.id,
+                "email": "pepe@pepe.com",
+                "project": self.project4.id}
+
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(self.project4.memberships.count(), 1)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertNotEqual(len(mail.outbox[0].body), 0)
+
+    def test_send_invitations_02(self):
+        response = self.client.login(username=self.user1.username,
+                                     password=self.user1.username)
+        self.assertTrue(response)
+
+        url = reverse("memberships-list")
+        data = {"role": self.dev_role.id,
+                "email": "pepe@pepe.com",
+                "project": self.project4.id}
+
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(self.project4.memberships.count(), 1)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertNotEqual(len(mail.outbox[0].body), 0)
+
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+
+        self.assertEqual(self.project4.memberships.count(), 1)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertNotEqual(len(mail.outbox[0].body), 0)
+
+    def test_send_invitations_03(self):
+        response = self.client.login(username=self.user1.username,
+                                     password=self.user1.username)
+        self.assertTrue(response)
+
+        url = reverse("memberships-list")
+        data = {"role": self.dev_role.id,
+                "email": self.user3.email,
+                "project": self.project3.id}
+
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_list_projects_by_anon(self):
         response = self.client.get(reverse("projects-list"))
@@ -187,7 +248,7 @@ class ProjectsTestCase(test.TestCase):
         response = self.client.get(reverse("projects-list"))
         self.assertEqual(response.status_code, 200)
         projects_list = response.data
-        self.assertEqual(len(projects_list), 1)
+        self.assertEqual(len(projects_list), 2)
         self.client.logout()
 
     def test_list_projects_by_membership(self):
@@ -239,13 +300,13 @@ class ProjectsTestCase(test.TestCase):
             "total_story_points": 10
         }
 
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         response = self.client.post(
             reverse("projects-list"),
             json.dumps(data),
             content_type="application/json")
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
 
     def test_create_project_by_auth(self):
         data = {
@@ -254,16 +315,15 @@ class ProjectsTestCase(test.TestCase):
             "total_story_points": 10
         }
 
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         response = self.client.login(username=self.user1.username,
                                      password=self.user1.username)
         self.assertTrue(response)
-        response = self.client.post(
-            reverse("projects-list"),
-            json.dumps(data),
-            content_type="application/json")
+        response = self.client.post(reverse("projects-list"), json.dumps(data),
+                                    content_type="application/json")
+
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(Project.objects.all().count(), 4)
+        self.assertEqual(Project.objects.all().count(), 5)
         self.client.logout()
 
     def test_edit_project_by_anon(self):
@@ -271,21 +331,21 @@ class ProjectsTestCase(test.TestCase):
             "description": "Edited project description",
         }
 
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         self.assertNotEqual(data["description"], self.project1.description)
         response = self.client.patch(
             reverse("projects-detail", args=(self.project1.id,)),
             json.dumps(data),
             content_type="application/json")
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
 
     def test_edit_project_by_owner(self):
         data = {
             "description": "Modified project description",
         }
 
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         self.assertNotEqual(data["description"], self.project1.description)
         response = self.client.login(username=self.user1.username,
                                      password=self.user1.username)
@@ -296,7 +356,7 @@ class ProjectsTestCase(test.TestCase):
             content_type="application/json")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["description"], response.data["description"])
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         self.client.logout()
 
     def test_edit_project_by_membership(self):
@@ -304,7 +364,7 @@ class ProjectsTestCase(test.TestCase):
             "description": "Edited project description",
         }
 
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         self.assertNotEqual(data["description"], self.project1.description)
         response = self.client.login(username=self.user3.username,
                                      password=self.user3.username)
@@ -315,7 +375,7 @@ class ProjectsTestCase(test.TestCase):
             content_type="application/json")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["description"], response.data["description"])
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         self.client.logout()
 
     def test_edit_project_by_not_membership(self):
@@ -323,7 +383,7 @@ class ProjectsTestCase(test.TestCase):
             "description": "Edited project description",
         }
 
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         self.assertNotEqual(data["description"], self.project1.description)
         response = self.client.login(username=self.user2.username,
                                      password=self.user2.username)
@@ -333,41 +393,41 @@ class ProjectsTestCase(test.TestCase):
             json.dumps(data),
             content_type="application/json")
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         self.client.logout()
 
     def test_delete_project_by_anon(self):
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         response = self.client.delete(reverse("projects-detail", args=(self.project1.id,)))
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
 
     def test_delete_project_by_owner(self):
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         response = self.client.login(username=self.user1.username,
                                      password=self.user1.username)
         self.assertTrue(response)
         response = self.client.delete(reverse("projects-detail", args=(self.project1.id,)))
         self.assertEqual(response.status_code, 204)
-        self.assertEqual(Project.objects.all().count(), 2)
+        self.assertEqual(Project.objects.all().count(), 3)
         self.client.logout()
 
     def test_delete_project_by_membership(self):
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         response = self.client.login(username=self.user3.username,
                                      password=self.user3.username)
         self.assertTrue(response)
         response = self.client.delete(reverse("projects-detail", args=(self.project1.id,)))
         self.assertEqual(response.status_code, 204)
-        self.assertEqual(Project.objects.all().count(), 2)
+        self.assertEqual(Project.objects.all().count(), 3)
         self.client.logout()
 
     def test_delete_project_by_not_membership(self):
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         response = self.client.login(username=self.user1.username,
                                      password=self.user1.username)
         self.assertTrue(response)
         response = self.client.delete(reverse("projects-detail", args=(self.project3.id,)))
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(Project.objects.all().count(), 4)
         self.client.logout()

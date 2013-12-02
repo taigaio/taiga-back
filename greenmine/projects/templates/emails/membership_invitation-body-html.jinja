@@ -1,0 +1,23 @@
+{% extends "emails/base.jinja" %}
+
+{% set final_url = resolve_front_url("invitation", membership.token) %}
+{% set final_url_name = "Greenmine - Invitation to join on {0} project.".format(membership.project) %}
+
+{% block body %}
+<table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
+    <tr>
+        <td>
+            <p>Hi,</p>
+            <p>you have been invited to the project '{{ membership.project }}'.</p>
+            <p>If you want to join to this project go to <a href="{{ final_url }}">this link</a>
+               for accept this invitation.</p>
+        </td>
+    </tr>
+</table>
+{% endblock %}
+
+{% block footer %}
+<p style="padding: 10px; border-top: 1px solid #eee;">
+    More info at: <a href="{{ final_url }}" style="color: #666;">{{ final_url_name }}</a>
+</p>
+{% endblock %}

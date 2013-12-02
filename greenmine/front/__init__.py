@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from django.conf import settings
-import django_sites as sites
-
 from django_jinja import library
+
+from greenmine.base import sites
 
 
 URLS = {
@@ -15,20 +15,16 @@ URLS = {
     "issue": "/#/project/{0}/issues/{1}",
     "project-admin": "/#/project/{0}/admin",
     "change-password": "/#/change-password/{0}",
+    "invitation": "/#/invitation/{0}",
 }
 
 
 lib = library.Library()
 
-def get_current_site():
-    current_site_id = getattr(settings, "SITE_ID")
-    front_sites = getattr(settings, "SITES_FRONT")
-    return sites.Site(front_sites[current_site_id])
-
 
 @lib.global_function(name="resolve_front_url")
 def resolve(type, *args):
-    site = get_current_site()
+    site = sites.get_active_site()
     url_tmpl = "{scheme}//{domain}{url}"
 
     scheme = site.scheme and "{0}:".format(site.scheme) or ""

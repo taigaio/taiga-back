@@ -20,8 +20,7 @@ def create_project(id, owner, save=True):
 
 def add_membership(project, user, role_slug=None):
     model = get_model("users", "Role")
-    roles = model.objects.filter(slug=role_slug)
-    role = roles[0] if roles.exists() else model.objects.all()[0]
+    role = model.objects.get(slug=role_slug)
 
     model = get_model("projects", "Membership")
     instance = model.objects.create(
