@@ -274,7 +274,7 @@ class Command(BaseCommand):
                 description='Project example {0} description'.format(counter),
                 owner=random.choice(self.users),
                 public=True,
-                total_story_points=self.sd.int(100, 150),
+                total_story_points=self.sd.int(600, 3000),
                 total_milestones=self.sd.int(5,10))
 
         return project
