@@ -15,7 +15,7 @@ from . import create_issue
 
 
 class IssuesTestCase(test.TestCase):
-    fixtures = ["initial_role.json", ]
+    fixtures = ["initial_role.json", "initial_site.json"]
 
     def setUp(self):
         self.user1 = create_user(1) # Project owner

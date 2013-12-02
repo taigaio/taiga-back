@@ -18,7 +18,7 @@ def create_project(id, owner, save=True):
     return instance
 
 
-def add_membership(project, user, role_slug=None):
+def add_membership(project, user, role_slug="back"):
     model = get_model("users", "Role")
     role = model.objects.get(slug=role_slug)
 
