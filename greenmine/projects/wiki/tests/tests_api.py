@@ -14,7 +14,7 @@ from . import create_wiki_page
 
 
 class WikiPagesTestCase(test.TestCase):
-    fixtures = ["initial_role.json", "initial_site.json"]
+    fixtures = ["initial_role.json", "initial_domains.json"]
 
     def setUp(self):
         self.user1 = create_user(1)

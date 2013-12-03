@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models import Site
+
+from .models import Domain
 
 
-class SiteAdmin(admin.ModelAdmin):
+class DomainAdmin(admin.ModelAdmin):
     list_display = ('domain', 'name')
     search_fields = ('domain', 'name')
 
-admin.site.register(Site, SiteAdmin)
+admin.site.register(Domain, DomainAdmin)

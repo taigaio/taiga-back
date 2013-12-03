@@ -1,8 +1,10 @@
 [
 {
-    "model": "base.site", 
+    "model": "domains.domain", 
     "fields": {
+        "public_register": false, 
         "domain": "localhost", 
+        "scheme": null, 
         "name": "localhost"
     }, 
     "pk": 1

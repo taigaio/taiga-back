@@ -13,7 +13,7 @@ from greenmine.projects.models import Project, Membership
 from . import create_project, add_membership
 
 class ProfileTestCase(test.TestCase):
-    fixtures = ["initial_role.json", "initial_site.json"]
+    fixtures = ["initial_role.json", "initial_domains.json"]
 
     def setUp(self):
         self.user1 = create_user(1, is_superuser=True)
@@ -154,7 +154,7 @@ class ProfileTestCase(test.TestCase):
 
 
 class ProjectsTestCase(test.TestCase):
-    fixtures = ["initial_role.json", "initial_site.json"]
+    fixtures = ["initial_role.json", "initial_domains.json"]
 
     def setUp(self):
         self.user1 = create_user(1)

@@ -89,6 +89,7 @@ class Command(BaseCommand):
                 role = self.sd.db_object_from_queryset(Role.objects.all())
 
                 Membership.objects.create(
+                        email=user.email,
                         project=project,
                         role=role,
                         user=user)
@@ -273,6 +274,7 @@ class Command(BaseCommand):
                 name='Project Example {0}'.format(counter),
                 description='Project example {0} description'.format(counter),
                 owner=random.choice(self.users),
+                site_id=1,
                 public=True,
                 total_story_points=self.sd.int(600, 3000),
                 total_milestones=self.sd.int(5,10))

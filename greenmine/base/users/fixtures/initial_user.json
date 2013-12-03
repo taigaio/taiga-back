@@ -23,5 +23,16 @@
         "email": "niwi@niwi.be",
         "date_joined": "2013-04-01T13:48:21.711Z"
     }
+},
+{
+    "model": "domains.domainmember", 
+    "pk": 1, 
+    "fields": {
+        "is_staff": true, 
+        "is_owner": true, 
+        "user": 1, 
+        "site": 1, 
+        "email": "niwi@niwi.be"
+    }
 }
 ]

@@ -3,7 +3,7 @@
 from django.conf import settings
 from django_jinja import library
 
-from greenmine.base import sites
+from greenmine.base import domains
 
 
 URLS = {
@@ -24,9 +24,9 @@ lib = library.Library()
 
 @lib.global_function(name="resolve_front_url")
 def resolve(type, *args):
-    site = sites.get_active_site()
+    domain = domains.get_active_domain()
     url_tmpl = "{scheme}//{domain}{url}"
 
-    scheme = site.scheme and "{0}:".format(site.scheme) or ""
+    scheme = domain.scheme and "{0}:".format(domain.scheme) or ""
     url = URLS[type].format(*args)
-    return url_tmpl.format(scheme=scheme, domain=site.domain, url=url)
+    return url_tmpl.format(scheme=scheme, domain=domain.domain, url=url)

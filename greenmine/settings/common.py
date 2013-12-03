@@ -70,7 +70,9 @@ SITES_FRONT = {
     1: {"domain": "localhost:9001", "scheme": "http"},
 }
 
+DOMAIN_ID = 1
 
+# Only for django. Not used.
 SITE_ID = 1
 
 #SESSION BACKEND
@@ -154,7 +156,7 @@ TEMPLATE_LOADERS = [
 
 MIDDLEWARE_CLASSES = [
     'greenmine.base.middleware.CoorsMiddleware',
-    'greenmine.base.middleware.SitesMiddleware',
+    'greenmine.base.domains.middleware.DomainsMiddleware',
 
     # Common middlewares
     'django.middleware.common.CommonMiddleware',
@@ -192,6 +194,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'greenmine.base.users',
+    'greenmine.base.domains',
     'greenmine.base.notifications',
     'greenmine.base.searches',
     'greenmine.base',

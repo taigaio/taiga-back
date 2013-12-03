@@ -114,7 +114,7 @@ class Project(ProjectDefaults, models.Model):
     total_story_points = models.FloatField(default=None, null=True, blank=False,
                                            verbose_name=_("total story points"))
     tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
-    site = models.ForeignKey("base.Site", related_name="projects", null=True, default=None)
+    site = models.ForeignKey("domains.Domain", related_name="projects", null=True, default=None)
 
     notifiable_fields = [
         "name",

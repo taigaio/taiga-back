@@ -9,8 +9,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework import status, viewsets
 from rest_framework.decorators import list_route
 
-from greenmine.base.models import SiteMember
-from greenmine.base.sites import get_active_site
+from greenmine.base.domains.models import DomainMember
+from greenmine.base.domains import get_active_domain
 from greenmine.base.users.models import User, Role
 from greenmine.base.users.serializers import UserSerializer
 from greenmine.base import exceptions as exc
@@ -31,13 +31,13 @@ class AuthViewSet(viewsets.ViewSet):
         response_data["auth_token"] = auth.get_token_for_user(user)
         return response_data
 
-    def _create_site_member(self, user):
-        site = get_active_site()
+    def _create_domain_member(self, user):
+        domain = get_active_domain()
 
-        if SiteMember.objects.filter(site=site, user=user).count() == 0:
-            site_member = SiteMember(site=site, user=user, email=user.email,
+        if DomainMember.objects.filter(site=domain, user=user).count() == 0:
+            domain_member = DomainMember(site=domain, user=user, email=user.email,
                                      is_owner=False, is_staff=False)
-            site_member.save()
+            domain_member.save()
 
     def _send_public_register_email(self, user):
         context = {"user": user}
@@ -47,8 +47,8 @@ class AuthViewSet(viewsets.ViewSet):
         email.send()
 
     def _public_register(self, request):
-        if not request.site.public_register:
-            raise exc.BadRequest("Public register is disabled for this site.")
+        if not request.domain.public_register:
+            raise exc.BadRequest("Public register is disabled for this domain.")
 
         serializer = PublicRegisterSerializer(data=request.DATA)
         if not serializer.is_valid():
@@ -63,7 +63,7 @@ class AuthViewSet(viewsets.ViewSet):
         user.set_password(data["password"])
         user.save()
 
-        self._create_site_member(user)
+        self._create_domain_member(user)
 
         #self._send_public_register_email(user)
 
@@ -111,7 +111,7 @@ class AuthViewSet(viewsets.ViewSet):
             user.set_password(data["password"])
             user.save()
 
-        self._create_site_member(user)
+        self._create_domain_member(user)
 
         membership.user = user
         membership.save()

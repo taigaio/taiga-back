@@ -61,10 +61,12 @@ class ProjectViewSet(ModelCrudViewSet):
     def pre_save(self, obj):
         obj.owner = self.request.user
 
+        # FIXME
+
         # Assign site only if it current
         # value is None
         if not obj.site:
-            obj.site = self.request.site
+            obj.site = self.request.domain
 
         super().pre_save(obj)
 

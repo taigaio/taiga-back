@@ -5,6 +5,8 @@ from django.db.models.loading import get_model
 
 def create_user(id, save=True, is_superuser=False):
     model = get_model("users", "User")
+    domain_member_model = get_model("domains", "DomainMember")
+    domain_model = get_model("domains", "Domain")
 
     instance = model(
        username="user{0}".format(id),
@@ -18,17 +20,26 @@ def create_user(id, save=True, is_superuser=False):
         instance.is_staff = True
         instance.is_superuser = True
 
-    if save:
-        instance.save()
+    instance.save()
+
+    domain = domain_model.objects.get(pk=1)
+    dm = domain_member_model.objects.create(user=instance,
+                                            email=instance.email,
+                                            site=domain)
+    if id == 1:
+        dm.is_owner = True
+        dm.is_staff = True
+        dm.save()
+
     return instance
 
 
-def create_site(name, public_register=False):
-    site_model = get_model("base", "Site")
+def create_domain(name, public_register=False):
+    domain_model = get_model("domains", "Domain")
 
-    instance = site_model(name=name,
-                          domain=name,
-                          public_register=public_register)
+    instance = domain_model(name=name,
+                            domain=name,
+                            public_register=public_register)
 
     instance.save()
     return instance
