@@ -25,7 +25,7 @@ def create_user(id, save=True, is_superuser=False):
     domain = domain_model.objects.get(pk=1)
     dm = domain_member_model.objects.create(user=instance,
                                             email=instance.email,
-                                            site=domain)
+                                            domain=domain)
     if id == 1:
         dm.is_owner = True
         dm.is_staff = True

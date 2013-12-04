@@ -34,8 +34,8 @@ class AuthViewSet(viewsets.ViewSet):
     def _create_domain_member(self, user):
         domain = get_active_domain()
 
-        if DomainMember.objects.filter(site=domain, user=user).count() == 0:
-            domain_member = DomainMember(site=domain, user=user, email=user.email,
+        if DomainMember.objects.filter(domain=domain, user=user).count() == 0:
+            domain_member = DomainMember(domain=domain, user=user, email=user.email,
                                      is_owner=False, is_staff=False)
             domain_member.save()
 

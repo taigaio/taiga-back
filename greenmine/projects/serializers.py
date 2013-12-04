@@ -107,7 +107,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Project
-        read_only_fields = ("created_date", "modified_date", "owner", "site")
+        read_only_fields = ("created_date", "modified_date", "owner", "domain")
         exclude = ("last_us_ref", "last_task_ref", "last_issue_ref")
 
 

@@ -45,7 +45,7 @@ class Domain(models.Model):
 
 
 class DomainMember(models.Model):
-    site = models.ForeignKey("Domain", related_name="+")
+    domain = models.ForeignKey("Domain", related_name="+", null=True)
     user = models.ForeignKey("users.User", related_name="+", null=True)
 
     email = models.EmailField(max_length=255)
@@ -56,10 +56,10 @@ class DomainMember(models.Model):
         ordering = ["email"]
         verbose_name = "Domain Member"
         verbose_name_plural = "Domain Members"
-        unique_together = ("site", "user")
+        unique_together = ("domain", "user")
 
     def __str__(self):
-        return "DomainMember: {0}:{1}".format(self.site, self.user)
+        return "DomainMember: {0}:{1}".format(self.domain, self.user)
 
 
 pre_save.connect(clear_domain_cache, sender=Domain)

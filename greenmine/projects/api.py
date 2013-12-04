@@ -63,10 +63,10 @@ class ProjectViewSet(ModelCrudViewSet):
 
         # FIXME
 
-        # Assign site only if it current
+        # Assign domain only if it current
         # value is None
-        if not obj.site:
-            obj.site = self.request.domain
+        if not obj.domain:
+            obj.domain = self.request.domain
 
         super().pre_save(obj)
 
