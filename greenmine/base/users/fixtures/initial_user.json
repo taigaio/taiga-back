@@ -31,7 +31,7 @@
         "is_staff": true, 
         "is_owner": true, 
         "user": 1, 
-        "site": 1, 
+        "domain": 1, 
         "email": "niwi@niwi.be"
     }
 }
