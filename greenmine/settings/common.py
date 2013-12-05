@@ -264,12 +264,13 @@ LOGGING = {
         },
         'greenmine': {
             'handlers': ['console'],
+            'handlers': [],
             'level': 'DEBUG',
             'propagate': False,
         },
-        'greenmine.site': {
+        'greenmine.domains': {
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': False,
         },
     }

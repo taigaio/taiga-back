@@ -6,7 +6,6 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import list_route, action
-from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 
 from greenmine.base import filters
@@ -60,6 +59,7 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
     model = models.UserStory
     serializer_class = serializers.UserStorySerializer
     permission_classes = (IsAuthenticated, permissions.UserStoryPermission)
+
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ['project', 'milestone', 'milestone__isnull']
 
@@ -71,19 +71,20 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
     def bulk_create(self, request):
         bulk_stories = request.DATA.get('bulkStories', None)
         if bulk_stories is None:
-            raise ParseError(detail='You need bulkStories data')
+            raise exc.BadRequest(detail='You need bulkStories data')
 
         project_id = request.DATA.get('projectId', None)
         if project_id is None:
-            raise ParseError(detail='You need projectId data')
+            raise exc.BadRequest(detail='You need projectId data')
 
         project = get_object_or_404(Project, id=project_id)
 
         if not has_project_perm(request.user, project, 'add_userstory'):
-            raise PermissionDenied("You don't have permision to create user stories")
+            raise exc.PermissionDenied("You don't have permision to create user stories")
 
         result_stories = []
         bulk_stories = bulk_stories.split("\n")
+
         for bulk_story in bulk_stories:
             bulk_story = bulk_story.strip()
             if len(bulk_story) > 0:
@@ -92,6 +93,8 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
                                                                       owner=request.user,
                                                                       status=project.default_us_status))
 
+        # FIXME: this should use many=True on UserStorySerializer
+        # instead of this unnecesary iteration
         data = map(lambda x: serializers.UserStorySerializer(x).data, result_stories)
         return Response(data)
 

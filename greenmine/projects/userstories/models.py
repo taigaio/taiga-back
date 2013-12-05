@@ -37,7 +37,7 @@ class RolePoints(models.Model):
         return "{}: {}".format(self.role.name, self.points.name)
 
 
-class UserStory(WatchedMixin):
+class UserStory(WatchedMixin, models.Model):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
@@ -51,6 +51,7 @@ class UserStory(WatchedMixin):
     status = models.ForeignKey("projects.UserStoryStatus", null=True, blank=True,
                                related_name="user_stories", verbose_name=_("status"),
                                on_delete=models.SET_NULL)
+    is_closed = models.BooleanField(default=False)
     points = models.ManyToManyField("projects.Points", null=False, blank=False,
                                     related_name="userstories", through="RolePoints",
                                     verbose_name=_("points"))
@@ -102,10 +103,6 @@ class UserStory(WatchedMixin):
 
     def __repr__(self):
         return "<UserStory %s>" % (self.id)
-
-    @property
-    def is_closed(self):
-        return self.status.is_closed
 
     def get_role_points(self):
         return self.role_points

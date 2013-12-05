@@ -107,60 +107,40 @@ def task_ref_handler(sender, instance, **kwargs):
 
 @receiver(models.signals.pre_save, sender=Task, dispatch_uid="tasks_close_handler")
 def tasks_close_handler(sender, instance, **kwargs):
-    # USs
-    if instance.id:                                                             # Edit task
-        if (sender.objects.get(id=instance.id).status.is_closed == False and
-                instance.status.is_closed == True):                             # Close task
-            instance.finished_date = timezone.now()
-            if instance.user_story and (all([task.status.is_closed for task in
-                    instance.user_story.tasks.exclude(id=instance.id)])):       # All close
-                us_closed_status = instance.project.us_statuses.filter(
-                                                         is_closed=True).order_by(
-                                                                           "order")[0]
-                instance.user_story.status = us_closed_status
-                instance.user_story.finish_date = timezone.now()
-                instance.user_story.save()
-        elif (sender.objects.get(id=instance.id).status.is_closed == True and
-                instance.status.is_closed == False):                            # Opene task
-            instance.finished_date = None
-            if instance.user_story and instance.user_story.status.is_closed == True: # Us close
-                us_opened_status = instance.project.us_statuses.filter(
-                                                        is_closed=False).order_by(
-                                                                          "-order")[0]
-                instance.user_story.status = us_opened_status
-                instance.user_story.finish_date = None
-                instance.user_story.save()
-    else:                                                                      # Create Task
-        if instance.status.is_closed == True:                                # Task is close
-            instance.finished_date = timezone.now()
-            if instance.user_story:
-                if instance.user_story.status.is_closed == True: # Us is close
-                    instance.user_story.finish_date = timezone.now()
-                    instance.user_story.save()
-                elif all([task.status.is_closed for task in
-                                                    instance.user_story.tasks.all()]):  # All us's tasks are close
-                    # if any stupid robot/machine/user/alien create an open US
-                    us_closed_status = instance.project.us_statuses.filter(is_closed=True).order_by("order")[0]
-                    instance.user_story.status = us_closed_status
-                    instance.user_story.finish_date = timezone.now()
-                    instance.user_story.save()
-        else:                                                               # Task is opene
-            instance.finished_date = None
-            if instance.user_story and instance.user_story.status.is_closed == True: # US is close
-                us_opened_status = instance.project.us_statuses.filter(
-                                                        is_closed=False).order_by(
-                                                                          "-order")[0]
-                instance.user_story.status = us_opened_status
-                instance.user_story.finish_date = None
-                instance.user_story.save()
+    def us_has_open_tasks(us, exclude_task):
+        qs = us.tasks.all()
+        if exclude_task.pk:
+            qs = qs.exclude(pk=exclude_task.pk)
 
-    # Milestone
-    if instance.milestone:
-        if (instance.status.is_closed and not instance.milestone.closed and
-                all([t.status.is_closed for t in instance.milestone.tasks.all()]) and
-                all([us.status.is_closed for us in instance.milestone.user_stories.all()])):
-            instance.milestone.closed = True
-            instance.milestone.save()
+        return all(task.status.is_closed for task in qs)
+
+    def milestone_has_open_userstories(milestone):
+        qs = milestone.user_stories.exclude(is_closed=True)
+        return qs.exists()
+
+    if instance.id:
+        orig_instance = sender.objects.get(id=instance.id)
+    else:
+        orig_instance = instance
+
+    if orig_instance.status.is_closed != instance.status.is_closed:
+        if orig_instance.status.is_closed and not instance.status.is_closed:
+            instance.finished_date = None
+            if instance.user_story_id:
+                instance.user_story.is_closed = False
+                instance.user_story.save(update_fields=["is_closed"])
+        else:
+            instance.finished_date = timezone.now()
+            if instance.user_story_id and us_has_open_tasks(us=instance.user_story,
+                                                            exclude_task=instance):
+                instance.user_story.is_closed = True
+                instance.user_story.save(update_fields=["is_closed"])
+
+    if instance.milestone_id:
+        if instance.status.is_closed and not instance.milestone.closed:
+            if not milestone_has_open_userstories(instance.milestone):
+                instance.milestone.closed = True
+                instance.milestone.save(update_fields=["closed"])
         elif not instance.status.is_closed and instance.milestone.closed:
             instance.milestone.closed = False
-            instance.milestone.save()
+            instance.milestone.save(update_fields=["closed"])
