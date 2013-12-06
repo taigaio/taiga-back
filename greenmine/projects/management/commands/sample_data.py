@@ -124,8 +124,13 @@ class Command(BaseCommand):
                 start_date = end_date
 
             # created unassociated uss.
-            for y in range(self.sd.int(8,15)):
+            for y in range(self.sd.int(8,20)):
                 us = self.create_us(project, None, computable_project_roles)
+
+            # Set a value to total_story_points to show the deadline in the backlog
+            defined_points = sum(project.defined_points.values())
+            project.total_story_points = int(defined_points * self.sd.int(5,10) / 10)
+            project.save()
 
             # create bugs.
             for y in range(self.sd.int(15,25)):
