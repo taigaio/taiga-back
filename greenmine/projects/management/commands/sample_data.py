@@ -129,7 +129,7 @@ class Command(BaseCommand):
 
             # Set a value to total_story_points to show the deadline in the backlog
             defined_points = sum(project.defined_points.values())
-            project.total_story_points = int(defined_points * self.sd.int(5,10) / 10)
+            project.total_story_points = int(defined_points * self.sd.int(5,12) / 10)
             project.save()
 
             # create bugs.
