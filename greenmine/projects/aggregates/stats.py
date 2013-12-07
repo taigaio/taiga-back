@@ -96,6 +96,8 @@ def _count_owned_object(user_obj, counting_storage):
 def get_stats_for_project_issues(project):
     project_issues_stats = {
         'total_issues': 0,
+        'opened_issues': 0,
+        'closed_issues': 0,
         'issues_per_type': {},
         'issues_per_status': {},
         'issues_per_priority': {},
@@ -111,8 +113,13 @@ def get_stats_for_project_issues(project):
 
     }
 
-    for issue in project.issues.all().prefetch_related('status', 'priority', 'type', 'severity', 'owner', 'assigned_to'):
+    for issue in project.issues.all().prefetch_related('status', 'priority', 'type', 'severity', 'owner',
+                                                       'assigned_to'):
         project_issues_stats['total_issues'] += 1
+        if issue.status.is_closed:
+            project_issues_stats['closed_issues'] += 1
+        else:
+            project_issues_stats['opened_issues'] += 1
         _count_status_object(issue.type, project_issues_stats['issues_per_type'])
         _count_status_object(issue.status, project_issues_stats['issues_per_status'])
         _count_status_object(issue.priority, project_issues_stats['issues_per_priority'])
