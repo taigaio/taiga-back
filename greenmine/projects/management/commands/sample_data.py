@@ -290,7 +290,7 @@ class Command(BaseCommand):
         user = User.objects.create(
                 username='user-{0}'.format(counter),
                 first_name=self.sd.name('es'),
-                last_name=self.sd.surname('es'),
+                last_name=self.sd.surname('es', number=1),
                 email=self.sd.email(),
                 token=''.join(random.sample('abcdef0123456789', 10)),
                 color=self.sd.choice(COLOR_CHOICES))

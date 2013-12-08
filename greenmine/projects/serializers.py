@@ -97,7 +97,7 @@ class MembershipSerializer(serializers.ModelSerializer):
 class ProjectMembershipSerializer(serializers.ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False)
     full_name = serializers.CharField(source='user.get_full_name', required=False)
-
+    color = serializers.CharField(source='user.color', required=False)
     class Meta:
         model = models.Membership
 
