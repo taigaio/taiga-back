@@ -17,6 +17,7 @@ from . import pagination
 from . import serializers
 from . import decorators
 
+
 class CreateModelMixin(mixins.CreateModelMixin):
     @transaction.atomic
     def create(self, *args, **kwargs):

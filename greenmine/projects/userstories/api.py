@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import reversion
+
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
@@ -7,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import list_route, action
 from rest_framework.response import Response
+from rest_framework import status
 
 from greenmine.base import filters
 from greenmine.base import exceptions as exc
@@ -18,12 +21,10 @@ from greenmine.projects.serializers import AttachmentSerializer
 from greenmine.projects.models import Attachment
 from greenmine.projects.models import Project
 
-from . import serializers
 from . import models
 from . import permissions
-
-import reversion
-
+from . import serializers
+from . import services
 
 
 class UserStoryAttachmentViewSet(ModelCrudViewSet):
@@ -68,7 +69,7 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
     destroy_notification_template = "destroy_userstory_notification"
 
     @list_route(methods=["POST"])
-    def bulk_create(self, request):
+    def bulk_create(self, request, **kwargs):
         bulk_stories = request.DATA.get('bulkStories', None)
         if bulk_stories is None:
             raise exc.BadRequest(detail='You need bulkStories data')
@@ -82,21 +83,34 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
         if not has_project_perm(request.user, project, 'add_userstory'):
             raise exc.PermissionDenied("You don't have permision to create user stories")
 
-        result_stories = []
-        bulk_stories = bulk_stories.split("\n")
+        service = services.UserStoriesService()
+        service.bulk_insert(project, request.user, bulk_stories)
 
-        for bulk_story in bulk_stories:
-            bulk_story = bulk_story.strip()
-            if len(bulk_story) > 0:
-                result_stories.append(models.UserStory.objects.create(subject=bulk_story,
-                                                                      project=project,
-                                                                      owner=request.user,
-                                                                      status=project.default_us_status))
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
-        # FIXME: this should use many=True on UserStorySerializer
-        # instead of this unnecesary iteration
-        data = map(lambda x: serializers.UserStorySerializer(x).data, result_stories)
-        return Response(data)
+    @list_route(methods=["POST"])
+    def bulk_update_order(self, request, **kwargs):
+        # bulkStories should be:
+        # [[1,1],[23, 2], ...]
+
+        bulk_stories = request.DATA.get("bulkStories", None)
+
+        if bulk_stories is None:
+            raise exc.BadRequest("bulkStories is missing")
+
+        project_id = request.DATA.get('projectId', None)
+        if project_id is None:
+            raise exc.BadRequest(detail='You need projectId data')
+
+        project = get_object_or_404(Project, id=project_id)
+
+        if not has_project_perm(request.user, project, 'add_userstory'):
+            raise exc.PermissionDenied("You don't have permision to create user stories")
+
+        service = services.UserStoriesService()
+        service.bulk_update_order(project, request.user, bulk_stories)
+
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
     def pre_save(self, obj):
         if not obj.id:
