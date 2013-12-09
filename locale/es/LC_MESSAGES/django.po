@@ -1,0 +1,516 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-12-09 17:01+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: greenmine/dashboard.py:28
+msgid "Administration"
+msgstr "Administración"
+
+#: greenmine/dashboard.py:37
+msgid "Projects"
+msgstr "Proyectos"
+
+#: greenmine/dashboard.py:50
+msgid "Support"
+msgstr "Soporte"
+
+#: greenmine/dashboard.py:54
+msgid "Django Documentation"
+msgstr "Documentación de Django"
+
+#: greenmine/dashboard.py:59
+msgid "Grappelli Documentation"
+msgstr "Documentación de grappelli"
+
+#: greenmine/dashboard.py:64
+msgid "Grappelli Google-Code"
+msgstr "Google-Code de grapelli"
+
+#: greenmine/dashboard.py:73
+msgid "Recent Actions"
+msgstr "Acciones recientes"
+
+#: greenmine/base/domains/models.py:24
+msgid "The domain name cannot contain any spaces or tabs."
+msgstr "El nombre de dominio no puede tener espacios o tabs."
+
+#: greenmine/base/domains/models.py:30
+msgid "domain name"
+msgstr "nombre del dominio"
+
+#: greenmine/base/domains/models.py:32
+msgid "display name"
+msgstr "nombre mostrado"
+
+#: greenmine/base/domains/models.py:33
+msgid "scheme"
+msgstr "esquema"
+
+#: greenmine/base/domains/models.py:38 greenmine/base/users/models.py:19
+msgid "default language"
+msgstr "idioma por defecto"
+
+#: greenmine/base/domains/models.py:41 greenmine/base/domains/models.py:42
+msgid "domain"
+msgstr "dominio"
+
+#: greenmine/base/notifications/models.py:12
+msgid "All events on my projects"
+msgstr "Todos los eventos en mis proyectos"
+
+#: greenmine/base/notifications/models.py:13
+msgid "Only events for objects i watch"
+msgstr "Solo eventos para objetos que observo"
+
+#: greenmine/base/notifications/models.py:14
+msgid "Only events for objects assigned to me"
+msgstr "Solo eventos para objetos asignados a mi"
+
+#: greenmine/base/notifications/models.py:15
+msgid "Only events for objects owned by me"
+msgstr "Solo eventos para mis objetos"
+
+#: greenmine/base/notifications/models.py:16
+msgid "No events"
+msgstr "Sin eventos"
+
+#: greenmine/base/notifications/models.py:22
+msgid "notify level"
+msgstr "nivel de notificación"
+
+#: greenmine/base/notifications/models.py:24
+msgid "notify changes by me"
+msgstr "notificar mis cambios"
+
+#: greenmine/base/users/admin.py:36
+msgid "Personal info"
+msgstr "Información personal"
+
+#: greenmine/base/users/admin.py:37
+msgid "Extra info"
+msgstr "Información extra"
+
+#: greenmine/base/users/admin.py:38
+msgid "Notifications info"
+msgstr "Información de notificaciones"
+
+#: greenmine/base/users/admin.py:39
+msgid "Permissions"
+msgstr "Permisos"
+
+#: greenmine/base/users/admin.py:40
+msgid "Important dates"
+msgstr "fechas importantes"
+
+#: greenmine/base/users/models.py:13 greenmine/projects/models.py:281
+#: greenmine/projects/models.py:331 greenmine/projects/models.py:356
+#: greenmine/projects/models.py:379 greenmine/projects/models.py:404
+#: greenmine/projects/models.py:427 greenmine/projects/models.py:454
+msgid "color"
+msgstr "color"
+
+#: greenmine/base/users/models.py:15 greenmine/projects/models.py:95
+#: greenmine/projects/documents/models.py:17
+#: greenmine/projects/issues/models.py:44
+#: greenmine/projects/tasks/models.py:40
+#: greenmine/projects/userstories/models.py:68
+msgid "description"
+msgstr "descripción"
+
+#: greenmine/base/users/models.py:17
+msgid "photo"
+msgstr "foto"
+
+#: greenmine/base/users/models.py:21
+msgid "default timezone"
+msgstr "zona horaria por defecto"
+
+#: greenmine/base/users/models.py:23
+msgid "token"
+msgstr "token"
+
+#: greenmine/base/users/models.py:25
+msgid "colorize tags"
+msgstr "etiquetas coloreadas"
+
+#: greenmine/base/users/models.py:45 greenmine/projects/models.py:91
+#: greenmine/projects/models.py:275 greenmine/projects/models.py:300
+#: greenmine/projects/models.py:325 greenmine/projects/models.py:352
+#: greenmine/projects/models.py:375 greenmine/projects/models.py:398
+#: greenmine/projects/models.py:423 greenmine/projects/models.py:448
+#: greenmine/projects/milestones/models.py:20
+msgid "name"
+msgstr "nombre"
+
+#: greenmine/base/users/models.py:47 greenmine/projects/models.py:93
+#: greenmine/projects/documents/models.py:13
+#: greenmine/projects/milestones/models.py:22
+#: greenmine/projects/wiki/models.py:15
+msgid "slug"
+msgstr "slug"
+
+#: greenmine/base/users/models.py:49
+msgid "permissions"
+msgstr "permisos"
+
+#: greenmine/base/users/models.py:51 greenmine/projects/models.py:277
+#: greenmine/projects/models.py:302 greenmine/projects/models.py:327
+#: greenmine/projects/models.py:354 greenmine/projects/models.py:377
+#: greenmine/projects/models.py:400 greenmine/projects/models.py:425
+#: greenmine/projects/models.py:450 greenmine/projects/milestones/models.py:40
+#: greenmine/projects/userstories/models.py:59
+msgid "order"
+msgstr "orden"
+
+#: greenmine/projects/choices.py:7
+msgid "Open"
+msgstr "Abierta"
+
+#: greenmine/projects/choices.py:8 greenmine/projects/choices.py:15
+#: greenmine/projects/choices.py:52 greenmine/projects/choices.py:65
+msgid "Closed"
+msgstr "Cerrada"
+
+#: greenmine/projects/choices.py:12 greenmine/projects/choices.py:49
+msgid "New"
+msgstr "Nueva"
+
+#: greenmine/projects/choices.py:13 greenmine/projects/choices.py:50
+msgid "In progress"
+msgstr "En progreso"
+
+#: greenmine/projects/choices.py:14 greenmine/projects/choices.py:51
+msgid "Ready for test"
+msgstr "Listo para probar"
+
+#: greenmine/projects/choices.py:16 greenmine/projects/choices.py:53
+msgid "Needs Info"
+msgstr "Necesita información"
+
+#: greenmine/projects/choices.py:35
+msgid "Low"
+msgstr "Baja"
+
+#: greenmine/projects/choices.py:36 greenmine/projects/choices.py:43
+msgid "Normal"
+msgstr "Normal"
+
+#: greenmine/projects/choices.py:37
+msgid "High"
+msgstr "Alta"
+
+#: greenmine/projects/choices.py:41
+msgid "Wishlist"
+msgstr "Deseo"
+
+#: greenmine/projects/choices.py:42
+msgid "Minor"
+msgstr "Menor"
+
+#: greenmine/projects/choices.py:44
+msgid "Important"
+msgstr "Importante"
+
+#: greenmine/projects/choices.py:45
+msgid "Critical"
+msgstr "Critica"
+
+#: greenmine/projects/choices.py:54
+msgid "Rejected"
+msgstr "Rechazada"
+
+#: greenmine/projects/choices.py:55
+msgid "Postponed"
+msgstr "Pospuesto"
+
+#: greenmine/projects/choices.py:59
+msgid "Bug"
+msgstr "Bug"
+
+#: greenmine/projects/choices.py:63
+msgid "Pending"
+msgstr "Pendiente"
+
+#: greenmine/projects/choices.py:64
+msgid "Answered"
+msgstr "Respondida"
+
+#: greenmine/projects/models.py:57
+msgid "default points"
+msgstr "puntos por defecto"
+
+#: greenmine/projects/models.py:61
+msgid "default US status"
+msgstr "estado por defecto de las USs"
+
+#: greenmine/projects/models.py:65
+msgid "default task status"
+msgstr "estado por defecto de las tareas"
+
+#: greenmine/projects/models.py:68
+msgid "default priority"
+msgstr "prioridad por defecto"
+
+#: greenmine/projects/models.py:71
+msgid "default severity"
+msgstr "severidad por defecto"
+
+#: greenmine/projects/models.py:75
+msgid "default issue status"
+msgstr "estado por defecto de las peticiones"
+
+#: greenmine/projects/models.py:79
+msgid "default issue type"
+msgstr "tipo por defecto de las peticiones"
+
+#: greenmine/projects/models.py:83
+msgid "default questions status"
+msgstr "Estado por defecto de las preguntas"
+
+#: greenmine/projects/models.py:97 greenmine/projects/models.py:253
+#: greenmine/projects/documents/models.py:19
+#: greenmine/projects/issues/models.py:37
+#: greenmine/projects/milestones/models.py:32
+#: greenmine/projects/questions/models.py:39
+#: greenmine/projects/tasks/models.py:33
+#: greenmine/projects/userstories/models.py:61
+#: greenmine/projects/wiki/models.py:24
+msgid "created date"
+msgstr "fecha de creación"
+
+#: greenmine/projects/models.py:99 greenmine/projects/models.py:255
+#: greenmine/projects/documents/models.py:21
+#: greenmine/projects/issues/models.py:39
+#: greenmine/projects/milestones/models.py:34
+#: greenmine/projects/questions/models.py:41
+#: greenmine/projects/tasks/models.py:35
+#: greenmine/projects/userstories/models.py:63
+#: greenmine/projects/wiki/models.py:26
+msgid "modified date"
+msgstr "fecha de modificación"
+
+#: greenmine/projects/models.py:101 greenmine/projects/models.py:244
+#: greenmine/projects/documents/models.py:27
+#: greenmine/projects/issues/models.py:22
+#: greenmine/projects/milestones/models.py:24
+#: greenmine/projects/questions/models.py:22
+#: greenmine/projects/tasks/models.py:24
+#: greenmine/projects/userstories/models.py:49
+#: greenmine/projects/wiki/models.py:19
+msgid "owner"
+msgstr "propietario"
+
+#: greenmine/projects/models.py:103
+msgid "members"
+msgstr "miembros"
+
+#: greenmine/projects/models.py:105
+msgid "public"
+msgstr "publico"
+
+#: greenmine/projects/models.py:107
+msgid "last us ref"
+msgstr "ultima referencia de US"
+
+#: greenmine/projects/models.py:109
+msgid "last task ref"
+msgstr "ultima referencia de tarea"
+
+#: greenmine/projects/models.py:111
+msgid "last issue ref"
+msgstr "ultima referencia de issue"
+
+#: greenmine/projects/models.py:113
+msgid "total of milestones"
+msgstr "total de sprints"
+
+#: greenmine/projects/models.py:115
+msgid "total story points"
+msgstr "total de puntos de historia"
+
+#: greenmine/projects/models.py:116 greenmine/projects/documents/models.py:32
+#: greenmine/projects/issues/models.py:51
+#: greenmine/projects/questions/models.py:45
+#: greenmine/projects/tasks/models.py:46
+#: greenmine/projects/userstories/models.py:76
+msgid "tags"
+msgstr "etiquetas"
+
+#: greenmine/projects/models.py:246 greenmine/projects/models.py:283
+#: greenmine/projects/models.py:306 greenmine/projects/models.py:333
+#: greenmine/projects/models.py:358 greenmine/projects/models.py:381
+#: greenmine/projects/models.py:406 greenmine/projects/models.py:429
+#: greenmine/projects/models.py:457 greenmine/projects/documents/models.py:24
+#: greenmine/projects/issues/models.py:35
+#: greenmine/projects/milestones/models.py:26
+#: greenmine/projects/questions/models.py:29
+#: greenmine/projects/tasks/models.py:28
+#: greenmine/projects/userstories/models.py:47
+#: greenmine/projects/wiki/models.py:13
+msgid "project"
+msgstr "proyecto"
+
+#: greenmine/projects/models.py:248
+msgid "content type"
+msgstr "tipo de contenido"
+
+#: greenmine/projects/models.py:250
+msgid "object id"
+msgstr "id de objeto"
+
+#: greenmine/projects/models.py:258
+msgid "attached file"
+msgstr "fichero adjunto"
+
+#: greenmine/projects/models.py:279 greenmine/projects/models.py:329
+#: greenmine/projects/models.py:402 greenmine/projects/models.py:452
+#: greenmine/projects/milestones/models.py:36
+msgid "is closed"
+msgstr "está cerrado"
+
+#: greenmine/projects/models.py:304
+msgid "value"
+msgstr "valor"
+
+#: greenmine/projects/documents/models.py:15
+msgid "title"
+msgstr "titulo"
+
+#: greenmine/projects/documents/models.py:30
+msgid "attached_file"
+msgstr "fichero_adjunto"
+
+#: greenmine/projects/issues/models.py:20
+#: greenmine/projects/questions/models.py:20
+#: greenmine/projects/tasks/models.py:22
+#: greenmine/projects/userstories/models.py:42
+msgid "ref"
+msgstr "ref"
+
+#: greenmine/projects/issues/models.py:24
+#: greenmine/projects/questions/models.py:24
+#: greenmine/projects/tasks/models.py:26
+#: greenmine/projects/userstories/models.py:52
+msgid "status"
+msgstr "estado"
+
+#: greenmine/projects/issues/models.py:26
+msgid "severity"
+msgstr "severidad"
+
+#: greenmine/projects/issues/models.py:28
+msgid "priority"
+msgstr "prioridad"
+
+#: greenmine/projects/issues/models.py:30
+msgid "type"
+msgstr "tipo"
+
+#: greenmine/projects/issues/models.py:33
+#: greenmine/projects/questions/models.py:32
+#: greenmine/projects/tasks/models.py:31
+#: greenmine/projects/userstories/models.py:45
+msgid "milestone"
+msgstr "sprint"
+
+#: greenmine/projects/issues/models.py:41
+#: greenmine/projects/questions/models.py:34
+#: greenmine/projects/tasks/models.py:37
+msgid "finished date"
+msgstr "fecha de fin"
+
+#: greenmine/projects/issues/models.py:43
+#: greenmine/projects/questions/models.py:26
+#: greenmine/projects/tasks/models.py:39
+#: greenmine/projects/userstories/models.py:67
+msgid "subject"
+msgstr "asunto"
+
+#: greenmine/projects/issues/models.py:47
+#: greenmine/projects/tasks/models.py:43
+msgid "assigned to"
+msgstr "assignada a"
+
+#: greenmine/projects/issues/models.py:50
+#: greenmine/projects/questions/models.py:44
+#: greenmine/projects/tasks/models.py:45
+#: greenmine/projects/userstories/models.py:70
+#: greenmine/projects/wiki/models.py:22
+msgid "watchers"
+msgstr "observadores"
+
+#: greenmine/projects/issues/models.py:86
+#: greenmine/projects/tasks/models.py:76
+msgid "Unassigned"
+msgstr "Sin asignar"
+
+#: greenmine/projects/milestones/models.py:28
+msgid "estimated start"
+msgstr "inicio estimado"
+
+#: greenmine/projects/milestones/models.py:30
+msgid "estimated finish"
+msgstr "fin estimado"
+
+#: greenmine/projects/milestones/models.py:38
+msgid "disponibility"
+msgstr "disponibilidad"
+
+#: greenmine/projects/questions/models.py:27
+#: greenmine/projects/wiki/models.py:17
+msgid "content"
+msgstr "contenido"
+
+#: greenmine/projects/questions/models.py:37
+msgid "assigned_to"
+msgstr "assignada_a"
+
+#: greenmine/projects/tasks/models.py:20
+#: greenmine/projects/userstories/models.py:20
+msgid "user story"
+msgstr "historia de usuario"
+
+#: greenmine/projects/tasks/models.py:49
+msgid "is iocaine"
+msgstr "es iocaina"
+
+#: greenmine/projects/userstories/models.py:23
+msgid "role"
+msgstr "rol"
+
+#: greenmine/projects/userstories/models.py:26
+#: greenmine/projects/userstories/models.py:57
+msgid "points"
+msgstr "puntos"
+
+#: greenmine/projects/userstories/models.py:65
+msgid "finish date"
+msgstr "fecha de fin"
+
+#: greenmine/projects/userstories/models.py:72
+msgid "is client requirement"
+msgstr "es requisito del cliente"
+
+#: greenmine/projects/userstories/models.py:74
+msgid "is team requirement"
+msgstr "es requisito del equipo"
+
+#: greenmine/settings/common.py:28
+msgid "English"
+msgstr "Ingles"
