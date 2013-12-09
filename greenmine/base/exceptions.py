@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
+from django.utils.translation import ugettext_lazy as _
 from django.http import Http404
 
 from .utils.json import to_json
@@ -12,7 +13,7 @@ from .utils.json import to_json
 
 class BaseException(exceptions.APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = 'Unexpected error'
+    default_detail = _('Unexpected error')
 
     def __init__(self, detail=None):
         self.detail = detail or self.default_detail
@@ -24,7 +25,7 @@ class NotFound(BaseException):
     """
 
     status_code = status.HTTP_404_NOT_FOUND
-    default_detail = 'Not found.'
+    default_detail = _('Not found.')
 
 
 class BadRequest(BaseException):
@@ -32,7 +33,7 @@ class BadRequest(BaseException):
     Exception used on bad arguments detected
     on api view.
     """
-    default_detail = 'Wrong arguments.'
+    default_detail = _('Wrong arguments.')
 
 
 class WrongArguments(BaseException):
@@ -40,7 +41,7 @@ class WrongArguments(BaseException):
     Exception used on bad arguments detected
     on service. This is same as `BadRequest`.
     """
-    default_detail = 'Wrong arguments.'
+    default_detail = _('Wrong arguments.')
 
 
 class PermissionDenied(exceptions.PermissionDenied):
@@ -55,7 +56,7 @@ class PreconditionError(BaseException):
     """
     Error raised on precondition method on viewset.
     """
-    default_detail = "Precondition error"
+    default_detail = _("Precondition error")
 
 
 class InternalError(BaseException):
@@ -63,7 +64,7 @@ class InternalError(BaseException):
     Exception for internal errors.
     """
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-    default_detail = "Internal server error"
+    default_detail = _("Internal server error")
 
 
 class NotAuthenticated(exceptions.NotAuthenticated):
@@ -113,11 +114,11 @@ def exception_handler(exc):
         return Response(detail, status=exc.status_code, headers=headers)
 
     elif isinstance(exc, Http404):
-        return Response({'_error_message': 'Not found'},
+        return Response({'_error_message': _('Not found')},
                         status=status.HTTP_404_NOT_FOUND)
 
     elif isinstance(exc, DjangoPermissionDenied):
-        return Response({'_error_message': 'Permission denied'},
+        return Response({'_error_message': _('Permission denied')},
                         status=status.HTTP_403_FORBIDDEN)
 
     # Note: Unhandled exceptions will raise a 500 error.

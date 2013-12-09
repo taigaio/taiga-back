@@ -3,6 +3,7 @@
 import uuid
 
 from django.db.models import Q
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -85,7 +86,7 @@ class MembershipViewSet(ModelCrudViewSet):
                                            Q(project_id=serializer.data["project"],
                                              email=serializer.data["email"]))
             if qs.count() > 0:
-                raise exc.WrongArguments("Already exist user with specified email address.")
+                raise exc.WrongArguments(_("Already exist user with specified email address."))
 
             self.pre_save(serializer.object)
             self.object = serializer.save(force_insert=True)

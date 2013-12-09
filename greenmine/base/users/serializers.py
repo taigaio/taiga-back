@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from django.utils.translation import ugettext_lazy as _
+
 from rest_framework import serializers
 from .models import User, Role
 
@@ -28,7 +30,7 @@ class RecoverySerializer(serializers.Serializer):
         try:
             user = User.objects.get(token=token)
         except User.DoesNotExist:
-            raise serializers.ValidationError("invalid token")
+            raise serializers.ValidationError(_("invalid token"))
 
         return attrs
 

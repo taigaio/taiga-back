@@ -5,6 +5,7 @@ from threading import local
 
 from django.db.models import get_model
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.translation import ugettext_lazy as _
 
 from .. import exceptions as exc
 
@@ -50,7 +51,7 @@ def get_domain_for_domain_name(domain):
         domain = model_cls.objects.get(domain=domain)
     except model_cls.DoesNotExist:
         log.warning("Domain does not exist for domain: {}".format(domain))
-        raise DomainNotFound("domain not found")
+        raise DomainNotFound(_("domain not found"))
     else:
         cache[domain] = domain
 

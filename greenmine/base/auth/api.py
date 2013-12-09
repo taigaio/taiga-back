@@ -3,6 +3,7 @@
 from django.db.models.loading import get_model
 from django.contrib.auth import logout, login, authenticate
 from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -48,7 +49,7 @@ class AuthViewSet(viewsets.ViewSet):
 
     def _public_register(self, request):
         if not request.domain.public_register:
-            raise exc.BadRequest("Public register is disabled for this domain.")
+            raise exc.BadRequest(_("Public register is disabled for this domain."))
 
         serializer = PublicRegisterSerializer(data=request.DATA)
         if not serializer.is_valid():
@@ -87,7 +88,7 @@ class AuthViewSet(viewsets.ViewSet):
         try:
             membership = membership_model.objects.get(token=base_serializer.data["token"])
         except membership_model.DoesNotExist as e:
-            raise exc.BadRequest("Invalid token") from e
+            raise exc.BadRequest(_("Invalid token")) from e
 
         if base_serializer.data["existing"]:
             serializer = PrivateRegisterExistingSerializer(data=request.DATA)
@@ -96,7 +97,7 @@ class AuthViewSet(viewsets.ViewSet):
 
             user = get_object_or_404(User, username=serializer.data["username"])
             if not user.check_password(serializer.data["password"]):
-                raise exc.BadRequest({"password": "Incorrect password"})
+                raise exc.BadRequest({"password": _("Incorrect password")})
 
         else:
             serializer = PrivateRegisterSerializer(data=request.DATA)
@@ -129,7 +130,7 @@ class AuthViewSet(viewsets.ViewSet):
         elif type == "private":
             return self._private_register(request)
 
-        raise exc.BadRequest("invalid register type")
+        raise exc.BadRequest(_("invalid register type"))
 
     def create(self, request, **kwargs):
         username = request.DATA.get('username', None)
@@ -138,10 +139,10 @@ class AuthViewSet(viewsets.ViewSet):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            raise exc.BadRequest("Invalid username or password")
+            raise exc.BadRequest(_("Invalid username or password"))
 
         if not user.check_password(password):
-            raise exc.BadRequest("Invalid username or password")
+            raise exc.BadRequest(_("Invalid username or password"))
 
         response_data = self._create_response(user)
         return Response(response_data, status=status.HTTP_200_OK)

@@ -5,6 +5,7 @@ import uuid
 from django.db.models.loading import get_model
 from django.db.models import Q
 from django.contrib.auth import logout, login, authenticate
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.decorators import list_route, action
 from rest_framework.response import Response
@@ -41,14 +42,14 @@ class UsersViewSet(ModelCrudViewSet):
         username_or_email = request.DATA.get('username', None)
 
         if not username_or_email:
-            raise exc.WrongArguments("Invalid username or email")
+            raise exc.WrongArguments(_("Invalid username or email"))
 
         try:
             queryset = User.objects.all()
             user = queryset.get(Q(username=username_or_email) |
                                     Q(email=username_or_email))
         except User.DoesNotExist:
-            raise exc.WrongArguments("Invalid username or email")
+            raise exc.WrongArguments(_("Invalid username or email"))
 
         user.token = str(uuid.uuid1())
         user.save(update_fields=["token"])
@@ -57,7 +58,7 @@ class UsersViewSet(ModelCrudViewSet):
         email = mbuilder.password_recovery(user.email, {"user": user})
         email.send()
 
-        return Response({"detail": "Mail sended successful!"})
+        return Response({"detail": _("Mail sended successful!")})
 
     @list_route(permission_classes=[AllowAny], methods=["POST"])
     def change_password_from_recovery(self, request, pk=None):
@@ -66,7 +67,7 @@ class UsersViewSet(ModelCrudViewSet):
         """
         serializer = RecoverySerializer(data=request.DATA, many=False)
         if not serializer.is_valid():
-            raise exc.WrongArguments("Token is invalid")
+            raise exc.WrongArguments(_("Token is invalid"))
 
         user = User.objects.get(token=serializer.data["token"])
         user.set_password(serializer.data["password"])
@@ -83,10 +84,10 @@ class UsersViewSet(ModelCrudViewSet):
         password = request.DATA.get("password")
 
         if not password:
-            raise exc.WrongArguments("incomplete argiments")
+            raise exc.WrongArguments(_("incomplete argiments"))
 
         if len(password) < 6:
-            raise exc.WrongArguments("invalid password length")
+            raise exc.WrongArguments(_("invalid password length"))
 
         request.user.set_password(password)
         request.user.save(update_fields=["password"])

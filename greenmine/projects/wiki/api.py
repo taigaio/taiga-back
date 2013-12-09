@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.permissions import IsAuthenticated
 
@@ -35,8 +36,7 @@ class WikiAttachmentViewSet(ModelCrudViewSet):
 
         if (obj.project.owner != self.request.user and
                 obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PreconditionError("You must not add a new wiki page to this "
-                                        "project.")
+            raise exc.PreconditionError(_("You must not add a new wiki page to this project."))
 
     def pre_save(self, obj):
         if not obj.id:
@@ -61,8 +61,7 @@ class WikiViewSet(ModelCrudViewSet):
 
         if (obj.project.owner != self.request.user and
                 obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PreconditionError("You must not add a new wiki page to this "
-                                        "project.")
+            raise exc.PreconditionError(_("You must not add a new wiki page to this project."))
 
     def pre_save(self, obj):
         if not obj.owner:

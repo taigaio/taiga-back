@@ -34,7 +34,7 @@ class MilestoneViewSet(NotificationSenderMixin, ModelCrudViewSet):
 
         if (obj.project.owner != self.request.user and
                 obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PreconditionError("You must not add a new milestone to this project.")
+            raise exc.PreconditionError(_("You must not add a new milestone to this project."))
 
     def pre_save(self, obj):
         if not obj.id:
