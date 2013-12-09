@@ -277,6 +277,8 @@ class UserStoryStatus(models.Model):
                                 verbose_name=_("order"))
     is_closed = models.BooleanField(default=False, null=False, blank=True,
                                     verbose_name=_("is closed"))
+    color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
+                             verbose_name=_("color"))
     project = models.ForeignKey("Project", null=False, blank=False,
                                 related_name="us_statuses", verbose_name=_("project"))
 
@@ -501,8 +503,8 @@ def project_post_save(sender, instance, created, **kwargs):
         if is_default:
             instance.default_points = obj
 
-    for order, name, is_closed, is_default in choices.US_STATUSES:
-        obj = UserStoryStatus.objects.create(name=name, order=order,
+    for order, name, is_closed, is_default, color in choices.US_STATUSES:
+        obj = UserStoryStatus.objects.create(name=name, order=order, color=color,
                                              is_closed=is_closed, project=instance)
         if is_default:
             instance.default_us_status = obj

@@ -4,8 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 
 
 US_STATUSES = (
-    (1, _("Open"), False, True),
-    (2, _("Closed"), True, False),
+    (1, _("Open"), False, True, "#669933"),
+    (2, _("Closed"), True, False, "#999999"),
 )
 
 TASK_STATUSES = (
