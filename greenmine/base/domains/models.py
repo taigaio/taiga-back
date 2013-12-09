@@ -34,6 +34,8 @@ class Domain(models.Model):
 
     # Site Metadata
     public_register = models.BooleanField(default=False)
+    default_language = models.CharField(max_length=20, null=False, blank=True, default="",
+                                        verbose_name=_("default language"))
 
     class Meta:
         verbose_name = _('domain')

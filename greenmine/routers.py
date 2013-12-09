@@ -4,6 +4,7 @@ from greenmine.base import routers
 from greenmine.base.auth.api import AuthViewSet
 from greenmine.base.users.api import RolesViewSet, UsersViewSet
 from greenmine.base.searches.api import SearchViewSet
+from greenmine.base.domains.api import DomainViewSet
 from greenmine.projects.api import ProjectViewSet, MembershipViewSet, InvitationViewSet
 from greenmine.projects.milestones.api import MilestoneViewSet
 from greenmine.projects.userstories.api import UserStoryViewSet, UserStoryAttachmentViewSet
@@ -23,6 +24,9 @@ router.register(r"auth", AuthViewSet, base_name="auth")
 
 # greenmine.base.searches
 router.register(r"search", SearchViewSet, base_name="search")
+
+# greenmine.base.domains
+router.register(r"sites", DomainViewSet, base_name="sites")
 
 # greenmine.projects
 router.register(r"projects", ProjectViewSet, base_name="projects")

@@ -28,6 +28,5 @@ class DomainsMiddleware(object):
 
         if hasattr(request, "domain"):
             response["X-Site-Host"] = request.domain.domain
-            response["X-Site-Register"] = "on" if request.domain.public_register else "off"
 
         return response

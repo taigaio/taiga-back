@@ -2,11 +2,13 @@
 
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+
+from .serializers import DomainSerializer
 
 
 class DomainViewSet(viewsets.ViewSet):
-    def status(self, request, **kwargs):
-        return Response({})
+    permission_classes = (AllowAny,)
 
-
-domainstatus = DomainViewSet.as_view({"head": "status", "get": "status"})
+    def list(self, request, **kwargs):
+        return Response(DomainSerializer(request.domain).data)
