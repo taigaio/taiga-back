@@ -40,8 +40,8 @@ PRIORITY_CHOICES = (
 SEVERITY_CHOICES = (
     (1, _(u'Wishlist'), '#666666', False),
     (2, _(u'Minor'), '#669933', False),
-    (3, _(u'Normal'), 'blue', True),
-    (4, _(u'Important'), 'orange', False),
+    (3, _(u'Normal'), '#0000FF', True),
+    (4, _(u'Important'), '#FFA500', False),
     (5, _(u'Critical'), '#CC0000', False),
 )
 
@@ -60,7 +60,7 @@ ISSUE_TYPES = (
 )
 
 QUESTION_STATUS = (
-    (1, _("Pending"), False, 'orange', True),
+    (1, _("Pending"), False, '#FFA500', True),
     (2, _("Answered"), False, '#669933', False),
     (3, _("Closed"), True,'#BFB35A', False),
 )
