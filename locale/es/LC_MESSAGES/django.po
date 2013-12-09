@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-09 17:01+0000\n"
+"POT-Creation-Date: 2013-12-09 17:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,6 +45,58 @@ msgstr "Google-Code de grapelli"
 #: greenmine/dashboard.py:73
 msgid "Recent Actions"
 msgstr "Acciones recientes"
+
+#: greenmine/base/exceptions.py:16
+msgid "Unexpected error"
+msgstr "Error inesperado"
+
+#: greenmine/base/exceptions.py:28
+msgid "Not found."
+msgstr "No encontrado."
+
+#: greenmine/base/exceptions.py:36 greenmine/base/exceptions.py:44
+msgid "Wrong arguments."
+msgstr "Argumentos erroneos."
+
+#: greenmine/base/exceptions.py:59
+msgid "Precondition error"
+msgstr "Error en precondición"
+
+#: greenmine/base/exceptions.py:67
+msgid "Internal server error"
+msgstr "Error interno del servidor"
+
+#: greenmine/base/exceptions.py:117
+msgid "Not found"
+msgstr "No encontrado"
+
+#: greenmine/base/exceptions.py:121
+msgid "Permission denied"
+msgstr "Permiso denegado"
+
+#: greenmine/base/auth/api.py:52
+msgid "Public register is disabled for this domain."
+msgstr "El registro publico está deshabilitado para este dominio."
+
+#: greenmine/base/auth/api.py:91
+msgid "Invalid token"
+msgstr "Token invalido"
+
+#: greenmine/base/auth/api.py:100
+msgid "Incorrect password"
+msgstr "Password incorrecto"
+
+#: greenmine/base/auth/api.py:133
+msgid "invalid register type"
+msgstr "tipo de registro no valido"
+
+#: greenmine/base/auth/api.py:142 greenmine/base/auth/api.py:145
+msgid "Invalid username or password"
+msgstr "usuario o contraseña invalidos"
+
+#: greenmine/base/domains/__init__.py:54
+msgid "domain not found"
+msgstr "dominio no encontrado"
 
 #: greenmine/base/domains/models.py:24
 msgid "The domain name cannot contain any spaces or tabs."
@@ -118,6 +170,26 @@ msgstr "Permisos"
 msgid "Important dates"
 msgstr "fechas importantes"
 
+#: greenmine/base/users/api.py:45 greenmine/base/users/api.py:52
+msgid "Invalid username or email"
+msgstr "usuario o email invalido"
+
+#: greenmine/base/users/api.py:61
+msgid "Mail sended successful!"
+msgstr "¡Mail enviado correctamente!"
+
+#: greenmine/base/users/api.py:70
+msgid "Token is invalid"
+msgstr "El token no es válido"
+
+#: greenmine/base/users/api.py:87
+msgid "incomplete argiments"
+msgstr "argumentos incompletos"
+
+#: greenmine/base/users/api.py:90
+msgid "invalid password length"
+msgstr "longitud del password no válida"
+
 #: greenmine/base/users/models.py:13 greenmine/projects/models.py:281
 #: greenmine/projects/models.py:331 greenmine/projects/models.py:356
 #: greenmine/projects/models.py:379 greenmine/projects/models.py:404
@@ -177,6 +249,14 @@ msgstr "permisos"
 #: greenmine/projects/userstories/models.py:59
 msgid "order"
 msgstr "orden"
+
+#: greenmine/base/users/serializers.py:33
+msgid "invalid token"
+msgstr "token invalido"
+
+#: greenmine/projects/api.py:89
+msgid "Already exist user with specified email address."
+msgstr "Ya existe un usuario con el email especificado."
 
 #: greenmine/projects/choices.py:7
 msgid "Open"
@@ -396,6 +476,35 @@ msgstr "titulo"
 msgid "attached_file"
 msgstr "fichero_adjunto"
 
+#: greenmine/projects/issues/api.py:82
+msgid "You must not add a new issue to this project."
+msgstr "Tu no debes añadir una nueva petición a este proyecto."
+
+#: greenmine/projects/issues/api.py:85
+msgid "You must not add a new issue to this milestone."
+msgstr "Tu no debes añadir una nueva petición a este sprint."
+
+#: greenmine/projects/issues/api.py:88 greenmine/projects/tasks/api.py:83
+#: greenmine/projects/userstories/api.py:117
+msgid "You must not use a status from other project."
+msgstr "Tu no debes usar un estado de otro proyecto."
+
+#: greenmine/projects/issues/api.py:91
+msgid "You must not use a severity from other project."
+msgstr "Tu no debes usar una severidad de otro proyecto."
+
+#: greenmine/projects/issues/api.py:94
+msgid "You must not use a priority from other project."
+msgstr "Tu no debes usar una prioridad de otro proyecto."
+
+#: greenmine/projects/issues/api.py:97
+msgid "You must not use a type from other project."
+msgstr "Tu no debes usar un tipo de otro proyecto."
+
+#: greenmine/projects/issues/api.py:131
+msgid "You must not add a new issue attachment to this project."
+msgstr "Tu no debes añadir un nuevo adjunto de petición a este proyecto."
+
 #: greenmine/projects/issues/models.py:20
 #: greenmine/projects/questions/models.py:20
 #: greenmine/projects/tasks/models.py:22
@@ -460,6 +569,10 @@ msgstr "observadores"
 msgid "Unassigned"
 msgstr "Sin asignar"
 
+#: greenmine/projects/milestones/api.py:37
+msgid "You must not add a new milestone to this project."
+msgstr "Tu no debes añadir un nuevo sprint a este proyecto."
+
 #: greenmine/projects/milestones/models.py:28
 msgid "estimated start"
 msgstr "inicio estimado"
@@ -481,6 +594,22 @@ msgstr "contenido"
 msgid "assigned_to"
 msgstr "assignada_a"
 
+#: greenmine/projects/tasks/api.py:47
+msgid "You must not add a new task attachment to this project."
+msgstr "Tu no debes añadir un nuevo adjunto de tarea a este proyecto."
+
+#: greenmine/projects/tasks/api.py:74
+msgid "You must not add a new task to this project."
+msgstr "Tu no debes añadir una nueva tarea a este proyecto."
+
+#: greenmine/projects/tasks/api.py:77
+msgid "You must not add a task to this milestone."
+msgstr "Tu no debes añadir una tarea a este sprint."
+
+#: greenmine/projects/tasks/api.py:80
+msgid "You must not add a task to this user story."
+msgstr "Tu no debes añadir una tarea a esta historia de usuario."
+
 #: greenmine/projects/tasks/models.py:20
 #: greenmine/projects/userstories/models.py:20
 msgid "user story"
@@ -489,6 +618,30 @@ msgstr "historia de usuario"
 #: greenmine/projects/tasks/models.py:49
 msgid "is iocaine"
 msgstr "es iocaina"
+
+#: greenmine/projects/userstories/api.py:54
+msgid "You must not add a new user story attachment to this project."
+msgstr "Tu no debes añadir un nuevo adjunto de historia de usuario a este proyecto."
+
+#: greenmine/projects/userstories/api.py:73
+msgid "You need bulkStories data"
+msgstr "Necesitas el dato bulkStories"
+
+#: greenmine/projects/userstories/api.py:77
+msgid "You need projectId data"
+msgstr "Necesitas el dato projectId"
+
+#: greenmine/projects/userstories/api.py:82
+msgid "You don't have permision to create user stories"
+msgstr "Tu no tienes permisos para crear una historia de usuario"
+
+#: greenmine/projects/userstories/api.py:111
+msgid "You must not add a new user story to this project."
+msgstr "Tu no debes añadir una nueva historia de usuario a este proyecto."
+
+#: greenmine/projects/userstories/api.py:114
+msgid "You must not add a new user story to this milestone."
+msgstr "Tu no debes añadir una nueva historia de usuario a este sprint."
 
 #: greenmine/projects/userstories/models.py:23
 msgid "role"
@@ -510,6 +663,10 @@ msgstr "es requisito del cliente"
 #: greenmine/projects/userstories/models.py:74
 msgid "is team requirement"
 msgstr "es requisito del equipo"
+
+#: greenmine/projects/wiki/api.py:39 greenmine/projects/wiki/api.py:64
+msgid "You must not add a new wiki page to this project."
+msgstr "Tu no debes añadir una nueva página del wiki a este proyecto."
 
 #: greenmine/settings/common.py:28
 msgid "English"
