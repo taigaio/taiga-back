@@ -112,7 +112,7 @@ def tasks_close_handler(sender, instance, **kwargs):
         if exclude_task.pk:
             qs = qs.exclude(pk=exclude_task.pk)
 
-        return all(task.status.is_closed for task in qs)
+        return not all(task.status.is_closed for task in qs)
 
     def milestone_has_open_userstories(milestone):
         qs = milestone.user_stories.exclude(is_closed=True)
@@ -128,13 +128,47 @@ def tasks_close_handler(sender, instance, **kwargs):
             instance.finished_date = None
             if instance.user_story_id:
                 instance.user_story.is_closed = False
-                instance.user_story.save(update_fields=["is_closed"])
+                instance.user_story.finish_date = None
+                instance.user_story.save(update_fields=["is_closed", "finish_date"])
         else:
             instance.finished_date = timezone.now()
-            if instance.user_story_id and us_has_open_tasks(us=instance.user_story,
-                                                            exclude_task=instance):
+            if instance.user_story_id and not us_has_open_tasks(us=instance.user_story,
+                                                                exclude_task=instance):
                 instance.user_story.is_closed = True
-                instance.user_story.save(update_fields=["is_closed"])
+                instance.user_story.finish_date = timezone.now()
+                instance.user_story.save(update_fields=["is_closed", "finish_date"])
+    elif not instance.id:
+        if not orig_instance.status.is_closed:
+            instance.finished_date = None
+            if instance.user_story_id:
+                instance.user_story.is_closed = False
+                instance.user_story.finish_date = None
+                instance.user_story.save(update_fields=["is_closed", "finish_date"])
+        else:
+            instance.finished_date = timezone.now()
+            if instance.user_story_id and not us_has_open_tasks(us=instance.user_story,
+                                                                exclude_task=instance):
+                instance.user_story.is_closed = True
+                instance.user_story.finish_date = timezone.now()
+                instance.user_story.save(update_fields=["is_closed", "finish_date"])
+
+    # If the task change its US
+    if instance.user_story_id != orig_instance.user_story_id:
+        if (orig_instance.user_story_id and not orig_instance.status.is_closed
+                and not us_has_open_tasks(us=orig_instance.user_story, exclude_task=orig_instance)):
+            orig_instance.user_story.is_closed = True
+            orig_instance.user_story.finish_date = timezone.now()
+            orig_instance.user_story.save(update_fields=["is_closed", "finish_date"])
+
+        if instance.user_story_id:
+            if instance.user_story.is_closed:
+                if instance.status.is_closed:
+                    instance.user_story.finish_date = timezone.now()
+                    instance.user_story.save(update_fields=["finish_date"])
+                else:
+                    instance.user_story.is_closed = False
+                    instance.user_story.finish_date = None
+                    instance.user_story.save(update_fields=["is_closed", "finish_date"])
 
     if instance.milestone_id:
         if instance.status.is_closed and not instance.milestone.closed:
