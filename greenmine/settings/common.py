@@ -26,6 +26,7 @@ ADMINS = (
 
 LANGUAGES = (
     ('en', _('English')),
+    ('es', _('Spanish')),
 )
 
 MANAGERS = ADMINS

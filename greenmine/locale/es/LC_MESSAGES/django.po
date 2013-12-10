@@ -1,0 +1,591 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-12-09 22:06+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: base/exceptions.py:16
+msgid "Unexpected error"
+msgstr "Error inesperado"
+
+#: base/exceptions.py:28
+msgid "Not found."
+msgstr "No encontrado."
+
+#: base/exceptions.py:36 base/exceptions.py:44
+msgid "Wrong arguments."
+msgstr "Argumentos erroneos."
+
+#: base/exceptions.py:59
+msgid "Precondition error"
+msgstr "Error en precondición"
+
+#: base/exceptions.py:67
+msgid "Internal server error"
+msgstr "Error interno del servidor"
+
+#: base/exceptions.py:117
+msgid "Not found"
+msgstr "No encontrado"
+
+#: base/exceptions.py:121
+msgid "Permission denied"
+msgstr "Permiso denegado"
+
+#: base/auth/api.py:52
+msgid "Public register is disabled for this domain."
+msgstr "El registro publico está deshabilitado para este dominio."
+
+#: base/auth/api.py:91
+msgid "Invalid token"
+msgstr "Token invalido"
+
+#: base/auth/api.py:100
+msgid "Incorrect password"
+msgstr "Password incorrecto"
+
+#: base/auth/api.py:133
+msgid "invalid register type"
+msgstr "tipo de registro no valido"
+
+#: base/auth/api.py:142 base/auth/api.py:145
+msgid "Invalid username or password"
+msgstr "usuario o contraseña invalidos"
+
+#: base/domains/__init__.py:54
+msgid "domain not found"
+msgstr "dominio no encontrado"
+
+#: base/domains/models.py:24
+msgid "The domain name cannot contain any spaces or tabs."
+msgstr "El nombre de dominio no puede tener espacios o tabs."
+
+#: base/domains/models.py:30
+msgid "domain name"
+msgstr "nombre del dominio"
+
+#: base/domains/models.py:32
+msgid "display name"
+msgstr "nombre mostrado"
+
+#: base/domains/models.py:33
+msgid "scheme"
+msgstr "esquema"
+
+#: base/domains/models.py:38 base/users/models.py:19
+msgid "default language"
+msgstr "idioma por defecto"
+
+#: base/domains/models.py:41 base/domains/models.py:42
+msgid "domain"
+msgstr "dominio"
+
+#: base/notifications/models.py:12
+msgid "All events on my projects"
+msgstr "Todos los eventos en mis proyectos"
+
+#: base/notifications/models.py:13
+msgid "Only events for objects i watch"
+msgstr "Solo eventos para objetos que observo"
+
+#: base/notifications/models.py:14
+msgid "Only events for objects assigned to me"
+msgstr "Solo eventos para objetos asignados a mi"
+
+#: base/notifications/models.py:15
+msgid "Only events for objects owned by me"
+msgstr "Solo eventos para mis objetos"
+
+#: base/notifications/models.py:16
+msgid "No events"
+msgstr "Sin eventos"
+
+#: base/notifications/models.py:22
+msgid "notify level"
+msgstr "nivel de notificación"
+
+#: base/notifications/models.py:24
+msgid "notify changes by me"
+msgstr "notificar mis cambios"
+
+#: base/users/admin.py:36
+msgid "Personal info"
+msgstr "Información personal"
+
+#: base/users/admin.py:37
+msgid "Extra info"
+msgstr "Información extra"
+
+#: base/users/admin.py:38
+msgid "Notifications info"
+msgstr "Información de notificaciones"
+
+#: base/users/admin.py:39
+msgid "Permissions"
+msgstr "Permisos"
+
+#: base/users/admin.py:40
+msgid "Important dates"
+msgstr "fechas importantes"
+
+#: base/users/api.py:45 base/users/api.py:52
+msgid "Invalid username or email"
+msgstr "usuario o email invalido"
+
+#: base/users/api.py:61
+msgid "Mail sended successful!"
+msgstr "¡Mail enviado correctamente!"
+
+#: base/users/api.py:70
+msgid "Token is invalid"
+msgstr "El token no es válido"
+
+#: base/users/api.py:87
+msgid "Incomplete arguments"
+msgstr "Argumentos incompletos"
+
+#: base/users/api.py:90
+msgid "Invalid password length"
+msgstr "longitud del password no válida"
+
+#: base/users/models.py:13 projects/models.py:281 projects/models.py:331
+#: projects/models.py:356 projects/models.py:379 projects/models.py:404
+#: projects/models.py:427 projects/models.py:454
+msgid "color"
+msgstr "color"
+
+#: base/users/models.py:15 projects/models.py:95
+#: projects/documents/models.py:17 projects/issues/models.py:44
+#: projects/tasks/models.py:40 projects/userstories/models.py:68
+msgid "description"
+msgstr "descripción"
+
+#: base/users/models.py:17
+msgid "photo"
+msgstr "foto"
+
+#: base/users/models.py:21
+msgid "default timezone"
+msgstr "zona horaria por defecto"
+
+#: base/users/models.py:23
+msgid "token"
+msgstr "token"
+
+#: base/users/models.py:25
+msgid "colorize tags"
+msgstr "etiquetas coloreadas"
+
+#: base/users/models.py:45 projects/models.py:91 projects/models.py:275
+#: projects/models.py:300 projects/models.py:325 projects/models.py:352
+#: projects/models.py:375 projects/models.py:398 projects/models.py:423
+#: projects/models.py:448 projects/milestones/models.py:20
+msgid "name"
+msgstr "nombre"
+
+#: base/users/models.py:47 projects/models.py:93
+#: projects/documents/models.py:13 projects/milestones/models.py:22
+#: projects/wiki/models.py:15
+msgid "slug"
+msgstr "slug"
+
+#: base/users/models.py:49
+msgid "permissions"
+msgstr "permisos"
+
+#: base/users/models.py:51 projects/models.py:277 projects/models.py:302
+#: projects/models.py:327 projects/models.py:354 projects/models.py:377
+#: projects/models.py:400 projects/models.py:425 projects/models.py:450
+#: projects/milestones/models.py:40 projects/userstories/models.py:59
+msgid "order"
+msgstr "orden"
+
+#: base/users/serializers.py:33
+msgid "invalid token"
+msgstr "token invalido"
+
+#: projects/api.py:89
+msgid "Email address is already taken."
+msgstr ""
+
+#: projects/choices.py:7
+msgid "Open"
+msgstr "Abierta"
+
+#: projects/choices.py:8 projects/choices.py:15 projects/choices.py:52
+#: projects/choices.py:65
+msgid "Closed"
+msgstr "Cerrada"
+
+#: projects/choices.py:12 projects/choices.py:49
+msgid "New"
+msgstr "Nueva"
+
+#: projects/choices.py:13 projects/choices.py:50
+msgid "In progress"
+msgstr "En progreso"
+
+#: projects/choices.py:14 projects/choices.py:51
+msgid "Ready for test"
+msgstr "Listo para probar"
+
+#: projects/choices.py:16 projects/choices.py:53
+msgid "Needs Info"
+msgstr "Necesita información"
+
+#: projects/choices.py:35
+msgid "Low"
+msgstr "Baja"
+
+#: projects/choices.py:36 projects/choices.py:43
+msgid "Normal"
+msgstr "Normal"
+
+#: projects/choices.py:37
+msgid "High"
+msgstr "Alta"
+
+#: projects/choices.py:41
+msgid "Wishlist"
+msgstr "Deseo"
+
+#: projects/choices.py:42
+msgid "Minor"
+msgstr "Menor"
+
+#: projects/choices.py:44
+msgid "Important"
+msgstr "Importante"
+
+#: projects/choices.py:45
+msgid "Critical"
+msgstr "Critica"
+
+#: projects/choices.py:54
+msgid "Rejected"
+msgstr "Rechazada"
+
+#: projects/choices.py:55
+msgid "Postponed"
+msgstr "Pospuesto"
+
+#: projects/choices.py:59
+msgid "Bug"
+msgstr "Bug"
+
+#: projects/choices.py:63
+msgid "Pending"
+msgstr "Pendiente"
+
+#: projects/choices.py:64
+msgid "Answered"
+msgstr "Respondida"
+
+#: projects/models.py:57
+msgid "default points"
+msgstr "puntos por defecto"
+
+#: projects/models.py:61
+msgid "default US status"
+msgstr "estado por defecto de las USs"
+
+#: projects/models.py:65
+msgid "default task status"
+msgstr "estado por defecto de las tareas"
+
+#: projects/models.py:68
+msgid "default priority"
+msgstr "prioridad por defecto"
+
+#: projects/models.py:71
+msgid "default severity"
+msgstr "severidad por defecto"
+
+#: projects/models.py:75
+msgid "default issue status"
+msgstr "estado por defecto de las peticiones"
+
+#: projects/models.py:79
+msgid "default issue type"
+msgstr "tipo por defecto de las peticiones"
+
+#: projects/models.py:83
+msgid "default questions status"
+msgstr "Estado por defecto de las preguntas"
+
+#: projects/models.py:97 projects/models.py:253
+#: projects/documents/models.py:19 projects/issues/models.py:37
+#: projects/milestones/models.py:32 projects/questions/models.py:39
+#: projects/tasks/models.py:33 projects/userstories/models.py:61
+#: projects/wiki/models.py:24
+msgid "created date"
+msgstr "fecha de creación"
+
+#: projects/models.py:99 projects/models.py:255
+#: projects/documents/models.py:21 projects/issues/models.py:39
+#: projects/milestones/models.py:34 projects/questions/models.py:41
+#: projects/tasks/models.py:35 projects/userstories/models.py:63
+#: projects/wiki/models.py:26
+msgid "modified date"
+msgstr "fecha de modificación"
+
+#: projects/models.py:101 projects/models.py:244
+#: projects/documents/models.py:27 projects/issues/models.py:22
+#: projects/milestones/models.py:24 projects/questions/models.py:22
+#: projects/tasks/models.py:24 projects/userstories/models.py:49
+#: projects/wiki/models.py:19
+msgid "owner"
+msgstr "propietario"
+
+#: projects/models.py:103
+msgid "members"
+msgstr "miembros"
+
+#: projects/models.py:105
+msgid "public"
+msgstr "publico"
+
+#: projects/models.py:107
+msgid "last us ref"
+msgstr "ultima referencia de US"
+
+#: projects/models.py:109
+msgid "last task ref"
+msgstr "ultima referencia de tarea"
+
+#: projects/models.py:111
+msgid "last issue ref"
+msgstr "ultima referencia de issue"
+
+#: projects/models.py:113
+msgid "total of milestones"
+msgstr "total de sprints"
+
+#: projects/models.py:115
+msgid "total story points"
+msgstr "total de puntos de historia"
+
+#: projects/models.py:116 projects/documents/models.py:32
+#: projects/issues/models.py:51 projects/questions/models.py:45
+#: projects/tasks/models.py:46 projects/userstories/models.py:76
+msgid "tags"
+msgstr "etiquetas"
+
+#: projects/models.py:246 projects/models.py:283 projects/models.py:306
+#: projects/models.py:333 projects/models.py:358 projects/models.py:381
+#: projects/models.py:406 projects/models.py:429 projects/models.py:457
+#: projects/documents/models.py:24 projects/issues/models.py:35
+#: projects/milestones/models.py:26 projects/questions/models.py:29
+#: projects/tasks/models.py:28 projects/userstories/models.py:47
+#: projects/wiki/models.py:13
+msgid "project"
+msgstr "proyecto"
+
+#: projects/models.py:248
+msgid "content type"
+msgstr "tipo de contenido"
+
+#: projects/models.py:250
+msgid "object id"
+msgstr "id de objeto"
+
+#: projects/models.py:258
+msgid "attached file"
+msgstr "fichero adjunto"
+
+#: projects/models.py:279 projects/models.py:329 projects/models.py:402
+#: projects/models.py:452 projects/milestones/models.py:36
+msgid "is closed"
+msgstr "está cerrado"
+
+#: projects/models.py:304
+msgid "value"
+msgstr "valor"
+
+#: projects/documents/models.py:15
+msgid "title"
+msgstr "titulo"
+
+#: projects/documents/models.py:30
+msgid "attached_file"
+msgstr "fichero_adjunto"
+
+#: projects/issues/api.py:82 projects/issues/api.py:85
+#: projects/issues/api.py:88 projects/issues/api.py:91
+#: projects/issues/api.py:94 projects/issues/api.py:97
+msgid "You don't have permissions for add/modify this issue."
+msgstr "Tu no tienes permisos para crear/modificar esta peticion."
+
+#: projects/issues/api.py:131
+msgid "You don't have permissions for add attachments to this issue"
+msgstr "Tu no tienes permisos para añadir ficheros adjuntos a esta peticion"
+
+#: projects/issues/models.py:20 projects/questions/models.py:20
+#: projects/tasks/models.py:22 projects/userstories/models.py:42
+msgid "ref"
+msgstr "ref"
+
+#: projects/issues/models.py:24 projects/questions/models.py:24
+#: projects/tasks/models.py:26 projects/userstories/models.py:52
+msgid "status"
+msgstr "estado"
+
+#: projects/issues/models.py:26
+msgid "severity"
+msgstr "severidad"
+
+#: projects/issues/models.py:28
+msgid "priority"
+msgstr "prioridad"
+
+#: projects/issues/models.py:30
+msgid "type"
+msgstr "tipo"
+
+#: projects/issues/models.py:33 projects/questions/models.py:32
+#: projects/tasks/models.py:31 projects/userstories/models.py:45
+msgid "milestone"
+msgstr "sprint"
+
+#: projects/issues/models.py:41 projects/questions/models.py:34
+#: projects/tasks/models.py:37
+msgid "finished date"
+msgstr "fecha de fin"
+
+#: projects/issues/models.py:43 projects/questions/models.py:26
+#: projects/tasks/models.py:39 projects/userstories/models.py:67
+msgid "subject"
+msgstr "asunto"
+
+#: projects/issues/models.py:47 projects/tasks/models.py:43
+msgid "assigned to"
+msgstr "assignada a"
+
+#: projects/issues/models.py:50 projects/questions/models.py:44
+#: projects/tasks/models.py:45 projects/userstories/models.py:70
+#: projects/wiki/models.py:22
+msgid "watchers"
+msgstr "observadores"
+
+#: projects/issues/models.py:86 projects/tasks/models.py:76
+msgid "Unassigned"
+msgstr "Sin asignar"
+
+#: projects/milestones/api.py:37
+msgid "You must not add a new milestone to this project."
+msgstr "Tu no debes añadir un nuevo sprint a este proyecto."
+
+#: projects/milestones/models.py:28
+msgid "estimated start"
+msgstr "inicio estimado"
+
+#: projects/milestones/models.py:30
+msgid "estimated finish"
+msgstr "fin estimado"
+
+#: projects/milestones/models.py:38
+msgid "disponibility"
+msgstr "disponibilidad"
+
+#: projects/questions/models.py:27 projects/wiki/models.py:17
+msgid "content"
+msgstr "contenido"
+
+#: projects/questions/models.py:37
+msgid "assigned_to"
+msgstr "assignada_a"
+
+#: projects/tasks/api.py:47
+msgid "You don't have permissions for add attachments to this task."
+msgstr "Tu no tienes permisos para añadir ficheros adjuntos a esta tarea."
+
+#: projects/tasks/api.py:74 projects/tasks/api.py:77 projects/tasks/api.py:80
+#: projects/tasks/api.py:83
+msgid "You don't have permissions for add/modify this task."
+msgstr "Tu no tienes permisos para añadir/modificar esta tarea."
+
+#: projects/tasks/models.py:20 projects/userstories/models.py:20
+msgid "user story"
+msgstr "historia de usuario"
+
+#: projects/tasks/models.py:49
+msgid "is iocaine"
+msgstr "es iocaina"
+
+#: projects/userstories/api.py:55
+msgid "You don't have permissions for add attachments to this user story"
+msgstr ""
+"Tu no tienes permisos para añadir ficheros adjuntos a esta historia de "
+"usuario."
+
+#: projects/userstories/api.py:75 projects/userstories/api.py:99
+msgid "bulkStories parameter is mandatory"
+msgstr ""
+
+#: projects/userstories/api.py:79
+msgid "projectId parameter is mandatory"
+msgstr ""
+
+#: projects/userstories/api.py:84 projects/userstories/api.py:108
+msgid "You don't have permisions to create user stories."
+msgstr "Tu no tienes permisos para crear historias de usuario."
+
+#: projects/userstories/api.py:103
+msgid "projectId parameter ir mandatory"
+msgstr ""
+
+#: projects/userstories/api.py:126 projects/userstories/api.py:129
+#: projects/userstories/api.py:132
+msgid "You don't have permissions for add/modify this user story"
+msgstr "Tu no tienes permisos para crear o modificar esta historia de usuario."
+
+#: projects/userstories/models.py:23
+msgid "role"
+msgstr "rol"
+
+#: projects/userstories/models.py:26 projects/userstories/models.py:57
+msgid "points"
+msgstr "puntos"
+
+#: projects/userstories/models.py:65
+msgid "finish date"
+msgstr "fecha de fin"
+
+#: projects/userstories/models.py:72
+msgid "is client requirement"
+msgstr "es requisito del cliente"
+
+#: projects/userstories/models.py:74
+msgid "is team requirement"
+msgstr "es requisito del equipo"
+
+#: projects/wiki/api.py:39
+msgid "You don't have permissions for add attachments to this wiki page."
+msgstr ""
+"Tu no tienes permisos para añadir ficheros adjuntos a esta pagina de wiki."
+
+#: projects/wiki/api.py:65
+msgid "You don't haver permissions for add/modify this wiki page."
+msgstr "Tu no tienes permisos para crear or modificar esta pagina de wiki."
+
+#: settings/common.py:28
+msgid "English"
+msgstr "Ingles"
+
+#: settings/common.py:29
+msgid "Spanish"
+msgstr "Español"
