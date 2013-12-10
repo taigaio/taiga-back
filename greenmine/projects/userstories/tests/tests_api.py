@@ -171,7 +171,7 @@ class UserStoriesTestCase(test.TestCase):
             reverse("userstories-list"),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()
 
@@ -192,7 +192,7 @@ class UserStoriesTestCase(test.TestCase):
             reverse("userstories-list"),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()
 
@@ -212,7 +212,7 @@ class UserStoriesTestCase(test.TestCase):
             reverse("userstories-list"),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()
 
@@ -255,7 +255,7 @@ class UserStoriesTestCase(test.TestCase):
             reverse("userstories-list"),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()
 
@@ -276,7 +276,7 @@ class UserStoriesTestCase(test.TestCase):
             reverse("userstories-list"),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()
 
@@ -296,7 +296,7 @@ class UserStoriesTestCase(test.TestCase):
             reverse("userstories-list"),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()
 
@@ -318,7 +318,7 @@ class UserStoriesTestCase(test.TestCase):
             reverse("userstories-list"),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()
 
@@ -387,7 +387,7 @@ class UserStoriesTestCase(test.TestCase):
             reverse("userstories-detail", args=(self.userstory1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()
 
@@ -404,7 +404,7 @@ class UserStoriesTestCase(test.TestCase):
             reverse("userstories-detail", args=(self.userstory1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()
 
@@ -459,7 +459,7 @@ class UserStoriesTestCase(test.TestCase):
             reverse("userstories-detail", args=(self.userstory1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()
 
@@ -476,7 +476,7 @@ class UserStoriesTestCase(test.TestCase):
             reverse("userstories-detail", args=(self.userstory1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()
 
@@ -531,7 +531,7 @@ class UserStoriesTestCase(test.TestCase):
             reverse("userstories-detail", args=(self.userstory1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()
 
@@ -548,7 +548,7 @@ class UserStoriesTestCase(test.TestCase):
             reverse("userstories-detail", args=(self.userstory1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()
 

@@ -184,7 +184,7 @@ class WikiPagesTestCase(test.TestCase):
             reverse("wiki-list"),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(WikiPage.objects.all().count(), 2)
         self.client.logout()
 
@@ -204,7 +204,7 @@ class WikiPagesTestCase(test.TestCase):
             reverse("wiki-list"),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(WikiPage.objects.all().count(), 2)
         self.client.logout()
 
@@ -256,7 +256,7 @@ class WikiPagesTestCase(test.TestCase):
             reverse("wiki-detail", args=(self.wiki_page1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(WikiPage.objects.all().count(), 2)
         self.client.logout()
 
@@ -294,7 +294,7 @@ class WikiPagesTestCase(test.TestCase):
             reverse("wiki-detail", args=(self.wiki_page1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(WikiPage.objects.all().count(), 2)
         self.client.logout()
 
@@ -332,7 +332,7 @@ class WikiPagesTestCase(test.TestCase):
             reverse("wiki-detail", args=(self.wiki_page1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(WikiPage.objects.all().count(), 2)
         self.client.logout()
 
