@@ -86,7 +86,7 @@ class MembershipViewSet(ModelCrudViewSet):
                                            Q(project_id=serializer.data["project"],
                                              email=serializer.data["email"]))
             if qs.count() > 0:
-                raise exc.WrongArguments(_("Already exist user with specified email address."))
+                raise exc.WrongArguments(_("Email address is already taken."))
 
             self.pre_save(serializer.object)
             self.object = serializer.save(force_insert=True)

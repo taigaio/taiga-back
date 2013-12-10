@@ -79,22 +79,22 @@ class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
 
         if (obj.project.owner != self.request.user and
                 obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PreconditionError(_("You must not add a new issue to this project."))
+            raise exc.PermissionDenied(_("You don't have permissions for add/modify this issue."))
 
         if obj.milestone and obj.milestone.project != obj.project:
-            raise exc.PreconditionError(_("You must not add a new issue to this milestone."))
+            raise exc.PermissionDenied(_("You don't have permissions for add/modify this issue."))
 
         if obj.status and obj.status.project != obj.project:
-            raise exc.PreconditionError(_("You must not use a status from other project."))
+            raise exc.PermissionDenied(_("You don't have permissions for add/modify this issue."))
 
         if obj.severity and obj.severity.project != obj.project:
-            raise exc.PreconditionError(_("You must not use a severity from other project."))
+            raise exc.PermissionDenied(_("You don't have permissions for add/modify this issue."))
 
         if obj.priority and obj.priority.project != obj.project:
-            raise exc.PreconditionError(_("You must not use a priority from other project."))
+            raise exc.PermissionDenied(_("You don't have permissions for add/modify this issue."))
 
         if obj.type and obj.type.project != obj.project:
-            raise exc.PreconditionError(_("You must not use a type from other project."))
+            raise exc.PermissionDenied(_("You don't have permissions for add/modify this issue."))
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():
@@ -128,4 +128,5 @@ class IssueAttachmentViewSet(ModelCrudViewSet):
 
         if (obj.project.owner != self.request.user and
                 obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PreconditionError(_("You must not add a new issue attachment to this project."))
+            raise exc.PermissionDenied(_("You don't have permissions for add attachments "
+                                         "to this issue"))

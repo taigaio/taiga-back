@@ -36,7 +36,8 @@ class WikiAttachmentViewSet(ModelCrudViewSet):
 
         if (obj.project.owner != self.request.user and
                 obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PreconditionError(_("You must not add a new wiki page to this project."))
+            raise exc.PermissionDenied(_("You don't have permissions for add "
+                                         "attachments to this wiki page."))
 
     def pre_save(self, obj):
         if not obj.id:
@@ -61,8 +62,8 @@ class WikiViewSet(ModelCrudViewSet):
 
         if (obj.project.owner != self.request.user and
                 obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PreconditionError(_("You must not add a new wiki page to this project."))
-
+            raise exc.PermissionDenied(_("You don't haver permissions for add/modify "
+                                         "this wiki page."))
     def pre_save(self, obj):
         if not obj.owner:
             obj.owner = self.request.user

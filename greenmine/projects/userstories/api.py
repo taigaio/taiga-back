@@ -52,7 +52,8 @@ class UserStoryAttachmentViewSet(ModelCrudViewSet):
 
         if (obj.project.owner != self.request.user and
                 obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PreconditionError(_("You must not add a new user story attachment to this project."))
+            raise exc.PermissionDenied(_("You don't have permissions for "
+                                         "add attachments to this user story"))
 
 
 class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
@@ -71,16 +72,16 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
     def bulk_create(self, request, **kwargs):
         bulk_stories = request.DATA.get('bulkStories', None)
         if bulk_stories is None:
-            raise exc.BadRequest(detail=_('You need bulkStories data'))
+            raise exc.BadRequest(_('bulkStories parameter is mandatory'))
 
         project_id = request.DATA.get('projectId', None)
         if project_id is None:
-            raise exc.BadRequest(detail=_('You need projectId data'))
+            raise exc.BadRequest(_('projectId parameter is mandatory'))
 
         project = get_object_or_404(Project, id=project_id)
 
         if not has_project_perm(request.user, project, 'add_userstory'):
-            raise exc.PermissionDenied(_("You don't have permision to create user stories"))
+            raise exc.PermissionDenied(_("You don't have permisions to create user stories."))
 
         service = services.UserStoriesService()
         service.bulk_insert(project, request.user, bulk_stories)
@@ -95,16 +96,16 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
         bulk_stories = request.DATA.get("bulkStories", None)
 
         if bulk_stories is None:
-            raise exc.BadRequest("bulkStories is missing")
+            raise exc.BadRequest(_("bulkStories parameter is mandatory"))
 
         project_id = request.DATA.get('projectId', None)
         if project_id is None:
-            raise exc.BadRequest(detail='You need projectId data')
+            raise exc.BadRequest(_("projectId parameter ir mandatory"))
 
         project = get_object_or_404(Project, id=project_id)
 
         if not has_project_perm(request.user, project, 'add_userstory'):
-            raise exc.PermissionDenied("You don't have permision to create user stories")
+            raise exc.PermissionDenied(_("You don't have permisions to create user stories."))
 
         service = services.UserStoriesService()
         service.bulk_update_order(project, request.user, bulk_stories)
@@ -122,13 +123,13 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
 
         if (obj.project.owner != self.request.user and
                 obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PreconditionError(_("You must not add a new user story to this project."))
+            raise exc.PermissionDenied(_("You don't have permissions for add/modify this user story"))
 
         if obj.milestone and obj.milestone.project != obj.project:
-            raise exc.PreconditionError(_("You must not add a new user story to this milestone."))
+            raise exc.PermissionDenied(_("You don't have permissions for add/modify this user story"))
 
         if obj.status and obj.status.project != obj.project:
-            raise exc.PreconditionError(_("You must not use a status from other project."))
+            raise exc.PermissionDenied(_("You don't have permissions for add/modify this user story"))
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():

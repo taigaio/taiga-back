@@ -44,8 +44,8 @@ class TaskAttachmentViewSet(ModelCrudViewSet):
 
         if (obj.project.owner != self.request.user and
                 obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PreconditionError(_("You must not add a new task attachment to this project."))
-
+            raise exc.PermissionDenied(_("You don't have permissions for add "
+                                         "attachments to this task."))
 
 
 class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
@@ -71,16 +71,16 @@ class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
 
         if (obj.project.owner != self.request.user and
                 obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PreconditionError(_("You must not add a new task to this project."))
+            raise exc.PermissionDenied(_("You don't have permissions for add/modify this task."))
 
         if obj.milestone and obj.milestone.project != obj.project:
-            raise exc.PreconditionError(_("You must not add a task to this milestone."))
+            raise exc.PermissionDenied(_("You don't have permissions for add/modify this task."))
 
         if obj.user_story and obj.user_story.project != obj.project:
-            raise exc.PreconditionError(_("You must not add a task to this user story."))
+            raise exc.PermissionDenied(_("You don't have permissions for add/modify this task."))
 
         if obj.status and obj.status.project != obj.project:
-            raise exc.PreconditionError(_("You must not use a status from other project."))
+            raise exc.PermissionDenied(_("You don't have permissions for add/modify this task."))
 
     def post_save(self, obj, created=False):
         with reversion.create_revision():

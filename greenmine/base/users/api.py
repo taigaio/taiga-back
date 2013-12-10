@@ -84,10 +84,10 @@ class UsersViewSet(ModelCrudViewSet):
         password = request.DATA.get("password")
 
         if not password:
-            raise exc.WrongArguments(_("incomplete argiments"))
+            raise exc.WrongArguments(_("Incomplete arguments"))
 
         if len(password) < 6:
-            raise exc.WrongArguments(_("invalid password length"))
+            raise exc.WrongArguments(_("Invalid password length"))
 
         request.user.set_password(password)
         request.user.save(update_fields=["password"])
