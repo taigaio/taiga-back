@@ -167,8 +167,11 @@ def get_stats_for_project(project):
         'total_milestones': project.total_milestones,
         'total_points': project.total_story_points,
         'closed_points': sum(project.closed_points.values()),
+        'closed_points_per_role': project.closed_points,
         'defined_points': sum(project.defined_points.values()),
+        'defined_points_per_role': project.defined_points,
         'assigned_points': sum(project.assigned_points.values()),
+        'assigned_points_per_role': project.assigned_points,
         'milestones': _get_milestones_stats_for_backlog(project)
     }
     return project_stats
