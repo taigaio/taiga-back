@@ -2,13 +2,38 @@
 
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from .serializers import DomainSerializer
+from django.http import Http404
+
+from greenmine.base.api import ModelCrudViewSet, UpdateModelMixin
+from .serializers import DomainSerializer, DomainMemberSerializer
+from .permissions import DomainMembersPermission, DomainPermission
+from .models import DomainMember, Domain
 
 
-class DomainViewSet(viewsets.ViewSet):
-    permission_classes = (AllowAny,)
+class DomainViewSet(UpdateModelMixin, viewsets.GenericViewSet):
+    permission_classes = (IsAuthenticated, DomainPermission,)
+    serializer_class = DomainSerializer
+    queryset = Domain.objects.all()
 
     def list(self, request, **kwargs):
-        return Response(DomainSerializer(request.domain).data)
+        domain_data = DomainSerializer(request.domain).data
+        if request.domain.user_is_normal_user(request.user):
+            domain_data['projects'] = None
+        elif request.user.is_anonymous():
+            domain_data['projects'] = None
+        return Response(domain_data)
+
+    def update(self, request, **kwargs):
+        raise Http404
+
+    def create(self, request, **kwargs):
+        self.kwargs['pk'] = request.domain.pk
+        return super().update(request, pk=request.domain.pk, **kwargs)
+
+
+class DomainMembersViewSet(ModelCrudViewSet):
+    permission_classes = (IsAuthenticated, DomainMembersPermission,)
+    serializer_class = DomainMemberSerializer
+    queryset = DomainMember.objects.all()

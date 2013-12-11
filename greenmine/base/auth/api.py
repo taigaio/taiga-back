@@ -29,13 +29,17 @@ class AuthViewSet(viewsets.ViewSet):
     def _create_response(self, user):
         serializer = UserSerializer(user)
         response_data = serializer.data
+
+        domain = get_active_domain()
+        response_data['is_site_owner'] = domain.user_is_owner(user)
+        response_data['is_site_staff'] = domain.user_is_staff(user)
         response_data["auth_token"] = auth.get_token_for_user(user)
         return response_data
 
     def _create_domain_member(self, user):
         domain = get_active_domain()
 
-        if DomainMember.objects.filter(domain=domain, user=user).count() == 0:
+        if domain.members.filter(user=user).count() == 0:
             domain_member = DomainMember(domain=domain, user=user, email=user.email,
                                      is_owner=False, is_staff=False)
             domain_member.save()

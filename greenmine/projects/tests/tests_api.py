@@ -418,8 +418,8 @@ class ProjectsTestCase(test.TestCase):
                                      password=self.user3.username)
         self.assertTrue(response)
         response = self.client.delete(reverse("projects-detail", args=(self.project1.id,)))
-        self.assertEqual(response.status_code, 204)
-        self.assertEqual(Project.objects.all().count(), 3)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Project.objects.all().count(), 4)
         self.client.logout()
 
     def test_delete_project_by_not_membership(self):

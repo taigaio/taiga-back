@@ -1,16 +1,40 @@
 # -*- coding: utf-8 -*-
 
 from greenmine.base.permissions import BasePermission
+from greenmine.base.domains import get_active_domain
 
 
 class ProjectPermission(BasePermission):
     get_permission = "view_project"
-    post_permission = "add_project"
+    post_permission = None
     put_permission = "change_project"
     patch_permission = "change_project"
-    delete_permission = "delete_project"
+    delete_permission = None
     safe_methods = ["HEAD", "OPTIONS"]
     path_to_project =  []
+
+class ProjectAdminPermission(BasePermission):
+    def has_permission(self, request, view):
+        if request.method in self.safe_methods:
+            return True
+
+        domain = get_active_domain()
+        if request.method in ["POST", "PUT", "GET", "PATCH"]:
+            return domain.user_is_staff(request.user)
+        elif request.method == "DELETE":
+            return domain.user_is_owner(request.user)
+        return super().has_permission(request, view)
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in self.safe_methods:
+            return True
+
+        domain = get_active_domain()
+        if request.method in ["POST", "PUT", "GET", "PATCH"]:
+            return domain.user_is_staff(request.user)
+        elif request.method == "DELETE":
+            return domain.user_is_owner(request.user)
+        return super().has_object_permission(request, view, obj)
 
 
 class MembershipPermission(BasePermission):

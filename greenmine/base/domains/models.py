@@ -45,9 +45,18 @@ class Domain(models.Model):
     def __str__(self):
         return self.domain
 
+    def user_is_owner(self, user):
+        return self.members.filter(id=user.id, is_owner=True).count() > 0
+
+    def user_is_staff(self, user):
+        return self.members.filter(id=user.id, is_staff=True).count() > 0
+
+    def user_is_normal_user(self, user):
+        return self.members.filter(id=user.id, is_owner=False, is_staff=False).count() > 0
+
 
 class DomainMember(models.Model):
-    domain = models.ForeignKey("Domain", related_name="+", null=True)
+    domain = models.ForeignKey("Domain", related_name="members", null=True)
     user = models.ForeignKey("users.User", related_name="+", null=True)
 
     email = models.EmailField(max_length=255)

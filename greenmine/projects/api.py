@@ -16,6 +16,7 @@ from djmail.template_mail import MagicMailBuilder
 from greenmine.base import filters
 from greenmine.base import exceptions as exc
 from greenmine.base.api import ModelCrudViewSet, ModelListViewSet, RetrieveModelMixin
+from greenmine.base.domains import get_active_domain
 from greenmine.base.notifications.api import NotificationSenderMixin
 from greenmine.projects.aggregates.tags import get_all_tags
 
@@ -25,6 +26,29 @@ from . import permissions
 
 from .aggregates import stats
 from .aggregates import filters as filters_aggr
+
+
+class ProjectAdminViewSet(ModelCrudViewSet):
+    model = models.Project
+    serializer_class = serializers.ProjectDetailSerializer
+    list_serializer_class = serializers.ProjectSerializer
+    permission_classes = (IsAuthenticated, permissions.ProjectAdminPermission)
+
+    def get_queryset(self):
+        domain = get_active_domain()
+        return domain.projects.all()
+
+    def pre_save(self, obj):
+        obj.owner = self.request.user
+
+        # FIXME
+
+        # Assign domain only if it current
+        # value is None
+        if not obj.domain:
+            obj.domain = self.request.domain
+
+        super().pre_save(obj)
 
 
 class ProjectViewSet(ModelCrudViewSet):
