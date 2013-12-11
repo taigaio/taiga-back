@@ -7,18 +7,13 @@ from .models import User, Role
 
 
 class UserSerializer(serializers.ModelSerializer):
-    projects = serializers.SerializerMethodField('get_projects')
     full_name = serializers.CharField(source='get_full_name', required=False)
 
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name', 'last_name', 'full_name', 'email',
                   'color', 'description', 'default_language', 'default_timezone',
-                  'is_active', 'photo', 'projects', 'notify_level',
-                  'notify_changes_by_me')
-
-    def get_projects(self, obj):
-        return [{"id": x.id, "name": x.name} for x in obj.projects.all()]
+                  'is_active', 'photo', 'notify_level', 'notify_changes_by_me')
 
 
 class RecoverySerializer(serializers.Serializer):
