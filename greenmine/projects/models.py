@@ -193,12 +193,19 @@ class Project(ProjectDefaults, models.Model):
         user_stories = UserStory.objects.none()
         last_milestones = self.milestones.order_by('-estimated_finish')
         last_milestone = last_milestones[0] if last_milestones else None
-        user_stories = UserStory.objects.filter(
-            created_date__gte=last_milestone.estimated_finish if last_milestones else None,
-            project_id=self.id,
-            client_requirement=client_requirement,
-            team_requirement=team_requirement
-        )
+        if last_milestone:
+            user_stories = UserStory.objects.filter(
+                created_date__gte=last_milestone.estimated_finish,
+                project_id=self.id,
+                client_requirement=client_requirement,
+                team_requirement=team_requirement
+            )
+        else:
+            user_stories = UserStory.objects.filter(
+                project_id=self.id,
+                client_requirement=client_requirement,
+                team_requirement=team_requirement
+            )
         return self._get_user_stories_points(user_stories)
 
     @property
