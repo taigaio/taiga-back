@@ -128,7 +128,7 @@ class InvitationViewSet(RetrieveModelMixin, viewsets.GenericViewSet):
 
 # User Stories commin ViewSets
 
-class PointsViewSet(ModelListViewSet):
+class PointsViewSet(ModelCrudViewSet):
     model = models.Points
     serializer_class = serializers.PointsSerializer
     permission_classes = (IsAuthenticated, permissions.PointsPermission)
@@ -136,7 +136,7 @@ class PointsViewSet(ModelListViewSet):
     filter_fields = ('project',)
 
 
-class UserStoryStatusViewSet(ModelListViewSet):
+class UserStoryStatusViewSet(ModelCrudViewSet):
     model = models.UserStoryStatus
     serializer_class = serializers.UserStoryStatusSerializer
     permission_classes = (IsAuthenticated, permissions.UserStoryStatusPermission)
@@ -146,7 +146,7 @@ class UserStoryStatusViewSet(ModelListViewSet):
 
 # Tasks commin ViewSets
 
-class TaskStatusViewSet(ModelListViewSet):
+class TaskStatusViewSet(ModelCrudViewSet):
     model = models.TaskStatus
     serializer_class = serializers.TaskStatusSerializer
     permission_classes = (IsAuthenticated, permissions.TaskStatusPermission)
@@ -156,7 +156,7 @@ class TaskStatusViewSet(ModelListViewSet):
 
 # Issues common ViewSets
 
-class SeverityViewSet(ModelListViewSet):
+class SeverityViewSet(ModelCrudViewSet):
     model = models.Severity
     serializer_class = serializers.SeveritySerializer
     permission_classes = (IsAuthenticated, permissions.SeverityPermission)
@@ -164,7 +164,7 @@ class SeverityViewSet(ModelListViewSet):
     filter_fields = ("project",)
 
 
-class PriorityViewSet(ModelListViewSet):
+class PriorityViewSet(ModelCrudViewSet):
     model = models.Priority
     serializer_class = serializers.PrioritySerializer
     permission_classes = (IsAuthenticated, permissions.PriorityPermission)
@@ -172,7 +172,7 @@ class PriorityViewSet(ModelListViewSet):
     filter_fields = ("project",)
 
 
-class IssueTypeViewSet(ModelListViewSet):
+class IssueTypeViewSet(ModelCrudViewSet):
     model = models.IssueType
     serializer_class = serializers.IssueTypeSerializer
     permission_classes = (IsAuthenticated, permissions.IssueTypePermission)
@@ -180,7 +180,7 @@ class IssueTypeViewSet(ModelListViewSet):
     filter_fields = ("project",)
 
 
-class IssueStatusViewSet(ModelListViewSet):
+class IssueStatusViewSet(ModelCrudViewSet):
     model = models.IssueStatus
     serializer_class = serializers.IssueStatusSerializer
     permission_classes = (IsAuthenticated, permissions.IssueStatusPermission)
@@ -190,7 +190,7 @@ class IssueStatusViewSet(ModelListViewSet):
 
 # Questions commin ViewSets
 
-class QuestionStatusViewSet(ModelListViewSet):
+class QuestionStatusViewSet(ModelCrudViewSet):
     model = models.QuestionStatus
     serializer_class = serializers.QuestionStatusSerializer
     permission_classes = (IsAuthenticated, permissions.QuestionStatusPermission)
