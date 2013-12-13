@@ -4,6 +4,7 @@ import string
 
 from django.db import models
 from django.db.models.signals import pre_save, pre_delete
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
@@ -75,3 +76,8 @@ class DomainMember(models.Model):
 
 pre_save.connect(clear_domain_cache, sender=Domain)
 pre_delete.connect(clear_domain_cache, sender=Domain)
+
+@receiver(pre_delete, sender=DomainMember, dispatch_uid="domain_member_pre_delete")
+def domain_member_pre_delete(sender, instance, *args, **kwargs):
+    for domain_project in instance.domain.projects.all():
+        domain_project.memberships.filter(user=instance.user).delete()

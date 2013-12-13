@@ -20,6 +20,7 @@ import reversion
 from greenmine.base.utils.slug import slugify_uniquely
 from greenmine.base.utils.dicts import dict_sum
 from greenmine.projects.userstories.models import UserStory
+from greenmine.base.domains.models import DomainMember
 from . import choices
 
 
@@ -487,6 +488,14 @@ reversion.register(Attachment)
           dispatch_uid='membership_post_save')
 def membership_post_save(sender, instance, created, **kwargs):
     instance.project.update_role_points()
+    if instance.user and instance.project.domain.members.filter(user=instance.user).count() == 0:
+        DomainMember.objects.create(
+            domain=instance.project.domain,
+            user=instance.user,
+            email=instance.email,
+            is_owner=False,
+            is_staff=False
+        )
 
 
 # On membership object is deleted, update role-points relation.
