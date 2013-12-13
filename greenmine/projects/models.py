@@ -488,7 +488,7 @@ reversion.register(Attachment)
           dispatch_uid='membership_post_save')
 def membership_post_save(sender, instance, created, **kwargs):
     instance.project.update_role_points()
-    if instance.user and instance.project.domain.members.filter(user=instance.user).count() == 0:
+    if instance.user and instance.project.domain and instance.project.domain.members.filter(user=instance.user).count() == 0:
         DomainMember.objects.create(
             domain=instance.project.domain,
             user=instance.user,
