@@ -4,8 +4,10 @@ import uuid
 
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
+from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework import viewsets
@@ -15,6 +17,7 @@ from djmail.template_mail import MagicMailBuilder
 
 from greenmine.base import filters
 from greenmine.base import exceptions as exc
+from greenmine.base.permissions import has_project_perm
 from greenmine.base.api import ModelCrudViewSet, ModelListViewSet, RetrieveModelMixin
 from greenmine.base.domains import get_active_domain
 from greenmine.base.notifications.api import NotificationSenderMixin
@@ -23,6 +26,7 @@ from greenmine.projects.aggregates.tags import get_all_tags
 from . import serializers
 from . import models
 from . import permissions
+from . import services
 
 from .aggregates import stats
 from .aggregates import filters as filters_aggr
@@ -159,6 +163,30 @@ class PointsViewSet(ModelCrudViewSet):
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ('project',)
 
+    @list_route(methods=["POST"])
+    def bulk_update_order(self, request, **kwargs):
+        # bulk_points should be:
+        # [[1,1],[23, 2], ...]
+
+        bulk_points = request.DATA.get("bulk_points", None)
+
+        if bulk_points is None:
+            raise exc.BadRequest(_("bulk_points parameter is mandatory"))
+
+        project_id = request.DATA.get('project', None)
+        if project_id is None:
+            raise exc.BadRequest(_("project parameter ir mandatory"))
+
+        project = get_object_or_404(models.Project, id=project_id)
+
+        if not has_project_perm(request.user, project, 'change_points'):
+            raise exc.PermissionDenied(_("You don't have permisions to change points."))
+
+        service = services.PointsService()
+        service.bulk_update_order(project, request.user, bulk_points)
+
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+
 
 class UserStoryStatusViewSet(ModelCrudViewSet):
     model = models.UserStoryStatus
@@ -166,6 +194,30 @@ class UserStoryStatusViewSet(ModelCrudViewSet):
     permission_classes = (IsAuthenticated, permissions.UserStoryStatusPermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ('project',)
+
+    @list_route(methods=["POST"])
+    def bulk_update_order(self, request, **kwargs):
+        # bulk_userstory_statuses should be:
+        # [[1,1],[23, 2], ...]
+
+        bulk_userstory_statuses = request.DATA.get("bulk_userstory_statuses", None)
+
+        if bulk_userstory_statuses is None:
+            raise exc.BadRequest(_("bulk_userstory_statuses parameter is mandatory"))
+
+        project_id = request.DATA.get('project', None)
+        if project_id is None:
+            raise exc.BadRequest(_("project parameter ir mandatory"))
+
+        project = get_object_or_404(models.Project, id=project_id)
+
+        if not has_project_perm(request.user, project, 'change_userstorystatus'):
+            raise exc.PermissionDenied(_("You don't have permisions to change user_story_statuses."))
+
+        service = services.UserStoryStatusesService()
+        service.bulk_update_order(project, request.user, bulk_userstory_statuses)
+
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
 
 # Tasks commin ViewSets
@@ -177,6 +229,30 @@ class TaskStatusViewSet(ModelCrudViewSet):
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ("project",)
 
+    @list_route(methods=["POST"])
+    def bulk_update_order(self, request, **kwargs):
+        # bulk_task_statuses should be:
+        # [[1,1],[23, 2], ...]
+
+        bulk_task_statuses = request.DATA.get("bulk_task_statuses", None)
+
+        if bulk_task_statuses is None:
+            raise exc.BadRequest(_("bulk_task_statuses parameter is mandatory"))
+
+        project_id = request.DATA.get('project', None)
+        if project_id is None:
+            raise exc.BadRequest(_("project parameter ir mandatory"))
+
+        project = get_object_or_404(models.Project, id=project_id)
+
+        if not has_project_perm(request.user, project, 'change_taskstatus'):
+            raise exc.PermissionDenied(_("You don't have permisions to change task_statuses."))
+
+        service = services.TaskStatusesService()
+        service.bulk_update_order(project, request.user, bulk_task_statuses)
+
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+
 
 # Issues common ViewSets
 
@@ -187,6 +263,30 @@ class SeverityViewSet(ModelCrudViewSet):
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ("project",)
 
+    @list_route(methods=["POST"])
+    def bulk_update_order(self, request, **kwargs):
+        # bulk_severities should be:
+        # [[1,1],[23, 2], ...]
+
+        bulk_severities = request.DATA.get("bulk_severities", None)
+
+        if bulk_severities is None:
+            raise exc.BadRequest(_("bulk_severities parameter is mandatory"))
+
+        project_id = request.DATA.get('project', None)
+        if project_id is None:
+            raise exc.BadRequest(_("project parameter ir mandatory"))
+
+        project = get_object_or_404(models.Project, id=project_id)
+
+        if not has_project_perm(request.user, project, 'change_severity'):
+            raise exc.PermissionDenied(_("You don't have permisions to change severities."))
+
+        service = services.SeveritiesService()
+        service.bulk_update_order(project, request.user, bulk_severities)
+
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+
 
 class PriorityViewSet(ModelCrudViewSet):
     model = models.Priority
@@ -194,6 +294,30 @@ class PriorityViewSet(ModelCrudViewSet):
     permission_classes = (IsAuthenticated, permissions.PriorityPermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ("project",)
+
+    @list_route(methods=["POST"])
+    def bulk_update_order(self, request, **kwargs):
+        # bulk_priorities should be:
+        # [[1,1],[23, 2], ...]
+
+        bulk_priorities = request.DATA.get("bulk_priorities", None)
+
+        if bulk_priorities is None:
+            raise exc.BadRequest(_("bulk_priorities parameter is mandatory"))
+
+        project_id = request.DATA.get('project', None)
+        if project_id is None:
+            raise exc.BadRequest(_("project parameter ir mandatory"))
+
+        project = get_object_or_404(models.Project, id=project_id)
+
+        if not has_project_perm(request.user, project, 'change_priority'):
+            raise exc.PermissionDenied(_("You don't have permisions to change priorities."))
+
+        service = services.PrioritiesService()
+        service.bulk_update_order(project, request.user, bulk_priorities)
+
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueTypeViewSet(ModelCrudViewSet):
@@ -203,6 +327,30 @@ class IssueTypeViewSet(ModelCrudViewSet):
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ("project",)
 
+    @list_route(methods=["POST"])
+    def bulk_update_order(self, request, **kwargs):
+        # bulk_issue_types should be:
+        # [[1,1],[23, 2], ...]
+
+        bulk_issue_types = request.DATA.get("bulk_issue_types", None)
+
+        if bulk_issue_types is None:
+            raise exc.BadRequest(_("bulk_riorities parameter is mandatory"))
+
+        project_id = request.DATA.get('project', None)
+        if project_id is None:
+            raise exc.BadRequest(_("project parameter ir mandatory"))
+
+        project = get_object_or_404(models.Project, id=project_id)
+
+        if not has_project_perm(request.user, project, 'change_issuetype'):
+            raise exc.PermissionDenied(_("You don't have permisions to change issue_types."))
+
+        service = services.IssueTypesService()
+        service.bulk_update_order(project, request.user, bulk_issue_types)
+
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+
 
 class IssueStatusViewSet(ModelCrudViewSet):
     model = models.IssueStatus
@@ -210,6 +358,30 @@ class IssueStatusViewSet(ModelCrudViewSet):
     permission_classes = (IsAuthenticated, permissions.IssueStatusPermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ("project",)
+
+    @list_route(methods=["POST"])
+    def bulk_update_order(self, request, **kwargs):
+        # bulk_issue_statuses should be:
+        # [[1,1],[23, 2], ...]
+
+        bulk_issue_statuses = request.DATA.get("bulk_issue_statuses", None)
+
+        if bulk_issue_statuses is None:
+            raise exc.BadRequest(_("bulk_riorities parameter is mandatory"))
+
+        project_id = request.DATA.get('project', None)
+        if project_id is None:
+            raise exc.BadRequest(_("project parameter ir mandatory"))
+
+        project = get_object_or_404(models.Project, id=project_id)
+
+        if not has_project_perm(request.user, project, 'change_issuestatus'):
+            raise exc.PermissionDenied(_("You don't have permisions to change issue_statuses."))
+
+        service = services.IssueStatusesService()
+        service.bulk_update_order(project, request.user, bulk_issue_statuses)
+
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
 
 # Questions commin ViewSets
@@ -220,3 +392,27 @@ class QuestionStatusViewSet(ModelCrudViewSet):
     permission_classes = (IsAuthenticated, permissions.QuestionStatusPermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ("project",)
+
+    @list_route(methods=["POST"])
+    def bulk_update_order(self, request, **kwargs):
+        # bulk_question_statuses should be:
+        # [[1,1],[23, 2], ...]
+
+        bulk_question_statuses = request.DATA.get("bulk_question_statuses", None)
+
+        if bulk_question_statuses is None:
+            raise exc.BadRequest(_("bulk_question_statuses parameter is mandatory"))
+
+        project_id = request.DATA.get('project', None)
+        if project_id is None:
+            raise exc.BadRequest(_("project parameter ir mandatory"))
+
+        project = get_object_or_404(models.Project, id=project_id)
+
+        if not has_project_perm(request.user, project, 'change_questionstatus'):
+            raise exc.PermissionDenied(_("You don't have permisions to change question_statuses."))
+
+        service = services.QuestionStatusesService()
+        service.bulk_update_order(project, request.user, bulk_question_statuses)
+
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
