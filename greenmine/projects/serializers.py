@@ -149,6 +149,7 @@ class ProjectDetailSerializer(ProjectSerializer):
                 "id": milestone.id,
                 "name": milestone.name,
                 "finish_date": milestone.estimated_finish,
+                "total_points": milestone.total_points,
                 "closed_points": milestone.closed_points,
                 "client_increment_points": milestone.client_increment_points,
                 "team_increment_points": milestone.team_increment_points,
