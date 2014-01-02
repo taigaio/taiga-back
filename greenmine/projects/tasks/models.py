@@ -11,6 +11,8 @@ from picklefield.fields import PickledObjectField
 
 from greenmine.base.utils.slug import ref_uniquely
 from greenmine.base.notifications.models import WatchedMixin
+from greenmine.projects.userstories.models import UserStory
+from greenmine.projects.milestones.models import Milestone
 
 import reversion
 
@@ -104,20 +106,31 @@ def task_ref_handler(sender, instance, **kwargs):
     if not instance.id and instance.project:
         instance.ref = ref_uniquely(instance.project, "last_task_ref", instance.__class__)
 
+def us_has_open_tasks(us, exclude_task):
+    qs = us.tasks.all()
+    if exclude_task.pk:
+        qs = qs.exclude(pk=exclude_task.pk)
+
+    return not all(task.status.is_closed for task in qs)
+
+def milestone_has_open_userstories(milestone):
+    qs = milestone.user_stories.exclude(is_closed=True)
+    return qs.exists()
+
+@receiver(models.signals.post_delete, sender=Task, dispatch_uid="tasks_close_handler_on_delete")
+def tasks_close_handler_on_delete(sender, instance, **kwargs):
+    if instance.user_story_id and UserStory.objects.filter(id=instance.user_story_id) and not us_has_open_tasks(us=instance.user_story, exclude_task=instance):
+        instance.user_story.is_closed = True
+        instance.user_story.finish_date = timezone.now()
+        instance.user_story.save(update_fields=["is_closed", "finish_date"])
+
+    if instance.milestone_id and Milestone.objects.filter(id=instance.milestone_id):
+        if not milestone_has_open_userstories(instance.milestone):
+            instance.milestone.closed = True
+            instance.milestone.save(update_fields=["closed"])
 
 @receiver(models.signals.pre_save, sender=Task, dispatch_uid="tasks_close_handler")
 def tasks_close_handler(sender, instance, **kwargs):
-    def us_has_open_tasks(us, exclude_task):
-        qs = us.tasks.all()
-        if exclude_task.pk:
-            qs = qs.exclude(pk=exclude_task.pk)
-
-        return not all(task.status.is_closed for task in qs)
-
-    def milestone_has_open_userstories(milestone):
-        qs = milestone.user_stories.exclude(is_closed=True)
-        return qs.exists()
-
     if instance.id:
         orig_instance = sender.objects.get(id=instance.id)
     else:
