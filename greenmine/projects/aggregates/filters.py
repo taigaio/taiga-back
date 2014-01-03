@@ -14,7 +14,7 @@ def _get_issues_tags(project):
         cursor.execute(extra_sql, [project.id])
         rows = cursor.fetchall()
 
-    return dict(rows)
+    return rows
 
 def _get_issues_statuses(project):
     extra_sql = ("select status_id, count(status_id) from issues_issue "
@@ -24,14 +24,14 @@ def _get_issues_statuses(project):
     select id, (select count(*) from issues_issue
                     where project_id = m.project_id and status_id = m.id)
         from projects_issuestatus as m
-        where project_id = %s;
+        where project_id = %s order by m.order;
     """
 
     with closing(connection.cursor()) as cursor:
         cursor.execute(extra_sql, [project.id])
         rows = cursor.fetchall()
 
-    return dict(rows)
+    return rows
 
 
 def _get_issues_priorities(project):
@@ -39,29 +39,28 @@ def _get_issues_priorities(project):
     select id, (select count(*) from issues_issue
                 where project_id = m.project_id and priority_id = m.id)
         from projects_priority as m
-        where project_id = %s;
+        where project_id = %s order by m.order;
     """
 
     with closing(connection.cursor()) as cursor:
         cursor.execute(extra_sql, [project.id])
         rows = cursor.fetchall()
 
-    return dict(rows)
-
+    return rows
 
 def _get_issues_types(project):
     extra_sql = """
     select id, (select count(*) from issues_issue
                 where project_id = m.project_id and type_id = m.id)
         from projects_issuetype as m
-        where project_id = %s;
+        where project_id = %s order by m.order;
     """
 
     with closing(connection.cursor()) as cursor:
         cursor.execute(extra_sql, [project.id])
         rows = cursor.fetchall()
 
-    return dict(rows)
+    return rows
 
 
 def _get_issues_severities(project):
@@ -69,14 +68,14 @@ def _get_issues_severities(project):
     select id, (select count(*) from issues_issue
                 where project_id = m.project_id and severity_id = m.id)
         from projects_severity as m
-        where project_id = %s;
+        where project_id = %s order by m.order;
     """
 
     with closing(connection.cursor()) as cursor:
         cursor.execute(extra_sql, [project.id])
         rows = cursor.fetchall()
 
-    return dict(rows)
+    return rows
 
 
 def _get_issues_assigned_to(project):
@@ -91,7 +90,7 @@ def _get_issues_assigned_to(project):
         cursor.execute(extra_sql, [project.id])
         rows = cursor.fetchall()
 
-    return dict(rows)
+    return rows
 
 
 def _get_issues_owners(project):
@@ -106,7 +105,7 @@ def _get_issues_owners(project):
         cursor.execute(extra_sql, [project.id])
         rows = cursor.fetchall()
 
-    return dict(rows)
+    return rows
 
 
 def _get_issues_created_by(project):
@@ -121,7 +120,7 @@ def _get_issues_created_by(project):
         cursor.execute(extra_sql, [project.id])
         rows = cursor.fetchall()
 
-    return dict(rows)
+    return rows
 
 
 def get_issues_filters_data(project):
