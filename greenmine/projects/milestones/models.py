@@ -18,6 +18,7 @@ import datetime
 class Milestone(WatchedMixin, models.Model):
     name = models.CharField(max_length=200, db_index=True, null=False, blank=False,
                             verbose_name=_("name"))
+    # TODO: Change the unique restriction to a unique together with the project id
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
                             verbose_name=_("slug"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,

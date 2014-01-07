@@ -5,6 +5,7 @@ from greenmine.base.auth.api import AuthViewSet
 from greenmine.base.users.api import RolesViewSet, UsersViewSet
 from greenmine.base.searches.api import SearchViewSet
 from greenmine.base.domains.api import DomainViewSet, DomainMembersViewSet
+from greenmine.base.resolver.api import ResolverViewSet
 from greenmine.projects.api import (ProjectViewSet, MembershipViewSet, InvitationViewSet,
                                     UserStoryStatusViewSet, PointsViewSet, TaskStatusViewSet,
                                     IssueStatusViewSet, IssueTypeViewSet, PriorityViewSet,
@@ -24,6 +25,9 @@ router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", UsersViewSet, base_name="users")
 router.register(r"roles", RolesViewSet, base_name="roles")
 router.register(r"auth", AuthViewSet, base_name="auth")
+
+# greenmine.base.resolver
+router.register(r"resolver", ResolverViewSet, base_name="resolver")
 
 # greenmine.base.searches
 router.register(r"search", SearchViewSet, base_name="search")
