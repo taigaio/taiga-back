@@ -56,6 +56,7 @@ class MilestoneViewSet(NotificationSenderMixin, ModelCrudViewSet):
             'completed_userstories': len([us for us in milestone.user_stories.all() if us.is_closed]),
             'total_tasks': milestone.tasks.all().count(),
             'completed_tasks': milestone.tasks.all().filter(status__is_closed=True).count(),
+            'iocaine_doses': milestone.tasks.filter(is_iocaine=True).count(),
             'days': []
         }
         current_date = milestone.estimated_start
