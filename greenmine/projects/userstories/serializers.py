@@ -24,6 +24,7 @@ class UserStorySerializer(serializers.ModelSerializer):
     points = RolePointsField(source="role_points", required=False )
     total_points = serializers.SerializerMethodField("get_total_points")
     comment = serializers.SerializerMethodField("get_comment")
+    milestone_slug = serializers.SerializerMethodField("get_milestone_slug")
 
     class Meta:
         model = models.UserStory
@@ -48,3 +49,9 @@ class UserStorySerializer(serializers.ModelSerializer):
 
     def get_comment(self, obj):
         return ""
+
+    def get_milestone_slug(self, obj):
+        if obj.milestone:
+            return obj.milestone.slug
+        else:
+            return None
