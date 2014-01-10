@@ -37,10 +37,12 @@ class Membership(models.Model):
                              related_name="memberships")
 
     # Invitation metadata
-    email = models.EmailField(max_length=255, default=None, null=True)
-    created_at = models.DateTimeField(auto_now_add=True, default=timezone.now)
-    token = models.CharField(max_length=60, unique=True, blank=True, null=True,
-                             default=None)
+    email = models.EmailField(max_length=255, default=None, null=True, blank=True,
+                              verbose_name=_("email"))
+    created_at = models.DateTimeField(auto_now_add=True, default=timezone.now,
+                                      verbose_name=_("creado el"))
+    token = models.CharField(max_length=60, blank=True, null=True, default=None,
+                             verbose_name=_("token"))
 
     class Meta:
         verbose_name = "membership"
@@ -49,7 +51,6 @@ class Membership(models.Model):
         permissions = (
             ("view_membership", "Can view membership"),
         )
-
 
 
 class ProjectDefaults(models.Model):
@@ -115,7 +116,8 @@ class Project(ProjectDefaults, models.Model):
     total_story_points = models.FloatField(default=None, null=True, blank=False,
                                            verbose_name=_("total story points"))
     tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
-    domain = models.ForeignKey("domains.Domain", related_name="projects", null=True, default=None)
+    domain = models.ForeignKey("domains.Domain", related_name="projects", null=True, blank=True,
+                               default=None, verbose_name=_("domain"))
 
     notifiable_fields = [
         "name",

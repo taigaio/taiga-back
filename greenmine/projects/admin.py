@@ -34,7 +34,7 @@ class MembershipInline(admin.TabularInline):
 
 class ProjectAdmin(reversion.VersionAdmin):
     list_display = ["name", "owner", "created_date", "total_milestones",
-                    "total_story_points"]
+                    "total_story_points", "domain"]
     list_display_links = list_display
     inlines = [MembershipInline, MilestoneInline]
 
@@ -46,12 +46,12 @@ class ProjectAdmin(reversion.VersionAdmin):
         if (db_field.name in ["default_points", "default_us_status", "default_task_status",
                               "default_priority", "default_severity",
                               "default_issue_status", "default_issue_type",
-                              "default_question_status"]
-                and getattr(self, 'obj', None)):
-            kwargs["queryset"] = db_field.related.parent_model.objects.filter(
-                                                      project=self.obj)
-        else:
-            kwargs["queryset"] = db_field.related.parent_model.objects.none()
+                              "default_question_status"]):
+            if getattr(self, 'obj', None):
+                kwargs["queryset"] = db_field.related.parent_model.objects.filter(
+                                                          project=self.obj)
+            else:
+                kwargs["queryset"] = db_field.related.parent_model.objects.none()
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
