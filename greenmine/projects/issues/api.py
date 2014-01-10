@@ -54,13 +54,26 @@ class IssuesFilter(filters.FilterBackend):
 
         return queryset
 
+class IssuesOrdering(filters.FilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        if 'order_by' in request.QUERY_PARAMS:
+            if request.QUERY_PARAMS['order_by'] == 'owner':
+                queryset = queryset.order_by('owner__first_name', 'owner__last_name')
+            elif request.QUERY_PARAMS['order_by'] == '-owner':
+                queryset = queryset.order_by('-owner__first_name', '-owner__last_name')
+            elif request.QUERY_PARAMS['order_by'] == 'assigned_to':
+                queryset = queryset.order_by('assigned_to__first_name', 'assigned_to__last_name')
+            elif request.QUERY_PARAMS['order_by'] == '-assigned_to':
+                queryset = queryset.order_by('-assigned_to__first_name', '-assigned_to__last_name')
+        return queryset
+
 
 class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
     model = models.Issue
     serializer_class = serializers.IssueSerializer
     permission_classes = (IsAuthenticated, permissions.IssuePermission)
 
-    filter_backends = (filters.IsProjectMemberFilterBackend, IssuesFilter)
+    filter_backends = (filters.IsProjectMemberFilterBackend, IssuesFilter, IssuesOrdering)
     filter_fields = ("project",)
     order_by_fields = ("severity", "status", "priority", "created_date", "modified_date", "owner",
                        "assigned_to", "subject")
