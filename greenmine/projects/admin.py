@@ -49,7 +49,7 @@ class ProjectAdmin(reversion.VersionAdmin):
                               "default_question_status"]
                 and getattr(self, 'obj', None)):
             kwargs["queryset"] = db_field.related.parent_model.objects.filter(
-                                                      project=self.obj.project)
+                                                      project=self.obj)
         else:
             kwargs["queryset"] = db_field.related.parent_model.objects.none()
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
@@ -58,7 +58,7 @@ class ProjectAdmin(reversion.VersionAdmin):
         if (db_field.name in ["watchers"]
                 and getattr(self, 'obj', None)):
             kwargs["queryset"] = db_field.related.parent_model.objects.filter(
-                                         memberships__project=self.obj.project)
+                                         memberships__project=self.obj)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 
