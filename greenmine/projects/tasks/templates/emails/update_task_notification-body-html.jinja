@@ -1,7 +1,7 @@
 {% extends "emails/base.jinja" %}
 
 {% set final_url = resolve_front_url("task", object.project.id, object.id) %}
-{% set final_url_name = "Greenmine - View task #{0}".format(object.ref) %}
+{% set final_url_name = "Taiga - View task #{0}".format(object.ref) %}
 
 {% block body %}
 <table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
