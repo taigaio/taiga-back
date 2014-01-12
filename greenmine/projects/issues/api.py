@@ -57,7 +57,7 @@ class IssuesFilter(filters.FilterBackend):
 class IssuesOrdering(filters.FilterBackend):
     def filter_queryset(self, request, queryset, view):
         order_by = request.QUERY_PARAMS.get('order_by', None)
-        if order_by in ['owner', '-owner', 'assigend_to', '-assigend_to']:
+        if order_by in ['owner', '-owner', 'assigned_to', '-assigned_to']:
             return queryset.order_by(
                 '{}__first_name'.format(order_by),
                 '{}__last_name'.format(order_by)
