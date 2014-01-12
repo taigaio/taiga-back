@@ -56,15 +56,12 @@ class IssuesFilter(filters.FilterBackend):
 
 class IssuesOrdering(filters.FilterBackend):
     def filter_queryset(self, request, queryset, view):
-        if 'order_by' in request.QUERY_PARAMS:
-            if request.QUERY_PARAMS['order_by'] == 'owner':
-                queryset = queryset.order_by('owner__first_name', 'owner__last_name')
-            elif request.QUERY_PARAMS['order_by'] == '-owner':
-                queryset = queryset.order_by('-owner__first_name', '-owner__last_name')
-            elif request.QUERY_PARAMS['order_by'] == 'assigned_to':
-                queryset = queryset.order_by('assigned_to__first_name', 'assigned_to__last_name')
-            elif request.QUERY_PARAMS['order_by'] == '-assigned_to':
-                queryset = queryset.order_by('-assigned_to__first_name', '-assigned_to__last_name')
+        order_by = request.QUERY_PARAMS.get('order_by', None)
+        if order_by in ['owner', '-owner', 'assigend_to', '-assigend_to']:
+            return queryset.order_by(
+                '{}__first_name'.format(order_by),
+                '{}__last_name'.format(order_by)
+            )
         return queryset
 
 
