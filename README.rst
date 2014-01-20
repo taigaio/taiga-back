@@ -10,6 +10,9 @@ Greenmine Backend
 .. image:: https://coveralls.io/repos/kaleidos/greenmine-back/badge.png?branch=master
     :target: https://coveralls.io/r/kaleidos/greenmine-back?branch=master
 
+.. image:: https://d2weczhvl823v0.cloudfront.net/kaleidos/greenmine-back/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
 
 Setup development environment
 -----------------------------
@@ -61,9 +64,3 @@ requests. The file ``greenmine/base/monkey.py`` contains a temporary fix for thi
 
 This patch is applied when the module ``base.models`` it's loaded. Once it's solved on django rest
 framework, this patch can be removed.
-
-
-.. image:: https://d2weczhvl823v0.cloudfront.net/kaleidos/greenmine-back/trend.png
-   :alt: Bitdeli badge
-   :target: https://bitdeli.com/free
-
