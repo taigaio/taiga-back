@@ -1,4 +1,4 @@
-Greenmine Backend
+Taiga Backend
 =================
 
 .. image:: http://kaleidos.net/static/img/badge.png
@@ -51,7 +51,7 @@ must support PL/Python. You use a dbuser with privileges in the database,
     CREATE INDEX issues_unpickle_tags_index ON issues_issue USING btree (unpickle(tags));
 
 
-Note: greenmine only runs with python 3.3+.
+Note: taiga only runs with python 3.3+.
 
 Note: Initial auth data: admin/123123
 
