@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os.path, sys, os
-import djcelery
 from django.utils.translation import ugettext_lazy as _
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-djcelery.setup_loader()
 
 OUT_BASE_DIR = os.path.abspath(
     os.path.join(BASE_DIR, "..")
