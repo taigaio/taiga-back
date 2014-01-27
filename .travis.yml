@@ -4,12 +4,12 @@ python:
 services:
   - rabbitmq # will start rabbitmq-server
 before_script:
-  - psql -c 'create database greenmine;' -U postgres
+  - psql -c 'create database taiga;' -U postgres
 install:
   - pip install -r requirements.txt --use-mirrors
   - pip install coveralls --use-mirrors
 script:
-    - coverage run --source=greenmine --omit='*tests*,*commands*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' manage.py test --settings=greenmine.settings.travis greenmine
+    - coverage run --source=taiga --omit='*tests*,*commands*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' manage.py test --settings=taiga.settings.travis taiga
 notifications:
   email:
     recipients:

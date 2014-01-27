@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # For postgresql
-echo "-> Remove greenmine DB"
-dropdb greenmine
-echo "-> Create greenmine DB"
-createdb greenmine
+echo "-> Remove taiga DB"
+dropdb taiga
+echo "-> Create taiga DB"
+createdb taiga
 
 echo "-> Run syncdb"
 python manage.py syncdb --migrate --noinput --traceback

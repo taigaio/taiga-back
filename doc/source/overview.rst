@@ -40,11 +40,11 @@ Requirements for running tests: same as standard requierements.
 
 To run tests, open a shell on a package directory and type::
     
-    python manage.py test -v2 greenmine
+    python manage.py test -v2 taiga
 
 To access coverage of tests you need to install the coverage_ package and run the tests using::
     
-    coverage run --omit=extern manage.py test -v2 greenmine
+    coverage run --omit=extern manage.py test -v2 taiga
 
 and to check out the coverage report::
     
@@ -60,7 +60,7 @@ Develpment of Green-Mine happens at github: https://github.com/niwibe/Green-Mine
 
 We very much welcome your contribution of course. To do so, simply follow these guidelines:
 
-1. Fork ``greenmine`` on github.
+1. Fork ``taiga`` on github.
 2. Create feature branch. Example: ``git checkout -b my_new_feature``
 3. Push your changes. Example: ``git push -u origin my_new_feature``
 4. Send me a pull-request.

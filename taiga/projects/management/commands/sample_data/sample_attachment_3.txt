@@ -1,0 +1,28 @@
+TAIGA TEAM
+==========
+
+|-----------------------------------------------|
+| NAME             | TWITTER      | JOB         |
+|-----------------------------------------------|
+| Andrey Antukhi   | @niwibe      | Back Dev    |
+|-----------------------------------------------|
+| Jesús Espino     | @jespinog    | Back Dev    |
+|-----------------------------------------------|
+| David Barrgán    | @bameda      | Back Dev    |
+|-----------------------------------------------|
+| Alejandro Alonso | @_superalex_ | Back Dev    |
+|-----------------------------------------------|
+| Andrés Moya      | @hirunatan   | Back Dev    |
+|-----------------------------------------------|
+| Alejandro Gómex  | @dialelo     | Back Dev    |
+|-----------------------------------------------|
+| Alonso Torres    | @Alotor      | Back Dev    |
+|-----------------------------------------------|
+| Xavier Julián    | @Xaviju      | Front Dev   |
+|-----------------------------------------------|
+| Pilar Esteban    | @devilme     | UX/Designer |
+|-----------------------------------------------|
+
+Kaleidos OpenSource SL - http://kaleidos.net
+ΠWEEK (Personal Innovation Week) - http://piweek.es
+

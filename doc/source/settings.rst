@@ -1,5 +1,5 @@
-Settings introduced by greenmine.
-=================================
+Settings introduced by taiga.
+=============================
 
 Default settings
 ----------------
