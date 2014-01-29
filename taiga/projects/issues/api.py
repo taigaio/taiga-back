@@ -3,6 +3,7 @@
 import reversion
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Q
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import list_route
@@ -22,20 +23,34 @@ from . import models
 from . import permissions
 from . import serializers
 
+
 class IssuesFilter(filters.FilterBackend):
     filter_fields = ( "status", "severity", "priority", "owner", "assigned_to", "tags")
+    _special_values_dict = {
+        'true': True,
+        'false': False,
+        'null': None,
+    }
 
     def _prepare_filters_data(self, request):
+        def _transform_value(value):
+            try:
+                return int(value)
+            except:
+                if value in self._special_values_dict.keys():
+                    return self._special_values_dict[value]
+            raise exc.BadRequest()
+
         data = {}
         for filtername in self.filter_fields:
             if filtername not in request.QUERY_PARAMS:
                 continue
 
             raw_value = request.QUERY_PARAMS[filtername]
-            values = (x.strip() for x in raw_value.split(","))
+            values = set([x.strip() for x in raw_value.split(",")])
 
             if filtername != "tags":
-                values = map(int, values)
+                values = map(_transform_value, values)
 
             data[filtername] = list(values)
         return data
@@ -49,8 +64,13 @@ class IssuesFilter(filters.FilterBackend):
             queryset = queryset.extra(where=where_sql, params=params)
 
         for name, value in filter(lambda x: x[0] != "tags", filterdata.items()):
-            qs_kwargs = {"{0}_id__in".format(name): value}
-            queryset = queryset.filter(**qs_kwargs)
+            if None in value:
+                qs_in_kwargs = {"{0}__in".format(name): [v for v in value if v != None]}
+                qs_isnull_kwargs = {"{0}__isnull".format(name): True}
+                queryset = queryset.filter(Q(**qs_in_kwargs) | Q(**qs_isnull_kwargs))
+            else:
+                qs_kwargs = {"{0}__in".format(name): value}
+                queryset = queryset.filter(**qs_kwargs)
 
         return queryset
 
