@@ -20,4 +20,3 @@ from . import monkey
 monkey.patch_api_view()
 monkey.patch_serializer()
 monkey.patch_import_module()
-monkey.patch_south_hacks()
