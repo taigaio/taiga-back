@@ -80,14 +80,16 @@ def _get_issues_severities(project):
 
 def _get_issues_assigned_to(project):
     extra_sql = """
-    select user_id, (select count(*) from issues_issue
+    select null, (select count(*) from issues_issue
+                        where project_id = %s and assigned_to_id is null)
+    UNION select user_id, (select count(*) from issues_issue
                         where project_id = pm.project_id and assigned_to_id = pm.user_id)
         from projects_membership as pm
         where project_id = %s;
     """
 
     with closing(connection.cursor()) as cursor:
-        cursor.execute(extra_sql, [project.id])
+        cursor.execute(extra_sql, [project.id, project.id])
         rows = cursor.fetchall()
 
     return rows
@@ -108,30 +110,14 @@ def _get_issues_owners(project):
     return rows
 
 
-def _get_issues_created_by(project):
-    extra_sql = """
-    select user_id, (select count(*) from issues_issue
-                        where project_id = pm.project_id and owner_id = pm.user_id)
-        from projects_membership as pm
-        where project_id = %s;
-    """
-
-    with closing(connection.cursor()) as cursor:
-        cursor.execute(extra_sql, [project.id])
-        rows = cursor.fetchall()
-
-    return rows
-
-
 def get_issues_filters_data(project):
     data = {
-        "owners": _get_issues_owners(project),
-        "tags": _get_issues_tags(project),
+        "types": _get_issues_types(project),
         "statuses": _get_issues_statuses(project),
         "priorities": _get_issues_priorities(project),
-        "assigned_to": _get_issues_assigned_to(project),
-        "created_by": _get_issues_created_by(project),
-        "types": _get_issues_types(project),
         "severities": _get_issues_severities(project),
+        "assigned_to": _get_issues_assigned_to(project),
+        "owners": _get_issues_owners(project),
+        "tags": _get_issues_tags(project),
     }
     return data
