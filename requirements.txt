@@ -1,14 +1,14 @@
 git+https://github.com/tomchristie/django-rest-framework.git@2.4.0
-git+https://github.com/etianen/django-reversion.git@django-1.6
 
+django-reversion==1.8.0
 Django==1.6.1
 South==0.8.3
 django-filter==0.7
 django-picklefield==0.3.0
 django-sampledatahelper==0.2.1
 gunicorn>=17.5
-psycopg2==2.5.1
-pytz>=2013d
+psycopg2==2.5.2
+pytz>=2013.9
 six>=1.4.1
 djmail>=0.4
 django-jinja>=0.23
