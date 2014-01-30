@@ -11,6 +11,7 @@ Taiga Backend
     :target: https://coveralls.io/r/taigaio/taiga-back?branch=master
 
 
+
 Setup development environment
 -----------------------------
 
@@ -19,35 +20,11 @@ Just execute these commands in your virtualenv(wrapper):
 .. code-block:: console
 
     pip install -r requirements.txt
-    python manage.py syncdb --all --noinput
-    python manage.py migrate --fake
+    python manage.py migrate --noinput
     python manage.py loaddata initial_user
     python manage.py loaddata initial_project_templates
     python manage.py loaddata initial_role
     python manage.py sample_data
-
-You have to load the sql sentences of the file ``sql/tags.sql`` and your database
-must support PL/Python. You use a dbuser with privileges in the database,
-'taiga' for example, to do this.
-
-.. code-block:: console
-
-    psql taiga
-
-.. code-block:: sql
-
-    CREATE LANGUAGE plpythonu;
-
-    CREATE OR REPLACE FUNCTION unpickle (data text)
-        RETURNS text[]
-    AS $$
-        import base64
-        import pickle
-
-        return pickle.loads(base64.b64decode(data))
-    $$ LANGUAGE plpythonu IMMUTABLE;
-
-    CREATE INDEX issues_unpickle_tags_index ON issues_issue USING btree (unpickle(tags));
 
 
 Note: taiga only runs with python 3.3+.
