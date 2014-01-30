@@ -17,14 +17,13 @@
 from django.contrib import admin
 
 from taiga.projects.attachments.admin import AttachmentInline
-
 from . import models
 
 
 class IssueAdmin(admin.ModelAdmin):
     list_display = ["project", "milestone", "ref", "subject",]
     list_display_links = ["ref", "subject",]
-    inlines = [AttachmentInline]
+    # inlines = [AttachmentInline]
 
     def get_object(self, *args, **kwargs):
         self.obj = super().get_object(*args, **kwargs)

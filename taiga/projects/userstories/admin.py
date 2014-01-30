@@ -41,7 +41,7 @@ class UserStoryAdmin(admin.ModelAdmin):
     list_display = ["project", "milestone",  "ref", "subject",]
     list_display_links = ["ref", "subject",]
     list_filter = ["project"]
-    inlines = [RolePointsInline, AttachmentInline]
+    inlines = [RolePointsInline]
 
     def get_object(self, *args, **kwargs):
         self.obj = super().get_object(*args, **kwargs)
