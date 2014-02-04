@@ -13,7 +13,7 @@ from .models import DomainMember, Domain
 
 
 class DomainViewSet(UpdateModelMixin, viewsets.GenericViewSet):
-    permission_classes = (IsAuthenticated, DomainPermission,)
+    permission_classes = (DomainPermission,)
     serializer_class = DomainSerializer
     queryset = Domain.objects.all()
 
