@@ -85,7 +85,7 @@ def _get_issues_assigned_to(project):
     UNION select user_id, (select count(*) from issues_issue
                         where project_id = pm.project_id and assigned_to_id = pm.user_id)
         from projects_membership as pm
-        where project_id = %s;
+        where project_id = %s and pm.user_id is not null;
     """
 
     with closing(connection.cursor()) as cursor:
@@ -100,7 +100,7 @@ def _get_issues_owners(project):
     select user_id, (select count(*) from issues_issue
                         where project_id = pm.project_id and owner_id = pm.user_id)
         from projects_membership as pm
-        where project_id = %s;
+        where project_id = %s and pm.user_id is not null;
     """
 
     with closing(connection.cursor()) as cursor:
