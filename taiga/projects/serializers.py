@@ -98,6 +98,7 @@ class ProjectMembershipSerializer(serializers.ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False)
     full_name = serializers.CharField(source='user.get_full_name', required=False)
     color = serializers.CharField(source='user.color', required=False)
+
     class Meta:
         model = models.Membership
 
@@ -115,6 +116,7 @@ class ProjectDetailSerializer(ProjectSerializer):
     list_of_milestones = serializers.SerializerMethodField("get_list_of_milestones")
     roles = serializers.SerializerMethodField("get_list_of_roles")
     memberships = ProjectMembershipSerializer(many=True, required=False)
+    active_memberships = serializers.SerializerMethodField("get_active_membership")
     us_statuses = UserStoryStatusSerializer(many=True, required=False)       # User Stories
     points = PointsSerializer(many=True, required=False)
     task_statuses = TaskStatusSerializer(many=True, required=False)          # Tasks
@@ -123,6 +125,10 @@ class ProjectDetailSerializer(ProjectSerializer):
     issue_statuses = IssueStatusSerializer(many=True, required=False)
     issue_types = IssueTypeSerializer(many=True, required=False)
     #question_statuses = QuestionStatusSerializer(many=True, required=False) # Questions
+
+    def get_active_membership(self, obj):
+        serializer = ProjectMembershipSerializer(obj.memberships.filter(user__isnull=False), many=True)
+        return serializer.data
 
     def get_list_of_roles(self, obj):
         roles_list = []
