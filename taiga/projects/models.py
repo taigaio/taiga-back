@@ -10,6 +10,7 @@ from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
@@ -21,6 +22,7 @@ from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
 from taiga.projects.userstories.models import UserStory
 from taiga.base.domains.models import DomainMember
+from taiga.base.users.models import Role
 from . import choices
 
 
@@ -156,8 +158,7 @@ class Project(ProjectDefaults, models.Model):
         super().save(*args, **kwargs)
 
     def get_roles(self):
-        role_model = get_model("users", "Role")
-        return role_model.objects.all()
+        return self.roles.all()
 
     def get_users(self):
         user_model = get_user_model()
@@ -562,5 +563,12 @@ def project_post_save(sender, instance, created, **kwargs):
                                             is_closed=is_closed, project=instance, color=color)
         if is_default:
             instance.default_question_status = obj
+
+    # Questions
+    for order, slug, name, computable, permissions  in choices.ROLES:
+        obj = Role.objects.create(slug=slug, name=name, order=order, computable=computable, project=instance)
+        for permission in permissions:
+            perm = Permission.objects.get(codename=permission[0], content_type__app_label=permission[1], content_type__model=permission[2])
+            obj.permissions.add(perm)
 
     instance.save()

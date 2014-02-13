@@ -133,6 +133,16 @@ class IssueTypePermission(BasePermission):
     path_to_project =  ["project"]
 
 
+class RolesPermission(BasePermission):
+    get_permission = "view_role"
+    post_permission = "add_role"
+    put_permission = "change_role"
+    patch_permission = "change_role"
+    delete_permission = "delete_role"
+    safe_methods = ["HEAD", "OPTIONS"]
+    path_to_project =  ["project"]
+
+
 # Questions
 
 class QuestionStatusPermission(BasePermission):

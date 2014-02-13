@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.contenttypes import generic
 
 from taiga.projects.milestones.admin import MilestoneInline
+from taiga.base.users.admin import RoleInline
 from . import models
 
 import reversion
@@ -36,7 +37,7 @@ class ProjectAdmin(reversion.VersionAdmin):
     list_display = ["name", "owner", "created_date", "total_milestones",
                     "total_story_points", "domain"]
     list_display_links = list_display
-    inlines = [MembershipInline, MilestoneInline]
+    inlines = [RoleInline, MembershipInline, MilestoneInline]
 
     def get_object(self, *args, **kwargs):
         self.obj = super().get_object(*args, **kwargs)

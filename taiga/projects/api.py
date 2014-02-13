@@ -20,6 +20,7 @@ from taiga.base import exceptions as exc
 from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet, RetrieveModelMixin
 from taiga.base.domains import get_active_domain
+from taiga.base.users.models import Role
 from taiga.base.notifications.api import NotificationSenderMixin
 from taiga.projects.aggregates.tags import get_all_tags
 
@@ -153,6 +154,13 @@ class InvitationViewSet(RetrieveModelMixin, viewsets.GenericViewSet):
     lookup_field = "token"
     permission_classes = (AllowAny,)
 
+
+class RolesViewSet(ModelCrudViewSet):
+    model = Role
+    serializer_class = serializers.RoleSerializer
+    permission_classes = (IsAuthenticated, permissions.RolesPermission)
+    filter_backends = (filters.IsProjectMemberFilterBackend,)
+    filter_fields = ('project',)
 
 # User Stories commin ViewSets
 

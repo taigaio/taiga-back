@@ -28,9 +28,3 @@ class RecoverySerializer(serializers.Serializer):
             raise serializers.ValidationError(_("invalid token"))
 
         return attrs
-
-
-class RoleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Role
-        fields = ('id', 'name', 'slug', 'permissions', 'computable')

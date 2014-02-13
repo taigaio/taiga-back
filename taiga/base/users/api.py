@@ -19,7 +19,7 @@ from taiga.base.filters import FilterBackend
 from taiga.base.api import ModelCrudViewSet, RetrieveModelMixin
 
 from .models import User, Role
-from .serializers import UserSerializer, RoleSerializer, RecoverySerializer
+from .serializers import UserSerializer, RecoverySerializer
 
 
 
@@ -92,22 +92,3 @@ class UsersViewSet(ModelCrudViewSet):
         request.user.set_password(password)
         request.user.save(update_fields=["password"])
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class RolesViewSet(viewsets.ViewSet):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = RoleSerializer
-
-    def list(self, request, pk=None):
-        queryset = Role.objects.all()
-        serializer = self.serializer_class(queryset, many=True)
-        return Response(serializer.data)
-
-    def retrieve(self, request, pk=None):
-        try:
-            role = Role.objects.get(pk=pk)
-        except Role.DoesNotExist:
-            raise exc.NotFound()
-
-        serializer = self.serializer_class(role)
-        return Response(serializer.data)

@@ -3,7 +3,7 @@
 from rest_framework import serializers
 
 from taiga.base.serializers import PickleField
-from taiga.base.users.serializers import RoleSerializer
+from taiga.base.users.models import Role
 
 from . import models
 
@@ -163,3 +163,9 @@ class ProjectDetailSerializer(ProjectSerializer):
             } for milestone in obj.milestones.all().order_by("estimated_start")]
 
         return milestones_list
+
+
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = ('id', 'name', 'slug', 'permissions', 'computable')

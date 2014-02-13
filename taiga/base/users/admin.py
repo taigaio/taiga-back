@@ -48,5 +48,10 @@ class PermissionAdmin(admin.ModelAdmin):
     list_filter = ['content_type']
 
 
+class RoleInline(admin.TabularInline):
+    model = Role
+    extra = 0
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Permission, PermissionAdmin)
