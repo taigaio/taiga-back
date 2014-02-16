@@ -25,7 +25,7 @@ from . import serializers
 
 
 class IssuesFilter(filters.FilterBackend):
-    filter_fields = ( "status", "severity", "priority", "owner", "assigned_to", "tags")
+    filter_fields = ( "status", "severity", "priority", "owner", "assigned_to", "tags", "type")
     _special_values_dict = {
         'true': True,
         'false': False,
