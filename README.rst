@@ -24,6 +24,7 @@ Just execute these commands in your virtualenv(wrapper):
     pip install -r requirements.txt
     python manage.py syncdb --migrate --noinput
     python manage.py loaddata initial_user
+    python manage.py loaddata initial_role
     python manage.py sample_data
     python manage.py createinitialrevisions
 
