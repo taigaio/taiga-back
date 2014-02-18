@@ -13,7 +13,7 @@ class DomainSerializer(serializers.ModelSerializer):
         fields = ('public_register', 'default_language', "projects")
 
     def get_projects(self, obj):
-        return map(lambda x: {"id": x.id, "name": x.name }, obj.projects.all().order_by('name'))
+        return map(lambda x: {"id": x.id, "name": x.name, "slug": x.slug}, obj.projects.all().order_by('name'))
 
 
 class DomainMemberSerializer(serializers.ModelSerializer):
