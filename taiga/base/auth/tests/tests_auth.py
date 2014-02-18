@@ -175,7 +175,7 @@ class RegisterTests(test.TestCase):
     def _create_role(self):
         role_model = get_model("users", "Role")
         instance = role_model(name="foo", slug="foo",
-                              order=1, computable=True)
+                              order=1, computable=True, project_id=1)
 
         instance.save()
         return instance

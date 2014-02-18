@@ -13,7 +13,7 @@ from taiga.projects.models import Project, Membership
 from . import create_project, add_membership
 
 class ProfileTestCase(test.TestCase):
-    fixtures = ["initial_role.json", "initial_domains.json"]
+    fixtures = ["initial_domains.json"]
 
     def setUp(self):
         self.user1 = create_user(1, is_superuser=True)
@@ -170,7 +170,10 @@ class ProjectsTestCase(test.TestCase):
         add_membership(self.project1, self.user3, "back")
         add_membership(self.project3, self.user3, "back")
 
-        self.dev_role = get_model("users", "Role").objects.get(slug="back")
+        self.dev_role1 = get_model("users", "Role").objects.get(slug="back", project=self.project1)
+        self.dev_role2 = get_model("users", "Role").objects.get(slug="back", project=self.project2)
+        self.dev_role3 = get_model("users", "Role").objects.get(slug="back", project=self.project3)
+        self.dev_role4 = get_model("users", "Role").objects.get(slug="back", project=self.project4)
 
     def test_send_invitations_01(self):
         response = self.client.login(username=self.user1.username,
@@ -178,7 +181,7 @@ class ProjectsTestCase(test.TestCase):
         self.assertTrue(response)
 
         url = reverse("memberships-list")
-        data = {"role": self.dev_role.id,
+        data = {"role": self.dev_role4.id,
                 "email": "pepe@pepe.com",
                 "project": self.project4.id}
 
@@ -195,7 +198,7 @@ class ProjectsTestCase(test.TestCase):
         self.assertTrue(response)
 
         url = reverse("memberships-list")
-        data = {"role": self.dev_role.id,
+        data = {"role": self.dev_role4.id,
                 "email": "pepe@pepe.com",
                 "project": self.project4.id}
 
@@ -219,7 +222,7 @@ class ProjectsTestCase(test.TestCase):
         self.assertTrue(response)
 
         url = reverse("memberships-list")
-        data = {"role": self.dev_role.id,
+        data = {"role": self.dev_role3.id,
                 "email": self.user3.email,
                 "project": self.project3.id}
 

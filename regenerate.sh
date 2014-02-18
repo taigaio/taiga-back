@@ -7,7 +7,8 @@ echo "-> Create taiga DB"
 createdb taiga
 
 echo "-> Run syncdb"
-python manage.py syncdb --migrate --noinput --traceback
+python manage.py syncdb --all --noinput --traceback
+python manage.py migrate --fake
 # echo "-> Load initial Site"
 # python manage.py loaddata initial_site --traceback
 echo "-> Load initial domain"

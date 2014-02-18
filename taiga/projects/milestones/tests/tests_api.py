@@ -14,7 +14,7 @@ from . import create_milestone
 
 
 class MilestonesTestCase(test.TestCase):
-    fixtures = ["initial_role.json", "initial_domains.json",]
+    fixtures = ["initial_domains.json",]
 
     def setUp(self):
         self.user1 = create_user(1)
