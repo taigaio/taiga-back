@@ -27,6 +27,7 @@ from . import choices
 
 VIDEOCONFERENCES_CHOICES = (
     ('appear-in', 'AppearIn'),
+    ('talky', 'Talky'),
 )
 
 
