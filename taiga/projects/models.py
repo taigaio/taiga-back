@@ -25,6 +25,10 @@ from taiga.base.domains.models import DomainMember
 from taiga.base.users.models import Role
 from . import choices
 
+VIDEOCONFERENCES_CHOICES = (
+    ('appear-in', 'AppearIn'),
+)
+
 
 class Membership(models.Model):
     # This model stores all project memberships. Also
@@ -117,6 +121,8 @@ class Project(ProjectDefaults, models.Model):
                                            verbose_name=_("total of milestones"))
     total_story_points = models.FloatField(default=None, null=True, blank=False,
                                            verbose_name=_("total story points"))
+    videoconferences = models.CharField(max_length=250, null=True, blank=True,
+                            verbose_name=_("videoconference system"), choices=VIDEOCONFERENCES_CHOICES)
     tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
     domain = models.ForeignKey("domains.Domain", related_name="projects", null=True, blank=True,
                                default=None, verbose_name=_("domain"))
