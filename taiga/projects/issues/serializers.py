@@ -2,14 +2,12 @@
 
 from rest_framework import serializers
 
-from taiga.base.serializers import PickleField
+from taiga.base.serializers import PickleField, NeighborsSerializerMixin
 
 from . import models
 
-import reversion
 
-
-class IssueSerializer(serializers.ModelSerializer):
+class IssueSerializer(NeighborsSerializerMixin, serializers.ModelSerializer):
     tags = PickleField(required=False)
     comment = serializers.SerializerMethodField("get_comment")
     is_closed = serializers.Field(source="is_closed")
@@ -19,3 +17,16 @@ class IssueSerializer(serializers.ModelSerializer):
 
     def get_comment(self, obj):
         return ""
+
+
+class IssueNeighborsSerializer(IssueSerializer):
+
+    def serialize_neighbor(self, neighbor):
+        return NeighborIssueSerializer(neighbor).data
+
+
+class NeighborIssueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Issue
+        fields = ("id", "ref", "subject")
+        depth = 0

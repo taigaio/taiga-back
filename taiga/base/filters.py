@@ -76,3 +76,24 @@ class IsProjectMemberFilterBackend(FilterBackend):
             queryset = queryset.filter(Q(project__members=request.user) |
                                        Q(project__owner=request.user))
         return queryset.distinct()
+
+
+class TagsFilter(FilterBackend):
+    FILTER_TAGS_SQL = "unpickle({table}.tags) && %s"
+
+    def __init__(self, filter_name='tags'):
+        self.filter_name = filter_name
+
+    def _get_tags_queryparams(self, params):
+        tags = params.get(self.filter_name, [])
+        if tags:
+            tags = list({tag.strip() for tag in tags.split(",")})
+        return tags
+
+    def filter_queryset(self, request, queryset, view):
+        tags = self._get_tags_queryparams(request.QUERY_PARAMS)
+        if tags:
+            where_sql = self.FILTER_TAGS_SQL.format(table=view.model._meta.db_table)
+            queryset = queryset.extra(where=[where_sql], params=[tags])
+
+        return queryset

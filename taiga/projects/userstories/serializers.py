@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import json, reversion
+import json
 from django.db.models import get_model
 from rest_framework import serializers
 
-from taiga.base.serializers import PickleField
+from taiga.base.serializers import PickleField, NeighborsSerializerMixin
 from . import models
 
 
@@ -21,7 +21,7 @@ class RolePointsField(serializers.WritableField):
 class UserStorySerializer(serializers.ModelSerializer):
     tags = PickleField(default=[], required=False)
     # is_closed = serializers.Field(source="is_closed")
-    points = RolePointsField(source="role_points", required=False )
+    points = RolePointsField(source="role_points", required=False)
     total_points = serializers.SerializerMethodField("get_total_points")
     comment = serializers.SerializerMethodField("get_comment")
     milestone_slug = serializers.SerializerMethodField("get_milestone_slug")
@@ -55,3 +55,16 @@ class UserStorySerializer(serializers.ModelSerializer):
             return obj.milestone.slug
         else:
             return None
+
+
+class UserStoryNeighborsSerializer(NeighborsSerializerMixin, UserStorySerializer):
+
+    def serialize_neighbor(self, neighbor):
+        return NeighborUserStorySerializer(neighbor).data
+
+
+class NeighborUserStorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.UserStory
+        fields = ("id", "ref", "subject")
+        depth = 0

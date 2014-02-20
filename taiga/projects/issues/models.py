@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from picklefield.fields import PickledObjectField
 
+from taiga.base.models import NeighborsMixin
 from taiga.base.utils.slug import ref_uniquely
 from taiga.base.notifications.models import WatchedMixin
 from taiga.projects.mixins.blocked.models import BlockedMixin
@@ -16,7 +17,7 @@ from taiga.projects.mixins.blocked.models import BlockedMixin
 import reversion
 
 
-class Issue(WatchedMixin, BlockedMixin):
+class Issue(NeighborsMixin, WatchedMixin, BlockedMixin):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
@@ -115,10 +116,12 @@ def issue_finished_date_handler(sender, instance, **kwargs):
     elif not instance.status.is_closed and instance.finished_date:
         instance.finished_date = None
 
+
 @receiver(models.signals.pre_save, sender=Issue, dispatch_uid="issue_ref_handler")
 def issue_ref_handler(sender, instance, **kwargs):
     if not instance.id and instance.project:
         instance.ref = ref_uniquely(instance.project, "last_issue_ref", instance.__class__)
+
 
 @receiver(models.signals.pre_save, sender=Issue, dispatch_uid="issue-tags-normalization")
 def issue_tags_normalization(sender, instance, **kwargs):

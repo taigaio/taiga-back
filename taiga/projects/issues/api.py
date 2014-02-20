@@ -87,7 +87,7 @@ class IssuesOrdering(filters.FilterBackend):
 
 class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
     model = models.Issue
-    serializer_class = serializers.IssueSerializer
+    serializer_class = serializers.IssueNeighborsSerializer
     permission_classes = (IsAuthenticated, permissions.IssuePermission)
 
     filter_backends = (filters.IsProjectMemberFilterBackend, IssuesFilter, IssuesOrdering)
