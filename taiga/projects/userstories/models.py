@@ -11,7 +11,7 @@ import reversion
 
 from taiga.base.utils.slug import ref_uniquely
 from taiga.base.notifications.models import WatchedMixin
-
+from taiga.projects.mixins.blocked.models import BlockedMixin
 
 
 class RolePoints(models.Model):
@@ -37,7 +37,7 @@ class RolePoints(models.Model):
         return "{}: {}".format(self.role.name, self.points.name)
 
 
-class UserStory(WatchedMixin, models.Model):
+class UserStory(WatchedMixin, BlockedMixin):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
@@ -87,6 +87,8 @@ class UserStory(WatchedMixin, models.Model):
         "points",
         "tags",
         "description",
+        "is_blocked",
+        "blocked_comment"
     ]
 
     class Meta:

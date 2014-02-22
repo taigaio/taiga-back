@@ -192,6 +192,7 @@ INSTALLED_APPS = [
     'taiga.base.searches',
     'taiga.base',
     'taiga.projects',
+    'taiga.projects.mixins.blocked',
     'taiga.projects.milestones',
     'taiga.projects.userstories',
     'taiga.projects.tasks',

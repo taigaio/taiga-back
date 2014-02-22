@@ -11,11 +11,12 @@ from picklefield.fields import PickledObjectField
 
 from taiga.base.utils.slug import ref_uniquely
 from taiga.base.notifications.models import WatchedMixin
+from taiga.projects.mixins.blocked.models import BlockedMixin
 
 import reversion
 
 
-class Issue(WatchedMixin):
+class Issue(WatchedMixin, BlockedMixin):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
@@ -52,17 +53,19 @@ class Issue(WatchedMixin):
     attachments = generic.GenericRelation("projects.Attachment")
 
     notifiable_fields = [
-         "subject",
-         "milestone",
-         "owner",
-         "assigned_to",
-         "finished_date",
-         "type",
-         "status",
-         "severity",
-         "priority",
-         "tags",
-         "description",
+        "subject",
+        "milestone",
+        "owner",
+        "assigned_to",
+        "finished_date",
+        "type",
+        "status",
+        "severity",
+        "priority",
+        "tags",
+        "description",
+        "is_blocked",
+        "blocked_comment"
     ]
 
     class Meta:

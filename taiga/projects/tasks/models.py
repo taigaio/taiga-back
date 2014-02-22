@@ -13,11 +13,12 @@ from taiga.base.utils.slug import ref_uniquely
 from taiga.base.notifications.models import WatchedMixin
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.milestones.models import Milestone
+from taiga.projects.mixins.blocked.models import BlockedMixin
 
 import reversion
 
 
-class Task(WatchedMixin):
+class Task(WatchedMixin, BlockedMixin):
     user_story = models.ForeignKey("userstories.UserStory", null=True, blank=True,
                 related_name="tasks", verbose_name=_("user story"))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
@@ -59,6 +60,8 @@ class Task(WatchedMixin):
         "status",
         "description",
         "tags",
+        "is_blocked",
+        "blocked_comment"
     ]
 
     class Meta:
