@@ -42,7 +42,7 @@ class Task(WatchedMixin, BlockedMixin):
                                verbose_name=_("subject"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
-                                    default=None, related_name="user_storys_assigned_to_me",
+                                    default=None, related_name="tasks_assigned_to_me",
                                     verbose_name=_("assigned to"))
     watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
                 related_name="watched_tasks", verbose_name=_("watchers"))
