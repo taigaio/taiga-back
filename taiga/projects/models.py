@@ -17,13 +17,13 @@ from django.utils import timezone
 from picklefield.fields import PickledObjectField
 import reversion
 
-
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
 from taiga.projects.userstories.models import UserStory
 from taiga.base.domains.models import DomainMember
 from taiga.base.users.models import Role
 from . import choices
+
 
 VIDEOCONFERENCES_CHOICES = (
     ('appear-in', 'AppearIn'),
@@ -122,9 +122,16 @@ class Project(ProjectDefaults, models.Model):
                                            verbose_name=_("total of milestones"))
     total_story_points = models.FloatField(default=None, null=True, blank=False,
                                            verbose_name=_("total story points"))
-    videoconferences = models.CharField(max_length=250, null=True, blank=True,
-                            verbose_name=_("videoconference system"), choices=VIDEOCONFERENCES_CHOICES)
     tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
+
+    is_backlog_activated = models.BooleanField(default=True, null=False, blank=True,
+                                               verbose_name=_("active backlog panel"))
+    is_kanban_activated = models.BooleanField(default=False, null=False, blank=True,
+                                              verbose_name=_("active kanban panel"))
+    videoconferences = models.CharField(max_length=250, null=True, blank=True,
+                                        choices=VIDEOCONFERENCES_CHOICES,
+                                        verbose_name=_("videoconference system"))
+
     domain = models.ForeignKey("domains.Domain", related_name="projects", null=True, blank=True,
                                default=None, verbose_name=_("domain"))
 
@@ -132,15 +139,6 @@ class Project(ProjectDefaults, models.Model):
         "name",
         "total_milestones",
         "total_story_points",
-        # This realy should be in this list?
-        # "default_points",
-        # "default_us_status",
-        # "default_task_status",
-        # "default_priority",
-        # "default_severity",
-        # "default_issue_status",
-        # "default_issue_type",
-        # "default_question_status",
         "description"
     ]
 
