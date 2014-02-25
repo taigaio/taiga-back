@@ -66,6 +66,9 @@ class UserStory(WatchedMixin, BlockedMixin):
     subject = models.CharField(max_length=500, null=False, blank=False,
                                verbose_name=_("subject"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
+    assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
+                                    default=None, related_name="userstories_assigned_to_me",
+                                    verbose_name=_("assigned to"))
     watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
                                       related_name="watched_us", verbose_name=_("watchers"))
     client_requirement = models.BooleanField(default=False, null=False, blank=True,
@@ -80,6 +83,7 @@ class UserStory(WatchedMixin, BlockedMixin):
         "subject",
         "milestone",
         "owner",
+        "assigned_to",
         "finish_date",
         "client_requirement",
         "team_requirement",
@@ -117,6 +121,11 @@ class UserStory(WatchedMixin, BlockedMixin):
 
         return total
 
+    def get_notifiable_assigned_to_display(self, value):
+        if not value:
+            return _("Unassigned")
+        return value.get_full_name()
+
     def get_notifiable_tags_display(self, value):
         if type(value) is list:
             return ", ".join(value)
@@ -132,6 +141,7 @@ class UserStory(WatchedMixin, BlockedMixin):
     def _get_watchers_by_role(self):
         return {
             "owner": self.owner,
+            "assigned_to": self.assigned_to,
             "suscribed_watchers": self.watchers.all(),
             "project_owner": (self.project, self.project.owner),
         }

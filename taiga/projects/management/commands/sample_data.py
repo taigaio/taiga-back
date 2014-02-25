@@ -257,6 +257,10 @@ class Command(BaseCommand):
         for i in range(self.sd.int(0, 4)):
             attachment = self.create_attachment(us)
 
+        if self.sd.choice([True, True, False, True, True]):
+            us.assigned_to = self.sd.db_object_from_queryset(project.memberships.all()).user
+            us.save()
+
         return us
 
     def create_milestone(self, project, start_date, end_date):
