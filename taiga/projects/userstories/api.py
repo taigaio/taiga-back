@@ -18,8 +18,7 @@ from taiga.base.api import ModelCrudViewSet
 from taiga.base.notifications.api import NotificationSenderMixin
 from taiga.projects.permissions import AttachmentPermission
 from taiga.projects.serializers import AttachmentSerializer
-from taiga.projects.models import Attachment
-from taiga.projects.models import Project
+from taiga.projects.models import Attachment, Project
 
 from . import models
 from . import permissions

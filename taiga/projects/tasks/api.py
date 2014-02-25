@@ -2,16 +2,22 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import list_route
+from rest_framework.response import Response
+from rest_framework import status
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
+from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.notifications.api import NotificationSenderMixin
 from taiga.projects.permissions import AttachmentPermission
 from taiga.projects.serializers import AttachmentSerializer
-from taiga.projects.models import Attachment
+from taiga.projects.models import Attachment, Project
+from taiga.projects.userstories.models import UserStory
 
 from . import models
 from . import permissions
@@ -88,3 +94,35 @@ class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
                 # Update the comment in the last version
                 reversion.set_comment(self.request.DATA["comment"])
         super().post_save(obj, created)
+
+    @list_route(methods=["POST"])
+    def bulk_create(self, request, **kwargs):
+        bulk_tasks = request.DATA.get('bulkTasks', None)
+        if bulk_tasks is None:
+            raise exc.BadRequest(_('bulkTasks parameter is mandatory'))
+
+        project_id = request.DATA.get('projectId', None)
+        if project_id is None:
+            raise exc.BadRequest(_('projectId parameter is mandatory'))
+
+        us_id = request.DATA.get('usId', None)
+        if us_id is None:
+            raise exc.BadRequest(_('usId parameter is mandatory'))
+
+        project = get_object_or_404(Project, id=project_id)
+        us = get_object_or_404(UserStory, id=us_id)
+
+        if not has_project_perm(request.user, project, 'add_task'):
+            raise exc.PermissionDenied(_("You don't have permisions to create tasks."))
+
+        items = filter(lambda s: len(s) > 0,
+                    map(lambda s: s.strip(), bulk_tasks.split("\n")))
+
+        tasks = []
+        for item in items:
+            tasks.append(models.Task.objects.create(subject=item, project=project,
+                                       user_story=us, owner=request.user,
+                                       status=project.default_task_status))
+        tasks_serialized = self.serializer_class(tasks, many=True)
+
+        return Response(data=tasks_serialized.data)
