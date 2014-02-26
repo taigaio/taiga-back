@@ -22,12 +22,14 @@ class NeighborsMixin:
         """
         if queryset is None:
             queryset = type(self).objects.get_queryset()
+        if not self._get_queryset_order_by(queryset):
+            queryset = queryset.order_by(*self._meta.ordering)
         queryset = queryset.filter(~Q(id=self.id))
 
         return self._get_previous_neighbor(queryset), self._get_next_neighbor(queryset)
 
     def _get_queryset_order_by(self, queryset):
-        return queryset.query.order_by or [self._meta.pk.name]
+        return queryset.query.order_by or []
 
     def _field(self, field):
         return getattr(self, field.lstrip("-"))
@@ -57,6 +59,7 @@ class NeighborsMixin:
     def _get_next_neighbor(self, queryset):
         conds = [{"{}__{}".format(*self._filter(field, "gt", "lt")): self._field(field)}
                  for field in self._get_queryset_order_by(queryset)]
+
         try:
             return queryset.filter(self._or(conds))[0]
         except IndexError:
