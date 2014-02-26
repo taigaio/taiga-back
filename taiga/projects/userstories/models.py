@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from picklefield.fields import PickledObjectField
 import reversion
 
+from taiga.base.models import NeighborsMixin
 from taiga.base.utils.slug import ref_uniquely
 from taiga.base.notifications.models import WatchedMixin
 from taiga.projects.mixins.blocked.models import BlockedMixin
@@ -33,11 +34,12 @@ class RolePoints(models.Model):
         permissions = (
             ("view_rolepoints", "Can view role points"),
         )
+
     def __str__(self):
         return "{}: {}".format(self.role.name, self.points.name)
 
 
-class UserStory(WatchedMixin, BlockedMixin):
+class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
@@ -98,7 +100,7 @@ class UserStory(WatchedMixin, BlockedMixin):
     class Meta:
         verbose_name = "user story"
         verbose_name_plural = "user stories"
-        ordering = ["project", "order"]
+        ordering = ["project", "order", "ref"]
         unique_together = ("ref", "project")
         permissions = (
             ("view_userstory", "Can view user story"),
@@ -133,7 +135,7 @@ class UserStory(WatchedMixin, BlockedMixin):
 
     def get_notifiable_points_display(self, value):
         if isinstance(value, models.manager.Manager):
-            return ", ".join(["{}: {}".format(rp.role.name,rp.points.name)
+            return ", ".join(["{}: {}".format(rp.role.name, rp.points.name)
                               for rp in self.role_points.all().order_by("role")])
 
         return None
@@ -169,6 +171,7 @@ def us_create_role_points_handler(sender, instance, **kwargs):
 def us_task_reassignation(sender, instance, created, **kwargs):
     if not created:
         instance.tasks.update(milestone=instance.milestone)
+
 
 @receiver(models.signals.pre_save, sender=UserStory, dispatch_uid="us-tags-normalization")
 def us_tags_normalization(sender, instance, **kwargs):

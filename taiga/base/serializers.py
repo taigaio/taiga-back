@@ -77,3 +77,21 @@ class VersionSerializer(serializers.ModelSerializer):
               }
 
         return changed_fields
+
+
+class NeighborsSerializerMixin:
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["neighbors"] = serializers.SerializerMethodField("get_neighbors")
+
+    def serialize_neighbor(self, neighbor):
+        raise NotImplementedError
+
+    def get_neighbors(self, obj):
+        view, request = self.context["view"], self.context["request"]
+        queryset = view.filter_queryset(view.get_queryset())
+        previous, next = obj.get_neighbors(queryset)
+
+        return {"previous": self.serialize_neighbor(previous),
+                "next": self.serialize_neighbor(next)}

@@ -57,15 +57,18 @@ class UserStoryAttachmentViewSet(ModelCrudViewSet):
 
 class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
     model = models.UserStory
-    serializer_class = serializers.UserStorySerializer
+    serializer_class = serializers.UserStoryNeighborsSerializer
     permission_classes = (IsAuthenticated, permissions.UserStoryPermission)
 
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
+    filter_backends = (filters.IsProjectMemberFilterBackend, filters.TagsFilter)
     filter_fields = ['project', 'milestone', 'milestone__isnull']
 
     create_notification_template = "create_userstory_notification"
     update_notification_template = "update_userstory_notification"
     destroy_notification_template = "destroy_userstory_notification"
+
+    # Specific filter used for filtering neighbor user stories
+    _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
