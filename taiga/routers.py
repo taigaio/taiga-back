@@ -2,7 +2,7 @@
 
 from taiga.base import routers
 from taiga.base.auth.api import AuthViewSet
-from taiga.base.users.api import UsersViewSet
+from taiga.base.users.api import UsersViewSet, PermissionsViewSet
 from taiga.base.searches.api import SearchViewSet
 from taiga.base.domains.api import DomainViewSet, DomainMembersViewSet
 from taiga.base.resolver.api import ResolverViewSet
@@ -23,6 +23,7 @@ router = routers.DefaultRouter(trailing_slash=False)
 
 # taiga.base.users
 router.register(r"users", UsersViewSet, base_name="users")
+router.register(r"permissions", PermissionsViewSet, base_name="permissions")
 router.register(r"roles", RolesViewSet, base_name="roles")
 router.register(r"auth", AuthViewSet, base_name="auth")
 

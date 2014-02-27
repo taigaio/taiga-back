@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import Permission
 
 from rest_framework import serializers
 from .models import User, Role
+
+
+class PermissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Permission
+        fields = ['id', 'codename']
 
 
 class UserSerializer(serializers.ModelSerializer):

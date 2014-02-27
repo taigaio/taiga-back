@@ -5,6 +5,7 @@ import uuid
 from django.db.models.loading import get_model
 from django.db.models import Q
 from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth.models import Permission
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.decorators import list_route, action
@@ -16,11 +17,16 @@ from djmail.template_mail import MagicMailBuilder
 
 from taiga.base import exceptions as exc
 from taiga.base.filters import FilterBackend
-from taiga.base.api import ModelCrudViewSet, RetrieveModelMixin
+from taiga.base.api import ModelCrudViewSet, RetrieveModelMixin, ModelListViewSet
 
 from .models import User, Role
-from .serializers import UserSerializer, RecoverySerializer
+from .serializers import UserSerializer, RecoverySerializer, PermissionSerializer
 
+class PermissionsViewSet(ModelListViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = PermissionSerializer
+    queryset = Permission.objects.all()
+    paginate_by = 0
 
 
 class UsersViewSet(ModelCrudViewSet):
