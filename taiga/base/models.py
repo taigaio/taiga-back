@@ -23,13 +23,16 @@ class NeighborsMixin:
         if queryset is None:
             queryset = type(self).objects.get_queryset()
         if not self._get_queryset_order_by(queryset):
-            queryset = queryset.order_by(*self._meta.ordering)
+            queryset = queryset.order_by(*self._get_order_by())
         queryset = queryset.filter(~Q(id=self.id))
 
         return self._get_previous_neighbor(queryset), self._get_next_neighbor(queryset)
 
     def _get_queryset_order_by(self, queryset):
         return queryset.query.order_by or []
+
+    def _get_order_by(self):
+        return self._meta.ordering
 
     def _field(self, field):
         return getattr(self, field.lstrip("-"))
@@ -42,25 +45,36 @@ class NeighborsMixin:
             operator = inc
         return field, operator
 
+    def _format(self, value):
+        if hasattr(value, "format"):
+            value = value.format(obj=self)
+        return value
+
     def _or(self, conditions):
-        result = Q(**conditions[0])
-        for condition in conditions:
-            result = result | Q(**condition)
+        condition = conditions[0]
+        result = Q(**{key: self._format(condition[key]) for key in condition})
+        for condition in conditions[1:]:
+            result = result | Q(**{key: self._format(condition[key]) for key in condition})
         return result
 
-    def _get_previous_neighbor(self, queryset):
+    def _get_prev_neighbor_filters(self, queryset):
         conds = [{"{}__{}".format(*self._filter(field, "lt", "gt")): self._field(field)}
                  for field in self._get_queryset_order_by(queryset)]
+        return self._or(conds)
+
+    def _get_previous_neighbor(self, queryset):
         try:
-            return queryset.filter(self._or(conds)).reverse()[0]
+            return queryset.filter(self._get_prev_neighbor_filters(queryset)).reverse()[0]
         except IndexError:
             return None
 
-    def _get_next_neighbor(self, queryset):
+    def _get_next_neighbor_filters(self, queryset):
         conds = [{"{}__{}".format(*self._filter(field, "gt", "lt")): self._field(field)}
                  for field in self._get_queryset_order_by(queryset)]
+        return self._or(conds)
 
+    def _get_next_neighbor(self, queryset):
         try:
-            return queryset.filter(self._or(conds))[0]
+            return queryset.filter(self._get_next_neighbor_filters(queryset))[0]
         except IndexError:
             return None

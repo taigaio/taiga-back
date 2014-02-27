@@ -61,7 +61,7 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
     permission_classes = (IsAuthenticated, permissions.UserStoryPermission)
 
     filter_backends = (filters.IsProjectMemberFilterBackend, filters.TagsFilter)
-    filter_fields = ['project', 'milestone', 'milestone__isnull']
+    filter_fields = ['project', 'milestone', 'milestone__isnull', 'status']
 
     create_notification_template = "create_userstory_notification"
     update_notification_template = "update_userstory_notification"

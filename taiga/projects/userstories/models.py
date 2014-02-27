@@ -100,7 +100,7 @@ class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
     class Meta:
         verbose_name = "user story"
         verbose_name_plural = "user stories"
-        ordering = ["project", "order"]
+        ordering = ["project", "order", "ref"]
         unique_together = ("ref", "project")
         permissions = (
             ("view_userstory", "Can view user story"),
@@ -111,6 +111,14 @@ class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
 
     def __repr__(self):
         return "<UserStory %s>" % (self.id)
+
+    def _get_prev_neighbor_filters(self, queryset):
+        return self._or([{"order__lt": "{obj.order}"},
+                         {"order__lte": "{obj.order}", "ref__lt": "{obj.ref}"}])
+
+    def _get_next_neighbor_filters(self, queryset):
+        return self._or([{"order__gt": "{obj.order}"},
+                         {"order__gte": "{obj.order}", "ref__gt": "{obj.ref}"}])
 
     def get_role_points(self):
         return self.role_points
