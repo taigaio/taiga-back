@@ -131,6 +131,8 @@ class Project(ProjectDefaults, models.Model):
     videoconferences = models.CharField(max_length=250, null=True, blank=True,
                                         choices=VIDEOCONFERENCES_CHOICES,
                                         verbose_name=_("videoconference system"))
+    videoconferences_salt = models.CharField(max_length=250, null=True, blank=True,
+                                        verbose_name=_("videoconference room salt"))
 
     domain = models.ForeignKey("domains.Domain", related_name="projects", null=True, blank=True,
                                default=None, verbose_name=_("domain"))
@@ -159,6 +161,8 @@ class Project(ProjectDefaults, models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify_uniquely(self.name, self.__class__)
+        if not self.videoconferences:
+            self.videoconferences_salt = None
 
         super().save(*args, **kwargs)
 
