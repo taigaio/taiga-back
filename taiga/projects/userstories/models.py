@@ -100,7 +100,7 @@ class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
     class Meta:
         verbose_name = "user story"
         verbose_name_plural = "user stories"
-        ordering = ["project", "order", "ref"]
+        ordering = ["project", "order"]
         unique_together = ("ref", "project")
         permissions = (
             ("view_userstory", "Can view user story"),
