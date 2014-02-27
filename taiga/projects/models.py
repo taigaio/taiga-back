@@ -128,6 +128,10 @@ class Project(ProjectDefaults, models.Model):
                                                verbose_name=_("active backlog panel"))
     is_kanban_activated = models.BooleanField(default=False, null=False, blank=True,
                                               verbose_name=_("active kanban panel"))
+    is_wiki_activated = models.BooleanField(default=True, null=False, blank=True,
+                                              verbose_name=_("active wiki panel"))
+    is_issues_activated = models.BooleanField(default=True, null=False, blank=True,
+                                              verbose_name=_("active issues panel"))
     videoconferences = models.CharField(max_length=250, null=True, blank=True,
                                         choices=VIDEOCONFERENCES_CHOICES,
                                         verbose_name=_("videoconference system"))
