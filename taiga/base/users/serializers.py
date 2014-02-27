@@ -10,7 +10,7 @@ from .models import User, Role
 class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permission
-        fields = ['id', 'codename']
+        fields = ['id', 'name', 'codename']
 
 
 class UserSerializer(serializers.ModelSerializer):
