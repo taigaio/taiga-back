@@ -112,11 +112,11 @@ class Project(ProjectDefaults, models.Model):
                                      through="Membership", verbose_name=_("members"))
     public = models.BooleanField(default=True, null=False, blank=True,
                                  verbose_name=_("public"))
-    last_us_ref = models.BigIntegerField(null=True, blank=False, default=1,
+    last_us_ref = models.BigIntegerField(null=True, blank=False, default=0,
                                          verbose_name=_("last us ref"))
-    last_task_ref = models.BigIntegerField(null=True, blank=False, default=1,
+    last_task_ref = models.BigIntegerField(null=True, blank=False, default=0,
                                            verbose_name=_("last task ref"))
-    last_issue_ref = models.BigIntegerField(null=True, blank=False, default=1,
+    last_issue_ref = models.BigIntegerField(null=True, blank=False, default=0,
                                             verbose_name=_("last issue ref"))
     total_milestones = models.IntegerField(default=0, null=True, blank=True,
                                            verbose_name=_("total of milestones"))
