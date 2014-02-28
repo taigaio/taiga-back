@@ -168,4 +168,4 @@ class ProjectDetailSerializer(ProjectSerializer):
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        fields = ('id', 'name', 'slug', 'permissions', 'computable')
+        fields = ('id', 'name', 'permissions', 'computable', 'project', 'order')

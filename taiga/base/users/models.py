@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import UserManager, AbstractUser
 
+from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.notifications.models import WatcherMixin
 
 
@@ -52,6 +53,12 @@ class Role(models.Model):
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="roles", verbose_name=_("project"))
     computable = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify_uniquely(self.name, self.__class__)
+
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "role"
