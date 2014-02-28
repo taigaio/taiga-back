@@ -120,9 +120,11 @@ class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
 
         tasks = []
         for item in items:
-            tasks.append(models.Task.objects.create(subject=item, project=project,
-                                       user_story=us, owner=request.user,
-                                       status=project.default_task_status))
-        tasks_serialized = self.serializer_class(tasks, many=True)
+            obj = models.Task.objects.create(subject=item, project=project,
+                                             user_story=us, owner=request.user,
+                                             status=project.default_task_status)
+            tasks.append(obj)
+            self._post_save_notification_sender(obj, True)
 
+        tasks_serialized = self.serializer_class(tasks, many=True)
         return Response(data=tasks_serialized.data)

@@ -86,7 +86,8 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
             raise exc.PermissionDenied(_("You don't have permisions to create user stories."))
 
         service = services.UserStoriesService()
-        service.bulk_insert(project, request.user, bulk_stories)
+        service.bulk_insert(project, request.user, bulk_stories,
+                            callback_on_success=self._post_save_notification_sender)
 
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 

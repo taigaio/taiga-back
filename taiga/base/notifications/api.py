@@ -16,7 +16,9 @@ class NotificationSenderMixin(object):
 
     def post_save(self, obj, created=False):
         super().post_save(obj, created)
+        self._post_save_notification_sender(obj, created)
 
+    def _post_save_notification_sender(self, obj, created=False):
         users = obj.get_watchers_to_notify(self.request.user)
         comment = self.request.DATA.get("comment", None)
         context = {'changer': self.request.user, "comment": comment, 'object': obj}
