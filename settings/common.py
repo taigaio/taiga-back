@@ -90,7 +90,7 @@ EMAIL_BACKEND = 'djmail.backends.default.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DJMAIL_REAL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DJMAIL_SEND_ASYNC = False
+DJMAIL_SEND_ASYNC = True
 DJMAIL_MAX_RETRY_NUMBER = 3
 DJMAIL_TEMPLATE_EXTENSION = 'jinja'
 
