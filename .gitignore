@@ -1,7 +1,7 @@
 .*.sw*
 *.log
 taiga/search
-taiga/settings/local.py
+settings/local.py
 database.sqlite
 logs
 media
