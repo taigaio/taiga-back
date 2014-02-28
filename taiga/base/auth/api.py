@@ -69,7 +69,6 @@ class AuthViewSet(viewsets.ViewSet):
         user.save()
 
         self._create_domain_member(user)
-
         #self._send_public_register_email(user)
 
         response_data = self._create_response(user)
@@ -136,6 +135,7 @@ class AuthViewSet(viewsets.ViewSet):
 
         raise exc.BadRequest(_("invalid register type"))
 
+    # Login view: /api/v1/auth
     def create(self, request, **kwargs):
         username = request.DATA.get('username', None)
         password = request.DATA.get('password', None)
