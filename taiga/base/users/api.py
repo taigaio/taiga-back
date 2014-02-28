@@ -25,8 +25,26 @@ from .serializers import UserSerializer, RecoverySerializer, PermissionSerialize
 class PermissionsViewSet(ModelListViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = PermissionSerializer
-    queryset = Permission.objects.all()
     paginate_by = 0
+    excluded_codenames = [
+        "add_logentry", "change_logentry", "delete_logentry",
+        "add_group", "change_group", "delete_group",
+        "add_permission", "change_permission", "delete_permission",
+        "add_contenttype", "change_contenttype", "delete_contenttype",
+        "add_message", "change_message", "delete_message",
+        "add_domain", "change_domain", "delete_domain",
+        "add_session", "change_session", "delete_session",
+        "add_migrationhistory", "change_migrationhistory", "delete_migrationhistory",
+        "add_version", "change_version", "delete_version",
+        "add_revision", "change_revision", "delete_revision",
+        "add_questionstatus", "change_questionstatus", "delete_questionstatus", "view_questionstatus",
+        "add_user", "delete_user",
+        "add_project",
+        "add_domainmember", "change_domainmember", "delete_domainmember",
+    ]
+
+    def get_queryset(self):
+        return Permission.objects.exclude(codename__in=self.excluded_codenames)
 
 
 class UsersViewSet(ModelCrudViewSet):
