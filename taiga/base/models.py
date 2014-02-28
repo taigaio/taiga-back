@@ -22,27 +22,32 @@ class NeighborsMixin:
         """
         if queryset is None:
             queryset = type(self).objects.get_queryset()
-        if not self._get_queryset_order_by(queryset):
-            queryset = queryset.order_by(*self._get_order_by())
+        queryset = queryset.order_by(*self._get_order_by(queryset))
         queryset = queryset.filter(~Q(id=self.id))
 
         return self._get_previous_neighbor(queryset), self._get_next_neighbor(queryset)
 
     def _get_queryset_order_by(self, queryset):
-        return queryset.query.order_by or []
+        return queryset.query.order_by
 
-    def _get_order_by(self):
-        return self._meta.ordering
+    def _get_order_by(self, queryset):
+        return self._get_queryset_order_by(queryset) or self._meta.ordering
 
-    def _field(self, field):
-        return getattr(self, field.lstrip("-"))
+    def _get_order_field_value(self, field):
+        field = field.lstrip("-")
+        obj = self
+        for attr in field.split("__"):
+            value = getattr(obj, attr, None)
+            if value is None:
+                break
+            obj = value
 
-    def _filter(self, field, inc, desc):
+        return value
+
+    def _transform_order_field_into_lookup(self, field, operator, operator_if_order_desc):
         if field.startswith("-"):
             field = field[1:]
-            operator = desc
-        else:
-            operator = inc
+            operator = operator_if_order_desc
         return field, operator
 
     def _format(self, value):
@@ -51,30 +56,39 @@ class NeighborsMixin:
         return value
 
     def _or(self, conditions):
-        condition = conditions[0]
-        result = Q(**{key: self._format(condition[key]) for key in condition})
-        for condition in conditions[1:]:
-            result = result | Q(**{key: self._format(condition[key]) for key in condition})
+        result = Q()
+        for condition in conditions:
+            result |= Q(**{key: self._format(condition[key]) for key in condition})
         return result
 
+    def _get_neighbor_filters(self, queryset, operator, operator_if_order_desc):
+        conds = []
+        for field in self._get_queryset_order_by(queryset):
+            value = self._get_order_field_value(field)
+            if value is None:
+                continue
+            lookup_field, operator = self._transform_order_field_into_lookup(
+                field, operator, operator_if_order_desc)
+            lookup = "{}__{}".format(lookup_field, operator)
+            conds.append({lookup: value})
+        return conds
+
     def _get_prev_neighbor_filters(self, queryset):
-        conds = [{"{}__{}".format(*self._filter(field, "lt", "gt")): self._field(field)}
-                 for field in self._get_queryset_order_by(queryset)]
-        return self._or(conds)
+        return self._get_neighbor_filters(queryset, "lte", "gte")
+
+    def _get_next_neighbor_filters(self, queryset):
+        return self._get_neighbor_filters(queryset, "gte", "lte")
 
     def _get_previous_neighbor(self, queryset):
+        queryset = queryset.filter(self._or(self._get_prev_neighbor_filters(queryset)))
         try:
-            return queryset.filter(self._get_prev_neighbor_filters(queryset)).reverse()[0]
+            return queryset.reverse()[0]
         except IndexError:
             return None
 
-    def _get_next_neighbor_filters(self, queryset):
-        conds = [{"{}__{}".format(*self._filter(field, "gt", "lt")): self._field(field)}
-                 for field in self._get_queryset_order_by(queryset)]
-        return self._or(conds)
-
     def _get_next_neighbor(self, queryset):
+        queryset = queryset.filter(self._or(self._get_next_neighbor_filters(queryset)))
         try:
-            return queryset.filter(self._get_next_neighbor_filters(queryset))[0]
+            return queryset[0]
         except IndexError:
             return None

@@ -81,6 +81,157 @@ class Issue(NeighborsMixin, WatchedMixin, BlockedMixin):
     def __str__(self):
         return "({1}) {0}".format(self.ref, self.subject)
 
+    def _get_order_by(self, queryset):
+        ordering = self._get_queryset_order_by(queryset)
+        if ordering:
+            main_order = ordering[0]
+            need_extra_ordering = ("severity", "-severity", "owner__first_name",
+                                   "-owner__first_name", "status", "-status", "priority",
+                                   "-priority", "assigned_to__first_name",
+                                   "-assigned_to__first_name")
+            if main_order in need_extra_ordering:
+                ordering += self._meta.ordering
+
+        return ordering
+
+    def _get_prev_neighbor_filters(self, queryset):
+        conds = super()._get_prev_neighbor_filters(queryset)
+        main_order = queryset.query.order_by[0]
+        if main_order == "severity":
+            conds = [{"severity__order__lt": self.severity.order},
+                     {"severity__order": self.severity.order,
+                      "created_date__lt": self.created_date}]
+        elif main_order == "-severity":
+            conds = [{"severity__order__gt": self.severity.order},
+                     {"severity__order": self.severity.order,
+                      "created_date__lt": self.created_date}]
+        elif main_order == "status":
+            conds = [{"status__order__lt": self.status.order},
+                     {"status__order": self.status.order,
+                      "created_date__lt": self.created_date}]
+        elif main_order == "-status":
+            conds = [{"status__order__gt": self.status.order},
+                     {"status__order": self.status.order,
+                      "created_date__lt": self.created_date}]
+        elif main_order == "priority":
+            conds = [{"priority__order__lt": self.priority.order},
+                     {"priority__order": self.priority.order,
+                      "created_date__lt": self.created_date}]
+        elif main_order == "-priority":
+            conds = [{"priority__order__gt": self.priority.order},
+                     {"priority__order": self.priority.order,
+                      "created_date__lt": self.created_date}]
+        elif main_order == "owner__first_name":
+            conds = [{"owner__first_name": self.owner.first_name,
+                      "owner__last_name": self.owner.last_name,
+                      "created_date__lt": self.created_date},
+                     {"owner__first_name": self.owner.first_name,
+                      "owner__last_name__lt": self.owner.last_name},
+                     {"owner__first_name__lt": self.owner.first_name}]
+        elif main_order == "-owner__first_name":
+            conds = [{"owner__first_name": self.owner.first_name,
+                      "owner__last_name": self.owner.last_name,
+                      "created_date__lt": self.created_date},
+                     {"owner__first_name": self.owner.first_name,
+                      "owner__last_name__gt": self.owner.last_name},
+                     {"owner__first_name__gt": self.owner.first_name}]
+        elif main_order == "assigned_to__first_name":
+            if self.assigned_to:
+                conds = [{"assigned_to__first_name": self.assigned_to.first_name,
+                          "assigned_to__last_name": self.assigned_to.last_name,
+                          "created_date__lt": self.created_date},
+                         {"assigned_to__first_name": self.assigned_to.first_name,
+                          "assigned_to__last_name__lt": self.assigned_to.last_name},
+                         {"assigned_to__first_name__lt": self.assigned_to.first_name}]
+            else:
+                conds = [{"assigned_to__isnull": True,
+                          "created_date__lt": self.created_date},
+                         {"assigned_to__isnull": False}]
+        elif main_order == "-assigned_to__first_name":
+            if self.assigned_to:
+                conds = [{"assigned_to__first_name": self.assigned_to.first_name,
+                          "assigned_to__last_name": self.assigned_to.last_name,
+                          "created_date__lt": self.created_date},
+                         {"assigned_to__first_name": self.assigned_to.first_name,
+                          "assigned_to__last_name__gt": self.assigned_to.last_name},
+                         {"assigned_to__first_name__gt": self.assigned_to.first_name},
+                         {"assigned_to__isnull": True}]
+            else:
+                conds = [{"assigned_to__isnull": True,
+                          "created_date__lt": self.created_date},
+                         {"assigned_to__isnull": False}]
+
+        return conds
+
+    def _get_next_neighbor_filters(self, queryset):
+        conds = super()._get_next_neighbor_filters(queryset)
+        ordering = queryset.query.order_by
+        main_order = ordering[0]
+        if main_order == "severity":
+            conds = [{"severity__order__gt": self.severity.order},
+                     {"severity__order": self.severity.order,
+                      "created_date__gt": self.created_date}]
+        elif main_order == "-severity":
+            conds = [{"severity__order__lt": self.severity.order},
+                     {"severity__order": self.severity.order,
+                      "created_date__gt": self.created_date}]
+        elif main_order == "status":
+            conds = [{"status__order__gt": self.status.order},
+                     {"status__order": self.status.order,
+                      "created_date__gt": self.created_date}]
+        elif main_order == "-status":
+            conds = [{"status__order__lt": self.status.order},
+                     {"status__order": self.status.order,
+                      "created_date__gt": self.created_date}]
+        elif main_order == "priority":
+            conds = [{"priority__order__gt": self.priority.order},
+                     {"priority__order": self.priority.order,
+                      "created_date__gt": self.created_date}]
+        elif main_order == "-priority":
+            conds = [{"priority__order__lt": self.priority.order},
+                     {"priority__order": self.priority.order,
+                      "created_date__gt": self.created_date}]
+        elif main_order == "owner__first_name":
+            conds = [{"owner__first_name": self.owner.first_name,
+                      "owner__last_name": self.owner.last_name,
+                      "created_date__gt": self.created_date},
+                     {"owner__first_name": self.owner.first_name,
+                      "owner__last_name__gt": self.owner.last_name},
+                     {"owner__first_name__gt": self.owner.first_name}]
+        elif main_order == "-owner__first_name":
+            conds = [{"owner__first_name": self.owner.first_name,
+                      "owner__last_name": self.owner.last_name,
+                      "created_date__gt": self.created_date},
+                     {"owner__first_name": self.owner.first_name,
+                      "owner__last_name__lt": self.owner.last_name},
+                     {"owner__first_name__lt": self.owner.first_name}]
+        elif main_order == "assigned_to__first_name":
+            if self.assigned_to:
+                conds = [{"assigned_to__first_name": self.assigned_to.first_name,
+                          "assigned_to__last_name": self.assigned_to.last_name,
+                          "created_date__gt": self.created_date},
+                         {"assigned_to__first_name": self.assigned_to.first_name,
+                          "assigned_to__last_name__gt": self.assigned_to.last_name},
+                         {"assigned_to__first_name__gt": self.assigned_to.first_name},
+                         {"assigned_to__isnull": True}]
+            else:
+                conds = [{"assigned_to__isnull": True,
+                          "created_date__gt": self.created_date}]
+        elif main_order == "-assigned_to__first_name":
+            if self.assigned_to:
+                conds = [{"assigned_to__first_name": self.assigned_to.first_name,
+                          "assigned_to__last_name": self.assigned_to.last_name,
+                          "created_date__gt": self.created_date},
+                         {"assigned_to__first_name": self.assigned_to.first_name,
+                          "assigned_to__last_name__lt": self.assigned_to.last_name},
+                         {"assigned_to__first_name__lt": self.assigned_to.first_name}]
+            else:
+                conds = [{"assigned_to__isnull": True,
+                          "created_date__gt": self.created_date},
+                         {"assigned_to__isnull": False}]
+
+        return conds
+
     @property
     def is_closed(self):
         return self.status.is_closed

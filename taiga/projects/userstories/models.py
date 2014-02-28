@@ -113,12 +113,14 @@ class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
         return "<UserStory %s>" % (self.id)
 
     def _get_prev_neighbor_filters(self, queryset):
-        return self._or([{"order__lt": "{obj.order}"},
-                         {"order__lte": "{obj.order}", "ref__lt": "{obj.ref}"}])
+        conds = [{"order__lt": "{obj.order}"},
+                 {"order__lte": "{obj.order}", "ref__lt": "{obj.ref}"}]
+        return conds
 
     def _get_next_neighbor_filters(self, queryset):
-        return self._or([{"order__gt": "{obj.order}"},
-                         {"order__gte": "{obj.order}", "ref__gt": "{obj.ref}"}])
+        conds = [{"order__gt": "{obj.order}"},
+                 {"order__gte": "{obj.order}", "ref__gt": "{obj.ref}"}]
+        return conds
 
     def get_role_points(self):
         return self.role_points
