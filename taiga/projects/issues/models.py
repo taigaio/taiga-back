@@ -96,7 +96,11 @@ class Issue(NeighborsMixin, WatchedMixin, BlockedMixin):
 
     def _get_prev_neighbor_filters(self, queryset):
         conds = super()._get_prev_neighbor_filters(queryset)
-        main_order = queryset.query.order_by[0]
+        try:
+            main_order = queryset.query.order_by[0]
+        except IndexError:
+            main_order = None
+
         if main_order == "severity":
             conds = [{"severity__order__lt": self.severity.order},
                      {"severity__order": self.severity.order,
@@ -166,7 +170,11 @@ class Issue(NeighborsMixin, WatchedMixin, BlockedMixin):
     def _get_next_neighbor_filters(self, queryset):
         conds = super()._get_next_neighbor_filters(queryset)
         ordering = queryset.query.order_by
-        main_order = ordering[0]
+        try:
+            main_order = ordering[0]
+        except IndexError:
+            main_order = None
+
         if main_order == "severity":
             conds = [{"severity__order__gt": self.severity.order},
                      {"severity__order": self.severity.order,
@@ -217,18 +225,17 @@ class Issue(NeighborsMixin, WatchedMixin, BlockedMixin):
             else:
                 conds = [{"assigned_to__isnull": True,
                           "created_date__gt": self.created_date}]
-        elif main_order == "-assigned_to__first_name":
-            if self.assigned_to:
+        elif main_order == "-assigned_to__first_name" and self.assigned_to:
                 conds = [{"assigned_to__first_name": self.assigned_to.first_name,
                           "assigned_to__last_name": self.assigned_to.last_name,
                           "created_date__gt": self.created_date},
                          {"assigned_to__first_name": self.assigned_to.first_name,
                           "assigned_to__last_name__lt": self.assigned_to.last_name},
                          {"assigned_to__first_name__lt": self.assigned_to.first_name}]
-            else:
-                conds = [{"assigned_to__isnull": True,
-                          "created_date__gt": self.created_date},
-                         {"assigned_to__isnull": False}]
+        else:
+            conds = [{"assigned_to__isnull": True,
+                      "created_date__gt": self.created_date},
+                     {"assigned_to__isnull": False}]
 
         return conds
 
