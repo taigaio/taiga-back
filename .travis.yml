@@ -16,6 +16,7 @@ notifications:
       - jespinog@gmail.com
       - andrei.antoukh@gmail.com
       - bameda@dbarragan.com
+      - anler86@gmail.com
     on_success: change
     on_failure: change
 after_success:
