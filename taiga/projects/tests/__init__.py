@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db.models.loading import get_model
+from taiga.base.domains import get_active_domain
 
 
 def create_project(id, owner, save=True):
@@ -10,7 +11,8 @@ def create_project(id, owner, save=True):
        name="Project {0}".format(id),
        description="This is a test project",
        owner=owner,
-       total_story_points=id
+       total_story_points=id,
+       domain=get_active_domain()
     )
 
     if save:
