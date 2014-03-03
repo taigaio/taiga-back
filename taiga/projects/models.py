@@ -585,3 +585,8 @@ def project_post_save(sender, instance, created, **kwargs):
             obj.permissions.add(perm)
 
     instance.save()
+
+    from taiga.projects.template_manager import ProjectTemplateManager
+    if instance.template:
+        template_manager = ProjectTemplateManager()
+        template_manager.apply(instance.template, instance)

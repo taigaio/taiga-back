@@ -46,6 +46,10 @@ class ProjectAdminViewSet(ModelCrudViewSet):
     def pre_save(self, obj):
         obj.owner = self.request.user
 
+        # TODO REFACTOR THIS
+        if not obj.id:
+            obj.template = self.request.QUERY_PARAMS['template']
+
         # FIXME
 
         # Assign domain only if it current
