@@ -48,7 +48,7 @@ class ProjectAdminViewSet(ModelCrudViewSet):
 
         # TODO REFACTOR THIS
         if not obj.id:
-            obj.template = self.request.QUERY_PARAMS['template']
+            obj.template = self.request.QUERY_PARAMS.get('template', None)
 
         # FIXME
 
