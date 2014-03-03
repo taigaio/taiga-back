@@ -85,7 +85,7 @@ class ProjectViewSet(ModelCrudViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.filter(Q(owner=self.request.user) |
-                       Q(members=self.request.user))
+                       Q(members=self.request.user)).filter(domain=get_active_domain())
         return qs.distinct()
 
     def pre_save(self, obj):
