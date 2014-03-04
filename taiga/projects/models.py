@@ -587,6 +587,6 @@ def project_post_save(sender, instance, created, **kwargs):
     instance.save()
 
     from taiga.projects.template_manager import ProjectTemplateManager
-    if instance.template:
+    if hasattr(instance, "template"):
         template_manager = ProjectTemplateManager()
         template_manager.apply(instance.template, instance)
