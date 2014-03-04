@@ -577,12 +577,15 @@ def project_post_save(sender, instance, created, **kwargs):
         if is_default:
             instance.default_question_status = obj
 
-    # Questions
+    # Permissions
     for order, slug, name, computable, permissions  in choices.ROLES:
         obj = Role.objects.create(slug=slug, name=name, order=order, computable=computable, project=instance)
         for permission in permissions:
-            perm = Permission.objects.get(codename=permission[0], content_type__app_label=permission[1], content_type__model=permission[2])
-            obj.permissions.add(perm)
+            try:
+                perm = Permission.objects.get(codename=permission[0], content_type__app_label=permission[1], content_type__model=permission[2])
+                obj.permissions.add(perm)
+            except Permission.DoesNotExist:
+                pass
 
     instance.save()
 
