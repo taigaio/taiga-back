@@ -2,9 +2,9 @@ from taiga.projects.models import UserStoryStatus
 
 class ProjectTemplateManager():
     def apply(self, template, project):
-        if not hasattr(self, template):
+        if not hasattr(self, "template"):
             return False
-        template = getattr(self, template)
+        template = getattr(self, "template")
         template(project)
 
     def legal(self, project):
