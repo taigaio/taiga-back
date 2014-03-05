@@ -89,9 +89,11 @@ class NeighborsSerializerMixin:
         raise NotImplementedError
 
     def get_neighbors(self, obj):
-        view, request = self.context["view"], self.context["request"]
-        queryset = view.filter_queryset(view.get_queryset())
-        previous, next = obj.get_neighbors(queryset)
+        view, request = self.context.get("view", None), self.context.get("request", None)
+        if view and request:
+            queryset = view.filter_queryset(view.get_queryset())
+            previous, next = obj.get_neighbors(queryset)
 
-        return {"previous": self.serialize_neighbor(previous),
-                "next": self.serialize_neighbor(next)}
+            return {"previous": self.serialize_neighbor(previous),
+                    "next": self.serialize_neighbor(next)}
+        return {"previous": None, "next": None}
