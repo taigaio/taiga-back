@@ -55,7 +55,7 @@ class Membership(models.Model):
     def clean(self):
         # TODO: Review and do it more robust
         memberships = Membership.objects.filter(user=self.user, project=self.project)
-        if memberships.count() > 0 and memberships[0].id != self.id:
+        if self.user and memberships.count() > 0 and memberships[0].id != self.id:
             raise ValidationError(_('The user is already member of the project'))
 
     class Meta:
