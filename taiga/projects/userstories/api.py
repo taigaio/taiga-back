@@ -58,6 +58,7 @@ class UserStoryAttachmentViewSet(ModelCrudViewSet):
 class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
     model = models.UserStory
     serializer_class = serializers.UserStoryNeighborsSerializer
+    list_serializer_class = serializers.UserStorySerializer
     permission_classes = (IsAuthenticated, permissions.UserStoryPermission)
 
     filter_backends = (filters.IsProjectMemberFilterBackend, filters.TagsFilter)

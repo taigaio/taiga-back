@@ -7,7 +7,7 @@ from taiga.base.serializers import PickleField, NeighborsSerializerMixin
 from . import models
 
 
-class IssueSerializer(NeighborsSerializerMixin, serializers.ModelSerializer):
+class IssueSerializer(serializers.ModelSerializer):
     tags = PickleField(required=False)
     comment = serializers.SerializerMethodField("get_comment")
     is_closed = serializers.Field(source="is_closed")
@@ -19,7 +19,7 @@ class IssueSerializer(NeighborsSerializerMixin, serializers.ModelSerializer):
         return ""
 
 
-class IssueNeighborsSerializer(IssueSerializer):
+class IssueNeighborsSerializer(NeighborsSerializerMixin, IssueSerializer):
 
     def serialize_neighbor(self, neighbor):
         return NeighborIssueSerializer(neighbor).data
