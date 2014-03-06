@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from rest_framework import serializers
-from .models import Domain, DomainMember
 from taiga.base.users.serializers import UserSerializer
+
+from .models import Domain, DomainMember
 
 
 class DomainSerializer(serializers.ModelSerializer):
@@ -18,5 +19,6 @@ class DomainSerializer(serializers.ModelSerializer):
 
 class DomainMemberSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+
     class Meta:
         model = DomainMember

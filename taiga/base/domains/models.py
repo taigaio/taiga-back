@@ -47,13 +47,13 @@ class Domain(models.Model):
         return self.domain
 
     def user_is_owner(self, user):
-        return self.members.filter(id=user.id, is_owner=True).count() > 0
+        return self.members.filter(user_id=user.id, is_owner=True).exists()
 
     def user_is_staff(self, user):
-        return self.members.filter(id=user.id, is_staff=True).count() > 0
+        return self.members.filter(user_id=user.id, is_staff=True).exists()
 
     def user_is_normal_user(self, user):
-        return self.members.filter(id=user.id, is_owner=False, is_staff=False).count() > 0
+        return self.members.filter(user_id=user.id, is_owner=False, is_staff=False).exists()
 
 
 class DomainMember(models.Model):
