@@ -3,6 +3,7 @@
 import itertools
 import collections
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.loading import get_model
 from django.conf import settings
@@ -50,6 +51,12 @@ class Membership(models.Model):
                                       verbose_name=_("creado el"))
     token = models.CharField(max_length=60, blank=True, null=True, default=None,
                              verbose_name=_("token"))
+
+    def clean(self):
+        # TODO: Review and do it more robust
+        memberships = Membership.objects.filter(user=self.user, project=self.project)
+        if memberships.count() > 0 and memberships[0].id != self.id:
+            raise ValidationError(_('The user is already member of the project'))
 
     class Meta:
         verbose_name = "membership"
