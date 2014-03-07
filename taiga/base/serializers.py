@@ -91,7 +91,7 @@ class NeighborsSerializerMixin:
     def get_neighbors(self, obj):
         view, request = self.context.get("view", None), self.context.get("request", None)
         if view and request:
-            queryset = view.filter_queryset(view.get_queryset())
+            queryset = view.filter_queryset(view.get_queryset(), True)
             previous, next = obj.get_neighbors(queryset)
 
             return {"previous": self.serialize_neighbor(previous),

@@ -14,7 +14,7 @@ from rest_framework import status
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.permissions import has_project_perm
-from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelCrudViewSet, NeighborsApiMixin
 from taiga.base.notifications.api import NotificationSenderMixin
 from taiga.projects.permissions import AttachmentPermission
 from taiga.projects.serializers import AttachmentSerializer
@@ -55,13 +55,14 @@ class UserStoryAttachmentViewSet(ModelCrudViewSet):
                                          "add attachments to this user story"))
 
 
-class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
+class UserStoryViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudViewSet):
     model = models.UserStory
     serializer_class = serializers.UserStoryNeighborsSerializer
     list_serializer_class = serializers.UserStorySerializer
     permission_classes = (IsAuthenticated, permissions.UserStoryPermission)
 
     filter_backends = (filters.IsProjectMemberFilterBackend, filters.TagsFilter)
+    retrieve_exclude_filters = (filters.TagsFilter,)
     filter_fields = ['project', 'milestone', 'milestone__isnull', 'status']
 
     create_notification_template = "create_userstory_notification"

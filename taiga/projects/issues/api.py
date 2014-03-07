@@ -13,7 +13,7 @@ from rest_framework import filters
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
-from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelCrudViewSet, NeighborsApiMixin
 from taiga.base.notifications.api import NotificationSenderMixin
 from taiga.projects.permissions import AttachmentPermission
 from taiga.projects.serializers import AttachmentSerializer
@@ -85,13 +85,14 @@ class IssuesOrdering(filters.FilterBackend):
         return queryset
 
 
-class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
+class IssueViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudViewSet):
     model = models.Issue
     serializer_class = serializers.IssueNeighborsSerializer
     list_serializer_class = serializers.IssueSerializer
     permission_classes = (IsAuthenticated, permissions.IssuePermission)
 
     filter_backends = (filters.IsProjectMemberFilterBackend, IssuesFilter, IssuesOrdering)
+    retrieve_exclude_filters = (IssuesFilter,)
     filter_fields = ("project",)
     order_by_fields = ("severity", "status", "priority", "created_date", "modified_date", "owner",
                        "assigned_to", "subject")

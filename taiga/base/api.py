@@ -42,6 +42,14 @@ class ListModelMixin(mixins.ListModelMixin):
         return super().list(*args, **kwargs)
 
 
+class NeighborsApiMixin:
+    def filter_queryset(self, queryset, force=False):
+        for backend in self.get_filter_backends():
+            if force or self.action != "retrieve" or backend not in self.retrieve_exclude_filters:
+                queryset = backend().filter_queryset(self.request, queryset, self)
+        return queryset
+
+
 class DestroyModelMixin(mixins.DestroyModelMixin):
     """
     Self version of DestroyModelMixin with
