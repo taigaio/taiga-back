@@ -87,6 +87,7 @@ class IssuesOrdering(filters.FilterBackend):
 
 class IssueViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudViewSet):
     model = models.Issue
+    queryset = models.Issue.objects.all().prefetch_related("attachments")
     serializer_class = serializers.IssueNeighborsSerializer
     list_serializer_class = serializers.IssueSerializer
     permission_classes = (IsAuthenticated, permissions.IssuePermission)
