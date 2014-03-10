@@ -20,7 +20,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         fields = ()
 
     def get_comment(self, obj):
-        # TODO
+        # NOTE: This method and field is necessary to historical comments work
         return ""
 
     def get_questions_diff(self, old_question_version, new_question_version):

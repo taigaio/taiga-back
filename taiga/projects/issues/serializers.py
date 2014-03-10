@@ -16,10 +16,15 @@ class IssueAttachmentSerializer(AttachmentSerializer):
 class IssueSerializer(serializers.ModelSerializer):
     tags = PickleField(required=False)
     is_closed = serializers.Field(source="is_closed")
+    comment = serializers.SerializerMethodField("get_comment")
     attachments = IssueAttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Issue
+
+    def get_comment(self, obj):
+        # NOTE: This method and field is necessary to historical comments work
+        return ""
 
 
 class IssueNeighborsSerializer(NeighborsSerializerMixin, IssueSerializer):

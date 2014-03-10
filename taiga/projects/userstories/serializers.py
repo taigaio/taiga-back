@@ -47,6 +47,7 @@ class UserStorySerializer(serializers.ModelSerializer):
         return obj.get_total_points()
 
     def get_comment(self, obj):
+        # NOTE: This method and field is necessary to historical comments work
         return ""
 
     def get_milestone_slug(self, obj):
