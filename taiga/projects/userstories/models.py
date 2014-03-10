@@ -72,7 +72,7 @@ class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
                                     default=None, related_name="userstories_assigned_to_me",
                                     verbose_name=_("assigned to"))
     watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
-                                      related_name="watched_us", verbose_name=_("watchers"))
+                                      related_name="watched_user_stories", verbose_name=_("watchers"))
     client_requirement = models.BooleanField(default=False, null=False, blank=True,
                                              verbose_name=_("is client requirement"))
     team_requirement = models.BooleanField(default=False, null=False, blank=True,
