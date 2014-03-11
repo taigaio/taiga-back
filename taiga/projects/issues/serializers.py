@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from taiga.base.serializers import PickleField, NeighborsSerializerMixin
 from taiga.projects.serializers import AttachmentSerializer
-
+from taiga.projects.mixins.notifications.serializers import WatcherValidationSerializerMixin
 from . import models
 
 
@@ -13,7 +13,7 @@ class IssueAttachmentSerializer(AttachmentSerializer):
         fields = ("id", "name", "size", "url", "owner", "created_date", "modified_date", )
 
 
-class IssueSerializer(serializers.ModelSerializer):
+class IssueSerializer(WatcherValidationSerializerMixin, serializers.ModelSerializer):
     tags = PickleField(required=False)
     is_closed = serializers.Field(source="is_closed")
     comment = serializers.SerializerMethodField("get_comment")

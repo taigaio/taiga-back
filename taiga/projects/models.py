@@ -20,9 +20,9 @@ import reversion
 
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
-from taiga.projects.userstories.models import UserStory
 from taiga.base.domains.models import DomainMember
 from taiga.base.users.models import Role
+from taiga.projects.userstories.models import UserStory
 from . import choices
 
 
@@ -526,6 +526,15 @@ def membership_post_save(sender, instance, created, **kwargs):
           dispatch_uid='membership_pre_delete')
 def membership_post_delete(sender, instance, using, **kwargs):
     instance.project.update_role_points()
+
+
+# On membership object is deleted, update watchers of all objects relation.
+@receiver(models.signals.post_delete, sender=Membership,
+          dispatch_uid='update_watchers_on_membership_post_delete')
+def update_watchers_on_membership_post_delete(sender, instance, using, **kwargs):
+    get_model("userstories", "UserStory").watchers.through.objects.filter(user=instance.user).delete()
+    get_model("tasks", "Task").watchers.through.objects.filter(user=instance.user).delete()
+    get_model("issues", "Issue").watchers.through.objects.filter(user=instance.user).delete()
 
 
 @receiver(models.signals.post_save, sender=Project, dispatch_uid='project_post_save')
