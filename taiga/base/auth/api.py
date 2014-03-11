@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db.models.loading import get_model
+from django.db.models import Q
 from django.contrib.auth import logout, login, authenticate
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
@@ -61,6 +62,9 @@ class AuthViewSet(viewsets.ViewSet):
 
         data = serializer.data
 
+        if User.objects.filter(Q(username=data["username"]) | Q(email=data["email"])).exists():
+            raise exc.BadRequest(_("This username or email is already in use."))
+
         user = User(username=data["username"],
                     first_name=data["first_name"],
                     last_name=data["last_name"],
@@ -108,6 +112,10 @@ class AuthViewSet(viewsets.ViewSet):
                 raise exc.BadRequest(serializer.errors)
 
             data = serializer.data
+
+            if User.objects.filter(Q(username=data["username"]) | Q(email=data["email"])).exists():
+                raise exc.BadRequest(_("This username or email is already in use."))
+
             user = User(username=data["username"],
                         first_name=data["first_name"],
                         last_name=data["last_name"],
