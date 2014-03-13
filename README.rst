@@ -4,13 +4,13 @@ Taiga Backend
 .. image:: http://kaleidos.net/static/img/badge.png
     :target: http://kaleidos.net/community/taiga/
 
-.. image:: https://travis-ci.org/taiga/taiga-back.png?branch=master
-    :target: https://travis-ci.org/taiga/taiga-back
+.. image:: https://travis-ci.org/taigaio/taiga-back.png?branch=master
+    :target: https://travis-ci.org/taigaio/taiga-back
 
-.. image:: https://coveralls.io/repos/taiga/taiga-back/badge.png?branch=master
-    :target: https://coveralls.io/r/taiga/taiga-back?branch=master
+.. image:: https://coveralls.io/repos/taigaio/taiga-back/badge.png?branch=master
+    :target: https://coveralls.io/r/taigaio/taiga-back?branch=master
 
-.. image:: https://d2weczhvl823v0.cloudfront.net/taiga/taiga-back/trend.png
+.. image:: https://d2weczhvl823v0.cloudfront.net/taigaio/taiga-back/trend.png
    :alt: Bitdeli badge
    :target: https://bitdeli.com/free
 
