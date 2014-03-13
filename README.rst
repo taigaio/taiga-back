@@ -10,9 +10,6 @@ Taiga Backend
 .. image:: https://coveralls.io/repos/taigaio/taiga-back/badge.png?branch=master
     :target: https://coveralls.io/r/taigaio/taiga-back?branch=master
 
-.. image:: https://d2weczhvl823v0.cloudfront.net/taigaio/taiga-back/trend.png
-   :alt: Bitdeli badge
-   :target: https://bitdeli.com/free
 
 Setup development environment
 -----------------------------
