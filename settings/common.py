@@ -78,6 +78,9 @@ DJMAIL_SEND_ASYNC = True
 DJMAIL_MAX_RETRY_NUMBER = 3
 DJMAIL_TEMPLATE_EXTENSION = "jinja"
 
+# Events backend
+EVENTS_PUSH_BACKEND = "taiga.events.backends.postgresql.EventsPushBackend"
+
 # Message System
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
@@ -158,6 +161,7 @@ INSTALLED_APPS = [
     "taiga.base.notifications",
     "taiga.base.searches",
     "taiga.base",
+    "taiga.events",
     "taiga.domains",
     "taiga.projects",
     "taiga.projects.mixins.blocked",
