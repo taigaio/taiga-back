@@ -36,4 +36,6 @@ class DomainViewSet(UpdateModelMixin, viewsets.GenericViewSet):
 class DomainMembersViewSet(ModelCrudViewSet):
     permission_classes = (IsAuthenticated, DomainMembersPermission,)
     serializer_class = DomainMemberSerializer
-    queryset = DomainMember.objects.all()
+
+    def get_queryset(self):
+        return DomainMember.objects.filter(domain=get_active_domain()).distinct()
