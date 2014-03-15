@@ -148,7 +148,7 @@ TEMPLATE_LOADERS = [
 ]
 
 MIDDLEWARE_CLASSES = [
-    'taiga.base.middleware.CoorsMiddleware',
+    'taiga.base.middleware.cors.CoorsMiddleware',
     'taiga.base.domains.middleware.DomainsMiddleware',
 
     # Common middlewares
