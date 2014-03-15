@@ -5,11 +5,12 @@ import json
 from django import http
 
 
-COORS_ALLOWED_ORIGINS = '*'
-COORS_ALLOWED_METHODS = ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE', 'PATCH', 'HEAD']
-COORS_ALLOWED_HEADERS = ['content-type', 'x-requested-with',
-                         'authorization', 'accept-encoding',
-                         'x-disable-pagination', 'x-host']
+COORS_ALLOWED_ORIGINS = "*"
+COORS_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE", "PATCH", "HEAD"]
+COORS_ALLOWED_HEADERS = ["content-type", "x-requested-with",
+                         "authorization", "accept-encoding",
+                         "x-disable-pagination", "x-host",
+                         "x-session-id"]
 COORS_ALLOWED_CREDENTIALS = True
 COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated", "x-paginated-by",
                         "x-paginated-by", "x-pagination-current", "x-site-host",
@@ -24,10 +25,10 @@ class CoorsMiddleware(object):
         response["Access-Control-Expose-Headers"] = ",".join(COORS_EXPOSE_HEADERS)
 
         if COORS_ALLOWED_CREDENTIALS:
-            response["Access-Control-Allow-Credentials"] = 'true'
+            response["Access-Control-Allow-Credentials"] = "true"
 
     def process_request(self, request):
-        if 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' in request.META:
+        if "HTTP_ACCESS_CONTROL_REQUEST_METHOD" in request.META:
             response = http.HttpResponse()
             self._populate_response(response)
             return response
