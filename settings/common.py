@@ -117,6 +117,7 @@ TEMPLATE_LOADERS = [
 MIDDLEWARE_CLASSES = [
     "taiga.base.middleware.cors.CoorsMiddleware",
     "taiga.domains.middleware.DomainsMiddleware",
+    "taiga.events.middleware.SessionIDMiddleware",
 
     # Common middlewares
     "django.middleware.common.CommonMiddleware",
