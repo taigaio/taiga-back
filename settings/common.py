@@ -69,9 +69,6 @@ SITE_ID = 1
 SESSION_ENGINE="django.contrib.sessions.backends.db"
 SESSION_COOKIE_AGE = 1209600 # (2 weeks)
 
-
-HOST = "http://localhost:8000"
-
 # MAIL OPTIONS
 DEFAULT_FROM_EMAIL = "john@doe.com"
 EMAIL_BACKEND = "djmail.backends.default.EmailBackend"
