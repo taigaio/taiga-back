@@ -2,6 +2,7 @@
 
 import itertools
 import collections
+import time
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -262,11 +263,14 @@ class Project(ProjectDefaults, models.Model):
 
 
 def get_attachment_file_path(instance, filename):
-    return "attachment-files/{project}/{model}/{filename}".format(
-        project=instance.project.slug,
-        model=instance.content_type.model,
-        filename=filename
-    )
+    template = "attachment-files/{project}/{model}/{stamp}/{filename}"
+    current_timestamp = int(time.mktime(timezone.now().timetuple()))
+
+    upload_to_path = template.format(stamp=current_timestamp,
+                                     project=instance.project.slug,
+                                     model=instance.content_type.model,
+                                     filename=filename)
+    return upload_to_path
 
 
 class Attachment(models.Model):
