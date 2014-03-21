@@ -4,11 +4,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
+from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.notifications.api import NotificationSenderMixin
 

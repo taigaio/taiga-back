@@ -7,9 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.decorators import list_route
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
 from rest_framework import viewsets
 from rest_framework import status
 
@@ -17,6 +15,7 @@ from djmail.template_mail import MagicMailBuilder
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
+from taiga.base.decorators import list_route, detail_route
 from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet, RetrieveModelMixin
 from taiga.base.domains import get_active_domain

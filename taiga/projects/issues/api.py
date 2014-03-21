@@ -6,13 +6,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import filters
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
+from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet, NeighborsApiMixin
 from taiga.base.notifications.api import NotificationSenderMixin
 from taiga.projects.permissions import AttachmentPermission

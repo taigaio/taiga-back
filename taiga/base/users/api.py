@@ -8,13 +8,13 @@ from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.models import Permission
 from django.utils.translation import ugettext_lazy as _
 
-from rest_framework.decorators import list_route, action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status, viewsets
 
 from djmail.template_mail import MagicMailBuilder
 
+from taiga.base.decorators import list_route, action
 from taiga.base import exceptions as exc
 from taiga.base.filters import FilterBackend
 from taiga.base.api import ModelCrudViewSet, RetrieveModelMixin, ModelListViewSet
