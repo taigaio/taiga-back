@@ -228,7 +228,6 @@ LOGGING = {
         },
         "taiga": {
             "handlers": ["console"],
-            "handlers": [],
             "level": "DEBUG",
             "propagate": False,
         },
