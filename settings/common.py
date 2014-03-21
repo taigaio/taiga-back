@@ -10,6 +10,7 @@ OUT_BASE_DIR = os.path.abspath(
 )
 
 APPEND_SLASH = False
+ALLOWED_HOSTS = ["*"]
 
 ADMINS = (
     ("Admin", "example@example.com"),
