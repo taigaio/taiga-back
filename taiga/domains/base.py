@@ -1,49 +1,42 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from threading import local
+import functools
+import threading
 
 from django.db.models import get_model
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 
-from .. import exceptions as exc
-
-
-_local = local()
+from taiga.base import exceptions as exc
 log = logging.getLogger("taiga.domains")
+
+_local = threading.local()
 
 
 class DomainNotFound(exc.BaseException):
     pass
 
 
+@functools.lru_cache(maxsize=1)
 def get_default_domain():
     from django.conf import settings
     try:
-        sid = settings.SITE_ID
+        sid = settings.DOMAIN_ID
     except AttributeError:
         raise ImproperlyConfigured("You're using the \"domains framework\" without having "
                                    "set the DOMAIN_ID setting. Create a domain in your database "
                                    "and set the DOMAIN_ID setting to fix this error.")
 
     model_cls = get_model("domains", "Domain")
-    cached = getattr(_local, "default_domain", None)
-    if cached is None:
-        try:
-            cached = _local.default_domain = model_cls.objects.get(pk=sid)
-        except model_cls.DoesNotExist:
-            raise ImproperlyConfigured("default domain not found on database.")
+    try:
+        return model_cls.objects.get(pk=sid)
+    except model_cls.DoesNotExist:
+        raise ImproperlyConfigured("default domain not found on database.")
 
-    return cached
-
-
-def get_domain_for_domain_name(domain):
+@functools.lru_cache(maxsize=100, typed=True)
+def get_domain_for_domain_name(domain:str, follow_alias:bool=True):
     log.debug("Trying activate domain for domain name: {}".format(domain))
-    cache = getattr(_local, "cache", {})
-
-    if domain in cache:
-        return cache[domain]
 
     model_cls = get_model("domains", "Domain")
 
@@ -52,11 +45,12 @@ def get_domain_for_domain_name(domain):
     except model_cls.DoesNotExist:
         log.warning("Domain does not exist for domain: {}".format(domain))
         raise DomainNotFound(_("domain not found"))
-    else:
-        cache[domain] = domain
 
-    return domain
+    # Use `alias_of_id` instead of simple `alias_of` for performace reasons.
+    if domain.alias_of_id is None or not follow_alias:
+        return domain
 
+    return domain.alias_of
 
 def activate(domain):
     log.debug("Activating domain: {}".format(domain))
@@ -75,9 +69,7 @@ def get_active_domain():
         return get_default_domain()
     return active_domain
 
-def clear_domain_cache(**kwargs):
-    if hasattr(_local, "default_domain"):
-        del _local.default_domain
 
-    if hasattr(_local, "cache"):
-        del _local.cache
+def clear_domain_cache(**kwargs):
+    get_default_domain.cache_clear()
+    get_domain_for_domain_name.cache_clear()

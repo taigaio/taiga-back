@@ -18,7 +18,7 @@ from taiga.base import auth
 from taiga.base.users.tests import create_user, create_domain
 from taiga.projects.tests import create_project
 
-from taiga.base.domains.models import Domain, DomainMember
+from taiga.domains.models import Domain, DomainMember
 from taiga.projects.models import Membership
 
 

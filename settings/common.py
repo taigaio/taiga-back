@@ -116,7 +116,7 @@ TEMPLATE_LOADERS = [
 
 MIDDLEWARE_CLASSES = [
     "taiga.base.middleware.cors.CoorsMiddleware",
-    "taiga.base.domains.middleware.DomainsMiddleware",
+    "taiga.domains.middleware.DomainsMiddleware",
 
     # Common middlewares
     "django.middleware.common.CommonMiddleware",
@@ -154,10 +154,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "taiga.base.users",
-    "taiga.base.domains",
     "taiga.base.notifications",
     "taiga.base.searches",
     "taiga.base",
+    "taiga.domains",
     "taiga.projects",
     "taiga.projects.mixins.blocked",
     "taiga.projects.milestones",

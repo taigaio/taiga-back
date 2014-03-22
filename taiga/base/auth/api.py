@@ -11,8 +11,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework import status, viewsets
 from taiga.base.decorators import list_route
 
-from taiga.base.domains.models import DomainMember
-from taiga.base.domains import get_active_domain
+from taiga.domains.models import DomainMember
+from taiga.domains import get_active_domain
 from taiga.base.users.models import User, Role
 from taiga.base.users.serializers import UserSerializer
 from taiga.base import exceptions as exc

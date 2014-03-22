@@ -19,11 +19,12 @@ from django.utils import timezone
 from picklefield.fields import PickledObjectField
 import reversion
 
+from taiga.domains.models import DomainMember
+from taiga.projects.userstories.models import UserStory
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
-from taiga.base.domains.models import DomainMember
 from taiga.base.users.models import Role
-from taiga.projects.userstories.models import UserStory
+
 from . import choices
 
 
