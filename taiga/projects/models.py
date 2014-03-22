@@ -536,9 +536,15 @@ def membership_post_delete(sender, instance, using, **kwargs):
 @receiver(models.signals.post_delete, sender=Membership,
           dispatch_uid='update_watchers_on_membership_post_delete')
 def update_watchers_on_membership_post_delete(sender, instance, using, **kwargs):
-    get_model("userstories", "UserStory").watchers.through.objects.filter(user=instance.user).delete()
-    get_model("tasks", "Task").watchers.through.objects.filter(user=instance.user).delete()
-    get_model("issues", "Issue").watchers.through.objects.filter(user=instance.user).delete()
+    models = [get_model("userstories", "UserStory"),
+              get_model("tasks", "Task"),
+              get_model("issues", "Issue")]
+
+    # `user_id` is used beacuse in some momments
+    # instance.user can contain pointer to now
+    # removed object from a database.
+    for model in models:
+        model.watchers.through.objects.filter(user_id=instance.user_id).delete()
 
 
 @receiver(models.signals.post_save, sender=Project, dispatch_uid='project_post_save')
