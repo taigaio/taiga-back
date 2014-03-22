@@ -14,8 +14,8 @@
 
 from rest_framework import permissions
 
-from taiga.base.domains.models import DomainMember
-from taiga.base.domains import get_active_domain
+from .models import DomainMember
+from .base import get_active_domain
 
 
 class DomainPermission(permissions.BasePermission):
