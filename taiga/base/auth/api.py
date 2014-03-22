@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status, viewsets
-from rest_framework.decorators import list_route
+from taiga.base.decorators import list_route
 
 from taiga.base.domains.models import DomainMember
 from taiga.base.domains import get_active_domain

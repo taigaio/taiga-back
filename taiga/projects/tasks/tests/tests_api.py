@@ -436,7 +436,7 @@ class TasksTestCase(test.TestCase):
             reverse("tasks-detail", args=(self.task1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(Task.objects.all().count(), 5)
         self.client.logout()
 
@@ -538,7 +538,7 @@ class TasksTestCase(test.TestCase):
             reverse("tasks-detail", args=(self.task1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(Task.objects.all().count(), 5)
         self.client.logout()
 
@@ -640,7 +640,7 @@ class TasksTestCase(test.TestCase):
             reverse("tasks-detail", args=(self.task1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(Task.objects.all().count(), 5)
         self.client.logout()
 

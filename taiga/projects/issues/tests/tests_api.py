@@ -539,7 +539,7 @@ class IssuesTestCase(test.TestCase):
             reverse("issues-detail", args=(self.issue1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(Issue.objects.all().count(), 4)
         self.client.logout()
 
@@ -662,7 +662,7 @@ class IssuesTestCase(test.TestCase):
             reverse("issues-detail", args=(self.issue1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(Issue.objects.all().count(), 4)
         self.client.logout()
 
@@ -781,11 +781,12 @@ class IssuesTestCase(test.TestCase):
         response = self.client.login(username=self.user3.username,
                                      password=self.user3.username)
         self.assertTrue(response)
+
         response = self.client.patch(
             reverse("issues-detail", args=(self.issue1.id,)),
             json.dumps(data),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(Issue.objects.all().count(), 4)
         self.client.logout()
 

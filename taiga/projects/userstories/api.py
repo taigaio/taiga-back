@@ -7,12 +7,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import list_route, action
 from rest_framework.response import Response
 from rest_framework import status
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
+from taiga.base.decorators import list_route, action
 from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet, NeighborsApiMixin
 from taiga.base.notifications.api import NotificationSenderMixin
