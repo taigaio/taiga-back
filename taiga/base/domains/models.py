@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
-from . import clear_domain_cache
+from .base import clear_domain_cache
 
 
 def _simple_domain_name_validator(value):
@@ -37,6 +37,9 @@ class Domain(models.Model):
     public_register = models.BooleanField(default=False)
     default_language = models.CharField(max_length=20, null=False, blank=True, default="",
                                         verbose_name=_("default language"))
+
+    alias_of = models.ForeignKey("self", null=True, default=None, blank=True,
+                                 verbose_name=_("Mark as alias of"), related_name="+")
 
     class Meta:
         verbose_name = _('domain')

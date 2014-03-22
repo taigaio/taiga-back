@@ -7,8 +7,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.http import Http404
 
 from taiga.base.api import ModelCrudViewSet, UpdateModelMixin
-from taiga.base.domains import get_active_domain
 
+from .base import get_active_domain
 from .serializers import DomainSerializer, DomainMemberSerializer
 from .permissions import DomainMembersPermission, DomainPermission
 from .models import DomainMember, Domain
