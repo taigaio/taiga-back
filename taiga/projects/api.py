@@ -15,11 +15,11 @@ from rest_framework import status
 
 from djmail.template_mail import MagicMailBuilder
 
+from taiga.domains import get_active_domain
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet, RetrieveModelMixin
-from taiga.base.domains import get_active_domain
 from taiga.base.users.models import Role
 from taiga.base.notifications.api import NotificationSenderMixin
 from taiga.projects.aggregates.tags import get_all_tags

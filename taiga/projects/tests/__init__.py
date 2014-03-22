@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db.models.loading import get_model
-from taiga.base.domains import get_active_domain
+from taiga.domains import get_active_domain
 
 
 def create_project(id, owner, save=True):

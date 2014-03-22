@@ -3,8 +3,7 @@
 from django.conf import settings
 from django_jinja import library
 
-from taiga.base import domains
-
+from taiga import domains
 
 URLS = {
     "home": "/",
