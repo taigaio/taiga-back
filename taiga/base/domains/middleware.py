@@ -3,7 +3,6 @@
 import json
 
 from django import http
-
 from taiga.base import domains
 from taiga.base.exceptions import format_exception
 

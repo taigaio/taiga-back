@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.http import Http404
 
@@ -76,16 +77,13 @@ class NotAuthenticated(exceptions.NotAuthenticated):
 
 
 def format_exception(exc):
-    # TODO: this method need a refactor.
-    # TODO: should return in uniform way all exceptions.
-
     if isinstance(exc.detail, (dict, list, tuple,)):
         detail = exc.detail
     else:
         class_name = exc.__class__.__name__
         class_module = exc.__class__.__module__
         detail = {
-            "_error_message": exc.detail,
+            "_error_message": force_text(exc.detail),
             "_error_type": "{0}.{1}".format(class_module, class_name)
         }
 
