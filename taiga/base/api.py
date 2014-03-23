@@ -146,7 +146,8 @@ class ReversionMixin(object):
         return Response(serializer.data)
 
     @rf_decorators.action()
-    def restore(self, request, vpk=None, *args, **kwargs):
+    def restore(self, request, *args, **kwargs):
+        vpk = request.QUERY_PARAMS.get("version", None)
         if not vpk:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
