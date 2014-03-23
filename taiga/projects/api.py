@@ -148,7 +148,7 @@ class MembershipViewSet(ModelCrudViewSet):
         email.send()
 
 
-class InvitationViewSet(RetrieveModelMixin, viewsets.GenericViewSet):
+class InvitationViewSet(RetrieveModelMixin, viewsets.ReadOnlyModelViewSet):
     """
     Only used by front for get invitation by it token.
     """
@@ -156,6 +156,9 @@ class InvitationViewSet(RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = serializers.MembershipSerializer
     lookup_field = "token"
     permission_classes = (AllowAny,)
+
+    def list(self, *args, **kwargs):
+        raise exc.PermissionDenied(_("You don't have permisions to see that."))
 
 
 class RolesViewSet(ModelCrudViewSet):

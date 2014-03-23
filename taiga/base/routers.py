@@ -295,13 +295,6 @@ class DRFDefaultRouter(SimpleRouter):
 
 
 class DefaultRouter(DRFDefaultRouter):
-    routes = [
-        Route(
-            url=r'^{prefix}/(?P<pk>\d+)/restore/(?P<vpk>\d+)$',
-            mapping={'post': 'restore'},
-            name='{basename}-restore',
-            initkwargs={}
-        )
-    ] + DRFDefaultRouter.routes
+    pass
 
 __all__ = ["DefaultRouter"]
