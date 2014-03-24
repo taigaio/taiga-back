@@ -10,7 +10,6 @@ import reversion
 class WatcherMixin(models.Model):
     NOTIFY_LEVEL_CHOICES = (
         ("all_owned_projects", _(u"All events on my projects")),
-        ("only_watching", _(u"Only events for objects i watch")),
         ("only_assigned", _(u"Only events for objects assigned to me")),
         ("only_owner", _(u"Only events for objects owned by me")),
         ("no_events", _(u"No events")),
@@ -48,11 +47,7 @@ class WatcherMixin(models.Model):
         ])
 
     def allow_notify_project(self, project):
-        return self.notify_level == "all_owned_projects" and project.owner.pk == self.pk
-
-    def allow_notify_by_me(self, changer):
-        return (changer.pk != self.pk) or self.notify_changes_by_me
-
+        return self.notify_level == "all_owned_projects"
 
 class WatchedMixin(models.Model):
     notifiable_fields = []
@@ -91,30 +86,30 @@ class WatchedMixin(models.Model):
         watchers_by_role = self._get_watchers_by_role()
 
         owner = watchers_by_role.get("owner", None)
-        if (owner and owner.allow_notify_owned()
-                and owner.allow_notify_by_me(changer)):
+        if owner and owner.allow_notify_owned():
             watchers_to_notify.add(owner)
 
         assigned_to = watchers_by_role.get("assigned_to", None)
-        if (assigned_to and assigned_to.allow_notify_assigned_to()
-                and assigned_to.allow_notify_by_me(changer)):
+        if assigned_to and assigned_to.allow_notify_assigned_to():
             watchers_to_notify.add(assigned_to)
 
         suscribed_watchers = watchers_by_role.get("suscribed_watchers", None)
         if suscribed_watchers:
             for suscribed_watcher in suscribed_watchers:
-                if (suscribed_watcher and suscribed_watcher.allow_notify_suscribed()
-                        and suscribed_watcher.allow_notify_by_me(changer)):
+                if suscribed_watcher and suscribed_watcher.allow_notify_suscribed():
                     watchers_to_notify.add(suscribed_watcher)
 
-        (project, project_owner) = watchers_by_role.get("project_owner", (None, None))
-        if (project_owner
-                and project_owner.allow_notify_project(project)
-                and project_owner.allow_notify_by_me(changer)):
-            watchers_to_notify.add(project_owner)
+        project = watchers_by_role.get("project", None)
+        if project:
+            for member in project.members.all():
+                if member and member.allow_notify_project(project):
+                    watchers_to_notify.add(member)
 
         if changer.notify_changes_by_me:
             watchers_to_notify.add(changer)
+        else:
+            if changer in watchers_to_notify:
+                watchers_to_notify.remove(changer)
 
         return watchers_to_notify
 

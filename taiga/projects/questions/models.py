@@ -77,7 +77,7 @@ class Question(WatchedMixin):
             "owner": self.owner,
             "assigned_to": self.assigned_to,
             "suscribed_watchers": self.watchers.all(),
-            "project_owner": (self.project, self.project.owner),
+            "project": self.project,
         }
 
 

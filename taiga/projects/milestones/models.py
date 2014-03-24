@@ -123,7 +123,7 @@ class Milestone(WatchedMixin, models.Model):
     def _get_watchers_by_role(self):
         return {
             "owner": self.owner,
-            "project_owner": (self.project, self.project.owner),
+            "project": self.project,
         }
 
     def closed_points_by_date(self, date):
