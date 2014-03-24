@@ -152,7 +152,7 @@ class UserStoriesTestCase(test.TestCase):
             content_type="application/json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(UserStory.objects.all().count(), 5)
-        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_create_userstory_by_project_owner_with_wron_project(self):
@@ -354,7 +354,7 @@ class UserStoriesTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["subject"], response.data["subject"])
         self.assertEqual(UserStory.objects.all().count(), 4)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_edit_userstory_by_project_owner_with_wron_project(self):
@@ -498,7 +498,7 @@ class UserStoriesTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["subject"], response.data["subject"])
         self.assertEqual(UserStory.objects.all().count(), 4)
-        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(len(mail.outbox), 1)
         self.client.logout()
 
     def test_edit_userstory_by_membership_with_wron_project(self):
