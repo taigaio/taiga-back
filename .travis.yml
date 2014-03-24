@@ -9,7 +9,7 @@ install:
   - pip install -r requirements.txt --use-mirrors
   - pip install coveralls --use-mirrors
 script:
-    - coverage run --source=taiga --omit='*tests*,*commands*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' manage.py test --settings=settings.travis taiga
+    - coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' manage.py test --settings=settings.travis taiga
 notifications:
   email:
     recipients:
