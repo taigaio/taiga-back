@@ -3,6 +3,8 @@ import json
 from django.contrib.contenttypes.models import ContentType
 from . import backends
 
+# The complete list of content types
+# of allowed models for change events
 watched_types = (
     ("userstories", "userstory"),
     ("issues", "issue"),
@@ -10,6 +12,9 @@ watched_types = (
 
 
 def _get_type_for_model(model_instance):
+    """
+    Get content type tuple from model instance.
+    """
     ct = ContentType.objects.get_for_model(model_instance)
     return (ct.app_label, ct.model)
 

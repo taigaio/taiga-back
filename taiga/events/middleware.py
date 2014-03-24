@@ -3,7 +3,17 @@ import threading
 _local = threading.local()
 _local.session_id = None
 
-def get_current_session_id():
+
+def get_current_session_id() -> str:
+    """
+    Get current session id for current
+    request.
+
+    This function should be used only whithin
+    request context. Out of request context
+    it always return None
+    """
+
     global _local
     if not hasattr(_local, "session_id"):
         raise RuntimeException("No session identifier is found, "
@@ -18,6 +28,7 @@ class SessionIDMiddleware(object):
     identifier to thread local storage (that only avaliable for
     current thread).
     """
+
     def process_request(self, request):
         global _local
         session_id = request.META.get("HTTP_X_SESSION_ID", None)
