@@ -638,9 +638,7 @@ class UserStoriesTestCase(test.TestCase):
             "project": self.project1.id,
             "milestone": self.milestone1.id,
             "status": self.project1.us_statuses.all()[1].id,
-            "generated_from_issue": issue.id,
-            "issue_comment": "This is a test example"
-
+            "generated_from_issue": issue.id
         }
 
         self.assertEqual(UserStory.objects.all().count(), 4)
@@ -659,8 +657,7 @@ class UserStoriesTestCase(test.TestCase):
             "project": self.project1.id,
             "milestone": self.milestone1.id,
             "status": self.project1.us_statuses.all()[1].id,
-            "generated_from_issue": issue.id,
-            "issue_comment": "This is a test example"
+            "generated_from_issue": issue.id
         }
 
         self.assertEqual(UserStory.objects.all().count(), 4)
@@ -678,7 +675,7 @@ class UserStoriesTestCase(test.TestCase):
 
         self.assertEqual(response.data["origin_issue"]["subject"], issue.subject)
         issue_historical = reversion.get_unique_for_object(issue)
-        self.assertEqual(issue_historical[0].revision.comment, data["issue_comment"])
+        self.assertTrue(data["subject"] in issue_historical[0].revision.comment)
 
         self.client.logout()
 
@@ -692,8 +689,7 @@ class UserStoriesTestCase(test.TestCase):
             "status": self.project1.us_statuses.all()[1].id,
             "generated_from_issue": issue.id,
             "issue_comment": "This is a test example",
-            "generated_from_issue": issue.id,
-            "issue_comment": "This is a test example"
+            "generated_from_issue": issue.id
         }
 
         self.assertEqual(UserStory.objects.all().count(), 4)
@@ -711,7 +707,7 @@ class UserStoriesTestCase(test.TestCase):
 
         self.assertEqual(response.data["origin_issue"]["subject"], issue.subject)
         issue_historical = reversion.get_unique_for_object(issue)
-        self.assertEqual(issue_historical[0].revision.comment, data["issue_comment"])
+        self.assertTrue(data["subject"] in issue_historical[0].revision.comment)
 
         self.client.logout()
 
@@ -723,8 +719,7 @@ class UserStoriesTestCase(test.TestCase):
             "project": self.project1.id,
             "milestone": self.milestone1.id,
             "status": self.project1.us_statuses.all()[1].id,
-            "generated_from_issue": issue.id,
-            "issue_comment": "This is a test example"
+            "generated_from_issue": issue.id
         }
 
         self.assertEqual(UserStory.objects.all().count(), 4)

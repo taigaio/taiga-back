@@ -125,9 +125,9 @@ class UserStoryViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudView
         # Added comment to the origin (issue)
         if response.status_code == status.HTTP_201_CREATED and self.object.generated_from_issue:
             with reversion.create_revision():
-                if "issue_comment" in self.request.DATA:
-                    reversion.set_comment(self.request.DATA['issue_comment'])
-                    self.object.generated_from_issue.save()
+                reversion.set_comment(_("Generated the user story [US #{ref} - {subject}](:us:{ref} \"US #{ref} - {subject}\")").format(
+                                                                                        ref=self.object.ref, subject=self.object.subject))
+                self.object.generated_from_issue.save()
 
         return response
 
