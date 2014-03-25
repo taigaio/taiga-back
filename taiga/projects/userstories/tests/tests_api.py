@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import json
-
 from django import test
 from django.core import mail
 from django.core.urlresolvers import reverse
@@ -10,8 +8,12 @@ from taiga.base.users.tests import create_user
 from taiga.projects.tests import create_project, add_membership
 from taiga.projects.milestones.tests import create_milestone
 from taiga.projects.userstories.models import UserStory
+from taiga.projects.issues.tests import create_issue
 
 from . import create_userstory
+
+import json
+import reversion
 
 
 class UserStoriesTestCase(test.TestCase):
@@ -623,5 +625,117 @@ class UserStoriesTestCase(test.TestCase):
                 reverse("userstories-detail", args=(self.userstory1.id,))
         )
         self.assertEqual(response.status_code, 404)
+        self.assertEqual(UserStory.objects.all().count(), 4)
+        self.client.logout()
+
+    ##########################################
+
+    def test_create_userstory_from_issue_by_anon(self):
+        issue = create_issue(1, self.user2, self.project1, self.milestone1)
+        data = {
+            "subject": "Test UserStory",
+            "description": "A Test UserStory example description",
+            "project": self.project1.id,
+            "milestone": self.milestone1.id,
+            "status": self.project1.us_statuses.all()[1].id,
+            "generated_from_issue": issue.id,
+            "issue_comment": "This is a test example"
+
+        }
+
+        self.assertEqual(UserStory.objects.all().count(), 4)
+        response = self.client.post(
+            reverse("userstories-list"),
+            json.dumps(data),
+            content_type="application/json")
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(UserStory.objects.all().count(), 4)
+
+    def test_create_userstory_from_issue_by_project_owner(self):
+        issue = create_issue(1, self.user2, self.project1, self.milestone1)
+        data = {
+            "subject": "Test UserStory",
+            "description": "A Test UserStory example description",
+            "project": self.project1.id,
+            "milestone": self.milestone1.id,
+            "status": self.project1.us_statuses.all()[1].id,
+            "generated_from_issue": issue.id,
+            "issue_comment": "This is a test example"
+        }
+
+        self.assertEqual(UserStory.objects.all().count(), 4)
+        self.assertEqual(len(mail.outbox), 0)
+        response = self.client.login(username=self.user1.username,
+                                     password=self.user1.username)
+        self.assertTrue(response)
+        response = self.client.post(
+            reverse("userstories-list"),
+            json.dumps(data),
+            content_type="application/json")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(UserStory.objects.all().count(), 5)
+        self.assertEqual(len(mail.outbox), 2)
+
+        self.assertEqual(response.data["origin_issue"]["subject"], issue.subject)
+        issue_historical = reversion.get_unique_for_object(issue)
+        self.assertEqual(issue_historical[0].revision.comment, data["issue_comment"])
+
+        self.client.logout()
+
+    def test_create_userstory_from_issue_by_membership(self):
+        issue = create_issue(1, self.user2, self.project1, self.milestone1)
+        data = {
+            "subject": "Test UserStory creation from issue",
+            "description": "A Test UserStory example description",
+            "project": self.project1.id,
+            "milestone": self.milestone1.id,
+            "status": self.project1.us_statuses.all()[1].id,
+            "generated_from_issue": issue.id,
+            "issue_comment": "This is a test example",
+            "generated_from_issue": issue.id,
+            "issue_comment": "This is a test example"
+        }
+
+        self.assertEqual(UserStory.objects.all().count(), 4)
+        self.assertEqual(len(mail.outbox), 0)
+        response = self.client.login(username=self.user2.username,
+                                     password=self.user2.username)
+        self.assertTrue(response)
+        response = self.client.post(
+            reverse("userstories-list"),
+            json.dumps(data),
+            content_type="application/json")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(UserStory.objects.all().count(), 5)
+        self.assertEqual(len(mail.outbox), 1)
+
+        self.assertEqual(response.data["origin_issue"]["subject"], issue.subject)
+        issue_historical = reversion.get_unique_for_object(issue)
+        self.assertEqual(issue_historical[0].revision.comment, data["issue_comment"])
+
+        self.client.logout()
+
+    def test_create_userstory_from_issue_by_no_membership(self):
+        issue = create_issue(1, self.user2, self.project1, self.milestone1)
+        data = {
+            "subject": "Test UserStory",
+            "description": "A Test UserStory example description",
+            "project": self.project1.id,
+            "milestone": self.milestone1.id,
+            "status": self.project1.us_statuses.all()[1].id,
+            "generated_from_issue": issue.id,
+            "issue_comment": "This is a test example"
+        }
+
+        self.assertEqual(UserStory.objects.all().count(), 4)
+        self.assertEqual(len(mail.outbox), 0)
+        response = self.client.login(username=self.user4.username,
+                                     password=self.user4.username)
+        self.assertTrue(response)
+        response = self.client.post(
+            reverse("userstories-list"),
+            json.dumps(data),
+            content_type="application/json")
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(UserStory.objects.all().count(), 4)
         self.client.logout()

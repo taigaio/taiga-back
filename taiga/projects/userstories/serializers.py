@@ -5,6 +5,7 @@ from django.db.models import get_model
 from rest_framework import serializers
 
 from taiga.base.serializers import PickleField, NeighborsSerializerMixin
+
 from . import models
 
 
@@ -24,6 +25,7 @@ class UserStorySerializer(serializers.ModelSerializer):
     total_points = serializers.SerializerMethodField("get_total_points")
     comment = serializers.SerializerMethodField("get_comment")
     milestone_slug = serializers.SerializerMethodField("get_milestone_slug")
+    origin_issue = serializers.SerializerMethodField("get_origin_issue")
 
     class Meta:
         model = models.UserStory
@@ -55,6 +57,15 @@ class UserStorySerializer(serializers.ModelSerializer):
             return obj.milestone.slug
         else:
             return None
+
+    def get_origin_issue(self, obj):
+        if obj.generated_from_issue:
+            return {
+                "id": obj.generated_from_issue.id,
+                "ref": obj.generated_from_issue.ref,
+                "subject": obj.generated_from_issue.subject,
+            }
+        return None
 
 
 class UserStoryNeighborsSerializer(NeighborsSerializerMixin, UserStorySerializer):

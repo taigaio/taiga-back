@@ -80,6 +80,9 @@ class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
     tags = PickledObjectField(null=False, blank=True,
                               verbose_name=_("tags"))
     attachments = generic.GenericRelation("projects.Attachment")
+    generated_from_issue = models.ForeignKey("issues.Issue", null=True, blank=True,
+                                             related_name="generated_user_stories",
+                                             verbose_name=_("generated from issue"))
 
     notifiable_fields = [
         "subject",
@@ -94,7 +97,8 @@ class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
         "tags",
         "description",
         "is_blocked",
-        "blocked_comment"
+        "blocked_comment",
+        "generated_from_isssue"
     ]
 
     class Meta:

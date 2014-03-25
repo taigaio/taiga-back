@@ -5,6 +5,7 @@ from rest_framework import serializers
 from taiga.base.serializers import PickleField, NeighborsSerializerMixin
 from taiga.projects.serializers import AttachmentSerializer
 from taiga.projects.mixins.notifications.serializers import WatcherValidationSerializerMixin
+
 from . import models
 
 
@@ -18,6 +19,7 @@ class IssueSerializer(WatcherValidationSerializerMixin, serializers.ModelSeriali
     is_closed = serializers.Field(source="is_closed")
     comment = serializers.SerializerMethodField("get_comment")
     attachments = IssueAttachmentSerializer(many=True, read_only=True)
+    generated_user_stories = serializers.SerializerMethodField("get_generated_user_stories")
 
     class Meta:
         model = models.Issue
@@ -25,6 +27,9 @@ class IssueSerializer(WatcherValidationSerializerMixin, serializers.ModelSeriali
     def get_comment(self, obj):
         # NOTE: This method and field is necessary to historical comments work
         return ""
+
+    def get_generated_user_stories(self, obj):
+        return obj.generated_user_stories.values("id", "ref", "subject")
 
 
 class IssueNeighborsSerializer(NeighborsSerializerMixin, IssueSerializer):

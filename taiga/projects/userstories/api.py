@@ -2,6 +2,7 @@
 
 import reversion
 
+from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
@@ -116,6 +117,19 @@ class UserStoryViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudView
         service.bulk_update_order(project, request.user, bulk_stories)
 
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+
+    @transaction.atomic
+    def create(self, *args, **kwargs):
+        response = super().create(*args, **kwargs)
+
+        # Added comment to the origin (issue)
+        if response.status_code == status.HTTP_201_CREATED and self.object.generated_from_issue:
+            with reversion.create_revision():
+                if "issue_comment" in self.request.DATA:
+                    reversion.set_comment(self.request.DATA['issue_comment'])
+                    self.object.generated_from_issue.save()
+
+        return response
 
     def pre_save(self, obj):
         if not obj.id:
