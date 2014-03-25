@@ -10,7 +10,7 @@ from rest_framework.response import Response
 
 from reversion.revisions import revision_context_manager
 from reversion.models import Version
-import  reversion
+import reversion
 
 
 from . import pagination
