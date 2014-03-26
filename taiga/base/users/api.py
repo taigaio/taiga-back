@@ -29,9 +29,15 @@ class MembersFilterBackend(BaseFilterBackend):
         if project_id:
             Project = get_model('projects', 'Project')
             project = get_object_or_404(Project, pk=project_id)
-            return queryset.filter(Q(memberships__project=project) | Q(id=project.owner.id)).distinct()
+            if project.memberships.filter(user=request.user).exists() or project.owner ==request.user:
+                return queryset.filter(Q(memberships__project=project) | Q(id=project.owner.id)).distinct()
+            else:
+                raise exc.PermissionDenied(_("You don't have permisions to see this project users."))
         else:
-            return queryset
+            if request.user.is_superuser:
+                return queryset
+            else:
+                raise exc.PermissionDenied(_("You don't have permisions to see all users."))
 
 class PermissionsViewSet(ModelListViewSet):
     permission_classes = (IsAuthenticated,)
