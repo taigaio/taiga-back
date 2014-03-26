@@ -38,6 +38,16 @@ class ProfileTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
 
         users_list = response.data
+        self.assertEqual(len(users_list), 1)
+
+        response = self.client.login(username=self.user1.username,
+                                     password=self.user1.username)
+        self.assertTrue(response)
+
+        response = self.client.get(reverse("users-list"))
+        self.assertEqual(response.status_code, 200)
+
+        users_list = response.data
         self.assertEqual(len(users_list), 3)
 
 
@@ -52,7 +62,7 @@ class ProfileTestCase(test.TestCase):
                         reverse("users-detail", args=[self.user2.pk]),
                         content_type="application/json",
                         data=json.dumps(data))
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
     def test_update_users_self(self):
         response = self.client.login(username=self.user3.username,
@@ -88,7 +98,7 @@ class ProfileTestCase(test.TestCase):
         data = {"first_name": "Foo Bar"}
         response = self.client.delete(
                         reverse("users-detail", args=[self.user2.pk]))
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
     def test_delete_users_self(self):
         response = self.client.login(username=self.user3.username,

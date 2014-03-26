@@ -37,7 +37,7 @@ class MembersFilterBackend(BaseFilterBackend):
             if request.user.is_superuser:
                 return queryset
             else:
-                raise exc.PermissionDenied(_("You don't have permisions to see all users."))
+                return queryset.filter(pk=request.user.id)
 
 class PermissionsViewSet(ModelListViewSet):
     permission_classes = (IsAuthenticated,)
