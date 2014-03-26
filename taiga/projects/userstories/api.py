@@ -85,7 +85,7 @@ class UserStoryViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudView
 
         project = get_object_or_404(Project, id=project_id)
 
-        if not has_project_perm(request.user, project, 'add_userstory'):
+        if request.user != project.owner and not has_project_perm(request.user, project, 'add_userstory'):
             raise exc.PermissionDenied(_("You don't have permisions to create user stories."))
 
         service = services.UserStoriesService()
@@ -110,7 +110,7 @@ class UserStoryViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudView
 
         project = get_object_or_404(Project, id=project_id)
 
-        if not has_project_perm(request.user, project, 'add_userstory'):
+        if request.user != project.owner and not has_project_perm(request.user, project, 'change_userstory'):
             raise exc.PermissionDenied(_("You don't have permisions to create user stories."))
 
         service = services.UserStoriesService()

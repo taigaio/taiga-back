@@ -112,7 +112,7 @@ class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
         project = get_object_or_404(Project, id=project_id)
         us = get_object_or_404(UserStory, id=us_id)
 
-        if not has_project_perm(request.user, project, 'add_task'):
+        if request.user != project.owner and not has_project_perm(request.user, project, 'add_task'):
             raise exc.PermissionDenied(_("You don't have permisions to create tasks."))
 
         items = filter(lambda s: len(s) > 0,

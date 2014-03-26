@@ -193,7 +193,7 @@ class PointsViewSet(ModelCrudViewSet):
 
         project = get_object_or_404(models.Project, id=project_id)
 
-        if not has_project_perm(request.user, project, 'change_points'):
+        if request.user != project.owner and not has_project_perm(request.user, project, 'change_points'):
             raise exc.PermissionDenied(_("You don't have permisions to change points."))
 
         service = services.PointsService()
@@ -225,7 +225,7 @@ class UserStoryStatusViewSet(ModelCrudViewSet):
 
         project = get_object_or_404(models.Project, id=project_id)
 
-        if not has_project_perm(request.user, project, 'change_userstorystatus'):
+        if request.user != project.owner and not has_project_perm(request.user, project, 'change_userstorystatus'):
             raise exc.PermissionDenied(_("You don't have permisions to change user_story_statuses."))
 
         service = services.UserStoryStatusesService()
@@ -259,7 +259,7 @@ class TaskStatusViewSet(ModelCrudViewSet):
 
         project = get_object_or_404(models.Project, id=project_id)
 
-        if not has_project_perm(request.user, project, 'change_taskstatus'):
+        if request.user != project.owner and not has_project_perm(request.user, project, 'change_taskstatus'):
             raise exc.PermissionDenied(_("You don't have permisions to change task_statuses."))
 
         service = services.TaskStatusesService()
@@ -293,7 +293,7 @@ class SeverityViewSet(ModelCrudViewSet):
 
         project = get_object_or_404(models.Project, id=project_id)
 
-        if not has_project_perm(request.user, project, 'change_severity'):
+        if request.user != project.owner and not has_project_perm(request.user, project, 'change_severity'):
             raise exc.PermissionDenied(_("You don't have permisions to change severities."))
 
         service = services.SeveritiesService()
@@ -325,7 +325,7 @@ class PriorityViewSet(ModelCrudViewSet):
 
         project = get_object_or_404(models.Project, id=project_id)
 
-        if not has_project_perm(request.user, project, 'change_priority'):
+        if request.user != project.owner and not has_project_perm(request.user, project, 'change_priority'):
             raise exc.PermissionDenied(_("You don't have permisions to change priorities."))
 
         service = services.PrioritiesService()
@@ -357,7 +357,7 @@ class IssueTypeViewSet(ModelCrudViewSet):
 
         project = get_object_or_404(models.Project, id=project_id)
 
-        if not has_project_perm(request.user, project, 'change_issuetype'):
+        if request.user != project.owner and not has_project_perm(request.user, project, 'change_issuetype'):
             raise exc.PermissionDenied(_("You don't have permisions to change issue_types."))
 
         service = services.IssueTypesService()
@@ -389,7 +389,7 @@ class IssueStatusViewSet(ModelCrudViewSet):
 
         project = get_object_or_404(models.Project, id=project_id)
 
-        if not has_project_perm(request.user, project, 'change_issuestatus'):
+        if request.user != project.owner and not has_project_perm(request.user, project, 'change_issuestatus'):
             raise exc.PermissionDenied(_("You don't have permisions to change issue_statuses."))
 
         service = services.IssueStatusesService()
@@ -423,7 +423,7 @@ class QuestionStatusViewSet(ModelCrudViewSet):
 
         project = get_object_or_404(models.Project, id=project_id)
 
-        if not has_project_perm(request.user, project, 'change_questionstatus'):
+        if request.user != project.owner and not has_project_perm(request.user, project, 'change_questionstatus'):
             raise exc.PermissionDenied(_("You don't have permisions to change question_statuses."))
 
         service = services.QuestionStatusesService()
