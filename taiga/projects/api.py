@@ -43,7 +43,8 @@ class ProjectAdminViewSet(ModelCrudViewSet):
         return domain.projects.all()
 
     def pre_save(self, obj):
-        obj.owner = self.request.user
+        if not obj.id:
+            obj.owner = self.request.user
 
         # TODO REFACTOR THIS
         if not obj.id:
@@ -92,7 +93,8 @@ class ProjectViewSet(ModelCrudViewSet):
         return qs.distinct()
 
     def pre_save(self, obj):
-        obj.owner = self.request.user
+        if not obj.id:
+            obj.owner = self.request.user
 
         # FIXME
 

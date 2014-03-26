@@ -4,11 +4,13 @@ import uuid
 
 from django.db.models.loading import get_model
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.models import Permission
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.response import Response
+from rest_framework.filters import BaseFilterBackend
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status, viewsets
 
@@ -16,11 +18,20 @@ from djmail.template_mail import MagicMailBuilder
 
 from taiga.base.decorators import list_route, action
 from taiga.base import exceptions as exc
-from taiga.base.filters import FilterBackend
 from taiga.base.api import ModelCrudViewSet, RetrieveModelMixin, ModelListViewSet
 
 from .models import User, Role
 from .serializers import UserSerializer, RecoverySerializer, PermissionSerializer
+
+class MembersFilterBackend(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        project_id = request.QUERY_PARAMS.get('project', None)
+        if project_id:
+            Project = get_model('projects', 'Project')
+            project = get_object_or_404(Project, pk=project_id)
+            return queryset.filter(Q(memberships__project=project) | Q(id=project.owner.id)).distinct()
+        else:
+            return queryset
 
 class PermissionsViewSet(ModelListViewSet):
     permission_classes = (IsAuthenticated,)
@@ -51,7 +62,7 @@ class UsersViewSet(ModelCrudViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    filter_fields = [("project", "memberships__project__pk")]
+    filter_backends = (MembersFilterBackend,)
 
     def pre_conditions_on_save(self, obj):
         if not self.request.user.is_superuser and obj.id != self.request.user.id:
