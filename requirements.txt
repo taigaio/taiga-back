@@ -2,7 +2,7 @@
 
 djangorestframework==2.3.13
 django-reversion==1.8.0
-Django==1.6.1
+Django==1.6.2
 South==0.8.3
 django-filter==0.7
 django-picklefield==0.3.0
