@@ -315,6 +315,8 @@ class UserStoryStatus(models.Model):
                                     verbose_name=_("is closed"))
     color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
                              verbose_name=_("color"))
+    wip_limit = models.IntegerField(null=True, blank=True, default=None,
+                                    verbose_name=_("work in progress limit"))
     project = models.ForeignKey("Project", null=False, blank=False,
                                 related_name="us_statuses", verbose_name=_("project"))
 
