@@ -157,7 +157,7 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.staticfiles",
 
-    "taiga.base.users",
+    "taiga.users",
     "taiga.base.notifications",
     "taiga.base.searches",
     "taiga.base",
