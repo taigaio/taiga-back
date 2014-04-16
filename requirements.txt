@@ -17,5 +17,5 @@ jinja2==2.7.1
 pygments>=1.6
 django-sites==0.4
 
-# Uncomment it if you are using python < 3.4
-#enum34==0.9.23
+# Comment it if you are using python >= 3.4
+enum34==0.9.23
