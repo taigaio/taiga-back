@@ -16,32 +16,37 @@
 
 from taiga.base import routers
 
+from taiga.auth.api import AuthViewSet
+from taiga.users.api import UsersViewSet, PermissionsViewSet
+from taiga.base.searches.api import SearchViewSet
+from taiga.base.resolver.api import ResolverViewSet
+from taiga.projects.api import (ProjectViewSet, MembershipViewSet, InvitationViewSet,
+                                    UserStoryStatusViewSet, PointsViewSet, TaskStatusViewSet,
+                                    IssueStatusViewSet, IssueTypeViewSet, PriorityViewSet,
+                                    SeverityViewSet, ProjectAdminViewSet, RolesViewSet) #, QuestionStatusViewSet)
+from taiga.domains.api import DomainViewSet, DomainMembersViewSet
+from taiga.projects.milestones.api import MilestoneViewSet
+from taiga.projects.userstories.api import UserStoryViewSet, UserStoryAttachmentViewSet
+from taiga.projects.tasks.api import  TaskViewSet, TaskAttachmentViewSet
+from taiga.projects.issues.api import IssueViewSet, IssueAttachmentViewSet
+#from taiga.projects.questions.api import QuestionViewSet, QuestionAttachmentViewSet
+#from taiga.projects.documents.api import DocumentViewSet, DocumentAttachmentViewSet
+from taiga.projects.wiki.api import WikiViewSet, WikiAttachmentViewSet
+
+
 router = routers.DefaultRouter(trailing_slash=False)
 
-
-# Users & Auth
-from taiga.base.users.api import UsersViewSet
-from taiga.base.users.api import PermissionsViewSet
-from taiga.base.auth.api import AuthViewSet
-
+# taiga.users
 router.register(r"users", UsersViewSet, base_name="users")
 router.register(r"permissions", PermissionsViewSet, base_name="permissions")
 router.register(r"auth", AuthViewSet, base_name="auth")
 
 
 # Resolver & Search
-from taiga.base.resolver.api import ResolverViewSet
-from taiga.base.searches.api import SearchViewSet
-
 router.register(r"resolver", ResolverViewSet, base_name="resolver")
 router.register(r"search", SearchViewSet, base_name="search")
 
-
 # Domains
-from taiga.domains.api import DomainViewSet
-from taiga.domains.api import DomainMembersViewSet
-from taiga.projects.api import ProjectAdminViewSet
-
 router.register(r"sites", DomainViewSet, base_name="sites")
 router.register(r"site-members", DomainMembersViewSet, base_name="site-members")
 router.register(r"site-projects", ProjectAdminViewSet, base_name="site-projects")

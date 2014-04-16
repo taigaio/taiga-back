@@ -1,15 +1,12 @@
-# -*- coding: utf-8 -*-
-
 import json
-
 from django import test
 
-from taiga.base.users.tests import create_user
+from taiga.users.tests import create_user
 from taiga.projects.tests import create_project
 
-from . import create_userstory
 from .. import services
 from .. import models
+from . import create_userstory
 
 
 class UserStoriesServiceTestCase(test.TestCase):

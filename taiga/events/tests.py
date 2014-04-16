@@ -18,7 +18,7 @@ from django.http import HttpResponse
 
 from taiga.projects.tests import create_project
 from taiga.projects.issues.tests import create_issue
-from taiga.base.users.tests import create_user
+from taiga.users.tests import create_user
 
 from . import middleware as mw
 from . import changes as ch

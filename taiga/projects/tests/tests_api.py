@@ -7,10 +7,12 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.db.models import get_model
 
-from taiga.base.users.tests import create_user
+from taiga.users.tests import create_user
 from taiga.projects.models import Project, Membership
 
-from . import create_project, add_membership
+from . import create_project
+from . import add_membership
+
 
 class ProfileTestCase(test.TestCase):
     fixtures = ["initial_domains.json"]

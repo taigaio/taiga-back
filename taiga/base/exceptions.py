@@ -14,7 +14,7 @@ from .utils.json import to_json
 
 class BaseException(exceptions.APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = _('Unexpected error')
+    default_detail = _("Unexpected error")
 
     def __init__(self, detail=None):
         self.detail = detail or self.default_detail
@@ -26,7 +26,7 @@ class NotFound(BaseException):
     """
 
     status_code = status.HTTP_404_NOT_FOUND
-    default_detail = _('Not found.')
+    default_detail = _("Not found.")
 
 
 class NotSupported(BaseException):
@@ -39,7 +39,7 @@ class BadRequest(BaseException):
     Exception used on bad arguments detected
     on api view.
     """
-    default_detail = _('Wrong arguments.')
+    default_detail = _("Wrong arguments.")
 
 
 class WrongArguments(BaseException):
@@ -47,7 +47,11 @@ class WrongArguments(BaseException):
     Exception used on bad arguments detected
     on service. This is same as `BadRequest`.
     """
-    default_detail = _('Wrong arguments.')
+    default_detail = _("Wrong arguments.")
+
+
+class RequestValidationError(BaseException):
+    default_detail = _("Data validation error")
 
 
 class PermissionDenied(exceptions.PermissionDenied):
@@ -56,6 +60,11 @@ class PermissionDenied(exceptions.PermissionDenied):
     exception.
     """
     pass
+
+
+class IntegrityError(BaseException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = _("Integrity Error for wrong or invalid arguments")
 
 
 class PreconditionError(BaseException):
@@ -108,20 +117,20 @@ def exception_handler(exc):
 
     if isinstance(exc, exceptions.APIException):
         headers = {}
-        if getattr(exc, 'auth_header', None):
-            headers['WWW-Authenticate'] = exc.auth_header
-        if getattr(exc, 'wait', None):
-            headers['X-Throttle-Wait-Seconds'] = '%d' % exc.wait
+        if getattr(exc, "auth_header", None):
+            headers["WWW-Authenticate"] = exc.auth_header
+        if getattr(exc, "wait", None):
+            headers["X-Throttle-Wait-Seconds"] = "%d" % exc.wait
 
         detail = format_exception(exc)
         return Response(detail, status=exc.status_code, headers=headers)
 
     elif isinstance(exc, Http404):
-        return Response({'_error_message': _('Not found')},
+        return Response({"_error_message": _("Not found")},
                         status=status.HTTP_404_NOT_FOUND)
 
     elif isinstance(exc, DjangoPermissionDenied):
-        return Response({'_error_message': _('Permission denied')},
+        return Response({"_error_message": _("Permission denied")},
                         status=status.HTTP_403_FORBIDDEN)
 
     # Note: Unhandled exceptions will raise a 500 error.

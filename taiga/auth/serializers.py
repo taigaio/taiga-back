@@ -14,16 +14,10 @@ class PublicRegisterSerializer(BaseRegisterSerializer):
     pass
 
 
-class PrivateRegisterSerializer(BaseRegisterSerializer):
-    pass
-
-
-class PrivateGenericRegisterSerializer(serializers.Serializer):
+class PrivateRegisterForNewUserSerializer(BaseRegisterSerializer):
     token = serializers.CharField(max_length=255, required=True)
-    existing = serializers.BooleanField()
-    # existing = serializers.ChoiceField(choices=[("on", "on"), ("off", "off")])
 
-
-class PrivateRegisterExistingSerializer(serializers.Serializer):
+class PrivateRegisterForExistingUserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=200)
     password = serializers.CharField(min_length=4)
+    token = serializers.CharField(max_length=255, required=True)

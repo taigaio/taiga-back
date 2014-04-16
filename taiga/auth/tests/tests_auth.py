@@ -14,16 +14,19 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from taiga import urls
-from taiga.base import auth
-from taiga.base.users.tests import create_user, create_domain
+from taiga.users.tests import create_user, create_domain
 from taiga.projects.tests import create_project
 
 from taiga.domains.models import Domain, DomainMember
 from taiga.projects.models import Membership
 
 
+from taiga.auth.backends import Token as TokenAuthBackend
+from taiga.auth.backends import get_token_for_user
+
+
 class TestAuthView(viewsets.ViewSet):
-    authentication_classes = (auth.Token,)
+    authentication_classes = (TokenAuthBackend,)
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
@@ -37,6 +40,7 @@ urls.urlpatterns += patterns("",
 
 class TokenAuthTests(test.TestCase):
     fixtures = ["initial_domains.json",]
+
     def setUp(self):
         self.user1 = create_user(1)
 
@@ -45,9 +49,9 @@ class TokenAuthTests(test.TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_token_auth_02(self):
-        token = auth.get_token_for_user(self.user1)
+        token = get_token_for_user(self.user1)
         response = self.client.get(reverse("test-token-auth"),
-                                    HTTP_AUTHORIZATION="Bearer {}".format(token))
+                                   HTTP_AUTHORIZATION="Bearer {}".format(token))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b'"ok"')
 

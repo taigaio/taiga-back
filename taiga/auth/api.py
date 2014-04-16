@@ -1,137 +1,109 @@
-# -*- coding: utf-8 -*-
+from functools import partial
+from enum import Enum
 
-from django.db.models.loading import get_model
-from django.db.models import Q
-from django.contrib.auth import logout, login, authenticate
-from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework import status, viewsets
+from rest_framework import status
+from rest_framework import viewsets
+from rest_framework import serializers
+
 from taiga.base.decorators import list_route
-
-from taiga.domains.models import DomainMember
-from taiga.domains import get_active_domain
-from taiga.base.users.models import User, Role
-from taiga.base.users.serializers import UserSerializer
 from taiga.base import exceptions as exc
-from taiga.base import auth
+from taiga.users.services import get_and_validate_user
+from taiga.domains.services import is_public_register_enabled_for_domain
 
-from .serializers import (PublicRegisterSerializer,
-                          PrivateRegisterSerializer,
-                          PrivateGenericRegisterSerializer,
-                          PrivateRegisterExistingSerializer)
+from .serializers import PublicRegisterSerializer
+from .serializers import PrivateRegisterForExistingUserSerializer
+from .serializers import PrivateRegisterForNewUserSerializer
+
+from .services import private_register_for_existing_user
+from .services import private_register_for_new_user
+from .services import public_register
+from .services import make_auth_response_data
+
+
+def _parse_data(data:dict, *, cls):
+    """
+    Generic function for parse user data using
+    specified serializer on `cls` keyword parameter.
+
+    Raises: RequestValidationError exception if
+    some errors found when data is validated.
+
+    Returns the parsed data.
+    """
+
+    serializer = cls(data=data)
+    if not serializer.is_valid():
+        raise exc.RequestValidationError(serializer.errors)
+    return serializer.data
+
+# Parse public register data
+parse_public_register_data = partial(_parse_data, cls=PublicRegisterSerializer)
+
+# Parse private register data for existing user
+parse_private_register_for_existing_user_data = \
+    partial(_parse_data, cls=PrivateRegisterForExistingUserSerializer)
+
+# Parse private register data for new user
+parse_private_register_for_new_user_data = \
+    partial(_parse_data, cls=PrivateRegisterForNewUserSerializer)
+
+
+class RegisterTypeEnum(Enum):
+    new_user = 1
+    existing_user = 2
+
+
+def parse_register_type(userdata:dict) -> str:
+    """
+    Parses user data and detects that register type is.
+    It returns RegisterTypeEnum value.
+    """
+    # Create adhoc inner serializer for avoid parse
+    # manually the user data.
+    class _serializer(serializers.Serializer):
+        existing = serializers.BooleanField()
+
+    instance = _serializer(data=userdata)
+    if not instance.is_valid():
+        raise exc.RequestValidationError(instance.errors)
+
+    if instance.data["existing"]:
+        return RegisterTypeEnum.existing_user
+    return RegisterTypeEnum.new_user
 
 
 class AuthViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
 
-    def _create_response(self, user):
-        serializer = UserSerializer(user)
-        response_data = serializer.data
-
-        domain = get_active_domain()
-        response_data['is_site_owner'] = domain.user_is_owner(user)
-        response_data['is_site_staff'] = domain.user_is_staff(user)
-        response_data["auth_token"] = auth.get_token_for_user(user)
-        return response_data
-
-    def _create_domain_member(self, user):
-        domain = get_active_domain()
-
-        if domain.members.filter(user=user).count() == 0:
-            domain_member = DomainMember(domain=domain, user=user, email=user.email,
-                                     is_owner=False, is_staff=False)
-            domain_member.save()
-
-    def _send_public_register_email(self, user):
-        context = {"user": user}
-
-        mbuilder = MagicMailBuilder()
-        email = mbuilder.public_register_user(user.email, context)
-        email.send()
-
     def _public_register(self, request):
-        if not request.domain.public_register:
+        if not is_public_register_enabled_for_domain(request.domain):
             raise exc.BadRequest(_("Public register is disabled for this domain."))
 
-        serializer = PublicRegisterSerializer(data=request.DATA)
-        if not serializer.is_valid():
-            raise exc.BadRequest(serializer.errors)
+        try:
+            data = parse_public_register_data(request.DATA)
+            user = public_register(request.domain, **data)
+        except exc.IntegrityError as e:
+            raise exc.BadRequest(e.detail)
 
-        data = serializer.data
-
-        if User.objects.filter(Q(username=data["username"]) | Q(email=data["email"])).exists():
-            raise exc.BadRequest(_("This username or email is already in use."))
-
-        user = User(username=data["username"],
-                    first_name=data["first_name"],
-                    last_name=data["last_name"],
-                    email=data["email"])
-        user.set_password(data["password"])
-        user.save()
-
-        self._create_domain_member(user)
-        #self._send_public_register_email(user)
-
-        response_data = self._create_response(user)
-        return Response(response_data, status=status.HTTP_201_CREATED)
-
-    def _send_private_register_email(self, user, **kwargs):
-        context = {"user": user}
-        context.update(kwargs)
-
-        mbuilder = MagicMailBuilder()
-        email = mbuilder.private_register_user(user.email, context)
-        email.send()
+        data = make_auth_response_data(request.domain, user)
+        return Response(data, status=status.HTTP_201_CREATED)
 
     def _private_register(self, request):
-        base_serializer = PrivateGenericRegisterSerializer(data=request.DATA)
-        if not base_serializer.is_valid():
-            raise exc.BadRequest(base_serializer.errors)
+        register_type = parse_register_type(request.DATA)
 
-        membership_model = get_model("projects", "Membership")
-        try:
-            membership = membership_model.objects.get(token=base_serializer.data["token"])
-        except membership_model.DoesNotExist as e:
-            raise exc.BadRequest(_("Invalid token")) from e
-
-        if base_serializer.data["existing"]:
-            serializer = PrivateRegisterExistingSerializer(data=request.DATA)
-            if not serializer.is_valid():
-                raise exc.BadRequest(serializer.errors)
-
-            user = get_object_or_404(User, username=serializer.data["username"])
-            if not user.check_password(serializer.data["password"]):
-                raise exc.BadRequest({"password": _("Incorrect password")})
-
+        if register_type is RegisterTypeEnum.existing_user:
+            data = parse_private_register_for_existing_user_data(request.DATA)
+            user = private_register_for_existing_user(request.domain, **data)
         else:
-            serializer = PrivateRegisterSerializer(data=request.DATA)
-            if not serializer.is_valid():
-                raise exc.BadRequest(serializer.errors)
+            data = parse_private_register_for_new_user_data(request.DATA)
+            user = private_register_for_new_user(request.domain, **data)
 
-            data = serializer.data
-
-            if User.objects.filter(Q(username=data["username"]) | Q(email=data["email"])).exists():
-                raise exc.BadRequest(_("This username or email is already in use."))
-
-            user = User(username=data["username"],
-                        first_name=data["first_name"],
-                        last_name=data["last_name"],
-                        email=data["email"])
-            user.set_password(data["password"])
-            user.save()
-
-        self._create_domain_member(user)
-
-        membership.user = user
-        membership.save()
-
-        #self._send_private_register_email(user, membership=membership)
-
-        response_data = self._create_response(user)
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        data = make_auth_response_data(request.domain, user)
+        return Response(data, status=status.HTTP_201_CREATED)
 
     @list_route(methods=["POST"], permission_classes=[AllowAny])
     def register(self, request, **kwargs):
@@ -140,7 +112,6 @@ class AuthViewSet(viewsets.ViewSet):
             return self._public_register(request)
         elif type == "private":
             return self._private_register(request)
-
         raise exc.BadRequest(_("invalid register type"))
 
     # Login view: /api/v1/auth
@@ -148,13 +119,6 @@ class AuthViewSet(viewsets.ViewSet):
         username = request.DATA.get('username', None)
         password = request.DATA.get('password', None)
 
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            raise exc.BadRequest(_("Invalid username or password"))
-
-        if not user.check_password(password):
-            raise exc.BadRequest(_("Invalid username or password"))
-
-        response_data = self._create_response(user)
-        return Response(response_data, status=status.HTTP_200_OK)
+        user = get_and_validate_user(username=username, password=password)
+        data = make_auth_response_data(request.domain, user)
+        return Response(data, status=status.HTTP_200_OK)
