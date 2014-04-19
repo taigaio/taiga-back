@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import reversion
+
 from django.db import transaction
 
 from rest_framework import viewsets
@@ -10,13 +12,14 @@ from rest_framework.response import Response
 
 from reversion.revisions import revision_context_manager
 from reversion.models import Version
-import reversion
 
 
 from . import pagination
 from . import serializers
 from . import decorators
 
+
+# Transactional version of rest framework mixins.
 
 class CreateModelMixin(mixins.CreateModelMixin):
     @transaction.atomic
@@ -35,6 +38,9 @@ class UpdateModelMixin(mixins.UpdateModelMixin):
     def update(self, *args, **kwargs):
         return super().update(*args, **kwargs)
 
+    @transaction.atomic
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
 
 class ListModelMixin(mixins.ListModelMixin):
     @transaction.atomic
