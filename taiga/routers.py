@@ -6,9 +6,9 @@ from taiga.base.users.api import UsersViewSet, PermissionsViewSet
 from taiga.base.searches.api import SearchViewSet
 from taiga.base.resolver.api import ResolverViewSet
 from taiga.projects.api import (ProjectViewSet, MembershipViewSet, InvitationViewSet,
-                                    UserStoryStatusViewSet, PointsViewSet, TaskStatusViewSet,
-                                    IssueStatusViewSet, IssueTypeViewSet, PriorityViewSet,
-                                    SeverityViewSet, ProjectAdminViewSet, RolesViewSet) #, QuestionStatusViewSet)
+                                UserStoryStatusViewSet, PointsViewSet, TaskStatusViewSet,
+                                IssueStatusViewSet, IssueTypeViewSet, PriorityViewSet,
+                                SeverityViewSet, ProjectAdminViewSet, RolesViewSet) #, QuestionStatusViewSet)
 from taiga.domains.api import DomainViewSet, DomainMembersViewSet
 from taiga.projects.milestones.api import MilestoneViewSet
 from taiga.projects.userstories.api import UserStoryViewSet, UserStoryAttachmentViewSet
