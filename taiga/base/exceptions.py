@@ -29,6 +29,11 @@ class NotFound(BaseException):
     default_detail = _('Not found.')
 
 
+class NotSupported(BaseException):
+    status_code = status.HTTP_405_METHOD_NOT_ALLOWED
+    default_detail = _("Method not supported for this endpoint.")
+
+
 class BadRequest(BaseException):
     """
     Exception used on bad arguments detected
