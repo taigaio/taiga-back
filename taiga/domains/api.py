@@ -12,21 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 
-from django.http import Http404
-
-from taiga.base.api import ModelCrudViewSet, UpdateModelMixin
+from taiga.base.api import GenericViewSet
+from taiga.base.api import ListModelMixin
+from taiga.base.api import UpdateModelMixin
+from taiga.base import exceptions as exc
 
 from .base import get_active_domain
-from .serializers import DomainSerializer, DomainMemberSerializer
-from .permissions import DomainMembersPermission, DomainPermission
-from .models import DomainMember, Domain
+from .serializers import DomainSerializer
+from .serializers import DomainMemberSerializer
+from .permissions import DomainPermission
+from .permissions import DomainMembersPermission
+from .models import Domain
+from .models import DomainMember
 
 
-class DomainViewSet(UpdateModelMixin, viewsets.GenericViewSet):
+class DomainViewSet(UpdateModelMixin, GenericViewSet):
     permission_classes = (DomainPermission,)
     serializer_class = DomainSerializer
     queryset = Domain.objects.all()
@@ -39,17 +42,23 @@ class DomainViewSet(UpdateModelMixin, viewsets.GenericViewSet):
             domain_data['projects'] = None
         return Response(domain_data)
 
-    def update(self, request, **kwargs):
-        raise Http404
+    def update(self, request, *args, **kwargs):
+        raise exc.NotSupported()
+
+    def partial_update(self, request, *args, **kwargs):
+        raise exc.NotSupported()
 
     def create(self, request, **kwargs):
         self.kwargs['pk'] = request.domain.pk
         return super().update(request, pk=request.domain.pk, **kwargs)
 
 
-class DomainMembersViewSet(ModelCrudViewSet):
+class DomainMembersViewSet(ListModelMixin, UpdateModelMixin, GenericViewSet):
     permission_classes = (IsAuthenticated, DomainMembersPermission,)
     serializer_class = DomainMemberSerializer
+    queryset = DomainMember.objects.all()
 
     def get_queryset(self):
-        return DomainMember.objects.filter(domain=get_active_domain()).distinct()
+        domain = get_active_domain()
+        qs = super().get_queryset()
+        return qs.filter(domain=domain).distinct()

@@ -39,5 +39,5 @@ class DomainMembersPermission(permissions.BasePermission):
         domain = get_active_domain()
         if request.method in ["POST", "PUT", "PATCH", "GET"]:
             return domain.user_is_owner(request.user)
-        else:
-            return False
+
+        return False
