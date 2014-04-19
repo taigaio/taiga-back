@@ -170,18 +170,17 @@ class RolesViewSet(ModelCrudViewSet):
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ('project',)
 
+
 # User Stories commin ViewSets
 
-class BulkUpdateOrderMixin:
+class BulkUpdateOrderMixin(object):
     """
     This mixin need three fields in the child class:
 
     - bulk_update_param: that the name of the field of the data received from
       the cliente that contains the pairs (id, order) to sort the objects.
-    - bulk_update_perm: that containts the codename of the permission needed to
-      sort.
-    - bulk_update_service: that is a object with the bulk_update_order method
-      for ordering the object.
+    - bulk_update_perm: that containts the codename of the permission needed to sort.
+    - bulk_update_order: method with bulk update order logic
     """
 
     @list_route(methods=["POST"])
@@ -200,9 +199,9 @@ class BulkUpdateOrderMixin:
         if request.user != project.owner and not has_project_perm(request.user, project, self.bulk_update_perm):
             raise exc.PermissionDenied(_("You don't have permisions %s.") % self.bulk_update_perm)
 
-        self.bulk_update_service.bulk_update_order(project, request.user, bulk_data)
-
+        self.bulk_update_order(project, request.user, bulk_data)
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+
 
 class PointsViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.Points
@@ -212,7 +211,7 @@ class PointsViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     filter_fields = ('project',)
     bulk_update_param = "bulk_points"
     bulk_update_perm = "change_points"
-    bulk_update_service = services.PointsService()
+    bulk_update_order = services.bulk_update_points_order
 
 
 class UserStoryStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
@@ -223,7 +222,7 @@ class UserStoryStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     filter_fields = ('project',)
     bulk_update_param = "bulk_userstory_statuses"
     bulk_update_perm = "change_userstorystatus"
-    bulk_update_service = services.UserStoryStatusesService()
+    bulk_update_order = services.bulk_update_userstory_status_order
 
 
 class TaskStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
@@ -234,7 +233,7 @@ class TaskStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     filter_fields = ("project",)
     bulk_update_param = "bulk_task_statuses"
     bulk_update_perm = "change_taskstatus"
-    bulk_update_service = services.TaskStatusesService()
+    bulk_update_order = services.bulk_update_task_status_order
 
 
 class SeverityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
@@ -245,7 +244,7 @@ class SeverityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     filter_fields = ("project",)
     bulk_update_param = "bulk_severities"
     bulk_update_perm = "change_severity"
-    bulk_update_service = services.SeveritiesService()
+    bulk_update_order = services.bulk_update_severity_order
 
 
 class PriorityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
@@ -256,7 +255,7 @@ class PriorityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     filter_fields = ("project",)
     bulk_update_param = "bulk_priorities"
     bulk_update_perm = "change_priority"
-    bulk_update_service = services.PrioritiesService()
+    bulk_update_order = services.bulk_update_priority_order
 
 
 class IssueTypeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
@@ -267,7 +266,7 @@ class IssueTypeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     filter_fields = ("project",)
     bulk_update_param = "bulk_issue_types"
     bulk_update_perm = "change_issuetype"
-    bulk_update_service = services.IssueTypesService()
+    bulk_update_order = services.bulk_update_issue_type_order
 
 
 class IssueStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
@@ -278,7 +277,7 @@ class IssueStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     filter_fields = ("project",)
     bulk_update_param = "bulk_issue_statuses"
     bulk_update_perm = "change_issuestatus"
-    bulk_update_service = services.IssueStatusesService()
+    bulk_update_order = services.bulk_update_issue_status_order
 
 
 class QuestionStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
@@ -289,4 +288,4 @@ class QuestionStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     filter_fields = ("project",)
     bulk_update_param = "bulk_question_statuses"
     bulk_update_perm = "change_questionstatus"
-    bulk_update_service = services.QuestionStatusesService()
+    bulk_update_order = services.bulk_update_question_status_order
