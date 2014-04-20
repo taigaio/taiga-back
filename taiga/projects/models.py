@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import itertools
-import collections
 import time
+import reversion
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -17,7 +17,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
 from picklefield.fields import PickledObjectField
-import reversion
 
 from taiga.domains.models import DomainMember
 from taiga.projects.userstories.models import UserStory
@@ -94,6 +93,7 @@ class ProjectDefaults(models.Model):
                                                    related_name="+", null=True, blank=True,
                                                    verbose_name=_("default questions "
                                                                   "status"))
+
     class Meta:
         abstract = True
 
@@ -132,14 +132,14 @@ class Project(ProjectDefaults, models.Model):
     is_kanban_activated = models.BooleanField(default=False, null=False, blank=True,
                                               verbose_name=_("active kanban panel"))
     is_wiki_activated = models.BooleanField(default=True, null=False, blank=True,
-                                              verbose_name=_("active wiki panel"))
+                                            verbose_name=_("active wiki panel"))
     is_issues_activated = models.BooleanField(default=True, null=False, blank=True,
                                               verbose_name=_("active issues panel"))
     videoconferences = models.CharField(max_length=250, null=True, blank=True,
                                         choices=choices.VIDEOCONFERENCES_CHOICES,
                                         verbose_name=_("videoconference system"))
     videoconferences_salt = models.CharField(max_length=250, null=True, blank=True,
-                                        verbose_name=_("videoconference room salt"))
+                                             verbose_name=_("videoconference room salt"))
 
     domain = models.ForeignKey("domains.Domain", related_name="projects", null=True, blank=True,
                                default=None, verbose_name=_("domain"))
@@ -231,13 +231,13 @@ class Project(ProjectDefaults, models.Model):
     @property
     def future_team_increment(self):
         team_increment = self._get_points_increment(False, True)
-        shared_increment = {key: value/2 for key, value in self.future_shared_increment.items()}
+        shared_increment = {key: value / 2 for key, value in self.future_shared_increment.items()}
         return dict_sum(team_increment, shared_increment)
 
     @property
     def future_client_increment(self):
         client_increment = self._get_points_increment(True, False)
-        shared_increment = {key: value/2 for key, value in self.future_shared_increment.items()}
+        shared_increment = {key: value / 2 for key, value in self.future_shared_increment.items()}
         return dict_sum(client_increment, shared_increment)
 
     @property
@@ -505,7 +505,6 @@ class QuestionStatus(models.Model):
 reversion.register(Project)
 reversion.register(Attachment)
 
-
 # On membership object is created/changed, update
 # role-points relation.
 @receiver(models.signals.post_save, sender=Membership,
@@ -601,7 +600,7 @@ def project_post_save(sender, instance, created, **kwargs):
             instance.default_question_status = obj
 
     # Permissions
-    for order, slug, name, computable, permissions  in choices.ROLES:
+    for order, slug, name, computable, permissions in choices.ROLES:
         obj = Role.objects.create(slug=slug, name=name, order=order, computable=computable, project=instance)
         for permission in permissions:
             try:
