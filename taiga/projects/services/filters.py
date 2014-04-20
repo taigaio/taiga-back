@@ -1,7 +1,29 @@
-# -*- coding: utf-8 -*-
-
 from contextlib import closing
 from django.db import connection
+
+def _get_issues_tags(project):
+    extra_sql = ("select unnest(unpickle(tags)) as tagname "
+                 "from issues_issue where project_id = %s "
+                 "group by unnest(unpickle(tags)) "
+                 "order by tagname asc")
+
+    with closing(connection.cursor()) as cursor:
+        cursor.execute(extra_sql, [project.id])
+        rows = cursor.fetchall()
+
+    return set([x[0] for x in rows])
+
+def _get_stories_tags(project):
+    extra_sql = ("select unnest(unpickle(tags)) as tagname, count(unnest(unpickle(tags))) "
+                 "from userstories_userstory where project_id = %s "
+                 "group by unnest(unpickle(tags)) "
+                 "order by tagname asc")
+
+    with closing(connection.cursor()) as cursor:
+        cursor.execute(extra_sql, [project.id])
+        rows = cursor.fetchall()
+
+    return set([x[0] for x in rows])
 
 
 def _get_issues_tags(project):
@@ -110,7 +132,26 @@ def _get_issues_owners(project):
     return rows
 
 
+# Public api
+
+def get_all_tags(project):
+    """
+    Given a project, return sorted list of unique
+    tags found on it.
+    """
+
+    result = set()
+    result.update(_get_issues_tags(project))
+    result.update(_get_stories_tags(project))
+    return sorted(result)
+
+
 def get_issues_filters_data(project):
+    """
+    Given a project, return a simple data structure
+    of all possible filters for issues.
+    """
+
     data = {
         "types": _get_issues_types(project),
         "statuses": _get_issues_statuses(project),

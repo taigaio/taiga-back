@@ -18,18 +18,13 @@ from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route, detail_route
 from taiga.base.permissions import has_project_perm
-from taiga.base.api import ModelCrudViewSet, ModelListViewSet, RetrieveModelMixin
+from taiga.base.api import ModelCrudViewSet, RetrieveModelMixin
 from taiga.base.users.models import Role
-from taiga.base.notifications.api import NotificationSenderMixin
-from taiga.projects.aggregates.tags import get_all_tags
 
 from . import serializers
 from . import models
 from . import permissions
 from . import services
-
-from .aggregates import stats
-from .aggregates import filters as filters_aggr
 
 
 class ProjectAdminViewSet(ModelCrudViewSet):
@@ -69,22 +64,22 @@ class ProjectViewSet(ModelCrudViewSet):
     @detail_route(methods=['get'])
     def stats(self, request, pk=None):
         project = self.get_object()
-        return Response(stats.get_stats_for_project(project))
+        return Response(services.get_stats_for_project(project))
 
     @detail_route(methods=['get'])
     def issues_stats(self, request, pk=None):
         project = self.get_object()
-        return Response(stats.get_stats_for_project_issues(project))
+        return Response(services.get_stats_for_project_issues(project))
 
     @detail_route(methods=['get'])
     def issue_filters_data(self, request, pk=None):
         project = self.get_object()
-        return Response(filters_aggr.get_issues_filters_data(project))
+        return Response(services.get_issues_filters_data(project))
 
     @detail_route(methods=['get'])
     def tags(self, request, pk=None):
         project = self.get_object()
-        return Response(get_all_tags(project))
+        return Response(services.get_all_tags(project))
 
     def get_queryset(self):
         qs = super().get_queryset()
