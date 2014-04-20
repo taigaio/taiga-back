@@ -3,6 +3,11 @@
 from django.utils.translation import ugettext_lazy as _
 
 
+VIDEOCONFERENCES_CHOICES = (
+    ("appear-in", "AppearIn"),
+    ("talky", "Talky"),
+)
+
 US_STATUSES = (
     (1, _("Open"), False, True, "#669933"),
     (2, _("Closed"), True, False, "#999999"),

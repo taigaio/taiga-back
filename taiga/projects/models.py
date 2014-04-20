@@ -28,12 +28,6 @@ from taiga.base.users.models import Role
 from . import choices
 
 
-VIDEOCONFERENCES_CHOICES = (
-    ('appear-in', 'AppearIn'),
-    ('talky', 'Talky'),
-)
-
-
 class Membership(models.Model):
     # This model stores all project memberships. Also
     # stores invitations to memberships that does not have
@@ -142,7 +136,7 @@ class Project(ProjectDefaults, models.Model):
     is_issues_activated = models.BooleanField(default=True, null=False, blank=True,
                                               verbose_name=_("active issues panel"))
     videoconferences = models.CharField(max_length=250, null=True, blank=True,
-                                        choices=VIDEOCONFERENCES_CHOICES,
+                                        choices=choices.VIDEOCONFERENCES_CHOICES,
                                         verbose_name=_("videoconference system"))
     videoconferences_salt = models.CharField(max_length=250, null=True, blank=True,
                                         verbose_name=_("videoconference room salt"))
