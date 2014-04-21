@@ -70,8 +70,9 @@ We very much welcome your contribution of course. To do so, simply follow these 
 License
 =======
 
-This software is licensed under the New BSD_ License. See the LICENSE
-file in the top distribution directory for the full license text.
+This software is licensed under the `GNU Affero General Public License`_, Version
+3. See the LICENSE file in the top distribution directory for the full license
+text.
 
 .. _coverage: http://nedbatchelder.com/code/coverage/
-.. _BSD: http://www.opensource.org/licenses/bsd-license.php
+.. _`GNU Affero General Public License`: http://www.gnu.org/licenses/agpl.html
