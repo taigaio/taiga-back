@@ -13,7 +13,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from rest_framework import serializers
-from taiga.base.users.serializers import UserSerializer
+from taiga.users.serializers import UserSerializer
 
 from .models import Domain, DomainMember
 

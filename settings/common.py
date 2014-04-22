@@ -157,7 +157,7 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.staticfiles",
 
-    "taiga.base.users",
+    "taiga.users",
     "taiga.base.notifications",
     "taiga.base.searches",
     "taiga.base",
@@ -266,10 +266,10 @@ API_LIMIT_PER_PAGE = 0
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         # Mainly used by taiga-front
-        "taiga.base.auth.Token",
+        "taiga.auth.backends.Token",
 
         # Mainly used for api debug.
-        "taiga.base.auth.Session",
+        "taiga.auth.backends.Session",
     ),
     "FILTER_BACKEND": "taiga.base.filters.FilterBackend",
     "EXCEPTION_HANDLER": "taiga.base.exceptions.exception_handler",

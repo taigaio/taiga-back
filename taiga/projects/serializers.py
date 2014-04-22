@@ -14,14 +14,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from os import path
 from rest_framework import serializers
 
 from taiga.base.serializers import PickleField
-from taiga.base.users.models import Role
+from taiga.users.models import Role
 
 from . import models
-
-from os import path
 
 
 class AttachmentSerializer(serializers.ModelSerializer):

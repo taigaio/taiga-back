@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.contrib.contenttypes import generic
 
 from taiga.projects.milestones.admin import MilestoneInline
-from taiga.base.users.admin import RoleInline
+from taiga.users.admin import RoleInline
 from . import models
 
 import reversion

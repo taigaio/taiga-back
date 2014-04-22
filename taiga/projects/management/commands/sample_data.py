@@ -23,7 +23,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from sampledatahelper.helper import SampleDataHelper
 
-from taiga.base.users.models import *
+from taiga.users.models import *
 from taiga.projects.models import *
 from taiga.projects.milestones.models import *
 from taiga.projects.userstories.models import *

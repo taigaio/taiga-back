@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 
 import reversion
 
-from taiga.base.users.tests import create_user
+from taiga.users.tests import create_user
 from taiga.projects.tests import create_project, add_membership
 from taiga.projects.milestones.tests import create_milestone
 from taiga.projects.userstories.tests import create_userstory

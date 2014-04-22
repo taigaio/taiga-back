@@ -7,12 +7,13 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.db.models import get_model
 
-from taiga.base.users.tests import create_user
+from taiga.users.tests import create_user
 from taiga.projects.models import Project, Membership
 from taiga.projects.issues.tests import create_issue
 from taiga.projects.tasks.tests import create_task
 
-from . import create_project, add_membership
+from . import create_project
+from . import add_membership
 
 class AllProjectEventsNotificationsTestCase(test.TestCase):
     fixtures = ["initial_domains.json"]

@@ -32,8 +32,8 @@ from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route, detail_route
 from taiga.base.permissions import has_project_perm
-from taiga.base.api import ModelCrudViewSet, RetrieveModelMixin
-from taiga.base.users.models import Role
+from taiga.base.api import ModelCrudViewSet, ModelListViewSet, RetrieveModelMixin
+from taiga.users.models import Role
 
 from . import serializers
 from . import models

@@ -32,14 +32,19 @@ from django.utils import timezone
 
 from picklefield.fields import PickledObjectField
 
+from taiga.users.models import Role
 from taiga.domains.models import DomainMember
 from taiga.projects.userstories.models import UserStory
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
-from taiga.base.users.models import Role
 
 from . import choices
 
+# FIXME: this should to be on choices module (?)
+VIDEOCONFERENCES_CHOICES = (
+    ('appear-in', 'AppearIn'),
+    ('talky', 'Talky'),
+)
 
 class Membership(models.Model):
     # This model stores all project memberships. Also
