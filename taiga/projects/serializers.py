@@ -17,7 +17,7 @@
 from os import path
 from rest_framework import serializers
 
-from taiga.base.serializers import PickleField
+from taiga.base.serializers import PickleField, JsonField, AutoDomainField
 from taiga.users.models import Role
 
 from . import models
@@ -182,3 +182,20 @@ class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = ('id', 'name', 'permissions', 'computable', 'project', 'order')
+
+
+class ProjectTemplateSerializer(serializers.ModelSerializer):
+    domain = AutoDomainField()
+
+    default_options = JsonField()
+    us_statuses = JsonField()
+    points = JsonField()
+    task_statuses = JsonField()
+    issue_statuses = JsonField()
+    issue_types = JsonField()
+    priorities = JsonField()
+    severities = JsonField()
+    roles = JsonField()
+
+    class Meta:
+        model = models.ProjectTemplate

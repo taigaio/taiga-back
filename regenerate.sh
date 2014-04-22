@@ -15,10 +15,11 @@ echo "-> Load initial domain"
 python manage.py loaddata initial_domains --traceback
 echo "-> Load initial user"
 python manage.py loaddata initial_user --traceback
+echo "-> Load initial project_templates"
+python manage.py loaddata initial_project_templates --traceback
 echo "-> Load initial roles"
 python manage.py loaddata initial_role --traceback
 echo "-> Generate sample data"
 python manage.py sample_data --traceback
 echo "-> Generate initial versions of objects"
 python manage.py createinitialrevisions --traceback
-

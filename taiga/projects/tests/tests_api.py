@@ -24,14 +24,15 @@ from django.core import mail
 from django.db.models import get_model
 
 from taiga.users.tests import create_user
-from taiga.projects.models import Project, Membership
+from taiga.projects.models import Project, Membership, ProjectTemplate
+from taiga.domains.models import Domain
 
 from . import create_project
 from . import add_membership
 
 
 class ProfileTestCase(test.TestCase):
-    fixtures = ["initial_domains.json"]
+    fixtures = ["initial_domains.json", "initial_project_templates.json"]
 
     def setUp(self):
         self.user1 = create_user(1, is_superuser=True)
@@ -182,7 +183,7 @@ class ProfileTestCase(test.TestCase):
 
 
 class ProjectsTestCase(test.TestCase):
-    fixtures = ["initial_role.json", "initial_domains.json"]
+    fixtures = ["initial_domains.json", "initial_project_templates.json"]
 
     def setUp(self):
         self.user1 = create_user(1)
@@ -462,3 +463,264 @@ class ProjectsTestCase(test.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(Project.objects.all().count(), 4)
         self.client.logout()
+
+class ProjectTemplatesTestCase(test.TestCase):
+    fixtures = ["initial_domains.json", "initial_project_templates.json"]
+
+    def setUp(self):
+        self.user1 = create_user(1)
+        self.user2 = create_user(2)
+        self.domain = Domain.objects.all()[0]
+        self.domain.owner = self.user1
+
+    def test_list_project_templates_by_anon(self):
+        response = self.client.get(reverse("project-templates-list"))
+        self.assertEqual(response.status_code, 401)
+
+    def test_list_project_templates_by_domain_owner(self):
+        response = self.client.login(username=self.user1.username,
+                                     password=self.user1.username)
+        self.assertTrue(response)
+        response = self.client.get(reverse("project-templates-list"))
+        self.assertEqual(response.status_code, 200)
+        projects_list = response.data
+        self.assertEqual(len(projects_list), 2)
+        self.client.logout()
+
+    def test_list_projects_by_not_domain_owner(self):
+        response = self.client.login(username=self.user2.username,
+                                     password=self.user2.username)
+        self.assertTrue(response)
+        response = self.client.get(reverse("project-templates-list"))
+        self.assertEqual(response.status_code, 403)
+
+    def test_view_project_template_by_anon(self):
+        response = self.client.get(reverse("project-templates-detail", args=(1,)))
+        self.assertEqual(response.status_code, 401)
+
+    def test_view_project_template_by_domain_owner(self):
+        response = self.client.login(username=self.user1.username,
+                                     password=self.user1.username)
+        self.assertTrue(response)
+        response = self.client.get(reverse("project-templates-detail", args=(1,)))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse("project-templates-detail", args=(2,)))
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+
+    def test_view_project_template_by_not_domain_owner(self):
+        response = self.client.login(username=self.user2.username,
+                                     password=self.user2.username)
+        self.assertTrue(response)
+        response = self.client.get(reverse("project-templates-detail", args=(1,)))
+        self.assertEqual(response.status_code, 403)
+        response = self.client.get(reverse("project-templates-detail", args=(2,)))
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+
+    def test_create_project_template_by_anon(self):
+        data = {
+            "name": "Test Project Template",
+            "slug": "test-project-template",
+            "description": "A new Test Project Template",
+        }
+
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+        response = self.client.post(
+            reverse("project-templates-list"),
+            json.dumps(data),
+            content_type="application/json")
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+
+        data = {
+            "name": "Test Project Template 2",
+            "slug": "test-project-template-2",
+            "description": "A new Test Project Template",
+            "domain": 100,
+        }
+
+        response = self.client.post(
+            reverse("project-templates-list"),
+            json.dumps(data),
+            content_type="application/json")
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+
+    def test_create_project_template_by_domain_owner(self):
+        data = {
+            "name": "Test Project Template",
+            "slug": "test-project-template",
+            "description": "A new Test Project Template",
+        }
+
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+        response = self.client.login(username=self.user1.username,
+                                     password=self.user1.username)
+        self.assertTrue(response)
+        response = self.client.post(reverse("project-templates-list"), json.dumps(data),
+                                    content_type="application/json")
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ProjectTemplate.objects.all().count(), 3)
+
+        data = {
+            "name": "Test Project Template 2",
+            "slug": "test-project-template-2",
+            "description": "A new Test Project Template",
+            "domain": 100,
+        }
+
+        response = self.client.login(username=self.user1.username,
+                                     password=self.user1.username)
+        self.assertTrue(response)
+        response = self.client.post(reverse("project-templates-list"), json.dumps(data),
+                                    content_type="application/json")
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ProjectTemplate.objects.all().count(), 4)
+        template = ProjectTemplate.objects.order_by('-created_date')[0]
+        self.assertEqual(template.domain.id, 1)
+
+        self.client.logout()
+
+        ProjectTemplate.objects.order_by("created_date")[0:2].delete()
+
+    def test_create_project_template_by_not_domain_owner(self):
+        data = {
+            "name": "Test Project Template",
+            "slug": "test-project-template",
+            "description": "A new Test Project Template",
+        }
+
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+        response = self.client.login(username=self.user1.username,
+                                     password=self.user1.username)
+        self.assertTrue(response)
+        response = self.client.post(
+            reverse("project-templates-list"),
+            json.dumps(data),
+            content_type="application/json")
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+
+        data = {
+            "name": "Test Project Template 2",
+            "slug": "test-project-template-2",
+            "description": "A new Test Project Template",
+            "domain": 100
+        }
+
+        response = self.client.post(
+            reverse("project-templates-list"),
+            json.dumps(data),
+            content_type="application/json")
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+        self.client.logout()
+
+    # def test_edit_project_by_anon(self):
+    #     data = {
+    #         "description": "Edited project description",
+    #     }
+
+    #     self.assertEqual(Project.objects.all().count(), 4)
+    #     self.assertNotEqual(data["description"], self.project1.description)
+    #     response = self.client.patch(
+    #         reverse("projects-detail", args=(self.project1.id,)),
+    #         json.dumps(data),
+    #         content_type="application/json")
+    #     self.assertEqual(response.status_code, 401)
+    #     self.assertEqual(Project.objects.all().count(), 4)
+
+    # def test_edit_project_by_owner(self):
+    #     data = {
+    #         "description": "Modified project description",
+    #     }
+
+    #     self.assertEqual(Project.objects.all().count(), 4)
+    #     self.assertNotEqual(data["description"], self.project1.description)
+    #     response = self.client.login(username=self.user1.username,
+    #                                  password=self.user1.username)
+    #     self.assertTrue(response)
+    #     response = self.client.patch(
+    #         reverse("projects-detail", args=(self.project1.id,)),
+    #         json.dumps(data),
+    #         content_type="application/json")
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertEqual(data["description"], response.data["description"])
+    #     self.assertEqual(Project.objects.all().count(), 4)
+    #     self.client.logout()
+
+    # def test_edit_project_by_membership(self):
+    #     data = {
+    #         "description": "Edited project description",
+    #     }
+
+    #     self.assertEqual(Project.objects.all().count(), 4)
+    #     self.assertNotEqual(data["description"], self.project1.description)
+    #     response = self.client.login(username=self.user3.username,
+    #                                  password=self.user3.username)
+    #     self.assertTrue(response)
+    #     response = self.client.patch(
+    #         reverse("projects-detail", args=(self.project1.id,)),
+    #         json.dumps(data),
+    #         content_type="application/json")
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertEqual(data["description"], response.data["description"])
+    #     self.assertEqual(Project.objects.all().count(), 4)
+    #     self.client.logout()
+
+    # def test_edit_project_by_not_membership(self):
+    #     data = {
+    #         "description": "Edited project description",
+    #     }
+
+    #     self.assertEqual(Project.objects.all().count(), 4)
+    #     self.assertNotEqual(data["description"], self.project1.description)
+    #     response = self.client.login(username=self.user2.username,
+    #                                  password=self.user2.username)
+    #     self.assertTrue(response)
+    #     response = self.client.patch(
+    #         reverse("projects-detail", args=(self.project1.id,)),
+    #         json.dumps(data),
+    #         content_type="application/json")
+    #     self.assertEqual(response.status_code, 404)
+    #     self.assertEqual(Project.objects.all().count(), 4)
+    #     self.client.logout()
+
+    # def test_delete_project_by_anon(self):
+    #     self.assertEqual(Project.objects.all().count(), 4)
+    #     response = self.client.delete(reverse("projects-detail", args=(self.project1.id,)))
+    #     self.assertEqual(response.status_code, 401)
+    #     self.assertEqual(Project.objects.all().count(), 4)
+
+    # def test_delete_project_by_owner(self):
+    #     self.assertEqual(Project.objects.all().count(), 4)
+    #     response = self.client.login(username=self.user1.username,
+    #                                  password=self.user1.username)
+    #     self.assertTrue(response)
+    #     response = self.client.delete(reverse("projects-detail", args=(self.project1.id,)))
+    #     self.assertEqual(response.status_code, 204)
+    #     self.assertEqual(Project.objects.all().count(), 3)
+    #     self.client.logout()
+
+    # def test_delete_project_by_membership(self):
+    #     self.assertEqual(Project.objects.all().count(), 4)
+    #     response = self.client.login(username=self.user3.username,
+    #                                  password=self.user3.username)
+    #     self.assertTrue(response)
+    #     response = self.client.delete(reverse("projects-detail", args=(self.project1.id,)))
+    #     self.assertEqual(response.status_code, 403)
+    #     self.assertEqual(Project.objects.all().count(), 4)
+    #     self.client.logout()
+
+    # def test_delete_project_by_not_membership(self):
+    #     self.assertEqual(Project.objects.all().count(), 4)
+    #     response = self.client.login(username=self.user1.username,
+    #                                  password=self.user1.username)
+    #     self.assertTrue(response)
+    #     response = self.client.delete(reverse("projects-detail", args=(self.project3.id,)))
+    #     self.assertEqual(response.status_code, 404)
+    #     self.assertEqual(Project.objects.all().count(), 4)
+    #     self.client.logout()

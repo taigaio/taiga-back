@@ -51,7 +51,7 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 
 class ChangesTest(test.TestCase):
-    fixtures = ["initial_domains.json"]
+    fixtures = ["initial_domains.json", "initial_project_templates.json"]
 
     def test_emit_change_for_model(self):
         user = create_user(1) # Project owner

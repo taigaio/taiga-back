@@ -31,6 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
 from picklefield.fields import PickledObjectField
+from django_pgjson.fields import JsonField
 
 from taiga.users.models import Role
 from taiga.domains.models import DomainMember
@@ -520,6 +521,241 @@ class QuestionStatus(models.Model):
         return self.name
 
 
+class ProjectTemplate(models.Model):
+    name = models.CharField(max_length=250, unique=True, null=False, blank=False,
+                            verbose_name=_("name"))
+    slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
+                            verbose_name=_("slug"))
+    description = models.TextField(null=False, blank=False,
+                                   verbose_name=_("description"))
+    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+                                        verbose_name=_("created date"))
+    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+                                         verbose_name=_("modified date"))
+    domain = models.ForeignKey("domains.Domain", related_name="templates", null=True, blank=True,
+                               default=None, verbose_name=_("domain"))
+
+    is_backlog_activated = models.BooleanField(default=True, null=False, blank=True,
+                                               verbose_name=_("active backlog panel"))
+    is_kanban_activated = models.BooleanField(default=False, null=False, blank=True,
+                                              verbose_name=_("active kanban panel"))
+    is_wiki_activated = models.BooleanField(default=True, null=False, blank=True,
+                                            verbose_name=_("active wiki panel"))
+    is_issues_activated = models.BooleanField(default=True, null=False, blank=True,
+                                              verbose_name=_("active issues panel"))
+    videoconferences = models.CharField(max_length=250, null=True, blank=True,
+                                        choices=choices.VIDEOCONFERENCES_CHOICES,
+                                        verbose_name=_("videoconference system"))
+    videoconferences_salt = models.CharField(max_length=250, null=True, blank=True,
+                                             verbose_name=_("videoconference room salt"))
+
+    default_options = JsonField(null=True, blank=True, default=None, verbose_name=_("default options"))
+    us_statuses = JsonField(null=True, blank=True, default=None, verbose_name=_("us statuses"))
+    points = JsonField(null=True, blank=True, default=None, verbose_name=_("us points"))
+    task_statuses = JsonField(null=True, blank=True, default=None, verbose_name=_("task statuses"))
+    issue_statuses = JsonField(null=True, blank=True, default=None, verbose_name=_("issue statuses"))
+    issue_types = JsonField(null=True, blank=True, default=None, verbose_name=_("issue types"))
+    priorities = JsonField(null=True, blank=True, default=None, verbose_name=_("issue types"))
+    severities = JsonField(null=True, blank=True, default=None, verbose_name=_("issue types"))
+    roles = JsonField(null=True, blank=True, default=None, verbose_name=_("roles"))
+
+    class Meta:
+        verbose_name = "project template"
+        verbose_name_plural = "project templates"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return "<Project Template {0}>".format(self.slug)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+    def load_data_from_project(self, project):
+        self.is_backlog_activated = project.is_backlog_activated
+        self.is_kanban_activated = project.is_kanban_activated
+        self.is_wiki_activated = project.is_wiki_activated
+        self.is_issues_activated = project.is_issues_activated
+        self.videoconferences = project.videoconferences
+        self.videoconferences_salt = project.videoconferences_salt
+
+        self.default_options = {
+            "points": project.default_points.name,
+            "us_status": project.default_us_status.name,
+            "task_status": project.default_task_status.name,
+            "issue_status": project.default_issue_status.name,
+            "issue_type": project.default_issue_type.name,
+            "priority": project.default_priority.name,
+            "severity": project.default_severity.name
+        }
+
+
+        self.us_statuses = []
+        for us_status in project.us_statuses.all():
+            self.us_statuses.append({
+                "name": us_status.name,
+                "is_closed": us_status.is_closed,
+                "color": us_status.color,
+                "wip_limit": us_status.wip_limit,
+                "order": us_status.order,
+            })
+
+        self.points = []
+        for us_point in project.points.all():
+            self.points.append({
+                "name": us_point.name,
+                "value": us_point.value,
+                "order": us_point.order,
+            })
+
+        self.task_statuses = []
+        for task_status in project.task_statuses.all():
+            self.task_statuses.append({
+                "name": task_status.name,
+                "is_closed": task_status.is_closed,
+                "color": task_status.color,
+                "order": task_status.order,
+            })
+
+        self.issue_statuses = []
+        for issue_status in project.issue_statuses.all():
+            self.issue_statuses.append({
+                "name": issue_status.name,
+                "is_closed": issue_status.is_closed,
+                "color": issue_status.color,
+                "order": issue_status.order,
+            })
+
+        self.issue_types = []
+        for issue_type in project.issue_types.all():
+            self.issue_types.append({
+                "name": issue_type.name,
+                "color": issue_type.color,
+                "order": issue_type.order,
+            })
+
+        self.priorities = []
+        for priority in project.priorities.all():
+            self.priorities.append({
+                "name": priority.name,
+                "color": priority.color,
+                "order": priority.order,
+            })
+
+        self.severities = []
+        for severity in project.severities.all():
+            self.severities.append({
+                "name": severity.name,
+                "color": severity.color,
+                "order": severity.order,
+            })
+
+        self.roles = []
+        for role in project.roles.all():
+            permissions = [p.codename for p in role.permissions.all()]
+            self.roles.append({
+                "name": role.name,
+                "slug": role.slug,
+                "permissions": permissions,
+                "order": role.order,
+                "computable": role.computable
+            })
+
+    def apply_to_project(self, project):
+        if project.id is None:
+            raise "Project need an id (must be a saved project)"
+
+        project.is_backlog_activated = self.is_backlog_activated
+        project.is_kanban_activated = self.is_kanban_activated
+        project.is_wiki_activated = self.is_wiki_activated
+        project.is_issues_activated = self.is_issues_activated
+        project.videoconferences = self.videoconferences
+        project.videoconferences_salt = self.videoconferences_salt
+
+        for us_status in self.us_statuses:
+            UserStoryStatus.objects.create(
+                name=us_status["name"],
+                is_closed=us_status["is_closed"],
+                color=us_status["color"],
+                wip_limit=us_status["wip_limit"],
+                order=us_status["order"],
+                project=project
+            )
+
+        for point in self.points:
+            Points.objects.create(
+                name=point["name"],
+                value=point["value"],
+                order=point["order"],
+                project=project
+            )
+
+        for task_status in self.task_statuses:
+            TaskStatus.objects.create(
+                name=task_status["name"],
+                is_closed=task_status["is_closed"],
+                color=task_status["color"],
+                order=task_status["order"],
+                project=project
+            )
+
+        for issue_status in self.issue_statuses:
+            IssueStatus.objects.create(
+                name=issue_status["name"],
+                is_closed=issue_status["is_closed"],
+                color=issue_status["color"],
+                order=issue_status["order"],
+                project=project
+            )
+
+        for issue_type in self.issue_types:
+            IssueType.objects.create(
+                name=issue_type["name"],
+                color=issue_type["color"],
+                order=issue_type["order"],
+                project=project
+            )
+
+        for priority in self.priorities:
+            Priority.objects.create(
+                name=priority["name"],
+                color=priority["color"],
+                order=priority["order"],
+                project=project
+            )
+
+        for severity in self.severities:
+            Severity.objects.create(
+                name=severity["name"],
+                color=severity["color"],
+                order=severity["order"],
+                project=project
+            )
+
+        for role in self.roles:
+            newRoleInstance = Role.objects.create(
+                name=role["name"],
+                slug=role["slug"],
+                order=role["order"],
+                computable=role["computable"],
+                project=project
+            )
+            permissions = [Permission.objects.get(codename=codename) for codename in role["permissions"]]
+            for permission in permissions:
+                newRoleInstance.permissions.add(permission)
+
+        project.default_points = Points.objects.get(name=self.default_options["points"], project=project)
+        project.default_us_status = UserStoryStatus.objects.get(name=self.default_options["us_status"], project=project)
+        project.default_task_status = TaskStatus.objects.get(name=self.default_options["task_status"], project=project)
+        project.default_issue_status = IssueStatus.objects.get(name=self.default_options["issue_status"], project=project)
+        project.default_issue_type = IssueType.objects.get(name=self.default_options["issue_type"], project=project)
+        project.default_priority = Priority.objects.get(name=self.default_options["priority"], project=project)
+        project.default_severity = Severity.objects.get(name=self.default_options["severity"], project=project)
+
+        return project
+
 # Reversion registration (usufull for base.notification and for meke a historical)
 reversion.register(Project)
 reversion.register(Attachment)
@@ -570,67 +806,7 @@ def project_post_save(sender, instance, created, **kwargs):
     if not created:
         return
 
-    # USs
-    for order, name, value, is_default in choices.POINTS_CHOICES:
-        obj = Points.objects.create(project=instance, name=name, order=order, value=value)
-        if is_default:
-            instance.default_points = obj
-
-    for order, name, is_closed, is_default, color in choices.US_STATUSES:
-        obj = UserStoryStatus.objects.create(name=name, order=order, color=color,
-                                             is_closed=is_closed, project=instance)
-        if is_default:
-            instance.default_us_status = obj
-
-    # Tasks
-    for order, name, is_closed, is_default, color in choices.TASK_STATUSES:
-        obj = TaskStatus.objects.create(name=name, order=order, color=color,
-                                        is_closed=is_closed, project=instance)
-        if is_default:
-            instance.default_task_status = obj
-
-    # Issues
-    for order, name, color, is_default in choices.PRIORITY_CHOICES:
-        obj = Priority.objects.create(project=instance, name=name, order=order, color=color)
-        if is_default:
-            instance.default_priority = obj
-
-    for order, name, color, is_default in choices.SEVERITY_CHOICES:
-        obj = Severity.objects.create(project=instance, name=name, order=order, color=color)
-        if is_default:
-            instance.default_severity = obj
-
-    for order, name, is_closed, color, is_default in choices.ISSUE_STATUSES:
-        obj = IssueStatus.objects.create(name=name, order=order,
-                                         is_closed=is_closed, project=instance, color=color)
-        if is_default:
-            instance.default_issue_status = obj
-
-    for order, name, color, is_default in choices.ISSUE_TYPES:
-        obj = IssueType.objects.create(project=instance, name=name, order=order, color=color)
-        if is_default:
-            instance.default_issue_type = obj
-
-    # Questions
-    for order, name, is_closed, color, is_default in choices.QUESTION_STATUS:
-        obj = QuestionStatus.objects.create(name=name, order=order,
-                                            is_closed=is_closed, project=instance, color=color)
-        if is_default:
-            instance.default_question_status = obj
-
-    # Permissions
-    for order, slug, name, computable, permissions in choices.ROLES:
-        obj = Role.objects.create(slug=slug, name=name, order=order, computable=computable, project=instance)
-        for permission in permissions:
-            try:
-                perm = Permission.objects.get(codename=permission[0], content_type__app_label=permission[1], content_type__model=permission[2])
-                obj.permissions.add(perm)
-            except Permission.DoesNotExist:
-                pass
-
+    template_slug = getattr(instance, "template", settings.DEFAULT_PROJECT_TEMPLATE)
+    template = ProjectTemplate.objects.get(slug=template_slug, domain__isnull=True)
+    template.apply_to_project(instance)
     instance.save()
-
-    from taiga.projects.template_manager import ProjectTemplateManager
-    if hasattr(instance, "template"):
-        template_manager = ProjectTemplateManager()
-        template_manager.apply(instance.template, instance)

@@ -12,6 +12,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
+
 from rest_framework import serializers
 from taiga.users.serializers import UserSerializer
 
@@ -20,13 +22,17 @@ from .models import Domain, DomainMember
 
 class DomainSerializer(serializers.ModelSerializer):
     projects = serializers.SerializerMethodField('get_projects')
+    default_project_template = serializers.SerializerMethodField('get_default_project_template')
 
     class Meta:
         model = Domain
-        fields = ('public_register', 'default_language', "projects")
+        fields = ('public_register', 'default_language', "projects", "default_project_template")
 
     def get_projects(self, obj):
         return map(lambda x: {"id": x.id, "name": x.name, "slug": x.slug, "owner": x.owner.id}, obj.projects.all().order_by('name'))
+
+    def get_default_project_template(self, obj):
+        return settings.DEFAULT_PROJECT_TEMPLATE
 
 
 class DomainMemberSerializer(serializers.ModelSerializer):

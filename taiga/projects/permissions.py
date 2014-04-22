@@ -168,3 +168,12 @@ class QuestionStatusPermission(BasePermission):
     delete_permission = "delete_questionstatus"
     safe_methods = ["HEAD", "OPTIONS"]
     path_to_project =  ["project"]
+
+class ProjectTemplatePermission(BasePermission):
+    def has_permission(self, request, view):
+        domain = get_active_domain()
+        return domain.user_is_owner(request.user)
+
+    def has_object_permission(self, request, view, obj):
+        domain = get_active_domain()
+        return domain.user_is_owner(request.user)

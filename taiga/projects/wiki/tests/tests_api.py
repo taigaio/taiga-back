@@ -30,7 +30,7 @@ from . import create_wiki_page
 
 
 class WikiPagesTestCase(test.TestCase):
-    fixtures = ["initial_domains.json"]
+    fixtures = ["initial_domains.json", "initial_project_templates.json"]
 
     def setUp(self):
         self.user1 = create_user(1)

@@ -298,3 +298,12 @@ class QuestionStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_param = "bulk_question_statuses"
     bulk_update_perm = "change_questionstatus"
     bulk_update_order = services.bulk_update_question_status_order
+
+class ProjectTemplateViewSet(ModelCrudViewSet):
+    model = models.ProjectTemplate
+    serializer_class = serializers.ProjectTemplateSerializer
+    permission_classes = (IsAuthenticated, permissions.ProjectTemplatePermission)
+
+    def get_queryset(self):
+        domain = get_active_domain()
+        return models.ProjectTemplate.objects.filter(Q(domain=domain) | Q(domain__isnull=True))

@@ -34,7 +34,7 @@ from . import create_task
 
 
 class TasksTestCase(test.TestCase):
-    fixtures = ["initial_domains.json"]
+    fixtures = ["initial_domains.json", "initial_project_templates.json"]
 
     def setUp(self):
         self.user1 = create_user(1) # Project owner
