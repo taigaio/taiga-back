@@ -34,12 +34,9 @@ class NotificationSenderMixin(object):
             self.notification_service.send_notification_email(self.create_notification_template,
                                                               users=users, context=context)
         else:
-            changed_fields = obj.get_changed_fields_list(self.request.DATA)
-
-            if changed_fields:
-                context["changed_fields"] = changed_fields
-                self.notification_service.send_notification_email(self.update_notification_template,
-                                                                  users=users, context=context)
+            context["changed_fields"] = obj.get_changed_fields_list(self.request.DATA)
+            self.notification_service.send_notification_email(self.update_notification_template,
+                                                              users=users, context=context)
 
     def post_save(self, obj, created=False):
         super().post_save(obj, created)
