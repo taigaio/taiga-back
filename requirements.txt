@@ -12,6 +12,7 @@ psycopg2==2.5.2
 pytz>=2013.9
 six>=1.4.1
 djmail>=0.4
+django-pgjson==0.1.2
 django-jinja>=0.23
 jinja2==2.7.1
 pygments>=1.6

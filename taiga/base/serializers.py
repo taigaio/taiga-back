@@ -22,6 +22,7 @@ from reversion.models import Version
 import reversion
 
 from taiga.domains.base import get_active_domain
+from taiga.domains.models import Domain
 
 
 class PickleField(serializers.WritableField):
@@ -50,11 +51,13 @@ class AutoDomainField(serializers.WritableField):
     Automatically set domain field serializer.
     """
     def to_native(self, obj):
+        if obj:
+            return obj.id
         return obj
 
     def from_native(self, data):
         domain = get_active_domain()
-        return domain.id
+        return domain
 
 class VersionSerializer(serializers.ModelSerializer):
     created_date = serializers.SerializerMethodField("get_created_date")

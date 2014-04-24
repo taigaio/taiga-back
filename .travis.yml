@@ -3,6 +3,8 @@ python:
   - "3.3"
 services:
   - rabbitmq # will start rabbitmq-server
+addons:
+  postgresql: "9.3"
 before_script:
   - psql -c 'create database taiga;' -U postgres
 install:

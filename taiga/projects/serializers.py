@@ -16,6 +16,7 @@
 
 from os import path
 from rest_framework import serializers
+from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.serializers import PickleField, JsonField, AutoDomainField
 from taiga.users.models import Role
@@ -185,17 +186,17 @@ class RoleSerializer(serializers.ModelSerializer):
 
 
 class ProjectTemplateSerializer(serializers.ModelSerializer):
-    domain = AutoDomainField()
+    domain = AutoDomainField(required=False, label=_("Domain"))
 
-    default_options = JsonField()
-    us_statuses = JsonField()
-    points = JsonField()
-    task_statuses = JsonField()
-    issue_statuses = JsonField()
-    issue_types = JsonField()
-    priorities = JsonField()
-    severities = JsonField()
-    roles = JsonField()
+    default_options = JsonField(required=False, label=_("Default options"))
+    us_statuses = JsonField(required=False, label=_("User story's statuses"))
+    points = JsonField(required=False, label=_("Points"))
+    task_statuses = JsonField(required=False, label=_("Task's statuses"))
+    issue_statuses = JsonField(required=False, label=_("Issue's statuses"))
+    issue_types = JsonField(required=False, label=_("Issue's types"))
+    priorities = JsonField(required=False, label=_("Priorities"))
+    severities = JsonField(required=False, label=_("Severities"))
+    roles = JsonField(required=False, label=_("Roles"))
 
     class Meta:
         model = models.ProjectTemplate

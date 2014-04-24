@@ -1,5 +1,4 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be> # Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -175,5 +174,11 @@ class ProjectTemplatePermission(BasePermission):
         return domain.user_is_owner(request.user)
 
     def has_object_permission(self, request, view, obj):
-        domain = get_active_domain()
-        return domain.user_is_owner(request.user)
+        current_domain = get_active_domain()
+        if obj.domain:
+            return obj.domain == current_domain and current_domain.user_is_owner(request.user)
+        else:
+            if request.method == "GET":
+                return current_domain.user_is_owner(request.user)
+            else:
+                False

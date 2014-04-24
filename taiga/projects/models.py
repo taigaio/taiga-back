@@ -161,6 +161,11 @@ class Project(ProjectDefaults, models.Model):
     videoconferences_salt = models.CharField(max_length=250, null=True, blank=True,
                                              verbose_name=_("videoconference room salt"))
 
+    creation_template = models.ForeignKey("projects.ProjectTemplate",
+                                          related_name="projects", null=True,
+                                          blank=True, default=None,
+                                          verbose_name=_("creation template"))
+
     domain = models.ForeignKey("domains.Domain", related_name="projects", null=True, blank=True,
                                default=None, verbose_name=_("domain"))
 
@@ -549,15 +554,15 @@ class ProjectTemplate(models.Model):
     videoconferences_salt = models.CharField(max_length=250, null=True, blank=True,
                                              verbose_name=_("videoconference room salt"))
 
-    default_options = JsonField(null=True, blank=True, default=None, verbose_name=_("default options"))
-    us_statuses = JsonField(null=True, blank=True, default=None, verbose_name=_("us statuses"))
-    points = JsonField(null=True, blank=True, default=None, verbose_name=_("us points"))
-    task_statuses = JsonField(null=True, blank=True, default=None, verbose_name=_("task statuses"))
-    issue_statuses = JsonField(null=True, blank=True, default=None, verbose_name=_("issue statuses"))
-    issue_types = JsonField(null=True, blank=True, default=None, verbose_name=_("issue types"))
-    priorities = JsonField(null=True, blank=True, default=None, verbose_name=_("issue types"))
-    severities = JsonField(null=True, blank=True, default=None, verbose_name=_("issue types"))
-    roles = JsonField(null=True, blank=True, default=None, verbose_name=_("roles"))
+    default_options = JsonField(null=True, blank=True, verbose_name=_("default options"))
+    us_statuses = JsonField(null=True, blank=True, verbose_name=_("us statuses"))
+    points = JsonField(null=True, blank=True, verbose_name=_("us points"))
+    task_statuses = JsonField(null=True, blank=True, verbose_name=_("task statuses"))
+    issue_statuses = JsonField(null=True, blank=True, verbose_name=_("issue statuses"))
+    issue_types = JsonField(null=True, blank=True, verbose_name=_("issue types"))
+    priorities = JsonField(null=True, blank=True, verbose_name=_("issue types"))
+    severities = JsonField(null=True, blank=True, verbose_name=_("issue types"))
+    roles = JsonField(null=True, blank=True, verbose_name=_("roles"))
 
     class Meta:
         verbose_name = "project template"
@@ -582,13 +587,13 @@ class ProjectTemplate(models.Model):
         self.videoconferences_salt = project.videoconferences_salt
 
         self.default_options = {
-            "points": project.default_points.name,
-            "us_status": project.default_us_status.name,
-            "task_status": project.default_task_status.name,
-            "issue_status": project.default_issue_status.name,
-            "issue_type": project.default_issue_type.name,
-            "priority": project.default_priority.name,
-            "severity": project.default_severity.name
+            "points": getattr(project.default_points, "name", None),
+            "us_status": getattr(project.default_us_status, "name", None),
+            "task_status": getattr(project.default_task_status, "name", None),
+            "issue_status": getattr(project.default_issue_status, "name", None),
+            "issue_type": getattr(project.default_issue_type, "name", None),
+            "priority": getattr(project.default_priority, "name", None),
+            "severity": getattr(project.default_severity, "name", None)
         }
 
 
@@ -665,8 +670,9 @@ class ProjectTemplate(models.Model):
 
     def apply_to_project(self, project):
         if project.id is None:
-            raise "Project need an id (must be a saved project)"
+            raise Exception("Project need an id (must be a saved project)")
 
+        project.creation_template = self
         project.is_backlog_activated = self.is_backlog_activated
         project.is_kanban_activated = self.is_kanban_activated
         project.is_wiki_activated = self.is_wiki_activated
