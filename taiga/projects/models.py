@@ -539,6 +539,9 @@ class ProjectTemplate(models.Model):
                                          verbose_name=_("modified date"))
     domain = models.ForeignKey("domains.Domain", related_name="templates", null=True, blank=True,
                                default=None, verbose_name=_("domain"))
+    default_owner_role = models.CharField(max_length=50, null=False,
+                                          blank=False,
+                                          verbose_name=_("default owner's role"))
 
     is_backlog_activated = models.BooleanField(default=True, null=False, blank=True,
                                                verbose_name=_("active backlog panel"))
@@ -668,6 +671,9 @@ class ProjectTemplate(models.Model):
                 "computable": role.computable
             })
 
+        owner_membership =  project.memberships.get(user=project.owner)
+        self.default_owner_role = owner_membership.role.slug
+
     def apply_to_project(self, project):
         if project.id is None:
             raise Exception("Project need an id (must be a saved project)")
@@ -759,6 +765,13 @@ class ProjectTemplate(models.Model):
         project.default_issue_type = IssueType.objects.get(name=self.default_options["issue_type"], project=project)
         project.default_priority = Priority.objects.get(name=self.default_options["priority"], project=project)
         project.default_severity = Severity.objects.get(name=self.default_options["severity"], project=project)
+
+        Membership.objects.create(
+            user=project.owner,
+            project=project,
+            role=project.roles.get(slug=self.default_owner_role),
+            email=project.owner.email
+        )
 
         return project
 
