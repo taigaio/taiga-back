@@ -48,6 +48,7 @@ class IssuesTestCase(test.TestCase):
         self.project2 = create_project(2, self.user4)
         self.milestone2 = create_milestone(2, self.user4, self.project2)
         self.issue4 = create_issue(4, self.user4, self.project2)
+        mail.outbox = []
 
     def test_list_issues_by_anon(self):
         response = self.client.get(reverse("issues-list"))
@@ -337,7 +338,7 @@ class IssuesTestCase(test.TestCase):
             content_type="application/json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Issue.objects.all().count(), 5)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_create_issue_by_membership_with_wron_project(self):
@@ -660,7 +661,7 @@ class IssuesTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["subject"], response.data["subject"])
         self.assertEqual(Issue.objects.all().count(), 4)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_edit_issue_by_owner_with_wron_project(self):
@@ -783,7 +784,7 @@ class IssuesTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["subject"], response.data["subject"])
         self.assertEqual(Issue.objects.all().count(), 4)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_edit_issue_by_membership_with_wron_project(self):

@@ -202,11 +202,12 @@ class RegisterApiTests(test.TestCase):
         }
 
         url = reverse("auth-register")
+        self.assertEqual(self.project.memberships.count(), 1)
         response = self.client.post(url, data, HTTP_X_HOST=self.domain1.name)
         self.assertEqual(response.status_code, 201)
 
         self.assertEqual(DomainMember.objects.filter(domain=self.domain1).count(), 1)
-        self.assertEqual(self.project.memberships.count(), 0)
+        self.assertEqual(self.project.memberships.count(), 1)
 
     def test_public_register_02(self):
         data = {
@@ -250,7 +251,7 @@ class RegisterApiTests(test.TestCase):
             "token": membership.token,
         }
 
-        self.assertEqual(self.project.memberships.exclude(user__isnull=True).count(), 0)
+        self.assertEqual(self.project.memberships.exclude(user__isnull=True).count(), 1)
 
         url = reverse("auth-register")
         response = self.client.post(url, data=json.dumps(data),
@@ -258,8 +259,8 @@ class RegisterApiTests(test.TestCase):
                                     HTTP_X_HOST=self.domain2.name)
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(self.project.memberships.exclude(user__isnull=True).count(), 1)
-        self.assertEqual(self.project.memberships.get().role, self.role)
+        self.assertEqual(self.project.memberships.exclude(user__isnull=True).count(), 2)
+        self.assertEqual(self.project.memberships.order_by("-pk")[0].role, self.role)
         self.assertEqual(DomainMember.objects.filter(domain=self.domain1).count(), 0)
         self.assertEqual(DomainMember.objects.filter(domain=self.domain2).count(), 1)
 
@@ -274,7 +275,7 @@ class RegisterApiTests(test.TestCase):
             "token": membership.token,
         }
 
-        self.assertEqual(self.project.memberships.exclude(user__isnull=True).count(), 0)
+        self.assertEqual(self.project.memberships.exclude(user__isnull=True).count(), 1)
 
         url = reverse("auth-register")
         response = self.client.post(url, data=json.dumps(data),
@@ -282,8 +283,8 @@ class RegisterApiTests(test.TestCase):
                                     HTTP_X_HOST=self.domain2.name)
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(self.project.memberships.exclude(user__isnull=True).count(), 1)
-        self.assertEqual(self.project.memberships.get().role, self.role)
+        self.assertEqual(self.project.memberships.exclude(user__isnull=True).count(), 2)
+        self.assertEqual(self.project.memberships.order_by("-pk")[0].role, self.role)
         self.assertEqual(DomainMember.objects.filter(domain=self.domain1).count(), 0)
         self.assertEqual(DomainMember.objects.filter(domain=self.domain2).count(), 1)
 

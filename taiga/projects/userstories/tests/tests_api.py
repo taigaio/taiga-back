@@ -50,6 +50,7 @@ class UserStoriesTestCase(test.TestCase):
         self.project2 = create_project(2, self.user4)
         self.milestone2 = create_milestone(2, self.user4, self.project2)
         self.userstory4 = create_userstory(4, self.user4, self.project2)
+        mail.outbox = []
 
     def test_list_userstories_by_anon(self):
         response = self.client.get(reverse("userstories-list"))
@@ -252,7 +253,7 @@ class UserStoriesTestCase(test.TestCase):
             content_type="application/json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(UserStory.objects.all().count(), 5)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_create_userstory_by_membership_with_wron_project(self):
@@ -442,7 +443,7 @@ class UserStoriesTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["subject"], response.data["subject"])
         self.assertEqual(UserStory.objects.all().count(), 4)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_edit_userstory_by_owner_with_wron_project(self):
@@ -514,7 +515,7 @@ class UserStoriesTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["subject"], response.data["subject"])
         self.assertEqual(UserStory.objects.all().count(), 4)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_edit_userstory_by_membership_with_wron_project(self):
@@ -717,7 +718,7 @@ class UserStoriesTestCase(test.TestCase):
             content_type="application/json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(UserStory.objects.all().count(), 5)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
 
         self.assertEqual(response.data["origin_issue"]["subject"], issue.subject)
         issue_historical = reversion.get_unique_for_object(issue)

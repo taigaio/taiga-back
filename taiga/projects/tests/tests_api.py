@@ -214,7 +214,7 @@ class ProjectsTestCase(test.TestCase):
 
         response = self.client.post(url, data=json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(self.project4.memberships.count(), 1)
+        self.assertEqual(self.project4.memberships.count(), 2)
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertNotEqual(len(mail.outbox[0].body), 0)
@@ -232,13 +232,13 @@ class ProjectsTestCase(test.TestCase):
         response = self.client.post(url, data=json.dumps(data), content_type="application/json")
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(self.project4.memberships.count(), 1)
+        self.assertEqual(self.project4.memberships.count(), 2)
         self.assertEqual(len(mail.outbox), 1)
         self.assertNotEqual(len(mail.outbox[0].body), 0)
 
         response = self.client.post(url, data=json.dumps(data), content_type="application/json")
 
-        self.assertEqual(self.project4.memberships.count(), 1)
+        self.assertEqual(self.project4.memberships.count(), 2)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(len(mail.outbox), 1)
         self.assertNotEqual(len(mail.outbox[0].body), 0)
@@ -550,6 +550,7 @@ class ProjectTemplatesTestCase(test.TestCase):
             "name": "Test Project Template",
             "slug": "test-project-template",
             "description": "A new Test Project Template",
+            "default_owner_role": "test",
         }
 
         self.assertEqual(ProjectTemplate.objects.all().count(), 2)
@@ -566,6 +567,7 @@ class ProjectTemplatesTestCase(test.TestCase):
             "name": "Test Project Template 2",
             "slug": "test-project-template-2",
             "description": "A new Test Project Template",
+            "default_owner_role": "test",
             "domain": 100,
         }
 
