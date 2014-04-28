@@ -100,6 +100,9 @@ class Command(BaseCommand):
             # added memberships
             computable_project_roles = set()
             for user in self.users:
+                if user == project.owner:
+                    continue
+
                 role = self.sd.db_object_from_queryset(Role.objects.all())
 
                 Membership.objects.create(

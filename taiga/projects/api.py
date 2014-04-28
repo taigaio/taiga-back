@@ -22,6 +22,7 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.exceptions import ParseError
 from rest_framework import viewsets
 from rest_framework import status
 
@@ -33,6 +34,7 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route, detail_route
 from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet, RetrieveModelMixin
+from taiga.base.utils.slug import slugify_uniquely
 from taiga.users.models import Role
 
 from . import serializers
@@ -303,6 +305,34 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
     model = models.ProjectTemplate
     serializer_class = serializers.ProjectTemplateSerializer
     permission_classes = (IsAuthenticated, permissions.ProjectTemplatePermission)
+
+    @list_route(methods=["POST"])
+    def create_from_project(self, request, **kwargs):
+        project_id = request.DATA.get('project_id', None)
+        template_name = request.DATA.get('template_name', None)
+        template_description = request.DATA.get('template_description', None)
+
+        if not template_name:
+            raise ParseError("Not valid template name")
+
+        template_slug = slugify_uniquely(template_name, models.ProjectTemplate)
+
+        domain = get_active_domain()
+
+        try:
+            project = models.Project.objects.get(domain=domain, pk=project_id)
+        except models.Project.DoesNotExist:
+            raise ParseError("Not valid project_id")
+
+        template = models.ProjectTemplate(
+            name=template_name,
+            slug=template_slug,
+            description=template_description,
+            domain=domain,
+        )
+        template.load_data_from_project(project)
+        template.save()
+        return Response(self.serializer_class(template).data)
 
     def get_queryset(self):
         domain = get_active_domain()

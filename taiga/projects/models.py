@@ -76,6 +76,7 @@ class Membership(models.Model):
     class Meta:
         verbose_name = "membership"
         verbose_name_plural = "membershipss"
+        unique_together = ("user", "project", "email")
         ordering = ["project", "role"]
         permissions = (
             ("view_membership", "Can view membership"),
@@ -530,9 +531,9 @@ class QuestionStatus(models.Model):
 
 
 class ProjectTemplate(models.Model):
-    name = models.CharField(max_length=250, unique=True, null=False, blank=False,
+    name = models.CharField(max_length=250, null=False, blank=False,
                             verbose_name=_("name"))
-    slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
+    slug = models.SlugField(max_length=250, null=False, blank=True,
                             verbose_name=_("slug"))
     description = models.TextField(null=False, blank=False,
                                    verbose_name=_("description"))
@@ -573,6 +574,7 @@ class ProjectTemplate(models.Model):
     class Meta:
         verbose_name = "project template"
         verbose_name_plural = "project templates"
+        unique_together = ["slug", "domain"]
         ordering = ["name"]
 
     def __str__(self):
@@ -674,7 +676,9 @@ class ProjectTemplate(models.Model):
                 "computable": role.computable
             })
 
-        owner_membership =  project.memberships.get(user=project.owner)
+        for membership in Membership.objects.filter(project=project, user=project.owner):
+            print(membership.id, membership.user, membership.project, membership.email)
+        owner_membership = Membership.objects.get(project=project, user=project.owner)
         self.default_owner_role = owner_membership.role.slug
 
     def apply_to_project(self, project):
