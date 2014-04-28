@@ -332,7 +332,7 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
         )
         template.load_data_from_project(project)
         template.save()
-        return Response(self.serializer_class(template).data)
+        return Response(self.serializer_class(template).data, status=201)
 
     def get_queryset(self):
         domain = get_active_domain()

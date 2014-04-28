@@ -766,3 +766,80 @@ class ProjectTemplatesTestCase(test.TestCase):
 
         template.delete()
         self.client.logout()
+
+    def test_create_project_template_from_project_by_anon(self):
+        data = {
+            "project_id": 1,
+            "template_name": "Test",
+            "template_description": "Test"
+        }
+
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+
+        response = self.client.post(reverse("project-templates-create-from-project"), data)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+
+        response = self.client.post(reverse("project-templates-create-from-project"), data)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+
+    def test_create_project_template_from_project_by_domain_owner(self):
+        project = create_project(1, self.user1)
+
+        data = {
+            "project_id": project.id,
+            "template_description": "Test"
+        }
+
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+        response = self.client.login(username=self.user1.username,
+                                     password=self.user1.username)
+        self.assertTrue(response)
+        response = self.client.post(reverse("project-templates-create-from-project"), data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+
+        data = {
+            "template_name": "Test",
+            "template_description": "Test"
+        }
+
+        response = self.client.post(reverse("project-templates-create-from-project"), data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+
+        data = {
+            "project_id": project.id,
+            "template_name": "Test",
+            "template_description": "Test"
+        }
+
+        response = self.client.post(reverse("project-templates-create-from-project"), data)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ProjectTemplate.objects.all().count(), 3)
+
+        ProjectTemplate.objects.get(slug="test").delete()
+
+        self.client.logout()
+
+    def test_create_project_template_from_project_by_not_domain_owner(self):
+        data = {
+            "project_id": 1,
+            "template_name": "Test",
+            "template_description": "Test"
+        }
+
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+        response = self.client.login(username=self.user2.username,
+                                     password=self.user2.username)
+        self.assertTrue(response)
+        response = self.client.post(reverse("project-templates-create-from-project"), data)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+
+        response = self.client.post(reverse("project-templates-create-from-project"), data)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(ProjectTemplate.objects.all().count(), 2)
+
+        self.client.logout()

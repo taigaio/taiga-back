@@ -677,8 +677,6 @@ class ProjectTemplate(models.Model):
                 "computable": role.computable
             })
 
-        for membership in Membership.objects.filter(project=project, user=project.owner):
-            print(membership.id, membership.user, membership.project, membership.email)
         owner_membership = Membership.objects.get(project=project, user=project.owner)
         self.default_owner_role = owner_membership.role.slug
 
