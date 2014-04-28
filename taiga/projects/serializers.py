@@ -33,7 +33,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
         model = models.Attachment
         fields = ("id", "project", "owner", "name", "attached_file", "size", "url",
                   "description", "is_deprecated", "created_date", "modified_date",
-                  "object_id")
+                  "object_id", "order")
         read_only_fields = ("owner",)
 
     def get_name(self, obj):

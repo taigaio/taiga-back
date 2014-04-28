@@ -315,6 +315,7 @@ class Attachment(models.Model):
                                      verbose_name=_("attached file"))
     is_deprecated = models.BooleanField(default=False, verbose_name=_("is deprecated"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
+    order = models.IntegerField(default=0, null=False, blank=False, verbose_name=_("order"))
 
     class Meta:
         verbose_name = "attachment"
