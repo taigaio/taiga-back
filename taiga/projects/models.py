@@ -308,9 +308,12 @@ class Attachment(models.Model):
                                         verbose_name=_("created date"))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
                                          verbose_name=_("modified date"))
+
     attached_file = models.FileField(max_length=500, null=True, blank=True,
                                      upload_to=get_attachment_file_path,
                                      verbose_name=_("attached file"))
+    is_deprecated = models.BooleanField(default=False, verbose_name=_("is deprecated"))
+    description = models.TextField(null=False, blank=True, verbose_name=_("description"))
 
     class Meta:
         verbose_name = "attachment"

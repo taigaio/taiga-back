@@ -31,8 +31,9 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Attachment
-        fields = ("id", "project", "owner", "name", "attached_file", "size",
-                  "created_date", "modified_date", "object_id", "url")
+        fields = ("id", "project", "owner", "name", "attached_file", "size", "url",
+                  "description", "is_deprecated", "created_date", "modified_date",
+                  "object_id")
         read_only_fields = ("owner",)
 
     def get_name(self, obj):
@@ -141,7 +142,9 @@ class ProjectDetailSerializer(ProjectSerializer):
     #question_statuses = QuestionStatusSerializer(many=True, required=False) # Questions
 
     def get_active_membership(self, obj):
-        serializer = ProjectMembershipSerializer(obj.memberships.filter(user__isnull=False).order_by('user__first_name', 'user__last_name', 'user__username'), many=True)
+        memberships = obj.memberships.filter(user__isnull=False)
+                                     .order_by('user__first_name', 'user__last_name', 'user__username')
+        serializer = ProjectMembershipSerializer(memberships, many=True)
         return serializer.data
 
     def get_list_of_roles(self, obj):
