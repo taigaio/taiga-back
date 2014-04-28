@@ -142,8 +142,7 @@ class ProjectDetailSerializer(ProjectSerializer):
     #question_statuses = QuestionStatusSerializer(many=True, required=False) # Questions
 
     def get_active_membership(self, obj):
-        memberships = obj.memberships.filter(user__isnull=False)
-                                     .order_by('user__first_name', 'user__last_name', 'user__username')
+        memberships = obj.memberships.filter(user__isnull=False).order_by('user__first_name', 'user__last_name', 'user__username')
         serializer = ProjectMembershipSerializer(memberships, many=True)
         return serializer.data
 
