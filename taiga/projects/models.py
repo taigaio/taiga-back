@@ -35,6 +35,7 @@ from django_pgjson.fields import JsonField
 
 from taiga.users.models import Role
 from taiga.domains.models import DomainMember
+from taiga.domains import get_active_domain
 from taiga.projects.userstories.models import UserStory
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
@@ -832,6 +833,9 @@ def project_post_save(sender, instance, created, **kwargs):
         return
 
     template_slug = getattr(instance, "template", settings.DEFAULT_PROJECT_TEMPLATE)
-    template = ProjectTemplate.objects.get(slug=template_slug, domain__isnull=True)
+    template = ProjectTemplate.objects.filter(slug=template_slug).get(
+        models.Q(domain__isnull=True) | models.Q(domain=get_active_domain())
+    )
+
     template.apply_to_project(instance)
     instance.save()
