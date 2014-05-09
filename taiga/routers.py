@@ -16,35 +16,31 @@
 
 from taiga.base import routers
 
-from taiga.auth.api import AuthViewSet
-from taiga.users.api import UsersViewSet, PermissionsViewSet
-from taiga.base.searches.api import SearchViewSet
-from taiga.base.resolver.api import ResolverViewSet
-from taiga.projects.api import (ProjectViewSet, MembershipViewSet, InvitationViewSet,
-                                    UserStoryStatusViewSet, PointsViewSet, TaskStatusViewSet,
-                                    IssueStatusViewSet, IssueTypeViewSet, PriorityViewSet,
-                                    SeverityViewSet, ProjectAdminViewSet, RolesViewSet)
-from taiga.domains.api import DomainViewSet, DomainMembersViewSet
-from taiga.projects.milestones.api import MilestoneViewSet
-from taiga.projects.userstories.api import UserStoryViewSet, UserStoryAttachmentViewSet
-from taiga.projects.tasks.api import  TaskViewSet, TaskAttachmentViewSet
-from taiga.projects.issues.api import IssueViewSet, IssueAttachmentViewSet
-from taiga.projects.wiki.api import WikiViewSet, WikiAttachmentViewSet
-
-
 router = routers.DefaultRouter(trailing_slash=False)
 
 # taiga.users
+from taiga.users.api import UsersViewSet
+from taiga.users.api import PermissionsViewSet
+from taiga.auth.api import AuthViewSet
+
 router.register(r"users", UsersViewSet, base_name="users")
 router.register(r"permissions", PermissionsViewSet, base_name="permissions")
 router.register(r"auth", AuthViewSet, base_name="auth")
 
 
 # Resolver & Search
+from taiga.base.searches.api import SearchViewSet
+from taiga.base.resolver.api import ResolverViewSet
+
 router.register(r"resolver", ResolverViewSet, base_name="resolver")
 router.register(r"search", SearchViewSet, base_name="search")
 
+
 # Domains
+from taiga.domains.api import DomainViewSet
+from taiga.domains.api import DomainMembersViewSet
+from taiga.projects.api import ProjectAdminViewSet
+
 router.register(r"sites", DomainViewSet, base_name="sites")
 router.register(r"site-members", DomainMembersViewSet, base_name="site-members")
 router.register(r"site-projects", ProjectAdminViewSet, base_name="site-projects")
@@ -76,6 +72,20 @@ router.register(r"issue-statuses", IssueStatusViewSet, base_name="issue-statuses
 router.register(r"issue-types", IssueTypeViewSet, base_name="issue-types")
 router.register(r"priorities", PriorityViewSet, base_name="priorities")
 router.register(r"severities",SeverityViewSet , base_name="severities")
+
+
+
+
+# History & Components
+from taiga.projects.history.api import UserStoryHistory
+from taiga.projects.history.api import TaskHistory
+from taiga.projects.history.api import IssueHistory
+from taiga.projects.history.api import WikiHistory
+
+router.register(r"history/userstory", UserStoryHistory, base_name="userstory-history")
+router.register(r"history/task", TaskHistory, base_name="task-history")
+router.register(r"history/issue", IssueHistory, base_name="issue-history")
+router.register(r"history/wiki", WikiHistory, base_name="wiki-history")
 
 
 # Project components

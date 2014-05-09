@@ -1,9 +1,8 @@
 #git+https://github.com/tomchristie/django-rest-framework.git@2.4.0
 
 djangorestframework==2.3.13
-django-reversion==1.8.0
 Django==1.6.2
-South==0.8.3
+South==0.8.4
 django-filter==0.7
 django-picklefield==0.3.0
 django-sampledatahelper==0.2.1

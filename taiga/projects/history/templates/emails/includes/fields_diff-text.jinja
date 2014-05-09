@@ -1,0 +1,45 @@
+{% for field_name, values in changed_fields.items() %}
+    - {{ verbose_name(object, field_name) }}:
+{# POINTS #}
+    {% if field_name == "points" %}
+        {% for role, points in values.items() %}
+        * {{ role }} to: {{ points.1|linebreaksbr }} from: {{ points.0|linebreaksbr }}
+        {% endfor %}
+{# ATTACHMENTS #}
+    {% elif field_name == "attachments" %}
+        {% if values.new %}
+        * {{ _("Added") }}:
+            {% for att in values['new']%}
+            - {{ att.filename|linebreaksbr }}
+            {% endfor %}
+        {% endif %}
+
+        {% if values.changed %}
+        * {{ _("Changed") }}
+            {% for att in values['changed'] %}
+            - {{ att.1.filename|linebreaksbr }}
+            {% endfor %}
+        {% endif %}
+
+        {% if values.deleted %}
+        * {{ _("Deleted") }}
+            {% for att in values['deleted']%}
+            - {{ att.filename|linebreaksbr }}
+            {% endfor %}
+        {% endif %}
+{# TAGS AND WATCHERS #}
+    {% elif field_name in ["tags", "watchers"] %}
+    * to: {{ ', '.join(values.1)|linebreaksbr }}
+        {% if values.0 != None or values.0 != [] %}
+    * from: {{ ', '.join(values.0)|linebreaksbr }}
+        {% endif %}
+{# * #}
+    {% else %}
+        {% if values.1 != None or values.1 != "" %}
+    * to: {{ values.1|linebreaksbr }}
+        {% endif %}
+        {% if values.0 != None or values.0 != "" %}
+    * from: {{ values.0|linebreaksbr }}
+        {% endif %}
+    {% endif %}
+{% endfor %}
