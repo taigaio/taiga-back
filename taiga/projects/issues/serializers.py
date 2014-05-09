@@ -19,6 +19,7 @@ from rest_framework import serializers
 from taiga.base.serializers import PickleField, NeighborsSerializerMixin
 from taiga.projects.attachments.serializers import AttachmentSerializer
 from taiga.projects.mixins.notifications import WatcherValidationSerializerMixin
+from taiga.mdrender.service import render as mdrender
 
 from . import models
 
@@ -34,6 +35,8 @@ class IssueSerializer(WatcherValidationSerializerMixin, serializers.ModelSeriali
     comment = serializers.SerializerMethodField("get_comment")
     attachments = IssueAttachmentSerializer(many=True, read_only=True)
     generated_user_stories = serializers.SerializerMethodField("get_generated_user_stories")
+    blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
+    description_html = serializers.SerializerMethodField("get_description_html")
 
     class Meta:
         model = models.Issue
@@ -44,6 +47,12 @@ class IssueSerializer(WatcherValidationSerializerMixin, serializers.ModelSeriali
 
     def get_generated_user_stories(self, obj):
         return obj.generated_user_stories.values("id", "ref", "subject")
+
+    def get_blocked_note_html(self, obj):
+        return mdrender(obj.project, obj.blocked_note)
+
+    def get_description_html(self, obj):
+        return mdrender(obj.project, obj.description)
 
 
 class IssueNeighborsSerializer(NeighborsSerializerMixin, IssueSerializer):

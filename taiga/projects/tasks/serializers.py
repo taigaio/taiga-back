@@ -25,6 +25,8 @@ class TaskSerializer(serializers.ModelSerializer):
     tags = PickleField(required=False, default=[])
     comment = serializers.SerializerMethodField("get_comment")
     milestone_slug = serializers.SerializerMethodField("get_milestone_slug")
+    blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
+    description_html = serializers.SerializerMethodField("get_description_html")
 
     class Meta:
         model = models.Task
@@ -37,3 +39,9 @@ class TaskSerializer(serializers.ModelSerializer):
             return obj.milestone.slug
         else:
             return None
+
+    def get_blocked_note_html(self, obj):
+        return mdrender(obj.project, obj.blocked_note)
+
+    def get_description_html(self, obj):
+        return mdrender(obj.project, obj.description)

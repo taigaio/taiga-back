@@ -16,6 +16,8 @@ django-jinja>=0.23
 jinja2==2.7.1
 pygments>=1.6
 django-sites==0.4
+Markdown==2.4
+fn==0.2.13
 
 # Comment it if you are using python >= 3.4
 enum34==0.9.23

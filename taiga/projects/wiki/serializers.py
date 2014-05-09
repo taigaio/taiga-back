@@ -18,7 +18,14 @@ from rest_framework import serializers
 
 from . import models
 
+from taiga.mdrender.service import render as mdrender
+
 
 class WikiPageSerializer(serializers.ModelSerializer):
+    html = serializers.SerializerMethodField("get_html")
+
     class Meta:
         model = models.WikiPage
+
+    def get_html(self, obj):
+        return mdrender(obj.project, obj.content)

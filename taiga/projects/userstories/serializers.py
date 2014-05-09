@@ -19,6 +19,7 @@ from django.db.models import get_model
 from rest_framework import serializers
 
 from taiga.base.serializers import PickleField, NeighborsSerializerMixin
+from taiga.mdrender.service import render as mdrender
 
 from . import models
 
@@ -41,6 +42,8 @@ class UserStorySerializer(serializers.ModelSerializer):
     milestone_slug = serializers.SerializerMethodField("get_milestone_slug")
     milestone_name = serializers.SerializerMethodField("get_milestone_name")
     origin_issue = serializers.SerializerMethodField("get_origin_issue")
+    blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
+    description_html = serializers.SerializerMethodField("get_description_html")
 
     class Meta:
         model = models.UserStory
@@ -87,6 +90,12 @@ class UserStorySerializer(serializers.ModelSerializer):
                 "subject": obj.generated_from_issue.subject,
             }
         return None
+
+    def get_blocked_note_html(self, obj):
+        return mdrender(obj.project, obj.blocked_note)
+
+    def get_description_html(self, obj):
+        return mdrender(obj.project, obj.description)
 
 
 class UserStoryNeighborsSerializer(NeighborsSerializerMixin, UserStorySerializer):
