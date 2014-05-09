@@ -9,9 +9,7 @@ Comment: {{ comment|linebreaksbr }}
 {% endif %}
 {% if changed_fields %}
 - Updated fields:
-    {% for field in changed_fields %}
-    * {{ field.verbose_name}}</b>: from '{{ field.old_value}}' to '{{ field.new_value }}'.
-    {% endfor %}
+    {% include "emails/includes/fields_diff-text.jinja" %}
 {% endif %}
 
 ** More info at {{ final_url_name }} ({{ final_url }}) **

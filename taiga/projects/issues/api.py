@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import reversion
-from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
@@ -27,11 +25,12 @@ from rest_framework import filters
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
-from taiga.base.api import ModelCrudViewSet, NeighborsApiMixin
-from taiga.base.notifications.api import NotificationSenderMixin
 from taiga.projects.permissions import AttachmentPermission
 from taiga.projects.serializers import AttachmentSerializer
 from taiga.projects.models import Attachment
+from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import NeighborsApiMixin
+from taiga.projects.mixins.notifications import NotificationSenderMixin
 
 from . import models
 from . import permissions
@@ -142,15 +141,6 @@ class IssueViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudViewSet)
 
         if obj.type and obj.type.project != obj.project:
             raise exc.PermissionDenied(_("You don't have permissions for add/modify this issue."))
-
-    def post_save(self, obj, created=False):
-        with reversion.create_revision():
-            if "comment" in self.request.DATA:
-                # Update the comment in the last version
-                reversion.set_comment(self.request.DATA["comment"])
-        super().post_save(obj, created)
-
-
 class IssueAttachmentViewSet(ModelCrudViewSet):
     model = Attachment
     serializer_class = AttachmentSerializer

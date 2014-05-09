@@ -24,7 +24,7 @@ from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet
-from taiga.base.notifications.api import NotificationSenderMixin
+from taiga.projects.mixins.notifications import NotificationSenderMixin
 
 from . import serializers
 from . import models

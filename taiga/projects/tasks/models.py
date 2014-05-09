@@ -24,7 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 from picklefield.fields import PickledObjectField
 
 from taiga.base.utils.slug import ref_uniquely
-from taiga.base.notifications.models import WatchedMixin
+from taiga.projects.notifications.models import WatchedMixin
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.milestones.models import Milestone
 from taiga.projects.mixins.blocked.models import BlockedMixin
@@ -34,7 +34,7 @@ import reversion
 
 class Task(WatchedMixin, BlockedMixin):
     user_story = models.ForeignKey("userstories.UserStory", null=True, blank=True,
-                related_name="tasks", verbose_name=_("user story"))
+                                   related_name="tasks", verbose_name=_("user story"))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
@@ -107,10 +107,6 @@ class Task(WatchedMixin, BlockedMixin):
             "suscribed_watchers": self.watchers.all(),
             "project": self.project,
         }
-
-
-# Reversion registration (usufull for base.notification and for meke a historical)
-reversion.register(Task)
 
 
 # Model related signals handlers

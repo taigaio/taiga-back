@@ -19,8 +19,6 @@ from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-import reversion
-
 
 class WikiPage(models.Model):
     project = models.ForeignKey("projects.Project", null=False, blank=False,
@@ -51,6 +49,3 @@ class WikiPage(models.Model):
 
     def __str__(self):
         return "project {0} - {1}".format(self.project_id, self.slug)
-
-
-reversion.register(WikiPage)

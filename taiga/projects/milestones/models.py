@@ -20,11 +20,10 @@ from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
-from taiga.base.notifications.models import WatchedMixin
+from taiga.projects.notifications.models import WatchedMixin
 
 from taiga.projects.userstories.models import UserStory
 
-import reversion
 import itertools
 import datetime
 
@@ -146,7 +145,3 @@ class Milestone(WatchedMixin, models.Model):
                 finish_date__lt=date + datetime.timedelta(days=1)
             ) if us.is_closed
         ])
-
-
-# Reversion registration (usufull for base.notification and for meke a historical)
-reversion.register(Milestone)

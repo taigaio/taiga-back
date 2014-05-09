@@ -28,7 +28,6 @@ from taiga.base.utils.slug import ref_uniquely
 from taiga.base.notifications.models import WatchedMixin
 from taiga.projects.mixins.blocked.models import BlockedMixin
 
-import reversion
 
 
 class Issue(NeighborsMixin, WatchedMixin, BlockedMixin):
@@ -274,10 +273,6 @@ class Issue(NeighborsMixin, WatchedMixin, BlockedMixin):
             "suscribed_watchers": self.watchers.all(),
             "project": self.project,
         }
-
-
-# Reversion registration (usufull for base.notification and for meke a historical)
-reversion.register(Issue)
 
 
 # Model related signals handlers

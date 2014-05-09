@@ -27,7 +27,6 @@ from taiga.projects.issues.tests import create_issue
 from . import create_userstory
 
 import json
-import reversion
 
 
 class UserStoriesTestCase(test.TestCase):
@@ -689,8 +688,6 @@ class UserStoriesTestCase(test.TestCase):
         self.assertEqual(len(mail.outbox), 2)
 
         self.assertEqual(response.data["origin_issue"]["subject"], issue.subject)
-        issue_historical = reversion.get_unique_for_object(issue)
-        self.assertTrue(data["subject"] in issue_historical[0].revision.comment)
 
         self.client.logout()
 
@@ -721,8 +718,6 @@ class UserStoriesTestCase(test.TestCase):
         self.assertEqual(len(mail.outbox), 2)
 
         self.assertEqual(response.data["origin_issue"]["subject"], issue.subject)
-        issue_historical = reversion.get_unique_for_object(issue)
-        self.assertTrue(data["subject"] in issue_historical[0].revision.comment)
 
         self.client.logout()
 

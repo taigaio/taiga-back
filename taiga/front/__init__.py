@@ -27,6 +27,7 @@ URLS = {
     "project-admin": "/#/project/{0}/admin",
     "change-password": "/#/change-password/{0}",
     "invitation": "/#/invitation/{0}",
+    "wiki": "/#/project/{0}/wiki/{1}"
 }
 
 

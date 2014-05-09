@@ -14,24 +14,8 @@
             <p>Comment <b>{{ comment|linebreaksbr }}</b></p>
         {% endif %}
         {% if changed_fields %}
-            <p>Updated fields:
-            <dl>
-            {% for field in changed_fields %}
-                <dt style="background: #669933; padding: 5px 15px; color: #fff">
-                    <b>{{ field.verbose_name}}</b>
-                </dt>
-                {% if field.new_value != None or field.new_value != "" %}
-                <dd style="background: #eee; padding: 5px 15px; color: #444">
-                    <b>to:</b> <i>{{ field.new_value|linebreaksbr }}</i>
-                </dd>
-                {% endif %}
-                {% if field.old_value != None or field.old_value != "" %}
-                <dd style="padding: 5px 15px; color: #bbb">
-                    <b>from:</b> <i>{{ field.old_value|linebreaksbr }}</i>
-                </dd>
-                {% endif %}
-            {% endfor %}
-            </dl>
+            <p>Updated fields:</p>
+            {% include "emails/includes/fields_diff-html.jinja" %}
         {% endif %}
         </td>
     </tr>

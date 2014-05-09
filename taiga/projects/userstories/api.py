@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import reversion
-
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
@@ -27,13 +25,16 @@ from rest_framework import status
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
-from taiga.base.decorators import list_route, action
+from taiga.base.decorators import list_route
+from taiga.base.decorators import action
 from taiga.base.permissions import has_project_perm
-from taiga.base.api import ModelCrudViewSet, NeighborsApiMixin
-from taiga.base.notifications.api import NotificationSenderMixin
 from taiga.projects.permissions import AttachmentPermission
 from taiga.projects.serializers import AttachmentSerializer
 from taiga.projects.models import Attachment, Project
+from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import NeighborsApiMixin
+from taiga.projects.mixins.notifications import NotificationSenderMixin
+from taiga.projects.history.services import take_snapshot
 
 from . import models
 from . import permissions
@@ -103,16 +104,19 @@ class UserStoryViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudView
             raise exc.PermissionDenied(_("You don't have permisions to create user stories."))
 
         service = services.UserStoriesService()
-        service.bulk_insert(project, request.user, bulk_stories,
-                            callback_on_success=self._post_save_notification_sender)
+        user_stories = service.bulk_insert(project, request.user, bulk_stories,
+                            callback_on_success=self.post_save)
 
-        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+        user_stories_serialized = self.serializer_class(user_stories, many=True)
+        return Response(data=user_stories_serialized.data)
 
     @list_route(methods=["POST"])
     def bulk_update_order(self, request, **kwargs):
         # bulkStories should be:
         # [[1,1],[23, 2], ...]
 
+        # TODO: Generate the histoy snaptshot when change the uss order in the backlog.
+        #       Implement order with linked lists \o/.
         bulk_stories = request.DATA.get("bulkStories", None)
 
         if bulk_stories is None:
@@ -138,10 +142,12 @@ class UserStoryViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudView
 
         # Added comment to the origin (issue)
         if response.status_code == status.HTTP_201_CREATED and self.object.generated_from_issue:
-            with reversion.create_revision():
-                reversion.set_comment(_("Generated the user story [US #{ref} - {subject}](:us:{ref} \"US #{ref} - {subject}\")").format(
-                                                                                        ref=self.object.ref, subject=self.object.subject))
-                self.object.generated_from_issue.save()
+            self.object.generated_from_issue.save()
+
+            comment = _("Generate the user story [US #{ref} - "
+                        "{subject}](:us:{ref} \"US #{ref} - {subject}\")")
+            comment = comment.format(ref=self.object.ref, subject=self.object.subject)
+            take_snapshot(self.object.generated_from_issue, comment=comment, user=self.request.user)
 
         return response
 

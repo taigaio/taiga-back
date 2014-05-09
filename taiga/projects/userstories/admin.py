@@ -15,12 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-import reversion
 
 from taiga.projects.admin import AttachmentInline
 
 from . import models
-
 
 
 class RolePointsInline(admin.TabularInline):
@@ -39,7 +37,7 @@ class RolePointsAdmin(admin.ModelAdmin):
     readonly_fields = ["user_story", "role", "points"]
 
 
-class UserStoryAdmin(reversion.VersionAdmin):
+class UserStoryAdmin(admin.ModelAdmin):
     list_display = ["project", "milestone",  "ref", "subject",]
     list_display_links = ["ref", "subject",]
     list_filter = ["project"]

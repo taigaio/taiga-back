@@ -18,23 +18,29 @@ from django.db import transaction
 from django.db import connection
 
 from . import models
-import reversion
 
 
 class UserStoriesService(object):
     @transaction.atomic
     def bulk_insert(self, project, user, data, callback_on_success=None):
+        user_stories = []
+
         items = filter(lambda s: len(s) > 0,
                     map(lambda s: s.strip(), data.split("\n")))
 
         for item in items:
             obj = models.UserStory.objects.create(subject=item, project=project, owner=user,
                                                   status=project.default_us_status)
+            user_stories.append(obj)
+
             if callback_on_success:
                 callback_on_success(obj, True)
 
+        return user_stories
+
     @transaction.atomic
     def bulk_update_order(self, project, user, data):
+        # TODO: Create a history snapshot of all updated USs
         cursor = connection.cursor()
 
         sql = """

@@ -14,59 +14,54 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
-
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
-from taiga.base.api import ModelCrudViewSet, ModelListViewSet
-from taiga.base.notifications.api import NotificationSenderMixin
-from taiga.projects.permissions import AttachmentPermission
-from taiga.projects.serializers import AttachmentSerializer
-from taiga.projects.models import Attachment
+from taiga.base.api import ModelCrudViewSet
+from taiga.base.decorators import list_route
+from taiga.projects.mixins.notifications import NotificationSenderMixin
+from taiga.projects.attachments.api import BaseAttachmentViewSet
+from taiga.projects.models import Project
+from taiga.mdrender.service import render as mdrender
 
 from . import models
 from . import permissions
 from . import serializers
 
 
-class WikiAttachmentViewSet(ModelCrudViewSet):
-    model = Attachment
-    serializer_class = AttachmentSerializer
-    permission_classes = (IsAuthenticated, AttachmentPermission)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
-    filter_fields = ["project", "object_id"]
-
-    def get_queryset(self):
-        ct = ContentType.objects.get_for_model(models.WikiPage)
-        qs = super().get_queryset()
-        qs = qs.filter(content_type=ct)
-        return qs.distinct()
-
-    def pre_conditions_on_save(self, obj):
-        super().pre_conditions_on_save(obj)
-
-        if (obj.project.owner != self.request.user and
-                obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PermissionDenied(_("You don't have permissions for add "
-                                         "attachments to this wiki page."))
-
-    def pre_save(self, obj):
-        if not obj.id:
-            obj.content_type = ContentType.objects.get_for_model(models.WikiPage)
-            obj.owner = self.request.user
-
-        super().pre_save(obj)
-
-
-class WikiViewSet(ModelCrudViewSet):
+class WikiViewSet(NotificationSenderMixin, ModelCrudViewSet):
     model = models.WikiPage
     serializer_class = serializers.WikiPageSerializer
     permission_classes = (IsAuthenticated,)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ["project", "slug"]
+
+    create_notification_template = "create_wiki_notification"
+    update_notification_template = "update_wiki_notification"
+    destroy_notification_template = "destroy_wiki_notification"
+
+    @list_route(methods=["POST"])
+    def render(self, request, **kwargs):
+        content = request.DATA.get("content", None)
+        project_id = request.DATA.get("project_id", None)
+
+        if not content:
+            return Response({"content": "No content parameter"}, status=status.HTTP_400_BAD_REQUEST)
+        if not project_id:
+            return Response({"project_id": "No project_id parameter"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            project = Project.objects.get(pk=project_id)
+        except Project.DoesNotExist:
+            return Response({"project_id": "Not valid project id"}, status=status.HTTP_400_BAD_REQUEST)
+
+        data = mdrender(project, content)
+
+        return Response({"data": data})
 
     def pre_conditions_on_save(self, obj):
         super().pre_conditions_on_save(obj)

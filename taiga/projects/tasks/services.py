@@ -14,15 +14,28 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib import admin
-
-from taiga.projects.attachments.admin import AttachmentInline
+from django.db import transaction
+from django.db import connection
 
 from . import models
 
-class WikiPageAdmin(admin.ModelAdmin):
-    list_display = ["project", "slug", "owner"]
-    list_display_links = list_display
-    inlines = [AttachmentInline]
 
-admin.site.register(models.WikiPage, WikiPageAdmin)
+class TasksService(object):
+    @transaction.atomic
+    def bulk_insert(self, project, user, user_story, data, callback_on_success=None):
+        tasks = []
+
+        items = filter(lambda s: len(s) > 0,
+                    map(lambda s: s.strip(), data.split("\n")))
+
+        for item in items:
+            obj = models.Task.objects.create(subject=item, project=project,
+                                             user_story=user_story, owner=user,
+                                             status=project.default_task_status)
+            tasks.append(obj)
+
+            if callback_on_success:
+                callback_on_success(obj, True)
+
+        return tasks
+

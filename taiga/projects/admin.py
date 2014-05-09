@@ -47,7 +47,7 @@ class MembershipInline(admin.TabularInline):
     extra = 0
 
 
-class ProjectAdmin(reversion.VersionAdmin):
+class ProjectAdmin(admin.ModelAdmin):
     list_display = ["name", "owner", "created_date", "total_milestones",
                     "total_story_points", "domain"]
     list_display_links = list_display

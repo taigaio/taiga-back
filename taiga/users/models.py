@@ -20,7 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import UserManager, AbstractUser
 
 from taiga.base.utils.slug import slugify_uniquely
-from taiga.base.notifications.models import WatcherMixin
+from taiga.projects.notifications.models import WatcherMixin
 
 import random
 

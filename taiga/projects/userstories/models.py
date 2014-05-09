@@ -21,12 +21,11 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
 from picklefield.fields import PickledObjectField
-import reversion
 
 from taiga.base.models import NeighborsMixin
 from taiga.base.utils.slug import ref_uniquely
-from taiga.base.notifications.models import WatchedMixin
 from taiga.projects.mixins.blocked.models import BlockedMixin
+from taiga.projects.notifications.models import WatchedMixin
 
 
 class RolePoints(models.Model):
@@ -175,10 +174,6 @@ class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
             "suscribed_watchers": self.watchers.all(),
             "project": self.project,
         }
-
-
-# Reversion registration (usufull for base.notification and for meke a historical)
-reversion.register(UserStory)
 
 
 # Model related signals handlers

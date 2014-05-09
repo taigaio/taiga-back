@@ -18,7 +18,7 @@ from rest_framework import serializers
 
 from taiga.base.serializers import PickleField, NeighborsSerializerMixin
 from taiga.projects.serializers import AttachmentSerializer
-from taiga.projects.mixins.notifications.serializers import WatcherValidationSerializerMixin
+from taiga.projects.mixins.notifications import WatcherValidationSerializerMixin
 
 from . import models
 

@@ -20,10 +20,8 @@ from taiga.projects.admin import AttachmentInline
 
 from . import models
 
-import reversion
 
-
-class IssueAdmin(reversion.VersionAdmin):
+class IssueAdmin(admin.ModelAdmin):
     list_display = ["project", "milestone", "ref", "subject",]
     list_display_links = ["ref", "subject",]
     inlines = [AttachmentInline]

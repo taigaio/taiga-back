@@ -21,7 +21,7 @@ from taiga.projects.admin import AttachmentInline
 from . import models
 
 
-class TaskAdmin(reversion.VersionAdmin):
+class TaskAdmin(admin.ModelAdmin):
     list_display = ["project", "milestone", "user_story",  "ref", "subject",]
     list_display_links = ["ref", "subject",]
     list_filter = ["project"]

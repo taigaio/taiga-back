@@ -20,8 +20,6 @@ from django import test
 from django.core import mail
 from django.core.urlresolvers import reverse
 
-import reversion
-
 from taiga.users.tests import create_user
 from taiga.projects.tests import create_project, add_membership
 from taiga.projects.milestones.tests import create_milestone
@@ -110,24 +108,6 @@ class TasksTestCase(test.TestCase):
     def test_view_task_by_anon(self):
         response = self.client.get(reverse("tasks-detail", args=(self.task1.id,)))
         self.assertEqual(response.status_code, 401)
-
-    def test_view_task_by_project_owner(self):
-        response = self.client.login(username=self.user1.username,
-                                     password=self.user1.username)
-        self.assertTrue(response)
-
-        # Change task for generate history/diff.
-        with reversion.create_revision():
-            self.task1.tags = ["LL"]
-            self.task1.save()
-
-        with reversion.create_revision():
-            self.task1.tags = ["LLKK"]
-            self.task1.save()
-
-        response = self.client.get(reverse("tasks-detail", args=(self.task1.id,)))
-        self.assertEqual(response.status_code, 200)
-        self.client.logout()
 
     def test_view_task_by_owner(self):
         response = self.client.login(username=self.user2.username,

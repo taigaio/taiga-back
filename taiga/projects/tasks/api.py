@@ -27,19 +27,15 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet
-from taiga.base.notifications.api import NotificationSenderMixin
 from taiga.projects.permissions import AttachmentPermission
 from taiga.projects.serializers import AttachmentSerializer
 from taiga.projects.models import Attachment, Project
+from taiga.projects.mixins.notifications import NotificationSenderMixin
 from taiga.projects.userstories.models import UserStory
 
 from . import models
 from . import permissions
 from . import serializers
-
-import reversion
-
-
 class TaskAttachmentViewSet(ModelCrudViewSet):
     model = Attachment
     serializer_class = AttachmentSerializer
@@ -66,6 +62,7 @@ class TaskAttachmentViewSet(ModelCrudViewSet):
                 obj.project.memberships.filter(user=self.request.user).count() == 0):
             raise exc.PermissionDenied(_("You don't have permissions for add "
                                          "attachments to this task."))
+from . import services
 
 
 class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
@@ -102,13 +99,6 @@ class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
         if obj.status and obj.status.project != obj.project:
             raise exc.PermissionDenied(_("You don't have permissions for add/modify this task."))
 
-    def post_save(self, obj, created=False):
-        with reversion.create_revision():
-            if "comment" in self.request.DATA:
-                # Update the comment in the last version
-                reversion.set_comment(self.request.DATA["comment"])
-        super().post_save(obj, created)
-
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
         bulk_tasks = request.DATA.get('bulkTasks', None)
@@ -124,21 +114,14 @@ class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
             raise exc.BadRequest(_('usId parameter is mandatory'))
 
         project = get_object_or_404(Project, id=project_id)
-        us = get_object_or_404(UserStory, id=us_id)
+        user_story = get_object_or_404(UserStory, id=us_id)
 
         if request.user != project.owner and not has_project_perm(request.user, project, 'add_task'):
             raise exc.PermissionDenied(_("You don't have permisions to create tasks."))
 
-        items = filter(lambda s: len(s) > 0,
-                    map(lambda s: s.strip(), bulk_tasks.split("\n")))
-
-        tasks = []
-        for item in items:
-            obj = models.Task.objects.create(subject=item, project=project,
-                                             user_story=us, owner=request.user,
-                                             status=project.default_task_status)
-            tasks.append(obj)
-            self._post_save_notification_sender(obj, True)
+        service = services.TasksService()
+        tasks = service.bulk_insert(project, request.user, user_story, bulk_tasks,
+                                    callback_on_success=self.post_save)
 
         tasks_serialized = self.serializer_class(tasks, many=True)
         return Response(data=tasks_serialized.data)

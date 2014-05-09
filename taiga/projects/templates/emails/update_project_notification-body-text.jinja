@@ -8,8 +8,8 @@ Comment: {{ comment|linebreaksbr }}
 {% endif %}
 {% if changed_fields %}
 - Updated fields:
-    {% for field in changed_fields %}
-    * {{ field.verbose_name}}</b>: from '{{ field.old_value}}' to '{{ field.new_value }}'.
+    {% for field_name, values in changed_fields.items() %}
+    * {{ verbose_name(object, field_name) }}</b>: from '{{ values.0 }}' to '{{ values.1 }}'.
     {% endfor %}
 {% endif %}
 
