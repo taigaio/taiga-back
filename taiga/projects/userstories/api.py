@@ -15,8 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import transaction
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated
@@ -28,47 +27,16 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.decorators import action
 from taiga.base.permissions import has_project_perm
-from taiga.projects.permissions import AttachmentPermission
-from taiga.projects.serializers import AttachmentSerializer
-from taiga.projects.models import Attachment, Project
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import NeighborsApiMixin
 from taiga.projects.mixins.notifications import NotificationSenderMixin
+from taiga.projects.models import Project
 from taiga.projects.history.services import take_snapshot
 
 from . import models
 from . import permissions
 from . import serializers
 from . import services
-
-
-class UserStoryAttachmentViewSet(ModelCrudViewSet):
-    model = Attachment
-    serializer_class = AttachmentSerializer
-    permission_classes = (IsAuthenticated, AttachmentPermission,)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
-    filter_fields = ["project", "object_id"]
-
-    def get_queryset(self):
-        ct = ContentType.objects.get_for_model(models.UserStory)
-        qs = super().get_queryset()
-        qs = qs.filter(content_type=ct)
-        return qs.distinct()
-
-    def pre_save(self, obj):
-        if not obj.id:
-            obj.content_type = ContentType.objects.get_for_model(models.UserStory)
-            obj.owner = self.request.user
-
-        super().pre_save(obj)
-
-    def pre_conditions_on_save(self, obj):
-        super().pre_conditions_on_save(obj)
-
-        if (obj.project.owner != self.request.user and
-                obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PermissionDenied(_("You don't have permissions for "
-                                         "add attachments to this user story"))
 
 
 class UserStoryViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudViewSet):
@@ -169,11 +137,3 @@ class UserStoryViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudView
 
         if obj.status and obj.status.project != obj.project:
             raise exc.PermissionDenied(_("You don't have permissions for add/modify this user story"))
-
-    def post_save(self, obj, created=False):
-        with reversion.create_revision():
-            if "comment" in self.request.DATA:
-                # Update the comment in the last version
-                reversion.set_comment(self.request.DATA['comment'])
-
-        super().post_save(obj, created)

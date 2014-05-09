@@ -14,26 +14,22 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rest_framework import serializers
-
-from taiga.base.serializers import PickleField
+from django.contrib import admin
+from django.contrib.contenttypes import generic
 
 from . import models
 
 
-class TaskSerializer(serializers.ModelSerializer):
-    tags = PickleField(required=False, default=[])
-    comment = serializers.SerializerMethodField("get_comment")
-    milestone_slug = serializers.SerializerMethodField("get_milestone_slug")
+class AttachmentAdmin(admin.ModelAdmin):
+    list_display = ["id", "project", "attached_file", "owner", "content_type", "content_object"]
+    list_display_links = ["id", "attached_file",]
+    list_filter = ["project", "content_type"]
 
-    class Meta:
-        model = models.Task
 
-    def get_comment(self, obj):
-        return ""
+class AttachmentInline(generic.GenericTabularInline):
+     model = models.Attachment
+     fields = ("attached_file", "owner")
+     extra = 0
 
-    def get_milestone_slug(self, obj):
-        if obj.milestone:
-            return obj.milestone.slug
-        else:
-            return None
+
+admin.site.register(models.Attachment, AttachmentAdmin)

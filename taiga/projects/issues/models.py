@@ -64,7 +64,7 @@ class Issue(NeighborsMixin, WatchedMixin, BlockedMixin):
                                       related_name="watched_issues",
                                       verbose_name=_("watchers"))
     tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
-    attachments = generic.GenericRelation("projects.Attachment")
+    attachments = generic.GenericRelation("attachments.Attachment")
 
     notifiable_fields = [
         "subject",

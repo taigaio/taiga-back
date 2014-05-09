@@ -30,6 +30,7 @@ from taiga.projects.userstories.models import *
 from taiga.projects.tasks.models import *
 from taiga.projects.issues.models import *
 from taiga.projects.wiki.models import *
+from taiga.projects.attachments.models import *
 
 import random
 import datetime

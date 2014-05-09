@@ -15,9 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-import reversion
 
-from taiga.projects.admin import AttachmentInline
+from taiga.projects.attachments.admin import AttachmentInline
 from . import models
 
 

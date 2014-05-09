@@ -15,25 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-from django.contrib.contenttypes import generic
 
 from taiga.projects.milestones.admin import MilestoneInline
 from taiga.users.admin import RoleInline
 from . import models
-
-import reversion
-
-
-class AttachmentAdmin(reversion.VersionAdmin):
-    list_display = ["id", "project", "attached_file", "owner", "content_type", "content_object"]
-    list_display_links = ["id", "attached_file",]
-    list_filter = ["project", "content_type"]
-
-
-class AttachmentInline(generic.GenericTabularInline):
-     model = models.Attachment
-     fields = ("attached_file", "owner")
-     extra = 0
 
 
 class MembershipAdmin(admin.ModelAdmin):
@@ -129,7 +114,6 @@ admin.site.register(models.TaskStatus, TaskStatusAdmin)
 admin.site.register(models.UserStoryStatus, UserStoryStatusAdmin)
 admin.site.register(models.Points, PointsAdmin)
 admin.site.register(models.Project, ProjectAdmin)
-admin.site.register(models.Attachment, AttachmentAdmin)
 admin.site.register(models.Membership, MembershipAdmin)
 admin.site.register(models.Severity, SeverityAdmin)
 admin.site.register(models.Priority, PriorityAdmin)

@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated
@@ -27,41 +26,13 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet
-from taiga.projects.permissions import AttachmentPermission
-from taiga.projects.serializers import AttachmentSerializer
-from taiga.projects.models import Attachment, Project
 from taiga.projects.mixins.notifications import NotificationSenderMixin
+from taiga.projects.models import Project
 from taiga.projects.userstories.models import UserStory
 
 from . import models
 from . import permissions
 from . import serializers
-class TaskAttachmentViewSet(ModelCrudViewSet):
-    model = Attachment
-    serializer_class = AttachmentSerializer
-    permission_classes = (IsAuthenticated, AttachmentPermission,)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
-    filter_fields = ["project", "object_id"]
-
-    def get_queryset(self):
-        ct = ContentType.objects.get_for_model(models.Task)
-        qs = super().get_queryset()
-        qs = qs.filter(content_type=ct)
-        return qs.distinct()
-
-    def pre_save(self, obj):
-        if not obj.id:
-            obj.content_type = ContentType.objects.get_for_model(models.Task)
-            obj.owner = self.request.user
-        super().pre_save(obj)
-
-    def pre_conditions_on_save(self, obj):
-        super().pre_conditions_on_save(obj)
-
-        if (obj.project.owner != self.request.user and
-                obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PermissionDenied(_("You don't have permissions for add "
-                                         "attachments to this task."))
 from . import services
 
 

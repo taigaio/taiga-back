@@ -74,6 +74,16 @@ router.register(r"priorities", PriorityViewSet, base_name="priorities")
 router.register(r"severities",SeverityViewSet , base_name="severities")
 
 
+# Attachments
+from taiga.projects.attachments.api import UserStoryAttachmentViewSet
+from taiga.projects.attachments.api import IssueAttachmentViewSet
+from taiga.projects.attachments.api import TaskAttachmentViewSet
+from taiga.projects.attachments.api import WikiAttachmentViewSet
+
+router.register(r"userstories/attachments", UserStoryAttachmentViewSet, base_name="userstory-attachments")
+router.register(r"tasks/attachments", TaskAttachmentViewSet, base_name="task-attachments")
+router.register(r"issues/attachments", IssueAttachmentViewSet, base_name="issue-attachments")
+router.register(r"wiki/attachments", WikiAttachmentViewSet, base_name="wiki-attachments")
 
 
 # History & Components
@@ -91,20 +101,12 @@ router.register(r"history/wiki", WikiHistory, base_name="wiki-history")
 # Project components
 from taiga.projects.milestones.api import MilestoneViewSet
 from taiga.projects.userstories.api import UserStoryViewSet
-from taiga.projects.userstories.api import UserStoryAttachmentViewSet
 from taiga.projects.tasks.api import TaskViewSet
-from taiga.projects.tasks.api import TaskAttachmentViewSet
 from taiga.projects.issues.api import IssueViewSet
-from taiga.projects.issues.api import IssueAttachmentViewSet
 from taiga.projects.wiki.api import WikiViewSet
-from taiga.projects.wiki.api import WikiAttachmentViewSet
 
 router.register(r"milestones", MilestoneViewSet, base_name="milestones")
 router.register(r"userstories", UserStoryViewSet, base_name="userstories")
-router.register(r"userstory-attachments", UserStoryAttachmentViewSet, base_name="userstory-attachments")
 router.register(r"tasks", TaskViewSet, base_name="tasks")
-router.register(r"task-attachments", TaskAttachmentViewSet, base_name="task-attachments")
 router.register(r"issues", IssueViewSet, base_name="issues")
-router.register(r"issue-attachments", IssueAttachmentViewSet, base_name="issue-attachments")
 router.register(r"wiki", WikiViewSet, base_name="wiki")
-router.register(r"wiki-attachments", WikiAttachmentViewSet, base_name="wiki-attachments")

@@ -25,9 +25,6 @@ from rest_framework import filters
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
-from taiga.projects.permissions import AttachmentPermission
-from taiga.projects.serializers import AttachmentSerializer
-from taiga.projects.models import Attachment
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import NeighborsApiMixin
 from taiga.projects.mixins.notifications import NotificationSenderMixin
@@ -141,29 +138,3 @@ class IssueViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudViewSet)
 
         if obj.type and obj.type.project != obj.project:
             raise exc.PermissionDenied(_("You don't have permissions for add/modify this issue."))
-class IssueAttachmentViewSet(ModelCrudViewSet):
-    model = Attachment
-    serializer_class = AttachmentSerializer
-    permission_classes = (IsAuthenticated, AttachmentPermission)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
-    filter_fields = ["project", "object_id"]
-
-    def get_queryset(self):
-        ct = ContentType.objects.get_for_model(models.Issue)
-        qs = super().get_queryset()
-        qs = qs.filter(content_type=ct)
-        return qs.distinct()
-
-    def pre_save(self, obj):
-        if not obj.id:
-            obj.content_type = ContentType.objects.get_for_model(models.Issue)
-            obj.owner = self.request.user
-        super().pre_save(obj)
-
-    def pre_conditions_on_save(self, obj):
-        super().pre_conditions_on_save(obj)
-
-        if (obj.project.owner != self.request.user and
-                obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PermissionDenied(_("You don't have permissions for add attachments "
-                                         "to this issue"))

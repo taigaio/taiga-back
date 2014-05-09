@@ -24,8 +24,8 @@ from picklefield.fields import PickledObjectField
 
 from taiga.base.models import NeighborsMixin
 from taiga.base.utils.slug import ref_uniquely
-from taiga.projects.mixins.blocked.models import BlockedMixin
 from taiga.projects.notifications.models import WatchedMixin
+from taiga.projects.mixins.blocked import BlockedMixin
 
 
 class RolePoints(models.Model):
@@ -92,7 +92,7 @@ class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
                                            verbose_name=_("is team requirement"))
     tags = PickledObjectField(null=False, blank=True,
                               verbose_name=_("tags"))
-    attachments = generic.GenericRelation("projects.Attachment")
+    attachments = generic.GenericRelation("attachments.Attachment")
     generated_from_issue = models.ForeignKey("issues.Issue", null=True, blank=True,
                                              related_name="generated_user_stories",
                                              verbose_name=_("generated from issue"))

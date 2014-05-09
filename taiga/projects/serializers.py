@@ -24,35 +24,6 @@ from taiga.users.models import Role
 from . import models
 
 
-class AttachmentSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField("get_name")
-    url = serializers.SerializerMethodField("get_url")
-    size = serializers.SerializerMethodField("get_size")
-
-    class Meta:
-        model = models.Attachment
-        fields = ("id", "project", "owner", "name", "attached_file", "size", "url",
-                  "description", "is_deprecated", "created_date", "modified_date",
-                  "object_id", "order")
-        read_only_fields = ("owner",)
-
-    def get_name(self, obj):
-        if obj.attached_file:
-            return path.basename(obj.attached_file.path)
-        return ""
-
-    def get_url(self, obj):
-        return obj.attached_file.url if obj and obj.attached_file else ""
-
-    def get_size(self, obj):
-        if obj.attached_file:
-            try:
-                return obj.attached_file.size
-            except FileNotFoundError:
-                pass
-        return 0
-
-
 # User Stories common serializers
 
 class PointsSerializer(serializers.ModelSerializer):

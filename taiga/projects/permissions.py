@@ -61,16 +61,6 @@ class MembershipPermission(BasePermission):
     path_to_project =  ["project"]
 
 
-class AttachmentPermission(BasePermission):
-    get_permission = "view_attachment"
-    post_permission = "add_attachment"
-    put_permission = "change_attachment"
-    patch_permission = "change_attachment"
-    delete_permission = "delete_attachment"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
-
-
 # User Stories
 
 class PointsPermission(BasePermission):

@@ -14,26 +14,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rest_framework import serializers
 
-from taiga.base.serializers import PickleField
-
-from . import models
+from taiga.base.permissions import BasePermission
 
 
-class TaskSerializer(serializers.ModelSerializer):
-    tags = PickleField(required=False, default=[])
-    comment = serializers.SerializerMethodField("get_comment")
-    milestone_slug = serializers.SerializerMethodField("get_milestone_slug")
-
-    class Meta:
-        model = models.Task
-
-    def get_comment(self, obj):
-        return ""
-
-    def get_milestone_slug(self, obj):
-        if obj.milestone:
-            return obj.milestone.slug
-        else:
-            return None
+class AttachmentPermission(BasePermission):
+    get_permission = "view_attachment"
+    post_permission = "add_attachment"
+    put_permission = "change_attachment"
+    patch_permission = "change_attachment"
+    delete_permission = "delete_attachment"
+    safe_methods = ["HEAD", "OPTIONS"]
+    path_to_project =  ["project"]

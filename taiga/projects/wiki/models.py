@@ -36,7 +36,7 @@ class WikiPage(models.Model):
                                         verbose_name=_("created date"))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
                                          verbose_name=_("modified date"))
-    attachments = generic.GenericRelation("projects.Attachment")
+    attachments = generic.GenericRelation("attachments.Attachment")
 
     class Meta:
         verbose_name = "wiki page"

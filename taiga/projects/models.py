@@ -15,16 +15,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import itertools
-import time
-import reversion
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.loading import get_model
 from django.conf import settings
 from django.dispatch import receiver
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.utils.translation import ugettext_lazy as _
@@ -277,52 +273,6 @@ class Project(ProjectDefaults, models.Model):
     @property
     def assigned_points(self):
         return self._get_user_stories_points(self.user_stories.filter(milestone__isnull=False))
-
-
-def get_attachment_file_path(instance, filename):
-    template = "attachment-files/{project}/{model}/{stamp}/{filename}"
-    current_timestamp = int(time.mktime(timezone.now().timetuple()))
-
-    upload_to_path = template.format(stamp=current_timestamp,
-                                     project=instance.project.slug,
-                                     model=instance.content_type.model,
-                                     filename=filename)
-    return upload_to_path
-
-
-class Attachment(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
-                              related_name="change_attachments",
-                              verbose_name=_("owner"))
-    project = models.ForeignKey("Project", null=False, blank=False,
-                                related_name="attachments", verbose_name=_("project"))
-    content_type = models.ForeignKey(ContentType, null=False, blank=False,
-                                     verbose_name=_("content type"))
-    object_id = models.PositiveIntegerField(null=False, blank=False,
-                                            verbose_name=_("object id"))
-    content_object = generic.GenericForeignKey("content_type", "object_id")
-    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                                        verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
-                                         verbose_name=_("modified date"))
-
-    attached_file = models.FileField(max_length=500, null=True, blank=True,
-                                     upload_to=get_attachment_file_path,
-                                     verbose_name=_("attached file"))
-    is_deprecated = models.BooleanField(default=False, verbose_name=_("is deprecated"))
-    description = models.TextField(null=False, blank=True, verbose_name=_("description"))
-    order = models.IntegerField(default=0, null=False, blank=False, verbose_name=_("order"))
-
-    class Meta:
-        verbose_name = "attachment"
-        verbose_name_plural = "attachments"
-        ordering = ["project", "created_date"]
-        permissions = (
-            ("view_attachment", "Can view attachment"),
-        )
-
-    def __str__(self):
-        return "Attachment: {}".format(self.id)
 
 
 # User Stories common Models

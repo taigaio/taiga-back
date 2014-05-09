@@ -16,7 +16,7 @@
 
 from django.contrib import admin
 
-from taiga.projects.admin import AttachmentInline
+from taiga.projects.attachments.admin import AttachmentInline
 
 from . import models
 

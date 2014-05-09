@@ -59,9 +59,9 @@ class Task(WatchedMixin, BlockedMixin):
                                     default=None, related_name="tasks_assigned_to_me",
                                     verbose_name=_("assigned to"))
     watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
-                related_name="watched_tasks", verbose_name=_("watchers"))
+                                      related_name="watched_tasks", verbose_name=_("watchers"))
     tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
-    attachments = generic.GenericRelation("projects.Attachment")
+    attachments = generic.GenericRelation("attachments.Attachment")
     is_iocaine = models.BooleanField(default=False, null=False, blank=True,
                                      verbose_name=_("is iocaine"))
 
