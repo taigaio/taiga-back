@@ -25,12 +25,11 @@ from picklefield.fields import PickledObjectField
 
 from taiga.base.models import NeighborsMixin
 from taiga.base.utils.slug import ref_uniquely
-from taiga.base.notifications.models import WatchedMixin
-from taiga.projects.mixins.blocked.models import BlockedMixin
+from taiga.projects.notifications.models import WatchedMixin
+from taiga.projects.mixins.blocked import BlockedMixin
 
 
-
-class Issue(NeighborsMixin, WatchedMixin, BlockedMixin):
+class Issue(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,

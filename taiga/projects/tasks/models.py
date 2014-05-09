@@ -27,9 +27,7 @@ from taiga.base.utils.slug import ref_uniquely
 from taiga.projects.notifications.models import WatchedMixin
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.milestones.models import Milestone
-from taiga.projects.mixins.blocked.models import BlockedMixin
-
-import reversion
+from taiga.projects.mixins.blocked import BlockedMixin
 
 
 class Task(WatchedMixin, BlockedMixin):
