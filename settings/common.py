@@ -171,12 +171,13 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.staticfiles",
 
-    "taiga.users",
     "taiga.base.notifications",
-    "taiga.base.searches",
     "taiga.base",
+    "taiga.base.searches",
     "taiga.events",
     "taiga.domains",
+    "taiga.front",
+    "taiga.users",
     "taiga.projects",
     "taiga.projects.mixins.blocked",
     "taiga.projects.milestones",
@@ -184,7 +185,7 @@ INSTALLED_APPS = [
     "taiga.projects.tasks",
     "taiga.projects.issues",
     "taiga.projects.wiki",
-    "taiga.front",
+    "taiga.projects.history",
 
     "south",
     "reversion",
@@ -286,6 +287,7 @@ REST_FRAMEWORK = {
     "FILTER_BACKEND": "taiga.base.filters.FilterBackend",
     "EXCEPTION_HANDLER": "taiga.base.exceptions.exception_handler",
     "PAGINATE_BY": 30,
+    "PAGINATE_BY_PARAM": "page_size",
     "MAX_PAGINATE_BY": 1000,
 }
 
