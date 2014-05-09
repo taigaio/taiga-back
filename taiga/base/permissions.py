@@ -23,16 +23,21 @@ def has_project_perm(user, project, perm):
     if user.is_authenticated():
         try:
             membership = Membership.objects.get(project=project, user=user)
-            if membership.role.permissions.filter(codename=perm).count() > 0:
-                return True
-
+            return membership.role.permissions.filter(codename=perm).exists()
         except Membership.DoesNotExist:
             pass
 
     return False
 
 
-class BasePermission(permissions.BasePermission):
+class Permission(permissions.BasePermission):
+    """
+    Base permission class.
+    """
+    pass
+
+
+class BasePermission(Permission):
     get_permission = None
     post_permission = None
     put_permission = None

@@ -41,6 +41,7 @@ class JsonField(serializers.WritableField):
     def from_native(self, data):
         return data
 
+
 class AutoDomainField(serializers.WritableField):
     """
     Automatically set domain field serializer.
