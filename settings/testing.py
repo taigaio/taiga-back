@@ -20,5 +20,5 @@ SKIP_SOUTH_TESTS = True
 SOUTH_TESTS_MIGRATE = False
 
 INSTALLED_APPS += [
-    "taiga.projects.mixins.blocked.tests.foo",
+    "taiga.projects.mixins.tests.blocked.foo",
 ]

@@ -171,7 +171,6 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.staticfiles",
 
-    "taiga.base.notifications",
     "taiga.base",
     "taiga.base.searches",
     "taiga.events",
@@ -179,13 +178,14 @@ INSTALLED_APPS = [
     "taiga.front",
     "taiga.users",
     "taiga.projects",
-    "taiga.projects.mixins.blocked",
+    "taiga.projects.attachments",
     "taiga.projects.milestones",
     "taiga.projects.userstories",
     "taiga.projects.tasks",
     "taiga.projects.issues",
     "taiga.projects.wiki",
     "taiga.projects.history",
+    "taiga.projects.notifications",
 
     "south",
     "reversion",
