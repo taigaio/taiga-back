@@ -291,16 +291,6 @@ class IssueStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_order = services.bulk_update_issue_status_order
 
 
-class QuestionStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
-    model = models.QuestionStatus
-    serializer_class = serializers.QuestionStatusSerializer
-    permission_classes = (IsAuthenticated, permissions.QuestionStatusPermission)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
-    filter_fields = ("project",)
-    bulk_update_param = "bulk_question_statuses"
-    bulk_update_perm = "change_questionstatus"
-    bulk_update_order = services.bulk_update_question_status_order
-
 class ProjectTemplateViewSet(ModelCrudViewSet):
     model = models.ProjectTemplate
     serializer_class = serializers.ProjectTemplateSerializer

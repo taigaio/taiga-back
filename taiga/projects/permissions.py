@@ -157,16 +157,7 @@ class RolesPermission(BasePermission):
     path_to_project =  ["project"]
 
 
-# Questions
-
-class QuestionStatusPermission(BasePermission):
-    get_permission = "view_questionstatus"
-    post_permission = "add_questionstatus"
-    put_permission = "change_questionstatus"
-    patch_permission = "change_questionstatus"
-    delete_permission = "delete_questionstatus"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+# Project Templates
 
 class ProjectTemplatePermission(BasePermission):
     def has_permission(self, request, view):

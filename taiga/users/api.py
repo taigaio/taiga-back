@@ -68,7 +68,6 @@ class PermissionsViewSet(ModelListViewSet):
         "add_migrationhistory", "change_migrationhistory", "delete_migrationhistory",
         "add_version", "change_version", "delete_version",
         "add_revision", "change_revision", "delete_revision",
-        "add_questionstatus", "change_questionstatus", "delete_questionstatus", "view_questionstatus",
         "add_user", "delete_user",
         "add_project",
         "add_domainmember", "change_domainmember", "delete_domainmember",

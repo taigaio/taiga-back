@@ -110,11 +110,6 @@ class ProjectDefaults(models.Model):
                                               on_delete=models.SET_NULL, related_name="+",
                                               null=True, blank=True,
                                               verbose_name=_("default issue type"))
-    default_question_status = models.OneToOneField("projects.QuestionStatus",
-                                                   on_delete=models.SET_NULL,
-                                                   related_name="+", null=True, blank=True,
-                                                   verbose_name=_("default questions "
-                                                                  "status"))
 
     class Meta:
         abstract = True
@@ -498,34 +493,6 @@ class IssueType(models.Model):
         unique_together = ("project", "name")
         permissions = (
             ("view_issuetype", "Can view issue type"),
-        )
-
-    def __str__(self):
-        return self.name
-
-
-# Questions common models
-
-class QuestionStatus(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False,
-                            verbose_name=_("name"))
-    order = models.IntegerField(default=10, null=False, blank=False,
-                                verbose_name=_("order"))
-    is_closed = models.BooleanField(default=False, null=False, blank=True,
-                                    verbose_name=_("is closed"))
-    color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
-                             verbose_name=_("color"))
-    project = models.ForeignKey("Project", null=False, blank=False,
-                                related_name="question_status",
-                                verbose_name=_("project"))
-
-    class Meta:
-        verbose_name = "question status"
-        verbose_name_plural = "question statuses"
-        ordering = ["project", "order", "name"]
-        unique_together = ("project", "name")
-        permissions = (
-            ("view_questionstatus", "Can view question status"),
         )
 
     def __str__(self):

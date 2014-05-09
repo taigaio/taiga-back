@@ -29,8 +29,6 @@ from taiga.projects.milestones.models import *
 from taiga.projects.userstories.models import *
 from taiga.projects.tasks.models import *
 from taiga.projects.issues.models import *
-#from taiga.projects.questions.models import *
-#from taiga.projects.documents.models import *
 from taiga.projects.wiki.models import *
 
 import random
@@ -153,10 +151,6 @@ class Command(BaseCommand):
             for y in range(self.sd.int(15,25)):
                 bug = self.create_bug(project)
 
-            # create questions.
-            #for y in range(self.sd.int(15,25)):
-            #    question = self.create_question(project)
-
             # create a wiki page
             wiki_page = self.create_wiki(project, "home")
 
@@ -183,20 +177,6 @@ class Command(BaseCommand):
             attachment = self.create_attachment(wiki_page)
 
         return wiki_page
-
-    #def create_question(self, project):
-    #    question = Question.objects.create(
-    #            project=project,
-    #            subject=self.sd.choice(SUBJECT_CHOICES),
-    #            content=self.sd.paragraph(),
-    #            owner=self.sd.db_object_from_queryset(project.memberships.all()).user,
-    #            status=self.sd.db_object_from_queryset(project.question_status.all()),
-    #            tags=self.sd.words(1,5).split(" "))
-    #
-    #    for i in range(self.sd.int(0, 4)):
-    #        attachment = self.create_attachment(question)
-    #
-    #    return question
 
     def create_bug(self, project):
         bug = Issue.objects.create(

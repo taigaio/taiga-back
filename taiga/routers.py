@@ -23,14 +23,12 @@ from taiga.base.resolver.api import ResolverViewSet
 from taiga.projects.api import (ProjectViewSet, MembershipViewSet, InvitationViewSet,
                                     UserStoryStatusViewSet, PointsViewSet, TaskStatusViewSet,
                                     IssueStatusViewSet, IssueTypeViewSet, PriorityViewSet,
-                                    SeverityViewSet, ProjectAdminViewSet, RolesViewSet) #, QuestionStatusViewSet)
+                                    SeverityViewSet, ProjectAdminViewSet, RolesViewSet)
 from taiga.domains.api import DomainViewSet, DomainMembersViewSet
 from taiga.projects.milestones.api import MilestoneViewSet
 from taiga.projects.userstories.api import UserStoryViewSet, UserStoryAttachmentViewSet
 from taiga.projects.tasks.api import  TaskViewSet, TaskAttachmentViewSet
 from taiga.projects.issues.api import IssueViewSet, IssueAttachmentViewSet
-#from taiga.projects.questions.api import QuestionViewSet, QuestionAttachmentViewSet
-#from taiga.projects.documents.api import DocumentViewSet, DocumentAttachmentViewSet
 from taiga.projects.wiki.api import WikiViewSet, WikiAttachmentViewSet
 
 

@@ -134,20 +134,3 @@ def bulk_update_severity_order(project, user, data):
         cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
                        (order, id, project.id))
     cursor.close()
-
-
-@transaction.atomic
-def bulk_update_question_status_order(project, user, data):
-    cursor = connection.cursor()
-
-    sql = """
-    prepare bulk_update_order as update projects_questionstatus set "order" = $1
-        where projects_questionstatus.id = $2 and
-              projects_questionstatus.project_id = $3;
-    """
-
-    cursor.execute(sql)
-    for id, order in data:
-        cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
-                       (order, id, project.id))
-    cursor.close()

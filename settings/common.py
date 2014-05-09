@@ -183,10 +183,8 @@ INSTALLED_APPS = [
     "taiga.projects.userstories",
     "taiga.projects.tasks",
     "taiga.projects.issues",
-    "taiga.front",
-    #"taiga.projects.questions",
-    #"taiga.projects.documents",
     "taiga.projects.wiki",
+    "taiga.front",
 
     "south",
     "reversion",

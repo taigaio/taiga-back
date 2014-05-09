@@ -60,8 +60,7 @@ class ProjectAdmin(reversion.VersionAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if (db_field.name in ["default_points", "default_us_status", "default_task_status",
                               "default_priority", "default_severity",
-                              "default_issue_status", "default_issue_type",
-                              "default_question_status"]):
+                              "default_issue_status", "default_issue_type"]):
             if getattr(self, 'obj', None):
                 kwargs["queryset"] = db_field.related.parent_model.objects.filter(
                                                           project=self.obj)
@@ -125,15 +124,6 @@ class IssueStatusAdmin(admin.ModelAdmin):
     list_filter = ["project"]
 
 
-# Questions common admins
-
-class QuestionStatusAdmin(admin.ModelAdmin):
-    list_display = ["project", "order", "name", "is_closed", "color"]
-    list_display_links = ["name"]
-    list_filter = ["project"]
-
-
-
 admin.site.register(models.IssueStatus, IssueStatusAdmin)
 admin.site.register(models.TaskStatus, TaskStatusAdmin)
 admin.site.register(models.UserStoryStatus, UserStoryStatusAdmin)
@@ -144,5 +134,3 @@ admin.site.register(models.Membership, MembershipAdmin)
 admin.site.register(models.Severity, SeverityAdmin)
 admin.site.register(models.Priority, PriorityAdmin)
 admin.site.register(models.IssueType, IssueTypeAdmin)
-
-admin.site.register(models.QuestionStatus, QuestionStatusAdmin)
