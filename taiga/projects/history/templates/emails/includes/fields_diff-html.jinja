@@ -29,7 +29,9 @@
 
             {% for att in values['new']%}
             <dd style="background: #eee; padding: 5px 15px; color: #444">
-                <i>{{ att.filename|linebreaksbr }}</i>
+                <i>
+                    {{ att.filename|linebreaksbr }}  {% if att.description %}({{ att.description|linebreaksbr }}){% endif %}
+                </i>
             </dd>
             {% endfor %}
         {% endif %}
@@ -41,7 +43,12 @@
 
             {% for att in values['changed'] %}
             <dd style="background: #eee; padding: 5px 15px; color: #444">
-                <i>{{ att.1.filename|linebreaksbr }}</i>
+                <i>{{ att.1.filename|linebreaksbr }}  {% if att.1.description %}({{ att.1.description|linebreaksbr }}){% endif %}</i>
+                {% if att.1.is_deprecated and not att.0.is_deprecated %}
+                    to <b>deprecated</b>
+                {% elif not att.1.is_deprecated and att.0.is_deprecated %}
+                    to <b>not deprecated</b>
+                {% endif %}
             </dd>
             {% endfor %}
         {% endif %}
