@@ -28,7 +28,7 @@ def _make_extensions_list(wikilinks_config=None):
             StrikethroughExtension(),
             WikiLinkExtension(wikilinks_config),
             "extra",
-            "codehilite"])
+            "codehilite"]
 
 
 def cache_by_sha(func):
