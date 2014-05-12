@@ -52,7 +52,7 @@ def cache_by_sha(func):
 def _render_markdown(project, text):
     wikilinks_config = {"base_url": "#/project/{}/wiki/".format(project.slug),
                         "end_url": ""}
-    extenstions = _make_extensions_list(wikilinks_config=wikilinks_config)
+    extensions = _make_extensions_list(wikilinks_config=wikilinks_config)
     return markdown(text, extensions=extensions)
 
 
