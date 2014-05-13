@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
@@ -23,7 +22,6 @@ from rest_framework.permissions import IsAuthenticated
 
 from taiga.base.api import GenericViewSet
 from taiga.base.filters import IsProjectMemberFilterBackend
-from taiga.base import exceptions as exc
 
 from . import permissions
 from . import serializers
