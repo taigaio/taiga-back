@@ -34,7 +34,7 @@ class ProjectAdminPermission(BasePermission):
 
         domain = get_active_domain()
         if request.method in ["POST", "PUT", "GET", "PATCH"]:
-            return domain.user_is_staff(request.user)
+            return domain.user_is_staff(request.user) or domain.user_is_owner(request.user)
         elif request.method == "DELETE":
             return domain.user_is_owner(request.user)
         return super().has_permission(request, view)
@@ -45,9 +45,10 @@ class ProjectAdminPermission(BasePermission):
 
         domain = get_active_domain()
         if request.method in ["POST", "PUT", "GET", "PATCH"]:
-            return domain.user_is_staff(request.user)
+            return domain.user_is_staff(request.user) or domain.user_is_owner(request.user)
         elif request.method == "DELETE":
-            return domain.user_is_owner(request.user)
+            return domain.user_is_owner(request.user) or (
+                domain.user_is_staff(request.user) and obj.user == request.user)
         return super().has_object_permission(request, view, obj)
 
 
