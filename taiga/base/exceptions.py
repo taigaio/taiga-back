@@ -141,7 +141,7 @@ def exception_handler(exc):
         return Response(detail, status=exc.status_code, headers=headers)
 
     elif isinstance(exc, Http404):
-        return Response({"_error_message": _("Not found")},
+        return Response({'_error_message': str(exc)},
                         status=status.HTTP_404_NOT_FOUND)
 
     elif isinstance(exc, DjangoPermissionDenied):
