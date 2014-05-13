@@ -85,7 +85,7 @@ SESSION_COOKIE_AGE = 1209600 # (2 weeks)
 
 # MAIL OPTIONS
 DEFAULT_FROM_EMAIL = "john@doe.com"
-EMAIL_BACKEND = "djmail.backends.default.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 DJMAIL_REAL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DJMAIL_SEND_ASYNC = True
