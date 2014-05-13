@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.forms import widgets
+
 from rest_framework import serializers
 
 from taiga.domains.base import get_active_domain
@@ -35,6 +37,8 @@ class JsonField(serializers.WritableField):
     """
     Json objects serializer.
     """
+    widget = widgets.Textarea
+
     def to_native(self, obj):
         return obj
 
