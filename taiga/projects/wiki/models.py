@@ -49,3 +49,22 @@ class WikiPage(models.Model):
 
     def __str__(self):
         return "project {0} - {1}".format(self.project_id, self.slug)
+
+
+class WikiLink(models.Model):
+    project = models.ForeignKey("projects.Project", null=False, blank=False,
+                                related_name="wiki_links", verbose_name=_("project"))
+    title = models.CharField(max_length=500, null=False, blank=False)
+    href = models.SlugField(max_length=500, db_index=True, null=False, blank=False,
+                            verbose_name=_("href"))
+    order = models.PositiveSmallIntegerField(default=1, null=False, blank=False,
+                                             verbose_name=_("order"))
+
+    class Meta:
+        verbose_name = "wiki link"
+        verbose_name_plural = "wiki links"
+        ordering = ["project", "order"]
+        unique_together = ("project", "href")
+
+    def __str__(self):
+        return self.title

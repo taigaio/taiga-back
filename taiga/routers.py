@@ -103,10 +103,11 @@ from taiga.projects.milestones.api import MilestoneViewSet
 from taiga.projects.userstories.api import UserStoryViewSet
 from taiga.projects.tasks.api import TaskViewSet
 from taiga.projects.issues.api import IssueViewSet
-from taiga.projects.wiki.api import WikiViewSet
+from taiga.projects.wiki.api import WikiViewSet, WikiLinkViewSet
 
 router.register(r"milestones", MilestoneViewSet, base_name="milestones")
 router.register(r"userstories", UserStoryViewSet, base_name="userstories")
 router.register(r"tasks", TaskViewSet, base_name="tasks")
 router.register(r"issues", IssueViewSet, base_name="issues")
 router.register(r"wiki", WikiViewSet, base_name="wiki")
+router.register(r"wiki-links", WikiLinkViewSet, base_name="wiki-links")
