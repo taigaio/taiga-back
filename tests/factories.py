@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import uuid
 
 import factory
@@ -7,6 +6,7 @@ from django.conf import settings
 import taiga.domains.models
 import taiga.projects.models
 import taiga.users.models
+import taiga.userstorage.models
 
 
 class DomainFactory(factory.DjangoModelFactory):
@@ -60,3 +60,11 @@ class MembershipFactory(factory.DjangoModelFactory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
     role = factory.SubFactory("tests.factories.RoleFactory")
     user = factory.SubFactory("tests.factories.UserFactory")
+
+
+class StorageEntryFactory(factory.DjangoModelFactory):
+    FACTORY_FOR = taiga.userstorage.models.StorageEntry
+
+    owner = factory.SubFactory("tests.factories.UserFactory")
+    key = factory.Sequence(lambda n: "key-{}".format(n))
+    value = factory.Sequence(lambda n: "value {}".format(n))

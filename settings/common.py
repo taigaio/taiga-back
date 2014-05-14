@@ -177,6 +177,7 @@ INSTALLED_APPS = [
     "taiga.domains",
     "taiga.front",
     "taiga.users",
+    "taiga.userstorage",
     "taiga.projects",
     "taiga.projects.attachments",
     "taiga.projects.milestones",

@@ -28,6 +28,12 @@ router.register(r"permissions", PermissionsViewSet, base_name="permissions")
 router.register(r"auth", AuthViewSet, base_name="auth")
 
 
+#taiga.userstorage
+from taiga.userstorage.api import StorageEntriesViewSet
+
+router.register(r"user-storage", StorageEntriesViewSet, base_name="user-storage")
+
+
 # Resolver & Search
 from taiga.base.searches.api import SearchViewSet
 from taiga.base.resolver.api import ResolverViewSet
