@@ -75,3 +75,11 @@ class WikiViewSet(NotificationSenderMixin, ModelCrudViewSet):
             obj.owner = self.request.user
 
         super().pre_save(obj)
+
+
+class WikiLinkViewSet(ModelCrudViewSet):
+    model = models.WikiLink
+    serializer_class = serializers.WikiLinkSerializer
+    permission_classes = (IsAuthenticated,)
+    filter_backends = (filters.IsProjectMemberFilterBackend,)
+    filter_fields = ["project"]

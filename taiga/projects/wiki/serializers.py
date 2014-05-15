@@ -29,3 +29,9 @@ class WikiPageSerializer(serializers.ModelSerializer):
 
     def get_html(self, obj):
         return mdrender(obj.project, obj.content)
+
+
+class WikiLinkSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.WikiLink
