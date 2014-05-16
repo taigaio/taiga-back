@@ -97,23 +97,6 @@ class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
                                              related_name="generated_user_stories",
                                              verbose_name=_("generated from issue"))
 
-    notifiable_fields = [
-        "subject",
-        "milestone",
-        "owner",
-        "assigned_to",
-        "finish_date",
-        "client_requirement",
-        "team_requirement",
-        "status",
-        "points",
-        "tags",
-        "description",
-        "is_blocked",
-        "blocked_comment",
-        "generated_from_isssue"
-    ]
-
     class Meta:
         verbose_name = "user story"
         verbose_name_plural = "user stories"

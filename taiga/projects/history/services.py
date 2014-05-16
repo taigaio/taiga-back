@@ -272,22 +272,22 @@ from .freeze_impl import milestone_freezer
 from .freeze_impl import userstory_freezer
 from .freeze_impl import issue_freezer
 from .freeze_impl import task_freezer
-from .freeze_impl import wiki_freezer
+from .freeze_impl import wikipage_freezer
 
 register_freeze_implementation(milestone_freezer, typename="milestones.milestone")
 register_freeze_implementation(userstory_freezer, typename="userstories.userstory")
 register_freeze_implementation(issue_freezer, typename="issues.issue")
 register_freeze_implementation(task_freezer, typename="tasks.task")
-register_freeze_implementation(wiki_freezer, typename="wiki.wiki")
+register_freeze_implementation(wikipage_freezer, typename="wiki.wikipage")
 
 from .freeze_impl import milestone_values
 from .freeze_impl import userstory_values
 from .freeze_impl import issue_values
 from .freeze_impl import task_values
-from .freeze_impl import wiki_values
+from .freeze_impl import wikipage_values
 
 register_values_implementation(milestone_values, typename="milestones.milestone")
 register_values_implementation(userstory_values, typename="userstories.userstory")
 register_values_implementation(issue_values, typename="issues.issue")
 register_values_implementation(task_values, typename="tasks.task")
-register_values_implementation(wiki_values, typename="wiki.wiki")
+register_values_implementation(wikipage_values, typename="wiki.wikipage")

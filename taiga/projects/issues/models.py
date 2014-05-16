@@ -65,22 +65,6 @@ class Issue(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
     tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
     attachments = generic.GenericRelation("attachments.Attachment")
 
-    notifiable_fields = [
-        "subject",
-        "milestone",
-        "owner",
-        "assigned_to",
-        "finished_date",
-        "type",
-        "status",
-        "severity",
-        "priority",
-        "tags",
-        "description",
-        "is_blocked",
-        "blocked_comment"
-    ]
-
     class Meta:
         verbose_name = "issue"
         verbose_name_plural = "issues"

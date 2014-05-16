@@ -63,19 +63,6 @@ class Task(WatchedMixin, BlockedMixin):
     is_iocaine = models.BooleanField(default=False, null=False, blank=True,
                                      verbose_name=_("is iocaine"))
 
-    notifiable_fields = [
-        "subject",
-        "owner",
-        "assigned_to",
-        "finished_date",
-        "is_iocaine",
-        "status",
-        "description",
-        "tags",
-        "is_blocked",
-        "blocked_comment"
-    ]
-
     class Meta:
         verbose_name = "task"
         verbose_name_plural = "tasks"

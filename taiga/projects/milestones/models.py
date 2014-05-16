@@ -53,15 +53,6 @@ class Milestone(WatchedMixin, models.Model):
     order = models.PositiveSmallIntegerField(default=1, null=False, blank=False,
                                              verbose_name=_("order"))
 
-    notifiable_fields = [
-        "name",
-        "owner",
-        "disponibility",
-        "closed",
-        "estimated_start",
-        "estimated_finish",
-    ]
-
     class Meta:
         verbose_name = "milestone"
         verbose_name_plural = "milestones"

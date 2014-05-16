@@ -18,9 +18,10 @@ from django.db import models
 from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from taiga.projects.notifications.models import WatchedMixin
 
 
-class WikiPage(models.Model):
+class WikiPage(WatchedMixin, models.Model):
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="wiki_pages", verbose_name=_("project"))
     slug = models.SlugField(max_length=500, db_index=True, null=False, blank=False,
@@ -49,6 +50,14 @@ class WikiPage(models.Model):
 
     def __str__(self):
         return "project {0} - {1}".format(self.project_id, self.slug)
+
+    def _get_watchers_by_role(self):
+        return {
+            "owner": self.owner,
+            "assigned_to": None,
+            "suscribed_watchers": self.watchers.all(),
+            "project": self.project,
+        }
 
 
 class WikiLink(models.Model):

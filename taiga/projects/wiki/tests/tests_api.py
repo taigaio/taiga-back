@@ -159,7 +159,7 @@ class WikiPagesTestCase(test.TestCase):
             content_type="application/json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(WikiPage.objects.all().count(), 3)
-        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_create_wiki_page_by_membership(self):
@@ -180,7 +180,7 @@ class WikiPagesTestCase(test.TestCase):
             content_type="application/json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(WikiPage.objects.all().count(), 3)
-        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_create_wiki_page_by_membership_with_wron_project(self):
@@ -254,7 +254,7 @@ class WikiPagesTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["content"], response.data["content"])
         self.assertEqual(WikiPage.objects.all().count(), 2)
-        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_edit_wiki_page_by_project_owner_with_wron_project(self):
@@ -292,7 +292,7 @@ class WikiPagesTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["content"], response.data["content"])
         self.assertEqual(WikiPage.objects.all().count(), 2)
-        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_edit_wiki_page_by_owner_with_wron_project(self):
@@ -330,7 +330,7 @@ class WikiPagesTestCase(test.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["content"], response.data["content"])
         self.assertEqual(WikiPage.objects.all().count(), 2)
-        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(len(mail.outbox), 2)
         self.client.logout()
 
     def test_edit_wiki_page_by_membership_with_wron_project(self):

@@ -141,7 +141,7 @@ def task_values(diff):
     return values
 
 
-def wiki_values(diff):
+def wikipage_values(diff):
     values = _common_users_values(diff)
     return values
 
@@ -248,12 +248,12 @@ def task_freezer(task) -> dict:
     return snapshot
 
 
-def wiki_freezer(wiki) -> dict:
+def wikipage_freezer(wiki) -> dict:
     snapshot = {
         "slug": wiki.slug,
         "owner": wiki.owner_id,
         "content": wiki.content,
-        "content_home": mdrender(wiki.project, wiki.content),
+        "content_html": mdrender(wiki.project, wiki.content),
         "watchers": [x.pk for x in wiki.watchers.all()],
         "attachments": extract_attachments(wiki),
     }

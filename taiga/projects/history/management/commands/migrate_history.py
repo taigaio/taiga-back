@@ -75,3 +75,4 @@ class Command(BaseCommand):
         self.handle_generic_model("tasks", "Task")
         self.handle_generic_model("userstories", "UserStory")
         self.handle_generic_model("issues", "Issue")
+        self.handle_generic_model("wiki", "WikiPage")

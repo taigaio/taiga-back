@@ -162,13 +162,6 @@ class Project(ProjectDefaults, models.Model):
     domain = models.ForeignKey("domains.Domain", related_name="projects", null=True, blank=True,
                                default=None, verbose_name=_("domain"))
 
-    notifiable_fields = [
-        "name",
-        "total_milestones",
-        "total_story_points",
-        "description"
-    ]
-
     class Meta:
         verbose_name = "project"
         verbose_name_plural = "projects"
