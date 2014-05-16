@@ -18,6 +18,7 @@ pygments>=1.6
 django-sites==0.4
 Markdown==2.4
 fn==0.2.13
+diff-match-patch==20110725.1
 
 # Comment it if you are using python >= 3.4
 enum34==0.9.23

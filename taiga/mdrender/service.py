@@ -32,6 +32,9 @@ def _make_extensions_list(wikilinks_config=None):
             "codehilite"]
 
 
+import diff_match_patch
+
+
 def cache_by_sha(func):
     @functools.wraps(func)
     def _decorator(project, text):
@@ -71,5 +74,23 @@ def render(project, text):
     renderer = F() >> F(_preprocessors, project) >> F(_render_markdown, project) >> F(_postprocessors, project)
     return renderer(text)
 
+class DiffMatchPatch(diff_match_patch.diff_match_patch):
+    def diff_pretty_html(self, diffs):
+        html = []
+        for (op, data) in diffs:
+          text = (data.replace("&", "&amp;").replace("<", "&lt;")
+                     .replace(">", "&gt;").replace("\n", "<br />"))
+          if op == self.DIFF_INSERT:
+            html.append("<ins style=\"background:#e6ffe6;\">%s</ins>" % text)
+          elif op == self.DIFF_DELETE:
+            html.append("<del style=\"background:#ffe6e6;\">%s</del>" % text)
+          elif op == self.DIFF_EQUAL:
+            html.append("<span>%s</span>" % text)
+        return "".join(html)
 
-__all__ = ['render']
+def get_diff_of_htmls(html1, html2):
+    diffutil = DiffMatchPatch()
+    diff = diffutil.diff_main(html1, html2)
+    return diffutil.diff_pretty_html(diff)
+
+__all__ = ['render', 'get_diff_of_htmls']
