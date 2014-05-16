@@ -203,7 +203,7 @@ class BulkUpdateOrderMixin(object):
 
         project_id = request.DATA.get('project', None)
         if project_id is None:
-            raise exc.BadRequest(_("project parameter ir mandatory"))
+            raise exc.BadRequest(_("project parameter is mandatory"))
 
         project = get_object_or_404(models.Project, id=project_id)
 
