@@ -17,6 +17,7 @@
 from rest_framework import serializers
 
 from taiga.base.serializers import PickleField
+from taiga.mdrender.service import render as mdrender
 
 from . import models
 
