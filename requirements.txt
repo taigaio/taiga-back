@@ -21,3 +21,5 @@ fn==0.2.13
 
 # Comment it if you are using python >= 3.4
 enum34==0.9.23
+
+django-reversion==1.8.0
