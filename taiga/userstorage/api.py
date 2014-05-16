@@ -23,12 +23,14 @@ from taiga.base.api import ModelCrudViewSet
 from taiga.base import exceptions as exc
 
 from . import models
+from . import filters
 from . import serializers
 from . import permissions
 
 
 class StorageEntriesViewSet(ModelCrudViewSet):
     model = models.StorageEntry
+    filter_backends = (filters.StorageEntriesFilterBackend,)
     serializer_class = serializers.StorageEntrySerializer
     permission_classes = (IsAuthenticated, permissions.StorageEntriesPermission)
     lookup_field = "key"

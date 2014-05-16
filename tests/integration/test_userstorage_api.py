@@ -16,6 +16,7 @@ class TestListStorageEntries:
         self.user2 = factories.UserFactory()
         self.storage11 = factories.StorageEntryFactory(owner=self.user1)
         self.storage12 = factories.StorageEntryFactory(owner=self.user1)
+        self.storage13 = factories.StorageEntryFactory(owner=self.user1)
         self.storage21 = factories.StorageEntryFactory(owner=self.user2)
 
     def test_list_by_anonymous_user(self, client):
@@ -29,7 +30,7 @@ class TestListStorageEntries:
         response = client.get(reverse("user-storage-list"))
         assert response.status_code == 200
         entries = response.data
-        assert len(entries) == 2
+        assert len(entries) == 3
         response = client.logout()
 
     def test_list_only_user2_entriees(self, client):
@@ -39,6 +40,16 @@ class TestListStorageEntries:
         assert response.status_code == 200
         entries = response.data
         assert len(entries) == 1
+        response = client.logout()
+
+    def test_list_only_user1_entriees_filter_by_keys(self, client):
+        self._load_initial_data()
+        response = client.login(username=self.user1.username, password=self.user1.username)
+        keys = "{},{}".format(self.storage11.key, self.storage13.key)
+        response = client.get("{}?keys={}".format(reverse("user-storage-list"), keys))
+        assert response.status_code == 200
+        entries = response.data
+        assert len(entries) == 2
         response = client.logout()
 
 
