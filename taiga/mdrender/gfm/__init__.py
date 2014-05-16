@@ -8,6 +8,7 @@ from . import hidden_hilite
 from . import semi_sane_lists
 from . import spaced_link
 from . import strikethrough
+from . import wikilinks
 
 AutolinkExtension = autolink.AutolinkExtension
 AutomailExtension = automail.AutomailExtension
@@ -15,3 +16,4 @@ HiddenHiliteExtension = hidden_hilite.HiddenHiliteExtension
 SemiSaneListExtension = semi_sane_lists.SemiSaneListExtension
 SpacedLinkExtension = spaced_link.SpacedLinkExtension
 StrikethroughExtension = strikethrough.StrikethroughExtension
+WikiLinkExtension = wikilinks.WikiLinkExtension

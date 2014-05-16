@@ -5,7 +5,7 @@ from django.core.cache import cache
 from django.utils.encoding import force_bytes
 
 from markdown import markdown
-from markdown.extensions.wikilinks import WikiLinkExtension
+#from markdown.extensions.wikilinks import WikiLinkExtension
 from fn import F
 
 from .gfm import AutolinkExtension
@@ -14,6 +14,7 @@ from .gfm import HiddenHiliteExtension
 from .gfm import SemiSaneListExtension
 from .gfm import SpacedLinkExtension
 from .gfm import StrikethroughExtension
+from .gfm import WikiLinkExtension
 
 from .processors.emoji import emoji
 from .processors.mentions import mentions

@@ -6,9 +6,14 @@ import taiga.base
 from taiga.mdrender.processors import emoji
 from taiga.mdrender.processors import mentions
 from taiga.mdrender.processors import references
+from taiga.mdrender.service import render
 
 class DummyClass:
     pass
+
+dummy_project = DummyClass()
+dummy_project.id = 1
+dummy_project.slug = "test"
 
 def test_proccessor_valid_emoji():
     result = emoji.emoji("<b>:smile:</b>")
@@ -49,11 +54,7 @@ def test_proccessor_valid_us_reference():
     UserStoryBack = references.UserStory
     references.UserStory = MockModelWithInstance
 
-    DummyProject = DummyClass()
-    DummyProject.id = 1
-    DummyProject.slug = "test"
-
-    result = references.references(DummyProject, "**#us1**")
+    result = references.references(dummy_project, "**#us1**")
     assert result == '**[#us1](/#/project/test/user-story/1 "test-subject")**'
 
     references.UserStory = UserStoryBack
@@ -65,14 +66,10 @@ def test_proccessor_invalid_us_reference():
             def filter(*args, **kwargs):
                 return []
 
-    DummyProject = DummyClass()
-    DummyProject.id = 1
-    DummyProject.slug = "test"
-
     UserStoryBack = references.UserStory
     references.UserStory = MockModelEmpty
 
-    result = references.references(DummyProject, "**#us1**")
+    result = references.references(dummy_project, "**#us1**")
     assert result == "**#us1**"
 
     references.UserStory = UserStoryBack
@@ -87,11 +84,7 @@ def test_proccessor_valid_issue_reference():
     IssueBack = references.Issue
     references.Issue = MockModelWithInstance
 
-    DummyProject = DummyClass()
-    DummyProject.id = 1
-    DummyProject.slug = "test"
-
-    result = references.references(DummyProject, "**#issue1**")
+    result = references.references(dummy_project, "**#issue1**")
     assert result == '**[#issue1](/#/project/test/issues/1 "test-subject")**'
 
     references.Issue = IssueBack
@@ -103,14 +96,10 @@ def test_proccessor_invalid_issue_reference():
             def filter(*args, **kwargs):
                 return []
 
-    DummyProject = DummyClass()
-    DummyProject.id = 1
-    DummyProject.slug = "test"
-
     IssueBack = references.Issue
     references.Issue = MockModelEmpty
 
-    result = references.references(DummyProject, "**#issue1**")
+    result = references.references(dummy_project, "**#issue1**")
     assert result == "**#issue1**"
 
     references.Issue = IssueBack
@@ -125,11 +114,7 @@ def test_proccessor_valid_task_reference():
     TaskBack = references.Task
     references.Task = MockModelWithInstance
 
-    DummyProject = DummyClass()
-    DummyProject.id = 1
-    DummyProject.slug = "test"
-
-    result = references.references(DummyProject, "**#task1**")
+    result = references.references(dummy_project, "**#task1**")
     assert result == '**[#task1](/#/project/test/tasks/1 "test-subject")**'
 
     references.Task = TaskBack
@@ -141,14 +126,10 @@ def test_proccessor_invalid_task_reference():
             def filter(*args, **kwargs):
                 return []
 
-    DummyProject = DummyClass()
-    DummyProject.id = 1
-    DummyProject.slug = "test"
-
     TaskBack = references.Task
     references.Task = MockModelEmpty
 
-    result = references.references(DummyProject, "**#task1**")
+    result = references.references(dummy_project, "**#task1**")
     assert result == "**#task1**"
 
     references.Task = TaskBack
@@ -156,3 +137,40 @@ def test_proccessor_invalid_task_reference():
 def test_proccessor_invalid_type_reference():
     result = references.references(None, "**#invalid1**")
     assert result == "**#invalid1**"
+
+def test_render_wiki_strong():
+    assert render(dummy_project, "**test**") == "<p><strong>test</strong></p>"
+
+def test_render_absolute_link():
+    assert render(dummy_project, "[test](/test)") == "<p><a href=\"/test\">test</a></p>"
+
+def test_render_relative_link():
+    assert render(dummy_project, "[test](test)") == "<p><a href=\"test\">test</a></p>"
+
+def test_render_wikilink():
+    expected_result = "<p><a class=\"wikilink\" href=\"#/project/test/wiki/test\">test</a></p>"
+    assert render(dummy_project, "[[test]]") == expected_result
+
+def test_render_wikilink_with_custom_title():
+    expected_result = "<p><a class=\"wikilink\" href=\"#/project/test/wiki/test\">custom</a></p>"
+    assert render(dummy_project, "[[test|custom]]") == expected_result
+
+def test_render_absolute_image():
+    assert render(dummy_project, "![test](/test.png)") == "<p><img alt=\"test\" src=\"/test.png\" /></p>"
+
+def test_render_relative_image():
+    assert render(dummy_project, "![test](test.png)") == "<p><img alt=\"test\" src=\"test.png\" /></p>"
+
+# def test_render_wikilink_attachment():
+#     assert render(dummy_project, "![[test.png]]") == "<p><img alt=\"test.png\" src=\"test.png\" /></p>"
+#
+# def test_render_wikilink_attachment_with_custom_alt():
+#     assert render(dummy_project, "![[test.png|test]]") == "<p><img alt=\"test\" src=\"test.png\" /></p>"
+
+def test_render_triple_quote_code():
+    expected_result = "<div class=\"codehilite\"><pre><span class=\"n\">print</span><span class=\"p\">(</span><span class=\"s\">&quot;test&quot;</span><span class=\"p\">)</span>\n</pre></div>"
+    assert render(dummy_project, "```\nprint(\"test\")\n```") == expected_result
+
+def test_render_triple_quote_and_lang_code():
+    expected_result = "<div class=\"codehilite\"><pre><span class=\"k\">print</span><span class=\"p\">(</span><span class=\"s\">&quot;test&quot;</span><span class=\"p\">)</span>\n</pre></div>"
+    assert render(dummy_project, "```python\nprint(\"test\")\n```") == expected_result
