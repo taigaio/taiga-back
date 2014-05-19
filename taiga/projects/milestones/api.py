@@ -34,7 +34,13 @@ import datetime
 
 
 class MilestoneViewSet(NotificationSenderMixin, ModelCrudViewSet):
-    queryset = models.Milestone.objects.all().order_by("-estimated_start")
+    # TODO: Refactor this, too much prefetch related
+    queryset = models.Milestone.objects.all().order_by("-estimated_start").prefetch_related(
+        "user_stories",
+        "user_stories__role_points",
+        "user_stories__role_points__points",
+        "user_stories__role_points__role",
+    )
     serializer_class = serializers.MilestoneSerializer
     permission_classes = (IsAuthenticated, permissions.MilestonePermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)

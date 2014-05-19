@@ -181,6 +181,9 @@ class RolesViewSet(ModelCrudViewSet):
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ('project',)
 
+    def get_queryset(self):
+        return self.model.objects.all().prefetch_related('permissions')
+
 
 # User Stories commin ViewSets
 
