@@ -56,6 +56,10 @@ class UserStoryViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudView
     # Specific filter used for filtering neighbor user stories
     _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')
 
+    def get_queryset(self):
+        return self.model.objects.prefetch_related("points", "role_points", "role_points__points", "role_points__role").select_related("milestone", "project")
+        # TODO: Refactor this
+
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
         bulk_stories = request.DATA.get('bulkStories', None)
