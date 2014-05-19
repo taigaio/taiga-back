@@ -92,9 +92,9 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectDetailSerializer(ProjectSerializer):
-    list_of_milestones = serializers.SerializerMethodField("get_list_of_milestones")
+    #list_of_milestones = serializers.SerializerMethodField("get_list_of_milestones")
     roles = serializers.SerializerMethodField("get_list_of_roles")
-    memberships = ProjectMembershipSerializer(many=True, required=False)
+    memberships = serializers.SerializerMethodField("get_membership")
     active_memberships = serializers.SerializerMethodField("get_active_membership")
     us_statuses = UserStoryStatusSerializer(many=True, required=False)       # User Stories
     points = PointsSerializer(many=True, required=False)
@@ -104,8 +104,13 @@ class ProjectDetailSerializer(ProjectSerializer):
     issue_statuses = IssueStatusSerializer(many=True, required=False)
     issue_types = IssueTypeSerializer(many=True, required=False)
 
+    def get_membership(self, obj):
+        memberships = obj.memberships.order_by('user__first_name', 'user__last_name', 'user__username').select_related("role", "user")
+        serializer = ProjectMembershipSerializer(memberships, many=True)
+        return serializer.data
+
     def get_active_membership(self, obj):
-        memberships = obj.memberships.filter(user__isnull=False).order_by('user__first_name', 'user__last_name', 'user__username')
+        memberships = obj.memberships.filter(user__isnull=False).order_by('user__first_name', 'user__last_name', 'user__username').select_related("role", "user")
         serializer = ProjectMembershipSerializer(memberships, many=True)
         return serializer.data
 
@@ -139,7 +144,8 @@ class ProjectDetailSerializer(ProjectSerializer):
                 "client_increment_points": milestone.client_increment_points,
                 "team_increment_points": milestone.team_increment_points,
                 "closed": milestone.closed
-            } for milestone in obj.milestones.all().order_by("estimated_start")]
+            } for milestone in obj.milestones.prefetch_related("user_stories", "user_stories__role_points", "user_stories__role_points__points").order_by("estimated_start")]
+            # TODO: Refactor this (too much prefetch related)
 
         return milestones_list
 
