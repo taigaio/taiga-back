@@ -161,12 +161,6 @@ def test_render_absolute_image():
 def test_render_relative_image():
     assert render(dummy_project, "![test](test.png)") == "<p><img alt=\"test\" src=\"test.png\" /></p>"
 
-# def test_render_wikilink_attachment():
-#     assert render(dummy_project, "![[test.png]]") == "<p><img alt=\"test.png\" src=\"test.png\" /></p>"
-#
-# def test_render_wikilink_attachment_with_custom_alt():
-#     assert render(dummy_project, "![[test.png|test]]") == "<p><img alt=\"test\" src=\"test.png\" /></p>"
-
 def test_render_triple_quote_code():
     expected_result = "<div class=\"codehilite\"><pre><span class=\"n\">print</span><span class=\"p\">(</span><span class=\"s\">&quot;test&quot;</span><span class=\"p\">)</span>\n</pre></div>"
     assert render(dummy_project, "```\nprint(\"test\")\n```") == expected_result
