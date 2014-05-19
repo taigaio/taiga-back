@@ -67,7 +67,7 @@ class Task(WatchedMixin, BlockedMixin):
         verbose_name = "task"
         verbose_name_plural = "tasks"
         ordering = ["project", "created_date"]
-        unique_together = ("ref", "project")
+        # unique_together = ("ref", "project")
         permissions = (
             ("view_task", "Can view task"),
         )
@@ -94,15 +94,6 @@ class Task(WatchedMixin, BlockedMixin):
         }
 
 
-# Model related signals handlers
-@receiver(models.signals.pre_save, sender=Task, dispatch_uid="task_ref_handler")
-def task_ref_handler(sender, instance, **kwargs):
-    """
-    Automatically assignes a seguent reference code to a
-    user story if that is not created.
-    """
-    if not instance.id and instance.project:
-        instance.ref = ref_uniquely(instance.project, "last_task_ref", instance.__class__)
 
 def us_has_open_tasks(us, exclude_task):
     qs = us.tasks.all()

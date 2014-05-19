@@ -69,7 +69,7 @@ class Issue(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
         verbose_name = "issue"
         verbose_name_plural = "issues"
         ordering = ["project", "created_date"]
-        unique_together = ("ref", "project")
+        #unique_together = ("ref", "project")
         permissions = (
             ("view_issue", "Can view issue"),
         )
@@ -265,12 +265,6 @@ def issue_finished_date_handler(sender, instance, **kwargs):
         instance.finished_date = timezone.now()
     elif not instance.status.is_closed and instance.finished_date:
         instance.finished_date = None
-
-
-@receiver(models.signals.pre_save, sender=Issue, dispatch_uid="issue_ref_handler")
-def issue_ref_handler(sender, instance, **kwargs):
-    if not instance.id and instance.project:
-        instance.ref = ref_uniquely(instance.project, "last_issue_ref", instance.__class__)
 
 
 @receiver(models.signals.pre_save, sender=Issue, dispatch_uid="issue-tags-normalization")

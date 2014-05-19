@@ -101,7 +101,7 @@ class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
         verbose_name = "user story"
         verbose_name_plural = "user stories"
         ordering = ["project", "order", "ref"]
-        unique_together = ("ref", "project")
+        #unique_together = ("ref", "project")
         permissions = (
             ("view_userstory", "Can view user story"),
         )
@@ -158,12 +158,6 @@ class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
             "project": self.project,
         }
 
-
-# Model related signals handlers
-@receiver(models.signals.pre_save, sender=UserStory, dispatch_uid="user_story_ref_handler")
-def us_ref_handler(sender, instance, **kwargs):
-    if not instance.id and instance.project:
-        instance.ref = ref_uniquely(instance.project, "last_us_ref", instance.__class__)
 
 
 @receiver(models.signals.post_save, sender=UserStory,
