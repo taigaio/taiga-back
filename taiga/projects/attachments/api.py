@@ -104,7 +104,7 @@ class TaskAttachmentViewSet(BaseAttachmentViewSet):
 
 
 class WikiAttachmentViewSet(BaseAttachmentViewSet):
-    content_type = "wiki.wiki"
+    content_type = "wiki.wikipage"
     create_notification_template = "create_wiki_notification"
     update_notification_template = "update_wiki_notification"
     destroy_notification_template = "destroy_wiki_notification"
