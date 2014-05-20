@@ -152,25 +152,33 @@ def get_stats_for_project_issues(project):
         project_issues_stats['last_four_weeks_days']['by_priority'][priority['id']]['data'] = []
 
     for x in range(27, -1, -1):
-        day = datetime.date.today() - datetime.timedelta(days=x)
+        day = datetime.datetime.combine(datetime.date.today(), datetime.time(0, 0)) - datetime.timedelta(days=x)
         next_day = day + datetime.timedelta(days=1)
-        project_issues_stats['last_four_weeks_days']['by_open_closed']['open'].append(
-            project.issues.filter(created_date__gte=day, created_date__lt=next_day).count()
-        )
-        project_issues_stats['last_four_weeks_days']['by_open_closed']['closed'].append(
-            project.issues.filter(finished_date__gte=day, finished_date__lt=next_day).count()
-        )
-        open_this_day = project.issues.filter(created_date__lt=next_day)
-        open_this_day = open_this_day.filter(Q(finished_date__gt=day) | Q(finished_date__isnull=True))
+        issues = project.issues.all()
+
+        open_this_day = filter(lambda x: x.created_date.replace(tzinfo=None) >= day, issues)
+        open_this_day = filter(lambda x: x.created_date.replace(tzinfo=None) < next_day, open_this_day)
+        open_this_day = len(list(open_this_day))
+        project_issues_stats['last_four_weeks_days']['by_open_closed']['open'].append(open_this_day)
+
+        closed_this_day = filter(lambda x: x.finished_date, issues)
+        closed_this_day = filter(lambda x: x.finished_date.replace(tzinfo=None) >= day, closed_this_day)
+        closed_this_day = filter(lambda x: x.finished_date.replace(tzinfo=None) < next_day, closed_this_day)
+        closed_this_day = len(list(closed_this_day))
+        project_issues_stats['last_four_weeks_days']['by_open_closed']['closed'].append(closed_this_day)
+
+        opened_this_day = filter(lambda x: x.created_date.replace(tzinfo=None) < next_day, issues)
+        opened_this_day = list(filter(lambda x: x.finished_date is None or x.finished_date.replace(tzinfo=None) > day, opened_this_day))
+
         for severity in project_issues_stats['last_four_weeks_days']['by_severity']:
-            project_issues_stats['last_four_weeks_days']['by_severity'][severity]['data'].append(
-                open_this_day.filter(severity_id=severity).count()
-            )
+            by_severity = filter(lambda x: x.severity_id == severity, opened_this_day)
+            by_severity = len(list(by_severity))
+            project_issues_stats['last_four_weeks_days']['by_severity'][severity]['data'].append(by_severity)
 
         for priority in project_issues_stats['last_four_weeks_days']['by_priority']:
-            project_issues_stats['last_four_weeks_days']['by_priority'][priority]['data'].append(
-                open_this_day.filter(priority_id=priority).count()
-            )
+            by_priority = filter(lambda x: x.priority_id == priority, opened_this_day)
+            by_priority = len(list(by_priority))
+            project_issues_stats['last_four_weeks_days']['by_priority'][priority]['data'].append(by_priority)
 
     return project_issues_stats
 
