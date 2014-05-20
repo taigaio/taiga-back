@@ -3,8 +3,8 @@ from unittest import mock
 import pytest
 
 import taiga.base
-from taiga.mdrender.processors import emoji
-from taiga.mdrender.processors import mentions
+from taiga.mdrender.gfm import mentions
+from taiga.mdrender.gfm import emojify
 from taiga.mdrender.processors import references
 from taiga.mdrender.service import render
 
@@ -16,12 +16,12 @@ dummy_project.id = 1
 dummy_project.slug = "test"
 
 def test_proccessor_valid_emoji():
-    result = emoji.emoji("<b>:smile:</b>")
-    assert result == '<b><img class="emoji" title="smile" alt="smile" height="20" width="20" src="http://localhost:8000/static/img/emojis/smile.png" align="top"></b>'
+    result = emojify.EmojifyPreprocessor().run(["**:smile:**"])
+    assert result == ["**![smile](http://localhost:8000/static/img/emojis/smile.png)**"]
 
 def test_proccessor_invalid_emoji():
-    result = emoji.emoji("<b>:notvalidemoji:</b>")
-    assert result == "<b>:notvalidemoji:</b>"
+    result = emojify.EmojifyPreprocessor().run(["**:notvalidemoji:**"])
+    assert result == ["**:notvalidemoji:**"]
 
 def test_proccessor_valid_user_mention():
     DummyModel = DummyClass()
@@ -30,8 +30,8 @@ def test_proccessor_valid_user_mention():
 
     mentions.User = DummyModel
 
-    result = mentions.mentions("**@user1**")
-    assert result == '**[@user1](/#/profile/user1 "@user1")**'
+    result = mentions.MentionsPreprocessor().run(["**@user1**"])
+    assert result == ["**[@user1](/#/profile/user1 \"@user1\")**"]
 
 def test_proccessor_invalid_user_mention():
     DummyModel = DummyClass()
@@ -40,8 +40,8 @@ def test_proccessor_invalid_user_mention():
 
     mentions.User = DummyModel
 
-    result = mentions.mentions("**@notvaliduser**")
-    assert result == '**@notvaliduser**'
+    result = mentions.MentionsPreprocessor().run(["**@notvaliduser**"])
+    assert result == ['**@notvaliduser**']
 
 
 def test_proccessor_valid_us_reference():

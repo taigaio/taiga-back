@@ -10,6 +10,7 @@ from . import spaced_link
 from . import strikethrough
 from . import wikilinks
 from . import emojify
+from . import mentions
 
 AutolinkExtension = autolink.AutolinkExtension
 AutomailExtension = automail.AutomailExtension
@@ -19,3 +20,4 @@ SpacedLinkExtension = spaced_link.SpacedLinkExtension
 StrikethroughExtension = strikethrough.StrikethroughExtension
 WikiLinkExtension = wikilinks.WikiLinkExtension
 EmojifyExtension = emojify.EmojifyExtension
+MentionsExtension = mentions.MentionsExtension

@@ -15,8 +15,8 @@ from .gfm import SpacedLinkExtension
 from .gfm import StrikethroughExtension
 from .gfm import WikiLinkExtension
 from .gfm import EmojifyExtension
+from .gfm import MentionsExtension
 
-from .processors.mentions import mentions
 from .processors.references import references
 
 
@@ -28,6 +28,7 @@ def _make_extensions_list(wikilinks_config=None):
             StrikethroughExtension(),
             WikiLinkExtension(wikilinks_config),
             EmojifyExtension(),
+            MentionsExtension(),
             "extra",
             "codehilite"]
 
@@ -61,7 +62,7 @@ def _render_markdown(project, text):
 
 
 def _preprocessors(project, text):
-    pre = F() >> mentions >> F(references, project)
+    pre = F() >> F(references, project)
     return pre(text)
 
 

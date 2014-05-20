@@ -159,6 +159,8 @@ class EmojifyExtension(Extension):
 class EmojifyPreprocessor(Preprocessor):
 
     def run(self, lines):
+        pattern = re.compile(':([a-z0-9\+\-_]+):')
+
         new_lines = []
 
         def emojify(match):
@@ -173,7 +175,7 @@ class EmojifyPreprocessor(Preprocessor):
 
         for line in lines:
             if line.strip():
-                line = re.sub(r':([a-z0-9\+\-_]+):', emojify, line, flags=re.UNICODE)
+                line = pattern.sub(emojify, line)
 
             new_lines.append(line)
 
