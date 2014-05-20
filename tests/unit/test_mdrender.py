@@ -129,17 +129,25 @@ def test_proccessor_invalid_task_reference():
     TaskBack = references.Task
     references.Task = MockModelEmpty
 
-    result = references.references(dummy_project, "**#task1**")
+    result = ReferencesPreprocessor(dummy_project).run("**#task1**")
     assert result == "**#task1**"
 
     references.Task = TaskBack
 
 def test_proccessor_invalid_type_reference():
-    result = references.references(None, "**#invalid1**")
+    result = ReferencesPreprocessor(dummy_project).run("**#invalid1**")
     assert result == "**#invalid1**"
 
 def test_render_wiki_strong():
     assert render(dummy_project, "**test**") == "<p><strong>test</strong></p>"
+    assert render(dummy_project, "__test__") == "<p><strong>test</strong></p>"
+
+def test_render_wiki_italic():
+    assert render(dummy_project, "*test*") == "<p><em>test</em></p>"
+    assert render(dummy_project, "_test_") == "<p><em>test</em></p>"
+
+def test_render_wiki_strike():
+    assert render(dummy_project, "~~test~~") == "<p><del>test</del></p>"
 
 def test_render_absolute_link():
     assert render(dummy_project, "[test](/test)") == "<p><a href=\"/test\">test</a></p>"
@@ -154,6 +162,16 @@ def test_render_wikilink():
 def test_render_wikilink_with_custom_title():
     expected_result = "<p><a class=\"wikilink\" href=\"#/project/test/wiki/test\">custom</a></p>"
     assert render(dummy_project, "[[test|custom]]") == expected_result
+
+def test_render_reference_links():
+    expected_result = "<p>An <a href=\"http://example.com/\" title=\"Title\">example</a> of reference link</p>"
+    source = "An [example][id] of reference link\n  [id]: http://example.com/  \"Title\""
+    assert render(dummy_project, source) == expected_result
+
+def test_render_url_autolinks():
+    expected_result = "<p>Test the <a href=\"http://example.com/\">http://example.com/</a> autolink</p>"
+    source = "Test the http://example.com/ autolink"
+    assert render(dummy_project, source) == expected_result
 
 def test_render_absolute_image():
     assert render(dummy_project, "![test](/test.png)") == "<p><img alt=\"test\" src=\"/test.png\" /></p>"
