@@ -19,6 +19,8 @@ from django.db.models import Q
 
 from rest_framework import filters
 
+from taiga.base.utils.db import filter_by_tags
+
 
 class QueryParamsFilterMixin(object):
     _special_values_dict = {
@@ -94,8 +96,6 @@ class IsProjectMemberFilterBackend(FilterBackend):
 
 
 class TagsFilter(FilterBackend):
-    FILTER_TAGS_SQL = "unpickle({table}.tags) && %s"
-
     def __init__(self, filter_name='tags'):
         self.filter_name = filter_name
 
@@ -108,7 +108,6 @@ class TagsFilter(FilterBackend):
     def filter_queryset(self, request, queryset, view):
         tags = self._get_tags_queryparams(request.QUERY_PARAMS)
         if tags:
-            where_sql = self.FILTER_TAGS_SQL.format(table=view.model._meta.db_table)
-            queryset = queryset.extra(where=[where_sql], params=[tags])
+            queryset = filter_by_tags(tags, queryset)
 
         return queryset
