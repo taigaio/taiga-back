@@ -9,6 +9,7 @@ from . import semi_sane_lists
 from . import spaced_link
 from . import strikethrough
 from . import wikilinks
+from . import emojify
 
 AutolinkExtension = autolink.AutolinkExtension
 AutomailExtension = automail.AutomailExtension
@@ -17,3 +18,4 @@ SemiSaneListExtension = semi_sane_lists.SemiSaneListExtension
 SpacedLinkExtension = spaced_link.SpacedLinkExtension
 StrikethroughExtension = strikethrough.StrikethroughExtension
 WikiLinkExtension = wikilinks.WikiLinkExtension
+EmojifyExtension = emojify.EmojifyExtension

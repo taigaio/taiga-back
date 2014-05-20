@@ -5,7 +5,6 @@ from django.core.cache import cache
 from django.utils.encoding import force_bytes
 
 from markdown import markdown
-#from markdown.extensions.wikilinks import WikiLinkExtension
 from fn import F
 
 from .gfm import AutolinkExtension
@@ -15,8 +14,8 @@ from .gfm import SemiSaneListExtension
 from .gfm import SpacedLinkExtension
 from .gfm import StrikethroughExtension
 from .gfm import WikiLinkExtension
+from .gfm import EmojifyExtension
 
-from .processors.emoji import emoji
 from .processors.mentions import mentions
 from .processors.references import references
 
@@ -28,6 +27,7 @@ def _make_extensions_list(wikilinks_config=None):
             SpacedLinkExtension(),
             StrikethroughExtension(),
             WikiLinkExtension(wikilinks_config),
+            EmojifyExtension(),
             "extra",
             "codehilite"]
 
@@ -64,14 +64,10 @@ def _preprocessors(project, text):
     pre = F() >> mentions >> F(references, project)
     return pre(text)
 
-def _postprocessors(project, html):
-    post = F() >> emoji
-    return post(html)
-
 
 #@cache_by_sha
 def render(project, text):
-    renderer = F() >> F(_preprocessors, project) >> F(_render_markdown, project) >> F(_postprocessors, project)
+    renderer = F() >> F(_preprocessors, project) >> F(_render_markdown, project)
     return renderer(text)
 
 class DiffMatchPatch(diff_match_patch.diff_match_patch):
