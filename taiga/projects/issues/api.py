@@ -26,7 +26,7 @@ from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet
-from taiga.base.api import NeighborsApiMixin
+
 from taiga.projects.mixins.notifications import NotificationSenderMixin
 
 from . import models
@@ -87,6 +87,7 @@ class IssuesFilter(filters.FilterBackend):
 class IssuesOrdering(filters.FilterBackend):
     def filter_queryset(self, request, queryset, view):
         order_by = request.QUERY_PARAMS.get('order_by', None)
+
         if order_by in ['owner', '-owner', 'assigned_to', '-assigned_to']:
             return queryset.order_by(
                 '{}__first_name'.format(order_by),
@@ -95,7 +96,7 @@ class IssuesOrdering(filters.FilterBackend):
         return queryset
 
 
-class IssueViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudViewSet):
+class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
     model = models.Issue
     queryset = models.Issue.objects.all().prefetch_related("attachments")
     serializer_class = serializers.IssueNeighborsSerializer

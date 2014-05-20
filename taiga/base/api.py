@@ -63,13 +63,6 @@ class DestroyModelMixin(mixins.DestroyModelMixin):
 
 # Other mixins (what they are doing here?)
 
-class NeighborsApiMixin(object):
-    def filter_queryset(self, queryset, force=False):
-        for backend in self.get_filter_backends():
-            if force or self.action != "retrieve" or backend not in self.retrieve_exclude_filters:
-                queryset = backend().filter_queryset(self.request, queryset, self)
-        return queryset
-
 
 class PreconditionMixin(object):
     def pre_conditions_on_save(self, obj):

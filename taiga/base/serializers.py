@@ -20,6 +20,7 @@ from rest_framework import serializers
 
 from taiga.domains.base import get_active_domain
 from taiga.domains.models import Domain
+from .neighbors import get_neighbors
 
 
 class PickleField(serializers.WritableField):
@@ -72,9 +73,12 @@ class NeighborsSerializerMixin:
     def get_neighbors(self, obj):
         view, request = self.context.get("view", None), self.context.get("request", None)
         if view and request:
-            queryset = view.filter_queryset(view.get_queryset(), True)
-            previous, next = obj.get_neighbors(queryset)
+            queryset = view.filter_queryset(view.get_queryset())
+            left, right = get_neighbors(obj, results_set=queryset)
+        else:
+            left = right = None
 
-            return {"previous": self.serialize_neighbor(previous),
-                    "next": self.serialize_neighbor(next)}
-        return {"previous": None, "next": None}
+        return {
+            "previous": self.serialize_neighbor(left),
+            "next": self.serialize_neighbor(right)
+        }

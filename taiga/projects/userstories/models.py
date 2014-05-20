@@ -22,7 +22,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from picklefield.fields import PickledObjectField
 
-from taiga.base.models import NeighborsMixin
 from taiga.base.utils.slug import ref_uniquely
 from taiga.projects.notifications.models import WatchedMixin
 from taiga.projects.mixins.blocked import BlockedMixin
@@ -52,7 +51,8 @@ class RolePoints(models.Model):
         return "{}: {}".format(self.role.name, self.points.name)
 
 
-class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
+class UserStory(WatchedMixin, BlockedMixin, models.Model):
+
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
@@ -111,16 +111,6 @@ class UserStory(NeighborsMixin, WatchedMixin, BlockedMixin, models.Model):
 
     def __repr__(self):
         return "<UserStory %s>" % (self.id)
-
-    def _get_prev_neighbor_filters(self, queryset):
-        conds = [{"order__lt": "{obj.order}"},
-                 {"order__lte": "{obj.order}", "ref__lt": "{obj.ref}"}]
-        return conds
-
-    def _get_next_neighbor_filters(self, queryset):
-        conds = [{"order__gt": "{obj.order}"},
-                 {"order__gte": "{obj.order}", "ref__gt": "{obj.ref}"}]
-        return conds
 
     def get_role_points(self):
         return self.role_points

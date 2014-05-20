@@ -28,7 +28,7 @@ from taiga.base.decorators import list_route
 from taiga.base.decorators import action
 from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet
-from taiga.base.api import NeighborsApiMixin
+
 from taiga.projects.mixins.notifications import NotificationSenderMixin
 from taiga.projects.models import Project
 from taiga.projects.history.services import take_snapshot
@@ -39,7 +39,7 @@ from . import serializers
 from . import services
 
 
-class UserStoryViewSet(NeighborsApiMixin, NotificationSenderMixin, ModelCrudViewSet):
+class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
     model = models.UserStory
     serializer_class = serializers.UserStoryNeighborsSerializer
     list_serializer_class = serializers.UserStorySerializer
