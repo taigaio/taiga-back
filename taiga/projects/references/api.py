@@ -35,6 +35,6 @@ class ResolverViewSet(viewsets.ViewSet):
         if data["issue"]:
             result["issue"] = get_object_or_404(project.issues.all(), ref=data["issue"]).pk
         if data["milestone"]:
-            result["milestone"] = get_object_or_404(project.milestones.all(), slug=data["milestones"]).pk
+            result["milestone"] = get_object_or_404(project.milestones.all(), slug=data["milestone"]).pk
 
         return Response(result)
