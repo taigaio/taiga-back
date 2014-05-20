@@ -129,13 +129,13 @@ def test_proccessor_invalid_task_reference():
     TaskBack = references.Task
     references.Task = MockModelEmpty
 
-    result = ReferencesPreprocessor(dummy_project).run("**#task1**")
+    result = references.references(dummy_project, "**#task1**")
     assert result == "**#task1**"
 
     references.Task = TaskBack
 
 def test_proccessor_invalid_type_reference():
-    result = ReferencesPreprocessor(dummy_project).run("**#invalid1**")
+    result = references.references(dummy_project, "**#invalid1**")
     assert result == "**#invalid1**"
 
 def test_render_wiki_strong():
