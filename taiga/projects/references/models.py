@@ -16,9 +16,12 @@ class Reference(models.Model):
     ref = models.BigIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
     created_at = models.DateTimeField(auto_now_add=True)
+    project = models.ForeignKey("projects.Project", null=False,
+                                blank=False, related_name="references")
 
     class Meta:
         ordering = ["created_at"]
+        unique_together = ["project", "ref"]
 
     def __str__(self):
         return "Reference {}".format(self.object_id)
@@ -40,7 +43,8 @@ def make_reference(instance, project, create=False):
     ct = ContentType.objects.get_for_model(instance.__class__)
     refinstance = Reference.objects.create(content_type=ct,
                                            object_id=instance.pk,
-                                           ref=refval)
+                                           ref=refval,
+                                           project=project)
     return refval, refinstance
 
 
