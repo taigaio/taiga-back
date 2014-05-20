@@ -127,8 +127,10 @@ def get_stats_for_project_issues(project):
 
     }
 
-    for issue in project.issues.all().prefetch_related('status', 'priority', 'type', 'severity', 'owner',
-                                                       'assigned_to'):
+    issues = project.issues.all().select_related(
+        'status', 'priority', 'type', 'severity', 'owner', 'assigned_to'
+    )
+    for issue in issues:
         project_issues_stats['total_issues'] += 1
         if issue.status.is_closed:
             project_issues_stats['closed_issues'] += 1
@@ -154,7 +156,6 @@ def get_stats_for_project_issues(project):
     for x in range(27, -1, -1):
         day = datetime.datetime.combine(datetime.date.today(), datetime.time(0, 0)) - datetime.timedelta(days=x)
         next_day = day + datetime.timedelta(days=1)
-        issues = project.issues.all()
 
         open_this_day = filter(lambda x: x.created_date.replace(tzinfo=None) >= day, issues)
         open_this_day = filter(lambda x: x.created_date.replace(tzinfo=None) < next_day, open_this_day)
