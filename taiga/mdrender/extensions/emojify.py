@@ -181,7 +181,3 @@ class EmojifyPreprocessor(Preprocessor):
             new_lines.append(line)
 
         return new_lines
-
-
-def makeExtension(configs=None):
-    return EmojifyExtension(configs=configs)

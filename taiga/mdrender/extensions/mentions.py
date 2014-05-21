@@ -46,26 +46,21 @@ class MentionsExtension(Extension):
 
 class MentionsPattern(Pattern):
     def handleMatch(self, m):
-        if m.group(2).strip():
-            username = m.group(2)
+        username = m.group(2)
 
-            try:
-                user = User.objects.get(username=username)
-            except User.DoesNotExist:
-                return "@{}".format(username)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return "@{}".format(username)
 
-            url = "/#/profile/{}".format(username)
+        url = "/#/profile/{}".format(username)
 
-            link_text = "&commat;{}".format(username)
+        link_text = "&commat;{}".format(username)
 
-            a = etree.Element('a')
-            a.text = link_text
-            a.set('href', url)
-            a.set('alt', user.get_full_name())
-            a.set('title', user.get_full_name())
-            a.set('class', "mention")
-            return a
-        return ''
-
-def makeExtension(configs=None):
-    return MentionsExtension(configs=configs)
+        a = etree.Element('a')
+        a.text = link_text
+        a.set('href', url)
+        a.set('alt', user.get_full_name())
+        a.set('title', user.get_full_name())
+        a.set('class', "mention")
+        return a

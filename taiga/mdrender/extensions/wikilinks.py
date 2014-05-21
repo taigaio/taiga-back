@@ -41,23 +41,20 @@ class WikiLinks(Pattern):
         self.config = config
 
     def handleMatch(self, m):
-        if m.group(2).strip():
-            base_url, end_url, html_class = self._getMeta()
-            label = m.group(2).strip()
-            url = self.config['build_url'](label, base_url, end_url)
+        base_url, end_url, html_class = self._getMeta()
+        label = m.group(2).strip()
+        url = self.config['build_url'](label, base_url, end_url)
 
-            if m.group(3):
-                title = m.group(3).strip()[1:]
-            else:
-                title = label
-
-            a = etree.Element('a')
-            a.text = title
-            a.set('href', url)
-            if html_class:
-                a.set('class', html_class)
+        if m.group(3):
+            title = m.group(3).strip()[1:]
         else:
-            a = ''
+            title = label
+
+        a = etree.Element('a')
+        a.text = title
+        a.set('href', url)
+        if html_class:
+            a.set('class', html_class)
         return a
 
     def _getMeta(self):
@@ -65,15 +62,4 @@ class WikiLinks(Pattern):
         base_url = self.config['base_url']
         end_url = self.config['end_url']
         html_class = self.config['html_class']
-        if hasattr(self.md, 'Meta'):
-            if 'wiki_base_url' in self.md.Meta:
-                base_url = self.md.Meta['wiki_base_url'][0]
-            if 'wiki_end_url' in self.md.Meta:
-                end_url = self.md.Meta['wiki_end_url'][0]
-            if 'wiki_html_class' in self.md.Meta:
-                html_class = self.md.Meta['wiki_html_class'][0]
         return base_url, end_url, html_class
-
-
-def makeExtension(configs=None) :
-    return WikiLinkExtension(configs=configs)

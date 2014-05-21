@@ -53,44 +53,38 @@ class TaigaReferencesPattern(Pattern):
         super().__init__(pattern)
 
     def handleMatch(self, m):
-        if m.group(2).strip():
-            obj_ref = m.group(2)
+        obj_ref = m.group(2)
 
-            instance = get_instance_by_ref(self.project.id, obj_ref)
-            if instance is None:
-                return "#{}".format(obj_ref)
+        instance = get_instance_by_ref(self.project.id, obj_ref)
+        if instance is None:
+            return "#{}".format(obj_ref)
 
-            subject = instance.content_object.subject
+        subject = instance.content_object.subject
 
-            if instance.content_type.model == "userstory":
-                obj_section = "user-story"
-                html_classes = "reference user-story"
-            elif instance.content_type.model == "task":
-                obj_section = "tasks"
-                html_classes = "reference task"
-            elif instance.content_type.model == "issue":
-                obj_section = "issues"
-                html_classes = "reference issue"
-            else:
-                return "#{}".format(obj_ref)
-
-
-            url = "/#/project/{}/{}/{}".format(
-                self.project.slug,
-                obj_section,
-                obj_ref
-            )
-            link_text = "&num;{}".format(obj_ref)
-
-            a = etree.Element('a')
-            a.text = link_text
-            a.set('href', url)
-            a.set('alt', subject)
-            a.set('title', subject)
-            a.set('class', html_classes)
-            return a
-        return ''
+        if instance.content_type.model == "userstory":
+            obj_section = "user-story"
+            html_classes = "reference user-story"
+        elif instance.content_type.model == "task":
+            obj_section = "tasks"
+            html_classes = "reference task"
+        elif instance.content_type.model == "issue":
+            obj_section = "issues"
+            html_classes = "reference issue"
+        else:
+            return "#{}".format(obj_ref)
 
 
-def makeExtension(configs=None):
-    return TaigaReferencesExtension(configs=configs)
+        url = "/#/project/{}/{}/{}".format(
+            self.project.slug,
+            obj_section,
+            obj_ref
+        )
+        link_text = "&num;{}".format(obj_ref)
+
+        a = etree.Element('a')
+        a.text = link_text
+        a.set('href', url)
+        a.set('alt', subject)
+        a.set('title', subject)
+        a.set('class', html_classes)
+        return a

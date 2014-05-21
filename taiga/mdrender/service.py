@@ -9,7 +9,6 @@ from fn import F
 
 from .extensions.autolink import AutolinkExtension
 from .extensions.automail import AutomailExtension
-from .extensions.hidden_hilite import HiddenHiliteExtension
 from .extensions.semi_sane_lists import SemiSaneListExtension
 from .extensions.spaced_link import SpacedLinkExtension
 from .extensions.strikethrough import StrikethroughExtension
@@ -47,7 +46,7 @@ def cache_by_sha(func):
         if cached is not None:
             return cached
 
-        returned_value = func(text)
+        returned_value = func(project, text)
         cache.set(key, returned_value, timeout=None)
         return returned_value
 
