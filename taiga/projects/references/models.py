@@ -56,6 +56,13 @@ def create_sequence(sender, instance, created, **kwargs):
     if not seq.exists(seqname):
         seq.create(seqname)
 
+
+def delete_sequence(sender, instance, **kwargs):
+    seqname = make_sequence_name(instance)
+    if seq.exists(seqname):
+        seq.delete(seqname)
+
+
 def attach_sequence(sender, instance, created, **kwargs):
     if created:
         # Create a reference object. This operation should be
@@ -72,7 +79,7 @@ models.signals.post_save.connect(create_sequence, sender=Project, dispatch_uid="
 models.signals.post_save.connect(attach_sequence, sender=UserStory, dispatch_uid="refus")
 models.signals.post_save.connect(attach_sequence, sender=Issue, dispatch_uid="refissue")
 models.signals.post_save.connect(attach_sequence, sender=Task, dispatch_uid="reftask")
-
+models.signals.post_delete.connect(delete_sequence, sender=Project, dispatch_uid="refprojdel")
 
 
 

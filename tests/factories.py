@@ -24,7 +24,15 @@ class ProjectTemplateFactory(factory.DjangoModelFactory):
 
     name = "Template name"
     slug = settings.DEFAULT_PROJECT_TEMPLATE
-    default_owner_role = "tester"
+
+    us_statuses = []
+    points = []
+    task_statuses = []
+    issue_statuses = []
+    issue_types = []
+    priorities = []
+    severities = []
+    roles = []
 
 
 class ProjectFactory(factory.DjangoModelFactory):

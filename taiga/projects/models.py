@@ -18,6 +18,7 @@ import itertools
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import signals
 from django.db.models.loading import get_model
 from django.conf import settings
 from django.dispatch import receiver
@@ -669,50 +670,63 @@ class ProjectTemplate(models.Model):
             for permission in permissions:
                 newRoleInstance.permissions.add(permission)
 
-        project.default_points = Points.objects.get(name=self.default_options["points"], project=project)
-        project.default_us_status = UserStoryStatus.objects.get(name=self.default_options["us_status"], project=project)
-        project.default_task_status = TaskStatus.objects.get(name=self.default_options["task_status"], project=project)
-        project.default_issue_status = IssueStatus.objects.get(name=self.default_options["issue_status"], project=project)
-        project.default_issue_type = IssueType.objects.get(name=self.default_options["issue_type"], project=project)
-        project.default_priority = Priority.objects.get(name=self.default_options["priority"], project=project)
-        project.default_severity = Severity.objects.get(name=self.default_options["severity"], project=project)
+        if self.points:
+            project.default_points = Points.objects.get(name=self.default_options["points"],
+                                                        project=project)
+        if self.us_statuses:
+            project.default_us_status = UserStoryStatus.objects.get(name=self.default_options["us_status"],
+                                                                    project=project)
 
-        Membership.objects.create(
-            user=project.owner,
-            project=project,
-            role=project.roles.get(slug=self.default_owner_role),
-            email=project.owner.email
-        )
+        if self.task_statuses:
+            project.default_task_status = TaskStatus.objects.get(name=self.default_options["task_status"],
+                                                                 project=project)
+        if self.issue_statuses:
+            project.default_issue_status = IssueStatus.objects.get(name=self.default_options["issue_status"],
+                                                                   project=project)
 
+        if self.issue_types:
+            project.default_issue_type = IssueType.objects.get(name=self.default_options["issue_type"],
+                                                               project=project)
+
+        if self.priorities:
+            project.default_priority = Priority.objects.get(name=self.default_options["priority"], project=project)
+
+        if self.severities:
+            project.default_severity = Severity.objects.get(name=self.default_options["severity"], project=project)
+
+
+        if self.default_owner_role:
+            # FIXME: is operation should to be on template apply method?
+            Membership.objects.create(user=project.owner,
+                                      project=project,
+                                      role=project.roles.get(slug=self.default_owner_role),
+                                      email=project.owner.email)
         return project
 
 
 # On membership object is created/changed, update
 # role-points relation.
-@receiver(models.signals.post_save, sender=Membership,
-          dispatch_uid='membership_post_save')
+@receiver(signals.post_save, sender=Membership, dispatch_uid='membership_post_save')
 def membership_post_save(sender, instance, created, **kwargs):
     instance.project.update_role_points()
-    if instance.user and instance.project.domain and instance.project.domain.members.filter(user=instance.user).count() == 0:
-        DomainMember.objects.create(
-            domain=instance.project.domain,
-            user=instance.user,
-            email=instance.email,
-            is_owner=False,
-            is_staff=False
-        )
+    exists_user_on_domain = instance.project.domain.members.filter(user=instance.user).exists()
+
+    if instance.user and instance.project.domain and not exists_user_on_domain:
+        DomainMember.objects.create(domain=instance.project.domain,
+                                    user=instance.user,
+                                    email=instance.email,
+                                    is_owner=False,
+                                    is_staff=False)
 
 
 # On membership object is deleted, update role-points relation.
-@receiver(models.signals.pre_delete, sender=Membership,
-          dispatch_uid='membership_pre_delete')
+@receiver(signals.pre_delete, sender=Membership, dispatch_uid='membership_pre_delete')
 def membership_post_delete(sender, instance, using, **kwargs):
     instance.project.update_role_points()
 
 
 # On membership object is deleted, update watchers of all objects relation.
-@receiver(models.signals.post_delete, sender=Membership,
-          dispatch_uid='update_watchers_on_membership_post_delete')
+@receiver(signals.post_delete, sender=Membership, dispatch_uid='update_watchers_on_membership_post_delete')
 def update_watchers_on_membership_post_delete(sender, instance, using, **kwargs):
     models = [get_model("userstories", "UserStory"),
               get_model("tasks", "Task"),
@@ -725,7 +739,7 @@ def update_watchers_on_membership_post_delete(sender, instance, using, **kwargs)
         model.watchers.through.objects.filter(user_id=instance.user_id).delete()
 
 
-@receiver(models.signals.post_save, sender=Project, dispatch_uid='project_post_save')
+@receiver(signals.post_save, sender=Project, dispatch_uid='project_post_save')
 def project_post_save(sender, instance, created, **kwargs):
     """
     Populate new project dependen default data
