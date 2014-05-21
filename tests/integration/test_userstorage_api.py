@@ -1,16 +1,14 @@
+import json
 import pytest
 
-from rest_framework.reverse import reverse
-
+from django.core.urlresolvers import reverse
 from .. import factories
-
-import json
 
 
 pytestmark = pytest.mark.django_db
 
 
-class TestListStorageEntries:
+class TestListStorageEntries(object):
     def _load_initial_data(self):
         self.user1 = factories.UserFactory()
         self.user2 = factories.UserFactory()
@@ -53,7 +51,7 @@ class TestListStorageEntries:
         response = client.logout()
 
 
-class TestViewStorageEntries:
+class TestViewStorageEntries(object):
     def _load_initial_data(self):
         self.user1 = factories.UserFactory()
         self.user2 = factories.UserFactory()
@@ -89,7 +87,7 @@ class TestViewStorageEntries:
         response = client.logout()
 
 
-class TestCreateStorageEntries:
+class TestCreateStorageEntries(object):
     @classmethod
     def setup_class(cls):
         cls.form = {"key": "foo",
@@ -135,7 +133,7 @@ class TestCreateStorageEntries:
         response = client.logout()
 
 
-class TestUpdateStorageEntries:
+class TestUpdateStorageEntries(object):
     @classmethod
     def setup_class(cls):
         cls.form = {"value": "bar"}
@@ -184,7 +182,7 @@ class TestUpdateStorageEntries:
         response = client.logout()
 
 
-class TestDeleteStorageEntries:
+class TestDeleteStorageEntries(object):
     def _load_initial_data(self):
         self.user1 = factories.UserFactory()
         self.user2 = factories.UserFactory()

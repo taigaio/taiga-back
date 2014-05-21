@@ -1,8 +1,7 @@
 from unittest import mock
-
 import pytest
 
-from rest_framework.reverse import reverse
+from django.core.urlresolvers import reverse
 
 from .. import factories
 
@@ -20,7 +19,6 @@ def teardown_module(module):
 
 
 class TestPublicRegistration:
-
     @classmethod
     def setup_class(cls):
         cls.form = {"username": "username", "password": "password", "first_name": "fname",
@@ -39,7 +37,6 @@ class TestPublicRegistration:
 
 @pytest.mark.xfail
 class TestPrivateRegistration:
-
     @classmethod
     def setup_class(cls):
         cls.form = {"username": "username", "password": "password", "first_name": "fname",
