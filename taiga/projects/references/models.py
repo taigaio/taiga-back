@@ -56,14 +56,16 @@ def create_sequence(sender, instance, created, **kwargs):
     if not seq.exists(seqname):
         seq.create(seqname)
 
-def attach_sequence(sender, instance, **kwargs):
-    # Create a reference object. This operation should be
-    # used in transaction context, otherwise it can
-    # create a lot of phantom reference objects.
-    refval, _ = make_reference(instance, instance.project)
+def attach_sequence(sender, instance, created, **kwargs):
+    if created:
+        # Create a reference object. This operation should be
+        # used in transaction context, otherwise it can
+        # create a lot of phantom reference objects.
+        refval, _ = make_reference(instance, instance.project)
 
-    # Additionally, attach sequence number to instance as ref
-    sender.objects.filter(pk=instance.pk).update(ref=refval)
+        # Additionally, attach sequence number to instance as ref
+        instance.ref = refval
+        instance.save(update_fields=['ref'])
 
 
 models.signals.post_save.connect(create_sequence, sender=Project, dispatch_uid="refproj")
