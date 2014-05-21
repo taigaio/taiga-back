@@ -3,6 +3,7 @@
 # Tested on Markdown 2.3.1
 #
 # Copyright (c) 2014, Esteban Castro Borsani
+# Copyright (c) 2014, Jesús Espino García
 # The MIT License (MIT)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -171,7 +172,7 @@ class EmojifyPreprocessor(Preprocessor):
 
             url = emojis_path + emoji + u'.png'
 
-            return u'![%(emoji)s](%(url)s)' % {'emoji': emoji, 'url': url}
+            return '![{emoji}]({url})'.format(emoji=emoji, url=url)
 
         for line in lines:
             if line.strip():

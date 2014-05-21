@@ -28,41 +28,44 @@ import re
 import os
 
 from markdown.extensions import Extension
-from markdown.preprocessors import Preprocessor
+from markdown.inlinepatterns import Pattern
+from markdown.util import etree
+
+from taiga.users.models import User
 
 
 class MentionsExtension(Extension):
-
     def extendMarkdown(self, md, md_globals):
-        md.registerExtension(self)
-        md.preprocessors.add('emojify',
-                             MentionsPreprocessor(md),
-                             '_end')
+        MENTION_RE = r'(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9-]+)'
+        mentionsPattern = MentionsPattern(MENTION_RE)
+        mentionsPattern.md = md
+        md.inlinePatterns.add('mentions',
+                             mentionsPattern,
+                             '_begin')
 
 
-class MentionsPreprocessor(Preprocessor):
+class MentionsPattern(Pattern):
+    def handleMatch(self, m):
+        if m.group(2).strip():
+            username = m.group(2)
 
-    def run(self, lines):
-        new_lines = []
-        pattern = re.compile('(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9]+)')
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                return "@{}".format(username)
 
-        def make_mention_link(m):
-            name = m.group(1)
+            url = "/#/profile/{}".format(username)
 
-            if not User.objects.filter(username=name):
-                return "@{name}".format(name=name)
+            link_text = "&commat;{}".format(username)
 
-            tpl = ('[@{name}](/#/profile/{name} "@{name}")')
-            return tpl.format(name=name)
-
-        for line in lines:
-            if line.strip():
-                line = pattern.sub(make_mention_link, line)
-
-            new_lines.append(line)
-
-        return new_lines
-
+            a = etree.Element('a')
+            a.text = link_text
+            a.set('href', url)
+            a.set('alt', user.get_full_name())
+            a.set('title', user.get_full_name())
+            a.set('class', "mention")
+            return a
+        return ''
 
 def makeExtension(configs=None):
     return MentionsExtension(configs=configs)

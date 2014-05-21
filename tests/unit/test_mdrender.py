@@ -1,17 +1,17 @@
-from unittest import mock
+from unittest.mock import patch, MagicMock
 
 import pytest
 
 import taiga.base
-from taiga.mdrender.gfm import mentions
-from taiga.mdrender.gfm import emojify
-from taiga.mdrender.processors import references
+from taiga.mdrender.extensions import mentions
+from taiga.mdrender.extensions import emojify
 from taiga.mdrender.service import render
 
-class DummyClass:
-    pass
+from taiga.projects.references import services
 
-dummy_project = DummyClass()
+from taiga.users.models import User
+
+dummy_project = MagicMock()
 dummy_project.id = 1
 dummy_project.slug = "test"
 
@@ -24,119 +24,52 @@ def test_proccessor_invalid_emoji():
     assert result == ["**:notvalidemoji:**"]
 
 def test_proccessor_valid_user_mention():
-    DummyModel = DummyClass()
-    DummyModel.objects = DummyClass()
-    DummyModel.objects.filter = lambda username: ["test"]
-
-    mentions.User = DummyModel
-
-    result = mentions.MentionsPreprocessor().run(["**@user1**"])
-    assert result == ["**[@user1](/#/profile/user1 \"@user1\")**"]
+    with patch("taiga.mdrender.extensions.mentions.User") as mock:
+        instance = mock.objects.get.return_value
+        instance.get_full_name.return_value = "test name"
+        result = render(dummy_project, "**@user1**")
+        expected_result = "<p><strong><a alt=\"test name\" class=\"mention\" href=\"/#/profile/user1\" title=\"test name\">&commat;user1</a></strong></p>"
+        assert result == expected_result
 
 def test_proccessor_invalid_user_mention():
-    DummyModel = DummyClass()
-    DummyModel.objects = DummyClass()
-    DummyModel.objects.filter = lambda username: []
-
-    mentions.User = DummyModel
-
-    result = mentions.MentionsPreprocessor().run(["**@notvaliduser**"])
-    assert result == ['**@notvaliduser**']
-
+    with patch("taiga.mdrender.extensions.mentions.User") as mock:
+        mock.DoesNotExist = User.DoesNotExist
+        mock.objects.get.side_effect = User.DoesNotExist
+        result = render(dummy_project, "**@notvaliduser**")
+        assert result == '<p><strong>@notvaliduser</strong></p>'
 
 def test_proccessor_valid_us_reference():
-    class MockModelWithInstance:
-        class objects:
-            def filter(*args, **kwargs):
-                dummy_instance = DummyClass()
-                dummy_instance.subject = "test-subject"
-                return [dummy_instance]
-    UserStoryBack = references.UserStory
-    references.UserStory = MockModelWithInstance
-
-    result = references.references(dummy_project, "**#us1**")
-    assert result == '**[#us1](/#/project/test/user-story/1 "test-subject")**'
-
-    references.UserStory = UserStoryBack
-
-
-def test_proccessor_invalid_us_reference():
-    class MockModelEmpty:
-        class objects:
-            def filter(*args, **kwargs):
-                return []
-
-    UserStoryBack = references.UserStory
-    references.UserStory = MockModelEmpty
-
-    result = references.references(dummy_project, "**#us1**")
-    assert result == "**#us1**"
-
-    references.UserStory = UserStoryBack
+    with patch("taiga.mdrender.extensions.references.get_instance_by_ref") as mock:
+        instance = mock.return_value
+        instance.content_type.model = "userstory"
+        instance.content_object.subject = "test"
+        result = render(dummy_project, "**#1**")
+        expected_result = '<p><strong><a alt="test" class="reference user-story" href="/#/project/test/user-story/1" title="test">&num;1</a></strong></p>'
+        assert result == expected_result
 
 def test_proccessor_valid_issue_reference():
-    class MockModelWithInstance:
-        class objects:
-            def filter(*args, **kwargs):
-                dummy_instance = DummyClass()
-                dummy_instance.subject = "test-subject"
-                return [dummy_instance]
-    IssueBack = references.Issue
-    references.Issue = MockModelWithInstance
-
-    result = references.references(dummy_project, "**#issue1**")
-    assert result == '**[#issue1](/#/project/test/issues/1 "test-subject")**'
-
-    references.Issue = IssueBack
-
-
-def test_proccessor_invalid_issue_reference():
-    class MockModelEmpty:
-        class objects:
-            def filter(*args, **kwargs):
-                return []
-
-    IssueBack = references.Issue
-    references.Issue = MockModelEmpty
-
-    result = references.references(dummy_project, "**#issue1**")
-    assert result == "**#issue1**"
-
-    references.Issue = IssueBack
+    with patch("taiga.mdrender.extensions.references.get_instance_by_ref") as mock:
+        instance = mock.return_value
+        instance.content_type.model = "issue"
+        instance.content_object.subject = "test"
+        result = render(dummy_project, "**#1**")
+        expected_result = '<p><strong><a alt="test" class="reference issue" href="/#/project/test/issues/1" title="test">&num;1</a></strong></p>'
+        assert result == expected_result
 
 def test_proccessor_valid_task_reference():
-    class MockModelWithInstance:
-        class objects:
-            def filter(*args, **kwargs):
-                dummy_instance = DummyClass()
-                dummy_instance.subject = "test-subject"
-                return [dummy_instance]
-    TaskBack = references.Task
-    references.Task = MockModelWithInstance
+    with patch("taiga.mdrender.extensions.references.get_instance_by_ref") as mock:
+        instance = mock.return_value
+        instance.content_type.model = "task"
+        instance.content_object.subject = "test"
+        result = render(dummy_project, "**#1**")
+        expected_result = '<p><strong><a alt="test" class="reference task" href="/#/project/test/tasks/1" title="test">&num;1</a></strong></p>'
+        assert result == expected_result
 
-    result = references.references(dummy_project, "**#task1**")
-    assert result == '**[#task1](/#/project/test/tasks/1 "test-subject")**'
-
-    references.Task = TaskBack
-
-
-def test_proccessor_invalid_task_reference():
-    class MockModelEmpty:
-        class objects:
-            def filter(*args, **kwargs):
-                return []
-
-    TaskBack = references.Task
-    references.Task = MockModelEmpty
-
-    result = references.references(dummy_project, "**#task1**")
-    assert result == "**#task1**"
-
-    references.Task = TaskBack
-
-def test_proccessor_invalid_type_reference():
-    result = references.references(dummy_project, "**#invalid1**")
-    assert result == "**#invalid1**"
+def test_proccessor_invalid_reference():
+    with patch("taiga.mdrender.extensions.references.get_instance_by_ref") as mock:
+        mock.return_value = None
+        result = render(dummy_project, "**#1**")
+        assert result == "<p><strong>#1</strong></p>"
 
 def test_render_wiki_strong():
     assert render(dummy_project, "**test**") == "<p><strong>test</strong></p>"

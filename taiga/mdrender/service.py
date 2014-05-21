@@ -7,20 +7,19 @@ from django.utils.encoding import force_bytes
 from markdown import markdown
 from fn import F
 
-from .gfm import AutolinkExtension
-from .gfm import AutomailExtension
-from .gfm import HiddenHiliteExtension
-from .gfm import SemiSaneListExtension
-from .gfm import SpacedLinkExtension
-from .gfm import StrikethroughExtension
-from .gfm import WikiLinkExtension
-from .gfm import EmojifyExtension
-from .gfm import MentionsExtension
+from .extensions.autolink import AutolinkExtension
+from .extensions.automail import AutomailExtension
+from .extensions.hidden_hilite import HiddenHiliteExtension
+from .extensions.semi_sane_lists import SemiSaneListExtension
+from .extensions.spaced_link import SpacedLinkExtension
+from .extensions.strikethrough import StrikethroughExtension
+from .extensions.wikilinks import WikiLinkExtension
+from .extensions.emojify import EmojifyExtension
+from .extensions.mentions import MentionsExtension
+from .extensions.references import TaigaReferencesExtension
 
-from .processors.references import references
 
-
-def _make_extensions_list(wikilinks_config=None):
+def _make_extensions_list(wikilinks_config=None, project=None):
     return [AutolinkExtension(),
             AutomailExtension(),
             SemiSaneListExtension(),
@@ -29,6 +28,7 @@ def _make_extensions_list(wikilinks_config=None):
             WikiLinkExtension(wikilinks_config),
             EmojifyExtension(),
             MentionsExtension(),
+            TaigaReferencesExtension(project),
             "extra",
             "codehilite"]
 
@@ -54,22 +54,13 @@ def cache_by_sha(func):
     return _decorator
 
 
-def _render_markdown(project, text):
-    wikilinks_config = {"base_url": "#/project/{}/wiki/".format(project.slug),
-                        "end_url": ""}
-    extensions = _make_extensions_list(wikilinks_config=wikilinks_config)
-    return markdown(text, extensions=extensions)
-
-
-def _preprocessors(project, text):
-    pre = F() >> F(references, project)
-    return pre(text)
-
-
 #@cache_by_sha
 def render(project, text):
-    renderer = F() >> F(_preprocessors, project) >> F(_render_markdown, project)
-    return renderer(text)
+    wikilinks_config = {"base_url": "#/project/{}/wiki/".format(project.slug),
+                        "end_url": ""}
+    extensions = _make_extensions_list(wikilinks_config=wikilinks_config, project=project)
+    return markdown(text, extensions=extensions)
+
 
 class DiffMatchPatch(diff_match_patch.diff_match_patch):
     def diff_pretty_html(self, diffs):
