@@ -31,7 +31,7 @@ class ResolverViewSet(viewsets.ViewSet):
         if data["us"]:
             result["us"] = get_object_or_404(project.user_stories.all(), ref=data["us"]).pk
         if data["task"]:
-            result["us"] = get_object_or_404(project.tasks.all(), ref=data["task"]).pk
+            result["task"] = get_object_or_404(project.tasks.all(), ref=data["task"]).pk
         if data["issue"]:
             result["issue"] = get_object_or_404(project.issues.all(), ref=data["issue"]).pk
         if data["milestone"]:
