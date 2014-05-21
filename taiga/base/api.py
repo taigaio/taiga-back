@@ -56,20 +56,9 @@ class ListModelMixin(mixins.ListModelMixin):
 
 
 class DestroyModelMixin(mixins.DestroyModelMixin):
-    """
-    Self version of DestroyModelMixin with
-    pre_delete hook method.
-    """
-
-    def pre_delete(self, obj):
-        pass
-
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
-        obj = self.get_object()
-        self.pre_delete(obj)
-        obj.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return super().destroy(request, *args, **kwargs)
 
 
 # Other mixins (what they are doing here?)
