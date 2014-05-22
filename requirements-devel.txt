@@ -7,4 +7,4 @@ pytest-django==2.6.1
 pytest-pythonpath==0.3
 
 coverage==3.7.1
-coveralls-0.4.2
+coveralls==0.4.2
