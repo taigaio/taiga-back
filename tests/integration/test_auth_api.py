@@ -13,7 +13,6 @@ def setup_module(module):
                                 mock.Mock(return_value=factories.DomainFactory()))
     module.patcher.start()
 
-
 def teardown_module(module):
     module.patcher.stop()
 
