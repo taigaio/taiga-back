@@ -63,4 +63,7 @@ class MentionsPattern(Pattern):
         a.set('alt', user.get_full_name())
         a.set('title', user.get_full_name())
         a.set('class', "mention")
+
+        self.md.extracted_data['mentions'].append(user)
+
         return a

@@ -4,8 +4,7 @@ import functools
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
 
-from markdown import markdown
-from fn import F
+from markdown import Markdown
 
 from .extensions.autolink import AutolinkExtension
 from .extensions.automail import AutomailExtension
@@ -53,31 +52,46 @@ def cache_by_sha(func):
     return _decorator
 
 
-#@cache_by_sha
-def render(project, text):
+def _get_markdown(project):
     wikilinks_config = {"base_url": "#/project/{}/wiki/".format(project.slug),
                         "end_url": ""}
-    extensions = _make_extensions_list(wikilinks_config=wikilinks_config, project=project)
-    return markdown(text, extensions=extensions)
+    extensions = _make_extensions_list(wikilinks_config=wikilinks_config,
+                                       project=project)
+    md = Markdown(extensions=extensions)
+    md.extracted_data = {"mentions": [], "references": []}
+    return md
+
+
+@cache_by_sha
+def render(project, text):
+    md = _get_markdown(project)
+    return md.convert(text)
+
+
+def render_and_extract(project, text):
+    md = _get_markdown(project)
+    result = md.convert(text)
+    return (result, md.extracted_data)
 
 
 class DiffMatchPatch(diff_match_patch.diff_match_patch):
     def diff_pretty_html(self, diffs):
         html = []
         for (op, data) in diffs:
-          text = (data.replace("&", "&amp;").replace("<", "&lt;")
-                     .replace(">", "&gt;").replace("\n", "<br />"))
-          if op == self.DIFF_INSERT:
-            html.append("<ins style=\"background:#e6ffe6;\">%s</ins>" % text)
-          elif op == self.DIFF_DELETE:
-            html.append("<del style=\"background:#ffe6e6;\">%s</del>" % text)
-          elif op == self.DIFF_EQUAL:
-            html.append("<span>%s</span>" % text)
+            text = (data.replace("&", "&amp;").replace("<", "&lt;")
+                    .replace(">", "&gt;").replace("\n", "<br />"))
+            if op == self.DIFF_INSERT:
+                html.append("<ins style=\"background:#e6ffe6;\">%s</ins>" % text)
+            elif op == self.DIFF_DELETE:
+                html.append("<del style=\"background:#ffe6e6;\">%s</del>" % text)
+            elif op == self.DIFF_EQUAL:
+                html.append("<span>%s</span>" % text)
         return "".join(html)
+
 
 def get_diff_of_htmls(html1, html2):
     diffutil = DiffMatchPatch()
     diff = diffutil.diff_main(html1, html2)
     return diffutil.diff_pretty_html(diff)
 
-__all__ = ['render', 'get_diff_of_htmls']
+__all__ = ["render", "get_diff_of_htmls", "render_and_extract"]

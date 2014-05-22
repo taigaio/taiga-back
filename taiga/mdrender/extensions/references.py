@@ -87,4 +87,7 @@ class TaigaReferencesPattern(Pattern):
         a.set('alt', subject)
         a.set('title', subject)
         a.set('class', html_classes)
+
+        self.md.extracted_data['references'].append(instance.content_object)
+
         return a

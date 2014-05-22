@@ -5,7 +5,7 @@ import pytest
 import taiga.base
 from taiga.mdrender.extensions import mentions
 from taiga.mdrender.extensions import emojify
-from taiga.mdrender.service import render, cache_by_sha, get_diff_of_htmls
+from taiga.mdrender.service import render, cache_by_sha, get_diff_of_htmls, render_and_extract
 
 from taiga.projects.references import services
 
@@ -162,3 +162,18 @@ def test_get_diff_of_htmls_deletions():
 def test_get_diff_of_htmls_modifications():
     result = get_diff_of_htmls("<p>test1</p>", "<p>1test</p>")
     assert result == "<span>&lt;p&gt;</span><ins style=\"background:#e6ffe6;\">1</ins><span>test</span><del style=\"background:#ffe6e6;\">1</del><span>&lt;/p&gt;</span>"
+
+def test_render_and_extract_references():
+    with patch("taiga.mdrender.extensions.references.get_instance_by_ref") as mock:
+        instance = mock.return_value
+        instance.content_type.model = "issue"
+        instance.content_object.subject = "test"
+        (_, extracted) = render_and_extract(dummy_project, "**#1**")
+        assert extracted['references'] == [instance.content_object]
+
+def test_render_and_extract_mentions():
+    with patch("taiga.mdrender.extensions.mentions.User") as mock:
+        instance = mock.objects.get.return_value
+        instance.get_full_name.return_value = "test name"
+        (_, extracted) = render_and_extract(dummy_project, "**@user1**")
+        assert extracted['mentions'] == [instance]
