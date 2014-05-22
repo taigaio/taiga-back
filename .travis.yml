@@ -8,10 +8,9 @@ addons:
 before_script:
   - psql -c 'create database taiga;' -U postgres
 install:
-  - pip install -r requirements.txt --use-mirrors
-  - pip install coveralls --use-mirrors
+  - pip install -r requirements-devel.txt --use-mirrors
 script:
-    - coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' manage.py test --settings=settings.travis taiga
+    - coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' -m py.test
 notifications:
   email:
     recipients:

@@ -8,3 +8,4 @@ media
 *.pyc
 *.mo
 .venv
+.coverage
