@@ -92,7 +92,6 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectDetailSerializer(ProjectSerializer):
-    #list_of_milestones = serializers.SerializerMethodField("get_list_of_milestones")
     roles = serializers.SerializerMethodField("get_list_of_roles")
     memberships = serializers.SerializerMethodField("get_membership")
     active_memberships = serializers.SerializerMethodField("get_active_membership")
@@ -130,24 +129,6 @@ class ProjectDetailSerializer(ProjectSerializer):
                                          .distinct("role__order", "role__id")]
 
         return roles_list
-
-    def get_list_of_milestones(self, obj):
-        milestones_list = []
-
-        if obj and obj.milestones:
-            milestones_list = [{
-                "id": milestone.id,
-                "name": milestone.name,
-                "finish_date": milestone.estimated_finish,
-                "total_points": milestone.total_points,
-                "closed_points": milestone.closed_points,
-                "client_increment_points": milestone.client_increment_points,
-                "team_increment_points": milestone.team_increment_points,
-                "closed": milestone.closed
-            } for milestone in obj.milestones.prefetch_related("user_stories", "user_stories__role_points", "user_stories__role_points__points").order_by("estimated_start")]
-            # TODO: Refactor this (too much prefetch related)
-
-        return milestones_list
 
 
 class RoleSerializer(serializers.ModelSerializer):
