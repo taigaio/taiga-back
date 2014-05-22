@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 # Tested on Markdown 2.3.1
 #
@@ -23,10 +23,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-
-import re
-import os
-
 from markdown.extensions import Extension
 from markdown.inlinepatterns import Pattern
 from markdown.util import etree
@@ -43,9 +39,8 @@ class TaigaReferencesExtension(Extension):
         TAIGA_REFERENCE_RE = r'(?<=^|(?<=[^a-zA-Z0-9-\[]))#(\d+)'
         referencesPattern = TaigaReferencesPattern(TAIGA_REFERENCE_RE, self.project)
         referencesPattern.md = md
-        md.inlinePatterns.add('taiga-references',
-                             referencesPattern,
-                             '_begin')
+        md.inlinePatterns.add('taiga-references', referencesPattern, '_begin')
+
 
 class TaigaReferencesPattern(Pattern):
     def __init__(self, pattern, project):
@@ -72,7 +67,6 @@ class TaigaReferencesPattern(Pattern):
             html_classes = "reference issue"
         else:
             return "#{}".format(obj_ref)
-
 
         url = "/#/project/{}/{}/{}".format(
             self.project.slug,

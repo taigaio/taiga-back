@@ -20,6 +20,7 @@ SPACED_IMAGE_LINK_RE = markdown.inlinepatterns.IMAGE_LINK_RE.replace(
 SPACED_IMAGE_REFERENCE_RE = markdown.inlinepatterns.IMAGE_REFERENCE_RE.replace(
     r'\!' + BRK, r'\!' + BRK + SPACE)
 
+
 class SpacedLinkExtension(markdown.Extension):
     """An extension that supports links and images with additional whitespace.
 

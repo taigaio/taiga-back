@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 # Tested on Markdown 2.3.1
 #
@@ -26,7 +26,6 @@
 
 
 import re
-import os
 
 from markdown.extensions import Extension
 from markdown.preprocessors import Preprocessor
@@ -167,7 +166,7 @@ class EmojifyPreprocessor(Preprocessor):
         def emojify(match):
             emoji = match.group(1)
 
-            if not emoji in emojis_set:
+            if emoji not in emojis_set:
                 return match.group(0)
 
             url = emojis_path + emoji + u'.png'

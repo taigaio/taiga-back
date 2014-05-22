@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 # Tested on Markdown 2.3.1
 #
@@ -23,10 +23,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-
-import re
-import os
-
 from markdown.extensions import Extension
 from markdown.inlinepatterns import Pattern
 from markdown.util import etree
@@ -39,9 +35,7 @@ class MentionsExtension(Extension):
         MENTION_RE = r'(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9-]+)'
         mentionsPattern = MentionsPattern(MENTION_RE)
         mentionsPattern.md = md
-        md.inlinePatterns.add('mentions',
-                             mentionsPattern,
-                             '_begin')
+        md.inlinePatterns.add('mentions', mentionsPattern, '_begin')
 
 
 class MentionsPattern(Pattern):

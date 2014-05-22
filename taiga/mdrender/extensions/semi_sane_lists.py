@@ -2,14 +2,16 @@
 # for details. All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
 
-import re
 import markdown
+
 
 class SemiSaneOListProcessor(markdown.blockprocessors.OListProcessor):
     SIBLING_TAGS = ['ol']
 
+
 class SemiSaneUListProcessor(markdown.blockprocessors.UListProcessor):
     SIBLING_TAGS = ['ul']
+
 
 class SemiSaneListExtension(markdown.Extension):
     """An extension that causes lists to be treated the same way GitHub does.
