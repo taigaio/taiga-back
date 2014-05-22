@@ -54,7 +54,7 @@ def test_unique_reference_per_project(seq, refmodels):
     project = factories.ProjectFactory.create()
     seqname = refmodels.make_sequence_name(project)
 
-    assert seqname == "references_project3"
+    assert seqname == "references_project1"
     assert seq.exists(seqname)
 
     assert refmodels.make_unique_reference_id(project, create=True) == 1
