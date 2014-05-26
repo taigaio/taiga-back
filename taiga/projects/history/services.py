@@ -68,17 +68,16 @@ def get_typename_for_model_class(model:object) -> str:
     return "{0}.{1}".format(ct.app_label, ct.model)
 
 
-def register_values_implementation(fn=None, *, typename:str=None):
+def register_values_implementation(typename:str, fn=None):
     """
     Register values implementation for specified typename.
     This function can be used as decorator.
     """
 
-    if fn is None:
-        return partial(register_values_implementation, typename=typename)
+    assert isinstance(typename, str), "typename must be specied"
 
-    if typename is None:
-        raise RuntimeError("typename must be specied")
+    if fn is None:
+        return partial(register_values_implementation, typename)
 
     @wraps(fn)
     def _wrapper(*args, **kwargs):
@@ -88,17 +87,16 @@ def register_values_implementation(fn=None, *, typename:str=None):
     return _wrapper
 
 
-def register_freeze_implementation(fn=None, *, typename:str=None):
+def register_freeze_implementation(typename:str, fn=None):
     """
     Register freeze implementation for specified typename.
     This function can be used as decorator.
     """
 
-    if fn is None:
-        return partial(register_freeze_implementation, typename=typename)
+    assert isinstance(typename, str), "typename must be specied"
 
-    if typename is None:
-        raise RuntimeError("typename must be specied")
+    if fn is None:
+        return partial(register_freeze_implementation, typename)
 
     @wraps(fn)
     def _wrapper(*args, **kwargs):
@@ -282,11 +280,11 @@ from .freeze_impl import issue_freezer
 from .freeze_impl import task_freezer
 from .freeze_impl import wikipage_freezer
 
-register_freeze_implementation(milestone_freezer, typename="milestones.milestone")
-register_freeze_implementation(userstory_freezer, typename="userstories.userstory")
-register_freeze_implementation(issue_freezer, typename="issues.issue")
-register_freeze_implementation(task_freezer, typename="tasks.task")
-register_freeze_implementation(wikipage_freezer, typename="wiki.wikipage")
+register_freeze_implementation("milestones.milestone", milestone_freezer,)
+register_freeze_implementation("userstories.userstory", userstory_freezer)
+register_freeze_implementation("issues.issue", issue_freezer)
+register_freeze_implementation("tasks.task", task_freezer)
+register_freeze_implementation("wiki.wikipage", wikipage_freezer)
 
 from .freeze_impl import milestone_values
 from .freeze_impl import userstory_values
@@ -294,8 +292,8 @@ from .freeze_impl import issue_values
 from .freeze_impl import task_values
 from .freeze_impl import wikipage_values
 
-register_values_implementation(milestone_values, typename="milestones.milestone")
-register_values_implementation(userstory_values, typename="userstories.userstory")
-register_values_implementation(issue_values, typename="issues.issue")
-register_values_implementation(task_values, typename="tasks.task")
-register_values_implementation(wikipage_values, typename="wiki.wikipage")
+register_values_implementation("milestones.milestone", milestone_values)
+register_values_implementation("userstories.userstory", userstory_values)
+register_values_implementation("issues.issue", issue_values)
+register_values_implementation("tasks.task", task_values)
+register_values_implementation("wiki.wikipage", wikipage_values)
