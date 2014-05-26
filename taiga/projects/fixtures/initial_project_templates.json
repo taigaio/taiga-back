@@ -23,8 +23,7 @@
         "us_statuses": "[{\"order\": 1, \"name\": \"Open\", \"color\": \"#669933\", \"is_closed\": false, \"wip_limit\": null}, {\"order\": 2, \"name\": \"Closed\", \"color\": \"#999999\", \"is_closed\": true, \"wip_limit\": null}]",
         "videoconferences_salt": null,
         "priorities": "[{\"order\": 1, \"name\": \"Low\", \"color\": \"#666666\"}, {\"order\": 3, \"name\": \"Normal\", \"color\": \"#669933\"}, {\"order\": 5, \"name\": \"High\", \"color\": \"#CC0000\"}]",
-        "severities": "[{\"order\": 1, \"name\": \"Wishlist\", \"color\": \"#666666\"}, {\"order\": 2, \"name\": \"Minor\", \"color\": \"#669933\"}, {\"order\": 3, \"name\": \"Normal\", \"color\": \"#0000FF\"}, {\"order\": 4, \"name\": \"Important\", \"color\": \"#FFA500\"}, {\"order\": 5, \"name\": \"Critical\", \"color\": \"#CC0000\"}]",
-        "domain": null
+        "severities": "[{\"order\": 1, \"name\": \"Wishlist\", \"color\": \"#666666\"}, {\"order\": 2, \"name\": \"Minor\", \"color\": \"#669933\"}, {\"order\": 3, \"name\": \"Normal\", \"color\": \"#0000FF\"}, {\"order\": 4, \"name\": \"Important\", \"color\": \"#FFA500\"}, {\"order\": 5, \"name\": \"Critical\", \"color\": \"#CC0000\"}]"
     }
 },
 {
@@ -51,8 +50,7 @@
         "us_statuses": "[{\"order\": 1, \"name\": \"To do\", \"color\": \"#999999\", \"is_closed\": false, \"wip_limit\": null}, {\"order\": 2, \"name\": \"Doing\", \"color\": \"#ff9900\", \"is_closed\": false, \"wip_limit\": null}, {\"order\": 3, \"name\": \"Done\", \"color\": \"#ffcc00\", \"is_closed\": true, \"wip_limit\": null}]",
         "videoconferences_salt": null,
         "priorities": "[{\"order\": 1, \"name\": \"Low\", \"color\": \"#666666\"}, {\"order\": 3, \"name\": \"Normal\", \"color\": \"#669933\"}, {\"order\": 5, \"name\": \"High\", \"color\": \"#CC0000\"}]",
-        "severities": "[{\"order\": 1, \"name\": \"Wishlist\", \"color\": \"#666666\"}, {\"order\": 2, \"name\": \"Minor\", \"color\": \"#669933\"}, {\"order\": 3, \"name\": \"Normal\", \"color\": \"#0000FF\"}, {\"order\": 4, \"name\": \"Important\", \"color\": \"#FFA500\"}, {\"order\": 5, \"name\": \"Critical\", \"color\": \"#CC0000\"}]",
-        "domain": null
+        "severities": "[{\"order\": 1, \"name\": \"Wishlist\", \"color\": \"#666666\"}, {\"order\": 2, \"name\": \"Minor\", \"color\": \"#669933\"}, {\"order\": 3, \"name\": \"Normal\", \"color\": \"#0000FF\"}, {\"order\": 4, \"name\": \"Important\", \"color\": \"#FFA500\"}, {\"order\": 5, \"name\": \"Critical\", \"color\": \"#CC0000\"}]"
     }
 }
 ]

@@ -34,8 +34,6 @@ from djmail.template_mail import MagicMailBuilder
 from taiga.base import exceptions as exc
 from taiga.users.serializers import UserSerializer
 from taiga.users.services import get_and_validate_user
-from taiga.domains.services import (create_domain_member,
-                                    is_user_exists_on_domain)
 
 from .backends import get_token_for_user
 
@@ -92,8 +90,7 @@ def get_membership_by_token(token:str):
 
 
 @tx.atomic
-def public_register(domain, *, username:str, password:str,
-                    email:str, first_name:str, last_name:str):
+def public_register(username:str, password:str, email:str, first_name:str, last_name:str):
     """
     Given a parsed parameters, try register a new user
     knowing that it follows a public register flow.
@@ -115,15 +112,12 @@ def public_register(domain, *, username:str, password:str,
     user.set_password(password)
     user.save()
 
-    if not is_user_exists_on_domain(domain, user):
-        create_domain_member(domain, user)
-
     # send_public_register_email(user)
     return user
 
 
 @tx.atomic
-def private_register_for_existing_user(domain, *, token:str, username:str, password:str):
+def private_register_for_existing_user(token:str, username:str, password:str):
     """
     Register works not only for register users, also serves for accept
     inviatations for projects as existing user.
@@ -135,9 +129,6 @@ def private_register_for_existing_user(domain, *, token:str, username:str, passw
     user = get_and_validate_user(username=username, password=password)
     membership = get_membership_by_token(token)
 
-    if not is_user_exists_on_domain(domain, user):
-        create_domain_member(domain, user)
-
     membership.user = user
     membership.save(update_fields=["user"])
 
@@ -146,7 +137,7 @@ def private_register_for_existing_user(domain, *, token:str, username:str, passw
 
 
 @tx.atomic
-def private_register_for_new_user(domain, *, token:str, username:str, email:str,
+def private_register_for_new_user(token:str, username:str, email:str,
                                   first_name:str, last_name:str, password:str):
     """
     Given a inviation token, try register new user matching
@@ -169,9 +160,6 @@ def private_register_for_new_user(domain, *, token:str, username:str, email:str,
     except IntegrityError:
         raise exc.IntegrityError(_("Error on creating new user."))
 
-    if not is_user_exists_on_domain(domain, user):
-        create_domain_member(domain, user)
-
     membership = get_membership_by_token(token)
     membership.user = user
     membership.save(update_fields=["user"])
@@ -179,7 +167,7 @@ def private_register_for_new_user(domain, *, token:str, username:str, email:str,
     return user
 
 
-def make_auth_response_data(domain, user) -> dict:
+def make_auth_response_data(user) -> dict:
     """
     Given a domain and user, creates data structure
     using python dict containing a representation
@@ -187,9 +175,5 @@ def make_auth_response_data(domain, user) -> dict:
     """
     serializer = UserSerializer(user)
     data = dict(serializer.data)
-
-    data['is_site_owner'] = domain.user_is_owner(user)
-    data['is_site_staff'] = domain.user_is_staff(user)
     data["auth_token"] = get_token_for_user(user)
-
     return data

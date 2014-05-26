@@ -15,7 +15,6 @@
 
 
 from taiga.base.permissions import BasePermission
-from taiga.domains import get_active_domain
 
 
 class ProjectPermission(BasePermission):
@@ -27,28 +26,16 @@ class ProjectPermission(BasePermission):
     safe_methods = ["HEAD", "OPTIONS"]
     path_to_project =  []
 
+
 class ProjectAdminPermission(BasePermission):
     def has_permission(self, request, view):
         if request.method in self.safe_methods:
             return True
-
-        domain = get_active_domain()
-        if request.method in ["POST", "PUT", "GET", "PATCH"]:
-            return domain.user_is_staff(request.user) or domain.user_is_owner(request.user)
-        elif request.method == "DELETE":
-            return domain.user_is_owner(request.user)
         return super().has_permission(request, view)
 
     def has_object_permission(self, request, view, obj):
         if request.method in self.safe_methods:
             return True
-
-        domain = get_active_domain()
-        if request.method in ["POST", "PUT", "GET", "PATCH"]:
-            return domain.user_is_staff(request.user) or domain.user_is_owner(request.user)
-        elif request.method == "DELETE":
-            return domain.user_is_owner(request.user) or (
-                domain.user_is_staff(request.user) and obj.user == request.user)
         return super().has_object_permission(request, view, obj)
 
 
@@ -151,16 +138,5 @@ class RolesPermission(BasePermission):
 # Project Templates
 
 class ProjectTemplatePermission(BasePermission):
-    def has_permission(self, request, view):
-        domain = get_active_domain()
-        return domain.user_is_owner(request.user)
-
-    def has_object_permission(self, request, view, obj):
-        current_domain = get_active_domain()
-        if obj.domain:
-            return obj.domain == current_domain and current_domain.user_is_owner(request.user)
-        else:
-            if request.method == "GET":
-                return current_domain.user_is_owner(request.user)
-            else:
-                False
+    # TODO: should be improved in permissions refactor
+    pass

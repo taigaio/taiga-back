@@ -42,13 +42,7 @@ router.register(r"resolver", ResolverViewSet, base_name="resolver")
 router.register(r"search", SearchViewSet, base_name="search")
 
 
-# Domains
-from taiga.domains.api import DomainViewSet
-from taiga.domains.api import DomainMembersViewSet
 from taiga.projects.api import ProjectAdminViewSet
-
-router.register(r"sites", DomainViewSet, base_name="sites")
-router.register(r"site-members", DomainMembersViewSet, base_name="site-members")
 router.register(r"site-projects", ProjectAdminViewSet, base_name="site-projects")
 
 

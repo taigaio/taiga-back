@@ -34,7 +34,7 @@ class MembershipInline(admin.TabularInline):
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ["name", "owner", "created_date", "total_milestones",
-                    "total_story_points", "domain"]
+                    "total_story_points"]
     list_display_links = list_display
     inlines = [RoleInline, MembershipInline, MilestoneInline]
 

@@ -18,6 +18,7 @@ from functools import partial
 from enum import Enum
 
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -28,7 +29,6 @@ from rest_framework import serializers
 from taiga.base.decorators import list_route
 from taiga.base import exceptions as exc
 from taiga.users.services import get_and_validate_user
-from taiga.domains.services import is_public_register_enabled_for_domain
 
 from .serializers import PublicRegisterSerializer
 from .serializers import PrivateRegisterForExistingUserSerializer
@@ -96,16 +96,16 @@ class AuthViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
 
     def _public_register(self, request):
-        if not is_public_register_enabled_for_domain(request.domain):
-            raise exc.BadRequest(_("Public register is disabled for this domain."))
+        if not settings.PUBLIC_REGISTER_ENABLED:
+            raise exc.BadRequest(_("Public register is disabled."))
 
         try:
             data = parse_public_register_data(request.DATA)
-            user = public_register(request.domain, **data)
+            user = public_register(**data)
         except exc.IntegrityError as e:
             raise exc.BadRequest(e.detail)
 
-        data = make_auth_response_data(request.domain, user)
+        data = make_auth_response_data(user)
         return Response(data, status=status.HTTP_201_CREATED)
 
     def _private_register(self, request):
@@ -113,12 +113,12 @@ class AuthViewSet(viewsets.ViewSet):
 
         if register_type is RegisterTypeEnum.existing_user:
             data = parse_private_register_for_existing_user_data(request.DATA)
-            user = private_register_for_existing_user(request.domain, **data)
+            user = private_register_for_existing_user(**data)
         else:
             data = parse_private_register_for_new_user_data(request.DATA)
-            user = private_register_for_new_user(request.domain, **data)
+            user = private_register_for_new_user(**data)
 
-        data = make_auth_response_data(request.domain, user)
+        data = make_auth_response_data(user)
         return Response(data, status=status.HTTP_201_CREATED)
 
     @list_route(methods=["POST"], permission_classes=[AllowAny])
@@ -136,5 +136,5 @@ class AuthViewSet(viewsets.ViewSet):
         password = request.DATA.get('password', None)
 
         user = get_and_validate_user(username=username, password=password)
-        data = make_auth_response_data(request.domain, user)
+        data = make_auth_response_data(user)
         return Response(data, status=status.HTTP_200_OK)

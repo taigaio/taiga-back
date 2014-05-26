@@ -13,11 +13,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
+
 from django_jinja import library
+from django_sites import get_by_id as get_site_by_id
 
-from taiga import domains
 
-URLS = {
+urls = {
     "home": "/",
     "backlog": "/#/project/{0}/backlog/",
     "taskboard": "/#/project/{0}/taskboard/{1}",
@@ -31,14 +32,11 @@ URLS = {
 }
 
 
-lib = library.Library()
-
-
-@lib.global_function(name="resolve_front_url")
+@library.global_function(name="resolve_front_url")
 def resolve(type, *args):
-    domain = domains.get_active_domain()
+    site = get_site_by_id("front")
     url_tmpl = "{scheme}//{domain}{url}"
 
-    scheme = domain.scheme and "{0}:".format(domain.scheme) or ""
-    url = URLS[type].format(*args)
-    return url_tmpl.format(scheme=scheme, domain=domain.domain, url=url)
+    scheme = site.scheme and "{0}:".format(site.scheme) or ""
+    url = urlsp[type].format(*args)
+    return url_tmpl.format(scheme=scheme, domain=site.domain, url=url)

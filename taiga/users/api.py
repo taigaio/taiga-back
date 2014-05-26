@@ -63,14 +63,12 @@ class PermissionsViewSet(ModelListViewSet):
         "add_permission", "change_permission", "delete_permission",
         "add_contenttype", "change_contenttype", "delete_contenttype",
         "add_message", "change_message", "delete_message",
-        "add_domain", "change_domain", "delete_domain",
         "add_session", "change_session", "delete_session",
         "add_migrationhistory", "change_migrationhistory", "delete_migrationhistory",
         "add_version", "change_version", "delete_version",
         "add_revision", "change_revision", "delete_revision",
         "add_user", "delete_user",
         "add_project",
-        "add_domainmember", "change_domainmember", "delete_domainmember",
     ]
 
     def get_queryset(self):
