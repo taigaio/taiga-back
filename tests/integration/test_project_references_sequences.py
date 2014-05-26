@@ -11,10 +11,12 @@ def seq():
     from taiga.projects.references import sequences as seq
     return seq
 
+
 @pytest.fixture
 def refmodels():
     from taiga.projects.references import models
     return models
+
 
 @pytest.mark.django_db
 def test_sequences(seq):
@@ -47,14 +49,10 @@ def test_sequences(seq):
 
 @pytest.mark.django_db
 def test_unique_reference_per_project(seq, refmodels):
-    # management.call_command("loaddata", "initial_project_templates")
-    domain = factories.DomainFactory(public_register=True)
-    settings.DOMAIN_ID = domain.id
-
     project = factories.ProjectFactory.create()
     seqname = refmodels.make_sequence_name(project)
 
-    assert seqname == "references_project1"
+    assert seqname == "references_project{0}".format(project.id)
     assert seq.exists(seqname)
 
     assert refmodels.make_unique_reference_id(project, create=True) == 1

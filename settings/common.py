@@ -73,11 +73,11 @@ LOGIN_URL="/auth/login/"
 USE_TZ = True
 
 SITES = {
-    1: {"domain": "localhost:8000", "scheme": "http"},
+    "api": {"domain": "localhost:8000", "scheme": "http", "name": "api"},
+    "front": {"domain": "localhost:9001", "scheme": "http", "name": "front"},
 }
 
-DOMAIN_ID = 1
-SITE_ID = 1
+SITE_ID = "api"
 
 # Session configuration (only used for admin)
 SESSION_ENGINE="django.contrib.sessions.backends.db"
@@ -133,7 +133,6 @@ TEMPLATE_LOADERS = [
 
 MIDDLEWARE_CLASSES = [
     "taiga.base.middleware.cors.CoorsMiddleware",
-    "taiga.domains.middleware.DomainsMiddleware",
     "taiga.events.middleware.SessionIDMiddleware",
 
     # Common middlewares
@@ -174,7 +173,6 @@ INSTALLED_APPS = [
     "taiga.base",
     "taiga.base.searches",
     "taiga.events",
-    "taiga.domains",
     "taiga.front",
     "taiga.users",
     "taiga.userstorage",
@@ -294,6 +292,7 @@ REST_FRAMEWORK = {
 }
 
 DEFAULT_PROJECT_TEMPLATE = "scrum"
+PUBLIC_REGISTER_ENABLED = False
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 

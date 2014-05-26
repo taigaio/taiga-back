@@ -28,7 +28,6 @@ from rest_framework import status
 
 from djmail.template_mail import MagicMailBuilder
 
-from taiga.domains import get_active_domain
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route, detail_route
@@ -50,8 +49,7 @@ class ProjectAdminViewSet(ModelCrudViewSet):
     permission_classes = (IsAuthenticated, permissions.ProjectAdminPermission)
 
     def get_queryset(self):
-        domain = get_active_domain()
-        return domain.projects.all()
+        return models.Project.objects.all()
 
     def pre_save(self, obj):
         if not obj.id:
@@ -60,13 +58,6 @@ class ProjectAdminViewSet(ModelCrudViewSet):
         # TODO REFACTOR THIS
         if not obj.id:
             obj.template = self.request.QUERY_PARAMS.get('template', None)
-
-        # FIXME
-
-        # Assign domain only if it current
-        # value is None
-        if not obj.domain:
-            obj.domain = self.request.domain
 
         super().pre_save(obj)
 
@@ -100,19 +91,12 @@ class ProjectViewSet(ModelCrudViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.filter(Q(owner=self.request.user) |
-                       Q(members=self.request.user)).filter(domain=get_active_domain())
+                       Q(members=self.request.user))
         return qs.distinct()
 
     def pre_save(self, obj):
         if not obj.id:
             obj.owner = self.request.user
-
-        # FIXME
-
-        # Assign domain only if it current
-        # value is None
-        if not obj.domain:
-            obj.domain = self.request.domain
 
         super().pre_save(obj)
 
@@ -310,10 +294,8 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
 
         template_slug = slugify_uniquely(template_name, models.ProjectTemplate)
 
-        domain = get_active_domain()
-
         try:
-            project = models.Project.objects.get(domain=domain, pk=project_id)
+            project = models.Project.objects.get(pk=project_id)
         except models.Project.DoesNotExist:
             raise ParseError("Not valid project_id")
 
@@ -321,12 +303,11 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
             name=template_name,
             slug=template_slug,
             description=template_description,
-            domain=domain,
         )
+
         template.load_data_from_project(project)
         template.save()
         return Response(self.serializer_class(template).data, status=201)
 
     def get_queryset(self):
-        domain = get_active_domain()
-        return models.ProjectTemplate.objects.filter(Q(domain=domain) | Q(domain__isnull=True))
+        return models.ProjectTemplate.objects.all()

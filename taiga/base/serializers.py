@@ -18,8 +18,6 @@ from django.forms import widgets
 
 from rest_framework import serializers
 
-from taiga.domains.base import get_active_domain
-from taiga.domains.models import Domain
 from .neighbors import get_neighbors
 
 
@@ -45,20 +43,6 @@ class JsonField(serializers.WritableField):
 
     def from_native(self, data):
         return data
-
-
-class AutoDomainField(serializers.WritableField):
-    """
-    Automatically set domain field serializer.
-    """
-    def to_native(self, obj):
-        if obj:
-            return obj.id
-        return obj
-
-    def from_native(self, data):
-        domain = get_active_domain()
-        return domain
 
 
 class NeighborsSerializerMixin:

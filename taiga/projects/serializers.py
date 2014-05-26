@@ -18,7 +18,7 @@ from os import path
 from rest_framework import serializers
 from django.utils.translation import ugettext_lazy as _
 
-from taiga.base.serializers import PickleField, JsonField, AutoDomainField
+from taiga.base.serializers import PickleField, JsonField
 from taiga.users.models import Role
 
 from . import models
@@ -87,7 +87,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Project
-        read_only_fields = ("created_date", "modified_date", "owner", "domain")
+        read_only_fields = ("created_date", "modified_date", "owner")
         exclude = ("last_us_ref", "last_task_ref", "last_issue_ref")
 
 
@@ -138,8 +138,6 @@ class RoleSerializer(serializers.ModelSerializer):
 
 
 class ProjectTemplateSerializer(serializers.ModelSerializer):
-    domain = AutoDomainField(required=False, label=_("Domain"))
-
     default_options = JsonField(required=False, label=_("Default options"))
     us_statuses = JsonField(required=False, label=_("User story's statuses"))
     points = JsonField(required=False, label=_("Points"))

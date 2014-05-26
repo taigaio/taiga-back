@@ -8,211 +8,167 @@ from .. import factories
 pytestmark = pytest.mark.django_db
 
 
-class TestListStorageEntries(object):
-    def _load_initial_data(self):
-        self.user1 = factories.UserFactory()
-        self.user2 = factories.UserFactory()
-        self.storage11 = factories.StorageEntryFactory(owner=self.user1)
-        self.storage12 = factories.StorageEntryFactory(owner=self.user1)
-        self.storage13 = factories.StorageEntryFactory(owner=self.user1)
-        self.storage21 = factories.StorageEntryFactory(owner=self.user2)
+def test_list_userstories(client):
+    user1 = factories.UserFactory()
+    user2 = factories.UserFactory()
+    storage11 = factories.StorageEntryFactory(owner=user1)
+    storage12 = factories.StorageEntryFactory(owner=user1)
+    storage13 = factories.StorageEntryFactory(owner=user1)
+    storage21 = factories.StorageEntryFactory(owner=user2)
 
-    def test_list_by_anonymous_user(self, client):
-        self._load_initial_data()
-        response = client.get(reverse("user-storage-list"))
-        assert response.status_code == 401
+    # List by anonumous user
+    response = client.get(reverse("user-storage-list"))
+    assert response.status_code == 401
 
-    def test_list_only_user1_entriees(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user1.username, password=self.user1.username)
-        response = client.get(reverse("user-storage-list"))
-        assert response.status_code == 200
-        entries = response.data
-        assert len(entries) == 3
-        response = client.logout()
+    # List own entries
+    client.login(username=user1.username, password=user1.username)
+    response = client.get(reverse("user-storage-list"))
+    assert response.status_code == 200
+    assert len(response.data) == 3
 
-    def test_list_only_user2_entriees(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user2.username, password=self.user2.username)
-        response = client.get(reverse("user-storage-list"))
-        assert response.status_code == 200
-        entries = response.data
-        assert len(entries) == 1
-        response = client.logout()
+    client.login(username=user2.username, password=user2.username)
+    response = client.get(reverse("user-storage-list"))
+    assert response.status_code == 200
+    assert len(response.data) == 1
 
-    def test_list_only_user1_entriees_filter_by_keys(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user1.username, password=self.user1.username)
-        keys = "{},{}".format(self.storage11.key, self.storage13.key)
-        response = client.get("{}?keys={}".format(reverse("user-storage-list"), keys))
-        assert response.status_code == 200
-        entries = response.data
-        assert len(entries) == 2
-        response = client.logout()
+    # Filter results by key
+    client.login(username=user1.username, password=user1.username)
+    keys = ",".join([storage11.key, storage13.key])
+    url = "{}?keys={}".format(reverse("user-storage-list"), keys)
+
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data) == 2
+
+    client.logout()
 
 
-class TestViewStorageEntries(object):
-    def _load_initial_data(self):
-        self.user1 = factories.UserFactory()
-        self.user2 = factories.UserFactory()
-        self.storage11 = factories.StorageEntryFactory(owner=self.user1)
+def test_view_storage_entries(client):
+    user1 = factories.UserFactory()
+    user2 = factories.UserFactory()
+    storage11 = factories.StorageEntryFactory(owner=user1)
 
-    def test_view_an_entry_by_anonymous_user(self, client):
-        self._load_initial_data()
-        response = client.get(reverse("user-storage-detail", args=[self.storage11.key]))
-        assert response.status_code == 401
+    # Get by anonymous user
+    response = client.get(reverse("user-storage-detail", args=[storage11.key]))
+    assert response.status_code == 401
 
-    def test_view_an_entry(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user1.username, password=self.user1.username)
-        response = client.get(reverse("user-storage-detail", args=[self.storage11.key]))
-        assert response.status_code == 200
-        entry = response.data
-        assert entry["key"] == self.storage11.key
-        assert entry["value"] == self.storage11.value
-        response = client.logout()
+    # Get single entry
+    client.login(username=user1.username, password=user1.username)
+    response = client.get(reverse("user-storage-detail", args=[storage11.key]))
+    assert response.status_code == 200
+    assert response.data["key"] == storage11.key
+    assert response.data["value"] == storage11.value
 
-    def test_view_an_entry_by_incorrect_user(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user2.username, password=self.user2.username)
-        response = client.get(reverse("user-storage-detail", args=[self.storage11.key]))
-        assert response.status_code == 404
-        response = client.logout()
+    # Get not existent key
+    client.login(username=user2.username, password=user2.username)
+    response = client.get(reverse("user-storage-detail", args=[storage11.key]))
+    assert response.status_code == 404
 
-    def test_view_non_existent_entry(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user1.username, password=self.user1.username)
-        response = client.get(reverse("user-storage-detail", args=["foo"]))
-        assert response.status_code == 404
-        response = client.logout()
+    response = client.get(reverse("user-storage-detail", args=["foobar"]))
+    assert response.status_code == 404
+
+    client.logout()
 
 
-class TestCreateStorageEntries(object):
-    @classmethod
-    def setup_class(cls):
-        cls.form = {"key": "foo",
-                    "value": "bar"}
-        cls.form_without_key = {"value": "bar"}
-        cls.form_without_value = {"key": "foo"}
+def test_create_entries(client):
+    user1 = factories.UserFactory()
+    user2 = factories.UserFactory()
+    storage11 = factories.StorageEntryFactory(owner=user1)
 
-    def _load_initial_data(self):
-        self.user1 = factories.UserFactory()
-        self.user2 = factories.UserFactory()
-        self.storage11 = factories.StorageEntryFactory(owner=self.user1)
+    form = {"key": "foo",
+            "value": "bar"}
+    form_without_key = {"value": "bar"}
+    form_without_value = {"key": "foo"}
+    error_form = {"key": storage11.key,
+                  "value": "bar"}
 
-    def test_create_entry_by_anonymous_user_with_error(self, client):
-        self._load_initial_data()
-        response = client.post(reverse("user-storage-list"), self.form)
-        assert response.status_code == 401
+    # Create entry by anonymous user
+    response = client.post(reverse("user-storage-list"), form)
+    assert response.status_code == 401
 
-    def test_create_entry_successfully(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user1.username, password=self.user1.username)
-        response = client.post(reverse("user-storage-list"), self.form)
-        assert response.status_code == 201
-        response = client.get(reverse("user-storage-detail", args=[self.form["key"]]))
-        assert response.status_code == 200
-        response = client.logout()
+    # Create by logged user
+    client.login(username=user1.username, password=user1.username)
+    response = client.post(reverse("user-storage-list"), form)
+    assert response.status_code == 201
+    response = client.get(reverse("user-storage-detail", args=[form["key"]]))
+    assert response.status_code == 200
 
-    def test_create_entry_with_incorret_form_error(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user1.username, password=self.user1.username)
-        response = client.post(reverse("user-storage-list"), self.form_without_key)
-        assert response.status_code == 400
-        response = client.post(reverse("user-storage-list"), self.form_without_value)
-        assert response.status_code == 400
-        response = client.logout()
+    # Wrong data
+    client.login(username=user1.username, password=user1.username)
+    response = client.post(reverse("user-storage-list"), form_without_key)
+    assert response.status_code == 400
+    response = client.post(reverse("user-storage-list"), form_without_value)
+    assert response.status_code == 400
+    response = client.post(reverse("user-storage-list"), error_form)
+    assert response.status_code == 400
 
-    def test_create_entry_with_integrity_error(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user1.username, password=self.user1.username)
-        error_form = {"key": self.storage11.key,
-                      "value": "bar"}
-        response = client.post(reverse("user-storage-list"), error_form)
-        assert response.status_code == 400
-        response = client.logout()
+    client.logout()
 
 
-class TestUpdateStorageEntries(object):
-    @classmethod
-    def setup_class(cls):
-        cls.form = {"value": "bar"}
+def test_update_entries(client):
+    user1 = factories.UserFactory()
+    user2 = factories.UserFactory()
+    storage11 = factories.StorageEntryFactory(owner=user1)
 
-    def _load_initial_data(self):
-        self.user1 = factories.UserFactory()
-        self.user2 = factories.UserFactory()
-        self.storage11 = factories.StorageEntryFactory(owner=self.user1)
+    # Update by anonymous user
+    form = {"value": "bar", "key": storage11.key}
+    response = client.put(reverse("user-storage-detail", args=[storage11.key]),
+                          json.dumps(form),
+                          content_type='application/json')
+    assert response.status_code == 401
 
-    def test_update_entry_by_anonymous_user(self, client):
-        self._load_initial_data()
-        self.form["key"] = self.storage11.key
-        response = client.put(reverse("user-storage-detail", args=[self.storage11.key]),
-                              json.dumps(self.form),
-                              content_type='application/json')
-        assert response.status_code == 401
+    # Update by logged user
+    client.login(username=user1.username, password=user1.username)
+    form = {"value": "bar", "key": storage11.key}
 
-    def test_update_entry(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user1.username, password=self.user1.username)
-        self.form["key"] = self.storage11.key
-        response = client.put(reverse("user-storage-detail", args=[self.storage11.key]),
-                              json.dumps(self.form),
-                              content_type='application/json')
-        assert response.status_code == 200
-        response = client.get(reverse("user-storage-detail", args=[self.storage11.key]))
-        assert response.status_code == 200
-        entry = response.data
-        assert entry["value"] == self.form["value"]
-        response = client.logout()
+    response = client.put(reverse("user-storage-detail", args=[storage11.key]),
+                          json.dumps(form),
+                          content_type='application/json')
+    assert response.status_code == 200
+    response = client.get(reverse("user-storage-detail", args=[storage11.key]))
+    assert response.status_code == 200
+    assert response.data["value"] == form["value"]
 
-    def test_update_non_existent_entry(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user1.username, password=self.user1.username)
-        self.form["key"] = "foo"
-        response = client.get(reverse("user-storage-detail", args=[self.form["key"]]))
-        assert response.status_code == 404
-        response = client.put(reverse("user-storage-detail", args=[self.form["key"]]),
-                              json.dumps(self.form),
-                              content_type='application/json')
-        assert response.status_code == 201
-        response = client.get(reverse("user-storage-detail", args=[self.form["key"]]))
-        assert response.status_code == 200
-        entry = response.data
-        assert entry["value"] == self.form["value"]
-        response = client.logout()
+    # Update not existing entry
+    form = {"value": "bar", "key": "foo"}
+    response = client.get(reverse("user-storage-detail", args=[form["key"]]))
+    assert response.status_code == 404
+    response = client.put(reverse("user-storage-detail", args=[form["key"]]),
+                          json.dumps(form),
+                          content_type='application/json')
+    assert response.status_code == 201
+    response = client.get(reverse("user-storage-detail", args=[form["key"]]))
+    assert response.status_code == 200
+    assert response.data["value"] == form["value"]
+
+    client.logout()
 
 
-class TestDeleteStorageEntries(object):
-    def _load_initial_data(self):
-        self.user1 = factories.UserFactory()
-        self.user2 = factories.UserFactory()
-        self.storage11 = factories.StorageEntryFactory(owner=self.user1)
 
-    def test_delete_entry_by_anonymous_user(self, client):
-        self._load_initial_data()
-        response = client.delete(reverse("user-storage-detail", args=[self.storage11.key]))
-        assert response.status_code == 401
+def test_delete_storage_entry(client):
+    user1 = factories.UserFactory()
+    user2 = factories.UserFactory()
+    storage11 = factories.StorageEntryFactory(owner=user1)
 
-    def test_delete_entry(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user1.username, password=self.user1.username)
-        key = self.storage11.key
-        response = client.delete(reverse("user-storage-detail", args=[key]))
-        assert response.status_code == 204
-        response = client.get(reverse("user-storage-detail", args=[key]))
-        assert response.status_code == 404
-        response = client.logout()
+    # Delete by anonumous user
+    response = client.delete(reverse("user-storage-detail", args=[storage11.key]))
+    assert response.status_code == 401
 
-    def test_delete_entry_by_incorrect_user(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user2.username, password=self.user2.username)
-        response = client.delete(reverse("user-storage-detail", args=[self.storage11.key]))
-        assert response.status_code == 404
-        response = client.logout()
+    # Delete by logged user
+    client.login(username=user1.username, password=user1.username)
+    response = client.delete(reverse("user-storage-detail", args=[storage11.key]))
+    assert response.status_code == 204
 
-    def test_delete_non_existent_entry(self, client):
-        self._load_initial_data()
-        response = client.login(username=self.user1.username, password=self.user1.username)
-        response = client.delete(reverse("user-storage-detail", args=["foo"]))
-        assert response.status_code == 404
-        response = client.logout()
+    response = client.get(reverse("user-storage-detail", args=[storage11.key]))
+    assert response.status_code == 404
+
+    # Delete not existent entry
+    response = client.delete(reverse("user-storage-detail", args=["foo"]))
+    assert response.status_code == 404
+
+    client.login(username=user2.username, password=user2.username)
+    response = client.delete(reverse("user-storage-detail", args=[storage11.key]))
+    assert response.status_code == 404
+
+    client.logout()
+

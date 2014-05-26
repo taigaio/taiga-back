@@ -31,8 +31,6 @@ from picklefield.fields import PickledObjectField
 from django_pgjson.fields import JsonField
 
 from taiga.users.models import Role
-from taiga.domains.models import DomainMember
-from taiga.domains import get_active_domain
 from taiga.projects.userstories.models import UserStory
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
@@ -153,9 +151,6 @@ class Project(ProjectDefaults, models.Model):
                                           related_name="projects", null=True,
                                           blank=True, default=None,
                                           verbose_name=_("creation template"))
-
-    domain = models.ForeignKey("domains.Domain", related_name="projects", null=True, blank=True,
-                               default=None, verbose_name=_("domain"))
 
     class Meta:
         verbose_name = "project"
@@ -441,15 +436,13 @@ class ProjectTemplate(models.Model):
     name = models.CharField(max_length=250, null=False, blank=False,
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, null=False, blank=True,
-                            verbose_name=_("slug"))
+                            verbose_name=_("slug"), unique=True)
     description = models.TextField(null=False, blank=False,
                                    verbose_name=_("description"))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
                                         verbose_name=_("created date"))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
                                          verbose_name=_("modified date"))
-    domain = models.ForeignKey("domains.Domain", related_name="templates", null=True, blank=True,
-                               default=None, verbose_name=_("domain"))
     default_owner_role = models.CharField(max_length=50, null=False,
                                           blank=False,
                                           verbose_name=_("default owner's role"))
@@ -481,7 +474,6 @@ class ProjectTemplate(models.Model):
     class Meta:
         verbose_name = "project template"
         verbose_name_plural = "project templates"
-        unique_together = ["slug", "domain"]
         ordering = ["name"]
 
     def __str__(self):
@@ -704,21 +696,6 @@ class ProjectTemplate(models.Model):
         return project
 
 
-# On membership object is created/changed, update
-# role-points relation.
-@receiver(signals.post_save, sender=Membership, dispatch_uid='membership_post_save')
-def membership_post_save(sender, instance, created, **kwargs):
-    instance.project.update_role_points()
-    exists_user_on_domain = instance.project.domain.members.filter(user=instance.user).exists()
-
-    if instance.user and instance.project.domain and not exists_user_on_domain:
-        DomainMember.objects.create(domain=instance.project.domain,
-                                    user=instance.user,
-                                    email=instance.email,
-                                    is_owner=False,
-                                    is_staff=False)
-
-
 # On membership object is deleted, update role-points relation.
 @receiver(signals.pre_delete, sender=Membership, dispatch_uid='membership_pre_delete')
 def membership_post_delete(sender, instance, using, **kwargs):
@@ -748,9 +725,7 @@ def project_post_save(sender, instance, created, **kwargs):
         return
 
     template_slug = getattr(instance, "template", settings.DEFAULT_PROJECT_TEMPLATE)
-    template = ProjectTemplate.objects.filter(slug=template_slug).get(
-        models.Q(domain__isnull=True) | models.Q(domain=get_active_domain())
-    )
-
+    template = ProjectTemplate.objects.get(slug=template_slug)
     template.apply_to_project(instance)
+
     instance.save()
