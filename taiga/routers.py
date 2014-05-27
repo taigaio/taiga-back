@@ -59,9 +59,13 @@ from taiga.projects.api import IssueTypeViewSet
 from taiga.projects.api import PriorityViewSet
 from taiga.projects.api import SeverityViewSet
 from taiga.projects.api import ProjectTemplateViewSet
+from taiga.projects.api import FansViewSet
+from taiga.projects.api import StarredViewSet
 
 router.register(r"roles", RolesViewSet, base_name="roles")
 router.register(r"projects", ProjectViewSet, base_name="projects")
+router.register(r"projects/(?P<project_id>\d+)/fans", FansViewSet, base_name="project-fans")
+router.register(r"users/(?P<user_id>\d+)/starred", StarredViewSet, base_name="user-starred")
 router.register(r"project-templates", ProjectTemplateViewSet, base_name="project-templates")
 router.register(r"memberships", MembershipViewSet, base_name="memberships")
 router.register(r"invitations", InvitationViewSet, base_name="invitations")

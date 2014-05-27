@@ -45,11 +45,23 @@ def get_stars(project):
     return Stars.objects.filter(project=project).count
 
 
-def get_fans(project):
+def get_fans(project_or_id):
     """Get the fans a project have."""
-    return get_user_model().objects.filter(fans__project=project)
+    qs = get_user_model().objects.get_queryset()
+    if isinstance(project_or_id, int):
+        qs = qs.filter(fans__project_id=project_or_id)
+    else:
+        qs = qs.filter(fans__project=project_or_id)
+
+    return qs
 
 
-def get_starred_projects(user):
+def get_starred(user_or_id):
     """Get the projects an user has starred."""
-    return Project.objects.filter(fans__user=user)
+    qs = Project.objects.get_queryset()
+    if isinstance(user_or_id, int):
+        qs = qs.filter(fans__user_id=user_or_id)
+    else:
+        qs = qs.filter(fans__user=user_or_id)
+
+    return qs

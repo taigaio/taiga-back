@@ -24,7 +24,7 @@ class Fan(models.Model):
 
 class Stars(models.Model):
     project = models.OneToOneField("projects.Project", null=False, blank=False,
-                                   verbose_name=_("project"))
+                                   related_name="stars", verbose_name=_("project"))
     count = models.PositiveIntegerField(null=False, blank=False, default=0,
                                         verbose_name=_("count"))
 

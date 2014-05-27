@@ -164,3 +164,10 @@ class FanFactory(Factory):
 
     project = factory.SubFactory("tests.factories.ProjectFactory")
     user = factory.SubFactory("tests.factories.UserFactory")
+
+
+class StarsFactory(Factory):
+    FACTORY_FOR = taiga.projects.stars.models.Stars
+
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    count = 0

@@ -19,7 +19,7 @@ from rest_framework import serializers
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.serializers import PickleField, JsonField
-from taiga.users.models import Role
+from taiga.users.models import Role, User
 
 from . import models
 
@@ -84,6 +84,7 @@ class ProjectMembershipSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     tags = PickleField(required=False)
+    stars = serializers.IntegerField(source="stars.count")
 
     class Meta:
         model = models.Project
@@ -150,3 +151,17 @@ class ProjectTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.ProjectTemplate
+
+
+class FanSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source='get_full_name', required=False)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'first_name', 'last_name', 'full_name')
+
+
+class StarredSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Project
+        fields = ['id', 'name', 'slug']
