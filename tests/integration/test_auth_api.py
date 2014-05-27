@@ -5,14 +5,15 @@ from .. import factories
 
 pytestmark = pytest.mark.django_db
 
+
 @pytest.fixture
 def register_form():
-   return {"username": "username",
-           "password": "password",
-           "first_name": "fname",
-           "last_name": "lname",
-           "email": "user@email.com",
-           "type": "public"}
+    return {"username": "username",
+            "password": "password",
+            "first_name": "fname",
+            "last_name": "lname",
+            "email": "user@email.com",
+            "type": "public"}
 
 
 def test_respond_201_if_domain_allows_public_registration(client, register_form):

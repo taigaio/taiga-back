@@ -1,4 +1,5 @@
 import uuid
+import threading
 
 import factory
 from django.conf import settings
@@ -7,11 +8,25 @@ import taiga.projects.models
 import taiga.projects.userstories.models
 import taiga.projects.issues.models
 import taiga.projects.milestones.models
+import taiga.projects.stars.models
 import taiga.users.models
 import taiga.userstorage.models
 
 
-class ProjectTemplateFactory(factory.DjangoModelFactory):
+class Factory(factory.DjangoModelFactory):
+    FACTORY_STRATEGY = factory.CREATE_STRATEGY
+
+    _SEQUENCE = 1
+    _SEQUENCE_LOCK = threading.Lock()
+
+    @classmethod
+    def _setup_next_sequence(cls):
+        with cls._SEQUENCE_LOCK:
+            cls._SEQUENCE += 1
+        return cls._SEQUENCE
+
+
+class ProjectTemplateFactory(Factory):
     FACTORY_FOR = taiga.projects.models.ProjectTemplate
     FACTORY_DJANGO_GET_OR_CREATE = ("slug", )
 
@@ -28,7 +43,7 @@ class ProjectTemplateFactory(factory.DjangoModelFactory):
     roles = []
 
 
-class ProjectFactory(factory.DjangoModelFactory):
+class ProjectFactory(Factory):
     FACTORY_FOR = taiga.projects.models.Project
 
     name = factory.Sequence(lambda n: "Project {}".format(n))
@@ -38,14 +53,30 @@ class ProjectFactory(factory.DjangoModelFactory):
     creation_template = factory.SubFactory("tests.factories.ProjectTemplateFactory")
 
 
-class RoleFactory(factory.DjangoModelFactory):
+class RoleFactory(Factory):
     FACTORY_FOR = taiga.users.models.Role
 
     name = "Tester"
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
-class UserFactory(factory.DjangoModelFactory):
+class PointsFactory(Factory):
+    FACTORY_FOR = taiga.projects.models.Points
+
+    name = factory.Sequence(lambda n: "Points {}".format(n))
+    value = 2
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
+class RolePointsFactory(Factory):
+    FACTORY_FOR = taiga.projects.userstories.models.RolePoints
+
+    user_story = factory.SubFactory("tests.factories.UserStoryFactory")
+    role = factory.SubFactory("tests.factories.RoleFactory")
+    points = factory.SubFactory("tests.factories.PointsFactory")
+
+
+class UserFactory(Factory):
     FACTORY_FOR = taiga.users.models.User
 
     username = factory.Sequence(lambda n: "user{}".format(n))
@@ -53,7 +84,7 @@ class UserFactory(factory.DjangoModelFactory):
     password = factory.PostGeneration(lambda obj, *args, **kwargs: obj.set_password(obj.username))
 
 
-class MembershipFactory(factory.DjangoModelFactory):
+class MembershipFactory(Factory):
     FACTORY_FOR = taiga.projects.models.Membership
 
     token = factory.LazyAttribute(lambda obj: str(uuid.uuid1()))
@@ -62,7 +93,7 @@ class MembershipFactory(factory.DjangoModelFactory):
     user = factory.SubFactory("tests.factories.UserFactory")
 
 
-class StorageEntryFactory(factory.DjangoModelFactory):
+class StorageEntryFactory(Factory):
     FACTORY_FOR = taiga.userstorage.models.StorageEntry
 
     owner = factory.SubFactory("tests.factories.UserFactory")
@@ -70,7 +101,7 @@ class StorageEntryFactory(factory.DjangoModelFactory):
     value = factory.Sequence(lambda n: "value {}".format(n))
 
 
-class UserStoryFactory(factory.DjangoModelFactory):
+class UserStoryFactory(Factory):
     FACTORY_FOR = taiga.projects.userstories.models.UserStory
 
     ref = factory.Sequence(lambda n: n)
@@ -79,7 +110,7 @@ class UserStoryFactory(factory.DjangoModelFactory):
     subject = factory.Sequence(lambda n: "User Story {}".format(n))
 
 
-class MilestoneFactory(factory.DjangoModelFactory):
+class MilestoneFactory(Factory):
     FACTORY_FOR = taiga.projects.milestones.models.Milestone
 
     name = factory.Sequence(lambda n: "Milestone {}".format(n))
@@ -87,7 +118,7 @@ class MilestoneFactory(factory.DjangoModelFactory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
-class IssueFactory(factory.DjangoModelFactory):
+class IssueFactory(Factory):
     FACTORY_FOR = taiga.projects.issues.models.Issue
 
     subject = factory.Sequence(lambda n: "Issue {}".format(n))
@@ -100,29 +131,43 @@ class IssueFactory(factory.DjangoModelFactory):
     milestone = factory.SubFactory("tests.factories.MilestoneFactory")
 
 
-class IssueStatusFactory(factory.DjangoModelFactory):
+class IssueStatusFactory(Factory):
     FACTORY_FOR = taiga.projects.models.IssueStatus
 
     name = factory.Sequence(lambda n: "Issue Status {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
-class SeverityFactory(factory.DjangoModelFactory):
+class SeverityFactory(Factory):
     FACTORY_FOR = taiga.projects.models.Severity
 
     name = factory.Sequence(lambda n: "Severity {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
-class PriorityFactory(factory.DjangoModelFactory):
+class PriorityFactory(Factory):
     FACTORY_FOR = taiga.projects.models.Priority
 
     name = factory.Sequence(lambda n: "Priority {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
-class IssueTypeFactory(factory.DjangoModelFactory):
+class IssueTypeFactory(Factory):
     FACTORY_FOR = taiga.projects.models.IssueType
 
     name = factory.Sequence(lambda n: "Issue Type {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
+class FanFactory(Factory):
+    FACTORY_FOR = taiga.projects.stars.models.Fan
+
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    user = factory.SubFactory("tests.factories.UserFactory")
+
+
+class StarsFactory(Factory):
+    FACTORY_FOR = taiga.projects.stars.models.Stars
+
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    count = 0

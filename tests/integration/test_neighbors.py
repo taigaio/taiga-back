@@ -7,7 +7,13 @@ from taiga.projects.userstories.models import UserStory
 from taiga.projects.issues.models import Issue
 from taiga.base.utils.db import filter_by_tags
 from taiga.base import neighbors as n
+
 from .. import factories as f
+from ..utils import disconnect_signals
+
+
+def setup_module():
+    disconnect_signals()
 
 
 class TestGetAttribute:
@@ -53,7 +59,6 @@ def test_disjunction_filters():
 
 
 @pytest.mark.django_db
-@pytest.mark.slow
 class TestUserStories:
     def test_no_filters(self):
         project = f.ProjectFactory.create()
@@ -99,7 +104,6 @@ class TestUserStories:
 
 
 @pytest.mark.django_db
-@pytest.mark.slow
 class TestIssues:
     def test_no_filters(self):
         project = f.ProjectFactory.create()

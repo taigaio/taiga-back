@@ -18,6 +18,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import Permission
 
 from rest_framework import serializers
+
+from taiga.projects.models import Project
 from .models import User, Role
 
 

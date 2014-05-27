@@ -1,13 +1,6 @@
 import pytest
 
-
-class Object:
-    pass
-
-
-@pytest.fixture
-def object():
-    return Object()
+from .fixtures import *
 
 
 def pytest_addoption(parser):
