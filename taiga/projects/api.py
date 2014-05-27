@@ -40,6 +40,7 @@ from . import serializers
 from . import models
 from . import permissions
 from . import services
+from . import stars
 
 
 class ProjectAdminViewSet(ModelCrudViewSet):
@@ -72,6 +73,18 @@ class ProjectViewSet(ModelCrudViewSet):
     def stats(self, request, pk=None):
         project = self.get_object()
         return Response(services.get_stats_for_project(project))
+
+    @detail_route(methods=['post'], permission_classes=(IsAuthenticated,))
+    def star(self, request, pk=None):
+        project = self.get_object()
+        stars.star(project, user=request.user)
+        return Response(status=status.HTTP_200_OK)
+
+    @detail_route(methods=['post'], permission_classes=(IsAuthenticated,))
+    def unstar(self, request, pk=None):
+        project = self.get_object()
+        stars.unstar(project, user=request.user)
+        return Response(status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def issues_stats(self, request, pk=None):

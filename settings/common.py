@@ -186,6 +186,7 @@ INSTALLED_APPS = [
     "taiga.projects.wiki",
     "taiga.projects.history",
     "taiga.projects.notifications",
+    "taiga.projects.stars",
 
     "south",
     "reversion",
