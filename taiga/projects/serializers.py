@@ -84,12 +84,17 @@ class ProjectMembershipSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     tags = PickleField(required=False)
-    stars = serializers.IntegerField(source="stars.count")
+    stars = serializers.SerializerMethodField("get_starts_number")
 
     class Meta:
         model = models.Project
         read_only_fields = ("created_date", "modified_date", "owner")
         exclude = ("last_us_ref", "last_task_ref", "last_issue_ref")
+
+    def get_starts_number(self, obj):
+        # The "starts_count" attribute is attached by
+        # starts app service methods
+        return getattr(obj, "starts_count", 0)
 
 
 class ProjectDetailSerializer(ProjectSerializer):
