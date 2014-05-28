@@ -31,7 +31,6 @@ from picklefield.fields import PickledObjectField
 from django_pgjson.fields import JsonField
 
 from taiga.users.models import Role
-from taiga.projects.userstories.models import UserStory
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
 
@@ -211,18 +210,19 @@ class Project(ProjectDefaults, models.Model):
         return dict_sum(*flat_role_dicts)
 
     def _get_points_increment(self, client_requirement, team_requirement):
-        user_stories = UserStory.objects.none()
+        userstory_model = get_model("userstories", "UserStory")
+        user_stories = userstory_model.objects.none()
         last_milestones = self.milestones.order_by('-estimated_finish')
         last_milestone = last_milestones[0] if last_milestones else None
         if last_milestone:
-            user_stories = UserStory.objects.filter(
+            user_stories = userstory_model.objects.filter(
                 created_date__gte=last_milestone.estimated_finish,
                 project_id=self.id,
                 client_requirement=client_requirement,
                 team_requirement=team_requirement
             )
         else:
-            user_stories = UserStory.objects.filter(
+            user_stories = userstory_model.objects.filter(
                 project_id=self.id,
                 client_requirement=client_requirement,
                 team_requirement=team_requirement
