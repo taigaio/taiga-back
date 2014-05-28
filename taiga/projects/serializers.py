@@ -105,13 +105,18 @@ class ProjectDetailSerializer(ProjectSerializer):
     issue_types = IssueTypeSerializer(many=True, required=False)
 
     def get_membership(self, obj):
-        memberships = obj.memberships.order_by('user__first_name', 'user__last_name', 'user__username').select_related("role", "user")
-        serializer = ProjectMembershipSerializer(memberships, many=True)
+        qs = obj.memberships.order_by('user__first_name', 'user__last_name', 'user__username')
+        qs = qs.select_related("role", "user")
+
+        serializer = ProjectMembershipSerializer(qs, many=True)
         return serializer.data
 
     def get_active_membership(self, obj):
-        memberships = obj.memberships.filter(user__isnull=False).order_by('user__first_name', 'user__last_name', 'user__username').select_related("role", "user")
-        serializer = ProjectMembershipSerializer(memberships, many=True)
+        qs = obj.memberships.filter(user__isnull=False)
+        qs = qs.order_by('user__first_name', 'user__last_name', 'user__username')
+        qs = qs.select_related("role", "user")
+
+        serializer = ProjectMembershipSerializer(qs, many=True)
         return serializer.data
 
     def get_list_of_roles(self, obj):
