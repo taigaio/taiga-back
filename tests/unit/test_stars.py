@@ -4,6 +4,14 @@ from taiga.projects.stars import services as stars
 from .. import factories as f
 
 
+def setup_module(module):
+    module.patcher = mock.patch.object(stars, "atomic", mock.MagicMock())
+    module.patcher.start()
+
+def teardown_module(module):
+    module.patcher.stop()
+
+
 def test_user_star_project():
     "An user can star a project"
     user = f.UserFactory.build()
@@ -12,13 +20,12 @@ def test_user_star_project():
     with mock.patch("taiga.projects.stars.services.Fan") as Fan:
         with mock.patch("taiga.projects.stars.services.Stars") as Stars:
             stars_instance = mock.Mock()
-            stars_instance.save = mock.Mock()
-            Fan.objects.filter(project=project, user=user).exists = mock.Mock(return_value=False)
+
+            Fan.objects.get_or_create = mock.MagicMock(return_value=(mock.Mock(), True))
             Stars.objects.get_or_create = mock.MagicMock(return_value=(stars_instance, True))
 
             stars.star(project, user=user)
 
-            assert Fan.objects.create.called
             assert stars_instance.count.connector == '+'
             assert stars_instance.count.children[1] == 1
             assert stars_instance.save.called
@@ -32,8 +39,8 @@ def test_idempotence_user_star_project():
     with mock.patch("taiga.projects.stars.services.Fan") as Fan:
         with mock.patch("taiga.projects.stars.services.Stars") as Stars:
             stars_instance = mock.Mock()
-            stars_instance.save = mock.Mock()
-            Fan.objects.filter(project=project, user=user).exists = mock.Mock(return_value=True)
+
+            Fan.objects.get_or_create = mock.MagicMock(return_value=(mock.Mock(), False))
             Stars.objects.get_or_create = mock.MagicMock(return_value=(stars_instance, True))
 
             stars.star(project, user=user)
@@ -50,7 +57,7 @@ def test_user_unstar_project():
         with mock.patch("taiga.projects.stars.services.Stars") as Stars:
             delete_mock = mock.Mock()
             stars_instance = mock.Mock()
-            stars_instance.save = mock.Mock()
+
             Fan.objects.filter(project=fan.project, user=fan.user).exists = mock.Mock(
                 return_value=True)
             Fan.objects.filter(project=fan.project, user=fan.user).delete = delete_mock
@@ -72,7 +79,7 @@ def test_idempotence_user_unstar_project():
         with mock.patch("taiga.projects.stars.services.Stars") as Stars:
             delete_mock = mock.Mock()
             stars_instance = mock.Mock()
-            stars_instance.save = mock.Mock()
+
             Fan.objects.filter(project=fan.project, user=fan.user).exists = mock.Mock(
                 return_value=False)
             Fan.objects.filter(project=fan.project, user=fan.user).delete = delete_mock
