@@ -80,3 +80,21 @@ def get_starred(user_or_id):
         qs = qs.filter(fans__user=user_or_id)
 
     return qs
+
+
+def attach_startscount_to_queryset(queryset):
+    """
+    Attach stars count to each object of projects queryset.
+
+    Because of lazynes of starts objects creation, this makes
+    much simple and more efficient way to access to project
+    starts number.
+
+    (The other way was be do it on serializer with some try/except
+    blocks and additional queryes)
+    """
+    sql = ("SELECT coalesce(stars_stars.count, 0) FROM stars_stars "
+           "WHERE stars_stars.project_id = projects_project.id ")
+    qs = queryset.extra(select={"starts_count": sql})
+    return qs
+
