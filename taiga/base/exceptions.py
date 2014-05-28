@@ -35,7 +35,7 @@ class BaseException(exceptions.APIException):
         self.detail = detail or self.default_detail
 
 
-class NotFound(BaseException):
+class NotFound(BaseException, Http404):
     """
     Exception used for not found objects.
     """
@@ -57,7 +57,7 @@ class BadRequest(BaseException):
     default_detail = _("Wrong arguments.")
 
 
-class WrongArguments(BaseException):
+class WrongArguments(BadRequest):
     """
     Exception used on bad arguments detected
     on service. This is same as `BadRequest`.
@@ -65,7 +65,7 @@ class WrongArguments(BaseException):
     default_detail = _("Wrong arguments.")
 
 
-class RequestValidationError(BaseException):
+class RequestValidationError(BadRequest):
     default_detail = _("Data validation error")
 
 
@@ -77,24 +77,15 @@ class PermissionDenied(exceptions.PermissionDenied):
     pass
 
 
-class IntegrityError(BaseException):
-    status_code = status.HTTP_400_BAD_REQUEST
+class IntegrityError(BadRequest):
     default_detail = _("Integrity Error for wrong or invalid arguments")
 
 
-class PreconditionError(BaseException):
+class PreconditionError(BadRequest):
     """
     Error raised on precondition method on viewset.
     """
     default_detail = _("Precondition error")
-
-
-class InternalError(BaseException):
-    """
-    Exception for internal errors.
-    """
-    status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-    default_detail = _("Internal server error")
 
 
 class NotAuthenticated(exceptions.NotAuthenticated):
@@ -145,7 +136,7 @@ def exception_handler(exc):
                         status=status.HTTP_404_NOT_FOUND)
 
     elif isinstance(exc, DjangoPermissionDenied):
-        return Response({"_error_message": _("Permission denied")},
+        return Response({"_error_message": str(exc)},
                         status=status.HTTP_403_FORBIDDEN)
 
     # Note: Unhandled exceptions will raise a 500 error.
