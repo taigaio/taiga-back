@@ -19,10 +19,6 @@ from django.utils.translation import ugettext_lazy as _
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-OUT_BASE_DIR = os.path.abspath(
-    os.path.join(BASE_DIR, "..")
-)
-
 APPEND_SLASH = False
 ALLOWED_HOSTS = ["*"]
 
@@ -99,9 +95,9 @@ EVENTS_PUSH_BACKEND = "taiga.events.backends.postgresql.EventsPushBackend"
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
 # Static configuration.
-MEDIA_ROOT = os.path.join(OUT_BASE_DIR, "media")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
-STATIC_ROOT = os.path.join(OUT_BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATIC_URL = "/static/"
 ADMIN_MEDIA_PREFIX = "/static/admin/"
 
