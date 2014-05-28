@@ -1,8 +1,8 @@
 from django.db.models import F
 from django.db.transaction import atomic
+from django.db.models.loading import get_model
 from django.contrib.auth import get_user_model
 
-from ..models import Project
 from .models import Fan, Stars
 
 
@@ -58,7 +58,9 @@ def get_fans(project_or_id):
 
 def get_starred(user_or_id):
     """Get the projects an user has starred."""
-    qs = Project.objects.get_queryset()
+    project_model = get_model("projects", "Project")
+    qs = project_model.objects.get_queryset()
+
     if isinstance(user_or_id, int):
         qs = qs.filter(fans__user_id=user_or_id)
     else:
