@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext_lazy as _
+from django.shortcuts import get_object_or_404
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
@@ -50,17 +52,13 @@ class WikiViewSet(NotificationSenderMixin, ModelCrudViewSet):
         project_id = request.DATA.get("project_id", None)
 
         if not content:
-            return Response({"content": "No content parameter"}, status=status.HTTP_400_BAD_REQUEST)
+            raise exc.WrongArguments({"content": "No content parameter"})
+
         if not project_id:
-            return Response({"project_id": "No project_id parameter"}, status=status.HTTP_400_BAD_REQUEST)
+            raise exc.WrongArguments({"project_id": "No project_id parameter"})
 
-        try:
-            project = Project.objects.get(pk=project_id)
-        except Project.DoesNotExist:
-            return Response({"project_id": "Not valid project id"}, status=status.HTTP_400_BAD_REQUEST)
-
+        project = get_object_or_404(Project, pk=project_id)
         data = mdrender(project, content)
-
         return Response({"data": data})
 
     def pre_conditions_on_save(self, obj):
