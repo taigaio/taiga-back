@@ -44,13 +44,14 @@ from . import stars
 
 
 class ProjectAdminViewSet(ModelCrudViewSet):
-    model = models.Project
     serializer_class = serializers.ProjectDetailSerializer
     list_serializer_class = serializers.ProjectSerializer
     permission_classes = (IsAuthenticated, permissions.ProjectAdminPermission)
 
     def get_queryset(self):
-        return models.Project.objects.all()
+        qs = models.Project.objects.all()
+        qs = stars.attach_startscount_to_queryset(qs)
+        return qs
 
     def pre_save(self, obj):
         if not obj.id:
@@ -64,10 +65,16 @@ class ProjectAdminViewSet(ModelCrudViewSet):
 
 
 class ProjectViewSet(ModelCrudViewSet):
-    model = models.Project
     serializer_class = serializers.ProjectDetailSerializer
     list_serializer_class = serializers.ProjectSerializer
     permission_classes = (IsAuthenticated, permissions.ProjectPermission)
+
+    def get_queryset(self):
+        qs = models.Project.objects.all()
+        qs = stars.attach_startscount_to_queryset(qs)
+        qs = qs.filter(Q(owner=self.request.user) |
+                       Q(members=self.request.user))
+        return qs.distinct()
 
     @detail_route(methods=['get'])
     def stats(self, request, pk=None):
@@ -100,12 +107,6 @@ class ProjectViewSet(ModelCrudViewSet):
     def tags(self, request, pk=None):
         project = self.get_object()
         return Response(services.get_all_tags(project))
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        qs = qs.filter(Q(owner=self.request.user) |
-                       Q(members=self.request.user))
-        return qs.distinct()
 
     def pre_save(self, obj):
         if not obj.id:
