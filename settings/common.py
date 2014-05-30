@@ -183,6 +183,7 @@ INSTALLED_APPS = [
     "taiga.projects.history",
     "taiga.projects.notifications",
     "taiga.projects.stars",
+    "taiga.projects.votes",
 
     "south",
     "reversion",

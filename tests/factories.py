@@ -173,3 +173,22 @@ class StarsFactory(Factory):
 
     project = factory.SubFactory("tests.factories.ProjectFactory")
     count = 0
+
+
+class VoteFactory(Factory):
+    FACTORY_FOR = get_model("votes", "Vote")
+
+    content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
+    object_id = factory.Sequence(lambda n: n)
+    user = factory.SubFactory("tests.factories.UserFactory")
+
+
+class VotesFactory(Factory):
+    FACTORY_FOR = get_model("votes", "Votes")
+
+    content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
+    object_id = factory.Sequence(lambda n: n)
+
+
+class ContentTypeFactory(Factory):
+    FACTORY_FOR = get_model("contenttypes", "ContentType")
