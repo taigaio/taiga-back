@@ -76,17 +76,23 @@ def get_votes(obj):
         return 0
 
 
-def get_voted(user, obj_class):
+def get_voted(user_or_id, model):
     """Get the objects voted by an user.
 
-    :param user: :class:`~taiga.users.models.User` instance.
-    :param obj_class: Show only objects of this kind. Can be any Django model class.
+    :param user_or_id: :class:`~taiga.users.models.User` instance or id.
+    :param model: Show only objects of this kind. Can be any Django model class.
 
-    :return:
+    :return: Queryset of objects representing the votes of the user.
     """
-    obj_type = get_model("contenttypes", "ContentType").objects.get_for_model(obj_class)
+    obj_type = get_model("contenttypes", "ContentType").objects.get_for_model(model)
     conditions = ('votes_vote.content_type_id = %s',
-                  '%s.id = votes_vote.object_id' % obj_class._meta.db_table,
+                  '%s.id = votes_vote.object_id' % model._meta.db_table,
                   'votes_vote.user_id = %s')
-    return obj_class.objects.extra(where=conditions, tables=('votes_vote',),
-                                   params=(obj_type.id, user.id))
+
+    if isinstance(user_or_id, get_user_model()):
+        user_id = user_or_id.id
+    else:
+        user_id = user_or_id
+
+    return model.objects.extra(where=conditions, tables=('votes_vote',),
+                               params=(obj_type.id, user_id))

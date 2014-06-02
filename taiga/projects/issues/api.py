@@ -24,11 +24,12 @@ from rest_framework import filters
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
-from taiga.base.decorators import list_route
+from taiga.base.decorators import list_route, detail_route
 from taiga.base.api import ModelCrudViewSet
 
 from taiga.projects.mixins.notifications import NotificationSenderMixin
 
+from .. import votes
 from . import models
 from . import permissions
 from . import serializers
@@ -113,6 +114,11 @@ class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
     update_notification_template = "update_issue_notification"
     destroy_notification_template = "destroy_issue_notification"
 
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        qs = votes.attach_votescount_to_queryset(qs, as_field="votes_count")
+        return qs
+
     def pre_save(self, obj):
         if not obj.id:
             obj.owner = self.request.user
@@ -139,3 +145,25 @@ class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
 
         if obj.type and obj.type.project != obj.project:
             raise exc.PermissionDenied(_("You don't have permissions for add/modify this issue."))
+
+    @detail_route(methods=['post'], permission_classes=(IsAuthenticated,))
+    def upvote(self, request, pk=None):
+        issue = self.get_object()
+        votes.add_vote(issue, user=request.user)
+        return Response(status=status.HTTP_200_OK)
+
+    @detail_route(methods=['post'], permission_classes=(IsAuthenticated,))
+    def downvote(self, request, pk=None):
+        issue = self.get_object()
+        votes.remove_vote(issue, user=request.user)
+        return Response(status=status.HTTP_200_OK)
+
+
+class VotersViewSet(ModelCrudViewSet):
+    serializer_class = votes.serializers.VoterSerializer
+    list_serializer_class = votes.serializers.VoterSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        issue = models.Issue.objects.get(pk=self.kwargs.get("issue_id"))
+        return votes.get_voters(issue)
