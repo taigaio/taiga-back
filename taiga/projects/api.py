@@ -40,7 +40,7 @@ from . import serializers
 from . import models
 from . import permissions
 from . import services
-from . import stars
+from . import votes
 
 
 class ProjectAdminViewSet(ModelCrudViewSet):
@@ -50,7 +50,7 @@ class ProjectAdminViewSet(ModelCrudViewSet):
 
     def get_queryset(self):
         qs = models.Project.objects.all()
-        qs = stars.attach_startscount_to_queryset(qs)
+        qs = votes.attach_votescount_to_queryset(qs, as_field="stars_count")
         return qs
 
     def pre_save(self, obj):
@@ -71,7 +71,7 @@ class ProjectViewSet(ModelCrudViewSet):
 
     def get_queryset(self):
         qs = models.Project.objects.all()
-        qs = stars.attach_startscount_to_queryset(qs)
+        qs = votes.attach_votescount_to_queryset(qs, as_field="stars_count")
         qs = qs.filter(Q(owner=self.request.user) |
                        Q(members=self.request.user))
         return qs.distinct()
@@ -84,13 +84,13 @@ class ProjectViewSet(ModelCrudViewSet):
     @detail_route(methods=['post'], permission_classes=(IsAuthenticated,))
     def star(self, request, pk=None):
         project = self.get_object()
-        stars.star(project, user=request.user)
+        votes.add_vote(project, user=request.user)
         return Response(status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'], permission_classes=(IsAuthenticated,))
     def unstar(self, request, pk=None):
         project = self.get_object()
-        stars.unstar(project, user=request.user)
+        votes.remove_vote(project, user=request.user)
         return Response(status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
@@ -328,12 +328,13 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
 
 
 class FansViewSet(ModelCrudViewSet):
-    serializer_class = serializers.FanSerializer
-    list_serializer_class = serializers.FanSerializer
+    serializer_class = votes.serializers.VoterSerializer
+    list_serializer_class = votes.serializers.VoterSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return stars.get_fans(self.kwargs.get("project_id"))
+        project = models.Project.objects.get(pk=self.kwargs.get("project_id"))
+        return votes.get_voters(project)
 
 
 class StarredViewSet(ModelCrudViewSet):
@@ -342,4 +343,4 @@ class StarredViewSet(ModelCrudViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return stars.get_starred(self.kwargs.get("user_id"))
+        return votes.get_voted(self.kwargs.get("user_id"), model=models.Project)

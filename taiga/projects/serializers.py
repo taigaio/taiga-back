@@ -84,17 +84,16 @@ class ProjectMembershipSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     tags = PickleField(required=False)
-    stars = serializers.SerializerMethodField("get_starts_number")
+    stars = serializers.SerializerMethodField("get_stars_number")
 
     class Meta:
         model = models.Project
         read_only_fields = ("created_date", "modified_date", "owner")
         exclude = ("last_us_ref", "last_task_ref", "last_issue_ref")
 
-    def get_starts_number(self, obj):
-        # The "starts_count" attribute is attached by
-        # starts app service methods
-        return getattr(obj, "starts_count", 0)
+    def get_stars_number(self, obj):
+        # The "stars_count" attribute is attached in the get_queryset of the viewset.
+        return getattr(obj, "stars_count", 0)
 
 
 class ProjectDetailSerializer(ProjectSerializer):
@@ -161,14 +160,6 @@ class ProjectTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.ProjectTemplate
-
-
-class FanSerializer(serializers.ModelSerializer):
-    full_name = serializers.CharField(source='get_full_name', required=False)
-
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'full_name')
 
 
 class StarredSerializer(serializers.ModelSerializer):

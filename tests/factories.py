@@ -173,3 +173,44 @@ class StarsFactory(Factory):
 
     project = factory.SubFactory("tests.factories.ProjectFactory")
     count = 0
+
+
+class VoteFactory(Factory):
+    FACTORY_FOR = get_model("votes", "Vote")
+
+    content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
+    object_id = factory.Sequence(lambda n: n)
+    user = factory.SubFactory("tests.factories.UserFactory")
+
+
+class VotesFactory(Factory):
+    FACTORY_FOR = get_model("votes", "Votes")
+
+    content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
+    object_id = factory.Sequence(lambda n: n)
+
+
+class ContentTypeFactory(Factory):
+    FACTORY_FOR = get_model("contenttypes", "ContentType")
+    FACTORY_DJANGO_GET_OR_CREATE = ("app_label", "model")
+
+    app_label = factory.LazyAttribute(lambda obj: ContentTypeFactory.FACTORY_FOR._meta.app_label)
+    model = factory.LazyAttribute(lambda obj: ContentTypeFactory.FACTORY_FOR._meta.model_name)
+
+
+def create_issue(**kwargs):
+    "Create an issue and its dependencies in an appropriate way."
+    owner = kwargs.pop("owner") if "owner" in kwargs else UserFactory()
+    project = ProjectFactory.create(owner=owner)
+    defaults = {
+        "project": project,
+        "owner": owner,
+        "status": IssueStatusFactory.create(project=project),
+        "milestone": MilestoneFactory.create(project=project),
+        "priority": PriorityFactory.create(project=project),
+        "severity": SeverityFactory.create(project=project),
+        "type": IssueTypeFactory.create(project=project),
+    }
+    defaults.update(kwargs)
+
+    return IssueFactory.create(**defaults)

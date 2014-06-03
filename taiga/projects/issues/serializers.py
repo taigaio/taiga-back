@@ -37,6 +37,7 @@ class IssueSerializer(WatcherValidationSerializerMixin, serializers.ModelSeriali
     generated_user_stories = serializers.SerializerMethodField("get_generated_user_stories")
     blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
     description_html = serializers.SerializerMethodField("get_description_html")
+    votes = serializers.SerializerMethodField("get_votes_number")
 
     class Meta:
         model = models.Issue
@@ -53,6 +54,10 @@ class IssueSerializer(WatcherValidationSerializerMixin, serializers.ModelSeriali
 
     def get_description_html(self, obj):
         return mdrender(obj.project, obj.description)
+
+    def get_votes_number(self, obj):
+        # The "votes_count" attribute is attached in the get_queryset of the viewset.
+        return getattr(obj, "votes_count", 0)
 
 
 class IssueNeighborsSerializer(NeighborsSerializerMixin, IssueSerializer):
