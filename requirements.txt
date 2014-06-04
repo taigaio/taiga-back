@@ -1,21 +1,21 @@
 #git+https://github.com/tomchristie/django-rest-framework.git@2.4.0
 
 djangorestframework==2.3.13
-Django==1.6.2
+Django==1.6.5
 South==0.8.4
 django-filter==0.7
 django-picklefield==0.3.0
 django-sampledatahelper==0.2.1
-gunicorn>=17.5
-psycopg2==2.5.2
+gunicorn>=18.0
+psycopg2==2.5.3
 pytz>=2013.9
 six>=1.4.1
 djmail>=0.4
 django-pgjson==0.1.2
-django-jinja>=1.0.1
-jinja2==2.7.1
+django-jinja>=0.23
+jinja2==2.7.2
 pygments>=1.6
-django-sites==0.6
+django-sites==0.8
 Markdown==2.4
 fn==0.2.13
 diff-match-patch==20110725.1
