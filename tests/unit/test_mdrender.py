@@ -3,8 +3,6 @@ from unittest.mock import patch, MagicMock
 from taiga.mdrender.extensions import emojify
 from taiga.mdrender.service import render, cache_by_sha, get_diff_of_htmls, render_and_extract
 
-from taiga.users.models import User
-
 from datetime import datetime
 
 dummy_project = MagicMock()
@@ -20,23 +18,6 @@ def test_proccessor_valid_emoji():
 def test_proccessor_invalid_emoji():
     result = emojify.EmojifyPreprocessor().run(["**:notvalidemoji:**"])
     assert result == ["**:notvalidemoji:**"]
-
-
-def test_proccessor_valid_user_mention():
-    with patch("taiga.mdrender.extensions.mentions.User") as mock:
-        instance = mock.objects.get.return_value
-        instance.get_full_name.return_value = "test name"
-        result = render(dummy_project, "**@user1**")
-        expected_result = "<p><strong><a alt=\"test name\" class=\"mention\" href=\"/#/profile/user1\" title=\"test name\">&commat;user1</a></strong></p>"
-        assert result == expected_result
-
-
-def test_proccessor_invalid_user_mention():
-    with patch("taiga.mdrender.extensions.mentions.User") as mock:
-        mock.DoesNotExist = User.DoesNotExist
-        mock.objects.get.side_effect = User.DoesNotExist
-        result = render(dummy_project, "**@notvaliduser**")
-        assert result == '<p><strong>@notvaliduser</strong></p>'
 
 
 def test_proccessor_valid_us_reference():
@@ -193,11 +174,3 @@ def test_render_and_extract_references():
         instance.content_object.subject = "test"
         (_, extracted) = render_and_extract(dummy_project, "**#1**")
         assert extracted['references'] == [instance.content_object]
-
-
-def test_render_and_extract_mentions():
-    with patch("taiga.mdrender.extensions.mentions.User") as mock:
-        instance = mock.objects.get.return_value
-        instance.get_full_name.return_value = "test name"
-        (_, extracted) = render_and_extract(dummy_project, "**@user1**")
-        assert extracted['mentions'] == [instance]
