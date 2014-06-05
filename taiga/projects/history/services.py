@@ -40,6 +40,7 @@ from .models import HistoryType
 
 from taiga.mdrender.service import render as mdrender
 from taiga.mdrender.service import get_diff_of_htmls
+from taiga.base.utils.db import get_typename_for_model_class
 
 # Type that represents a freezed object
 FrozenObj = namedtuple("FrozenObj", ["key", "snapshot"])
@@ -58,14 +59,6 @@ def make_key_from_model_object(obj:object) -> str:
     """
     tn = get_typename_for_model_class(obj.__class__)
     return "{0}:{1}".format(tn, obj.pk)
-
-
-def get_typename_for_model_class(model:object) -> str:
-    """
-    Get typename for model instance.
-    """
-    ct = ContentType.objects.get_for_model(model)
-    return "{0}.{1}".format(ct.app_label, ct.model)
 
 
 def register_values_implementation(typename:str, fn=None):

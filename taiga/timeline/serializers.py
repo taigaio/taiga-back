@@ -14,26 +14,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib.contenttypes.models import ContentType
+from rest_framework import serializers
+from taiga.base.serializers import JsonField
 
-FILTER_TAGS_SQL = "unpickle({table}.tags) && %s"
-
-
-def filter_by_tags(tags, queryset):
-    """Filter a queryset of a model with pickled field named tags, by tags."""
-    table_name = queryset.model._meta.db_table
-    where_sql = FILTER_TAGS_SQL.format(table=table_name)
-
-    return queryset.extra(where=[where_sql], params=[tags])
+from . import models
 
 
-def get_typename_for_model_class(model:object, for_concrete_model=True) -> str:
-    """
-    Get typename for model instance.
-    """
-    if for_concrete_model:
-        model = model._meta.concrete_model
-    else:
-        model = model._meta.proxy_for_model
+class TimelineSerializer(serializers.ModelSerializer):
+    data = JsonField()
 
-    return "{0}.{1}".format(model._meta.app_label, model._meta.model_name)
+    class Meta:
+        model = models.Timeline

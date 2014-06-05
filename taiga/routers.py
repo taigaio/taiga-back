@@ -102,6 +102,14 @@ router.register(r"history/issue", IssueHistory, base_name="issue-history")
 router.register(r"history/wiki", WikiHistory, base_name="wiki-history")
 
 
+# Timelines
+from taiga.timeline.api import UserTimeline
+from taiga.timeline.api import ProjectTimeline
+
+router.register(r"timeline/user", UserTimeline, base_name="user-timeline")
+router.register(r"timeline/project", ProjectTimeline, base_name="project-timeline")
+
+
 # Project components
 from taiga.projects.milestones.api import MilestoneViewSet
 from taiga.projects.userstories.api import UserStoryViewSet
