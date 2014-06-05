@@ -187,6 +187,10 @@ class Project(ProjectDefaults, models.Model):
         # Get all available roles on this project
         roles = self.get_roles().filter(computable=True)
 
+        # Do nothing if project does not have roles
+        if len(roles) == 0:
+            return
+
         # Get point instance that represent a null/undefined
         null_points_value = self.points.get(value=None)
 
