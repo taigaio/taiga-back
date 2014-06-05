@@ -13,7 +13,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import uuid
-import enum
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
@@ -21,10 +20,8 @@ from django.db.models.loading import get_model
 from django.utils.functional import cached_property
 from django_pgjson.fields import JsonField
 
-
-class HistoryType(enum.IntEnum):
-    change = 1
-    create = 2
+from .choices import HistoryType
+from .choices import HISTORY_TYPE_CHOICES
 
 
 class HistoryEntry(models.Model):
@@ -35,16 +32,12 @@ class HistoryEntry(models.Model):
     It is used for store object changes and
     comments.
     """
-
-    TYPE_CHOICES = ((HistoryType.change, _("Change")),
-                    (HistoryType.create, _("Create")))
-
     id = models.CharField(primary_key=True, max_length=255, unique=True,
                           editable=False, default=lambda: str(uuid.uuid1()))
 
     user = JsonField(blank=True, default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    type = models.SmallIntegerField(choices=TYPE_CHOICES)
+    type = models.SmallIntegerField(choices=HISTORY_TYPE_CHOICES)
     is_snapshot = models.BooleanField(default=False)
 
     key = models.CharField(max_length=255, null=True, default=None, blank=True)
