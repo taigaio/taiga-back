@@ -189,6 +189,7 @@ INSTALLED_APPS = [
     "reversion",
     "rest_framework",
     "djmail",
+    "django_jinja",
 ]
 
 WSGI_APPLICATION = "taiga.wsgi.application"
