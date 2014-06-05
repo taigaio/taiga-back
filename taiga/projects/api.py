@@ -40,7 +40,9 @@ from . import serializers
 from . import models
 from . import permissions
 from . import services
-from . import votes
+from .votes.utils import attach_votescount_to_queryset
+from .votes import services as votes_service
+from .votes import serializers as votes_serializers
 
 
 class ProjectAdminViewSet(ModelCrudViewSet):
@@ -50,7 +52,7 @@ class ProjectAdminViewSet(ModelCrudViewSet):
 
     def get_queryset(self):
         qs = models.Project.objects.all()
-        qs = votes.attach_votescount_to_queryset(qs, as_field="stars_count")
+        qs = attach_votescount_to_queryset(qs, as_field="stars_count")
         return qs
 
     def pre_save(self, obj):
@@ -71,7 +73,7 @@ class ProjectViewSet(ModelCrudViewSet):
 
     def get_queryset(self):
         qs = models.Project.objects.all()
-        qs = votes.attach_votescount_to_queryset(qs, as_field="stars_count")
+        qs = attach_votescount_to_queryset(qs, as_field="stars_count")
         qs = qs.filter(Q(owner=self.request.user) |
                        Q(members=self.request.user))
         return qs.distinct()
@@ -84,13 +86,13 @@ class ProjectViewSet(ModelCrudViewSet):
     @detail_route(methods=['post'], permission_classes=(IsAuthenticated,))
     def star(self, request, pk=None):
         project = self.get_object()
-        votes.add_vote(project, user=request.user)
+        votes_service.add_vote(project, user=request.user)
         return Response(status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'], permission_classes=(IsAuthenticated,))
     def unstar(self, request, pk=None):
         project = self.get_object()
-        votes.remove_vote(project, user=request.user)
+        votes_service.remove_vote(project, user=request.user)
         return Response(status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
@@ -328,13 +330,13 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
 
 
 class FansViewSet(ModelCrudViewSet):
-    serializer_class = votes.serializers.VoterSerializer
-    list_serializer_class = votes.serializers.VoterSerializer
+    serializer_class = votes_serializers.VoterSerializer
+    list_serializer_class = votes_serializers.VoterSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         project = models.Project.objects.get(pk=self.kwargs.get("project_id"))
-        return votes.get_voters(project)
+        return votes_service.get_voters(project)
 
 
 class StarredViewSet(ModelCrudViewSet):
@@ -343,4 +345,4 @@ class StarredViewSet(ModelCrudViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return votes.get_voted(self.kwargs.get("user_id"), model=models.Project)
+        return votes_service.get_voted(self.kwargs.get("user_id"), model=models.Project)

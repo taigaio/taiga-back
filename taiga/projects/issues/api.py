@@ -29,7 +29,9 @@ from taiga.base.api import ModelCrudViewSet
 
 from taiga.projects.mixins.notifications import NotificationSenderMixin
 
-from .. import votes
+from taiga.projects.votes.utils import attach_votescount_to_queryset
+from taiga.projects.votes import services as votes_service
+from taiga.projects.votes import serializers as votes_serializers
 from . import models
 from . import permissions
 from . import serializers
@@ -116,7 +118,7 @@ class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
 
     def get_queryset(self):
         qs = self.model.objects.all()
-        qs = votes.attach_votescount_to_queryset(qs, as_field="votes_count")
+        qs = attach_votescount_to_queryset(qs, as_field="votes_count")
         return qs
 
     def pre_save(self, obj):
@@ -149,21 +151,21 @@ class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
     @detail_route(methods=['post'], permission_classes=(IsAuthenticated,))
     def upvote(self, request, pk=None):
         issue = self.get_object()
-        votes.add_vote(issue, user=request.user)
+        votes_service.add_vote(issue, user=request.user)
         return Response(status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'], permission_classes=(IsAuthenticated,))
     def downvote(self, request, pk=None):
         issue = self.get_object()
-        votes.remove_vote(issue, user=request.user)
+        votes_service.remove_vote(issue, user=request.user)
         return Response(status=status.HTTP_200_OK)
 
 
 class VotersViewSet(ModelCrudViewSet):
-    serializer_class = votes.serializers.VoterSerializer
-    list_serializer_class = votes.serializers.VoterSerializer
+    serializer_class = votes_serializers.VoterSerializer
+    list_serializer_class = votes_serializers.VoterSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         issue = models.Issue.objects.get(pk=self.kwargs.get("issue_id"))
-        return votes.get_voters(issue)
+        return votes_service.get_voters(issue)
