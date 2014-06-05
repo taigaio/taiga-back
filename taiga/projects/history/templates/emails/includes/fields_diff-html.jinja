@@ -78,9 +78,21 @@
         </dd>
         {% endif %}
 
+{# DESCRIPTIONS #}
+    {% elif field_name in ["description"] %}
+        {% if values.1 != None or values.1 != "" %}
+            <dd style="background: #eee; padding: 5px 15px; color: #444">
+                <b>to:</b> <i>{{ mdrender(object.project, values.1) }}</i>
+            </dd>
+        {% endif %}
+
+        {% if values.0 != None or values.0 != "" %}
+            <dd style="padding: 5px 15px; color: #bbb">
+                <b>from:</b> <i>{{ mdrender(object.project, values.0) }}</i>
+            </dd>
+        {% endif %}
 {# * #}
     {% else %}
-
         {% if values.1 != None or values.1 != "" %}
             <dd style="background: #eee; padding: 5px 15px; color: #444">
                 <b>to:</b> <i>{{ values.1|linebreaksbr }}</i>

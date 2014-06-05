@@ -11,7 +11,7 @@
             <h2>US #{{ object.ref }}: {{ object.subject }}</h2>
             <p>Updated by <b>{{ changer.get_full_name() }}</b>.</p>
         {% if comment %}
-            <p>Comment <b>{{ comment|linebreaksbr }}</b></p>
+            <p>Comment <b>{{ mdrender(object.project, comment)}}</b></p>
         {% endif %}
         {% if changed_fields %}
             <p>Updated fields:</p>

@@ -184,6 +184,7 @@ INSTALLED_APPS = [
     "taiga.projects.notifications",
     "taiga.projects.votes",
     "taiga.timeline",
+    "taiga.mdrender",
 
     "south",
     "reversion",
