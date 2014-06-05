@@ -14,9 +14,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django_jinja.base import Library
+from django_jinja import library
 
-register = Library()
+register = library.Library()
 
 
 @register.global_function
