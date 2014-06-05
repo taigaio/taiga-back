@@ -3,24 +3,23 @@
 djangorestframework==2.3.13
 Django==1.6.5
 South==0.8.4
-django-filter==0.7
-django-picklefield==0.3.0
+django-picklefield==0.3.1
 django-sampledatahelper==0.2.1
-gunicorn>=18.0
+gunicorn==18.0
 psycopg2==2.5.3
-pytz>=2013.9
-six>=1.4.1
-djmail>=0.4
+pytz==2014.4
+six==1.6.1
+djmail==0.4
 django-pgjson==0.1.2
-django-jinja>=0.23
+django-jinja==1.0.1
 jinja2==2.7.2
-pygments>=1.6
+pygments==1.6rc1
 django-sites==0.8
-Markdown==2.4
+Markdown==2.4.1
 fn==0.2.13
-diff-match-patch==20110725.1
+diff-match-patch==20121119
 
 # Comment it if you are using python >= 3.4
-enum34==0.9.23
+enum34==1.0
 
-django-reversion==1.8.0
+django-reversion==1.8.1
