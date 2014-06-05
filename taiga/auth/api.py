@@ -21,11 +21,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
 from rest_framework import status
-from rest_framework import viewsets
 from rest_framework import serializers
 
+from taiga.base.api import viewsets
 from taiga.base.decorators import list_route
 from taiga.base import exceptions as exc
 from taiga.base.connectors import github
@@ -40,6 +39,8 @@ from .services import private_register_for_new_user
 from .services import public_register
 from .services import github_register
 from .services import make_auth_response_data
+
+from .permissions import AuthPermission
 
 
 def _parse_data(data:dict, *, cls):
@@ -95,7 +96,7 @@ def parse_register_type(userdata:dict) -> str:
 
 
 class AuthViewSet(viewsets.ViewSet):
-    permission_classes = (AllowAny,)
+    permission_classes = (AuthPermission,)
 
     def _public_register(self, request):
         if not settings.PUBLIC_REGISTER_ENABLED:
@@ -123,8 +124,10 @@ class AuthViewSet(viewsets.ViewSet):
         data = make_auth_response_data(user)
         return Response(data, status=status.HTTP_201_CREATED)
 
-    @list_route(methods=["POST"], permission_classes=[AllowAny])
+    @list_route(methods=["POST"])
     def register(self, request, **kwargs):
+        self.check_permissions(request, 'register', None)
+
         type = request.DATA.get("type", None)
         if type == "public":
             return self._public_register(request)
@@ -157,6 +160,8 @@ class AuthViewSet(viewsets.ViewSet):
 
     # Login view: /api/v1/auth
     def create(self, request, **kwargs):
+        self.check_permissions(request, 'create', None)
+
         type = request.DATA.get("type", None)
         if type == "normal":
             return self._login(request)

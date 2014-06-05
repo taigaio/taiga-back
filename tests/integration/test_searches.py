@@ -21,8 +21,20 @@ from django.core.urlresolvers import reverse
 
 from .. import factories as f
 
+from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+from tests.utils import disconnect_signals, reconnect_signals
+
 
 pytestmark = pytest.mark.django_db
+
+
+def setup_module(module):
+    disconnect_signals()
+
+
+def teardown_module(module):
+    reconnect_signals()
+
 
 @pytest.fixture
 def searches_initial_data():
@@ -31,12 +43,33 @@ def searches_initial_data():
     m.project1 = f.ProjectFactory.create()
     m.project2 = f.ProjectFactory.create()
 
-    m.member1 = f.MembershipFactory.create(project=m.project1)
-    m.member2 = f.MembershipFactory.create(project=m.project1)
+    m.member1 = f.MembershipFactory(project=m.project1,
+                                    role__project=m.project1,
+                                    role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    m.member2 = f.MembershipFactory(project=m.project1,
+                                    role__project=m.project1,
+                                    role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
 
-    m.us1 = f.UserStoryFactory.create(project=m.project1)
-    m.us2 = f.UserStoryFactory.create(project=m.project1, description="Back to the future")
-    m.us3 = f.UserStoryFactory.create(project=m.project2)
+    f.RoleFactory(project=m.project2)
+
+    m.points1 = f.PointsFactory(project=m.project1, value=None)
+    m.points2 = f.PointsFactory(project=m.project2, value=None)
+
+    m.role_points1 = f.RolePointsFactory.create(role=m.project1.roles.all()[0],
+                                         points=m.points1,
+                                         user_story__project=m.project1)
+    m.role_points2 = f.RolePointsFactory.create(role=m.project1.roles.all()[0],
+                                         points=m.points1,
+                                         user_story__project=m.project1,
+                                         user_story__description="Back to the future")
+    m.role_points3 = f.RolePointsFactory.create(role=m.project2.roles.all()[0],
+                                         points=m.points2,
+                                         user_story__project=m.project2)
+
+    m.us1 = m.role_points1.user_story
+    m.us2 = m.role_points2.user_story
+    m.us3 = m.role_points3.user_story
+
 
     m.tsk1 = f.TaskFactory.create(project=m.project2)
     m.tsk2 = f.TaskFactory.create(project=m.project1)
@@ -73,7 +106,8 @@ def test_search_all_objects_in_project_is_not_mine(client, searches_initial_data
     client.login(data.member1.user)
 
     response = client.get(reverse("search-list"), {"project": data.project2.id})
-    assert response.status_code == 403
+    assert response.status_code == 200
+    assert response.data["count"] == 0
 
 
 def test_search_text_query_in_my_project(client, searches_initial_data):

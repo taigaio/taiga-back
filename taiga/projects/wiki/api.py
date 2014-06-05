@@ -41,8 +41,8 @@ from . import serializers
 class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     model = models.WikiPage
     serializer_class = serializers.WikiPageSerializer
-    permission_classes = (IsAuthenticated,)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
+    permission_classes = (permissions.WikiPagePermission,)
+    filter_backends = (filters.CanViewWikiPagesFilterBackend,)
     filter_fields = ("project", "slug")
 
     @list_route(methods=["POST"])
@@ -57,16 +57,12 @@ class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
             raise exc.WrongArguments({"project_id": "No project_id parameter"})
 
         project = get_object_or_404(Project, pk=project_id)
+
+        self.check_permissions(request, "render", project)
+
         data = mdrender(project, content)
         return Response({"data": data})
 
-    def pre_conditions_on_save(self, obj):
-        super().pre_conditions_on_save(obj)
-
-        if (obj.project.owner != self.request.user and
-                obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PermissionDenied(_("You don't haver permissions for add/modify "
-                                         "this wiki page."))
     def pre_save(self, obj):
         if not obj.owner:
             obj.owner = self.request.user
@@ -77,6 +73,6 @@ class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
 class WikiLinkViewSet(ModelCrudViewSet):
     model = models.WikiLink
     serializer_class = serializers.WikiLinkSerializer
-    permission_classes = (IsAuthenticated,)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
+    permission_classes = (permissions.WikiLinkPermission,)
+    filter_backends = (filters.CanViewWikiPagesFilterBackend,)
     filter_fields = ["project"]

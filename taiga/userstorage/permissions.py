@@ -14,9 +14,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.permissions import Permission
+from taiga.base.api.permissions import ResourcePermission, IsAuthenticated, DenyAll
 
 
-class StorageEntriesPermission(Permission):
-    def has_object_permission(self, request, view, obj):
-        return request.user == obj.owner
+class StorageEntriesPermission(ResourcePermission):
+    enought_perms = IsAuthenticated()
+    global_perms = DenyAll()

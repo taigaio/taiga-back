@@ -15,14 +15,36 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from taiga.base.permissions import BasePermission
+from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
+                                        IsProjectOwner, PermissionComponent,
+                                        AllowAny, IsAuthenticated)
 
 
-class IssuePermission(BasePermission):
-    get_permission = "view_issue"
-    post_permission = "add_issue"
-    put_permission = "change_issue"
-    patch_permission = "change_issue"
-    delete_permission = "delete_issue"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+class IssuePermission(ResourcePermission):
+    enought_perms = IsProjectOwner()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_issues')
+    create_perms = HasProjectPerm('add_issue')
+    update_perms = HasProjectPerm('modify_issue')
+    destroy_perms = HasProjectPerm('delete_issue')
+    list_perms = AllowAny()
+    upvote_perms = IsAuthenticated() & HasProjectPerm('vote_issues')
+    downvote_perms = IsAuthenticated() & HasProjectPerm('vote_issues')
+
+
+class HasIssueIdUrlParam(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        param = view.kwargs.get('issue_id', None)
+        if param:
+            return True
+        return False
+
+
+class IssueVotersPermission(ResourcePermission):
+    enought_perms = IsProjectOwner()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_issues')
+    create_perms = HasProjectPerm('add_issue')
+    update_perms = HasProjectPerm('modify_issue')
+    destroy_perms = HasProjectPerm('delete_issue')
+    list_perms = HasProjectPerm('view_issues')

@@ -41,7 +41,7 @@ class RoleAdmin(admin.ModelAdmin):
             db_field, request=request, **kwargs)
 
 
-admin.site.register(Role, RoleAdmin)
+# admin.site.register(Role, RoleAdmin)
 
 
 class UserAdmin(DjangoUserAdmin):

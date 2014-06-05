@@ -14,129 +14,117 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from taiga.base.permissions import BasePermission
+from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
+                                        IsAuthenticated, IsProjectOwner,
+                                        AllowAny, IsSuperUser)
 
 
-class ProjectPermission(BasePermission):
-    get_permission = "view_project"
-    post_permission = None
-    put_permission = "change_project"
-    patch_permission = "change_project"
-    delete_permission = None
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  []
+class ProjectPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsAuthenticated()
+    update_perms = IsProjectOwner()
+    destroy_perms = IsProjectOwner()
+    list_perms = AllowAny()
+    stats_perms = AllowAny()
+    star_perms = IsAuthenticated()
+    unstar_perms = IsAuthenticated()
+    issues_stats_perms = AllowAny()
+    issues_filters_data_perms = AllowAny()
+    tags_perms = AllowAny()
+    fans_perms = HasProjectPerm('view_project')
+    create_template_perms = IsSuperUser()
 
 
-class ProjectAdminPermission(BasePermission):
-    def has_permission(self, request, view):
-        if request.method in self.safe_methods:
-            return True
-        return super().has_permission(request, view)
-
-    def has_object_permission(self, request, view, obj):
-        if request.method in self.safe_methods:
-            return True
-        return super().has_object_permission(request, view, obj)
-
-
-class MembershipPermission(BasePermission):
-    get_permission = "view_membership"
-    post_permission = "add_membership"
-    put_permission = "change_membership"
-    patch_permission = "change_membership"
-    delete_permission = "delete_membership"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+class MembershipPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectOwner()
+    update_perms = IsProjectOwner()
+    destroy_perms = IsProjectOwner()
+    list_perms = AllowAny()
 
 
 # User Stories
 
-class PointsPermission(BasePermission):
-    get_permission = "view_points"
-    post_permission = "add_points"
-    put_permission = "change_points"
-    patch_permission = "change_points"
-    delete_permission = "delete_points"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+class PointsPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectOwner()
+    update_perms = IsProjectOwner()
+    destroy_perms = IsProjectOwner()
+    list_perms = AllowAny()
+    bulk_update_order_perms = IsProjectOwner()
 
 
-class UserStoryStatusPermission(BasePermission):
-    get_permission = "view_userstorystatus"
-    post_permission = "add_userstorystatus"
-    put_permission = "change_userstorystatus"
-    patch_permission = "change_userstorystatus"
-    delete_permission = "delete_userstorystatus"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+class UserStoryStatusPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectOwner()
+    update_perms = IsProjectOwner()
+    destroy_perms = IsProjectOwner()
+    list_perms = AllowAny()
+    bulk_update_order_perms = IsProjectOwner()
 
 
 # Tasks
 
-class TaskStatusPermission(BasePermission):
-    get_permission = "view_taskstatus"
-    post_permission = "ade_taskstatus"
-    put_permission = "change_taskstatus"
-    patch_permission = "change_taskstatus"
-    delete_permission = "delete_taskstatus"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+class TaskStatusPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectOwner()
+    update_perms = IsProjectOwner()
+    destroy_perms = IsProjectOwner()
+    list_perms = AllowAny()
+    bulk_update_order_perms = IsProjectOwner()
 
 
 # Issues
 
-class SeverityPermission(BasePermission):
-    get_permission = "view_severity"
-    post_permission = "add_severity"
-    put_permission = "change_severity"
-    patch_permission = "change_severity"
-    delete_permission = "delete_severity"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+class SeverityPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectOwner()
+    update_perms = IsProjectOwner()
+    destroy_perms = IsProjectOwner()
+    list_perms = AllowAny()
+    bulk_update_order_perms = IsProjectOwner()
 
 
-class PriorityPermission(BasePermission):
-    get_permission = "view_priority"
-    post_permission = "add_priority"
-    put_permission = "change_priority"
-    patch_permission = "change_priority"
-    delete_permission = "delete_priority"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+class PriorityPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectOwner()
+    update_perms = IsProjectOwner()
+    destroy_perms = IsProjectOwner()
+    list_perms = AllowAny()
+    bulk_update_order_perms = IsProjectOwner()
 
 
-class IssueStatusPermission(BasePermission):
-    get_permission = "view_issuestatus"
-    post_permission = "add_issuestatus"
-    put_permission = "change_issuestatus"
-    patch_permission = "change_issuestatus"
-    delete_permission = "delete_issuestatus"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+class IssueStatusPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectOwner()
+    update_perms = IsProjectOwner()
+    destroy_perms = IsProjectOwner()
+    list_perms = AllowAny()
+    bulk_update_order_perms = IsProjectOwner()
 
 
-class IssueTypePermission(BasePermission):
-    get_permission = "view_issuetype"
-    post_permission = "add_issuetype"
-    put_permission = "change_issuetype"
-    patch_permission = "change_issuetype"
-    delete_permission = "delete_issuetype"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+class IssueTypePermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectOwner()
+    update_perms = IsProjectOwner()
+    destroy_perms = IsProjectOwner()
+    list_perms = AllowAny()
+    bulk_update_order_perms = IsProjectOwner()
 
 
-class RolesPermission(BasePermission):
-    get_permission = "view_role"
-    post_permission = "add_role"
-    put_permission = "change_role"
-    patch_permission = "change_role"
-    delete_permission = "delete_role"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+class RolesPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectOwner()
+    update_perms = IsProjectOwner()
+    destroy_perms = IsProjectOwner()
+    list_perms = AllowAny()
 
 
 # Project Templates
 
-class ProjectTemplatePermission(BasePermission):
-    # TODO: should be improved in permissions refactor
-    pass
+class ProjectTemplatePermission(ResourcePermission):
+    retrieve_perms = AllowAny()
+    create_perms = IsSuperUser()
+    update_perms = IsSuperUser()
+    destroy_perms = IsSuperUser()
+    list_perms = AllowAny()

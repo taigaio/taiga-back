@@ -14,15 +14,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
+from django.conf import settings
+from django import http
 
 from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import generics
 from taiga.base import filters
 from taiga.base import exceptions as exc
-from taiga.projects.history.services import take_snapshot
 
 from taiga.projects.notifications import WatchedResourceMixin
 from taiga.projects.history import HistoryResourceMixin
@@ -36,9 +39,6 @@ from . import models
 class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     model = models.Attachment
     serializer_class = serializers.AttachmentSerializer
-    permission_classes = (IsAuthenticated, permissions.AttachmentPermission,)
-
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ["project", "object_id"]
 
     content_type = None
@@ -47,12 +47,6 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCru
         app_name, model = self.content_type.split(".", 1)
         return get_object_or_404(ContentType, app_label=app_name, model=model)
 
-    def get_queryset(self):
-        ct = self.get_content_type()
-        qs = super().get_queryset()
-        qs = qs.filter(content_type=ct)
-        return qs.distinct()
-
     def pre_save(self, obj):
         if not obj.id:
             obj.content_type = self.get_content_type()
@@ -60,19 +54,13 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCru
 
         super().pre_save(obj)
 
-    def pre_conditions_on_save(self, obj):
-        super().pre_conditions_on_save(obj)
-
-        if (obj.project.owner != self.request.user and
-                obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PermissionDenied(_("You don't have permissions for "
-                                         "add attachments to this user story"))
-
     def get_object_for_snapshot(self, obj):
         return obj.content_object
 
 
 class UserStoryAttachmentViewSet(BaseAttachmentViewSet):
+    permission_classes = (permissions.UserStoryAttachmentPermission,)
+    filter_backends = (filters.CanViewUserStoryAttachmentFilterBackend,)
     content_type = "userstories.userstory"
     create_notification_template = "create_userstory_notification"
     update_notification_template = "update_userstory_notification"
@@ -80,6 +68,8 @@ class UserStoryAttachmentViewSet(BaseAttachmentViewSet):
 
 
 class IssueAttachmentViewSet(BaseAttachmentViewSet):
+    permission_classes = (permissions.IssueAttachmentPermission,)
+    filter_backends = (filters.CanViewIssueAttachmentFilterBackend,)
     content_type = "issues.issue"
     create_notification_template = "create_issue_notification"
     update_notification_template = "update_issue_notification"
@@ -87,6 +77,8 @@ class IssueAttachmentViewSet(BaseAttachmentViewSet):
 
 
 class TaskAttachmentViewSet(BaseAttachmentViewSet):
+    permission_classes = (permissions.TaskAttachmentPermission,)
+    filter_backends = (filters.CanViewTaskAttachmentFilterBackend,)
     content_type = "tasks.task"
     create_notification_template = "create_task_notification"
     update_notification_template = "update_task_notification"
@@ -94,7 +86,31 @@ class TaskAttachmentViewSet(BaseAttachmentViewSet):
 
 
 class WikiAttachmentViewSet(BaseAttachmentViewSet):
+    permission_classes = (permissions.WikiAttachmentPermission,)
+    filter_backends = (filters.CanViewWikiAttachmentFilterBackend,)
     content_type = "wiki.wikipage"
     create_notification_template = "create_wiki_notification"
     update_notification_template = "update_wiki_notification"
     destroy_notification_template = "destroy_wiki_notification"
+
+
+class RawAttachmentView(generics.RetrieveAPIView):
+    queryset = models.Attachment.objects.all()
+    permission_classes = (permissions.RawAttachmentPermission,)
+
+    def _serve_attachment(self, attachment):
+        if settings.IN_DEVELOPMENT_SERVER:
+            return http.HttpResponseRedirect(attachment.url)
+
+        name = attachment.name
+        response = http.HttpResponse()
+        response['X-Accel-Redirect'] = "/{filepath}".format(filepath=name)
+        response['Content-Disposition'] = 'attachment;filename={filename}'.format(
+            filename=os.path.basename(name))
+
+        return response
+
+    def retrieve(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.check_permissions(request, 'retrieve', self.object)
+        return self._serve_attachment(self.object.attached_file)

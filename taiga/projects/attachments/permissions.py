@@ -15,14 +15,62 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from taiga.base.permissions import BasePermission
+from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
+                                        IsProjectOwner, AllowAny, PermissionComponent)
 
 
-class AttachmentPermission(BasePermission):
-    get_permission = "view_attachment"
-    post_permission = "add_attachment"
-    put_permission = "change_attachment"
-    patch_permission = "change_attachment"
-    delete_permission = "delete_attachment"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+class IsAttachmentOwnerPerm(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        if obj and obj.owner and request.user.is_authenticated():
+            return request.user == obj.owner
+        return False
+
+
+class UserStoryAttachmentPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_us') | IsAttachmentOwnerPerm()
+    create_perms = HasProjectPerm('modify_us')
+    update_perms = HasProjectPerm('modify_us') | IsAttachmentOwnerPerm()
+    destroy_perms = HasProjectPerm('modify_us') | IsAttachmentOwnerPerm()
+    list_perms = AllowAny()
+
+
+class TaskAttachmentPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_tasks') | IsAttachmentOwnerPerm()
+    create_perms = HasProjectPerm('modify_task')
+    update_perms = HasProjectPerm('modify_task') | IsAttachmentOwnerPerm()
+    destroy_perms = HasProjectPerm('modify_task') | IsAttachmentOwnerPerm()
+    list_perms = AllowAny()
+
+
+class IssueAttachmentPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_issues') | IsAttachmentOwnerPerm()
+    create_perms = HasProjectPerm('modify_issue')
+    update_perms = HasProjectPerm('modify_issue') | IsAttachmentOwnerPerm()
+    destroy_perms = HasProjectPerm('modify_issue') | IsAttachmentOwnerPerm()
+    list_perms = AllowAny()
+
+
+class WikiAttachmentPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_wiki_pages') | IsAttachmentOwnerPerm()
+    create_perms = HasProjectPerm('modify_wiki_page')
+    update_perms = HasProjectPerm('modify_wiki_page') | IsAttachmentOwnerPerm()
+    destroy_perms = HasProjectPerm('modify_wiki_page') | IsAttachmentOwnerPerm()
+    list_perms = AllowAny()
+
+
+class RawAttachmentPerm(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        is_owner = IsAttachmentOwnerPerm().check_permissions(request, view, obj)
+        if obj.content_type.app_label == "userstories" and obj.content_type.model == "userstory":
+            return UserStoryAttachmentPermission(request, view).check_permissions('retrieve', obj) or is_owner
+        elif obj.content_type.app_label == "tasks" and obj.content_type.model == "task":
+            return TaskAttachmentPermission(request, view).check_permissions('retrieve', obj) or is_owner
+        elif obj.content_type.app_label == "issues" and obj.content_type.model == "issue":
+            return IssueAttachmentPermission(request, view).check_permissions('retrieve', obj) or is_owner
+        elif obj.content_type.app_label == "wiki" and obj.content_type.model == "wikipage":
+            return WikiAttachmentPermission(request, view).check_permissions('retrieve', obj) or is_owner
+        return False
+
+
+class RawAttachmentPermission(ResourcePermission):
+    retrieve_perms = RawAttachmentPerm()

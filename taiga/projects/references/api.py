@@ -18,15 +18,17 @@ from django.db.models.loading import get_model
 from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
 
 from taiga.base import exceptions as exc
+from taiga.base.api import viewsets
 from .serializers import ResolverSerializer
+from taiga.permissions.service import user_has_perm
+
+from . import permissions
 
 
 class ResolverViewSet(viewsets.ViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (permissions.ResolverPermission,)
 
     def list(self, request, **kwargs):
         serializer = ResolverSerializer(data=request.QUERY_PARAMS)
@@ -38,17 +40,19 @@ class ResolverViewSet(viewsets.ViewSet):
         project_model = get_model("projects", "Project")
         project = get_object_or_404(project_model, slug=data["project"])
 
+        self.check_permissions(request, "list", project)
+
         result = {
             "project": project.pk
         }
 
-        if data["us"]:
+        if data["us"] and user_has_perm(request.user, "view_us", project):
             result["us"] = get_object_or_404(project.user_stories.all(), ref=data["us"]).pk
-        if data["task"]:
+        if data["task"] and user_has_perm(request.user, "view_tasks", project):
             result["task"] = get_object_or_404(project.tasks.all(), ref=data["task"]).pk
-        if data["issue"]:
+        if data["issue"] and user_has_perm(request.user, "view_issues", project):
             result["issue"] = get_object_or_404(project.issues.all(), ref=data["issue"]).pk
-        if data["milestone"]:
+        if data["milestone"] and user_has_perm(request.user, "view_milestones", project):
             result["milestone"] = get_object_or_404(project.milestones.all(), slug=data["milestone"]).pk
 
         return Response(result)

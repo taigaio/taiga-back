@@ -23,8 +23,8 @@ from taiga.base.api import GenericViewSet
 
 from . import serializers
 from . import service
-
-# TODO: Set Timelines permissions
+from . import permissions
+from . import models
 
 
 class TimelineViewSet(GenericViewSet):
@@ -36,13 +36,13 @@ class TimelineViewSet(GenericViewSet):
         app_name, model = self.content_type.split(".", 1)
         return get_object_or_404(ContentType, app_label=app_name, model=model)
 
-    def get_object(self):
+    def get_queryset(self):
         ct = self.get_content_type()
         model_cls = ct.model_class()
 
         qs = model_cls.objects.all()
         filtered_qs = self.filter_queryset(qs)
-        return super().get_object(queryset=filtered_qs)
+        return filtered_qs
 
     def response_for_queryset(self, queryset):
         # Switch between paginated or standard style responses
@@ -61,13 +61,17 @@ class TimelineViewSet(GenericViewSet):
 
     def retrieve(self, request, pk):
         obj = self.get_object()
+        self.check_permissions(request, "retrieve", obj)
+
         qs = service.get_timeline(obj)
         return self.response_for_queryset(qs)
 
 
 class UserTimeline(TimelineViewSet):
     content_type = "users.user"
+    permission_classes = (permissions.UserTimelinePermission,)
 
 
 class ProjectTimeline(TimelineViewSet):
     content_type = "projects.project"
+    permission_classes = (permissions.ProjectTimelinePermission,)

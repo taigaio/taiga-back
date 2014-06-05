@@ -18,10 +18,10 @@ from os import path
 from rest_framework import serializers
 from django.utils.translation import ugettext_lazy as _
 
-from taiga.base.serializers import PickleField, JsonField
-from taiga.users.serializers import UserSerializer
+from taiga.base.serializers import JsonField, PgArrayField
 from taiga.users.models import Role, User
 from taiga.users.services import get_photo_or_gravatar_url
+from taiga.users.serializers import UserSerializer
 
 from . import models
 
@@ -131,6 +131,9 @@ class ProjectMembershipSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    tags = PgArrayField(required=False)
+    anon_permissions = PgArrayField(required=False)
+    public_permissions = PgArrayField(required=False)
     stars = serializers.SerializerMethodField("get_stars_number")
 
     class Meta:
@@ -143,9 +146,15 @@ class ProjectSerializer(serializers.ModelSerializer):
         return getattr(obj, "stars_count", 0)
 
     def validate_slug(self, attrs, source):
-        project_with_slug = models.Project.objects.filter(slug=attrs[source])
+        if self.object:
+            project_with_slug = models.Project.objects.filter(slug=attrs[source]).exclude(pk=self.object.pk)
+        else:
+            project_with_slug = models.Project.objects.filter(slug=attrs[source])
+
         if source == "slug" and project_with_slug.exists():
             raise serializers.ValidationError(_("Slug duplicated for the project"))
+
+        return attrs
 
 
 class ProjectDetailSerializer(ProjectSerializer):
@@ -187,6 +196,8 @@ class ProjectRoleSerializer(serializers.ModelSerializer):
 
 
 class RoleSerializer(serializers.ModelSerializer):
+    permissions = PgArrayField(required=False)
+
     class Meta:
         model = Role
         fields = ('id', 'name', 'permissions', 'computable', 'project', 'order')

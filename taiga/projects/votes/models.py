@@ -32,6 +32,12 @@ class Votes(models.Model):
         verbose_name_plural = _("Votes")
         unique_together = ("content_type", "object_id")
 
+    @property
+    def project(self):
+        if hasattr(self.content_object, 'project'):
+            return self.content_object.project
+        return None
+
     def __str__(self):
         return self.count
 
@@ -47,6 +53,12 @@ class Vote(models.Model):
         verbose_name = _("Vote")
         verbose_name_plural = _("Votes")
         unique_together = ("content_type", "object_id", "user")
+
+    @property
+    def project(self):
+        if hasattr(self.content_object, 'project'):
+            return self.content_object.project
+        return None
 
     def __str__(self):
         return self.user

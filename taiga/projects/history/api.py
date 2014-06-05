@@ -31,8 +31,6 @@ from . import services
 # TODO: add specific permission for view history?
 
 class HistoryViewSet(GenericViewSet):
-    filter_backends = (IsProjectMemberFilterBackend,)
-    permission_classes = (IsAuthenticated, permissions.HistoryPermission)
     serializer_class = serializers.HistoryEntrySerializer
 
     content_type = None
@@ -41,13 +39,13 @@ class HistoryViewSet(GenericViewSet):
         app_name, model = self.content_type.split(".", 1)
         return get_object_or_404(ContentType, app_label=app_name, model=model)
 
-    def get_object(self):
+    def get_queryset(self):
         ct = self.get_content_type()
         model_cls = ct.model_class()
 
         qs = model_cls.objects.all()
         filtered_qs = self.filter_queryset(qs)
-        return super().get_object(queryset=filtered_qs)
+        return filtered_qs
 
     def response_for_queryset(self, queryset):
         # Switch between paginated or standard style responses
@@ -66,21 +64,27 @@ class HistoryViewSet(GenericViewSet):
 
     def retrieve(self, request, pk):
         obj = self.get_object()
+        self.check_permissions(request, "retrieve", obj)
+
         qs = services.get_history_queryset_by_model_instance(obj)
         return self.response_for_queryset(qs)
 
 
 class UserStoryHistory(HistoryViewSet):
     content_type = "userstories.userstory"
+    permission_classes = (permissions.UserStoryHistoryPermission,)
 
 
 class TaskHistory(HistoryViewSet):
     content_type = "tasks.task"
+    permission_classes = (permissions.TaskHistoryPermission,)
 
 
 class IssueHistory(HistoryViewSet):
     content_type = "issues.issue"
+    permission_classes = (permissions.IssueHistoryPermission,)
 
 
 class WikiHistory(HistoryViewSet):
-    content_type = "wiki.wiki"
+    content_type = "wiki.wikipage"
+    permission_classes = (permissions.WikiHistoryPermission,)

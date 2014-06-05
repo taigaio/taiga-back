@@ -14,15 +14,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.permissions import BasePermission
+from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
+                                        IsProjectOwner, AllowAny)
 
 
-class MilestonePermission(BasePermission):
-    get_permission = "view_milestone"
-    post_permission = "add_milestone"
-    put_permission = "change_milestone"
-    patch_permission = "change_milestone"
-    delete_permission = "delete_milestone"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
-
+class MilestonePermission(ResourcePermission):
+    enought_perms = IsProjectOwner()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_milestones')
+    create_perms = HasProjectPerm('add_milestone')
+    update_perms = HasProjectPerm('modify_milestone')
+    destroy_perms = HasProjectPerm('delete_milestone')
+    list_perms = AllowAny()
+    stats_perms = HasProjectPerm('view_milestones')

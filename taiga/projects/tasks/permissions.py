@@ -14,14 +14,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.permissions import BasePermission
+from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
+                                        IsProjectOwner, AllowAny)
 
 
-class TaskPermission(BasePermission):
-    get_permission = "view_task"
-    post_permission = "add_task"
-    put_permission = "change_task"
-    patch_permission = "change_task"
-    delete_permission = "delete_task"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+class TaskPermission(ResourcePermission):
+    enought_perms = IsProjectOwner()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_tasks')
+    create_perms = HasProjectPerm('add_task')
+    update_perms = HasProjectPerm('modify_task')
+    destroy_perms = HasProjectPerm('delete_task')
+    list_perms = AllowAny()
+    bulk_create_perms = HasProjectPerm('add_task')
