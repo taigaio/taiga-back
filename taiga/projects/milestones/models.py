@@ -20,15 +20,14 @@ from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
-from taiga.projects.notifications.models import WatchedMixin
-
+from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.userstories.models import UserStory
 
 import itertools
 import datetime
 
 
-class Milestone(WatchedMixin, models.Model):
+class Milestone(WatchedModelMixin, models.Model):
     name = models.CharField(max_length=200, db_index=True, null=False, blank=False,
                             verbose_name=_("name"))
     # TODO: Change the unique restriction to a unique together with the project id
@@ -123,12 +122,6 @@ class Milestone(WatchedMixin, models.Model):
     @property
     def shared_increment_points(self):
         return self._get_points_increment(True, True)
-
-    def _get_watchers_by_role(self):
-        return {
-            "owner": self.owner,
-            "project": self.project,
-        }
 
     def closed_points_by_date(self, date):
         return self._get_user_stories_points([

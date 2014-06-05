@@ -24,7 +24,10 @@ from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet
-from taiga.projects.mixins.notifications import NotificationSenderMixin
+
+from taiga.projects.notifications import WatchedResourceMixin
+from taiga.projects.history import HistoryResourceMixin
+
 
 from . import serializers
 from . import models
@@ -33,21 +36,20 @@ from . import permissions
 import datetime
 
 
-class MilestoneViewSet(NotificationSenderMixin, ModelCrudViewSet):
-    # TODO: Refactor this, too much prefetch related
-    queryset = models.Milestone.objects.all().order_by("-estimated_start").prefetch_related(
-        "user_stories",
-        "user_stories__role_points",
-        "user_stories__role_points__points",
-        "user_stories__role_points__role",
-    )
+class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     serializer_class = serializers.MilestoneSerializer
     permission_classes = (IsAuthenticated, permissions.MilestonePermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ("project",)
-    create_notification_template = "create_milestone_notification"
-    update_notification_template = "update_milestone_notification"
-    destroy_notification_template = "destroy_milestone_notification"
+
+    def get_queryset(self):
+        qs = models.Milestone.objects.all()
+        qs = qs.prefetch_related("user_stories",
+                                 "user_stories__role_points",
+                                 "user_stories__role_points__points",
+                                 "user_stories__role_points__role")
+        qs = qs.order_by("-estimated_start")
+        return qs
 
     def pre_conditions_on_save(self, obj):
         super().pre_conditions_on_save(obj)

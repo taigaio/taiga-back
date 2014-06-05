@@ -26,9 +26,12 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet
-from taiga.projects.mixins.notifications import NotificationSenderMixin
 from taiga.projects.models import Project
 from taiga.projects.userstories.models import UserStory
+
+from taiga.projects.notifications import WatchedResourceMixin
+from taiga.projects.history import HistoryResourceMixin
+
 
 from . import models
 from . import permissions
@@ -36,16 +39,12 @@ from . import serializers
 from . import services
 
 
-class TaskViewSet(NotificationSenderMixin, ModelCrudViewSet):
+class TaskViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     model = models.Task
     serializer_class = serializers.TaskSerializer
     permission_classes = (IsAuthenticated, permissions.TaskPermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ["user_story", "milestone", "project"]
-
-    create_notification_template = "create_task_notification"
-    update_notification_template = "update_task_notification"
-    destroy_notification_template = "destroy_task_notification"
 
     def pre_save(self, obj):
         if obj.user_story:

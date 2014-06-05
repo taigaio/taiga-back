@@ -18,10 +18,10 @@ from django.db import models
 from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from taiga.projects.notifications.models import WatchedMixin
+from taiga.projects.notifications import WatchedModelMixin
 
 
-class WikiPage(WatchedMixin, models.Model):
+class WikiPage(WatchedModelMixin, models.Model):
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="wiki_pages", verbose_name=_("project"))
     slug = models.SlugField(max_length=500, db_index=True, null=False, blank=False,
@@ -30,9 +30,6 @@ class WikiPage(WatchedMixin, models.Model):
                                verbose_name=_("content"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                               related_name="owned_wiki_pages", verbose_name=_("owner"))
-    watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
-                                      related_name="watched_wiki_pages",
-                                      verbose_name=_("watchers"))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
                                         verbose_name=_("created date"))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
@@ -50,14 +47,6 @@ class WikiPage(WatchedMixin, models.Model):
 
     def __str__(self):
         return "project {0} - {1}".format(self.project_id, self.slug)
-
-    def _get_watchers_by_role(self):
-        return {
-            "owner": self.owner,
-            "assigned_to": None,
-            "suscribed_watchers": self.watchers.all(),
-            "project": self.project,
-        }
 
 
 class WikiLink(models.Model):

@@ -20,7 +20,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import UserManager, AbstractUser
 
 from taiga.base.utils.slug import slugify_uniquely
-from taiga.projects.notifications.models import WatcherMixin
 
 import random
 
@@ -29,7 +28,7 @@ def generate_random_hex_color():
     return "#{:06x}".format(random.randint(0,0xFFFFFF))
 
 
-class User(AbstractUser, WatcherMixin):
+class User(AbstractUser):
     color = models.CharField(max_length=9, null=False, blank=True, default=generate_random_hex_color,
                              verbose_name=_("color"))
     description = models.TextField(null=False, blank=True,

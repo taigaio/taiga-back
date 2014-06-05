@@ -29,7 +29,9 @@ from taiga.base.decorators import action
 from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet
 
-from taiga.projects.mixins.notifications import NotificationSenderMixin
+from taiga.projects.notifications import WatchedResourceMixin
+from taiga.projects.history import HistoryResourceMixin
+
 from taiga.projects.models import Project
 from taiga.projects.history.services import take_snapshot
 
@@ -39,7 +41,7 @@ from . import serializers
 from . import services
 
 
-class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
+class UserStoryViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     model = models.UserStory
     serializer_class = serializers.UserStoryNeighborsSerializer
     list_serializer_class = serializers.UserStorySerializer
@@ -49,16 +51,17 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
     retrieve_exclude_filters = (filters.TagsFilter,)
     filter_fields = ['project', 'milestone', 'milestone__isnull', 'status']
 
-    create_notification_template = "create_userstory_notification"
-    update_notification_template = "update_userstory_notification"
-    destroy_notification_template = "destroy_userstory_notification"
-
     # Specific filter used for filtering neighbor user stories
     _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')
 
     def get_queryset(self):
-        return self.model.objects.prefetch_related("points", "role_points", "role_points__points", "role_points__role").select_related("milestone", "project")
-        # TODO: Refactor this
+        qs = self.model.objects.all()
+        qs = qs.prefetch_related("points",
+                                 "role_points",
+                                 "role_points__points",
+                                 "role_points__role")
+        qs = qs.select_related("milestone", "project")
+        return qs
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
@@ -119,7 +122,11 @@ class UserStoryViewSet(NotificationSenderMixin, ModelCrudViewSet):
             comment = _("Generate the user story [US #{ref} - "
                         "{subject}](:us:{ref} \"US #{ref} - {subject}\")")
             comment = comment.format(ref=self.object.ref, subject=self.object.subject)
-            take_snapshot(self.object.generated_from_issue, comment=comment, user=self.request.user)
+            history = take_snapshot(self.object.generated_from_issue,
+                                    comment=comment,
+                                    user=self.request.user)
+
+            self.send_notifications(self.object.generated_from_issue, history)
 
         return response
 

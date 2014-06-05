@@ -39,9 +39,6 @@ class UserCreationForm(DjangoUserCreationForm):
 
 
 class UserChangeForm(DjangoUserChangeForm):
-    notify_level = forms.ChoiceField(choices=User.NOTIFY_LEVEL_CHOICES)
-    notify_changes_by_me = forms.BooleanField(required=False)
-
     class Meta:
         model = User
 

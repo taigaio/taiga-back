@@ -24,13 +24,13 @@ from django.utils.translation import ugettext_lazy as _
 from picklefield.fields import PickledObjectField
 
 from taiga.base.utils.slug import ref_uniquely
-from taiga.projects.notifications.models import WatchedMixin
+from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.milestones.models import Milestone
 from taiga.projects.mixins.blocked import BlockedMixin
 
 
-class Task(WatchedMixin, BlockedMixin):
+class Task(WatchedModelMixin, BlockedMixin, models.Model):
     user_story = models.ForeignKey("userstories.UserStory", null=True, blank=True,
                                    related_name="tasks", verbose_name=_("user story"))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
@@ -56,8 +56,6 @@ class Task(WatchedMixin, BlockedMixin):
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                     default=None, related_name="tasks_assigned_to_me",
                                     verbose_name=_("assigned to"))
-    watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
-                                      related_name="watched_tasks", verbose_name=_("watchers"))
     tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
     attachments = generic.GenericRelation("attachments.Attachment")
     is_iocaine = models.BooleanField(default=False, null=False, blank=True,
@@ -84,15 +82,6 @@ class Task(WatchedMixin, BlockedMixin):
         if type(value) is list:
             return ", ".join(value)
         return value
-
-    def _get_watchers_by_role(self):
-        return {
-            "owner": self.owner,
-            "assigned_to": self.assigned_to,
-            "suscribed_watchers": self.watchers.all(),
-            "project": self.project,
-        }
-
 
 
 def us_has_open_tasks(us, exclude_task):
