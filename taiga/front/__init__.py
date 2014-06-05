@@ -38,5 +38,5 @@ def resolve(type, *args):
     url_tmpl = "{scheme}//{domain}{url}"
 
     scheme = site.scheme and "{0}:".format(site.scheme) or ""
-    url = urlsp[type].format(*args)
+    url = urls[type].format(*args)
     return url_tmpl.format(scheme=scheme, domain=site.domain, url=url)
