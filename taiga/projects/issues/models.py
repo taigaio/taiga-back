@@ -21,15 +21,14 @@ from django.utils import timezone
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
-from picklefield.fields import PickledObjectField
-
+from taiga.base.tags import TaggedMixin
 from taiga.base.utils.slug import ref_uniquely
 from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
 
 
-class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, models.Model):
+class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
@@ -59,7 +58,6 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, models.Model):
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                     default=None, related_name="issues_assigned_to_me",
                                     verbose_name=_("assigned to"))
-    tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
     attachments = generic.GenericRelation("attachments.Attachment")
 
     class Meta:

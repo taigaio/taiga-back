@@ -30,6 +30,7 @@ from django.utils import timezone
 from picklefield.fields import PickledObjectField
 from django_pgjson.fields import JsonField
 
+from taiga.base.tags import TaggedMixin
 from taiga.users.models import Role
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
@@ -109,7 +110,7 @@ class ProjectDefaults(models.Model):
         abstract = True
 
 
-class Project(ProjectDefaults, models.Model):
+class Project(ProjectDefaults, TaggedMixin):
     name = models.CharField(max_length=250, unique=True, null=False, blank=False,
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
@@ -130,7 +131,6 @@ class Project(ProjectDefaults, models.Model):
                                            verbose_name=_("total of milestones"))
     total_story_points = models.FloatField(default=None, null=True, blank=False,
                                            verbose_name=_("total story points"))
-    tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
 
     is_backlog_activated = models.BooleanField(default=True, null=False, blank=True,
                                                verbose_name=_("active backlog panel"))
@@ -186,6 +186,8 @@ class Project(ProjectDefaults, models.Model):
 
         # Get all available roles on this project
         roles = self.get_roles().filter(computable=True)
+        if len(roles) == 0:
+            return
 
         # Do nothing if project does not have roles
         if len(roles) == 0:

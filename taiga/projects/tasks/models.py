@@ -21,8 +21,7 @@ from django.utils import timezone
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
-from picklefield.fields import PickledObjectField
-
+from taiga.base.tags import TaggedMixin
 from taiga.base.utils.slug import ref_uniquely
 from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
@@ -31,7 +30,7 @@ from taiga.projects.milestones.models import Milestone
 from taiga.projects.mixins.blocked import BlockedMixin
 
 
-class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, models.Model):
+class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin):
     user_story = models.ForeignKey("userstories.UserStory", null=True, blank=True,
                                    related_name="tasks", verbose_name=_("user story"))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
@@ -57,7 +56,6 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, models.Model):
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                     default=None, related_name="tasks_assigned_to_me",
                                     verbose_name=_("assigned to"))
-    tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
     attachments = generic.GenericRelation("attachments.Attachment")
     is_iocaine = models.BooleanField(default=False, null=False, blank=True,
                                      verbose_name=_("is iocaine"))

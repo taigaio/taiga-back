@@ -5,7 +5,7 @@ import pytest
 
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.issues.models import Issue
-from taiga.base.utils.db import filter_by_tags
+from taiga.base import tags
 from taiga.base import neighbors as n
 
 from .. import factories as f
@@ -77,14 +77,14 @@ class TestUserStories:
         assert neighbors.right == us3
 
     def test_filtered_by_tags(self):
-        tags = ["test"]
+        tag_names = ["test"]
         project = f.ProjectFactory.create()
 
         f.UserStoryFactory.create(project=project)
-        us1 = f.UserStoryFactory.create(project=project, tags=tags)
-        us2 = f.UserStoryFactory.create(project=project, tags=tags)
+        us1 = f.UserStoryFactory.create(project=project, tags=tag_names)
+        us2 = f.UserStoryFactory.create(project=project, tags=tag_names)
 
-        test_user_stories = filter_by_tags(tags, queryset=UserStory.objects.get_queryset())
+        test_user_stories = tags.filter(UserStory.objects.get_queryset(), contains=tag_names)
 
         neighbors = n.get_neighbors(us1, results_set=test_user_stories)
 
