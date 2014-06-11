@@ -11,7 +11,7 @@ install:
   - sudo apt-get install postgresql-plpython-9.3
   - pip install -r requirements-devel.txt --use-mirrors
 script:
-    - coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' -m py.test
+    - coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' -m py.test -v
 notifications:
   email:
     recipients:
