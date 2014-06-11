@@ -79,8 +79,8 @@ def _get(url:str, headers:dict) -> dict:
 
     data = response.json()
     if response.status_code != 200:
-        raise exc.GitHubApiErrorApiError({"status_code": response.status_code,
-                                          "error": data.get("error", "")})
+        raise exc.GitHubApiError({"status_code": response.status_code,
+                                  "error": data.get("error", "")})
     return data
 
 
@@ -88,12 +88,12 @@ def _post(url:str, params:dict, headers:dict) -> dict:
     """
     Make a POST call.
     """
-    response = requests.post(url,params=params, headers=headers)
+    response = requests.post(url, params=params, headers=headers)
 
     data = response.json()
     if response.status_code != 200 or "error" in data:
-        raise exc.GitHubApiErrorApiError({"status_code": response.status_code,
-                                          "error": data.get("error", "")})
+        raise exc.GitHubApiError({"status_code": response.status_code,
+                                  "error": data.get("error", "")})
     return data
 
 
@@ -136,7 +136,7 @@ def get_user_emails(headers:dict=HEADERS) -> list:
     """
     url = _build_url("user", "emails")
     data = _get(url, headers=headers)
-    return [Email(email=e.get("email", None), is_primary=e.get("primary", None))
+    return [Email(email=e.get("email", None), is_primary=e.get("primary", False))
                     for e in data]
 
 
