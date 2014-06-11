@@ -20,7 +20,6 @@ from django.db.models.loading import get_model
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import logout, login, authenticate
-from django.contrib.auth.models import Permission
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.response import Response
@@ -35,7 +34,8 @@ from taiga.base import exceptions as exc
 from taiga.base.api import ModelCrudViewSet, RetrieveModelMixin, ModelListViewSet
 
 from .models import User, Role
-from .serializers import UserSerializer, RecoverySerializer, PermissionSerializer
+from .serializers import UserSerializer, RecoverySerializer
+
 
 class MembersFilterBackend(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
@@ -52,27 +52,6 @@ class MembersFilterBackend(BaseFilterBackend):
                 return queryset
             else:
                 return queryset.filter(pk=request.user.id)
-
-class PermissionsViewSet(ModelListViewSet):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = PermissionSerializer
-    paginate_by = 0
-    excluded_codenames = [
-        "add_logentry", "change_logentry", "delete_logentry",
-        "add_group", "change_group", "delete_group",
-        "add_permission", "change_permission", "delete_permission",
-        "add_contenttype", "change_contenttype", "delete_contenttype",
-        "add_message", "change_message", "delete_message",
-        "add_session", "change_session", "delete_session",
-        "add_migrationhistory", "change_migrationhistory", "delete_migrationhistory",
-        "add_version", "change_version", "delete_version",
-        "add_revision", "change_revision", "delete_revision",
-        "add_user", "delete_user",
-        "add_project",
-    ]
-
-    def get_queryset(self):
-        return Permission.objects.exclude(codename__in=self.excluded_codenames)
 
 
 class UsersViewSet(ModelCrudViewSet):

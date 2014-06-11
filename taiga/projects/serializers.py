@@ -109,7 +109,7 @@ class ProjectDetailSerializer(ProjectSerializer):
     issue_types = IssueTypeSerializer(many=True, required=False)
 
     def get_membership(self, obj):
-        qs = obj.memberships.order_by('user__first_name', 'user__last_name', 'user__username')
+        qs = obj.memberships.order_by('user__full_name', 'user__username')
         qs = qs.select_related("role", "user")
 
         serializer = ProjectMembershipSerializer(qs, many=True)
@@ -117,7 +117,7 @@ class ProjectDetailSerializer(ProjectSerializer):
 
     def get_active_membership(self, obj):
         qs = obj.memberships.filter(user__isnull=False)
-        qs = qs.order_by('user__first_name', 'user__last_name', 'user__username')
+        qs = qs.order_by('user__full_name', 'user__username')
         qs = qs.select_related("role", "user")
 
         serializer = ProjectMembershipSerializer(qs, many=True)

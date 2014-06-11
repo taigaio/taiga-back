@@ -20,11 +20,9 @@ router = routers.DefaultRouter(trailing_slash=False)
 
 # taiga.users
 from taiga.users.api import UsersViewSet
-from taiga.users.api import PermissionsViewSet
 from taiga.auth.api import AuthViewSet
 
 router.register(r"users", UsersViewSet, base_name="users")
-router.register(r"permissions", PermissionsViewSet, base_name="permissions")
 router.register(r"auth", AuthViewSet, base_name="auth")
 
 

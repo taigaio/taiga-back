@@ -10,8 +10,7 @@ pytestmark = pytest.mark.django_db
 def register_form():
     return {"username": "username",
             "password": "password",
-            "first_name": "fname",
-            "last_name": "lname",
+            "full_name": "fname",
             "email": "user@email.com",
             "type": "public"}
 

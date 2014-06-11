@@ -96,8 +96,7 @@ class IssuesOrdering(filters.FilterBackend):
 
         if order_by in ['owner', '-owner', 'assigned_to', '-assigned_to']:
             return queryset.order_by(
-                '{}__first_name'.format(order_by),
-                '{}__last_name'.format(order_by)
+                '{}__full_name'.format(order_by)
             )
         return queryset
 

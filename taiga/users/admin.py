@@ -47,20 +47,19 @@ admin.site.register(Role, RoleAdmin)
 class UserAdmin(DjangoUserAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'description', 'photo')}),
+        (_('Personal info'), {'fields': ('full_name', 'email', 'bio', 'photo')}),
         (_('Extra info'), {'fields': ('color', 'default_language', 'default_timezone', 'token', 'colorize_tags')}),
         (_('Notifications info'), {'fields': ("notify_level", "notify_changes_by_me",)}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
+        (_('Permissions'), {'fields': ('is_active', 'is_superuser',)}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
     form = UserChangeForm
     add_form = UserCreationForm
-
-
-class PermissionAdmin(admin.ModelAdmin):
-    list_display = ['name', 'content_type', 'codename']
-    list_filter = ['content_type']
-
+    list_display = ('username', 'email', 'full_name')
+    list_filter = ('is_superuser', 'is_active')
+    search_fields = ('username', 'full_name', 'email')
+    ordering = ('username',)
+    filter_horizontal = ()
 
 class RoleInline(admin.TabularInline):
     model = Role
@@ -68,4 +67,3 @@ class RoleInline(admin.TabularInline):
 
 
 admin.site.register(User, UserAdmin)
-admin.site.register(Permission, PermissionAdmin)

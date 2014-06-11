@@ -25,8 +25,7 @@ def create_user(id, save=True, is_superuser=False):
     instance = model(
        username="user{0}".format(id),
        email="user{0}@taiga.io".format(id),
-       first_name="Foo{0}".format(id),
-       last_name="Bar{0}".format(id)
+       full_name="Foo{0} Bar{0}".format(id)
     )
 
     instance.set_password(instance.username)
@@ -45,15 +44,4 @@ def create_user(id, save=True, is_superuser=False):
         dm.is_staff = True
         dm.save()
 
-    return instance
-
-
-def create_domain(name, public_register=False):
-    domain_model = get_model("domains", "Domain")
-
-    instance = domain_model(name=name,
-                            domain=name,
-                            public_register=public_register)
-
-    instance.save()
     return instance

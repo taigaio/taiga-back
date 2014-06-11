@@ -73,7 +73,7 @@ class ProfileTestCase(test.TestCase):
                                      password=self.user3.username)
         self.assertTrue(response)
 
-        data = {"first_name": "Foo Bar"}
+        data = {"full_name": "Foo Bar"}
 
         response = self.client.patch(
                         reverse("users-detail", args=[self.user2.pk]),
@@ -86,7 +86,7 @@ class ProfileTestCase(test.TestCase):
                                      password=self.user3.username)
         self.assertTrue(response)
 
-        data = {"first_name": "Foo Bar"}
+        data = {"full_name": "Foo Bar"}
         response = self.client.patch(
                         reverse("users-detail", args=[self.user3.pk]),
                         content_type="application/json",
@@ -99,7 +99,7 @@ class ProfileTestCase(test.TestCase):
                                      password=self.user1.username)
         self.assertTrue(response)
 
-        data = {"first_name": "Foo Bar"}
+        data = {"full_name": "Foo Bar"}
         response = self.client.patch(
                         reverse("users-detail", args=[self.user3.pk]),
                         content_type="application/json",
@@ -112,7 +112,7 @@ class ProfileTestCase(test.TestCase):
                                      password=self.user3.username)
         self.assertTrue(response)
 
-        data = {"first_name": "Foo Bar"}
+        data = {"full_name": "Foo Bar"}
         response = self.client.delete(
                         reverse("users-detail", args=[self.user2.pk]))
         self.assertEqual(response.status_code, 404)
@@ -122,7 +122,7 @@ class ProfileTestCase(test.TestCase):
                                      password=self.user3.username)
         self.assertTrue(response)
 
-        data = {"first_name": "Foo Bar"}
+        data = {"full_name": "Foo Bar"}
         response = self.client.delete(
                         reverse("users-detail", args=[self.user3.pk]))
 
@@ -134,7 +134,7 @@ class ProfileTestCase(test.TestCase):
                                      password=self.user1.username)
         self.assertTrue(response)
 
-        data = {"first_name": "Foo Bar"}
+        data = {"full_name": "Foo Bar"}
         response = self.client.delete(
                         reverse("users-detail", args=[self.user3.pk]))
 

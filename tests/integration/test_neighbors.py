@@ -22,12 +22,12 @@ def teardown_module():
 
 class TestGetAttribute:
     def test_no_attribute(self, object):
-        object.first_name = "name"
+        object.full_name = "name"
         with pytest.raises(AttributeError):
             n.get_attribute(object, "name")
 
         with pytest.raises(AttributeError):
-            n.get_attribute(object, "first_name__last_name")
+            n.get_attribute(object, "full_name__last_name")
 
     def test_one_level(self, object):
         object.name = "name"
@@ -35,14 +35,14 @@ class TestGetAttribute:
 
     def test_two_levels(self, object):
         object.name = object
-        object.name.first_name = "first name"
-        assert n.get_attribute(object, "name__first_name") == object.name.first_name
+        object.name.full_name = "first name"
+        assert n.get_attribute(object, "name__full_name") == object.name.full_name
 
     def test_three_levels(self, object):
         object.info = object
         object.info.name = object
-        object.info.name.first_name = "first name"
-        assert n.get_attribute(object, "info__name__first_name") == object.info.name.first_name
+        object.info.name.full_name = "first name"
+        assert n.get_attribute(object, "info__name__full_name") == object.info.name.full_name
 
 
 def test_transform_field_into_lookup():
@@ -237,14 +237,14 @@ class TestIssues:
 
     def test_ordering_by_owner(self):
         project = f.ProjectFactory.create()
-        owner1 = f.UserFactory.create(first_name="Chuck", last_name="Norris")
-        owner2 = f.UserFactory.create(first_name="George", last_name="Of The Jungle")
+        owner1 = f.UserFactory.create(full_name="Chuck Norris")
+        owner2 = f.UserFactory.create(full_name="George Of The Jungle")
 
         issue1 = f.IssueFactory.create(project=project, owner=owner2)
         issue2 = f.IssueFactory.create(project=project, owner=owner1)
         issue3 = f.IssueFactory.create(project=project, owner=owner1)
 
-        issues = Issue.objects.filter(project=project).order_by("owner__first_name")
+        issues = Issue.objects.filter(project=project).order_by("owner__full_name")
 
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
@@ -256,14 +256,14 @@ class TestIssues:
 
     def test_ordering_by_owner_desc(self):
         project = f.ProjectFactory.create()
-        owner1 = f.UserFactory.create(first_name="Chuck", last_name="Norris")
-        owner2 = f.UserFactory.create(first_name="George", last_name="Of The Jungle")
+        owner1 = f.UserFactory.create(full_name="Chuck Norris")
+        owner2 = f.UserFactory.create(full_name="George Of The Jungle")
 
         issue1 = f.IssueFactory.create(project=project, owner=owner2)
         issue2 = f.IssueFactory.create(project=project, owner=owner1)
         issue3 = f.IssueFactory.create(project=project, owner=owner1)
 
-        issues = Issue.objects.filter(project=project).order_by("-owner__first_name")
+        issues = Issue.objects.filter(project=project).order_by("-owner__full_name")
 
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
@@ -275,14 +275,14 @@ class TestIssues:
 
     def test_ordering_by_assigned_to(self):
         project = f.ProjectFactory.create()
-        assigned_to1 = f.UserFactory.create(first_name="Chuck", last_name="Norris")
-        assigned_to2 = f.UserFactory.create(first_name="George", last_name="Of The Jungle")
+        assigned_to1 = f.UserFactory.create(full_name="Chuck Norris")
+        assigned_to2 = f.UserFactory.create(full_name="George Of The Jungle")
 
         issue1 = f.IssueFactory.create(project=project, assigned_to=assigned_to2)
         issue2 = f.IssueFactory.create(project=project, assigned_to=assigned_to1)
         issue3 = f.IssueFactory.create(project=project, assigned_to=assigned_to1)
 
-        issues = Issue.objects.filter(project=project).order_by("assigned_to__first_name")
+        issues = Issue.objects.filter(project=project).order_by("assigned_to__full_name")
 
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
@@ -294,14 +294,14 @@ class TestIssues:
 
     def test_ordering_by_assigned_to_desc(self):
         project = f.ProjectFactory.create()
-        assigned_to1 = f.UserFactory.create(first_name="Chuck", last_name="Norris")
-        assigned_to2 = f.UserFactory.create(first_name="George", last_name="Of The Jungle")
+        assigned_to1 = f.UserFactory.create(full_name="Chuck Norris")
+        assigned_to2 = f.UserFactory.create(full_name="George Of The Jungle")
 
         issue1 = f.IssueFactory.create(project=project, assigned_to=assigned_to2)
         issue2 = f.IssueFactory.create(project=project, assigned_to=assigned_to1)
         issue3 = f.IssueFactory.create(project=project, assigned_to=assigned_to1)
 
-        issues = Issue.objects.filter(project=project).order_by("-assigned_to__first_name")
+        issues = Issue.objects.filter(project=project).order_by("-assigned_to__full_name")
 
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
