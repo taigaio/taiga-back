@@ -63,14 +63,18 @@ def send_private_register_email(user, **kwargs) -> bool:
     return bool(email.send())
 
 
-def is_user_already_registred(*, username:str, email:str) -> bool:
+def is_user_already_registred(*, username:str, email:str, github_id:int=None) -> bool:
     """
     Checks if a specified user is already registred.
     """
 
     user_model = get_model("users", "User")
-    qs = user_model.objects.filter(Q(username=username) |
-                                   Q(email=email))
+
+    or_expr = Q(username=username) | Q(email=email)
+    if github_id:
+        or_expr = or_expr | Q(email=email)
+
+    qs = user_model.objects.filter(or_expr)
     return qs.exists()
 
 
@@ -90,7 +94,7 @@ def get_membership_by_token(token:str):
 
 
 @tx.atomic
-def public_register(username:str, password:str, email:str, first_name:str, last_name:str):
+def public_register(username:str, password:str, email:str, full_name:str):
     """
     Given a parsed parameters, try register a new user
     knowing that it follows a public register flow.
@@ -107,8 +111,7 @@ def public_register(username:str, password:str, email:str, first_name:str, last_
     user_model = get_model("users", "User")
     user = user_model(username=username,
                       email=email,
-                      first_name=first_name,
-                      last_name=last_name)
+                      full_name=full_name)
     user.set_password(password)
     user.save()
 
@@ -138,21 +141,18 @@ def private_register_for_existing_user(token:str, username:str, password:str):
 
 @tx.atomic
 def private_register_for_new_user(token:str, username:str, email:str,
-                                  first_name:str, last_name:str, password:str):
+                                  full_name:str, password:str):
     """
     Given a inviation token, try register new user matching
     the invitation token.
     """
-
-    user_model = get_model("users", "User")
-
     if is_user_already_registred(username=username, email=email):
         raise exc.WrongArguments(_("Username or Email is already in use."))
 
+    user_model = get_model("users", "User")
     user = user_model(username=username,
                       email=email,
-                      first_name=first_name,
-                      last_name=last_name)
+                      full_name=full_name)
 
     user.set_password(password)
     try:
@@ -163,6 +163,30 @@ def private_register_for_new_user(token:str, username:str, email:str,
     membership = get_membership_by_token(token)
     membership.user = user
     membership.save(update_fields=["user"])
+
+    return user
+
+
+@tx.atomic
+def github_register(username:str, email:str, full_name:str, github_id:int, bio:str, token:str=None):
+    """
+    Register a new user from github.
+
+    This can raise `exc.IntegrityError` exceptions in
+    case of conflics found.
+
+    :returns: User
+    """
+    user_model = get_model("users", "User")
+    user, created = user_model.objects.get_or_create(github_id=github_id,
+                                                     defaults={"username": username,
+                                                               "email": email,
+                                                               "full_name": full_name,
+                                                               "bio": bio})
+    if token:
+        membership = get_membership_by_token(token)
+        membership.user = user
+        membership.save(update_fields=["user"])
 
     return user
 

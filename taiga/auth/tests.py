@@ -105,15 +105,13 @@ class AuthServicesTests(test.TestCase):
                                      username=self.user1.username,
                                      password="secret",
                                      email=self.user1.email,
-                                     first_name="foo",
-                                     last_name="bar")
+                                     full_name="foo")
 
         user = services.public_register(self.domain,
                                         username="foousername",
                                         password="foosecret",
                                         email="foo@bar.ca",
-                                        first_name="Foo",
-                                        last_name="Bar")
+                                        full_name="Foo")
         self.assertEqual(user.username, "foousername")
         self.assertTrue(user.check_password("foosecret"))
         self.assertTrue(is_user_exists_on_domain(self.domain, user))
@@ -153,8 +151,7 @@ class AuthServicesTests(test.TestCase):
                                                       username="user2",
                                                       password="user2",
                                                       email="user2@bar.ca",
-                                                      first_name="Foo",
-                                                      last_name="Bar")
+                                                      full_name="Foo")
 
 
         membership = membership.__class__.objects.get(pk=membership.pk)
@@ -195,8 +192,7 @@ class RegisterApiTests(test.TestCase):
         data = {
             "username": "pepe",
             "password": "pepepepe",
-            "first_name": "pepe",
-            "last_name": "pepe",
+            "full_name": "pepe",
             "email": "pepe@pepe.com",
             "type": "public",
         }
@@ -213,8 +209,7 @@ class RegisterApiTests(test.TestCase):
         data = {
             "username": "pepe",
             "password": "pepepepe",
-            "first_name": "pepe",
-            "last_name": "pepe",
+            "full_name": "pepe",
             "email": "pepe@pepe.com",
             "type": "public",
         }
@@ -227,8 +222,7 @@ class RegisterApiTests(test.TestCase):
         data = {
             "username": "pepe",
             "password": "pepepepe",
-            "first_name": "pepe",
-            "last_name": "pepe",
+            "full_name": "pepe",
             "email": "pepe@pepe.com",
             "type": "private",
         }
@@ -243,8 +237,7 @@ class RegisterApiTests(test.TestCase):
         data = {
             "username": "pepe",
             "password": "pepepepe",
-            "first_name": "pepe",
-            "last_name": "pepe",
+            "full_name": "pepe",
             "email": "pepe@pepe.com",
             "type": "private",
             "existing": False,

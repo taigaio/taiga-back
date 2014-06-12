@@ -46,3 +46,10 @@ from .development import *
 #EMAIL_HOST_USER = 'youremail@gmail.com'
 #EMAIL_HOST_PASSWORD = 'yourpassword'
 #EMAIL_PORT = 587
+
+# GITHUP SETTINGS
+#GITHUB_URL = "https://github.com/"
+#GITHUB_API_URL = "https://api.github.com/"
+#GITHUB_API_CLIENT_ID = "yourgithubclientid"
+#GITHUB_API_CLIENT_SECRET = "yourgithubclientsecret"
+

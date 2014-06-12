@@ -28,6 +28,7 @@ from rest_framework import serializers
 
 from taiga.base.decorators import list_route
 from taiga.base import exceptions as exc
+from taiga.base.connectors import github
 from taiga.users.services import get_and_validate_user
 
 from .serializers import PublicRegisterSerializer
@@ -37,6 +38,7 @@ from .serializers import PrivateRegisterForNewUserSerializer
 from .services import private_register_for_existing_user
 from .services import private_register_for_new_user
 from .services import public_register
+from .services import github_register
 from .services import make_auth_response_data
 
 
@@ -130,11 +132,34 @@ class AuthViewSet(viewsets.ViewSet):
             return self._private_register(request)
         raise exc.BadRequest(_("invalid register type"))
 
-    # Login view: /api/v1/auth
-    def create(self, request, **kwargs):
+    def _login(self, request):
         username = request.DATA.get('username', None)
         password = request.DATA.get('password', None)
 
         user = get_and_validate_user(username=username, password=password)
         data = make_auth_response_data(user)
         return Response(data, status=status.HTTP_200_OK)
+
+    def _github_login(self, request):
+        code = request.DATA.get('code', None)
+        token = request.DATA.get('token', None)
+
+        email, user_info = github.me(code)
+
+        user = github_register(username=user_info.username,
+                               email=email,
+                               full_name=user_info.full_name,
+                               github_id=user_info.id,
+                               bio=user_info.bio,
+                               token=token)
+        data = make_auth_response_data(user)
+        return Response(data, status=status.HTTP_200_OK)
+
+    # Login view: /api/v1/auth
+    def create(self, request, **kwargs):
+        type = request.DATA.get("type", None)
+        if type == "normal":
+            return self._login(request)
+        elif type == "github":
+            return self._github_login(request)
+        raise exc.BadRequest(_("invalid login type"))

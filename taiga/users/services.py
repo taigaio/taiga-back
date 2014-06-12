@@ -19,12 +19,14 @@ This model contains a domain logic for users application.
 """
 
 from django.db.models.loading import get_model
+from django.db.models import Q
+
 from taiga.base import exceptions as exc
 
 
 def get_and_validate_user(*, username:str, password:str) -> bool:
     """
-    Check if user with username exists and specified
+    Check if user with username/email exists and specified
     password matchs well with existing user password.
 
     if user is valid,  user is returned else, corresponding
@@ -32,7 +34,8 @@ def get_and_validate_user(*, username:str, password:str) -> bool:
     """
 
     user_model = get_model("users", "User")
-    qs = user_model.objects.filter(username=username)
+    qs = user_model.objects.filter(Q(username=username) |
+                                   Q(email=username))
     if len(qs) == 0:
         raise exc.WrongArguments("Username or password does not matches user.")
 

@@ -17,32 +17,83 @@
 from django.db import models
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import UserManager, AbstractUser
+from django.contrib.auth.models import UserManager, AbstractBaseUser
+from django.core import validators
+from django.utils import timezone
 
 from taiga.base.utils.slug import slugify_uniquely
 
 import random
+import re
 
 
 def generate_random_hex_color():
     return "#{:06x}".format(random.randint(0,0xFFFFFF))
 
 
-class User(AbstractUser):
+class PermissionsMixin(models.Model):
+    """
+    A mixin class that adds the fields and methods necessary to support
+    Django's Permission model using the ModelBackend.
+    """
+    is_superuser = models.BooleanField(_('superuser status'), default=False,
+        help_text=_('Designates that this user has all permissions without '
+                    'explicitly assigning them.'))
+
+    class Meta:
+        abstract = True
+
+    def has_perm(self, perm, obj=None):
+        """
+        Returns True if the user is superadmin and is active
+        """
+        return self.is_active and self.is_superuser
+
+    def has_perms(self, perm_list, obj=None):
+        """
+        Returns True if the user is superadmin and is active
+        """
+        return self.is_active and self.is_superuser
+
+    def has_module_perms(self, app_label):
+        """
+        Returns True if the user is superadmin and is active
+        """
+        return self.is_active and self.is_superuser
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(_('username'), max_length=30, unique=True,
+        help_text=_('Required. 30 characters or fewer. Letters, numbers and '
+                    '/./-/_ characters'),
+        validators=[
+            validators.RegexValidator(re.compile('^[\w.-]+$'), _('Enter a valid username.'), 'invalid')
+        ])
+    email = models.EmailField(_('email address'), blank=True)
+    is_active = models.BooleanField(_('active'), default=True,
+        help_text=_('Designates whether this user should be treated as '
+                    'active. Unselect this instead of deleting accounts.'))
+
+    full_name = models.CharField(_('full name'), max_length=256, blank=True)
     color = models.CharField(max_length=9, null=False, blank=True, default=generate_random_hex_color,
                              verbose_name=_("color"))
-    description = models.TextField(null=False, blank=True,
-                                   verbose_name=_("description"))
-    photo = models.FileField(upload_to="files/msg", max_length=500, null=True, blank=True,
+    bio = models.TextField(null=False, blank=True, default="", verbose_name=_("biography"))
+    photo = models.FileField(upload_to="users/photo", max_length=500, null=True, blank=True,
                              verbose_name=_("photo"))
+    date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     default_language = models.CharField(max_length=20, null=False, blank=True, default="",
                                         verbose_name=_("default language"))
     default_timezone = models.CharField(max_length=20, null=False, blank=True, default="",
                                         verbose_name=_("default timezone"))
-    token = models.CharField(max_length=200, null=True, blank=True, default=None,
-                             verbose_name=_("token"))
     colorize_tags = models.BooleanField(null=False, blank=True, default=False,
                                         verbose_name=_("colorize tags"))
+    token = models.CharField(max_length=200, null=True, blank=True, default=None,
+                             verbose_name=_("token"))
+    github_id = models.IntegerField(null=True, blank=True, verbose_name=_("github ID"))
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
+
     objects = UserManager()
 
     class Meta:
@@ -56,8 +107,12 @@ class User(AbstractUser):
     def __str__(self):
         return self.get_full_name()
 
+    def get_short_name(self):
+        "Returns the short name for the user."
+        return self.username
+
     def get_full_name(self):
-        return super().get_full_name() or self.username or self.email
+        return self.full_name or self.username or self.email
 
 
 class Role(models.Model):
@@ -104,4 +159,3 @@ def role_post_save(sender, instance, created, **kwargs):
     unique_projects = set(map(lambda x: x.project, instance.memberships.all()))
     for project in unique_projects:
         project.update_role_points()
-

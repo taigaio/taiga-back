@@ -14,23 +14,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rest_framework import serializers
+from taiga.base.exceptions import BaseException
 
-class BaseRegisterSerializer(serializers.Serializer):
-    full_name = serializers.CharField(max_length=256)
-    email = serializers.EmailField(max_length=200)
-    username = serializers.CharField(max_length=200)
-    password = serializers.CharField(min_length=4)
+from django.utils.translation import ugettext_lazy as _
+
+class ConnectorBaseException(BaseException):
+    status_code = 400
+    default_detail = _("Connection error.")
 
 
-class PublicRegisterSerializer(BaseRegisterSerializer):
+class GitHubApiError(ConnectorBaseException):
     pass
-
-
-class PrivateRegisterForNewUserSerializer(BaseRegisterSerializer):
-    token = serializers.CharField(max_length=255, required=True)
-
-class PrivateRegisterForExistingUserSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=200)
-    password = serializers.CharField(min_length=4)
-    token = serializers.CharField(max_length=255, required=True)

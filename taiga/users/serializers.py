@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import Permission
 
 from rest_framework import serializers
 
@@ -23,20 +22,12 @@ from taiga.projects.models import Project
 from .models import User, Role
 
 
-class PermissionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Permission
-        fields = ("id", "name", "codename")
-
-
 class UserSerializer(serializers.ModelSerializer):
-    full_name = serializers.CharField(source="get_full_name", required=False)
-
     class Meta:
         model = User
-        fields = ("id", "username", "first_name", "last_name", "full_name", "email",
-                  "color", "description", "default_language", "default_timezone",
-                  "is_active", "photo",)
+        fields = ('id', 'username', 'full_name', 'email', 'github_id',
+                  'color', 'bio', 'default_language', 'default_timezone',
+                  'is_active', 'photo')
 
 
 class RecoverySerializer(serializers.Serializer):
