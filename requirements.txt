@@ -9,7 +9,7 @@ gunicorn==18.0
 psycopg2==2.5.3
 pytz==2014.4
 six==1.6.1
-djmail==0.6
+djmail==0.7
 django-pgjson==0.1.2
 django-jinja==1.0.1
 jinja2==2.7.2
