@@ -25,26 +25,24 @@ from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.decorators import list_route
-from taiga.projects.mixins.notifications import NotificationSenderMixin
-from taiga.projects.attachments.api import BaseAttachmentViewSet
 from taiga.projects.models import Project
 from taiga.mdrender.service import render as mdrender
+
+from taiga.projects.notifications import WatchedResourceMixin
+from taiga.projects.history import HistoryResourceMixin
+
 
 from . import models
 from . import permissions
 from . import serializers
 
 
-class WikiViewSet(NotificationSenderMixin, ModelCrudViewSet):
+class WikiViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     model = models.WikiPage
     serializer_class = serializers.WikiPageSerializer
     permission_classes = (IsAuthenticated,)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
-    filter_fields = ["project", "slug"]
-
-    create_notification_template = "create_wiki_notification"
-    update_notification_template = "update_wiki_notification"
-    destroy_notification_template = "destroy_wiki_notification"
+    filter_fields = ("project", "slug")
 
     @list_route(methods=["POST"])
     def render(self, request, **kwargs):

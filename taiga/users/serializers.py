@@ -26,17 +26,17 @@ from .models import User, Role
 class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permission
-        fields = ['id', 'name', 'codename']
+        fields = ("id", "name", "codename")
 
 
 class UserSerializer(serializers.ModelSerializer):
-    full_name = serializers.CharField(source='get_full_name', required=False)
+    full_name = serializers.CharField(source="get_full_name", required=False)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'full_name', 'email',
-                  'color', 'description', 'default_language', 'default_timezone',
-                  'is_active', 'photo', 'notify_level', 'notify_changes_by_me')
+        fields = ("id", "username", "first_name", "last_name", "full_name", "email",
+                  "color", "description", "default_language", "default_timezone",
+                  "is_active", "photo",)
 
 
 class RecoverySerializer(serializers.Serializer):

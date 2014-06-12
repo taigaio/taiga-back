@@ -22,15 +22,18 @@ from rest_framework.permissions import IsAuthenticated
 from taiga.base.api import ModelCrudViewSet
 from taiga.base import filters
 from taiga.base import exceptions as exc
-from taiga.projects.mixins.notifications import NotificationSenderMixin
 from taiga.projects.history.services import take_snapshot
+
+from taiga.projects.notifications import WatchedResourceMixin
+from taiga.projects.history import HistoryResourceMixin
+
 
 from . import permissions
 from . import serializers
 from . import models
 
 
-class BaseAttachmentViewSet(NotificationSenderMixin, ModelCrudViewSet):
+class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     model = models.Attachment
     serializer_class = serializers.AttachmentSerializer
     permission_classes = (IsAuthenticated, permissions.AttachmentPermission,)
@@ -65,21 +68,8 @@ class BaseAttachmentViewSet(NotificationSenderMixin, ModelCrudViewSet):
             raise exc.PermissionDenied(_("You don't have permissions for "
                                          "add attachments to this user story"))
 
-    def _get_object_for_snapshot(self, obj):
+    def get_object_for_snapshot(self, obj):
         return obj.content_object
-
-    def pre_destroy(self, obj):
-        pass
-
-    def post_destroy(self, obj):
-        user = self.request.user
-        comment = self.request.DATA.get("comment", "")
-
-        obj = self._get_object_for_snapshot(obj)
-        history = take_snapshot(obj, comment=comment, user=user)
-
-        if history:
-            self._post_save_notification_sender(obj, history)
 
 
 class UserStoryAttachmentViewSet(BaseAttachmentViewSet):

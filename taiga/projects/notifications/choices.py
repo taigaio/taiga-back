@@ -14,7 +14,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .mixins import WatchedResourceMixin
-from .mixins import WatchedModelMixin
+import enum
+from django.utils.translation import ugettext_lazy as _
 
-__all__ = ["WatchedModelMixin", "WatchedResourceMixin"]
+
+class NotifyLevel(enum.IntEnum):
+    notwatch = 1
+    watch = 2
+    ignore = 3
+
+
+NOTIFY_LEVEL_CHOICES = (
+    (NotifyLevel.notwatch, _("Not watching")),
+    (NotifyLevel.watch, _("Watching")),
+    (NotifyLevel.ignore, _("Ignoring")),
+)

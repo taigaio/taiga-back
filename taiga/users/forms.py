@@ -15,10 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
-from django.contrib.auth.forms import (
-    UserCreationForm as DjangoUserCreationForm,
-    UserChangeForm as DjangoUserChangeForm
-)
+from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm
+from django.contrib.auth.forms import UserChangeForm as DjangoUserChangeForm
+
+
 from .models import User
 
 
@@ -39,9 +39,6 @@ class UserCreationForm(DjangoUserCreationForm):
 
 
 class UserChangeForm(DjangoUserChangeForm):
-    notify_level = forms.ChoiceField(choices=User.NOTIFY_LEVEL_CHOICES)
-    notify_changes_by_me = forms.BooleanField(required=False)
-
     class Meta:
         model = User
 

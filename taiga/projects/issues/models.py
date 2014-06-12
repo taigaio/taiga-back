@@ -24,11 +24,11 @@ from django.utils.translation import ugettext_lazy as _
 from picklefield.fields import PickledObjectField
 
 from taiga.base.utils.slug import ref_uniquely
-from taiga.projects.notifications.models import WatchedMixin
+from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
 
 
-class Issue(WatchedMixin, BlockedMixin, models.Model):
+class Issue(WatchedModelMixin, BlockedMixin, models.Model):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
@@ -58,9 +58,6 @@ class Issue(WatchedMixin, BlockedMixin, models.Model):
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                     default=None, related_name="issues_assigned_to_me",
                                     verbose_name=_("assigned to"))
-    watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
-                                      related_name="watched_issues",
-                                      verbose_name=_("watchers"))
     tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
     attachments = generic.GenericRelation("attachments.Attachment")
 
@@ -89,14 +86,6 @@ class Issue(WatchedMixin, BlockedMixin, models.Model):
         if type(value) is list:
             return ", ".join(value)
         return value
-
-    def _get_watchers_by_role(self):
-        return {
-            "owner": self.owner,
-            "assigned_to": self.assigned_to,
-            "suscribed_watchers": self.watchers.all(),
-            "project": self.project,
-        }
 
 
 # Model related signals handlers

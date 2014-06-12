@@ -150,6 +150,12 @@ def wikipage_values(diff):
 # Freezes
 ####################
 
+def _generic_extract(obj:object, fields:list, default=None) -> dict:
+    result = {}
+    for fieldname in fields:
+        result[fieldname] = getattr(obj, fieldname, default)
+    return result
+
 
 @as_tuple
 def extract_attachments(obj) -> list:
@@ -160,6 +166,22 @@ def extract_attachments(obj) -> list:
                "is_deprecated": attach.is_deprecated,
                "description": attach.description,
                "order": attach.order}
+
+
+def project_freezer(project) -> dict:
+    fields = ("name",
+              "slug",
+              "created_at",
+              "owner_id",
+              "public",
+              "total_milestones",
+              "total_story_points",
+              "tags",
+              "is_backlog_activated",
+              "is_kanban_activated",
+              "is_wiki_activated",
+              "is_issues_activated")
+    return _generic_extract(project, fields)
 
 
 def milestone_freezer(milestone) -> dict:
@@ -174,6 +196,7 @@ def milestone_freezer(milestone) -> dict:
     }
 
     return snapshot
+
 
 def userstory_freezer(us) -> dict:
     rp_cls = get_model("userstories", "RolePoints")

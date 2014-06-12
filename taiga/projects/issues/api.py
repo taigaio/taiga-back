@@ -27,7 +27,9 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route, detail_route
 from taiga.base.api import ModelCrudViewSet
 
-from taiga.projects.mixins.notifications import NotificationSenderMixin
+from taiga.projects.notifications import WatchedResourceMixin
+from taiga.projects.history import HistoryResourceMixin
+
 
 from taiga.projects.votes.utils import attach_votescount_to_queryset
 from taiga.projects.votes import services as votes_service
@@ -87,6 +89,7 @@ class IssuesFilter(filters.FilterBackend):
 
         return queryset
 
+
 class IssuesOrdering(filters.FilterBackend):
     def filter_queryset(self, request, queryset, view):
         order_by = request.QUERY_PARAMS.get('order_by', None)
@@ -99,25 +102,27 @@ class IssuesOrdering(filters.FilterBackend):
         return queryset
 
 
-class IssueViewSet(NotificationSenderMixin, ModelCrudViewSet):
-    model = models.Issue
-    queryset = models.Issue.objects.all().prefetch_related("attachments")
+class IssueViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     serializer_class = serializers.IssueNeighborsSerializer
     list_serializer_class = serializers.IssueSerializer
     permission_classes = (IsAuthenticated, permissions.IssuePermission)
 
     filter_backends = (filters.IsProjectMemberFilterBackend, IssuesFilter, IssuesOrdering)
     retrieve_exclude_filters = (IssuesFilter,)
-    filter_fields = ("project",)
-    order_by_fields = ("severity", "status", "priority", "created_date", "modified_date", "owner",
-                       "assigned_to", "subject")
 
-    create_notification_template = "create_issue_notification"
-    update_notification_template = "update_issue_notification"
-    destroy_notification_template = "destroy_issue_notification"
+    filter_fields = ("project",)
+    order_by_fields = ("severity",
+                       "status",
+                       "priority",
+                       "created_date",
+                       "modified_date",
+                       "owner",
+                       "assigned_to",
+                       "subject")
 
     def get_queryset(self):
-        qs = self.model.objects.all()
+        qs = models.Issue.objects.all()
+        qs = qs.prefetch_related("attachments")
         qs = attach_votescount_to_queryset(qs, as_field="votes_count")
         return qs
 

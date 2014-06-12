@@ -17,95 +17,21 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from .choices import NOTIFY_LEVEL_CHOICES
 
 
-class WatcherMixin(models.Model):
-    NOTIFY_LEVEL_CHOICES = (
-        ("all_owned_projects", _(u"All events on my projects")),
-        ("only_assigned", _(u"Only events for objects assigned to me")),
-        ("only_owner", _(u"Only events for objects owned by me")),
-        ("no_events", _(u"No events")),
-    )
+class NotifyPolicy(models.Model):
+    """
+    This class represents a persistence for
+    project user notifications preference.
+    """
+    project = models.ForeignKey("projects.Project", related_name="+")
+    user = models.ForeignKey("users.User", related_name="+")
+    notify_level = models.SmallIntegerField(choices=NOTIFY_LEVEL_CHOICES)
 
-    notify_level = models.CharField(max_length=32, null=False, blank=False,
-                                    default="all_owned_projects",
-                                    choices=NOTIFY_LEVEL_CHOICES,
-                                    verbose_name=_(u"notify level"))
-    notify_changes_by_me = models.BooleanField(blank=True, default=False,
-                                               verbose_name=_(u"notify changes by me"))
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        abstract = True
-
-    def allow_notify_owned(self):
-        return (self.notify_level in [
-            "only_owner",
-            "only_assigned",
-            "only_watching",
-            "all_owned_projects",
-        ])
-
-    def allow_notify_assigned_to(self):
-        return (self.notify_level in [
-            "only_assigned",
-            "only_watching",
-            "all_owned_projects",
-        ])
-
-    def allow_notify_suscribed(self):
-        return (self.notify_level in [
-            "only_watching",
-            "all_owned_projects",
-        ])
-
-    def allow_notify_project(self, project):
-        return self.notify_level == "all_owned_projects"
-
-
-class WatchedMixin(object):
-    def get_watchers_to_notify(self, changer):
-        watchers_to_notify = set()
-        watchers_by_role = self._get_watchers_by_role()
-
-        owner = watchers_by_role.get("owner", None)
-        if owner and owner.allow_notify_owned():
-            watchers_to_notify.add(owner)
-
-        assigned_to = watchers_by_role.get("assigned_to", None)
-        if assigned_to and assigned_to.allow_notify_assigned_to():
-            watchers_to_notify.add(assigned_to)
-
-        suscribed_watchers = watchers_by_role.get("suscribed_watchers", None)
-        if suscribed_watchers:
-            for suscribed_watcher in suscribed_watchers:
-                if suscribed_watcher and suscribed_watcher.allow_notify_suscribed():
-                    watchers_to_notify.add(suscribed_watcher)
-
-        project = watchers_by_role.get("project", None)
-        if project:
-            for member in project.members.all():
-                if member and member.allow_notify_project(project):
-                    watchers_to_notify.add(member)
-
-        if changer.notify_changes_by_me:
-            watchers_to_notify.add(changer)
-        else:
-            if changer in watchers_to_notify:
-                watchers_to_notify.remove(changer)
-
-        return watchers_to_notify
-
-    def _get_watchers_by_role(self):
-        """
-        Return the actual instances of watchers of this object, classified by role.
-        For example:
-
-           return {
-               "owner": self.owner,
-               "assigned_to": self.assigned_to,
-               "suscribed_watchers": self.watchers.all(),
-               "project_owner": (self.project, self.project.owner),
-           }
-        """
-        raise NotImplementedError("You must subclass WatchedMixin and provide "
-                                  "_get_watchers_by_role method")
+        unique_together = ("project", "user",)
+        ordering = ["created_at"]

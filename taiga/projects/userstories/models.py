@@ -23,7 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 from picklefield.fields import PickledObjectField
 
 from taiga.base.utils.slug import ref_uniquely
-from taiga.projects.notifications.models import WatchedMixin
+from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
 
 
@@ -51,8 +51,7 @@ class RolePoints(models.Model):
         return "{}: {}".format(self.role.name, self.points.name)
 
 
-class UserStory(WatchedMixin, BlockedMixin, models.Model):
-
+class UserStory(WatchedModelMixin, BlockedMixin, models.Model):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
@@ -84,8 +83,6 @@ class UserStory(WatchedMixin, BlockedMixin, models.Model):
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                     default=None, related_name="userstories_assigned_to_me",
                                     verbose_name=_("assigned to"))
-    watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
-                                      related_name="watched_user_stories", verbose_name=_("watchers"))
     client_requirement = models.BooleanField(default=False, null=False, blank=True,
                                              verbose_name=_("is client requirement"))
     team_requirement = models.BooleanField(default=False, null=False, blank=True,
@@ -137,17 +134,7 @@ class UserStory(WatchedMixin, BlockedMixin, models.Model):
         if isinstance(value, models.manager.Manager):
             return ", ".join(["{}: {}".format(rp.role.name, rp.points.name)
                               for rp in self.role_points.all().order_by("role")])
-
         return None
-
-    def _get_watchers_by_role(self):
-        return {
-            "owner": self.owner,
-            "assigned_to": self.assigned_to,
-            "suscribed_watchers": self.watchers.all(),
-            "project": self.project,
-        }
-
 
 
 @receiver(models.signals.post_save, sender=UserStory,

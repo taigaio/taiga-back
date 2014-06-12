@@ -14,7 +14,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .mixins import WatchedResourceMixin
-from .mixins import WatchedModelMixin
 
-__all__ = ["WatchedModelMixin", "WatchedResourceMixin"]
+def strip_lines(text):
+    """
+    Given text, try remove unnecesary spaces and
+    put text in one unique line.
+    """
+    output = text.replace("\r\n", " ")
+    output = output.replace("\r", " ")
+    output = output.replace("\n", " ")
+
+    return output.strip()

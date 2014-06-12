@@ -25,22 +25,25 @@ This is possible example:
           # Do something...
           history.persist_history(object, user=request.user)
 """
-
+import logging
 from collections import namedtuple
-from functools import partial, wraps, lru_cache
 from copy import deepcopy
+from functools import partial
+from functools import wraps
+from functools import lru_cache
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
+from django.core.paginator import Paginator, InvalidPage
 from django.db.models.loading import get_model
 from django.db import transaction as tx
-from django.core.paginator import Paginator, InvalidPage
-from django.contrib.contenttypes.models import ContentType
-
-from .models import HistoryType
 
 from taiga.mdrender.service import render as mdrender
 from taiga.mdrender.service import get_diff_of_htmls
 from taiga.base.utils.db import get_typename_for_model_class
+
+from .models import HistoryType
+
 
 # Type that represents a freezed object
 FrozenObj = namedtuple("FrozenObj", ["key", "snapshot"])
@@ -51,6 +54,8 @@ _freeze_impl_map = {}
 
 # Dict containing registred containing with their values implementation.
 _values_impl_map = {}
+
+log = logging.getLogger("taiga.history")
 
 
 def make_key_from_model_object(obj:object) -> str:
@@ -110,7 +115,16 @@ def freeze_model_instance(obj:object) -> FrozenObj:
     wrapped into FrozenObj.
     """
 
-    typename = get_typename_for_model_class(obj.__class__)
+    model_cls = obj.__class__
+
+    # Additional query for test if object is really exists
+    # on the database or it is removed.
+    try:
+        obj = model_cls.objects.get(pk=obj.pk)
+    except model_cls.DoesNotExist:
+        return None
+
+    typename = get_typename_for_model_class(model_cls)
     if typename not in _freeze_impl_map:
         raise RuntimeError("No implementation found for {}".format(typename))
 
@@ -160,10 +174,13 @@ def make_diff(oldobj:FrozenObj, newobj:FrozenObj) -> FrozenDiff:
 def make_diff_values(typename:str, fdiff:FrozenDiff) -> dict:
     """
     Given a typename and diff, build a values dict for it.
+    If no implementation found for typename, warnig is raised in
+    logging and returns empty dict.
     """
 
     if typename not in _values_impl_map:
-        raise RuntimeError("No implementation found for {}".format(typename))
+        log.warning("No implementation found of '{}' for values.".format(typename))
+        return {}
 
     impl_fn = _values_impl_map[typename]
     return impl_fn(fdiff.diff)
@@ -209,7 +226,7 @@ def get_last_snapshot_for_key(key:str) -> FrozenObj:
 # Public api
 
 @tx.atomic
-def take_snapshot(obj:object, *, comment:str="", user=None):
+def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
     """
     Given any model instance with registred content type,
     create new history entry of "change" type.
@@ -222,33 +239,53 @@ def take_snapshot(obj:object, *, comment:str="", user=None):
     typename = get_typename_for_model_class(obj.__class__)
 
     new_fobj = freeze_model_instance(obj)
-    old_fobj, need_snapshot = get_last_snapshot_for_key(key)
+    old_fobj, need_real_snapshot = get_last_snapshot_for_key(key)
+
+    entry_model = get_model("history", "HistoryEntry")
+    user_id = None if user is None else user.id
+    user_name = "" if user is None else user.get_full_name()
+
+    # Determine history type
+    if delete:
+        entry_type = HistoryType.delete
+    elif new_fobj and not old_fobj:
+        entry_type = HistoryType.create
+    elif new_fobj and old_fobj:
+        entry_type = HistoryType.change
+    else:
+        raise RuntimeError("Unexpected condition")
+
+    kwargs = {
+        "user": {"pk": user_id, "name": user_name},
+        "key": key,
+        "type": entry_type,
+        "comment": "",
+        "comment_html": "",
+        "diff": None,
+        "values": None,
+        "snapshot": None,
+        "is_snapshot": False,
+    }
 
     fdiff = make_diff(old_fobj, new_fobj)
     fvals = make_diff_values(typename, fdiff)
 
     # If diff and comment are empty, do
     # not create empty history entry
-    if not fdiff.diff and not comment and old_fobj != None:
+    if (not fdiff.diff and not comment
+        and old_fobj is not None
+        and entry_type != HistoryType.delete):
+
         return None
 
-    entry_type = HistoryType.change if old_fobj else HistoryType.create
-    entry_model = get_model("history", "HistoryEntry")
-
-    user_id = None if user is None else user.id
-    user_name = "" if user is None else user.get_full_name()
-
-    kwargs = {
-        "user": {"pk": user_id, "name": user_name},
-        "type": entry_type,
-        "key": key,
-        "diff": fdiff.diff,
-        "snapshot": fdiff.snapshot if need_snapshot else None,
-        "is_snapshot": need_snapshot,
-        "comment": comment,
-        "comment_html": mdrender(obj.project, comment),
+    kwargs.update({
+        "snapshot": fdiff.snapshot if need_real_snapshot else None,
+        "is_snapshot": need_real_snapshot,
         "values": fvals,
-    }
+        "comment": comment,
+        "diff": fdiff.diff,
+        "comment_html": mdrender(obj.project, comment),
+    })
 
     return entry_model.objects.create(**kwargs)
 
@@ -267,12 +304,14 @@ def get_history_queryset_by_model_instance(obj:object, types=(HistoryType.change
 
 
 # Freeze implementatitions
+from .freeze_impl import project_freezer
 from .freeze_impl import milestone_freezer
 from .freeze_impl import userstory_freezer
 from .freeze_impl import issue_freezer
 from .freeze_impl import task_freezer
 from .freeze_impl import wikipage_freezer
 
+register_freeze_implementation("projects.project", project_freezer)
 register_freeze_implementation("milestones.milestone", milestone_freezer,)
 register_freeze_implementation("userstories.userstory", userstory_freezer)
 register_freeze_implementation("issues.issue", issue_freezer)
