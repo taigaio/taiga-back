@@ -18,7 +18,3 @@ from .development import *
 
 SKIP_SOUTH_TESTS = True
 SOUTH_TESTS_MIGRATE = False
-
-INSTALLED_APPS += [
-    "taiga.projects.mixins.tests.blocked.foo",
-]
