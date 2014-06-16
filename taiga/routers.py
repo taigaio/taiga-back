@@ -32,11 +32,15 @@ from taiga.userstorage.api import StorageEntriesViewSet
 router.register(r"user-storage", StorageEntriesViewSet, base_name="user-storage")
 
 
-# Resolver & Search
-from taiga.base.searches.api import SearchViewSet
+# Resolver
 from taiga.projects.references.api import ResolverViewSet
 
 router.register(r"resolver", ResolverViewSet, base_name="resolver")
+
+
+# Search
+from taiga.searches.api import SearchViewSet
+
 router.register(r"search", SearchViewSet, base_name="search")
 
 

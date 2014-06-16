@@ -167,7 +167,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "taiga.base",
-    "taiga.base.searches",
     "taiga.events",
     "taiga.front",
     "taiga.users",
@@ -183,6 +182,7 @@ INSTALLED_APPS = [
     "taiga.projects.history",
     "taiga.projects.notifications",
     "taiga.projects.votes",
+    "taiga.searches",
     "taiga.timeline",
     "taiga.mdrender",
 
@@ -294,9 +294,11 @@ REST_FRAMEWORK = {
 DEFAULT_PROJECT_TEMPLATE = "scrum"
 PUBLIC_REGISTER_ENABLED = False
 
+SEARCHES_MAX_RESULTS = 150
+
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 
-TEST_RUNNER="django.test.runner.DiscoverRunner"
+#TEST_RUNNER="django.test.runner.DiscoverRunner"
 
 # Test conditions
 if "test" in sys.argv:

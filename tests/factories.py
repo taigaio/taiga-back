@@ -110,6 +110,7 @@ class UserStoryFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
     owner = factory.SubFactory("tests.factories.UserFactory")
     subject = factory.Sequence(lambda n: "User Story {}".format(n))
+    description = factory.Sequence(lambda n: "User Story {} description".format(n))
 
 
 class MilestoneFactory(Factory):
@@ -124,6 +125,7 @@ class IssueFactory(Factory):
     FACTORY_FOR = get_model("issues", "Issue")
 
     subject = factory.Sequence(lambda n: "Issue {}".format(n))
+    description = factory.Sequence(lambda n: "Issue {} description".format(n))
     owner = factory.SubFactory("tests.factories.UserFactory")
     project = factory.SubFactory("tests.factories.ProjectFactory")
     status = factory.SubFactory("tests.factories.IssueStatusFactory")
@@ -137,6 +139,7 @@ class TaskFactory(Factory):
     FACTORY_FOR = get_model("tasks", "Task")
 
     subject = factory.Sequence(lambda n: "Task {}".format(n))
+    description = factory.Sequence(lambda n: "Task {} description".format(n))
     owner = factory.SubFactory("tests.factories.UserFactory")
     project = factory.SubFactory("tests.factories.ProjectFactory")
     status = factory.SubFactory("tests.factories.TaskStatusFactory")
@@ -148,6 +151,8 @@ class WikiPageFactory(Factory):
 
     project = factory.SubFactory("tests.factories.ProjectFactory")
     owner = factory.SubFactory("tests.factories.UserFactory")
+    slug = factory.Sequence(lambda n: "wiki-page-{}".format(n))
+    content = factory.Sequence(lambda n: "Wiki Page {} content".format(n))
 
 
 class IssueStatusFactory(Factory):
