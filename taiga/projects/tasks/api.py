@@ -31,6 +31,7 @@ from taiga.projects.userstories.models import UserStory
 
 from taiga.projects.notifications import WatchedResourceMixin
 from taiga.projects.history import HistoryResourceMixin
+from taiga.projects.occ import OCCResourceMixin
 
 
 from . import models
@@ -39,7 +40,7 @@ from . import serializers
 from . import services
 
 
-class TaskViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
+class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     model = models.Task
     serializer_class = serializers.TaskSerializer
     permission_classes = (IsAuthenticated, permissions.TaskPermission)

@@ -24,6 +24,7 @@ from picklefield.fields import PickledObjectField
 
 from taiga.base.utils.slug import ref_uniquely
 from taiga.projects.notifications import WatchedModelMixin
+from taiga.projects.occ import OCCModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
 
 
@@ -51,7 +52,7 @@ class RolePoints(models.Model):
         return "{}: {}".format(self.role.name, self.points.name)
 
 
-class UserStory(WatchedModelMixin, BlockedMixin, models.Model):
+class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, models.Model):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,

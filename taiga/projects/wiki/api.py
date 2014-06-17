@@ -30,6 +30,7 @@ from taiga.mdrender.service import render as mdrender
 
 from taiga.projects.notifications import WatchedResourceMixin
 from taiga.projects.history import HistoryResourceMixin
+from taiga.projects.occ import OCCResourceMixin
 
 
 from . import models
@@ -37,7 +38,7 @@ from . import permissions
 from . import serializers
 
 
-class WikiViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
+class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     model = models.WikiPage
     serializer_class = serializers.WikiPageSerializer
     permission_classes = (IsAuthenticated,)

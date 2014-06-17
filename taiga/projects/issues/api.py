@@ -28,6 +28,7 @@ from taiga.base.decorators import list_route, detail_route
 from taiga.base.api import ModelCrudViewSet
 
 from taiga.projects.notifications import WatchedResourceMixin
+from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.history import HistoryResourceMixin
 
 
@@ -101,7 +102,7 @@ class IssuesOrdering(filters.FilterBackend):
         return queryset
 
 
-class IssueViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
+class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     serializer_class = serializers.IssueNeighborsSerializer
     list_serializer_class = serializers.IssueSerializer
     permission_classes = (IsAuthenticated, permissions.IssuePermission)
