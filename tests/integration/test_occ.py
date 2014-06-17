@@ -65,7 +65,7 @@ def test_invalid_concurrent_save_for_wiki_page(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     membership = f.MembershipFactory.create(project=project, user=user)
-    wiki_page = f.WikiPageFactory.create(project=project, owner=user)
+    wiki_page = f.WikiPageFactory.create(version=10, project=project, owner=user)
     client.login(user)
 
     url = reverse("wiki-detail", args=(wiki_page.id,))
@@ -77,7 +77,7 @@ def test_valid_concurrent_save_for_wiki_page(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     membership = f.MembershipFactory.create(project=project, user=user)
-    wiki_page = f.WikiPageFactory.create(project=project, owner=user)
+    wiki_page = f.WikiPageFactory.create(version=10, project=project, owner=user)
     client.login(user)
 
     url = reverse("wiki-detail", args=(wiki_page.id,))
@@ -91,7 +91,7 @@ def test_invalid_concurrent_save_for_us(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     membership = f.MembershipFactory.create(project=project, user=user)
-    userstory = f.UserStoryFactory.create(project=project)
+    userstory = f.UserStoryFactory.create(version=10, project=project)
     client.login(user)
 
     url = reverse("userstories-detail", args=(userstory.id,))
@@ -103,7 +103,7 @@ def test_valid_concurrent_save_for_us(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     membership = f.MembershipFactory.create(project=project, user=user)
-    userstory = f.UserStoryFactory.create(project=project)
+    userstory = f.UserStoryFactory.create(version=10, project=project)
     client.login(user)
 
     url = reverse("userstories-detail", args=(userstory.id,))
@@ -118,7 +118,7 @@ def test_invalid_concurrent_save_for_task(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     membership = f.MembershipFactory.create(project=project, user=user)
-    task = f.TaskFactory.create(project=project)
+    task = f.TaskFactory.create(version=10, project=project)
     client.login(user)
 
     mock_path = "taiga.projects.tasks.api.TaskViewSet.pre_conditions_on_save"
@@ -132,7 +132,7 @@ def test_valid_concurrent_save_for_task(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     membership = f.MembershipFactory.create(project=project, user=user)
-    task = f.TaskFactory.create(project=project)
+    task = f.TaskFactory.create(version=10, project=project)
     client.login(user)
 
     mock_path = "taiga.projects.tasks.api.TaskViewSet.pre_conditions_on_save"
