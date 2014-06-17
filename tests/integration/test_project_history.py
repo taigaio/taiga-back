@@ -140,7 +140,7 @@ def test_issue_resource_history_test(client):
     assert qs_all.count() == 0
 
     with patch(mock_path) as m:
-        data = {"subject": "Fooooo"}
+        data = {"subject": "Fooooo", "version": issue.version}
         response = client.patch(url, json.dumps(data), content_type="application/json")
         assert response.status_code == 200
 
