@@ -31,12 +31,8 @@ class OCCResourceMixin(object):
         if current_version != param_version:
             raise exc.WrongArguments({"version": "The version doesn't match with the current one"})
 
-        super().pre_save(obj)
-
-    def post_save(self, obj, created=False):
         obj.version += 1
-        obj.save()
-        super().post_save(obj, created)
+        super().pre_save(obj)
 
 
 class OCCModelMixin(models.Model):
