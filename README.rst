@@ -22,6 +22,8 @@ Just execute these commands in your virtualenv(wrapper):
     python manage.py syncdb --all --noinput
     python manage.py migrate --fake
     python manage.py loaddata initial_user
+    python manage.py loaddata initial_project_templates
+    python manage.py loaddata initial_role
     python manage.py sample_data
     python manage.py createinitialrevisions
 
