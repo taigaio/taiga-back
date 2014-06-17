@@ -218,7 +218,7 @@ def test_resource_notification_test(client, mail):
     client.login(user1)
 
     with patch(mock_path) as m:
-        data = {"subject": "Fooooo"}
+        data = {"subject": "Fooooo", "version": issue.version}
         response = client.patch(url, json.dumps(data), content_type="application/json")
         assert len(mail.outbox) == 1
         assert response.status_code == 200

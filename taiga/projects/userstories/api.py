@@ -31,6 +31,7 @@ from taiga.base.api import ModelCrudViewSet
 
 from taiga.projects.notifications import WatchedResourceMixin
 from taiga.projects.history import HistoryResourceMixin
+from taiga.projects.occ import OCCResourceMixin
 
 from taiga.projects.models import Project
 from taiga.projects.history.services import take_snapshot
@@ -41,7 +42,7 @@ from . import serializers
 from . import services
 
 
-class UserStoryViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
+class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     model = models.UserStory
     serializer_class = serializers.UserStoryNeighborsSerializer
     list_serializer_class = serializers.UserStorySerializer

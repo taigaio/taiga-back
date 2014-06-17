@@ -19,9 +19,10 @@ from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from taiga.projects.notifications import WatchedModelMixin
+from taiga.projects.occ import OCCModelMixin
 
 
-class WikiPage(WatchedModelMixin, models.Model):
+class WikiPage(OCCModelMixin, WatchedModelMixin, models.Model):
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="wiki_pages", verbose_name=_("project"))
     slug = models.SlugField(max_length=500, db_index=True, null=False, blank=False,

@@ -25,12 +25,13 @@ from picklefield.fields import PickledObjectField
 
 from taiga.base.utils.slug import ref_uniquely
 from taiga.projects.notifications import WatchedModelMixin
+from taiga.projects.occ import OCCModelMixin
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.milestones.models import Milestone
 from taiga.projects.mixins.blocked import BlockedMixin
 
 
-class Task(WatchedModelMixin, BlockedMixin, models.Model):
+class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, models.Model):
     user_story = models.ForeignKey("userstories.UserStory", null=True, blank=True,
                                    related_name="tasks", verbose_name=_("user story"))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
