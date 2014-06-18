@@ -12,8 +12,7 @@ from picklefield.fields import PickledObjectField
 
 
 class TaggedMixin(models.Model):
-    pgtags = TextArrayField(default=None, verbose_name=_("tags"))
-    tags = PickledObjectField(null=False, blank=True, verbose_name=_("tags"))
+    tags = TextArrayField(default=None, verbose_name=_("tags"))
 
     class Meta:
         abstract = True
