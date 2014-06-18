@@ -270,3 +270,18 @@ def create_task(**kwargs):
     defaults.update(kwargs)
 
     return TaskFactory.create(**defaults)
+
+
+def create_membership(**kwargs):
+    "Create a membership along with its dependencies"
+    project = kwargs.pop("project", ProjectFactory())
+    project.points.add(PointsFactory.create(project=project, value=None))
+
+    defaults = {
+        "project": project,
+        "user": project.owner,
+        "role": RoleFactory.create(project=project)
+    }
+    defaults.update(kwargs)
+
+    return MembershipFactory.create(**defaults)
