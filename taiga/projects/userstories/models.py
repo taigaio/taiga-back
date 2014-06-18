@@ -154,4 +154,4 @@ def us_task_reassignation(sender, instance, created, **kwargs):
 @receiver(models.signals.pre_save, sender=UserStory, dispatch_uid="us-tags-normalization")
 def us_tags_normalization(sender, instance, **kwargs):
     if isinstance(instance.tags, (list, tuple)):
-        instance.tags = list(map(lambda x: x.lower(), instance.tags))
+        instance.tags = list(map(str.lower, instance.tags))
