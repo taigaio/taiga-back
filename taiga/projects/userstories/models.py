@@ -67,6 +67,8 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, models.Model):
                                related_name="user_stories", verbose_name=_("status"),
                                on_delete=models.SET_NULL)
     is_closed = models.BooleanField(default=False)
+    is_archived = models.BooleanField(default=False, null=False, blank=True,
+                                      verbose_name=_("archived"))
     points = models.ManyToManyField("projects.Points", null=False, blank=False,
                                     related_name="userstories", through="RolePoints",
                                     verbose_name=_("points"))

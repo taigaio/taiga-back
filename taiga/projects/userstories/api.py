@@ -50,7 +50,7 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
 
     filter_backends = (filters.IsProjectMemberFilterBackend, filters.TagsFilter)
     retrieve_exclude_filters = (filters.TagsFilter,)
-    filter_fields = ['project', 'milestone', 'milestone__isnull', 'status']
+    filter_fields = ['project', 'milestone', 'milestone__isnull', 'status', 'is_archived']
 
     # Specific filter used for filtering neighbor user stories
     _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')
