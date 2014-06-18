@@ -104,7 +104,7 @@ class TagsFilter(FilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         query_tags = self._get_tags_queryparams(request.QUERY_PARAMS)
-        if tags:
+        if query_tags:
             queryset = tags.filter(queryset, contains=query_tags)
 
         return queryset
