@@ -189,10 +189,6 @@ class Project(ProjectDefaults, TaggedMixin):
         if len(roles) == 0:
             return
 
-        # Do nothing if project does not have roles
-        if len(roles) == 0:
-            return
-
         # Get point instance that represent a null/undefined
         null_points_value = self.points.get(value=None)
 
