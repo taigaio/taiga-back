@@ -14,6 +14,7 @@ def test():
     tags1 = TaggedModel.objects.create(tags=["foo", "bar"])
     tags2 = TaggedModel.objects.create(tags=["foo"])
 
+    assert list(tags.filter(TaggedModel, contains=["foo"])) == [tags1, tags2]
     assert list(tags.filter(TaggedModel, contained_by=["foo"])) == [tags2]
     assert list(tags.filter(TaggedModel, overlap=["bar"])) == [tags1]
 
