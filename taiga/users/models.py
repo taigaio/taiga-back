@@ -61,6 +61,10 @@ class PermissionsMixin(models.Model):
         """
         return self.is_active and self.is_superuser
 
+    @property
+    def is_staff(self):
+        return self.is_superuser
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(_('username'), max_length=30, unique=True,
