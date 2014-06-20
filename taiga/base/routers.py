@@ -20,6 +20,8 @@ import itertools
 from collections import namedtuple
 from django.conf.urls import patterns, url
 from django.core.exceptions import ImproperlyConfigured
+from django.core.urlresolvers import NoReverseMatch
+
 from rest_framework import views
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -285,7 +287,11 @@ class DRFDefaultRouter(SimpleRouter):
             def get(self, request, format=None):
                 ret = {}
                 for key, url_name in api_root_dict.items():
-                    ret[key] = reverse(url_name, request=request, format=format)
+                    try:
+                        ret[key] = reverse(url_name, request=request, format=format)
+                    except NoReverseMatch:
+                        # Support resources that are prefixed by a parametrized url
+                        ret[key] = request.build_absolute_uri() + key
                 return Response(ret)
 
         return APIRoot.as_view()
