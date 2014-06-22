@@ -4,8 +4,9 @@ The PRIMARY AUTHORS are:
 - Jesus Espino Garcia <jespinog@gmail.com>
 - David Barragán Merino <dbarragan@dbarragan.com>
 - Alejandro Alonso <alejandro.alonso@kaleidos.net>
+- Anler Hernández <hello@anler.me>
 
-Special thanks to Kaleidos Open Source S.L for provice time for taiga
+Special thanks to Kaleidos Open Source S.L. for provice time for taiga
 development.
 
 And here is an inevitably incomplete list of MUCH-APPRECIATED CONTRIBUTORS --
