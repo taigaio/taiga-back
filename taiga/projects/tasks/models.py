@@ -30,7 +30,7 @@ from taiga.projects.milestones.models import Milestone
 from taiga.projects.mixins.blocked import BlockedMixin
 
 
-class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin):
+class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
     user_story = models.ForeignKey("userstories.UserStory", null=True, blank=True,
                                    related_name="tasks", verbose_name=_("user story"))
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,

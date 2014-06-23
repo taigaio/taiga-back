@@ -1,11 +1,13 @@
 import pytest
 
+from django.db import models
+
 from taiga.base import tags
 
 pytestmark = pytest.mark.django_db
 
 
-class TaggedModel(tags.TaggedMixin):
+class TaggedModel(tags.TaggedMixin, models.Model):
     class Meta:
         app_label = "base"
 

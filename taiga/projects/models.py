@@ -110,7 +110,7 @@ class ProjectDefaults(models.Model):
         abstract = True
 
 
-class Project(ProjectDefaults, TaggedMixin):
+class Project(ProjectDefaults, TaggedMixin, models.Model):
     name = models.CharField(max_length=250, unique=True, null=False, blank=False,
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,

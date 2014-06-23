@@ -51,7 +51,7 @@ class RolePoints(models.Model):
         return "{}: {}".format(self.role.name, self.points.name)
 
 
-class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin):
+class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
 
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))

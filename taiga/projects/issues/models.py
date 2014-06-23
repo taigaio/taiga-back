@@ -28,7 +28,7 @@ from taiga.projects.occ import OCCModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
 
 
-class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin):
+class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
