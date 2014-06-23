@@ -25,9 +25,22 @@ from . import models
 
 class MilestoneSerializer(serializers.ModelSerializer):
     user_stories = UserStorySerializer(many=True, required=False)
-    closed_points = serializers.FloatField(source='closed_points', required=False)
-    client_increment_points = serializers.FloatField(source='client_increment_points', required=False)
-    team_increment_points = serializers.FloatField(source='team_increment_points', required=False)
+    total_points = serializers.SerializerMethodField('get_total_points')
+    closed_points = serializers.SerializerMethodField('get_closed_points')
+    client_increment_points = serializers.SerializerMethodField('get_client_increment_points')
+    team_increment_points = serializers.SerializerMethodField('get_team_increment_points')
 
     class Meta:
         model = models.Milestone
+
+    def get_total_points(self, obj):
+        return sum(obj.total_points.values())
+
+    def get_closed_points(self, obj):
+        return sum(obj.closed_points.values())
+
+    def get_client_increment_points(self, obj):
+        return sum(obj.client_increment_points.values())
+
+    def get_team_increment_points(self, obj):
+        return sum(obj.team_increment_points.values())

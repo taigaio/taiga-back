@@ -29,6 +29,7 @@ from .. import factories as f
 
 pytestmark = pytest.mark.django_db
 
+
 def test_invalid_concurrent_save_for_issue(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
@@ -98,6 +99,22 @@ def test_invalid_concurrent_save_for_us(client):
     data = {}
     response = client.patch(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
+
+def test_valid_us_creation(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory.create(project=project, user=user)
+
+    client.login(user)
+
+    url = reverse("userstories-list")
+    data = {
+        'project': project.id,
+        'subject': 'test',
+    }
+
+    response = client.post(url, json.dumps(data), content_type="application/json")
+    assert response.status_code == 201
 
 def test_valid_concurrent_save_for_us(client):
     user = f.UserFactory.create()

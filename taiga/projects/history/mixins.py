@@ -6,7 +6,7 @@
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
+# This program is distributed in the hope that it will be useful,60
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
@@ -67,7 +67,7 @@ class HistoryResourceMixin(object):
         self.__object_saved = True
 
     def post_save(self, obj, created=False):
-        self.persist_history_snapshot(obj)
+        self.persist_history_snapshot(obj=obj)
         super().post_save(obj, created=created)
 
     def pre_delete(self, obj):

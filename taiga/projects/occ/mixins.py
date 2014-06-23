@@ -28,7 +28,8 @@ class OCCResourceMixin(object):
     def pre_save(self, obj):
         current_version = obj.version
         param_version = self.request.DATA.get('version', None)
-        if current_version != param_version:
+
+        if obj.id is not None and current_version != param_version:
             raise exc.WrongArguments({"version": "The version doesn't match with the current one"})
 
         if obj.id:
