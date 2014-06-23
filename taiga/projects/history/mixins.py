@@ -67,10 +67,9 @@ class HistoryResourceMixin(object):
         self.__object_saved = True
 
     def post_save(self, obj, created=False):
-        self.persist_history_snapshot()
+        self.persist_history_snapshot(obj)
         super().post_save(obj, created=created)
 
     def pre_delete(self, obj):
         self.persist_history_snapshot(obj, delete=True)
         super().pre_delete(obj)
-
