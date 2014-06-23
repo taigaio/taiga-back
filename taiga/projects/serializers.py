@@ -83,7 +83,6 @@ class ProjectMembershipSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    tags = PickleField(required=False)
     stars = serializers.SerializerMethodField("get_stars_number")
 
     class Meta:

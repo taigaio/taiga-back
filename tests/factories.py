@@ -23,14 +23,6 @@ from django.db.models.loading import get_model
 import factory
 from django.conf import settings
 
-# import taiga.projects.models
-# import taiga.projects.userstories.models
-# import taiga.projects.issues.models
-# import taiga.projects.milestones.models
-# import taiga.projects.stars.models
-# import taiga.users.models
-# import taiga.userstorage.models
-
 
 class Factory(factory.DjangoModelFactory):
     FACTORY_STRATEGY = factory.CREATE_STRATEGY
@@ -128,6 +120,25 @@ class UserStoryFactory(Factory):
     owner = factory.SubFactory("tests.factories.UserFactory")
     subject = factory.Sequence(lambda n: "User Story {}".format(n))
     description = factory.Sequence(lambda n: "User Story {} description".format(n))
+
+
+class TaskFactory(Factory):
+    FACTORY_FOR = get_model("tasks", "Task")
+
+    ref = factory.Sequence(lambda n: n)
+    owner = factory.SubFactory("tests.factories.UserFactory")
+    subject = factory.Sequence(lambda n: "Task {}".format(n))
+    user_story = factory.SubFactory("tests.factories.UserStoryFactory")
+    status = factory.SubFactory("tests.factories.TaskStatusFactory")
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    milestone = factory.SubFactory("tests.factories.MilestoneFactory")
+
+
+class TaskStatusFactory(Factory):
+    FACTORY_FOR = get_model("projects", "TaskStatus")
+
+    name = factory.Sequence(lambda n: "Task status {}".format(n))
+    project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
 class MilestoneFactory(Factory):
@@ -245,8 +256,8 @@ class ContentTypeFactory(Factory):
 
 
 def create_issue(**kwargs):
-    "Create an issue and its dependencies in an appropriate way."
-    owner = kwargs.pop("owner") if "owner" in kwargs else UserFactory()
+    "Create an issue and along with its dependencies."
+    owner = kwargs.pop("owner", UserFactory())
     project = ProjectFactory.create(owner=owner)
     defaults = {
         "project": project,
@@ -260,3 +271,34 @@ def create_issue(**kwargs):
     defaults.update(kwargs)
 
     return IssueFactory.create(**defaults)
+
+
+def create_task(**kwargs):
+    "Create a task and along with its dependencies."
+    owner = kwargs.pop("owner", UserFactory())
+    project = ProjectFactory.create(owner=owner)
+    defaults = {
+        "project": project,
+        "owner": owner,
+        "status": TaskStatusFactory.create(project=project),
+        "milestone": MilestoneFactory.create(project=project),
+        "user_story": UserStoryFactory.create(project=project, owner=owner),
+    }
+    defaults.update(kwargs)
+
+    return TaskFactory.create(**defaults)
+
+
+def create_membership(**kwargs):
+    "Create a membership along with its dependencies"
+    project = kwargs.pop("project", ProjectFactory())
+    project.points.add(PointsFactory.create(project=project, value=None))
+
+    defaults = {
+        "project": project,
+        "user": project.owner,
+        "role": RoleFactory.create(project=project)
+    }
+    defaults.update(kwargs)
+
+    return MembershipFactory.create(**defaults)

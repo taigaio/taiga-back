@@ -19,29 +19,18 @@ from django.db import connection
 
 
 def _get_stories_tags(project):
-    extra_sql = ("select unnest(unpickle(tags)) as tagname, count(unnest(unpickle(tags))) "
-                 "from userstories_userstory where project_id = %s "
-                 "group by unnest(unpickle(tags)) "
-                 "order by tagname asc")
-
-    with closing(connection.cursor()) as cursor:
-        cursor.execute(extra_sql, [project.id])
-        rows = cursor.fetchall()
-
-    return set([x[0] for x in rows])
+    result = set()
+    for tags in project.user_stories.values("tags", flat=True):
+        result.update(tags)
+    return result
 
 
 def _get_issues_tags(project):
-    extra_sql = ("select unnest(unpickle(tags)) as tagname, count(unnest(unpickle(tags))) "
-                 "from issues_issue where project_id = %s "
-                 "group by unnest(unpickle(tags)) "
-                 "order by tagname asc")
+    result = set()
+    for tags in project.issues.values("tags", flat=True):
+        result.update(tags)
+    return result
 
-    with closing(connection.cursor()) as cursor:
-        cursor.execute(extra_sql, [project.id])
-        rows = cursor.fetchall()
-
-    return rows
 
 def _get_issues_statuses(project):
     extra_sql = ("select status_id, count(status_id) from issues_issue "
@@ -144,9 +133,8 @@ def get_all_tags(project):
     Given a project, return sorted list of unique
     tags found on it.
     """
-
     result = set()
-    result.update(x[0] for x in _get_issues_tags(project))
+    result.update(_get_issues_tags(project))
     result.update(_get_stories_tags(project))
     return sorted(result)
 

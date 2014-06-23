@@ -19,7 +19,7 @@ from django.db.models import Q
 
 from rest_framework import filters
 
-from taiga.base.utils.db import filter_by_tags
+from taiga.base import tags
 
 
 class QueryParamsFilterMixin(object):
@@ -100,14 +100,11 @@ class TagsFilter(FilterBackend):
         self.filter_name = filter_name
 
     def _get_tags_queryparams(self, params):
-        tags = params.get(self.filter_name, [])
-        if tags:
-            tags = list({tag.strip() for tag in tags.split(",")})
-        return tags
+        return params.get(self.filter_name, "")
 
     def filter_queryset(self, request, queryset, view):
-        tags = self._get_tags_queryparams(request.QUERY_PARAMS)
-        if tags:
-            queryset = filter_by_tags(tags, queryset)
+        query_tags = self._get_tags_queryparams(request.QUERY_PARAMS)
+        if query_tags:
+            queryset = tags.filter(queryset, contains=query_tags)
 
         return queryset

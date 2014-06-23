@@ -20,8 +20,7 @@ from django.conf import settings
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
-from picklefield.fields import PickledObjectField
-
+from taiga.base.tags import TaggedMixin
 from taiga.base.utils.slug import ref_uniquely
 from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
@@ -52,7 +51,8 @@ class RolePoints(models.Model):
         return "{}: {}".format(self.role.name, self.points.name)
 
 
-class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, models.Model):
+class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
+
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
@@ -90,8 +90,6 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, models.Model):
                                              verbose_name=_("is client requirement"))
     team_requirement = models.BooleanField(default=False, null=False, blank=True,
                                            verbose_name=_("is team requirement"))
-    tags = PickledObjectField(null=False, blank=True,
-                              verbose_name=_("tags"))
     attachments = generic.GenericRelation("attachments.Attachment")
     generated_from_issue = models.ForeignKey("issues.Issue", null=True, blank=True,
                                              related_name="generated_user_stories",
@@ -156,4 +154,4 @@ def us_task_reassignation(sender, instance, created, **kwargs):
 @receiver(models.signals.pre_save, sender=UserStory, dispatch_uid="us-tags-normalization")
 def us_tags_normalization(sender, instance, **kwargs):
     if isinstance(instance.tags, (list, tuple)):
-        instance.tags = list(map(lambda x: x.lower(), instance.tags))
+        instance.tags = list(map(str.lower, instance.tags))

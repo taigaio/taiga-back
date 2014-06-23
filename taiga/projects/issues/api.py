@@ -26,6 +26,7 @@ from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route, detail_route
 from taiga.base.api import ModelCrudViewSet
+from taiga.base import tags
 
 from taiga.projects.notifications import WatchedResourceMixin
 from taiga.projects.occ import OCCResourceMixin
@@ -75,9 +76,7 @@ class IssuesFilter(filters.FilterBackend):
         filterdata = self._prepare_filters_data(request)
 
         if "tags" in filterdata:
-            where_sql = ["unpickle(issues_issue.tags) @> %s"]
-            params = [filterdata["tags"]]
-            queryset = queryset.extra(where=where_sql, params=params)
+            queryset = tags.filter(queryset, contains=filterdata["tags"])
 
         for name, value in filter(lambda x: x[0] != "tags", filterdata.items()):
             if None in value:

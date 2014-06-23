@@ -11,6 +11,7 @@ pytz==2014.4
 six==1.6.1
 djmail==0.7
 django-pgjson==0.1.2
+djorm-pgarray==1.0
 django-jinja==1.0.1
 jinja2==2.7.2
 pygments==1.6rc1
