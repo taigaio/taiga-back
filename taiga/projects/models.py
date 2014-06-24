@@ -181,12 +181,13 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         members = self.memberships.values_list("user", flat=True)
         return user_model.objects.filter(id__in=list(members))
 
-    def update_role_points(self):
-        rolepoints_model = get_model("userstories", "RolePoints")
+    def update_role_points(self, user_stories=None):
+        RolePoints = get_model("userstories", "RolePoints")
+        Role = get_model("users", "Role")
 
         # Get all available roles on this project
         roles = self.get_roles().filter(computable=True)
-        if len(roles) == 0:
+        if roles.count() == 0:
             return
 
         # Get point instance that represent a null/undefined
@@ -194,14 +195,19 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
 
         # Iter over all project user stories and create
         # role point instance for new created roles.
-        for us in self.user_stories.all():
-            for role in roles:
-                if not us.role_points.filter(role=role).exists():
-                    rolepoints_model.objects.create(role=role, user_story=us,
-                                                    points=null_points_value)
+        if user_stories is None:
+            user_stories = self.user_stories.all()
+
+        for story in user_stories:
+            story_related_roles = Role.objects.filter(role_points__in=story.role_points.all())\
+                                              .distinct()
+            new_roles = roles.exclude(id__in=story_related_roles)
+            new_rolepoints = [RolePoints(role=role, user_story=story, points=null_points_value)
+                              for role in new_roles]
+            RolePoints.objects.bulk_create(new_rolepoints)
 
         # Now remove rolepoints associated with not existing roles.
-        rp_query = rolepoints_model.objects.filter(user_story__in=self.user_stories.all())
+        rp_query = RolePoints.objects.filter(user_story__in=self.user_stories.all())
         rp_query = rp_query.exclude(role__id__in=roles.values_list("id", flat=True))
         rp_query.delete()
 
