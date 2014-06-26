@@ -25,10 +25,10 @@ from . import models
 
 class MilestoneSerializer(serializers.ModelSerializer):
     user_stories = UserStorySerializer(many=True, required=False)
-    total_points = serializers.SerializerMethodField('get_total_points')
-    closed_points = serializers.SerializerMethodField('get_closed_points')
-    client_increment_points = serializers.SerializerMethodField('get_client_increment_points')
-    team_increment_points = serializers.SerializerMethodField('get_team_increment_points')
+    total_points = serializers.SerializerMethodField("get_total_points")
+    closed_points = serializers.SerializerMethodField("get_closed_points")
+    client_increment_points = serializers.SerializerMethodField("get_client_increment_points")
+    team_increment_points = serializers.SerializerMethodField("get_team_increment_points")
 
     class Meta:
         model = models.Milestone
@@ -44,3 +44,13 @@ class MilestoneSerializer(serializers.ModelSerializer):
 
     def get_team_increment_points(self, obj):
         return sum(obj.team_increment_points.values())
+
+    def validate_name(self, attrs, source):
+        """
+        Check the milestone name is not duplicated in the project
+        """
+        qs = models.Milestone.objects.filter(project=attrs["project"], name=attrs[source])
+        if qs.exists():
+            raise serializers.ValidationError("Name duplicated for the project")
+
+        return attrs
