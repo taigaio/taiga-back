@@ -18,6 +18,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.base import exceptions as exc
+from taiga.base.utils import db
 
 
 class OCCResourceMixin(object):
@@ -36,6 +37,11 @@ class OCCResourceMixin(object):
             obj.version = models.F('version') + 1
 
         super().pre_save(obj)
+
+    def post_save(self, obj, created=False):
+        super().post_save(obj, created)
+        if not created:
+            obj.version = db.reload_attribute(obj, 'version')
 
 
 class OCCModelMixin(models.Model):

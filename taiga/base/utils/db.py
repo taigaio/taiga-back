@@ -27,3 +27,13 @@ def get_typename_for_model_class(model:object, for_concrete_model=True) -> str:
         model = model._meta.proxy_for_model
 
     return "{0}.{1}".format(model._meta.app_label, model._meta.model_name)
+
+
+def reload_attribute(model_instance, attr_name):
+    """Fetch the stored value of a model instance attribute.
+
+    :param model_instance: Model instance.
+    :param attr_name: Attribute name to fetch.
+    """
+    qs = type(model_instance).objects.filter(id=model_instance.id)
+    return qs.values_list(attr_name, flat=True)[0]
