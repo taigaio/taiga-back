@@ -123,21 +123,14 @@ class ProjectDetailSerializer(ProjectSerializer):
         return serializer.data
 
     def get_list_of_roles(self, obj):
-        roles_list = []
+        serializer = ProjectRoleSerializer(obj.roles.all(), many=True)
+        return serializer.data
 
-        if obj and obj.memberships:
-            roles_list = [{
-                "id": role["role__id"],
-                "name": role["role__name"],
-                "slug": role["role__slug"],
-                "order": role["role__order"],
-                "computable": role["role__computable"],
-            } for role in obj.memberships.values("role__id", "role__name", "role__slug", "role__order",
-                                                 "role__computable")
-                                         .order_by("role__order", "role__id")
-                                         .distinct("role__order", "role__id")]
 
-        return roles_list
+class ProjectRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = ('id', 'name', 'slug', 'order', 'computable')
 
 
 class RoleSerializer(serializers.ModelSerializer):
