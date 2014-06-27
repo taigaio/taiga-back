@@ -17,6 +17,7 @@
 
 import uuid
 import threading
+from datetime import date, timedelta
 
 from django.db.models.loading import get_model
 
@@ -147,6 +148,8 @@ class MilestoneFactory(Factory):
     name = factory.Sequence(lambda n: "Milestone {}".format(n))
     owner = factory.SubFactory("tests.factories.UserFactory")
     project = factory.SubFactory("tests.factories.ProjectFactory")
+    estimated_start = factory.LazyAttribute(lambda o: date.today())
+    estimated_finish = factory.LazyAttribute(lambda o: o.estimated_start + timedelta(days=7))
 
 
 class IssueFactory(Factory):
