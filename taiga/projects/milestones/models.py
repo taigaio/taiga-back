@@ -37,10 +37,8 @@ class Milestone(WatchedModelMixin, models.Model):
                               related_name="owned_milestones", verbose_name=_("owner"))
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="milestones", verbose_name=_("project"))
-    estimated_start = models.DateField(null=True, blank=True, default=None,
-                                       verbose_name=_("estimated start"))
-    estimated_finish = models.DateField(null=True, blank=True, default=None,
-                                        verbose_name=_("estimated finish"))
+    estimated_start = models.DateField(verbose_name=_("estimated start date"))
+    estimated_finish = models.DateField(verbose_name=_("estimated finish date"))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
                                         verbose_name=_("created date"))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
