@@ -23,11 +23,16 @@ from .models import User, Role
 
 
 class UserSerializer(serializers.ModelSerializer):
+    full_name_display = serializers.SerializerMethodField("get_full_name_display")
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'full_name', 'email', 'github_id',
+        fields = ('id', 'username', 'full_name', 'full_name_display', 'email', 'github_id',
                   'color', 'bio', 'default_language', 'default_timezone',
                   'is_active', 'photo')
+
+    def get_full_name_display(self, obj):
+        return obj.get_full_name() if obj else ""
 
 
 class RecoverySerializer(serializers.Serializer):
