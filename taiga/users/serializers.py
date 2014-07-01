@@ -18,12 +18,13 @@ from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 
-from taiga.projects.models import Project
-from .models import User, Role
+from .models import User
+from .gravatar import get_gravatar_url
 
 
 class UserSerializer(serializers.ModelSerializer):
     full_name_display = serializers.SerializerMethodField("get_full_name_display")
+    photo = serializers.SerializerMethodField("get_photo")
 
     class Meta:
         model = User
@@ -33,6 +34,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_full_name_display(self, obj):
         return obj.get_full_name() if obj else ""
+
+    def get_photo(self, user):
+        "Return the user photo or her gravatar"
+        return user.photo or get_gravatar_url(user.email)
 
 
 class RecoverySerializer(serializers.Serializer):
