@@ -15,10 +15,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from rest_framework import serializers
 
 from .models import User
+from .services import get_photo_url
 from .gravatar import get_gravatar_url
 
 
@@ -37,7 +39,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_photo(self, user):
         "Return the user photo or her gravatar"
-        return user.photo or get_gravatar_url(user.email)
+        if user.photo:
+            url = get_photo_url(user.photo)
+        else:
+            url = get_gravatar_url(user.email)
+        return url
 
 
 class RecoverySerializer(serializers.Serializer):

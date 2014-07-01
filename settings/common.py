@@ -191,6 +191,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "djmail",
     "django_jinja",
+    "easy_thumbnails",
 ]
 
 WSGI_APPLICATION = "taiga.wsgi.application"
@@ -306,4 +307,21 @@ if "test" in sys.argv:
     print ("Try: \033[1;33mpy.test\033[0m")
     sys.exit(0)
 
-DEFAULT_AVATAR_URL = ""
+SOUTH_MIGRATION_MODULES = {
+    'easy_thumbnails': 'easy_thumbnails.south_migrations',
+}
+
+DEFAULT_AVATAR_SIZE = 80                # 80x80 pixels
+
+DEFAULT_AVATAR_URL = ''
+
+THUMBNAIL_ALIASES = {
+    '': {
+        'avatar': {'size': (DEFAULT_AVATAR_SIZE, DEFAULT_AVATAR_SIZE), 'crop': True},
+    },
+}
+
+GRAVATAR_DEFAULT_OPTIONS = {
+    'default': DEFAULT_AVATAR_URL, # default avatar to show if there's no gravatar image
+    'size': DEFAULT_AVATAR_SIZE
+}

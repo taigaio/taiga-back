@@ -21,7 +21,10 @@ This model contains a domain logic for users application.
 from django.db.models.loading import get_model
 from django.db.models import Q
 
+from easy_thumbnails.files import get_thumbnailer
+
 from taiga.base import exceptions as exc
+from taiga.base.utils.urls import get_absolute_url
 
 
 def get_and_validate_user(*, username:str, password:str) -> bool:
@@ -44,3 +47,9 @@ def get_and_validate_user(*, username:str, password:str) -> bool:
         raise exc.WrongArguments("Username or password does not matches user.")
 
     return user
+
+
+def get_photo_url(photo):
+    """Get a photo absolute url and the photo automatically cropped."""
+    url = get_thumbnailer(photo)['avatar'].url
+    return get_absolute_url(url)

@@ -25,3 +25,4 @@ requests==2.3.0
 enum34==1.0
 
 django-reversion==1.8.1
+easy-thumbnails==2.0
