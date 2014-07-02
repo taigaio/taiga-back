@@ -9,7 +9,7 @@ def build_url(path, scheme="http", domain="localhost"):
 
 def is_absolute_url(path):
     """Test wether or not `path` is absolute url."""
-    return path.startswith("http")
+    return path.startswith("http") or path.startswith("https")
 
 
 def get_absolute_url(path):
