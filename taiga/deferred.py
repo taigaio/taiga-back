@@ -1,4 +1,12 @@
+from django.conf import settings
+
 from .celery import app
+
+
+def _send_task(task, args, kwargs, **options):
+    if settings.CELERY_ALWAYS_EAGER:
+        return app.tasks[task].apply(args, kwargs, **options)
+    return app.send_task(task, args, kwargs, **options)
 
 
 def defer(task: str, *args, **kwargs):
@@ -17,7 +25,7 @@ def defer(task: str, *args, **kwargs):
 
     :return: A future object.
     """
-    return app.send_task(task, args, kwargs, routing_key="transient.deferred")
+    return _send_task(task, args, kwargs, routing_key="transient.deferred")
 
 
 def call_async(task: str, *args, **kwargs):
@@ -40,4 +48,4 @@ def apply_async(task: str, args=None, kwargs=None, **options):
     :param kwargs: Dict of keyword arguments for the task.
     :param options: Celery-specific options when running the task. See Celery docs on `apply_async`
     """
-    app.send_task(task, args, kwargs, **options)
+    _send_task(task, args, kwargs, **options)
