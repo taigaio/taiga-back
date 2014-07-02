@@ -25,7 +25,6 @@ Just execute these commands in your virtualenv(wrapper):
     python manage.py loaddata initial_project_templates
     python manage.py loaddata initial_role
     python manage.py sample_data
-    python manage.py createinitialrevisions
 
 You have to load the sql sentences of the file ``sql/tags.sql`` and your database
 must support PL/Python. You use a dbuser with privileges in the database,
