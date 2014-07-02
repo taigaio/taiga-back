@@ -20,6 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.serializers import PickleField, JsonField
 from taiga.users.models import Role, User
+from taiga.users.services import get_photo_or_gravatar_url
 
 from . import models
 
@@ -77,9 +78,13 @@ class ProjectMembershipSerializer(serializers.ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False)
     full_name = serializers.CharField(source='user.get_full_name', required=False)
     color = serializers.CharField(source='user.color', required=False)
+    photo = serializers.SerializerMethodField("get_photo")
 
     class Meta:
         model = models.Membership
+
+    def get_photo(self, project):
+        return get_photo_or_gravatar_url(project.user)
 
 
 class ProjectSerializer(serializers.ModelSerializer):

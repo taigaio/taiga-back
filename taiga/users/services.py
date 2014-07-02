@@ -26,6 +26,8 @@ from easy_thumbnails.files import get_thumbnailer
 from taiga.base import exceptions as exc
 from taiga.base.utils.urls import get_absolute_url
 
+from .gravatar import get_gravatar_url
+
 
 def get_and_validate_user(*, username:str, password:str) -> bool:
     """
@@ -53,3 +55,8 @@ def get_photo_url(photo):
     """Get a photo absolute url and the photo automatically cropped."""
     url = get_thumbnailer(photo)['avatar'].url
     return get_absolute_url(url)
+
+
+def get_photo_or_gravatar_url(user):
+    """Get the user's photo/gravatar url."""
+    return get_photo_url(user.photo) if user.photo else get_gravatar_url(user.email)
