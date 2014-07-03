@@ -18,3 +18,5 @@ from .development import *
 
 SKIP_SOUTH_TESTS = True
 SOUTH_TESTS_MIGRATE = False
+
+CELERY_ALWAYS_EAGER = True
