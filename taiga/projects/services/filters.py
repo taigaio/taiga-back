@@ -32,6 +32,19 @@ def _get_issues_tags(project):
     return result
 
 
+def _get_issues_tags_with_count(project):
+    extra_sql = ("select unnest(tags) as tagname, count(unnest(tags)) "
+                 "from issues_issue where project_id = %s "
+                 "group by unnest(tags) "
+                 "order by tagname asc")
+
+    with closing(connection.cursor()) as cursor:
+        cursor.execute(extra_sql, [project.id])
+        rows = cursor.fetchall()
+
+    return rows
+
+
 def _get_issues_statuses(project):
     extra_sql = ("select status_id, count(status_id) from issues_issue "
                  "where project_id = %s group by status_id;")
@@ -152,6 +165,7 @@ def get_issues_filters_data(project):
         "severities": _get_issues_severities(project),
         "assigned_to": _get_issues_assigned_to(project),
         "owners": _get_issues_owners(project),
-        "tags": _get_issues_tags(project),
+        "tags": _get_issues_tags_with_count(project),
     }
+
     return data
