@@ -258,6 +258,16 @@ class ContentTypeFactory(Factory):
     model = factory.LazyAttribute(lambda obj: ContentTypeFactory.FACTORY_FOR._meta.model_name)
 
 
+class AttachmentFactory(Factory):
+    FACTORY_FOR = get_model("attachments", "Attachment")
+
+    owner = factory.SubFactory("tests.factories.UserFactory")
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
+    object_id = factory.Sequence(lambda n: n)
+    attached_file = factory.django.FileField(data=b"File contents")
+
+
 def create_issue(**kwargs):
     "Create an issue and along with its dependencies."
     owner = kwargs.pop("owner", UserFactory())

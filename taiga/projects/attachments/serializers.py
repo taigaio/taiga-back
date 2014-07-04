@@ -13,12 +13,12 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from os import path
 
 from rest_framework import serializers
 
+from taiga.base.utils.urls import reverse
 from . import models
-
-from os import path
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
@@ -39,7 +39,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
         return ""
 
     def get_url(self, obj):
-        return obj.attached_file.url if obj and obj.attached_file else ""
+        return reverse("attachment-url", kwargs={"pk": obj.pk})
 
     def get_size(self, obj):
         if obj.attached_file:

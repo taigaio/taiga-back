@@ -76,7 +76,7 @@ SITES = {
 SITE_ID = "api"
 
 # Session configuration (only used for admin)
-SESSION_ENGINE="django.contrib.sessions.backends.db"
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_COOKIE_AGE = 1209600 # (2 weeks)
 
 # MAIL OPTIONS
@@ -325,3 +325,8 @@ GRAVATAR_DEFAULT_OPTIONS = {
     'default': DEFAULT_AVATAR_URL, # default avatar to show if there's no gravatar image
     'size': DEFAULT_AVATAR_SIZE
 }
+
+try:
+    IN_DEVELOPMENT_SERVER = sys.argv[1] == 'runserver'
+except IndexError:
+    IN_DEVELOPMENT_SERVER = False
