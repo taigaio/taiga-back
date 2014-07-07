@@ -47,10 +47,17 @@ class MilestoneSerializer(serializers.ModelSerializer):
 
     def validate_name(self, attrs, source):
         """
-        Check the milestone name is not duplicated in the project
+        Check the milestone name is not duplicated in the project on creation
         """
-        qs = models.Milestone.objects.filter(project=attrs["project"], name=attrs[source])
-        if qs.exists():
-            raise serializers.ValidationError("Name duplicated for the project")
+        qs = None
+        # If the milestone exists:
+        if self.object and attrs.get("name", None):
+            qs = models.Milestone.objects.filter(project=self.object.project, name=attrs[source])
+
+        if not self.object and attrs.get("project", None)  and attrs.get("name", None):
+            qs = models.Milestone.objects.filter(project=attrs["project"], name=attrs[source])
+
+        if qs and qs.exists():
+              raise serializers.ValidationError("Name duplicated for the project")
 
         return attrs
