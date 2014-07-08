@@ -20,15 +20,21 @@ from django_sites import get_by_id as get_site_by_id
 
 urls = {
     "home": "/",
-    "backlog": "/#/project/{0}/backlog/",
-    "taskboard": "/#/project/{0}/taskboard/{1}",
-    "userstory": "/#/project/{0}/user-story/{1}",
-    "task": "/#/project/{0}/tasks/{1}",
-    "issue": "/#/project/{0}/issues/{1}",
-    "project-admin": "/#/project/{0}/admin",
-    "change-password": "/#/change-password/{0}",
-    "invitation": "/#/invitation/{0}",
-    "wiki": "/#/project/{0}/wiki/{1}"
+
+    "login": "/login",
+    "change-password": "/change-password/{0}",
+    "invitation": "/invitation/{0}",
+
+    "backlog": "/project/{0}/backlog/",
+    "taskboard": "/project/{0}/taskboard/{1}",
+    "userstory": "/project/{0}/user-story/{1}",
+    "task": "/project/{0}/tasks/{1}",
+
+    "issue": "/project/{0}/issues/{1}",
+
+    "wiki": "/project/{0}/wiki/{1}",
+
+    "project-admin": "/project/{0}/admin",
 }
 
 
