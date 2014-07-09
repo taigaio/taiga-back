@@ -89,7 +89,8 @@ class UsersViewSet(ModelCrudViewSet):
         email = mbuilder.password_recovery(user.email, {"user": user})
         email.send()
 
-        return Response({"detail": _("Mail sended successful!")})
+        return Response({"detail": _("Mail sended successful!"),
+                         "email": user.email})
 
     @list_route(permission_classes=[AllowAny], methods=["POST"])
     def change_password_from_recovery(self, request, pk=None):
