@@ -30,8 +30,10 @@ class TasksService(object):
 
         for item in items:
             obj = models.Task.objects.create(subject=item, project=project,
+                                             milestone=user_story.milestone,
                                              user_story=user_story, owner=user,
                                              status=project.default_task_status)
+
             tasks.append(obj)
 
             if callback_on_success:
