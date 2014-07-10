@@ -14,30 +14,32 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db import transaction
-from django.db import connection
+from taiga.base.utils import db, text
 
 from . import models
 
 
-class TasksService(object):
-    @transaction.atomic
-    def bulk_insert(self, project, user, user_story, data, callback_on_success=None):
-        tasks = []
+def get_tasks_from_bulk(bulk_data, **additional_fields):
+    """Convert `bulk_data` into a list of tasks.
 
-        items = filter(lambda s: len(s) > 0,
-                    map(lambda s: s.strip(), data.split("\n")))
+    :param bulk_data: List of tasks in bulk format.
+    :param additional_fields: Additional fields when instantiating each task.
 
-        for item in items:
-            obj = models.Task.objects.create(subject=item, project=project,
-                                             milestone=user_story.milestone,
-                                             user_story=user_story, owner=user,
-                                             status=project.default_task_status)
+    :return: List of `Task` instances.
+    """
+    return [models.Task(subject=line, **additional_fields)
+            for line in text.split_in_lines(bulk_data)]
 
-            tasks.append(obj)
 
-            if callback_on_success:
-                callback_on_success(obj, True)
+def create_tasks_in_bulk(bulk_data, callback=None, **additional_fields):
+    """Create tasks from `bulk_data`.
 
-        return tasks
+    :param bulk_data: List of tasks in bulk format.
+    :param callback: Callback to execute after each task save.
+    :param additional_fields: Additional fields when instantiating each task.
 
+    :return: List of created `Task` instances.
+    """
+    tasks = get_tasks_from_bulk(bulk_data, **additional_fields)
+    db.save_in_bulk(tasks, callback)
+    return tasks

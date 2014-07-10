@@ -15,6 +15,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.contenttypes.models import ContentType
+from django.db import transaction
+
+from . import functions
 
 
 def get_typename_for_model_class(model:object, for_concrete_model=True) -> str:
@@ -37,3 +40,18 @@ def reload_attribute(model_instance, attr_name):
     """
     qs = type(model_instance).objects.filter(id=model_instance.id)
     return qs.values_list(attr_name, flat=True)[0]
+
+
+@transaction.atomic
+def save_in_bulk(instances, callback=None, **save_options):
+    """Save a list of model instances.
+
+    :params callback: Callback to call after each save.
+    :params save_options: Additional options to use when saving each instance.
+    """
+    if callback is None:
+        callback = functions.identity
+
+    for instance in instances:
+        instance.save(**save_options)
+        callback(instance)

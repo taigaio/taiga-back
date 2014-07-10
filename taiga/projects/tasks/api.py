@@ -90,9 +90,9 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
         if request.user != project.owner and not has_project_perm(request.user, project, 'add_task'):
             raise exc.PermissionDenied(_("You don't have permisions to create tasks."))
 
-        service = services.TasksService()
-        tasks = service.bulk_insert(project, request.user, user_story, bulk_tasks,
-                                    callback_on_success=self.post_save)
+        tasks = services.create_tasks_in_bulk(bulk_tasks, callback=self.post_save, project=project,
+                                              user_story=user_story, owner=request.user,
+                                              status=project.default_task_status)
 
         tasks_serialized = self.serializer_class(tasks, many=True)
         return Response(data=tasks_serialized.data)
