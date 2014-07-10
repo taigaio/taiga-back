@@ -19,6 +19,7 @@ from rest_framework import serializers
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.serializers import PickleField, JsonField
+from taiga.users.serializers import UserSerializer
 from taiga.users.models import Role, User
 from taiga.users.services import get_photo_or_gravatar_url
 
@@ -69,9 +70,20 @@ class IssueTypeSerializer(serializers.ModelSerializer):
 # Projects
 
 class MembershipSerializer(serializers.ModelSerializer):
+    invited_by = serializers.SerializerMethodField("get_invited_by")
+
     class Meta:
         model = models.Membership
         read_only_fields = ("user",)
+        # exclude = ("invited_by_id",)
+
+    def get_invited_by(self, membership):
+        try:
+            queryset = User.objects.get(pk=membership.invited_by_id)
+        except User.DoesNotExist:
+            return None
+        else:
+            return UserSerializer(queryset).data
 
 
 class ProjectMembershipSerializer(serializers.ModelSerializer):

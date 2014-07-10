@@ -123,7 +123,9 @@ class MembershipViewSet(ModelCrudViewSet):
     permission_classes = (IsAuthenticated, permissions.MembershipPermission)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.DATA, files=request.FILES)
+        data = request.DATA
+        data.update({"invited_by_id": request.user.id})
+        serializer = self.get_serializer(data=data, files=request.FILES)
 
         if serializer.is_valid():
             qs = self.model.objects.filter(Q(project_id=serializer.data["project"],

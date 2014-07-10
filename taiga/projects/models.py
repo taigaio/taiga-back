@@ -62,6 +62,7 @@ class Membership(models.Model):
                                       verbose_name=_("creado el"))
     token = models.CharField(max_length=60, blank=True, null=True, default=None,
                              verbose_name=_("token"))
+    invited_by_id = models.IntegerField(null=True, blank=True)
 
     def clean(self):
         # TODO: Review and do it more robust
