@@ -46,6 +46,7 @@ def reload_attribute(model_instance, attr_name):
 def save_in_bulk(instances, callback=None, **save_options):
     """Save a list of model instances.
 
+    :params instances: List of model instances.
     :params callback: Callback to call after each save.
     :params save_options: Additional options to use when saving each instance.
     """
@@ -55,3 +56,34 @@ def save_in_bulk(instances, callback=None, **save_options):
     for instance in instances:
         instance.save(**save_options)
         callback(instance)
+
+
+@transaction.atomic
+def update_in_bulk(instances, list_of_new_values, callback=None):
+    """Update a list of model instances.
+
+    :params instances: List of model instances.
+    :params new_values: List of dicts where each dict is the new data corresponding to the instance
+    in the same index position as the dict.
+    """
+    if callback is None:
+        callback = functions.identity
+
+    for instance, new_values in zip(instances, list_of_new_values):
+        for attribute, value in new_values.items():
+            setattr(instance, attribute, value)
+        instance.save()
+        callback(instance)
+
+
+@transaction.atomic
+def update_in_bulk_with_ids(ids, list_of_new_values, model):
+    """Update a table using a list of ids.
+
+    :params ids: List of ids.
+    :params new_values: List of dicts or duples where each dict/duple is the new data corresponding
+    to the instance in the same index position as the dict.
+    :param model: Model of the ids.
+    """
+    for id, new_values in zip(ids, list_of_new_values):
+        model.objects.filter(id=id).update(**new_values)

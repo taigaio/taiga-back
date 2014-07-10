@@ -14,43 +14,47 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db import transaction
-from django.db import connection
+from taiga.base.utils import db, text
 
 from . import models
 
 
-class UserStoriesService(object):
-    @transaction.atomic
-    def bulk_insert(self, project, user, data, callback_on_success=None):
-        user_stories = []
+def get_userstories_from_bulk(bulk_data, **additional_fields):
+    """Convert `bulk_data` into a list of user stories.
 
-        items = filter(lambda s: len(s) > 0,
-                    map(lambda s: s.strip(), data.split("\n")))
+    :param bulk_data: List of user stories in bulk format.
+    :param additional_fields: Additional fields when instantiating each user story.
 
-        for item in items:
-            obj = models.UserStory.objects.create(subject=item, project=project, owner=user,
-                                                  status=project.default_us_status)
-            user_stories.append(obj)
+    :return: List of `UserStory` instances.
+    """
+    return [models.UserStory(subject=line, **additional_fields)
+            for line in text.split_in_lines(bulk_data)]
 
-            if callback_on_success:
-                callback_on_success(obj, True)
 
-        return user_stories
+def create_userstories_in_bulk(bulk_data, callback=None, **additional_fields):
+    """Create user stories from `bulk_data`.
 
-    @transaction.atomic
-    def bulk_update_order(self, project, user, data):
-        # TODO: Create a history snapshot of all updated USs
-        cursor = connection.cursor()
+    :param bulk_data: List of user stories in bulk format.
+    :param callback: Callback to execute after each user story save.
+    :param additional_fields: Additional fields when instantiating each user story.
 
-        sql = """
-        prepare bulk_update_order as update userstories_userstory set "order" = $1
-            where userstories_userstory.id = $2 and
-                  userstories_userstory.project_id = $3;
-        """
+    :return: List of created `Task` instances.
+    """
+    userstories = get_userstories_from_bulk(bulk_data, **additional_fields)
+    db.save_in_bulk(userstories, callback)
+    return userstories
 
-        cursor.execute(sql)
-        for usid, usorder in data:
-            cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
-                           (usorder, usid, project.id))
-        cursor.close()
+
+def update_userstories_order_in_bulk(bulk_data):
+    """Update the order of some user stories.
+
+    `bulk_data` should be a list of tuples with the following format:
+
+    [(<user story id>, <new user story order value>), ...]
+    """
+    user_story_ids = []
+    new_order_values = []
+    for user_story_id, new_order_value in bulk_data:
+        user_story_ids.append(user_story_id)
+        new_order_values.append({"order": new_order_value})
+    db.update_in_bulk_with_ids(user_story_ids, new_order_values, model=models.UserStory)

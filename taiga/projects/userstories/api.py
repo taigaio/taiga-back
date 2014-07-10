@@ -79,9 +79,8 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
         if request.user != project.owner and not has_project_perm(request.user, project, 'add_userstory'):
             raise exc.PermissionDenied(_("You don't have permisions to create user stories."))
 
-        service = services.UserStoriesService()
-        user_stories = service.bulk_insert(project, request.user, bulk_stories,
-                            callback_on_success=self.post_save)
+        user_stories = services.create_userstories_in_bulk(
+            bulk_stories, callback=self.post_save, project=project, owner=request.user)
 
         user_stories_serialized = self.serializer_class(user_stories, many=True)
         return Response(data=user_stories_serialized.data)
@@ -107,8 +106,7 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
         if request.user != project.owner and not has_project_perm(request.user, project, 'change_userstory'):
             raise exc.PermissionDenied(_("You don't have permisions to create user stories."))
 
-        service = services.UserStoriesService()
-        service.bulk_update_order(project, request.user, bulk_stories)
+        services.update_userstories_order_in_bulk(bulk_stories)
 
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 

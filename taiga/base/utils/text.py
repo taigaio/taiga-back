@@ -25,3 +25,8 @@ def strip_lines(text):
     output = output.replace("\n", " ")
 
     return output.strip()
+
+
+def split_in_lines(text):
+    """Split a block of text in lines removing unnecessary spaces from each line."""
+    return (line for line in map(str.strip, text.split("\n")) if line)
