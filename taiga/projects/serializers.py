@@ -72,6 +72,7 @@ class IssueTypeSerializer(serializers.ModelSerializer):
 class MembershipSerializer(serializers.ModelSerializer):
     invited_by = serializers.SerializerMethodField("get_invited_by")
     project_name = serializers.SerializerMethodField("get_project_name")
+    project_slug = serializers.SerializerMethodField("get_project_slug")
 
     class Meta:
         model = models.Membership
@@ -88,6 +89,9 @@ class MembershipSerializer(serializers.ModelSerializer):
 
     def get_project_name(self, obj):
         return obj.project.name if obj and obj.project else ""
+
+    def get_project_slug(self, obj):
+        return obj.project.slug if obj and obj.project else ""
 
 
 class ProjectMembershipSerializer(serializers.ModelSerializer):
