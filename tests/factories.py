@@ -121,6 +121,14 @@ class UserStoryFactory(Factory):
     owner = factory.SubFactory("tests.factories.UserFactory")
     subject = factory.Sequence(lambda n: "User Story {}".format(n))
     description = factory.Sequence(lambda n: "User Story {} description".format(n))
+    status = factory.SubFactory("tests.factories.UserStoryStatusFactory")
+
+
+class UserStoryStatusFactory(Factory):
+    FACTORY_FOR = get_model("projects", "UserStoryStatus")
+
+    name = factory.Sequence(lambda n: "User Story status {}".format(n))
+    project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
 class TaskFactory(Factory):
