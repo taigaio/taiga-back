@@ -167,7 +167,7 @@ class InvitationViewSet(RetrieveModelMixin, viewsets.ReadOnlyModelViewSet):
     """
     Only used by front for get invitation by it token.
     """
-    queryset = models.Membership.objects.all()
+    queryset = models.Membership.objects.filter(user__isnull=True)
     serializer_class = serializers.MembershipSerializer
     lookup_field = "token"
     permission_classes = (AllowAny,)

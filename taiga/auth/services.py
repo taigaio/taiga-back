@@ -87,9 +87,9 @@ def get_membership_by_token(token:str):
     is raised.
     """
     membership_model = get_model("projects", "Membership")
-    qs = membership_model.objects.filter(token=token)
+    qs = membership_model.objects.filter(user__isnull=True, token=token)
     if len(qs) == 0:
-        raise exc.NotFound("Token not matches any member.")
+        raise exc.NotFound("Token not matches any valid invitation.")
     return qs[0]
 
 
@@ -129,7 +129,7 @@ def private_register_for_existing_user(token:str, username:str, password:str):
     as existing user.
     """
 
-    user = get_and_validate_user(username=username, password=password)
+    user = get_and_validate_user(username=username, email=username, password=password)
     membership = get_membership_by_token(token)
 
     membership.user = user
