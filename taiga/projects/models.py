@@ -75,7 +75,7 @@ class Membership(models.Model):
         verbose_name = "membership"
         verbose_name_plural = "membershipss"
         unique_together = ("user", "project",)
-        ordering = ["project", "role"]
+        ordering = ["project", "role", "user__full_name", "user__username", "user__email", "email"]
         permissions = (
             ("view_membership", "Can view membership"),
         )
