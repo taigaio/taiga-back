@@ -63,6 +63,9 @@ def update_userstories_order_in_bulk(bulk_data):
 
 
 def calculate_userstory_is_closed(user_story):
+    if user_story.status is None:
+        return False
+
     if user_story.tasks.count() == 0:
         return user_story.status.is_closed
 
