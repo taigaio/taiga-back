@@ -20,11 +20,14 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 
 from .routers import router
+from .projects.attachments.views import RawAttachmentView
+
 
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^attachments/(?P<pk>\d+)/$', RawAttachmentView.as_view(), name="attachment-url"),
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', include(admin.site.urls)),
