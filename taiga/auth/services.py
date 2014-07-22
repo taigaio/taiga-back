@@ -129,7 +129,7 @@ def private_register_for_existing_user(token:str, username:str, password:str):
     as existing user.
     """
 
-    user = get_and_validate_user(username=username, email=username, password=password)
+    user = get_and_validate_user(username=username, password=password)
     membership = get_membership_by_token(token)
 
     membership.user = user
