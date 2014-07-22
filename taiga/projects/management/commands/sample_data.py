@@ -80,6 +80,16 @@ SUBJECT_CHOICES = [
     "Support for bulk actions",
     "Migrate to Python 3 and milk a beautiful cow"]
 
+NUM_USERS =                  10
+NUM_PROJECTS =                4
+NUM_MILESTONES =     (  1,    5)
+NUM_USS =            (  3,    7)
+NUM_TASKS_FINISHED = (  1,    5)
+NUM_TASKS = (  0,    4)
+NUM_USS_BACK =       (  8,   20)
+NUM_ISSUES =         ( 12,   25)
+NUM_ATTACHMENTS =    (  0,    4)
+
 
 class Command(BaseCommand):
     sd = SampleDataHelper(seed=12345678901)
@@ -89,11 +99,11 @@ class Command(BaseCommand):
         self.users = [User.objects.get(is_superuser=True)]
 
         # create users
-        for x in range(10):
+        for x in range(NUM_USERS):
             self.users.append(self.create_user(x))
 
         # create project
-        for x in range(4):
+        for x in range(NUM_PROJECTS):
             project = self.create_project(x)
 
             # added memberships
@@ -116,16 +126,16 @@ class Command(BaseCommand):
             start_date = now() - datetime.timedelta(55)
 
             # create milestones
-            for y in range(self.sd.int(1, 5)):
+            for y in range(self.sd.int(*NUM_MILESTONES)):
                 end_date = start_date + datetime.timedelta(15)
                 milestone = self.create_milestone(project, start_date, end_date)
 
                 # create uss asociated to milestones
-                for z in range(self.sd.int(3, 7)):
+                for z in range(self.sd.int(*NUM_USS)):
                     us = self.create_us(project, milestone, computable_project_roles)
 
                     # create tasks
-                    rang = (1, 4) if start_date <= now() and end_date <= now() else (0, 6)
+                    rang = NUM_TASKS_FINISHED if start_date <= now() and end_date <= now() else NUM_TASKS
                     for w in range(self.sd.int(*rang)):
                         if start_date <= now() and end_date <= now():
                             task = self.create_task(project, milestone, us, start_date,
@@ -140,7 +150,7 @@ class Command(BaseCommand):
                 start_date = end_date
 
             # created unassociated uss.
-            for y in range(self.sd.int(8,20)):
+            for y in range(self.sd.int(*NUM_USS_BACK)):
                 us = self.create_us(project, None, computable_project_roles)
 
             # Set a value to total_story_points to show the deadline in the backlog
@@ -149,7 +159,7 @@ class Command(BaseCommand):
             project.save()
 
             # create bugs.
-            for y in range(self.sd.int(15,25)):
+            for y in range(self.sd.int(*NUM_ISSUES)):
                 bug = self.create_bug(project)
 
             # create a wiki page
@@ -174,7 +184,7 @@ class Command(BaseCommand):
                 content=self.sd.paragraphs(3,15),
                 owner=self.sd.db_object_from_queryset(project.memberships.all()).user)
 
-        for i in range(self.sd.int(0, 4)):
+        for i in range(self.sd.int(*NUM_ATTACHMENTS)):
             attachment = self.create_attachment(wiki_page)
 
         return wiki_page
@@ -195,7 +205,7 @@ class Command(BaseCommand):
                                                                project=project)),
                 tags=self.sd.words(1, 5).split(" "))
 
-        for i in range(self.sd.int(0, 4)):
+        for i in range(self.sd.int(*NUM_ATTACHMENTS)):
             attachment = self.create_attachment(bug)
 
         if bug.status.order != 1:
@@ -225,7 +235,7 @@ class Command(BaseCommand):
 
         task.save()
 
-        for i in range(self.sd.int(0, 4)):
+        for i in range(self.sd.int(*NUM_ATTACHMENTS)):
             attachment = self.create_attachment(task)
 
         return task
@@ -252,7 +262,7 @@ class Command(BaseCommand):
 
             role_points.save()
 
-        for i in range(self.sd.int(0, 4)):
+        for i in range(self.sd.int(*NUM_ATTACHMENTS)):
             attachment = self.create_attachment(us)
 
         if self.sd.choice([True, True, False, True, True]):
