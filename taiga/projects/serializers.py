@@ -37,6 +37,23 @@ class UserStoryStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserStoryStatus
 
+    def validate_name(self, attrs, source):
+        """
+        Check the status name is not duplicated in the project on creation
+        """
+        qs = None
+        # If the milestone exists:
+        if self.object and attrs.get("name", None):
+            qs = models.UserStoryStatus.objects.filter(project=self.object.project, name=attrs[source])
+
+        if not self.object and attrs.get("project", None)  and attrs.get("name", None):
+            qs = models.UserStoryStatus.objects.filter(project=attrs["project"], name=attrs[source])
+
+        if qs and qs.exists():
+              raise serializers.ValidationError("Name duplicated for the project")
+
+        return attrs
+
 
 # Task common serializers
 
