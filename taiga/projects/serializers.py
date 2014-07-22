@@ -42,7 +42,7 @@ class UserStoryStatusSerializer(serializers.ModelSerializer):
         Check the status name is not duplicated in the project on creation
         """
         qs = None
-        # If the milestone exists:
+        # If the user story status exists:
         if self.object and attrs.get("name", None):
             qs = models.UserStoryStatus.objects.filter(project=self.object.project, name=attrs[source])
 
