@@ -54,6 +54,7 @@ class Membership(models.Model):
                                 related_name="memberships")
     role = models.ForeignKey("users.Role", null=False, blank=False,
                              related_name="memberships")
+    is_admin =  models.BooleanField(default=False, verbose_name=_("is admin"))
 
     # Invitation metadata
     email = models.EmailField(max_length=255, default=None, null=True, blank=True,

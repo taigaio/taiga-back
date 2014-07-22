@@ -121,6 +121,7 @@ class MembershipViewSet(ModelCrudViewSet):
     model = models.Membership
     serializer_class = serializers.MembershipSerializer
     permission_classes = (IsAuthenticated, permissions.MembershipPermission)
+    filter_fields = ("project", "role")
 
     def create(self, request, *args, **kwargs):
         data = request.DATA

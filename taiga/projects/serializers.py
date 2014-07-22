@@ -87,6 +87,10 @@ class IssueTypeSerializer(serializers.ModelSerializer):
 # Projects
 
 class MembershipSerializer(serializers.ModelSerializer):
+    role_name = serializers.CharField(source='role.name', required=False)
+    full_name = serializers.CharField(source='user.get_full_name', required=False)
+    color = serializers.CharField(source='user.color', required=False)
+    photo = serializers.SerializerMethodField("get_photo")
     invited_by = serializers.SerializerMethodField("get_invited_by")
     project_name = serializers.SerializerMethodField("get_project_name")
     project_slug = serializers.SerializerMethodField("get_project_slug")
@@ -94,7 +98,15 @@ class MembershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Membership
         read_only_fields = ("user",)
-        # exclude = ("invited_by_id",)
+
+    def get_photo(self, project):
+        return get_photo_or_gravatar_url(project.user)
+
+    def get_project_name(self, obj):
+        return obj.project.name if obj and obj.project else ""
+
+    def get_project_slug(self, obj):
+        return obj.project.slug if obj and obj.project else ""
 
     def get_invited_by(self, membership):
         try:
@@ -103,12 +115,6 @@ class MembershipSerializer(serializers.ModelSerializer):
             return None
         else:
             return UserSerializer(queryset).data
-
-    def get_project_name(self, obj):
-        return obj.project.name if obj and obj.project else ""
-
-    def get_project_slug(self, obj):
-        return obj.project.slug if obj and obj.project else ""
 
 
 class ProjectMembershipSerializer(serializers.ModelSerializer):
