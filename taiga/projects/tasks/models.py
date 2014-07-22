@@ -26,6 +26,7 @@ from taiga.base.utils.slug import ref_uniquely
 from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.userstories.models import UserStory
+from taiga.projects.userstories import services as us_service
 from taiga.projects.milestones.models import Milestone
 from taiga.projects.mixins.blocked import BlockedMixin
 
@@ -83,36 +84,9 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
         return value
 
 
-def us_has_open_tasks(us, exclude_task):
-    qs = us.tasks.all()
-    if exclude_task.pk:
-        qs = qs.exclude(pk=exclude_task.pk)
-
-    return not all(task.status.is_closed for task in qs)
-
 def milestone_has_open_userstories(milestone):
     qs = milestone.user_stories.exclude(is_closed=True)
     return qs.exists()
-
-
-def close_user_story(us):
-    us.is_closed = True
-    us.finish_date = timezone.now()
-    us.save(update_fields=["is_closed", "finish_date"])
-
-
-def open_user_story(us):
-    us.is_closed = False
-    us.finish_date = None
-    us.save(update_fields=["is_closed", "finish_date"])
-
-
-@receiver(models.signals.post_delete, sender=Task, dispatch_uid="tasks_us_close_handler_on_delete")
-def tasks_us_close_handler_on_delete(sender, instance, **kwargs):
-    if (instance.user_story_id
-            and UserStory.objects.filter(id=instance.user_story_id)
-            and not us_has_open_tasks(us=instance.user_story, exclude_task=instance)):
-        close_user_story(instance.user_story)
 
 
 @receiver(models.signals.post_delete, sender=Task, dispatch_uid="tasks_milestone_close_handler_on_delete")
@@ -123,41 +97,36 @@ def tasks_milestone_close_handler_on_delete(sender, instance, **kwargs):
             instance.milestone.save(update_fields=["closed"])
 
 
+# Define the previous version of the task for use it on the post_save handler
 @receiver(models.signals.pre_save, sender=Task, dispatch_uid="tasks_us_close_handler")
 def tasks_us_close_handler(sender, instance, **kwargs):
+    instance.prev = None
     if instance.id:
-        orig_instance = sender.objects.get(id=instance.id)
+        instance.prev = sender.objects.get(id=instance.id)
 
-        if (instance.user_story_id != orig_instance.user_story_id
-                and orig_instance.user_story_id
-                and not orig_instance.status.is_closed
-                and not us_has_open_tasks(us=orig_instance.user_story, exclude_task=orig_instance)):
-            close_user_story(orig_instance.user_story)
 
-        if not instance.user_story_id:
-            return
-
-        if orig_instance.status.is_closed != instance.status.is_closed:
-            if orig_instance.status.is_closed and not instance.status.is_closed:
-                open_user_story(instance.user_story)
-            elif not us_has_open_tasks(us=instance.user_story, exclude_task=instance):
-                close_user_story(instance.user_story)
-
-        if instance.user_story_id != orig_instance.user_story_id and instance.user_story.is_closed:
-            if instance.status.is_closed:
-                close_user_story(instance.user_story)
-            else:
-                open_user_story(instance.user_story)
-
-    else:  # ON CREATION
-        if not instance.user_story_id:
-            return
-
-        if (instance.status.is_closed
-                and not us_has_open_tasks(us=instance.user_story, exclude_task=instance)):
-            close_user_story(instance.user_story)
+@receiver(models.signals.post_save, sender=Task, dispatch_uid="tasks_us_close_on_create_handler")
+def tasks_us_close_on_create_handler(sender, instance, created, **kwargs):
+    if instance.user_story_id:
+        if us_service.calculate_userstory_is_closed(instance.user_story):
+            us_service.close_userstory(instance.user_story)
         else:
-            open_user_story(instance.user_story)
+            us_service.open_userstory(instance.user_story)
+
+    if instance.prev and instance.prev.user_story_id:
+        if us_service.calculate_userstory_is_closed(instance.prev.user_story):
+            us_service.close_userstory(instance.prev.user_story)
+        else:
+            us_service.open_userstory(instance.prev.user_story)
+
+
+@receiver(models.signals.post_delete, sender=Task, dispatch_uid="tasks_us_close_handler_on_delete")
+def tasks_us_close_handler_on_delete(sender, instance, **kwargs):
+    if instance.user_story_id:
+        if us_service.calculate_userstory_is_closed(instance.user_story):
+            us_service.close_userstory(instance.user_story)
+        else:
+            us_service.open_userstory(instance.user_story)
 
 
 @receiver(models.signals.pre_save, sender=Task, dispatch_uid="tasks_milestone_close_handler")

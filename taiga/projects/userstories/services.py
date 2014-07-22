@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils import timezone
+
 from taiga.base.utils import db, text
 
 from . import models
@@ -58,3 +60,27 @@ def update_userstories_order_in_bulk(bulk_data):
         user_story_ids.append(user_story_id)
         new_order_values.append({"order": new_order_value})
     db.update_in_bulk_with_ids(user_story_ids, new_order_values, model=models.UserStory)
+
+
+def calculate_userstory_is_closed(user_story):
+    if user_story.tasks.count() == 0:
+        return user_story.status.is_closed
+
+    if all([task.status.is_closed for task in user_story.tasks.all()]):
+        return True
+
+    return False
+
+
+def close_userstory(us):
+    if not us.is_closed:
+        us.is_closed = True
+        us.finish_date = timezone.now()
+        us.save(update_fields=["is_closed", "finish_date"])
+
+
+def open_userstory(us):
+    if us.is_closed:
+        us.is_closed = False
+        us.finish_date = None
+        us.save(update_fields=["is_closed", "finish_date"])

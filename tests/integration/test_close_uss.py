@@ -15,11 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from unittest.mock import patch, MagicMock, call
-
-from django.core.exceptions import ValidationError
-
-from tests import factories
+from tests import factories as f
 
 from taiga.projects.userstories.models import UserStory
 
@@ -28,160 +24,212 @@ import pytest
 pytestmark = pytest.mark.django_db
 
 
-def test_us_without_tasks_close():
-    closed_status = factories.UserStoryStatusFactory(is_closed=True)
-    open_status = factories.UserStoryStatusFactory(is_closed=False)
-    user_story = factories.UserStoryFactory(status=open_status)
-    assert user_story.is_closed == False
-    user_story.status = closed_status
-    user_story.save()
-    user_story = UserStory.objects.get(pk=user_story.pk)
-    assert user_story.is_closed == True
+@pytest.fixture
+def data():
+    m = type("Models", (object,), {})
+    m.us_closed_status = f.UserStoryStatusFactory(is_closed=True)
+    m.us_open_status = f.UserStoryStatusFactory(is_closed=False)
+    m.task_closed_status = f.TaskStatusFactory(is_closed=True)
+    m.task_open_status = f.TaskStatusFactory(is_closed=False)
+    m.user_story1 = f.UserStoryFactory(status=m.us_open_status)
+    m.user_story2 = f.UserStoryFactory(status=m.us_open_status)
+    m.task1 = f.TaskFactory(user_story=m.user_story1, status=m.task_open_status)
+    m.task2 = f.TaskFactory(user_story=m.user_story1, status=m.task_open_status)
+    m.task3 = f.TaskFactory(user_story=m.user_story1, status=m.task_open_status)
+    return m
 
 
-def test_us_without_tasks_open():
-    closed_status = factories.UserStoryStatusFactory(is_closed=True)
-    open_status = factories.UserStoryStatusFactory(is_closed=False)
-    user_story = factories.UserStoryFactory(status=closed_status)
-    assert user_story.is_closed == True
-    user_story.status = open_status
-    user_story.save()
-    user_story = UserStory.objects.get(pk=user_story.pk)
-    assert user_story.is_closed == False
+def test_us_without_tasks_open_close_us_status(data):
+    assert data.user_story2.is_closed is False
+    data.user_story2.status = data.us_closed_status
+    data.user_story2.save()
+    data.user_story2 = UserStory.objects.get(pk=data.user_story2.pk)
+    assert data.user_story2.is_closed is True
+    data.user_story2.status = data.us_open_status
+    data.user_story2.save()
+    data.user_story2 = UserStory.objects.get(pk=data.user_story2.pk)
+    assert data.user_story2.is_closed is False
 
 
-def test_us_with_tasks_close():
-    closed_status = factories.UserStoryStatusFactory(is_closed=True)
-    open_status = factories.UserStoryStatusFactory(is_closed=False)
-
-    closed_task_status = factories.TaskStatusFactory(is_closed=True)
-    open_task_status = factories.TaskStatusFactory(is_closed=False)
-
-    user_story = factories.UserStoryFactory(status=closed_status)
-    task1 = factories.TaskFactory(user_story=user_story, status=closed_task_status)
-    task2 = factories.TaskFactory(user_story=user_story, status=closed_task_status)
-    task3 = factories.TaskFactory(user_story=user_story, status=closed_task_status)
-    assert user_story.is_closed == True
-    user_story.status = open_status
-    user_story.save()
-    user_story = UserStory.objects.get(pk=user_story.pk)
-    assert user_story.is_closed == True
+def test_us_with_tasks_open_close_us_status(data):
+    assert data.user_story1.is_closed is False
+    data.user_story1.status = data.us_closed_status
+    data.user_story1.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+    data.user_story1.status = data.us_open_status
+    data.user_story1.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
 
 
-def test_us_with_tasks_on_delete_empty_open():
-    closed_status = factories.UserStoryStatusFactory(is_closed=True)
-    open_status = factories.UserStoryStatusFactory(is_closed=False)
-
-    closed_task_status = factories.TaskStatusFactory(is_closed=True)
-    open_task_status = factories.TaskStatusFactory(is_closed=False)
-
-    user_story = factories.UserStoryFactory(status=open_status)
-    task1 = factories.TaskFactory(user_story=user_story, status=closed_task_status)
-    assert user_story.is_closed == True
-    task1.delete()
-    user_story = UserStory.objects.get(pk=user_story.pk)
-    assert user_story.is_closed == False
-
-
-def test_us_with_tasks_on_delete_empty_close():
-    closed_status = factories.UserStoryStatusFactory(is_closed=True)
-    open_status = factories.UserStoryStatusFactory(is_closed=False)
-
-    closed_task_status = factories.TaskStatusFactory(is_closed=True)
-    open_task_status = factories.TaskStatusFactory(is_closed=False)
-
-    user_story = factories.UserStoryFactory(status=closed_status)
-    task1 = factories.TaskFactory(user_story=user_story, status=open_task_status)
-    assert user_story.is_closed == False
-    task1.delete()
-    user_story = UserStory.objects.get(pk=user_story.pk)
-    assert user_story.is_closed == True
+def test_us_on_task_delete_empty_close(data):
+    data.user_story1.status = data.us_closed_status
+    data.user_story1.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+    data.task3.delete()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+    data.task2.delete()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+    data.task1.delete()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
 
 
-def test_us_with_tasks_open():
-    closed_status = factories.UserStoryStatusFactory(is_closed=True)
-    open_status = factories.UserStoryStatusFactory(is_closed=False)
-
-    closed_task_status = factories.TaskStatusFactory(is_closed=True)
-    open_task_status = factories.TaskStatusFactory(is_closed=False)
-
-    user_story = factories.UserStoryFactory(status=open_status)
-    task1 = factories.TaskFactory(user_story=user_story, status=closed_task_status)
-    task2 = factories.TaskFactory(user_story=user_story, status=closed_task_status)
-    task3 = factories.TaskFactory(user_story=user_story, status=open_task_status)
-    assert user_story.is_closed == False
-    user_story.status = closed_status
-    user_story.save()
-    user_story = UserStory.objects.get(pk=user_story.pk)
-    assert user_story.is_closed == False
-
-
-def test_us_close_last_tasks():
-    closed_status = factories.TaskStatusFactory(is_closed=True)
-    open_status = factories.TaskStatusFactory(is_closed=False)
-    user_story = factories.UserStoryFactory()
-    task1 = factories.TaskFactory(user_story=user_story, status=closed_status)
-    task2 = factories.TaskFactory(user_story=user_story, status=closed_status)
-    task3 = factories.TaskFactory(user_story=user_story, status=open_status)
-    assert user_story.is_closed == False
-    task3.status = closed_status
-    task3.save()
-    user_story = UserStory.objects.get(pk=user_story.pk)
-    assert user_story.is_closed == True
+def test_us_on_task_delete_empty_open(data):
+    data.task1.status = data.task_closed_status
+    data.task1.save()
+    data.task2.status = data.task_closed_status
+    data.task2.save()
+    data.task3.status = data.task_closed_status
+    data.task3.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
+    data.task3.delete()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
+    data.task2.delete()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
+    data.task1.delete()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
 
 
-def test_us_with_all_closed_open_task():
-    closed_status = factories.TaskStatusFactory(is_closed=True)
-    open_status = factories.TaskStatusFactory(is_closed=False)
-    user_story = factories.UserStoryFactory()
-    task1 = factories.TaskFactory(user_story=user_story, status=closed_status)
-    task2 = factories.TaskFactory(user_story=user_story, status=closed_status)
-    task3 = factories.TaskFactory(user_story=user_story, status=closed_status)
-    assert user_story.is_closed == True
-    task3.status = open_status
-    task3.save()
-    user_story = UserStory.objects.get(pk=user_story.pk)
-    assert user_story.is_closed == False
+def test_us_with_tasks_on_move_empty_open(data):
+    data.task1.status = data.task_closed_status
+    data.task1.save()
+    data.task2.status = data.task_closed_status
+    data.task2.save()
+    data.task3.status = data.task_closed_status
+    data.task3.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
+    data.task3.user_story = data.user_story2
+    data.task3.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
+    data.task2.user_story = data.user_story2
+    data.task2.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
+    data.task1.user_story = data.user_story2
+    data.task1.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
 
 
-def test_us_delete_task_then_all_closed():
-    closed_status = factories.TaskStatusFactory(is_closed=True)
-    open_status = factories.TaskStatusFactory(is_closed=False)
-    user_story = factories.UserStoryFactory()
-    task1 = factories.TaskFactory(user_story=user_story, status=closed_status)
-    task2 = factories.TaskFactory(user_story=user_story, status=closed_status)
-    task3 = factories.TaskFactory(user_story=user_story, status=open_status)
-    assert user_story.is_closed == False
-    task3.delete()
-    user_story = UserStory.objects.get(pk=user_story.pk)
-    assert user_story.is_closed == True
+def test_us_with_tasks_on_move_empty_close(data):
+    data.user_story1.status = data.us_closed_status
+    data.user_story1.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+    data.task3.user_story = data.user_story2
+    data.task3.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+    data.task2.user_story = data.user_story2
+    data.task2.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+    data.task1.user_story = data.user_story2
+    data.task1.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
 
 
-def test_us_change_task_us_then_all_closed():
-    closed_status = factories.TaskStatusFactory(is_closed=True)
-    open_status = factories.TaskStatusFactory(is_closed=False)
-    user_story1 = factories.UserStoryFactory()
-    user_story2 = factories.UserStoryFactory()
-    task1 = factories.TaskFactory(user_story=user_story1, status=closed_status)
-    task2 = factories.TaskFactory(user_story=user_story1, status=closed_status)
-    task3 = factories.TaskFactory(user_story=user_story1, status=open_status)
-    assert user_story1.is_closed == False
-    task3.user_story = user_story2
-    task3.save()
-    user_story1 = UserStory.objects.get(pk=user_story1.pk)
-    assert user_story1.is_closed == True
+def test_us_close_last_tasks(data):
+    assert data.user_story1.is_closed is False
+    data.task3.status = data.task_closed_status
+    data.task3.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+    data.task2.status = data.task_closed_status
+    data.task2.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+    data.task1.status = data.task_closed_status
+    data.task1.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
 
 
-def test_us_change_task_us_to_us_with_all_closed():
-    closed_status = factories.TaskStatusFactory(is_closed=True)
-    open_status = factories.TaskStatusFactory(is_closed=False)
-    user_story1 = factories.UserStoryFactory()
-    user_story2 = factories.UserStoryFactory()
-    task1 = factories.TaskFactory(user_story=user_story1, status=closed_status)
-    task2 = factories.TaskFactory(user_story=user_story1, status=closed_status)
-    task3 = factories.TaskFactory(user_story=user_story2, status=open_status)
-    assert user_story1.is_closed == True
-    task3.user_story = user_story1
-    task3.save()
-    user_story1 = UserStory.objects.get(pk=user_story1.pk)
-    assert user_story1.is_closed == False
+def test_us_reopen_tasks(data):
+    data.task1.status = data.task_closed_status
+    data.task1.save()
+    data.task2.status = data.task_closed_status
+    data.task2.save()
+    data.task3.status = data.task_closed_status
+    data.task3.save()
+
+    assert data.user_story1.is_closed is True
+    data.task3.status = data.task_open_status
+    data.task3.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+    data.task2.status = data.task_open_status
+    data.task2.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+    data.task1.status = data.task_open_status
+    data.task1.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+
+
+def test_us_delete_task_then_all_closed(data):
+    data.task1.status = data.task_closed_status
+    data.task1.save()
+    data.task2.status = data.task_closed_status
+    data.task2.save()
+    assert data.user_story1.is_closed is False
+    data.task3.delete()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
+
+
+def test_us_change_task_us_then_all_closed(data):
+    data.task1.status = data.task_closed_status
+    data.task1.save()
+    data.task2.status = data.task_closed_status
+    data.task2.save()
+    assert data.user_story1.is_closed is False
+    data.task3.user_story = data.user_story2
+    data.task3.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
+
+
+def test_us_change_task_us_then_any_open(data):
+    data.task1.status = data.task_closed_status
+    data.task1.save()
+    data.task2.status = data.task_closed_status
+    data.task2.save()
+    data.task3.user_story = data.user_story2
+    data.task3.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
+    data.task3.user_story = data.user_story1
+    data.task3.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+
+
+def test_task_create(data):
+    data.task1.status = data.task_closed_status
+    data.task1.save()
+    data.task2.status = data.task_closed_status
+    data.task2.save()
+    data.task3.status = data.task_closed_status
+    data.task3.save()
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
+    f.TaskFactory(user_story=data.user_story1, status=data.task_closed_status)
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is True
+    f.TaskFactory(user_story=data.user_story1, status=data.task_open_status)
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False

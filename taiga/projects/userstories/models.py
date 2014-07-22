@@ -16,7 +16,6 @@
 
 from django.db import models
 from django.contrib.contenttypes import generic
-from django.utils import timezone
 from django.conf import settings
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
@@ -160,11 +159,9 @@ def us_tags_normalization(sender, instance, **kwargs):
 @receiver(models.signals.post_save, sender=UserStory,
           dispatch_uid="user_story_on_status_change")
 def us_close_open_on_status_change(sender, instance, **kwargs):
-    if instance.tasks.count() == 0:
-        if instance.is_closed != instance.status.is_closed:
-            instance.is_closed = instance.status.is_closed
-            if instance.is_closed:
-                instance.finish_date = timezone.now()
-            else:
-                instance.finish_date = None
-            instance.save(update_fields=['is_closed', 'finish_date'])
+    from taiga.projects.userstories import services as service
+
+    if service.calculate_userstory_is_closed(instance):
+        service.close_userstory(instance)
+    else:
+        service.open_userstory(instance)
