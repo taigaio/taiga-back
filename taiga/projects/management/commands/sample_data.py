@@ -80,15 +80,15 @@ SUBJECT_CHOICES = [
     "Support for bulk actions",
     "Migrate to Python 3 and milk a beautiful cow"]
 
-NUM_USERS =                  10
-NUM_PROJECTS =                4
-NUM_MILESTONES =     (  1,    5)
-NUM_USS =            (  3,    7)
-NUM_TASKS_FINISHED = (  1,    5)
-NUM_TASKS = (  0,    4)
-NUM_USS_BACK =       (  8,   20)
-NUM_ISSUES =         ( 12,   25)
-NUM_ATTACHMENTS =    (  0,    4)
+NUM_USERS = 10
+NUM_PROJECTS = 4
+NUM_MILESTONES = (1, 5)
+NUM_USS = (3, 7)
+NUM_TASKS_FINISHED = (1, 5)
+NUM_TASKS = (0, 4)
+NUM_USS_BACK = (8, 20)
+NUM_ISSUES = (12, 25)
+NUM_ATTACHMENTS = (0, 4)
 
 
 class Command(BaseCommand):
@@ -114,11 +114,11 @@ class Command(BaseCommand):
 
                 role = self.sd.db_object_from_queryset(Role.objects.all())
 
-                Membership.objects.create(
-                        email=user.email,
-                        project=project,
-                        role=role,
-                        user=user)
+                Membership.objects.create(email=user.email,
+                                          project=project,
+                                          role=role,
+                                          is_owner=self.sd.boolean(),
+                                          user=user)
 
                 if role.computable:
                     computable_project_roles.add(role)
