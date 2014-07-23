@@ -323,3 +323,16 @@ def create_membership(**kwargs):
     defaults.update(kwargs)
 
     return MembershipFactory.create(**defaults)
+
+
+def create_userstory(**kwargs):
+    "Create an user story along with its dependencies"
+    project = kwargs.pop("project", ProjectFactory())
+
+    defaults = {
+        "project": project,
+        "owner": project.owner
+    }
+    defaults.update(kwargs)
+
+    return UserStoryFactory(**defaults)
