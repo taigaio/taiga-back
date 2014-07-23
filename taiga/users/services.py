@@ -59,4 +59,6 @@ def get_photo_url(photo):
 
 def get_photo_or_gravatar_url(user):
     """Get the user's photo/gravatar url."""
-    return get_photo_url(user.photo) if user.photo else get_gravatar_url(user.email)
+    if user:
+        return get_photo_url(user.photo) if user.photo else get_gravatar_url(user.email)
+    return ""
