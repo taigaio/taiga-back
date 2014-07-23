@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from functools import partial
-from unittest import mock
 
 import pytest
 
@@ -135,8 +134,8 @@ class TestIssues:
 
         neighbors = n.get_neighbors(issue2)
 
-        assert neighbors.left == issue1
-        assert neighbors.right == issue3
+        assert neighbors.left == issue3
+        assert neighbors.right == issue1
 
     def test_ordering_by_severity(self):
         project = f.ProjectFactory.create()
@@ -152,10 +151,10 @@ class TestIssues:
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
 
-        assert issue2_neighbors.left is None
-        assert issue2_neighbors.right == issue3
-        assert issue3_neighbors.left == issue2
-        assert issue3_neighbors.right == issue1
+        assert issue3_neighbors.left is None
+        assert issue3_neighbors.right == issue2
+        assert issue2_neighbors.left == issue3
+        assert issue2_neighbors.right == issue1
 
     def test_ordering_by_severity_desc(self):
         project = f.ProjectFactory.create()
@@ -169,12 +168,12 @@ class TestIssues:
         issues = Issue.objects.filter(project=project).order_by("-severity")
 
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
-        issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
+        issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
 
         assert issue1_neighbors.left is None
-        assert issue1_neighbors.right == issue2
-        assert issue3_neighbors.left == issue2
-        assert issue3_neighbors.right is None
+        assert issue1_neighbors.right == issue3
+        assert issue2_neighbors.left == issue3
+        assert issue2_neighbors.right is None
 
     def test_ordering_by_status(self):
         project = f.ProjectFactory.create()
@@ -190,10 +189,10 @@ class TestIssues:
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
 
-        assert issue2_neighbors.left is None
-        assert issue2_neighbors.right == issue3
-        assert issue3_neighbors.left == issue2
-        assert issue3_neighbors.right == issue1
+        assert issue3_neighbors.left is None
+        assert issue3_neighbors.right == issue2
+        assert issue2_neighbors.left == issue3
+        assert issue2_neighbors.right == issue1
 
     def test_ordering_by_status_desc(self):
         project = f.ProjectFactory.create()
@@ -207,12 +206,12 @@ class TestIssues:
         issues = Issue.objects.filter(project=project).order_by("-status")
 
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
-        issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
+        issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
 
         assert issue1_neighbors.left is None
-        assert issue1_neighbors.right == issue2
-        assert issue3_neighbors.left == issue2
-        assert issue3_neighbors.right is None
+        assert issue1_neighbors.right == issue3
+        assert issue2_neighbors.left == issue3
+        assert issue2_neighbors.right is None
 
     def test_ordering_by_priority(self):
         project = f.ProjectFactory.create()
@@ -228,10 +227,10 @@ class TestIssues:
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
 
-        assert issue2_neighbors.left is None
-        assert issue2_neighbors.right == issue3
-        assert issue3_neighbors.left == issue2
-        assert issue3_neighbors.right == issue1
+        assert issue3_neighbors.left is None
+        assert issue3_neighbors.right == issue2
+        assert issue2_neighbors.left == issue3
+        assert issue2_neighbors.right == issue1
 
     def test_ordering_by_priority_desc(self):
         project = f.ProjectFactory.create()
@@ -245,12 +244,12 @@ class TestIssues:
         issues = Issue.objects.filter(project=project).order_by("-priority")
 
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
-        issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
+        issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
 
         assert issue1_neighbors.left is None
-        assert issue1_neighbors.right == issue2
-        assert issue3_neighbors.left == issue2
-        assert issue3_neighbors.right is None
+        assert issue1_neighbors.right == issue3
+        assert issue2_neighbors.left == issue3
+        assert issue2_neighbors.right is None
 
     def test_ordering_by_owner(self):
         project = f.ProjectFactory.create()
@@ -266,10 +265,10 @@ class TestIssues:
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
 
-        assert issue2_neighbors.left is None
-        assert issue2_neighbors.right == issue3
-        assert issue3_neighbors.left == issue2
-        assert issue3_neighbors.right == issue1
+        assert issue3_neighbors.left is None
+        assert issue3_neighbors.right == issue2
+        assert issue2_neighbors.left == issue3
+        assert issue2_neighbors.right == issue1
 
     def test_ordering_by_owner_desc(self):
         project = f.ProjectFactory.create()
@@ -283,12 +282,12 @@ class TestIssues:
         issues = Issue.objects.filter(project=project).order_by("-owner__full_name")
 
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
-        issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
+        issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
 
         assert issue1_neighbors.left is None
-        assert issue1_neighbors.right == issue2
-        assert issue3_neighbors.left == issue2
-        assert issue3_neighbors.right is None
+        assert issue1_neighbors.right == issue3
+        assert issue2_neighbors.left == issue3
+        assert issue2_neighbors.right is None
 
     def test_ordering_by_assigned_to(self):
         project = f.ProjectFactory.create()
@@ -304,10 +303,10 @@ class TestIssues:
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
 
-        assert issue2_neighbors.left is None
-        assert issue2_neighbors.right == issue3
-        assert issue3_neighbors.left == issue2
-        assert issue3_neighbors.right == issue1
+        assert issue3_neighbors.left is None
+        assert issue3_neighbors.right == issue2
+        assert issue2_neighbors.left == issue3
+        assert issue2_neighbors.right == issue1
 
     def test_ordering_by_assigned_to_desc(self):
         project = f.ProjectFactory.create()
@@ -321,9 +320,9 @@ class TestIssues:
         issues = Issue.objects.filter(project=project).order_by("-assigned_to__full_name")
 
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
-        issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
+        issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
 
         assert issue1_neighbors.left is None
-        assert issue1_neighbors.right == issue2
-        assert issue3_neighbors.left == issue2
-        assert issue3_neighbors.right is None
+        assert issue1_neighbors.right == issue3
+        assert issue2_neighbors.left == issue3
+        assert issue2_neighbors.right is None
