@@ -16,7 +16,7 @@
 
 from rest_framework import serializers
 
-from taiga.base.serializers import PickleField
+from taiga.base.serializers import PickleField, NeighborsSerializerMixin
 from taiga.mdrender.service import render as mdrender
 
 from . import models
@@ -46,3 +46,16 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def get_description_html(self, obj):
         return mdrender(obj.project, obj.description)
+
+
+class TaskNeighborsSerializer(NeighborsSerializerMixin, TaskSerializer):
+
+    def serialize_neighbor(self, neighbor):
+        return NeighborTaskSerializer(neighbor).data
+
+
+class NeighborTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Task
+        fields = ("id", "ref", "subject")
+        depth = 0

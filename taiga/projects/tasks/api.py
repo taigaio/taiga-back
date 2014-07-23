@@ -42,7 +42,8 @@ from . import services
 
 class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     model = models.Task
-    serializer_class = serializers.TaskSerializer
+    serializer_class = serializers.TaskNeighborsSerializer
+    list_serializer_class = serializers.TaskSerializer
     permission_classes = (IsAuthenticated, permissions.TaskPermission)
     filter_backends = (filters.IsProjectMemberFilterBackend,)
     filter_fields = ["user_story", "milestone", "project"]
