@@ -81,7 +81,9 @@ SUBJECT_CHOICES = [
     "Migrate to Python 3 and milk a beautiful cow"]
 
 NUM_USERS = 10
+NUM_INVITATIONS = 2
 NUM_PROJECTS = 4
+NUM_EMPTY_PROJECTS = 2
 NUM_MILESTONES = (1, 5)
 NUM_USS = (3, 7)
 NUM_TASKS_FINISHED = (1, 5)
@@ -103,7 +105,7 @@ class Command(BaseCommand):
             self.users.append(self.create_user(x))
 
         # create project
-        for x in range(NUM_PROJECTS):
+        for x in range(NUM_PROJECTS + NUM_EMPTY_PROJECTS):
             project = self.create_project(x)
 
             # added memberships
@@ -123,47 +125,62 @@ class Command(BaseCommand):
                 if role.computable:
                     computable_project_roles.add(role)
 
-            start_date = now() - datetime.timedelta(55)
+            # added invitations
+            for x in range(NUM_INVITATIONS):
+                role = self.sd.db_object_from_queryset(Role.objects.all())
 
-            # create milestones
-            for y in range(self.sd.int(*NUM_MILESTONES)):
-                end_date = start_date + datetime.timedelta(15)
-                milestone = self.create_milestone(project, start_date, end_date)
+                Membership.objects.create(email=self.sd.email(),
+                                          project=project,
+                                          role=role,
+                                          is_owner=self.sd.boolean(),
+                                          token=''.join(random.sample('abcdef0123456789', 10)))
 
-                # create uss asociated to milestones
-                for z in range(self.sd.int(*NUM_USS)):
-                    us = self.create_us(project, milestone, computable_project_roles)
+                if role.computable:
+                    computable_project_roles.add(role)
 
-                    # create tasks
-                    rang = NUM_TASKS_FINISHED if start_date <= now() and end_date <= now() else NUM_TASKS
-                    for w in range(self.sd.int(*rang)):
-                        if start_date <= now() and end_date <= now():
-                            task = self.create_task(project, milestone, us, start_date,
-                                                    end_date, closed=True)
-                        elif start_date <= now() and end_date >= now():
-                            task = self.create_task(project, milestone, us, start_date,
-                                                    now())
-                        else:
-                            # No task on not initiated milestones
-                            pass
+            if x < NUM_PROJECTS:
+                start_date = now() - datetime.timedelta(55)
 
-                start_date = end_date
+                # create milestones
+                for y in range(self.sd.int(*NUM_MILESTONES)):
+                    end_date = start_date + datetime.timedelta(15)
+                    milestone = self.create_milestone(project, start_date, end_date)
 
-            # created unassociated uss.
-            for y in range(self.sd.int(*NUM_USS_BACK)):
-                us = self.create_us(project, None, computable_project_roles)
+                    # create uss asociated to milestones
+                    for z in range(self.sd.int(*NUM_USS)):
+                        us = self.create_us(project, milestone, computable_project_roles)
+
+                        # create tasks
+                        rang = NUM_TASKS_FINISHED if start_date <= now() and end_date <= now() else NUM_TASKS
+                        for w in range(self.sd.int(*rang)):
+                            if start_date <= now() and end_date <= now():
+                                task = self.create_task(project, milestone, us, start_date,
+                                                        end_date, closed=True)
+                            elif start_date <= now() and end_date >= now():
+                                task = self.create_task(project, milestone, us, start_date,
+                                                        now())
+                            else:
+                                # No task on not initiated milestones
+                                pass
+
+                    start_date = end_date
+
+                # created unassociated uss.
+                for y in range(self.sd.int(*NUM_USS_BACK)):
+                    us = self.create_us(project, None, computable_project_roles)
+
+                # create bugs.
+                for y in range(self.sd.int(*NUM_ISSUES)):
+                    bug = self.create_bug(project)
+
+                # create a wiki page
+                wiki_page = self.create_wiki(project, "home")
 
             # Set a value to total_story_points to show the deadline in the backlog
             defined_points = sum(project.defined_points.values())
             project.total_story_points = int(defined_points * self.sd.int(5,12) / 10)
             project.save()
 
-            # create bugs.
-            for y in range(self.sd.int(*NUM_ISSUES)):
-                bug = self.create_bug(project)
-
-            # create a wiki page
-            wiki_page = self.create_wiki(project, "home")
 
     def create_attachment(self, object):
         attachment = Attachment.objects.create(
@@ -172,7 +189,7 @@ class Command(BaseCommand):
                 content_object=object,
                 object_id=object.id,
                 owner=self.sd.db_object_from_queryset(
-                          object.project.memberships.all()).user,
+                          object.project.memberships.filter(user__isnull=False)).user,
                 attached_file=self.sd.image_from_directory(*ATTACHMENT_SAMPLE_DATA))
 
         return attachment
@@ -182,7 +199,7 @@ class Command(BaseCommand):
                 project=project,
                 slug=slug,
                 content=self.sd.paragraphs(3,15),
-                owner=self.sd.db_object_from_queryset(project.memberships.all()).user)
+                owner=self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user)
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
             attachment = self.create_attachment(wiki_page)
@@ -194,7 +211,7 @@ class Command(BaseCommand):
                 project=project,
                 subject=self.sd.choice(SUBJECT_CHOICES),
                 description=self.sd.paragraph(),
-                owner=self.sd.db_object_from_queryset(project.memberships.all()).user,
+                owner=self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user,
                 severity=self.sd.db_object_from_queryset(Severity.objects.filter(
                                                                   project=project)),
                 status=self.sd.db_object_from_queryset(IssueStatus.objects.filter(
@@ -209,7 +226,7 @@ class Command(BaseCommand):
             attachment = self.create_attachment(bug)
 
         if bug.status.order != 1:
-            bug.assigned_to = self.sd.db_object_from_queryset(project.memberships.all()).user
+            bug.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
             bug.save()
 
         return bug
@@ -219,11 +236,11 @@ class Command(BaseCommand):
                 subject=self.sd.choice(SUBJECT_CHOICES),
                 description=self.sd.paragraph(),
                 project=project,
-                owner=self.sd.db_object_from_queryset(project.memberships.all()).user,
+                owner=self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user,
                 milestone=milestone,
                 user_story=us,
                 finished_date=None,
-                assigned_to = self.sd.db_object_from_queryset(project.memberships.all()).user)
+                assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user)
 
         if closed:
             task.status = project.task_statuses.get(order=4)
@@ -244,7 +261,7 @@ class Command(BaseCommand):
         us = UserStory.objects.create(
                 subject=self.sd.choice(SUBJECT_CHOICES),
                 project=project,
-                owner=self.sd.db_object_from_queryset(project.memberships.all()).user,
+                owner=self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user,
                 description=self.sd.paragraph(),
                 milestone=milestone,
                 status=self.sd.db_object_from_queryset(project.us_statuses.filter(
@@ -266,7 +283,7 @@ class Command(BaseCommand):
             attachment = self.create_attachment(us)
 
         if self.sd.choice([True, True, False, True, True]):
-            us.assigned_to = self.sd.db_object_from_queryset(project.memberships.all()).user
+            us.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
             us.save()
 
         return us
@@ -277,7 +294,7 @@ class Command(BaseCommand):
                 name='Sprint {0}-{1}-{2}'.format(start_date.year,
                                                  start_date.month,
                                                  start_date.day),
-                owner=self.sd.db_object_from_queryset(project.memberships.all()).user,
+                owner=self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user,
                 created_date=start_date,
                 modified_date=start_date,
                 estimated_start=start_date,
@@ -299,13 +316,13 @@ class Command(BaseCommand):
 
     def create_user(self, counter):
         user = User.objects.create(
-                username='user-{0}'.format(counter),
+                username='user{0}'.format(counter),
                 full_name="{} {}".format(self.sd.name('es'), self.sd.surname('es', number=1)),
                 email=self.sd.email(),
                 token=''.join(random.sample('abcdef0123456789', 10)),
                 color=self.sd.choice(COLOR_CHOICES))
 
-        user.set_password('user{0}'.format(counter))
+        user.set_password('123123')
         user.save()
 
         return user
