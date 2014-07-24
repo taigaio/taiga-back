@@ -26,3 +26,9 @@ class WikiPageAdmin(admin.ModelAdmin):
     inlines = [AttachmentInline]
 
 admin.site.register(models.WikiPage, WikiPageAdmin)
+
+class WikiLinkAdmin(admin.ModelAdmin):
+    list_display = ["project", "title"]
+    list_display_links = list_display
+
+admin.site.register(models.WikiLink, WikiLinkAdmin)

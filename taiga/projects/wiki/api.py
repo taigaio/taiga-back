@@ -66,6 +66,7 @@ class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
     def pre_save(self, obj):
         if not obj.owner:
             obj.owner = self.request.user
+        obj.last_modifier = self.request.user
 
         super().pre_save(obj)
 

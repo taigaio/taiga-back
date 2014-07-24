@@ -31,6 +31,8 @@ class WikiPage(OCCModelMixin, WatchedModelMixin, models.Model):
                                verbose_name=_("content"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                               related_name="owned_wiki_pages", verbose_name=_("owner"))
+    last_modifier = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+                              related_name="last_modified_wiki_pages", verbose_name=_("last modifier"))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
                                         verbose_name=_("created date"))
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
