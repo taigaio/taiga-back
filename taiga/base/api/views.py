@@ -291,6 +291,9 @@ class APIView(View):
             if not permission.check_permissions(action=action, obj=obj):
                 self.permission_denied(request)
 
+    def check_object_permissions(self, request, obj):
+        self.check_permissions(request, None, obj)
+
     def check_throttles(self, request):
         """
         Check if request should be throttled.
