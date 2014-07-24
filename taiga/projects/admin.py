@@ -108,6 +108,8 @@ class IssueStatusAdmin(admin.ModelAdmin):
     list_display_links = ["name"]
     list_filter = ["project"]
 
+class ProjectTemplateAdmin(admin.ModelAdmin):
+    pass
 
 admin.site.register(models.IssueStatus, IssueStatusAdmin)
 admin.site.register(models.TaskStatus, TaskStatusAdmin)
@@ -118,3 +120,4 @@ admin.site.register(models.Membership, MembershipAdmin)
 admin.site.register(models.Severity, SeverityAdmin)
 admin.site.register(models.Priority, PriorityAdmin)
 admin.site.register(models.IssueType, IssueTypeAdmin)
+admin.site.register(models.ProjectTemplate, ProjectTemplateAdmin)
