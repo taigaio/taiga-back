@@ -27,12 +27,19 @@ def _get_milestones_stats_for_backlog(project):
     current_evolution = 0
     current_team_increment = 0
     current_client_increment = 0
-    optimal_points_per_sprint = project.total_story_points / (project.total_milestones)
+
+    optimal_points_per_sprint = 0
+    if project.total_story_points and project.total_milestones:
+        optimal_points_per_sprint = project.total_story_points / project.total_milestones
+
     future_team_increment = sum(project.future_team_increment.values())
     future_client_increment = sum(project.future_client_increment.values())
 
     milestones = project.milestones.order_by('estimated_start')
 
+    optimal_points = 0
+    team_increment = 0
+    client_increment = 0
     for current_milestone in range(0, max(milestones.count(), project.total_milestones)):
         optimal_points = (project.total_story_points -
                             (optimal_points_per_sprint * current_milestone))
@@ -65,7 +72,7 @@ def _get_milestones_stats_for_backlog(project):
 
     optimal_points -= optimal_points_per_sprint
     evolution = (project.total_story_points - current_evolution
-                    if current_evolution is not None else None)
+                    if current_evolution is not None and project.total_story_points else None)
     yield {
         'name': 'Project End',
         'optimal': optimal_points,

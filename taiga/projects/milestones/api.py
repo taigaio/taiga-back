@@ -38,8 +38,8 @@ import datetime
 
 class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     serializer_class = serializers.MilestoneSerializer
-    permission_classes = (IsAuthenticated, permissions.MilestonePermission)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
+    permission_classes = (permissions.MilestonePermission,)
+    filter_backends = (filters.CanViewMilestonesFilterBackend,)
     filter_fields = ("project",)
 
     def get_queryset(self):
@@ -51,13 +51,6 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
         qs = qs.order_by("-estimated_start")
         return qs
 
-    def pre_conditions_on_save(self, obj):
-        super().pre_conditions_on_save(obj)
-
-        if (obj.project.owner != self.request.user and
-                obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PreconditionError(_("You must not add a new milestone to this project."))
-
     def pre_save(self, obj):
         if not obj.id:
             obj.owner = self.request.user
@@ -67,6 +60,9 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
     @detail_route(methods=['get'])
     def stats(self, request, pk=None):
         milestone = get_object_or_404(models.Milestone, pk=pk)
+
+        self.check_permissions(request, "stats", milestone)
+
         total_points = milestone.total_points
         milestone_stats = {
             'name': milestone.name,

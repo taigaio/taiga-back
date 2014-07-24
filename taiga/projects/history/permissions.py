@@ -1,4 +1,6 @@
 # Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -12,9 +14,21 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.permissions import Permission
+from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
+                                        IsProjectOwner, AllowAny)
 
-class HistoryPermission(Permission):
-    def has_object_permission(self, request, view, obj):
-        # TODO: change this.
-        return True
+
+class UserStoryHistoryPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+
+
+class TaskHistoryPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+
+
+class IssueHistoryPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+
+
+class WikiHistoryPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')

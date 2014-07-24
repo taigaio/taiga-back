@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import functools
+import json
 
 from django.conf import settings
 from django.db.models import signals
@@ -86,3 +87,36 @@ class SettingsTestCase(object):
     def teardown_class(cls):
         override_settings(cls.ORIGINAL_SETTINGS)
         cls.OVERRIDE_SETTINGS.clear()
+
+def _helper_test_http_method_responses(client, method, url, data, users, after_each_request=None):
+    results = []
+    for user in users:
+        if user is None:
+            client.logout()
+        else:
+            client.login(user)
+        if data:
+            response = getattr(client, method)(url, data, content_type="application/json")
+        else:
+            response = getattr(client, method)(url)
+        if response.status_code == 400:
+            print(response.content)
+
+        results.append(response)
+
+        if after_each_request is not None:
+            after_each_request()
+    return results
+
+def helper_test_http_method(client, method, url, data, users, after_each_request=None):
+    responses = _helper_test_http_method_responses(client, method, url, data, users, after_each_request)
+    return list(map(lambda r: r.status_code, responses))
+
+
+def helper_test_http_method_and_count(client, method, url, data, users, after_each_request=None):
+    responses = _helper_test_http_method_responses(client, method, url, data, users, after_each_request)
+    return list(map(lambda r: (r.status_code, len(json.loads(r.content.decode('utf-8')))), responses))
+
+def helper_test_http_method_and_keys(client, method, url, data, users, after_each_request=None):
+    responses = _helper_test_http_method_responses(client, method, url, data, users, after_each_request)
+    return list(map(lambda r: (r.status_code, set(json.loads(r.content.decode('utf-8')).keys())), responses))

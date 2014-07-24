@@ -24,6 +24,7 @@ from taiga.projects.userstories.serializers import UserStorySerializer
 from taiga.projects.tasks.serializers import TaskSerializer
 from taiga.projects.issues.serializers import IssueSerializer
 from taiga.projects.wiki.serializers import WikiPageSerializer
+from taiga.permissions.service import user_has_perm
 
 from . import services
 
@@ -40,22 +41,22 @@ class SearchViewSet(viewsets.ViewSet):
         except (project_model.DoesNotExist, TypeError):
             raise excp.PermissionDenied({"detail": "Wrong project id"})
 
-        result = {
-            "userstories": self._search_user_stories(project, text),
-            "tasks": self._search_tasks(project, text),
-            "issues": self._search_issues(project, text),
-            "wikipages": self._search_wiki_pages(project, text)
-        }
+        result = {}
+        if user_has_perm(request.user, "view_us", project):
+            result["userstories"] = self._search_user_stories(project, text)
+        if user_has_perm(request.user, "view_tasks", project):
+            result["tasks"] = self._search_tasks(project, text)
+        if user_has_perm(request.user, "view_issues", project):
+            result["issues"] = self._search_issues(project, text)
+        if user_has_perm(request.user, "view_wiki_pages", project):
+            result["wikipages"] = self._search_wiki_pages(project, text)
 
         result["count"] = sum(map(lambda x: len(x), result.values()))
         return Response(result)
 
     def _get_project(self, project_id):
         project_model = get_model("projects", "Project")
-        own_projects = (project_model.objects
-                            .filter(members=self.request.user))
-
-        return own_projects.get(pk=project_id)
+        return project_model.objects.get(pk=project_id)
 
     def _search_user_stories(self, project, text):
         queryset = services.search_user_stories(project, text)

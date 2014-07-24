@@ -25,17 +25,18 @@ from .. import factories
 pytestmark = pytest.mark.django_db
 
 
-def test_list_userstories(client):
+def test_list_userstorage(client):
     user1 = factories.UserFactory()
     user2 = factories.UserFactory()
     storage11 = factories.StorageEntryFactory(owner=user1)
-    storage12 = factories.StorageEntryFactory(owner=user1)
+    factories.StorageEntryFactory(owner=user1)
     storage13 = factories.StorageEntryFactory(owner=user1)
-    storage21 = factories.StorageEntryFactory(owner=user2)
+    factories.StorageEntryFactory(owner=user2)
 
     # List by anonumous user
     response = client.get(reverse("user-storage-list"))
-    assert response.status_code == 401
+    assert response.status_code == 200
+    assert len(response.data) == 0
 
     # List own entries
     client.login(username=user1.username, password=user1.username)
@@ -56,8 +57,6 @@ def test_list_userstories(client):
     response = client.get(url)
     assert response.status_code == 200
     assert len(response.data) == 2
-
-    client.logout()
 
 
 def test_view_storage_entries(client):
@@ -84,12 +83,9 @@ def test_view_storage_entries(client):
     response = client.get(reverse("user-storage-detail", args=["foobar"]))
     assert response.status_code == 404
 
-    client.logout()
-
 
 def test_create_entries(client):
     user1 = factories.UserFactory()
-    user2 = factories.UserFactory()
     storage11 = factories.StorageEntryFactory(owner=user1)
 
     form = {"key": "foo",
@@ -119,12 +115,9 @@ def test_create_entries(client):
     response = client.post(reverse("user-storage-list"), error_form)
     assert response.status_code == 400
 
-    client.logout()
-
 
 def test_update_entries(client):
     user1 = factories.UserFactory()
-    user2 = factories.UserFactory()
     storage11 = factories.StorageEntryFactory(owner=user1)
 
     # Update by anonymous user
@@ -158,9 +151,6 @@ def test_update_entries(client):
     assert response.status_code == 200
     assert response.data["value"] == form["value"]
 
-    client.logout()
-
-
 
 def test_delete_storage_entry(client):
     user1 = factories.UserFactory()
@@ -186,6 +176,3 @@ def test_delete_storage_entry(client):
     client.login(username=user2.username, password=user2.username)
     response = client.delete(reverse("user-storage-detail", args=[storage11.key]))
     assert response.status_code == 404
-
-    client.logout()
-

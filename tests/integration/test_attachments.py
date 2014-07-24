@@ -10,7 +10,7 @@ pytestmark = pytest.mark.django_db
 
 def test_authentication(client):
     "User can't access an attachment if not authenticated"
-    attachment = f.AttachmentFactory.create()
+    attachment = f.UserStoryAttachmentFactory.create()
     url = reverse("attachment-url", kwargs={"pk": attachment.pk})
 
     response = client.get(url)
@@ -20,7 +20,7 @@ def test_authentication(client):
 
 def test_authorization(client):
     "User can't access an attachment if not authorized"
-    attachment = f.AttachmentFactory.create()
+    attachment = f.UserStoryAttachmentFactory.create()
     user = f.UserFactory.create()
 
     url = reverse("attachment-url", kwargs={"pk": attachment.pk})
@@ -34,7 +34,7 @@ def test_authorization(client):
 @set_settings(IN_DEVELOPMENT_SERVER=True)
 def test_attachment_redirect_in_devserver(client):
     "When accessing the attachment in devserver redirect to the real attachment url"
-    attachment = f.AttachmentFactory.create()
+    attachment = f.UserStoryAttachmentFactory.create(attached_file="test")
 
     url = reverse("attachment-url", kwargs={"pk": attachment.pk})
 
@@ -47,7 +47,7 @@ def test_attachment_redirect_in_devserver(client):
 @set_settings(IN_DEVELOPMENT_SERVER=False)
 def test_attachment_redirect(client):
     "When accessing the attachment redirect using X-Accel-Redirect header"
-    attachment = f.AttachmentFactory.create()
+    attachment = f.UserStoryAttachmentFactory.create()
 
     url = reverse("attachment-url", kwargs={"pk": attachment.pk})
 

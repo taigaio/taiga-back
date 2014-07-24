@@ -42,12 +42,3 @@ class UserSerializer(serializers.ModelSerializer):
 class RecoverySerializer(serializers.Serializer):
     token = serializers.CharField(max_length=200)
     password = serializers.CharField(min_length=6)
-
-    def validate_token(self, attrs, source):
-        token = attrs[source]
-        try:
-            user = User.objects.get(token=token)
-        except User.DoesNotExist:
-            raise serializers.ValidationError(_("invalid token"))
-
-        return attrs

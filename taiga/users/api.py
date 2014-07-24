@@ -25,16 +25,21 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework.response import Response
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework import status, viewsets
+from rest_framework import status
 
 from djmail.template_mail import MagicMailBuilder
 
-from taiga.base.decorators import list_route, action
+from taiga.base.decorators import list_route, detail_route
+from taiga.base.decorators import action
 from taiga.base import exceptions as exc
-from taiga.base.api import ModelCrudViewSet, RetrieveModelMixin, ModelListViewSet
+from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelListViewSet
+from taiga.projects.votes import services as votes_service
+from taiga.projects.serializers import StarredSerializer
 
-from .models import User, Role
-from .serializers import UserSerializer, RecoverySerializer
+from . import models
+from . import serializers
+from . import permissions
 
 
 class MembersFilterBackend(BaseFilterBackend):
@@ -55,31 +60,45 @@ class MembersFilterBackend(BaseFilterBackend):
 
 
 class UsersViewSet(ModelCrudViewSet):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
-    filter_backends = (MembersFilterBackend,)
+    permission_classes = (permissions.UserPermission,)
+    serializer_class = serializers.UserSerializer
+    queryset = models.User.objects.all()
 
     def pre_conditions_on_save(self, obj):
-        if not self.request.user.is_superuser and obj.id != self.request.user.id:
-            raise exc.PreconditionError()
+        if self.request.user.is_superuser:
+            return
+
+        if obj.id == self.request.user.id:
+            return
+
+        if obj.id is None:
+            return
+
+        raise exc.PreconditionError()
 
     def pre_conditions_on_delete(self, obj):
-        if not self.request.user.is_superuser and obj.id != self.request.user.id:
-            raise exc.PreconditionError()
+        if self.request.user.is_superuser:
+            return
 
-    @list_route(permission_classes=[AllowAny], methods=["POST"])
+        if obj.id == self.request.user.id:
+            return
+
+        raise exc.PreconditionError()
+
+    @list_route(methods=["POST"])
     def password_recovery(self, request, pk=None):
         username_or_email = request.DATA.get('username', None)
+
+        self.check_permissions(request, "password_recovery", None)
 
         if not username_or_email:
             raise exc.WrongArguments(_("Invalid username or email"))
 
         try:
-            queryset = User.objects.all()
+            queryset = models.User.objects.all()
             user = queryset.get(Q(username=username_or_email) |
                                     Q(email=username_or_email))
-        except User.DoesNotExist:
+        except models.User.DoesNotExist:
             raise exc.WrongArguments(_("Invalid username or email"))
 
         user.token = str(uuid.uuid1())
@@ -92,27 +111,36 @@ class UsersViewSet(ModelCrudViewSet):
         return Response({"detail": _("Mail sended successful!"),
                          "email": user.email})
 
-    @list_route(permission_classes=[AllowAny], methods=["POST"])
+    @list_route(methods=["POST"])
     def change_password_from_recovery(self, request, pk=None):
         """
         Change password with token (from password recovery step).
         """
-        serializer = RecoverySerializer(data=request.DATA, many=False)
+
+        self.check_permissions(request, "change_password_from_recovery", None)
+
+        serializer = serializers.RecoverySerializer(data=request.DATA, many=False)
         if not serializer.is_valid():
             raise exc.WrongArguments(_("Token is invalid"))
 
-        user = User.objects.get(token=serializer.data["token"])
+        try:
+            user = models.User.objects.get(token=serializer.data["token"])
+        except models.User.DoesNotExist:
+            raise exc.WrongArguments(_("Token is invalid"))
+
         user.set_password(serializer.data["password"])
         user.token = None
         user.save(update_fields=["password", "token"])
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @list_route(permission_classes=[IsAuthenticated], methods=["POST"])
+    @list_route(methods=["POST"])
     def change_password(self, request, pk=None):
         """
         Change password to current logged user.
         """
+        self.check_permissions(request, "change_password", None)
+
         password = request.DATA.get("password")
 
         if not password:
@@ -124,3 +152,12 @@ class UsersViewSet(ModelCrudViewSet):
         request.user.set_password(password)
         request.user.save(update_fields=["password"])
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @detail_route(methods=["GET"])
+    def starred(self, request, pk=None):
+        user = self.get_object()
+        self.check_permissions(request, 'starred', user)
+
+        stars = votes_service.get_voted(user.pk, model=get_model('projects', 'Project'))
+        stars_data = StarredSerializer(stars, many=True)
+        return Response(stars_data.data)

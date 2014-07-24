@@ -44,6 +44,7 @@ class ProjectTemplateFactory(Factory):
 
     name = "Template name"
     slug = settings.DEFAULT_PROJECT_TEMPLATE
+    description = factory.Sequence(lambda n: "Description {}".format(n))
 
     us_statuses = []
     points = []
@@ -78,6 +79,28 @@ class PointsFactory(Factory):
     name = factory.Sequence(lambda n: "Points {}".format(n))
     value = 2
     project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
+class AttachmentFactory(Factory):
+    FACTORY_FOR = get_model("attachments", "Attachment")
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    owner = factory.SubFactory("tests.factories.UserFactory")
+
+
+class UserStoryAttachmentFactory(AttachmentFactory):
+    content_object = factory.SubFactory("tests.factories.UserStoryFactory")
+
+
+class TaskAttachmentFactory(AttachmentFactory):
+    content_object = factory.SubFactory("tests.factories.TaskFactory")
+
+
+class IssueAttachmentFactory(AttachmentFactory):
+    content_object = factory.SubFactory("tests.factories.IssueFactory")
+
+
+class WikiAttachmentFactory(AttachmentFactory):
+    content_object = factory.SubFactory("tests.factories.WikiFactory")
 
 
 class RolePointsFactory(Factory):
@@ -131,17 +154,6 @@ class UserStoryStatusFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
-class TaskFactory(Factory):
-    FACTORY_FOR = get_model("tasks", "Task")
-
-    ref = factory.Sequence(lambda n: n)
-    owner = factory.SubFactory("tests.factories.UserFactory")
-    subject = factory.Sequence(lambda n: "Task {}".format(n))
-    user_story = factory.SubFactory("tests.factories.UserStoryFactory")
-    status = factory.SubFactory("tests.factories.TaskStatusFactory")
-    project = factory.SubFactory("tests.factories.ProjectFactory")
-    milestone = factory.SubFactory("tests.factories.MilestoneFactory")
-
 
 class TaskStatusFactory(Factory):
     FACTORY_FOR = get_model("projects", "TaskStatus")
@@ -177,12 +189,14 @@ class IssueFactory(Factory):
 class TaskFactory(Factory):
     FACTORY_FOR = get_model("tasks", "Task")
 
+    ref = factory.Sequence(lambda n: n)
     subject = factory.Sequence(lambda n: "Task {}".format(n))
     description = factory.Sequence(lambda n: "Task {} description".format(n))
     owner = factory.SubFactory("tests.factories.UserFactory")
     project = factory.SubFactory("tests.factories.ProjectFactory")
     status = factory.SubFactory("tests.factories.TaskStatusFactory")
     milestone = factory.SubFactory("tests.factories.MilestoneFactory")
+    user_story = factory.SubFactory("tests.factories.UserStoryFactory")
 
 
 class WikiPageFactory(Factory):
@@ -194,6 +208,15 @@ class WikiPageFactory(Factory):
     content = factory.Sequence(lambda n: "Wiki Page {} content".format(n))
 
 
+class WikiLinkFactory(Factory):
+    FACTORY_FOR = get_model("wiki", "WikiLink")
+
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    title = factory.Sequence(lambda n: "Wiki Link {} title".format(n))
+    href = factory.Sequence(lambda n: "link-{}".format(n))
+    order = factory.Sequence(lambda n: n)
+
+
 class IssueStatusFactory(Factory):
     FACTORY_FOR = get_model("projects", "IssueStatus")
 
@@ -201,10 +224,10 @@ class IssueStatusFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
-class TaskStatusFactory(Factory):
-    FACTORY_FOR = get_model("projects", "TaskStatus")
+class UserStoryStatusFactory(Factory):
+    FACTORY_FOR = get_model("projects", "UserStoryStatus")
 
-    name = factory.Sequence(lambda n: "Issue Status {}".format(n))
+    name = factory.Sequence(lambda n: "User Story Status {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 

@@ -26,6 +26,7 @@ def detail_route(methods=['get'], **kwargs):
     def decorator(func):
         func.bind_to_methods = methods
         func.detail = True
+        func.permission_classes = kwargs.get('permission_classes', [])
         func.kwargs = kwargs
         return func
     return decorator
@@ -38,6 +39,7 @@ def list_route(methods=['get'], **kwargs):
     def decorator(func):
         func.bind_to_methods = methods
         func.detail = False
+        func.permission_classes = kwargs.get('permission_classes', [])
         func.kwargs = kwargs
         return func
     return decorator
@@ -52,6 +54,7 @@ def link(**kwargs):
     def decorator(func):
         func.bind_to_methods = ['get']
         func.detail = True
+        func.permission_classes = kwargs.get('permission_classes', [])
         func.kwargs = kwargs
         return func
     return decorator
@@ -66,6 +69,7 @@ def action(methods=['post'], **kwargs):
     def decorator(func):
         func.bind_to_methods = methods
         func.detail = True
+        func.permission_classes = kwargs.get('permission_classes', [])
         func.kwargs = kwargs
         return func
     return decorator

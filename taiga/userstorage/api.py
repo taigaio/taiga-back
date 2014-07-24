@@ -32,14 +32,17 @@ class StorageEntriesViewSet(ModelCrudViewSet):
     model = models.StorageEntry
     filter_backends = (filters.StorageEntriesFilterBackend,)
     serializer_class = serializers.StorageEntrySerializer
-    permission_classes = (IsAuthenticated, permissions.StorageEntriesPermission)
+    permission_classes = [permissions.StorageEntriesPermission]
     lookup_field = "key"
 
     def get_queryset(self):
+        if self.request.user.is_anonymous():
+            return self.model.objects.none()
         return self.request.user.storage_entries.all()
 
     def pre_save(self, obj):
-        obj.owner = self.request.user
+        if self.request.user.is_authenticated():
+            obj.owner = self.request.user
 
     def create(self, *args, **kwargs):
         try:

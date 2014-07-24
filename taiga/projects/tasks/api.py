@@ -44,8 +44,8 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
     model = models.Task
     serializer_class = serializers.TaskNeighborsSerializer
     list_serializer_class = serializers.TaskSerializer
-    permission_classes = (IsAuthenticated, permissions.TaskPermission)
-    filter_backends = (filters.IsProjectMemberFilterBackend,)
+    permission_classes = (permissions.TaskPermission,)
+    filter_backends = (filters.CanViewTasksFilterBackend,)
     filter_fields = ["user_story", "milestone", "project"]
 
     def pre_save(self, obj):
@@ -57,10 +57,6 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
 
     def pre_conditions_on_save(self, obj):
         super().pre_conditions_on_save(obj)
-
-        if (obj.project.owner != self.request.user and
-                obj.project.memberships.filter(user=self.request.user).count() == 0):
-            raise exc.PermissionDenied(_("You don't have permissions for add/modify this task."))
 
         if obj.milestone and obj.milestone.project != obj.project:
             raise exc.PermissionDenied(_("You don't have permissions for add/modify this task."))
@@ -88,8 +84,7 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
         project = get_object_or_404(Project, id=project_id)
         user_story = get_object_or_404(UserStory, id=us_id)
 
-        if request.user != project.owner and not has_project_perm(request.user, project, 'add_task'):
-            raise exc.PermissionDenied(_("You don't have permisions to create tasks."))
+        self.check_permissions(request, 'bulk_create', project)
 
         tasks = services.create_tasks_in_bulk(bulk_tasks, callback=self.post_save, project=project,
                                               user_story=user_story, owner=request.user,

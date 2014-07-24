@@ -52,9 +52,9 @@ class MilestoneSerializer(serializers.ModelSerializer):
         qs = None
         # If the milestone exists:
         if self.object and attrs.get("name", None):
-            qs = models.Milestone.objects.filter(project=self.object.project, name=attrs[source])
+            qs = models.Milestone.objects.filter(project=self.object.project, name=attrs[source]).exclude(pk=self.object.pk)
 
-        if not self.object and attrs.get("project", None)  and attrs.get("name", None):
+        if not self.object and attrs.get("project", None) and attrs.get("name", None):
             qs = models.Milestone.objects.filter(project=attrs["project"], name=attrs[source])
 
         if qs and qs.exists():

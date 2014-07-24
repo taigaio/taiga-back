@@ -31,6 +31,7 @@ def bulk_update_userstory_status_order(project, user, data):
     for id, order in data:
         cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
                        (order, id, project.id))
+    cursor.execute("DEALLOCATE bulk_update_order")
     cursor.close()
 
 
@@ -48,6 +49,7 @@ def bulk_update_points_order(project, user, data):
     for id, order in data:
         cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
                        (order, id, project.id))
+    cursor.execute("DEALLOCATE bulk_update_order")
     cursor.close()
 
 
@@ -65,6 +67,7 @@ def bulk_update_task_status_order(project, user, data):
     for id, order in data:
         cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
                        (order, id, project.id))
+    cursor.execute("DEALLOCATE bulk_update_order")
     cursor.close()
 
 
@@ -82,6 +85,7 @@ def bulk_update_issue_status_order(project, user, data):
     for id, order in data:
         cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
                        (order, id, project.id))
+    cursor.execute("DEALLOCATE bulk_update_order")
     cursor.close()
 
 
@@ -99,6 +103,7 @@ def bulk_update_issue_type_order(project, user, data):
     for id, order in data:
         cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
                        (order, id, project.id))
+    cursor.execute("DEALLOCATE bulk_update_order")
     cursor.close()
 
 
@@ -116,6 +121,7 @@ def bulk_update_priority_order(project, user, data):
     for id, order in data:
         cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
                        (order, id, project.id))
+    cursor.execute("DEALLOCATE bulk_update_order")
     cursor.close()
 
 
@@ -133,4 +139,5 @@ def bulk_update_severity_order(project, user, data):
     for id, order in data:
         cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
                        (order, id, project.id))
+    cursor.execute("DEALLOCATE bulk_update_order")
     cursor.close()

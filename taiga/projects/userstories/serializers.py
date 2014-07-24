@@ -55,7 +55,6 @@ class UserStorySerializer(serializers.ModelSerializer):
 
         points_modelcls = get_model("projects", "Points")
 
-        obj.project.update_role_points()
         if role_points:
             for role_id, points_id in role_points.items():
                 role_points = obj.role_points.get(role__id=role_id)

@@ -34,7 +34,7 @@ def add_vote(obj, user):
     """
     obj_type = get_model("contenttypes", "ContentType").objects.get_for_model(obj)
     with atomic():
-        _, created = Vote.objects.get_or_create(content_type=obj_type, object_id=obj.id, user=user)
+        vote, created = Vote.objects.get_or_create(content_type=obj_type, object_id=obj.id, user=user)
 
         if not created:
             return
@@ -42,6 +42,7 @@ def add_vote(obj, user):
         votes, _ = Votes.objects.get_or_create(content_type=obj_type, object_id=obj.id)
         votes.count = F('count') + 1
         votes.save()
+    return vote
 
 
 def remove_vote(obj, user):
@@ -74,7 +75,6 @@ def get_voters(obj):
     :return: User queryset object representing the users that voted the object.
     """
     obj_type = get_model("contenttypes", "ContentType").objects.get_for_model(obj)
-
     return get_user_model().objects.filter(votes__content_type=obj_type, votes__object_id=obj.id)
 
 

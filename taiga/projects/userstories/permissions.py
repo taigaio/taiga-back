@@ -14,14 +14,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.permissions import BasePermission
+from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
+                                        IsAuthenticated, IsProjectOwner,
+                                        AllowAny, IsSuperUser)
 
 
-class UserStoryPermission(BasePermission):
-    get_permission = "view_userstory"
-    post_permission = "add_userstory"
-    put_permission = "change_userstory"
-    patch_permission = "change_userstory"
-    delete_permission = "delete_userstory"
-    safe_methods = ["HEAD", "OPTIONS"]
-    path_to_project =  ["project"]
+class UserStoryPermission(ResourcePermission):
+    retrieve_perms = HasProjectPerm('view_us')
+    create_perms = HasProjectPerm('add_us_to_project') | HasProjectPerm('add_us')
+    update_perms = HasProjectPerm('modify_us')
+    destroy_perms = HasProjectPerm('delete_us')
+    list_perms = AllowAny()
+    bulk_create_perms = IsAuthenticated() & (HasProjectPerm('add_us_to_project') | HasProjectPerm('add_us'))
+    bulk_update_order_perms = HasProjectPerm('modify_us')

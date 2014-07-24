@@ -28,9 +28,9 @@ pytestmark = pytest.mark.django_db
 def test_archived_filter(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    membership = f.MembershipFactory.create(project=project, user=user)
-    userstory_1 = f.UserStoryFactory.create(project=project)
-    user_story_2 = f.UserStoryFactory.create(is_archived=True, project=project)
+    f.MembershipFactory.create(project=project, user=user)
+    f.UserStoryFactory.create(project=project)
+    f.UserStoryFactory.create(is_archived=True, project=project)
 
     client.login(user)
 
