@@ -17,6 +17,7 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.timezone import now
+from django.conf import settings
 
 from django.contrib.webdesign import lorem_ipsum
 from django.contrib.contenttypes.models import ContentType
@@ -80,17 +81,17 @@ SUBJECT_CHOICES = [
     "Support for bulk actions",
     "Migrate to Python 3 and milk a beautiful cow"]
 
-NUM_USERS = 10
-NUM_INVITATIONS = 2
-NUM_PROJECTS = 4
-NUM_EMPTY_PROJECTS = 2
-NUM_MILESTONES = (1, 5)
-NUM_USS = (3, 7)
-NUM_TASKS_FINISHED = (1, 5)
-NUM_TASKS = (0, 4)
-NUM_USS_BACK = (8, 20)
-NUM_ISSUES = (12, 25)
-NUM_ATTACHMENTS = (0, 4)
+NUM_USERS = getattr(settings, "SAMPLE_DATA_NUM_USERS", 10)
+NUM_INVITATIONS =getattr(settings, "SAMPLE_DATA_NUM_INVITATIONS",  2)
+NUM_PROJECTS =getattr(settings, "SAMPLE_DATA_NUM_PROJECTS",  4)
+NUM_EMPTY_PROJECTS = getattr(settings, "SAMPLE_DATA_NUM_EMPTY_PROJECTS", 2)
+NUM_MILESTONES = getattr(settings, "SAMPLE_DATA_NUM_MILESTONES", (1, 5))
+NUM_USS = getattr(settings, "SAMPLE_DATA_NUM_USS", (3, 7))
+NUM_TASKS_FINISHED = getattr(settings, "SAMPLE_DATA_NUM_TASKS_FINISHED", (1, 5))
+NUM_TASKS = getattr(settings, "SAMPLE_DATA_NUM_TASKS", (0, 4))
+NUM_USS_BACK = getattr(settings, "SAMPLE_DATA_NUM_USS_BACK", (8, 20))
+NUM_ISSUES = getattr(settings, "SAMPLE_DATA_NUM_ISSUES", (12, 25))
+NUM_ATTACHMENTS = getattr(settings, "SAMPLE_DATA_NUM_ATTACHMENTS", (0, 4))
 
 
 class Command(BaseCommand):
