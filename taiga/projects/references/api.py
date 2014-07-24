@@ -54,5 +54,7 @@ class ResolverViewSet(viewsets.ViewSet):
             result["issue"] = get_object_or_404(project.issues.all(), ref=data["issue"]).pk
         if data["milestone"] and user_has_perm(request.user, "view_milestones", project):
             result["milestone"] = get_object_or_404(project.milestones.all(), slug=data["milestone"]).pk
+        if data["wikipage"] and user_has_perm(request.user, "view_wiki_pages", project):
+            result["wikipage"] = get_object_or_404(project.wiki_pages.all(), slug=data["wikipage"]).pk
 
         return Response(result)
