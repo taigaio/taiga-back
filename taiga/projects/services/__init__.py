@@ -30,3 +30,6 @@ from .filters import get_issues_filters_data
 
 from .stats import get_stats_for_project_issues
 from .stats import get_stats_for_project
+
+from .members import create_members_in_bulk
+from .members import get_members_from_bulk

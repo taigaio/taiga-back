@@ -171,6 +171,17 @@ class MembershipViewSet(ModelCrudViewSet):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @list_route(methods=["POST"])
+    def bulk_create(self, request, **kwargs):
+        bulk_members = request.DATA.get('bulkMembers', None)
+        if bulk_members is None:
+            raise exc.BadRequest(_('bulkMembers parameter is mandatory'))
+
+        members = services.create_members_in_bulk(bulk_members, callback=self.post_save)
+
+        members_serialized = self.serializer_class(members, many=True)
+        return Response(data=members_serialized.data)
+
     def pre_save(self, object):
         # Only assign new token if a current token value is empty.
         if not object.token:
