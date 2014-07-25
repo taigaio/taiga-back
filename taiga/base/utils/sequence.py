@@ -23,3 +23,9 @@ def first(iterable):
 def next(data:list):
     return data[1:]
 
+
+def arithmetic_progression(step=1, start=1):
+    i = start
+    while True:
+        yield i
+        i += step

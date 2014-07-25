@@ -145,17 +145,6 @@ class ProjectSerializer(serializers.ModelSerializer):
         # The "stars_count" attribute is attached in the get_queryset of the viewset.
         return getattr(obj, "stars_count", 0)
 
-    def validate_slug(self, attrs, source):
-        if self.object:
-            project_with_slug = models.Project.objects.filter(slug=attrs[source]).exclude(pk=self.object.pk)
-        else:
-            project_with_slug = models.Project.objects.filter(slug=attrs[source])
-
-        if source == "slug" and project_with_slug.exists():
-            raise serializers.ValidationError(_("Slug duplicated for the project"))
-
-        return attrs
-
 
 class ProjectDetailSerializer(ProjectSerializer):
     roles = serializers.SerializerMethodField("get_list_of_roles")

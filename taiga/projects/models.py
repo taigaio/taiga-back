@@ -35,6 +35,7 @@ from taiga.base.tags import TaggedMixin
 from taiga.users.models import Role
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
+from taiga.base.utils.sequence import arithmetic_progression
 
 from . import choices
 
@@ -181,7 +182,14 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify_uniquely(self.name, self.__class__)
+            base_slug = slugify_uniquely(self.name, self.__class__)
+            slug = base_slug
+            for i in arithmetic_progression():
+                if not type(self).objects.filter(slug=slug).exists() or i > 100:
+                    break
+                slug = "{}-{}".format(base_slug, i)
+            self.slug = slug
+
         if not self.videoconferences:
             self.videoconferences_salt = None
 

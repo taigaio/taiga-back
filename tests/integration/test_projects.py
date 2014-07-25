@@ -12,7 +12,7 @@ def test_api_create_project(client):
     f.ProjectTemplateFactory.create(slug=settings.DEFAULT_PROJECT_TEMPLATE)
     user = f.UserFactory.create()
     url = reverse("projects-list")
-    data = {"name": "project name", "slug": "project-slug", "description": "project description"}
+    data = {"name": "project name", "description": "project description"}
 
     client.login(user)
     response = client.json.post(url, data)
