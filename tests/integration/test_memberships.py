@@ -63,3 +63,22 @@ def test_api_resend_invitation(client, outbox):
     assert response.status_code == 204
     assert len(outbox) == 1
     assert outbox[0].to == [invitation.email]
+
+
+def test_api_invite_existing_user(client, outbox):
+    "Should create the invitation linked to that user"
+    user = f.UserFactory.create()
+    role = f.RoleFactory.create()
+    url = reverse("memberships-list")
+    data = {"role": role.pk, "project": role.project.pk, "email": user.email}
+
+    response = client.json.post(url, data)
+
+    assert response.status_code == 201, response.data
+    assert len(outbox) == 1
+    assert user.memberships.count() == 1
+
+    message = outbox[0]
+
+    assert message.to == [user.email]
+    assert "Added to the project" in message.subject

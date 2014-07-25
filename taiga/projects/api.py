@@ -190,6 +190,8 @@ class MembershipViewSet(ModelCrudViewSet):
         if not object.token:
             object.token = str(uuid.uuid1())
 
+        object.user = services.find_invited_user(object, default=object.user)
+
         super().pre_save(object)
 
     def post_save(self, object, created=False):
