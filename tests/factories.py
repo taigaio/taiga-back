@@ -348,6 +348,23 @@ def create_membership(**kwargs):
     return MembershipFactory.create(**defaults)
 
 
+def create_invitation(**kwargs):
+    "Create an invitation along with its dependencies"
+    project = kwargs.pop("project", ProjectFactory())
+    project.points.add(PointsFactory.create(project=project, value=None))
+
+    defaults = {
+        "project": project,
+        "role": RoleFactory.create(project=project),
+        "email": "invited-user@email.com",
+        "token": "tokenvalue",
+        "invited_by_id": project.owner.id
+    }
+    defaults.update(kwargs)
+
+    return MembershipFactory.create(**defaults)
+
+
 def create_userstory(**kwargs):
     "Create an user story along with its dependencies"
     project = kwargs.pop("project", ProjectFactory())

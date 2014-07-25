@@ -25,8 +25,6 @@ from rest_framework.exceptions import ParseError
 from rest_framework import viewsets
 from rest_framework import status
 
-from djmail.template_mail import MagicMailBuilder
-
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
@@ -182,6 +180,11 @@ class MembershipViewSet(ModelCrudViewSet):
         members_serialized = self.serializer_class(members, many=True)
         return Response(data=members_serialized.data)
 
+    @detail_route(methods=["POST"])
+    def resend_invitation(self, request, **kwargs):
+        services.send_invitation(invitation=self.get_object())
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def pre_save(self, object):
         # Only assign new token if a current token value is empty.
         if not object.token:
@@ -196,9 +199,7 @@ class MembershipViewSet(ModelCrudViewSet):
             return
 
         # Send email only if a new membership is created
-        mbuilder = MagicMailBuilder()
-        email = mbuilder.membership_invitation(object.email, {"membership": object})
-        email.send()
+        services.send_invitation(invitation=object)
 
 
 class InvitationViewSet(ModelListViewSet):

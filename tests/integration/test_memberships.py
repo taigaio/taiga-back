@@ -51,3 +51,15 @@ def test_api_create_bulk_members(client):
     assert response.status_code == 200
     assert response.data[0]["email"] == john.email
     assert response.data[1]["email"] == joseph.email
+
+
+def test_api_resend_invitation(client, outbox):
+    invitation = f.create_invitation()
+    url = reverse("memberships-resend-invitation", kwargs={"pk": invitation.pk})
+
+    client.login(invitation.project.owner)
+    response = client.post(url)
+
+    assert response.status_code == 204
+    assert len(outbox) == 1
+    assert outbox[0].to == [invitation.email]

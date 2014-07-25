@@ -32,3 +32,10 @@ def client():
     from testclient_extensions import Client
 
     return Client()
+
+
+@pytest.fixture
+def outbox():
+    from django.core import mail
+
+    return mail.outbox
