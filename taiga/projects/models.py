@@ -488,12 +488,12 @@ class ProjectTemplate(models.Model):
 
     default_options = JsonField(null=True, blank=True, verbose_name=_("default options"))
     us_statuses = JsonField(null=True, blank=True, verbose_name=_("us statuses"))
-    points = JsonField(null=True, blank=True, verbose_name=_("us points"))
+    points = JsonField(null=True, blank=True, verbose_name=_("points"))
     task_statuses = JsonField(null=True, blank=True, verbose_name=_("task statuses"))
     issue_statuses = JsonField(null=True, blank=True, verbose_name=_("issue statuses"))
     issue_types = JsonField(null=True, blank=True, verbose_name=_("issue types"))
-    priorities = JsonField(null=True, blank=True, verbose_name=_("issue types"))
-    severities = JsonField(null=True, blank=True, verbose_name=_("issue types"))
+    priorities = JsonField(null=True, blank=True, verbose_name=_("priorities"))
+    severities = JsonField(null=True, blank=True, verbose_name=_("severities"))
     roles = JsonField(null=True, blank=True, verbose_name=_("roles"))
 
     class Meta:
