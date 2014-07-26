@@ -72,7 +72,7 @@ class Milestone(WatchedModelMixin, models.Model):
         super().save(*args, **kwargs)
 
     def _get_user_stories_points(self, user_stories):
-        role_points = [us.role_points.all() for us in user_stories]
+        role_points = [us.role_points.all().select_related('points') for us in user_stories]
         flat_role_points = itertools.chain(*role_points)
         flat_role_dicts = map(lambda x: {x.role_id: x.points.value if x.points.value else 0}, flat_role_points)
         return dict_sum(*flat_role_dicts)
