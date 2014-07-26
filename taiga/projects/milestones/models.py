@@ -72,7 +72,7 @@ class Milestone(WatchedModelMixin, models.Model):
         super().save(*args, **kwargs)
 
     def _get_user_stories_points(self, user_stories):
-        role_points = [us.role_points.all().select_related('points') for us in user_stories]
+        role_points = [us.role_points.all() for us in user_stories]
         flat_role_points = itertools.chain(*role_points)
         flat_role_dicts = map(lambda x: {x.role_id: x.points.value if x.points.value else 0}, flat_role_points)
         return dict_sum(*flat_role_dicts)
@@ -80,13 +80,13 @@ class Milestone(WatchedModelMixin, models.Model):
     @property
     def total_points(self):
         return self._get_user_stories_points(
-            [us for us in self.user_stories.all()]
+            [us for us in self.user_stories.all().prefetch_related('role_points', 'role_points__points')]
         )
 
     @property
     def closed_points(self):
         return self._get_user_stories_points(
-            [us for us in self.user_stories.all() if us.is_closed]
+            [us for us in self.user_stories.all().prefetch_related('role_points', 'role_points__points') if us.is_closed]
         )
 
     def _get_points_increment(self, client_requirement, team_requirement):
@@ -98,7 +98,7 @@ class Milestone(WatchedModelMixin, models.Model):
                 project_id=self.project_id,
                 client_requirement=client_requirement,
                 team_requirement=team_requirement
-            )
+            ).prefetch_related('role_points', 'role_points__points')
         return self._get_user_stories_points(user_stories)
 
     @property
@@ -125,5 +125,5 @@ class Milestone(WatchedModelMixin, models.Model):
         return self._get_user_stories_points([
             us for us in self.user_stories.filter(
                 finish_date__lt=date + datetime.timedelta(days=1)
-            ) if us.is_closed
+            ).prefetch_related('role_points', 'role_points__points') if us.is_closed
         ])
