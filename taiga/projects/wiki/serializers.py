@@ -18,17 +18,23 @@ from rest_framework import serializers
 
 from . import models
 
+from taiga.projects.history import services as history_service
+
 from taiga.mdrender.service import render as mdrender
 
 
 class WikiPageSerializer(serializers.ModelSerializer):
     html = serializers.SerializerMethodField("get_html")
+    editions = serializers.SerializerMethodField("get_editions")
 
     class Meta:
         model = models.WikiPage
 
     def get_html(self, obj):
         return mdrender(obj.project, obj.content)
+
+    def get_editions(self, obj):
+        return history_service.get_history_queryset_by_model_instance(obj).count()
 
 
 class WikiLinkSerializer(serializers.ModelSerializer):
