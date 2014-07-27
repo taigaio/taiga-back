@@ -171,7 +171,7 @@ class MembershipViewSet(ModelCrudViewSet):
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
-        bulk_members = request.DATA.get('bulkMembers', None)
+        bulk_members = request.DATA.get('bulk_memberships', None)
         if bulk_members is None:
             raise exc.BadRequest(_('bulkMembers parameter is mandatory'))
 
