@@ -114,6 +114,7 @@ def _get_candidates(obj, results_set, reverse=False):
 
     return (results_set
             .filter(~Q(id=obj.id), disjunction_filters(filters))
+            .filter(project_id=obj.project.id)
             .distinct()
             .order_by(*ordering))
 _left_candidates = partial(_get_candidates, reverse=True)
