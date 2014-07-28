@@ -27,6 +27,7 @@ from taiga.base.decorators import list_route
 from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet
 from taiga.projects.models import Project
+from taiga.projects.milestones.models import Milestone
 from taiga.projects.userstories.models import UserStory
 
 from taiga.projects.notifications import WatchedResourceMixin
@@ -77,18 +78,24 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
         if project_id is None:
             raise exc.BadRequest(_('projectId parameter is mandatory'))
 
+        sprint_id = request.DATA.get('sprintId', None)
+        if sprint_id is None:
+            raise exc.BadRequest(_('sprintId parameter is mandatory'))
+
+        milestone = get_object_or_404(Milestone, id=sprint_id)
+
         us_id = request.DATA.get('usId', None)
-        if us_id is None:
-            raise exc.BadRequest(_('usId parameter is mandatory'))
+        user_story = None
+        if us_id:
+            user_story = get_object_or_404(UserStory, id=us_id)
 
         project = get_object_or_404(Project, id=project_id)
-        user_story = get_object_or_404(UserStory, id=us_id)
 
         self.check_permissions(request, 'bulk_create', project)
 
         tasks = services.create_tasks_in_bulk(bulk_tasks, callback=self.post_save, project=project,
                                               user_story=user_story, owner=request.user,
-                                              status=project.default_task_status)
+                                              milestone=milestone, status=project.default_task_status)
 
         tasks_serialized = self.serializer_class(tasks, many=True)
         return Response(data=tasks_serialized.data)
