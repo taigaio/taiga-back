@@ -19,6 +19,7 @@ import functools
 
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
+from django.template.defaultfilters import slugify
 
 from markdown import Markdown
 
@@ -69,8 +70,12 @@ def cache_by_sha(func):
 
 
 def _get_markdown(project):
-    wikilinks_config = {"base_url": "#/project/{}/wiki/".format(project.slug),
-                        "end_url": ""}
+    def build_url(*args, **kwargs):
+        return args[1] + slugify(args[0])
+
+    wikilinks_config = {"base_url": "/project/{}/wiki/".format(project.slug),
+                        "end_url": "",
+                        "build_url": build_url}
     extensions = _make_extensions_list(wikilinks_config=wikilinks_config,
                                        project=project)
     md = Markdown(extensions=extensions)
