@@ -33,6 +33,8 @@ from taiga.projects.issues.models import *
 from taiga.projects.wiki.models import *
 from taiga.projects.attachments.models import *
 
+from taiga.projects.history.services import take_snapshot
+
 import random
 import datetime
 
@@ -188,65 +190,77 @@ class Command(BaseCommand):
             project.save()
 
 
-    def create_attachment(self, object):
-        attachment = Attachment.objects.create(
-                project=object.project,
-                content_type=ContentType.objects.get_for_model(object.__class__),
-                content_object=object,
-                object_id=object.id,
-                owner=self.sd.db_object_from_queryset(
-                          object.project.memberships.filter(user__isnull=False)).user,
-                attached_file=self.sd.image_from_directory(*ATTACHMENT_SAMPLE_DATA))
+    def create_attachment(self, object, order):
+        attachment = Attachment.objects.create(project=object.project,
+                                               content_type=ContentType.objects.get_for_model(object.__class__),
+                                               content_object=object,
+                                               order=order,
+                                               is_deprecated=self.sd.boolean(),
+                                               description=self.sd.words(3, 12).split(" "),
+                                               object_id=object.id,
+                                               owner=self.sd.db_object_from_queryset(
+                                                     object.project.memberships.filter(user__isnull=False)).user,
+                                               attached_file=self.sd.image_from_directory(
+                                                                  *ATTACHMENT_SAMPLE_DATA))
 
         return attachment
 
     def create_wiki(self, project, slug):
-        wiki_page = WikiPage.objects.create(
-                project=project,
-                slug=slug,
-                content=self.sd.paragraphs(3,15),
-                owner=self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user)
+        wiki_page = WikiPage.objects.create(project=project,
+                                            slug=slug,
+                                            content=self.sd.paragraphs(3,15),
+                                            owner=self.sd.db_object_from_queryset(
+                                                    project.memberships.filter(user__isnull=False)).user)
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
-            attachment = self.create_attachment(wiki_page)
+            attachment = self.create_attachment(wiki_page, i)
+
+        take_snapshot(wiki_page,
+                      comment=self.sd.paragraph(),
+                      user=wiki_page.owner)
 
         return wiki_page
 
     def create_bug(self, project):
-        bug = Issue.objects.create(
-                project=project,
-                subject=self.sd.choice(SUBJECT_CHOICES),
-                description=self.sd.paragraph(),
-                owner=self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user,
-                severity=self.sd.db_object_from_queryset(Severity.objects.filter(
-                                                                  project=project)),
-                status=self.sd.db_object_from_queryset(IssueStatus.objects.filter(
-                                                                   project=project)),
-                priority=self.sd.db_object_from_queryset(Priority.objects.filter(
-                                                                  project=project)),
-                type=self.sd.db_object_from_queryset(IssueType.objects.filter(
-                                                               project=project)),
-                tags=self.sd.words(1, 5).split(" "))
+        bug = Issue.objects.create(project=project,
+                                   subject=self.sd.choice(SUBJECT_CHOICES),
+                                   description=self.sd.paragraph(),
+                                   owner=self.sd.db_object_from_queryset(
+                                            project.memberships.filter(user__isnull=False)).user,
+                                   severity=self.sd.db_object_from_queryset(Severity.objects.filter(
+                                                                                    project=project)),
+                                   status=self.sd.db_object_from_queryset(IssueStatus.objects.filter(
+                                                                                     project=project)),
+                                   priority=self.sd.db_object_from_queryset(Priority.objects.filter(
+                                                                                    project=project)),
+                                   type=self.sd.db_object_from_queryset(IssueType.objects.filter(
+                                                                                 project=project)),
+                                   tags=self.sd.words(1, 5).split(" "))
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
-            attachment = self.create_attachment(bug)
+            attachment = self.create_attachment(bug, i)
 
         if bug.status.order != 1:
-            bug.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
+            bug.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(
+                                                                      user__isnull=False)).user
             bug.save()
+
+        take_snapshot(bug,
+                      comment=self.sd.paragraph(),
+                      user=bug.owner)
 
         return bug
 
     def create_task(self, project, milestone, us, min_date, max_date, closed=False):
-        task = Task(
-                subject=self.sd.choice(SUBJECT_CHOICES),
-                description=self.sd.paragraph(),
-                project=project,
-                owner=self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user,
-                milestone=milestone,
-                user_story=us,
-                finished_date=None,
-                assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user)
+        task = Task(subject=self.sd.choice(SUBJECT_CHOICES),
+                    description=self.sd.paragraph(),
+                    project=project,
+                    owner=self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user,
+                    milestone=milestone,
+                    user_story=us,
+                    finished_date=None,
+                    assigned_to = self.sd.db_object_from_queryset(
+                    project.memberships.filter(user__isnull=False)).user)
 
         if closed:
             task.status = project.task_statuses.get(order=4)
@@ -259,21 +273,24 @@ class Command(BaseCommand):
         task.save()
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
-            attachment = self.create_attachment(task)
+            attachment = self.create_attachment(task, i)
+
+        take_snapshot(task,
+                      comment=self.sd.paragraph(),
+                      user=task.owner)
 
         return task
 
     def create_us(self, project, milestone=None, computable_project_roles=list(Role.objects.all())):
-        us = UserStory.objects.create(
-                subject=self.sd.choice(SUBJECT_CHOICES),
-                project=project,
-                owner=self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user,
-                description=self.sd.paragraph(),
-                milestone=milestone,
-                status=self.sd.db_object_from_queryset(project.us_statuses.filter(
-                                                                   is_closed=False)),
-                tags=self.sd.words(1, 3).split(" ")
-        )
+        us = UserStory.objects.create(subject=self.sd.choice(SUBJECT_CHOICES),
+                                      project=project,
+                                      owner=self.sd.db_object_from_queryset(
+                                              project.memberships.filter(user__isnull=False)).user,
+                                      description=self.sd.paragraph(),
+                                      milestone=milestone,
+                                      status=self.sd.db_object_from_queryset(project.us_statuses.filter(
+                                                                             is_closed=False)),
+                                       tags=self.sd.words(1, 3).split(" "))
 
         for role_points in us.role_points.filter(role__in=computable_project_roles):
             if milestone:
@@ -286,37 +303,40 @@ class Command(BaseCommand):
             role_points.save()
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
-            attachment = self.create_attachment(us)
+            attachment = self.create_attachment(us, i)
 
         if self.sd.choice([True, True, False, True, True]):
             us.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
             us.save()
 
+        take_snapshot(us,
+                      comment=self.sd.paragraph(),
+                      user=us.owner)
+
         return us
 
     def create_milestone(self, project, start_date, end_date):
-        milestone = Milestone.objects.create(
-                project=project,
-                name='Sprint {0}-{1}-{2}'.format(start_date.year,
-                                                 start_date.month,
-                                                 start_date.day),
-                owner=self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user,
-                created_date=start_date,
-                modified_date=start_date,
-                estimated_start=start_date,
-                estimated_finish=end_date,
-                order=10)
+        milestone = Milestone.objects.create(project=project,
+                                             name='Sprint {0}-{1}-{2}'.format(start_date.year,
+                                                                              start_date.month,
+                                                                              start_date.day),
+                                              owner=self.sd.db_object_from_queryset(
+                                                      project.memberships.filter(user__isnull=False)).user,
+                                              created_date=start_date,
+                                              modified_date=start_date,
+                                              estimated_start=start_date,
+                                              estimated_finish=end_date,
+                                              order=10)
 
         return milestone
 
     def create_project(self, counter):
-        project = Project.objects.create(
-                name='Project Example {0}'.format(counter),
-                description='Project example {0} description'.format(counter),
-                owner=random.choice(self.users),
-                public=True,
-                total_story_points=self.sd.int(600, 3000),
-                total_milestones=self.sd.int(5,10))
+        project = Project.objects.create(name='Project Example {0}'.format(counter),
+                                         description='Project example {0} description'.format(counter),
+                                         owner=random.choice(self.users),
+                                         public=True,
+                                         total_story_points=self.sd.int(600, 3000),
+                                         total_milestones=self.sd.int(5,10))
 
         return project
 
@@ -326,12 +346,11 @@ class Command(BaseCommand):
         full_name = full_name or "{} {}".format(self.sd.name('es'), self.sd.surname('es', number=1))
         email = email or self.sd.email()
 
-        user = User.objects.create(
-                username=username,
-                full_name=full_name,
-                email=email,
-                token=''.join(random.sample('abcdef0123456789', 10)),
-                color=self.sd.choice(COLOR_CHOICES))
+        user = User.objects.create(username=username,
+                                   full_name=full_name,
+                                   email=email,
+                                   token=''.join(random.sample('abcdef0123456789', 10)),
+                                   color=self.sd.choice(COLOR_CHOICES))
 
         user.set_password('123123')
         user.save()
