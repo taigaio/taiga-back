@@ -196,7 +196,7 @@ class Command(BaseCommand):
                                                content_object=object,
                                                order=order,
                                                is_deprecated=self.sd.boolean(),
-                                               description=self.sd.words(3, 12).split(" "),
+                                               description=self.sd.words(3, 12),
                                                object_id=object.id,
                                                owner=self.sd.db_object_from_queryset(
                                                      object.project.memberships.filter(user__isnull=False)).user,
@@ -213,7 +213,7 @@ class Command(BaseCommand):
                                                     project.memberships.filter(user__isnull=False)).user)
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
-            attachment = self.create_attachment(wiki_page, i)
+            attachment = self.create_attachment(wiki_page, i+1)
 
         take_snapshot(wiki_page,
                       comment=self.sd.paragraph(),
@@ -238,7 +238,7 @@ class Command(BaseCommand):
                                    tags=self.sd.words(1, 5).split(" "))
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
-            attachment = self.create_attachment(bug, i)
+            attachment = self.create_attachment(bug, i+1)
 
         if bug.status.order != 1:
             bug.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(
@@ -273,7 +273,7 @@ class Command(BaseCommand):
         task.save()
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
-            attachment = self.create_attachment(task, i)
+            attachment = self.create_attachment(task, i+1)
 
         take_snapshot(task,
                       comment=self.sd.paragraph(),
@@ -303,7 +303,7 @@ class Command(BaseCommand):
             role_points.save()
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
-            attachment = self.create_attachment(us, i)
+            attachment = self.create_attachment(us, i+1)
 
         if self.sd.choice([True, True, False, True, True]):
             us.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
