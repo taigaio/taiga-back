@@ -49,7 +49,6 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class TaskNeighborsSerializer(NeighborsSerializerMixin, TaskSerializer):
-
     def serialize_neighbor(self, neighbor):
         return NeighborTaskSerializer(neighbor).data
 

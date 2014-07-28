@@ -90,7 +90,6 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
                                              verbose_name=_("is client requirement"))
     team_requirement = models.BooleanField(default=False, null=False, blank=True,
                                            verbose_name=_("is team requirement"))
-    attachments = generic.GenericRelation("attachments.Attachment")
     generated_from_issue = models.ForeignKey("issues.Issue", null=True, blank=True,
                                              related_name="generated_user_stories",
                                              verbose_name=_("generated from issue"))

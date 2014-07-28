@@ -17,25 +17,15 @@
 from rest_framework import serializers
 
 from taiga.base.serializers import PickleField, NeighborsSerializerMixin
-from taiga.projects.attachments.serializers import AttachmentSerializer
-# from taiga.projects.mixins.notifications import WatcherValidationSerializerMixin
 from taiga.mdrender.service import render as mdrender
 
 from . import models
 
 
-class IssueAttachmentSerializer(AttachmentSerializer):
-    class Meta(AttachmentSerializer.Meta):
-        fields = ("id", "name", "size", "url", "owner", "created_date", "modified_date", )
-
-
-# class IssueSerializer(WatcherValidationSerializerMixin, serializers.ModelSerializer):
-
 class IssueSerializer(serializers.ModelSerializer):
     tags = PickleField(required=False)
     is_closed = serializers.Field(source="is_closed")
     comment = serializers.SerializerMethodField("get_comment")
-    attachments = IssueAttachmentSerializer(many=True, read_only=True)
     generated_user_stories = serializers.SerializerMethodField("get_generated_user_stories")
     blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
     description_html = serializers.SerializerMethodField("get_description_html")
@@ -63,7 +53,6 @@ class IssueSerializer(serializers.ModelSerializer):
 
 
 class IssueNeighborsSerializer(NeighborsSerializerMixin, IssueSerializer):
-
     def serialize_neighbor(self, neighbor):
         return NeighborIssueSerializer(neighbor).data
 
