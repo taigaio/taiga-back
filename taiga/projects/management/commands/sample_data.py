@@ -81,6 +81,7 @@ SUBJECT_CHOICES = [
     "Support for bulk actions",
     "Migrate to Python 3 and milk a beautiful cow"]
 
+BASE_USERS = getattr(settings, "SAMPLE_DATA_BASE_USERS", {})
 NUM_USERS = getattr(settings, "SAMPLE_DATA_NUM_USERS", 10)
 NUM_INVITATIONS =getattr(settings, "SAMPLE_DATA_NUM_INVITATIONS",  2)
 NUM_PROJECTS =getattr(settings, "SAMPLE_DATA_NUM_PROJECTS",  4)
@@ -102,8 +103,12 @@ class Command(BaseCommand):
         self.users = [User.objects.get(is_superuser=True)]
 
         # create users
-        for x in range(NUM_USERS):
-            self.users.append(self.create_user(x))
+        if BASE_USERS:
+            for username, full_name, email in BASE_USERS:
+                self.users.append(self.create_user(username=username, full_name=full_name, email=email))
+        else:
+            for x in range(NUM_USERS):
+                self.users.append(self.create_user(counter=x))
 
         # create project
         for x in range(NUM_PROJECTS + NUM_EMPTY_PROJECTS):
@@ -315,11 +320,16 @@ class Command(BaseCommand):
 
         return project
 
-    def create_user(self, counter):
+    def create_user(self, counter=None, username=None, full_name=None, email=None):
+        counter = counter or self.sd.int()
+        username = username or 'user{0}'.format(counter)
+        full_name = full_name or "{} {}".format(self.sd.name('es'), self.sd.surname('es', number=1))
+        email = email or self.sd.email()
+
         user = User.objects.create(
-                username='user{0}'.format(counter),
-                full_name="{} {}".format(self.sd.name('es'), self.sd.surname('es', number=1)),
-                email=self.sd.email(),
+                username=username,
+                full_name=full_name,
+                email=email,
                 token=''.join(random.sample('abcdef0123456789', 10)),
                 color=self.sd.choice(COLOR_CHOICES))
 
