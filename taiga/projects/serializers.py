@@ -185,11 +185,15 @@ class ProjectRoleSerializer(serializers.ModelSerializer):
 
 
 class RoleSerializer(serializers.ModelSerializer):
+    members_count = serializers.SerializerMethodField("get_members_count")
     permissions = PgArrayField(required=False)
 
     class Meta:
         model = Role
-        fields = ('id', 'name', 'permissions', 'computable', 'project', 'order')
+        fields = ('id', 'name', 'permissions', 'computable', 'project', 'order', 'members_count')
+
+    def get_members_count(self, obj):
+        return obj.memberships.count()
 
 
 class ProjectTemplateSerializer(serializers.ModelSerializer):
