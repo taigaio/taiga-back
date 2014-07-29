@@ -165,6 +165,4 @@ def role_post_save(sender, instance, created, **kwargs):
     if created:
         return
 
-    unique_projects = set(map(lambda x: x.project, instance.memberships.all()))
-    for project in unique_projects:
-        project.update_role_points()
+    instance.project.update_role_points()
