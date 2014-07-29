@@ -24,7 +24,7 @@ from rest_framework import status
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
-from taiga.base.decorators import detail_route
+from taiga.base.decorators import detail_route, list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base import tags
 
@@ -34,11 +34,12 @@ from taiga.projects.notifications import WatchedResourceMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.history import HistoryResourceMixin
 
-
+from taiga.projects.models import Project
 from taiga.projects.votes.utils import attach_votescount_to_queryset
 from taiga.projects.votes import services as votes_service
 from taiga.projects.votes import serializers as votes_serializers
 from . import models
+from . import services
 from . import permissions
 from . import serializers
 
@@ -151,6 +152,28 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
 
         if obj.type and obj.type.project != obj.project:
             raise exc.PermissionDenied(_("You don't have permissions to set this type to this issue."))
+
+    @list_route(methods=["POST"])
+    def bulk_create(self, request, **kwargs):
+        bulk_issues = request.DATA.get('bulkIssues', None)
+        if bulk_issues is None:
+            raise exc.BadRequest(_('bulkIssues parameter is mandatory'))
+
+        project_id = request.DATA.get('projectId', None)
+        if project_id is None:
+            raise exc.BadRequest(_('projectId parameter is mandatory'))
+
+        project = get_object_or_404(Project, id=project_id)
+
+        self.check_permissions(request, 'bulk_create', project)
+
+        issues = services.create_issues_in_bulk(
+            bulk_issues, callback=self.post_save, project=project, owner=request.user,
+            status=project.default_issue_status, severity=project.default_severity,
+            priority=project.default_priority, type=project.default_issue_type)
+
+        issues_serialized = self.serializer_class(issues, many=True)
+        return Response(data=issues_serialized.data)
 
     @detail_route(methods=['post'])
     def upvote(self, request, pk=None):

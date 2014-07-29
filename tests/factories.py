@@ -376,3 +376,18 @@ def create_userstory(**kwargs):
     defaults.update(kwargs)
 
     return UserStoryFactory(**defaults)
+
+
+def create_project(**kwargs):
+    "Create a project along with its dependencies"
+    defaults = {}
+    defaults.update(kwargs)
+
+    project = ProjectFactory.create(**defaults)
+    project.default_issue_status = IssueStatusFactory.create(project=project)
+    project.default_severity = SeverityFactory.create(project=project)
+    project.default_priority = PriorityFactory.create(project=project)
+    project.default_issue_type = IssueTypeFactory.create(project=project)
+    project.save()
+
+    return project
