@@ -134,8 +134,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                                  verbose_name=_("public"))
     total_milestones = models.IntegerField(default=0, null=True, blank=True,
                                            verbose_name=_("total of milestones"))
-    total_story_points = models.FloatField(default=None, null=True, blank=False,
-                                           verbose_name=_("total story points"))
+    total_story_points = models.FloatField(default=0, verbose_name=_("total story points"))
 
     is_backlog_activated = models.BooleanField(default=True, null=False, blank=True,
                                                verbose_name=_("active backlog panel"))
