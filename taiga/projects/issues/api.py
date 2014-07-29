@@ -108,10 +108,12 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
     list_serializer_class = serializers.IssueSerializer
     permission_classes = (permissions.IssuePermission, )
 
-    filter_backends = (filters.CanViewIssuesFilterBackend, IssuesFilter, IssuesOrdering)
+    filter_backends = (filters.CanViewIssuesFilterBackend, filters.SearchFieldFilter,
+                       IssuesFilter, IssuesOrdering)
     retrieve_exclude_filters = (IssuesFilter,)
 
     filter_fields = ("project",)
+    search_fields = ("subject",)
     order_by_fields = ("severity",
                        "status",
                        "priority",
