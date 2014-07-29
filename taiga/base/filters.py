@@ -13,7 +13,8 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import operator
+from functools import reduce
 
 from django.db.models import Q
 from django.db.models.sql.where import ExtraWhere, OR
@@ -214,3 +215,28 @@ class TagsFilter(FilterBackend):
             queryset = tags.filter(queryset, contains=query_tags)
 
         return super().filter_queryset(request, queryset, view)
+
+
+class SearchFieldFilter(filters.SearchFilter):
+    """Search filter that looks up the search param in the parameter named after the search field,
+    that is: ?<search field>=... instead of looking for the search param: ?search=...
+    This way you can search in a field-specific way.
+    """
+    def get_search_terms(self, request, field):
+        params = request.QUERY_PARAMS.get(field, '')
+        return params.replace(',', ' ').split()
+
+    def filter_queryset(self, request, queryset, view):
+        search_fields = getattr(view, "search_fields", None)
+        if not search_fields:
+            return queryset
+
+        lookups = dict((self.construct_search(field), self.get_search_terms(request, field))
+                       for field in search_fields)
+
+        for lookup, values in lookups.items():
+            or_queries = [Q(**{lookup: value}) for value in values]
+            if or_queries:
+                queryset = queryset.filter(reduce(operator.or_, or_queries))
+
+        return queryset

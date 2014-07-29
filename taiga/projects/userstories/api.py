@@ -48,9 +48,11 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
     list_serializer_class = serializers.UserStorySerializer
     permission_classes = (permissions.UserStoryPermission,)
 
-    filter_backends = (filters.CanViewUsFilterBackend, filters.TagsFilter)
+    filter_backends = (filters.CanViewUsFilterBackend, filters.TagsFilter,
+                       filters.SearchFieldFilter)
     retrieve_exclude_filters = (filters.TagsFilter,)
     filter_fields = ['project', 'milestone', 'milestone__isnull', 'status', 'is_archived']
+    search_fields = ('subject',)
 
     # Specific filter used for filtering neighbor user stories
     _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')

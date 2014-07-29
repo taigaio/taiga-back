@@ -51,3 +51,16 @@ def test_api_delete_userstory(client):
     response = client.delete(url)
 
     assert response.status_code == 204
+
+
+def test_api_filter_by_subject(client):
+    f.create_userstory()
+    us = f.create_userstory(subject="some random subject")
+    url = reverse("userstories-list") + "?subject=some subject"
+
+    client.login(us.owner)
+    response = client.get(url)
+    number_of_stories = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_stories == 1, number_of_stories
