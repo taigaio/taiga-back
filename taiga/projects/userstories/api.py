@@ -77,11 +77,13 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
             raise exc.BadRequest(_('projectId parameter is mandatory'))
 
         project = get_object_or_404(Project, id=project_id)
+        status = get_object_or_404(request.DATA.get('statusId', project.default_us_status_id))
 
         self.check_permissions(request, 'bulk_create', project)
 
         user_stories = services.create_userstories_in_bulk(
-            bulk_stories, callback=self.post_save, project=project, owner=request.user)
+            bulk_stories, callback=self.post_save, project=project, owner=request.user,
+            status=status)
 
         user_stories_serialized = self.serializer_class(user_stories, many=True)
         return Response(data=user_stories_serialized.data)

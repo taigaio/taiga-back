@@ -91,7 +91,7 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
 
         project = get_object_or_404(Project, id=project_id)
         user_story = get_object_or_404(UserStory, id=us_id)
-        status = get_object_or_404(request.DATA.get('statusId', project.default_task_status.id))
+        status = get_object_or_404(request.DATA.get('statusId', project.default_task_status_id))
 
         self.check_permissions(request, 'bulk_create', project)
 
