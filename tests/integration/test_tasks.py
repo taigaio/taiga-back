@@ -43,3 +43,21 @@ def test_api_update_task_tags(client):
     response = client.json.patch(url, data)
 
     assert response.status_code == 200, response.data
+
+
+def test_api_create_in_bulk_with_status(client):
+    us = f.create_userstory()
+    url = reverse("tasks-bulk-create")
+    data = {
+        "bulkTasks": "Story #1\nStory #2",
+        "usId": us.id,
+        "projectId": us.project.id,
+        "sprintId": us.milestone.id,
+        "statusId": us.project.default_task_status.id
+    }
+
+    client.login(us.owner)
+    response = client.json.post(url, data)
+
+    assert response.status_code == 200
+    assert response.data[0]["status"] == us.project.default_task_status.id

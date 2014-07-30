@@ -367,11 +367,12 @@ def create_invitation(**kwargs):
 
 def create_userstory(**kwargs):
     "Create an user story along with its dependencies"
-    project = kwargs.pop("project", ProjectFactory())
+    project = kwargs.pop("project", create_project())
 
     defaults = {
         "project": project,
-        "owner": project.owner
+        "owner": project.owner,
+        "milestone": MilestoneFactory.create(project=project, owner=project.owner)
     }
     defaults.update(kwargs)
 
@@ -388,6 +389,9 @@ def create_project(**kwargs):
     project.default_severity = SeverityFactory.create(project=project)
     project.default_priority = PriorityFactory.create(project=project)
     project.default_issue_type = IssueTypeFactory.create(project=project)
+    project.default_us_status = UserStoryStatusFactory.create(project=project)
+    project.default_task_status = TaskStatusFactory.create(project=project)
+
     project.save()
 
     return project

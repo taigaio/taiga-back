@@ -26,7 +26,7 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet
-from taiga.projects.models import Project
+from taiga.projects.models import Project, TaskStatus
 from taiga.projects.milestones.models import Milestone
 from taiga.projects.userstories.models import UserStory
 
@@ -91,9 +91,14 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
 
         project = get_object_or_404(Project, id=project_id)
         user_story = get_object_or_404(UserStory, id=us_id)
-        status = get_object_or_404(request.DATA.get('statusId', project.default_task_status.id))
 
         self.check_permissions(request, 'bulk_create', project)
+
+        status_id = request.DATA.get('statusId', None)
+        if status_id:
+            status = get_object_or_404(TaskStatus, id=status_id)
+        else:
+            status = project.default_us_status
 
         tasks = services.create_tasks_in_bulk(bulk_tasks, callback=self.post_save, project=project,
                                               user_story=user_story, owner=request.user,

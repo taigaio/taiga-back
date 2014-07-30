@@ -64,3 +64,19 @@ def test_api_filter_by_subject(client):
 
     assert response.status_code == 200
     assert number_of_stories == 1, number_of_stories
+
+
+def test_api_create_in_bulk_with_status(client):
+    project = f.create_project()
+    url = reverse("userstories-bulk-create")
+    data = {
+        "bulkStories": "Story #1\nStory #2",
+        "projectId": project.id,
+        "statusId": project.default_us_status.id
+    }
+
+    client.login(project.owner)
+    response = client.json.post(url, data)
+
+    assert response.status_code == 200
+    assert response.data[0]["status"] == project.default_us_status.id

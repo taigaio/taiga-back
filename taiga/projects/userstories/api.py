@@ -33,7 +33,7 @@ from taiga.projects.notifications import WatchedResourceMixin
 from taiga.projects.history import HistoryResourceMixin
 from taiga.projects.occ import OCCResourceMixin
 
-from taiga.projects.models import Project
+from taiga.projects.models import Project, UserStoryStatus
 from taiga.projects.history.services import take_snapshot
 
 from . import models
@@ -77,7 +77,12 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
             raise exc.BadRequest(_('projectId parameter is mandatory'))
 
         project = get_object_or_404(Project, id=project_id)
-        status = get_object_or_404(request.DATA.get('statusId', project.default_us_status.id))
+
+        status_id = request.DATA.get('statusId', None)
+        if status_id:
+            status = get_object_or_404(UserStoryStatus, id=status_id)
+        else:
+            status = project.default_us_status
 
         self.check_permissions(request, 'bulk_create', project)
 
