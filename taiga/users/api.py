@@ -20,7 +20,9 @@ from django.db.models.loading import get_model
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth.hashers import make_password
 from django.utils.translation import ugettext_lazy as _
+
 
 from rest_framework.response import Response
 from rest_framework.filters import BaseFilterBackend
@@ -142,13 +144,19 @@ class UsersViewSet(ModelCrudViewSet):
         """
         self.check_permissions(request, "change_password", None)
 
+        current_password = request.DATA.get("current_password")
         password = request.DATA.get("password")
+        if not current_password:
+            raise exc.WrongArguments(_("Current password parameter needed"))
 
         if not password:
-            raise exc.WrongArguments(_("Incomplete arguments"))
+            raise exc.WrongArguments(_("New password parameter needed"))
 
         if len(password) < 6:
-            raise exc.WrongArguments(_("Invalid password length"))
+            raise exc.WrongArguments(_("Invalid password length at least 6 charaters needed"))
+
+        if not request.user.check_password(current_password):
+            raise exc.WrongArguments(_("Invalid current password"))
 
         request.user.set_password(password)
         request.user.save(update_fields=["password"])
