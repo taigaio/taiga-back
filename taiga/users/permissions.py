@@ -35,4 +35,5 @@ class UserPermission(ResourcePermission):
     password_recovery_perms = AllowAny()
     change_password_from_recovery_perms = AllowAny()
     change_password_perms = IsAuthenticated()
+    change_avatar_perms = IsAuthenticated()
     starred_perms = AllowAny()

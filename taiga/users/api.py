@@ -153,6 +153,23 @@ class UsersViewSet(ModelCrudViewSet):
         request.user.save(update_fields=["password"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @list_route(methods=["POST"])
+    def change_avatar(self, request):
+        """
+        Change avatar to current logged user.
+        """
+        self.check_permissions(request, "change_avatar", None)
+
+        avatar = request.FILES['avatar']
+
+        if not avatar:
+            raise exc.WrongArguments(_("Incomplete arguments"))
+
+        request.user.photo = avatar
+        request.user.save(update_fields=["photo"])
+        user_data = serializers.UserSerializer(request.user).data
+        return Response(user_data, status=status.HTTP_200_OK)
+
     @detail_route(methods=["GET"])
     def starred(self, request, pk=None):
         user = self.get_object()

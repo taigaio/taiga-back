@@ -311,12 +311,14 @@ SOUTH_MIGRATION_MODULES = {
 }
 
 DEFAULT_AVATAR_SIZE = 80                # 80x80 pixels
+DEFAULT_BIG_AVATAR_SIZE = 300           # 300x300 pixels
 
 DEFAULT_AVATAR_URL = ''
 
 THUMBNAIL_ALIASES = {
     '': {
         'avatar': {'size': (DEFAULT_AVATAR_SIZE, DEFAULT_AVATAR_SIZE), 'crop': True},
+        'big-avatar': {'size': (DEFAULT_BIG_AVATAR_SIZE, DEFAULT_BIG_AVATAR_SIZE), 'crop': True},
     },
 }
 

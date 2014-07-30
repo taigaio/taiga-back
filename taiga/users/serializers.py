@@ -19,24 +19,28 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 
 from .models import User
-from .services import get_photo_or_gravatar_url
+from .services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
 
 
 class UserSerializer(serializers.ModelSerializer):
     full_name_display = serializers.SerializerMethodField("get_full_name_display")
     photo = serializers.SerializerMethodField("get_photo")
+    big_photo = serializers.SerializerMethodField("get_big_photo")
 
     class Meta:
         model = User
         fields = ('id', 'username', 'full_name', 'full_name_display', 'email', 'github_id',
                   'color', 'bio', 'default_language', 'default_timezone',
-                  'is_active', 'photo')
+                  'is_active', 'photo', 'big_photo')
 
     def get_full_name_display(self, obj):
         return obj.get_full_name() if obj else ""
 
     def get_photo(self, user):
         return get_photo_or_gravatar_url(user)
+
+    def get_big_photo(self, user):
+        return get_big_photo_or_gravatar_url(user)
 
 
 class RecoverySerializer(serializers.Serializer):
