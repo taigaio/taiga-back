@@ -90,12 +90,14 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
             user_story = get_object_or_404(UserStory, id=us_id)
 
         project = get_object_or_404(Project, id=project_id)
+        user_story = get_object_or_404(UserStory, id=us_id)
+        status = get_object_or_404(request.DATA.get('statusId', project.default_task_status.id))
 
         self.check_permissions(request, 'bulk_create', project)
 
         tasks = services.create_tasks_in_bulk(bulk_tasks, callback=self.post_save, project=project,
                                               user_story=user_story, owner=request.user,
-                                              milestone=milestone, status=project.default_task_status)
+                                              milestone=milestone, status=status)
 
         tasks_serialized = self.serializer_class(tasks, many=True)
         return Response(data=tasks_serialized.data)
