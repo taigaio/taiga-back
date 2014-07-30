@@ -34,6 +34,7 @@ from taiga.base.decorators import action
 from taiga.base import exceptions as exc
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelListViewSet
+from taiga.base.utils.slug import slugify_uniquely
 from taiga.projects.votes import services as votes_service
 from taiga.projects.serializers import StarredSerializer
 
@@ -178,3 +179,20 @@ class UsersViewSet(ModelCrudViewSet):
         stars = votes_service.get_voted(user.pk, model=get_model('projects', 'Project'))
         stars_data = StarredSerializer(stars, many=True)
         return Response(stars_data.data)
+
+    def destroy(self, request, pk=None):
+        user = self.get_object()
+        user.username = slugify_uniquely("deleted-user", models.User, slugfield="username")
+        user.email = "deleted-user@taiga.io"
+        user.is_active = False
+        user.full_name = "Deleted user"
+        user.color = ""
+        user.bio = ""
+        user.default_language = ""
+        user.default_timezone = ""
+        user.colorize_tags = True
+        user.token = None
+        user.github_id = None
+        user.set_unusable_password()
+        user.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
