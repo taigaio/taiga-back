@@ -98,7 +98,7 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
         if status_id:
             status = get_object_or_404(TaskStatus, id=status_id)
         else:
-            status = project.default_us_status
+            status = project.default_task_status
 
         tasks = services.create_tasks_in_bulk(bulk_tasks, callback=self.post_save, project=project,
                                               user_story=user_story, owner=request.user,

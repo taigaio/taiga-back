@@ -143,6 +143,13 @@ def test_user_patch(client, data):
 def test_user_action_change_password(client, data):
     url = reverse('users-change-password')
 
+    data.registered_user.set_password("test-current-password")
+    data.registered_user.save()
+    data.other_user.set_password("test-current-password")
+    data.other_user.save()
+    data.superuser.set_password("test-current-password")
+    data.superuser.save()
+
     users = [
         None,
         data.registered_user,
@@ -150,7 +157,8 @@ def test_user_action_change_password(client, data):
         data.superuser,
     ]
 
-    patch_data = json.dumps({"password": "test-password"})
+
+    patch_data = json.dumps({"current_password": "test-current-password", "password": "test-password"})
     results = helper_test_http_method(client, 'post', url, patch_data, users)
     assert results == [401, 204, 204, 204]
 
@@ -189,42 +197,3 @@ def test_user_action_password_recovery(client, data):
     patch_data = json.dumps({"username": "test"})
     results = helper_test_http_method(client, 'post', url, patch_data, users)
     assert results == [200, 200, 200, 200]
-
-# def test_membership_retrieve(client, data):
-#     assert False
-#
-#
-# def test_membership_update(client, data):
-#     assert False
-#
-#
-# def test_membership_delete(client, data):
-#     assert False
-#
-#
-# def test_membership_list(client, data):
-#     assert False
-#
-#
-# def test_membership_patch(client, data):
-#     assert False
-#
-#
-# def test_invitation_retrieve(client, data):
-#     assert False
-#
-#
-# def test_invitation_update(client, data):
-#     assert False
-#
-#
-# def test_invitation_delete(client, data):
-#     assert False
-#
-#
-# def test_invitation_list(client, data):
-#     assert False
-#
-#
-# def test_invitation_patch(client, data):
-#     assert False

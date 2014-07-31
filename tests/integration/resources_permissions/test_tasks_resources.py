@@ -270,6 +270,7 @@ def test_task_action_bulk_create(client, data):
         "bulkTasks": "test1\ntest2",
         "usId": data.public_task.user_story.pk,
         "projectId": data.public_task.project.pk,
+        "sprintId": data.public_task.milestone.pk,
     })
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 403, 403, 200, 200]
@@ -278,6 +279,7 @@ def test_task_action_bulk_create(client, data):
         "bulkTasks": "test1\ntest2",
         "usId": data.private_task1.user_story.pk,
         "projectId": data.private_task1.project.pk,
+        "sprintId": data.private_task1.milestone.pk,
     })
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 403, 403, 200, 200]
@@ -286,6 +288,7 @@ def test_task_action_bulk_create(client, data):
         "bulkTasks": "test1\ntest2",
         "usId": data.private_task2.user_story.pk,
         "projectId": data.private_task2.project.pk,
+        "sprintId": data.private_task2.milestone.pk,
     })
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 403, 403, 200, 200]

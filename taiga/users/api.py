@@ -190,6 +190,7 @@ class UsersViewSet(ModelCrudViewSet):
 
     def destroy(self, request, pk=None):
         user = self.get_object()
+        self.check_permissions(request, "destroy", user)
         user.username = slugify_uniquely("deleted-user", models.User, slugfield="username")
         user.email = "deleted-user@taiga.io"
         user.is_active = False

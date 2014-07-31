@@ -69,6 +69,9 @@ def test_api_invite_existing_user(client, outbox):
     "Should create the invitation linked to that user"
     user = f.UserFactory.create()
     role = f.RoleFactory.create()
+
+    client.login(role.project.owner)
+
     url = reverse("memberships-list")
     data = {"role": role.pk, "project": role.project.pk, "email": user.email}
 
