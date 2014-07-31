@@ -113,17 +113,14 @@ def test_user_create(client, data):
 
     users = [
         None,
-        data.registered_user,
-        data.other_user,
-        data.superuser,
     ]
 
     create_data = json.dumps({
         "username": "test",
         "full_name": "test",
     })
-    results = helper_test_http_method(client, 'post', url, create_data, users, lambda: User.objects.filter(username="test").delete())
-    assert results == [201, 201, 201, 201]
+    results = helper_test_http_method(client, 'post', url, create_data, users)
+    assert results == [201]
 
 
 def test_user_patch(client, data):
