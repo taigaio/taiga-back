@@ -176,11 +176,17 @@ class MembershipViewSet(ModelCrudViewSet):
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
+        project_id = request.DATA.get('projectId', None)
+        if project_id is None:
+            raise exc.BadRequest(_('projectId parameter is mandatory'))
+
         bulk_members = request.DATA.get('bulk_memberships', None)
         if bulk_members is None:
-            raise exc.BadRequest(_('bulkMembers parameter is mandatory'))
+            raise exc.BadRequest(_('bulk_memberships parameter is mandatory'))
 
-        members = services.create_members_in_bulk(bulk_members, callback=self.post_save)
+        project = get_object_or_404(models.Project, id=project_id)
+        members = services.create_members_in_bulk(bulk_members, callback=self.post_save,
+                                                  project=project)
 
         members_serialized = self.serializer_class(members, many=True)
         return Response(data=members_serialized.data)

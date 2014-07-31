@@ -12,9 +12,9 @@ pytestmark = pytest.mark.django_db
 
 
 def test_get_members_from_bulk():
-    data = [{"project_id": "1", "role_id": "1", "email": "member1@email.com"},
-            {"project_id": "1", "role_id": "1", "email": "member2@email.com"}]
-    members = services.get_members_from_bulk(data)
+    data = [{"role_id": "1", "email": "member1@email.com"},
+            {"role_id": "1", "email": "member2@email.com"}]
+    members = services.get_members_from_bulk(data, project_id=1)
 
     assert len(members) == 2
     assert members[0].email == "member1@email.com"
@@ -23,9 +23,9 @@ def test_get_members_from_bulk():
 
 @mock.patch("taiga.projects.services.members.db")
 def test_create_members_in_bulk(db):
-    data = [{"project_id": "1", "role_id": "1", "email": "member1@email.com"},
-            {"project_id": "1", "role_id": "1", "email": "member2@email.com"}]
-    members = services.create_members_in_bulk(data)
+    data = [{"role_id": "1", "email": "member1@email.com"},
+            {"role_id": "1", "email": "member2@email.com"}]
+    members = services.create_members_in_bulk(data, project_id=1)
 
     db.save_in_bulk.assert_called_once_with(members, None)
 
@@ -40,9 +40,10 @@ def test_api_create_bulk_members(client):
     url = reverse("memberships-bulk-create")
 
     data = {
-        "bulkMembers": [
-            {"project_id": project.pk, "role_id": tester.pk, "email": john.email},
-            {"project_id": project.pk, "role_id": gamer.pk, "email": joseph.email},
+        "projectId": project.id,
+        "bulk_memberships": [
+            {"role_id": tester.pk, "email": john.email},
+            {"role_id": gamer.pk, "email": joseph.email},
         ]
     }
     client.login(project.owner)
