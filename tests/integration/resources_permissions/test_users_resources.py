@@ -167,13 +167,6 @@ def test_user_action_change_password(client, data):
 def test_user_action_change_avatar(client, data):
     url = reverse('users-change-avatar')
 
-    users = [
-        None,
-        data.registered_user,
-        data.other_user,
-        data.superuser,
-    ]
-
     with NamedTemporaryFile() as avatar:
         avatar.write(DUMMY_BMP_DATA)
         avatar.seek(0)

@@ -171,7 +171,7 @@ class UsersViewSet(ModelCrudViewSet):
         """
         self.check_permissions(request, "change_avatar", None)
 
-        avatar = request.FILES['avatar']
+        avatar = request.FILES.get('avatar', None)
 
         if not avatar:
             raise exc.WrongArguments(_("Incomplete arguments"))
