@@ -185,6 +185,9 @@ class MembershipViewSet(ModelCrudViewSet):
             raise exc.BadRequest(_('bulk_memberships parameter is mandatory'))
 
         project = get_object_or_404(models.Project, id=project_id)
+
+        self.check_permissions(request, 'bulk_create', project)
+
         members = services.create_members_in_bulk(bulk_members, callback=self.post_save,
                                                   project=project)
 

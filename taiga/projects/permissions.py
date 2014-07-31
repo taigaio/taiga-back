@@ -41,6 +41,7 @@ class MembershipPermission(ResourcePermission):
     update_perms = IsProjectOwner()
     destroy_perms = IsProjectOwner()
     list_perms = AllowAny()
+    bulk_create_perms = IsProjectOwner()
 
 
 # User Stories

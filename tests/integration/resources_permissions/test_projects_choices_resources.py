@@ -1506,6 +1506,51 @@ def test_membership_create(client, data):
     assert results == [401, 403, 403, 403, 201]
 
 
+def test_membership_action_bulk_create(client, data):
+    url = reverse('memberships-bulk-create')
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    bulk_data = {
+        "project_id": data.public_project.id,
+        "bulk_memberships": [
+            {"role_id": data.public_membership.role.pk, "email": "test1@test.com"},
+            {"role_id": data.public_membership.role.pk, "email": "test2@test.com"},
+        ]
+    }
+    bulk_data = JSONRenderer().render(bulk_data)
+    results = helper_test_http_method(client, 'post', url, bulk_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    bulk_data = {
+        "project_id": data.private_project1.id,
+        "bulk_memberships": [
+            {"role_id": data.private_membership1.role.pk, "email": "test1@test.com"},
+            {"role_id": data.private_membership1.role.pk, "email": "test2@test.com"},
+        ]
+    }
+    bulk_data = JSONRenderer().render(bulk_data)
+    results = helper_test_http_method(client, 'post', url, bulk_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    bulk_data = {
+        "project_id": data.private_project2.id,
+        "bulk_memberships": [
+            {"role_id": data.private_membership2.role.pk, "email": "test1@test.com"},
+            {"role_id": data.private_membership2.role.pk, "email": "test2@test.com"},
+        ]
+    }
+    bulk_data = JSONRenderer().render(bulk_data)
+    results = helper_test_http_method(client, 'post', url, bulk_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+
 def test_project_template_retrieve(client, data):
     url = reverse('project-templates-detail', kwargs={"pk": data.project_template.pk})
 
