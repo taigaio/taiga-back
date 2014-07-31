@@ -27,8 +27,13 @@ def is_project_owner(user, obj):
 
     project = _get_object_project(obj)
 
-    if project:
-        return project.owner == user
+    if project and project.owner == user:
+        return True
+
+    membership = _get_user_project_membership(user, project)
+    if membership and membership.is_owner:
+        return True
+
     return False
 
 
