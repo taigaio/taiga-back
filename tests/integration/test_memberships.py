@@ -40,7 +40,7 @@ def test_api_create_bulk_members(client):
     url = reverse("memberships-bulk-create")
 
     data = {
-        "projectId": project.id,
+        "project_id": project.id,
         "bulk_memberships": [
             {"role_id": tester.pk, "email": john.email},
             {"role_id": gamer.pk, "email": joseph.email},
