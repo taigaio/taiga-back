@@ -119,3 +119,7 @@ router.register(r"issues", IssueViewSet, base_name="issues")
 router.register(r"issues/(?P<issue_id>\d+)/voters", VotersViewSet, base_name="issue-voters")
 router.register(r"wiki", WikiViewSet, base_name="wiki")
 router.register(r"wiki-links", WikiLinkViewSet, base_name="wiki-links")
+
+# Notify policies
+from taiga.projects.notifications.api import NotifyPolicyViewSet
+router.register(r"notifications", NotifyPolicyViewSet, base_name="notifications")
