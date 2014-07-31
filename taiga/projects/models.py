@@ -279,7 +279,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
 
     @property
     def closed_points(self):
-        return dict_sum(*[ml.closed_points for ml in self.milestones.all()])
+        return self._get_user_stories_points(self.user_stories.filter(is_closed=True).prefetch_related('role_points', 'role_points__points'))
 
     @property
     def defined_points(self):

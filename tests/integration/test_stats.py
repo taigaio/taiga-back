@@ -28,6 +28,7 @@ def data():
     m.role1 = f.RoleFactory(project=m.project)
     m.role2 = f.RoleFactory(project=m.project)
 
+    m.null_points = f.PointsFactory(project=m.project, value=None)
     m.points1 = f.PointsFactory(project=m.project, value=1)
     m.points2 = f.PointsFactory(project=m.project, value=2)
     m.points3 = f.PointsFactory(project=m.project, value=4)
