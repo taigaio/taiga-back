@@ -68,7 +68,7 @@ class TaigaReferencesPattern(Pattern):
         else:
             return "#{}".format(obj_ref)
 
-        url = "/#/project/{}/{}/{}".format(
+        url = "/project/{}/{}/{}".format(
             self.project.slug,
             obj_section,
             obj_ref

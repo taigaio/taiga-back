@@ -43,7 +43,7 @@ def test_proccessor_valid_us_reference():
         instance.content_type.model = "userstory"
         instance.content_object.subject = "test"
         result = render(dummy_project, "**#1**")
-        expected_result = '<p><strong><a alt="test" class="reference user-story" href="/#/project/test/user-story/1" title="test">&num;1</a></strong></p>'
+        expected_result = '<p><strong><a alt="test" class="reference user-story" href="/project/test/user-story/1" title="test">&num;1</a></strong></p>'
         assert result == expected_result
 
 
@@ -53,7 +53,7 @@ def test_proccessor_valid_issue_reference():
         instance.content_type.model = "issue"
         instance.content_object.subject = "test"
         result = render(dummy_project, "**#2**")
-        expected_result = '<p><strong><a alt="test" class="reference issue" href="/#/project/test/issues/2" title="test">&num;2</a></strong></p>'
+        expected_result = '<p><strong><a alt="test" class="reference issue" href="/project/test/issues/2" title="test">&num;2</a></strong></p>'
         assert result == expected_result
 
 
@@ -63,7 +63,7 @@ def test_proccessor_valid_task_reference():
         instance.content_type.model = "task"
         instance.content_object.subject = "test"
         result = render(dummy_project, "**#3**")
-        expected_result = '<p><strong><a alt="test" class="reference task" href="/#/project/test/tasks/3" title="test">&num;3</a></strong></p>'
+        expected_result = '<p><strong><a alt="test" class="reference task" href="/project/test/tasks/3" title="test">&num;3</a></strong></p>'
         assert result == expected_result
 
 
@@ -106,12 +106,12 @@ def test_render_relative_link():
 
 
 def test_render_wikilink():
-    expected_result = "<p><a class=\"wikilink\" href=\"#/project/test/wiki/test\">test</a></p>"
+    expected_result = "<p><a class=\"wikilink\" href=\"/project/test/wiki/test\">test</a></p>"
     assert render(dummy_project, "[[test]]") == expected_result
 
 
 def test_render_wikilink_with_custom_title():
-    expected_result = "<p><a class=\"wikilink\" href=\"#/project/test/wiki/test\">custom</a></p>"
+    expected_result = "<p><a class=\"wikilink\" href=\"/project/test/wiki/test\">custom</a></p>"
     assert render(dummy_project, "[[test|custom]]") == expected_result
 
 

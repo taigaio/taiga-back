@@ -47,7 +47,7 @@ class MentionsPattern(Pattern):
         except User.DoesNotExist:
             return "@{}".format(username)
 
-        url = "/#/profile/{}".format(username)
+        url = "/profile/{}".format(username)
 
         link_text = "&commat;{}".format(username)
 
