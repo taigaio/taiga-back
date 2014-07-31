@@ -55,5 +55,5 @@ class NotifyPolicyViewSet(ModelCrudViewSet):
         qs = models.NotifyPolicy.objects.filter(
             Q(project__owner=self.request.user) |
             Q(project__memberships__user=self.request.user)
-        )
+        ).order_by("project__name")
         return qs.distinct()
