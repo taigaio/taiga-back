@@ -24,6 +24,7 @@ from django.contrib.auth.hashers import make_password
 from django.utils.translation import ugettext_lazy as _
 
 from easy_thumbnails.exceptions import InvalidImageFormatError
+from easy_thumbnails.source_generators import pil_image
 
 
 from rest_framework.response import Response
@@ -176,12 +177,13 @@ class UsersViewSet(ModelCrudViewSet):
         if not avatar:
             raise exc.WrongArguments(_("Incomplete arguments"))
 
+        try:
+            pil_image(avatar)
+        except Exception:
+            raise exc.WrongArguments(_("Invalid image format"))
+
         request.user.photo = avatar
         request.user.save(update_fields=["photo"])
-        try:
-            user_data = serializers.UserSerializer(request.user).data
-        except InvalidImageFormatError:
-            raise exc.WrongArguments(_("Invalid image format"))
         user_data = serializers.UserSerializer(request.user).data
 
         return Response(user_data, status=status.HTTP_200_OK)
