@@ -23,6 +23,8 @@ from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.hashers import make_password
 from django.utils.translation import ugettext_lazy as _
 
+from easy_thumbnails.exceptions import InvalidImageFormatError
+
 
 from rest_framework.response import Response
 from rest_framework.filters import BaseFilterBackend
@@ -176,7 +178,12 @@ class UsersViewSet(ModelCrudViewSet):
 
         request.user.photo = avatar
         request.user.save(update_fields=["photo"])
+        try:
+            user_data = serializers.UserSerializer(request.user).data
+        except InvalidImageFormatError:
+            raise exc.WrongArguments(_("Invalid image format"))
         user_data = serializers.UserSerializer(request.user).data
+
         return Response(user_data, status=status.HTTP_200_OK)
 
     @detail_route(methods=["GET"])

@@ -12,7 +12,11 @@ from tests.utils import helper_test_http_method, disconnect_signals, reconnect_s
 
 import json
 
+from tempfile import NamedTemporaryFile
+
 pytestmark = pytest.mark.django_db
+
+DUMMY_BMP_DATA = b'BM:\x00\x00\x00\x00\x00\x00\x006\x00\x00\x00(\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00\x18\x00\x00\x00\x00\x00\x04\x00\x00\x00\x13\x0b\x00\x00\x13\x0b\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 
 
 def setup_module(module):
@@ -155,9 +159,48 @@ def test_user_action_change_password(client, data):
     ]
 
 
-    patch_data = json.dumps({"current_password": "test-current-password", "password": "test-password"})
-    results = helper_test_http_method(client, 'post', url, patch_data, users)
+    post_data = json.dumps({"current_password": "test-current-password", "password": "test-password"})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 204, 204, 204]
+
+
+def test_user_action_change_avatar(client, data):
+    url = reverse('users-change-avatar')
+
+    users = [
+        None,
+        data.registered_user,
+        data.other_user,
+        data.superuser,
+    ]
+
+    with NamedTemporaryFile() as avatar:
+        avatar.write(DUMMY_BMP_DATA)
+        avatar.seek(0)
+
+        post_data = {
+            'avatar': avatar
+        }
+
+        client.logout()
+        response = client.post(url, post_data)
+        assert response.status_code == 401
+
+        avatar.seek(0)
+        client.login(data.registered_user)
+        response = client.post(url, post_data)
+        assert response.status_code == 200
+
+        avatar.seek(0)
+        client.login(data.other_user)
+        response = client.post(url, post_data)
+        assert response.status_code == 200
+
+        avatar.seek(0)
+        client.login(data.superuser)
+        response = client.post(url, post_data)
+        assert response.status_code == 200
+
 
 def test_user_action_change_password_from_recovery(client, data):
     url = reverse('users-change-password-from-recovery')
