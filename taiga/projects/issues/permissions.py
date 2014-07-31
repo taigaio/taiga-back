@@ -30,7 +30,7 @@ class IssuePermission(ResourcePermission):
     list_perms = AllowAny()
     upvote_perms = IsAuthenticated() & HasProjectPerm('vote_issues')
     downvote_perms = IsAuthenticated() & HasProjectPerm('vote_issues')
-    bulk_create_perms = IsAuthenticated() & (HasProjectPerm('add_issue_to_project') | HasProjectPerm('add_issue'))
+    bulk_create_perms = HasProjectPerm('add_issue')
 
 
 class HasIssueIdUrlParam(PermissionComponent):
