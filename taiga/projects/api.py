@@ -153,9 +153,14 @@ class MembershipViewSet(ModelCrudViewSet):
         serializer = self.get_serializer(data=data, files=request.FILES)
 
         if serializer.is_valid():
-            qs = self.model.objects.filter(Q(project_id=serializer.data["project"],
+            project_id = serializer.data["project"]
+            project = get_object_or_404(models.Project, id=project_id)
+
+            self.check_permissions(request, 'create', project)
+
+            qs = self.model.objects.filter(Q(project_id=project_id,
                                              user__email=serializer.data["email"]) |
-                                           Q(project_id=serializer.data["project"],
+                                           Q(project_id=project_id,
                                              email=serializer.data["email"]))
             if qs.count() > 0:
                 raise exc.WrongArguments(_("Email address is already taken."))

@@ -1473,6 +1473,38 @@ def test_membership_patch(client, data):
     results = helper_test_http_method(client, 'patch', private2_url, '{"name": "Test"}', users)
     assert results == [401, 403, 403, 403, 200]
 
+def test_membership_create(client, data):
+    url = reverse('memberships-list')
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    membership_data = serializers.MembershipSerializer(data.public_membership).data
+    membership_data["id"] = None
+    membership_data["email"] = "test1@test.com"
+    membership_data = JSONRenderer().render(membership_data)
+    results = helper_test_http_method(client, 'post', url, membership_data, users)
+    assert results == [401, 403, 403, 403, 201]
+
+    membership_data = serializers.MembershipSerializer(data.private_membership1).data
+    membership_data["id"] = None
+    membership_data["email"] = "test2@test.com"
+    membership_data = JSONRenderer().render(membership_data)
+    results = helper_test_http_method(client, 'post', url, membership_data, users)
+    assert results == [401, 403, 403, 403, 201]
+
+    membership_data = serializers.MembershipSerializer(data.private_membership2).data
+    membership_data["id"] = None
+    membership_data["email"] = "test3@test.com"
+    membership_data = JSONRenderer().render(membership_data)
+    results = helper_test_http_method(client, 'post', url, membership_data, users)
+    assert results == [401, 403, 403, 403, 201]
+
 
 def test_project_template_retrieve(client, data):
     url = reverse('project-templates-detail', kwargs={"pk": data.project_template.pk})
