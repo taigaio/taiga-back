@@ -22,8 +22,10 @@ from taiga.base.serializers import JsonField, PgArrayField
 from taiga.users.models import Role, User
 from taiga.users.services import get_photo_or_gravatar_url
 from taiga.users.serializers import UserSerializer
+from taiga.users.validators import RoleExistsValidator
 
 from . import models
+from . validators import ProjectExistsValidator
 
 
 # User Stories common serializers
@@ -215,3 +217,13 @@ class StarredSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Project
         fields = ['id', 'name', 'slug']
+
+
+class MemberBulkSerializer(RoleExistsValidator, serializers.Serializer):
+    email = serializers.EmailField()
+    role_id = serializers.IntegerField()
+
+
+class MembersBulkSerializer(ProjectExistsValidator, serializers.Serializer):
+    project_id = serializers.IntegerField()
+    bulk_memberships = MemberBulkSerializer(many=True)

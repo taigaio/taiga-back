@@ -25,7 +25,7 @@ from rest_framework.exceptions import ParseError
 from rest_framework import viewsets
 from rest_framework import status
 
-from taiga.base import filters
+from taiga.base import filters, response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
@@ -176,23 +176,18 @@ class MembershipViewSet(ModelCrudViewSet):
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
-        project_id = request.DATA.get('project_id', None)
-        if project_id is None:
-            raise exc.BadRequest(_('project_id parameter is mandatory'))
+        serializer = serializers.MembersBulkSerializer(data=request.DATA)
+        if serializer.is_valid():
+            data = serializer.data
+            project = models.Project.objects.get(id=data["project_id"])
+            self.check_permissions(request, 'bulk_create', project)
+            members = services.create_members_in_bulk(
+                data["bulk_memberships"], project=project, callback=self.post_save)
+            members_serialized = self.serializer_class(members, many=True)
 
-        bulk_members = request.DATA.get('bulk_memberships', None)
-        if bulk_members is None:
-            raise exc.BadRequest(_('bulk_memberships parameter is mandatory'))
+            return response.Ok(data=members_serialized.data)
 
-        project = get_object_or_404(models.Project, id=project_id)
-
-        self.check_permissions(request, 'bulk_create', project)
-
-        members = services.create_members_in_bulk(bulk_members, callback=self.post_save,
-                                                  project=project)
-
-        members_serialized = self.serializer_class(members, many=True)
-        return Response(data=members_serialized.data)
+        return response.BadRequest(serializer.errors)
 
     @detail_route(methods=["POST"])
     def resend_invitation(self, request, **kwargs):
