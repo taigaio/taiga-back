@@ -65,10 +65,10 @@ def data():
 
 
 def test_project_defined_points(client, data):
-    assert data.project.defined_points == {1: 15}
+    assert data.project.defined_points == {data.role1.pk: 15}
     data.role_points1.role = data.role2
     data.role_points1.save()
-    assert data.project.defined_points == {1: 14, 2: 1}
+    assert data.project.defined_points == {data.role1.pk: 14, data.role2.pk: 1}
 
 
 def test_project_closed_points(client, data):
