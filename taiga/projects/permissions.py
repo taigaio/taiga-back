@@ -42,6 +42,7 @@ class MembershipPermission(ResourcePermission):
     destroy_perms = IsProjectOwner()
     list_perms = AllowAny()
     bulk_create_perms = IsProjectOwner()
+    resend_invitation_perms = IsProjectOwner()
 
 
 # User Stories

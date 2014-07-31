@@ -1551,6 +1551,33 @@ def test_membership_action_bulk_create(client, data):
     assert results == [401, 403, 403, 403, 200]
 
 
+def test_membership_action_resend_invitation(client, data):
+    public_invitation = f.InvitationFactory(project=data.public_project, role__project=data.public_project)
+    private_invitation1 = f.InvitationFactory(project=data.private_project1, role__project=data.private_project1)
+    private_invitation2 = f.InvitationFactory(project=data.private_project2, role__project=data.private_project2)
+
+    public_url = reverse('memberships-resend-invitation', kwargs={"pk": public_invitation.pk})
+    private1_url = reverse('memberships-resend-invitation', kwargs={"pk": private_invitation1.pk})
+    private2_url = reverse('memberships-resend-invitation', kwargs={"pk": private_invitation2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, None, users)
+    assert results == [401, 403, 403, 403, 204]
+
+    results = helper_test_http_method(client, 'post', private1_url, None, users)
+    assert results == [401, 403, 403, 403, 204]
+
+    results = helper_test_http_method(client, 'post', private2_url, None, users)
+    assert results == [404, 404, 403, 403, 204]
+
+
 def test_project_template_retrieve(client, data):
     url = reverse('project-templates-detail', kwargs={"pk": data.project_template.pk})
 

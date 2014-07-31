@@ -196,7 +196,11 @@ class MembershipViewSet(ModelCrudViewSet):
 
     @detail_route(methods=["POST"])
     def resend_invitation(self, request, **kwargs):
-        services.send_invitation(invitation=self.get_object())
+        invitation = self.get_object()
+
+        self.check_permissions(request, 'resend_invitation', invitation.project)
+
+        services.send_invitation(invitation=invitation)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def pre_save(self, object):

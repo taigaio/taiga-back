@@ -128,6 +128,15 @@ class MembershipFactory(Factory):
     user = factory.SubFactory("tests.factories.UserFactory")
 
 
+class InvitationFactory(Factory):
+    FACTORY_FOR = get_model("projects", "Membership")
+
+    token = factory.LazyAttribute(lambda obj: str(uuid.uuid1()))
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    role = factory.SubFactory("tests.factories.RoleFactory")
+    email = factory.Sequence(lambda n: "user{}@email.com".format(n))
+
+
 class StorageEntryFactory(Factory):
     FACTORY_FOR = get_model("userstorage", "StorageEntry")
 
