@@ -18,15 +18,12 @@ from django.db import transaction
 from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404
 
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from taiga.base import filters
+from taiga.base import filters, response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
-from taiga.base.decorators import action
-from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet
 
 from taiga.projects.notifications import WatchedResourceMixin
@@ -68,30 +65,18 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
-        bulk_stories = request.DATA.get('bulkStories', None)
-        if bulk_stories is None:
-            raise exc.BadRequest(_('bulkStories parameter is mandatory'))
-
-        project_id = request.DATA.get('projectId', None)
-        if project_id is None:
-            raise exc.BadRequest(_('projectId parameter is mandatory'))
-
-        project = get_object_or_404(Project, id=project_id)
-
-        status_id = request.DATA.get('statusId', None)
-        if status_id:
-            status = get_object_or_404(UserStoryStatus, id=status_id)
-        else:
-            status = project.default_us_status
-
-        self.check_permissions(request, 'bulk_create', project)
-
-        user_stories = services.create_userstories_in_bulk(
-            bulk_stories, callback=self.post_save, project=project, owner=request.user,
-            status=status)
-
-        user_stories_serialized = self.serializer_class(user_stories, many=True)
-        return Response(data=user_stories_serialized.data)
+        serializer = serializers.UserStoriesBulkSerializer(data=request.DATA)
+        if serializer.is_valid():
+            data = serializer.data
+            project = Project.objects.get(id=data["project_id"])
+            self.check_permissions(request, 'bulk_create', project)
+            user_stories = services.create_userstories_in_bulk(
+                data["bulk_stories"], project=project, owner=request.user,
+                status_id=data.get("status_id", project.default_us_status_id),
+                callback=self.post_save)
+            user_stories_serialized = self.serializer_class(user_stories, many=True)
+            return response.Ok(user_stories_serialized.data)
+        return response.BadRequest(serializer.errors)
 
     @list_route(methods=["POST"])
     def bulk_update_order(self, request, **kwargs):

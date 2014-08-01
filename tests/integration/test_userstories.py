@@ -70,9 +70,9 @@ def test_api_create_in_bulk_with_status(client):
     project = f.create_project()
     url = reverse("userstories-bulk-create")
     data = {
-        "bulkStories": "Story #1\nStory #2",
-        "projectId": project.id,
-        "statusId": project.default_us_status.id
+        "bulk_stories": "Story #1\nStory #2",
+        "project_id": project.id,
+        "status_id": project.default_us_status.id
     }
 
     client.login(project.owner)
