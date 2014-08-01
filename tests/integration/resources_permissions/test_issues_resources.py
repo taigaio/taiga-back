@@ -295,15 +295,15 @@ def test_issue_bulk_create(client, data):
     ]
 
 
-    bulk_data = json.dumps({"bulkIssues": "test1\ntest2", "projectId": data.public_issue.project.pk})
+    bulk_data = json.dumps({"bulk_issues": "test1\ntest2", "project_id": data.public_issue.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 200, 200, 200, 200]
 
-    bulk_data = json.dumps({"bulkIssues": "test1\ntest2", "projectId": data.private_issue1.project.pk})
+    bulk_data = json.dumps({"bulk_issues": "test1\ntest2", "project_id": data.private_issue1.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 200, 200, 200, 200]
 
-    bulk_data = json.dumps({"bulkIssues": "test1\ntest2", "projectId": data.private_issue2.project.pk})
+    bulk_data = json.dumps({"bulk_issues": "test1\ntest2", "project_id": data.private_issue2.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 403, 403, 200, 200]
 

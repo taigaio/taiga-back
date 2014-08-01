@@ -47,8 +47,8 @@ def test_api_create_issues_in_bulk(client):
     project = f.create_project()
 
     url = reverse("issues-bulk-create")
-    data = {"bulkIssues": "Issue #1\nIssue #2",
-            "projectId": project.id}
+    data = {"bulk_issues": "Issue #1\nIssue #2",
+            "project_id": project.id}
 
     client.login(project.owner)
     response = client.json.post(url, data)

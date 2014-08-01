@@ -22,7 +22,7 @@ from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status
 
-from taiga.base import filters
+from taiga.base import filters, response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import detail_route, list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
@@ -155,25 +155,21 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
-        bulk_issues = request.DATA.get('bulkIssues', None)
-        if bulk_issues is None:
-            raise exc.BadRequest(_('bulkIssues parameter is mandatory'))
+        serializer = serializers.IssuesBulkSerializer(data=request.DATA)
+        if serializer.is_valid():
+            data = serializer.data
+            project = Project.objects.get(pk=data["project_id"])
+            self.check_permissions(request, 'bulk_create', project)
+            issues = services.create_issues_in_bulk(
+                data["bulk_issues"], project=project, owner=request.user,
+                status=project.default_issue_status, severity=project.default_severity,
+                priority=project.default_priority, type=project.default_issue_type,
+                callback=self.post_save)
+            issues_serialized = self.serializer_class(issues, many=True)
 
-        project_id = request.DATA.get('projectId', None)
-        if project_id is None:
-            raise exc.BadRequest(_('projectId parameter is mandatory'))
+            return response.Ok(data=issues_serialized.data)
 
-        project = get_object_or_404(Project, id=project_id)
-
-        self.check_permissions(request, 'bulk_create', project)
-
-        issues = services.create_issues_in_bulk(
-            bulk_issues, callback=self.post_save, project=project, owner=request.user,
-            status=project.default_issue_status, severity=project.default_severity,
-            priority=project.default_priority, type=project.default_issue_type)
-
-        issues_serialized = self.serializer_class(issues, many=True)
-        return Response(data=issues_serialized.data)
+        return response.BadRequest(serializer.errors)
 
     @detail_route(methods=['post'])
     def upvote(self, request, pk=None):

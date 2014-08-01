@@ -72,7 +72,7 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
             self.check_permissions(request, 'bulk_create', project)
             user_stories = services.create_userstories_in_bulk(
                 data["bulk_stories"], project=project, owner=request.user,
-                status_id=data.get("status_id", project.default_us_status_id),
+                status_id=data.get("status_id") or project.default_us_status_id,
                 callback=self.post_save)
             user_stories_serialized = self.serializer_class(user_stories, many=True)
             return response.Ok(user_stories_serialized.data)

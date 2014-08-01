@@ -16,8 +16,9 @@
 
 from rest_framework import serializers
 
-from taiga.base.serializers import PickleField, NeighborsSerializerMixin
+from taiga.base.serializers import Serializer, PickleField, NeighborsSerializerMixin
 from taiga.mdrender.service import render as mdrender
+from taiga.projects.validators import ProjectExistsValidator
 
 from . import models
 
@@ -62,3 +63,8 @@ class NeighborIssueSerializer(serializers.ModelSerializer):
         model = models.Issue
         fields = ("id", "ref", "subject")
         depth = 0
+
+
+class IssuesBulkSerializer(ProjectExistsValidator, Serializer):
+    project_id = serializers.IntegerField()
+    bulk_issues = serializers.CharField()
