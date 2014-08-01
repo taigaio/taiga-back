@@ -18,9 +18,9 @@ import json
 from django.db.models import get_model
 from rest_framework import serializers
 
-from taiga.base.serializers import PickleField, NeighborsSerializerMixin
+from taiga.base.serializers import Serializer, PickleField, NeighborsSerializerMixin
 from taiga.mdrender.service import render as mdrender
-from taiga.projects.validators import ProjectExistsValidator
+from taiga.projects.validators import ProjectExistsValidator, UserStoryStatusExistsValidator
 
 from . import models
 
@@ -111,7 +111,8 @@ class NeighborUserStorySerializer(serializers.ModelSerializer):
         depth = 0
 
 
-class UserStoriesBulkSerializer(ProjectExistsValidator, serializers.Serializer):
+class UserStoriesBulkSerializer(ProjectExistsValidator, UserStoryStatusExistsValidator,
+                                Serializer):
     project_id = serializers.IntegerField()
     status_id = serializers.IntegerField(required=False)
     bulk_stories = serializers.CharField()

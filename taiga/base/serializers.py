@@ -79,3 +79,42 @@ class NeighborsSerializerMixin:
             "previous": self.serialize_neighbor(left),
             "next": self.serialize_neighbor(right)
         }
+
+
+class Serializer(serializers.Serializer):
+    def skip_field_validation(self, field, attrs, source):
+        return source not in attrs and (field.partial or not field.required)
+
+    def perform_validation(self, attrs):
+        """
+        Run `validate_<fieldname>()` and `validate()` methods on the serializer
+        """
+        for field_name, field in self.fields.items():
+            if field_name in self._errors:
+                continue
+
+            source = field.source or field_name
+            if self.skip_field_validation(field, attrs, source):
+                continue
+
+            try:
+                validate_method = getattr(self, 'validate_%s' % field_name, None)
+                if validate_method:
+                    attrs = validate_method(attrs, source)
+            except serializers.ValidationError as err:
+                self._errors[field_name] = self._errors.get(field_name, []) + list(err.messages)
+
+        # If there are already errors, we don't run .validate() because
+        # field-validation failed and thus `attrs` may not be complete.
+        # which in turn can cause inconsistent validation errors.
+        if not self._errors:
+            try:
+                attrs = self.validate(attrs)
+            except serializers.ValidationError as err:
+                if hasattr(err, 'message_dict'):
+                    for field_name, error_messages in err.message_dict.items():
+                        self._errors[field_name] = self._errors.get(field_name, []) + list(error_messages)
+                elif hasattr(err, 'messages'):
+                    self._errors['non_field_errors'] = err.messages
+
+        return attrs

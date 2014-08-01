@@ -78,5 +78,5 @@ def test_api_create_in_bulk_with_status(client):
     client.login(project.owner)
     response = client.json.post(url, data)
 
-    assert response.status_code == 200
+    assert response.status_code == 200, response.data
     assert response.data[0]["status"] == project.default_us_status.id

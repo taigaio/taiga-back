@@ -15,20 +15,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import get_object_or_404
 
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework import status
-
-from taiga.base import filters
+from taiga.base import filters, response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
-from taiga.base.permissions import has_project_perm
 from taiga.base.api import ModelCrudViewSet
-from taiga.projects.models import Project, TaskStatus
-from taiga.projects.milestones.models import Milestone
-from taiga.projects.userstories.models import UserStory
+from taiga.projects.models import Project
 
 from taiga.projects.notifications import WatchedResourceMixin
 from taiga.projects.history import HistoryResourceMixin
@@ -70,39 +62,17 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
-        bulk_tasks = request.DATA.get('bulkTasks', None)
-        if bulk_tasks is None:
-            raise exc.BadRequest(_('bulkTasks parameter is mandatory'))
+        serializer = serializers.TasksBulkSerializer(data=request.DATA)
+        if serializer.is_valid():
+            data = serializer.data
+            project = Project.objects.get(id=data["project_id"])
+            self.check_permissions(request, 'bulk_create', project)
+            tasks = services.create_tasks_in_bulk(
+                data["bulk_tasks"], milestone_id=data["sprint_id"], user_story_id=data["us_id"],
+                status_id=data.get("status_id", project.default_task_status_id),
+                project=project, owner=request.user, callback=self.post_save)
+            tasks_serialized = self.serializer_class(tasks, many=True)
 
-        project_id = request.DATA.get('projectId', None)
-        if project_id is None:
-            raise exc.BadRequest(_('projectId parameter is mandatory'))
+            return response.Ok(tasks_serialized.data)
 
-        sprint_id = request.DATA.get('sprintId', None)
-        if sprint_id is None:
-            raise exc.BadRequest(_('sprintId parameter is mandatory'))
-
-        milestone = get_object_or_404(Milestone, id=sprint_id)
-
-        us_id = request.DATA.get('usId', None)
-        user_story = None
-        if us_id:
-            user_story = get_object_or_404(UserStory, id=us_id)
-
-        project = get_object_or_404(Project, id=project_id)
-        user_story = get_object_or_404(UserStory, id=us_id)
-
-        self.check_permissions(request, 'bulk_create', project)
-
-        status_id = request.DATA.get('statusId', None)
-        if status_id:
-            status = get_object_or_404(TaskStatus, id=status_id)
-        else:
-            status = project.default_task_status
-
-        tasks = services.create_tasks_in_bulk(bulk_tasks, callback=self.post_save, project=project,
-                                              user_story=user_story, owner=request.user,
-                                              milestone=milestone, status=status)
-
-        tasks_serialized = self.serializer_class(tasks, many=True)
-        return Response(data=tasks_serialized.data)
+        return response.BadRequest(serializer.errors)

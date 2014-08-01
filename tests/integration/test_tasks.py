@@ -49,11 +49,11 @@ def test_api_create_in_bulk_with_status(client):
     us = f.create_userstory()
     url = reverse("tasks-bulk-create")
     data = {
-        "bulkTasks": "Story #1\nStory #2",
-        "usId": us.id,
-        "projectId": us.project.id,
-        "sprintId": us.milestone.id,
-        "statusId": us.project.default_task_status.id
+        "bulk_tasks": "Story #1\nStory #2",
+        "us_id": us.id,
+        "project_id": us.project.id,
+        "sprint_id": us.milestone.id,
+        "status_id": us.project.default_task_status.id
     }
 
     client.login(us.owner)

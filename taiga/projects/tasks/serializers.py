@@ -16,8 +16,11 @@
 
 from rest_framework import serializers
 
-from taiga.base.serializers import PickleField, NeighborsSerializerMixin
+from taiga.base.serializers import Serializer, PickleField, NeighborsSerializerMixin
 from taiga.mdrender.service import render as mdrender
+from taiga.projects.validators import ProjectExistsValidator, TaskStatusExistsValidator
+from taiga.projects.milestones.validators import SprintExistsValidator
+from taiga.projects.userstories.validators import UserStoryExistsValidator
 
 from . import models
 
@@ -58,3 +61,12 @@ class NeighborTaskSerializer(serializers.ModelSerializer):
         model = models.Task
         fields = ("id", "ref", "subject")
         depth = 0
+
+
+class TasksBulkSerializer(ProjectExistsValidator, SprintExistsValidator, TaskStatusExistsValidator,
+                          UserStoryExistsValidator, Serializer):
+    project_id = serializers.IntegerField()
+    sprint_id = serializers.IntegerField()
+    status_id = serializers.IntegerField(required=False)
+    us_id = serializers.IntegerField()
+    bulk_tasks = serializers.CharField()
