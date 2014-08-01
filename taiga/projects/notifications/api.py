@@ -44,10 +44,9 @@ class NotifyPolicyViewSet(ModelCrudViewSet):
         projects = Project.objects.filter(
             Q(owner=self.request.user) |
             Q(memberships__user=self.request.user)
-        )
+        ).distinct()
         for project in projects:
-            if not services.notify_policy_exists(project, self.request.user):
-                services.create_notify_policy(project, self.request.user, NotifyLevel.watch)
+            services.create_notify_policy_if_not_exists(project, self.request.user, NotifyLevel.watch)
 
     def get_queryset(self):
         self._build_needed_notify_policies()
@@ -55,5 +54,5 @@ class NotifyPolicyViewSet(ModelCrudViewSet):
         qs = models.NotifyPolicy.objects.filter(
             Q(project__owner=self.request.user) |
             Q(project__memberships__user=self.request.user)
-        ).order_by("project__name")
+        )
         return qs.distinct()

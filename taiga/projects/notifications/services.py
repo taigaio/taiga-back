@@ -52,6 +52,20 @@ def create_notify_policy(project, user, level=NotifyLevel.notwatch):
         raise exc.IntegrityError("Notify exists for specified user and project") from e
 
 
+def create_notify_policy_if_not_exists(project, user, level=NotifyLevel.notwatch):
+    """
+    Given a project and user, create notification policy for it.
+    """
+    model_cls = get_model("notifications", "NotifyPolicy")
+    try:
+        result = model_cls.objects.get_or_create(project=project,
+                                               user=user,
+                                               defaults={"notify_level": level})
+        return result[0]
+    except IntegrityError as e:
+        raise exc.IntegrityError("Notify exists for specified user and project") from e
+
+
 def get_notify_policy(project, user):
     """
     Get notification level for specified project and user.
