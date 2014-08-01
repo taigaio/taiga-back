@@ -188,6 +188,17 @@ class UsersViewSet(ModelCrudViewSet):
 
         return Response(user_data, status=status.HTTP_200_OK)
 
+    @list_route(methods=["POST"])
+    def remove_avatar(self, request):
+        """
+        Remove the avatar of current logged user.
+        """
+        self.check_permissions(request, "remove_avatar", None)
+        request.user.photo = None
+        request.user.save(update_fields=["photo"])
+        user_data = serializers.UserSerializer(request.user).data
+        return Response(user_data, status=status.HTTP_200_OK)
+
     @detail_route(methods=["GET"])
     def starred(self, request, pk=None):
         user = self.get_object()
