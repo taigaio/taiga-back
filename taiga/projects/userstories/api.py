@@ -80,27 +80,16 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
 
     @list_route(methods=["POST"])
     def bulk_update_order(self, request, **kwargs):
-        # bulkStories should be:
-        # [[1,1],[23, 2], ...]
+        serializer = serializers.UpdateUserStoriesBulkSerializer(data=request.DATA)
+        if serializer.is_valid():
+            data = serializer.data
+            project = Project.objects.get(id=data["project_id"])
+            self.check_permissions(request, 'bulk_update_order', project)
+            # services.update_userstories_order_in_bulk(data["bulk_stories"])
 
-        # TODO: Generate the histoy snaptshot when change the uss order in the backlog.
-        #       Implement order with linked lists \o/.
-        bulk_stories = request.DATA.get("bulkStories", None)
+            return response.NoContent()
 
-        if bulk_stories is None:
-            raise exc.BadRequest(_("bulkStories parameter is mandatory"))
-
-        project_id = request.DATA.get('projectId', None)
-        if project_id is None:
-            raise exc.BadRequest(_("projectId parameter ir mandatory"))
-
-        project = get_object_or_404(Project, id=project_id)
-
-        self.check_permissions(request, 'bulk_update_order', project)
-
-        services.update_userstories_order_in_bulk(bulk_stories)
-
-        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+        return response.BadRequest(serializer.errors)
 
     @transaction.atomic
     def create(self, *args, **kwargs):

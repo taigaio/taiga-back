@@ -6,7 +6,7 @@ from . import models
 
 
 class UserStoryExistsValidator:
-    def validate_project_id(self, attrs, source):
+    def validate_us_id(self, attrs, source):
         value = attrs[source]
         if not models.UserStory.objects.filter(pk=value).exists():
             msg = _("There's no user story with that id")

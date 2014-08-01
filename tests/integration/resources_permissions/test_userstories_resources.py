@@ -250,15 +250,15 @@ def test_user_story_action_bulk_create(client, data):
         data.project_owner
     ]
 
-    bulk_data = json.dumps({"bulkStories": "test1\ntest2", "projectId": data.public_user_story.project.pk})
+    bulk_data = json.dumps({"bulk_stories": "test1\ntest2", "projectId": data.public_user_story.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 200, 200, 200, 200]
 
-    bulk_data = json.dumps({"bulkStories": "test1\ntest2", "projectId": data.private_user_story1.project.pk})
+    bulk_data = json.dumps({"bulk_stories": "test1\ntest2", "projectId": data.private_user_story1.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 200, 200, 200, 200]
 
-    bulk_data = json.dumps({"bulkStories": "test1\ntest2", "projectId": data.private_user_story2.project.pk})
+    bulk_data = json.dumps({"bulk_stories": "test1\ntest2", "projectId": data.private_user_story2.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 403, 403, 200, 200]
 
@@ -275,22 +275,22 @@ def test_user_story_action_bulk_update_order(client, data):
     ]
 
     post_data = json.dumps({
-        "bulkStories": [(1,2)],
-        "projectId": data.public_project.pk
+        "bulk_stories": [{"us_id": 1, "order": 2}],
+        "project_id": data.public_project.pk
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 204, 204]
 
     post_data = json.dumps({
-        "bulkStories": [(1,2)],
-        "projectId": data.private_project1.pk
+        "bulk_stories": [{"id": 1, "order": 2}],
+        "project_id": data.private_project1.pk
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 204, 204]
 
     post_data = json.dumps({
-        "bulkStories": [(1,2)],
-        "projectId": data.private_project2.pk
+        "bulk_stories": [{"id": 1, "order": 2}],
+        "project_id": data.private_project2.pk
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 204, 204]

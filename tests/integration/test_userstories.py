@@ -80,3 +80,20 @@ def test_api_create_in_bulk_with_status(client):
 
     assert response.status_code == 200, response.data
     assert response.data[0]["status"] == project.default_us_status.id
+
+
+def test_api_update_order_in_bulk(client):
+    project = f.create_project()
+    us1 = f.create_userstory(project=project)
+    us2 = f.create_userstory(project=project)
+    url = reverse("userstories-bulk-update-order")
+    data = {
+        "project_id": project.id,
+        "bulk_stories": [{"us_id": us1.id, "order": 1},
+                         {"us_id": us2.id, "order": 2}]
+    }
+
+    client.login(project.owner)
+    response = client.json.post(url, data)
+
+    assert response.status_code == 204, response.data

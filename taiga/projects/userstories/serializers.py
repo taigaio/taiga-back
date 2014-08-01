@@ -21,6 +21,7 @@ from rest_framework import serializers
 from taiga.base.serializers import Serializer, PickleField, NeighborsSerializerMixin
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator, UserStoryStatusExistsValidator
+from taiga.projects.userstories.validators import UserStoryExistsValidator
 
 from . import models
 
@@ -116,3 +117,14 @@ class UserStoriesBulkSerializer(ProjectExistsValidator, UserStoryStatusExistsVal
     project_id = serializers.IntegerField()
     status_id = serializers.IntegerField(required=False)
     bulk_stories = serializers.CharField()
+
+
+class UserStoryOrderBulkSerializer(UserStoryExistsValidator, Serializer):
+    us_id = serializers.IntegerField()
+    order = serializers.IntegerField()
+
+
+class UpdateUserStoriesBulkSerializer(ProjectExistsValidator, UserStoryStatusExistsValidator,
+                                      Serializer):
+    project_id = serializers.IntegerField()
+    bulk_stories = UserStoryOrderBulkSerializer(many=True)
