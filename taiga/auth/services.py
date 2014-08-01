@@ -87,7 +87,7 @@ def get_membership_by_token(token:str):
     is raised.
     """
     membership_model = get_model("projects", "Membership")
-    qs = membership_model.objects.filter(user__isnull=True, token=token)
+    qs = membership_model.objects.filter(token=token)
     if len(qs) == 0:
         raise exc.NotFound("Token not matches any valid invitation.")
     return qs[0]

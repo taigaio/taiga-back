@@ -61,7 +61,8 @@ def test_respond_201_if_domain_allows_public_registration(client, register_form)
     })
 
     response = client.post(reverse("auth-register"), register_form)
-    assert response.status_code == 201
+
+    assert response.status_code == 201, response.data
 
 
 def test_response_200_in_registration_with_github_account(client):
