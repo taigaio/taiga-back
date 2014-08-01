@@ -195,6 +195,20 @@ def test_user_action_change_avatar(client, data):
         assert response.status_code == 200
 
 
+def test_user_action_remove_avatar(client, data):
+    url = reverse('users-remove-avatar')
+
+    users = [
+        None,
+        data.registered_user,
+        data.other_user,
+        data.superuser,
+    ]
+
+    results = helper_test_http_method(client, 'post', url, None, users)
+    assert results == [401, 200, 200, 200]
+
+
 def test_user_action_change_password_from_recovery(client, data):
     url = reverse('users-change-password-from-recovery')
 
