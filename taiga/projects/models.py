@@ -130,8 +130,6 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                               related_name="owned_projects", verbose_name=_("owner"))
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="projects",
                                      through="Membership", verbose_name=_("members"))
-    public = models.BooleanField(default=True, null=False, blank=True,
-                                 verbose_name=_("public"))
     total_milestones = models.IntegerField(default=0, null=True, blank=True,
                                            verbose_name=_("total of milestones"))
     total_story_points = models.FloatField(default=0, verbose_name=_("total story points"))

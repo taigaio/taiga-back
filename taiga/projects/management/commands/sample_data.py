@@ -334,7 +334,7 @@ class Command(BaseCommand):
         project = Project.objects.create(name='Project Example {0}'.format(counter),
                                          description='Project example {0} description'.format(counter),
                                          owner=random.choice(self.users),
-                                         public=True,
+                                         is_private=False,
                                          total_story_points=self.sd.int(600, 3000),
                                          total_milestones=self.sd.int(5,10))
 
