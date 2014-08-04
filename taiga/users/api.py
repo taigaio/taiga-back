@@ -19,26 +19,22 @@ import uuid
 from django.db.models.loading import get_model
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import logout, login, authenticate
-from django.contrib.auth.hashers import make_password
 from django.utils.translation import ugettext_lazy as _
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
-from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.source_generators import pil_image
 
 
 from rest_framework.response import Response
 from rest_framework.filters import BaseFilterBackend
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 
 from djmail.template_mail import MagicMailBuilder
 
 from taiga.base.decorators import list_route, detail_route
-from taiga.base.decorators import action
 from taiga.base import exceptions as exc
 from taiga.base.api import ModelCrudViewSet
-from taiga.base.api import ModelListViewSet
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.projects.votes import services as votes_service
 from taiga.projects.serializers import StarredSerializer
@@ -207,6 +203,67 @@ class UsersViewSet(ModelCrudViewSet):
         stars = votes_service.get_voted(user.pk, model=get_model('projects', 'Project'))
         stars_data = StarredSerializer(stars, many=True)
         return Response(stars_data.data)
+
+    #TODO: commit_on_success
+    def partial_update(self, request, *args, **kwargs):
+        """
+        We must detect if the user is trying to change his email so we can
+        save that value and generate a token that allows him to validate it in
+        the new email account
+        """
+        user = self.get_object()
+        self.check_permissions(request, "update", user)
+
+        ret = super(UsersViewSet, self).partial_update(request, *args, **kwargs)
+
+        new_email = request.DATA.get('email', None)
+        if new_email is not None:
+            valid_new_email = True
+            duplicated_email = models.User.objects.filter(email = new_email).exists()
+
+            try:
+                validate_email(new_email)
+            except ValidationError:
+                valid_new_email = False
+
+            valid_new_email = valid_new_email and new_email != request.user.email
+
+            if duplicated_email:
+                raise exc.WrongArguments(_("Duplicated email"))
+            elif not valid_new_email:
+                raise exc.WrongArguments(_("Not valid email"))
+
+            #We need to generate a token for the email
+            request.user.email_token = str(uuid.uuid1())
+            request.user.new_email = new_email
+            request.user.save(update_fields=["email_token", "new_email"])
+            mbuilder = MagicMailBuilder()
+            email = mbuilder.change_email(request.user.email, {"user": request.user})
+            email.send()
+
+        return ret
+
+    @list_route(methods=["POST"])
+    def change_email(self, request, pk=None):
+        """
+        Verify the email change to current logged user.
+        """
+        serializer = serializers.ChangeEmailSerializer(data=request.DATA, many=False)
+        if not serializer.is_valid():
+            raise exc.WrongArguments(_("Token is invalid"))
+
+        try:
+            user = models.User.objects.get(email_token=serializer.data["email_token"])
+        except models.User.DoesNotExist:
+            raise exc.WrongArguments(_("Token is invalid"))
+
+        self.check_permissions(request, "change_email", user)
+        user.email = user.new_email
+        user.new_email = None
+        user.email_token = None
+        user.save(update_fields=["email", "new_email", "email_token"])
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, pk=None):
         user = self.get_object()

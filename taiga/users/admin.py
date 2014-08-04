@@ -48,7 +48,7 @@ class UserAdmin(DjangoUserAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('full_name', 'email', 'bio', 'photo')}),
-        (_('Extra info'), {'fields': ('color', 'default_language', 'default_timezone', 'token', 'colorize_tags')}),
+        (_('Extra info'), {'fields': ('color', 'default_language', 'default_timezone', 'token', 'colorize_tags', 'email_token', 'new_email')}),
         (_('Permissions'), {'fields': ('is_active', 'is_superuser',)}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )

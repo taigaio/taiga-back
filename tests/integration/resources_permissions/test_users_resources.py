@@ -4,8 +4,6 @@ from django.core.urlresolvers import reverse
 from rest_framework.renderers import JSONRenderer
 
 from taiga.users.serializers import UserSerializer
-from taiga.users.models import User
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
@@ -232,7 +230,7 @@ def test_user_action_change_password_from_recovery(client, data):
 def test_user_action_password_recovery(client, data):
     url = reverse('users-password-recovery')
 
-    new_user = f.UserFactory.create(username="test")
+    f.UserFactory.create(username="test")
 
     users = [
         None,
@@ -244,3 +242,20 @@ def test_user_action_password_recovery(client, data):
     patch_data = json.dumps({"username": "test"})
     results = helper_test_http_method(client, 'post', url, patch_data, users)
     assert results == [200, 200, 200, 200]
+
+def test_user_action_change_email(client, data):
+    url = reverse('users-change-email')
+
+    data.registered_user.email_token = "test-token"
+    data.registered_user.new_email = "new@email.com"
+    data.registered_user.save()
+
+    users = [
+        None,
+        data.registered_user,
+        data.other_user,
+    ]
+
+    patch_data = json.dumps({"email_token": "test-token"})
+    results = helper_test_http_method(client, 'post', url, patch_data, users)
+    assert results == [401, 204, 400]

@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext_lazy as _
-
 from rest_framework import serializers
 
 from .models import User
@@ -47,3 +45,6 @@ class UserSerializer(serializers.ModelSerializer):
 class RecoverySerializer(serializers.Serializer):
     token = serializers.CharField(max_length=200)
     password = serializers.CharField(min_length=6)
+
+class ChangeEmailSerializer(serializers.Serializer):
+    email_token = serializers.CharField(max_length=200)

@@ -12,8 +12,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import settings
-
 from django_jinja import library
 from django_sites import get_by_id as get_site_by_id
 
@@ -23,6 +21,7 @@ urls = {
 
     "login": "/login",
     "change-password": "/change-password/{0}",
+    "change-email": "/change-email/{0}",
     "invitation": "/invitation/{0}",
 
     "backlog": "/project/{0}/backlog/",

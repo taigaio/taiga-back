@@ -1,0 +1,27 @@
+{% extends "emails/base.jinja" %}
+
+{% set final_url = resolve_front_url("change-email", user.email_token) %}
+{% set final_url_name = "Taiga - Change email" %}
+
+{% block body %}
+<table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
+    <tr>
+        <td>
+            <h1>Change your email:</h1>
+            <p>Hello {{ user.get_full_name() }},</p>
+            <p>you can recover your password by going to the following url:</p>
+            <p><a style="color: #669900;" href="{{ final_url }}">{{ final_url }}</a>
+            <p>You can ignore this message if you did not request.</p>
+            <p>Regards</p>
+            <p>--<br />The Taiga Team</p>
+        </td>
+    </tr>
+</table>
+{% endblock %}
+
+{% block footer %}
+<p style="padding: 10px; border-top: 1px solid #eee;">
+    More info at:
+    <a href="{{ final_url }}" style="color: #666;">{{ final_url_name }}</a>
+</p>
+{% endblock %}

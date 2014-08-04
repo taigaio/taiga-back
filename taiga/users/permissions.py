@@ -38,3 +38,4 @@ class UserPermission(ResourcePermission):
     change_avatar_perms = IsAuthenticated()
     remove_avatar_perms = IsAuthenticated()
     starred_perms = AllowAny()
+    change_email_perms = IsTheSameUser()

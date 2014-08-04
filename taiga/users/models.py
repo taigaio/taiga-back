@@ -96,6 +96,12 @@ class User(AbstractBaseUser, PermissionsMixin):
                                         verbose_name=_("colorize tags"))
     token = models.CharField(max_length=200, null=True, blank=True, default=None,
                              verbose_name=_("token"))
+
+    email_token = models.CharField(max_length=200, null=True, blank=True, default=None,
+                         verbose_name=_("email token"))
+
+    new_email = models.EmailField(_('new email address'), null=True, blank=True)
+
     github_id = models.IntegerField(null=True, blank=True, verbose_name=_("github ID"))
 
     USERNAME_FIELD = 'username'
