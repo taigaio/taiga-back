@@ -15,7 +15,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
-                                        IsProjectOwner, AllowAny)
+                                        IsProjectOwner, AllowAny,
+                                        PermissionComponent)
+
+
+class IsLastMilestone(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        return obj.project.milestones.filter(pk__gt=obj.pk).count() == 0
 
 
 class MilestonePermission(ResourcePermission):
@@ -24,6 +30,6 @@ class MilestonePermission(ResourcePermission):
     retrieve_perms = HasProjectPerm('view_milestones')
     create_perms = HasProjectPerm('add_milestone')
     update_perms = HasProjectPerm('modify_milestone')
-    destroy_perms = HasProjectPerm('delete_milestone')
+    destroy_perms = HasProjectPerm('delete_milestone') | (HasProjectPerm('delete_last_milestone') & IsLastMilestone())
     list_perms = AllowAny()
     stats_perms = HasProjectPerm('view_milestones')

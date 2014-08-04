@@ -146,6 +146,29 @@ def test_milestone_delete(client, data):
     assert results == [401, 403, 403, 204]
 
 
+def test_milestone_delete_last_milestone(client, data):
+    url_not_last_milestone = reverse('milestones-detail', kwargs={"pk": data.public_milestone.pk})
+
+    data.public_milestone2 = f.MilestoneFactory(project=data.public_project)
+    url_last_milestone = reverse('milestones-detail', kwargs={"pk": data.public_milestone2.pk})
+
+    data.public_membership.role.permissions = list(filter(lambda x: x != "delete_milestone", data.public_membership.role.permissions))
+    data.public_membership.role.save()
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+    ]
+    results = helper_test_http_method(client, 'delete', url_not_last_milestone, None, users)
+    assert results == [401, 403, 403, 403]
+    results = helper_test_http_method(client, 'delete', url_last_milestone, None, users)
+    assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', url_not_last_milestone, None, users)
+    assert results == [401, 403, 403, 204]
+
+
 def test_milestone_list(client, data):
     url = reverse('milestones-list')
 
