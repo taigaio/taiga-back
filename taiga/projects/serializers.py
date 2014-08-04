@@ -149,25 +149,17 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectDetailSerializer(ProjectSerializer):
-    roles = serializers.SerializerMethodField("get_list_of_roles")
-    memberships = serializers.SerializerMethodField("get_membership")
-    active_memberships = serializers.SerializerMethodField("get_active_membership")
+    roles = serializers.SerializerMethodField("get_roles")
+    memberships = serializers.SerializerMethodField("get_memberships")
     us_statuses = UserStoryStatusSerializer(many=True, required=False)       # User Stories
     points = PointsSerializer(many=True, required=False)
     task_statuses = TaskStatusSerializer(many=True, required=False)          # Tasks
-    priorities = PrioritySerializer(many=True, required=False)               # Issues
-    severities = SeveritySerializer(many=True, required=False)
     issue_statuses = IssueStatusSerializer(many=True, required=False)
     issue_types = IssueTypeSerializer(many=True, required=False)
+    priorities = PrioritySerializer(many=True, required=False)               # Issues
+    severities = SeveritySerializer(many=True, required=False)
 
-    def get_membership(self, obj):
-        qs = obj.memberships.order_by('user__full_name', 'user__username')
-        qs = qs.select_related("role", "user")
-
-        serializer = ProjectMembershipSerializer(qs, many=True)
-        return serializer.data
-
-    def get_active_membership(self, obj):
+    def get_memberships(self, obj):
         qs = obj.memberships.filter(user__isnull=False)
         qs = qs.order_by('user__full_name', 'user__username')
         qs = qs.select_related("role", "user")
@@ -175,7 +167,7 @@ class ProjectDetailSerializer(ProjectSerializer):
         serializer = ProjectMembershipSerializer(qs, many=True)
         return serializer.data
 
-    def get_list_of_roles(self, obj):
+    def get_roles(self, obj):
         serializer = ProjectRoleSerializer(obj.roles.all(), many=True)
         return serializer.data
 
