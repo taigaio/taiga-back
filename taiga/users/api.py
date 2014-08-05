@@ -250,12 +250,12 @@ class UsersViewSet(ModelCrudViewSet):
         """
         serializer = serializers.ChangeEmailSerializer(data=request.DATA, many=False)
         if not serializer.is_valid():
-            raise exc.WrongArguments(_("Token is invalid"))
+            raise exc.WrongArguments(_("Invalid, are you sure the token is correct and you didn't use it before?"))
 
         try:
             user = models.User.objects.get(email_token=serializer.data["email_token"])
         except models.User.DoesNotExist:
-            raise exc.WrongArguments(_("Token is invalid"))
+            raise exc.WrongArguments(_("Invalid, are you sure the token is correct and you didn't use it before?"))
 
         self.check_permissions(request, "change_email", user)
         user.email = user.new_email
