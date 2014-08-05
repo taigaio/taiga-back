@@ -235,7 +235,7 @@ class Command(BaseCommand):
                                                                                     project=project)),
                                    type=self.sd.db_object_from_queryset(IssueType.objects.filter(
                                                                                  project=project)),
-                                   tags=self.sd.words(1, 5).split(" "))
+                                   tags=self.sd.words(1, 10).split(" "))
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
             attachment = self.create_attachment(bug, i+1)
@@ -260,7 +260,8 @@ class Command(BaseCommand):
                     user_story=us,
                     finished_date=None,
                     assigned_to = self.sd.db_object_from_queryset(
-                    project.memberships.filter(user__isnull=False)).user)
+                    project.memberships.filter(user__isnull=False)).user,
+                    tags=self.sd.words(1, 10).split(" "))
 
         if closed:
             task.status = project.task_statuses.get(order=4)
@@ -290,7 +291,7 @@ class Command(BaseCommand):
                                       milestone=milestone,
                                       status=self.sd.db_object_from_queryset(project.us_statuses.filter(
                                                                              is_closed=False)),
-                                       tags=self.sd.words(1, 3).split(" "))
+                                      tags=self.sd.words(1, 3).split(" "))
 
         for role_points in us.role_points.filter(role__in=computable_project_roles):
             if milestone:
