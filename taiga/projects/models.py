@@ -745,8 +745,9 @@ def project_post_save(sender, instance, created, **kwargs):
     if not created:
         return
 
-    template_slug = getattr(instance, "template", None) or settings.DEFAULT_PROJECT_TEMPLATE
-    template = ProjectTemplate.objects.get(slug=template_slug)
+    template = getattr(instance, "creation_template", None)
+    if template is None:
+        template = ProjectTemplate.objects.get(slug=settings.DEFAULT_PROJECT_TEMPLATE)
     template.apply_to_project(instance)
 
     instance.save()
