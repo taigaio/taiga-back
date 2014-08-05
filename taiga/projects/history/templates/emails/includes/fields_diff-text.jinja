@@ -30,7 +30,7 @@
 {# TAGS AND WATCHERS #}
     {% elif field_name in ["tags", "watchers"] %}
     * to: {{ ', '.join(values.1)|linebreaksbr }}
-        {% if values.0 != None or values.0 != [] %}
+        {% if values.0 %}
     * from: {{ ', '.join(values.0)|linebreaksbr }}
         {% endif %}
 {# * #}
