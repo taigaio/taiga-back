@@ -110,6 +110,10 @@ class RawAttachmentView(generics.RetrieveAPIView):
 
         return response
 
+    def check_permissions(self, request, action='retrieve', obj=None):
+        self.object = self.get_object()
+        return super().check_permissions(request, action, self.object)
+
     def retrieve(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.check_permissions(request, 'retrieve', self.object)
