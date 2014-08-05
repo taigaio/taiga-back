@@ -37,11 +37,7 @@ MEMBERS_PERMISSIONS = [
     ('view_milestones', _('View milestones')),
     ('add_milestone', _('Add milestone')),
     ('modify_milestone', _('Modify milestone')),
-    ('delete_last_milestone', _('Delete last milestone')),
     ('delete_milestone', _('Delete milestone')),
-    ('add_us_to_milestone', _('Add use to milestone')),
-    ('remove_us_from_milestone', _('Remove us from milestone')),
-    ('reorder_us_on_milestone', _('Reorder us on milestone')),
     # US permissions
     ('view_us', _('View user story')),
     ('add_us', _('Add user story')),

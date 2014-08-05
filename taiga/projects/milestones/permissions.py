@@ -19,17 +19,12 @@ from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
                                         PermissionComponent)
 
 
-class IsLastMilestone(PermissionComponent):
-    def check_permissions(self, request, view, obj=None):
-        return obj.project.milestones.filter(pk__gt=obj.pk).count() == 0
-
-
 class MilestonePermission(ResourcePermission):
     enought_perms = IsProjectOwner()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_milestones')
     create_perms = HasProjectPerm('add_milestone')
     update_perms = HasProjectPerm('modify_milestone')
-    destroy_perms = HasProjectPerm('delete_milestone') | (HasProjectPerm('delete_last_milestone') & IsLastMilestone())
+    destroy_perms = HasProjectPerm('delete_milestone')
     list_perms = AllowAny()
     stats_perms = HasProjectPerm('view_milestones')
