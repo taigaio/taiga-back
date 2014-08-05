@@ -24,6 +24,8 @@ from taiga.users.services import get_photo_or_gravatar_url
 from taiga.users.serializers import UserSerializer
 from taiga.users.validators import RoleExistsValidator
 
+from taiga.permissions.service import get_user_project_permissions
+
 from . import models
 from . validators import ProjectExistsValidator
 
@@ -137,6 +139,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
     stars = serializers.SerializerMethodField("get_stars_number")
+    my_permissions = serializers.SerializerMethodField("get_my_permissions")
 
     class Meta:
         model = models.Project
@@ -146,6 +149,9 @@ class ProjectSerializer(serializers.ModelSerializer):
     def get_stars_number(self, obj):
         # The "stars_count" attribute is attached in the get_queryset of the viewset.
         return getattr(obj, "stars_count", 0)
+
+    def get_my_permissions(self, obj):
+        return get_user_project_permissions(self.context['request'].user, obj)
 
 
 class ProjectDetailSerializer(ProjectSerializer):
