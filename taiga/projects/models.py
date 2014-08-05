@@ -26,7 +26,6 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
-from picklefield.fields import PickledObjectField
 from django_pgjson.fields import JsonField
 from djorm_pgarray.fields import TextArrayField
 from taiga.permissions.permissions import ANON_PERMISSIONS, USER_PERMISSIONS
@@ -715,12 +714,6 @@ class ProjectTemplate(models.Model):
         if self.severities:
             project.default_severity = Severity.objects.get(name=self.default_options["severity"], project=project)
 
-        if self.default_owner_role:
-            # FIXME: is operation should to be on template apply method?
-            Membership.objects.create(user=project.owner,
-                                      project=project,
-                                      role=project.roles.get(slug=self.default_owner_role),
-                                      email=project.owner.email)
         return project
 
 
@@ -757,3 +750,6 @@ def project_post_save(sender, instance, created, **kwargs):
     template.apply_to_project(instance)
 
     instance.save()
+
+    owner_role = instance.roles.get(slug=template.default_owner_role)
+    Membership.objects.create(user=instance.owner, project=instance, role=owner_role, is_owner=True, email=instance.owner.email)
