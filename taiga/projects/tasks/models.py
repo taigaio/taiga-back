@@ -29,6 +29,7 @@ from taiga.projects.userstories.models import UserStory
 from taiga.projects.userstories import services as us_service
 from taiga.projects.milestones.models import Milestone
 from taiga.projects.mixins.blocked import BlockedMixin
+from taiga.projects.services.tags_colors import update_project_tags_colors_handler, remove_unused_tags
 
 
 class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
@@ -139,3 +140,14 @@ def tasks_milestone_close_handler(sender, instance, **kwargs):
         elif not instance.status.is_closed and instance.milestone.closed:
             instance.milestone.closed = False
             instance.milestone.save(update_fields=["closed"])
+
+
+@receiver(models.signals.post_save, sender=Task, dispatch_uid="task_update_project_colors")
+def task_update_project_tags(sender, instance, **kwargs):
+    update_project_tags_colors_handler(instance)
+
+
+@receiver(models.signals.post_delete, sender=Task, dispatch_uid="task_update_project_colors_on_delete")
+def task_update_project_tags_on_delete(sender, instance, **kwargs):
+    remove_unused_tags(instance.project)
+    instance.project.save()

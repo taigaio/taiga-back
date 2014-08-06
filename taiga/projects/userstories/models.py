@@ -25,6 +25,7 @@ from taiga.base.utils.slug import ref_uniquely
 from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
+from taiga.projects.services.tags_colors import update_project_tags_colors_handler, remove_unused_tags
 
 
 class RolePoints(models.Model):
@@ -165,3 +166,14 @@ def us_close_open_on_status_change(sender, instance, **kwargs):
         service.close_userstory(instance)
     else:
         service.open_userstory(instance)
+
+
+@receiver(models.signals.post_save, sender=UserStory, dispatch_uid="user_story_update_project_colors")
+def us_update_project_tags(sender, instance, **kwargs):
+    update_project_tags_colors_handler(instance)
+
+
+@receiver(models.signals.post_delete, sender=UserStory, dispatch_uid="user_story_update_project_colors_on_delete")
+def us_update_project_tags_on_delete(sender, instance, **kwargs):
+    remove_unused_tags(instance.project)
+    instance.project.save()

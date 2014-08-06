@@ -8,8 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from djorm_pgarray.fields import TextArrayField
 
-from picklefield.fields import PickledObjectField
-
 
 class TaggedMixin(models.Model):
     tags = TextArrayField(default=None, verbose_name=_("tags"))

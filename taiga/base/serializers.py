@@ -58,6 +58,19 @@ class PgArrayField(serializers.WritableField):
         return data
 
 
+class TagsColorsField(serializers.WritableField):
+    """
+    PgArray objects serializer.
+    """
+    widget = widgets.Textarea
+
+    def to_native(self, obj):
+        return dict(obj)
+
+    def from_native(self, data):
+        return list(data.items())
+
+
 class NeighborsSerializerMixin:
 
     def __init__(self, *args, **kwargs):

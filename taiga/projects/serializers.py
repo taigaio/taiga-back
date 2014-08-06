@@ -18,7 +18,7 @@ from os import path
 from rest_framework import serializers
 from django.utils.translation import ugettext_lazy as _
 
-from taiga.base.serializers import JsonField, PgArrayField, ModelSerializer
+from taiga.base.serializers import JsonField, PgArrayField, ModelSerializer, TagsColorsField
 from taiga.users.models import Role, User
 from taiga.users.services import get_photo_or_gravatar_url
 from taiga.users.serializers import UserSerializer
@@ -141,6 +141,7 @@ class ProjectSerializer(ModelSerializer):
     stars = serializers.SerializerMethodField("get_stars_number")
     my_permissions = serializers.SerializerMethodField("get_my_permissions")
     i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
+    tags_colors = TagsColorsField(required=False)
 
     class Meta:
         model = models.Project

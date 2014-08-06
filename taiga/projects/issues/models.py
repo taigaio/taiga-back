@@ -26,6 +26,7 @@ from taiga.base.utils.slug import ref_uniquely
 from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
+from taiga.projects.services.tags_colors import update_project_tags_colors_handler, remove_unused_tags
 
 
 class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
@@ -100,3 +101,14 @@ def issue_finished_date_handler(sender, instance, **kwargs):
 def issue_tags_normalization(sender, instance, **kwargs):
     if isinstance(instance.tags, (list, tuple)):
         instance.tags = list(map(lambda x: x.lower(), instance.tags))
+
+
+@receiver(models.signals.post_save, sender=Issue, dispatch_uid="issue_update_project_colors")
+def issue_update_project_tags(sender, instance, **kwargs):
+    update_project_tags_colors_handler(instance)
+
+
+@receiver(models.signals.post_delete, sender=Issue, dispatch_uid="issue_update_project_colors_on_delete")
+def issue_update_project_tags_on_delete(sender, instance, **kwargs):
+    remove_unused_tags(instance.project)
+    instance.project.save()
