@@ -18,3 +18,15 @@ def test_api_create_project(client):
     response = client.json.post(url, data)
 
     assert response.status_code == 201
+
+
+def test_api_partially_update_project(client):
+    f.ProjectTemplateFactory.create(slug=settings.DEFAULT_PROJECT_TEMPLATE)
+    project = f.create_project()
+    url = reverse("projects-detail", kwargs={"pk": project.pk})
+    data = {"name": ""}
+
+    client.login(project.owner)
+    response = client.json.patch(url, data)
+
+    assert response.status_code == 400
