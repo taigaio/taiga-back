@@ -20,9 +20,9 @@ import threading
 from datetime import date, timedelta
 
 from django.db.models.loading import get_model
+from django.conf import settings
 
 import factory
-from django.conf import settings
 
 
 class Factory(factory.DjangoModelFactory):
@@ -54,6 +54,7 @@ class ProjectTemplateFactory(Factory):
     priorities = []
     severities = []
     roles = []
+    default_owner_role = "tester"
 
 
 class ProjectFactory(Factory):
@@ -70,6 +71,7 @@ class RoleFactory(Factory):
     FACTORY_FOR = get_model("users", "Role")
 
     name = "Tester"
+    slug = "tester"
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
@@ -393,6 +395,8 @@ def create_project(**kwargs):
     defaults = {}
     defaults.update(kwargs)
 
+    ProjectTemplateFactory.create(slug=settings.DEFAULT_PROJECT_TEMPLATE)
+
     project = ProjectFactory.create(**defaults)
     project.default_issue_status = IssueStatusFactory.create(project=project)
     project.default_severity = SeverityFactory.create(project=project)
@@ -404,3 +408,10 @@ def create_project(**kwargs):
     project.save()
 
     return project
+
+
+def create_user(**kwargs):
+    "Create an user along with her dependencies"
+    ProjectTemplateFactory.create(slug=settings.DEFAULT_PROJECT_TEMPLATE)
+    RoleFactory.create()
+    return UserFactory.create(**kwargs)

@@ -752,5 +752,9 @@ def project_post_save(sender, instance, created, **kwargs):
 
     instance.save()
 
-    owner_role = instance.roles.get(slug=template.default_owner_role)
-    Membership.objects.create(user=instance.owner, project=instance, role=owner_role, is_owner=True, email=instance.owner.email)
+    try:
+        owner_role = instance.roles.get(slug=template.default_owner_role)
+        Membership.objects.create(user=instance.owner, project=instance, role=owner_role,
+                                  is_owner=True, email=instance.owner.email)
+    except Role.DoesNotExist:
+        pass

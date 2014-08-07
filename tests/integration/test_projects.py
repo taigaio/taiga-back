@@ -1,6 +1,5 @@
 import pytest
 
-from django.conf import settings
 from django.core.urlresolvers import reverse
 
 from .. import factories as f
@@ -9,8 +8,7 @@ pytestmark = pytest.mark.django_db
 
 
 def test_api_create_project(client):
-    f.ProjectTemplateFactory.create(slug=settings.DEFAULT_PROJECT_TEMPLATE)
-    user = f.UserFactory.create()
+    user = f.create_user()
     url = reverse("projects-list")
     data = {"name": "project name", "description": "project description"}
 
@@ -21,7 +19,6 @@ def test_api_create_project(client):
 
 
 def test_api_partially_update_project(client):
-    f.ProjectTemplateFactory.create(slug=settings.DEFAULT_PROJECT_TEMPLATE)
     project = f.create_project()
     url = reverse("projects-detail", kwargs={"pk": project.pk})
     data = {"name": ""}
