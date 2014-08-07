@@ -118,3 +118,12 @@ class Serializer(serializers.Serializer):
                     self._errors['non_field_errors'] = err.messages
 
         return attrs
+
+
+class ModelSerializer(serializers.ModelSerializer):
+    def perform_validation(self, attrs):
+        for attr in attrs:
+            field = self.fields.get(attr, None)
+            if field:
+                field.required = True
+        return super().perform_validation(attrs)

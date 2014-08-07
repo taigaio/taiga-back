@@ -18,7 +18,7 @@ from os import path
 from rest_framework import serializers
 from django.utils.translation import ugettext_lazy as _
 
-from taiga.base.serializers import JsonField, PgArrayField
+from taiga.base.serializers import JsonField, PgArrayField, ModelSerializer
 from taiga.users.models import Role, User
 from taiga.users.services import get_photo_or_gravatar_url
 from taiga.users.serializers import UserSerializer
@@ -32,12 +32,12 @@ from . validators import ProjectExistsValidator
 
 # User Stories common serializers
 
-class PointsSerializer(serializers.ModelSerializer):
+class PointsSerializer(ModelSerializer):
     class Meta:
         model = models.Points
 
 
-class UserStoryStatusSerializer(serializers.ModelSerializer):
+class UserStoryStatusSerializer(ModelSerializer):
     class Meta:
         model = models.UserStoryStatus
 
@@ -61,36 +61,36 @@ class UserStoryStatusSerializer(serializers.ModelSerializer):
 
 # Task common serializers
 
-class TaskStatusSerializer(serializers.ModelSerializer):
+class TaskStatusSerializer(ModelSerializer):
     class Meta:
         model = models.TaskStatus
 
 
 # Issues common serializers
 
-class SeveritySerializer(serializers.ModelSerializer):
+class SeveritySerializer(ModelSerializer):
     class Meta:
         model = models.Severity
 
 
-class PrioritySerializer(serializers.ModelSerializer):
+class PrioritySerializer(ModelSerializer):
     class Meta:
         model = models.Priority
 
 
-class IssueStatusSerializer(serializers.ModelSerializer):
+class IssueStatusSerializer(ModelSerializer):
     class Meta:
         model = models.IssueStatus
 
 
-class IssueTypeSerializer(serializers.ModelSerializer):
+class IssueTypeSerializer(ModelSerializer):
     class Meta:
         model = models.IssueType
 
 
 # Projects
 
-class MembershipSerializer(serializers.ModelSerializer):
+class MembershipSerializer(ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False, read_only=True)
     full_name = serializers.CharField(source='user.get_full_name', required=False, read_only=True)
     color = serializers.CharField(source='user.color', required=False, read_only=True)
@@ -121,7 +121,7 @@ class MembershipSerializer(serializers.ModelSerializer):
             return UserSerializer(queryset).data
 
 
-class ProjectMembershipSerializer(serializers.ModelSerializer):
+class ProjectMembershipSerializer(ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False)
     full_name = serializers.CharField(source='user.get_full_name', required=False)
     color = serializers.CharField(source='user.color', required=False)
@@ -134,7 +134,7 @@ class ProjectMembershipSerializer(serializers.ModelSerializer):
         return get_photo_or_gravatar_url(project.user)
 
 
-class ProjectSerializer(serializers.ModelSerializer):
+class ProjectSerializer(ModelSerializer):
     tags = PgArrayField(required=False)
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
@@ -182,13 +182,13 @@ class ProjectDetailSerializer(ProjectSerializer):
         return serializer.data
 
 
-class ProjectRoleSerializer(serializers.ModelSerializer):
+class ProjectRoleSerializer(ModelSerializer):
     class Meta:
         model = Role
         fields = ('id', 'name', 'slug', 'order', 'computable')
 
 
-class RoleSerializer(serializers.ModelSerializer):
+class RoleSerializer(ModelSerializer):
     members_count = serializers.SerializerMethodField("get_members_count")
     permissions = PgArrayField(required=False)
 
@@ -200,7 +200,7 @@ class RoleSerializer(serializers.ModelSerializer):
         return obj.memberships.count()
 
 
-class ProjectTemplateSerializer(serializers.ModelSerializer):
+class ProjectTemplateSerializer(ModelSerializer):
     default_options = JsonField(required=False, label=_("Default options"))
     us_statuses = JsonField(required=False, label=_("User story's statuses"))
     points = JsonField(required=False, label=_("Points"))
@@ -215,7 +215,7 @@ class ProjectTemplateSerializer(serializers.ModelSerializer):
         model = models.ProjectTemplate
 
 
-class StarredSerializer(serializers.ModelSerializer):
+class StarredSerializer(ModelSerializer):
     class Meta:
         model = models.Project
         fields = ['id', 'name', 'slug']
