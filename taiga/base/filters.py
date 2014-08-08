@@ -17,11 +17,13 @@ import operator
 from functools import reduce
 
 from django.db.models import Q
-from django.db.models.sql.where import ExtraWhere, OR
+from django.db.models.sql.where import ExtraWhere, OR, AND
 
 from rest_framework import filters
 
 from taiga.base import tags
+
+from taiga.users.models import Role
 
 
 class QueryParamsFilterMixin(filters.BaseFilterBackend):
@@ -89,19 +91,31 @@ class PermissionBasedFilterBackend(FilterBackend):
     permission = None
 
     def filter_queryset(self, request, queryset, view):
-        # TODO: Make permissions aware of members permissions, now only check membership.
+        project_id = None
+        if hasattr(view, "filter_fields") and "project" in view.filter_fields:
+            project_id = request.QUERY_PARAMS.get("project", None)
+
         qs = queryset
 
         if request.user.is_authenticated() and request.user.is_superuser:
             qs = qs
         elif request.user.is_authenticated():
-            qs = qs.filter(Q(project__owner=request.user) |
-                           Q(project__members=request.user) |
-                           Q(project__is_private=False))
+            roles_qs = Role.objects.filter(memberships__user=request.user)
+            roles_qs = roles_qs.extra(where=["users_role.permissions @> ARRAY['{}']".format(self.permission)])
+            if project_id:
+                roles_qs = roles_qs.filter(project_id=project_id)
+            projects_list = [role.project_id for role in roles_qs]
+
+            if len(projects_list) == 0:
+                qs = qs.filter(Q(project__owner=request.user))
+            elif len(projects_list) == 1:
+                qs = qs.filter(Q(project__owner=request.user) | Q(project=projects_list[0]))
+            else:
+                qs = qs.filter(Q(project__owner=request.user) | Q(project__in=projects_list))
             qs.query.where.add(ExtraWhere(["projects_project.public_permissions @> ARRAY['{}']".format(self.permission)], []), OR)
         else:
-            qs = qs.filter(project__is_private=False)
-            qs.query.where.add(ExtraWhere(["projects_project.anon_permissions @> ARRAY['{}']".format(self.permission)], []), OR)
+            qs = qs.exclude(project__owner=-1)
+            qs.query.where.add(ExtraWhere(["projects_project.anon_permissions @> ARRAY['{}']".format(self.permission)], []), AND)
 
         return super().filter_queryset(request, qs.distinct(), view)
 
@@ -133,28 +147,15 @@ class CanViewWikiLinksFilterBackend(PermissionBasedFilterBackend):
 class CanViewMilestonesFilterBackend(PermissionBasedFilterBackend):
     permission = "view_milestones"
 
-class PermissionBasedAttachmentFilterBackend(FilterBackend):
+
+class PermissionBasedAttachmentFilterBackend(PermissionBasedFilterBackend):
     permission = None
 
     def filter_queryset(self, request, queryset, view):
-        # TODO: Make permissions aware of members permissions, now only check membership.
-        qs = queryset
-
-        if request.user.is_authenticated() and request.user.is_superuser:
-            qs = qs
-        elif request.user.is_authenticated():
-            qs = qs.filter(Q(project__owner=request.user) |
-                           Q(project__members=request.user) |
-                           Q(project__is_private=False))
-            qs.query.where.add(ExtraWhere(["projects_project.public_permissions @> ARRAY['{}']".format(self.permission)], []), OR)
-        else:
-            qs = qs.filter(project__is_private=False)
-            qs.query.where.add(ExtraWhere(["projects_project.anon_permissions @> ARRAY['{}']".format(self.permission)], []), OR)
+        qs = super().filter_queryset(request, queryset, view)
 
         ct = view.get_content_type()
-        qs = qs.filter(content_type=ct)
-
-        return super().filter_queryset(request, qs.distinct(), view)
+        return qs.filter(content_type=ct)
 
 
 class CanViewUserStoryAttachmentFilterBackend(PermissionBasedAttachmentFilterBackend):
@@ -175,18 +176,30 @@ class CanViewWikiAttachmentFilterBackend(PermissionBasedAttachmentFilterBackend)
 
 class CanViewProjectObjFilterBackend(FilterBackend):
     def filter_queryset(self, request, queryset, view):
+        project_id = None
+        if hasattr(view, "filter_fields") and "project" in view.filter_fields:
+            project_id = request.QUERY_PARAMS.get("project", None)
+
         qs = queryset
 
         if request.user.is_authenticated() and request.user.is_superuser:
             qs = qs
         elif request.user.is_authenticated():
-            qs = qs.filter(Q(owner=request.user) |
-                           Q(members=request.user) |
-                           Q(is_private=False))
+            roles_qs = Role.objects.filter(memberships__user=request.user)
+            roles_qs = roles_qs.extra(where=["users_role.permissions @> ARRAY['view_project']"])
+            if project_id:
+                roles_qs = roles_qs.filter(project_id=project_id)
+            projects_list = [role.project_id for role in roles_qs]
+
+            if len(projects_list) == 0:
+                qs = qs.filter(Q(owner=request.user))
+            elif len(projects_list) == 1:
+                qs = qs.filter(Q(owner=request.user) | Q(id=projects_list[0]))
+            else:
+                qs = qs.filter(Q(owner=request.user) | Q(id__in=projects_list))
             qs.query.where.add(ExtraWhere(["projects_project.public_permissions @> ARRAY['view_project']"], []), OR)
         else:
-            qs = qs.filter(is_private=False)
-            qs.query.where.add(ExtraWhere(["projects_project.anon_permissions @> ARRAY['view_project']"], []), OR)
+            qs.query.where.add(ExtraWhere(["projects_project.anon_permissions @> ARRAY['view_project']"], []), AND)
 
         return super().filter_queryset(request, qs.distinct(), view)
 

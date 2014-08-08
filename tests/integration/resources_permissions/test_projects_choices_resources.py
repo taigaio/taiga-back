@@ -182,7 +182,7 @@ def test_roles_list(client, data):
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 5
+    assert len(projects_data) == 3
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
@@ -310,7 +310,7 @@ def test_points_list(client, data):
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 3
+    assert len(projects_data) == 2
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
@@ -471,7 +471,7 @@ def test_user_story_status_list(client, data):
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 3
+    assert len(projects_data) == 2
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
@@ -632,7 +632,7 @@ def test_task_status_list(client, data):
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 3
+    assert len(projects_data) == 2
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
@@ -793,7 +793,7 @@ def test_issue_status_list(client, data):
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 3
+    assert len(projects_data) == 2
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
@@ -954,7 +954,7 @@ def test_issue_type_list(client, data):
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 3
+    assert len(projects_data) == 2
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
@@ -1115,7 +1115,7 @@ def test_priority_list(client, data):
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 3
+    assert len(projects_data) == 2
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
@@ -1276,7 +1276,7 @@ def test_severity_list(client, data):
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 3
+    assert len(projects_data) == 2
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
@@ -1437,7 +1437,7 @@ def test_membership_list(client, data):
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 5
+    assert len(projects_data) == 3
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
@@ -1575,7 +1575,7 @@ def test_membership_action_resend_invitation(client, data):
     assert results == [401, 403, 403, 403, 204]
 
     results = helper_test_http_method(client, 'post', private2_url, None, users)
-    assert results == [404, 404, 403, 403, 204]
+    assert results == [404, 404, 404, 403, 204]
 
 
 def test_project_template_retrieve(client, data):

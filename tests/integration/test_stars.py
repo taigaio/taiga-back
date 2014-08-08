@@ -48,7 +48,7 @@ def test_project_owner_unstar_project(client):
 def test_project_member_star_project(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create()
-    role = f.RoleFactory.create(project=project)
+    role = f.RoleFactory.create(project=project, permissions=["view_project"])
     f.MembershipFactory.create(project=project, user=user, role=role)
     url = reverse("projects-star", args=(project.id,))
 
@@ -61,7 +61,7 @@ def test_project_member_star_project(client):
 def test_project_member_unstar_project(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create()
-    role = f.RoleFactory.create(project=project)
+    role = f.RoleFactory.create(project=project, permissions=["view_project"])
     f.MembershipFactory.create(project=project, user=user, role=role)
     url = reverse("projects-unstar", args=(project.id,))
 

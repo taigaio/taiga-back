@@ -302,7 +302,7 @@ def test_project_action_fans(client, data):
     results = helper_test_http_method_and_count(client, 'get', private1_url, None, users)
     assert results == [(200, 2), (200, 2), (200, 2), (200, 2), (200, 2)]
     results = helper_test_http_method_and_count(client, 'get', private2_url, None, users)
-    assert results == [(404, 1), (404, 1), (403, 2), (200, 2), (200, 2)]
+    assert results == [(404, 1), (404, 1), (404, 1), (200, 2), (200, 2)]
 
 
 def test_user_action_starred(client, data):
@@ -350,7 +350,7 @@ def test_project_action_create_template(client, data):
     results = helper_test_http_method(client, 'post', private1_url, template_data, users)
     assert results == [401, 403, 403, 403, 403, 201]
     results = helper_test_http_method(client, 'post', private2_url, template_data, users)
-    assert results == [404, 404, 403, 403, 403, 201]
+    assert results == [404, 404, 404, 403, 403, 201]
 
 
 def test_invitations_list(client, data):

@@ -85,7 +85,7 @@ def test_api_user_action_change_email_no_token(client):
     response = client.post(url, json.dumps(data), content_type="application/json")
 
     assert response.status_code == 400
-    assert response.data['_error_message'] == 'Token is invalid'
+    assert response.data['_error_message'] == 'Invalid, are you sure the token is correct and you didn\'t use it before?'
 
 
 def test_api_user_action_change_email_invalid_token(client):
@@ -97,4 +97,4 @@ def test_api_user_action_change_email_invalid_token(client):
     response = client.post(url, json.dumps(data), content_type="application/json")
 
     assert response.status_code == 400
-    assert response.data['_error_message'] == 'Token is invalid'
+    assert response.data['_error_message'] == 'Invalid, are you sure the token is correct and you didn\'t use it before?'

@@ -546,7 +546,7 @@ def test_user_story_attachment_list(client, data):
     ]
 
     results = helper_test_http_method_and_count(client, 'get', url, None, users)
-    assert results == [(200, 2), (200, 2), (200, 3), (200, 3), (200, 3)]
+    assert results == [(200, 2), (200, 2), (200, 2), (200, 3), (200, 3)]
 
 
 def test_task_attachment_list(client, data):
@@ -561,7 +561,7 @@ def test_task_attachment_list(client, data):
     ]
 
     results = helper_test_http_method_and_count(client, 'get', url, None, users)
-    assert results == [(200, 2), (200, 2), (200, 3), (200, 3), (200, 3)]
+    assert results == [(200, 2), (200, 2), (200, 2), (200, 3), (200, 3)]
 
 
 def test_issue_attachment_list(client, data):
@@ -576,7 +576,7 @@ def test_issue_attachment_list(client, data):
     ]
 
     results = helper_test_http_method_and_count(client, 'get', url, None, users)
-    assert results == [(200, 2), (200, 2), (200, 3), (200, 3), (200, 3)]
+    assert results == [(200, 2), (200, 2), (200, 2), (200, 3), (200, 3)]
 
 
 def test_wiki_attachment_list(client, data):
@@ -591,4 +591,4 @@ def test_wiki_attachment_list(client, data):
     ]
 
     results = helper_test_http_method_and_count(client, 'get', url, None, users)
-    assert results == [(200, 2), (200, 2), (200, 3), (200, 3), (200, 3)]
+    assert results == [(200, 2), (200, 2), (200, 2), (200, 3), (200, 3)]

@@ -152,10 +152,14 @@ class ProjectSerializer(ModelSerializer):
         return getattr(obj, "stars_count", 0)
 
     def get_my_permissions(self, obj):
-        return get_user_project_permissions(self.context['request'].user, obj)
+        if "request" in self.context:
+            return get_user_project_permissions(self.context["request"].user, obj)
+        return []
 
     def get_i_am_owner(self, obj):
-        return is_project_owner(self.context['request'].user, obj)
+        if "request" in self.context:
+            return is_project_owner(self.context["request"].user, obj)
+        return False
 
 
 class ProjectDetailSerializer(ProjectSerializer):

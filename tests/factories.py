@@ -71,7 +71,7 @@ class RoleFactory(Factory):
     FACTORY_FOR = get_model("users", "Role")
 
     name = "Tester"
-    slug = "tester"
+    slug = factory.Sequence(lambda n: "test-role-{}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
