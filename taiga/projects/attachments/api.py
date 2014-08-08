@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import hashlib
 
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
@@ -26,6 +27,7 @@ from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import generics
 from taiga.base import filters
 from taiga.base import exceptions as exc
+from taiga.users.models import User
 
 from taiga.projects.notifications import WatchedResourceMixin
 from taiga.projects.history import HistoryResourceMixin
@@ -112,9 +114,18 @@ class RawAttachmentView(generics.RetrieveAPIView):
 
     def check_permissions(self, request, action='retrieve', obj=None):
         self.object = self.get_object()
+        user_id = self.request.QUERY_PARAMS.get('user', None)
+        token = self.request.QUERY_PARAMS.get('token', None)
+
+        if token and user_id:
+            token_src = "{}-{}-{}".format(settings.ATTACHMENTS_TOKEN_SALT, user_id, self.object.id)
+            if token == hashlib.sha1(token_src.encode("utf-8")).hexdigest():
+                request.user = get_object_or_404(User, pk=user_id)
+
         return super().check_permissions(request, action, self.object)
 
     def retrieve(self, request, *args, **kwargs):
         self.object = self.get_object()
+
         self.check_permissions(request, 'retrieve', self.object)
         return self._serve_attachment(self.object.attached_file)

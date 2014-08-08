@@ -331,3 +331,5 @@ try:
     IN_DEVELOPMENT_SERVER = sys.argv[1] == 'runserver'
 except IndexError:
     IN_DEVELOPMENT_SERVER = False
+
+ATTACHMENTS_TOKEN_SALT = "ATTACHMENTS_TOKEN_SALT"

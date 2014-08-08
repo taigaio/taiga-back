@@ -13,7 +13,11 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from os import path
+import hashlib
+
+from django.conf import settings
 
 from rest_framework import serializers
 
@@ -39,7 +43,17 @@ class AttachmentSerializer(serializers.ModelSerializer):
         return ""
 
     def get_url(self, obj):
-        return reverse("attachment-url", kwargs={"pk": obj.pk})
+        token = None
+
+        url = reverse("attachment-url", kwargs={"pk": obj.pk})
+        if "request" in self.context and self.context["request"].user.is_authenticated():
+            user_id = self.context["request"].user.id
+            token_src = "{}-{}-{}".format(settings.ATTACHMENTS_TOKEN_SALT, user_id, obj.id)
+            token = hashlib.sha1(token_src.encode("utf-8"))
+
+            return "{}?user={}&token={}".format(url, user_id, token.hexdigest())
+
+        return url
 
     def get_size(self, obj):
         if obj.attached_file:
