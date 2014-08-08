@@ -115,7 +115,8 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
 
     filter_fields = ("project",)
     search_fields = ("subject",)
-    order_by_fields = ("severity",
+    order_by_fields = ("type",
+                       "severity",
                        "status",
                        "priority",
                        "created_date",
