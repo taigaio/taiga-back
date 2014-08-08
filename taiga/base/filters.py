@@ -23,7 +23,7 @@ from rest_framework import filters
 
 from taiga.base import tags
 
-from taiga.users.models import Role
+from taiga.projects.models import Membership
 
 
 class QueryParamsFilterMixin(filters.BaseFilterBackend):
@@ -100,11 +100,13 @@ class PermissionBasedFilterBackend(FilterBackend):
         if request.user.is_authenticated() and request.user.is_superuser:
             qs = qs
         elif request.user.is_authenticated():
-            roles_qs = Role.objects.filter(memberships__user=request.user)
-            roles_qs = roles_qs.extra(where=["users_role.permissions @> ARRAY['{}']".format(self.permission)])
+            memberships_qs = Membership.objects.filter(user=request.user)
             if project_id:
-                roles_qs = roles_qs.filter(project_id=project_id)
-            projects_list = [role.project_id for role in roles_qs]
+                memberships_qs = memberships_qs.filter(project_id=project_id)
+            memberships_qs = memberships_qs.exclude(role__slug="not valid slug")  # Force users_role table inclusion
+            memberships_qs = memberships_qs.extra(where=["users_role.permissions @> ARRAY['{}']".format(self.permission)])
+
+            projects_list = [membership.project_id for membership in memberships_qs]
 
             if len(projects_list) == 0:
                 qs = qs.filter(Q(project__owner=request.user))
@@ -185,11 +187,12 @@ class CanViewProjectObjFilterBackend(FilterBackend):
         if request.user.is_authenticated() and request.user.is_superuser:
             qs = qs
         elif request.user.is_authenticated():
-            roles_qs = Role.objects.filter(memberships__user=request.user)
-            roles_qs = roles_qs.extra(where=["users_role.permissions @> ARRAY['view_project']"])
+            memberships_qs = Membership.objects.filter(user=request.user)
             if project_id:
-                roles_qs = roles_qs.filter(project_id=project_id)
-            projects_list = [role.project_id for role in roles_qs]
+                memberships_qs = memberships_qs.filter(project_id=project_id)
+            memberships_qs = memberships_qs.exclude(role__slug="not valid slug")  # Force users_role table inclusion
+            memberships_qs = memberships_qs.extra(where=["users_role.permissions @> ARRAY['view_project']"])
+            projects_list = [membership.project_id for membership in memberships_qs]
 
             if len(projects_list) == 0:
                 qs = qs.filter(Q(owner=request.user))
