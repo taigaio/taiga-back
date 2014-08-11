@@ -34,7 +34,7 @@ class WikiPageSerializer(serializers.ModelSerializer):
         return mdrender(obj.project, obj.content)
 
     def get_editions(self, obj):
-        return history_service.get_history_queryset_by_model_instance(obj).count()
+        return history_service.get_history_queryset_by_model_instance(obj).count() + 1  # +1 for creation
 
 
 class WikiLinkSerializer(serializers.ModelSerializer):
