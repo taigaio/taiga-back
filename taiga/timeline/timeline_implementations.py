@@ -91,10 +91,22 @@ def membership_create_timeline(instance, extra_data={}):
 
 @register_timeline_implementation("projects.membership", "delete")
 def membership_delete_timeline(instance, extra_data={}):
+    if instance.user:
+        return {
+            "user": {
+                "id": instance.user.pk,
+                "name": instance.user.get_full_name(),
+            },
+            "project": {
+                "id": instance.project.pk,
+                "slug": instance.project.slug,
+                "name": instance.project.name,
+            },
+        }
     return {
-        "user": {
-            "id": instance.user.pk,
-            "name": instance.user.get_full_name(),
+        "invitation": {
+            "id": instance.pk,
+            "email": instance.email,
         },
         "project": {
             "id": instance.project.pk,
