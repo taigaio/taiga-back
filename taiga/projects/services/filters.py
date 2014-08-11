@@ -26,6 +26,14 @@ def _get_stories_tags(project):
     return result
 
 
+def _get_tasks_tags(project):
+    result = set()
+    for tags in project.tasks.values_list("tags", flat=True):
+        if tags:
+            result.update(tags)
+    return result
+
+
 def _get_issues_tags(project):
     result = set()
     for tags in project.issues.values_list("tags", flat=True):
@@ -151,6 +159,7 @@ def get_all_tags(project):
     result = set()
     result.update(_get_issues_tags(project))
     result.update(_get_stories_tags(project))
+    result.update(_get_tasks_tags(project))
     return sorted(result)
 
 
