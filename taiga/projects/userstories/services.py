@@ -33,7 +33,7 @@ def get_userstories_from_bulk(bulk_data, **additional_fields):
             for line in text.split_in_lines(bulk_data)]
 
 
-def create_userstories_in_bulk(bulk_data, callback=None, **additional_fields):
+def create_userstories_in_bulk(bulk_data, callback=None, precall=None, **additional_fields):
     """Create user stories from `bulk_data`.
 
     :param bulk_data: List of user stories in bulk format.
@@ -43,7 +43,7 @@ def create_userstories_in_bulk(bulk_data, callback=None, **additional_fields):
     :return: List of created `Task` instances.
     """
     userstories = get_userstories_from_bulk(bulk_data, **additional_fields)
-    db.save_in_bulk(userstories, callback)
+    db.save_in_bulk(userstories, callback, precall)
     return userstories
 
 

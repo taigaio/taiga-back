@@ -188,7 +188,8 @@ class MembershipViewSet(ModelCrudViewSet):
             project = models.Project.objects.get(id=data["project_id"])
             self.check_permissions(request, 'bulk_create', project)
             members = services.create_members_in_bulk(
-                data["bulk_memberships"], project=project, callback=self.post_save)
+                data["bulk_memberships"], project=project, callback=self.post_save,
+                precall=self.pre_save)
             members_serialized = self.serializer_class(members, many=True)
 
             return response.Ok(data=members_serialized.data)

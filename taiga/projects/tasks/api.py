@@ -70,7 +70,7 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
             tasks = services.create_tasks_in_bulk(
                 data["bulk_tasks"], milestone_id=data["sprint_id"], user_story_id=data["us_id"],
                 status_id=data.get("status_id") or project.default_task_status_id,
-                project=project, owner=request.user, callback=self.post_save)
+                project=project, owner=request.user, callback=self.post_save, precall=self.pre_save)
             tasks_serialized = self.serializer_class(tasks, many=True)
 
             return response.Ok(tasks_serialized.data)

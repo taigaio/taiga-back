@@ -19,7 +19,7 @@ def get_members_from_bulk(bulk_data, **additional_fields):
     return members
 
 
-def create_members_in_bulk(bulk_data, callback=None, **additional_fields):
+def create_members_in_bulk(bulk_data, callback=None, precall=None, **additional_fields):
     """Create members from `bulk_data`.
 
     :param bulk_data: List of dicts `{"project_id": <>, "role_id": <>, "email": <>}`.
@@ -29,5 +29,5 @@ def create_members_in_bulk(bulk_data, callback=None, **additional_fields):
     :return: List of created `Member` instances.
     """
     members = get_members_from_bulk(bulk_data, **additional_fields)
-    db.save_in_bulk(members, callback)
+    db.save_in_bulk(members, callback, precall)
     return members

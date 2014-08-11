@@ -31,7 +31,7 @@ def get_tasks_from_bulk(bulk_data, **additional_fields):
             for line in text.split_in_lines(bulk_data)]
 
 
-def create_tasks_in_bulk(bulk_data, callback=None, **additional_fields):
+def create_tasks_in_bulk(bulk_data, callback=None, precall=None, **additional_fields):
     """Create tasks from `bulk_data`.
 
     :param bulk_data: List of tasks in bulk format.
@@ -41,5 +41,5 @@ def create_tasks_in_bulk(bulk_data, callback=None, **additional_fields):
     :return: List of created `Task` instances.
     """
     tasks = get_tasks_from_bulk(bulk_data, **additional_fields)
-    db.save_in_bulk(tasks, callback)
+    db.save_in_bulk(tasks, callback, precall)
     return tasks

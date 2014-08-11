@@ -165,7 +165,7 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
                 data["bulk_issues"], project=project, owner=request.user,
                 status=project.default_issue_status, severity=project.default_severity,
                 priority=project.default_priority, type=project.default_issue_type,
-                callback=self.post_save)
+                callback=self.post_save, precall=self.pre_save)
             issues_serialized = self.serializer_class(issues, many=True)
 
             return response.Ok(data=issues_serialized.data)

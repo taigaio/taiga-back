@@ -43,7 +43,7 @@ def reload_attribute(model_instance, attr_name):
 
 
 @transaction.atomic
-def save_in_bulk(instances, callback=None, **save_options):
+def save_in_bulk(instances, callback=None, precall=None, **save_options):
     """Save a list of model instances.
 
     :params instances: List of model instances.
@@ -53,16 +53,20 @@ def save_in_bulk(instances, callback=None, **save_options):
     if callback is None:
         callback = functions.identity
 
+    if precall is None:
+        precall = functions.identity
+
     for instance in instances:
         if instance.pk is None:
             created = True
 
+        precall(instance)
         instance.save(**save_options)
         callback(instance, created=True)
 
 
 @transaction.atomic
-def update_in_bulk(instances, list_of_new_values, callback=None):
+def update_in_bulk(instances, list_of_new_values, callback=None, precall=None):
     """Update a list of model instances.
 
     :params instances: List of model instances.
@@ -71,10 +75,13 @@ def update_in_bulk(instances, list_of_new_values, callback=None):
     """
     if callback is None:
         callback = functions.identity
+    if precall is None:
+        precall = functions.identity
 
     for instance, new_values in zip(instances, list_of_new_values):
         for attribute, value in new_values.items():
             setattr(instance, attribute, value)
+        precall(instance)
         instance.save()
         callback(instance)
 
