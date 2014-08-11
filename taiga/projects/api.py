@@ -94,6 +94,12 @@ class ProjectViewSet(ModelCrudViewSet):
         return Response(services.get_all_tags(project))
 
     @detail_route(methods=['get'])
+    def tags_colors(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, 'tags_colors', project)
+        return Response(dict(project.tags_colors))
+
+    @detail_route(methods=['get'])
     def fans(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, 'fans', project)

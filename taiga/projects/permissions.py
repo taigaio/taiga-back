@@ -30,7 +30,8 @@ class ProjectPermission(ResourcePermission):
     unstar_perms = IsAuthenticated()
     issues_stats_perms = AllowAny()
     issues_filters_data_perms = AllowAny()
-    tags_perms = AllowAny()
+    tags_perms = HasProjectPerm('view_project')
+    tags_colors_perms = HasProjectPerm('view_project')
     fans_perms = HasProjectPerm('view_project')
     create_template_perms = IsSuperUser()
 
