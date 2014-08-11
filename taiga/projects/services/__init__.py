@@ -35,6 +35,5 @@ from .members import create_members_in_bulk
 from .members import get_members_from_bulk
 
 from .invitations import send_invitation
-from .invitations import find_invited_user
 
 from .tags_colors import update_project_tags_colors_handler

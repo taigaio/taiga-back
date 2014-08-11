@@ -54,8 +54,11 @@ def save_in_bulk(instances, callback=None, **save_options):
         callback = functions.identity
 
     for instance in instances:
+        if instance.pk is None:
+            created = True
+
         instance.save(**save_options)
-        callback(instance)
+        callback(instance, created=True)
 
 
 @transaction.atomic
