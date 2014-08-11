@@ -21,14 +21,16 @@ from django.db import connection
 def _get_stories_tags(project):
     result = set()
     for tags in project.user_stories.values_list("tags", flat=True):
-        result.update(tags)
+        if tags:
+            result.update(tags)
     return result
 
 
 def _get_issues_tags(project):
     result = set()
     for tags in project.issues.values_list("tags", flat=True):
-        result.update(tags)
+        if tags:
+            result.update(tags)
     return result
 
 

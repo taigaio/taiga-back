@@ -39,6 +39,9 @@ def remove_unused_tags(project):
 
 
 def update_project_tags_colors_handler(instance):
+    if instance.tags is None:
+        instance.tags = []
+
     for tag in instance.tags:
         defined_tags = map(lambda x: x[0], instance.project.tags_colors)
         if tag not in defined_tags:
