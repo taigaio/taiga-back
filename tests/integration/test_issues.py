@@ -31,7 +31,7 @@ Issue #2
 """
     issues = services.create_issues_in_bulk(data)
 
-    db.save_in_bulk.assert_called_once_with(issues, None)
+    db.save_in_bulk.assert_called_once_with(issues, None, None)
 
 
 @mock.patch("taiga.projects.issues.services.db")

@@ -31,7 +31,7 @@ User Story #2
 """
     userstories = services.create_userstories_in_bulk(data)
 
-    db.save_in_bulk.assert_called_once_with(userstories, None)
+    db.save_in_bulk.assert_called_once_with(userstories, None, None)
 
 
 @mock.patch("taiga.projects.userstories.services.db")

@@ -27,7 +27,7 @@ def test_create_members_in_bulk(db):
             {"role_id": "1", "email": "member2@email.com"}]
     members = services.create_members_in_bulk(data, project_id=1)
 
-    db.save_in_bulk.assert_called_once_with(members, None)
+    db.save_in_bulk.assert_called_once_with(members, None, None)
 
 
 def test_api_create_bulk_members(client):

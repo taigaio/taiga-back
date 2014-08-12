@@ -31,7 +31,7 @@ Task #2
 """
     tasks = services.create_tasks_in_bulk(data)
 
-    db.save_in_bulk.assert_called_once_with(tasks, None)
+    db.save_in_bulk.assert_called_once_with(tasks, None, None)
 
 
 def test_api_update_task_tags(client):
