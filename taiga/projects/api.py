@@ -19,6 +19,7 @@ import uuid
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
+from django.db import transaction as tx
 
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
@@ -34,6 +35,9 @@ from taiga.base.api.mixins import RetrieveModelMixin
 from taiga.base.api.permissions import IsAuthenticatedPermission, AllowAnyPermission
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.users.models import Role
+from taiga.projects.issues.models import Issue
+from taiga.projects.userstories.models import UserStory
+from taiga.projects.tasks.models import Task
 
 from . import serializers
 from . import models
@@ -287,7 +291,24 @@ class PointsViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_order_action = services.bulk_update_points_order
 
 
-class UserStoryStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
+class MoveOnDestroyMixin(object):
+    @tx.atomic
+    def destroy(self, request, *args, **kwargs):
+        moveTo = self.request.QUERY_PARAMS.get('moveTo', None)
+        if moveTo is None:
+            return super().destroy(request, *args, **kwargs)
+
+        obj = self.get_object_or_none()
+
+        moveItem = get_object_or_404(self.model, project=obj.project, id=moveTo)
+
+        self.check_permissions(request, 'destroy', obj)
+        kwargs = {self.move_on_destroy_related_field: moveItem}
+        self.move_on_destroy_related_class.objects.filter(project=obj.project, severity_id=obj.id).update(**kwargs)
+        return super().destroy(request, *args, **kwargs)
+
+
+class UserStoryStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin):
     model = models.UserStoryStatus
     serializer_class = serializers.UserStoryStatusSerializer
     permission_classes = (permissions.UserStoryStatusPermission,)
@@ -296,9 +317,11 @@ class UserStoryStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_param = "bulk_userstory_statuses"
     bulk_update_perm = "change_userstorystatus"
     bulk_update_order_action = services.bulk_update_userstory_status_order
+    move_on_destroy_related_class = UserStory
+    move_on_destroy_related_field = "status"
 
 
-class TaskStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
+class TaskStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin):
     model = models.TaskStatus
     serializer_class = serializers.TaskStatusSerializer
     permission_classes = (permissions.TaskStatusPermission,)
@@ -307,9 +330,11 @@ class TaskStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_param = "bulk_task_statuses"
     bulk_update_perm = "change_taskstatus"
     bulk_update_order_action = services.bulk_update_task_status_order
+    move_on_destroy_related_class = Task
+    move_on_destroy_related_field = "status"
 
 
-class SeverityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
+class SeverityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin):
     model = models.Severity
     serializer_class = serializers.SeveritySerializer
     permission_classes = (permissions.SeverityPermission,)
@@ -318,9 +343,11 @@ class SeverityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_param = "bulk_severities"
     bulk_update_perm = "change_severity"
     bulk_update_order_action = services.bulk_update_severity_order
+    move_on_destroy_related_class = Issue
+    move_on_destroy_related_field = "severity"
 
 
-class PriorityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
+class PriorityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin):
     model = models.Priority
     serializer_class = serializers.PrioritySerializer
     permission_classes = (permissions.PriorityPermission,)
@@ -329,9 +356,11 @@ class PriorityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_param = "bulk_priorities"
     bulk_update_perm = "change_priority"
     bulk_update_order_action = services.bulk_update_priority_order
+    move_on_destroy_related_class = Issue
+    move_on_destroy_related_field = "priority"
 
 
-class IssueTypeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
+class IssueTypeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin):
     model = models.IssueType
     serializer_class = serializers.IssueTypeSerializer
     permission_classes = (permissions.IssueTypePermission,)
@@ -340,9 +369,11 @@ class IssueTypeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_param = "bulk_issue_types"
     bulk_update_perm = "change_issuetype"
     bulk_update_order_action = services.bulk_update_issue_type_order
+    move_on_destroy_related_class = Issue
+    move_on_destroy_related_field = "type"
 
 
-class IssueStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
+class IssueStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin):
     model = models.IssueStatus
     serializer_class = serializers.IssueStatusSerializer
     permission_classes = (permissions.IssueStatusPermission,)
@@ -351,6 +382,8 @@ class IssueStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_param = "bulk_issue_statuses"
     bulk_update_perm = "change_issuestatus"
     bulk_update_order_action = services.bulk_update_issue_status_order
+    move_on_destroy_related_class = Issue
+    move_on_destroy_related_field = "status"
 
 
 class ProjectTemplateViewSet(ModelCrudViewSet):
