@@ -248,6 +248,21 @@ class RolesViewSet(ModelCrudViewSet):
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ('project',)
 
+    @tx.atomic
+    def destroy(self, request, *args, **kwargs):
+        moveTo = self.request.QUERY_PARAMS.get('moveTo', None)
+        if moveTo is None:
+            return super().destroy(request, *args, **kwargs)
+
+        obj = self.get_object_or_none()
+
+        moveItem = get_object_or_404(self.model, project=obj.project, id=moveTo)
+
+        self.check_permissions(request, 'destroy', obj)
+
+        models.Membership.objects.filter(project=obj.project, role=obj).update(role=moveItem)
+        return super().destroy(request, *args, **kwargs)
+
 
 # User Stories commin ViewSets
 
