@@ -56,9 +56,9 @@ def update_userstories_order_in_bulk(bulk_data):
     """
     user_story_ids = []
     new_order_values = []
-    for user_story_id, new_order_value in bulk_data:
-        user_story_ids.append(user_story_id)
-        new_order_values.append({"order": new_order_value})
+    for us_data in bulk_data:
+        user_story_ids.append(us_data['us_id'])
+        new_order_values.append({"order": us_data['order']})
     db.update_in_bulk_with_ids(user_story_ids, new_order_values, model=models.UserStory)
 
 

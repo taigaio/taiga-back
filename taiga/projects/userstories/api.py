@@ -85,7 +85,7 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
             data = serializer.data
             project = Project.objects.get(id=data["project_id"])
             self.check_permissions(request, 'bulk_update_order', project)
-            # services.update_userstories_order_in_bulk(data["bulk_stories"])
+            services.update_userstories_order_in_bulk(data["bulk_stories"])
 
             return response.NoContent()
 
