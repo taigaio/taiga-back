@@ -51,18 +51,19 @@ def save_in_bulk(instances, callback=None, precall=None, **save_options):
     :params save_options: Additional options to use when saving each instance.
     """
     if callback is None:
-        callback = functions.identity
+        callback = functions.noop
 
     if precall is None:
-        precall = functions.identity
+        precall = functions.noop
 
     for instance in instances:
+        created = False
         if instance.pk is None:
             created = True
 
         precall(instance)
         instance.save(**save_options)
-        callback(instance)
+        callback(instance, created=created)
 
 
 @transaction.atomic
@@ -74,9 +75,10 @@ def update_in_bulk(instances, list_of_new_values, callback=None, precall=None):
     in the same index position as the dict.
     """
     if callback is None:
-        callback = functions.identity
+        callback = functions.noop
+
     if precall is None:
-        precall = functions.identity
+        precall = functions.noop
 
     for instance, new_values in zip(instances, list_of_new_values):
         for attribute, value in new_values.items():

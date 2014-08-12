@@ -1,3 +1,3 @@
-def identity(argument):
-    """The identity function."""
-    return argument
+def noop(*args, **kwargs):
+    """The noop function."""
+    return None
