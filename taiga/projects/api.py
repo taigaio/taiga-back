@@ -304,11 +304,14 @@ class MoveOnDestroyMixin(object):
 
         self.check_permissions(request, 'destroy', obj)
         kwargs = {self.move_on_destroy_related_field: moveItem}
-        self.move_on_destroy_related_class.objects.filter(project=obj.project, severity_id=obj.id).update(**kwargs)
+        self.move_on_destroy_related_class.objects.filter(project=obj.project, **{self.move_on_destroy_related_field: obj}).update(**kwargs)
+        if getattr(obj.project, self.move_on_destroy_project_default_field) == obj:
+            setattr(obj.project, self.move_on_destroy_project_default_field, moveItem)
+            obj.project.save()
         return super().destroy(request, *args, **kwargs)
 
 
-class UserStoryStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin):
+class UserStoryStatusViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.UserStoryStatus
     serializer_class = serializers.UserStoryStatusSerializer
     permission_classes = (permissions.UserStoryStatusPermission,)
@@ -319,9 +322,10 @@ class UserStoryStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestr
     bulk_update_order_action = services.bulk_update_userstory_status_order
     move_on_destroy_related_class = UserStory
     move_on_destroy_related_field = "status"
+    move_on_destroy_project_default_field = "default_us_status"
 
 
-class TaskStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin):
+class TaskStatusViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.TaskStatus
     serializer_class = serializers.TaskStatusSerializer
     permission_classes = (permissions.TaskStatusPermission,)
@@ -332,9 +336,10 @@ class TaskStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMix
     bulk_update_order_action = services.bulk_update_task_status_order
     move_on_destroy_related_class = Task
     move_on_destroy_related_field = "status"
+    move_on_destroy_project_default_field = "default_task_status"
 
 
-class SeverityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin):
+class SeverityViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.Severity
     serializer_class = serializers.SeveritySerializer
     permission_classes = (permissions.SeverityPermission,)
@@ -345,9 +350,10 @@ class SeverityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin
     bulk_update_order_action = services.bulk_update_severity_order
     move_on_destroy_related_class = Issue
     move_on_destroy_related_field = "severity"
+    move_on_destroy_project_default_field = "default_severity"
 
 
-class PriorityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin):
+class PriorityViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.Priority
     serializer_class = serializers.PrioritySerializer
     permission_classes = (permissions.PriorityPermission,)
@@ -358,9 +364,10 @@ class PriorityViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin
     bulk_update_order_action = services.bulk_update_priority_order
     move_on_destroy_related_class = Issue
     move_on_destroy_related_field = "priority"
+    move_on_destroy_project_default_field = "default_priority"
 
 
-class IssueTypeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin):
+class IssueTypeViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.IssueType
     serializer_class = serializers.IssueTypeSerializer
     permission_classes = (permissions.IssueTypePermission,)
@@ -371,9 +378,10 @@ class IssueTypeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixi
     bulk_update_order_action = services.bulk_update_issue_type_order
     move_on_destroy_related_class = Issue
     move_on_destroy_related_field = "type"
+    move_on_destroy_project_default_field = "default_issue_type"
 
 
-class IssueStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMixin):
+class IssueStatusViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.IssueStatus
     serializer_class = serializers.IssueStatusSerializer
     permission_classes = (permissions.IssueStatusPermission,)
@@ -384,6 +392,7 @@ class IssueStatusViewSet(ModelCrudViewSet, BulkUpdateOrderMixin, MoveOnDestroyMi
     bulk_update_order_action = services.bulk_update_issue_status_order
     move_on_destroy_related_class = Issue
     move_on_destroy_related_field = "status"
+    move_on_destroy_project_default_field = "default_issue_status"
 
 
 class ProjectTemplateViewSet(ModelCrudViewSet):
