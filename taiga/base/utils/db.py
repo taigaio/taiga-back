@@ -62,7 +62,7 @@ def save_in_bulk(instances, callback=None, precall=None, **save_options):
 
         precall(instance)
         instance.save(**save_options)
-        callback(instance, created=True)
+        callback(instance)
 
 
 @transaction.atomic

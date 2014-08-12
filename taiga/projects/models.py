@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import itertools
-import uuid
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -32,7 +31,7 @@ from djorm_pgarray.fields import TextArrayField
 from taiga.permissions.permissions import ANON_PERMISSIONS, USER_PERMISSIONS
 
 from taiga.base.tags import TaggedMixin
-from taiga.users.models import User, Role
+from taiga.users.models import Role
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
 from taiga.base.utils.sequence import arithmetic_progression
@@ -73,14 +72,6 @@ class Membership(models.Model):
         memberships = Membership.objects.filter(user=self.user, project=self.project)
         if self.user and memberships.count() > 0 and memberships[0].id != self.id:
             raise ValidationError(_('The user is already member of the project'))
-
-    def save(self, *args, **kwargs):
-        if not self.token:
-            self.token = str(uuid.uuid1())
-
-        self.user = User.objects.filter(email=self.email).first()
-
-        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "membership"

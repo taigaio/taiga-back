@@ -205,6 +205,15 @@ class MembershipViewSet(ModelCrudViewSet):
         services.send_invitation(invitation=invitation)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def pre_save(self, object):
+        # Only assign new token if a current token value is empty.
+        if not object.token:
+            object.token = str(uuid.uuid1())
+
+        object.user = services.find_invited_user(object, default=object.user)
+
+        super().pre_save(object)
+
     def post_save(self, object, created=False):
         super().post_save(object, created=created)
 
