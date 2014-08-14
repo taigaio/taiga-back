@@ -211,7 +211,7 @@ def userstory_freezer(us) -> dict:
         "owner": us.owner_id,
         "status": us.status_id,
         "is_closed": us.is_closed,
-        "finish_date": us.finish_date,
+        "finish_date": str(us.finish_date),
         "order": us.order,
         "subject": us.subject,
         "description": us.description,
