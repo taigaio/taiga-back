@@ -50,7 +50,7 @@ class MembersFilterBackend(BaseFilterBackend):
         if project_id:
             Project = get_model('projects', 'Project')
             project = get_object_or_404(Project, pk=project_id)
-            if project.memberships.filter(user=request.user).exists() or project.owner ==request.user:
+            if project.memberships.filter(user=request.user).exists() or project.owner == request.user:
                 return queryset.filter(Q(memberships__project=project) | Q(id=project.owner.id)).distinct()
             else:
                 raise exc.PermissionDenied(_("You don't have permisions to see this project users."))
@@ -65,6 +65,7 @@ class UsersViewSet(ModelCrudViewSet):
     permission_classes = (permissions.UserPermission,)
     serializer_class = serializers.UserSerializer
     queryset = models.User.objects.all()
+    filter_backends = (MembersFilterBackend,)
 
     def pre_conditions_on_save(self, obj):
         if self.request.user.is_superuser:
