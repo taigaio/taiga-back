@@ -16,7 +16,7 @@
 
 import uuid
 
-from django.db.models import Q
+from django.db.models import Q, signals
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 from django.db import transaction as tx
@@ -149,6 +149,32 @@ class ProjectViewSet(ModelCrudViewSet):
 
         super().pre_save(obj)
 
+    def destroy(self, request, *args, **kwargs):
+        obj = self.get_object_or_none()
+        self.check_permissions(request, 'destroy', obj)
+
+        signals.post_delete.disconnect(sender=UserStory, dispatch_uid="user_story_update_project_colors_on_delete")
+        signals.post_delete.disconnect(sender=Issue, dispatch_uid="issue_update_project_colors_on_delete")
+        signals.post_delete.disconnect(dispatch_uid="refprojdel")
+        signals.post_delete.disconnect(dispatch_uid='update_watchers_on_membership_post_delete')
+        signals.post_delete.disconnect(sender=Task, dispatch_uid="tasks_milestone_close_handler_on_delete")
+        signals.post_delete.disconnect(sender=Task, dispatch_uid="tasks_us_close_handler_on_delete")
+        signals.post_delete.disconnect(sender=Task, dispatch_uid="task_update_project_colors_on_delete")
+
+        obj.tasks.all().delete()
+        obj.user_stories.all().delete()
+        obj.issues.all().delete()
+        obj.memberships.all().delete()
+        obj.roles.all().delete()
+
+        if obj is None:
+            raise Http404
+
+        self.pre_delete(obj)
+        self.pre_conditions_on_delete(obj)
+        obj.delete()
+        self.post_delete(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class MembershipViewSet(ModelCrudViewSet):
     model = models.Membership
