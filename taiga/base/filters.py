@@ -103,8 +103,11 @@ class PermissionBasedFilterBackend(FilterBackend):
             memberships_qs = Membership.objects.filter(user=request.user)
             if project_id:
                 memberships_qs = memberships_qs.filter(project_id=project_id)
-            memberships_qs = memberships_qs.exclude(role__slug="not valid slug")  # Force users_role table inclusion
-            memberships_qs = memberships_qs.extra(where=["users_role.permissions @> ARRAY['{}']".format(self.permission)])
+
+            # Force users_role table inclusion
+            memberships_qs = memberships_qs.exclude(role__slug="not valid slug")
+            where_sql  = ["users_role.permissions @> ARRAY['{}']".format(self.permission)]
+            memberships_qs = memberships_qs.extra(where=where_sql)
 
             projects_list = [membership.project_id for membership in memberships_qs]
 
@@ -114,10 +117,14 @@ class PermissionBasedFilterBackend(FilterBackend):
                 qs = qs.filter(Q(project__owner=request.user) | Q(project=projects_list[0]))
             else:
                 qs = qs.filter(Q(project__owner=request.user) | Q(project__in=projects_list))
-            qs.query.where.add(ExtraWhere(["projects_project.public_permissions @> ARRAY['{}']".format(self.permission)], []), OR)
+            extra_where = ExtraWhere(["projects_project.public_permissions @> ARRAY['{}']".format(
+                                                                                   self.permission)], [])
+            qs.query.where.add(extra_where, OR)
         else:
             qs = qs.exclude(project__owner=-1)
-            qs.query.where.add(ExtraWhere(["projects_project.anon_permissions @> ARRAY['{}']".format(self.permission)], []), AND)
+            extra_where = ExtraWhere(["projects_project.anon_permissions @> ARRAY['{}']".format(
+                                                                                 self.permission)], [])
+            qs.query.where.add(extra_where, AND)
 
         return super().filter_queryset(request, qs.distinct(), view)
 

@@ -176,6 +176,7 @@ class ProjectViewSet(ModelCrudViewSet):
         self.post_delete(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class MembershipViewSet(ModelCrudViewSet):
     model = models.Membership
     serializer_class = serializers.MembershipSerializer
