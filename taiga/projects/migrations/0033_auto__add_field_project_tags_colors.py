@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Project.tags_colors'
         db.add_column('projects_project', 'tags_colors',
-                      self.gf('djorm_pgarray.fields.TextArrayField')(blank=True, default={}, dimension=2, dbtype='text'),
+                      self.gf('djorm_pgarray.fields.TextArrayField')(blank=True, default=[], dimension=2, dbtype='text'),
                       keep_default=False)
 
 
