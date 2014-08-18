@@ -51,5 +51,5 @@ class NotifyPolicyViewSet(ModelCrudViewSet):
     def get_queryset(self):
         self._build_needed_notify_policies()
 
-        qs = models.NotifyPolicy.objects.filter(project__owner=self.request.user)
+        qs = models.NotifyPolicy.objects.filter(user=self.request.user)
         return qs.distinct()
