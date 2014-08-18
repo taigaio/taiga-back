@@ -35,6 +35,7 @@ from taiga.users.models import Role
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
 from taiga.base.utils.sequence import arithmetic_progression
+from taiga.projects.notifications.services import create_notify_policy_if_not_exists
 
 from . import choices
 
@@ -737,6 +738,13 @@ def update_watchers_on_membership_post_delete(sender, instance, using, **kwargs)
     # removed object from a database.
     for model in models:
         model.watchers.through.objects.filter(user_id=instance.user_id).delete()
+
+
+# On membership object is deleted, update watchers of all objects relation.
+@receiver(signals.post_save, sender=Membership, dispatch_uid='create-notify-policy')
+def create_notify_policy(sender, instance, using, **kwargs):
+    if instance.user:
+        create_notify_policy_if_not_exists(instance.project, instance.user)
 
 
 @receiver(signals.post_save, sender=Project, dispatch_uid='project_post_save')
