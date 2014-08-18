@@ -175,6 +175,7 @@ def get_issues_filters_data(project):
         "priorities": _get_issues_priorities(project),
         "severities": _get_issues_severities(project),
         "assigned_to": _get_issues_assigned_to(project),
+        "created_by": _get_issues_owners(project),
         "owners": _get_issues_owners(project),
         "tags": _get_issues_tags_with_count(project),
     }
