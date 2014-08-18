@@ -14,12 +14,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
-                                        IsProjectOwner, AllowAny)
+from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
+                                        IsProjectOwner, AllowAny, IsSuperUser)
 
 
-class WikiPagePermission(ResourcePermission):
-    enought_perms = IsProjectOwner()
+class WikiPagePermission(TaigaResourcePermission):
+    enought_perms = IsProjectOwner() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_wiki_pages')
     create_perms = HasProjectPerm('add_wiki_page')
@@ -29,8 +29,8 @@ class WikiPagePermission(ResourcePermission):
     list_perms = AllowAny()
     render_perms = AllowAny()
 
-class WikiLinkPermission(ResourcePermission):
-    enought_perms = IsProjectOwner()
+class WikiLinkPermission(TaigaResourcePermission):
+    enought_perms = IsProjectOwner() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_wiki_links')
     create_perms = HasProjectPerm('add_wiki_link')

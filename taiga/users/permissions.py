@@ -14,17 +14,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api.permissions import (ResourcePermission, IsSuperUser,
+from taiga.base.api.permissions import (TaigaResourcePermission, IsSuperUser,
                                         AllowAny, PermissionComponent,
                                         IsAuthenticated)
 
 
 class IsTheSameUser(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
-        return request.user.is_authenticated() and request.user.pk == obj.pk
+        return obj and request.user.is_authenticated() and request.user.pk == obj.pk
 
 
-class UserPermission(ResourcePermission):
+class UserPermission(TaigaResourcePermission):
     enought_perms = IsSuperUser()
     global_perms = None
     retrieve_perms = AllowAny()

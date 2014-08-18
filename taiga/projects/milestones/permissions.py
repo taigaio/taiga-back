@@ -14,13 +14,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
+from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
                                         IsProjectOwner, AllowAny,
-                                        PermissionComponent)
+                                        PermissionComponent, IsSuperUser)
 
 
-class MilestonePermission(ResourcePermission):
-    enought_perms = IsProjectOwner()
+class MilestonePermission(TaigaResourcePermission):
+    enought_perms = IsProjectOwner() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_milestones')
     create_perms = HasProjectPerm('add_milestone')

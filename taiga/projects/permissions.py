@@ -14,12 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
+from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
                                         IsAuthenticated, IsProjectOwner,
                                         AllowAny, IsSuperUser)
 
 
-class ProjectPermission(ResourcePermission):
+class ProjectPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsAuthenticated()
     update_perms = IsProjectOwner()
@@ -36,7 +36,7 @@ class ProjectPermission(ResourcePermission):
     create_template_perms = IsSuperUser()
 
 
-class MembershipPermission(ResourcePermission):
+class MembershipPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
@@ -48,7 +48,7 @@ class MembershipPermission(ResourcePermission):
 
 # User Stories
 
-class PointsPermission(ResourcePermission):
+class PointsPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
@@ -57,7 +57,7 @@ class PointsPermission(ResourcePermission):
     bulk_update_order_perms = IsProjectOwner()
 
 
-class UserStoryStatusPermission(ResourcePermission):
+class UserStoryStatusPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
@@ -68,7 +68,7 @@ class UserStoryStatusPermission(ResourcePermission):
 
 # Tasks
 
-class TaskStatusPermission(ResourcePermission):
+class TaskStatusPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
@@ -79,7 +79,7 @@ class TaskStatusPermission(ResourcePermission):
 
 # Issues
 
-class SeverityPermission(ResourcePermission):
+class SeverityPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
@@ -88,7 +88,7 @@ class SeverityPermission(ResourcePermission):
     bulk_update_order_perms = IsProjectOwner()
 
 
-class PriorityPermission(ResourcePermission):
+class PriorityPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
@@ -97,7 +97,7 @@ class PriorityPermission(ResourcePermission):
     bulk_update_order_perms = IsProjectOwner()
 
 
-class IssueStatusPermission(ResourcePermission):
+class IssueStatusPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
@@ -106,7 +106,7 @@ class IssueStatusPermission(ResourcePermission):
     bulk_update_order_perms = IsProjectOwner()
 
 
-class IssueTypePermission(ResourcePermission):
+class IssueTypePermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
@@ -115,7 +115,7 @@ class IssueTypePermission(ResourcePermission):
     bulk_update_order_perms = IsProjectOwner()
 
 
-class RolesPermission(ResourcePermission):
+class RolesPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
@@ -125,7 +125,7 @@ class RolesPermission(ResourcePermission):
 
 # Project Templates
 
-class ProjectTemplatePermission(ResourcePermission):
+class ProjectTemplatePermission(TaigaResourcePermission):
     retrieve_perms = AllowAny()
     create_perms = IsSuperUser()
     update_perms = IsSuperUser()

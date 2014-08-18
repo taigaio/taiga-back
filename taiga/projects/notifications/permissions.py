@@ -14,10 +14,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api.permissions import (ResourcePermission, IsAuthenticated)
+from taiga.base.api.permissions import (TaigaResourcePermission, IsAuthenticated)
 
 
-class NotifyPolicyPermission(ResourcePermission):
+class NotifyPolicyPermission(TaigaResourcePermission):
     retrieve_perms = IsAuthenticated()
     create_perms = IsAuthenticated()
     update_perms = IsAuthenticated()

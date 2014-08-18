@@ -216,12 +216,14 @@ class CanViewProjectObjFilterBackend(FilterBackend):
 
 class IsProjectMemberFilterBackend(FilterBackend):
     def filter_queryset(self, request, queryset, view):
-        queryset = super().filter_queryset(request, queryset, view)
-        user = request.user
-
-        if user.is_authenticated():
+        if request.user.is_authenticated() and request.user.is_superuser:
+            queryset = queryset
+        elif request.user.is_authenticated():
             queryset = queryset.filter(Q(project__members=request.user) |
                                        Q(project__owner=request.user))
+        else:
+            queryset = queryset.none()
+
         return super().filter_queryset(request, queryset.distinct(), view)
 
 

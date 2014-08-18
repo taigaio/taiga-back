@@ -55,10 +55,7 @@ class MembersFilterBackend(BaseFilterBackend):
             else:
                 raise exc.PermissionDenied(_("You don't have permisions to see this project users."))
         else:
-            if request.user.is_superuser:
-                return queryset
-            else:
-                return queryset.filter(pk=request.user.id)
+            return queryset
 
 
 class UsersViewSet(ModelCrudViewSet):

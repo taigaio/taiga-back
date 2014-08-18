@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
+from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
                                         IsProjectOwner, AllowAny, PermissionComponent)
 
 
@@ -26,7 +26,7 @@ class IsAttachmentOwnerPerm(PermissionComponent):
         return False
 
 
-class UserStoryAttachmentPermission(ResourcePermission):
+class UserStoryAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_us') | IsAttachmentOwnerPerm()
     create_perms = HasProjectPerm('modify_us')
     update_perms = HasProjectPerm('modify_us') | IsAttachmentOwnerPerm()
@@ -34,7 +34,7 @@ class UserStoryAttachmentPermission(ResourcePermission):
     list_perms = AllowAny()
 
 
-class TaskAttachmentPermission(ResourcePermission):
+class TaskAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_tasks') | IsAttachmentOwnerPerm()
     create_perms = HasProjectPerm('modify_task')
     update_perms = HasProjectPerm('modify_task') | IsAttachmentOwnerPerm()
@@ -42,7 +42,7 @@ class TaskAttachmentPermission(ResourcePermission):
     list_perms = AllowAny()
 
 
-class IssueAttachmentPermission(ResourcePermission):
+class IssueAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_issues') | IsAttachmentOwnerPerm()
     create_perms = HasProjectPerm('modify_issue')
     update_perms = HasProjectPerm('modify_issue') | IsAttachmentOwnerPerm()
@@ -50,7 +50,7 @@ class IssueAttachmentPermission(ResourcePermission):
     list_perms = AllowAny()
 
 
-class WikiAttachmentPermission(ResourcePermission):
+class WikiAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_wiki_pages') | IsAttachmentOwnerPerm()
     create_perms = HasProjectPerm('modify_wiki_page')
     update_perms = HasProjectPerm('modify_wiki_page') | IsAttachmentOwnerPerm()
@@ -72,5 +72,5 @@ class RawAttachmentPerm(PermissionComponent):
         return False
 
 
-class RawAttachmentPermission(ResourcePermission):
+class RawAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = RawAttachmentPerm()

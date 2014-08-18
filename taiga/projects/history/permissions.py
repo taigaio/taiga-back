@@ -14,21 +14,21 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
+from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
                                         IsProjectOwner, AllowAny)
 
 
-class UserStoryHistoryPermission(ResourcePermission):
+class UserStoryHistoryPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
 
 
-class TaskHistoryPermission(ResourcePermission):
+class TaskHistoryPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
 
 
-class IssueHistoryPermission(ResourcePermission):
+class IssueHistoryPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
 
 
-class WikiHistoryPermission(ResourcePermission):
+class WikiHistoryPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')

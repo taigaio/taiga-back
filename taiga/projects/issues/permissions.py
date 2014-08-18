@@ -15,13 +15,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
+from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
                                         IsProjectOwner, PermissionComponent,
-                                        AllowAny, IsAuthenticated)
+                                        AllowAny, IsAuthenticated, IsSuperUser)
 
 
-class IssuePermission(ResourcePermission):
-    enought_perms = IsProjectOwner()
+class IssuePermission(TaigaResourcePermission):
+    enought_perms = IsProjectOwner() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_issues')
     create_perms = HasProjectPerm('add_issue')
@@ -41,8 +41,8 @@ class HasIssueIdUrlParam(PermissionComponent):
         return False
 
 
-class IssueVotersPermission(ResourcePermission):
-    enought_perms = IsProjectOwner()
+class IssueVotersPermission(TaigaResourcePermission):
+    enought_perms = IsProjectOwner() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_issues')
     create_perms = HasProjectPerm('add_issue')

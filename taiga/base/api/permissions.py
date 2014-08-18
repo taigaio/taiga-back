@@ -216,3 +216,6 @@ class AllowAnyPermission(ResourcePermission):
 
 class IsAuthenticatedPermission(ResourcePermission):
     enought_perms = IsAuthenticated()
+
+class TaigaResourcePermission(ResourcePermission):
+    enought_perms = IsSuperUser()

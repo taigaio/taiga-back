@@ -14,13 +14,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api.permissions import (ResourcePermission, HasProjectPerm,
+from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
                                         IsProjectOwner, AllowAny)
 
 
-class UserTimelinePermission(ResourcePermission):
+class UserTimelinePermission(TaigaResourcePermission):
     retrieve_perms = AllowAny()
 
 
-class ProjectTimelinePermission(ResourcePermission):
+class ProjectTimelinePermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
