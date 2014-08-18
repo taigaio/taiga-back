@@ -102,9 +102,11 @@ def test_users_to_notify():
     member2 = f.MembershipFactory.create(project=project)
     member3 = f.MembershipFactory.create(project=project)
 
-    policy1 = services.create_notify_policy(project, member1.user)
-    policy2 = services.create_notify_policy(project, member2.user)
-    policy3 = services.create_notify_policy(project, member3.user)
+    policy_model_cls = get_model("notifications", "NotifyPolicy")
+
+    policy1 = policy_model_cls.objects.get(user=member1.user)
+    policy2 = policy_model_cls.objects.get(user=member2.user)
+    policy3 = policy_model_cls.objects.get(user=member3.user)
 
     history = MagicMock()
     history.owner = member2.user
