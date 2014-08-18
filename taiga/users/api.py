@@ -236,7 +236,7 @@ class UsersViewSet(ModelCrudViewSet):
             request.user.new_email = new_email
             request.user.save(update_fields=["email_token", "new_email"])
             mbuilder = MagicMailBuilder()
-            email = mbuilder.change_email(request.user.email, {"user": request.user})
+            email = mbuilder.change_email(request.user.new_email, {"user": request.user})
             email.send()
 
         return ret
