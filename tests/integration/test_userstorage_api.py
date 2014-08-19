@@ -66,7 +66,7 @@ def test_view_storage_entries(client):
 
     # Get by anonymous user
     response = client.get(reverse("user-storage-detail", args=[storage11.key]))
-    assert response.status_code == 401
+    assert response.status_code == 404
 
     # Get single entry
     client.login(username=user1.username, password=user1.username)

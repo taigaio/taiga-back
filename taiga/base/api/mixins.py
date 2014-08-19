@@ -20,6 +20,7 @@
 import warnings
 
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.db import transaction as tx
 
@@ -120,7 +121,7 @@ class RetrieveModelMixin(object):
     Retrieve a model instance.
     """
     def retrieve(self, request, *args, **kwargs):
-        self.object = self.get_object_or_none()
+        self.object = get_object_or_404(self.get_queryset(), **kwargs)
 
         self.check_permissions(request, 'retrieve', self.object)
 
