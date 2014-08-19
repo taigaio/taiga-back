@@ -6,7 +6,7 @@ from django.conf import settings
 from taiga.base.utils.urls import get_absolute_url
 
 
-GRAVATAR_BASE_URL = "http://www.gravatar.com/avatar/{}?{}"
+GRAVATAR_BASE_URL = "//www.gravatar.com/avatar/{}?{}"
 
 
 def get_gravatar_url(email: str, **options) -> str:
