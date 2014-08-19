@@ -16,6 +16,8 @@
 
 import os
 import hashlib
+import mimetypes
+mimetypes.init()
 
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
@@ -109,6 +111,7 @@ class RawAttachmentView(generics.RetrieveAPIView):
         response['X-Accel-Redirect'] = "/{filepath}".format(filepath=name)
         response['Content-Disposition'] = 'attachment;filename={filename}'.format(
             filename=os.path.basename(name))
+        response['Content-Type'] = mimetypes.guess_type(attachment.url)
 
         return response
 
