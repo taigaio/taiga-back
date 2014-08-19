@@ -125,7 +125,7 @@ def issue_values(diff):
     if "severity" in diff:
         values["severity"] = _get_severity_values(diff["severity"])
     if "type" in diff:
-        values["issue_type"] = _get_issue_type_values(diff["type"])
+        values["type"] = _get_issue_type_values(diff["type"])
 
     return values
 
