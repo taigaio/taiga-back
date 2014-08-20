@@ -111,7 +111,7 @@ class RawAttachmentView(generics.RetrieveAPIView):
         response['X-Accel-Redirect'] = "/{filepath}".format(filepath=name)
         response['Content-Disposition'] = 'attachment;filename={filename}'.format(
             filename=os.path.basename(name))
-        response['Content-Type'] = mimetypes.guess_type(attachment.url)
+        response['Content-Type'] = mimetypes.guess_type(name)
 
         return response
 
