@@ -61,20 +61,30 @@ def get_user_project_permissions(user, project):
     if user.is_superuser:
         owner_permissions = list(map(lambda perm: perm[0], OWNERS_PERMISSIONS))
         members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
-        anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
         public_permissions = list(map(lambda perm: perm[0], USER_PERMISSIONS))
-        return set(owner_permissions + members_permissions + public_permissions + anon_permissions)
+        anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
     elif project.owner == user:
         owner_permissions = list(map(lambda perm: perm[0], OWNERS_PERMISSIONS))
         members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
-        return set(project.anon_permissions + project.public_permissions + members_permissions + owner_permissions)
+        public_permissions = project.public_permissions if project.public_permissions is not None else []
+        anon_permissions = project.anon_permissions if project.anon_permissions is not None else []
     elif membership:
         if membership.is_owner:
             owner_permissions = list(map(lambda perm: perm[0], OWNERS_PERMISSIONS))
-            return set(project.anon_permissions + project.public_permissions + _get_membership_permissions(membership) + owner_permissions)
         else:
-            return set(project.anon_permissions + project.public_permissions + _get_membership_permissions(membership))
+            owner_permissions = []
+        members_permissions = _get_membership_permissions(membership)
+        public_permissions = project.public_permissions if project.public_permissions is not None else []
+        anon_permissions = project.anon_permissions if project.anon_permissions is not None else []
     elif user.is_authenticated():
-        return set(project.anon_permissions + project.public_permissions)
+        owner_permissions = []
+        members_permissions = []
+        public_permissions = project.public_permissions if project.public_permissions is not None else []
+        anon_permissions = project.anon_permissions if project.anon_permissions is not None else []
     else:
-        return set(project.anon_permissions)
+        owner_permissions = []
+        members_permissions = []
+        public_permissions = []
+        anon_permissions = project.anon_permissions if project.anon_permissions is not None else []
+
+    return set(owner_permissions + members_permissions + public_permissions + anon_permissions)
