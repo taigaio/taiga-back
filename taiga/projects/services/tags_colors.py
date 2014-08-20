@@ -42,6 +42,9 @@ def update_project_tags_colors_handler(instance):
     if instance.tags is None:
         instance.tags = []
 
+    if not isinstance(instance.project.tags_colors, list):
+        instance.project.tags_colors = []
+
     for tag in instance.tags:
         defined_tags = map(lambda x: x[0], instance.project.tags_colors)
         if tag not in defined_tags:
