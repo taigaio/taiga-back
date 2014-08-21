@@ -24,12 +24,16 @@ urls = {
     "change-email": "/change-email/{0}",
     "invitation": "/invitation/{0}",
 
+    "project": "/project/{0}",
+
     "backlog": "/project/{0}/backlog/",
     "taskboard": "/project/{0}/taskboard/{1}",
-    "userstory": "/project/{0}/user-story/{1}",
-    "task": "/project/{0}/tasks/{1}",
+    "kanban": "/project/{0}/kanban/",
+    "userstory": "/project/{0}/us/{1}",
+    "task": "/project/{0}/task/{1}",
 
-    "issue": "/project/{0}/issues/{1}",
+    "issues": "/project/{0}/issues",
+    "issue": "/project/{0}/issue/{1}",
 
     "wiki": "/project/{0}/wiki/{1}",
 
