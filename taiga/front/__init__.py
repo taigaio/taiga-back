@@ -37,7 +37,7 @@ urls = {
 
     "wiki": "/project/{0}/wiki/{1}",
 
-    "project-admin": "/project/{0}/admin",
+    "project-admin": "/project/{0}/admin/project-profile/details",
 }
 
 
