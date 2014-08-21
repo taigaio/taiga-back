@@ -50,6 +50,7 @@ class UserStorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserStory
         depth = 0
+        read_only_fields = ('created_date', 'modified_date')
 
     def save_object(self, obj, **kwargs):
         role_points = obj._related_data.pop("role_points", None)

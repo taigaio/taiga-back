@@ -18,6 +18,7 @@ from django.db import models
 from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
 
@@ -33,11 +34,13 @@ class WikiPage(OCCModelMixin, WatchedModelMixin, models.Model):
                               related_name="owned_wiki_pages", verbose_name=_("owner"))
     last_modifier = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                               related_name="last_modified_wiki_pages", verbose_name=_("last modifier"))
-    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                                        verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+    created_date = models.DateTimeField(null=False, blank=False,
+                                        verbose_name=_("created date"),
+                                        default=timezone.now)
+    modified_date = models.DateTimeField(null=False, blank=False,
                                          verbose_name=_("modified date"))
     attachments = generic.GenericRelation("attachments.Attachment")
+    _importing = None
 
     class Meta:
         verbose_name = "wiki page"
@@ -50,6 +53,12 @@ class WikiPage(OCCModelMixin, WatchedModelMixin, models.Model):
 
     def __str__(self):
         return "project {0} - {1}".format(self.project_id, self.slug)
+
+    def save(self, *args, **kwargs):
+        if not self._importing:
+            self.modified_date = timezone.now()
+
+        return super().save(*args, **kwargs)
 
 
 class WikiLink(models.Model):

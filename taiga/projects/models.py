@@ -62,7 +62,7 @@ class Membership(models.Model):
     # Invitation metadata
     email = models.EmailField(max_length=255, default=None, null=True, blank=True,
                               verbose_name=_("email"))
-    created_at = models.DateTimeField(auto_now_add=True, default=timezone.now,
+    created_at = models.DateTimeField(default=timezone.now,
                                       verbose_name=_("creado el"))
     token = models.CharField(max_length=60, blank=True, null=True, default=None,
                              verbose_name=_("token"))
@@ -122,9 +122,10 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                             verbose_name=_("slug"))
     description = models.TextField(null=False, blank=False,
                                    verbose_name=_("description"))
-    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                                        verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+    created_date = models.DateTimeField(null=False, blank=False,
+                                        verbose_name=_("created date"),
+                                        default=timezone.now)
+    modified_date = models.DateTimeField(null=False, blank=False,
                                          verbose_name=_("modified date"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
                               related_name="owned_projects", verbose_name=_("owner"))
@@ -164,6 +165,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                                      verbose_name=_("is private"))
 
     tags_colors = TextArrayField(dimension=2, null=False, blank=True, verbose_name=_("tags colors"), default=[])
+    _importing = None
 
     class Meta:
         verbose_name = "project"
@@ -180,6 +182,9 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         return "<Project {0}>".format(self.id)
 
     def save(self, *args, **kwargs):
+        if not self._importing:
+            self.modified_date = timezone.now()
+
         if not self.slug:
             base_slug = slugify_uniquely(self.name, self.__class__)
             slug = base_slug
@@ -471,9 +476,10 @@ class ProjectTemplate(models.Model):
                             verbose_name=_("slug"), unique=True)
     description = models.TextField(null=False, blank=False,
                                    verbose_name=_("description"))
-    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                                        verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+    created_date = models.DateTimeField(null=False, blank=False,
+                                        verbose_name=_("created date"),
+                                        default=timezone.now)
+    modified_date = models.DateTimeField(null=False, blank=False,
                                          verbose_name=_("modified date"))
     default_owner_role = models.CharField(max_length=50, null=False,
                                           blank=False,
@@ -502,6 +508,7 @@ class ProjectTemplate(models.Model):
     priorities = JsonField(null=True, blank=True, verbose_name=_("priorities"))
     severities = JsonField(null=True, blank=True, verbose_name=_("severities"))
     roles = JsonField(null=True, blank=True, verbose_name=_("roles"))
+    _importing = None
 
     class Meta:
         verbose_name = "project template"
@@ -515,6 +522,8 @@ class ProjectTemplate(models.Model):
         return "<Project Template {0}>".format(self.slug)
 
     def save(self, *args, **kwargs):
+        if not self._importing:
+            self.modified_date = timezone.now()
         super().save(*args, **kwargs)
 
     def load_data_from_project(self, project):

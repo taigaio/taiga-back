@@ -15,6 +15,7 @@
 import uuid
 
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 from django.db import models
 from django.db.models.loading import get_model
 from django.utils.functional import cached_property
@@ -36,7 +37,7 @@ class HistoryEntry(models.Model):
                           editable=False, default=lambda: str(uuid.uuid1()))
 
     user = JsonField(blank=True, default=None, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     type = models.SmallIntegerField(choices=HISTORY_TYPE_CHOICES)
     is_snapshot = models.BooleanField(default=False)
 

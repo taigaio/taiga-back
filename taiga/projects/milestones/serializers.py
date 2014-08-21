@@ -32,6 +32,7 @@ class MilestoneSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Milestone
+        read_only_fields = ('id', 'created_date', 'modified_date')
 
     def get_total_points(self, obj):
         return sum(obj.total_points.values())

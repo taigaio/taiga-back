@@ -35,6 +35,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Task
+        read_only_fields = ('id', 'ref', 'created_date', 'modified_date')
 
     def get_comment(self, obj):
         return ""
@@ -72,5 +73,5 @@ class TasksBulkSerializer(ProjectExistsValidator, SprintExistsValidator, TaskSta
     project_id = serializers.IntegerField()
     sprint_id = serializers.IntegerField()
     status_id = serializers.IntegerField(required=False)
-    us_id = serializers.IntegerField()
+    us_id = serializers.IntegerField(required=False)
     bulk_tasks = serializers.CharField()

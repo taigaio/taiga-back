@@ -17,6 +17,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
@@ -31,7 +32,7 @@ class Milestone(WatchedModelMixin, models.Model):
     name = models.CharField(max_length=200, db_index=True, null=False, blank=False,
                             verbose_name=_("name"))
     # TODO: Change the unique restriction to a unique together with the project id
-    slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
+    slug = models.SlugField(max_length=250, db_index=True, null=False, blank=True,
                             verbose_name=_("slug"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                               related_name="owned_milestones", verbose_name=_("owner"))
@@ -39,9 +40,10 @@ class Milestone(WatchedModelMixin, models.Model):
                                 related_name="milestones", verbose_name=_("project"))
     estimated_start = models.DateField(verbose_name=_("estimated start date"))
     estimated_finish = models.DateField(verbose_name=_("estimated finish date"))
-    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                                        verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+    created_date = models.DateTimeField(null=False, blank=False,
+                                        verbose_name=_("created date"),
+                                        default=timezone.now)
+    modified_date = models.DateTimeField(null=False, blank=False,
                                          verbose_name=_("modified date"))
     closed = models.BooleanField(default=False, null=False, blank=True,
                                  verbose_name=_("is closed"))
@@ -49,12 +51,13 @@ class Milestone(WatchedModelMixin, models.Model):
                                       verbose_name=_("disponibility"))
     order = models.PositiveSmallIntegerField(default=1, null=False, blank=False,
                                              verbose_name=_("order"))
+    _importing = None
 
     class Meta:
         verbose_name = "milestone"
         verbose_name_plural = "milestones"
         ordering = ["project", "created_date"]
-        unique_together = ("name", "project")
+        unique_together = [("name", "project"), ("slug", "project")]
         permissions = (
             ("view_milestone", "Can view milestone"),
         )
@@ -66,6 +69,8 @@ class Milestone(WatchedModelMixin, models.Model):
         return "<Milestone {0}>".format(self.id)
 
     def save(self, *args, **kwargs):
+        if not self._importing:
+            self.modified_date = timezone.now()
         if not self.slug:
             self.slug = slugify_uniquely(self.name, self.__class__)
 

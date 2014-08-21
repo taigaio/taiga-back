@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
+from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey
 
@@ -31,7 +32,7 @@ class Reference(models.Model):
     object_id = models.PositiveIntegerField()
     ref = models.BigIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     project = models.ForeignKey("projects.Project", null=False,
                                 blank=False, related_name="references")
 

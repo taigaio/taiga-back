@@ -34,6 +34,7 @@ class IssueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Issue
+        read_only_fields = ('id', 'ref', 'created_date', 'modified_date')
 
     def get_comment(self, obj):
         # NOTE: This method and field is necessary to historical comments work

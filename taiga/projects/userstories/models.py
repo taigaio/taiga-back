@@ -19,6 +19,7 @@ from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 from taiga.base.tags import TaggedMixin
 from taiga.base.utils.slug import ref_uniquely
@@ -75,9 +76,10 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
                                     verbose_name=_("points"))
     order = models.PositiveSmallIntegerField(null=False, blank=False, default=100,
                                              verbose_name=_("order"))
-    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                                        verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+    created_date = models.DateTimeField(null=False, blank=False,
+                                        verbose_name=_("created date"),
+                                        default=timezone.now)
+    modified_date = models.DateTimeField(null=False, blank=False,
                                          verbose_name=_("modified date"))
     finish_date = models.DateTimeField(null=True, blank=True,
                                        verbose_name=_("finish date"))
@@ -95,6 +97,7 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
     generated_from_issue = models.ForeignKey("issues.Issue", null=True, blank=True,
                                              related_name="generated_user_stories",
                                              verbose_name=_("generated from issue"))
+    _importing = None
 
     class Meta:
         verbose_name = "user story"
@@ -104,6 +107,12 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
         permissions = (
             ("view_userstory", "Can view user story"),
         )
+
+    def save(self, *args, **kwargs):
+        if not self._importing:
+            self.modified_date = timezone.now()
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return "({1}) {0}".format(self.ref, self.subject)

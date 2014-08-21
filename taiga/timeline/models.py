@@ -16,6 +16,7 @@
 
 from django.db import models
 from django_pgjson.fields import JsonField
+from django.utils import timezone
 
 from django.core.exceptions import ValidationError
 
@@ -30,7 +31,7 @@ class Timeline(models.Model):
     namespace = models.SlugField(default="default")
     event_type = models.SlugField()
     data = JsonField()
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):
         if self.id:

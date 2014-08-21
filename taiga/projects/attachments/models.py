@@ -46,9 +46,10 @@ class Attachment(models.Model):
     object_id = models.PositiveIntegerField(null=False, blank=False,
                                             verbose_name=_("object id"))
     content_object = generic.GenericForeignKey("content_type", "object_id")
-    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                                        verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+    created_date = models.DateTimeField(null=False, blank=False,
+                                        verbose_name=_("created date"),
+                                        default=timezone.now)
+    modified_date = models.DateTimeField(null=False, blank=False,
                                          verbose_name=_("modified date"))
 
     attached_file = models.FileField(max_length=500, null=True, blank=True,
@@ -57,6 +58,7 @@ class Attachment(models.Model):
     is_deprecated = models.BooleanField(default=False, verbose_name=_("is deprecated"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
     order = models.IntegerField(default=0, null=False, blank=False, verbose_name=_("order"))
+    _importing = None
 
     class Meta:
         verbose_name = "attachment"
@@ -65,6 +67,12 @@ class Attachment(models.Model):
         permissions = (
             ("view_attachment", "Can view attachment"),
         )
+
+    def save(self, *args, **kwargs):
+        if not self._importing:
+            self.modified_date = timezone.now()
+
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return "Attachment: {}".format(self.id)

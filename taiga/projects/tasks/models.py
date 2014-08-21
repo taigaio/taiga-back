@@ -46,9 +46,10 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
                                   default=None, related_name="tasks",
                                   verbose_name=_("milestone"))
-    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                                        verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+    created_date = models.DateTimeField(null=False, blank=False,
+                                        verbose_name=_("created date"),
+                                        default=timezone.now)
+    modified_date = models.DateTimeField(null=False, blank=False,
                                          verbose_name=_("modified date"))
     finished_date = models.DateTimeField(null=True, blank=True,
                                          verbose_name=_("finished date"))
@@ -61,6 +62,7 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     attachments = generic.GenericRelation("attachments.Attachment")
     is_iocaine = models.BooleanField(default=False, null=False, blank=True,
                                      verbose_name=_("is iocaine"))
+    _importing = None
 
     class Meta:
         verbose_name = "task"
@@ -70,6 +72,12 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
         permissions = (
             ("view_task", "Can view task"),
         )
+
+    def save(self, *args, **kwargs):
+        if not self._importing:
+            self.modified_date = timezone.now()
+
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return "({1}) {0}".format(self.ref, self.subject)

@@ -184,6 +184,7 @@ INSTALLED_APPS = [
     "taiga.searches",
     "taiga.timeline",
     "taiga.mdrender",
+    "taiga.export_import",
 
     "south",
     "reversion",

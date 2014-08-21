@@ -16,6 +16,7 @@
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 from .choices import NOTIFY_LEVEL_CHOICES
 
@@ -25,13 +26,20 @@ class NotifyPolicy(models.Model):
     This class represents a persistence for
     project user notifications preference.
     """
-    project = models.ForeignKey("projects.Project", related_name="+")
-    user = models.ForeignKey("users.User", related_name="+")
+    project = models.ForeignKey("projects.Project", related_name="notify_policies")
+    user = models.ForeignKey("users.User", related_name="notify_policies")
     notify_level = models.SmallIntegerField(choices=NOTIFY_LEVEL_CHOICES)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField()
+    _importing = None
 
     class Meta:
         unique_together = ("project", "user",)
         ordering = ["created_at"]
+
+    def save(self, *args, **kwargs):
+        if not self._importing:
+            self.modified_at = timezone.now()
+
+        return super().save(*args, **kwargs)

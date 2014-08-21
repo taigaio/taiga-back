@@ -47,9 +47,10 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.
                                   verbose_name=_("milestone"))
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="issues", verbose_name=_("project"))
-    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
-                                        verbose_name=_("created date"))
-    modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
+    created_date = models.DateTimeField(null=False, blank=False,
+                                        verbose_name=_("created date"),
+                                        default=timezone.now)
+    modified_date = models.DateTimeField(null=False, blank=False,
                                          verbose_name=_("modified date"))
     finished_date = models.DateTimeField(null=True, blank=True,
                                          verbose_name=_("finished date"))
@@ -60,6 +61,7 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.
                                     default=None, related_name="issues_assigned_to_me",
                                     verbose_name=_("assigned to"))
     attachments = generic.GenericRelation("attachments.Attachment")
+    _importing = None
 
     class Meta:
         verbose_name = "issue"
@@ -69,6 +71,12 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.
         permissions = (
             ("view_issue", "Can view issue"),
         )
+
+    def save(self, *args, **kwargs):
+        if not self._importing:
+            self.modified_date = timezone.now()
+
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return "({1}) {0}".format(self.ref, self.subject)
