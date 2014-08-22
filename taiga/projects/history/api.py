@@ -28,8 +28,6 @@ from . import serializers
 from . import services
 
 
-# TODO: add specific permission for view history?
-
 class HistoryViewSet(GenericViewSet):
     serializer_class = serializers.HistoryEntrySerializer
 
