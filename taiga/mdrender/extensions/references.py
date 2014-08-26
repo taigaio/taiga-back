@@ -28,6 +28,7 @@ from markdown.inlinepatterns import Pattern
 from markdown.util import etree
 
 from taiga.projects.references.services import get_instance_by_ref
+from taiga.front import resolve
 
 
 class TaigaReferencesExtension(Extension):
@@ -57,22 +58,16 @@ class TaigaReferencesPattern(Pattern):
         subject = instance.content_object.subject
 
         if instance.content_type.model == "userstory":
-            obj_section = "user-story"
             html_classes = "reference user-story"
         elif instance.content_type.model == "task":
-            obj_section = "tasks"
             html_classes = "reference task"
         elif instance.content_type.model == "issue":
-            obj_section = "issues"
             html_classes = "reference issue"
         else:
             return "#{}".format(obj_ref)
 
-        url = "/project/{}/{}/{}".format(
-            self.project.slug,
-            obj_section,
-            obj_ref
-        )
+        url = resolve(instance.content_type.model, self.project.slug, obj_ref)
+
         link_text = "&num;{}".format(obj_ref)
 
         a = etree.Element('a')
