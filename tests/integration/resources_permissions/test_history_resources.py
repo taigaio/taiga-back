@@ -64,29 +64,45 @@ def data():
                         user=m.project_member_without_perms,
                         role__project=m.private_project2,
                         role__permissions=[])
+    return m
 
-    m.public_user_story = f.UserStoryFactory(project=m.public_project, ref=1)
-    m.public_task = f.TaskFactory(project=m.public_project, ref=2)
-    m.public_issue = f.IssueFactory(project=m.public_project, ref=3)
-    m.public_wiki = f.WikiPageFactory(project=m.public_project, slug=4)
+@pytest.fixture
+def data_us(data):
+    m = type("Models", (object,), {})
+    m.public_user_story = f.UserStoryFactory(project=data.public_project, ref=1)
+    m.private_user_story1 = f.UserStoryFactory(project=data.private_project1, ref=5)
+    m.private_user_story2 = f.UserStoryFactory(project=data.private_project2, ref=9)
+    return m
 
-    m.private_user_story1 = f.UserStoryFactory(project=m.private_project1, ref=5)
-    m.private_task1 = f.TaskFactory(project=m.private_project1, ref=6)
-    m.private_issue1 = f.IssueFactory(project=m.private_project1, ref=7)
-    m.private_wiki1 = f.WikiPageFactory(project=m.private_project1, slug=8)
+@pytest.fixture
+def data_task(data):
+    m = type("Models", (object,), {})
+    m.public_task = f.TaskFactory(project=data.public_project, ref=2)
+    m.private_task1 = f.TaskFactory(project=data.private_project1, ref=6)
+    m.private_task2 = f.TaskFactory(project=data.private_project2, ref=10)
+    return m
 
-    m.private_user_story2 = f.UserStoryFactory(project=m.private_project2, ref=9)
-    m.private_task2 = f.TaskFactory(project=m.private_project2, ref=10)
-    m.private_issue2 = f.IssueFactory(project=m.private_project2, ref=11)
-    m.private_wiki2 = f.WikiPageFactory(project=m.private_project2, slug=12)
+@pytest.fixture
+def data_issue(data):
+    m = type("Models", (object,), {})
+    m.public_issue = f.IssueFactory(project=data.public_project, ref=3)
+    m.private_issue1 = f.IssueFactory(project=data.private_project1, ref=7)
+    m.private_issue2 = f.IssueFactory(project=data.private_project2, ref=11)
+    return m
 
+@pytest.fixture
+def data_wiki(data):
+    m = type("Models", (object,), {})
+    m.public_wiki = f.WikiPageFactory(project=data.public_project, slug=4)
+    m.private_wiki1 = f.WikiPageFactory(project=data.private_project1, slug=8)
+    m.private_wiki2 = f.WikiPageFactory(project=data.private_project2, slug=12)
     return m
 
 
-def test_user_story_history_retrieve(client, data):
-    public_url = reverse('userstory-history-detail', kwargs={"pk": data.public_user_story.pk})
-    private_url1 = reverse('userstory-history-detail', kwargs={"pk": data.private_user_story1.pk})
-    private_url2 = reverse('userstory-history-detail', kwargs={"pk": data.private_user_story2.pk})
+def test_user_story_history_retrieve(client, data, data_us):
+    public_url = reverse('userstory-history-detail', kwargs={"pk": data_us.public_user_story.pk})
+    private_url1 = reverse('userstory-history-detail', kwargs={"pk": data_us.private_user_story1.pk})
+    private_url2 = reverse('userstory-history-detail', kwargs={"pk": data_us.private_user_story2.pk})
 
     users = [
         None,
@@ -104,10 +120,10 @@ def test_user_story_history_retrieve(client, data):
     assert results == [401, 403, 403, 200, 200]
 
 
-def test_task_history_retrieve(client, data):
-    public_url = reverse('task-history-detail', kwargs={"pk": data.public_task.pk})
-    private_url1 = reverse('task-history-detail', kwargs={"pk": data.private_task1.pk})
-    private_url2 = reverse('task-history-detail', kwargs={"pk": data.private_task2.pk})
+def test_task_history_retrieve(client, data, data_task):
+    public_url = reverse('task-history-detail', kwargs={"pk": data_task.public_task.pk})
+    private_url1 = reverse('task-history-detail', kwargs={"pk": data_task.private_task1.pk})
+    private_url2 = reverse('task-history-detail', kwargs={"pk": data_task.private_task2.pk})
 
     users = [
         None,
@@ -125,10 +141,10 @@ def test_task_history_retrieve(client, data):
     assert results == [401, 403, 403, 200, 200]
 
 
-def test_issue_history_retrieve(client, data):
-    public_url = reverse('issue-history-detail', kwargs={"pk": data.public_issue.pk})
-    private_url1 = reverse('issue-history-detail', kwargs={"pk": data.private_issue1.pk})
-    private_url2 = reverse('issue-history-detail', kwargs={"pk": data.private_issue2.pk})
+def test_issue_history_retrieve(client, data, data_issue):
+    public_url = reverse('issue-history-detail', kwargs={"pk": data_issue.public_issue.pk})
+    private_url1 = reverse('issue-history-detail', kwargs={"pk": data_issue.private_issue1.pk})
+    private_url2 = reverse('issue-history-detail', kwargs={"pk": data_issue.private_issue2.pk})
 
     users = [
         None,
@@ -146,10 +162,10 @@ def test_issue_history_retrieve(client, data):
     assert results == [401, 403, 403, 200, 200]
 
 
-def test_wiki_history_retrieve(client, data):
-    public_url = reverse('wiki-history-detail', kwargs={"pk": data.public_wiki.pk})
-    private_url1 = reverse('wiki-history-detail', kwargs={"pk": data.private_wiki1.pk})
-    private_url2 = reverse('wiki-history-detail', kwargs={"pk": data.private_wiki2.pk})
+def test_wiki_history_retrieve(client, data, data_wiki):
+    public_url = reverse('wiki-history-detail', kwargs={"pk": data_wiki.public_wiki.pk})
+    private_url1 = reverse('wiki-history-detail', kwargs={"pk": data_wiki.private_wiki1.pk})
+    private_url2 = reverse('wiki-history-detail', kwargs={"pk": data_wiki.private_wiki2.pk})
 
     users = [
         None,
