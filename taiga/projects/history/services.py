@@ -300,7 +300,7 @@ def get_history_queryset_by_model_instance(obj:object, types=(HistoryType.change
     history_entry_model = get_model("history", "HistoryEntry")
 
     qs = history_entry_model.objects.filter(key=key, type__in=types)
-    return qs.order_by("-created_at")
+    return qs.order_by("created_at")
 
 
 # Freeze implementatitions
