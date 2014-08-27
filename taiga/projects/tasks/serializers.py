@@ -31,6 +31,7 @@ class TaskSerializer(serializers.ModelSerializer):
     milestone_slug = serializers.SerializerMethodField("get_milestone_slug")
     blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
     description_html = serializers.SerializerMethodField("get_description_html")
+    is_closed =  serializers.SerializerMethodField("get_is_closed")
 
     class Meta:
         model = models.Task
@@ -49,6 +50,9 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def get_description_html(self, obj):
         return mdrender(obj.project, obj.description)
+
+    def get_is_closed(self, obj):
+        return obj.status.is_closed
 
 
 class TaskNeighborsSerializer(NeighborsSerializerMixin, TaskSerializer):
