@@ -242,26 +242,12 @@ class TagsFilter(FilterBackend):
         return super().filter_queryset(request, queryset, view)
 
 
-class SearchFieldFilter(filters.SearchFilter):
-    """Search filter that looks up the search param in the parameter named after the search field,
-    that is: ?<search field>=... instead of looking for the search param: ?search=...
-    This way you can search in a field-specific way.
-    """
-    def get_search_terms(self, request, field):
-        params = request.QUERY_PARAMS.get(field, '')
-        return params.replace(',', ' ').split()
-
+class QFilter(FilterBackend):
     def filter_queryset(self, request, queryset, view):
-        search_fields = getattr(view, "search_fields", None)
-        if not search_fields:
-            return queryset
-
-        lookups = dict((self.construct_search(field), self.get_search_terms(request, field))
-                       for field in search_fields)
-
-        for lookup, values in lookups.items():
-            or_queries = [Q(**{lookup: value}) for value in values]
-            if or_queries:
-                queryset = queryset.filter(reduce(operator.or_, or_queries))
+        q = request.QUERY_PARAMS.get('q', None)
+        if q:
+            qs_args = [Q(subject__icontains=x) for x in q.split()]
+            qs_args += [Q(ref=x) for x in q.split() if x.isdigit()]
+            queryset = queryset.filter(reduce(operator.or_, qs_args))
 
         return queryset
