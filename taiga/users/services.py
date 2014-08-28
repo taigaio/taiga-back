@@ -23,6 +23,7 @@ from django.db.models import Q
 from django.conf import settings
 
 from easy_thumbnails.files import get_thumbnailer
+from easy_thumbnails.exceptions import InvalidImageFormatError
 
 from taiga.base import exceptions as exc
 from taiga.base.utils.urls import get_absolute_url
@@ -54,8 +55,11 @@ def get_and_validate_user(*, username:str, password:str) -> bool:
 
 def get_photo_url(photo):
     """Get a photo absolute url and the photo automatically cropped."""
-    url = get_thumbnailer(photo)['avatar'].url
-    return get_absolute_url(url)
+    try:
+        url = get_thumbnailer(photo)['avatar'].url
+        return get_absolute_url(url)
+    except InvalidImageFormatError as e:
+        return None
 
 
 def get_photo_or_gravatar_url(user):
@@ -67,8 +71,11 @@ def get_photo_or_gravatar_url(user):
 
 def get_big_photo_url(photo):
     """Get a big photo absolute url and the photo automatically cropped."""
-    url = get_thumbnailer(photo)['big-avatar'].url
-    return get_absolute_url(url)
+    try:
+        url = get_thumbnailer(photo)['big-avatar'].url
+        return get_absolute_url(url)
+    except InvalidImageFormatError as e:
+        return None
 
 
 def get_big_photo_or_gravatar_url(user):

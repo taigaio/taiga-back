@@ -18,17 +18,15 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
-from taiga.base.api import GenericViewSet
-from taiga.base.filters import IsProjectMemberFilterBackend
+from taiga.base.api import ReadOnlyListViewSet
 
 from . import permissions
 from . import serializers
 from . import services
 
 
-class HistoryViewSet(GenericViewSet):
+class HistoryViewSet(ReadOnlyListViewSet):
     serializer_class = serializers.HistoryEntrySerializer
 
     content_type = None
