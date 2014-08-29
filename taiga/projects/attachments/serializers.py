@@ -35,7 +35,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
         fields = ("id", "project", "owner", "name", "attached_file", "size", "url",
                   "description", "is_deprecated", "created_date", "modified_date",
                   "object_id", "order")
-        read_only_fields = ("owner",)
+        read_only_fields = ("owner", "created_date", "modified_date")
 
     def get_name(self, obj):
         if obj.attached_file:
