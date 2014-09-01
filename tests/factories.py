@@ -70,7 +70,7 @@ class ProjectFactory(Factory):
 class RoleFactory(Factory):
     FACTORY_FOR = get_model("users", "Role")
 
-    name = "Tester"
+    name = factory.Sequence(lambda n: "Role {}".format(n))
     slug = factory.Sequence(lambda n: "test-role-{}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
@@ -102,7 +102,7 @@ class IssueAttachmentFactory(AttachmentFactory):
 
 
 class WikiAttachmentFactory(AttachmentFactory):
-    content_object = factory.SubFactory("tests.factories.WikiFactory")
+    content_object = factory.SubFactory("tests.factories.WikiPageFactory")
 
 
 class RolePointsFactory(Factory):

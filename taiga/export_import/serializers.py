@@ -14,16 +14,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib.contenttypes.models import ContentType
-from django.core.files.base import ContentFile
-
-from rest_framework import serializers
-
-import json
 import base64
 import os
-import io
 from collections import OrderedDict
+
+from django.contrib.contenttypes.models import ContentType
+from django.core.files.base import ContentFile
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+
+from rest_framework import serializers
 
 from taiga.projects import models as projects_models
 from taiga.projects.userstories import models as userstories_models
@@ -31,14 +30,14 @@ from taiga.projects.tasks import models as tasks_models
 from taiga.projects.issues import models as issues_models
 from taiga.projects.milestones import models as milestones_models
 from taiga.projects.wiki import models as wiki_models
-from taiga.projects.votes import models as votes_models
-from taiga.projects.notifications import models as notifications_models
 from taiga.projects.history import models as history_models
 from taiga.projects.attachments import models as attachments_models
 from taiga.users import models as users_models
 from taiga.projects.votes import services as votes_service
 from taiga.projects.history import services as history_service
 from taiga.base.serializers import JsonField, PgArrayField
+from taiga import mdrender
+
 
 class AttachedFileField(serializers.WritableField):
     read_only = False
@@ -72,6 +71,15 @@ class UserRelatedField(serializers.RelatedField):
         except users_models.User.DoesNotExist:
             return None
 
+
+class CommentField(serializers.WritableField):
+    read_only = False
+
+    def field_from_native(self, data, files, field_name, into):
+        super().field_from_native(data, files, field_name, into)
+        into["comment_html"] = mdrender.render(self.context['project'], data.get("comment", ""))
+
+
 class ProjectRelatedField(serializers.RelatedField):
     read_only = False
 
@@ -88,8 +96,99 @@ class ProjectRelatedField(serializers.RelatedField):
         try:
             kwargs = {self.slug_field: data, "project": self.context['project']}
             return self.queryset.get(**kwargs)
-        except self.parent.opts.model.DoesNotExist:
-            return None
+        except ObjectDoesNotExist:
+            raise ValidationError("{}=\"{}\" not found in this project".format(self.slug_field, data))
+
+
+class HistoryUserField(JsonField):
+    def to_native(self, obj):
+        if obj is None:
+            return []
+        try:
+            user = users_models.User.objects.get(pk=obj['pk'])
+        except users_models.User.DoesNotExist:
+            user = None
+        return (UserRelatedField().to_native(user), obj['name'])
+
+    def from_native(self, data):
+        if data is None:
+            return []
+
+        if len(data) < 2:
+            return []
+
+        return {"pk": UserRelatedField().from_native(data[0]).pk, "name": data[1]}
+
+
+class HistoryValuesField(JsonField):
+    def to_native(self, obj):
+        if obj is None:
+            return []
+        if "users" in obj:
+            obj['users'] = map(HistoryUserField().to_native, obj['users'])
+        return obj
+
+    def from_native(self, data):
+        if data is None:
+            return []
+        if "users" in data:
+            data['users'] = map(HistoryUserField().from_native, data['users'])
+        return data
+
+
+class HistoryDiffField(JsonField):
+    def to_native(self, obj):
+        if obj is None:
+            return []
+        if "assigned_to" in obj:
+            obj['assigned_to'] = HistoryUserField().to_native(obj['assigned_to'])
+        return obj
+
+    def from_native(self, data):
+        if data is None:
+            return []
+        if "assigned_to" in data:
+            data['assigned_to'] = HistoryUserField().from_native(data['assigned_to'])
+        return data
+
+
+class HistoryExportSerializer(serializers.ModelSerializer):
+    user = HistoryUserField()
+    diff = HistoryDiffField(required=False)
+    snapshot = JsonField(required=False)
+    values = HistoryValuesField(required=False)
+    comment = CommentField(required=False)
+
+    class Meta:
+        model = history_models.HistoryEntry
+        exclude = ("id", "comment_html")
+
+
+class HistoryExportSerializerMixin(serializers.ModelSerializer):
+    history = serializers.SerializerMethodField("get_history")
+
+    def get_history(self, obj):
+        history_qs = history_service.get_history_queryset_by_model_instance(obj)
+        return HistoryExportSerializer(history_qs, many=True).data
+
+
+class AttachmentExportSerializer(serializers.ModelSerializer):
+    owner = UserRelatedField(required=False)
+    attached_file = AttachedFileField()
+    modified_date = serializers.DateTimeField(required=False)
+
+    class Meta:
+        model = attachments_models.Attachment
+        exclude = ('id', 'content_type', 'object_id', 'project')
+
+
+class AttachmentExportSerializerMixin(serializers.ModelSerializer):
+    attachments = serializers.SerializerMethodField("get_attachments")
+
+    def get_attachments(self, obj):
+        content_type = ContentType.objects.get_for_model(obj.__class__)
+        attachments_qs = attachments_models.Attachment.objects.filter(object_id=obj.pk, content_type=content_type)
+        return AttachmentExportSerializer(attachments_qs, many=True).data
 
 
 class PointsExportSerializer(serializers.ModelSerializer):
@@ -97,35 +196,42 @@ class PointsExportSerializer(serializers.ModelSerializer):
         model = projects_models.Points
         exclude = ('id', 'project')
 
+
 class UserStoryStatusExportSerializer(serializers.ModelSerializer):
     class Meta:
         model = projects_models.UserStoryStatus
         exclude = ('id', 'project')
+
 
 class TaskStatusExportSerializer(serializers.ModelSerializer):
     class Meta:
         model = projects_models.TaskStatus
         exclude = ('id', 'project')
 
+
 class IssueStatusExportSerializer(serializers.ModelSerializer):
     class Meta:
         model = projects_models.IssueStatus
         exclude = ('id', 'project')
+
 
 class PriorityExportSerializer(serializers.ModelSerializer):
     class Meta:
         model = projects_models.Priority
         exclude = ('id', 'project')
 
+
 class SeverityExportSerializer(serializers.ModelSerializer):
     class Meta:
         model = projects_models.Severity
         exclude = ('id', 'project')
 
+
 class IssueTypeExportSerializer(serializers.ModelSerializer):
     class Meta:
         model = projects_models.IssueType
         exclude = ('id', 'project')
+
 
 class RoleExportSerializer(serializers.ModelSerializer):
     permissions = PgArrayField(required=False)
@@ -134,9 +240,10 @@ class RoleExportSerializer(serializers.ModelSerializer):
         model = users_models.Role
         exclude = ('id', 'project')
 
+
 class MembershipExportSerializer(serializers.ModelSerializer):
     user = UserRelatedField(required=False)
-    role = ProjectRelatedField(slug_field="slug")
+    role = ProjectRelatedField(slug_field="name")
 
     class Meta:
         model = projects_models.Membership
@@ -147,120 +254,62 @@ class MembershipExportSerializer(serializers.ModelSerializer):
 
 
 class RolePointsExportSerializer(serializers.ModelSerializer):
-    role = ProjectRelatedField(slug_field="slug")
+    role = ProjectRelatedField(slug_field="name")
     points = ProjectRelatedField(slug_field="name")
 
     class Meta:
         model = userstories_models.RolePoints
         exclude = ('id', 'user_story')
 
+
 class MilestoneExportSerializer(serializers.ModelSerializer):
     owner = UserRelatedField(required=False)
     watchers = UserRelatedField(many=True, required=False)
-    tasks_without_us = serializers.SerializerMethodField("get_tasks_without_us")
+    modified_date = serializers.DateTimeField(required=False)
 
     class Meta:
         model = milestones_models.Milestone
         exclude = ('id', 'project')
 
-    def get_tasks_without_us(self, obj):
-        queryset = tasks_models.Task.objects.filter(milestone=obj, user_story__isnull=True)
-        return TaskExportSerializer(queryset.order_by('ref'), many=True).data
 
-class AttachmentExportSerializer(serializers.ModelSerializer):
-    owner = UserRelatedField()
-    attached_file = AttachedFileField()
-
-    class Meta:
-        model = attachments_models.Attachment
-        exclude = ('id', 'content_type', 'object_id', 'project')
-
-class AttachmentExportSerializerMixin(serializers.ModelSerializer):
-    attachments = serializers.SerializerMethodField("get_attachments")
-
-    def get_attachments(self, obj):
-        content_type = ContentType.objects.get_for_model(obj.__class__)
-        attachments_qs = attachments_models.Attachment.objects.filter(object_id=obj.pk, content_type=content_type)
-        return AttachmentExportSerializer(attachments_qs, many=True).data
-
-class TaskExportSerializer(AttachmentExportSerializerMixin, serializers.ModelSerializer):
+class TaskExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin, serializers.ModelSerializer):
     owner = UserRelatedField(required=False)
-    status = ProjectRelatedField(slug_field="name", required=False)
-    milestone = ProjectRelatedField(slug_field="slug", required=False)
+    status = ProjectRelatedField(slug_field="name")
+    user_story = ProjectRelatedField(slug_field="ref", required=False)
+    milestone = ProjectRelatedField(slug_field="name", required=False)
     assigned_to = UserRelatedField(required=False)
     watchers = UserRelatedField(many=True, required=False)
+    modified_date = serializers.DateTimeField(required=False)
 
     class Meta:
         model = tasks_models.Task
-        exclude = ('id', 'project', 'user_story')
+        exclude = ('id', 'project')
 
-class UserStoryExportSerializer(AttachmentExportSerializerMixin, serializers.ModelSerializer):
+
+class UserStoryExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin, serializers.ModelSerializer):
     role_points = RolePointsExportSerializer(many=True, required=False)
-    generated_from_issue = ProjectRelatedField(slug_field="ref", required=False)
     owner = UserRelatedField(required=False)
-    status = ProjectRelatedField(slug_field="name", required=False)
-    tasks = TaskExportSerializer(many=True, required=False)
-    milestone = ProjectRelatedField(slug_field="slug", required=False)
+    status = ProjectRelatedField(slug_field="name")
+    milestone = ProjectRelatedField(slug_field="name", required=False)
     watchers = UserRelatedField(many=True, required=False)
+    modified_date = serializers.DateTimeField(required=False)
 
     class Meta:
         model = userstories_models.UserStory
-        exclude = ('id', 'project', 'points')
-
-def _convert_user(user_pk):
-    try:
-        user = users_models.User.objects.get(pk=user_pk)
-    except users_models.User.DoesNotExist:
-        return "#imported#{}".format(user_pk)
-    return user.email
-
-def _convert_user_tuple(user_tuple):
-    return (_convert_user(user_tuple[0]), user_tuple[1])
-
-class HistoryExportSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField("get_user")
-    diff = serializers.SerializerMethodField("get_diff")
-    snapshot = JsonField()
-    values = serializers.SerializerMethodField("get_values")
-
-    def get_user(self, obj):
-        return (_convert_user(obj.user['pk']), obj.user['name'])
-
-    def get_values(self, obj):
-        for key, value in obj.values.items():
-            if key == "users":
-                obj.values["users"] = dict(map(_convert_user_tuple, value.items()))
-
-        return obj.values
-
-    def get_diff(self, obj):
-        for key, value in obj.diff.items():
-            if key == "assigned_to":
-                obj.diff["assigned_to"] = map(_convert_user, value)
-
-        return obj.diff
-
-    class Meta:
-        model = history_models.HistoryEntry
-
-class HistoryExportSerializerMixin(serializers.ModelSerializer):
-    history = serializers.SerializerMethodField("get_history")
-
-    def get_history(self, obj):
-        history_qs = history_service.get_history_queryset_by_model_instance(obj)
-        return HistoryExportSerializer(history_qs, many=True).data
+        exclude = ('id', 'project', 'points', 'tasks')
 
 
 class IssueExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin, serializers.ModelSerializer):
     owner = UserRelatedField(required=False)
-    status = ProjectRelatedField(slug_field="name", required=False)
+    status = ProjectRelatedField(slug_field="name")
     assigned_to = UserRelatedField(required=False)
-    priority = ProjectRelatedField(slug_field="name", required=False)
-    severity = ProjectRelatedField(slug_field="name", required=False)
-    type = ProjectRelatedField(slug_field="name", required=False)
-    milestone = ProjectRelatedField(slug_field="slug", required=False)
+    priority = ProjectRelatedField(slug_field="name")
+    severity = ProjectRelatedField(slug_field="name")
+    type = ProjectRelatedField(slug_field="name")
+    milestone = ProjectRelatedField(slug_field="name", required=False)
     watchers = UserRelatedField(many=True, required=False)
     votes = serializers.SerializerMethodField("get_votes")
+    modified_date = serializers.DateTimeField(required=False)
 
     def get_votes(self, obj):
         return [x.email for x in votes_service.get_voters(obj)]
@@ -269,19 +318,23 @@ class IssueExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerial
         model = issues_models.Issue
         exclude = ('id', 'project')
 
-class WikiPageExportSerializer(AttachmentExportSerializerMixin, serializers.ModelSerializer):
+
+class WikiPageExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin, serializers.ModelSerializer):
     owner = UserRelatedField(required=False)
     last_modifier = UserRelatedField(required=False)
     watchers = UserRelatedField(many=True, required=False)
+    modified_date = serializers.DateTimeField(required=False)
 
     class Meta:
         model = wiki_models.WikiPage
         exclude = ('id', 'project')
 
+
 class WikiLinkExportSerializer(serializers.ModelSerializer):
     class Meta:
         model = wiki_models.WikiLink
         exclude = ('id', 'project')
+
 
 class ProjectExportSerializer(serializers.ModelSerializer):
     owner = UserRelatedField(required=False)
@@ -305,6 +358,7 @@ class ProjectExportSerializer(serializers.ModelSerializer):
     wiki_pages = WikiPageExportSerializer(many=True, required=False)
     wiki_links = WikiLinkExportSerializer(many=True, required=False)
     user_stories = UserStoryExportSerializer(many=True, required=False)
+    tasks = TaskExportSerializer(many=True, required=False)
     issues = IssueExportSerializer(many=True, required=False)
     tags_colors = JsonField(required=False)
     anon_permissions = PgArrayField(required=False)

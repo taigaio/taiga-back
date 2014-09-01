@@ -57,4 +57,9 @@ def next_value(seqname):
         result = cursor.fetchone()
         return result[0]
 
-
+def set_max(seqname, new_value):
+    sql = "SELECT setval(%s, GREATEST(nextval(%s), %s));"
+    with closing(connection.cursor()) as cursor:
+        cursor.execute(sql, [seqname, seqname, new_value])
+        result = cursor.fetchone()
+        return result[0]

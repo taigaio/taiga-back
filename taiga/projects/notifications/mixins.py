@@ -37,6 +37,8 @@ class WatchedResourceMixin(object):
     after it on inheritance definition.
     """
 
+    _not_notify = False
+
     def send_notifications(self, obj, history=None):
         """
         Shortcut method for resources with special save
@@ -48,6 +50,9 @@ class WatchedResourceMixin(object):
 
         # If not history found, or it is empty. Do notthing.
         if not history:
+            return
+
+        if self._not_notify:
             return
 
         obj = self.get_object_for_snapshot(obj)

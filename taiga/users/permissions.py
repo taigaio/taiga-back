@@ -28,7 +28,6 @@ class UserPermission(TaigaResourcePermission):
     enought_perms = IsSuperUser()
     global_perms = None
     retrieve_perms = AllowAny()
-    create_perms = AllowAny()
     update_perms = IsTheSameUser()
     destroy_perms = IsTheSameUser()
     list_perms = AllowAny()

@@ -10,6 +10,21 @@ from taiga.users import models
 pytestmark = pytest.mark.django_db
 
 
+def test_api_user_normal_user(client):
+    user = f.UserFactory.create(is_superuser=True)
+
+    url = reverse('users-list')
+    data = {}
+
+    response = client.post(url, json.dumps(data), content_type="application/json")
+    assert response.status_code == 405
+
+    client.login(user)
+
+    response = client.post(url, json.dumps(data), content_type="application/json")
+    assert response.status_code == 405
+
+
 def test_api_user_patch_same_email(client):
     user = f.UserFactory.create(email="same@email.com")
     url = reverse('users-detail', kwargs={"pk": user.pk})

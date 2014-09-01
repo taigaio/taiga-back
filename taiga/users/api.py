@@ -64,6 +64,9 @@ class UsersViewSet(ModelCrudViewSet):
     queryset = models.User.objects.all()
     filter_backends = (MembersFilterBackend,)
 
+    def create(self, *args, **kwargs):
+        raise exc.NotSupported()
+
     def pre_conditions_on_save(self, obj):
         if self.request.user.is_superuser:
             return

@@ -119,7 +119,7 @@ def test_user_create(client, data):
         "full_name": "test",
     })
     results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [201]
+    assert results == [405]
 
 
 def test_user_patch(client, data):

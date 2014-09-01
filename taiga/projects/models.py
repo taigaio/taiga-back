@@ -764,6 +764,9 @@ def project_post_save(sender, instance, created, **kwargs):
     if not created:
         return
 
+    if instance._importing:
+        return
+
     template = getattr(instance, "creation_template", None)
     if template is None:
         template = ProjectTemplate.objects.get(slug=settings.DEFAULT_PROJECT_TEMPLATE)

@@ -17,8 +17,10 @@
 # This code is partially taken from django-rest-framework:
 # Copyright (c) 2011-2014, Tom Christie
 
+import json
+
 from django.core.exceptions import PermissionDenied
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.utils.datastructures import SortedDict
 from django.views.decorators.csrf import csrf_exempt
 
@@ -30,6 +32,9 @@ from rest_framework.settings import api_settings
 from rest_framework.utils import formatting
 
 from taiga.base.utils.iterators import as_tuple
+
+from django.conf import settings
+from django.views.defaults import server_error
 
 
 def get_view_name(view_cls, suffix=None):
@@ -436,3 +441,10 @@ class APIView(View):
         ret['renders'] = [renderer.media_type for renderer in self.renderer_classes]
         ret['parses'] = [parser.media_type for parser in self.parser_classes]
         return ret
+
+
+def api_server_error(request, *args, **kwargs):
+    if settings.DEBUG == False and request.META['CONTENT_TYPE'] == "application/json":
+        return HttpResponse(json.dumps({"error": "Server application error"}),
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return server_error(request, *args, **kwargs)

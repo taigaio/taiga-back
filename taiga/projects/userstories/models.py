@@ -112,6 +112,9 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
         if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
 
+        if not self.status:
+            self.status = self.project.default_us_status
+
         super().save(*args, **kwargs)
 
     def __str__(self):

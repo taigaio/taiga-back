@@ -52,3 +52,5 @@ def mediafiles_urlpatterns():
 
 urlpatterns += staticfiles_urlpatterns(prefix="/static/")
 urlpatterns += mediafiles_urlpatterns()
+
+handler500 = "taiga.base.api.views.api_server_error"

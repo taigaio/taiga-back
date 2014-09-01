@@ -76,6 +76,18 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.
         if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
 
+        if not self.status:
+            self.status = self.project.default_issue_status
+
+        if not self.type:
+            self.type = self.project.default_issue_type
+
+        if not self.severity:
+            self.severity = self.project.default_severity
+
+        if not self.priority:
+            self.priority = self.project.default_priority
+
         return super().save(*args, **kwargs)
 
     def __str__(self):
