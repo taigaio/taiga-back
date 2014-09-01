@@ -44,6 +44,12 @@ from taiga.searches.api import SearchViewSet
 router.register(r"search", SearchViewSet, base_name="search")
 
 
+# Importer
+from taiga.export_import.api import ProjectImporterViewSet
+
+router.register(r"importer", ProjectImporterViewSet, base_name="importer")
+
+
 # Projects & Types
 from taiga.projects.api import RolesViewSet
 from taiga.projects.api import ProjectViewSet
@@ -58,6 +64,7 @@ from taiga.projects.api import PriorityViewSet
 from taiga.projects.api import SeverityViewSet
 from taiga.projects.api import ProjectTemplateViewSet
 
+
 router.register(r"roles", RolesViewSet, base_name="roles")
 router.register(r"projects", ProjectViewSet, base_name="projects")
 router.register(r"project-templates", ProjectTemplateViewSet, base_name="project-templates")
@@ -70,7 +77,6 @@ router.register(r"issue-statuses", IssueStatusViewSet, base_name="issue-statuses
 router.register(r"issue-types", IssueTypeViewSet, base_name="issue-types")
 router.register(r"priorities", PriorityViewSet, base_name="priorities")
 router.register(r"severities",SeverityViewSet , base_name="severities")
-
 
 # Attachments
 from taiga.projects.attachments.api import UserStoryAttachmentViewSet
