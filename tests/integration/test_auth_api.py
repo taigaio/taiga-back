@@ -48,7 +48,7 @@ def test_respond_400_if_domain_does_not_allow_public_registration(client, regist
     assert response.status_code == 400
 
 
-def test_respond_201_if_domain_allows_public_registration(client, register_form):
+def test_respond_201_with_invitation_if_domain_does_not_allows_public_registration(client, register_form):
     user = factories.UserFactory()
     membership = factories.MembershipFactory(user=user)
 
@@ -120,3 +120,15 @@ def test_response_404_in_registration_with_github_account_in_a_project_with_inva
 
         response = client.post(reverse("auth-list"), form)
         assert response.status_code == 404
+
+
+def test_respond_400_If_username_is_invalid(client, settings, register_form):
+    settings.PUBLIC_REGISTER_ENABLED = True
+
+    register_form.update({"username": "User Examp:/e"})
+    response = client.post(reverse("auth-register"), register_form)
+    assert response.status_code == 400
+
+    register_form.update({"username": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-error"})
+    response = client.post(reverse("auth-register"), register_form)
+    assert response.status_code == 400

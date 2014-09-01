@@ -46,5 +46,6 @@ class RecoverySerializer(serializers.Serializer):
     token = serializers.CharField(max_length=200)
     password = serializers.CharField(min_length=6)
 
+
 class ChangeEmailSerializer(serializers.Serializer):
     email_token = serializers.CharField(max_length=200)

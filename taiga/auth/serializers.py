@@ -16,11 +16,27 @@
 
 from rest_framework import serializers
 
+from django.core import validators
+from django.core.exceptions import ValidationError
+import re
+
+
 class BaseRegisterSerializer(serializers.Serializer):
     full_name = serializers.CharField(max_length=256)
     email = serializers.EmailField(max_length=200)
-    username = serializers.CharField(max_length=200)
+    username = serializers.CharField(max_length=30)
     password = serializers.CharField(min_length=4)
+
+    def validate_username(self, attrs, source):
+        value = attrs[source]
+        validator = validators.RegexValidator(re.compile('^[\w.-]+$'), "invalid username", "invalid")
+
+        try:
+            validator(value)
+        except ValidationError:
+            raise serializers.ValidationError("Required. 30 characters or fewer. Letters, numbers "
+                                              "and /./-/_ characters'")
+        return attrs
 
 
 class PublicRegisterSerializer(BaseRegisterSerializer):
@@ -30,7 +46,8 @@ class PublicRegisterSerializer(BaseRegisterSerializer):
 class PrivateRegisterForNewUserSerializer(BaseRegisterSerializer):
     token = serializers.CharField(max_length=255, required=True)
 
+
 class PrivateRegisterForExistingUserSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=200)
+    username = serializers.CharField(max_length=30)
     password = serializers.CharField(min_length=4)
     token = serializers.CharField(max_length=255, required=True)
