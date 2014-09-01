@@ -200,7 +200,7 @@ class Command(BaseCommand):
                                                object_id=object.id,
                                                owner=self.sd.db_object_from_queryset(
                                                      object.project.memberships.filter(user__isnull=False)).user,
-                                               attached_file=self.sd.image_from_directory(
+                                               attached_file=self.sd.file_from_directory(
                                                                   *ATTACHMENT_SAMPLE_DATA))
 
         return attachment
