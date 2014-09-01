@@ -24,8 +24,7 @@ class ProjectImporterViewSet(CreateModelMixin, GenericViewSet):
         self.check_permissions(request, 'import_project', None)
 
         data = request.DATA.copy()
-        if not data['owner']:
-            data['owner'] = request.user
+        data['owner'] = data.get('owner', request.user.email)
 
         project_serialized = service.store_project(data)
 
