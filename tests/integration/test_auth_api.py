@@ -37,7 +37,8 @@ def register_form():
             "type": "public"}
 
 
-def test_respond_201_if_domain_allows_public_registration(client, register_form):
+def test_respond_201_if_domain_allows_public_registration(client, settings, register_form):
+    settings.PUBLIC_REGISTER_ENABLED = True
     response = client.post(reverse("auth-register"), register_form)
     assert response.status_code == 201
 
