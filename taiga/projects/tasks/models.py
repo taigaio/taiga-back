@@ -74,7 +74,7 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
         )
 
     def save(self, *args, **kwargs):
-        if not self._importing:
+        if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
 
         return super().save(*args, **kwargs)

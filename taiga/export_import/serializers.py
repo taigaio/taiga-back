@@ -284,7 +284,7 @@ class WikiLinkExportSerializer(serializers.ModelSerializer):
         exclude = ('id', 'project')
 
 class ProjectExportSerializer(serializers.ModelSerializer):
-    owner = UserRelatedField()
+    owner = UserRelatedField(required=False)
     default_points = serializers.SlugRelatedField(slug_field="name", required=False)
     default_us_status = serializers.SlugRelatedField(slug_field="name", required=False)
     default_task_status = serializers.SlugRelatedField(slug_field="name", required=False)
@@ -309,6 +309,7 @@ class ProjectExportSerializer(serializers.ModelSerializer):
     tags_colors = JsonField(required=False)
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
+    modified_date = serializers.DateTimeField(required=False)
 
     class Meta:
         model = projects_models.Project

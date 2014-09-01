@@ -182,7 +182,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         return "<Project {0}>".format(self.id)
 
     def save(self, *args, **kwargs):
-        if not self._importing:
+        if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
 
         if not self.slug:
@@ -522,7 +522,7 @@ class ProjectTemplate(models.Model):
         return "<Project Template {0}>".format(self.slug)
 
     def save(self, *args, **kwargs):
-        if not self._importing:
+        if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
         super().save(*args, **kwargs)
 

@@ -39,7 +39,7 @@ class NotifyPolicy(models.Model):
         ordering = ["created_at"]
 
     def save(self, *args, **kwargs):
-        if not self._importing:
+        if not self._importing or not self.modified_date:
             self.modified_at = timezone.now()
 
         return super().save(*args, **kwargs)

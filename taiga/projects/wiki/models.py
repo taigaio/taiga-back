@@ -55,7 +55,7 @@ class WikiPage(OCCModelMixin, WatchedModelMixin, models.Model):
         return "project {0} - {1}".format(self.project_id, self.slug)
 
     def save(self, *args, **kwargs):
-        if not self._importing:
+        if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
 
         return super().save(*args, **kwargs)

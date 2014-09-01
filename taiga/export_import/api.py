@@ -23,7 +23,10 @@ class ProjectImporterViewSet(CreateModelMixin, GenericViewSet):
     def create(self, request, *args, **kwargs):
         self.check_permissions(request, 'import_project', None)
 
-        data = request.DATA
+        data = request.DATA.copy()
+        if not data['owner']:
+            data['owner'] = request.user
+
         project_serialized = service.store_project(data)
 
         if project_serialized:
@@ -41,3 +44,23 @@ class ProjectImporterViewSet(CreateModelMixin, GenericViewSet):
             return Response(project_serialized.data, status=status.HTTP_201_CREATED, headers=headers)
 
         return Response(service.get_errors(), status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['post'])
+    def issue(self, request, *args, **kwargs):
+        self.check_permissions(request, 'import_item', serializer.object)
+
+    @detail_route(methods=['post'])
+    def task(self, request, *args, **kwargs):
+        self.check_permissions(request, 'import_item', serializer.object)
+
+    @detail_route(methods=['post'])
+    def us(self, request, *args, **kwargs):
+        self.check_permissions(request, 'import_item', serializer.object)
+
+    @detail_route(methods=['post'])
+    def wiki_page(self, request, *args, **kwargs):
+        self.check_permissions(request, 'import_item', serializer.object)
+
+    @detail_route(methods=['post'])
+    def wiki_link(self, request, *args, **kwargs):
+        self.check_permissions(request, 'import_item', serializer.object)
