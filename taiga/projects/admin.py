@@ -20,13 +20,6 @@ from taiga.projects.milestones.admin import MilestoneInline
 from taiga.users.admin import RoleInline
 from . import models
 
-# import reversion
-# class AttachmentAdmin(reversion.VersionAdmin):
-#     list_display = ["id", "project", "attached_file", "owner", "content_type", "content_object"]
-#     list_display_links = ["id", "attached_file",]
-#     list_filter = ["project", "content_type"]
-
-
 class MembershipAdmin(admin.ModelAdmin):
     list_display = ['project', 'role', 'user']
     list_display_links = list_display
