@@ -102,6 +102,7 @@ class MembershipSerializer(ModelSerializer):
     class Meta:
         model = models.Membership
         read_only_fields = ("user",)
+        exclude = ("token",)
 
     def get_photo(self, project):
         return get_photo_or_gravatar_url(project.user)
