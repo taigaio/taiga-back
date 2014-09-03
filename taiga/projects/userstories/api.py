@@ -27,7 +27,7 @@ from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet
 
 from taiga.projects.notifications import WatchedResourceMixin
-from taiga.projects.history import HistoryResourceMixin
+from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.occ import OCCResourceMixin
 
 from taiga.projects.models import Project, UserStoryStatus

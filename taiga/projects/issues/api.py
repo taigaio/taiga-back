@@ -32,7 +32,7 @@ from taiga.users.models import User
 
 from taiga.projects.notifications import WatchedResourceMixin
 from taiga.projects.occ import OCCResourceMixin
-from taiga.projects.history import HistoryResourceMixin
+from taiga.projects.history.mixins import HistoryResourceMixin
 
 from taiga.projects.models import Project
 from taiga.projects.votes.utils import attach_votescount_to_queryset

@@ -32,7 +32,7 @@ from taiga.base import exceptions as exc
 from taiga.users.models import User
 
 from taiga.projects.notifications import WatchedResourceMixin
-from taiga.projects.history import HistoryResourceMixin
+from taiga.projects.history.mixins import HistoryResourceMixin
 
 from . import permissions
 from . import serializers
