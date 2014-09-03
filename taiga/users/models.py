@@ -139,7 +139,10 @@ class Role(models.Model):
                                  choices=MEMBERS_PERMISSIONS)
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
-    project = models.ForeignKey("projects.Project", null=False, blank=False,
+    # null=True is for make work django 1.7 migrations. project
+    # field causes some circular dependencies, and due to this
+    # it can not be serialized in one transactional migration.
+    project = models.ForeignKey("projects.Project", null=True, blank=False,
                                 related_name="roles", verbose_name=_("project"))
     computable = models.BooleanField(default=True)
 
