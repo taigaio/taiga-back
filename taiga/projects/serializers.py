@@ -93,6 +93,7 @@ class IssueTypeSerializer(ModelSerializer):
 class MembershipSerializer(ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False, read_only=True)
     full_name = serializers.CharField(source='user.get_full_name', required=False, read_only=True)
+    email = serializers.EmailField(required=True)
     color = serializers.CharField(source='user.color', required=False, read_only=True)
     photo = serializers.SerializerMethodField("get_photo")
     invited_by = serializers.SerializerMethodField("get_invited_by")

@@ -86,3 +86,18 @@ def test_api_invite_existing_user(client, outbox):
 
     assert message.to == [user.email]
     assert "Added to the project" in message.subject
+
+def test_api_create_invalid_membership(client):
+    "Should create the invitation linked to that user"
+    user = f.UserFactory.create()
+    role = f.RoleFactory.create()
+
+    client.login(role.project.owner)
+
+    url = reverse("memberships-list")
+    data = {"role": role.pk, "project": role.project.pk}
+
+    response = client.json.post(url, data)
+
+    assert response.status_code == 400, response.data
+    assert user.memberships.count() == 0
