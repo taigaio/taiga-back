@@ -5,6 +5,7 @@ django-picklefield==0.3.1
 django-sampledatahelper==0.2.2
 gunicorn==18.0
 psycopg2==2.5.3
+pillow==2.5.3
 pytz==2014.4
 six==1.6.1
 djmail==0.7
