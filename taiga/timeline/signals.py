@@ -16,7 +16,6 @@
 
 from django.db.models.loading import get_model
 from django.db.models import signals
-from django.dispatch import receiver
 
 from taiga.timeline.service import push_to_timeline
 
@@ -24,25 +23,21 @@ from taiga.timeline.service import push_to_timeline
 # TODO: Add events to project watchers timeline when project watchers are implemented.
 
 
-@receiver(signals.post_save, sender=get_model("projects", "Project"))
 def create_project_push_to_timeline(sender, instance, created, **kwargs):
     if created:
         push_to_timeline(instance, instance, "create")
 
 
-@receiver(signals.post_save, sender=get_model("userstories", "UserStory"))
 def create_user_story_push_to_timeline(sender, instance, created, **kwargs):
     if created:
         push_to_timeline(instance.project, instance, "create")
 
 
-@receiver(signals.post_save, sender=get_model("issues", "Issue"))
 def create_issue_push_to_timeline(sender, instance, created, **kwargs):
     if created:
         push_to_timeline(instance.project, instance, "create")
 
 
-@receiver(signals.pre_save, sender=get_model("projects", "Membership"))
 def create_membership_push_to_timeline(sender, instance, **kwargs):
     if not instance.pk and instance.user:
         push_to_timeline(instance.project, instance, "create")
@@ -60,6 +55,5 @@ def create_membership_push_to_timeline(sender, instance, **kwargs):
             push_to_timeline(instance.project, instance, "role-changed", extra_data=extra_data)
 
 
-@receiver(signals.post_delete, sender=get_model("projects", "Membership"))
 def delete_membership_push_to_timeline(sender, instance, **kwargs):
     push_to_timeline(instance.project, instance, "delete")
