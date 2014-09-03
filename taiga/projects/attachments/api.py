@@ -19,7 +19,6 @@ import hashlib
 import mimetypes
 mimetypes.init()
 
-from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 from django.conf import settings
