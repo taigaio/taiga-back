@@ -16,6 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
+import django
+
+django.setup()
 
 from .fixtures import *
 
