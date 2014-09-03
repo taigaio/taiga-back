@@ -186,8 +186,6 @@ INSTALLED_APPS = [
     "taiga.mdrender",
     "taiga.export_import",
 
-    "south",
-    "reversion",
     "rest_framework",
     "djmail",
     "django_jinja",
