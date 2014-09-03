@@ -20,13 +20,12 @@ def test_get_members_from_bulk():
     assert members[1].email == "member2@email.com"
 
 
-@mock.patch("taiga.projects.services.members.db")
-def test_create_members_in_bulk(db):
-    data = [{"role_id": "1", "email": "member1@email.com"},
-            {"role_id": "1", "email": "member2@email.com"}]
-    members = services.create_members_in_bulk(data, project_id=1)
-
-    db.save_in_bulk.assert_called_once_with(members, None, None)
+def test_create_members_in_bulk():
+    with mock.patch("taiga.projects.services.members.db") as db:
+        data = [{"role_id": "1", "email": "member1@email.com"},
+                {"role_id": "1", "email": "member2@email.com"}]
+        members = services.create_members_in_bulk(data, project_id=1)
+        db.save_in_bulk.assert_called_once_with(members, None, None)
 
 
 def test_api_create_bulk_members(client):

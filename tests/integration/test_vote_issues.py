@@ -76,6 +76,7 @@ def test_get_issue_votes(client):
     user = f.UserFactory.create()
     issue = f.create_issue(owner=user)
     url = reverse("issues-detail", args=(issue.id,))
+
     f.VotesFactory.create(content_object=issue, count=5)
 
     client.login(user)

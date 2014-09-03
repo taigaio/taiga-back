@@ -190,7 +190,8 @@ def test_milestone_create(client, data):
         "estimated_finish": "2014-12-24",
         "project": data.public_project.pk,
     })
-    results = helper_test_http_method(client, 'post', url, create_data, users, lambda: Milestone.objects.all().delete())
+    results = helper_test_http_method(client, 'post', url, create_data, users,
+                                      lambda: Milestone.objects.all().delete())
     assert results == [401, 403, 403, 201, 201]
 
     create_data = json.dumps({
@@ -199,7 +200,9 @@ def test_milestone_create(client, data):
         "estimated_finish": "2014-12-24",
         "project": data.private_project1.pk,
     })
-    results = helper_test_http_method(client, 'post', url, create_data, users, lambda: Milestone.objects.all().delete())
+
+    results = helper_test_http_method(client, 'post', url, create_data, users,
+                                      lambda: Milestone.objects.all().delete())
     assert results == [401, 403, 403, 201, 201]
 
     create_data = json.dumps({

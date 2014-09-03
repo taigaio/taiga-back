@@ -1,4 +1,5 @@
 from unittest import mock
+import json
 
 from django.core.urlresolvers import reverse
 
@@ -23,15 +24,14 @@ Task #2
     assert tasks[1].subject == "Task #2"
 
 
-@mock.patch("taiga.projects.tasks.services.db")
 def test_create_tasks_in_bulk(db):
     data = """
 Task #1
 Task #2
 """
-    tasks = services.create_tasks_in_bulk(data)
-
-    db.save_in_bulk.assert_called_once_with(tasks, None, None)
+    with mock.patch("taiga.projects.tasks.services.db") as db:
+        tasks = services.create_tasks_in_bulk(data)
+        db.save_in_bulk.assert_called_once_with(tasks, None, None)
 
 
 def test_api_update_task_tags(client):

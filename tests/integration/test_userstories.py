@@ -1,5 +1,4 @@
 from unittest import mock
-
 from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
@@ -23,24 +22,24 @@ User Story #2
     assert userstories[1].subject == "User Story #2"
 
 
-@mock.patch("taiga.projects.userstories.services.db")
-def test_create_userstories_in_bulk(db):
+def test_create_userstories_in_bulk():
     data = """
 User Story #1
 User Story #2
 """
-    userstories = services.create_userstories_in_bulk(data)
 
-    db.save_in_bulk.assert_called_once_with(userstories, None, None)
+    with mock.patch("taiga.projects.userstories.services.db") as db:
+        userstories = services.create_userstories_in_bulk(data)
+        db.save_in_bulk.assert_called_once_with(userstories, None, None)
 
 
-@mock.patch("taiga.projects.userstories.services.db")
-def test_update_userstories_order_in_bulk(db):
+def test_update_userstories_order_in_bulk():
     data = [{"us_id": 1, "order": 1}, {"us_id": 2, "order": 2}]
-    services.update_userstories_order_in_bulk(data)
 
-    db.update_in_bulk_with_ids.assert_called_once_with([1, 2], [{"order": 1}, {"order": 2}],
-                                                       model=models.UserStory)
+    with mock.patch("taiga.projects.userstories.services.db") as db:
+        services.update_userstories_order_in_bulk(data)
+        db.update_in_bulk_with_ids.assert_called_once_with([1, 2], [{"order": 1}, {"order": 2}],
+                                                           model=models.UserStory)
 
 
 def test_api_delete_userstory(client):

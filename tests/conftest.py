@@ -15,11 +15,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings.testing")
+
 import pytest
 import django
-
-django.setup()
-
 from .fixtures import *
 
 
@@ -30,3 +30,8 @@ def pytest_addoption(parser):
 def pytest_runtest_setup(item):
     if "slow" in item.keywords and not item.config.getoption("--runslow"):
         pytest.skip("need --runslow option to run")
+
+
+def pytest_configure(config):
+    django.setup()
+

@@ -363,8 +363,8 @@ class ContentTypeFactory(Factory):
         strategy = factory.CREATE_STRATEGY
         django_get_or_create = ("app_label", "model")
 
-    app_label = factory.LazyAttribute(lambda obj: ContentTypeFactory.FACTORY_FOR._meta.app_label)
-    model = factory.LazyAttribute(lambda obj: ContentTypeFactory.FACTORY_FOR._meta.model_name)
+    app_label = factory.LazyAttribute(lambda obj: "issues")
+    model = factory.LazyAttribute(lambda obj: "Issue")
 
 
 class AttachmentFactory(Factory):
