@@ -17,37 +17,6 @@
 from __future__ import print_function
 import sys
 
-
-def patch_api_view():
-    from rest_framework import views
-    from rest_framework import status, exceptions
-    from rest_framework.response import Response
-
-    if hasattr(views, "_patched"):
-        return
-
-    views._APIView = views.APIView
-    views._patched = True
-
-    class APIView(views.APIView):
-        def handle_exception(self, exc):
-            if isinstance(exc, exceptions.NotAuthenticated):
-                return Response({'detail': 'Not authenticated'},
-                                status=status.HTTP_401_UNAUTHORIZED,
-                                exception=True)
-            return super().handle_exception(exc)
-
-        @classmethod
-        def as_view(cls, **initkwargs):
-            view = super(views._APIView, cls).as_view(**initkwargs)
-            view.cls_instance = cls(**initkwargs)
-            view.cls = cls
-            return view
-
-    print("Patching APIView", file=sys.stderr)
-    views.APIView = APIView
-
-
 def patch_serializer():
     from rest_framework import serializers
     if hasattr(serializers.BaseSerializer, "_patched"):
@@ -76,8 +45,6 @@ def patch_serializer():
     serializers.BaseSerializer.to_native = to_native
 
 
-def patch_import_module():
-    from django.utils import importlib as django_importlib
-    import importlib
-
-    django_importlib.import_module = importlib.import_module
+def patch_restframework():
+    from rest_framework import fields
+    fields.strip_multiple_choice_msg = lambda x: x

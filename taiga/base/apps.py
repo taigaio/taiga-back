@@ -13,10 +13,19 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import sys
 
 # Patch api view for correctly return 401 responses on
 # request is authenticated instead of 403
+from django.apps import AppConfig
 from . import monkey
-monkey.patch_api_view()
-monkey.patch_serializer()
-monkey.patch_import_module()
+
+class BaseAppConfig(AppConfig):
+    name = "taiga.base"
+    verbose_name = "Base App Config"
+
+    def ready(self):
+        print("Monkey patching...", file=sys.stderr)
+        monkey.patch_restframework()
+        monkey.patch_serializer()
+
