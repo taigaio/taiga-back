@@ -41,15 +41,13 @@ class PartialMethodCaller:
 @pytest.fixture
 def client():
     from django.test.client import Client
-    from django.test.client import MULTIPART_CONTENT
 
     class _Client(Client):
         def login(self, user=None, backend="django.contrib.auth.backends.ModelBackend", **credentials):
             if user is None:
                 return super().login(**credentials)
 
-            # This will be changed on django1.7 branch with other location
-            with mock.patch('django.test.client.authenticate') as authenticate:
+            with mock.patch('django.contrib.auth.authenticate') as authenticate:
                 user.backend = backend
                 authenticate.return_value = user
                 return super().login(**credentials)
