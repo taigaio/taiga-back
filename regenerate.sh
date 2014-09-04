@@ -7,8 +7,7 @@ echo "-> Create taiga DB"
 createdb taiga
 
 echo "-> Run syncdb"
-python manage.py syncdb --all --noinput --traceback
-python manage.py migrate --fake
+python manage.py migrate
 # echo "-> Load initial Site"
 # python manage.py loaddata initial_site --traceback
 echo "-> Load initial user"
@@ -19,5 +18,3 @@ echo "-> Load initial roles"
 python manage.py loaddata initial_role --traceback
 echo "-> Generate sample data"
 python manage.py sample_data --traceback
-echo "-> Generate initial versions of objects"
-python manage.py createinitialrevisions --traceback
