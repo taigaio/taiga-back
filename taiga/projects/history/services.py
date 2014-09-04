@@ -166,7 +166,8 @@ def make_diff(oldobj:FrozenObj, newobj:FrozenObj) -> FrozenDiff:
             diff["description"][0],
             diff["description"][1]
         )
-        diff["description_diff"] = (not_found_value, description_diff)
+        if description_diff:
+            diff["description_diff"] = (not_found_value, description_diff)
 
     return FrozenDiff(newobj.key, diff, newobj.snapshot)
 

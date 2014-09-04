@@ -23,4 +23,6 @@ register = library.Library()
 
 @register.global_function
 def mdrender(project, text) -> str:
-    return Markup(render(project, text))
+    if text:
+        return Markup(render(project, text))
+    return ""

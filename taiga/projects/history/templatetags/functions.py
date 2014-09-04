@@ -14,13 +14,23 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils.translation import ugettext_lazy as _
+
 from django_jinja import library
 
 register = library.Library()
 
 
+EXTRA_FIELD_VERBOSE_NAMES = {
+    "description_diff": _("description"),
+}
+
+
 @register.global_function
 def verbose_name(obj:object, field_name:str) -> str:
+    if field_name in EXTRA_FIELD_VERBOSE_NAMES:
+        return EXTRA_FIELD_VERBOSE_NAMES[field_name]
+
     try:
         return obj._meta.get_field(field_name).verbose_name
     except Exception:

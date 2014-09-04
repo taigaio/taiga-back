@@ -1,108 +1,125 @@
+{% set excluded_fields = [
+    "description",
+    "description_html"
+] %}
+
 <dl>
 {% for field_name, values in changed_fields.items() %}
-    <dt style="background: #669933; padding: 5px 15px; color: #fff">
-        <b>{{ verbose_name(object, field_name) }}</b>
-    </dt>
+    {% if field_name not in excluded_fields %}
+        <dt style="background: #669933; padding: 5px 15px; color: #fff">
+            <b>{{ verbose_name(object, field_name) }}</b>
+        </dt>
 
-{# POINTS #}
-    {% if field_name == "points" %}
+    {# POINTS #}
+        {% if field_name == "points" %}
 
-        {% for role, points in values.items() %}
-            <dd style="background: #b2cc99; padding: 5px 15px; color: #fff">
-                <b>{{ role }}</b>
-            </dd>
-            <dd style="background: #eee; padding: 5px 15px; color: #444">
-                <b>to:</b> <i>{{ points.1|linebreaksbr }}</i>
-            </dd>
-            <dd style="padding: 5px 15px; color: #bbb">
-                <b>from:</b> <i>{{ points.0|linebreaksbr }}</i>
-            </dd>
-        {% endfor %}
-
-{# ATTACHMENTS #}
-    {% elif field_name == "attachments" %}
-
-        {% if values.new %}
-            <dd style="background: #b2cc99; padding: 5px 15px; color: #fff">
-                <b>{{ _("Added") }}</b>
-            </dd>
-
-            {% for att in values['new']%}
-            <dd style="background: #eee; padding: 5px 15px; color: #444">
-                <i>
-                    {{ att.filename|linebreaksbr }}  {% if att.description %}({{ att.description|linebreaksbr }}){% endif %}
-                </i>
-            </dd>
+            {% for role, points in values.items() %}
+                <dd style="background: #b2cc99; padding: 5px 15px; color: #fff">
+                    <b>{{ role }}</b>
+                </dd>
+                <dd style="background: #eee; padding: 5px 15px; color: #444">
+                    <b>to:</b> <i>{{ points.1|linebreaksbr }}</i>
+                </dd>
+                <dd style="padding: 5px 15px; color: #bbb">
+                    <b>from:</b> <i>{{ points.0|linebreaksbr }}</i>
+                </dd>
             {% endfor %}
-        {% endif %}
 
-        {% if values.changed %}
-            <dd style="background: #b2cc99; padding: 5px 15px; color: #fff">
-                <b>{{ _("Changed") }}</b>
-            </dd>
+    {# ATTACHMENTS #}
+        {% elif field_name == "attachments" %}
 
-            {% for att in values['changed'] %}
+            {% if values.new %}
+                <dd style="background: #b2cc99; padding: 5px 15px; color: #fff">
+                    <b>{{ _("Added") }}</b>
+                </dd>
+
+                {% for att in values['new']%}
+                <dd style="background: #eee; padding: 5px 15px; color: #444">
+                    <i>
+                        {{ att.filename|linebreaksbr }}  {% if att.description %}({{ att.description|linebreaksbr }}){% endif %}
+                    </i>
+                </dd>
+                {% endfor %}
+            {% endif %}
+
+            {% if values.changed %}
+                <dd style="background: #b2cc99; padding: 5px 15px; color: #fff">
+                    <b>{{ _("Changed") }}</b>
+                </dd>
+
+                {% for att in values['changed'] %}
+                <dd style="background: #eee; padding: 5px 15px; color: #444">
+                    <i>{{ att.1.filename|linebreaksbr }}  {% if att.1.description %}({{ att.1.description|linebreaksbr }}){% endif %}</i>
+                    {% if att.1.is_deprecated and not att.0.is_deprecated %}
+                        to <b>deprecated</b>
+                    {% elif not att.1.is_deprecated and att.0.is_deprecated %}
+                        to <b>not deprecated</b>
+                    {% endif %}
+                </dd>
+                {% endfor %}
+            {% endif %}
+
+            {% if values.deleted %}
+                <dd style="background: #b2cc99; padding: 5px 15px; color: #fff">
+                    <b>{{ _("Deleted") }}</b>
+                </dd>
+
+                {% for att in values['deleted']%}
+                <dd style="padding: 5px 15px; color: #bbb">
+                    <i>{{ att.filename|linebreaksbr }}</i>
+                </dd>
+                {% endfor %}
+            {% endif %}
+
+    {# TAGS AND WATCHERS #}
+        {% elif field_name in ["tags", "watchers"] %}
+
             <dd style="background: #eee; padding: 5px 15px; color: #444">
-                <i>{{ att.1.filename|linebreaksbr }}  {% if att.1.description %}({{ att.1.description|linebreaksbr }}){% endif %}</i>
-                {% if att.1.is_deprecated and not att.0.is_deprecated %}
-                    to <b>deprecated</b>
-                {% elif not att.1.is_deprecated and att.0.is_deprecated %}
-                    to <b>not deprecated</b>
-                {% endif %}
-            </dd>
-            {% endfor %}
-        {% endif %}
-
-        {% if values.deleted %}
-            <dd style="background: #b2cc99; padding: 5px 15px; color: #fff">
-                <b>{{ _("Deleted") }}</b>
+                <b>to:</b> <i>{{ ', '.join(values.1)|linebreaksbr }}</i>
             </dd>
 
-            {% for att in values['deleted']%}
+            {% if values.0 %}
             <dd style="padding: 5px 15px; color: #bbb">
-                <i>{{ att.filename|linebreaksbr }}</i>
+                <b>from:</b> <i>{{ ', '.join(values.0)|linebreaksbr }}</i>
             </dd>
-            {% endfor %}
-        {% endif %}
+            {% endif %}
 
-{# TAGS AND WATCHERS #}
-    {% elif field_name in ["tags", "watchers"] %}
+    {# DESCRIPTIONS #}
+        {% elif field_name in ["description_diff"] %}
+                <dd style="background: #eee; padding: 5px 15px; color: #444">
+                    <b>to:</b> <i>{{ mdrender(object.project, values.1) }}</i>
+                </dd>
+    {# ASSIGNED TO #}
+        {% elif field_name == "assigned_to" %}
+                <dd style="background: #eee; padding: 5px 15px; color: #444">
+            {% if values.1 != None and values.1 != "" %}
+                    <b>to:</b> <i>{{ values.1|linebreaksbr }}</i>
+            {% else %}
+                    <b>to:</b> <i>{{ _("Unassigned") }}</i>
+            {% endif %}
+                </dd>
 
-        <dd style="background: #eee; padding: 5px 15px; color: #444">
-            <b>to:</b> <i>{{ ', '.join(values.1)|linebreaksbr }}</i>
-        </dd>
+                <dd style="padding: 5px 15px; color: #bbb">
+            {% if values.0 != None and values.0 != "" %}
+                    <b>from:</b> <i>{{ values.0|linebreaksbr }}</i>
+            {% else %}
+                    <b>from:</b> <i>{{ _("Unassigned") }}</i>
+            {% endif %}
+                </dd>
+    {# * #}
+        {% else %}
+            {% if values.1 != None and values.1 != "" %}
+                <dd style="background: #eee; padding: 5px 15px; color: #444">
+                    <b>to:</b> <i>{{ values.1|linebreaksbr }}</i>
+                </dd>
+            {% endif %}
 
-        {% if values.0 %}
-        <dd style="padding: 5px 15px; color: #bbb">
-            <b>from:</b> <i>{{ ', '.join(values.0)|linebreaksbr }}</i>
-        </dd>
-        {% endif %}
+            {% if values.0 != None and values.0 != "" %}
+                <dd style="padding: 5px 15px; color: #bbb">
+                    <b>from:</b> <i>{{ values.0|linebreaksbr }}</i>
+                </dd>
+            {% endif %}
 
-{# DESCRIPTIONS #}
-    {% elif field_name in ["description"] %}
-        {% if values.1 != None or values.1 != "" %}
-            <dd style="background: #eee; padding: 5px 15px; color: #444">
-                <b>to:</b> <i>{{ mdrender(object.project, values.1) }}</i>
-            </dd>
-        {% endif %}
-
-        {% if values.0 != None or values.0 != "" %}
-            <dd style="padding: 5px 15px; color: #bbb">
-                <b>from:</b> <i>{{ mdrender(object.project, values.0) }}</i>
-            </dd>
-        {% endif %}
-{# * #}
-    {% else %}
-        {% if values.1 != None or values.1 != "" %}
-            <dd style="background: #eee; padding: 5px 15px; color: #444">
-                <b>to:</b> <i>{{ values.1|linebreaksbr }}</i>
-            </dd>
-        {% endif %}
-
-        {% if values.0 != None or values.0 != "" %}
-            <dd style="padding: 5px 15px; color: #bbb">
-                <b>from:</b> <i>{{ values.0|linebreaksbr }}</i>
-            </dd>
         {% endif %}
 
     {% endif %}
