@@ -17,6 +17,7 @@
 from django.utils import timezone
 
 from taiga.base.utils import db, text
+from taiga.projects.history.services import take_snapshot
 
 from . import models
 
@@ -60,6 +61,15 @@ def update_userstories_order_in_bulk(bulk_data):
         user_story_ids.append(us_data['us_id'])
         new_order_values.append({"order": us_data['order']})
     db.update_in_bulk_with_ids(user_story_ids, new_order_values, model=models.UserStory)
+
+def snapshot_userstories_in_bulk(bulk_data, user):
+    user_story_ids = []
+    for us_data in bulk_data:
+        try:
+            us = models.UserStory.objects.get(pk=us_data['us_id'])
+            take_snapshot(us, user=user)
+        except models.UserStory.DoesNotExist:
+            pass
 
 
 def calculate_userstory_is_closed(user_story):
