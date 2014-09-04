@@ -37,6 +37,7 @@ class CoorsMiddleware(object):
         response["Access-Control-Allow-Methods"] = ",".join(COORS_ALLOWED_METHODS)
         response["Access-Control-Allow-Headers"] = ",".join(COORS_ALLOWED_HEADERS)
         response["Access-Control-Expose-Headers"] = ",".join(COORS_EXPOSE_HEADERS)
+        response["Access-Control-Max-Age"] = "3600"
 
         if COORS_ALLOWED_CREDENTIALS:
             response["Access-Control-Allow-Credentials"] = "true"
