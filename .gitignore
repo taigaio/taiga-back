@@ -9,4 +9,5 @@ media
 *.mo
 .venv
 .coverage
+.cache
 .\#*
