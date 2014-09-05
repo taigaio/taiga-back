@@ -80,36 +80,24 @@ class UserStoryAttachmentViewSet(BaseAttachmentViewSet):
     permission_classes = (permissions.UserStoryAttachmentPermission,)
     filter_backends = (filters.CanViewUserStoryAttachmentFilterBackend,)
     content_type = "userstories.userstory"
-    create_notification_template = "create_userstory_notification"
-    update_notification_template = "update_userstory_notification"
-    destroy_notification_template = "destroy_userstory_notification"
 
 
 class IssueAttachmentViewSet(BaseAttachmentViewSet):
     permission_classes = (permissions.IssueAttachmentPermission,)
     filter_backends = (filters.CanViewIssueAttachmentFilterBackend,)
     content_type = "issues.issue"
-    create_notification_template = "create_issue_notification"
-    update_notification_template = "update_issue_notification"
-    destroy_notification_template = "destroy_issue_notification"
 
 
 class TaskAttachmentViewSet(BaseAttachmentViewSet):
     permission_classes = (permissions.TaskAttachmentPermission,)
     filter_backends = (filters.CanViewTaskAttachmentFilterBackend,)
     content_type = "tasks.task"
-    create_notification_template = "create_task_notification"
-    update_notification_template = "update_task_notification"
-    destroy_notification_template = "destroy_task_notification"
 
 
 class WikiAttachmentViewSet(BaseAttachmentViewSet):
     permission_classes = (permissions.WikiAttachmentPermission,)
     filter_backends = (filters.CanViewWikiAttachmentFilterBackend,)
     content_type = "wiki.wikipage"
-    create_notification_template = "create_wiki_notification"
-    update_notification_template = "update_wiki_notification"
-    destroy_notification_template = "destroy_wiki_notification"
 
 
 class RawAttachmentView(generics.RetrieveAPIView):
