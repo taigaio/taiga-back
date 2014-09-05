@@ -34,7 +34,6 @@ from taiga.users.models import User
 from taiga.projects.notifications import WatchedResourceMixin
 from taiga.projects.history import HistoryResourceMixin
 
-
 from . import permissions
 from . import serializers
 from . import models
@@ -46,6 +45,12 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCru
     filter_fields = ["project", "object_id"]
 
     content_type = None
+
+    def update(self, *args, **kwargs):
+        partial = kwargs.get("partial", False)
+        if not partial:
+            raise exc.NotSupported("Non partial updates not supported")
+        return super().update(*args, **kwargs)
 
     def get_content_type(self):
         app_name, model = self.content_type.split(".", 1)
