@@ -43,7 +43,6 @@ class WatchedResourceMixin(object):
         cases on actions methods that not uses standard
         `post_save` hook of drf resources.
         """
-
         if history is None:
             history = self.get_last_history()
 

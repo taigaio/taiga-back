@@ -39,7 +39,6 @@ from django.db.models.loading import get_model
 from django.db import transaction as tx
 
 from taiga.mdrender.service import render as mdrender
-from taiga.mdrender.service import get_diff_of_htmls
 from taiga.base.utils.db import get_typename_for_model_class
 
 from .models import HistoryType
@@ -160,14 +159,6 @@ def make_diff(oldobj:FrozenObj, newobj:FrozenObj) -> FrozenDiff:
     for key in second:
         if key not in first:
             diff[key] = (not_found_value, second[key])
-
-    if "description" in diff:
-        description_diff = get_diff_of_htmls(
-            diff["description"][0],
-            diff["description"][1]
-        )
-        if description_diff:
-            diff["description_diff"] = (not_found_value, description_diff)
 
     return FrozenDiff(newobj.key, diff, newobj.snapshot)
 

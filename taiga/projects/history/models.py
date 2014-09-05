@@ -21,6 +21,8 @@ from django.db.models.loading import get_model
 from django.utils.functional import cached_property
 from django_pgjson.fields import JsonField
 
+from taiga.mdrender.service import get_diff_of_htmls
+
 from .choices import HistoryType
 from .choices import HISTORY_TYPE_CHOICES
 
@@ -82,7 +84,20 @@ class HistoryEntry(models.Model):
         for key in self.diff:
             value = None
 
-            if key in users_keys:
+            # Note: Hack to prevent description_diff propagation
+            #       on old HistoryEntry objects.
+            if key == "description_diff":
+                continue
+            elif key == "description":
+                description_diff = get_diff_of_htmls(
+                    self.diff[key][0],
+                    self.diff[key][1]
+                )
+
+                if description_diff:
+                    key = "description_diff"
+                    value = (None, description_diff)
+            elif key in users_keys:
                 value = [resolve_value("users", x) for x in self.diff[key]]
             elif key == "watchers":
                 value = [[resolve_value("users", x) for x in self.diff[key][0]],
