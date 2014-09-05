@@ -61,6 +61,9 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCru
             obj.content_type = self.get_content_type()
             obj.owner = self.request.user
 
+        if obj.project_id != obj.content_object.project_id:
+            raise exc.WrongArguments("Project ID not matches between object and project")
+
         super().pre_save(obj)
 
     def post_delete(self, obj):
