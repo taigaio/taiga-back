@@ -1,13 +1,13 @@
 from unittest import mock
 
-import pytest
-
 from django.core.urlresolvers import reverse
 
+from taiga.base.utils import json
 from taiga.projects.userstories import services, models
 
 from .. import factories as f
 
+import pytest
 pytestmark = pytest.mark.django_db
 
 
@@ -76,7 +76,7 @@ def test_api_create_in_bulk_with_status(client):
     }
 
     client.login(project.owner)
-    response = client.json.post(url, data)
+    response = client.json.post(url, json.to_json(data))
 
     assert response.status_code == 200, response.data
     assert response.data[0]["status"] == project.default_us_status.id
@@ -94,6 +94,6 @@ def test_api_update_order_in_bulk(client):
     }
 
     client.login(project.owner)
-    response = client.json.post(url, data)
+    response = client.json.post(url, json.to_json(data))
 
     assert response.status_code == 204, response.data

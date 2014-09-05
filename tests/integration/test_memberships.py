@@ -1,13 +1,12 @@
 from unittest import mock
-
-import pytest
-
 from django.core.urlresolvers import reverse
 
 from taiga.projects import services
+from taiga.base.utils import json
 
 from .. import factories as f
 
+import pytest
 pytestmark = pytest.mark.django_db
 
 
@@ -47,7 +46,7 @@ def test_api_create_bulk_members(client):
         ]
     }
     client.login(project.owner)
-    response = client.json.post(url, data)
+    response = client.json.post(url, json.to_json(data))
 
     assert response.status_code == 200
     assert response.data[0]["email"] == john.email
@@ -76,7 +75,7 @@ def test_api_invite_existing_user(client, outbox):
     url = reverse("memberships-list")
     data = {"role": role.pk, "project": role.project.pk, "email": user.email}
 
-    response = client.json.post(url, data)
+    response = client.json.post(url, json.to_json(data))
 
     assert response.status_code == 201, response.data
     assert len(outbox) == 1

@@ -88,19 +88,21 @@ class SettingsTestCase(object):
         override_settings(cls.ORIGINAL_SETTINGS)
         cls.OVERRIDE_SETTINGS.clear()
 
-def _helper_test_http_method_responses(client, method, url, data, users, after_each_request=None):
+def _helper_test_http_method_responses(client, method, url, data, users, after_each_request=None,
+                                       content_type="application/json"):
     results = []
+
     for user in users:
         if user is None:
             client.logout()
         else:
             client.login(user)
         if data:
-            response = getattr(client, method)(url, data, content_type="application/json")
+            response = getattr(client, method)(url, data, content_type=content_type)
         else:
             response = getattr(client, method)(url)
-        if response.status_code == 400:
-            print(response.content)
+        if response.status_code >= 400:
+            print("Response content:", response.content)
 
         results.append(response)
 
@@ -108,8 +110,10 @@ def _helper_test_http_method_responses(client, method, url, data, users, after_e
             after_each_request()
     return results
 
-def helper_test_http_method(client, method, url, data, users, after_each_request=None):
-    responses = _helper_test_http_method_responses(client, method, url, data, users, after_each_request)
+def helper_test_http_method(client, method, url, data, users, after_each_request=None,
+                            content_type="application/json"):
+    responses = _helper_test_http_method_responses(client, method, url, data, users, after_each_request,
+                                                   content_type=content_type)
     return list(map(lambda r: r.status_code, responses))
 
 
