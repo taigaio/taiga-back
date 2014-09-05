@@ -13,7 +13,7 @@ def test_api_create_project(client):
     data = {"name": "project name", "description": "project description"}
 
     client.login(user)
-    response = client.json.post(url, json.to_json(data))
+    response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 201
 
@@ -24,6 +24,6 @@ def test_api_partially_update_project(client):
     data = {"name": ""}
 
     client.login(project.owner)
-    response = client.json.patch(url, json.to_json(data))
+    response = client.json.patch(url, json.dumps(data))
 
     assert response.status_code == 400

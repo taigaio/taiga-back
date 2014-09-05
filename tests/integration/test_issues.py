@@ -51,7 +51,7 @@ def test_api_create_issues_in_bulk(client):
             "project_id": project.id}
 
     client.login(project.owner)
-    response = client.json.post(url, json.to_json(data))
+    response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 200, response.data
 

@@ -1,18 +1,14 @@
-import pytest
 from django.core.urlresolvers import reverse
 
-from rest_framework.renderers import JSONRenderer
-
+from taiga.base.utils import json
 from taiga.projects.wiki.serializers import WikiPageSerializer, WikiLinkSerializer
 from taiga.projects.wiki.models import WikiPage, WikiLink
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
-from taiga.projects.votes.services import add_vote
 
-import json
-
+import pytest
 pytestmark = pytest.mark.django_db
 
 
@@ -115,19 +111,19 @@ def test_wiki_page_update(client, data):
 
     wiki_page_data = WikiPageSerializer(data.public_wiki_page).data
     wiki_page_data["content"] = "test"
-    wiki_page_data = JSONRenderer().render(wiki_page_data)
+    wiki_page_data = json.dumps(wiki_page_data)
     results = helper_test_http_method(client, 'put', public_url, wiki_page_data, users)
     assert results == [401, 200, 200, 200, 200]
 
     wiki_page_data = WikiPageSerializer(data.private_wiki_page1).data
     wiki_page_data["content"] = "test"
-    wiki_page_data = JSONRenderer().render(wiki_page_data)
+    wiki_page_data = json.dumps(wiki_page_data)
     results = helper_test_http_method(client, 'put', private_url1, wiki_page_data, users)
     assert results == [401, 200, 200, 200, 200]
 
     wiki_page_data = WikiPageSerializer(data.private_wiki_page2).data
     wiki_page_data["content"] = "test"
-    wiki_page_data = JSONRenderer().render(wiki_page_data)
+    wiki_page_data = json.dumps(wiki_page_data)
     results = helper_test_http_method(client, 'put', private_url2, wiki_page_data, users)
     assert results == [401, 403, 403, 200, 200]
 
@@ -294,19 +290,19 @@ def test_wiki_link_update(client, data):
 
     wiki_link_data = WikiLinkSerializer(data.public_wiki_link).data
     wiki_link_data["title"] = "test"
-    wiki_link_data = JSONRenderer().render(wiki_link_data)
+    wiki_link_data = json.dumps(wiki_link_data)
     results = helper_test_http_method(client, 'put', public_url, wiki_link_data, users)
     assert results == [401, 200, 200, 200, 200]
 
     wiki_link_data = WikiLinkSerializer(data.private_wiki_link1).data
     wiki_link_data["title"] = "test"
-    wiki_link_data = JSONRenderer().render(wiki_link_data)
+    wiki_link_data = json.dumps(wiki_link_data)
     results = helper_test_http_method(client, 'put', private_url1, wiki_link_data, users)
     assert results == [401, 200, 200, 200, 200]
 
     wiki_link_data = WikiLinkSerializer(data.private_wiki_link2).data
     wiki_link_data["title"] = "test"
-    wiki_link_data = JSONRenderer().render(wiki_link_data)
+    wiki_link_data = json.dumps(wiki_link_data)
     results = helper_test_http_method(client, 'put', private_url2, wiki_link_data, users)
     assert results == [401, 403, 403, 200, 200]
 

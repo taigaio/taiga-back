@@ -1,17 +1,12 @@
-import pytest
 from django.core.urlresolvers import reverse
-
-from rest_framework.renderers import JSONRenderer
 
 from taiga.projects.issues.serializers import IssueSerializer
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 
 from tests import factories as f
 from tests.utils import helper_test_http_method_and_keys, disconnect_signals, reconnect_signals
-from taiga.projects.votes.services import add_vote
 
-import json
-
+import pytest
 pytestmark = pytest.mark.django_db
 
 

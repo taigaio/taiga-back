@@ -4,8 +4,6 @@ from django.core.urlresolvers import reverse
 from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from rest_framework.renderers import JSONRenderer
-
 from .. import factories as f
 from ..utils import set_settings
 

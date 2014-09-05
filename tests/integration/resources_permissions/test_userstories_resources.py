@@ -1,16 +1,13 @@
-import pytest
 from django.core.urlresolvers import reverse
 
-from rest_framework.renderers import JSONRenderer
-
+from taiga.base.utils import json
 from taiga.projects.userstories.serializers import UserStorySerializer
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
 
-import json
-
+import pytest
 pytestmark = pytest.mark.django_db
 
 
@@ -123,19 +120,19 @@ def test_user_story_update(client, data):
 
     user_story_data = UserStorySerializer(data.public_user_story).data
     user_story_data["subject"] = "test"
-    user_story_data = JSONRenderer().render(user_story_data)
+    user_story_data = json.dumps(user_story_data)
     results = helper_test_http_method(client, 'put', public_url, user_story_data, users)
     assert results == [401, 403, 403, 200, 200]
 
     user_story_data = UserStorySerializer(data.private_user_story1).data
     user_story_data["subject"] = "test"
-    user_story_data = JSONRenderer().render(user_story_data)
+    user_story_data = json.dumps(user_story_data)
     results = helper_test_http_method(client, 'put', private_url1, user_story_data, users)
     assert results == [401, 403, 403, 200, 200]
 
     user_story_data = UserStorySerializer(data.private_user_story2).data
     user_story_data["subject"] = "test"
-    user_story_data = JSONRenderer().render(user_story_data)
+    user_story_data = json.dumps(user_story_data)
     results = helper_test_http_method(client, 'put', private_url2, user_story_data, users)
     assert results == [401, 403, 403, 200, 200]
 

@@ -46,7 +46,7 @@ def test_api_create_bulk_members(client):
         ]
     }
     client.login(project.owner)
-    response = client.json.post(url, json.to_json(data))
+    response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 200
     assert response.data[0]["email"] == john.email
@@ -75,7 +75,7 @@ def test_api_invite_existing_user(client, outbox):
     url = reverse("memberships-list")
     data = {"role": role.pk, "project": role.project.pk, "email": user.email}
 
-    response = client.json.post(url, json.to_json(data))
+    response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 201, response.data
     assert len(outbox) == 1

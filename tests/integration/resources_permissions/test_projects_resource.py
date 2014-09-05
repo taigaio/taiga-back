@@ -1,17 +1,14 @@
-import pytest
 from django.core.urlresolvers import reverse
 from django.db.models.loading import get_model
 
-from rest_framework.renderers import JSONRenderer
-
+from taiga.base.utils import json
 from taiga.projects.serializers import ProjectDetailSerializer
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, helper_test_http_method_and_count
 
-import json
-
+import pytest
 pytestmark = pytest.mark.django_db
 
 
@@ -100,7 +97,7 @@ def test_project_update(client, data):
 
     project_data = ProjectDetailSerializer(data.private_project2).data
     project_data["is_private"] = False
-    project_data = JSONRenderer().render(project_data)
+    project_data = json.dumps(project_data)
 
     users = [
         None,
