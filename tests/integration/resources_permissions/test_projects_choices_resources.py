@@ -1,16 +1,13 @@
-import pytest
 from django.core.urlresolvers import reverse
 
-from rest_framework.renderers import JSONRenderer
-
+from taiga.base.utils import json
 from taiga.projects import serializers
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS
 
 from tests import factories as f
 from tests.utils import helper_test_http_method
 
-import json
-
+import pytest
 pytestmark = pytest.mark.django_db
 
 
@@ -132,19 +129,19 @@ def test_roles_update(client, data):
 
     role_data = serializers.RoleSerializer(data.public_project.roles.all()[0]).data
     role_data["name"] = "test"
-    role_data = JSONRenderer().render(role_data)
+    role_data = json.dumps(role_data)
     results = helper_test_http_method(client, 'put', public_url, role_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     role_data = serializers.RoleSerializer(data.private_project1.roles.all()[0]).data
     role_data["name"] = "test"
-    role_data = JSONRenderer().render(role_data)
+    role_data = json.dumps(role_data)
     results = helper_test_http_method(client, 'put', private1_url, role_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     role_data = serializers.RoleSerializer(data.private_project2.roles.all()[0]).data
     role_data["name"] = "test"
-    role_data = JSONRenderer().render(role_data)
+    role_data = json.dumps(role_data)
     results = helper_test_http_method(client, 'put', private2_url, role_data, users)
     assert results == [401, 403, 403, 403, 200]
 
@@ -260,19 +257,19 @@ def test_points_update(client, data):
 
     points_data = serializers.PointsSerializer(data.public_points).data
     points_data["name"] = "test"
-    points_data = JSONRenderer().render(points_data)
+    points_data = json.dumps(points_data)
     results = helper_test_http_method(client, 'put', public_url, points_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     points_data = serializers.PointsSerializer(data.private_points1).data
     points_data["name"] = "test"
-    points_data = JSONRenderer().render(points_data)
+    points_data = json.dumps(points_data)
     results = helper_test_http_method(client, 'put', private1_url, points_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     points_data = serializers.PointsSerializer(data.private_points2).data
     points_data["name"] = "test"
-    points_data = JSONRenderer().render(points_data)
+    points_data = json.dumps(points_data)
     results = helper_test_http_method(client, 'put', private2_url, points_data, users)
     assert results == [401, 403, 403, 403, 200]
 
@@ -421,19 +418,19 @@ def test_user_story_status_update(client, data):
 
     user_story_status_data = serializers.UserStoryStatusSerializer(data.public_user_story_status).data
     user_story_status_data["name"] = "test"
-    user_story_status_data = JSONRenderer().render(user_story_status_data)
+    user_story_status_data = json.dumps(user_story_status_data)
     results = helper_test_http_method(client, 'put', public_url, user_story_status_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     user_story_status_data = serializers.UserStoryStatusSerializer(data.private_user_story_status1).data
     user_story_status_data["name"] = "test"
-    user_story_status_data = JSONRenderer().render(user_story_status_data)
+    user_story_status_data = json.dumps(user_story_status_data)
     results = helper_test_http_method(client, 'put', private1_url, user_story_status_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     user_story_status_data = serializers.UserStoryStatusSerializer(data.private_user_story_status2).data
     user_story_status_data["name"] = "test"
-    user_story_status_data = JSONRenderer().render(user_story_status_data)
+    user_story_status_data = json.dumps(user_story_status_data)
     results = helper_test_http_method(client, 'put', private2_url, user_story_status_data, users)
     assert results == [401, 403, 403, 403, 200]
 
@@ -582,19 +579,19 @@ def test_task_status_update(client, data):
 
     task_status_data = serializers.TaskStatusSerializer(data.public_task_status).data
     task_status_data["name"] = "test"
-    task_status_data = JSONRenderer().render(task_status_data)
+    task_status_data = json.dumps(task_status_data)
     results = helper_test_http_method(client, 'put', public_url, task_status_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     task_status_data = serializers.TaskStatusSerializer(data.private_task_status1).data
     task_status_data["name"] = "test"
-    task_status_data = JSONRenderer().render(task_status_data)
+    task_status_data = json.dumps(task_status_data)
     results = helper_test_http_method(client, 'put', private1_url, task_status_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     task_status_data = serializers.TaskStatusSerializer(data.private_task_status2).data
     task_status_data["name"] = "test"
-    task_status_data = JSONRenderer().render(task_status_data)
+    task_status_data = json.dumps(task_status_data)
     results = helper_test_http_method(client, 'put', private2_url, task_status_data, users)
     assert results == [401, 403, 403, 403, 200]
 
@@ -743,19 +740,19 @@ def test_issue_status_update(client, data):
 
     issue_status_data = serializers.IssueStatusSerializer(data.public_issue_status).data
     issue_status_data["name"] = "test"
-    issue_status_data = JSONRenderer().render(issue_status_data)
+    issue_status_data = json.dumps(issue_status_data)
     results = helper_test_http_method(client, 'put', public_url, issue_status_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     issue_status_data = serializers.IssueStatusSerializer(data.private_issue_status1).data
     issue_status_data["name"] = "test"
-    issue_status_data = JSONRenderer().render(issue_status_data)
+    issue_status_data = json.dumps(issue_status_data)
     results = helper_test_http_method(client, 'put', private1_url, issue_status_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     issue_status_data = serializers.IssueStatusSerializer(data.private_issue_status2).data
     issue_status_data["name"] = "test"
-    issue_status_data = JSONRenderer().render(issue_status_data)
+    issue_status_data = json.dumps(issue_status_data)
     results = helper_test_http_method(client, 'put', private2_url, issue_status_data, users)
     assert results == [401, 403, 403, 403, 200]
 
@@ -904,19 +901,19 @@ def test_issue_type_update(client, data):
 
     issue_type_data = serializers.IssueTypeSerializer(data.public_issue_type).data
     issue_type_data["name"] = "test"
-    issue_type_data = JSONRenderer().render(issue_type_data)
+    issue_type_data = json.dumps(issue_type_data)
     results = helper_test_http_method(client, 'put', public_url, issue_type_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     issue_type_data = serializers.IssueTypeSerializer(data.private_issue_type1).data
     issue_type_data["name"] = "test"
-    issue_type_data = JSONRenderer().render(issue_type_data)
+    issue_type_data = json.dumps(issue_type_data)
     results = helper_test_http_method(client, 'put', private1_url, issue_type_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     issue_type_data = serializers.IssueTypeSerializer(data.private_issue_type2).data
     issue_type_data["name"] = "test"
-    issue_type_data = JSONRenderer().render(issue_type_data)
+    issue_type_data = json.dumps(issue_type_data)
     results = helper_test_http_method(client, 'put', private2_url, issue_type_data, users)
     assert results == [401, 403, 403, 403, 200]
 
@@ -1065,19 +1062,19 @@ def test_priority_update(client, data):
 
     priority_data = serializers.PrioritySerializer(data.public_priority).data
     priority_data["name"] = "test"
-    priority_data = JSONRenderer().render(priority_data)
+    priority_data = json.dumps(priority_data)
     results = helper_test_http_method(client, 'put', public_url, priority_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     priority_data = serializers.PrioritySerializer(data.private_priority1).data
     priority_data["name"] = "test"
-    priority_data = JSONRenderer().render(priority_data)
+    priority_data = json.dumps(priority_data)
     results = helper_test_http_method(client, 'put', private1_url, priority_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     priority_data = serializers.PrioritySerializer(data.private_priority2).data
     priority_data["name"] = "test"
-    priority_data = JSONRenderer().render(priority_data)
+    priority_data = json.dumps(priority_data)
     results = helper_test_http_method(client, 'put', private2_url, priority_data, users)
     assert results == [401, 403, 403, 403, 200]
 
@@ -1226,19 +1223,19 @@ def test_severity_update(client, data):
 
     severity_data = serializers.SeveritySerializer(data.public_severity).data
     severity_data["name"] = "test"
-    severity_data = JSONRenderer().render(severity_data)
+    severity_data = json.dumps(severity_data)
     results = helper_test_http_method(client, 'put', public_url, severity_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     severity_data = serializers.SeveritySerializer(data.private_severity1).data
     severity_data["name"] = "test"
-    severity_data = JSONRenderer().render(severity_data)
+    severity_data = json.dumps(severity_data)
     results = helper_test_http_method(client, 'put', private1_url, severity_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     severity_data = serializers.SeveritySerializer(data.private_severity2).data
     severity_data["name"] = "test"
-    severity_data = JSONRenderer().render(severity_data)
+    severity_data = json.dumps(severity_data)
     results = helper_test_http_method(client, 'put', private2_url, severity_data, users)
     assert results == [401, 403, 403, 403, 200]
 
@@ -1387,19 +1384,19 @@ def test_membership_update(client, data):
 
     membership_data = serializers.MembershipSerializer(data.public_membership).data
     membership_data["token"] = "test"
-    membership_data = JSONRenderer().render(membership_data)
+    membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'put', public_url, membership_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     membership_data = serializers.MembershipSerializer(data.private_membership1).data
     membership_data["token"] = "test"
-    membership_data = JSONRenderer().render(membership_data)
+    membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'put', private1_url, membership_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     membership_data = serializers.MembershipSerializer(data.private_membership2).data
     membership_data["token"] = "test"
-    membership_data = JSONRenderer().render(membership_data)
+    membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'put', private2_url, membership_data, users)
     assert results == [401, 403, 403, 403, 200]
 
@@ -1492,21 +1489,21 @@ def test_membership_create(client, data):
     membership_data = serializers.MembershipSerializer(data.public_membership).data
     membership_data["id"] = None
     membership_data["email"] = "test1@test.com"
-    membership_data = JSONRenderer().render(membership_data)
+    membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'post', url, membership_data, users)
     assert results == [401, 403, 403, 403, 201]
 
     membership_data = serializers.MembershipSerializer(data.private_membership1).data
     membership_data["id"] = None
     membership_data["email"] = "test2@test.com"
-    membership_data = JSONRenderer().render(membership_data)
+    membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'post', url, membership_data, users)
     assert results == [401, 403, 403, 403, 201]
 
     membership_data = serializers.MembershipSerializer(data.private_membership2).data
     membership_data["id"] = None
     membership_data["email"] = "test3@test.com"
-    membership_data = JSONRenderer().render(membership_data)
+    membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'post', url, membership_data, users)
     assert results == [401, 403, 403, 403, 201]
 
@@ -1529,7 +1526,7 @@ def test_membership_action_bulk_create(client, data):
             {"role_id": data.public_membership.role.pk, "email": "test2@test.com"},
         ]
     }
-    bulk_data = JSONRenderer().render(bulk_data)
+    bulk_data = json.dumps(bulk_data)
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 403, 403, 403, 200]
 
@@ -1540,7 +1537,7 @@ def test_membership_action_bulk_create(client, data):
             {"role_id": data.private_membership1.role.pk, "email": "test2@test.com"},
         ]
     }
-    bulk_data = JSONRenderer().render(bulk_data)
+    bulk_data = json.dumps(bulk_data)
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 403, 403, 403, 200]
 
@@ -1551,7 +1548,7 @@ def test_membership_action_bulk_create(client, data):
             {"role_id": data.private_membership2.role.pk, "email": "test2@test.com"},
         ]
     }
-    bulk_data = JSONRenderer().render(bulk_data)
+    bulk_data = json.dumps(bulk_data)
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 403, 403, 403, 200]
 
@@ -1607,7 +1604,7 @@ def test_project_template_update(client, data):
 
     project_template_data = serializers.ProjectTemplateSerializer(data.project_template).data
     project_template_data["default_owner_role"] = "test"
-    project_template_data = JSONRenderer().render(project_template_data)
+    project_template_data = json.dumps(project_template_data)
     results = helper_test_http_method(client, 'put', url, project_template_data, users)
     assert results == [401, 403, 200]
 
@@ -1657,9 +1654,3 @@ def test_project_template_patch(client, data):
 
     results = helper_test_http_method(client, 'patch', url, '{"name": "Test"}', users)
     assert results == [401, 403, 200]
-
-
-# def test_project_template_action_create_from_project(client, data):
-#     assert False
-#
-#

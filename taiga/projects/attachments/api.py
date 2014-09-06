@@ -34,7 +34,6 @@ from taiga.users.models import User
 from taiga.projects.notifications import WatchedResourceMixin
 from taiga.projects.history import HistoryResourceMixin
 
-
 from . import permissions
 from . import serializers
 from . import models
@@ -47,6 +46,12 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCru
 
     content_type = None
 
+    def update(self, *args, **kwargs):
+        partial = kwargs.get("partial", False)
+        if not partial:
+            raise exc.NotSupported("Non partial updates not supported")
+        return super().update(*args, **kwargs)
+
     def get_content_type(self):
         app_name, model = self.content_type.split(".", 1)
         return get_object_or_404(ContentType, app_label=app_name, model=model)
@@ -55,6 +60,9 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCru
         if not obj.id:
             obj.content_type = self.get_content_type()
             obj.owner = self.request.user
+
+        if obj.project_id != obj.content_object.project_id:
+            raise exc.WrongArguments("Project ID not matches between object and project")
 
         super().pre_save(obj)
 
@@ -72,36 +80,24 @@ class UserStoryAttachmentViewSet(BaseAttachmentViewSet):
     permission_classes = (permissions.UserStoryAttachmentPermission,)
     filter_backends = (filters.CanViewUserStoryAttachmentFilterBackend,)
     content_type = "userstories.userstory"
-    create_notification_template = "create_userstory_notification"
-    update_notification_template = "update_userstory_notification"
-    destroy_notification_template = "destroy_userstory_notification"
 
 
 class IssueAttachmentViewSet(BaseAttachmentViewSet):
     permission_classes = (permissions.IssueAttachmentPermission,)
     filter_backends = (filters.CanViewIssueAttachmentFilterBackend,)
     content_type = "issues.issue"
-    create_notification_template = "create_issue_notification"
-    update_notification_template = "update_issue_notification"
-    destroy_notification_template = "destroy_issue_notification"
 
 
 class TaskAttachmentViewSet(BaseAttachmentViewSet):
     permission_classes = (permissions.TaskAttachmentPermission,)
     filter_backends = (filters.CanViewTaskAttachmentFilterBackend,)
     content_type = "tasks.task"
-    create_notification_template = "create_task_notification"
-    update_notification_template = "update_task_notification"
-    destroy_notification_template = "destroy_task_notification"
 
 
 class WikiAttachmentViewSet(BaseAttachmentViewSet):
     permission_classes = (permissions.WikiAttachmentPermission,)
     filter_backends = (filters.CanViewWikiAttachmentFilterBackend,)
     content_type = "wiki.wikipage"
-    create_notification_template = "create_wiki_notification"
-    update_notification_template = "update_wiki_notification"
-    destroy_notification_template = "destroy_wiki_notification"
 
 
 class RawAttachmentView(generics.RetrieveAPIView):

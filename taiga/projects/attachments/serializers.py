@@ -21,7 +21,9 @@ from django.conf import settings
 
 from rest_framework import serializers
 
+from taiga.base.serializers import ModelSerializer
 from taiga.base.utils.urls import reverse
+
 from . import models
 
 
@@ -29,6 +31,8 @@ class AttachmentSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField("get_name")
     url = serializers.SerializerMethodField("get_url")
     size = serializers.SerializerMethodField("get_size")
+
+    attached_file = serializers.FileField(required=True)
 
     class Meta:
         model = models.Attachment

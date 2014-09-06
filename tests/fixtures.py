@@ -16,6 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
+import mock
+import functools
 
 
 class Object:
@@ -27,11 +29,36 @@ def object():
     return Object()
 
 
+class PartialMethodCaller:
+    def __init__(self, obj, **partial_params):
+        self.obj = obj
+        self.partial_params = partial_params
+
+    def __getattr__(self, name):
+        return functools.partial(getattr(self.obj, name), **self.partial_params)
+
+
 @pytest.fixture
 def client():
-    from testclient_extensions import Client
+    from django.test.client import Client
+    from django.test.client import MULTIPART_CONTENT
 
-    return Client()
+    class _Client(Client):
+        def login(self, user=None, backend="django.contrib.auth.backends.ModelBackend", **credentials):
+            if user is None:
+                return super().login(**credentials)
+
+            # This will be changed on django1.7 branch with other location
+            with mock.patch('django.test.client.authenticate') as authenticate:
+                user.backend = backend
+                authenticate.return_value = user
+                return super().login(**credentials)
+
+        @property
+        def json(self):
+            return PartialMethodCaller(obj=self, content_type='application/json;charset="utf-8"')
+
+    return _Client()
 
 
 @pytest.fixture

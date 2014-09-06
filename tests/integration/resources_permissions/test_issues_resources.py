@@ -1,17 +1,14 @@
-import pytest
 from django.core.urlresolvers import reverse
-
-from rest_framework.renderers import JSONRenderer
 
 from taiga.projects.issues.serializers import IssueSerializer
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.base.utils import json
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
 from taiga.projects.votes.services import add_vote
 
-import json
-
+import pytest
 pytestmark = pytest.mark.django_db
 
 
@@ -125,19 +122,19 @@ def test_issue_update(client, data):
 
     issue_data = IssueSerializer(data.public_issue).data
     issue_data["subject"] = "test"
-    issue_data = JSONRenderer().render(issue_data)
+    issue_data = json.dumps(issue_data)
     results = helper_test_http_method(client, 'put', public_url, issue_data, users)
     assert results == [401, 403, 403, 200, 200]
 
     issue_data = IssueSerializer(data.private_issue1).data
     issue_data["subject"] = "test"
-    issue_data = JSONRenderer().render(issue_data)
+    issue_data = json.dumps(issue_data)
     results = helper_test_http_method(client, 'put', private_url1, issue_data, users)
     assert results == [401, 403, 403, 200, 200]
 
     issue_data = IssueSerializer(data.private_issue2).data
     issue_data["subject"] = "test"
-    issue_data = JSONRenderer().render(issue_data)
+    issue_data = json.dumps(issue_data)
     results = helper_test_http_method(client, 'put', private_url2, issue_data, users)
     assert results == [401, 403, 403, 200, 200]
 
@@ -295,15 +292,18 @@ def test_issue_bulk_create(client, data):
     ]
 
 
-    bulk_data = json.dumps({"bulk_issues": "test1\ntest2", "project_id": data.public_issue.project.pk})
+    bulk_data = json.dumps({"bulk_issues": "test1\ntest2",
+                            "project_id": data.public_issue.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 200, 200, 200, 200]
 
-    bulk_data = json.dumps({"bulk_issues": "test1\ntest2", "project_id": data.private_issue1.project.pk})
+    bulk_data = json.dumps({"bulk_issues": "test1\ntest2",
+                            "project_id": data.private_issue1.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 200, 200, 200, 200]
 
-    bulk_data = json.dumps({"bulk_issues": "test1\ntest2", "project_id": data.private_issue2.project.pk})
+    bulk_data = json.dumps({"bulk_issues": "test1\ntest2",
+                            "project_id": data.private_issue2.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 403, 403, 200, 200]
 

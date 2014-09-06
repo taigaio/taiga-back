@@ -1,8 +1,6 @@
-import pytest
 from django.core.urlresolvers import reverse
 
-from rest_framework.renderers import JSONRenderer
-
+from taiga.base.utils import json
 from taiga.projects.milestones.serializers import MilestoneSerializer
 from taiga.projects.milestones.models import Milestone
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
@@ -10,8 +8,7 @@ from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS,
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
 
-import json
-
+import pytest
 pytestmark = pytest.mark.django_db
 
 
@@ -110,19 +107,19 @@ def test_milestone_update(client, data):
 
     milestone_data = MilestoneSerializer(data.public_milestone).data
     milestone_data["name"] = "test"
-    milestone_data = JSONRenderer().render(milestone_data)
+    milestone_data = json.dumps(milestone_data)
     results = helper_test_http_method(client, 'put', public_url, milestone_data, users)
     assert results == [401, 403, 403, 200, 200]
 
     milestone_data = MilestoneSerializer(data.private_milestone1).data
     milestone_data["name"] = "test"
-    milestone_data = JSONRenderer().render(milestone_data)
+    milestone_data = json.dumps(milestone_data)
     results = helper_test_http_method(client, 'put', private_url1, milestone_data, users)
     assert results == [401, 403, 403, 200, 200]
 
     milestone_data = MilestoneSerializer(data.private_milestone2).data
     milestone_data["name"] = "test"
-    milestone_data = JSONRenderer().render(milestone_data)
+    milestone_data = json.dumps(milestone_data)
     results = helper_test_http_method(client, 'put', private_url2, milestone_data, users)
     assert results == [401, 403, 403, 200, 200]
 
@@ -239,6 +236,7 @@ def test_milestone_patch(client, data):
     patch_data = json.dumps({"name": "test"})
     results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
     assert results == [401, 403, 403, 200, 200]
+
 
 def test_milestone_action_stats(client, data):
     public_url = reverse('milestones-stats', kwargs={"pk": data.public_milestone.pk})

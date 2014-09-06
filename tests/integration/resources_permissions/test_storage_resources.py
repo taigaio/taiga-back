@@ -1,19 +1,17 @@
-import pytest
 from django.core.urlresolvers import reverse
 
-from rest_framework.renderers import JSONRenderer
-
-from taiga.userstorage.serializers import StorageEntrySerializer
+from taiga.base.utils import json
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
-
-from tests import factories as f
-from tests.utils import helper_test_http_method, helper_test_http_method_and_count, disconnect_signals, reconnect_signals
 from taiga.projects.votes.services import add_vote
-
+from taiga.userstorage.serializers import StorageEntrySerializer
 from taiga.userstorage.models import StorageEntry
 
-import json
+from tests import factories as f
+from tests.utils import helper_test_http_method
+from tests.utils import helper_test_http_method_and_count
+from tests.utils import disconnect_signals, reconnect_signals
 
+import pytest
 pytestmark = pytest.mark.django_db
 
 
@@ -63,7 +61,7 @@ def test_storage_update(client, data):
 
     storage_data = StorageEntrySerializer(data.storage_user1).data
     storage_data["key"] = "test"
-    storage_data = JSONRenderer().render(storage_data)
+    storage_data = json.dumps(storage_data)
     results = helper_test_http_method(client, 'put', url, storage_data, users)
     assert results == [401, 200, 201]
 

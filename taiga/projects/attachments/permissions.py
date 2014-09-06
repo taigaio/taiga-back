@@ -16,7 +16,7 @@
 
 
 from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
-                                        IsProjectOwner, AllowAny, PermissionComponent)
+                                        AllowAny, PermissionComponent)
 
 
 class IsAttachmentOwnerPerm(PermissionComponent):

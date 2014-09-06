@@ -1,16 +1,19 @@
-import pytest
 from django.core.urlresolvers import reverse
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test.client import MULTIPART_CONTENT
 
-from rest_framework.renderers import JSONRenderer
+from taiga.base.utils import json
 
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 from taiga.projects.attachments.serializers import AttachmentSerializer
 
 from tests import factories as f
-from tests.utils import helper_test_http_method, helper_test_http_method_and_count, disconnect_signals, reconnect_signals
+from tests.utils import helper_test_http_method
+from tests.utils import helper_test_http_method_and_count
+from tests.utils import disconnect_signals
+from tests.utils import reconnect_signals
 
-import json
-
+import pytest
 pytestmark = pytest.mark.django_db
 
 
@@ -72,11 +75,14 @@ def data():
 def data_us(data):
     m = type("Models", (object,), {})
     m.public_user_story = f.UserStoryFactory(project=data.public_project, ref=1)
-    m.public_user_story_attachment = f.UserStoryAttachmentFactory(project=data.public_project, content_object=m.public_user_story)
+    m.public_user_story_attachment = f.UserStoryAttachmentFactory(project=data.public_project,
+                                                                  content_object=m.public_user_story)
     m.private_user_story1 = f.UserStoryFactory(project=data.private_project1, ref=5)
-    m.private_user_story1_attachment = f.UserStoryAttachmentFactory(project=data.private_project1, content_object=m.private_user_story1)
+    m.private_user_story1_attachment = f.UserStoryAttachmentFactory(project=data.private_project1,
+                                                                    content_object=m.private_user_story1)
     m.private_user_story2 = f.UserStoryFactory(project=data.private_project2, ref=9)
-    m.private_user_story2_attachment = f.UserStoryAttachmentFactory(project=data.private_project2, content_object=m.private_user_story2)
+    m.private_user_story2_attachment = f.UserStoryAttachmentFactory(project=data.private_project2,
+                                                                    content_object=m.private_user_story2)
     return m
 
 @pytest.fixture
@@ -197,9 +203,12 @@ def test_wiki_attachment_retrieve(client, data, data_wiki):
 
 
 def test_user_story_attachment_update(client, data, data_us):
-    public_url = reverse('userstory-attachments-detail', kwargs={"pk": data_us.public_user_story_attachment.pk})
-    private_url1 = reverse('userstory-attachments-detail', kwargs={"pk": data_us.private_user_story1_attachment.pk})
-    private_url2 = reverse('userstory-attachments-detail', kwargs={"pk": data_us.private_user_story2_attachment.pk})
+    public_url = reverse("userstory-attachments-detail",
+                         args=[data_us.public_user_story_attachment.pk])
+    private_url1 = reverse("userstory-attachments-detail",
+                           args=[data_us.private_user_story1_attachment.pk])
+    private_url2 = reverse("userstory-attachments-detail",
+                           args=[data_us.private_user_story2_attachment.pk])
 
     users = [
         None,
@@ -211,14 +220,20 @@ def test_user_story_attachment_update(client, data, data_us):
 
     attachment_data = AttachmentSerializer(data_us.public_user_story_attachment).data
     attachment_data["description"] = "test"
-    attachment_data = JSONRenderer().render(attachment_data)
 
-    results = helper_test_http_method(client, 'put', public_url, attachment_data, users)
-    assert results == [401, 403, 403, 200, 200]
-    results = helper_test_http_method(client, 'put', private_url1, attachment_data, users)
-    assert results == [401, 403, 403, 200, 200]
-    results = helper_test_http_method(client, 'put', private_url2, attachment_data, users)
-    assert results == [401, 403, 403, 200, 200]
+    attachment_data = json.dumps(attachment_data)
+
+    results = helper_test_http_method(client, "put", public_url, attachment_data, users)
+    # assert results == [401, 403, 403, 400, 400]
+    assert results == [405, 405, 405, 405, 405]
+
+    results = helper_test_http_method(client, "put", private_url1, attachment_data, users)
+    # assert results == [401, 403, 403, 400, 400]
+    assert results == [405, 405, 405, 405, 405]
+
+    results = helper_test_http_method(client, "put", private_url2, attachment_data, users)
+    # assert results == [401, 403, 403, 400, 400]
+    assert results == [405, 405, 405, 405, 405]
 
 
 def test_task_attachment_update(client, data, data_task):
@@ -236,14 +251,17 @@ def test_task_attachment_update(client, data, data_task):
 
     attachment_data = AttachmentSerializer(data_task.public_task_attachment).data
     attachment_data["description"] = "test"
-    attachment_data = JSONRenderer().render(attachment_data)
+    attachment_data = json.dumps(attachment_data)
 
     results = helper_test_http_method(client, 'put', public_url, attachment_data, users)
-    assert results == [401, 403, 403, 200, 200]
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'put', private_url1, attachment_data, users)
-    assert results == [401, 403, 403, 200, 200]
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'put', private_url2, attachment_data, users)
-    assert results == [401, 403, 403, 200, 200]
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
 
 
 def test_issue_attachment_update(client, data, data_issue):
@@ -261,14 +279,17 @@ def test_issue_attachment_update(client, data, data_issue):
 
     attachment_data = AttachmentSerializer(data_issue.public_issue_attachment).data
     attachment_data["description"] = "test"
-    attachment_data = JSONRenderer().render(attachment_data)
+    attachment_data = json.dumps(attachment_data)
 
     results = helper_test_http_method(client, 'put', public_url, attachment_data, users)
-    assert results == [401, 403, 403, 200, 200]
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'put', private_url1, attachment_data, users)
-    assert results == [401, 403, 403, 200, 200]
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'put', private_url2, attachment_data, users)
-    assert results == [401, 403, 403, 200, 200]
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
 
 
 def test_wiki_attachment_update(client, data, data_wiki):
@@ -286,14 +307,17 @@ def test_wiki_attachment_update(client, data, data_wiki):
 
     attachment_data = AttachmentSerializer(data_wiki.public_wiki_attachment).data
     attachment_data["description"] = "test"
-    attachment_data = JSONRenderer().render(attachment_data)
+    attachment_data = json.dumps(attachment_data)
 
     results = helper_test_http_method(client, 'put', public_url, attachment_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'put', private_url1, attachment_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'put', private_url2, attachment_data, users)
-    assert results == [401, 403, 403, 200, 200]
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
 
 
 def test_user_story_attachment_patch(client, data, data_us):
@@ -310,7 +334,7 @@ def test_user_story_attachment_patch(client, data, data_us):
     ]
 
     attachment_data = {"description": "test"}
-    attachment_data = JSONRenderer().render(attachment_data)
+    attachment_data = json.dumps(attachment_data)
 
     results = helper_test_http_method(client, 'patch', public_url, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
@@ -334,7 +358,7 @@ def test_task_attachment_patch(client, data, data_task):
     ]
 
     attachment_data = {"description": "test"}
-    attachment_data = JSONRenderer().render(attachment_data)
+    attachment_data = json.dumps(attachment_data)
 
     results = helper_test_http_method(client, 'patch', public_url, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
@@ -358,7 +382,7 @@ def test_issue_attachment_patch(client, data, data_issue):
     ]
 
     attachment_data = {"description": "test"}
-    attachment_data = JSONRenderer().render(attachment_data)
+    attachment_data = json.dumps(attachment_data)
 
     results = helper_test_http_method(client, 'patch', public_url, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
@@ -382,7 +406,7 @@ def test_wiki_attachment_patch(client, data, data_wiki):
     ]
 
     attachment_data = {"description": "test"}
-    attachment_data = JSONRenderer().render(attachment_data)
+    attachment_data = json.dumps(attachment_data)
 
     results = helper_test_http_method(client, 'patch', public_url, attachment_data, users)
     assert results == [401, 200, 200, 200, 200]
@@ -482,11 +506,16 @@ def test_user_story_attachment_create(client, data, data_us):
         data.project_owner
     ]
 
-    attachment_data = AttachmentSerializer(data_us.public_user_story_attachment).data
-    attachment_data["id"] = None
-    attachment_data["description"] = "test"
-    attachment_data = JSONRenderer().render(attachment_data)
-    results = helper_test_http_method(client, 'post', url, attachment_data, users)
+    attachment_data = {"description": "test",
+                       "object_id": data_us.public_user_story_attachment.object_id,
+                       "project": data_us.public_user_story_attachment.project_id,
+                       "attached_file": SimpleUploadedFile("test.txt", b"test")}
+
+    _after_each_request_hook = lambda: attachment_data["attached_file"].seek(0)
+
+    results = helper_test_http_method(client, 'post', url, attachment_data, users,
+                                      content_type=MULTIPART_CONTENT,
+                                      after_each_request=_after_each_request_hook)
     assert results == [401, 403, 403, 201, 201]
 
 
@@ -501,11 +530,16 @@ def test_task_attachment_create(client, data, data_task):
         data.project_owner
     ]
 
-    attachment_data = AttachmentSerializer(data_task.public_task_attachment).data
-    attachment_data["id"] = None
-    attachment_data["description"] = "test"
-    attachment_data = JSONRenderer().render(attachment_data)
-    results = helper_test_http_method(client, 'post', url, attachment_data, users)
+    attachment_data = {"description": "test",
+                       "object_id": data_task.public_task_attachment.object_id,
+                       "project": data_task.public_task_attachment.project_id,
+                       "attached_file": SimpleUploadedFile("test.txt", b"test")}
+
+    _after_each_request_hook = lambda: attachment_data["attached_file"].seek(0)
+
+    results = helper_test_http_method(client, 'post', url, attachment_data, users,
+                                      content_type=MULTIPART_CONTENT,
+                                      after_each_request=_after_each_request_hook)
     assert results == [401, 403, 403, 201, 201]
 
 
@@ -520,11 +554,17 @@ def test_issue_attachment_create(client, data, data_issue):
         data.project_owner
     ]
 
-    attachment_data = AttachmentSerializer(data_issue.public_issue_attachment).data
-    attachment_data["id"] = None
-    attachment_data["description"] = "test"
-    attachment_data = JSONRenderer().render(attachment_data)
-    results = helper_test_http_method(client, 'post', url, attachment_data, users)
+    attachment_data = {"description": "test",
+                       "object_id": data_issue.public_issue_attachment.object_id,
+                       "project": data_issue.public_issue_attachment.project_id,
+                       "attached_file": SimpleUploadedFile("test.txt", b"test")}
+
+    _after_each_request_hook = lambda: attachment_data["attached_file"].seek(0)
+
+    results = helper_test_http_method(client, 'post', url, attachment_data, users,
+                                      content_type=MULTIPART_CONTENT,
+                                      after_each_request=_after_each_request_hook)
+
     assert results == [401, 403, 403, 201, 201]
 
 
@@ -539,11 +579,17 @@ def test_wiki_attachment_create(client, data, data_wiki):
         data.project_owner
     ]
 
-    attachment_data = AttachmentSerializer(data_wiki.public_wiki_attachment).data
-    attachment_data["id"] = None
-    attachment_data["description"] = "test"
-    attachment_data = JSONRenderer().render(attachment_data)
-    results = helper_test_http_method(client, 'post', url, attachment_data, users)
+    attachment_data = {"description": "test",
+                       "object_id": data_wiki.public_wiki_attachment.object_id,
+                       "project": data_wiki.public_wiki_attachment.project_id,
+                       "attached_file": SimpleUploadedFile("test.txt", b"test")}
+
+    _after_each_request_hook = lambda: attachment_data["attached_file"].seek(0)
+
+    results = helper_test_http_method(client, 'post', url, attachment_data, users,
+                                      content_type=MULTIPART_CONTENT,
+                                      after_each_request=_after_each_request_hook)
+
     assert results == [401, 201, 201, 201, 201]
 
 

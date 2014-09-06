@@ -1,17 +1,14 @@
-import pytest
+from tempfile import NamedTemporaryFile
+
 from django.core.urlresolvers import reverse
 
-from rest_framework.renderers import JSONRenderer
-
+from taiga.base.utils import json
 from taiga.users.serializers import UserSerializer
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
 
-import json
-
-from tempfile import NamedTemporaryFile
-
+import pytest
 pytestmark = pytest.mark.django_db
 
 DUMMY_BMP_DATA = b'BM:\x00\x00\x00\x00\x00\x00\x006\x00\x00\x00(\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00\x18\x00\x00\x00\x00\x00\x04\x00\x00\x00\x13\x0b\x00\x00\x13\x0b\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -62,7 +59,7 @@ def test_user_update(client, data):
 
     user_data = UserSerializer(data.registered_user).data
     user_data["full_name"] = "test"
-    user_data = JSONRenderer().render(user_data)
+    user_data = json.dumps(user_data)
     results = helper_test_http_method(client, 'put', url, user_data, users)
     assert results == [401, 200, 403, 200]
 
