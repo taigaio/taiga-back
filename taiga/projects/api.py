@@ -185,7 +185,7 @@ class MembershipViewSet(ModelCrudViewSet):
     filter_fields = ("project", "role")
 
     def create(self, request, *args, **kwargs):
-        data = request.DATA
+        data = request.DATA.copy()
         data.update({"invited_by_id": request.user.id})
         serializer = self.get_serializer(data=data, files=request.FILES)
 
