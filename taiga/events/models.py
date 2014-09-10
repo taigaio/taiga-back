@@ -24,6 +24,10 @@ def on_save_any_model(sender, instance, created, **kwargs):
     # Ignore any object that can not have project_id
     content_type = changes._get_type_for_model(instance)
 
+    # Ignore changes on import
+    if getattr(instance, '_importing', False):
+        return
+
     # Ignore any other changes
     if content_type not in changes.watched_types:
         return

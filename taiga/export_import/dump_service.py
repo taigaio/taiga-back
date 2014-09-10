@@ -16,8 +16,6 @@
 
 from django.db.models import signals
 
-from taiga.base.utils.signals import without_signals
-
 from . import serializers
 from . import service
 
@@ -76,32 +74,30 @@ def dict_to_project(data, owner=None):
     if owner:
         data['owner'] = owner
 
-    with without_signals([signals.post_save, "project_post_save"]):
-        project_serialized = service.store_project(data)
+    project_serialized = service.store_project(data)
 
-        if not project_serialized:
-            raise TaigaImportError('error importing project')
+    if not project_serialized:
+        raise TaigaImportError('error importing project')
 
-        proj = project_serialized.object
+    proj = project_serialized.object
 
-        service.store_choices(proj, data, "points", serializers.PointsExportSerializer)
-        service.store_choices(proj, data, "issue_types", serializers.IssueTypeExportSerializer)
-        service.store_choices(proj, data, "issue_statuses", serializers.IssueStatusExportSerializer)
-        service.store_choices(proj, data, "us_statuses", serializers.UserStoryStatusExportSerializer)
-        service.store_choices(proj, data, "task_statuses", serializers.TaskStatusExportSerializer)
-        service.store_choices(proj, data, "priorities", serializers.PriorityExportSerializer)
-        service.store_choices(proj, data, "severities", serializers.SeverityExportSerializer)
+    service.store_choices(proj, data, "points", serializers.PointsExportSerializer)
+    service.store_choices(proj, data, "issue_types", serializers.IssueTypeExportSerializer)
+    service.store_choices(proj, data, "issue_statuses", serializers.IssueStatusExportSerializer)
+    service.store_choices(proj, data, "us_statuses", serializers.UserStoryStatusExportSerializer)
+    service.store_choices(proj, data, "task_statuses", serializers.TaskStatusExportSerializer)
+    service.store_choices(proj, data, "priorities", serializers.PriorityExportSerializer)
+    service.store_choices(proj, data, "severities", serializers.SeverityExportSerializer)
 
-        if service.get_errors(clear=False):
-            raise TaigaImportError('error importing choices')
+    if service.get_errors(clear=False):
+        raise TaigaImportError('error importing choices')
 
-        service.store_default_choices(proj, data)
+    service.store_default_choices(proj, data)
 
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing default choices')
 
-    with without_signals([signals.post_save, "role_post_save"]):
-        service.store_roles(proj, data)
+    service.store_roles(proj, data)
 
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing roles')
@@ -121,38 +117,32 @@ def dict_to_project(data, owner=None):
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing memberships')
 
-    with without_signals((signals.post_save, "events_dispatcher_on_change")):
-        store_milestones(proj, data)
+    store_milestones(proj, data)
 
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing milestones')
 
-    with without_signals((signals.post_save, "events_dispatcher_on_change")):
-        store_wiki_pages(proj, data)
+    store_wiki_pages(proj, data)
 
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing wiki pages')
 
-    with without_signals((signals.post_save, "events_dispatcher_on_change")):
-        store_wiki_links(proj, data)
+    store_wiki_links(proj, data)
 
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing wiki links')
 
-    with without_signals((signals.post_save, "events_dispatcher_on_change", "user_story_create_role_points_handler", "refus")):
-        store_user_stories(proj, data)
+    store_user_stories(proj, data)
 
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing user stories')
 
-    with without_signals((signals.post_save, "events_dispatcher_on_change", "refissue")):
-        store_issues(proj, data)
+    store_issues(proj, data)
 
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing issues')
 
-    with without_signals((signals.post_save, "events_dispatcher_on_change", "reftask")):
-        store_tasks(proj, data)
+    store_tasks(proj, data)
 
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing issues')

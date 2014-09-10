@@ -81,7 +81,7 @@ def delete_sequence(sender, instance, **kwargs):
 
 
 def attach_sequence(sender, instance, created, **kwargs):
-    if created:
+    if created and not instance._importing:
         # Create a reference object. This operation should be
         # used in transaction context, otherwise it can
         # create a lot of phantom reference objects.
