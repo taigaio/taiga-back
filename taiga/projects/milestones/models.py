@@ -18,6 +18,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
@@ -67,6 +68,11 @@ class Milestone(WatchedModelMixin, models.Model):
 
     def __repr__(self):
         return "<Milestone {0}>".format(self.id)
+
+    def clean(self):
+        # Don't allow draft entries to have a pub_date.
+        if self.estimated_start and self.estimated_finish and self.estimated_start > self.estimated_finish:
+            raise ValidationError('The estimated start must be previous to the estimated finish.')
 
     def save(self, *args, **kwargs):
         if not self._importing or not self.modified_date:
