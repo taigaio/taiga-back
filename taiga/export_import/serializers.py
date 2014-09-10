@@ -72,6 +72,24 @@ class UserRelatedField(serializers.RelatedField):
             return None
 
 
+class UserPkField(serializers.RelatedField):
+    read_only = False
+
+    def to_native(self, obj):
+        try:
+            user = users_models.User.objects.get(pk=obj)
+            return user.email
+        except users_models.User.DoesNotExist:
+            return None
+
+    def from_native(self, data):
+        try:
+            user = users_models.User.objects.get(email=data)
+            return user.pk
+        except users_models.User.DoesNotExist:
+            return None
+
+
 class CommentField(serializers.WritableField):
     read_only = False
 
@@ -112,10 +130,10 @@ class HistoryUserField(JsonField):
 
     def from_native(self, data):
         if data is None:
-            return []
+            return {}
 
         if len(data) < 2:
-            return []
+            return {}
 
         return {"pk": UserRelatedField().from_native(data[0]).pk, "name": data[1]}
 
@@ -125,14 +143,14 @@ class HistoryValuesField(JsonField):
         if obj is None:
             return []
         if "users" in obj:
-            obj['users'] = map(HistoryUserField().to_native, obj['users'])
+            obj['users'] = list(map(UserPkField().to_native, obj['users']))
         return obj
 
     def from_native(self, data):
         if data is None:
             return []
         if "users" in data:
-            data['users'] = map(HistoryUserField().from_native, data['users'])
+            data['users'] = list(map(UserPkField().from_native, data['users']))
         return data
 
 
@@ -140,15 +158,18 @@ class HistoryDiffField(JsonField):
     def to_native(self, obj):
         if obj is None:
             return []
+
         if "assigned_to" in obj:
-            obj['assigned_to'] = HistoryUserField().to_native(obj['assigned_to'])
+            obj['assigned_to'] = list(map(UserPkField().to_native, obj['assigned_to']))
+
         return obj
 
     def from_native(self, data):
         if data is None:
             return []
+
         if "assigned_to" in data:
-            data['assigned_to'] = HistoryUserField().from_native(data['assigned_to'])
+            data['assigned_to'] = list(map(UserPkField().from_native, data['assigned_to']))
         return data
 
 
@@ -289,6 +310,7 @@ class TaskExportSerializer(HistoryExportSerializerMixin, AttachmentExportSeriali
 class UserStoryExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin, serializers.ModelSerializer):
     role_points = RolePointsExportSerializer(many=True, required=False)
     owner = UserRelatedField(required=False)
+    assigned_to = UserRelatedField(required=False)
     status = ProjectRelatedField(slug_field="name")
     milestone = ProjectRelatedField(slug_field="name", required=False)
     watchers = UserRelatedField(many=True, required=False)

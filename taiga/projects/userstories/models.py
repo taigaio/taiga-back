@@ -154,6 +154,8 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
 @receiver(models.signals.post_save, sender=UserStory,
           dispatch_uid="user_story_create_role_points_handler")
 def us_create_role_points_handler(sender, instance, **kwargs):
+    if instance._importing:
+        return
     instance.project.update_role_points(user_stories=[instance])
 
 
