@@ -16,9 +16,12 @@
 
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 from rest_framework.response import Response
+from rest_framework import status
 
+from taiga.base.decorators import detail_route
 from taiga.base.api import ReadOnlyListViewSet
 
 from . import permissions
@@ -52,6 +55,44 @@ class HistoryViewSet(ReadOnlyListViewSet):
             serializer = self.get_serializer(queryset, many=True)
 
         return Response(serializer.data)
+
+    @detail_route(methods=['post'])
+    def delete_comment(self, request, pk):
+        obj = self.get_object()
+        self.check_permissions(request, 'delete_comment', obj)
+
+        comment_id = request.QUERY_PARAMS.get('id', None)
+        comment = services.get_history_queryset_by_model_instance(obj).filter(id=comment_id).first()
+
+        if comment is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if comment.delete_comment_date or comment.delete_comment_user:
+            return Response({"error": "Comment already deleted"}, status=status.HTTP_400_BAD_REQUEST)
+
+        comment.delete_comment_date = timezone.now()
+        comment.delete_comment_user = request.user
+        comment.save()
+        return Response(status=status.HTTP_200_OK)
+
+    @detail_route(methods=['post'])
+    def undelete_comment(self, request, pk):
+        obj = self.get_object()
+        self.check_permissions(request, 'undelete_comment', obj)
+
+        comment_id = request.QUERY_PARAMS.get('id', None)
+        comment = services.get_history_queryset_by_model_instance(obj).filter(id=comment_id).first()
+
+        if comment is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if not comment.delete_comment_date and not comment.delete_comment_user:
+            return Response({"error": "Comment not deleted"}, status=status.HTTP_400_BAD_REQUEST)
+
+        comment.delete_comment_date = None
+        comment.delete_comment_user = None
+        comment.save()
+        return Response(status=status.HTTP_200_OK)
 
     # Just for restframework! Because it raises
     # 404 on main api root if this method not exists.

@@ -31,6 +31,7 @@ class IssuePermission(TaigaResourcePermission):
     upvote_perms = IsAuthenticated() & HasProjectPerm('vote_issues')
     downvote_perms = IsAuthenticated() & HasProjectPerm('vote_issues')
     bulk_create_perms = HasProjectPerm('add_issue')
+    delete_comment_perms= HasProjectPerm('modify_issue')
 
 
 class HasIssueIdUrlParam(PermissionComponent):
