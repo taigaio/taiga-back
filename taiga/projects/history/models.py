@@ -48,8 +48,6 @@ class HistoryEntry(models.Model):
     user = JsonField(blank=True, default=None, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     type = models.SmallIntegerField(choices=HISTORY_TYPE_CHOICES)
-    is_snapshot = models.BooleanField(default=False)
-
     key = models.CharField(max_length=255, null=True, default=None, blank=True)
 
     # Stores the last diff
@@ -68,9 +66,15 @@ class HistoryEntry(models.Model):
     delete_comment_date = models.DateTimeField(null=True, blank=True, default=None)
     delete_comment_user = JsonField(blank=True, default=None, null=True)
 
-    @cached_property
-    def is_comment(self):
-        return self.type == HistoryType.comment
+    # Flag for mark some history entries as
+    # hidden. Hidden history entries are important
+    # for save but not important to preview.
+    # Order fields are the good example of this fields.
+    is_hidden = models.BooleanField(default=False)
+
+    # Flag for mark some history entries as complete
+    # snapshot. The rest are partial snapshot.
+    is_snapshot = models.BooleanField(default=False)
 
     @cached_property
     def owner(self):

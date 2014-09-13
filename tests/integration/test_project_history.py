@@ -51,6 +51,7 @@ def test_take_two_snapshots_with_changes():
 
     qs_all = HistoryEntry.objects.all()
     qs_created = qs_all.filter(type=HistoryType.create)
+    qs_hidden = qs_all.filter(is_hidden=True)
 
     assert qs_all.count() == 0
 
@@ -62,6 +63,7 @@ def test_take_two_snapshots_with_changes():
     services.take_snapshot(issue, user=issue.owner)
     assert qs_all.count() == 2
     assert qs_created.count() == 1
+    assert qs_hidden.count() == 0
 
 
 def test_take_two_snapshots_without_changes():
@@ -69,6 +71,7 @@ def test_take_two_snapshots_without_changes():
 
     qs_all = HistoryEntry.objects.all()
     qs_created = qs_all.filter(type=HistoryType.create)
+    qs_hidden = qs_all.filter(is_hidden=True)
 
     assert qs_all.count() == 0
 
@@ -79,7 +82,7 @@ def test_take_two_snapshots_without_changes():
 
     assert qs_all.count() == 1
     assert qs_created.count() == 1
-
+    assert qs_hidden.count() == 0
 
 def test_take_snapshot_from_deleted_object():
     issue = f.IssueFactory.create()
@@ -174,3 +177,23 @@ def test_issue_resource_history_test(client):
     assert qs_created.count() == 1
     assert qs_changed.count() == 0
     assert qs_deleted.count() == 1
+
+
+def test_take_hidden_snapshot():
+    task = f.TaskFactory.create()
+
+    qs_all = HistoryEntry.objects.all()
+    qs_hidden = qs_all.filter(is_hidden=True)
+
+    assert qs_all.count() == 0
+
+    # Two snapshots with modification should
+    # generate two snapshots.
+    services.take_snapshot(task, user=task.owner)
+    task.us_order = 3
+    task.save()
+
+    services.take_snapshot(task, user=task.owner)
+    assert qs_all.count() == 2
+    assert qs_hidden.count() == 1
+
