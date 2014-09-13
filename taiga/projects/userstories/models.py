@@ -73,8 +73,14 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
     points = models.ManyToManyField("projects.Points", null=False, blank=False,
                                     related_name="userstories", through="RolePoints",
                                     verbose_name=_("points"))
-    order = models.PositiveSmallIntegerField(null=False, blank=False, default=100,
-                                             verbose_name=_("order"))
+
+    backlog_order = models.IntegerField(null=False, blank=False, default=1,
+                                        verbose_name=_("backlog order"))
+    sprint_order = models.IntegerField(null=False, blank=False, default=1,
+                                       verbose_name=_("sprint order"))
+    kanban_order = models.IntegerField(null=False, blank=False, default=1,
+                                       verbose_name=_("sprint order"))
+
     created_date = models.DateTimeField(null=False, blank=False,
                                         verbose_name=_("created date"),
                                         default=timezone.now)
@@ -101,7 +107,7 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
     class Meta:
         verbose_name = "user story"
         verbose_name_plural = "user stories"
-        ordering = ["project", "order", "ref"]
+        ordering = ["project", "backlog_order", "ref"]
         #unique_together = ("ref", "project")
         permissions = (
             ("view_userstory", "Can view user story"),
