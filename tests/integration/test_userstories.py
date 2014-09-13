@@ -37,8 +37,8 @@ def test_update_userstories_order_in_bulk():
     data = [{"us_id": 1, "order": 1}, {"us_id": 2, "order": 2}]
 
     with mock.patch("taiga.projects.userstories.services.db") as db:
-        services.update_userstories_order_in_bulk(data)
-        db.update_in_bulk_with_ids.assert_called_once_with([1, 2], [{"order": 1}, {"order": 2}],
+        services.update_userstories_order_in_bulk(data, "backlog_order")
+        db.update_in_bulk_with_ids.assert_called_once_with([1, 2], [{"backlog_order": 1}, {"backlog_order": 2}],
                                                            model=models.UserStory)
 
 
@@ -81,11 +81,15 @@ def test_api_create_in_bulk_with_status(client):
     assert response.data[0]["status"] == project.default_us_status.id
 
 
-def test_api_update_order_in_bulk(client):
+def test_api_update_backlog_order_in_bulk(client):
     project = f.create_project()
     us1 = f.create_userstory(project=project)
     us2 = f.create_userstory(project=project)
-    url = reverse("userstories-bulk-update-order")
+
+    url1 = reverse("userstories-bulk-update-backlog-order")
+    url2 = reverse("userstories-bulk-update-kanban-order")
+    url3 = reverse("userstories-bulk-update-sprint-order")
+
     data = {
         "project_id": project.id,
         "bulk_stories": [{"us_id": us1.id, "order": 1},
@@ -93,6 +97,11 @@ def test_api_update_order_in_bulk(client):
     }
 
     client.login(project.owner)
-    response = client.json.post(url, json.dumps(data))
 
-    assert response.status_code == 204, response.data
+    response1 = client.json.post(url1, json.dumps(data))
+    response2 = client.json.post(url2, json.dumps(data))
+    response3 = client.json.post(url3, json.dumps(data))
+
+    assert response1.status_code == 204, response.data
+    assert response2.status_code == 204, response.data
+    assert response3.status_code == 204, response.data
