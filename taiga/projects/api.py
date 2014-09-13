@@ -185,52 +185,29 @@ class MembershipViewSet(ModelCrudViewSet):
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ("project", "role")
 
-    def create(self, request, *args, **kwargs):
-        data = request.DATA.copy()
-        data.update({"invited_by_id": request.user.id})
-        serializer = self.get_serializer(data=data, files=request.FILES)
-
-        if serializer.is_valid():
-            project_id = serializer.data["project"]
-            project = get_object_or_404(models.Project, id=project_id)
-
-            self.check_permissions(request, 'create', project)
-
-            qs = self.model.objects.filter(Q(project_id=project_id,
-                                             user__email=serializer.data["email"]) |
-                                           Q(project_id=project_id,
-                                             email=serializer.data["email"]))
-            if qs.count() > 0:
-                raise exc.WrongArguments(_("Email address is already taken."))
-
-            self.pre_save(serializer.object)
-            self.object = serializer.save(force_insert=True)
-            self.post_save(self.object, created=True)
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED,
-                            headers=headers)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
         serializer = serializers.MembersBulkSerializer(data=request.DATA)
-        if serializer.is_valid():
-            data = serializer.data
-            project = models.Project.objects.get(id=data["project_id"])
-            self.check_permissions(request, 'bulk_create', project)
-            try:
-                members = services.create_members_in_bulk(
-                    data["bulk_memberships"], project=project, callback=self.post_save,
-                    precall=self.pre_save)
-            except ValidationError as err:
-                return Response(err.message_dict, status=status.HTTP_400_BAD_REQUEST)
+        if not serializer.is_valid():
+            return response.BadRequest(serializer.errors)
 
-            members_serialized = self.serializer_class(members, many=True)
+        data = serializer.data
+        project = models.Project.objects.get(id=data["project_id"])
+        self.check_permissions(request, 'bulk_create', project)
 
-            return response.Ok(data=members_serialized.data)
+        # TODO: this should be moved to main exception handler instead
+        # of handling explicit exception catchin here.
 
-        return response.BadRequest(serializer.errors)
+        try:
+            members = services.create_members_in_bulk(data["bulk_memberships"],
+                                                      project=project,
+                                                      callback=self.post_save,
+                                                      precall=self.pre_save)
+        except ValidationError as err:
+            return response.BadRequest(err.message_dict)
+
+        members_serialized = self.serializer_class(members, many=True)
+        return response.Ok(data=members_serialized.data)
 
     @detail_route(methods=["POST"])
     def resend_invitation(self, request, **kwargs):
@@ -241,14 +218,13 @@ class MembershipViewSet(ModelCrudViewSet):
         services.send_invitation(invitation=invitation)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def pre_save(self, object):
-        # Only assign new token if a current token value is empty.
-        if not object.token:
-            object.token = str(uuid.uuid1())
+    def pre_save(self, obj):
+        if not obj.token:
+            obj.token = str(uuid.uuid1())
 
-        object.user = services.find_invited_user(object, default=object.user)
-
-        super().pre_save(object)
+        obj.invited_by = self.request.user
+        obj.user = services.find_invited_user(obj.email, default=obj.user)
+        super().pre_save(obj)
 
     def post_save(self, object, created=False):
         super().post_save(object, created=created)

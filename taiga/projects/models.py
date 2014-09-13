@@ -66,7 +66,9 @@ class Membership(models.Model):
                                       verbose_name=_("creado el"))
     token = models.CharField(max_length=60, blank=True, null=True, default=None,
                              verbose_name=_("token"))
-    invited_by_id = models.IntegerField(null=True, blank=True)
+
+    invited_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="ihaveinvited+",
+                                   null=True, blank=True)
 
     def clean(self):
         # TODO: Review and do it more robust
@@ -130,7 +132,8 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
                               related_name="owned_projects", verbose_name=_("owner"))
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="projects",
-                                     through="Membership", verbose_name=_("members"))
+                                     through="Membership", verbose_name=_("members"),
+                                     through_fields=("project", "user"))
     total_milestones = models.IntegerField(default=0, null=True, blank=True,
                                            verbose_name=_("total of milestones"))
     total_story_points = models.FloatField(default=0, verbose_name=_("total story points"))

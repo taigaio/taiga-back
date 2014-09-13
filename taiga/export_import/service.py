@@ -130,7 +130,8 @@ def store_membership(project, membership):
         serialized.object._importing = True
         if not serialized.object.token:
             serialized.object.token = str(uuid.uuid1())
-        serialized.object.user = find_invited_user(serialized.object, default=serialized.object.user)
+        serialized.object.user = find_invited_user(serialized.object.email,
+                                                   default=serialized.object.user)
         serialized.save()
         return serialized
 
