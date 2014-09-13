@@ -48,19 +48,21 @@ def create_userstories_in_bulk(bulk_data, callback=None, precall=None, **additio
     return userstories
 
 
-def update_userstories_order_in_bulk(bulk_data):
-    """Update the order of some user stories.
-
+def update_userstories_order_in_bulk(bulk_data:list, field:str):
+    """
+    Update the order of some user stories.
     `bulk_data` should be a list of tuples with the following format:
 
-    [(<user story id>, <new user story order value>), ...]
+    [(<user story id>, {<field>: <value>, ...}), ...]
     """
     user_story_ids = []
     new_order_values = []
     for us_data in bulk_data:
-        user_story_ids.append(us_data['us_id'])
-        new_order_values.append({"order": us_data['order']})
+        user_story_ids.append(us_data["us_id"])
+        new_order_values.append({field: us_data["order"]})
+
     db.update_in_bulk_with_ids(user_story_ids, new_order_values, model=models.UserStory)
+
 
 def snapshot_userstories_in_bulk(bulk_data, user):
     user_story_ids = []

@@ -120,12 +120,15 @@ class UserStoriesBulkSerializer(ProjectExistsValidator, UserStoryStatusExistsVal
     bulk_stories = serializers.CharField()
 
 
-class UserStoryOrderBulkSerializer(UserStoryExistsValidator, Serializer):
+## Order bulk serializers
+
+class _UserStoryOrderBulkSerializer(UserStoryExistsValidator, Serializer):
     us_id = serializers.IntegerField()
     order = serializers.IntegerField()
 
 
-class UpdateUserStoriesBulkSerializer(ProjectExistsValidator, UserStoryStatusExistsValidator,
-                                      Serializer):
+class UpdateUserStoriesOrderBulkSerializer(ProjectExistsValidator,
+                                                 UserStoryStatusExistsValidator,
+                                                 Serializer):
     project_id = serializers.IntegerField()
-    bulk_stories = UserStoryOrderBulkSerializer(many=True)
+    bulk_stories = _UserStoryOrderBulkSerializer(many=True)
