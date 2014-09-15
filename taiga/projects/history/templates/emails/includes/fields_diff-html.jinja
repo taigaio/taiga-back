@@ -50,16 +50,18 @@
                 {% for att in values['changed'] %}
                 <dd style="background: #eee; padding: 5px 15px; color: #444">
                     <b>{{ att.filename|linebreaksbr }}</b>
-                    {% if att.changes.is_deprecated %}
-                        {% if att.changes.is_deprecated.1 %}
-                            to <i>deprecated</i>
-                        {% else %}
-                            to <i>not deprecated</i>
+                    <ul>
+                        {% if att.changes.is_deprecated %}
+                            {% if att.changes.is_deprecated.1 %}
+                                <li>to <i>deprecated</i></li>
+                            {% else %}
+                                <li>to <i>not deprecated</i></li>
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
-                    {% if att.changes.description %}
-                        to <i>att.changes.description.1</i>
-                    {% endif %}
+                        {% if att.changes.description %}
+                            <li>description to <i>att.changes.description.1</i></li>
+                        {% endif %}
+                    </ul>
                 </dd>
                 {% endfor %}
             {% endif %}
