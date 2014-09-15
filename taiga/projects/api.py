@@ -20,6 +20,7 @@ from django.db.models import Q, signals
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 from django.db import transaction as tx
+from django.core.exceptions import ValidationError
 
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
@@ -218,9 +219,13 @@ class MembershipViewSet(ModelCrudViewSet):
             data = serializer.data
             project = models.Project.objects.get(id=data["project_id"])
             self.check_permissions(request, 'bulk_create', project)
-            members = services.create_members_in_bulk(
-                data["bulk_memberships"], project=project, callback=self.post_save,
-                precall=self.pre_save)
+            try:
+                members = services.create_members_in_bulk(
+                    data["bulk_memberships"], project=project, callback=self.post_save,
+                    precall=self.pre_save)
+            except ValidationError as err:
+                return Response(err.message_dict, status=status.HTTP_400_BAD_REQUEST)
+
             members_serialized = self.serializer_class(members, many=True)
 
             return response.Ok(data=members_serialized.data)
