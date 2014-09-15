@@ -40,6 +40,7 @@ from django.db import transaction as tx
 
 from taiga.mdrender.service import render as mdrender
 from taiga.base.utils.db import get_typename_for_model_class
+from taiga.base.utils.diff import make_diff as make_diff_from_dicts
 
 from .models import HistoryType
 
@@ -145,20 +146,7 @@ def make_diff(oldobj:FrozenObj, newobj:FrozenObj) -> FrozenDiff:
     first = oldobj.snapshot
     second = newobj.snapshot
 
-    diff = {}
-    not_found_value = None
-
-    # Check all keys in first dict
-    for key in first:
-        if key not in second:
-            diff[key] = (first[key], not_found_value)
-        elif first[key] != second[key]:
-            diff[key] = (first[key], second[key])
-
-    # Check all keys in second dict to find missing
-    for key in second:
-        if key not in first:
-            diff[key] = (not_found_value, second[key])
+    diff = make_diff_from_dicts(first, second)
 
     return FrozenDiff(newobj.key, diff, newobj.snapshot)
 

@@ -26,6 +26,8 @@ from taiga.mdrender.service import get_diff_of_htmls
 from .choices import HistoryType
 from .choices import HISTORY_TYPE_CHOICES
 
+from taiga.base.utils.diff import make_diff as make_diff_from_dicts
+
 
 class HistoryEntry(models.Model):
     """
@@ -144,7 +146,11 @@ class HistoryEntry(models.Model):
                 for aid in set(tuple(oldattachs.keys()) + tuple(newattachs.keys())):
                     if aid in oldattachs and aid in newattachs:
                         if oldattachs[aid] != newattachs[aid]:
-                            attachments["changed"].append([oldattachs[aid],newattachs[aid]])
+                            change = {
+                                "filename": oldattachs[aid]["filename"],
+                                "changes": make_diff_from_dicts(oldattachs[aid], newattachs[aid])
+                            }
+                            attachments["changed"].append(change)
                     elif aid in oldattachs and aid not in newattachs:
                         attachments["deleted"].append(oldattachs[aid])
                     elif aid not in oldattachs and aid in newattachs:

@@ -22,7 +22,7 @@
             {% if values.changed %}
         * {{ _("Changed") }}
                 {% for att in values['changed'] %}
-            - {{ att.1.filename|linebreaksbr }}
+            - {{ att.filename|linebreaksbr }}
                 {% endfor %}
             {% endif %}
 
