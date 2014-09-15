@@ -35,14 +35,14 @@ class Migration(SchemaMigration):
                       keep_default=False)
 
         #Copy first_name and last_name into full_name
-        for user in orm.Users.exclude(first_name="", last_name=""):
-            if user.first_name and user.last_name:
-                user.full_name = "{} {}".format(user.first_name, user.last_name)
-            elif not user.last_name:
-                user.full_name = user.first_name
-            else:
-                user.full_name = user.last_name
-            user.save()
+        # for user in orm.Users.exclude(first_name="", last_name=""):
+        #     if user.first_name and user.last_name:
+        #         user.full_name = "{} {}".format(user.first_name, user.last_name)
+        #     elif not user.last_name:
+        #         user.full_name = user.first_name
+        #     else:
+        #         user.full_name = user.last_name
+        #     user.save()
 
         # Deleting field 'User.first_name'
         db.delete_column('users_user', 'first_name')
