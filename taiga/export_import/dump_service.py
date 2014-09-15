@@ -16,6 +16,8 @@
 
 from django.db.models import signals
 
+from taiga.projects.models import Membership
+
 from . import serializers
 from . import service
 
