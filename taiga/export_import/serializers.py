@@ -135,7 +135,14 @@ class HistoryUserField(JsonField):
         if len(data) < 2:
             return {}
 
-        return {"pk": UserRelatedField().from_native(data[0]).pk, "name": data[1]}
+        user = UserRelatedField().from_native(data[0])
+
+        if user:
+            pk = user.pk
+        else:
+            pk = None
+
+        return {"pk": pk, "name": data[1]}
 
 
 class HistoryValuesField(JsonField):
