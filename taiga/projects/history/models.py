@@ -19,6 +19,7 @@ from django.utils import timezone
 from django.db import models
 from django.db.models.loading import get_model
 from django.utils.functional import cached_property
+from django.conf import settings
 from django_pgjson.fields import JsonField
 
 from taiga.mdrender.service import get_diff_of_htmls
@@ -63,6 +64,10 @@ class HistoryEntry(models.Model):
     # Stores a comment
     comment = models.TextField(blank=True)
     comment_html = models.TextField(blank=True)
+
+    delete_comment_date = models.DateTimeField(null=True, blank=True, default=None)
+    delete_comment_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
+                             related_name="deleted_comments")
 
     @cached_property
     def is_comment(self):

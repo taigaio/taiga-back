@@ -207,6 +207,11 @@ class IsProjectOwner(PermissionComponent):
         return is_project_owner(request.user, obj)
 
 
+class IsObjectOwner(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        return obj.owner == request.user
+
+
 ######################################################################
 # Generic permissions.
 ######################################################################

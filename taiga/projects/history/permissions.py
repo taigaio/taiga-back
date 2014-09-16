@@ -15,20 +15,34 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
-                                        IsProjectOwner, AllowAny)
+                                        IsProjectOwner, AllowAny,
+                                        IsObjectOwner, PermissionComponent)
+
+
+class IsCommentDeleter(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        return obj.delete_comment_user == request.user
 
 
 class UserStoryHistoryPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
+    delete_comment_perms = IsProjectOwner() | IsObjectOwner()
+    undelete_comment_perms = IsProjectOwner() | IsCommentDeleter()
 
 
 class TaskHistoryPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
+    delete_comment_perms = IsProjectOwner() | IsObjectOwner()
+    undelete_comment_perms = IsProjectOwner() | IsCommentDeleter()
 
 
 class IssueHistoryPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
+    delete_comment_perms = IsProjectOwner() | IsObjectOwner()
+    undelete_comment_perms = IsProjectOwner() | IsCommentDeleter()
 
 
 class WikiHistoryPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
+    delete_comment_perms = IsProjectOwner() | IsObjectOwner()
+    undelete_comment_perms = IsProjectOwner() | IsCommentDeleter()

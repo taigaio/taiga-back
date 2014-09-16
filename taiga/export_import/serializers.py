@@ -186,6 +186,7 @@ class HistoryExportSerializer(serializers.ModelSerializer):
     snapshot = JsonField(required=False)
     values = HistoryValuesField(required=False)
     comment = CommentField(required=False)
+    delete_comment_user = HistoryUserField(required=False)
 
     class Meta:
         model = history_models.HistoryEntry
