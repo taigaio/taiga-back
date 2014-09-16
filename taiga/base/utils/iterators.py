@@ -33,3 +33,12 @@ def as_dict(function):
     def _decorator(*args, **kwargs):
         return dict(function(*args, **kwargs))
     return _decorator
+
+
+def split_by_n(seq:str, n:int):
+    """
+    A generator to divide a sequence into chunks of n units.
+    """
+    while seq:
+        yield seq[:n]
+        seq = seq[n:]
