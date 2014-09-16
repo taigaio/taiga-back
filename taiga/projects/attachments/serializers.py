@@ -28,10 +28,7 @@ from . import models
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField("get_name")
     url = serializers.SerializerMethodField("get_url")
-    size = serializers.SerializerMethodField("get_size")
-
     attached_file = serializers.FileField(required=True)
 
     class Meta:
@@ -40,11 +37,6 @@ class AttachmentSerializer(serializers.ModelSerializer):
                   "description", "is_deprecated", "created_date", "modified_date",
                   "object_id", "order")
         read_only_fields = ("owner", "created_date", "modified_date")
-
-    def get_name(self, obj):
-        if obj.attached_file:
-            return path.basename(obj.attached_file.path)
-        return ""
 
     def get_url(self, obj):
         token = None
@@ -59,10 +51,3 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
         return url
 
-    def get_size(self, obj):
-        if obj.attached_file:
-            try:
-                return obj.attached_file.size
-            except FileNotFoundError:
-                pass
-        return 0

@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import os.path as path
 import hashlib
 import mimetypes
 mimetypes.init()
@@ -59,6 +60,8 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCru
         if not obj.id:
             obj.content_type = self.get_content_type()
             obj.owner = self.request.user
+            obj.size = obj.attached_file.size
+            obj.name = path.basename(obj.attached_file.name).lower()
 
         if obj.project_id != obj.content_object.project_id:
             raise exc.WrongArguments("Project ID not matches between object and project")

@@ -51,13 +51,17 @@ class Attachment(models.Model):
                                         default=timezone.now)
     modified_date = models.DateTimeField(null=False, blank=False,
                                          verbose_name=_("modified date"))
-
+    name = models.CharField(blank=True, default="", max_length=500)
+    size = models.IntegerField(null=True, blank=True, editable=False, default=None)
     attached_file = models.FileField(max_length=500, null=True, blank=True,
                                      upload_to=get_attachment_file_path,
                                      verbose_name=_("attached file"))
+
+
     is_deprecated = models.BooleanField(default=False, verbose_name=_("is deprecated"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
     order = models.IntegerField(default=0, null=False, blank=False, verbose_name=_("order"))
+
     _importing = None
 
     class Meta:
