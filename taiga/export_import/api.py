@@ -117,7 +117,7 @@ class ProjectImporterViewSet(CreateModelMixin, GenericViewSet):
         project = self.get_object_or_none()
         self.check_permissions(request, 'import_item', project)
 
-        issue = service.store_issue(project, request.DATA)
+        issue = service.store_issue(project, request.DATA.copy())
 
         errors = service.get_errors()
         if errors:
@@ -132,7 +132,7 @@ class ProjectImporterViewSet(CreateModelMixin, GenericViewSet):
         project = self.get_object_or_none()
         self.check_permissions(request, 'import_item', project)
 
-        task = service.store_task(project, request.DATA)
+        task = service.store_task(project, request.DATA.copy())
 
         errors = service.get_errors()
         if errors:
@@ -147,7 +147,7 @@ class ProjectImporterViewSet(CreateModelMixin, GenericViewSet):
         project = self.get_object_or_none()
         self.check_permissions(request, 'import_item', project)
 
-        us = service.store_user_story(project, request.DATA)
+        us = service.store_user_story(project, request.DATA.copy())
 
         errors = service.get_errors()
         if errors:
@@ -162,7 +162,7 @@ class ProjectImporterViewSet(CreateModelMixin, GenericViewSet):
         project = self.get_object_or_none()
         self.check_permissions(request, 'import_item', project)
 
-        milestone = service.store_milestone(project, request.DATA)
+        milestone = service.store_milestone(project, request.DATA.copy())
 
         errors = service.get_errors()
         if errors:
@@ -177,7 +177,7 @@ class ProjectImporterViewSet(CreateModelMixin, GenericViewSet):
         project = self.get_object_or_none()
         self.check_permissions(request, 'import_item', project)
 
-        wiki_page = service.store_wiki_page(project, request.DATA)
+        wiki_page = service.store_wiki_page(project, request.DATA.copy())
 
         errors = service.get_errors()
         if errors:
@@ -192,7 +192,7 @@ class ProjectImporterViewSet(CreateModelMixin, GenericViewSet):
         project = self.get_object_or_none()
         self.check_permissions(request, 'import_item', project)
 
-        wiki_link = service.store_wiki_link(project, request.DATA)
+        wiki_link = service.store_wiki_link(project, request.DATA.copy())
 
         errors = service.get_errors()
         if errors:
