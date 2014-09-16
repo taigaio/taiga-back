@@ -14,24 +14,42 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import hashlib
+import os
+import os.path as path
+import random
+import re
+
 from django.db import models
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import UserManager, AbstractBaseUser
 from django.core import validators
 from django.utils import timezone
+from django.utils.encoding import force_bytes
 
 from djorm_pgarray.fields import TextArrayField
 
 from taiga.base.utils.slug import slugify_uniquely
+from taiga.base.utils.iterators import split_by_n
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS
-
-import random
-import re
 
 
 def generate_random_hex_color():
     return "#{:06x}".format(random.randint(0,0xFFFFFF))
+
+
+def get_user_file_path(instance, filename):
+    basename = path.basename(filename).lower()
+
+    hs = hashlib.sha256()
+    hs.update(force_bytes(timezone.now().isoformat()))
+    hs.update(os.urandom(1024))
+
+    p1, p2, p3, p4, *p5 = split_by_n(hs.hexdigest(), 1)
+    hash_part = path.join(p1, p2, p3, p4, "".join(p5))
+
+    return path.join("user", hash_part, basename)
 
 
 class PermissionsMixin(models.Model):
@@ -85,7 +103,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     color = models.CharField(max_length=9, null=False, blank=True, default=generate_random_hex_color,
                              verbose_name=_("color"))
     bio = models.TextField(null=False, blank=True, default="", verbose_name=_("biography"))
-    photo = models.FileField(upload_to="users/photo", max_length=500, null=True, blank=True,
+    photo = models.FileField(upload_to=get_user_file_path,
+                             max_length=500, null=True, blank=True,
                              verbose_name=_("photo"))
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     default_language = models.CharField(max_length=20, null=False, blank=True, default="",
