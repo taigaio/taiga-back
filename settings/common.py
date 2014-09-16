@@ -58,8 +58,6 @@ SEND_BROKEN_LINK_EMAILS = True
 IGNORABLE_404_ENDS = (".php", ".cgi")
 IGNORABLE_404_STARTS = ("/phpmyadmin/",)
 
-
-# Default django tz/i18n config
 ATOMIC_REQUESTS = True
 TIME_ZONE = "UTC"
 LANGUAGE_CODE = "en"
@@ -94,12 +92,20 @@ EVENTS_PUSH_BACKEND = "taiga.events.backends.postgresql.EventsPushBackend"
 # Message System
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
-# Static configuration.
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "/media/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+# The absolute url is mandatory because attachments
+# urls depends on it. On production should be set
+# something like https://media.taiga.io/
+MEDIA_URL = "http://localhost:8000/media/"
+
+# Static url is not widelly used by taiga (only
+# if admin is activated).
 STATIC_URL = "/static/"
 ADMIN_MEDIA_PREFIX = "/static/admin/"
+
+# Static configuration.
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",

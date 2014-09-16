@@ -14,25 +14,32 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import time
+import hashlib
+import os
+import os.path as path
 
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.utils.encoding import force_bytes
+from django.utils.translation import ugettext_lazy as _
+
+from taiga.base.utils.iterators import split_by_n
 
 
 def get_attachment_file_path(instance, filename):
-    template = "attachment-files/{project}/{model}/{stamp}/{filename}"
-    current_timestamp = int(time.mktime(timezone.now().timetuple()))
+    basename = path.basename(filename).lower()
 
-    upload_to_path = template.format(stamp=current_timestamp,
-                                     project=instance.project.slug,
-                                     model=instance.content_type.model,
-                                     filename=filename)
-    return upload_to_path
+    hs = hashlib.sha256()
+    hs.update(force_bytes(timezone.now().isoformat()))
+    hs.update(os.urandom(1024))
+
+    p1, p2, p3, p4, *p5 = split_by_n(hs.hexdigest(), 1)
+    hash_part = path.join(p1, p2, p3, p4, "".join(p5))
+
+    return path.join("attachments", hash_part, basename)
 
 
 class Attachment(models.Model):

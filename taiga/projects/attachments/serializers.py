@@ -39,15 +39,4 @@ class AttachmentSerializer(serializers.ModelSerializer):
         read_only_fields = ("owner", "created_date", "modified_date")
 
     def get_url(self, obj):
-        token = None
-
-        url = reverse("attachment-url", kwargs={"pk": obj.pk})
-        if "request" in self.context and self.context["request"].user.is_authenticated():
-            user_id = self.context["request"].user.id
-            token_src = "{}-{}-{}".format(settings.ATTACHMENTS_TOKEN_SALT, user_id, obj.id)
-            token = hashlib.sha1(token_src.encode("utf-8"))
-
-            return "{}?user={}&token={}".format(url, user_id, token.hexdigest())
-
-        return url
-
+        return obj.attached_file.url
