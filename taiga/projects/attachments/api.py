@@ -19,7 +19,6 @@ import hashlib
 import mimetypes
 mimetypes.init()
 
-from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 from django.conf import settings
@@ -32,7 +31,7 @@ from taiga.base import exceptions as exc
 from taiga.users.models import User
 
 from taiga.projects.notifications import WatchedResourceMixin
-from taiga.projects.history import HistoryResourceMixin
+from taiga.projects.history.mixins import HistoryResourceMixin
 
 from . import permissions
 from . import serializers

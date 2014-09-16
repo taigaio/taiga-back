@@ -24,7 +24,7 @@ class TaskAdmin(admin.ModelAdmin):
     list_display = ["project", "milestone", "user_story",  "ref", "subject",]
     list_display_links = ["ref", "subject",]
     list_filter = ["project"]
-    inlines = [AttachmentInline]
+    # inlines = [AttachmentInline]
 
     def get_object(self, *args, **kwargs):
         self.obj = super().get_object(*args, **kwargs)

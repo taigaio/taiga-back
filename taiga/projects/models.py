@@ -243,7 +243,8 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     def _get_user_stories_points(self, user_stories):
         role_points = [us.role_points.all() for us in user_stories]
         flat_role_points = itertools.chain(*role_points)
-        flat_role_dicts = map(lambda x: {x.role_id: x.points.value if x.points.value else 0}, flat_role_points)
+        flat_role_dicts = map(lambda x: {x.role_id: x.points.value if x.points.value else 0},
+                              flat_role_points)
         return dict_sum(*flat_role_dicts)
 
     def _get_points_increment(self, client_requirement, team_requirement):

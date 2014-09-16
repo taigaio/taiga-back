@@ -36,7 +36,7 @@ class RolePoints(models.Model):
     role = models.ForeignKey("users.Role", null=False, blank=False,
                              related_name="role_points",
                              verbose_name=_("role"))
-    points = models.ForeignKey("projects.Points", null=False, blank=False,
+    points = models.ForeignKey("projects.Points", null=True, blank=False,
                                related_name="role_points",
                                verbose_name=_("points"))
 
@@ -54,7 +54,6 @@ class RolePoints(models.Model):
 
 
 class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
-
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,

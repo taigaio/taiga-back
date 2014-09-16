@@ -186,8 +186,6 @@ INSTALLED_APPS = [
     "taiga.mdrender",
     "taiga.export_import",
 
-    "south",
-    "reversion",
     "rest_framework",
     "djmail",
     "django_jinja",
@@ -298,16 +296,6 @@ PUBLIC_REGISTER_ENABLED = False
 
 SEARCHES_MAX_RESULTS = 150
 
-# NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
-
-#TEST_RUNNER="django.test.runner.DiscoverRunner"
-
-# Test conditions
-if "test" in sys.argv:
-    print ("\033[1;91mNo django tests.\033[0m")
-    print ("Try: \033[1;33mpy.test\033[0m")
-    sys.exit(0)
-
 SOUTH_MIGRATION_MODULES = {
     'easy_thumbnails': 'easy_thumbnails.south_migrations',
 }
@@ -342,3 +330,13 @@ TAGS_PREDEFINED_COLORS = ["#fce94f", "#edd400", "#c4a000", "#8ae234",
                           "#204a87", "#888a85", "#ad7fa8", "#75507b",
                           "#5c3566", "#ef2929", "#cc0000", "#a40000",
                           "#2e3436",]
+
+# NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
+
+TEST_RUNNER="django.test.runner.DiscoverRunner"
+
+if "test" in sys.argv:
+    print ("\033[1;91mNo django tests.\033[0m")
+    print ("Try: \033[1;33mpy.test\033[0m")
+    sys.exit(0)
+

@@ -29,6 +29,10 @@ from .choices import HISTORY_TYPE_CHOICES
 from taiga.base.utils.diff import make_diff as make_diff_from_dicts
 
 
+def _generate_uuid():
+    return str(uuid.uuid1())
+
+
 class HistoryEntry(models.Model):
     """
     Domain model that represents a history
@@ -38,7 +42,7 @@ class HistoryEntry(models.Model):
     comments.
     """
     id = models.CharField(primary_key=True, max_length=255, unique=True,
-                          editable=False, default=lambda: str(uuid.uuid1()))
+                          editable=False, default=_generate_uuid)
 
     user = JsonField(blank=True, default=None, null=True)
     created_at = models.DateTimeField(default=timezone.now)

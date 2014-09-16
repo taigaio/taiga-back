@@ -1,50 +1,36 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+import taiga.projects.history.models
+import django.utils.timezone
+import django_pgjson.fields
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'HistoryEntry'
-        db.create_table('history_historyentry', (
-            ('id', self.gf('django.db.models.fields.CharField')(unique=True, default='e3cec230-d752-11e3-a409-b499ba5650c0', max_length=255, primary_key=True)),
-            ('user', self.gf('django_pgjson.fields.JsonField')(default=None)),
-            ('created_at', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
-            ('type', self.gf('django.db.models.fields.SmallIntegerField')()),
-            ('is_snapshot', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('key', self.gf('django.db.models.fields.CharField')(blank=True, null=True, default=None, max_length=255)),
-            ('diff', self.gf('django_pgjson.fields.JsonField')(blank=False, default=None)),
-            ('snapshot', self.gf('django_pgjson.fields.JsonField')(blank=False, default=None)),
-            ('values', self.gf('django_pgjson.fields.JsonField')(blank=False, default=None)),
-            ('comment', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('comment_html', self.gf('django.db.models.fields.TextField')(blank=True)),
-        ))
-        db.send_create_signal('history', ['HistoryEntry'])
+    dependencies = [
+    ]
 
-
-    def backwards(self, orm):
-        # Deleting model 'HistoryEntry'
-        db.delete_table('history_historyentry')
-
-
-    models = {
-        'history.historyentry': {
-            'Meta': {'object_name': 'HistoryEntry', 'ordering': "['created_at']"},
-            'comment': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'comment_html': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
-            'diff': ('django_pgjson.fields.JsonField', [], {'blank': 'False', 'default': 'None'}),
-            'id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'default': "'e3cf38a0-d752-11e3-a409-b499ba5650c0'", 'max_length': '255', 'primary_key': 'True'}),
-            'is_snapshot': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'key': ('django.db.models.fields.CharField', [], {'blank': 'True', 'null': 'True', 'default': 'None', 'max_length': '255'}),
-            'snapshot': ('django_pgjson.fields.JsonField', [], {'blank': 'False', 'default': 'None'}),
-            'type': ('django.db.models.fields.SmallIntegerField', [], {}),
-            'user': ('django_pgjson.fields.JsonField', [], {'default': 'None'}),
-            'values': ('django_pgjson.fields.JsonField', [], {'blank': 'False', 'default': 'None'})
-        }
-    }
-
-    complete_apps = ['history']
+    operations = [
+        migrations.CreateModel(
+            name='HistoryEntry',
+            fields=[
+                ('id', models.CharField(primary_key=True, unique=True, max_length=255, serialize=False, default=taiga.projects.history.models._generate_uuid, editable=False)),
+                ('user', django_pgjson.fields.JsonField(default=None, blank=True, null=True)),
+                ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
+                ('type', models.SmallIntegerField(choices=[(1, 'Change'), (2, 'Create'), (3, 'Delete')])),
+                ('is_snapshot', models.BooleanField(default=False)),
+                ('key', models.CharField(max_length=255, default=None, blank=True, null=True)),
+                ('diff', django_pgjson.fields.JsonField(default=None, null=True)),
+                ('snapshot', django_pgjson.fields.JsonField(default=None, null=True)),
+                ('values', django_pgjson.fields.JsonField(default=None, null=True)),
+                ('comment', models.TextField(blank=True)),
+                ('comment_html', models.TextField(blank=True)),
+            ],
+            options={
+                'ordering': ['created_at'],
+            },
+            bases=(models.Model,),
+        ),
+    ]

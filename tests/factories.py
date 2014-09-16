@@ -26,7 +26,10 @@ import factory
 
 
 class Factory(factory.DjangoModelFactory):
-    FACTORY_STRATEGY = factory.CREATE_STRATEGY
+    class Meta:
+        strategy = factory.CREATE_STRATEGY
+        model = None
+        abstract = True
 
     _SEQUENCE = 1
     _SEQUENCE_LOCK = threading.Lock()
@@ -39,8 +42,10 @@ class Factory(factory.DjangoModelFactory):
 
 
 class ProjectTemplateFactory(Factory):
-    FACTORY_FOR = get_model("projects", "ProjectTemplate")
-    FACTORY_DJANGO_GET_OR_CREATE = ("slug", )
+    class Meta:
+        strategy = factory.CREATE_STRATEGY
+        model = "projects.ProjectTemplate"
+        django_get_or_create = ("slug",)
 
     name = "Template name"
     slug = settings.DEFAULT_PROJECT_TEMPLATE
@@ -58,7 +63,9 @@ class ProjectTemplateFactory(Factory):
 
 
 class ProjectFactory(Factory):
-    FACTORY_FOR = get_model("projects", "Project")
+    class Meta:
+        model = "projects.Project"
+        strategy = factory.CREATE_STRATEGY
 
     name = factory.Sequence(lambda n: "Project {}".format(n))
     slug = factory.Sequence(lambda n: "project-{}-slug".format(n))
@@ -68,7 +75,9 @@ class ProjectFactory(Factory):
 
 
 class RoleFactory(Factory):
-    FACTORY_FOR = get_model("users", "Role")
+    class Meta:
+        model = "users.Role"
+        strategy = factory.CREATE_STRATEGY
 
     name = factory.Sequence(lambda n: "Role {}".format(n))
     slug = factory.Sequence(lambda n: "test-role-{}".format(n))
@@ -76,37 +85,59 @@ class RoleFactory(Factory):
 
 
 class PointsFactory(Factory):
-    FACTORY_FOR = get_model("projects", "Points")
+    class Meta:
+        model = "projects.Points"
+        strategy = factory.CREATE_STRATEGY
 
     name = factory.Sequence(lambda n: "Points {}".format(n))
     value = 2
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
-class AttachmentFactory(Factory):
-    FACTORY_FOR = get_model("attachments", "Attachment")
+
+class UserStoryAttachmentFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
     owner = factory.SubFactory("tests.factories.UserFactory")
-
-
-class UserStoryAttachmentFactory(AttachmentFactory):
     content_object = factory.SubFactory("tests.factories.UserStoryFactory")
 
+    class Meta:
+        model = "attachments.Attachment"
+        strategy = factory.CREATE_STRATEGY
 
-class TaskAttachmentFactory(AttachmentFactory):
+
+class TaskAttachmentFactory(Factory):
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    owner = factory.SubFactory("tests.factories.UserFactory")
     content_object = factory.SubFactory("tests.factories.TaskFactory")
 
+    class Meta:
+        model = "attachments.Attachment"
+        strategy = factory.CREATE_STRATEGY
 
-class IssueAttachmentFactory(AttachmentFactory):
+
+class IssueAttachmentFactory(Factory):
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    owner = factory.SubFactory("tests.factories.UserFactory")
     content_object = factory.SubFactory("tests.factories.IssueFactory")
 
+    class Meta:
+        model = "attachments.Attachment"
+        strategy = factory.CREATE_STRATEGY
 
-class WikiAttachmentFactory(AttachmentFactory):
-    content_object = factory.SubFactory("tests.factories.WikiPageFactory")
+class WikiAttachmentFactory(Factory):
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    owner = factory.SubFactory("tests.factories.UserFactory")
+    content_object = factory.SubFactory("tests.factories.WikiFactory")
+
+    class Meta:
+        model = "attachments.Attachment"
+        strategy = factory.CREATE_STRATEGY
 
 
 class RolePointsFactory(Factory):
-    FACTORY_FOR = get_model("userstories", "RolePoints")
+    class Meta:
+        model = "userstories.RolePoints"
+        strategy = factory.CREATE_STRATEGY
 
     user_story = factory.SubFactory("tests.factories.UserStoryFactory")
     role = factory.SubFactory("tests.factories.RoleFactory")
@@ -114,7 +145,9 @@ class RolePointsFactory(Factory):
 
 
 class UserFactory(Factory):
-    FACTORY_FOR = get_model("users", "User")
+    class Meta:
+        model = "users.User"
+        strategy = factory.CREATE_STRATEGY
 
     username = factory.Sequence(lambda n: "user{}".format(n))
     email = factory.LazyAttribute(lambda obj: '%s@email.com' % obj.username)
@@ -122,7 +155,9 @@ class UserFactory(Factory):
 
 
 class MembershipFactory(Factory):
-    FACTORY_FOR = get_model("projects", "Membership")
+    class Meta:
+        model = "projects.Membership"
+        strategy = factory.CREATE_STRATEGY
 
     token = factory.LazyAttribute(lambda obj: str(uuid.uuid1()))
     project = factory.SubFactory("tests.factories.ProjectFactory")
@@ -131,7 +166,9 @@ class MembershipFactory(Factory):
 
 
 class InvitationFactory(Factory):
-    FACTORY_FOR = get_model("projects", "Membership")
+    class Meta:
+        model = "projects.Membership"
+        strategy = factory.CREATE_STRATEGY
 
     token = factory.LazyAttribute(lambda obj: str(uuid.uuid1()))
     project = factory.SubFactory("tests.factories.ProjectFactory")
@@ -140,7 +177,9 @@ class InvitationFactory(Factory):
 
 
 class StorageEntryFactory(Factory):
-    FACTORY_FOR = get_model("userstorage", "StorageEntry")
+    class Meta:
+        model = "userstorage.StorageEntry"
+        strategy = factory.CREATE_STRATEGY
 
     owner = factory.SubFactory("tests.factories.UserFactory")
     key = factory.Sequence(lambda n: "key-{}".format(n))
@@ -148,7 +187,9 @@ class StorageEntryFactory(Factory):
 
 
 class UserStoryFactory(Factory):
-    FACTORY_FOR = get_model("userstories", "UserStory")
+    class Meta:
+        model = "userstories.UserStory"
+        strategy = factory.CREATE_STRATEGY
 
     ref = factory.Sequence(lambda n: n)
     project = factory.SubFactory("tests.factories.ProjectFactory")
@@ -159,7 +200,9 @@ class UserStoryFactory(Factory):
 
 
 class UserStoryStatusFactory(Factory):
-    FACTORY_FOR = get_model("projects", "UserStoryStatus")
+    class Meta:
+        model = "projects.UserStoryStatus"
+        strategy = factory.CREATE_STRATEGY
 
     name = factory.Sequence(lambda n: "User Story status {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
@@ -167,14 +210,18 @@ class UserStoryStatusFactory(Factory):
 
 
 class TaskStatusFactory(Factory):
-    FACTORY_FOR = get_model("projects", "TaskStatus")
+    class Meta:
+        model = "projects.TaskStatus"
+        strategy = factory.CREATE_STRATEGY
 
     name = factory.Sequence(lambda n: "Task status {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
 class MilestoneFactory(Factory):
-    FACTORY_FOR = get_model("milestones", "Milestone")
+    class Meta:
+        model = "milestones.Milestone"
+        strategy = factory.CREATE_STRATEGY
 
     name = factory.Sequence(lambda n: "Milestone {}".format(n))
     owner = factory.SubFactory("tests.factories.UserFactory")
@@ -184,7 +231,9 @@ class MilestoneFactory(Factory):
 
 
 class IssueFactory(Factory):
-    FACTORY_FOR = get_model("issues", "Issue")
+    class Meta:
+        model = "issues.Issue"
+        strategy = factory.CREATE_STRATEGY
 
     subject = factory.Sequence(lambda n: "Issue {}".format(n))
     description = factory.Sequence(lambda n: "Issue {} description".format(n))
@@ -198,7 +247,9 @@ class IssueFactory(Factory):
 
 
 class TaskFactory(Factory):
-    FACTORY_FOR = get_model("tasks", "Task")
+    class Meta:
+        model = "tasks.Task"
+        strategy = factory.CREATE_STRATEGY
 
     ref = factory.Sequence(lambda n: n)
     subject = factory.Sequence(lambda n: "Task {}".format(n))
@@ -211,7 +262,9 @@ class TaskFactory(Factory):
 
 
 class WikiPageFactory(Factory):
-    FACTORY_FOR = get_model("wiki", "WikiPage")
+    class Meta:
+        model = "wiki.WikiPage"
+        strategy = factory.CREATE_STRATEGY
 
     project = factory.SubFactory("tests.factories.ProjectFactory")
     owner = factory.SubFactory("tests.factories.UserFactory")
@@ -220,7 +273,9 @@ class WikiPageFactory(Factory):
 
 
 class WikiLinkFactory(Factory):
-    FACTORY_FOR = get_model("wiki", "WikiLink")
+    class Meta:
+        model = "wiki.WikiLink"
+        strategy = factory.CREATE_STRATEGY
 
     project = factory.SubFactory("tests.factories.ProjectFactory")
     title = factory.Sequence(lambda n: "Wiki Link {} title".format(n))
@@ -229,56 +284,64 @@ class WikiLinkFactory(Factory):
 
 
 class IssueStatusFactory(Factory):
-    FACTORY_FOR = get_model("projects", "IssueStatus")
+    class Meta:
+        model = "projects.IssueStatus"
+        strategy = factory.CREATE_STRATEGY
 
     name = factory.Sequence(lambda n: "Issue Status {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
 class UserStoryStatusFactory(Factory):
-    FACTORY_FOR = get_model("projects", "UserStoryStatus")
+    class Meta:
+        model = "projects.UserStoryStatus"
+        strategy = factory.CREATE_STRATEGY
 
     name = factory.Sequence(lambda n: "User Story Status {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
 class SeverityFactory(Factory):
-    FACTORY_FOR = get_model("projects", "Severity")
+    class Meta:
+        model = "projects.Severity"
+        strategy = factory.CREATE_STRATEGY
 
     name = factory.Sequence(lambda n: "Severity {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
 class PriorityFactory(Factory):
-    FACTORY_FOR = get_model("projects", "Priority")
+    class Meta:
+        model = "projects.Priority"
+        strategy = factory.CREATE_STRATEGY
 
     name = factory.Sequence(lambda n: "Priority {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
 class IssueTypeFactory(Factory):
-    FACTORY_FOR = get_model("projects", "IssueType")
+    class Meta:
+        model = "projects.IssueType"
+        strategy = factory.CREATE_STRATEGY
 
     name = factory.Sequence(lambda n: "Issue Type {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
-class FanFactory(Factory):
-    FACTORY_FOR = get_model("stars", "Fan")
-
-    project = factory.SubFactory("tests.factories.ProjectFactory")
-    user = factory.SubFactory("tests.factories.UserFactory")
+# class FanFactory(Factory):
+#     project = factory.SubFactory("tests.factories.ProjectFactory")
+#     user = factory.SubFactory("tests.factories.UserFactory")
 
 
-class StarsFactory(Factory):
-    FACTORY_FOR = get_model("stars", "Stars")
-
-    project = factory.SubFactory("tests.factories.ProjectFactory")
-    count = 0
+# class StarsFactory(Factory):
+#     project = factory.SubFactory("tests.factories.ProjectFactory")
+#     count = 0
 
 
 class VoteFactory(Factory):
-    FACTORY_FOR = get_model("votes", "Vote")
+    class Meta:
+        model = "votes.Vote"
+        strategy = factory.CREATE_STRATEGY
 
     content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
     object_id = factory.Sequence(lambda n: n)
@@ -286,22 +349,28 @@ class VoteFactory(Factory):
 
 
 class VotesFactory(Factory):
-    FACTORY_FOR = get_model("votes", "Votes")
+    class Meta:
+        model = "votes.Votes"
+        strategy = factory.CREATE_STRATEGY
 
     content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
     object_id = factory.Sequence(lambda n: n)
 
 
 class ContentTypeFactory(Factory):
-    FACTORY_FOR = get_model("contenttypes", "ContentType")
-    FACTORY_DJANGO_GET_OR_CREATE = ("app_label", "model")
+    class Meta:
+        model = "contenttypes.ContentType"
+        strategy = factory.CREATE_STRATEGY
+        django_get_or_create = ("app_label", "model")
 
-    app_label = factory.LazyAttribute(lambda obj: ContentTypeFactory.FACTORY_FOR._meta.app_label)
-    model = factory.LazyAttribute(lambda obj: ContentTypeFactory.FACTORY_FOR._meta.model_name)
+    app_label = factory.LazyAttribute(lambda obj: "issues")
+    model = factory.LazyAttribute(lambda obj: "Issue")
 
 
 class AttachmentFactory(Factory):
-    FACTORY_FOR = get_model("attachments", "Attachment")
+    class Meta:
+        model = "attachments.Attachment"
+        strategy = factory.CREATE_STRATEGY
 
     owner = factory.SubFactory("tests.factories.UserFactory")
     project = factory.SubFactory("tests.factories.ProjectFactory")

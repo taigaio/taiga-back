@@ -1,4 +1,5 @@
 from unittest import mock
+import json
 
 from django.core.urlresolvers import reverse
 
@@ -23,31 +24,32 @@ Issue #2
     assert issues[1].subject == "Issue #2"
 
 
-@mock.patch("taiga.projects.issues.services.db")
 def test_create_issues_in_bulk(db):
     data = """
 Issue #1
 Issue #2
 """
-    issues = services.create_issues_in_bulk(data)
 
-    db.save_in_bulk.assert_called_once_with(issues, None, None)
+    with mock.patch("taiga.projects.issues.services.db") as db:
+        issues = services.create_issues_in_bulk(data)
+        db.save_in_bulk.assert_called_once_with(issues, None, None)
 
 
-@mock.patch("taiga.projects.issues.services.db")
-def test_update_issues_order_in_bulk(db):
+def test_update_issues_order_in_bulk():
     data = [(1, 1), (2, 2)]
-    services.update_issues_order_in_bulk(data)
 
-    db.update_in_bulk_with_ids.assert_called_once_with([1, 2], [{"order": 1}, {"order": 2}],
-                                                       model=models.Issue)
+    with mock.patch("taiga.projects.issues.services.db") as db:
+        services.update_issues_order_in_bulk(data)
+        db.update_in_bulk_with_ids.assert_called_once_with([1, 2], [{"order": 1}, {"order": 2}],
+                                                           model=models.Issue)
 
 
 def test_api_create_issues_in_bulk(client):
     project = f.create_project()
 
     url = reverse("issues-bulk-create")
-    data = {"bulk_issues": "Issue #1\nIssue #2",
+
+    data = {"bulk_issues": "Issue #1\nIssue #2\n",
             "project_id": project.id}
 
     client.login(project.owner)

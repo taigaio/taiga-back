@@ -17,13 +17,14 @@
 from django.contrib import admin
 
 from taiga.projects.attachments.admin import AttachmentInline
+from taiga.projects.wiki.models import WikiPage
 
 from . import models
 
 class WikiPageAdmin(admin.ModelAdmin):
     list_display = ["project", "slug", "owner"]
     list_display_links = list_display
-    inlines = [AttachmentInline]
+    # inlines = [AttachmentInline]
 
 admin.site.register(models.WikiPage, WikiPageAdmin)
 

@@ -1,18 +1,11 @@
 import pytest
-
-from django.db import models
-
-from taiga.base import tags
-
 pytestmark = pytest.mark.django_db
 
-
-class TaggedModel(tags.TaggedMixin, models.Model):
-    class Meta:
-        app_label = "base"
+from taiga.base import tags
+from tests.models import TaggedModel
 
 
-def test():
+def test_tags():
     tags1 = TaggedModel.objects.create(tags=["foo", "bar"])
     tags2 = TaggedModel.objects.create(tags=["foo"])
 

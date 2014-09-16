@@ -23,7 +23,7 @@ from taiga.base.api import ModelCrudViewSet
 from taiga.projects.models import Project
 
 from taiga.projects.notifications import WatchedResourceMixin
-from taiga.projects.history import HistoryResourceMixin
+from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.occ import OCCResourceMixin
 
 

@@ -25,5 +25,4 @@ def test_api_partially_update_project(client):
 
     client.login(project.owner)
     response = client.json.patch(url, json.dumps(data))
-
     assert response.status_code == 400

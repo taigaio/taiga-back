@@ -1,45 +1,35 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+import django.utils.timezone
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Reference'
-        db.create_table('references_reference', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', to=orm['contenttypes.ContentType'])),
-            ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
-            ('ref', self.gf('django.db.models.fields.BigIntegerField')()),
-            ('created_at', self.gf('django.db.models.fields.DateTimeField')(blank=True, auto_now_add=True)),
-        ))
-        db.send_create_signal('references', ['Reference'])
+    dependencies = [
+        ('projects', '0002_auto_20140903_0920'),
+        ('contenttypes', '0001_initial'),
+    ]
 
-
-    def backwards(self, orm):
-        # Deleting model 'Reference'
-        db.delete_table('references_reference')
-
-
-    models = {
-        'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'references.reference': {
-            'Meta': {'ordering': "['created_at']", 'object_name': 'Reference'},
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['contenttypes.ContentType']"}),
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'auto_now_add': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
-            'ref': ('django.db.models.fields.BigIntegerField', [], {})
-        }
-    }
-
-    complete_apps = ['references']
+    operations = [
+        migrations.CreateModel(
+            name='Reference',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
+                ('object_id', models.PositiveIntegerField()),
+                ('ref', models.BigIntegerField()),
+                ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
+                ('content_type', models.ForeignKey(related_name='+', to='contenttypes.ContentType')),
+                ('project', models.ForeignKey(related_name='references', to='projects.Project')),
+            ],
+            options={
+                'ordering': ['created_at'],
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AlterUniqueTogether(
+            name='reference',
+            unique_together=set([('project', 'ref')]),
+        ),
+    ]
