@@ -21,7 +21,7 @@
         "default_owner_role": "product-owner",
         "issue_types": "[{\"color\": \"#89BAB4\", \"order\": 1, \"name\": \"Bug\"}, {\"color\": \"#ba89a8\", \"order\": 2, \"name\": \"Question\"}, {\"color\": \"#89a8ba\", \"order\": 3, \"name\": \"Enhancement\"}]",
         "videoconferences": null,
-        "description": "Default Scrum template",
+        "description": "The agile product backlog in Scrum is a prioritized features list, containing short descriptions of all functionality desired in the product. When applying Scrum, it's not necessary to start a project with a lengthy, upfront effort to document all requirements. The Scrum product backlog is then allowed to grow and change as more is learned about the product and its customers",
         "name": "Scrum"
     },
     "pk": 1
@@ -48,7 +48,7 @@
         "default_owner_role": "product-owner",
         "issue_types": "[{\"color\": \"#cc0000\", \"order\": 1, \"name\": \"Bug\"}, {\"color\": \"#729fcf\", \"order\": 2, \"name\": \"Question\"}, {\"color\": \"#4e9a06\", \"order\": 3, \"name\": \"Enhancement\"}]",
         "videoconferences": null,
-        "description": "Default Kanban template.",
+        "description": "Kanban is a method for managing knowledge work with an emphasis on just-in-time delivery while not overloading the team members. In this approach, the process, from definition of a task to its delivery to the customer, is displayed for participants to see and team members pull work from a queue.",
         "name": "Kanban"
     },
     "pk": 2
