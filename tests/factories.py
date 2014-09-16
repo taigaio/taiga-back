@@ -99,6 +99,7 @@ class UserStoryAttachmentFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
     owner = factory.SubFactory("tests.factories.UserFactory")
     content_object = factory.SubFactory("tests.factories.UserStoryFactory")
+    attached_file = factory.django.FileField(data=b"File contents")
 
     class Meta:
         model = "attachments.Attachment"
@@ -109,6 +110,7 @@ class TaskAttachmentFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
     owner = factory.SubFactory("tests.factories.UserFactory")
     content_object = factory.SubFactory("tests.factories.TaskFactory")
+    attached_file = factory.django.FileField(data=b"File contents")
 
     class Meta:
         model = "attachments.Attachment"
@@ -119,15 +121,18 @@ class IssueAttachmentFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
     owner = factory.SubFactory("tests.factories.UserFactory")
     content_object = factory.SubFactory("tests.factories.IssueFactory")
+    attached_file = factory.django.FileField(data=b"File contents")
 
     class Meta:
         model = "attachments.Attachment"
         strategy = factory.CREATE_STRATEGY
 
+
 class WikiAttachmentFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
     owner = factory.SubFactory("tests.factories.UserFactory")
     content_object = factory.SubFactory("tests.factories.WikiFactory")
+    attached_file = factory.django.FileField(data=b"File contents")
 
     class Meta:
         model = "attachments.Attachment"
