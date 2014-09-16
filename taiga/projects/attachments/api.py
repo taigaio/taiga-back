@@ -100,39 +100,3 @@ class WikiAttachmentViewSet(BaseAttachmentViewSet):
     permission_classes = (permissions.WikiAttachmentPermission,)
     filter_backends = (filters.CanViewWikiAttachmentFilterBackend,)
     content_type = "wiki.wikipage"
-
-
-class RawAttachmentView(generics.RetrieveAPIView):
-    queryset = models.Attachment.objects.all()
-    permission_classes = (permissions.RawAttachmentPermission,)
-
-    def _serve_attachment(self, attachment):
-        if settings.IN_DEVELOPMENT_SERVER:
-            return http.HttpResponseRedirect(attachment.url)
-
-        name = attachment.name
-        response = http.HttpResponse()
-        response['X-Accel-Redirect'] = "/{filepath}".format(filepath=name)
-        response['Content-Disposition'] = 'inline;filename={filename}'.format(
-            filename=os.path.basename(name))
-        response['Content-Type'] = mimetypes.guess_type(name)[0]
-
-        return response
-
-    def check_permissions(self, request, action='retrieve', obj=None):
-        self.object = self.get_object()
-        user_id = self.request.QUERY_PARAMS.get('user', None)
-        token = self.request.QUERY_PARAMS.get('token', None)
-
-        if token and user_id:
-            token_src = "{}-{}-{}".format(settings.ATTACHMENTS_TOKEN_SALT, user_id, self.object.id)
-            if token == hashlib.sha1(token_src.encode("utf-8")).hexdigest():
-                request.user = get_object_or_404(User, pk=user_id)
-
-        return super().check_permissions(request, action, self.object)
-
-    def retrieve(self, request, *args, **kwargs):
-        self.object = self.get_object()
-
-        self.check_permissions(request, 'retrieve', self.object)
-        return self._serve_attachment(self.object.attached_file)
