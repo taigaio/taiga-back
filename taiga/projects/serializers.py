@@ -15,8 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from os import path
-from rest_framework import serializers
+
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Q
+
+from rest_framework import serializers
 
 from taiga.base.serializers import JsonField, PgArrayField, ModelSerializer, TagsColorsField
 from taiga.users.models import Role, User
@@ -97,9 +100,9 @@ class MembershipSerializer(ModelSerializer):
     email = serializers.EmailField(required=True)
     color = serializers.CharField(source='user.color', required=False, read_only=True)
     photo = serializers.SerializerMethodField("get_photo")
-    invited_by = serializers.SerializerMethodField("get_invited_by")
     project_name = serializers.SerializerMethodField("get_project_name")
     project_slug = serializers.SerializerMethodField("get_project_slug")
+    invited_by = UserSerializer(read_only=True)
 
     class Meta:
         model = models.Membership
@@ -115,13 +118,24 @@ class MembershipSerializer(ModelSerializer):
     def get_project_slug(self, obj):
         return obj.project.slug if obj and obj.project else ""
 
-    def get_invited_by(self, membership):
-        try:
-            queryset = User.objects.get(pk=membership.invited_by_id)
-        except User.DoesNotExist:
-            return None
-        else:
-            return UserSerializer(queryset).data
+    def validate_email(self, attrs, source):
+        project = attrs["project"]
+        email = attrs[source]
+
+        qs = models.Membership.objects.all()
+
+        # If self.object is not None, the serializer is in update
+        # mode, and for it, it should exclude self.
+        if self.object:
+            qs = qs.exclude(pk=self.object.pk)
+
+        qs = qs.filter(Q(project_id=project.id, user__email=email) |
+                       Q(project_id=project.id, email=email))
+
+        if qs.count() > 0:
+            raise serializers.ValidationError(_("Email address is already taken"))
+
+        return attrs
 
 
 class ProjectMembershipSerializer(ModelSerializer):
