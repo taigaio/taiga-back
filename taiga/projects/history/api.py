@@ -59,10 +59,10 @@ class HistoryViewSet(ReadOnlyListViewSet):
     @detail_route(methods=['post'])
     def delete_comment(self, request, pk):
         obj = self.get_object()
-        self.check_permissions(request, 'delete_comment', obj)
-
         comment_id = request.QUERY_PARAMS.get('id', None)
         comment = services.get_history_queryset_by_model_instance(obj).filter(id=comment_id).first()
+
+        self.check_permissions(request, 'delete_comment', comment)
 
         if comment is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -71,17 +71,17 @@ class HistoryViewSet(ReadOnlyListViewSet):
             return Response({"error": "Comment already deleted"}, status=status.HTTP_400_BAD_REQUEST)
 
         comment.delete_comment_date = timezone.now()
-        comment.delete_comment_user = request.user
+        comment.delete_comment_user = {"pk": request.user.pk, "name": request.user.get_full_name()}
         comment.save()
         return Response(status=status.HTTP_200_OK)
 
     @detail_route(methods=['post'])
     def undelete_comment(self, request, pk):
         obj = self.get_object()
-        self.check_permissions(request, 'undelete_comment', obj)
-
         comment_id = request.QUERY_PARAMS.get('id', None)
         comment = services.get_history_queryset_by_model_instance(obj).filter(id=comment_id).first()
+
+        self.check_permissions(request, 'undelete_comment', comment)
 
         if comment is None:
             return Response(status=status.HTTP_404_NOT_FOUND)

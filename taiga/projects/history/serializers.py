@@ -26,6 +26,7 @@ class HistoryEntrySerializer(serializers.ModelSerializer):
     values = JsonField()
     values_diff = JsonField()
     user = JsonField()
+    delete_comment_user = JsonField()
 
     class Meta:
         model = models.HistoryEntry
