@@ -14,11 +14,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import random
+import datetime
+
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.timezone import now
 from django.conf import settings
-
 from django.contrib.webdesign import lorem_ipsum
 from django.contrib.contenttypes.models import ContentType
 
@@ -34,9 +36,8 @@ from taiga.projects.wiki.models import *
 from taiga.projects.attachments.models import *
 
 from taiga.projects.history.services import take_snapshot
+from taiga.events.apps import disconnect_events_signals
 
-import random
-import datetime
 
 ATTACHMENT_SAMPLE_DATA = [
     "taiga/projects/management/commands/sample_data",
@@ -102,6 +103,9 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
+        # Prevent events emission when sample data is running
+        disconnect_events_signals()
+
         self.users = [User.objects.get(is_superuser=True)]
 
         # create users

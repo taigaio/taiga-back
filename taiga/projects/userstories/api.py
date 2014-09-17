@@ -87,7 +87,9 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
         project = get_object_or_404(Project, pk=data["project_id"])
 
         self.check_permissions(request, "bulk_update_order", project)
-        services.update_userstories_order_in_bulk(data["bulk_stories"], field="backlog_order")
+        services.update_userstories_order_in_bulk(data["bulk_stories"],
+                                                  project=project,
+                                                  field="backlog_order")
         services.snapshot_userstories_in_bulk(data["bulk_stories"], request.user)
 
         return response.NoContent()
@@ -102,7 +104,9 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
         project = get_object_or_404(Project, pk=data["project_id"])
 
         self.check_permissions(request, "bulk_update_order", project)
-        services.update_userstories_order_in_bulk(data["bulk_stories"], field="sprint_order")
+        services.update_userstories_order_in_bulk(data["bulk_stories"],
+                                                  project=project,
+                                                  field="sprint_order")
         services.snapshot_userstories_in_bulk(data["bulk_stories"], request.user)
         return response.NoContent()
 
@@ -116,7 +120,9 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
         project = get_object_or_404(Project, pk=data["project_id"])
 
         self.check_permissions(request, "bulk_update_order", project)
-        services.update_userstories_order_in_bulk(data["bulk_stories"], field="kanban_order")
+        services.update_userstories_order_in_bulk(data["bulk_stories"],
+                                                  project=project,
+                                                  field="kanban_order")
         services.snapshot_userstories_in_bulk(data["bulk_stories"], request.user)
         return response.NoContent()
 

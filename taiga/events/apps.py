@@ -14,4 +14,26 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-default_app_config = "taiga.events.apps.EventsAppConfig"
+import sys
+from django.apps import AppConfig
+from django.db.models import signals
+
+from . import signal_handlers as handlers
+
+
+def connect_events_signals():
+    signals.post_save.connect(handlers.on_save_any_model, dispatch_uid="events_change")
+    signals.post_delete.connect(handlers.on_delete_any_model, dispatch_uid="events_delete")
+
+
+def disconnect_events_signals():
+    signals.post_save.disconnect(dispatch_uid="events_change")
+    signals.post_delete.disconnect(dispatch_uid="events_delete")
+
+
+class EventsAppConfig(AppConfig):
+    name = "taiga.events"
+    verbose_name = "Events App Config"
+
+    def ready(self):
+        connect_events_signals()

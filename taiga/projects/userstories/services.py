@@ -18,6 +18,7 @@ from django.utils import timezone
 
 from taiga.base.utils import db, text
 from taiga.projects.history.services import take_snapshot
+from taiga.events import events
 
 from . import models
 
@@ -48,7 +49,7 @@ def create_userstories_in_bulk(bulk_data, callback=None, precall=None, **additio
     return userstories
 
 
-def update_userstories_order_in_bulk(bulk_data:list, field:str):
+def update_userstories_order_in_bulk(bulk_data:list, field:str, project:object):
     """
     Update the order of some user stories.
     `bulk_data` should be a list of tuples with the following format:
@@ -60,6 +61,10 @@ def update_userstories_order_in_bulk(bulk_data:list, field:str):
     for us_data in bulk_data:
         user_story_ids.append(us_data["us_id"])
         new_order_values.append({field: us_data["order"]})
+
+    events.emit_event_for_ids(ids=user_story_ids,
+                              content_type="userstories.userstory",
+                              projectid=project.pk)
 
     db.update_in_bulk_with_ids(user_story_ids, new_order_values, model=models.UserStory)
 

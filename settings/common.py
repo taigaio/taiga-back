@@ -87,7 +87,9 @@ DJMAIL_MAX_RETRY_NUMBER = 3
 DJMAIL_TEMPLATE_EXTENSION = "jinja"
 
 # Events backend
-EVENTS_PUSH_BACKEND = "taiga.events.backends.postgresql.EventsPushBackend"
+# EVENTS_PUSH_BACKEND = "taiga.events.backends.postgresql.EventsPushBackend"
+EVENTS_PUSH_BACKEND = "taiga.events.backends.rabbitmq.EventsPushBackend"
+EVENTS_PUSH_BACKEND_OPTIONS = {"url": "//guest:guest@127.0.0.1/"}
 
 # Message System
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
