@@ -66,8 +66,7 @@ class HistoryEntry(models.Model):
     comment_html = models.TextField(blank=True)
 
     delete_comment_date = models.DateTimeField(null=True, blank=True, default=None)
-    delete_comment_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
-                             related_name="deleted_comments")
+    delete_comment_user = JsonField(blank=True, default=None, null=True)
 
     @cached_property
     def is_comment(self):
