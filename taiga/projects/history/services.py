@@ -55,6 +55,13 @@ _freeze_impl_map = {}
 # Dict containing registred containing with their values implementation.
 _values_impl_map = {}
 
+# Not important fields for models (history entries with only
+# this fields are marked as hidden).
+_not_important_fields = {
+    "userstories.userstory": frozenset(["backlog_order", "sprint_order", "kanban_order"]),
+    "tasks.task": frozenset(["us_order", "taskboard_order"]),
+}
+
 log = logging.getLogger("taiga.history")
 
 
@@ -130,7 +137,30 @@ def freeze_model_instance(obj:object) -> FrozenObj:
 
     key = make_key_from_model_object(obj)
     impl_fn = _freeze_impl_map[typename]
-    return FrozenObj(key, impl_fn(obj))
+    snapshot = impl_fn(obj)
+    assert isinstance(snapshot, dict), "freeze handlers should return always a dict"
+
+    return FrozenObj(key, snapshot)
+
+
+def is_hidden_snapshot(obj:FrozenDiff) -> bool:
+    """
+    Check if frozen object is considered
+    hidden or not.
+    """
+    content_type, pk = obj.key.rsplit(":", 1)
+    snapshot_fields = frozenset(obj.diff.keys())
+
+    if content_type not in _not_important_fields:
+        return False
+
+    nfields = _not_important_fields[content_type]
+    result = snapshot_fields - nfields
+
+    if len(result) == 0:
+        return True
+
+    return False
 
 
 def make_diff(oldobj:FrozenObj, newobj:FrozenObj) -> FrozenDiff:
@@ -235,20 +265,7 @@ def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
     else:
         raise RuntimeError("Unexpected condition")
 
-    kwargs = {
-        "user": {"pk": user_id, "name": user_name},
-        "key": key,
-        "type": entry_type,
-        "comment": "",
-        "comment_html": "",
-        "diff": None,
-        "values": None,
-        "snapshot": None,
-        "is_snapshot": False,
-    }
-
     fdiff = make_diff(old_fobj, new_fobj)
-    fvals = make_diff_values(typename, fdiff)
 
     # If diff and comment are empty, do
     # not create empty history entry
@@ -258,21 +275,29 @@ def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
 
         return None
 
-    kwargs.update({
+    fvals = make_diff_values(typename, fdiff)
+    is_hidden = is_hidden_snapshot(fdiff)
+
+    kwargs = {
+        "user": {"pk": user_id, "name": user_name},
+        "key": key,
+        "type": entry_type,
         "snapshot": fdiff.snapshot if need_real_snapshot else None,
-        "is_snapshot": need_real_snapshot,
+        "diff": fdiff.diff,
         "values": fvals,
         "comment": comment,
-        "diff": fdiff.diff,
         "comment_html": mdrender(obj.project, comment),
-    })
+        "is_hidden": is_hidden,
+        "is_snapshot": need_real_snapshot,
+    }
 
     return entry_model.objects.create(**kwargs)
 
 
 # High level query api
 
-def get_history_queryset_by_model_instance(obj:object, types=(HistoryType.change,)):
+def get_history_queryset_by_model_instance(obj:object, types=(HistoryType.change,),
+                                           include_hidden=False):
     """
     Get one page of history for specified object.
     """
@@ -280,6 +305,9 @@ def get_history_queryset_by_model_instance(obj:object, types=(HistoryType.change
     history_entry_model = get_model("history", "HistoryEntry")
 
     qs = history_entry_model.objects.filter(key=key, type__in=types)
+    if not include_hidden:
+        qs = qs.filter(is_hidden=False)
+
     return qs.order_by("created_at")
 
 

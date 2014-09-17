@@ -33,4 +33,10 @@ def make_diff(first:dict, second:dict, not_found_value=None) -> dict:
         if key not in first:
             diff[key] = (not_found_value, second[key])
 
+    # Remove A -> A changes that usually happens with None -> None
+    for key, value in list(diff.items()):
+        frst, scnd = value
+        if frst == scnd:
+            del diff[key]
+
     return diff

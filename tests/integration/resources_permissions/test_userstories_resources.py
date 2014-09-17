@@ -261,7 +261,7 @@ def test_user_story_action_bulk_create(client, data):
 
 
 def test_user_story_action_bulk_update_order(client, data):
-    url = reverse('userstories-bulk-update-order')
+    url = reverse('userstories-bulk-update-backlog-order')
 
     users = [
         None,

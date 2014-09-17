@@ -55,6 +55,12 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
                                          verbose_name=_("finished date"))
     subject = models.TextField(null=False, blank=False,
                                verbose_name=_("subject"))
+
+    us_order = models.IntegerField(null=False, blank=False, default=1,
+                                        verbose_name=_("us order"))
+    taskboard_order = models.IntegerField(null=False, blank=False, default=1,
+                                          verbose_name=_("taskboard order"))
+
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                     default=None, related_name="tasks_assigned_to_me",
