@@ -276,7 +276,11 @@ def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
         return None
 
     fvals = make_diff_values(typename, fdiff)
-    is_hidden = is_hidden_snapshot(fdiff)
+
+    if len(comment) > 0:
+        is_hidden = False
+    else:
+        is_hidden = is_hidden_snapshot(fdiff)
 
     kwargs = {
         "user": {"pk": user_id, "name": user_name},

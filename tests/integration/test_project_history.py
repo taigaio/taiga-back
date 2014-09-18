@@ -197,3 +197,24 @@ def test_take_hidden_snapshot():
     assert qs_all.count() == 2
     assert qs_hidden.count() == 1
 
+
+def test_history_with_only_comment_shouldnot_be_hidden(client):
+    project = f.create_project()
+    us = f.create_userstory(project=project)
+
+    qs_all = HistoryEntry.objects.all()
+    qs_hidden = qs_all.filter(is_hidden=True)
+
+    assert qs_all.count() == 0
+
+    url = reverse("userstories-detail", args=[us.pk])
+    data = json.dumps({"comment": "test comment", "version": us.version})
+
+    print(url, data)
+    client.login(project.owner)
+    response = client.patch(url, data, content_type="application/json")
+
+    assert response.status_code == 200, response.content
+    assert qs_all.count() == 1
+    assert qs_hidden.count() == 0
+
