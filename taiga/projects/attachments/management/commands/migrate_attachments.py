@@ -16,7 +16,7 @@ class Command(BaseCommand):
     help = "Parses all objects and try replace old attachments url with one new"
 
 
-    trx = r"((?:https?)://api-taiga\.kaleidos\.net/attachments/(\d+)/[^\s]+)"
+    trx = r"((?:https?)://api-taiga\.kaleidos\.net/attachments/(\d+)/[^\s\"]+)"
 
     @transaction.atomic
     def handle(self, *args, **options):
