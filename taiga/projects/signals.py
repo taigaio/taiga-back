@@ -14,4 +14,24 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-default_app_config = "taiga.projects.tasks.apps.TasksAppConfig"
+from taiga.projects.services.tags_colors import update_project_tags_colors_handler, remove_unused_tags
+
+
+####################################
+# Signals over project items
+####################################
+
+## TAGS
+
+def tags_normalization(sender, instance, **kwargs):
+    if isinstance(instance.tags, (list, tuple)):
+        instance.tags = list(map(str.lower, instance.tags))
+
+
+def update_project_tags_when_create_or_edit_taggable_item(sender, instance, **kwargs):
+    update_project_tags_colors_handler(instance)
+
+
+def update_project_tags_when_delete_taggable_item(sender, instance, **kwargs):
+    remove_unused_tags(instance.project)
+    instance.project.save()

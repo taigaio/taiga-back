@@ -14,4 +14,24 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-default_app_config = "taiga.projects.tasks.apps.TasksAppConfig"
+from django.utils import timezone
+
+from . import models
+
+
+
+def calculate_milestone_is_closed(milestone):
+    return (all([task.status.is_closed for task in milestone.tasks.all()]) and
+            all([user_story.is_closed for user_story in milestone.user_stories.all()]))
+
+
+def close_milestone(milestone):
+    if not milestone.closed:
+        milestone.closed = True
+        milestone.save(update_fields=["closed",])
+
+
+def open_milestone(milestone):
+    if milestone.closed:
+        milestone.closed = False
+        milestone.save(update_fields=["closed",])

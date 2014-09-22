@@ -17,16 +17,13 @@
 from django.db import models
 from django.contrib.contenttypes import generic
 from django.conf import settings
-from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
-from taiga.base.tags import TaggedMixin
-from taiga.base.utils.slug import ref_uniquely
-from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
+from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
-from taiga.projects.services.tags_colors import update_project_tags_colors_handler, remove_unused_tags
+from taiga.base.tags import TaggedMixin
 
 
 class RolePoints(models.Model):
@@ -138,45 +135,3 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
                 total += rp.points.value
 
         return total
-
-
-@receiver(models.signals.post_save, sender=UserStory,
-          dispatch_uid="user_story_create_role_points_handler")
-def us_create_role_points_handler(sender, instance, **kwargs):
-    if instance._importing:
-        return
-    instance.project.update_role_points(user_stories=[instance])
-
-
-@receiver(models.signals.post_save, sender=UserStory,
-          dispatch_uid="user_story_tasks_reassignation")
-def us_task_reassignation(sender, instance, created, **kwargs):
-    if not created:
-        instance.tasks.update(milestone=instance.milestone)
-
-
-@receiver(models.signals.pre_save, sender=UserStory, dispatch_uid="us-tags-normalization")
-def us_tags_normalization(sender, instance, **kwargs):
-    if isinstance(instance.tags, (list, tuple)):
-        instance.tags = list(map(str.lower, instance.tags))
-
-@receiver(models.signals.post_save, sender=UserStory,
-          dispatch_uid="user_story_on_status_change")
-def us_close_open_on_status_change(sender, instance, **kwargs):
-    from taiga.projects.userstories import services as service
-
-    if service.calculate_userstory_is_closed(instance):
-        service.close_userstory(instance)
-    else:
-        service.open_userstory(instance)
-
-
-@receiver(models.signals.post_save, sender=UserStory, dispatch_uid="user_story_update_project_colors")
-def us_update_project_tags(sender, instance, **kwargs):
-    update_project_tags_colors_handler(instance)
-
-
-@receiver(models.signals.post_delete, sender=UserStory, dispatch_uid="user_story_update_project_colors_on_delete")
-def us_update_project_tags_on_delete(sender, instance, **kwargs):
-    remove_unused_tags(instance.project)
-    instance.project.save()

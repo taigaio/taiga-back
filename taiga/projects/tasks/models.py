@@ -18,18 +18,12 @@ from django.db import models
 from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.utils import timezone
-from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
-from taiga.base.tags import TaggedMixin
-from taiga.base.utils.slug import ref_uniquely
-from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
-from taiga.projects.userstories.models import UserStory
-from taiga.projects.userstories import services as us_service
-from taiga.projects.milestones.models import Milestone
+from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
-from taiga.projects.services.tags_colors import update_project_tags_colors_handler, remove_unused_tags
+from taiga.base.tags import TaggedMixin
 
 
 class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
@@ -90,71 +84,3 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
 
     def __str__(self):
         return "({1}) {0}".format(self.ref, self.subject)
-
-
-def milestone_has_open_userstories(milestone):
-    qs = milestone.user_stories.exclude(is_closed=True)
-    return qs.exists()
-
-
-@receiver(models.signals.post_delete, sender=Task, dispatch_uid="tasks_milestone_close_handler_on_delete")
-def tasks_milestone_close_handler_on_delete(sender, instance, **kwargs):
-    if instance.milestone_id and Milestone.objects.filter(id=instance.milestone_id):
-        if not milestone_has_open_userstories(instance.milestone):
-            instance.milestone.closed = True
-            instance.milestone.save(update_fields=["closed"])
-
-
-# Define the previous version of the task for use it on the post_save handler
-@receiver(models.signals.pre_save, sender=Task, dispatch_uid="tasks_us_close_handler")
-def tasks_us_close_handler(sender, instance, **kwargs):
-    instance.prev = None
-    if instance.id:
-        instance.prev = sender.objects.get(id=instance.id)
-
-
-@receiver(models.signals.post_save, sender=Task, dispatch_uid="tasks_us_close_on_create_handler")
-def tasks_us_close_on_create_handler(sender, instance, created, **kwargs):
-    if instance.user_story_id:
-        if us_service.calculate_userstory_is_closed(instance.user_story):
-            us_service.close_userstory(instance.user_story)
-        else:
-            us_service.open_userstory(instance.user_story)
-
-    if instance.prev and instance.prev.user_story_id:
-        if us_service.calculate_userstory_is_closed(instance.prev.user_story):
-            us_service.close_userstory(instance.prev.user_story)
-        else:
-            us_service.open_userstory(instance.prev.user_story)
-
-
-@receiver(models.signals.post_delete, sender=Task, dispatch_uid="tasks_us_close_handler_on_delete")
-def tasks_us_close_handler_on_delete(sender, instance, **kwargs):
-    if instance.user_story_id:
-        if us_service.calculate_userstory_is_closed(instance.user_story):
-            us_service.close_userstory(instance.user_story)
-        else:
-            us_service.open_userstory(instance.user_story)
-
-
-@receiver(models.signals.pre_save, sender=Task, dispatch_uid="tasks_milestone_close_handler")
-def tasks_milestone_close_handler(sender, instance, **kwargs):
-    if instance.milestone_id:
-        if instance.status.is_closed and not instance.milestone.closed:
-            if not milestone_has_open_userstories(instance.milestone):
-                instance.milestone.closed = True
-                instance.milestone.save(update_fields=["closed"])
-        elif not instance.status.is_closed and instance.milestone.closed:
-            instance.milestone.closed = False
-            instance.milestone.save(update_fields=["closed"])
-
-
-@receiver(models.signals.post_save, sender=Task, dispatch_uid="task_update_project_colors")
-def task_update_project_tags(sender, instance, **kwargs):
-    update_project_tags_colors_handler(instance)
-
-
-@receiver(models.signals.post_delete, sender=Task, dispatch_uid="task_update_project_colors_on_delete")
-def task_update_project_tags_on_delete(sender, instance, **kwargs):
-    remove_unused_tags(instance.project)
-    instance.project.save()
