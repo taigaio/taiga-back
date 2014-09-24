@@ -21,7 +21,6 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 
 from django.core.urlresolvers import reverse
-from django.db.models.loading import get_model
 from .. import factories as f
 
 from taiga.projects.history import services

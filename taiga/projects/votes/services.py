@@ -17,7 +17,7 @@
 
 from django.db.models import F
 from django.db.transaction import atomic
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.contrib.auth import get_user_model
 
 from .models import Votes, Vote
@@ -32,7 +32,7 @@ def add_vote(obj, user):
     :param obj: Any Django model instance.
     :param user: User adding the vote. :class:`~taiga.users.models.User` instance.
     """
-    obj_type = get_model("contenttypes", "ContentType").objects.get_for_model(obj)
+    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
     with atomic():
         vote, created = Vote.objects.get_or_create(content_type=obj_type, object_id=obj.id, user=user)
 
@@ -54,7 +54,7 @@ def remove_vote(obj, user):
     :param obj: Any Django model instance.
     :param user: User removing her vote. :class:`~taiga.users.models.User` instance.
     """
-    obj_type = get_model("contenttypes", "ContentType").objects.get_for_model(obj)
+    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
     with atomic():
         qs = Vote.objects.filter(content_type=obj_type, object_id=obj.id, user=user)
         if not qs.exists():
@@ -74,7 +74,7 @@ def get_voters(obj):
 
     :return: User queryset object representing the users that voted the object.
     """
-    obj_type = get_model("contenttypes", "ContentType").objects.get_for_model(obj)
+    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
     return get_user_model().objects.filter(votes__content_type=obj_type, votes__object_id=obj.id)
 
 
@@ -85,7 +85,7 @@ def get_votes(obj):
 
     :return: Number of votes or `0` if the object has no votes at all.
     """
-    obj_type = get_model("contenttypes", "ContentType").objects.get_for_model(obj)
+    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
 
     try:
         return Votes.objects.get(content_type=obj_type, object_id=obj.id).count
@@ -101,7 +101,7 @@ def get_voted(user_or_id, model):
 
     :return: Queryset of objects representing the votes of the user.
     """
-    obj_type = get_model("contenttypes", "ContentType").objects.get_for_model(model)
+    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(model)
     conditions = ('votes_vote.content_type_id = %s',
                   '%s.id = votes_vote.object_id' % model._meta.db_table,
                   'votes_vote.user_id = %s')

@@ -14,11 +14,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models.loading import get_model
+from django.apps import apps
 
 
 def get_instance_by_ref(project_id, obj_ref):
-    model_cls = get_model("references", "Reference")
+    model_cls = apps.get_model("references", "Reference")
     try:
         instance = model_cls.objects.get(project_id=project_id, ref=obj_ref)
     except model_cls.DoesNotExist:

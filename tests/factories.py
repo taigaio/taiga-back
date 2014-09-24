@@ -19,7 +19,6 @@ import uuid
 import threading
 from datetime import date, timedelta
 
-from django.db.models.loading import get_model
 from django.conf import settings
 
 import factory

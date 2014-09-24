@@ -16,7 +16,7 @@
 
 from functools import partial
 
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.db import IntegrityError
 from django.contrib.contenttypes.models import ContentType
 
@@ -33,7 +33,7 @@ def notify_policy_exists(project, user) -> bool:
     Check if policy exists for specified project
     and user.
     """
-    model_cls = get_model("notifications", "NotifyPolicy")
+    model_cls = apps.get_model("notifications", "NotifyPolicy")
     qs = model_cls.objects.filter(project=project,
                                   user=user)
     return qs.exists()
@@ -43,7 +43,7 @@ def create_notify_policy(project, user, level=NotifyLevel.notwatch):
     """
     Given a project and user, create notification policy for it.
     """
-    model_cls = get_model("notifications", "NotifyPolicy")
+    model_cls = apps.get_model("notifications", "NotifyPolicy")
     try:
         return model_cls.objects.create(project=project,
                                         user=user,
@@ -56,7 +56,7 @@ def create_notify_policy_if_not_exists(project, user, level=NotifyLevel.notwatch
     """
     Given a project and user, create notification policy for it.
     """
-    model_cls = get_model("notifications", "NotifyPolicy")
+    model_cls = apps.get_model("notifications", "NotifyPolicy")
     try:
         result = model_cls.objects.get_or_create(project=project,
                                                user=user,
@@ -70,7 +70,7 @@ def get_notify_policy(project, user):
     """
     Get notification level for specified project and user.
     """
-    model_cls = get_model("notifications", "NotifyPolicy")
+    model_cls = apps.get_model("notifications", "NotifyPolicy")
     instance, _ = model_cls.objects.get_or_create(project=project, user=user,
                                                   defaults={"notify_level": NotifyLevel.notwatch})
     return instance

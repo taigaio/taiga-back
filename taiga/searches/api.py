@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models.loading import get_model
+from django.apps import apps
 
 from rest_framework.response import Response
 from rest_framework import viewsets
@@ -31,7 +31,7 @@ from . import services
 
 class SearchViewSet(viewsets.ViewSet):
     def list(self, request, **kwargs):
-        project_model = get_model("projects", "Project")
+        project_model = apps.get_model("projects", "Project")
 
         text = request.QUERY_PARAMS.get('text', "")
         project_id = request.QUERY_PARAMS.get('project', None)
@@ -55,7 +55,7 @@ class SearchViewSet(viewsets.ViewSet):
         return Response(result)
 
     def _get_project(self, project_id):
-        project_model = get_model("projects", "Project")
+        project_model = apps.get_model("projects", "Project")
         return project_model.objects.get(pk=project_id)
 
     def _search_user_stories(self, project, text):

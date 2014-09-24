@@ -36,7 +36,7 @@ import base64
 import re
 
 from django.core import signing
-from django.db.models import get_model
+from django.apps import apps
 from rest_framework.authentication import BaseAuthentication
 from taiga.base import exceptions as exc
 
@@ -85,7 +85,7 @@ def get_user_for_token(token):
     except signing.BadSignature:
         raise exc.NotAuthenticated("Invalid token")
 
-    model_cls = get_model("users", "User")
+    model_cls = apps.get_model("users", "User")
 
     try:
         user = model_cls.objects.get(pk=data["user_id"])

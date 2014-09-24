@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from functools import partial
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from taiga.base.utils.iterators import as_tuple
 from taiga.base.utils.iterators import as_dict
@@ -41,7 +41,7 @@ def _get_generic_values(ids:tuple, *, typename=None, attr:str="name") -> tuple:
 
 @as_dict
 def _get_users_values(ids:set) -> dict:
-    user_model = get_model("users", "User")
+    user_model = apps.get_model("users", "User")
     ids = filter(lambda x: x is not None, ids)
     qs = user_model.objects.filter(pk__in=tuple(ids))
 
@@ -199,7 +199,7 @@ def milestone_freezer(milestone) -> dict:
 
 
 def userstory_freezer(us) -> dict:
-    rp_cls = get_model("userstories", "RolePoints")
+    rp_cls = apps.get_model("userstories", "RolePoints")
     rpqsd = rp_cls.objects.filter(user_story=us)
 
     points = {}

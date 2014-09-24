@@ -20,7 +20,7 @@ import pytest
 from unittest.mock import MagicMock, patch
 
 from django.core.urlresolvers import reverse
-from django.db.models.loading import get_model
+from django.apps import apps
 from .. import factories as f
 
 from taiga.projects.notifications import services
@@ -59,7 +59,7 @@ def test_attach_notify_policy_to_project_queryset():
 def test_create_retrieve_notify_policy():
     project = f.ProjectFactory.create()
 
-    policy_model_cls = get_model("notifications", "NotifyPolicy")
+    policy_model_cls = apps.get_model("notifications", "NotifyPolicy")
     current_number = policy_model_cls.objects.all().count()
     assert current_number == 0
 
@@ -102,7 +102,7 @@ def test_users_to_notify():
     member2 = f.MembershipFactory.create(project=project)
     member3 = f.MembershipFactory.create(project=project)
 
-    policy_model_cls = get_model("notifications", "NotifyPolicy")
+    policy_model_cls = apps.get_model("notifications", "NotifyPolicy")
 
     policy1 = policy_model_cls.objects.get(user=member1.user)
     policy2 = policy_model_cls.objects.get(user=member2.user)

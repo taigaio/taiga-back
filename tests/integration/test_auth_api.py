@@ -18,7 +18,7 @@
 import pytest
 from unittest.mock import patch, Mock
 
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.core.urlresolvers import reverse
 from .. import factories
 
@@ -88,7 +88,7 @@ def test_response_200_in_registration_with_github_account(client):
 
 
 def test_response_200_in_registration_with_github_account_in_a_project(client):
-    membership_model = get_model("projects", "Membership")
+    membership_model = apps.get_model("projects", "Membership")
     membership = factories.MembershipFactory(user=None)
     form = {"type": "github",
             "code": "xxxxxx",

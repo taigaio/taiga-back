@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
@@ -37,7 +37,7 @@ class ResolverViewSet(viewsets.ViewSet):
 
         data = serializer.data
 
-        project_model = get_model("projects", "Project")
+        project_model = apps.get_model("projects", "Project")
         project = get_object_or_404(project_model, slug=data["project"])
 
         self.check_permissions(request, "list", project)

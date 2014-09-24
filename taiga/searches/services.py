@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.conf import settings
 
 
@@ -22,7 +22,7 @@ MAX_RESULTS = getattr(settings, "SEARCHES_MAX_RESULTS", 150)
 
 
 def search_user_stories(project, text):
-    model_cls = get_model("userstories", "UserStory")
+    model_cls = apps.get_model("userstories", "UserStory")
     where_clause = ("to_tsvector(coalesce(userstories_userstory.subject) || ' ' || "
                     "coalesce(userstories_userstory.description)) @@ plainto_tsquery(%s)")
 
@@ -34,7 +34,7 @@ def search_user_stories(project, text):
 
 
 def search_tasks(project, text):
-    model_cls = get_model("tasks", "Task")
+    model_cls = apps.get_model("tasks", "Task")
     where_clause = ("to_tsvector(coalesce(tasks_task.subject, '') || ' ' || coalesce(tasks_task.description, '')) "
                     "@@ plainto_tsquery(%s)")
 
@@ -46,7 +46,7 @@ def search_tasks(project, text):
 
 
 def search_issues(project, text):
-    model_cls = get_model("issues", "Issue")
+    model_cls = apps.get_model("issues", "Issue")
     where_clause = ("to_tsvector(coalesce(issues_issue.subject) || ' ' || coalesce(issues_issue.description)) "
                     "@@ plainto_tsquery(%s)")
 
@@ -58,7 +58,7 @@ def search_issues(project, text):
 
 
 def search_wiki_pages(project, text):
-    model_cls = get_model("wiki", "WikiPage")
+    model_cls = apps.get_model("wiki", "WikiPage")
     where_clause = ("to_tsvector(coalesce(wiki_wikipage.slug) || ' ' || coalesce(wiki_wikipage.content)) "
                     "@@ plainto_tsquery(%s)")
 

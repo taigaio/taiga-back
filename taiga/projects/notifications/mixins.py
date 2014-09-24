@@ -18,12 +18,9 @@ from functools import partial
 from operator import is_not
 
 from django.conf import settings
-from django.db.models.loading import get_model
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from rest_framework import serializers
-from taiga.projects.history.models import HistoryType
 from taiga.projects.notifications import services
 
 
@@ -144,18 +141,3 @@ class WatchedModelMixin(models.Model):
                         self.get_owner(),)
         is_not_none = partial(is_not, None)
         return frozenset(filter(is_not_none, participants))
-
-
-# class WatcherValidationSerializerMixin(object):
-#     def validate_watchers(self, attrs, source):
-#         values =  set(attrs.get(source, []))
-#         if values:
-#             project = None
-#             if "project" in attrs and attrs["project"]:
-#                 project = attrs["project"]
-#             elif self.object:
-#                 project = self.object.project
-#             model_cls = get_model("projects", "Membership")
-#             if len(values) != model_cls.objects.filter(project=project, user__in=values).count():
-#                 raise serializers.ValidationError("Error, some watcher user is not a member of the project")
-#         return attrs

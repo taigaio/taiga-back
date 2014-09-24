@@ -18,7 +18,7 @@ import abc
 
 from taiga.base.utils import sequence as sq
 from taiga.permissions.service import user_has_perm, is_project_owner
-from django.db.models.loading import get_model
+from django.apps import apps
 
 
 ######################################################################
@@ -181,7 +181,7 @@ class HasProjectParamAndPerm(PermissionComponent):
         super().__init__(*components)
 
     def check_permissions(self, request, view, obj=None):
-        Project = get_model('projects', 'Project')
+        Project = apps.get_model('projects', 'Project')
         project_id = request.QUERY_PARAMS.get("project", None)
         try:
             project = Project.objects.get(pk=project_id)

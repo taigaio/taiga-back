@@ -16,7 +16,7 @@
 
 import uuid
 
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
@@ -48,7 +48,7 @@ class MembersFilterBackend(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         project_id = request.QUERY_PARAMS.get('project', None)
         if project_id:
-            Project = get_model('projects', 'Project')
+            Project = apps.get_model('projects', 'Project')
             project = get_object_or_404(Project, pk=project_id)
             if project.memberships.filter(user=request.user).exists() or project.owner == request.user:
                 return queryset.filter(Q(memberships__project=project) | Q(id=project.owner.id)).distinct()
@@ -201,7 +201,7 @@ class UsersViewSet(ModelCrudViewSet):
         user = self.get_object()
         self.check_permissions(request, 'starred', user)
 
-        stars = votes_service.get_voted(user.pk, model=get_model('projects', 'Project'))
+        stars = votes_service.get_voted(user.pk, model=apps.get_model('projects', 'Project'))
         stars_data = StarredSerializer(stars, many=True)
         return Response(stars_data.data)
 
