@@ -97,16 +97,6 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.
     def is_closed(self):
         return self.status.is_closed
 
-    def get_notifiable_assigned_to_display(self, value):
-        if not value:
-            return _("Unassigned")
-        return value.get_full_name()
-
-    def get_notifiable_tags_display(self, value):
-        if type(value) is list:
-            return ", ".join(value)
-        return value
-
 
 # Model related signals handlers
 @receiver(models.signals.pre_save, sender=Issue, dispatch_uid="issue_finished_date_handler")

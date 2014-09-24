@@ -139,22 +139,6 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
 
         return total
 
-    def get_notifiable_assigned_to_display(self, value):
-        if not value:
-            return _("Unassigned")
-        return value.get_full_name()
-
-    def get_notifiable_tags_display(self, value):
-        if type(value) is list:
-            return ", ".join(value)
-        return value
-
-    def get_notifiable_points_display(self, value):
-        if isinstance(value, models.manager.Manager):
-            return ", ".join(["{}: {}".format(rp.role.name, rp.points.name)
-                              for rp in self.role_points.all().order_by("role")])
-        return None
-
 
 @receiver(models.signals.post_save, sender=UserStory,
           dispatch_uid="user_story_create_role_points_handler")

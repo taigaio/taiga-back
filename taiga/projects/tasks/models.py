@@ -91,16 +91,6 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     def __str__(self):
         return "({1}) {0}".format(self.ref, self.subject)
 
-    def get_notifiable_assigned_to_display(self, value):
-        if not value:
-            return _("Unassigned")
-        return value.get_full_name()
-
-    def get_notifiable_tags_display(self, value):
-        if type(value) is list:
-            return ", ".join(value)
-        return value
-
 
 def milestone_has_open_userstories(milestone):
     qs = milestone.user_stories.exclude(is_closed=True)
