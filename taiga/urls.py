@@ -21,11 +21,11 @@ from django.contrib import admin
 
 from .routers import router
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', include(admin.site.urls)),
-)
+]
 
 
 def mediafiles_urlpatterns():
@@ -38,13 +38,12 @@ def mediafiles_urlpatterns():
         _media_url = _media_url[1:]
 
     from django.views.static import serve
-    return patterns('',
-        (r'^%s(?P<path>.*)$' % 'media', serve,
+    return [
+        url(r'^%s(?P<path>.*)$' % 'media', serve,
             {'document_root': settings.MEDIA_ROOT})
-    )
+    ]
 
 
 urlpatterns += staticfiles_urlpatterns(prefix="/static/")
 urlpatterns += mediafiles_urlpatterns()
-
 handler500 = "taiga.base.api.views.api_server_error"
