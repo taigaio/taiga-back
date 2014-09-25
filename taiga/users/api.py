@@ -67,27 +67,6 @@ class UsersViewSet(ModelCrudViewSet):
     def create(self, *args, **kwargs):
         raise exc.NotSupported()
 
-    def pre_conditions_on_save(self, obj):
-        if self.request.user.is_superuser:
-            return
-
-        if obj.id == self.request.user.id:
-            return
-
-        if obj.id is None:
-            return
-
-        raise exc.PreconditionError()
-
-    def pre_conditions_on_delete(self, obj):
-        if self.request.user.is_superuser:
-            return
-
-        if obj.id == self.request.user.id:
-            return
-
-        raise exc.PreconditionError()
-
     @list_route(methods=["POST"])
     def password_recovery(self, request, pk=None):
         username_or_email = request.DATA.get('username', None)
