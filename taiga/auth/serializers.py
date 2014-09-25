@@ -23,8 +23,8 @@ import re
 
 class BaseRegisterSerializer(serializers.Serializer):
     full_name = serializers.CharField(max_length=256)
-    email = serializers.EmailField(max_length=200)
-    username = serializers.CharField(max_length=30)
+    email = serializers.EmailField(max_length=255)
+    username = serializers.CharField(max_length=255)
     password = serializers.CharField(min_length=4)
 
     def validate_username(self, attrs, source):
@@ -34,7 +34,7 @@ class BaseRegisterSerializer(serializers.Serializer):
         try:
             validator(value)
         except ValidationError:
-            raise serializers.ValidationError("Required. 30 characters or fewer. Letters, numbers "
+            raise serializers.ValidationError("Required. 255 characters or fewer. Letters, numbers "
                                               "and /./-/_ characters'")
         return attrs
 

@@ -129,6 +129,6 @@ def test_respond_400_If_username_is_invalid(client, settings, register_form):
     response = client.post(reverse("auth-register"), register_form)
     assert response.status_code == 400
 
-    register_form.update({"username": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-error"})
+    register_form.update({"username": 300*"a"})
     response = client.post(reverse("auth-register"), register_form)
     assert response.status_code == 400

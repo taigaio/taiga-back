@@ -14,10 +14,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.core import validators
+from django.core.exceptions import ValidationError
+
 from rest_framework import serializers
 
 from .models import User
 from .services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
+
+import re
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -27,10 +32,25 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'full_name', 'full_name_display', 'email',
-                  'github_id', 'color', 'bio', 'default_language',
-                  'default_timezone', 'is_active', 'photo', 'big_photo')
-        read_only_fields = ('id', 'username', 'email', 'github_id')
+        fields = ("id", "username", "full_name", "full_name_display", "email",
+                  "github_id", "color", "bio", "default_language",
+                  "default_timezone", "is_active", "photo", "big_photo")
+        read_only_fields = ("id", "email", "github_id")
+
+    def validate_username(self, attrs, source):
+        value = attrs[source]
+        validator = validators.RegexValidator(re.compile('^[\w.-]+$'), "invalid username", "invalid")
+
+        try:
+            validator(value)
+        except ValidationError:
+            raise serializers.ValidationError("Required. 255 characters or fewer. Letters, numbers "
+                                              "and /./-/_ characters'")
+
+        if self.object and self.object.username != value and User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Invalid username. Try with a different one.")
+
+        return attrs
 
     def get_full_name_display(self, obj):
         return obj.get_full_name() if obj else ""
