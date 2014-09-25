@@ -19,7 +19,7 @@ import itertools
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.conf import settings
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
@@ -211,8 +211,8 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         return user_model.objects.filter(id__in=list(members))
 
     def update_role_points(self, user_stories=None):
-        RolePoints = get_model("userstories", "RolePoints")
-        Role = get_model("users", "Role")
+        RolePoints = apps.get_model("userstories", "RolePoints")
+        Role = apps.get_model("users", "Role")
 
         # Get all available roles on this project
         roles = self.get_roles().filter(computable=True)
@@ -251,7 +251,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         return dict_sum(*flat_role_dicts)
 
     def _get_points_increment(self, client_requirement, team_requirement):
-        userstory_model = get_model("userstories", "UserStory")
+        userstory_model = apps.get_model("userstories", "UserStory")
         user_stories = userstory_model.objects.none()
         last_milestones = self.milestones.order_by('-estimated_finish')
         last_milestone = last_milestones[0] if last_milestones else None
@@ -742,9 +742,9 @@ def membership_post_delete(sender, instance, using, **kwargs):
 # On membership object is deleted, update watchers of all objects relation.
 @receiver(signals.post_delete, sender=Membership, dispatch_uid='update_watchers_on_membership_post_delete')
 def update_watchers_on_membership_post_delete(sender, instance, using, **kwargs):
-    models = [get_model("userstories", "UserStory"),
-              get_model("tasks", "Task"),
-              get_model("issues", "Issue")]
+    models = [apps.get_model("userstories", "UserStory"),
+              apps.get_model("tasks", "Task"),
+              apps.get_model("issues", "Issue")]
 
     # `user_id` is used beacuse in some momments
     # instance.user can contain pointer to now

@@ -35,7 +35,7 @@ from functools import lru_cache
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, InvalidPage
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.db import transaction as tx
 
 from taiga.mdrender.service import render as mdrender
@@ -207,7 +207,7 @@ def _rebuild_snapshot_from_diffs(keysnapshot, partials):
 
 
 def get_last_snapshot_for_key(key:str) -> FrozenObj:
-    entry_model = get_model("history", "HistoryEntry")
+    entry_model = apps.get_model("history", "HistoryEntry")
 
     # Search last snapshot
     qs = (entry_model.objects
@@ -251,7 +251,7 @@ def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
     new_fobj = freeze_model_instance(obj)
     old_fobj, need_real_snapshot = get_last_snapshot_for_key(key)
 
-    entry_model = get_model("history", "HistoryEntry")
+    entry_model = apps.get_model("history", "HistoryEntry")
     user_id = None if user is None else user.id
     user_name = "" if user is None else user.get_full_name()
 
@@ -306,7 +306,7 @@ def get_history_queryset_by_model_instance(obj:object, types=(HistoryType.change
     Get one page of history for specified object.
     """
     key = make_key_from_model_object(obj)
-    history_entry_model = get_model("history", "HistoryEntry")
+    history_entry_model = apps.get_model("history", "HistoryEntry")
 
     qs = history_entry_model.objects.filter(key=key, type__in=types)
     if not include_hidden:

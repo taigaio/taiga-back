@@ -14,4 +14,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-default_app_config = "taiga.projects.tasks.apps.TasksAppConfig"
+from django.utils import timezone
+
+
+####################################
+# Signals for set finished date
+####################################
+
+def set_finished_date_when_edit_issue(sender, instance, **kwargs):
+    if instance.status.is_closed and not instance.finished_date:
+        instance.finished_date = timezone.now()
+    elif not instance.status.is_closed and instance.finished_date:
+        instance.finished_date = None

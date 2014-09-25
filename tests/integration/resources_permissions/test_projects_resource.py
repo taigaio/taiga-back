@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.db.models.loading import get_model
+from django.apps import apps
 
 from taiga.base.utils import json
 from taiga.projects.serializers import ProjectDetailSerializer
@@ -53,8 +53,8 @@ def data():
                                        role__project=m.private_project2,
                                        role__permissions=[])
 
-    ContentType = get_model("contenttypes", "ContentType")
-    Project = get_model("projects", "Project")
+    ContentType = apps.get_model("contenttypes", "ContentType")
+    Project = apps.get_model("projects", "Project")
 
     project_ct = ContentType.objects.get_for_model(Project)
 

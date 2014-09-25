@@ -21,11 +21,11 @@ from django.utils import timezone
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
-from taiga.base.tags import TaggedMixin
-from taiga.base.utils.slug import ref_uniquely
-from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
+from taiga.projects.notifications import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
+from taiga.base.tags import TaggedMixin
+
 from taiga.projects.services.tags_colors import update_project_tags_colors_handler, remove_unused_tags
 
 
@@ -67,7 +67,6 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.
         verbose_name = "issue"
         verbose_name_plural = "issues"
         ordering = ["project", "-created_date"]
-        #unique_together = ("ref", "project")
         permissions = (
             ("view_issue", "Can view issue"),
         )
@@ -96,29 +95,3 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.
     @property
     def is_closed(self):
         return self.status.is_closed
-
-
-# Model related signals handlers
-@receiver(models.signals.pre_save, sender=Issue, dispatch_uid="issue_finished_date_handler")
-def issue_finished_date_handler(sender, instance, **kwargs):
-    if instance.status.is_closed and not instance.finished_date:
-        instance.finished_date = timezone.now()
-    elif not instance.status.is_closed and instance.finished_date:
-        instance.finished_date = None
-
-
-@receiver(models.signals.pre_save, sender=Issue, dispatch_uid="issue-tags-normalization")
-def issue_tags_normalization(sender, instance, **kwargs):
-    if isinstance(instance.tags, (list, tuple)):
-        instance.tags = list(map(lambda x: x.lower(), instance.tags))
-
-
-@receiver(models.signals.post_save, sender=Issue, dispatch_uid="issue_update_project_colors")
-def issue_update_project_tags(sender, instance, **kwargs):
-    update_project_tags_colors_handler(instance)
-
-
-@receiver(models.signals.post_delete, sender=Issue, dispatch_uid="issue_update_project_colors_on_delete")
-def issue_update_project_tags_on_delete(sender, instance, **kwargs):
-    remove_unused_tags(instance.project)
-    instance.project.save()

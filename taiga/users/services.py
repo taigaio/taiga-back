@@ -18,7 +18,7 @@
 This model contains a domain logic for users application.
 """
 
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.db.models import Q
 from django.conf import settings
 
@@ -40,7 +40,7 @@ def get_and_validate_user(*, username:str, password:str) -> bool:
     exception is raised.
     """
 
-    user_model = get_model("users", "User")
+    user_model = apps.get_model("users", "User")
     qs = user_model.objects.filter(Q(username=username) |
                                    Q(email=username))
     if len(qs) == 0:

@@ -23,7 +23,7 @@ should be contained in a class". Because of that, it
 not uses clasess and uses simple functions.
 """
 
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.db.models import Q
 from django.db import transaction as tx
 from django.db import IntegrityError
@@ -68,7 +68,7 @@ def is_user_already_registred(*, username:str, email:str, github_id:int=None) ->
     Checks if a specified user is already registred.
     """
 
-    user_model = get_model("users", "User")
+    user_model = apps.get_model("users", "User")
 
     or_expr = Q(username=username) | Q(email=email)
     if github_id:
@@ -86,7 +86,7 @@ def get_membership_by_token(token:str):
     If not matches with any membership NotFound exception
     is raised.
     """
-    membership_model = get_model("projects", "Membership")
+    membership_model = apps.get_model("projects", "Membership")
     qs = membership_model.objects.filter(token=token)
     if len(qs) == 0:
         raise exc.NotFound("Token not matches any valid invitation.")
@@ -108,7 +108,7 @@ def public_register(username:str, password:str, email:str, full_name:str):
     if is_user_already_registred(username=username, email=email):
         raise exc.IntegrityError("User is already registred.")
 
-    user_model = get_model("users", "User")
+    user_model = apps.get_model("users", "User")
     user = user_model(username=username,
                       email=email,
                       full_name=full_name)
@@ -149,7 +149,7 @@ def private_register_for_new_user(token:str, username:str, email:str,
     if is_user_already_registred(username=username, email=email):
         raise exc.WrongArguments(_("Username or Email is already in use."))
 
-    user_model = get_model("users", "User")
+    user_model = apps.get_model("users", "User")
     user = user_model(username=username,
                       email=email,
                       full_name=full_name)
@@ -177,7 +177,7 @@ def github_register(username:str, email:str, full_name:str, github_id:int, bio:s
 
     :returns: User
     """
-    user_model = get_model("users", "User")
+    user_model = apps.get_model("users", "User")
     user, created = user_model.objects.get_or_create(github_id=github_id,
                                                      defaults={"username": username,
                                                                "email": email,

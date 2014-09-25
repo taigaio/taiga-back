@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
-from django.db.models import get_model
+from django.apps import apps
 from rest_framework import serializers
 
 from taiga.base.serializers import Serializer, PickleField, NeighborsSerializerMixin
@@ -56,7 +56,7 @@ class UserStorySerializer(serializers.ModelSerializer):
         role_points = obj._related_data.pop("role_points", None)
         super().save_object(obj, **kwargs)
 
-        points_modelcls = get_model("projects", "Points")
+        points_modelcls = apps.get_model("projects", "Points")
 
         if role_points:
             for role_id, points_id in role_points.items():

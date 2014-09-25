@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models.loading import get_model
+from django.apps import apps
 
 
 def attach_votescount_to_queryset(queryset, as_field="votes_count"):
@@ -33,7 +33,7 @@ def attach_votescount_to_queryset(queryset, as_field="votes_count"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    type = get_model("contenttypes", "ContentType").objects.get_for_model(model)
+    type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(model)
     sql = ("SELECT coalesce(votes_votes.count, 0) FROM votes_votes "
            "WHERE votes_votes.content_type_id = {type_id} AND votes_votes.object_id = {tbl}.id")
     sql = sql.format(type_id=type.id, tbl=model._meta.db_table)

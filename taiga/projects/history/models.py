@@ -17,7 +17,7 @@ import uuid
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.db import models
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.utils.functional import cached_property
 from django.conf import settings
 from django_pgjson.fields import JsonField
@@ -79,7 +79,7 @@ class HistoryEntry(models.Model):
     @cached_property
     def owner(self):
         pk = self.user["pk"]
-        model = get_model("users", "User")
+        model = apps.get_model("users", "User")
         return model.objects.get(pk=pk)
 
     @cached_property

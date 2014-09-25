@@ -14,9 +14,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models.loading import get_model
-from django.db.models import signals
-
 from taiga.timeline.service import push_to_timeline
 
 # TODO: Add events to followers timeline when followers are implemented.
