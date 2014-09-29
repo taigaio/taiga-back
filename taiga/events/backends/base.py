@@ -21,7 +21,7 @@ from django.conf import settings
 
 class BaseEventsPushBackend(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def emit_event(self, message:str, *, channel:str="events"):
+    def emit_event(self, message:str, *, routing_key:str, channel:str="events"):
         pass
 
 

@@ -20,7 +20,10 @@ from . import base
 
 class EventsPushBackend(base.BaseEventsPushBackend):
     @transaction.atomic
-    def emit_event(self, message:str, *, channel:str="events"):
+    def emit_event(self, message:str, *, routing_key:str, channel:str="events"):
+        routing_key = routing_key.replace(".", "__")
+        channel = "{channel}_{routing_key}".format(channel=channel,
+                                                   routing_key=routing_key)
         sql = "NOTIFY {channel}, %s".format(channel=channel)
         cursor = connection.cursor()
         cursor.execute(sql, [message])

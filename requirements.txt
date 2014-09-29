@@ -7,6 +7,7 @@ psycopg2==2.5.4
 pillow==2.5.3
 pytz==2014.4
 six==1.8.0
+amqp==1.4.6
 djmail==0.9
 django-pgjson==0.2.0
 djorm-pgarray==1.0.4

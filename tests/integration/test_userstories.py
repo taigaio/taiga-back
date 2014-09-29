@@ -36,8 +36,11 @@ User Story #2
 def test_update_userstories_order_in_bulk():
     data = [{"us_id": 1, "order": 1}, {"us_id": 2, "order": 2}]
 
+    project = mock.Mock()
+    project.pk = 1
+
     with mock.patch("taiga.projects.userstories.services.db") as db:
-        services.update_userstories_order_in_bulk(data, "backlog_order")
+        services.update_userstories_order_in_bulk(data, "backlog_order", project)
         db.update_in_bulk_with_ids.assert_called_once_with([1, 2], [{"backlog_order": 1}, {"backlog_order": 2}],
                                                            model=models.UserStory)
 
