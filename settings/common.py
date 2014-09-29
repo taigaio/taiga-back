@@ -100,7 +100,7 @@ MEDIA_URL = "http://localhost:8000/media/"
 # Static url is not widelly used by taiga (only
 # if admin is activated).
 STATIC_URL = "http://localhost:8000/static/"
-ADMIN_MEDIA_PREFIX = "/static/admin/"
+ADMIN_MEDIA_PREFIX = "http://localhost:8000/static/admin/"
 
 # Static configuration.
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -309,8 +309,6 @@ SOUTH_MIGRATION_MODULES = {
 DEFAULT_AVATAR_SIZE = 80                # 80x80 pixels
 DEFAULT_BIG_AVATAR_SIZE = 300           # 300x300 pixels
 
-DEFAULT_AVATAR_URL = 'user-noimage.png'
-
 THUMBNAIL_ALIASES = {
     '': {
         'avatar': {'size': (DEFAULT_AVATAR_SIZE, DEFAULT_AVATAR_SIZE), 'crop': True},
@@ -318,17 +316,9 @@ THUMBNAIL_ALIASES = {
     },
 }
 
-GRAVATAR_DEFAULT_OPTIONS = {
-    'default': DEFAULT_AVATAR_URL, # default avatar to show if there's no gravatar image
-    'size': DEFAULT_AVATAR_SIZE
-}
-
-try:
-    IN_DEVELOPMENT_SERVER = sys.argv[1] == 'runserver'
-except IndexError:
-    IN_DEVELOPMENT_SERVER = False
-
-ATTACHMENTS_TOKEN_SALT = "ATTACHMENTS_TOKEN_SALT"
+# GRAVATAR_DEFAULT_AVATAR = "img/user-noimage.png"
+GRAVATAR_DEFAULT_AVATAR = ""
+GRAVATAR_AVATAR_SIZE = DEFAULT_AVATAR_SIZE
 
 TAGS_PREDEFINED_COLORS = ["#fce94f", "#edd400", "#c4a000", "#8ae234",
                           "#73d216", "#4e9a06", "#d3d7cf", "#fcaf3e",
@@ -338,7 +328,6 @@ TAGS_PREDEFINED_COLORS = ["#fce94f", "#edd400", "#c4a000", "#8ae234",
                           "#2e3436",]
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
-
 TEST_RUNNER="django.test.runner.DiscoverRunner"
 
 if "test" in sys.argv:

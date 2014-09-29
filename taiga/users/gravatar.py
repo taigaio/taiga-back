@@ -16,6 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import hashlib
+import copy
+
 from urllib.parse import urlencode
 
 from django.conf import settings
@@ -30,16 +32,22 @@ def get_gravatar_url(email: str, **options) -> str:
     :param options: Additional options to gravatar.
     - `default` defines what image url to show if no gravatar exists
     - `size` defines the size of the avatar.
-    By default the `settings.GRAVATAR_DEFAULT_OPTIONS` are used.
 
     :return: Gravatar url.
     """
-    defaults = settings.GRAVATAR_DEFAULT_OPTIONS.copy()
-    default = defaults.get("default", None)
-    if default:
-        defaults["default"] = static(default)
-    defaults.update(options)
+
+    params = copy.copy(options)
+
+    default_avatar = getattr(settings, "GRAVATAR_DEFAULT_AVATAR", None)
+    default_size = getattr(settings, "GRAVATAR_AVATAR_SIZE", None)
+
+    if default_avatar:
+        params["default"] = static(default)
+
+    if default_size:
+        params["size"] = default_size
+
     email_hash = hashlib.md5(email.lower().encode()).hexdigest()
-    url = GRAVATAR_BASE_URL.format(email_hash, urlencode(defaults))
+    url = GRAVATAR_BASE_URL.format(email_hash, urlencode(params))
 
     return url

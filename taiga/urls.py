@@ -27,18 +27,21 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 ]
 
-
-def mediafiles_urlpatterns():
+def mediafiles_urlpatterns(prefix):
     """
     Method for serve media files with runserver.
     """
+    import re
     from django.views.static import serve
+
     return [
-        url(r'^%s(?P<path>.*)$' % 'media', serve,
+        url(r'^%s(?P<path>.*)$' % re.escape(prefix.lstrip('/')), serve,
             {'document_root': settings.MEDIA_ROOT})
     ]
 
+if settings.DEBUG:
+    # Hardcoded only for development server
+    urlpatterns += staticfiles_urlpatterns(prefix="/static/")
+    urlpatterns += mediafiles_urlpatterns(prefix="/media/")
 
-urlpatterns += staticfiles_urlpatterns(prefix="/static/")
-urlpatterns += mediafiles_urlpatterns()
 handler500 = "taiga.base.api.views.api_server_error"
