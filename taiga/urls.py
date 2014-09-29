@@ -32,11 +32,6 @@ def mediafiles_urlpatterns():
     """
     Method for serve media files with runserver.
     """
-
-    _media_url = settings.MEDIA_URL
-    if _media_url.startswith('/'):
-        _media_url = _media_url[1:]
-
     from django.views.static import serve
     return [
         url(r'^%s(?P<path>.*)$' % 'media', serve,

@@ -99,7 +99,7 @@ MEDIA_URL = "http://localhost:8000/media/"
 
 # Static url is not widelly used by taiga (only
 # if admin is activated).
-STATIC_URL = "/static/"
+STATIC_URL = "http://localhost:8000/static/"
 ADMIN_MEDIA_PREFIX = "/static/admin/"
 
 # Static configuration.
@@ -309,7 +309,7 @@ SOUTH_MIGRATION_MODULES = {
 DEFAULT_AVATAR_SIZE = 80                # 80x80 pixels
 DEFAULT_BIG_AVATAR_SIZE = 300           # 300x300 pixels
 
-DEFAULT_AVATAR_URL = ''
+DEFAULT_AVATAR_URL = 'user-noimage.png'
 
 THUMBNAIL_ALIASES = {
     '': {
@@ -345,4 +345,3 @@ if "test" in sys.argv:
     print ("\033[1;91mNo django tests.\033[0m")
     print ("Try: \033[1;33mpy.test\033[0m")
     sys.exit(0)
-
