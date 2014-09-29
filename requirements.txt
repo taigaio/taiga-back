@@ -19,9 +19,10 @@ Markdown==2.4.1
 fn==0.2.13
 diff-match-patch==20121119
 requests==2.4.1
-
-# Comment it if you are using python >= 3.4
-enum34==1.0
 easy-thumbnails==2.1
 celery==3.1.12
 redis==2.10.3
+
+# Comment it if you are using python >= 3.4
+enum34==1.0
+
