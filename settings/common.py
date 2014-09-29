@@ -193,6 +193,7 @@ INSTALLED_APPS = [
     "taiga.timeline",
     "taiga.mdrender",
     "taiga.export_import",
+    "taiga.feedback",
 
     "rest_framework",
     "djmail",
@@ -322,6 +323,11 @@ TAGS_PREDEFINED_COLORS = ["#fce94f", "#edd400", "#c4a000", "#8ae234",
                           "#204a87", "#888a85", "#ad7fa8", "#75507b",
                           "#5c3566", "#ef2929", "#cc0000", "#a40000",
                           "#2e3436",]
+
+# Feedback module settings
+FEEDBACK_ENABLED = True
+FEEDBACK_EMAIL = "support@taiga.io"
+
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"
