@@ -190,19 +190,19 @@ class Command(BaseCommand):
             project.save()
 
 
-    def create_attachment(self, object, order):
-        attachment = Attachment.objects.create(project=object.project,
-                                               content_type=ContentType.objects.get_for_model(object.__class__),
-                                               content_object=object,
+    def create_attachment(self, obj, order):
+        attached_file = self.sd.file_from_directory(*ATTACHMENT_SAMPLE_DATA)
+        membership = self.sd.db_object_from_queryset(obj.project.memberships
+                                                     .filter(user__isnull=False))
+        attachment = Attachment.objects.create(project=obj.project,
+                                               name=path.basename(attached_file.name).lower(),
+                                               size=attached_file.size,
+                                               content_object=obj,
                                                order=order,
+                                               owner=membership.user,
                                                is_deprecated=self.sd.boolean(),
                                                description=self.sd.words(3, 12),
-                                               object_id=object.id,
-                                               owner=self.sd.db_object_from_queryset(
-                                                     object.project.memberships.filter(user__isnull=False)).user,
-                                               attached_file=self.sd.file_from_directory(
-                                                                  *ATTACHMENT_SAMPLE_DATA))
-
+                                               attached_file=attached_file)
         return attachment
 
     def create_wiki(self, project, slug):
