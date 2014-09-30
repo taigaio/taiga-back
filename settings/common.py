@@ -252,12 +252,7 @@ LOGGING = {
             "handlers": ["console"],
             "level": "DEBUG",
             "propagate": False,
-        },
-        "taiga.domains": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
-        },
+        }
     }
 }
 
@@ -276,7 +271,6 @@ AUTHENTICATION_BACKENDS = (
 )
 
 ANONYMOUS_USER_ID = -1
-GRAPPELLI_INDEX_DASHBOARD = "taiga.dashboard.CustomIndexDashboard"
 
 MAX_SEARCH_RESULTS = 100
 

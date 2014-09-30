@@ -42,9 +42,6 @@ class RolePoints(models.Model):
         verbose_name_plural = "role points"
         unique_together = ("user_story", "role")
         ordering = ["user_story", "role"]
-        permissions = (
-            ("view_rolepoints", "Can view role points"),
-        )
 
     def __str__(self):
         return "{}: {}".format(self.role.name, self.points.name)
@@ -105,10 +102,6 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
         verbose_name = "user story"
         verbose_name_plural = "user stories"
         ordering = ["project", "backlog_order", "ref"]
-        #unique_together = ("ref", "project")
-        permissions = (
-            ("view_userstory", "Can view user story"),
-        )
 
     def save(self, *args, **kwargs):
         if not self._importing or not self.modified_date:
