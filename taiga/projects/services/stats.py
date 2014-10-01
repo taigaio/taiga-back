@@ -193,7 +193,11 @@ def get_stats_for_project_issues(project):
 
 def get_stats_for_project(project):
     closed_points = sum(project.closed_points.values())
-    speed = closed_points / project.milestones.filter(closed=True).count()
+    closed_milestones = project.milestones.filter(closed=True).count()
+    speed = 0
+    if closed_milestones != 0:
+        speed = closed_points / closed_milestones
+
     project_stats = {
         'name': project.name,
         'total_milestones': project.total_milestones,
