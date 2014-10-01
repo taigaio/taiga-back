@@ -27,7 +27,7 @@ Just execute these commands in your virtualenv(wrapper):
     python manage.py sample_data
 
 
-Ttaiga only runs with python 3.3+.
+Taiga only runs with python 3.3+.
 
 Initial auth data: admin/123123
 
