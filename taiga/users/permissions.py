@@ -27,7 +27,7 @@ class IsTheSameUser(PermissionComponent):
 class UserPermission(TaigaResourcePermission):
     enought_perms = IsSuperUser()
     global_perms = None
-    retrieve_perms = AllowAny()
+    retrieve_perms = IsTheSameUser()
     update_perms = IsTheSameUser()
     destroy_perms = IsTheSameUser()
     list_perms = AllowAny()

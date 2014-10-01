@@ -54,8 +54,7 @@ class MembersFilterBackend(BaseFilterBackend):
                 return queryset.filter(Q(memberships__project=project) | Q(id=project.owner.id)).distinct()
             else:
                 raise exc.PermissionDenied(_("You don't have permisions to see this project users."))
-        else:
-            return queryset
+        return []
 
 
 class UsersViewSet(ModelCrudViewSet):
