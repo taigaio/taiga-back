@@ -44,7 +44,7 @@ def test_user_retrieve(client, data):
     ]
 
     results = helper_test_http_method(client, 'get', url, None, users)
-    assert results == [200, 200, 200, 200]
+    assert results == [401, 200, 403, 200]
 
 
 def test_user_update(client, data):
@@ -82,21 +82,21 @@ def test_user_list(client, data):
 
     response = client.get(url)
     users_data = json.loads(response.content.decode('utf-8'))
-    assert len(users_data) == 3
+    assert len(users_data) == 0
     assert response.status_code == 200
 
     client.login(data.registered_user)
 
     response = client.get(url)
     users_data = json.loads(response.content.decode('utf-8'))
-    assert len(users_data) == 3
+    assert len(users_data) == 0
     assert response.status_code == 200
 
     client.login(data.other_user)
 
     response = client.get(url)
     users_data = json.loads(response.content.decode('utf-8'))
-    assert len(users_data) == 3
+    assert len(users_data) == 0
     assert response.status_code == 200
 
     client.login(data.superuser)

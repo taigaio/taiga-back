@@ -54,6 +54,10 @@ class MembersFilterBackend(BaseFilterBackend):
                 return queryset.filter(Q(memberships__project=project) | Q(id=project.owner.id)).distinct()
             else:
                 raise exc.PermissionDenied(_("You don't have permisions to see this project users."))
+
+        if request.user.is_superuser:
+            return queryset
+
         return []
 
 
@@ -61,10 +65,20 @@ class UsersViewSet(ModelCrudViewSet):
     permission_classes = (permissions.UserPermission,)
     serializer_class = serializers.UserSerializer
     queryset = models.User.objects.all()
-    filter_backends = (MembersFilterBackend,)
 
     def create(self, *args, **kwargs):
         raise exc.NotSupported()
+
+    def list(self, request, *args, **kwargs):
+        self.object_list = MembersFilterBackend().filter_queryset(request, self.get_queryset(), self)
+
+        page = self.paginate_queryset(self.object_list)
+        if page is not None:
+            serializer = self.get_pagination_serializer(page)
+        else:
+            serializer = self.get_serializer(self.object_list, many=True)
+
+        return Response(serializer.data)
 
     @list_route(methods=["POST"])
     def password_recovery(self, request, pk=None):
