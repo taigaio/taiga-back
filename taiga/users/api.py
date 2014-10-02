@@ -262,7 +262,7 @@ class UsersViewSet(ModelCrudViewSet):
         user = self.get_object()
         self.check_permissions(request, "destroy", user)
         user.username = slugify_uniquely("deleted-user", models.User, slugfield="username")
-        user.email = "deleted-user@taiga.io"
+        user.email = "{}@taiga.io".format(user.username)
         user.is_active = False
         user.full_name = "Deleted user"
         user.color = ""
