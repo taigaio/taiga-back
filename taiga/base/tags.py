@@ -18,8 +18,6 @@
 import re
 from functools import partial
 
-import six
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -106,7 +104,7 @@ def _tags_filter(**filters_map):
         else:
             qs = model_or_qs
 
-        for filter_name, filter_value in six.iteritems(filters):
+        for filter_name, filter_value in filters.items():
             try:
                 filter = get_filter(filter_name) or get_filter_matching(filter_name)
             except (LookupError, AttributeError):
