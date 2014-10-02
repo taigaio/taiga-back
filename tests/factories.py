@@ -93,6 +93,15 @@ class PointsFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
+class RolePointsFactory(Factory):
+    class Meta:
+        model = "userstories.RolePoints"
+        strategy = factory.CREATE_STRATEGY
+
+    user_story = factory.SubFactory("tests.factories.UserStoryFactory")
+    role = factory.SubFactory("tests.factories.RoleFactory")
+    points = factory.SubFactory("tests.factories.PointsFactory")
+
 
 class UserStoryAttachmentFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
