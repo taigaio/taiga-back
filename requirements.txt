@@ -18,6 +18,7 @@ Markdown==2.4.1
 fn==0.2.13
 diff-match-patch==20121119
 requests==2.4.1
+Unidecode==0.04.16
 
 # Comment it if you are using python >= 3.4
 enum34==1.0
