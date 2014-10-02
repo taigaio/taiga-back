@@ -192,16 +192,23 @@ def get_stats_for_project_issues(project):
 
 
 def get_stats_for_project(project):
+    closed_points = sum(project.closed_points.values())
+    closed_milestones = project.milestones.filter(closed=True).count()
+    speed = 0
+    if closed_milestones != 0:
+        speed = closed_points / closed_milestones
+
     project_stats = {
         'name': project.name,
         'total_milestones': project.total_milestones,
         'total_points': project.total_story_points,
-        'closed_points': sum(project.closed_points.values()),
+        'closed_points': closed_points,
         'closed_points_per_role': project.closed_points,
         'defined_points': sum(project.defined_points.values()),
         'defined_points_per_role': project.defined_points,
         'assigned_points': sum(project.assigned_points.values()),
         'assigned_points_per_role': project.assigned_points,
-        'milestones': _get_milestones_stats_for_backlog(project)
+        'milestones': _get_milestones_stats_for_backlog(project),
+        'speed': speed,
     }
     return project_stats
