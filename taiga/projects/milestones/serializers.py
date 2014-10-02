@@ -24,7 +24,7 @@ from . import models
 
 
 class MilestoneSerializer(serializers.ModelSerializer):
-    user_stories = UserStorySerializer(many=True, required=False)
+    user_stories = UserStorySerializer(many=True, required=False, read_only=True)
     total_points = serializers.SerializerMethodField("get_total_points")
     closed_points = serializers.SerializerMethodField("get_closed_points")
     client_increment_points = serializers.SerializerMethodField("get_client_increment_points")
@@ -32,7 +32,7 @@ class MilestoneSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Milestone
-        read_only_fields = ('id', 'created_date', 'modified_date')
+        read_only_fields = ("id", "created_date", "modified_date")
 
     def get_total_points(self, obj):
         return sum(obj.total_points.values())
