@@ -118,7 +118,7 @@ class ProjectDefaults(models.Model):
 
 
 class Project(ProjectDefaults, TaggedMixin, models.Model):
-    name = models.CharField(max_length=250, unique=True, null=False, blank=False,
+    name = models.CharField(max_length=250, null=False, blank=False,
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
                             verbose_name=_("slug"))
@@ -189,7 +189,8 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
             self.modified_date = timezone.now()
 
         if not self.slug:
-            base_slug = slugify_uniquely(self.name, self.__class__)
+            base_name = "{}-{}".format(self.owner.username, self.name)
+            base_slug = slugify_uniquely(base_name, self.__class__)
             slug = base_slug
             for i in arithmetic_progression():
                 if not type(self).objects.filter(slug=slug).exists() or i > 100:

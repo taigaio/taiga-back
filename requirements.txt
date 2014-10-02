@@ -22,7 +22,7 @@ requests==2.4.1
 easy-thumbnails==2.1
 celery==3.1.12
 redis==2.10.3
+Unidecode==0.04.16
 
 # Comment it if you are using python >= 3.4
 enum34==1.0
-

@@ -19,6 +19,8 @@ from django.template.defaultfilters import slugify
 
 import time
 
+from unidecode import unidecode
+
 
 def slugify_uniquely(value, model, slugfield="slug"):
     """
@@ -26,13 +28,13 @@ def slugify_uniquely(value, model, slugfield="slug"):
     """
 
     suffix = 0
-    potential = base = slugify(value)
+    potential = base = slugify(unidecode(value))
     if len(potential) == 0:
         potential = 'null'
     while True:
         if suffix:
             potential = "-".join([base, str(suffix)])
-        if not model.objects.filter(**{slugfield: potential}).count():
+        if not model.objects.filter(**{slugfield: potential}).exists():
             return potential
         suffix += 1
 
