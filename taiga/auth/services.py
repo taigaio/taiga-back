@@ -63,20 +63,25 @@ def send_private_register_email(user, **kwargs) -> bool:
     return bool(email.send())
 
 
-def is_user_already_registred(*, username:str, email:str, github_id:int=None) -> bool:
+def is_user_already_registered(*, username:str, email:str, github_id:int=None) -> (bool, str):
     """
     Checks if a specified user is already registred.
+
+    Returns a tuple containing a boolean value that indicates if the user exists
+    and in case he does whats the duplicated attribute
     """
 
     user_model = apps.get_model("users", "User")
-    qs = user_model.objects.select_for_update()
+    if user_model.objects.filter(username=username):
+        return (True, _("Username is already in use."))
 
-    or_expr = Q(username=username) | Q(email=email)
-    if github_id:
-        or_expr = or_expr | Q(github_id=github_id)
+    if user_model.objects.filter(email=email):
+        return (True, _("Email is already in use."))
 
-    qs = qs.filter(or_expr)
-    return qs.exists()
+    if github_id and user_model.objects.filter(github_id=github_id):
+        return (True, _("Github id is already in use"))
+
+    return (False, None)
 
 
 def get_membership_by_token(token:str):
@@ -106,8 +111,9 @@ def public_register(username:str, password:str, email:str, full_name:str):
     :returns: User
     """
 
-    if is_user_already_registred(username=username, email=email):
-        raise exc.IntegrityError("User is already registred.")
+    is_registered, reason = is_user_already_registered(username=username, email=email)
+    if is_registered:
+        raise exc.WrongArguments(reason)
 
     user_model = apps.get_model("users", "User")
     user = user_model(username=username,
@@ -117,7 +123,7 @@ def public_register(username:str, password:str, email:str, full_name:str):
     try:
         user.save()
     except IntegrityError:
-        raise exc.IntegrityError("User is already register.")
+        raise exc.WrongArguments("User is already register.")
 
     # send_public_register_email(user)
     return user
@@ -153,8 +159,9 @@ def private_register_for_new_user(token:str, username:str, email:str,
     Given a inviation token, try register new user matching
     the invitation token.
     """
-    if is_user_already_registred(username=username, email=email):
-        raise exc.WrongArguments(_("Username or Email is already in use."))
+    is_registered, reason = is_user_already_registered(username=username, email=email)
+    if is_registered:
+        raise exc.WrongArguments(reason)
 
     user_model = apps.get_model("users", "User")
     user = user_model(username=username,
@@ -165,7 +172,7 @@ def private_register_for_new_user(token:str, username:str, email:str,
     try:
         user.save()
     except IntegrityError:
-        raise exc.IntegrityError(_("Error on creating new user."))
+        raise exc.WrongArguments(_("Error on creating new user."))
 
     membership = get_membership_by_token(token)
     membership.user = user
