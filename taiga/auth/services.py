@@ -69,12 +69,13 @@ def is_user_already_registred(*, username:str, email:str, github_id:int=None) ->
     """
 
     user_model = apps.get_model("users", "User")
+    qs = user_model.objects.select_for_update()
 
     or_expr = Q(username=username) | Q(email=email)
     if github_id:
         or_expr = or_expr | Q(github_id=github_id)
 
-    qs = user_model.objects.filter(or_expr)
+    qs = qs.filter(or_expr)
     return qs.exists()
 
 
