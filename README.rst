@@ -15,6 +15,8 @@ Taiga Backend
 Setup development environment
 -----------------------------
 
+*Taiga only runs with Python 3.3+.*
+
 Just execute these commands in your virtualenv(wrapper):
 
 .. code-block:: console
@@ -26,8 +28,6 @@ Just execute these commands in your virtualenv(wrapper):
     python manage.py loaddata initial_role
     python manage.py sample_data
 
-
-Taiga only runs with python 3.3+.
 
 Initial auth data: admin/123123
 
