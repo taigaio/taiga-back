@@ -37,18 +37,20 @@ def register_form():
             "type": "public"}
 
 
-def test_respond_201_if_domain_allows_public_registration(client, settings, register_form):
+def test_respond_201_when_public_registration_is_enabled(client, settings, register_form):
     settings.PUBLIC_REGISTER_ENABLED = True
     response = client.post(reverse("auth-register"), register_form)
     assert response.status_code == 201
 
 
-def test_respond_400_if_domain_does_not_allow_public_registration(client, register_form):
+def test_respond_400_when_public_registration_is_disabled(client, register_form, settings):
+    settings.PUBLIC_REGISTER_ENABLED = False
     response = client.post(reverse("auth-register"), register_form)
     assert response.status_code == 400
 
 
-def test_respond_201_with_invitation_if_domain_does_not_allows_public_registration(client, register_form):
+def test_respond_201_with_invitation_without_public_registration(client, register_form, settings):
+    settings.PUBLIC_REGISTER_ENABLED = False
     user = factories.UserFactory()
     membership = factories.MembershipFactory(user=user)
 
@@ -66,7 +68,8 @@ def test_respond_201_with_invitation_if_domain_does_not_allows_public_registrati
     assert response.status_code == 201, response.data
 
 
-def test_response_200_in_registration_with_github_account(client):
+def test_response_200_in_registration_with_github_account(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = False
     form = {"type": "github",
             "code": "xxxxxx"}
 
@@ -87,7 +90,8 @@ def test_response_200_in_registration_with_github_account(client):
         assert response.data["github_id"] == 1955
 
 
-def test_response_200_in_registration_with_github_account_in_a_project(client):
+def test_response_200_in_registration_with_github_account_in_a_project(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = False
     membership_model = apps.get_model("projects", "Membership")
     membership = factories.MembershipFactory(user=None)
     form = {"type": "github",
@@ -106,7 +110,8 @@ def test_response_200_in_registration_with_github_account_in_a_project(client):
         assert membership_model.objects.get(token=form["token"]).user.username == "mmcfly"
 
 
-def test_response_404_in_registration_with_github_account_in_a_project_with_invalid_token(client):
+def test_response_404_in_registration_with_github_in_a_project_with_invalid_token(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = False
     form = {"type": "github",
             "code": "xxxxxx",
             "token": "123456"}
@@ -122,7 +127,7 @@ def test_response_404_in_registration_with_github_account_in_a_project_with_inva
         assert response.status_code == 404
 
 
-def test_respond_400_If_username_is_invalid(client, settings, register_form):
+def test_respond_400_if_username_is_invalid(client, settings, register_form):
     settings.PUBLIC_REGISTER_ENABLED = True
 
     register_form.update({"username": "User Examp:/e"})
@@ -130,5 +135,18 @@ def test_respond_400_If_username_is_invalid(client, settings, register_form):
     assert response.status_code == 400
 
     register_form.update({"username": 300*"a"})
+    response = client.post(reverse("auth-register"), register_form)
+    assert response.status_code == 400
+
+
+def test_respond_400_if_username_or_email_is_duplicate(client, settings, register_form):
+    settings.PUBLIC_REGISTER_ENABLED = True
+
+    response = client.post(reverse("auth-register"), register_form)
+    assert response.status_code == 201
+
+
+    register_form["username"] = "username"
+    register_form["email"] = "ff@dd.com"
     response = client.post(reverse("auth-register"), register_form)
     assert response.status_code == 400

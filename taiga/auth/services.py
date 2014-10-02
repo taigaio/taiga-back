@@ -72,7 +72,7 @@ def is_user_already_registred(*, username:str, email:str, github_id:int=None) ->
 
     or_expr = Q(username=username) | Q(email=email)
     if github_id:
-        or_expr = or_expr | Q(email=email)
+        or_expr = or_expr | Q(github_id=github_id)
 
     qs = user_model.objects.filter(or_expr)
     return qs.exists()
@@ -113,7 +113,10 @@ def public_register(username:str, password:str, email:str, full_name:str):
                       email=email,
                       full_name=full_name)
     user.set_password(password)
-    user.save()
+    try:
+        user.save()
+    except IntegrityError:
+        raise exc.IntegrityError("User is already register.")
 
     # send_public_register_email(user)
     return user
@@ -132,8 +135,11 @@ def private_register_for_existing_user(token:str, username:str, password:str):
     user = get_and_validate_user(username=username, password=password)
     membership = get_membership_by_token(token)
 
-    membership.user = user
-    membership.save(update_fields=["user"])
+    try:
+        membership.user = user
+        membership.save(update_fields=["user"])
+    except IntegrityError:
+        raise exc.IntegrityError("Membership with user is already exists.")
 
     # send_private_register_email(user)
     return user
