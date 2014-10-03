@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from contextlib import suppress
+from django.core.exceptions import ObjectDoesNotExist
 
 ####################################
 # Signals for cached prev task
@@ -84,7 +86,8 @@ def _try_to_close_or_open_milestone_when_create_or_edit_task(instance):
 
 
 def _try_to_close_milestone_when_delete_task(instance):
-    from taiga.projects.milestones import services as milestone_service
+    from taiga.projects.milestones import services
 
-    if instance.milestone_id and milestone_service.calculate_milestone_is_closed(instance.milestone):
-            milestone_service.close_milestone(instance.milestone)
+    with suppress(ObjectDoesNotExist):
+        if instance.milestone_id and services.calculate_milestone_is_closed(instance.milestone):
+            services.close_milestone(instance.milestone)
