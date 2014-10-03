@@ -18,6 +18,8 @@ import hashlib
 import os
 import os.path as path
 
+from unidecode import unidecode
+
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -25,12 +27,16 @@ from django.contrib.contenttypes import generic
 from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.translation import ugettext_lazy as _
+from django.template.defaultfilters import slugify
 
 from taiga.base.utils.iterators import split_by_n
 
 
 def get_attachment_file_path(instance, filename):
     basename = path.basename(filename).lower()
+    base, ext = path.splitext(basename)
+    base = slugify(unidecode(base))
+    basename = "".join([base, ext])
 
     hs = hashlib.sha256()
     hs.update(force_bytes(timezone.now().isoformat()))
