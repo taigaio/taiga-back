@@ -39,4 +39,4 @@ Configuration
 
 Configuration is on the `taiga-back/settings/local.py` file.
 
-After modifing the configuration, a `circusctl restart taiga` should be ran.
+After modifing the configuration, you have to restart taiga-back.
