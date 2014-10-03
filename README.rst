@@ -33,3 +33,10 @@ Initial auth data: admin/123123
 
 If you want a complete environment for production usage, you can try the taiga bootstrapping
 scripts https://github.com/taigaio/taiga-scripts (warning: alpha state)
+
+Configuration
+-------------
+
+Configuration is on the `taiga-back/settings/local.py` file.
+
+After modifing the configuration, you have to restart taiga-back.
