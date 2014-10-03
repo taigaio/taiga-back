@@ -19,7 +19,7 @@ python manage.py loaddata initial_role
 python manage.py sample_data
 ```
 
-Taiga only runs with python 3.3+.
+Taiga only runs with python 3.4+
 
 Initial auth data: admin/123123
 

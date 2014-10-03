@@ -15,12 +15,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from tests import factories as f
-
-from taiga.projects.userstories.models import UserStory
 
 import pytest
 
+from taiga.projects.userstories.models import UserStory
+from taiga.projects.tasks.models import Task
+
+from tests import factories as f
 pytestmark = pytest.mark.django_db
 
 
@@ -191,7 +192,33 @@ def test_us_delete_task_then_all_closed(data):
     assert data.user_story1.is_closed is True
 
 
-def test_us_change_task_us_then_all_closed(data):
+def test_auto_close_userstory_with_milestone_when_task_and_milestone_are_removed(data):
+    milestone = f.MilestoneFactory.create()
+
+    data.task1.status = data.task_closed_status
+    data.task1.milestone = milestone
+    data.task1.save()
+    data.task2.status = data.task_closed_status
+    data.task2.milestone = milestone
+    data.task2.save()
+    data.task3.status = data.task_open_status
+    data.task3.milestone = milestone
+    data.task3.save()
+    data.user_story1.milestone = milestone
+    data.user_story1.save()
+
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+
+    data.task3 = Task.objects.get(pk=data.task3.pk)
+    milestone.delete()
+    data.task3.delete()
+
+    data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
+    assert data.user_story1.is_closed is False
+
+
+def test_auto_close_us_when_all_tasks_are_changed_to_close_status(data):
     data.task1.status = data.task_closed_status
     data.task1.save()
     data.task2.status = data.task_closed_status
