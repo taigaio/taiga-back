@@ -1,0 +1,37 @@
+{% extends "emails/base.jinja" %}
+
+{% block body %}
+<table border="0" width="100%" cellpadding="4" cellspacing="10" class="table-body" style="border-collapse: collapse;">
+    <tr>
+        <td valign="top" style="border-top: 1px solid gray; border-bottom: 1px solid gray;">
+            <strong>From:</strong>
+        </td>
+        <td style="border-top: 1px solid gray; border-bottom: 1px solid gray;">
+            {{ feedback_entry.full_name }} [{{ feedback_entry.email }}]
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" style="border-top: 1px solid gray; border-bottom: 1px solid gray;">
+            <strong>Comment:</strong>
+        </td>
+        <td style="border-top: 1px solid gray; border-bottom: 1px solid gray;">
+            {{ feedback_entry.comment|linebreaks }}
+        </td>
+    </tr>
+    {% if extra %}
+    <tr>
+        <td valign="top" style="border-top: 1px solid gray; border-bottom: 1px solid gray;">
+            <strong>Extra:</strong>
+        </td>
+        <td style="border-top: 1px solid gray; border-bottom: 1px solid gray;">
+            <dl>
+            {% for k, v in extra.items() %}
+                <dt>{{ k }}</dt>
+                <dd>{{ v }}</dd>
+            {% endfor %}
+            </dl>
+        </td>
+    </tr
+    {% endif %}>
+</table>
+{% endblock %}

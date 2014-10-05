@@ -1,0 +1,11 @@
+---------
+- From: {{ feedback_entry.full_name }} [{{ feedback_entry.email }}]
+---------
+- Comment:
+{{ feedback_entry.comment }}
+---------{% if extra %}
+- Extra:
+{% for k, v in extra.items() %}
+    - {{ k }}: {{ v }}
+{% endfor %}
+{% endif %}----------

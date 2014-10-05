@@ -128,4 +128,11 @@ router.register(r"wiki-links", WikiLinkViewSet, base_name="wiki-links")
 
 # Notify policies
 from taiga.projects.notifications.api import NotifyPolicyViewSet
+
 router.register(r"notify-policies", NotifyPolicyViewSet, base_name="notifications")
+
+
+# feedback
+#   - see taiga.feedback.routers and taiga.feedback.apps
+
+
