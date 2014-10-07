@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-def make_diff(first:dict, second:dict, not_found_value=None) -> dict:
+def make_diff(first:dict, second:dict, not_found_value=None, excluded_keys:tuple=()) -> dict:
     """
     Compute a diff between two dicts.
     """
@@ -37,6 +37,11 @@ def make_diff(first:dict, second:dict, not_found_value=None) -> dict:
     for key, value in list(diff.items()):
         frst, scnd = value
         if frst == scnd:
+            del diff[key]
+
+    # Removed excluded keys
+    for key in excluded_keys:
+        if key in diff:
             del diff[key]
 
     return diff

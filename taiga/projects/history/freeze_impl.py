@@ -162,6 +162,7 @@ def extract_attachments(obj) -> list:
     for attach in obj.attachments.all():
         yield {"id": attach.id,
                "filename": os.path.basename(attach.attached_file.name),
+               "url": attach.attached_file.url,
                "description": attach.description,
                "is_deprecated": attach.is_deprecated,
                "description": attach.description,
