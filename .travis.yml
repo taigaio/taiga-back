@@ -1,6 +1,6 @@
 language: python
 python:
-  - "3.3"
+  - "3.4"
 services:
   - rabbitmq # will start rabbitmq-server
 addons:

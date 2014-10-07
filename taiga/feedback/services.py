@@ -1,4 +1,6 @@
 # Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -12,19 +14,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db import transaction
-from django.db import connection
+from django.conf import settings
 
-from . import base
+from djmail.template_mail import MagicMailBuilder
 
 
-class EventsPushBackend(base.BaseEventsPushBackend):
-    @transaction.atomic
-    def emit_event(self, message:str, *, routing_key:str, channel:str="events"):
-        routing_key = routing_key.replace(".", "__")
-        channel = "{channel}_{routing_key}".format(channel=channel,
-                                                   routing_key=routing_key)
-        sql = "NOTIFY {channel}, %s".format(channel=channel)
-        cursor = connection.cursor()
-        cursor.execute(sql, [message])
-        cursor.close()
+def send_feedback(feedback_entry, extra):
+    support_email = settings.FEEDBACK_EMAIL
+
+    if support_email:
+        mbuilder = MagicMailBuilder()
+        email = mbuilder.feedback_notification(support_email, {"feedback_entry": feedback_entry,
+                                                               "extra": extra})
+        email.send()

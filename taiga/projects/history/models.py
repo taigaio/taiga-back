@@ -111,6 +111,15 @@ class HistoryEntry(models.Model):
                 if description_diff:
                     key = "description_diff"
                     value = (None, description_diff)
+            elif key == "content":
+                content_diff = get_diff_of_htmls(
+                    self.diff[key][0],
+                    self.diff[key][1]
+                )
+
+                if content_diff:
+                    key = "content_diff"
+                    value = (None, content_diff)
             elif key in users_keys:
                 value = [resolve_value("users", x) for x in self.diff[key]]
             elif key == "watchers":

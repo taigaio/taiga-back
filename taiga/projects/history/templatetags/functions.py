@@ -23,6 +23,7 @@ register = library.Library()
 
 EXTRA_FIELD_VERBOSE_NAMES = {
     "description_diff": _("description"),
+    "content_diff": _("content")
 }
 
 

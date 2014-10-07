@@ -88,6 +88,8 @@ DJMAIL_TEMPLATE_EXTENSION = "jinja"
 
 # Events backend
 EVENTS_PUSH_BACKEND = "taiga.events.backends.postgresql.EventsPushBackend"
+# EVENTS_PUSH_BACKEND = "taiga.events.backends.rabbitmq.EventsPushBackend"
+# EVENTS_PUSH_BACKEND_OPTIONS = {"url": "//guest:guest@127.0.0.1/"}
 
 # Message System
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
@@ -99,8 +101,8 @@ MEDIA_URL = "http://localhost:8000/media/"
 
 # Static url is not widelly used by taiga (only
 # if admin is activated).
-STATIC_URL = "/static/"
-ADMIN_MEDIA_PREFIX = "/static/admin/"
+STATIC_URL = "http://localhost:8000/static/"
+ADMIN_MEDIA_PREFIX = "http://localhost:8000/static/admin/"
 
 # Static configuration.
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -191,6 +193,7 @@ INSTALLED_APPS = [
     "taiga.timeline",
     "taiga.mdrender",
     "taiga.export_import",
+    "taiga.feedback",
 
     "rest_framework",
     "djmail",
@@ -250,12 +253,7 @@ LOGGING = {
             "handlers": ["console"],
             "level": "DEBUG",
             "propagate": False,
-        },
-        "taiga.domains": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
-        },
+        }
     }
 }
 
@@ -274,7 +272,6 @@ AUTHENTICATION_BACKENDS = (
 )
 
 ANONYMOUS_USER_ID = -1
-GRAPPELLI_INDEX_DASHBOARD = "taiga.dashboard.CustomIndexDashboard"
 
 MAX_SEARCH_RESULTS = 100
 
@@ -309,8 +306,6 @@ SOUTH_MIGRATION_MODULES = {
 DEFAULT_AVATAR_SIZE = 80                # 80x80 pixels
 DEFAULT_BIG_AVATAR_SIZE = 300           # 300x300 pixels
 
-DEFAULT_AVATAR_URL = ''
-
 THUMBNAIL_ALIASES = {
     '': {
         'avatar': {'size': (DEFAULT_AVATAR_SIZE, DEFAULT_AVATAR_SIZE), 'crop': True},
@@ -318,17 +313,9 @@ THUMBNAIL_ALIASES = {
     },
 }
 
-GRAVATAR_DEFAULT_OPTIONS = {
-    'default': DEFAULT_AVATAR_URL, # default avatar to show if there's no gravatar image
-    'size': DEFAULT_AVATAR_SIZE
-}
-
-try:
-    IN_DEVELOPMENT_SERVER = sys.argv[1] == 'runserver'
-except IndexError:
-    IN_DEVELOPMENT_SERVER = False
-
-ATTACHMENTS_TOKEN_SALT = "ATTACHMENTS_TOKEN_SALT"
+# GRAVATAR_DEFAULT_AVATAR = "img/user-noimage.png"
+GRAVATAR_DEFAULT_AVATAR = ""
+GRAVATAR_AVATAR_SIZE = DEFAULT_AVATAR_SIZE
 
 TAGS_PREDEFINED_COLORS = ["#fce94f", "#edd400", "#c4a000", "#8ae234",
                           "#73d216", "#4e9a06", "#d3d7cf", "#fcaf3e",
@@ -337,12 +324,15 @@ TAGS_PREDEFINED_COLORS = ["#fce94f", "#edd400", "#c4a000", "#8ae234",
                           "#5c3566", "#ef2929", "#cc0000", "#a40000",
                           "#2e3436",]
 
-# NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
+# Feedback module settings
+FEEDBACK_ENABLED = True
+FEEDBACK_EMAIL = "support@taiga.io"
 
+
+# NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"
 
 if "test" in sys.argv:
     print ("\033[1;91mNo django tests.\033[0m")
     print ("Try: \033[1;33mpy.test\033[0m")
     sys.exit(0)
-

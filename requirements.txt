@@ -7,6 +7,7 @@ psycopg2==2.5.4
 pillow==2.5.3
 pytz==2014.4
 six==1.8.0
+amqp==1.4.6
 djmail==0.9
 django-pgjson==0.2.0
 djorm-pgarray==1.0.4
@@ -25,3 +26,7 @@ enum34==1.0
 easy-thumbnails==2.1
 celery==3.1.12
 redis==2.10.3
+Unidecode==0.04.16
+
+# Comment it if you are using python >= 3.4
+enum34==1.0

@@ -14,11 +14,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import random
+import datetime
+
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.timezone import now
 from django.conf import settings
-
 from django.contrib.webdesign import lorem_ipsum
 from django.contrib.contenttypes.models import ContentType
 
@@ -34,9 +36,8 @@ from taiga.projects.wiki.models import *
 from taiga.projects.attachments.models import *
 
 from taiga.projects.history.services import take_snapshot
+from taiga.events.apps import disconnect_events_signals
 
-import random
-import datetime
 
 ATTACHMENT_SAMPLE_DATA = [
     "taiga/projects/management/commands/sample_data",
@@ -102,6 +103,9 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
+        # Prevent events emission when sample data is running
+        disconnect_events_signals()
+
         self.users = [User.objects.get(is_superuser=True)]
 
         # create users
@@ -190,19 +194,19 @@ class Command(BaseCommand):
             project.save()
 
 
-    def create_attachment(self, object, order):
-        attachment = Attachment.objects.create(project=object.project,
-                                               content_type=ContentType.objects.get_for_model(object.__class__),
-                                               content_object=object,
+    def create_attachment(self, obj, order):
+        attached_file = self.sd.file_from_directory(*ATTACHMENT_SAMPLE_DATA)
+        membership = self.sd.db_object_from_queryset(obj.project.memberships
+                                                     .filter(user__isnull=False))
+        attachment = Attachment.objects.create(project=obj.project,
+                                               name=path.basename(attached_file.name).lower(),
+                                               size=attached_file.size,
+                                               content_object=obj,
                                                order=order,
+                                               owner=membership.user,
                                                is_deprecated=self.sd.boolean(),
                                                description=self.sd.words(3, 12),
-                                               object_id=object.id,
-                                               owner=self.sd.db_object_from_queryset(
-                                                     object.project.memberships.filter(user__isnull=False)).user,
-                                               attached_file=self.sd.file_from_directory(
-                                                                  *ATTACHMENT_SAMPLE_DATA))
-
+                                               attached_file=attached_file)
         return attachment
 
     def create_wiki(self, project, slug):
