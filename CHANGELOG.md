@@ -1,5 +1,4 @@
-<a name="1.0.0"></a>
-# 1.0.0 taiga-back (2014-10-07)
+# 1.0.0 (2014-10-07)
 
 ### Misc
 - Lots of small and not so small bugfixes
