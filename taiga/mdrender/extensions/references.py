@@ -52,7 +52,7 @@ class TaigaReferencesPattern(Pattern):
         obj_ref = m.group(2)
 
         instance = get_instance_by_ref(self.project.id, obj_ref)
-        if instance is None:
+        if instance is None or instance.content_object is None:
             return "#{}".format(obj_ref)
 
         subject = instance.content_object.subject
