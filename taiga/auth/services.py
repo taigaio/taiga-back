@@ -36,7 +36,7 @@ from taiga.users.serializers import UserSerializer
 from taiga.users.services import get_and_validate_user
 
 from .backends import get_token_for_user
-
+from .signals import user_registered as user_registered_signal
 
 def send_public_register_email(user) -> bool:
     """
@@ -126,6 +126,7 @@ def public_register(username:str, password:str, email:str, full_name:str):
         raise exc.WrongArguments("User is already register.")
 
     # send_public_register_email(user)
+    user_registered_signal.send(sender=user.__class__, user=user)
     return user
 
 
@@ -177,6 +178,7 @@ def private_register_for_new_user(token:str, username:str, email:str,
     membership = get_membership_by_token(token)
     membership.user = user
     membership.save(update_fields=["user"])
+    user_registered_signal.send(sender=user.__class__, user=user)
 
     return user
 
@@ -201,6 +203,9 @@ def github_register(username:str, email:str, full_name:str, github_id:int, bio:s
         membership = get_membership_by_token(token)
         membership.user = user
         membership.save(update_fields=["user"])
+
+    if created:
+        user_registered_signal.send(sender=user.__class__, user=user)
 
     return user
 
