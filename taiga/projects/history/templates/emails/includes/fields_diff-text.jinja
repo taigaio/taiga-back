@@ -1,6 +1,8 @@
 {% set excluded_fields = [
     "description_diff",
-    "description_html"
+    "description_html",
+    "content_diff",
+    "content_html"
 ] %}
 {% for field_name, values in changed_fields.items() %}
     {% if field_name not in excluded_fields %}
