@@ -19,6 +19,7 @@ import os
 import os.path as path
 import random
 import re
+import uuid
 
 from django.db import models
 from django.dispatch import receiver
@@ -123,6 +124,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     github_id = models.IntegerField(null=True, blank=True, verbose_name=_("github ID"))
 
+    cancel_token = models.CharField(max_length=200, null=True, blank=True, default=None,
+                     verbose_name=_("cancel account token"))
+
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
@@ -146,6 +150,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         return self.full_name or self.username or self.email
 
+    def save(self, *args, **kwargs):
+        if not self.cancel_token:
+            self.cancel_token = str(uuid.uuid1())
+
+        super().save(*args, **kwargs)
 
 class Role(models.Model):
     name = models.CharField(max_length=200, null=False, blank=False,
