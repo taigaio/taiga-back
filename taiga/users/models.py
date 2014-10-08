@@ -156,6 +156,21 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         super().save(*args, **kwargs)
 
+    def cancel(self):
+        self.username = slugify_uniquely("deleted-user", User, slugfield="username")
+        self.email = "{}@taiga.io".format(self.username)
+        self.is_active = False
+        self.full_name = "Deleted user"
+        self.color = ""
+        self.bio = ""
+        self.default_language = ""
+        self.default_timezone = ""
+        self.colorize_tags = True
+        self.token = None
+        self.github_id = None
+        self.set_unusable_password()
+        self.save()
+
 class Role(models.Model):
     name = models.CharField(max_length=200, null=False, blank=False,
                             verbose_name=_("name"))

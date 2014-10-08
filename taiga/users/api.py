@@ -258,20 +258,25 @@ class UsersViewSet(ModelCrudViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @list_route(methods=["POST"])
+    def cancel(self, request, pk=None):
+        """
+        Cancel an account via token
+        """
+        serializer = serializers.CancelAccountSerializer(data=request.DATA, many=False)
+        if not serializer.is_valid():
+            raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
+
+        try:
+            user = models.User.objects.get(cancel_token=serializer.data["cancel_token"])
+        except models.User.DoesNotExist:
+            raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
+
+        user.cancel()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def destroy(self, request, pk=None):
         user = self.get_object()
         self.check_permissions(request, "destroy", user)
-        user.username = slugify_uniquely("deleted-user", models.User, slugfield="username")
-        user.email = "{}@taiga.io".format(user.username)
-        user.is_active = False
-        user.full_name = "Deleted user"
-        user.color = ""
-        user.bio = ""
-        user.default_language = ""
-        user.default_timezone = ""
-        user.colorize_tags = True
-        user.token = None
-        user.github_id = None
-        user.set_unusable_password()
-        user.save()
+        user.cancel()
         return Response(status=status.HTTP_204_NO_CONTENT)
