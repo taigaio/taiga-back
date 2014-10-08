@@ -37,9 +37,10 @@
 
                 {% for att in values['new']%}
                 <dd style="background: #eee; padding: 5px 15px; color: #444">
-                    <i>
-                        {{ att.filename|linebreaksbr }}  {% if att.description %}({{ att.description|linebreaksbr }}){% endif %}
-                    </i>
+                    <a href="{{ att.url }}" target="_blank" style="font-weight: bold; color: #444">
+                        {{ att.filename|linebreaksbr }}
+                    </a>
+                    {% if att.description %}<i>  {{ att.description|linebreaksbr }}</i>{% endif %}
                 </dd>
                 {% endfor %}
             {% endif %}
@@ -51,7 +52,9 @@
 
                 {% for att in values['changed'] %}
                 <dd style="background: #eee; padding: 5px 15px; color: #444">
-                    <b>{{ att.filename|linebreaksbr }}</b>
+                    <a href="{{ att.url }}" target="_blank" style="font-weight: bold; color: #444">
+                        {{ att.filename|linebreaksbr }}
+                    </a>
                     <ul>
                         {% if att.changes.is_deprecated %}
                             {% if att.changes.is_deprecated.1 %}
