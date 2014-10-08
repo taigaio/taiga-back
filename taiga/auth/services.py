@@ -38,28 +38,15 @@ from taiga.users.services import get_and_validate_user
 from .backends import get_token_for_user
 from .signals import user_registered as user_registered_signal
 
-def send_public_register_email(user) -> bool:
+def send_register_email(user) -> bool:
     """
-    Given a user, send public register welcome email
+    Given a user, send register welcome email
     message to specified user.
     """
 
     context = {"user": user}
     mbuilder = MagicMailBuilder()
-    email = mbuilder.public_register_user(user.email, context)
-    return bool(email.send())
-
-
-def send_private_register_email(user, **kwargs) -> bool:
-    """
-    Given a user, send private register welcome
-    email message to specified user.
-    """
-    context = {"user": user}
-    context.update(kwargs)
-
-    mbuilder = MagicMailBuilder()
-    email = mbuilder.private_register_user(user.email, context)
+    email = mbuilder.registered_user(user.email, context)
     return bool(email.send())
 
 
@@ -125,7 +112,7 @@ def public_register(username:str, password:str, email:str, full_name:str):
     except IntegrityError:
         raise exc.WrongArguments("User is already register.")
 
-    # send_public_register_email(user)
+    send_register_email(user)
     user_registered_signal.send(sender=user.__class__, user=user)
     return user
 
@@ -149,7 +136,7 @@ def private_register_for_existing_user(token:str, username:str, password:str):
     except IntegrityError:
         raise exc.IntegrityError("Membership with user is already exists.")
 
-    # send_private_register_email(user)
+    send_register_email(user)
     return user
 
 
@@ -178,6 +165,7 @@ def private_register_for_new_user(token:str, username:str, email:str,
     membership = get_membership_by_token(token)
     membership.user = user
     membership.save(update_fields=["user"])
+    send_register_email(user)
     user_registered_signal.send(sender=user.__class__, user=user)
 
     return user
@@ -205,6 +193,7 @@ def github_register(username:str, email:str, full_name:str, github_id:int, bio:s
         membership.save(update_fields=["user"])
 
     if created:
+        send_register_email(user)
         user_registered_signal.send(sender=user.__class__, user=user)
 
     return user
