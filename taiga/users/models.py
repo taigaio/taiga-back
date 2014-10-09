@@ -31,6 +31,7 @@ from django.utils.encoding import force_bytes
 
 from djorm_pgarray.fields import TextArrayField
 
+from taiga.auth.tokens import get_token_for_user
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.iterators import split_by_n
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS
@@ -124,9 +125,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     github_id = models.IntegerField(null=True, blank=True, verbose_name=_("github ID"))
 
-    cancel_token = models.CharField(max_length=200, null=True, blank=True, default=None,
-                     verbose_name=_("cancel account token"))
-
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
@@ -151,9 +149,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.full_name or self.username or self.email
 
     def save(self, *args, **kwargs):
-        if not self.cancel_token:
-            self.cancel_token = str(uuid.uuid1())
-
+        get_token_for_user(self, "cancel_account")
         super().save(*args, **kwargs)
 
     def cancel(self):

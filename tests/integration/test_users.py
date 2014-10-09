@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from .. import factories as f
 
 from taiga.users import models
+from taiga.auth.tokens import get_token_for_user
 
 pytestmark = pytest.mark.django_db
 
@@ -130,7 +131,8 @@ def test_api_user_delete(client):
 def test_api_user_cancel_valid_token(client):
     user = f.UserFactory.create()
     url = reverse('users-cancel')
-    data = {"cancel_token": user.cancel_token}
+    cancel_token = get_token_for_user(user, "cancel_account")
+    data = {"cancel_token": cancel_token}
     client.login(user)
     response = client.post(url, json.dumps(data), content_type="application/json")
 

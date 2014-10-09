@@ -271,6 +271,9 @@ AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend", # default
 )
 
+MAX_AGE_AUTH_TOKEN = None
+MAX_AGE_CANCEL_ACCOUNT = 30 * 24 * 60 * 60 # 30 days in seconds
+
 ANONYMOUS_USER_ID = -1
 
 MAX_SEARCH_RESULTS = 100

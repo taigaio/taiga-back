@@ -35,7 +35,7 @@ from taiga.base import exceptions as exc
 from taiga.users.serializers import UserSerializer
 from taiga.users.services import get_and_validate_user
 
-from .backends import get_token_for_user
+from .tokens import get_token_for_user
 from .signals import user_registered as user_registered_signal
 
 def send_register_email(user) -> bool:
@@ -43,8 +43,8 @@ def send_register_email(user) -> bool:
     Given a user, send register welcome email
     message to specified user.
     """
-
-    context = {"user": user}
+    cancel_token = get_token_for_user(user, "cancel_account")
+    context = {"user": user, "cancel_token": cancel_token}
     mbuilder = MagicMailBuilder()
     email = mbuilder.registered_user(user.email, context)
     return bool(email.send())
@@ -207,5 +207,5 @@ def make_auth_response_data(user) -> dict:
     """
     serializer = UserSerializer(user)
     data = dict(serializer.data)
-    data["auth_token"] = get_token_for_user(user)
+    data["auth_token"] = get_token_for_user(user, "authentication")
     return data
