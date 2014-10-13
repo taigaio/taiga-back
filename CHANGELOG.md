@@ -1,5 +1,9 @@
 # Changelog #
 
+## 1.2.0 (Unreleased)
+
+No changes at this moment.
+
 ## 1.1.0 (2014-10-13)
 
 ### Misc
