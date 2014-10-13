@@ -20,6 +20,8 @@ import os.path as path
 import random
 import re
 
+from unidecode import unidecode
+
 from django.db import models
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
@@ -27,6 +29,7 @@ from django.contrib.auth.models import UserManager, AbstractBaseUser
 from django.core import validators
 from django.utils import timezone
 from django.utils.encoding import force_bytes
+from django.template.defaultfilters import slugify
 
 from djorm_pgarray.fields import TextArrayField
 
@@ -41,6 +44,9 @@ def generate_random_hex_color():
 
 def get_user_file_path(instance, filename):
     basename = path.basename(filename).lower()
+    base, ext = path.splitext(basename)
+    base = slugify(unidecode(base))
+    basename = "".join([base, ext])
 
     hs = hashlib.sha256()
     hs.update(force_bytes(timezone.now().isoformat()))

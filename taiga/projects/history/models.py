@@ -166,10 +166,14 @@ class HistoryEntry(models.Model):
 
                 for aid in set(tuple(oldattachs.keys()) + tuple(newattachs.keys())):
                     if aid in oldattachs and aid in newattachs:
-                        if oldattachs[aid] != newattachs[aid]:
+                        changes = make_diff_from_dicts(oldattachs[aid], newattachs[aid],
+                                                       excluded_keys=("filename", "url"))
+
+                        if changes:
                             change = {
-                                "filename": oldattachs[aid]["filename"],
-                                "changes": make_diff_from_dicts(oldattachs[aid], newattachs[aid])
+                                "filename": newattachs[aid]["filename"],
+                                "url": newattachs[aid]["url"],
+                                "changes": changes
                             }
                             attachments["changed"].append(change)
                     elif aid in oldattachs and aid not in newattachs:

@@ -50,7 +50,7 @@ class MembersFilterBackend(BaseFilterBackend):
         if project_id:
             Project = apps.get_model('projects', 'Project')
             project = get_object_or_404(Project, pk=project_id)
-            if project.memberships.filter(user=request.user).exists() or project.owner == request.user:
+            if request.user.is_authenticated() and (project.memberships.filter(user=request.user).exists() or project.owner == request.user):
                 return queryset.filter(Q(memberships__project=project) | Q(id=project.owner.id)).distinct()
             else:
                 raise exc.PermissionDenied(_("You don't have permisions to see this project users."))

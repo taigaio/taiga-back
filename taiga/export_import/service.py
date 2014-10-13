@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import uuid
+import os.path as path
 
 from django.contrib.contenttypes.models import ContentType
 
@@ -206,6 +207,8 @@ def store_attachment(project, obj, attachment):
         if serialized.object.owner is None:
             serialized.object.owner = serialized.object.project.owner
         serialized.object._importing = True
+        serialized.object.size = serialized.object.attached_file.size
+        serialized.object.name = path.basename(serialized.object.attached_file.name).lower()
         serialized.save()
         return serialized
     add_errors("attachments", serialized.errors)
