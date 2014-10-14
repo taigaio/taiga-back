@@ -22,6 +22,7 @@ urls = {
     "login": "/login",
     "change-password": "/change-password/{0}",
     "change-email": "/change-email/{0}",
+    "cancel-account": "/cancel-account/{0}",
     "invitation": "/invitation/{0}",
 
     "project": "/project/{0}",

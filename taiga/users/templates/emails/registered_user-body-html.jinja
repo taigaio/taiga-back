@@ -1,0 +1,24 @@
+{% extends "emails/base.jinja" %}
+
+{% block body %}
+<table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
+    <tr>
+        <td>
+            <p>Welcome to Taiga, an Open Source, Agile Project Management Tool</p>
+
+            <p>You, or someone you know has invited you to Taiga. You may remove your account from this service by clicking here:</p>
+            {{ resolve_front_url('cancel-account', cancel_token) }}
+
+            <p>We built Taiga because we wanted the project management tool that sits open on our computers all day long, to serve as a continued reminder of why we love to collaborate, code and design. We built it to be beautiful, elegant, simple to use and fun - without forsaking flexibility and power. We named it Taiga after the forest biome, because like its namesake, our tool is at the center of an ecosystem - your team, your projects. A great project management tool also helps you see the forest for the trees. We couldn't think of  a more appropriate name for what we've done.</p>
+
+            <p>We hope you enjoy it.</p>
+        </td>
+    </tr>
+</table>
+{% endblock %}
+
+{% block footer %}
+<p style="padding: 10px; border-top: 1px solid #eee;">
+    The Taiga development team.
+</p>
+{% endblock %}

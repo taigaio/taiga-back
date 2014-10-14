@@ -69,3 +69,7 @@ class RecoverySerializer(serializers.Serializer):
 
 class ChangeEmailSerializer(serializers.Serializer):
     email_token = serializers.CharField(max_length=200)
+
+
+class CancelAccountSerializer(serializers.Serializer):
+    cancel_token = serializers.CharField(max_length=200)

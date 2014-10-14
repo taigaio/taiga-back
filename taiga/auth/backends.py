@@ -35,11 +35,10 @@ fraudulent modifications.
 import base64
 import re
 
-from django.core import signing
-from django.apps import apps
+from django.conf import settings
 from rest_framework.authentication import BaseAuthentication
-from taiga.base import exceptions as exc
 
+from .tokens import get_user_for_token
 
 class Session(BaseAuthentication):
     """
@@ -62,39 +61,6 @@ class Session(BaseAuthentication):
         return (user, None)
 
 
-def get_token_for_user(user):
-    """
-    Generate a new signed token containing
-    a specified user.
-    """
-    data = {"user_id": user.id}
-    return signing.dumps(data)
-
-
-def get_user_for_token(token):
-    """
-    Given a selfcontained token, try parse and
-    unsign it.
-
-    If token passes a validation, returns
-    a user instance corresponding with user_id stored
-    in the incoming token.
-    """
-    try:
-        data = signing.loads(token)
-    except signing.BadSignature:
-        raise exc.NotAuthenticated("Invalid token")
-
-    model_cls = apps.get_model("users", "User")
-
-    try:
-        user = model_cls.objects.get(pk=data["user_id"])
-    except model_cls.DoesNotExist:
-        raise exc.NotAuthenticated("Invalid token")
-    else:
-        return user
-
-
 class Token(BaseAuthentication):
     """
     Self-contained stateles authentication implementatrion
@@ -114,7 +80,10 @@ class Token(BaseAuthentication):
             return None
 
         token = token_rx_match.group(1)
-        user = get_user_for_token(token)
+        max_age_auth_token = getattr(settings, "MAX_AGE_AUTH_TOKEN", None)
+        user = get_user_for_token(token, "authentication",
+            max_age=max_age_auth_token)
+            
         return (user, token)
 
     def authenticate_header(self, request):

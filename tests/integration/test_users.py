@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from .. import factories as f
 
 from taiga.users import models
+from taiga.auth.tokens import get_token_for_user
 
 pytestmark = pytest.mark.django_db
 
@@ -113,3 +114,39 @@ def test_api_user_action_change_email_invalid_token(client):
 
     assert response.status_code == 400
     assert response.data['_error_message'] == 'Invalid, are you sure the token is correct and you didn\'t use it before?'
+
+
+def test_api_user_delete(client):
+    user = f.UserFactory.create()
+    url = reverse('users-detail', kwargs={"pk": user.pk})
+
+    client.login(user)
+    response = client.delete(url)
+
+    assert response.status_code == 204
+    user = models.User.objects.get(pk=user.id)
+    assert user.full_name == "Deleted user"
+
+
+def test_api_user_cancel_valid_token(client):
+    user = f.UserFactory.create()
+    url = reverse('users-cancel')
+    cancel_token = get_token_for_user(user, "cancel_account")
+    data = {"cancel_token": cancel_token}
+    client.login(user)
+    response = client.post(url, json.dumps(data), content_type="application/json")
+
+    assert response.status_code == 204
+    user = models.User.objects.get(pk=user.id)
+    assert user.full_name == "Deleted user"
+
+
+def test_api_user_cancel_invalid_token(client):
+    user = f.UserFactory.create()
+    url = reverse('users-cancel')
+    data = {"cancel_token": "invalid_cancel_token"}
+    client.login(user)
+    response = client.post(url, json.dumps(data), content_type="application/json")
+
+    assert response.status_code == 400
+    assert response.data['_error_message'] == "Invalid, are you sure the token is correct?"
