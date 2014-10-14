@@ -285,6 +285,6 @@ class UsersViewSet(ModelCrudViewSet):
         self.check_permissions(request, "destroy", user)
         stream = request.stream
         request_data = stream is not None and stream.GET or None
-        user_cancel_account_signal.send(sender=user.__class__, user=user, request_data=request_data)      
+        user_cancel_account_signal.send(sender=user.__class__, user=user, request_data=request_data)
         user.cancel()
         return Response(status=status.HTTP_204_NO_CONTENT)
