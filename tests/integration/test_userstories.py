@@ -155,3 +155,26 @@ def test_update_userstory_points(client):
     assert rp == [(role1.pk, points3.pk), (role2.pk, points1.pk)]
 
 
+def test_archived_filter(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user)
+    f.UserStoryFactory.create(project=project)
+    f.UserStoryFactory.create(is_archived=True, project=project)
+
+    client.login(user)
+
+    url = reverse("userstories-list")
+
+    data = {}
+    response = client.get(url, data)
+    assert len(json.loads(response.content)) == 2
+
+    data = {"is_archived": 0}
+    response = client.get(url, data)
+    assert len(json.loads(response.content)) == 1
+
+    data = {"is_archived": 1}
+    response = client.get(url, data)
+    assert len(json.loads(response.content)) == 1
+
