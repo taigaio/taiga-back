@@ -29,8 +29,7 @@ from .. import factories as f
 
 pytestmark = pytest.mark.django_db
 
-
-def test_api_update_milestone(client):
+def test_update_milestone_with_userstories_list(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     role = f.RoleFactory.create(project=project)
