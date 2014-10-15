@@ -16,9 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import json
-
 from django.core.urlresolvers import reverse
+
+from taiga.base.utils import json
 from .. import factories as f
 
 
@@ -38,12 +38,12 @@ def test_archived_filter(client):
 
     data = {}
     response = client.get(url, data)
-    assert len(json.loads(response.content.decode('utf-8'))) == 2
+    assert len(json.loads(response.content)) == 2
 
     data = {"is_archived": 0}
     response = client.get(url, data)
-    assert len(json.loads(response.content.decode('utf-8'))) == 1
+    assert len(json.loads(response.content)) == 1
 
     data = {"is_archived": 1}
     response = client.get(url, data)
-    assert len(json.loads(response.content.decode('utf-8'))) == 1
+    assert len(json.loads(response.content)) == 1
