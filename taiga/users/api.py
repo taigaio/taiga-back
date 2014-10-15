@@ -44,6 +44,7 @@ from taiga.projects.serializers import StarredSerializer
 from . import models
 from . import serializers
 from . import permissions
+from .signals import user_cancel_account as user_cancel_account_signal
 
 
 class MembersFilterBackend(BaseFilterBackend):
@@ -273,7 +274,11 @@ class UsersViewSet(ModelCrudViewSet):
             max_age_cancel_account = getattr(settings, "MAX_AGE_CANCEL_ACCOUNT", None)
             user = get_user_for_token(serializer.data["cancel_token"], "cancel_account",
                 max_age=max_age_cancel_account)
+
         except exc.NotAuthenticated:
+            raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
+
+        if not user.is_active:
             raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
 
         user.cancel()
@@ -282,5 +287,8 @@ class UsersViewSet(ModelCrudViewSet):
     def destroy(self, request, pk=None):
         user = self.get_object()
         self.check_permissions(request, "destroy", user)
+        stream = request.stream
+        request_data = stream is not None and stream.GET or None
+        user_cancel_account_signal.send(sender=user.__class__, user=user, request_data=request_data)
         user.cancel()
         return Response(status=status.HTTP_204_NO_CONTENT)
