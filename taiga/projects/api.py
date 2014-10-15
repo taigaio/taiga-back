@@ -256,20 +256,14 @@ class RolesViewSet(ModelCrudViewSet):
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ('project',)
 
-    @tx.atomic
-    def destroy(self, request, *args, **kwargs):
-        moveTo = self.request.QUERY_PARAMS.get('moveTo', None)
-        if moveTo is None:
-            return super().destroy(request, *args, **kwargs)
+    def pre_delete(self, obj):
+        move_to = self.request.QUERY_PARAMS.get('moveTo', None)
+        if move_to:
+            role_dest = get_object_or_404(self.model, project=obj.project, id=move_to)
+            qs = models.Membership.objects.filter(project_id=obj.project.pk, role=obj)
+            qs.update(role=role_dest)
 
-        obj = self.get_object_or_none()
-
-        moveItem = get_object_or_404(self.model, project=obj.project, id=moveTo)
-
-        self.check_permissions(request, 'destroy', obj)
-
-        models.Membership.objects.filter(project=obj.project, role=obj).update(role=moveItem)
-        return super().destroy(request, *args, **kwargs)
+        super().pre_delete(obj)
 
 
 # User Stories commin ViewSets
@@ -317,19 +311,19 @@ class PointsViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
 class MoveOnDestroyMixin(object):
     @tx.atomic
     def destroy(self, request, *args, **kwargs):
-        moveTo = self.request.QUERY_PARAMS.get('moveTo', None)
-        if moveTo is None:
+        move_to = self.request.QUERY_PARAMS.get('moveTo', None)
+        if move_to is None:
             return super().destroy(request, *args, **kwargs)
 
         obj = self.get_object_or_none()
 
-        moveItem = get_object_or_404(self.model, project=obj.project, id=moveTo)
+        move_item = get_object_or_404(self.model, project=obj.project, id=move_to)
 
         self.check_permissions(request, 'destroy', obj)
-        kwargs = {self.move_on_destroy_related_field: moveItem}
+        kwargs = {self.move_on_destroy_related_field: move_item}
         self.move_on_destroy_related_class.objects.filter(project=obj.project, **{self.move_on_destroy_related_field: obj}).update(**kwargs)
         if getattr(obj.project, self.move_on_destroy_project_default_field) == obj:
-            setattr(obj.project, self.move_on_destroy_project_default_field, moveItem)
+            setattr(obj.project, self.move_on_destroy_project_default_field, move_item)
             obj.project.save()
         return super().destroy(request, *args, **kwargs)
 
