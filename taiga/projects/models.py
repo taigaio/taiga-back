@@ -220,22 +220,27 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         if roles.count() == 0:
             return
 
-        # Get point instance that represent a null/undefined
-        try:
-            null_points_value = self.points.get(value=None)
-        except Points.DoesNotExist:
-            null_points_value = None
-
         # Iter over all project user stories and create
         # role point instance for new created roles.
         if user_stories is None:
             user_stories = self.user_stories.all()
 
-        for story in user_stories:
-            story_related_roles = Role.objects.filter(role_points__in=story.role_points.all())\
-                                              .distinct()
-            new_roles = roles.exclude(id__in=story_related_roles)
-            new_rolepoints = [RolePoints(role=role, user_story=story, points=null_points_value)
+        # Get point instance that represent a null/undefined
+        # The current model allows dulplicate values. Because
+        # of it, we should get all poins with None as value
+        # and use the first one.
+        # In case of that not exists, creates one for avoid
+        # unxpected errors.
+        none_points = list(self.points.filter(value=None))
+        if none_points:
+            null_points_value = none_points[0]
+        else:
+            null_points_value = Points.objects.create(name="?", value=None, project=self)
+
+        for us in user_stories:
+            usroles = Role.objects.filter(role_points__in=us.role_points.all()).distinct()
+            new_roles = roles.exclude(id__in=usroles)
+            new_rolepoints = [RolePoints(role=role, user_story=us, points=null_points_value)
                               for role in new_roles]
             RolePoints.objects.bulk_create(new_rolepoints)
 
