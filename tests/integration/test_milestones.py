@@ -29,8 +29,7 @@ from .. import factories as f
 
 pytestmark = pytest.mark.django_db
 
-
-def test_api_update_milestone(client):
+def test_update_milestone_with_userstories_list(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     role = f.RoleFactory.create(project=project)
@@ -39,7 +38,6 @@ def test_api_update_milestone(client):
 
     points = f.PointsFactory.create(project=project, value=None)
     us = f.UserStoryFactory.create(project=project, owner=user)
-    # role_points = f.RolePointsFactory.create(points=points, user_story=us, role=role)
 
     url = reverse("milestones-detail", args=[sprint.pk])
 

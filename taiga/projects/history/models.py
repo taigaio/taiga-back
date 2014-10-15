@@ -171,8 +171,8 @@ class HistoryEntry(models.Model):
 
                         if changes:
                             change = {
-                                "filename": newattachs[aid]["filename"],
-                                "url": newattachs[aid]["url"],
+                                "filename": newattachs.get(aid, {}).get("filename", ""),
+                                "url": newattachs.get(aid, {}).get("url", ""),
                                 "changes": changes
                             }
                             attachments["changed"].append(change)

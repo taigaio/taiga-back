@@ -52,19 +52,6 @@ class UserStorySerializer(serializers.ModelSerializer):
         depth = 0
         read_only_fields = ('created_date', 'modified_date')
 
-    def save_object(self, obj, **kwargs):
-        role_points = obj._related_data.pop("role_points", None)
-        super().save_object(obj, **kwargs)
-
-        points_modelcls = apps.get_model("projects", "Points")
-
-        if role_points:
-            for role_id, points_id in role_points.items():
-                role_points = obj.role_points.get(role__id=role_id)
-                role_points.points = points_modelcls.objects.get(id=points_id,
-                                                                 project=obj.project)
-                role_points.save()
-
     def get_total_points(self, obj):
         return obj.get_total_points()
 

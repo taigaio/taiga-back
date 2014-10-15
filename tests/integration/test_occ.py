@@ -15,11 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import json
 from unittest.mock import patch
 
 from django.core.urlresolvers import reverse
 
+from taiga.base.utils import json
 from taiga.projects.issues.models import Issue
 from taiga.projects.wiki.models import WikiPage
 from taiga.projects.userstories.models import UserStory
@@ -58,7 +58,7 @@ def test_valid_concurrent_save_for_issue(client):
         url = reverse("issues-detail", args=(issue.id,))
         data = {"version": 10}
         response = client.patch(url, json.dumps(data), content_type="application/json")
-        assert json.loads(response.content.decode('utf-8'))['version'] == 11
+        assert json.loads(response.content)['version'] == 11
         assert response.status_code == 200
         issue = Issue.objects.get(id=issue.id)
         assert issue.version == 11
@@ -85,7 +85,7 @@ def test_valid_concurrent_save_for_wiki_page(client):
     url = reverse("wiki-detail", args=(wiki_page.id,))
     data = {"version": 10}
     response = client.patch(url, json.dumps(data), content_type="application/json")
-    assert json.loads(response.content.decode('utf-8'))['version'] == 11
+    assert json.loads(response.content)['version'] == 11
     assert response.status_code == 200
     wiki_page = WikiPage.objects.get(id=wiki_page.id)
     assert wiki_page.version == 11
@@ -128,7 +128,7 @@ def test_valid_concurrent_save_for_us(client):
     url = reverse("userstories-detail", args=(userstory.id,))
     data = {"version": 10}
     response = client.patch(url, json.dumps(data), content_type="application/json")
-    assert json.loads(response.content.decode('utf-8'))['version'] == 11
+    assert json.loads(response.content)['version'] == 11
     assert response.status_code == 200
     userstory = UserStory.objects.get(id=userstory.id)
     assert userstory.version == 11
@@ -159,7 +159,7 @@ def test_valid_concurrent_save_for_task(client):
         url = reverse("tasks-detail", args=(task.id,))
         data = {"version": 10}
         response = client.patch(url, json.dumps(data), content_type="application/json")
-        assert json.loads(response.content.decode('utf-8'))['version'] == 11
+        assert json.loads(response.content)['version'] == 11
         assert response.status_code == 200
         task = Task.objects.get(id=task.id)
         assert task.version == 11
