@@ -155,3 +155,48 @@ def test_update_userstory_points(client):
     assert rp == [(role1.pk, points3.pk), (role2.pk, points1.pk)]
 
 
+def test_update_userstory_rolepoints_on_add_new_role(client):
+    # This test is explicitly without assertions. It simple should
+    # works without raising any exception.
+
+    user1 = f.UserFactory.create()
+    user2 = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user1)
+
+    role1 = f.RoleFactory.create(project=project)
+
+    member1 = f.MembershipFactory.create(project=project, user=user1, role=role1)
+
+    points1 = f.PointsFactory.create(project=project, value=2)
+
+    us = f.UserStoryFactory.create(project=project, owner=user1)
+    # url = reverse("userstories-detail", args=[us.pk])
+    # client.login(user1)
+
+    role2 = f.RoleFactory.create(project=project, computable=True)
+    member2 = f.MembershipFactory.create(project=project, user=user2, role=role2)
+    us.save()
+
+
+def test_archived_filter(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user)
+    f.UserStoryFactory.create(project=project)
+    f.UserStoryFactory.create(is_archived=True, project=project)
+
+    client.login(user)
+
+    url = reverse("userstories-list")
+
+    data = {}
+    response = client.get(url, data)
+    assert len(json.loads(response.content)) == 2
+
+    data = {"is_archived": 0}
+    response = client.get(url, data)
+    assert len(json.loads(response.content)) == 1
+
+    data = {"is_archived": 1}
+    response = client.get(url, data)
+    assert len(json.loads(response.content)) == 1
