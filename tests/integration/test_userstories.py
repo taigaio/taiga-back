@@ -1,3 +1,4 @@
+import copy
 from unittest import mock
 from django.core.urlresolvers import reverse
 
@@ -11,10 +12,7 @@ pytestmark = pytest.mark.django_db
 
 
 def test_get_userstories_from_bulk():
-    data = """
-User Story #1
-User Story #2
-"""
+    data = "User Story #1\nUser Story #2\n"
     userstories = services.get_userstories_from_bulk(data)
 
     assert len(userstories) == 2
@@ -23,10 +21,7 @@ User Story #2
 
 
 def test_create_userstories_in_bulk():
-    data = """
-User Story #1
-User Story #2
-"""
+    data = "User Story #1\nUser Story #2\n"
 
     with mock.patch("taiga.projects.userstories.services.db") as db:
         userstories = services.create_userstories_in_bulk(data)
@@ -41,7 +36,9 @@ def test_update_userstories_order_in_bulk():
 
     with mock.patch("taiga.projects.userstories.services.db") as db:
         services.update_userstories_order_in_bulk(data, "backlog_order", project)
-        db.update_in_bulk_with_ids.assert_called_once_with([1, 2], [{"backlog_order": 1}, {"backlog_order": 2}],
+        db.update_in_bulk_with_ids.assert_called_once_with([1, 2],
+                                                           [{"backlog_order": 1},
+                                                            {"backlog_order": 2}],
                                                            model=models.UserStory)
 
 
@@ -108,3 +105,53 @@ def test_api_update_backlog_order_in_bulk(client):
     assert response1.status_code == 204, response.data
     assert response2.status_code == 204, response.data
     assert response3.status_code == 204, response.data
+
+
+from taiga.projects.userstories.serializers import UserStorySerializer
+
+
+def test_update_userstory_points(client):
+    user1 = f.UserFactory.create()
+    user2 = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user1)
+
+    role1 = f.RoleFactory.create(project=project)
+    role2 = f.RoleFactory.create(project=project)
+
+    member = f.MembershipFactory.create(project=project, user=user1, role=role1)
+    member = f.MembershipFactory.create(project=project, user=user2, role=role2)
+
+    points1 = f.PointsFactory.create(project=project, value=None)
+    points2 = f.PointsFactory.create(project=project, value=1)
+    points3 = f.PointsFactory.create(project=project, value=2)
+
+    us = f.UserStoryFactory.create(project=project, owner=user1)
+    url = reverse("userstories-detail", args=[us.pk])
+    usdata = UserStorySerializer(us).data
+
+    client.login(user1)
+
+    # Api should ignore invalid values
+    data = {}
+    data["version"] = usdata["version"]
+    data["points"] = copy.copy(usdata["points"])
+    data["points"].update({'2000':points3.pk})
+
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200, response.data
+
+    # Api should save successful
+    data = {}
+    data["version"] = usdata["version"]
+    data["points"] = copy.copy(usdata["points"])
+    data["points"].update({str(role1.pk):points3.pk})
+
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200, response.data
+
+    us = models.UserStory.objects.get(pk=us.pk)
+    rp = list(us.role_points.values_list("role_id", "points_id"))
+
+    assert rp == [(role1.pk, points3.pk), (role2.pk, points1.pk)]
+
+
