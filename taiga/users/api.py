@@ -274,7 +274,11 @@ class UsersViewSet(ModelCrudViewSet):
             max_age_cancel_account = getattr(settings, "MAX_AGE_CANCEL_ACCOUNT", None)
             user = get_user_for_token(serializer.data["cancel_token"], "cancel_account",
                 max_age=max_age_cancel_account)
+
         except exc.NotAuthenticated:
+            raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
+
+        if not user.is_active:
             raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
 
         user.cancel()
