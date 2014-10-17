@@ -231,7 +231,7 @@ def store_history(project, obj, history):
 
 
 def store_wiki_page(project, wiki_page):
-    wiki_page['slug'] = slugify(unidecode(wiki_page['slug']))
+    wiki_page['slug'] = slugify(unidecode(wiki_page.get('slug', '')))
     serialized = serializers.WikiPageExportSerializer(data=wiki_page)
     if serialized.is_valid():
         serialized.object.project = project
