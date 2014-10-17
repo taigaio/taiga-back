@@ -296,6 +296,23 @@ class MilestoneExportSerializer(serializers.ModelSerializer):
     watchers = UserRelatedField(many=True, required=False)
     modified_date = serializers.DateTimeField(required=False)
 
+    def __init__(self, *args, **kwargs):
+        project = kwargs.pop('project', None)
+        super(MilestoneExportSerializer, self).__init__(*args, **kwargs)
+        if project:
+            self.project = project
+
+    def validate_name(self, attrs, source):
+        """
+        Check the milestone name is not duplicated in the project
+        """
+        name = attrs[source]
+        qs = self.project.milestones.filter(name=name)
+        if qs.exists():
+              raise serializers.ValidationError("Name duplicated for the project")
+
+        return attrs
+
     class Meta:
         model = milestones_models.Milestone
         exclude = ('id', 'project')

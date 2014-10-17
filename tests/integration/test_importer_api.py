@@ -637,3 +637,21 @@ def test_valid_milestone_import(client):
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
     response_data = json.loads(response.content.decode("utf-8"))
+
+def test_milestone_import_duplicated_milestone(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    client.login(user)
+
+    url = reverse("importer-milestone", args=[project.pk])
+    data = {
+        "name": "Imported milestone",
+        "estimated_start": "2014-10-10",
+        "estimated_finish": "2014-10-20",
+    }
+    # We create twice the same milestone
+    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.post(url, json.dumps(data), content_type="application/json")
+    assert response.status_code == 400
+    response_data = json.loads(response.content.decode("utf-8"))
+    assert response_data["milestones"][0]["name"][0] == "Name duplicated for the project"

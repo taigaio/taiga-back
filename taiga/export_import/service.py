@@ -185,7 +185,7 @@ def store_task(project, task):
 
 
 def store_milestone(project, milestone):
-    serialized = serializers.MilestoneExportSerializer(data=milestone)
+    serialized = serializers.MilestoneExportSerializer(data=milestone, project=project)
     if serialized.is_valid():
         serialized.object.project = project
         serialized.object._importing = True
