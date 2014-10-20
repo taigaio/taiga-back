@@ -7,7 +7,7 @@ import pytest
 pytestmark = pytest.mark.django_db
 
 
-def test_api_create_project(client):
+def test_create_project(client):
     user = f.create_user()
     url = reverse("projects-list")
     data = {"name": "project name", "description": "project description"}
@@ -18,7 +18,7 @@ def test_api_create_project(client):
     assert response.status_code == 201
 
 
-def test_api_partially_update_project(client):
+def test_partially_update_project(client):
     project = f.create_project()
     url = reverse("projects-detail", kwargs={"pk": project.pk})
     data = {"name": ""}

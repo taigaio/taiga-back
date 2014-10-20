@@ -16,7 +16,9 @@
 
 import uuid
 import os.path as path
+from unidecode import unidecode
 
+from django.template.defaultfilters import slugify
 from django.contrib.contenttypes.models import ContentType
 
 from taiga.projects.history.services import make_key_from_model_object
@@ -183,7 +185,7 @@ def store_task(project, task):
 
 
 def store_milestone(project, milestone):
-    serialized = serializers.MilestoneExportSerializer(data=milestone)
+    serialized = serializers.MilestoneExportSerializer(data=milestone, project=project)
     if serialized.is_valid():
         serialized.object.project = project
         serialized.object._importing = True
@@ -229,6 +231,7 @@ def store_history(project, obj, history):
 
 
 def store_wiki_page(project, wiki_page):
+    wiki_page['slug'] = slugify(unidecode(wiki_page.get('slug', '')))
     serialized = serializers.WikiPageExportSerializer(data=wiki_page)
     if serialized.is_valid():
         serialized.object.project = project

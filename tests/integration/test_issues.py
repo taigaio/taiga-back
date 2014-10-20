@@ -69,3 +69,81 @@ def test_api_filter_by_subject(client):
 
     assert response.status_code == 200
     assert number_of_issues == 1, number_of_issues
+
+
+def test_api_filter_by_text_1(client):
+    f.create_issue()
+    issue = f.create_issue(subject="this is the issue one")
+    f.create_issue(subject="this is the issue two", owner=issue.owner)
+    url = reverse("issues-list") + "?q=one"
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 1
+
+def test_api_filter_by_text_2(client):
+    f.create_issue()
+    issue = f.create_issue(subject="this is the issue one")
+    f.create_issue(subject="this is the issue two", owner=issue.owner)
+    url = reverse("issues-list") + "?q=this is the issue one"
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 1
+
+def test_api_filter_by_text_3(client):
+    f.create_issue()
+    issue = f.create_issue(subject="this is the issue one")
+    f.create_issue(subject="this is the issue two", owner=issue.owner)
+    url = reverse("issues-list") + "?q=this is the issue"
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 2
+
+def test_api_filter_by_text_4(client):
+    f.create_issue()
+    issue = f.create_issue(subject="this is the issue one")
+    f.create_issue(subject="this is the issue two", owner=issue.owner)
+    url = reverse("issues-list") + "?q=one two"
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 0
+
+def test_api_filter_by_text_5(client):
+    f.create_issue()
+    issue = f.create_issue(subject="python 3")
+    url = reverse("issues-list") + "?q=python 3"
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 1
+
+
+def test_api_filter_by_text_6(client):
+    f.create_issue()
+    issue = f.create_issue(subject="test")
+    url = reverse("issues-list") + "?q=%s"%(issue.ref)
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 1

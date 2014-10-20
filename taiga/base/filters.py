@@ -246,8 +246,11 @@ class QFilter(FilterBackend):
     def filter_queryset(self, request, queryset, view):
         q = request.QUERY_PARAMS.get('q', None)
         if q:
-            qs_args = [Q(subject__icontains=x) for x in q.split()]
-            qs_args += [Q(ref=x) for x in q.split() if x.isdigit()]
-            queryset = queryset.filter(reduce(operator.or_, qs_args))
+            if q.isdigit():
+                qs_args = [Q(ref=q)]
+            else:
+                qs_args = [Q(subject__icontains=x) for x in q.split()]
+
+            queryset = queryset.filter(reduce(operator.and_, qs_args))
 
         return queryset

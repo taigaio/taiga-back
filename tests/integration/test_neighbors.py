@@ -137,6 +137,18 @@ class TestIssues:
         assert neighbors.left == issue3
         assert neighbors.right == issue1
 
+    def test_empty_related_queryset(self):
+        project = f.ProjectFactory.create()
+
+        issue1 = f.IssueFactory.create(project=project)
+        issue2 = f.IssueFactory.create(project=project)
+        issue3 = f.IssueFactory.create(project=project)
+
+        neighbors = n.get_neighbors(issue2, Issue.objects.none())
+
+        assert neighbors.left == issue3
+        assert neighbors.right == issue1
+
     def test_ordering_by_severity(self):
         project = f.ProjectFactory.create()
         severity1 = f.SeverityFactory.create(project=project, order=1)

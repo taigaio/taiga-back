@@ -20,10 +20,14 @@ from unittest.mock import patch, Mock
 
 from django.apps import apps
 from django.core.urlresolvers import reverse
+from django.core import mail
+
 from .. import factories
 
 from taiga.base.connectors import github
-
+from taiga.front import resolve as resolve_front_url
+from taiga.users import models
+from taiga.auth.tokens import get_token_for_user
 
 pytestmark = pytest.mark.django_db
 
@@ -67,6 +71,28 @@ def test_respond_201_with_invitation_without_public_registration(client, registe
 
     assert response.status_code == 201, response.data
 
+
+def test_response_200_in_public_registration(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = True
+    form = {
+        "type": "public",
+        "username": "mmcfly",
+        "full_name": "martin seamus mcfly",
+        "email": "mmcfly@bttf.com",
+        "password": "password",
+    }
+
+    response = client.post(reverse("auth-register"), form)
+    assert response.status_code == 201
+    assert response.data["username"] == "mmcfly"
+    assert response.data["email"] == "mmcfly@bttf.com"
+    assert response.data["full_name"] == "martin seamus mcfly"
+    assert len(mail.outbox) == 1
+    assert mail.outbox[0].subject == "You've been Taigatized!"
+    user = models.User.objects.get(username="mmcfly")
+    cancel_token = get_token_for_user(user, "cancel_account")
+    cancel_url = resolve_front_url("cancel-account", cancel_token)
+    assert mail.outbox[0].body.index(cancel_url) > 0
 
 def test_response_200_in_registration_with_github_account(client, settings):
     settings.PUBLIC_REGISTER_ENABLED = False

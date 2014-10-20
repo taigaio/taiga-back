@@ -61,3 +61,24 @@ def test_api_create_in_bulk_with_status(client):
 
     assert response.status_code == 200
     assert response.data[0]["status"] == us.project.default_task_status.id
+
+
+def test_api_create_invalid_task(client):
+    # Associated to a milestone and a user story.
+    # But the User Story is not associated with the milestone
+    us_milestone = f.MilestoneFactory.create()
+    us = f.create_userstory(milestone=us_milestone)
+    task_milestone = f.MilestoneFactory.create(project=us.project, owner=us.owner)
+
+    url = reverse("tasks-list")
+    data = {
+        "user_story": us.id,
+        "milestone": task_milestone.id,
+        "subject": "Testing subject",
+        "status": us.project.default_task_status.id,
+        "project": us.project.id
+    }
+
+    client.login(us.owner)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400

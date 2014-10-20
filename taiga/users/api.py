@@ -22,6 +22,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from easy_thumbnails.source_generators import pil_image
 
@@ -32,6 +33,7 @@ from rest_framework import status
 
 from djmail.template_mail import MagicMailBuilder
 
+from taiga.auth.tokens import get_user_for_token
 from taiga.base.decorators import list_route, detail_route
 from taiga.base import exceptions as exc
 from taiga.base.api import ModelCrudViewSet
@@ -42,6 +44,7 @@ from taiga.projects.serializers import StarredSerializer
 from . import models
 from . import serializers
 from . import permissions
+from .signals import user_cancel_account as user_cancel_account_signal
 
 
 class MembersFilterBackend(BaseFilterBackend):
@@ -258,20 +261,34 @@ class UsersViewSet(ModelCrudViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @list_route(methods=["POST"])
+    def cancel(self, request, pk=None):
+        """
+        Cancel an account via token
+        """
+        serializer = serializers.CancelAccountSerializer(data=request.DATA, many=False)
+        if not serializer.is_valid():
+            raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
+
+        try:
+            max_age_cancel_account = getattr(settings, "MAX_AGE_CANCEL_ACCOUNT", None)
+            user = get_user_for_token(serializer.data["cancel_token"], "cancel_account",
+                max_age=max_age_cancel_account)
+
+        except exc.NotAuthenticated:
+            raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
+
+        if not user.is_active:
+            raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
+
+        user.cancel()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def destroy(self, request, pk=None):
         user = self.get_object()
         self.check_permissions(request, "destroy", user)
-        user.username = slugify_uniquely("deleted-user", models.User, slugfield="username")
-        user.email = "{}@taiga.io".format(user.username)
-        user.is_active = False
-        user.full_name = "Deleted user"
-        user.color = ""
-        user.bio = ""
-        user.default_language = ""
-        user.default_timezone = ""
-        user.colorize_tags = True
-        user.token = None
-        user.github_id = None
-        user.set_unusable_password()
-        user.save()
+        stream = request.stream
+        request_data = stream is not None and stream.GET or None
+        user_cancel_account_signal.send(sender=user.__class__, user=user, request_data=request_data)
+        user.cancel()
         return Response(status=status.HTTP_204_NO_CONTENT)
