@@ -87,7 +87,7 @@ def get_neighbors(obj, results_set=None):
 
     :return: Tuple `<left neighbor>, <right neighbor>`. Left and right neighbors can be `None`.
     """
-    if results_set is None:
+    if results_set is None or results_set.count() == 0:
         results_set = type(obj).objects.get_queryset()
     try:
         left = _left_candidates(obj, results_set).reverse()[0]
