@@ -2,7 +2,12 @@
 
 ## 1.2.0 (Unreleased)
 
-No changes at this moment.
+### Features
+- Send an email to the user on signup.
+- Emit django signal on user signout.
+
+### Misc
+- Lots of small and not so small bugfixes
 
 ## 1.1.0 (2014-10-13)
 
