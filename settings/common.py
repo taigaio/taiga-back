@@ -199,6 +199,7 @@ INSTALLED_APPS = [
     "djmail",
     "django_jinja",
     "easy_thumbnails",
+    "raven.contrib.django.raven_compat",
 ]
 
 WSGI_APPLICATION = "taiga.wsgi.application"
