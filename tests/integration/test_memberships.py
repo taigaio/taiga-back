@@ -51,6 +51,29 @@ def test_api_create_bulk_members(client):
     assert response.data[0]["email"] == john.email
     assert response.data[1]["email"] == joseph.email
 
+def test_api_create_bulk_members_with_extra_text(client, outbox):
+    project = f.ProjectFactory()
+    tester = f.RoleFactory(project=project, name="Tester")
+    url = reverse("memberships-bulk-create")
+
+    invitation_extra_text = "this is a not so random invitation text"
+    data = {
+        "project_id": project.id,
+        "bulk_memberships": [
+            {"role_id": tester.pk, "email": "john@email.com"},
+        ],
+        "invitation_extra_text": invitation_extra_text
+    }
+    client.login(project.owner)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 200
+    assert response.data[0]["email"] == "john@email.com"
+
+    message = outbox[0]
+    assert len(outbox) == 1
+    assert message.to == ["john@email.com"]
+    assert "this is a not so random invitation text" in message.body
 
 def test_api_resend_invitation(client, outbox):
     invitation = f.create_invitation()
