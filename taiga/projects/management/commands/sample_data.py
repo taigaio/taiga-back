@@ -126,7 +126,7 @@ class Command(BaseCommand):
                 if user == project.owner:
                     continue
 
-                role = self.sd.db_object_from_queryset(Role.objects.all())
+                role = self.sd.db_object_from_queryset(project.roles.all())
 
                 Membership.objects.create(email=user.email,
                                           project=project,
@@ -138,8 +138,8 @@ class Command(BaseCommand):
                     computable_project_roles.add(role)
 
             # added invitations
-            for x in range(NUM_INVITATIONS):
-                role = self.sd.db_object_from_queryset(Role.objects.all())
+            for i in range(NUM_INVITATIONS):
+                role = self.sd.db_object_from_queryset(project.roles.all())
 
                 Membership.objects.create(email=self.sd.email(),
                                           project=project,
@@ -286,7 +286,7 @@ class Command(BaseCommand):
 
         return task
 
-    def create_us(self, project, milestone=None, computable_project_roles=list(Role.objects.all())):
+    def create_us(self, project, milestone=None, computable_project_roles=[]):
         us = UserStory.objects.create(subject=self.sd.choice(SUBJECT_CHOICES),
                                       project=project,
                                       owner=self.sd.db_object_from_queryset(
