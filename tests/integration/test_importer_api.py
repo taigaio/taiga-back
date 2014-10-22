@@ -176,6 +176,26 @@ def test_invalid_issue_import(client):
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
 
+def test_valid_user_story_import(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    project.default_us_status = f.UserStoryStatusFactory.create(project=project)
+    project.save()
+    client.login(user)
+
+    url = reverse("importer-us", args=[project.pk])
+    data = {
+        "subject": "Imported issue",
+        "finish_date": "2014-10-24T00:00:00+0000"
+    }
+
+    response = client.post(url, json.dumps(data), content_type="application/json")
+    assert response.status_code == 201
+    response_data = json.loads(response.content.decode("utf-8"))
+    assert response_data["subject"] == "Imported issue"
+    assert response_data["finish_date"] == "2014-10-24T00:00:00+0000"
+
+
 def test_valid_issue_import_without_extra_data(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
@@ -211,6 +231,7 @@ def test_valid_issue_import_with_extra_data(client):
     data = {
         "subject": "Imported issue",
         "description": "Imported issue",
+        "finished_date": "2014-10-24T00:00:00+0000",
         "attachments": [{
             "owner": user.email,
             "attached_file": {
@@ -226,6 +247,7 @@ def test_valid_issue_import_with_extra_data(client):
     assert len(response_data["attachments"]) == 1
     assert response_data["owner"] == user.email
     assert response_data["ref"] is not None
+    assert response_data["finished_date"] == "2014-10-24T00:00:00+0000"
 
 def test_invalid_issue_import_with_extra_data(client):
     user = f.UserFactory.create()
