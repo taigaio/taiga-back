@@ -70,6 +70,9 @@ class Membership(models.Model):
     invited_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="ihaveinvited+",
                                    null=True, blank=True)
 
+    invitation_extra_text = models.TextField(null=True, blank=True,
+                                   verbose_name=_("invitation extra text"))
+
     def clean(self):
         # TODO: Review and do it more robust
         memberships = Membership.objects.filter(user=self.user, project=self.project)

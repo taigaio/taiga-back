@@ -193,6 +193,7 @@ class MembershipViewSet(ModelCrudViewSet):
 
         data = serializer.data
         project = models.Project.objects.get(id=data["project_id"])
+        invitation_extra_text = data.get("invitation_extra_text", None)
         self.check_permissions(request, 'bulk_create', project)
 
         # TODO: this should be moved to main exception handler instead
@@ -201,6 +202,7 @@ class MembershipViewSet(ModelCrudViewSet):
         try:
             members = services.create_members_in_bulk(data["bulk_memberships"],
                                                       project=project,
+                                                      invitation_extra_text=invitation_extra_text,
                                                       callback=self.post_save,
                                                       precall=self.pre_save)
         except ValidationError as err:

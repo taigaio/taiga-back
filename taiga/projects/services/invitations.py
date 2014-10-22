@@ -11,6 +11,7 @@ def send_invitation(invitation):
         template = mbuilder.membership_notification
     else:
         template = mbuilder.membership_invitation
+
     email = template(invitation.email, {"membership": invitation})
     email.send()
 

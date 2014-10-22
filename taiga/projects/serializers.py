@@ -251,3 +251,4 @@ class MemberBulkSerializer(RoleExistsValidator, serializers.Serializer):
 class MembersBulkSerializer(ProjectExistsValidator, serializers.Serializer):
     project_id = serializers.IntegerField()
     bulk_memberships = MemberBulkSerializer(many=True)
+    invitation_extra_text = serializers.CharField(required=False, max_length=255)

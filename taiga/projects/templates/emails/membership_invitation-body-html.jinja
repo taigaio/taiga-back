@@ -11,6 +11,14 @@
             <p>you have been invited to the project '{{ membership.project }}'.</p>
             <p>If you want to join to this project go to <a href="{{ final_url }}">this link</a>
                for accept this invitation.</p>
+
+            {% if membership.invitation_extra_text %}
+            <p>
+            Some words from your Taiga Ambassador:<br/>
+            {{ membership.invitation_extra_text }}
+            </p>
+            {% endif %}
+
         </td>
     </tr>
 </table>
