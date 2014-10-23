@@ -21,11 +21,12 @@ from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator, TaskStatusExistsValidator
 from taiga.projects.milestones.validators import SprintExistsValidator
 from taiga.projects.userstories.validators import UserStoryExistsValidator
+from taiga.projects.notifications.validators import WatchersValidator
 
 from . import models
 
 
-class TaskSerializer(serializers.ModelSerializer):
+class TaskSerializer(WatchersValidator, serializers.ModelSerializer):
     tags = PickleField(required=False, default=[])
     comment = serializers.SerializerMethodField("get_comment")
     milestone_slug = serializers.SerializerMethodField("get_milestone_slug")

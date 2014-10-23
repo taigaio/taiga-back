@@ -19,11 +19,12 @@ from rest_framework import serializers
 from taiga.base.serializers import Serializer, PickleField, NeighborsSerializerMixin
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator
+from taiga.projects.notifications.validators import WatchersValidator
 
 from . import models
 
 
-class IssueSerializer(serializers.ModelSerializer):
+class IssueSerializer(WatchersValidator, serializers.ModelSerializer):
     tags = PickleField(required=False)
     is_closed = serializers.Field(source="is_closed")
     comment = serializers.SerializerMethodField("get_comment")
