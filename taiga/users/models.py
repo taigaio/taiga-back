@@ -129,7 +129,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     new_email = models.EmailField(_('new email address'), null=True, blank=True)
 
-    github_id = models.IntegerField(null=True, blank=True, verbose_name=_("github ID"))
+    github_id = models.IntegerField(null=True, blank=True, verbose_name=_("github ID"), db_index=True)
+    is_system = models.BooleanField(null=False, blank=False, default=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']

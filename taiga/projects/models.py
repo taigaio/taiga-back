@@ -35,6 +35,7 @@ from taiga.users.models import Role
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
 from taiga.base.utils.sequence import arithmetic_progression
+from taiga.base.utils.slug import slugify_uniquely_for_queryset
 from taiga.projects.notifications.services import create_notify_policy_if_not_exists
 
 from . import choices
@@ -302,10 +303,23 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         return self._get_user_stories_points(self.user_stories.filter(milestone__isnull=False).prefetch_related('role_points', 'role_points__points'))
 
 
+class ProjectModulesConfig(models.Model):
+    project = models.OneToOneField("Project", null=False, blank=False,
+                                related_name="modules_config", verbose_name=_("project"))
+    config = JsonField(null=True, blank=True, verbose_name=_("modules config"))
+
+    class Meta:
+        verbose_name = "project modules config"
+        verbose_name_plural = "project modules configs"
+        ordering = ["project"]
+
+
 # User Stories common Models
 class UserStoryStatus(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False,
                             verbose_name=_("name"))
+    slug = models.SlugField(max_length=255, null=False, blank=True,
+                            verbose_name=_("slug"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
     is_closed = models.BooleanField(default=False, null=False, blank=True,
@@ -321,13 +335,19 @@ class UserStoryStatus(models.Model):
         verbose_name = "user story status"
         verbose_name_plural = "user story statuses"
         ordering = ["project", "order", "name"]
-        unique_together = ("project", "name")
+        unique_together = (("project", "name"), ("project", "slug"))
         permissions = (
             ("view_userstorystatus", "Can view user story status"),
         )
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify_uniquely_for_queryset(self.name, self.project.us_statuses)
+
+        return super().save(*args, **kwargs)
 
 
 class Points(models.Model):
@@ -358,6 +378,8 @@ class Points(models.Model):
 class TaskStatus(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False,
                             verbose_name=_("name"))
+    slug = models.SlugField(max_length=255, null=False, blank=True,
+                            verbose_name=_("slug"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
     is_closed = models.BooleanField(default=False, null=False, blank=True,
@@ -371,13 +393,19 @@ class TaskStatus(models.Model):
         verbose_name = "task status"
         verbose_name_plural = "task statuses"
         ordering = ["project", "order", "name"]
-        unique_together = ("project", "name")
+        unique_together = (("project", "name"), ("project", "slug"))
         permissions = (
             ("view_taskstatus", "Can view task status"),
         )
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify_uniquely_for_queryset(self.name, self.project.task_statuses)
+
+        return super().save(*args, **kwargs)
 
 
 # Issue common Models
@@ -431,6 +459,8 @@ class Severity(models.Model):
 class IssueStatus(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False,
                             verbose_name=_("name"))
+    slug = models.SlugField(max_length=255, null=False, blank=True,
+                            verbose_name=_("slug"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
     is_closed = models.BooleanField(default=False, null=False, blank=True,
@@ -444,13 +474,19 @@ class IssueStatus(models.Model):
         verbose_name = "issue status"
         verbose_name_plural = "issue statuses"
         ordering = ["project", "order", "name"]
-        unique_together = ("project", "name")
+        unique_together = (("project", "name"), ("project", "slug"))
         permissions = (
             ("view_issuestatus", "Can view issue status"),
         )
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify_uniquely_for_queryset(self.name, self.project.issue_statuses)
+
+        return super().save(*args, **kwargs)
 
 
 class IssueType(models.Model):

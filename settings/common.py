@@ -194,6 +194,7 @@ INSTALLED_APPS = [
     "taiga.mdrender",
     "taiga.export_import",
     "taiga.feedback",
+    "taiga.github_hook",
 
     "rest_framework",
     "djmail",
