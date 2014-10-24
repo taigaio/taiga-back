@@ -394,8 +394,14 @@ class AttachmentFactory(Factory):
 
 def create_issue(**kwargs):
     "Create an issue and along with its dependencies."
-    owner = kwargs.pop("owner", UserFactory())
-    project = ProjectFactory.create(owner=owner)
+    owner = kwargs.pop("owner", None)
+    if owner is None:
+        owner = UserFactory.create()
+
+    project = kwargs.pop("project", None)
+    if project is None:
+        project = ProjectFactory.create(owner=owner)
+
     defaults = {
         "project": project,
         "owner": owner,
@@ -412,8 +418,14 @@ def create_issue(**kwargs):
 
 def create_task(**kwargs):
     "Create a task and along with its dependencies."
-    owner = kwargs.pop("owner", UserFactory())
-    project = ProjectFactory.create(owner=owner)
+    owner = kwargs.pop("owner", None)
+    if not owner:
+        owner = UserFactory.create()
+
+    project = kwargs.pop("project", None)
+    if project is None:
+        project = ProjectFactory.create(owner=owner)
+
     defaults = {
         "project": project,
         "owner": owner,
@@ -460,12 +472,19 @@ def create_invitation(**kwargs):
 
 def create_userstory(**kwargs):
     "Create an user story along with its dependencies"
-    project = kwargs.pop("project", create_project())
+
+    owner = kwargs.pop("owner", None)
+    if not owner:
+        owner = UserFactory.create()
+
+    project = kwargs.pop("project", None)
+    if project is None:
+        project = ProjectFactory.create(owner=owner)
 
     defaults = {
         "project": project,
-        "owner": project.owner,
-        "milestone": MilestoneFactory.create(project=project, owner=project.owner)
+        "owner": owner,
+        "milestone": MilestoneFactory.create(project=project, owner=owner)
     }
     defaults.update(kwargs)
 

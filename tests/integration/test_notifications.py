@@ -26,6 +26,9 @@ from .. import factories as f
 from taiga.projects.notifications import services
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.history.choices import HistoryType
+from taiga.projects.issues.serializers import IssueSerializer
+from taiga.projects.userstories.serializers import UserStorySerializer
+from taiga.projects.tasks.serializers import TaskSerializer
 
 
 pytestmark = pytest.mark.django_db
@@ -246,3 +249,162 @@ def test_resource_notification_test(client, mail):
         response = client.delete(url)
         assert response.status_code == 204
         assert len(mail.outbox) == 2
+
+
+def test_watchers_assignation_for_issue(client):
+    user1 = f.UserFactory.create()
+    user2 = f.UserFactory.create()
+    project1 = f.ProjectFactory.create(owner=user1)
+    project2 = f.ProjectFactory.create(owner=user2)
+    role1 = f.RoleFactory.create(project=project1)
+    role2 = f.RoleFactory.create(project=project2)
+    member1 = f.MembershipFactory.create(project=project1, user=user1, role=role1)
+    member2 = f.MembershipFactory.create(project=project2, user=user2, role=role2)
+
+    client.login(user1)
+
+    issue = f.create_issue(project=project1, owner=user1)
+    data = {"version": issue.version,
+            "watchers": [user1.pk]}
+
+    url = reverse("issues-detail", args=[issue.pk])
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200, response.content
+
+
+    issue = f.create_issue(project=project1, owner=user1)
+    data = {"version": issue.version,
+            "watchers": [user1.pk, user2.pk]}
+
+    url = reverse("issues-detail", args=[issue.pk])
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 400
+
+    issue = f.create_issue(project=project1, owner=user1)
+    data = dict(IssueSerializer(issue).data)
+    data["id"] = None
+    data["version"] = None
+    data["watchers"] = [user1.pk, user2.pk]
+
+    url = reverse("issues-list")
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+
+    # Test the impossible case when project is not
+    # exists in create request, and validator works as expected
+    issue = f.create_issue(project=project1, owner=user1)
+    data = dict(IssueSerializer(issue).data)
+
+    data["id"] = None
+    data["watchers"] = [user1.pk, user2.pk]
+    data["project"] = None
+
+    url = reverse("issues-list")
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+
+
+def test_watchers_assignation_for_task(client):
+    user1 = f.UserFactory.create()
+    user2 = f.UserFactory.create()
+    project1 = f.ProjectFactory.create(owner=user1)
+    project2 = f.ProjectFactory.create(owner=user2)
+    role1 = f.RoleFactory.create(project=project1)
+    role2 = f.RoleFactory.create(project=project2)
+    member1 = f.MembershipFactory.create(project=project1, user=user1, role=role1)
+    member2 = f.MembershipFactory.create(project=project2, user=user2, role=role2)
+
+    client.login(user1)
+
+    task = f.create_task(project=project1, owner=user1)
+    data = {"version": task.version,
+            "watchers": [user1.pk]}
+
+    url = reverse("tasks-detail", args=[task.pk])
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200, response.content
+
+
+    task = f.create_task(project=project1, owner=user1)
+    data = {"version": task.version,
+            "watchers": [user1.pk, user2.pk]}
+
+    url = reverse("tasks-detail", args=[task.pk])
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 400
+
+    task = f.create_task(project=project1, owner=user1)
+    data = dict(TaskSerializer(task).data)
+    data["id"] = None
+    data["version"] = None
+    data["watchers"] = [user1.pk, user2.pk]
+
+    url = reverse("tasks-list")
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+
+    # Test the impossible case when project is not
+    # exists in create request, and validator works as expected
+    task = f.create_task(project=project1, owner=user1)
+    data = dict(TaskSerializer(task).data)
+
+    data["id"] = None
+    data["watchers"] = [user1.pk, user2.pk]
+    data["project"] = None
+
+    url = reverse("tasks-list")
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+
+
+def test_watchers_assignation_for_us(client):
+    user1 = f.UserFactory.create()
+    user2 = f.UserFactory.create()
+    project1 = f.ProjectFactory.create(owner=user1)
+    project2 = f.ProjectFactory.create(owner=user2)
+    role1 = f.RoleFactory.create(project=project1)
+    role2 = f.RoleFactory.create(project=project2)
+    member1 = f.MembershipFactory.create(project=project1, user=user1, role=role1)
+    member2 = f.MembershipFactory.create(project=project2, user=user2, role=role2)
+
+    client.login(user1)
+
+    us = f.create_userstory(project=project1, owner=user1)
+    data = {"version": us.version,
+            "watchers": [user1.pk]}
+
+    url = reverse("userstories-detail", args=[us.pk])
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200
+
+
+    us = f.create_userstory(project=project1, owner=user1)
+    data = {"version": us.version,
+            "watchers": [user1.pk, user2.pk]}
+
+    url = reverse("userstories-detail", args=[us.pk])
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 400
+
+    us = f.create_userstory(project=project1, owner=user1)
+    data = dict(UserStorySerializer(us).data)
+    data["id"] = None
+    data["version"] = None
+    data["watchers"] = [user1.pk, user2.pk]
+
+    url = reverse("userstories-list")
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+
+    # Test the impossible case when project is not
+    # exists in create request, and validator works as expected
+    us = f.create_userstory(project=project1, owner=user1)
+    data = dict(UserStorySerializer(us).data)
+
+    data["id"] = None
+    data["watchers"] = [user1.pk, user2.pk]
+    data["project"] = None
+
+    url = reverse("userstories-list")
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400

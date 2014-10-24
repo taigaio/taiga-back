@@ -22,6 +22,7 @@ from taiga.base.serializers import Serializer, PickleField, NeighborsSerializerM
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator, UserStoryStatusExistsValidator
 from taiga.projects.userstories.validators import UserStoryExistsValidator
+from taiga.projects.notifications.validators import WatchersValidator
 
 from . import models
 
@@ -36,7 +37,7 @@ class RolePointsField(serializers.WritableField):
         return json.loads(obj)
 
 
-class UserStorySerializer(serializers.ModelSerializer):
+class UserStorySerializer(WatchersValidator, serializers.ModelSerializer):
     tags = PickleField(default=[], required=False)
     points = RolePointsField(source="role_points", required=False)
     total_points = serializers.SerializerMethodField("get_total_points")
