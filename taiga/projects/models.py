@@ -39,12 +39,6 @@ from taiga.projects.notifications.services import create_notify_policy_if_not_ex
 
 from . import choices
 
-# FIXME: this should to be on choices module (?)
-VIDEOCONFERENCES_CHOICES = (
-    ('appear-in', 'AppearIn'),
-    ('talky', 'Talky'),
-)
-
 
 class Membership(models.Model):
     # This model stores all project memberships. Also
