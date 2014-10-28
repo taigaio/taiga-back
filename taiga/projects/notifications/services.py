@@ -207,7 +207,7 @@ def send_notifications(obj, *, history):
 
     # If we are the min interval is 0 it just work in a synchronous and spamming way
     if settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL == 0:
-        send_sync_notifications(notification.id)    
+        send_sync_notifications(notification.id)
 
 @transaction.atomic
 def send_sync_notifications(notification_id):
@@ -222,7 +222,6 @@ def send_sync_notifications(notification_id):
     now = timezone.now()
     time_diff = now - notification.updated_datetime
     if time_diff.seconds < settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL:
-        print(time_diff.seconds)
         return
 
     history_entries = tuple(notification.history_entries.all().order_by("created_at"))
