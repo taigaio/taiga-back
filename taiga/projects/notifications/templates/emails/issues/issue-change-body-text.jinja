@@ -1,15 +1,17 @@
-{% set final_url = resolve_front_url("issue", object.project.slug, object.ref) %}
-{% set final_url_name = "Taiga - View issue #{0}".format(object.ref) %}
+{% set final_url = resolve_front_url("issue", project.slug, snapshot.ref) %}
+{% set final_url_name = "Taiga - View issue #{0}".format(snapshot.ref) %}
 
-- Project: {{ object.project.name }}
-- Issue #{{ object.ref }}: {{ object.subject }}
+- Project: {{ project.name }}
+- Issue #{{ snapshot.ref }}: {{ snapshot.subject }}
 - Updated by {{ changer.get_full_name() }}
-{% if comment %}
-Comment: {{ comment|linebreaksbr }}
-{% endif %}
-{% if changed_fields %}
-- Updated fields:
-    {% include "emails/includes/fields_diff-text.jinja" %}
-{% endif %}
+{% for entry in history_entries%}
+    {% if entry.comment %}
+    Comment: {{ entry.comment|linebreaksbr }}
+    {% endif %}
+    {% set changed_fields = entry.values_diff %}
+    {% if changed_fields %}
+        {% include "emails/includes/fields_diff-text.jinja" %}
+    {% endif %}
+{% endfor %}
 
 ** More info at {{ final_url_name }} ({{ final_url }}) **

@@ -99,12 +99,12 @@
     {# DESCRIPTIONS #}
         {% elif field_name in ["description_diff"] %}
                 <dd style="background: #eee; padding: 5px 15px; color: #444">
-                    <b>diff:</b> <i>{{ mdrender(object.project, values.1) }}</i>
+                    <b>diff:</b> <i>{{ mdrender(project, values.1) }}</i>
                 </dd>
     {# CONTENT #}
         {% elif field_name in ["content_diff"] %}
                 <dd style="background: #eee; padding: 5px 15px; color: #444">
-                    <b>diff:</b> <i>{{ mdrender(object.project, values.1) }}</i>
+                    <b>diff:</b> <i>{{ mdrender(project, values.1) }}</i>
                 </dd>
     {# ASSIGNED TO #}
         {% elif field_name == "assigned_to" %}

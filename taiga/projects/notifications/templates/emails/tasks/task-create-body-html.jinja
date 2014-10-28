@@ -1,14 +1,14 @@
 {% extends "emails/base.jinja" %}
 
-{% set final_url = resolve_front_url("task", object.project.slug, object.ref) %}
-{% set final_url_name = "Taiga - View task #{0}".format(object.ref) %}
+{% set final_url = resolve_front_url("task", project.slug, snapshot.ref) %}
+{% set final_url_name = "Taiga - View task #{0}".format(snapshot.ref) %}
 
 {% block body %}
 <table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
     <tr>
         <td>
-            <h1>Project: {{ object.project.name }}</h1>
-            <h2>Task #{{ object.ref }}: {{ object.subject }}</h2>
+            <h1>Project: {{ project.name }}</h1>
+            <h2>Task #{{ snapshot.ref }}: {{ snapshot.subject }}</h2>
             <p>Created by <b>{{ changer.get_full_name() }}</b>.</p>
         </td>
     </tr>

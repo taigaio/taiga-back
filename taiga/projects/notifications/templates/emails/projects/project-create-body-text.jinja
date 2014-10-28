@@ -1,7 +1,7 @@
-{% set final_url = resolve_front_url("project-admin", object.slug) %}
-{% set final_url_name = "Taiga - View Project #{0}".format(object.slug) %}
+{% set final_url = resolve_front_url("project-admin", snapshot.slug) %}
+{% set final_url_name = "Taiga - View Project #{0}".format(snapshot.slug) %}
 
-- Project #{{ object.slug }}: {{ object.name }}
+- Project #{{ snapshot.slug }}: {{ snapshot.name }}
 - Created by {{ changer.get_full_name() }}
 
 ** More info at {{ final_url_name }} ({{ final_url }}) **
