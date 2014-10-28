@@ -73,6 +73,14 @@ def make_key_from_model_object(obj:object) -> str:
     return "{0}:{1}".format(tn, obj.pk)
 
 
+def get_model_from_key(key:str) -> object:
+    """
+    Get model from key
+    """
+    class_name, pk = key.split(":", 1)
+    return apps.get_model(class_name)
+
+
 def register_values_implementation(typename:str, fn=None):
     """
     Register values implementation for specified typename.

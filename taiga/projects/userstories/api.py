@@ -177,4 +177,3 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
             self.send_notifications(self.object.generated_from_issue, history)
 
         return response
-

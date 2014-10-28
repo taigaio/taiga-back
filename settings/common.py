@@ -332,6 +332,7 @@ TAGS_PREDEFINED_COLORS = ["#fce94f", "#edd400", "#c4a000", "#8ae234",
 FEEDBACK_ENABLED = True
 FEEDBACK_EMAIL = "support@taiga.io"
 
+CHANGE_NOTIFICATIONS_MIN_INTERVAL = 30 #seconds
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"
