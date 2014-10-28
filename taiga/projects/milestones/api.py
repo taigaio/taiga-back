@@ -25,7 +25,7 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet
 
-from taiga.projects.notifications import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 
 

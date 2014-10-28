@@ -22,7 +22,7 @@ from django.core.exceptions import ValidationError
 
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
-from taiga.projects.notifications import WatchedModelMixin
+from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.userstories.models import UserStory
 
 import itertools

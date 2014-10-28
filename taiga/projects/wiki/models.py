@@ -19,7 +19,7 @@ from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
-from taiga.projects.notifications import WatchedModelMixin
+from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
 
 
