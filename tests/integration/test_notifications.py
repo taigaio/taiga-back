@@ -17,6 +17,7 @@
 
 import json
 import pytest
+import time
 from unittest.mock import MagicMock, patch
 
 from django.core.urlresolvers import reverse
@@ -147,7 +148,7 @@ def test_users_to_notify():
     assert len(users) == 2
     assert users == {member1.user, issue.get_owner()}
 
-@set_settings(CHANGE_NOTIFICATIONS_MIN_INTERVAL=0)
+@set_settings(CHANGE_NOTIFICATIONS_MIN_INTERVAL=1)
 def test_send_notifications_using_services_method(mail):
     project = f.ProjectFactory.create()
     member1 = f.MembershipFactory.create(project=project)
@@ -219,11 +220,11 @@ def test_send_notifications_using_services_method(mail):
 
     assert models.HistoryChangeNotification.objects.count() == 12
     assert len(mail.outbox) == 0
+    time.sleep(1)
     services.process_sync_notifications()
-
     assert len(mail.outbox) == 12
 
-@set_settings(CHANGE_NOTIFICATIONS_MIN_INTERVAL=0)
+@set_settings(CHANGE_NOTIFICATIONS_MIN_INTERVAL=1)
 def test_resource_notification_test(client, mail):
     user1 = f.UserFactory.create()
     user2 = f.UserFactory.create()
@@ -242,9 +243,9 @@ def test_resource_notification_test(client, mail):
         data = {"subject": "Fooooo", "version": issue.version}
         response = client.patch(url, json.dumps(data), content_type="application/json")
         assert response.status_code == 200
-
         assert len(mail.outbox) == 0
         assert models.HistoryChangeNotification.objects.count() == 1
+        time.sleep(1)
         services.process_sync_notifications()
         assert len(mail.outbox) == 1
         assert models.HistoryChangeNotification.objects.count() == 0
@@ -254,6 +255,7 @@ def test_resource_notification_test(client, mail):
         assert response.status_code == 204
         assert len(mail.outbox) == 1
         assert models.HistoryChangeNotification.objects.count() == 1
+        time.sleep(1)
         services.process_sync_notifications()
         assert len(mail.outbox) == 2
         assert models.HistoryChangeNotification.objects.count() == 0

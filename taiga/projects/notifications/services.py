@@ -205,6 +205,9 @@ def send_notifications(obj, *, history):
     for notify_user in notify_users:
         notification.notify_users.add(notify_user)
 
+    # If we are the min interval is 0 it just work in a synchronous and spamming way
+    if settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL == 0:
+        send_sync_notifications(notification.id)    
 
 @transaction.atomic
 def send_sync_notifications(notification_id):
