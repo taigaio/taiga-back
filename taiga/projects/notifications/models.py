@@ -67,3 +67,6 @@ class HistoryChangeNotification(models.Model):
                                 verbose_name="project",related_name="+")
 
     history_type = models.SmallIntegerField(choices=HISTORY_TYPE_CHOICES)
+
+    class Meta:
+        unique_together = ("key", "owner", "project", "history_type")
