@@ -1,15 +1,17 @@
-{% set final_url = resolve_front_url("taskboard", object.project.slug, object.slug) %}
-{% set final_url_name = "Taiga - View milestone #{0}".format(object.slug) %}
+{% set final_url = resolve_front_url("taskboard", project.slug, snapshot.slug) %}
+{% set final_url_name = "Taiga - View milestone #{0}".format(snapshot.slug) %}
 
-- Project: {{ object.project.name }}
-- Milestone #{{ object.slug }}: {{ object.name }}
+- Project: {{ project.name }}
+- Milestone #{{ snapshot.slug }}: {{ snapshot.name }}
 - Updated by {{ changer.get_full_name() }}
-{% if comment %}
-Comment: {{ comment|linebreaksbr }}
-{% endif %}
-{% if changed_fields %}
-- Updated fields:
-    {% include "emails/includes/fields_diff-text.jinja" %}
-{% endif %}
+{% for entry in history_entries%}
+    {% if entry.comment %}
+    Comment: {{ entry.comment|linebreaksbr }}
+    {% endif %}
+    {% set changed_fields = entry.values_diff %}
+    {% if changed_fields %}
+        {% include "emails/includes/fields_diff-text.jinja" %}
+    {% endif %}
+{% endfor %}
 
 ** More info at {{ final_url_name }} ({{ final_url }}) **

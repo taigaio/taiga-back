@@ -1,8 +1,8 @@
-{% set final_url = resolve_front_url("task", object.project.slug, object.ref) %}
-{% set final_url_name = "Taiga - View task #{0}".format(object.ref) %}
+{% set final_url = resolve_front_url("task", project.slug, snapshot.ref) %}
+{% set final_url_name = "Taiga - View task #{0}".format(snapshot.ref) %}
 
-- Project: {{ object.project.name }}
-- Task #{{ object.ref }}: {{ object.subject }}
+- Project: {{ project.name }}
+- Task #{{ snapshot.ref }}: {{ snapshot.subject }}
 - Created by {{ changer.get_full_name() }}
 
 ** More info at {{ final_url_name }} ({{ final_url }}) **

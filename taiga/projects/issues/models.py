@@ -22,7 +22,7 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.projects.occ import OCCModelMixin
-from taiga.projects.notifications import WatchedModelMixin
+from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
 from taiga.base.tags import TaggedMixin
 

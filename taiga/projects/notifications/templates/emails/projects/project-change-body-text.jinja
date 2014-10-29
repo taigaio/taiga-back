@@ -1,16 +1,17 @@
-{% set final_url = resolve_front_url("project-admin", object.slug) %}
-{% set final_url_name = "Taiga - View Project #{0}".format(object.slug) %}
+{% set final_url = resolve_front_url("project-admin", snapshot.slug) %}
+{% set final_url_name = "Taiga - View Project #{0}".format(snapshot.slug) %}
 
-- Project #{{ object.slug }}: {{ object.name }}
+- Project #{{ snapshot.slug }}: {{ snapshot.name }}
 - Updated by {{ changer.get_full_name() }}
-{% if comment %}
-Comment: {{ comment|linebreaksbr }}
-{% endif %}
-{% if changed_fields %}
-- Updated fields:
-    {% for field_name, values in changed_fields.items() %}
-    * {{ verbose_name(object, field_name) }}</b>: from '{{ values.0 }}' to '{{ values.1 }}'.
-    {% endfor %}
-{% endif %}
+{% for entry in history_entries%}
+    {% if entry.comment %}
+    Comment: {{ entry.comment|linebreaksbr }}
+    {% endif %}
+    {% set changed_fields = entry.values_diff %}
+        {% for field_name, values in changed_fields.items() %}
+        * {{ verbose_name(object, field_name) }}</b>: from '{{ values.0 }}' to '{{ values.1 }}'.
+        {% endfor %}
+    {% endif %}
+{% endfor %}
 
 ** More info at {{ final_url_name }} ({{ final_url }}) **

@@ -332,6 +332,10 @@ TAGS_PREDEFINED_COLORS = ["#fce94f", "#edd400", "#c4a000", "#8ae234",
 FEEDBACK_ENABLED = True
 FEEDBACK_EMAIL = "support@taiga.io"
 
+# 0 notifications will work in a synchronous way
+# >0 an external process will check the pending notifications and will send them
+# collapsed during that interval
+CHANGE_NOTIFICATIONS_MIN_INTERVAL = 0 #seconds
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"

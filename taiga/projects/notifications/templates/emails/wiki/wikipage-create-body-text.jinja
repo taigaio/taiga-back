@@ -1,8 +1,8 @@
-{% set final_url = resolve_front_url("wiki", object.project.slug, object.slug) %}
-{% set final_url_name = "Taiga - View Wiki Page '{0}'".format(object.slug) %}
+{% set final_url = resolve_front_url("wiki", project.slug, snapshot.slug) %}
+{% set final_url_name = "Taiga - View Wiki Page '{0}'".format(snapshot.slug) %}
 
-- Project: {{ object.project.name }}
-- Wiki Page: {{ object.slug }}
+- Project: {{ project.name }}
+- Wiki Page: {{ snapshot.slug }}
 - Created by {{ changer.get_full_name() }}
 
 ** More info at {{ final_url_name }} ({{ final_url }}) **

@@ -1,21 +1,23 @@
 {% extends "emails/base.jinja" %}
 
-{% set final_url = resolve_front_url("project-admin", object.slug) %}
-{% set final_url_name = "Taiga - View Project #{0}".format(object.slug) %}
+{% set final_url = resolve_front_url("project-admin", snapshot.slug) %}
+{% set final_url_name = "Taiga - View Project #{0}".format(snapshot.slug) %}
 
 {% block body %}
 <table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
     <tr>
         <td>
-            <h2>Project #{{ object.slug }}: {{ object.name }}</h2>
+            <h2>Project #{{ snapshot.slug }}: {{ snapshot.name }}</h2>
             <p>Updated by <b>{{ changer.get_full_name() }}</b>.</p>
-        {% if comment %}
-            <p>Comment <b>{{ comment|linebreaksbr }}</b></p>
-        {% endif %}
-        {% if changed_fields %}
-            <p>Updated fields:</p>
-            {% include "emails/includes/fields_diff-html.jinja" %}
-        {% endif %}
+            {% for entry in history_entries%}
+                {% if entry.comment %}
+                    <p>Comment <b>{{ entry.comment|linebreaksbr }}</b></p>
+                {% endif %}
+                {% set changed_fields = entry.values_diff %}
+                {% if changed_fields %}
+                    {% include "emails/includes/fields_diff-html.jinja" %}
+                {% endif %}
+            {% endfor %}
         </td>
     </tr>
 </table>

@@ -28,7 +28,7 @@ from taiga.base.decorators import list_route
 from taiga.projects.models import Project
 from taiga.mdrender.service import render as mdrender
 
-from taiga.projects.notifications import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.occ import OCCResourceMixin
 
