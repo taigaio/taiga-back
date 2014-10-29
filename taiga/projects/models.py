@@ -131,7 +131,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="projects",
                                      through="Membership", verbose_name=_("members"),
                                      through_fields=("project", "user"))
-    total_milestones = models.IntegerField(default=0, null=True, blank=True,
+    total_milestones = models.IntegerField(default=0, null=False, blank=False,
                                            verbose_name=_("total of milestones"))
     total_story_points = models.FloatField(default=0, verbose_name=_("total story points"))
 
