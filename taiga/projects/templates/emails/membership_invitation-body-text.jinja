@@ -1,18 +1,18 @@
 {% set final_url = resolve_front_url("invitation", membership.token) %}
 {% set final_url_name = "Taiga - Invitation to join on {0} project.".format(membership.project) %}
 
-Hi,
+The Taiga.io Deputy System Admin is commanded by His Highness The Chief Lord Oompa Loompa to extend a membership invitation to {{ membership.email}} and delights in the pleasure of welcoming you to join {{ membership.invited_by.full_name }} and others in the team as a new and right honorable member in good standing of the project titled: '{{ membership.project }}'.
 
-you have been invited to the project '{{ membership.project }}'.
-
-If you want to join to this project go to {{ final_url }} for accept this invitation.
+You may indicate your humble desire to accept this invitation by gently clicking here: {{ final_url }}
 
 {% if membership.invitation_extra_text %}
 
-Some words from your Taiga Ambassador:
+And now some words from the jolly good fellow or sistren who thought so kindly as to invite you:
 
 {{ membership.invitation_extra_text }}
 
 {% endif %}
 
-** More info at ({{ final_url }}) **
+Dress: Morning Suit, Uniform, Lounge Suit, Birthday Suit or hoodie.
+
+Further details: ({{ final_url }})

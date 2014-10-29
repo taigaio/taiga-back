@@ -7,17 +7,17 @@
 <table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
     <tr>
         <td>
-            <p>Hi,</p>
-            <p>you have been invited to the project '{{ membership.project }}'.</p>
-            <p>If you want to join to this project go to <a href="{{ final_url }}">this link</a>
-               for accept this invitation.</p>
+            <p>The Taiga.io Deputy System Admin is commanded by His Highness The Chief Lord Oompa Loompa to extend a membership invitation to {{ membership.email}} and delights in the pleasure of welcoming you to join {{ membership.invited_by.full_name }} and others in the team as a new and right honorable member in good standing of the project titled: '{{ membership.project }}'.</p>
+            <p>You may indicate your humble desire to accept this invitation by gently clicking here: {{ final_url }}</p>
 
             {% if membership.invitation_extra_text %}
             <p>
-            Some words from your Taiga Ambassador:<br/>
+            And now some words from the jolly good fellow or sistren who thought so kindly as to invite you:<br/>
             {{ membership.invitation_extra_text }}
             </p>
             {% endif %}
+
+            <p>Dress: Morning Suit, Uniform, Lounge Suit, Birthday Suit or hoodie.</p>
 
         </td>
     </tr>
@@ -26,6 +26,6 @@
 
 {% block footer %}
 <p style="padding: 10px; border-top: 1px solid #eee;">
-    More info at: <a href="{{ final_url }}" style="color: #666;">{{ final_url_name }}</a>
+    Further details: <a href="{{ final_url }}" style="color: #666;">{{ final_url_name }}</a>
 </p>
 {% endblock %}
