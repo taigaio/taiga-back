@@ -5,6 +5,7 @@
 ### Features
 - Send an email to the user on signup.
 - Emit django signal on user signout.
+- Support for custom text when inviting users.
 
 ### Misc
 - Lots of small and not so small bugfixes
