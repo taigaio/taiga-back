@@ -17,11 +17,13 @@
 
 from django.core.management.base import BaseCommand
 
+from taiga.base.utils.iterators import iter_queryset
 from taiga.projects.notifications.models import HistoryChangeNotification
 from taiga.projects.notifications.services import send_sync_notifications
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        for change_notification in HistoryChangeNotification.objects.all():
+        qs = HistoryChangeNotification.objects.all()
+        for change_notification in iter_queryset(qs, itersize=100):
             send_sync_notifications(change_notification.pk)
