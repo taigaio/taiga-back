@@ -27,9 +27,10 @@ class IssuesAppConfig(AppConfig):
     verbose_name = "Issues"
 
     def ready(self):
-        # Finixhed date
+        # Finished date
         signals.pre_save.connect(handlers.set_finished_date_when_edit_issue,
-                                 sender=apps.get_model("issues", "Issue"))
+                                 sender=apps.get_model("issues", "Issue"),
+                                 dispatch_uid="set_finished_date_when_edit_issue")
 
         # Tags
         signals.pre_save.connect(generic_handlers.tags_normalization,

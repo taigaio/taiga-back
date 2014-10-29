@@ -26,6 +26,7 @@ from taiga.base.api.mixins import CreateModelMixin
 from taiga.base.api.viewsets import GenericViewSet
 from taiga.base.decorators import detail_route
 from taiga.projects.models import Project, Membership
+from taiga.projects.issues.models import Issue
 
 from . import serializers
 from . import service
@@ -116,6 +117,9 @@ class ProjectImporterViewSet(CreateModelMixin, GenericViewSet):
     def issue(self, request, *args, **kwargs):
         project = self.get_object_or_none()
         self.check_permissions(request, 'import_item', project)
+
+        signals.pre_save.disconnect(sender=Issue,
+            dispatch_uid="set_finished_date_when_edit_issue")
 
         issue = service.store_issue(project, request.DATA.copy())
 
