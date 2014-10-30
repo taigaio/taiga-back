@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='total_milestones',
-            field=models.IntegerField(verbose_name='total of milestones', default=0),
+            field=models.IntegerField(null=False, blank=False, default=0, verbose_name='total of milestones'),
         ),
     ]
