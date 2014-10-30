@@ -66,20 +66,6 @@ class ProjectViewSet(ModelCrudViewSet):
         self.check_permissions(request, 'stats', project)
         return Response(services.get_stats_for_project(project))
 
-    @detail_route(methods=['post'])
-    def star(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, 'star', project)
-        votes_service.add_vote(project, user=request.user)
-        return Response(status=status.HTTP_200_OK)
-
-    @detail_route(methods=['post'])
-    def unstar(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, 'unstar', project)
-        votes_service.remove_vote(project, user=request.user)
-        return Response(status=status.HTTP_200_OK)
-
     @detail_route(methods=['get'])
     def issues_stats(self, request, pk=None):
         project = self.get_object()
@@ -93,16 +79,24 @@ class ProjectViewSet(ModelCrudViewSet):
         return Response(services.get_issues_filters_data(project))
 
     @detail_route(methods=['get'])
-    def tags(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, 'tags', project)
-        return Response(services.get_all_tags(project))
-
-    @detail_route(methods=['get'])
     def tags_colors(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, 'tags_colors', project)
         return Response(dict(project.tags_colors))
+
+    @detail_route(methods=['post'])
+    def star(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, 'star', project)
+        votes_service.add_vote(project, user=request.user)
+        return Response(status=status.HTTP_200_OK)
+
+    @detail_route(methods=['post'])
+    def unstar(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, 'unstar', project)
+        votes_service.remove_vote(project, user=request.user)
+        return Response(status=status.HTTP_200_OK)
 
     @detail_route(methods=['get'])
     def fans(self, request, pk=None):
