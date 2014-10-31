@@ -33,7 +33,7 @@ dummy_project.slug = "test"
 def test_proccessor_valid_user_mention():
     factories.UserFactory(username="user1", full_name="test name")
     result = render(dummy_project, "**@user1**")
-    expected_result = "<p><strong><a alt=\"test name\" class=\"mention\" href=\"/profile/user1\" title=\"test name\">&commat;user1</a></strong></p>"
+    expected_result = "<p><strong><a alt=\"test name\" class=\"mention\" href=\"/profile/user1\" title=\"test name\">@user1</a></strong></p>"
     assert result == expected_result
 
 

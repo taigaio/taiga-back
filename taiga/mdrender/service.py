@@ -16,6 +16,23 @@
 
 import hashlib
 import functools
+import bleach
+
+# BEGIN PATCH
+import html5lib
+from html5lib.serializer.htmlserializer import HTMLSerializer
+
+def _serialize(domtree):
+    walker = html5lib.treewalkers.getTreeWalker('etree')
+    stream = walker(domtree)
+    serializer = HTMLSerializer(quote_attr_values=True,
+                                omit_optional_tags=False,
+                                alphabetical_attributes=True)
+
+    return serializer.render(stream)
+
+bleach._serialize = _serialize
+### END PATCH
 
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
@@ -32,6 +49,15 @@ from .extensions.wikilinks import WikiLinkExtension
 from .extensions.emojify import EmojifyExtension
 from .extensions.mentions import MentionsExtension
 from .extensions.references import TaigaReferencesExtension
+
+
+ALLOWED_TAGS = bleach.ALLOWED_TAGS + ["p", "table", "th", "tr", "td", "h1",
+               "h2", "h3", "div", "pre", "span", "hr", "dl", "dt", "dd", "sup",
+               "img", "del"]
+ALLOWED_ATTRS = bleach.ALLOWED_ATTRIBUTES
+ALLOWED_ATTRS["a"] = ["href", "title", "alt"]
+ALLOWED_ATTRS["img"] = ["alt", "src"]
+ALLOWED_ATTRS["*"] = ["class"]
 
 
 def _make_extensions_list(wikilinks_config=None, project=None):
@@ -86,12 +112,12 @@ def _get_markdown(project):
 @cache_by_sha
 def render(project, text):
     md = _get_markdown(project)
-    return md.convert(text)
+    return bleach.clean(md.convert(text), tags=ALLOWED_TAGS)
 
 
 def render_and_extract(project, text):
     md = _get_markdown(project)
-    result = md.convert(text)
+    result = bleach.clean(md.convert(text), tags=ALLOWED_TAGS)
     return (result, md.extracted_data)
 
 
