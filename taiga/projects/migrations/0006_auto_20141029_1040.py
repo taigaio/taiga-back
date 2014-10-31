@@ -5,13 +5,11 @@ from django.db import models, migrations
 
 def update_total_milestones(apps, schema_editor):
     Project = apps.get_model("projects", "Project")
-    for project in Project.objects.filter(total_milestones__isnull=True):
-        project.total_milestones = 0
-        project.save()
+    qs = Project.objects.filter(total_milestones__isnull=True)
+    qs.update(total_milestones=0)
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('projects', '0005_membership_invitation_extra_text'),
     ]
@@ -21,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='total_milestones',
-            field=models.IntegerField(verbose_name='total of milestones', default=0),
+            field=models.IntegerField(null=False, blank=False, default=0, verbose_name='total of milestones'),
         ),
     ]
