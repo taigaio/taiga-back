@@ -1,6 +1,6 @@
 # Changelog #
 
-## 1.2.0 (Unreleased)
+## 1.2.0 Picea obovata (2014-11-04)
 
 ### Features
 - Send an email to the user on signup.
@@ -8,9 +8,9 @@
 - Support for custom text when inviting users.
 
 ### Misc
-- Lots of small and not so small bugfixes
+- Lots of small and not so small bugfixes.
 
-## 1.1.0 (2014-10-13)
+## 1.1.0 Alnus maximowiczii (2014-10-13)
 
 ### Misc
 - Fix bugs related to unicode chars on attachments.
