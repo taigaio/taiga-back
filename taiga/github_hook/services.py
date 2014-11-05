@@ -22,7 +22,7 @@ from taiga.users.models import User
 from taiga.base.utils.urls import get_absolute_url
 
 
-def get_config_or_default(project):
+def get_or_generate_config(project):
     config = project.modules_config.config
     if config and "github" in config:
         g_config = project.modules_config.config["github"]
