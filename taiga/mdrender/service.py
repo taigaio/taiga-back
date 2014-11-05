@@ -51,13 +51,16 @@ from .extensions.mentions import MentionsExtension
 from .extensions.references import TaigaReferencesExtension
 
 
-ALLOWED_TAGS = bleach.ALLOWED_TAGS + ["p", "table", "th", "tr", "td", "h1",
-               "h2", "h3", "div", "pre", "span", "hr", "dl", "dt", "dd", "sup",
-               "img", "del"]
-ALLOWED_ATTRS = bleach.ALLOWED_ATTRIBUTES
-ALLOWED_ATTRS["a"] = ["href", "title", "alt"]
-ALLOWED_ATTRS["img"] = ["alt", "src"]
-ALLOWED_ATTRS["*"] = ["class"]
+# Bleach configuration
+bleach.ALLOWED_TAGS += ["p", "table", "th", "tr", "td", "h1", "h2", "h3",
+                        "div", "pre", "span", "hr", "dl", "dt", "dd", "sup",
+                        "img", "del", "br", "ins"]
+
+bleach.ALLOWED_STYLES.append("background")
+
+bleach.ALLOWED_ATTRIBUTES["a"] = ["href", "title", "alt"]
+bleach.ALLOWED_ATTRIBUTES["img"] = ["alt", "src"]
+bleach.ALLOWED_ATTRIBUTES["*"] = ["class", "style"]
 
 
 def _make_extensions_list(wikilinks_config=None, project=None):
@@ -112,12 +115,12 @@ def _get_markdown(project):
 @cache_by_sha
 def render(project, text):
     md = _get_markdown(project)
-    return bleach.clean(md.convert(text), tags=ALLOWED_TAGS)
+    return bleach.clean(md.convert(text))
 
 
 def render_and_extract(project, text):
     md = _get_markdown(project)
-    result = bleach.clean(md.convert(text), tags=ALLOWED_TAGS)
+    result = bleach.clean(md.convert(text))
     return (result, md.extracted_data)
 
 
