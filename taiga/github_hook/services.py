@@ -16,23 +16,24 @@
 
 import uuid
 
-from taiga.projects.models import ProjectModulesConfig
+from django.core.urlresolvers import reverse
+
 from taiga.users.models import User
+from taiga.base.utils.urls import get_absolute_url
 
 
-def set_default_config(project):
-    if hasattr(project, "modules_config"):
-        if project.modules_config.config is None:
-            project.modules_config.config = {"github": {"secret": uuid.uuid4().hex }}
-        else:
-            project.modules_config.config["github"] = {"secret": uuid.uuid4().hex }
+def get_config_or_default(project):
+    config = project.modules_config.config
+    if config and "github" in config:
+        g_config = project.modules_config.config["github"]
     else:
-        project.modules_config = ProjectModulesConfig(project=project, config={
-            "github": {
-                "secret": uuid.uuid4().hex
-            }
-        })
-    project.modules_config.save()
+        g_config = {"secret": uuid.uuid4().hex }
+
+    url = reverse("github-hook-list")
+    url = get_absolute_url(url)
+    url = "%s?project=%s"%(url, project.id)
+    g_config["webhooks_url"] = url
+    return g_config
 
 
 def get_github_user(user_id):

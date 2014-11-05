@@ -60,6 +60,20 @@ class ProjectViewSet(ModelCrudViewSet):
         qs = models.Project.objects.all()
         return attach_votescount_to_queryset(qs, as_field="stars_count")
 
+    @detail_route(methods=["GET", "PATCH"])
+    def modules(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, 'modules', project)
+        modules_config = services.get_modules_config(project)
+
+        if request.method == "GET":
+            return Response(modules_config.config)
+
+        else:
+            modules_config.config.update(request.DATA)
+            modules_config.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
     @detail_route(methods=['get'])
     def stats(self, request, pk=None):
         project = self.get_object()

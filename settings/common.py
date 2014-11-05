@@ -338,6 +338,14 @@ FEEDBACK_EMAIL = "support@taiga.io"
 # collapsed during that interval
 CHANGE_NOTIFICATIONS_MIN_INTERVAL = 0 #seconds
 
+
+# List of functions called for filling correctly the ProjectModulesConfig associated to a project
+# This functions should receive a Project parameter and return a dict with the desired configuration
+PROJECT_MODULES_CONFIGURATORS = {
+    "github": "taiga.github_hook.services.get_config_or_default",
+}
+
+
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"
 

@@ -38,3 +38,5 @@ from .invitations import send_invitation
 from .invitations import find_invited_user
 
 from .tags_colors import update_project_tags_colors_handler
+
+from .modules_config import get_modules_config

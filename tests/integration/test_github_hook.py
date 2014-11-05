@@ -16,7 +16,7 @@ from taiga.projects.models import Membership
 from taiga.projects.history.services import get_history_queryset_by_model_instance, take_snapshot
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.models import NotifyPolicy
-
+from taiga.projects import services
 from .. import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -345,3 +345,38 @@ def test_issues_event_bad_comment(client):
 
     assert Issue.objects.count() == 1
     assert len(mail.outbox) == 0
+
+
+def test_api_get_project_modules(client):
+    project = f.create_project()
+
+    url = reverse("projects-modules", args=(project.id,))
+
+    client.login(project.owner)
+    response = client.get(url)
+    assert response.status_code == 200
+    content = json.loads(response.content.decode("utf-8"))
+    assert "github" in content
+    assert content["github"]["secret"] != ""
+    assert content["github"]["webhooks_url"] != ""
+
+
+def test_api_patch_project_modules(client):
+    project = f.create_project()
+
+    url = reverse("projects-modules", args=(project.id,))
+
+    client.login(project.owner)
+    data = {
+        "github": {
+            "secret": "test_secret",
+            "url": "test_url",
+        }
+    }
+    response = client.patch(url, json.dumps(data), content_type="application/json")
+    assert response.status_code == 204
+
+    config = services.get_modules_config(project).config
+    assert "github" in config
+    assert config["github"]["secret"] == "test_secret"
+    assert config["github"]["webhooks_url"] != "test_url"
