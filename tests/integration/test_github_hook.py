@@ -128,6 +128,24 @@ def test_push_event_user_story_processing(client):
     assert len(mail.outbox) == 1
 
 
+def test_push_event_processing_case_insensitive(client):
+    creation_status = f.TaskStatusFactory()
+    new_status = f.TaskStatusFactory(project=creation_status.project)
+    task = f.TaskFactory.create(status=creation_status, project=creation_status.project)
+    payload = {"commits": [
+        {"message": """test message
+            test   tg-%s    #%s   ok
+            bye!
+        """%(task.ref, new_status.slug.upper())},
+    ]}
+    mail.outbox = []
+    ev_hook = event_hooks.PushEventHook(task.project, payload)
+    ev_hook.process_event()
+    task = Task.objects.get(id=task.id)
+    assert task.status.id == new_status.id
+    assert len(mail.outbox) == 1
+
+
 def test_push_event_bad_processing_non_existing_ref(client):
     issue_status = f.IssueStatusFactory()
     payload = {"commits": [

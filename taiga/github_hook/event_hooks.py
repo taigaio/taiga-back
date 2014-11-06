@@ -63,8 +63,8 @@ class PushEventHook(BaseEventHook):
         if message is None:
             return
 
-        p = re.compile("TG-(\d+) +#([-\w]+)")
-        m = p.search(message)
+        p = re.compile("tg-(\d+) +#([-\w]+)")
+        m = p.search(message.lower())
         if m:
             ref = m.group(1)
             status_slug = m.group(2)
