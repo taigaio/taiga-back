@@ -146,7 +146,7 @@ def test_push_event_processing_case_insensitive(client):
     assert len(mail.outbox) == 1
 
 
-def test_push_event_bad_processing_non_existing_ref(client):
+def test_push_event_task_bad_processing_non_existing_ref(client):
     issue_status = f.IssueStatusFactory()
     payload = {"commits": [
         {"message": """test message
@@ -161,6 +161,25 @@ def test_push_event_bad_processing_non_existing_ref(client):
         ev_hook.process_event()
 
     assert str(excinfo.value) == "The referenced element doesn't exist"
+    assert len(mail.outbox) == 0
+
+
+def test_push_event_us_bad_processing_non_existing_status(client):
+    user_story = f.UserStoryFactory.create()
+    payload = {"commits": [
+        {"message": """test message
+            test   TG-%s    #non-existing-slug   ok
+            bye!
+        """%(user_story.ref)},
+    ]}
+
+    mail.outbox = []
+
+    ev_hook = event_hooks.PushEventHook(user_story.project, payload)
+    with pytest.raises(ActionSyntaxException) as excinfo:
+        ev_hook.process_event()
+
+    assert str(excinfo.value) == "The status doesn't exist"
     assert len(mail.outbox) == 0
 
 
@@ -181,6 +200,7 @@ def test_push_event_bad_processing_non_existing_status(client):
 
     assert str(excinfo.value) == "The status doesn't exist"
     assert len(mail.outbox) == 0
+
 
 def test_issues_event_opened_issue(client):
     issue = f.IssueFactory.create()

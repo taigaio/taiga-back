@@ -74,10 +74,10 @@ class PushEventHook(BaseEventHook):
         if Issue.objects.filter(project=self.project, ref=ref).exists():
             modelClass = Issue
             statusClass = IssueStatus
-        elif Task.objects.filter(ref=ref).exists():
+        elif Task.objects.filter(project=self.project, ref=ref).exists():
             modelClass = Task
             statusClass = TaskStatus
-        elif UserStory.objects.filter(ref=ref).exists():
+        elif UserStory.objects.filter(project=self.project, ref=ref).exists():
             modelClass = UserStory
             statusClass = UserStoryStatus
         else:
@@ -87,7 +87,7 @@ class PushEventHook(BaseEventHook):
 
         try:
             status = statusClass.objects.get(project=self.project, slug=status_slug)
-        except IssueStatus.DoesNotExist:
+        except statusClass.DoesNotExist:
             raise ActionSyntaxException(_("The status doesn't exist"))
 
         element.status = status
