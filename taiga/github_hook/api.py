@@ -32,8 +32,8 @@ from . import event_hooks
 from .exceptions import ActionSyntaxException
 
 
-class Http401(APIException):
-    status_code = 401
+class Http400(APIException):
+    status_code = 400
 
 
 class GitHubViewSet(GenericViewSet):
@@ -79,17 +79,17 @@ class GitHubViewSet(GenericViewSet):
     def create(self, request, *args, **kwargs):
         project = self._get_project(request)
         if not project:
-            raise Http401(_("The project doesn't exist"))
+            raise Http400(_("The project doesn't exist"))
 
         if not self._validate_signature(project, request):
-            raise Http401(_("Bad signature"))
+            raise Http400(_("Bad signature"))
 
         event_name = request.META.get("HTTP_X_GITHUB_EVENT", None)
 
         try:
             payload = json.loads(request.body.decode("utf-8"))
         except ValueError as e:
-            raise Http401(_("The payload is not a valid json"))
+            raise Http400(_("The payload is not a valid json"))
 
         event_hook_class = self.event_hook_classes.get(event_name, None)
         if event_hook_class is not None:
@@ -97,6 +97,6 @@ class GitHubViewSet(GenericViewSet):
             try:
                 event_hook.process_event()
             except ActionSyntaxException as e:
-                raise Http401(e)
+                raise Http400(e)
 
         return Response({})

@@ -31,7 +31,7 @@ def test_bad_signature(client):
         HTTP_X_HUB_SIGNATURE="sha1=badbadbad",
         content_type="application/json")
     response_content = json.loads(response.content.decode("utf-8"))
-    assert response.status_code == 401
+    assert response.status_code == 400
     assert "Bad signature" in response_content["_error_message"]
 
 
