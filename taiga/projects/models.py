@@ -344,9 +344,11 @@ class UserStoryStatus(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify_uniquely_for_queryset(self.name, self.project.us_statuses)
+        qs = self.project.us_statuses
+        if self.id:
+            qs = qs.exclude(id=self.id)
 
+        self.slug = slugify_uniquely_for_queryset(self.name, qs)
         return super().save(*args, **kwargs)
 
 
@@ -402,9 +404,11 @@ class TaskStatus(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify_uniquely_for_queryset(self.name, self.project.task_statuses)
+        qs = self.project.task_statuses
+        if self.id:
+            qs = qs.exclude(id=self.id)
 
+        self.slug = slugify_uniquely_for_queryset(self.name, qs)
         return super().save(*args, **kwargs)
 
 
@@ -483,9 +487,11 @@ class IssueStatus(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify_uniquely_for_queryset(self.name, self.project.issue_statuses)
+        qs = self.project.issue_statuses
+        if self.id:
+            qs = qs.exclude(id=self.id)
 
+        self.slug = slugify_uniquely_for_queryset(self.name, qs)
         return super().save(*args, **kwargs)
 
 
