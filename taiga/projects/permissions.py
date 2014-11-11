@@ -24,6 +24,7 @@ class ProjectPermission(TaigaResourcePermission):
     create_perms = IsAuthenticated()
     update_perms = IsProjectOwner()
     destroy_perms = IsProjectOwner()
+    modules_perms = IsProjectOwner()
     list_perms = AllowAny()
     stats_perms = AllowAny()
     star_perms = IsAuthenticated()
