@@ -98,7 +98,7 @@ class PushEventHook(BaseEventHook):
 
 
 def replace_github_references(project_url, wiki_text):
-    template = "\g<1>[Github #\g<2>]({}/issues/\g<2>)\g<3>".format(project_url)
+    template = "\g<1>[Github#\g<2>]({}/issues/\g<2>)\g<3>".format(project_url)
     return re.sub(r"(\s|^)#(\d+)(\s|$)", template, wiki_text, 0, re.M)
 
 
