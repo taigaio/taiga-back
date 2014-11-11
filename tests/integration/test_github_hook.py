@@ -223,6 +223,9 @@ def test_issues_event_opened_issue(client):
         },
         "assignee": {},
         "label": {},
+        "repository": {
+            "html_url": "test",
+        },
     }
 
     mail.outbox = []
@@ -303,6 +306,9 @@ def test_issue_comment_event_on_existing_issue_task_and_us(client):
         "comment": {
             "body": "Test body",
         },
+        "repository": {
+            "html_url": "test",
+        },
     }
 
     mail.outbox = []
@@ -316,15 +322,15 @@ def test_issue_comment_event_on_existing_issue_task_and_us(client):
 
     issue_history = get_history_queryset_by_model_instance(issue)
     assert issue_history.count() == 1
-    assert issue_history[0].comment == "From Github: Test body"
+    assert issue_history[0].comment == "From Github:\n\nTest body"
 
     task_history = get_history_queryset_by_model_instance(task)
     assert task_history.count() == 1
-    assert task_history[0].comment == "From Github: Test body"
+    assert task_history[0].comment == "From Github:\n\nTest body"
 
     us_history = get_history_queryset_by_model_instance(us)
     assert us_history.count() == 1
-    assert us_history[0].comment == "From Github: Test body"
+    assert us_history[0].comment == "From Github:\n\nTest body"
 
     assert len(mail.outbox) == 3
 
@@ -344,6 +350,9 @@ def test_issue_comment_event_on_not_existing_issue_task_and_us(client):
         },
         "comment": {
             "body": "Test body",
+        },
+        "repository": {
+            "html_url": "test",
         },
     }
 
@@ -371,6 +380,9 @@ def test_issues_event_bad_comment(client):
         "action": "other",
         "issue": {},
         "comment": {},
+        "repository": {
+            "html_url": "test",
+        },
     }
     ev_hook = event_hooks.IssueCommentEventHook(issue.project, payload)
 

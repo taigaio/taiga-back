@@ -151,5 +151,5 @@ class IssueCommentEventHook(BaseEventHook):
         uss = UserStory.objects.filter(external_reference=["github", github_reference])
 
         for item in list(issues) + list(tasks) + list(uss):
-            snapshot = take_snapshot(item, comment="From Github:\n\n {}".format(comment_message), user=get_github_user(github_user))
+            snapshot = take_snapshot(item, comment="From Github:\n\n{}".format(comment_message), user=get_github_user(github_user))
             send_notifications(item, history=snapshot)
