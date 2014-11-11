@@ -322,15 +322,15 @@ def test_issue_comment_event_on_existing_issue_task_and_us(client):
 
     issue_history = get_history_queryset_by_model_instance(issue)
     assert issue_history.count() == 1
-    assert issue_history[0].comment == "From Github:\n\nTest body"
+    assert issue_history[0].comment == "From GitHub:\n\nTest body"
 
     task_history = get_history_queryset_by_model_instance(task)
     assert task_history.count() == 1
-    assert task_history[0].comment == "From Github:\n\nTest body"
+    assert task_history[0].comment == "From GitHub:\n\nTest body"
 
     us_history = get_history_queryset_by_model_instance(us)
     assert us_history.count() == 1
-    assert us_history[0].comment == "From Github:\n\nTest body"
+    assert us_history[0].comment == "From GitHub:\n\nTest body"
 
     assert len(mail.outbox) == 3
 
@@ -432,8 +432,8 @@ def test_api_patch_project_modules(client):
     assert config["github"]["webhooks_url"] != "test_url"
 
 def test_replace_github_references():
-    assert event_hooks.replace_github_references("project-url", "#2") == "[Github#2](project-url/issues/2)"
-    assert event_hooks.replace_github_references("project-url", "#2 ") == "[Github#2](project-url/issues/2) "
-    assert event_hooks.replace_github_references("project-url", " #2 ") == " [Github#2](project-url/issues/2) "
-    assert event_hooks.replace_github_references("project-url", " #2") == " [Github#2](project-url/issues/2)"
+    assert event_hooks.replace_github_references("project-url", "#2") == "[GitHub#2](project-url/issues/2)"
+    assert event_hooks.replace_github_references("project-url", "#2 ") == "[GitHub#2](project-url/issues/2) "
+    assert event_hooks.replace_github_references("project-url", " #2 ") == " [GitHub#2](project-url/issues/2) "
+    assert event_hooks.replace_github_references("project-url", " #2") == " [GitHub#2](project-url/issues/2)"
     assert event_hooks.replace_github_references("project-url", "#test") == "#test"
