@@ -432,8 +432,8 @@ def test_api_patch_project_modules(client):
     assert config["github"]["webhooks_url"] != "test_url"
 
 def test_replace_github_references():
-    assert event_hooks.replace_github_references("project-url", "#2") == "[Github #2](project-url/issues/2)"
-    assert event_hooks.replace_github_references("project-url", "#2 ") == "[Github #2](project-url/issues/2) "
-    assert event_hooks.replace_github_references("project-url", " #2 ") == " [Github #2](project-url/issues/2) "
-    assert event_hooks.replace_github_references("project-url", " #2") == " [Github #2](project-url/issues/2)"
+    assert event_hooks.replace_github_references("project-url", "#2") == "[Github#2](project-url/issues/2)"
+    assert event_hooks.replace_github_references("project-url", "#2 ") == "[Github#2](project-url/issues/2) "
+    assert event_hooks.replace_github_references("project-url", " #2 ") == " [Github#2](project-url/issues/2) "
+    assert event_hooks.replace_github_references("project-url", " #2") == " [Github#2](project-url/issues/2)"
     assert event_hooks.replace_github_references("project-url", "#test") == "#test"
