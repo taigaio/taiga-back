@@ -61,11 +61,12 @@ def _try_to_close_or_open_us_when_create_or_edit_task(instance):
 def _try_to_close_or_open_us_when_delete_task(instance):
     from taiga.projects.userstories import services as us_service
 
-    if instance.user_story_id:
-        if us_service.calculate_userstory_is_closed(instance.user_story):
-            us_service.close_userstory(instance.user_story)
-        else:
-            us_service.open_userstory(instance.user_story)
+    with suppress(ObjectDoesNotExist):
+        if instance.user_story_id:
+            if us_service.calculate_userstory_is_closed(instance.user_story):
+                us_service.close_userstory(instance.user_story)
+            else:
+                us_service.open_userstory(instance.user_story)
 
 
 # Milestone
