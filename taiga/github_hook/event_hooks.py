@@ -96,6 +96,12 @@ class PushEventHook(BaseEventHook):
         snapshot = take_snapshot(element, comment="Status changed from Github commit", user=get_github_user(github_user))
         send_notifications(element, history=snapshot)
 
+
+def replace_github_references(project_url, wiki_text):
+    template = "\g<1>[Github #\g<2>]({}/issues/\g<2>)\g<3>".format(project_url)
+    return re.sub(r"(\s|^)#(\d+)(\s|$)", template, wiki_text, 0, re.M)
+
+
 class IssuesEventHook(BaseEventHook):
     def process_event(self):
         if self.payload.get('action', None) != "opened":
@@ -105,14 +111,15 @@ class IssuesEventHook(BaseEventHook):
         description = self.payload.get('issue', {}).get('body', None)
         github_reference = self.payload.get('issue', {}).get('number', None)
         github_user = self.payload.get('issue', {}).get('user', {}).get('id', None)
+        project_url = self.payload.get('repository', {}).get('html_url', None)
 
-        if not all([subject, github_reference]):
+        if not all([subject, github_reference, project_url]):
             raise ActionSyntaxException(_("Invalid issue information"))
 
         issue = Issue.objects.create(
             project=self.project,
             subject=subject,
-            description=description,
+            description=replace_github_references(project_url, description),
             status=self.project.default_issue_status,
             type=self.project.default_issue_type,
             severity=self.project.default_severity,
@@ -133,8 +140,10 @@ class IssueCommentEventHook(BaseEventHook):
         github_reference = self.payload.get('issue', {}).get('number', None)
         comment_message = self.payload.get('comment', {}).get('body', None)
         github_user = self.payload.get('sender', {}).get('id', None)
+        project_url = self.payload.get('repository', {}).get('html_url', None)
+        comment_message = replace_github_references(project_url, comment_message)
 
-        if not all([comment_message, github_reference]):
+        if not all([comment_message, github_reference, project_url]):
             raise ActionSyntaxException(_("Invalid issue comment information"))
 
         issues = Issue.objects.filter(external_reference=["github", github_reference])
@@ -142,5 +151,5 @@ class IssueCommentEventHook(BaseEventHook):
         uss = UserStory.objects.filter(external_reference=["github", github_reference])
 
         for item in list(issues) + list(tasks) + list(uss):
-            snapshot = take_snapshot(item, comment="From Github: {}".format(comment_message), user=get_github_user(github_user))
+            snapshot = take_snapshot(item, comment="From Github:\n\n {}".format(comment_message), user=get_github_user(github_user))
             send_notifications(item, history=snapshot)
