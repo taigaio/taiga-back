@@ -66,7 +66,7 @@ def is_user_already_registered(*, username:str, email:str, github_id:int=None) -
         return (True, _("Email is already in use."))
 
     if github_id and user_model.objects.filter(github_id=github_id):
-        return (True, _("Github id is already in use"))
+        return (True, _("GitHub id is already in use"))
 
     return (False, None)
 

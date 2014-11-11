@@ -14,26 +14,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
-import hmac
-import hashlib
-
-from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
-from rest_framework.exceptions import APIException
-
-from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.api.viewsets import GenericViewSet
+from taiga.base import exceptions as exc
+from taiga.base.utils import json
 from taiga.projects.models import Project
 
 from . import event_hooks
 from .exceptions import ActionSyntaxException
 
-
-class Http400(APIException):
-    status_code = 400
+import hmac
+import hashlib
 
 
 class GitHubViewSet(GenericViewSet):
@@ -79,17 +72,17 @@ class GitHubViewSet(GenericViewSet):
     def create(self, request, *args, **kwargs):
         project = self._get_project(request)
         if not project:
-            raise Http400(_("The project doesn't exist"))
+            raise exc.BadRequest(_("The project doesn't exist"))
 
         if not self._validate_signature(project, request):
-            raise Http400(_("Bad signature"))
+            raise exc.BadRequest(_("Bad signature"))
 
         event_name = request.META.get("HTTP_X_GITHUB_EVENT", None)
 
         try:
             payload = json.loads(request.body.decode("utf-8"))
-        except ValueError as e:
-            raise Http400(_("The payload is not a valid json"))
+        except ValueError:
+            raise exc.BadRequest(_("The payload is not a valid json"))
 
         event_hook_class = self.event_hook_classes.get(event_name, None)
         if event_hook_class is not None:
@@ -97,6 +90,6 @@ class GitHubViewSet(GenericViewSet):
             try:
                 event_hook.process_event()
             except ActionSyntaxException as e:
-                raise Http400(e)
+                raise exc.BadRequest(e)
 
         return Response({})

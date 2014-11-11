@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
-
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.projects.models import Project, IssueStatus, TaskStatus, UserStoryStatus
@@ -29,8 +27,10 @@ from taiga.projects.notifications.services import send_notifications
 from .exceptions import ActionSyntaxException
 from .services import get_github_user
 
-class BaseEventHook(object):
+import re
 
+
+class BaseEventHook:
     def __init__(self, project, payload):
         self.project = project
         self.payload = payload
@@ -40,7 +40,6 @@ class BaseEventHook(object):
 
 
 class PushEventHook(BaseEventHook):
-
     def process_event(self):
         if self.payload is None:
             return
@@ -93,12 +92,14 @@ class PushEventHook(BaseEventHook):
         element.status = status
         element.save()
 
-        snapshot = take_snapshot(element, comment="Status changed from Github commit", user=get_github_user(github_user))
+        snapshot = take_snapshot(element,
+                                 comment="Status changed from GitHub commit",
+                                 user=get_github_user(github_user))
         send_notifications(element, history=snapshot)
 
 
 def replace_github_references(project_url, wiki_text):
-    template = "\g<1>[Github#\g<2>]({}/issues/\g<2>)\g<3>".format(project_url)
+    template = "\g<1>[GitHub#\g<2>]({}/issues/\g<2>)\g<3>".format(project_url)
     return re.sub(r"(\s|^)#(\d+)(\s|$)", template, wiki_text, 0, re.M)
 
 
@@ -129,8 +130,9 @@ class IssuesEventHook(BaseEventHook):
         )
         take_snapshot(issue, user=get_github_user(github_user))
 
-        snapshot = take_snapshot(issue, comment="Created from Github", user=get_github_user(github_user))
+        snapshot = take_snapshot(issue, comment="Created from GitHub", user=get_github_user(github_user))
         send_notifications(issue, history=snapshot)
+
 
 class IssueCommentEventHook(BaseEventHook):
     def process_event(self):
@@ -151,5 +153,7 @@ class IssueCommentEventHook(BaseEventHook):
         uss = UserStory.objects.filter(external_reference=["github", github_reference])
 
         for item in list(issues) + list(tasks) + list(uss):
-            snapshot = take_snapshot(item, comment="From Github:\n\n{}".format(comment_message), user=get_github_user(github_user))
+            snapshot = take_snapshot(item,
+                                     comment="From GitHub:\n\n{}".format(comment_message),
+                                     user=get_github_user(github_user))
             send_notifications(item, history=snapshot)

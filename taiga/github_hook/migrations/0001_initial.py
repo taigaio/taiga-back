@@ -15,7 +15,7 @@ def create_github_system_user(apps, schema_editor):
     user = User.objects.using(db_alias).create(
         username="github-{}".format(random_hash),
         email="github-{}@taiga.io".format(random_hash),
-        full_name="Github",
+        full_name="GitHub",
         is_active=False,
         is_system=True,
         bio="",

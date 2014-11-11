@@ -131,7 +131,7 @@ from taiga.projects.notifications.api import NotifyPolicyViewSet
 
 router.register(r"notify-policies", NotifyPolicyViewSet, base_name="notifications")
 
-# Github webhooks
+# GitHub webhooks
 from taiga.github_hook.api import GitHubViewSet
 router.register(r"github-hook", GitHubViewSet, base_name="github-hook")
 
