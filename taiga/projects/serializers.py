@@ -68,6 +68,22 @@ class TaskStatusSerializer(ModelSerializer):
     class Meta:
         model = models.TaskStatus
 
+    def validate_name(self, attrs, source):
+        """
+        Check the task name is not duplicated in the project on creation
+        """
+        qs = None
+        # If the user story status exists:
+        if self.object and attrs.get("name", None):
+            qs = models.TaskStatus.objects.filter(project=self.object.project, name=attrs[source])
+
+        if not self.object and attrs.get("project", None)  and attrs.get("name", None):
+            qs = models.TaskStatus.objects.filter(project=attrs["project"], name=attrs[source])
+
+        if qs and qs.exists():
+              raise serializers.ValidationError("Name duplicated for the project")
+
+        return attrs
 
 # Issues common serializers
 
@@ -85,6 +101,23 @@ class IssueStatusSerializer(ModelSerializer):
     class Meta:
         model = models.IssueStatus
 
+    def validate_name(self, attrs, source):
+        """
+        Check the issue name is not duplicated in the project on creation
+        """
+        qs = None
+        # If the user story status exists:
+        if self.object and attrs.get("name", None):
+            qs = models.IssueStatus.objects.filter(project=self.object.project, name=attrs[source])
+
+        if not self.object and attrs.get("project", None)  and attrs.get("name", None):
+            qs = models.IssueStatus.objects.filter(project=attrs["project"], name=attrs[source])
+
+        if qs and qs.exists():
+              raise serializers.ValidationError("Name duplicated for the project")
+
+        return attrs
+        
 
 class IssueTypeSerializer(ModelSerializer):
     class Meta:
@@ -182,12 +215,13 @@ class ProjectSerializer(ModelSerializer):
     def validate_total_milestones(self, attrs, source):
         """
         Check that total_milestones is not null, it's an optional parameter but
-        not nullable in the model. 
+        not nullable in the model.
         """
         value = attrs[source]
         if value is None:
             raise serializers.ValidationError("Total milestones must be major or equal to zero")
         return attrs
+
 
 class ProjectDetailSerializer(ProjectSerializer):
     roles = serializers.SerializerMethodField("get_roles")

@@ -1,5 +1,18 @@
 # Changelog #
 
+## 1.3.0 Dryas hookeriana (Unreleased)
+
+### Features
+- GitHub integration (Phase I):
+  + Login/singin connector.
+  + Change status of user stories, tasks and issues with the commit messages.
+  + Sync issues creation in Taiga from GitHub.
+  + Sync comments  in Taiga from GitHub issues.
+
+### Misc
+- Lots of small and not so small bugfixes.
+
+
 ## 1.2.0 Picea obovata (2014-11-04)
 
 ### Features
@@ -10,12 +23,14 @@
 ### Misc
 - Lots of small and not so small bugfixes.
 
+
 ## 1.1.0 Alnus maximowiczii (2014-10-13)
 
 ### Misc
 - Fix bugs related to unicode chars on attachments.
 - Fix wrong static url resolve usage on emails.
 - Fix some bugs on import/export api related with attachments.
+
 
 ## 1.0.0 (2014-10-07)
 

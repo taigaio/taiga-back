@@ -39,6 +39,23 @@ def slugify_uniquely(value, model, slugfield="slug"):
         suffix += 1
 
 
+def slugify_uniquely_for_queryset(value, queryset, slugfield="slug"):
+    """
+    Returns a slug on a name which doesn't exist in a queryset
+    """
+
+    suffix = 0
+    potential = base = slugify(unidecode(value))
+    if len(potential) == 0:
+        potential = 'null'
+    while True:
+        if suffix:
+            potential = "-".join([base, str(suffix)])
+        if not queryset.filter(**{slugfield: potential}).exists():
+            return potential
+        suffix += 1
+
+
 def ref_uniquely(p, seq_field,  model, field='ref'):
     project = p.__class__.objects.select_for_update().get(pk=p.pk)
     ref = getattr(project, seq_field) + 1

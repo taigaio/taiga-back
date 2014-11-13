@@ -21,6 +21,7 @@ from collections import namedtuple
 from urllib.parse import urljoin
 
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from . import exceptions as exc
 
@@ -107,6 +108,11 @@ def login(access_code:str, client_id:str=CLIENT_ID, client_secret:str=CLIENT_SEC
     Get access_token fron an user authorized code, the client id and the client secret key.
     (See https://developer.github.com/v3/oauth/#web-application-flow).
     """
+    if not CLIENT_ID or not CLIENT_SECRET:
+        raise exc.GitHubApiError({"error_message": _("Login with github account is disabled. Contact "
+                                                     "with the sysadmins. Maybe they're snoozing in a "
+                                                     "secret hideout of the data center.")})
+
     url = urljoin(URL, "login/oauth/access_token")
     params={"code": access_code,
             "client_id": client_id,

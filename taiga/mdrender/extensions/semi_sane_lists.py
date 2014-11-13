@@ -21,7 +21,7 @@ class SemiSaneListExtension(markdown.Extension):
     the sane_lists extension, GitHub will mix list types if they're not
     separated by multiple newlines.
 
-    Github also recognizes lists that start in the middle of a paragraph. This
+    GitHub also recognizes lists that start in the middle of a paragraph. This
     is currently not supported by this extension, since the Python parser has a
     deeply-ingrained belief that blocks are always separated by multiple
     newlines.

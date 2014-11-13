@@ -33,8 +33,24 @@ def test_url_builder():
             "https://api.github.com/user/emails")
 
 
+def test_login_without_settings_params():
+    with pytest.raises(exc.GitHubApiError) as e, \
+            patch("taiga.base.connectors.github.requests") as m_requests:
+        m_requests.post.return_value = m_response = Mock()
+        m_response.status_code = 200
+        m_response.json.return_value = {"access_token": "xxxxxxxx"}
+
+        auth_info = github.login("*access-code*", "**client-id**", "*ient-secret*", github.HEADERS)
+    assert e.value.status_code == 400
+    assert "error_message" in e.value.detail
+
+
 def test_login_success():
-    with patch("taiga.base.connectors.github.requests") as m_requests:
+    with patch("taiga.base.connectors.github.requests") as m_requests, \
+            patch("taiga.base.connectors.github.CLIENT_ID") as CLIENT_ID, \
+            patch("taiga.base.connectors.github.CLIENT_SECRET") as CLIENT_SECRET:
+        CLIENT_ID = "*CLIENT_ID*"
+        CLIENT_SECRET = "*CLIENT_SECRET*"
         m_requests.post.return_value = m_response = Mock()
         m_response.status_code = 200
         m_response.json.return_value = {"access_token": "xxxxxxxx"}
@@ -52,7 +68,11 @@ def test_login_success():
 
 def test_login_whit_errors():
     with pytest.raises(exc.GitHubApiError) as e, \
-            patch("taiga.base.connectors.github.requests") as m_requests:
+            patch("taiga.base.connectors.github.requests") as m_requests, \
+            patch("taiga.base.connectors.github.CLIENT_ID") as CLIENT_ID, \
+            patch("taiga.base.connectors.github.CLIENT_SECRET") as CLIENT_SECRET:
+        CLIENT_ID = "*CLIENT_ID*"
+        CLIENT_SECRET = "*CLIENT_SECRET*"
         m_requests.post.return_value = m_response = Mock()
         m_response.status_code = 200
         m_response.json.return_value = {"error": "Invalid credentials"}

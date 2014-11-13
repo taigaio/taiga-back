@@ -73,6 +73,14 @@ class ProjectFactory(Factory):
     creation_template = factory.SubFactory("tests.factories.ProjectTemplateFactory")
 
 
+class ProjectModulesConfigFactory(Factory):
+    class Meta:
+        model = "projects.ProjectModulesConfig"
+        strategy = factory.CREATE_STRATEGY
+
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
 class RoleFactory(Factory):
     class Meta:
         model = "users.Role"
