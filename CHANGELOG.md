@@ -6,10 +6,10 @@
 - GitHub integration (Phase I):
   + Login/singin connector.
   + Change status of user stories, tasks and issues with the commit messages.
-  + Sync issues creation in Taiga from GitHub.          
-  + Sync comments  in Taiga from GitHub issues.         
+  + Sync issues creation in Taiga from GitHub.
+  + Sync comments  in Taiga from GitHub issues.
 
-### Misc               
+### Misc
 - Lots of small and not so small bugfixes.
 
 
