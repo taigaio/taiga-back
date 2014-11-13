@@ -1,15 +1,14 @@
 # Changelog #
 
-## 1.3.0 Dryas hookeriana  (Unreleased)
+## 1.3.0 Dryas hookeriana (Unreleased)
 
 ### Features
- 
 - GitHub integration (Phase I):
   + Login/singin connector.
   + Change status of user stories, tasks and issues with the commit messages.
   + Sync issues creation in Taiga from GitHub.          
   + Sync comments  in Taiga from GitHub issues.         
-                       
+
 ### Misc               
 - Lots of small and not so small bugfixes.
 
