@@ -36,48 +36,6 @@ def teardown_module():
     reconnect_signals()
 
 
-class TestGetAttribute:
-    def test_no_attribute(self, object):
-        object.full_name = "name"
-        with pytest.raises(AttributeError):
-            n.get_attribute(object, "name")
-
-        with pytest.raises(AttributeError):
-            n.get_attribute(object, "full_name__last_name")
-
-    def test_one_level(self, object):
-        object.name = "name"
-        assert n.get_attribute(object, "name") == object.name
-
-    def test_two_levels(self, object):
-        object.name = object
-        object.name.full_name = "first name"
-        assert n.get_attribute(object, "name__full_name") == object.name.full_name
-
-    def test_three_levels(self, object):
-        object.info = object
-        object.info.name = object
-        object.info.name.full_name = "first name"
-        assert n.get_attribute(object, "info__name__full_name") == object.info.name.full_name
-
-
-def test_transform_field_into_lookup():
-    transform = partial(n.transform_field_into_lookup, value="chuck", operator="__lt",
-                        operator_if_desc="__gt")
-
-    assert transform(name="name") == {"name__lt": "chuck"}
-    assert transform(name="-name") == {"name__gt": "chuck"}
-
-
-def test_disjunction_filters():
-    filters = [{"age__lt": 21, "name__eq": "chuck"}]
-    result_str = str(n.disjunction_filters(filters))
-
-    assert result_str.startswith("(OR: ")
-    assert "('age__lt', 21)" in result_str
-    assert "('name__eq', 'chuck')" in result_str
-
-
 @pytest.mark.django_db
 class TestUserStories:
     def test_no_filters(self):
@@ -337,4 +295,37 @@ class TestIssues:
         assert issue1_neighbors.left is None
         assert issue1_neighbors.right == issue3
         assert issue2_neighbors.left == issue3
+        assert issue2_neighbors.right is None
+
+    def test_ordering_by_assigned_to_desc_with_none_values(self):
+        project = f.ProjectFactory.create()
+
+        issue1 = f.IssueFactory.create(project=project, assigned_to=None)
+        issue2 = f.IssueFactory.create(project=project, assigned_to=None)
+        issue3 = f.IssueFactory.create(project=project, assigned_to=None)
+
+        issues = Issue.objects.filter(project=project).order_by("-assigned_to__full_name")
+        issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
+        issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
+
+        assert issue1_neighbors.left == issue2
+        assert issue1_neighbors.right is None
+        assert issue2_neighbors.left == issue3
+        assert issue2_neighbors.right == issue1
+
+    def test_ordering_by_assigned_to_desc_with_none_and_normal_values(self):
+        project = f.ProjectFactory.create()
+        assigned_to1 = f.UserFactory.create(full_name="Chuck Norris")
+        issue1 = f.IssueFactory.create(project=project, assigned_to=None)
+        issue2 = f.IssueFactory.create(project=project, assigned_to=assigned_to1)
+        issue3 = f.IssueFactory.create(project=project, assigned_to=None)
+
+        issues = Issue.objects.filter(project=project).order_by("-assigned_to__full_name")
+
+        issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
+        issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
+
+        assert issue1_neighbors.left == issue3
+        assert issue1_neighbors.right == issue2
+        assert issue2_neighbors.left == issue1
         assert issue2_neighbors.right is None
