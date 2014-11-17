@@ -74,7 +74,8 @@ def _make_extensions_list(wikilinks_config=None, project=None):
             MentionsExtension(),
             TaigaReferencesExtension(project),
             "extra",
-            "codehilite"]
+            "codehilite",
+            "nl2br"]
 
 
 import diff_match_patch
