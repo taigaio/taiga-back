@@ -53,6 +53,9 @@ def get_neighbors(obj, results_set=None):
     cursor = connection.cursor()
     cursor.execute(query, params)
     row = cursor.fetchone()
+    if row is None:
+        return Neighbor(None, None)
+
     obj_position = row[1] - 1
 
     try:
