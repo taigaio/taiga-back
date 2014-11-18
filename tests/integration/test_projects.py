@@ -83,3 +83,16 @@ def test_issue_status_slug_generation(client):
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 200
     assert response.data["slug"] == "new-status"
+
+
+def test_points_name_duplicated(client):
+    point_1 = f.PointsFactory()
+    point_2 = f.PointsFactory(project=point_1.project)
+
+    client.login(point_1.project.owner)
+
+    url = reverse("points-detail", kwargs={"pk": point_2.pk})
+    data = {"name": point_1.name}
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 400
+    assert response.data["name"][0] == "Name duplicated for the project"
