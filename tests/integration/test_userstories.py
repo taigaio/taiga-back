@@ -200,3 +200,34 @@ def test_archived_filter(client):
     data = {"is_archived": 1}
     response = client.get(url, data)
     assert len(json.loads(response.content)) == 1
+
+def test_get_total_points(client):
+    project = f.ProjectFactory.create()
+
+    role1 = f.RoleFactory.create(project=project)
+    role2 = f.RoleFactory.create(project=project)
+
+    points1 = f.PointsFactory.create(project=project, value=None)
+    points2 = f.PointsFactory.create(project=project, value=1)
+    points3 = f.PointsFactory.create(project=project, value=2)
+
+    us_with_points = f.UserStoryFactory.create(project=project)
+    us_with_points.role_points.all().delete()
+    f.RolePointsFactory.create(user_story=us_with_points, role=role1, points=points2)
+    f.RolePointsFactory.create(user_story=us_with_points, role=role2, points=points3)
+
+    assert us_with_points.get_total_points() == 3.0
+
+    us_without_points = f.UserStoryFactory.create(project=project)
+    us_without_points.role_points.all().delete()
+    f.RolePointsFactory.create(user_story=us_without_points, role=role1, points=points1)
+    f.RolePointsFactory.create(user_story=us_without_points, role=role2, points=points1)
+
+    assert us_without_points.get_total_points() is None
+
+    us_mixed = f.UserStoryFactory.create(project=project)
+    us_mixed.role_points.all().delete()
+    f.RolePointsFactory.create(user_story=us_mixed, role=role1, points=points1)
+    f.RolePointsFactory.create(user_story=us_mixed, role=role2, points=points2)
+
+    assert us_mixed.get_total_points() == 1.0
