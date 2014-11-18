@@ -115,6 +115,78 @@ def test_response_200_in_registration_with_github_account(client, settings):
         assert response.data["bio"] == "time traveler"
         assert response.data["github_id"] == 1955
 
+def test_response_200_in_registration_with_github_account_and_existed_user_by_email(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = False
+    form = {"type": "github",
+            "code": "xxxxxx"}
+    user = factories.UserFactory()
+    user.email = "mmcfly@bttf.com"
+    user.github_id = None
+    user.save()
+
+    with patch("taiga.base.connectors.github.me") as m_me:
+        m_me.return_value = ("mmcfly@bttf.com",
+                             github.User(id=1955,
+                                        username="mmcfly",
+                                        full_name="martin seamus mcfly",
+                                        bio="time traveler"))
+
+        response = client.post(reverse("auth-list"), form)
+        assert response.status_code == 200
+        assert response.data["username"] == user.username
+        assert response.data["auth_token"] != "" and response.data["auth_token"] != None
+        assert response.data["email"] ==  user.email
+        assert response.data["full_name"] == user.full_name
+        assert response.data["bio"] == user.bio
+        assert response.data["github_id"] == 1955
+
+def test_response_200_in_registration_with_github_account_and_existed_user_by_github_id(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = False
+    form = {"type": "github",
+            "code": "xxxxxx"}
+    user = factories.UserFactory()
+    user.github_id = 1955
+    user.save()
+
+    with patch("taiga.base.connectors.github.me") as m_me:
+        m_me.return_value = ("mmcfly@bttf.com",
+                             github.User(id=1955,
+                                        username="mmcfly",
+                                        full_name="martin seamus mcfly",
+                                        bio="time traveler"))
+
+        response = client.post(reverse("auth-list"), form)
+        assert response.status_code == 200
+        assert response.data["username"] != "mmcfly"
+        assert response.data["auth_token"] != "" and response.data["auth_token"] != None
+        assert response.data["email"] != "mmcfly@bttf.com"
+        assert response.data["full_name"] != "martin seamus mcfly"
+        assert response.data["bio"] != "time traveler"
+        assert response.data["github_id"] == user.github_id
+
+def test_response_200_in_registration_with_github_account_and_change_github_username(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = False
+    form = {"type": "github",
+            "code": "xxxxxx"}
+    user = factories.UserFactory()
+    user.username = "mmcfly"
+    user.save()
+
+    with patch("taiga.base.connectors.github.me") as m_me:
+        m_me.return_value = ("mmcfly@bttf.com",
+                             github.User(id=1955,
+                                        username="mmcfly",
+                                        full_name="martin seamus mcfly",
+                                        bio="time traveler"))
+
+        response = client.post(reverse("auth-list"), form)
+        assert response.status_code == 200
+        assert response.data["username"] == "mmcfly-1"
+        assert response.data["auth_token"] != "" and response.data["auth_token"] != None
+        assert response.data["email"] == "mmcfly@bttf.com"
+        assert response.data["full_name"] == "martin seamus mcfly"
+        assert response.data["bio"] == "time traveler"
+        assert response.data["github_id"] == 1955
 
 def test_response_200_in_registration_with_github_account_in_a_project(client, settings):
     settings.PUBLIC_REGISTER_ENABLED = False
@@ -170,7 +242,6 @@ def test_respond_400_if_username_or_email_is_duplicate(client, settings, registe
 
     response = client.post(reverse("auth-register"), register_form)
     assert response.status_code == 201
-
 
     register_form["username"] = "username"
     register_form["email"] = "ff@dd.com"
