@@ -39,6 +39,23 @@ class PointsSerializer(ModelSerializer):
     class Meta:
         model = models.Points
 
+    def validate_name(self, attrs, source):
+        """
+        Check the points name is not duplicated in the project on creation
+        """
+        qs = None
+        # If the user story status exists:
+        if self.object and attrs.get("name", None):
+            qs = models.Points.objects.filter(project=self.object.project, name=attrs[source])
+
+        if not self.object and attrs.get("project", None)  and attrs.get("name", None):
+            qs = models.Points.objects.filter(project=attrs["project"], name=attrs[source])
+
+        if qs and qs.exists():
+              raise serializers.ValidationError("Name duplicated for the project")
+
+        return attrs
+
 
 class UserStoryStatusSerializer(ModelSerializer):
     class Meta:
@@ -117,7 +134,7 @@ class IssueStatusSerializer(ModelSerializer):
               raise serializers.ValidationError("Name duplicated for the project")
 
         return attrs
-        
+
 
 class IssueTypeSerializer(ModelSerializer):
     class Meta:
