@@ -34,6 +34,7 @@ from djmail.template_mail import MagicMailBuilder
 from taiga.base import exceptions as exc
 from taiga.users.serializers import UserSerializer
 from taiga.users.services import get_and_validate_user
+from taiga.base.utils.slug import slugify_uniquely
 
 from .tokens import get_token_for_user
 from .signals import user_registered as user_registered_signal
@@ -50,7 +51,7 @@ def send_register_email(user) -> bool:
     return bool(email.send())
 
 
-def is_user_already_registered(*, username:str, email:str, github_id:int=None) -> (bool, str):
+def is_user_already_registered(*, username:str, email:str) -> (bool, str):
     """
     Checks if a specified user is already registred.
 
@@ -64,9 +65,6 @@ def is_user_already_registered(*, username:str, email:str, github_id:int=None) -
 
     if user_model.objects.filter(email=email):
         return (True, _("Email is already in use."))
-
-    if github_id and user_model.objects.filter(github_id=github_id):
-        return (True, _("GitHub id is already in use"))
 
     return (False, None)
 
@@ -182,19 +180,32 @@ def github_register(username:str, email:str, full_name:str, github_id:int, bio:s
     :returns: User
     """
     user_model = apps.get_model("users", "User")
-    user, created = user_model.objects.get_or_create(github_id=github_id,
-                                                     defaults={"username": username,
-                                                               "email": email,
-                                                               "full_name": full_name,
-                                                               "bio": bio})
+
+    try:
+        # Github user association exist?
+        user = user_model.objects.get(github_id=github_id)
+    except user_model.DoesNotExist:
+        try:
+            # Is a user with the same email as the github user?
+            user = user_model.objects.get(email=email)
+            user.github_id = github_id
+            user.save(update_fields=["github_id"])
+        except user_model.DoesNotExist:
+            # Create a new user
+            username_unique = slugify_uniquely(username, user_model, slugfield="username")
+            user = user_model.objects.create(email=email,
+                                             username=username_unique,
+                                             github_id=github_id,
+                                             full_name=full_name,
+                                             bio=bio)
+
+            send_register_email(user)
+            user_registered_signal.send(sender=user.__class__, user=user)
+
     if token:
         membership = get_membership_by_token(token)
         membership.user = user
         membership.save(update_fields=["user"])
-
-    if created:
-        send_register_email(user)
-        user_registered_signal.send(sender=user.__class__, user=user)
 
     return user
 

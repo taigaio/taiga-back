@@ -219,7 +219,7 @@ def test_issues_event_opened_issue(client):
         "issue": {
             "title": "test-title",
             "body": "test-body",
-            "number": 10,
+            "html_url": "http://github.com/test/project/issues/11",
         },
         "assignee": {},
         "label": {},
@@ -249,7 +249,7 @@ def test_issues_event_other_than_opened_issue(client):
         "issue": {
             "title": "test-title",
             "body": "test-body",
-            "number": 10,
+            "html_url": "http://github.com/test/project/issues/11",
         },
         "assignee": {},
         "label": {},
@@ -291,17 +291,17 @@ def test_issues_event_bad_issue(client):
 
 
 def test_issue_comment_event_on_existing_issue_task_and_us(client):
-    issue = f.IssueFactory.create(external_reference=["github", "10"])
+    issue = f.IssueFactory.create(external_reference=["github", "http://github.com/test/project/issues/11"])
     take_snapshot(issue, user=issue.owner)
-    task = f.TaskFactory.create(project=issue.project, external_reference=["github", "10"])
+    task = f.TaskFactory.create(project=issue.project, external_reference=["github", "http://github.com/test/project/issues/11"])
     take_snapshot(task, user=task.owner)
-    us = f.UserStoryFactory.create(project=issue.project, external_reference=["github", "10"])
+    us = f.UserStoryFactory.create(project=issue.project, external_reference=["github", "http://github.com/test/project/issues/11"])
     take_snapshot(us, user=us.owner)
 
     payload = {
         "action": "created",
         "issue": {
-            "number": 10,
+            "html_url": "http://github.com/test/project/issues/11",
         },
         "comment": {
             "body": "Test body",
@@ -346,7 +346,7 @@ def test_issue_comment_event_on_not_existing_issue_task_and_us(client):
     payload = {
         "action": "created",
         "issue": {
-            "number": 11,
+            "html_url": "http://github.com/test/project/issues/11",
         },
         "comment": {
             "body": "Test body",

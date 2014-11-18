@@ -52,7 +52,7 @@ from .extensions.references import TaigaReferencesExtension
 
 
 # Bleach configuration
-bleach.ALLOWED_TAGS += ["p", "table", "th", "tr", "td", "h1", "h2", "h3",
+bleach.ALLOWED_TAGS += ["p", "table", "thead", "tbody", "th", "tr", "td", "h1", "h2", "h3",
                         "div", "pre", "span", "hr", "dl", "dt", "dd", "sup",
                         "img", "del", "br", "ins"]
 
@@ -74,7 +74,8 @@ def _make_extensions_list(wikilinks_config=None, project=None):
             MentionsExtension(),
             TaigaReferencesExtension(project),
             "extra",
-            "codehilite"]
+            "codehilite",
+            "nl2br"]
 
 
 import diff_match_patch

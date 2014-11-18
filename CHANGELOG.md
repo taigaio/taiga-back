@@ -1,6 +1,6 @@
 # Changelog #
 
-## 1.3.0 Dryas hookeriana (Unreleased)
+## 1.3.0 Dryas hookeriana (2014-11-18)
 
 ### Features
 - GitHub integration (Phase I):
