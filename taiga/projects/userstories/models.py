@@ -126,9 +126,15 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
         return self.role_points
 
     def get_total_points(self):
+        not_null_role_points = self.role_points.select_related("points").\
+            exclude(points__value__isnull=True)
+
+        #If we only have None values the sum should be None
+        if not not_null_role_points:
+            return None
+
         total = 0.0
-        for rp in self.role_points.select_related("points"):
-            if rp.points.value:
-                total += rp.points.value
+        for rp in not_null_role_points:
+            total += rp.points.value
 
         return total
