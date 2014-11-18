@@ -110,11 +110,11 @@ class IssuesEventHook(BaseEventHook):
 
         subject = self.payload.get('issue', {}).get('title', None)
         description = self.payload.get('issue', {}).get('body', None)
-        github_reference = self.payload.get('issue', {}).get('number', None)
+        github_url = self.payload.get('issue', {}).get('html_url', None)
         github_user = self.payload.get('issue', {}).get('user', {}).get('id', None)
         project_url = self.payload.get('repository', {}).get('html_url', None)
 
-        if not all([subject, github_reference, project_url]):
+        if not all([subject, github_url, project_url]):
             raise ActionSyntaxException(_("Invalid issue information"))
 
         issue = Issue.objects.create(
@@ -125,7 +125,7 @@ class IssuesEventHook(BaseEventHook):
             type=self.project.default_issue_type,
             severity=self.project.default_severity,
             priority=self.project.default_priority,
-            external_reference=['github', github_reference],
+            external_reference=['github', github_url],
             owner=get_github_user(github_user)
         )
         take_snapshot(issue, user=get_github_user(github_user))
@@ -139,18 +139,18 @@ class IssueCommentEventHook(BaseEventHook):
         if self.payload.get('action', None) != "created":
             raise ActionSyntaxException(_("Invalid issue comment information"))
 
-        github_reference = self.payload.get('issue', {}).get('number', None)
+        github_url = self.payload.get('issue', {}).get('html_url', None)
         comment_message = self.payload.get('comment', {}).get('body', None)
         github_user = self.payload.get('sender', {}).get('id', None)
         project_url = self.payload.get('repository', {}).get('html_url', None)
         comment_message = replace_github_references(project_url, comment_message)
 
-        if not all([comment_message, github_reference, project_url]):
+        if not all([comment_message, github_url, project_url]):
             raise ActionSyntaxException(_("Invalid issue comment information"))
 
-        issues = Issue.objects.filter(external_reference=["github", github_reference])
-        tasks = Task.objects.filter(external_reference=["github", github_reference])
-        uss = UserStory.objects.filter(external_reference=["github", github_reference])
+        issues = Issue.objects.filter(external_reference=["github", github_url])
+        tasks = Task.objects.filter(external_reference=["github", github_url])
+        uss = UserStory.objects.filter(external_reference=["github", github_url])
 
         for item in list(issues) + list(tasks) + list(uss):
             snapshot = take_snapshot(item,

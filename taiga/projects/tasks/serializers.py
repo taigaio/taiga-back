@@ -16,7 +16,7 @@
 
 from rest_framework import serializers
 
-from taiga.base.serializers import Serializer, PickleField, NeighborsSerializerMixin
+from taiga.base.serializers import Serializer, PickleField, NeighborsSerializerMixin, PgArrayField
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator, TaskStatusExistsValidator
 from taiga.projects.milestones.validators import SprintExistsValidator
@@ -28,6 +28,7 @@ from . import models
 
 class TaskSerializer(WatchersValidator, serializers.ModelSerializer):
     tags = PickleField(required=False, default=[])
+    external_reference = PgArrayField(required=False)
     comment = serializers.SerializerMethodField("get_comment")
     milestone_slug = serializers.SerializerMethodField("get_milestone_slug")
     blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
