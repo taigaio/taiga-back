@@ -224,16 +224,17 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
             user_stories = self.user_stories.all()
 
         # Get point instance that represent a null/undefined
-        # The current model allows dulplicate values. Because
+        # The current model allows duplicate values. Because
         # of it, we should get all poins with None as value
         # and use the first one.
         # In case of that not exists, creates one for avoid
-        # unxpected errors.
+        # unexpected errors.
         none_points = list(self.points.filter(value=None))
         if none_points:
             null_points_value = none_points[0]
         else:
-            null_points_value = Points.objects.create(name="?", value=None, project=self)
+            name = slugify_uniquely_for_queryset("?", self.points.all(), slugfield="name")
+            null_points_value = Points.objects.create(name=name, value=None, project=self)
 
         for us in user_stories:
             usroles = Role.objects.filter(role_points__in=us.role_points.all()).distinct()
