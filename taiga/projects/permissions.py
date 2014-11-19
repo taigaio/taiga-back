@@ -23,6 +23,7 @@ class ProjectPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsAuthenticated()
     update_perms = IsProjectOwner()
+    partial_update_perms = IsProjectOwner()
     destroy_perms = IsProjectOwner()
     modules_perms = IsProjectOwner()
     list_perms = AllowAny()
