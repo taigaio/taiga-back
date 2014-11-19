@@ -169,7 +169,10 @@ class MembershipSerializer(ModelSerializer):
         return obj.project.slug if obj and obj.project else ""
 
     def validate_email(self, attrs, source):
-        project = attrs["project"]
+        project = attrs.get("project", None)
+        if project is None:
+            project = self.object.project
+
         email = attrs[source]
 
         qs = models.Membership.objects.all()
@@ -188,13 +191,17 @@ class MembershipSerializer(ModelSerializer):
         return attrs
 
     def validate_role(self, attrs, source):
-        project = attrs["project"]
+        project = attrs.get("project", None)
+        if project is None:
+            project = self.object.project
+
         role = attrs[source]
 
         if project.roles.filter(id=role.id).count() == 0:
             raise serializers.ValidationError(_("Invalid role for the project"))
 
         return attrs
+
 
 class ProjectMembershipSerializer(ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False)
