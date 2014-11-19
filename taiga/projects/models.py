@@ -598,6 +598,7 @@ class ProjectTemplate(models.Model):
         for us_status in project.us_statuses.all():
             self.us_statuses.append({
                 "name": us_status.name,
+                "slug": us_status.slug,
                 "is_closed": us_status.is_closed,
                 "color": us_status.color,
                 "wip_limit": us_status.wip_limit,
@@ -616,6 +617,7 @@ class ProjectTemplate(models.Model):
         for task_status in project.task_statuses.all():
             self.task_statuses.append({
                 "name": task_status.name,
+                "slug": task_status.slug,
                 "is_closed": task_status.is_closed,
                 "color": task_status.color,
                 "order": task_status.order,
@@ -625,6 +627,7 @@ class ProjectTemplate(models.Model):
         for issue_status in project.issue_statuses.all():
             self.issue_statuses.append({
                 "name": issue_status.name,
+                "slug": issue_status.slug,
                 "is_closed": issue_status.is_closed,
                 "color": issue_status.color,
                 "order": issue_status.order,
@@ -685,6 +688,7 @@ class ProjectTemplate(models.Model):
         for us_status in self.us_statuses:
             UserStoryStatus.objects.create(
                 name=us_status["name"],
+                slug=us_status["slug"],
                 is_closed=us_status["is_closed"],
                 color=us_status["color"],
                 wip_limit=us_status["wip_limit"],
@@ -703,6 +707,7 @@ class ProjectTemplate(models.Model):
         for task_status in self.task_statuses:
             TaskStatus.objects.create(
                 name=task_status["name"],
+                slug=task_status["slug"],
                 is_closed=task_status["is_closed"],
                 color=task_status["color"],
                 order=task_status["order"],
@@ -712,6 +717,7 @@ class ProjectTemplate(models.Model):
         for issue_status in self.issue_statuses:
             IssueStatus.objects.create(
                 name=issue_status["name"],
+                slug=issue_status["slug"],
                 is_closed=issue_status["is_closed"],
                 color=issue_status["color"],
                 order=issue_status["order"],

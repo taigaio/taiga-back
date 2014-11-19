@@ -303,6 +303,7 @@ class ProjectTemplateSerializer(ModelSerializer):
 
     class Meta:
         model = models.ProjectTemplate
+        read_only_fields = ("created_date", "modified_date")
 
 
 class StarredSerializer(ModelSerializer):
