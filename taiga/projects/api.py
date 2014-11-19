@@ -81,6 +81,12 @@ class ProjectViewSet(ModelCrudViewSet):
         return Response(services.get_stats_for_project(project))
 
     @detail_route(methods=['get'])
+    def member_stats(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, 'member_stats', project)
+        return Response(services.get_member_stats_for_project(project))
+
+    @detail_route(methods=['get'])
     def issues_stats(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, 'issues_stats', project)
