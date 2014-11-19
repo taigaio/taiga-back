@@ -187,6 +187,14 @@ class MembershipSerializer(ModelSerializer):
 
         return attrs
 
+    def validate_role(self, attrs, source):
+        project = attrs["project"]
+        role = attrs[source]
+
+        if project.roles.filter(id=role.id).count() == 0:
+            raise serializers.ValidationError(_("Invalid role for the project"))
+
+        return attrs
 
 class ProjectMembershipSerializer(ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False)
