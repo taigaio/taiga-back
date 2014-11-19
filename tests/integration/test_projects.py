@@ -84,7 +84,6 @@ def test_issue_status_slug_generation(client):
     assert response.status_code == 200
     assert response.data["slug"] == "new-status"
 
-
 def test_points_name_duplicated(client):
     point_1 = f.PointsFactory()
     point_2 = f.PointsFactory(project=point_1.project)
@@ -96,3 +95,10 @@ def test_points_name_duplicated(client):
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 400
     assert response.data["name"][0] == "Name duplicated for the project"
+
+def test_update_points_when_not_null_values_for_points(client):
+    points = f.PointsFactory(name="?", value="6")
+    role = f.RoleFactory(project=points.project, computable=True)
+    assert points.project.points.filter(value__isnull=True).count() == 0
+    points.project.update_role_points()
+    assert points.project.points.filter(value__isnull=True).count() == 1
