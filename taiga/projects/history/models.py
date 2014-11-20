@@ -48,7 +48,7 @@ class HistoryEntry(models.Model):
     user = JsonField(blank=True, default=None, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     type = models.SmallIntegerField(choices=HISTORY_TYPE_CHOICES)
-    key = models.CharField(max_length=255, null=True, default=None, blank=True)
+    key = models.CharField(max_length=255, null=True, default=None, blank=True, db_index=True)
 
     # Stores the last diff
     diff = JsonField(null=True, default=None)
