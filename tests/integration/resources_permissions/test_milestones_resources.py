@@ -64,6 +64,18 @@ def data():
                         role__project=m.private_project2,
                         role__permissions=[])
 
+    f.MembershipFactory(project=m.public_project,
+                        user=m.project_owner,
+                        is_owner=True)
+
+    f.MembershipFactory(project=m.private_project1,
+                        user=m.project_owner,
+                        is_owner=True)
+
+    f.MembershipFactory(project=m.private_project2,
+                        user=m.project_owner,
+                        is_owner=True)
+
     m.public_milestone = f.MilestoneFactory(project=m.public_project)
     m.private_milestone1 = f.MilestoneFactory(project=m.private_project1)
     m.private_milestone2 = f.MilestoneFactory(project=m.private_project2)

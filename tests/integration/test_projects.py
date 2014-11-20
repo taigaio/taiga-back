@@ -22,6 +22,7 @@ def test_create_project(client):
 
 def test_partially_update_project(client):
     project = f.create_project()
+    f.MembershipFactory(user=project.owner, project=project, is_owner=True)
     url = reverse("projects-detail", kwargs={"pk": project.pk})
     data = {"name": ""}
 
@@ -32,6 +33,7 @@ def test_partially_update_project(client):
 
 def test_us_status_slug_generation(client):
     us_status = f.UserStoryStatusFactory(name="NEW")
+    f.MembershipFactory(user=us_status.project.owner, project=us_status.project, is_owner=True)
     assert us_status.slug == "new"
 
     client.login(us_status.project.owner)
@@ -51,6 +53,7 @@ def test_us_status_slug_generation(client):
 
 def test_task_status_slug_generation(client):
     task_status = f.TaskStatusFactory(name="NEW")
+    f.MembershipFactory(user=task_status.project.owner, project=task_status.project, is_owner=True)
     assert task_status.slug == "new"
 
     client.login(task_status.project.owner)
@@ -70,6 +73,7 @@ def test_task_status_slug_generation(client):
 
 def test_issue_status_slug_generation(client):
     issue_status = f.IssueStatusFactory(name="NEW")
+    f.MembershipFactory(user=issue_status.project.owner, project=issue_status.project, is_owner=True)
     assert issue_status.slug == "new"
 
     client.login(issue_status.project.owner)
@@ -90,7 +94,7 @@ def test_issue_status_slug_generation(client):
 def test_points_name_duplicated(client):
     point_1 = f.PointsFactory()
     point_2 = f.PointsFactory(project=point_1.project)
-
+    f.MembershipFactory(user=point_1.project.owner, project=point_1.project, is_owner=True)
     client.login(point_1.project.owner)
 
     url = reverse("points-detail", kwargs={"pk": point_2.pk})
@@ -192,3 +196,30 @@ def test_leave_project_invalid_membership(client):
     url = reverse("projects-leave", args=(project.id,))
     response = client.post(url)
     assert response.status_code == 404
+
+
+def test_delete_membership_only_owner(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create()
+    role = f.RoleFactory.create(project=project, permissions=["view_project"])
+    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+    client.login(user)
+    url = reverse("memberships-detail", args=(membership.id,))
+    response = client.delete(url)
+    assert response.status_code == 400
+    assert json.loads(response.content)["_error_message"] == "At least one of the user must be an active admin"
+
+
+def test_edit_membership_only_owner(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create()
+    role = f.RoleFactory.create(project=project, permissions=["view_project"])
+    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+    data = {
+        "is_owner": False
+    }
+    client.login(user)
+    url = reverse("memberships-detail", args=(membership.id,))
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 400
+    assert response.data["is_owner"][0] == "At least one of the user must be an active admin"

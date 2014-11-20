@@ -40,6 +40,7 @@ from taiga.base.api import ModelCrudViewSet
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.projects.votes import services as votes_service
 from taiga.projects.serializers import StarredSerializer
+from taiga.permissions.service import is_project_owner
 
 from . import models
 from . import serializers
@@ -53,8 +54,8 @@ class MembersFilterBackend(BaseFilterBackend):
         if project_id:
             Project = apps.get_model('projects', 'Project')
             project = get_object_or_404(Project, pk=project_id)
-            if request.user.is_authenticated() and (project.memberships.filter(user=request.user).exists() or project.owner == request.user):
-                return queryset.filter(Q(memberships__project=project) | Q(id=project.owner.id)).distinct()
+            if request.user.is_authenticated() and project.memberships.filter(user=request.user).exists():
+                return queryset.filter(memberships__project=project).distinct()
             else:
                 raise exc.PermissionDenied(_("You don't have permisions to see this project users."))
 

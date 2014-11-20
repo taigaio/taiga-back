@@ -32,5 +32,27 @@ def create_members_in_bulk(bulk_data, callback=None, precall=None, **additional_
     return members
 
 
-def remove_member(project, user):
+def remove_user_from_project(user, project):
     models.Membership.objects.get(project=project, user=user).delete()
+
+
+def project_has_valid_owners(project, exclude_user=None):
+    """
+    Checks if the project has any owner membership with a user different than the specified
+    """
+    owner_memberships = project.memberships.filter(is_owner=True, user__is_active=True)
+    if exclude_user:
+        owner_memberships = owner_memberships.exclude(user=exclude_user)
+
+    return owner_memberships.count() > 0
+
+
+def can_user_leave_project(user, project):
+    membership = project.memberships.get(user=user)
+    if not membership.is_owner:
+         return True
+
+    if not project_has_valid_owners(project, exclude_user=user):
+        return False
+
+    return True

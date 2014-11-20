@@ -230,7 +230,7 @@ def test_resource_notification_test(client, mail):
     user2 = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user1)
     role = f.RoleFactory.create(project=project)
-    member1 = f.MembershipFactory.create(project=project, user=user1, role=role)
+    member1 = f.MembershipFactory.create(project=project, user=user1, role=role, is_owner=True)
     member2 = f.MembershipFactory.create(project=project, user=user2, role=role)
     issue = f.IssueFactory.create(owner=user2, project=project)
 
@@ -268,7 +268,7 @@ def test_watchers_assignation_for_issue(client):
     project2 = f.ProjectFactory.create(owner=user2)
     role1 = f.RoleFactory.create(project=project1)
     role2 = f.RoleFactory.create(project=project2)
-    member1 = f.MembershipFactory.create(project=project1, user=user1, role=role1)
+    member1 = f.MembershipFactory.create(project=project1, user=user1, role=role1, is_owner=True)
     member2 = f.MembershipFactory.create(project=project2, user=user2, role=role2)
 
     client.login(user1)
@@ -321,7 +321,7 @@ def test_watchers_assignation_for_task(client):
     project2 = f.ProjectFactory.create(owner=user2)
     role1 = f.RoleFactory.create(project=project1)
     role2 = f.RoleFactory.create(project=project2)
-    member1 = f.MembershipFactory.create(project=project1, user=user1, role=role1)
+    member1 = f.MembershipFactory.create(project=project1, user=user1, role=role1, is_owner=True)
     member2 = f.MembershipFactory.create(project=project2, user=user2, role=role2)
 
     client.login(user1)
@@ -374,7 +374,7 @@ def test_watchers_assignation_for_us(client):
     project2 = f.ProjectFactory.create(owner=user2)
     role1 = f.RoleFactory.create(project=project1)
     role2 = f.RoleFactory.create(project=project2)
-    member1 = f.MembershipFactory.create(project=project1, user=user1, role=role1)
+    member1 = f.MembershipFactory.create(project=project1, user=user1, role=role1, is_owner=True)
     member2 = f.MembershipFactory.create(project=project2, user=user2, role=role2)
 
     client.login(user1)

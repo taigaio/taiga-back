@@ -69,6 +69,18 @@ def data():
                         role__project=m.private_project2,
                         role__permissions=[])
 
+    f.MembershipFactory(project=m.public_project,
+                        user=m.project_owner,
+                        is_owner=True)
+
+    f.MembershipFactory(project=m.private_project1,
+                        user=m.project_owner,
+                        is_owner=True)
+
+    f.MembershipFactory(project=m.private_project2,
+                        user=m.project_owner,
+                        is_owner=True)
+
     return m
 
 @pytest.fixture

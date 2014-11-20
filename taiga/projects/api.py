@@ -158,7 +158,7 @@ class ProjectViewSet(ModelCrudViewSet):
     def leave(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, 'leave', project)
-        services.remove_member(project, user=request.user)
+        services.remove_user_from_project(request.user, project)
         return Response(status=status.HTTP_200_OK)
 
     def pre_save(self, obj):
@@ -240,6 +240,10 @@ class MembershipViewSet(ModelCrudViewSet):
 
         services.send_invitation(invitation=invitation)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def pre_delete(self, obj):
+        if not services.can_user_leave_project(obj.user, obj.project):
+            raise exc.BadRequest(_("At least one of the user must be an active admin"))
 
     def pre_save(self, obj):
         if not obj.token:

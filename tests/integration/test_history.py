@@ -143,7 +143,7 @@ def test_issue_resource_history_test(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     role = f.RoleFactory.create(project=project)
-    member = f.MembershipFactory.create(project=project, user=user, role=role)
+    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
     issue = f.IssueFactory.create(owner=user, project=project)
 
     mock_path = "taiga.projects.issues.api.IssueViewSet.pre_conditions_on_save"
@@ -200,6 +200,7 @@ def test_take_hidden_snapshot():
 def test_history_with_only_comment_shouldnot_be_hidden(client):
     project = f.create_project()
     us = f.create_userstory(project=project)
+    membership = f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
 
     qs_all = HistoryEntry.objects.all()
     qs_hidden = qs_all.filter(is_hidden=True)
@@ -209,11 +210,9 @@ def test_history_with_only_comment_shouldnot_be_hidden(client):
     url = reverse("userstories-detail", args=[us.pk])
     data = json.dumps({"comment": "test comment", "version": us.version})
 
-    print(url, data)
     client.login(project.owner)
     response = client.patch(url, data, content_type="application/json")
 
     assert response.status_code == 200, response.content
     assert qs_all.count() == 1
     assert qs_hidden.count() == 0
-

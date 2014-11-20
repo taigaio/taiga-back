@@ -33,7 +33,7 @@ pytestmark = pytest.mark.django_db
 def test_invalid_concurrent_save_for_issue(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    membership = f.MembershipFactory.create(project=project, user=user)
+    membership = f.MembershipFactory.create(project=project, user=user, is_owner=True)
     issue = f.IssueFactory.create(version=10, project=project)
 
     client.login(user)
@@ -48,7 +48,7 @@ def test_invalid_concurrent_save_for_issue(client):
 def test_valid_concurrent_save_for_issue(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    membership = f.MembershipFactory.create(project=project, user=user)
+    membership = f.MembershipFactory.create(project=project, user=user, is_owner=True)
     issue = f.IssueFactory.create(version=10, project=project)
 
     client.login(user)
@@ -66,7 +66,7 @@ def test_valid_concurrent_save_for_issue(client):
 def test_invalid_concurrent_save_for_wiki_page(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    membership = f.MembershipFactory.create(project=project, user=user)
+    membership = f.MembershipFactory.create(project=project, user=user, is_owner=True)
     wiki_page = f.WikiPageFactory.create(version=10, project=project, owner=user)
     client.login(user)
 
@@ -78,7 +78,7 @@ def test_invalid_concurrent_save_for_wiki_page(client):
 def test_valid_concurrent_save_for_wiki_page(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    membership = f.MembershipFactory.create(project=project, user=user)
+    membership = f.MembershipFactory.create(project=project, user=user, is_owner=True)
     wiki_page = f.WikiPageFactory.create(version=10, project=project, owner=user)
     client.login(user)
 
@@ -93,7 +93,7 @@ def test_valid_concurrent_save_for_wiki_page(client):
 def test_invalid_concurrent_save_for_us(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    membership = f.MembershipFactory.create(project=project, user=user)
+    membership = f.MembershipFactory.create(project=project, user=user, is_owner=True)
     userstory = f.UserStoryFactory.create(version=10, project=project)
     client.login(user)
 
@@ -105,7 +105,7 @@ def test_invalid_concurrent_save_for_us(client):
 def test_valid_us_creation(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    membership = f.MembershipFactory.create(project=project, user=user)
+    membership = f.MembershipFactory.create(project=project, user=user, is_owner=True)
 
     client.login(user)
 
@@ -121,7 +121,7 @@ def test_valid_us_creation(client):
 def test_valid_concurrent_save_for_us(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    membership = f.MembershipFactory.create(project=project, user=user)
+    membership = f.MembershipFactory.create(project=project, user=user, is_owner=True)
     userstory = f.UserStoryFactory.create(version=10, project=project)
     client.login(user)
 
@@ -136,7 +136,7 @@ def test_valid_concurrent_save_for_us(client):
 def test_invalid_concurrent_save_for_task(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    membership = f.MembershipFactory.create(project=project, user=user)
+    membership = f.MembershipFactory.create(project=project, user=user, is_owner=True)
     task = f.TaskFactory.create(version=10, project=project)
     client.login(user)
 
@@ -150,7 +150,7 @@ def test_invalid_concurrent_save_for_task(client):
 def test_valid_concurrent_save_for_task(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    membership = f.MembershipFactory.create(project=project, user=user)
+    membership = f.MembershipFactory.create(project=project, user=user, is_owner=True)
     task = f.TaskFactory.create(version=10, project=project)
     client.login(user)
 

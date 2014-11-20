@@ -399,6 +399,7 @@ def test_issues_event_bad_comment(client):
 
 def test_api_get_project_modules(client):
     project = f.create_project()
+    membership = f.MembershipFactory(project=project, user=project.owner, is_owner=True)
 
     url = reverse("projects-modules", args=(project.id,))
 
@@ -413,6 +414,7 @@ def test_api_get_project_modules(client):
 
 def test_api_patch_project_modules(client):
     project = f.create_project()
+    membership = f.MembershipFactory(project=project, user=project.owner, is_owner=True)
 
     url = reverse("projects-modules", args=(project.id,))
 

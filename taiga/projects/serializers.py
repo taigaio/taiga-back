@@ -30,6 +30,7 @@ from taiga.users.validators import RoleExistsValidator
 from taiga.permissions.service import get_user_project_permissions, is_project_owner
 
 from . import models
+from . import services
 from . validators import ProjectExistsValidator
 
 
@@ -199,6 +200,17 @@ class MembershipSerializer(ModelSerializer):
 
         if project.roles.filter(id=role.id).count() == 0:
             raise serializers.ValidationError(_("Invalid role for the project"))
+
+        return attrs
+
+    def validate_is_owner(self, attrs, source):
+        is_owner = attrs[source]
+        project = attrs.get("project", None)
+        if project is None:
+            project = self.object.project
+
+        if self.object and not services.project_has_valid_owners(project, exclude_user=self.object.user):
+            raise serializers.ValidationError(_("At least one of the user must be an active admin"))
 
         return attrs
 

@@ -36,6 +36,7 @@ Task #2
 
 def test_api_update_task_tags(client):
     task = f.create_task()
+    f.MembershipFactory.create(project=task.project, user=task.owner, is_owner=True)
     url = reverse("tasks-detail", kwargs={"pk": task.pk})
     data = {"tags": ["back", "front"], "version": task.version}
 
@@ -47,6 +48,7 @@ def test_api_update_task_tags(client):
 
 def test_api_create_in_bulk_with_status(client):
     us = f.create_userstory()
+    f.MembershipFactory.create(project=us.project, user=us.owner, is_owner=True)
     us.project.default_task_status = f.TaskStatusFactory.create(project=us.project)
     url = reverse("tasks-bulk-create")
     data = {
@@ -69,6 +71,7 @@ def test_api_create_invalid_task(client):
     # But the User Story is not associated with the milestone
     us_milestone = f.MilestoneFactory.create()
     us = f.create_userstory(milestone=us_milestone)
+    f.MembershipFactory.create(project=us.project, user=us.owner, is_owner=True)
     us.project.default_task_status = f.TaskStatusFactory.create(project=us.project)
     task_milestone = f.MilestoneFactory.create(project=us.project, owner=us.owner)
 

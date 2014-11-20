@@ -62,6 +62,18 @@ def data():
                         role__project=m.private_project2,
                         role__permissions=[])
 
+    f.MembershipFactory(project=m.public_project,
+                        user=m.project_owner,
+                        is_owner=True)
+
+    f.MembershipFactory(project=m.private_project1,
+                        user=m.project_owner,
+                        is_owner=True)
+
+    f.MembershipFactory(project=m.private_project2,
+                        user=m.project_owner,
+                        is_owner=True)
+
     m.public_issue = f.IssueFactory(project=m.public_project,
                                     status__project=m.public_project,
                                     severity__project=m.public_project,

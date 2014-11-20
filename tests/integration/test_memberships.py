@@ -34,6 +34,7 @@ def test_api_create_bulk_members(client):
     joseph = f.UserFactory.create()
     tester = f.RoleFactory(project=project, name="Tester")
     gamer = f.RoleFactory(project=project, name="Gamer")
+    membership = f.MembershipFactory(project=project, user=project.owner, is_owner=True)
 
     url = reverse("memberships-bulk-create")
 
@@ -54,6 +55,7 @@ def test_api_create_bulk_members(client):
 def test_api_create_bulk_members_with_extra_text(client, outbox):
     project = f.ProjectFactory()
     tester = f.RoleFactory(project=project, name="Tester")
+    membership = f.MembershipFactory(project=project, user=project.owner, is_owner=True)
     url = reverse("memberships-bulk-create")
 
     invitation_extra_text = "this is a not so random invitation text"
@@ -77,6 +79,7 @@ def test_api_create_bulk_members_with_extra_text(client, outbox):
 
 def test_api_resend_invitation(client, outbox):
     invitation = f.create_invitation()
+    membership = f.MembershipFactory(project=invitation.project, user=invitation.project.owner, is_owner=True)
     url = reverse("memberships-resend-invitation", kwargs={"pk": invitation.pk})
 
     client.login(invitation.project.owner)
@@ -91,6 +94,7 @@ def test_api_invite_existing_user(client, outbox):
     "Should create the invitation linked to that user"
     user = f.UserFactory.create()
     role = f.RoleFactory.create()
+    membership = f.MembershipFactory(project=role.project, user=role.project.owner, is_owner=True)
 
     client.login(role.project.owner)
 

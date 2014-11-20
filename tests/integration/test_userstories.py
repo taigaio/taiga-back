@@ -44,6 +44,7 @@ def test_update_userstories_order_in_bulk():
 
 def test_api_delete_userstory(client):
     us = f.create_userstory()
+    f.MembershipFactory.create(project=us.project, user=us.owner, is_owner=True)
     url = reverse("userstories-detail", kwargs={"pk": us.pk})
 
     client.login(us.owner)
@@ -67,6 +68,7 @@ def test_api_filter_by_subject(client):
 
 def test_api_create_in_bulk_with_status(client):
     project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
     url = reverse("userstories-bulk-create")
     data = {
         "bulk_stories": "Story #1\nStory #2",
@@ -83,6 +85,7 @@ def test_api_create_in_bulk_with_status(client):
 
 def test_api_update_backlog_order_in_bulk(client):
     project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
     us1 = f.create_userstory(project=project)
     us2 = f.create_userstory(project=project)
 
@@ -102,9 +105,9 @@ def test_api_update_backlog_order_in_bulk(client):
     response2 = client.json.post(url2, json.dumps(data))
     response3 = client.json.post(url3, json.dumps(data))
 
-    assert response1.status_code == 204, response.data
-    assert response2.status_code == 204, response.data
-    assert response3.status_code == 204, response.data
+    assert response1.status_code == 204, response1.data
+    assert response2.status_code == 204, response2.data
+    assert response3.status_code == 204, response3.data
 
 
 from taiga.projects.userstories.serializers import UserStorySerializer
@@ -118,7 +121,7 @@ def test_update_userstory_points(client):
     role1 = f.RoleFactory.create(project=project)
     role2 = f.RoleFactory.create(project=project)
 
-    member = f.MembershipFactory.create(project=project, user=user1, role=role1)
+    member = f.MembershipFactory.create(project=project, user=user1, role=role1, is_owner=True)
     member = f.MembershipFactory.create(project=project, user=user2, role=role2)
 
     points1 = f.PointsFactory.create(project=project, value=None)

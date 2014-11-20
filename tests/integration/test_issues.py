@@ -46,6 +46,7 @@ def test_update_issues_order_in_bulk():
 
 def test_api_create_issues_in_bulk(client):
     project = f.create_project()
+    membership = f.MembershipFactory(project=project, user=project.owner, is_owner=True)
 
     url = reverse("issues-bulk-create")
 

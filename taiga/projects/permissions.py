@@ -22,6 +22,7 @@ from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
 from taiga.base import exceptions as exc
 from taiga.projects.models import Membership
 
+from . import services
 
 class CanLeaveProject(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
@@ -29,14 +30,7 @@ class CanLeaveProject(PermissionComponent):
             return False
 
         try:
-            membership = Membership.objects.get(user=request.user, project=obj)
-            other_admin_memberships_count = Membership.objects\
-                .exclude(id=membership.id)\
-                .filter(project=obj, is_owner=True)\
-                .count()
-
-            # The project need at least one owner
-            if membership.is_owner and other_admin_memberships_count == 0:
+            if not services.can_user_leave_project(request.user, obj):
                 raise exc.PermissionDenied(_("You can't leave the project if there are no more owners"))
 
             return True
