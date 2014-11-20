@@ -223,6 +223,13 @@ class Command(BaseCommand):
                       comment=self.sd.paragraph(),
                       user=wiki_page.owner)
 
+        # Add history entry
+        wiki_page.content=self.sd.paragraphs(3,15)
+        wiki_page.save()
+        take_snapshot(wiki_page,
+              comment=self.sd.paragraph(),
+              user=wiki_page.owner)
+
         return wiki_page
 
     def create_bug(self, project):
@@ -252,6 +259,13 @@ class Command(BaseCommand):
         take_snapshot(bug,
                       comment=self.sd.paragraph(),
                       user=bug.owner)
+
+        # Add history entry
+        bug.status=self.sd.db_object_from_queryset(IssueStatus.objects.filter(project=project))
+        bug.save()
+        take_snapshot(bug,
+              comment=self.sd.paragraph(),
+              user=bug.owner)
 
         return bug
 
@@ -283,6 +297,13 @@ class Command(BaseCommand):
         take_snapshot(task,
                       comment=self.sd.paragraph(),
                       user=task.owner)
+
+        # Add history entry
+        task.status=self.sd.db_object_from_queryset(project.task_statuses.all())
+        task.save()
+        take_snapshot(task,
+              comment=self.sd.paragraph(),
+              user=task.owner)
 
         return task
 
@@ -318,6 +339,13 @@ class Command(BaseCommand):
                       comment=self.sd.paragraph(),
                       user=us.owner)
 
+        # Add history entry
+        us.status=self.sd.db_object_from_queryset(project.us_statuses.filter(is_closed=False))
+        us.save()
+        take_snapshot(us,
+              comment=self.sd.paragraph(),
+              user=us.owner)
+              
         return us
 
     def create_milestone(self, project, start_date, end_date):
