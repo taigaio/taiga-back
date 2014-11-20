@@ -34,6 +34,7 @@ from .stats import get_member_stats_for_project
 
 from .members import create_members_in_bulk
 from .members import get_members_from_bulk
+from .members import remove_member
 
 from .invitations import send_invitation
 from .invitations import find_invited_user

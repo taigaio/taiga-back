@@ -160,3 +160,35 @@ def test_get_closed_bugs_per_member_stats():
 
     assert stats["closed_tasks"][membership_1.user.id] == 1
     assert stats["closed_tasks"][membership_2.user.id] == 0
+
+
+def test_leave_project_valid_membership(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create()
+    role = f.RoleFactory.create(project=project, permissions=["view_project"])
+    f.MembershipFactory.create(project=project, user=user, role=role)
+    client.login(user)
+    url = reverse("projects-leave", args=(project.id,))
+    response = client.post(url)
+    assert response.status_code == 200
+
+
+def test_leave_project_valid_membership_only_owner(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create()
+    role = f.RoleFactory.create(project=project, permissions=["view_project"])
+    f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+    client.login(user)
+    url = reverse("projects-leave", args=(project.id,))
+    response = client.post(url)
+    assert response.status_code == 403
+    assert json.loads(response.content)["_error_message"] == "You can't leave the project if there are no more owners"
+
+
+def test_leave_project_invalid_membership(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory()
+    client.login(user)
+    url = reverse("projects-leave", args=(project.id,))
+    response = client.post(url)
+    assert response.status_code == 404

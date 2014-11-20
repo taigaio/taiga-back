@@ -2,7 +2,6 @@ from taiga.base.utils import db, text
 
 from .. import models
 
-
 def get_members_from_bulk(bulk_data, **additional_fields):
     """Convert `bulk_data` into a list of members.
 
@@ -31,3 +30,7 @@ def create_members_in_bulk(bulk_data, callback=None, precall=None, **additional_
     members = get_members_from_bulk(bulk_data, **additional_fields)
     db.save_in_bulk(members, callback, precall)
     return members
+
+
+def remove_member(project, user):
+    models.Membership.objects.get(project=project, user=user).delete()

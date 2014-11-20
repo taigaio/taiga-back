@@ -154,6 +154,13 @@ class ProjectViewSet(ModelCrudViewSet):
         template.save()
         return Response(serializers.ProjectTemplateSerializer(template).data, status=201)
 
+    @detail_route(methods=['post'])
+    def leave(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, 'leave', project)
+        services.remove_member(project, user=request.user)
+        return Response(status=status.HTTP_200_OK)
+
     def pre_save(self, obj):
         if not obj.id:
             obj.owner = self.request.user
