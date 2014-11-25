@@ -63,13 +63,13 @@ bleach.ALLOWED_ATTRIBUTES["img"] = ["alt", "src"]
 bleach.ALLOWED_ATTRIBUTES["*"] = ["class", "style"]
 
 
-def _make_extensions_list(wikilinks_config=None, project=None):
+def _make_extensions_list(project=None):
     return [AutolinkExtension(),
             AutomailExtension(),
             SemiSaneListExtension(),
             SpacedLinkExtension(),
             StrikethroughExtension(),
-            WikiLinkExtension(wikilinks_config),
+            WikiLinkExtension(project),
             EmojifyExtension(),
             MentionsExtension(),
             TaigaReferencesExtension(project),
@@ -103,11 +103,7 @@ def _get_markdown(project):
     def build_url(*args, **kwargs):
         return args[1] + slugify(args[0])
 
-    wikilinks_config = {"base_url": "/project/{}/wiki/".format(project.slug),
-                        "end_url": "",
-                        "build_url": build_url}
-    extensions = _make_extensions_list(wikilinks_config=wikilinks_config,
-                                       project=project)
+    extensions = _make_extensions_list(project=project)
     md = Markdown(extensions=extensions)
     md.extracted_data = {"mentions": [], "references": []}
     return md

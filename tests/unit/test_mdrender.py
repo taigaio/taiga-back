@@ -106,12 +106,12 @@ def test_render_relative_link():
 
 
 def test_render_wikilink():
-    expected_result = "<p><a class=\"wikilink\" href=\"/project/test/wiki/test\">test</a></p>"
+    expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/test\" title=\"test\">test</a></p>"
     assert render(dummy_project, "[[test]]") == expected_result
 
 
 def test_render_wikilink_with_custom_title():
-    expected_result = "<p><a class=\"wikilink\" href=\"/project/test/wiki/test\">custom</a></p>"
+    expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/test\" title=\"custom\">custom</a></p>"
     assert render(dummy_project, "[[test|custom]]") == expected_result
 
 
