@@ -54,7 +54,6 @@ class MentionsPattern(Pattern):
         a = etree.Element('a')
         a.text = link_text
         a.set('href', url)
-        a.set('alt', user.get_full_name())
         a.set('title', user.get_full_name())
         a.set('class', "mention")
 
