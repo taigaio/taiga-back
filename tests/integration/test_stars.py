@@ -26,6 +26,7 @@ pytestmark = pytest.mark.django_db
 def test_project_owner_star_project(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, is_owner=True, user=user)
     url = reverse("projects-star", args=(project.id,))
 
     client.login(user)
@@ -37,6 +38,7 @@ def test_project_owner_star_project(client):
 def test_project_owner_unstar_project(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, is_owner=True, user=user)
     url = reverse("projects-unstar", args=(project.id,))
 
     client.login(user)

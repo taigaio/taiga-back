@@ -43,7 +43,7 @@ def test_update_userstories_order_in_bulk():
 
 
 def test_api_delete_userstory(client):
-    us = f.create_userstory()
+    us = f.UserStoryFactory.create()
     f.MembershipFactory.create(project=us.project, user=us.owner, is_owner=True)
     url = reverse("userstories-detail", kwargs={"pk": us.pk})
 
@@ -53,12 +53,16 @@ def test_api_delete_userstory(client):
     assert response.status_code == 204
 
 
-def test_api_filter_by_subject(client):
-    f.create_userstory()
-    us = f.create_userstory(subject="some random subject")
-    url = reverse("userstories-list") + "?subject=some subject"
+def test_api_filter_by_subject_or_ref(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
 
-    client.login(us.owner)
+    f.UserStoryFactory.create(project=project)
+    f.UserStoryFactory.create(project=project, subject="some random subject")
+    url = reverse("userstories-list") + "?q=some subject"
+
+    client.login(project.owner)
     response = client.get(url)
     number_of_stories = len(response.data)
 
@@ -184,7 +188,7 @@ def test_update_userstory_rolepoints_on_add_new_role(client):
 def test_archived_filter(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory.create(project=project, user=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
     f.UserStoryFactory.create(project=project)
     f.UserStoryFactory.create(is_archived=True, project=project)
 

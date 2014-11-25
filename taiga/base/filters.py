@@ -103,7 +103,7 @@ class PermissionBasedFilterBackend(FilterBackend):
             memberships_qs = Membership.objects.filter(user=request.user)
             if project_id:
                 memberships_qs = memberships_qs.filter(project_id=project_id)
-            memberships_qs = memberships_qs.filter(role__permissions__contains=[self.permission])
+            memberships_qs = memberships_qs.filter(Q(role__permissions__contains=[self.permission]) | Q(is_owner=True))
 
             projects_list = [membership.project_id for membership in memberships_qs]
 
@@ -182,7 +182,8 @@ class CanViewProjectObjFilterBackend(FilterBackend):
             memberships_qs = Membership.objects.filter(user=request.user)
             if project_id:
                 memberships_qs = memberships_qs.filter(project_id=project_id)
-            memberships_qs = memberships_qs.filter(role__permissions__contains=['view_project'])
+            memberships_qs = memberships_qs.filter(Q(role__permissions__contains=['view_project']) | Q(is_owner=True))
+
             projects_list = [membership.project_id for membership in memberships_qs]
 
             qs = qs.filter(Q(id__in=projects_list) | Q(public_permissions__contains=["view_project"]))
