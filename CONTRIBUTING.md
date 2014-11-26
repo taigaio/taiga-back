@@ -7,7 +7,7 @@ Examples of contributions include:
 - Code patches.
 - Documentation improvements.
 - Bug reports.
-- Patch reviews.
+- UI enhancements
 
 Before start developing one big feature (with intentions of including it on taiga code base), it is
 strongly recommended chat about it using our [mailing list](http://groups.google.com/d/forum/taigaio).
