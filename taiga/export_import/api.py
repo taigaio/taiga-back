@@ -28,6 +28,7 @@ from taiga.base.decorators import detail_route
 from taiga.projects.models import Project, Membership
 from taiga.projects.issues.models import Issue
 
+from . import mixins
 from . import serializers
 from . import service
 from . import permissions
@@ -37,7 +38,7 @@ class Http400(APIException):
     status_code = 400
 
 
-class ProjectImporterViewSet(CreateModelMixin, GenericViewSet):
+class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixin, GenericViewSet):
     model = Project
     permission_classes = (permissions.ImportPermission, )
 

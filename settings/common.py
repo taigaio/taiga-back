@@ -291,6 +291,15 @@ REST_FRAMEWORK = {
         # Mainly used for api debug.
         "taiga.auth.backends.Session",
     ),
+    "DEFAULT_THROTTLE_CLASSES": (
+        "taiga.base.throttling.AnonRateThrottle",
+        "taiga.base.throttling.UserRateThrottle"
+    ),
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": None,
+        "user": None,
+        "import-mode": None
+    },
     "FILTER_BACKEND": "taiga.base.filters.FilterBackend",
     "EXCEPTION_HANDLER": "taiga.base.exceptions.exception_handler",
     "PAGINATE_BY": 30,
@@ -298,6 +307,7 @@ REST_FRAMEWORK = {
     "MAX_PAGINATE_BY": 1000,
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S%z"
 }
+
 
 DEFAULT_PROJECT_TEMPLATE = "scrum"
 PUBLIC_REGISTER_ENABLED = False
