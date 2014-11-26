@@ -13,14 +13,14 @@ def create_github_system_user(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     random_hash = uuid.uuid4().hex
     user = User.objects.using(db_alias).create(
-        username="github-{}".format(random_hash),
-        email="github-{}@taiga.io".format(random_hash),
-        full_name="GitHub",
+        username="gitlab-{}".format(random_hash),
+        email="gitlab-{}@taiga.io".format(random_hash),
+        full_name="GitLab",
         is_active=False,
         is_system=True,
         bio="",
     )
-    f = open("taiga/github_hook/migrations/logo.png", "rb")
+    f = open("taiga/hooks/gitlab/migrations/logo.png", "rb")
     user.photo.save("logo.png", File(f))
     user.save()
 

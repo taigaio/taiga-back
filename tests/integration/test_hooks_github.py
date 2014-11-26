@@ -6,9 +6,9 @@ from unittest import mock
 from django.core.urlresolvers import reverse
 from django.core import mail
 
-from taiga.github_hook.api import GitHubViewSet
-from taiga.github_hook import event_hooks
-from taiga.github_hook.exceptions import ActionSyntaxException
+from taiga.hooks.github import event_hooks
+from taiga.hooks.github.api import GitHubViewSet
+from taiga.hooks.exceptions import ActionSyntaxException
 from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.models import UserStory

@@ -21,21 +21,15 @@ from taiga.base.api.viewsets import GenericViewSet
 from taiga.base import exceptions as exc
 from taiga.base.utils import json
 from taiga.projects.models import Project
+from taiga.hooks.api import BaseWebhookApiViewSet
 
 from . import event_hooks
-from .exceptions import ActionSyntaxException
 
 import hmac
 import hashlib
 
 
-class GitHubViewSet(GenericViewSet):
-    # We don't want rest framework to parse the request body and transform it in
-    # a dict in request.DATA, we need it raw
-    parser_classes = ()
-
-    # This dict associates the event names we are listening for
-    # with their reponsible classes (extending event_hooks.BaseEventHook)
+class GitHubViewSet(BaseWebhookApiViewSet):
     event_hook_classes = {
         "push": event_hooks.PushEventHook,
         "issues": event_hooks.IssuesEventHook,
@@ -61,35 +55,5 @@ class GitHubViewSet(GenericViewSet):
         mac = hmac.new(secret, msg=request.body,digestmod=hashlib.sha1)
         return hmac.compare_digest(mac.hexdigest(), signature)
 
-    def _get_project(self, request):
-        project_id = request.GET.get("project", None)
-        try:
-            project = Project.objects.get(id=project_id)
-            return project
-        except Project.DoesNotExist:
-            return None
-
-    def create(self, request, *args, **kwargs):
-        project = self._get_project(request)
-        if not project:
-            raise exc.BadRequest(_("The project doesn't exist"))
-
-        if not self._validate_signature(project, request):
-            raise exc.BadRequest(_("Bad signature"))
-
-        event_name = request.META.get("HTTP_X_GITHUB_EVENT", None)
-
-        try:
-            payload = json.loads(request.body.decode("utf-8"))
-        except ValueError:
-            raise exc.BadRequest(_("The payload is not a valid json"))
-
-        event_hook_class = self.event_hook_classes.get(event_name, None)
-        if event_hook_class is not None:
-            event_hook = event_hook_class(project, payload)
-            try:
-                event_hook.process_event()
-            except ActionSyntaxException as e:
-                raise exc.BadRequest(e)
-
-        return Response({})
+    def _get_event_name(self, request):
+        return request.META.get("HTTP_X_GITHUB_EVENT", None)
