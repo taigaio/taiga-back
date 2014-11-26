@@ -101,11 +101,16 @@ def test_analize_object_for_watchers():
 
 def test_users_to_notify():
     project = f.ProjectFactory.create()
-    issue = f.IssueFactory.create(project=project)
+    role1 = f.RoleFactory.create(project=project, permissions=['view_issues'])
+    role2 = f.RoleFactory.create(project=project, permissions=[])
 
-    member1 = f.MembershipFactory.create(project=project)
-    member2 = f.MembershipFactory.create(project=project)
-    member3 = f.MembershipFactory.create(project=project)
+    member1 = f.MembershipFactory.create(project=project, role=role1)
+    member2 = f.MembershipFactory.create(project=project, role=role1)
+    member3 = f.MembershipFactory.create(project=project, role=role1)
+    member4 = f.MembershipFactory.create(project=project, role=role1)
+    member5 = f.MembershipFactory.create(project=project, role=role2)
+
+    issue = f.IssueFactory.create(project=project, owner=member4.user)
 
     policy_model_cls = apps.get_model("notifications", "NotifyPolicy")
 
@@ -147,12 +152,20 @@ def test_users_to_notify():
     assert len(users) == 2
     assert users == {member1.user, issue.get_owner()}
 
+    # Test with watchers without permissions
+    issue.watchers.add(member5.user)
+    users = services.get_users_to_notify(issue)
+    assert len(users) == 2
+    assert users == {member1.user, issue.get_owner()}
+
+
 def test_send_notifications_using_services_method(settings, mail):
     settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL = 1
 
     project = f.ProjectFactory.create()
-    member1 = f.MembershipFactory.create(project=project)
-    member2 = f.MembershipFactory.create(project=project)
+    role = f.RoleFactory.create(project=project, permissions=['view_issues', 'view_us', 'view_tasks', 'view_wiki_pages'])
+    member1 = f.MembershipFactory.create(project=project, role=role)
+    member2 = f.MembershipFactory.create(project=project, role=role)
 
     history_change = MagicMock()
     history_change.user = {"pk": member1.user.pk}
@@ -170,7 +183,7 @@ def test_send_notifications_using_services_method(settings, mail):
     history_delete.type = HistoryType.delete
 
     # Issues
-    issue = f.IssueFactory.create(project=project)
+    issue = f.IssueFactory.create(project=project, owner=member2.user)
     take_snapshot(issue)
     services.send_notifications(issue,
                                 history=history_create)
@@ -183,7 +196,7 @@ def test_send_notifications_using_services_method(settings, mail):
 
 
     # Userstories
-    us = f.UserStoryFactory.create()
+    us = f.UserStoryFactory.create(project=project, owner=member2.user)
     take_snapshot(us)
     services.send_notifications(us,
                                 history=history_create)
@@ -195,7 +208,7 @@ def test_send_notifications_using_services_method(settings, mail):
                                 history=history_delete)
 
     # Tasks
-    task = f.TaskFactory.create()
+    task = f.TaskFactory.create(project=project, owner=member2.user)
     take_snapshot(task)
     services.send_notifications(task,
                                 history=history_create)
@@ -207,7 +220,7 @@ def test_send_notifications_using_services_method(settings, mail):
                                 history=history_delete)
 
     # Wiki pages
-    wiki = f.WikiPageFactory.create()
+    wiki = f.WikiPageFactory.create(project=project, owner=member2.user)
     take_snapshot(wiki)
     services.send_notifications(wiki,
                                 history=history_create)
@@ -230,7 +243,7 @@ def test_resource_notification_test(client, settings, mail):
     user1 = f.UserFactory.create()
     user2 = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user1)
-    role = f.RoleFactory.create(project=project)
+    role = f.RoleFactory.create(project=project, permissions=["view_issues"])
     member1 = f.MembershipFactory.create(project=project, user=user1, role=role, is_owner=True)
     member2 = f.MembershipFactory.create(project=project, user=user2, role=role)
     issue = f.IssueFactory.create(owner=user2, project=project)
