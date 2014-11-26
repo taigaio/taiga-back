@@ -23,7 +23,6 @@ from unittest.mock import MagicMock, patch
 from django.core.urlresolvers import reverse
 from django.apps import apps
 from .. import factories as f
-from .. utils import set_settings
 
 from taiga.projects.notifications import services
 from taiga.projects.notifications import models
@@ -148,8 +147,9 @@ def test_users_to_notify():
     assert len(users) == 2
     assert users == {member1.user, issue.get_owner()}
 
-@set_settings(CHANGE_NOTIFICATIONS_MIN_INTERVAL=1)
-def test_send_notifications_using_services_method(mail):
+def test_send_notifications_using_services_method(settings, mail):
+    settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL = 1
+
     project = f.ProjectFactory.create()
     member1 = f.MembershipFactory.create(project=project)
     member2 = f.MembershipFactory.create(project=project)
@@ -224,8 +224,9 @@ def test_send_notifications_using_services_method(mail):
     services.process_sync_notifications()
     assert len(mail.outbox) == 12
 
-@set_settings(CHANGE_NOTIFICATIONS_MIN_INTERVAL=1)
-def test_resource_notification_test(client, mail):
+def test_resource_notification_test(client, settings, mail):
+    settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL = 1
+
     user1 = f.UserFactory.create()
     user2 = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user1)
