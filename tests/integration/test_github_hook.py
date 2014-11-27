@@ -75,8 +75,10 @@ def test_push_event_detected(client):
 
 def test_push_event_issue_processing(client):
     creation_status = f.IssueStatusFactory()
+    role = f.RoleFactory(project=creation_status.project, permissions=["view_issues"])
+    membership = f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.IssueStatusFactory(project=creation_status.project)
-    issue = f.IssueFactory.create(status=creation_status, project=creation_status.project)
+    issue = f.IssueFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     payload = {"commits": [
         {"message": """test message
             test   TG-%s    #%s   ok
@@ -93,8 +95,10 @@ def test_push_event_issue_processing(client):
 
 def test_push_event_task_processing(client):
     creation_status = f.TaskStatusFactory()
+    role = f.RoleFactory(project=creation_status.project, permissions=["view_tasks"])
+    membership = f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.TaskStatusFactory(project=creation_status.project)
-    task = f.TaskFactory.create(status=creation_status, project=creation_status.project)
+    task = f.TaskFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     payload = {"commits": [
         {"message": """test message
             test   TG-%s    #%s   ok
@@ -111,8 +115,10 @@ def test_push_event_task_processing(client):
 
 def test_push_event_user_story_processing(client):
     creation_status = f.UserStoryStatusFactory()
+    role = f.RoleFactory(project=creation_status.project, permissions=["view_us"])
+    membership = f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.UserStoryStatusFactory(project=creation_status.project)
-    user_story = f.UserStoryFactory.create(status=creation_status, project=creation_status.project)
+    user_story = f.UserStoryFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     payload = {"commits": [
         {"message": """test message
             test   TG-%s    #%s   ok
@@ -130,8 +136,10 @@ def test_push_event_user_story_processing(client):
 
 def test_push_event_processing_case_insensitive(client):
     creation_status = f.TaskStatusFactory()
+    role = f.RoleFactory(project=creation_status.project, permissions=["view_tasks"])
+    membership = f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.TaskStatusFactory(project=creation_status.project)
-    task = f.TaskFactory.create(status=creation_status, project=creation_status.project)
+    task = f.TaskFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     payload = {"commits": [
         {"message": """test message
             test   tg-%s    #%s   ok
@@ -291,12 +299,17 @@ def test_issues_event_bad_issue(client):
 
 
 def test_issue_comment_event_on_existing_issue_task_and_us(client):
-    issue = f.IssueFactory.create(external_reference=["github", "http://github.com/test/project/issues/11"])
-    take_snapshot(issue, user=issue.owner)
-    task = f.TaskFactory.create(project=issue.project, external_reference=["github", "http://github.com/test/project/issues/11"])
-    take_snapshot(task, user=task.owner)
-    us = f.UserStoryFactory.create(project=issue.project, external_reference=["github", "http://github.com/test/project/issues/11"])
-    take_snapshot(us, user=us.owner)
+    project = f.ProjectFactory()
+    role = f.RoleFactory(project=project, permissions=["view_tasks", "view_issues", "view_us"])
+    membership = f.MembershipFactory(project=project, role=role, user=project.owner)
+    user = f.UserFactory()
+
+    issue = f.IssueFactory.create(external_reference=["github", "http://github.com/test/project/issues/11"], owner=project.owner, project=project)
+    take_snapshot(issue, user=user)
+    task = f.TaskFactory.create(external_reference=["github", "http://github.com/test/project/issues/11"], owner=project.owner, project=project)
+    take_snapshot(task, user=user)
+    us = f.UserStoryFactory.create(external_reference=["github", "http://github.com/test/project/issues/11"], owner=project.owner, project=project)
+    take_snapshot(us, user=user)
 
     payload = {
         "action": "created",
