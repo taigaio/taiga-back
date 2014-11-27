@@ -135,8 +135,13 @@ router.register(r"notify-policies", NotifyPolicyViewSet, base_name="notification
 from taiga.hooks.github.api import GitHubViewSet
 router.register(r"github-hook", GitHubViewSet, base_name="github-hook")
 
+# Gitlab webhooks
 from taiga.hooks.gitlab.api import GitLabViewSet
 router.register(r"gitlab-hook", GitLabViewSet, base_name="gitlab-hook")
+
+# Bitbucket webhooks
+from taiga.hooks.bitbucket.api import BitBucketViewSet
+router.register(r"bitbucket-hook", BitBucketViewSet, base_name="bitbucket-hook")
 
 # feedback
 #   - see taiga.feedback.routers and taiga.feedback.apps

@@ -196,6 +196,7 @@ INSTALLED_APPS = [
     "taiga.feedback",
     "taiga.hooks.github",
     "taiga.hooks.gitlab",
+    "taiga.hooks.bitbucket",
 
     "rest_framework",
     "djmail",
@@ -355,8 +356,10 @@ CHANGE_NOTIFICATIONS_MIN_INTERVAL = 0 #seconds
 PROJECT_MODULES_CONFIGURATORS = {
     "github": "taiga.hooks.github.services.get_or_generate_config",
     "gitlab": "taiga.hooks.gitlab.services.get_or_generate_config",
+    "bitbucket": "taiga.hooks.bitbucket.services.get_or_generate_config",
 }
 
+BITBUCKET_VALID_ORIGIN_IPS = ["131.103.20.165", "131.103.20.166"]
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"
