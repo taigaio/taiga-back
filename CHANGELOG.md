@@ -1,5 +1,18 @@
 # Changelog #
 
+
+## 1.4.0  (Unreleased)
+
+### Features
+- Support throttling.
+  + for anonymous users
+  + for authenticated users
+  + in import mode
+
+### Misc
+- Lots of small and not so small bugfixes.
+
+
 ## 1.3.0 Dryas hookeriana (2014-11-18)
 
 ### Features
