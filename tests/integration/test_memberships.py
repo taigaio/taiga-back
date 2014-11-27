@@ -184,3 +184,14 @@ def test_api_delete_membership(client):
     response = client.json.delete(url)
 
     assert response.status_code == 204
+
+
+def test_api_delete_membership_without_user(client):
+    membership_owner = f.MembershipFactory(is_owner=True)
+    membership_without_user_one = f.MembershipFactory(project=membership_owner.project, user=None)
+    membership_without_user_two = f.MembershipFactory(project=membership_owner.project, user=None)
+    client.login(membership_owner.user)
+    url = reverse("memberships-detail", args=[membership_without_user_one.id])
+    response = client.json.delete(url)
+
+    assert response.status_code == 204

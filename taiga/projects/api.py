@@ -242,7 +242,7 @@ class MembershipViewSet(ModelCrudViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def pre_delete(self, obj):
-        if not services.can_user_leave_project(obj.user, obj.project):
+        if obj.user is not None and not services.can_user_leave_project(obj.user, obj.project):
             raise exc.BadRequest(_("At least one of the user must be an active admin"))
 
     def pre_save(self, obj):
