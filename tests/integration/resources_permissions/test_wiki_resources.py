@@ -4,9 +4,12 @@ from taiga.base.utils import json
 from taiga.projects.wiki.serializers import WikiPageSerializer, WikiLinkSerializer
 from taiga.projects.wiki.models import WikiPage, WikiLink
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.projects.occ import OCCResourceMixin
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
+
+from unittest import mock
 
 import pytest
 pytestmark = pytest.mark.django_db
@@ -121,23 +124,24 @@ def test_wiki_page_update(client, data):
         data.project_owner
     ]
 
-    wiki_page_data = WikiPageSerializer(data.public_wiki_page).data
-    wiki_page_data["content"] = "test"
-    wiki_page_data = json.dumps(wiki_page_data)
-    results = helper_test_http_method(client, 'put', public_url, wiki_page_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version") as _validate_and_update_version_mock:
+            wiki_page_data = WikiPageSerializer(data.public_wiki_page).data
+            wiki_page_data["content"] = "test"
+            wiki_page_data = json.dumps(wiki_page_data)
+            results = helper_test_http_method(client, 'put', public_url, wiki_page_data, users)
+            assert results == [401, 200, 200, 200, 200]
 
-    wiki_page_data = WikiPageSerializer(data.private_wiki_page1).data
-    wiki_page_data["content"] = "test"
-    wiki_page_data = json.dumps(wiki_page_data)
-    results = helper_test_http_method(client, 'put', private_url1, wiki_page_data, users)
-    assert results == [401, 200, 200, 200, 200]
+            wiki_page_data = WikiPageSerializer(data.private_wiki_page1).data
+            wiki_page_data["content"] = "test"
+            wiki_page_data = json.dumps(wiki_page_data)
+            results = helper_test_http_method(client, 'put', private_url1, wiki_page_data, users)
+            assert results == [401, 200, 200, 200, 200]
 
-    wiki_page_data = WikiPageSerializer(data.private_wiki_page2).data
-    wiki_page_data["content"] = "test"
-    wiki_page_data = json.dumps(wiki_page_data)
-    results = helper_test_http_method(client, 'put', private_url2, wiki_page_data, users)
-    assert results == [401, 403, 403, 200, 200]
+            wiki_page_data = WikiPageSerializer(data.private_wiki_page2).data
+            wiki_page_data["content"] = "test"
+            wiki_page_data = json.dumps(wiki_page_data)
+            results = helper_test_http_method(client, 'put', private_url2, wiki_page_data, users)
+            assert results == [401, 403, 403, 200, 200]
 
 
 def test_wiki_page_delete(client, data):
@@ -238,17 +242,18 @@ def test_wiki_page_patch(client, data):
         data.project_owner
     ]
 
-    patch_data = json.dumps({"content": "test", "version": data.public_wiki_page.version})
-    results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version") as _validate_and_update_version_mock:
+            patch_data = json.dumps({"content": "test", "version": data.public_wiki_page.version})
+            results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
+            assert results == [401, 200, 200, 200, 200]
 
-    patch_data = json.dumps({"content": "test", "version": data.private_wiki_page2.version})
-    results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
-    assert results == [401, 200, 200, 200, 200]
+            patch_data = json.dumps({"content": "test", "version": data.private_wiki_page2.version})
+            results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
+            assert results == [401, 200, 200, 200, 200]
 
-    patch_data = json.dumps({"content": "test", "version": data.private_wiki_page2.version})
-    results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
-    assert results == [401, 403, 403, 200, 200]
+            patch_data = json.dumps({"content": "test", "version": data.private_wiki_page2.version})
+            results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
+            assert results == [401, 403, 403, 200, 200]
 
 def test_wiki_page_action_render(client, data):
     url = reverse('wiki-render')
@@ -300,23 +305,24 @@ def test_wiki_link_update(client, data):
         data.project_owner
     ]
 
-    wiki_link_data = WikiLinkSerializer(data.public_wiki_link).data
-    wiki_link_data["title"] = "test"
-    wiki_link_data = json.dumps(wiki_link_data)
-    results = helper_test_http_method(client, 'put', public_url, wiki_link_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version") as _validate_and_update_version_mock:
+            wiki_link_data = WikiLinkSerializer(data.public_wiki_link).data
+            wiki_link_data["title"] = "test"
+            wiki_link_data = json.dumps(wiki_link_data)
+            results = helper_test_http_method(client, 'put', public_url, wiki_link_data, users)
+            assert results == [401, 200, 200, 200, 200]
 
-    wiki_link_data = WikiLinkSerializer(data.private_wiki_link1).data
-    wiki_link_data["title"] = "test"
-    wiki_link_data = json.dumps(wiki_link_data)
-    results = helper_test_http_method(client, 'put', private_url1, wiki_link_data, users)
-    assert results == [401, 200, 200, 200, 200]
+            wiki_link_data = WikiLinkSerializer(data.private_wiki_link1).data
+            wiki_link_data["title"] = "test"
+            wiki_link_data = json.dumps(wiki_link_data)
+            results = helper_test_http_method(client, 'put', private_url1, wiki_link_data, users)
+            assert results == [401, 200, 200, 200, 200]
 
-    wiki_link_data = WikiLinkSerializer(data.private_wiki_link2).data
-    wiki_link_data["title"] = "test"
-    wiki_link_data = json.dumps(wiki_link_data)
-    results = helper_test_http_method(client, 'put', private_url2, wiki_link_data, users)
-    assert results == [401, 403, 403, 200, 200]
+            wiki_link_data = WikiLinkSerializer(data.private_wiki_link2).data
+            wiki_link_data["title"] = "test"
+            wiki_link_data = json.dumps(wiki_link_data)
+            results = helper_test_http_method(client, 'put', private_url2, wiki_link_data, users)
+            assert results == [401, 403, 403, 200, 200]
 
 
 def test_wiki_link_delete(client, data):
@@ -417,14 +423,15 @@ def test_wiki_link_patch(client, data):
         data.project_owner
     ]
 
-    patch_data = json.dumps({"title": "test"})
-    results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version") as _validate_and_update_version_mock:
+            patch_data = json.dumps({"title": "test"})
+            results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
+            assert results == [401, 200, 200, 200, 200]
 
-    patch_data = json.dumps({"title": "test"})
-    results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
-    assert results == [401, 200, 200, 200, 200]
+            patch_data = json.dumps({"title": "test"})
+            results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
+            assert results == [401, 200, 200, 200, 200]
 
-    patch_data = json.dumps({"title": "test"})
-    results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
-    assert results == [401, 403, 403, 200, 200]
+            patch_data = json.dumps({"title": "test"})
+            results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
+            assert results == [401, 403, 403, 200, 200]

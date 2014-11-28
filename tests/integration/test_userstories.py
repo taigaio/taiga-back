@@ -149,7 +149,7 @@ def test_update_userstory_points(client):
 
     # Api should save successful
     data = {}
-    data["version"] = usdata["version"]
+    data["version"] = usdata["version"] + 1
     data["points"] = copy.copy(usdata["points"])
     data["points"].update({str(role1.pk):points3.pk})
 
