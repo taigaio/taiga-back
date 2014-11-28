@@ -16,6 +16,7 @@
 
 from rest_framework.response import Response
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from taiga.base.api.viewsets import GenericViewSet
 from taiga.base import exceptions as exc
@@ -24,6 +25,8 @@ from taiga.projects.models import Project
 from taiga.hooks.api import BaseWebhookApiViewSet
 
 from . import event_hooks
+
+from ipware.ip import get_real_ip
 
 
 class GitLabViewSet(BaseWebhookApiViewSet):
@@ -48,9 +51,9 @@ class GitLabViewSet(BaseWebhookApiViewSet):
         if not project_secret:
             return False
 
-        valid_origin_ips = project.modules_config.config.get("bitbucket", {}).get("valid_origin_ips", settings.GITLAB_VALID_ORIGIN_IPS)
+        valid_origin_ips = project.modules_config.config.get("gitlab", {}).get("valid_origin_ips", settings.GITLAB_VALID_ORIGIN_IPS)
         origin_ip = get_real_ip(request)
-        if not origin_ip or not origin_ip in valid_origin_ips:
+        if not origin_ip or origin_ip not in valid_origin_ips:
             return False
 
         return project_secret == secret_key

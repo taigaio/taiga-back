@@ -17,6 +17,7 @@
 import uuid
 
 from django.core.urlresolvers import reverse
+from django.conf import settings
 
 from taiga.users.models import User
 from taiga.base.utils.urls import get_absolute_url
@@ -28,7 +29,7 @@ def get_or_generate_config(project):
         g_config = project.modules_config.config["gitlab"]
     else:
         g_config = {
-            "secret": uuid.uuid4().hex
+            "secret": uuid.uuid4().hex,
             "valid_origin_ips": settings.GITLAB_VALID_ORIGIN_IPS,
         }
 

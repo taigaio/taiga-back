@@ -30,6 +30,7 @@ from ..exceptions import ActionSyntaxException
 from urllib.parse import parse_qs
 from ipware.ip import get_real_ip
 
+
 class BitBucketViewSet(BaseWebhookApiViewSet):
     event_hook_classes = {
         "push": event_hooks.PushEventHook,
