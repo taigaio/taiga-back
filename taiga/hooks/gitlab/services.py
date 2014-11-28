@@ -27,7 +27,10 @@ def get_or_generate_config(project):
     if config and "gitlab" in config:
         g_config = project.modules_config.config["gitlab"]
     else:
-        g_config = {"secret": uuid.uuid4().hex }
+        g_config = {
+            "secret": uuid.uuid4().hex
+            "valid_origin_ips": settings.GITLAB_VALID_ORIGIN_IPS,
+        }
 
     url = reverse("gitlab-hook-list")
     url = get_absolute_url(url)
