@@ -35,31 +35,14 @@ class BitBucketViewSet(BaseWebhookApiViewSet):
         "push": event_hooks.PushEventHook,
     }
 
-    def create(self, request, *args, **kwargs):
-        project = self._get_project(request)
-        if not project:
-            raise exc.BadRequest(_("The project doesn't exist"))
-
-        if not self._validate_signature(project, request):
-            raise exc.BadRequest(_("Bad signature"))
-
-        event_name = self._get_event_name(request)
-
+    def _get_payload(self, request):
         try:
             body = parse_qs(request.body.decode("utf-8"), strict_parsing=True)
             payload = body["payload"]
         except (ValueError, KeyError):
             raise exc.BadRequest(_("The payload is not a valid application/x-www-form-urlencoded"))
 
-        event_hook_class = self.event_hook_classes.get(event_name, None)
-        if event_hook_class is not None:
-            event_hook = event_hook_class(project, payload)
-            try:
-                event_hook.process_event()
-            except ActionSyntaxException as e:
-                raise exc.BadRequest(e)
-
-        return Response({})
+        return payload
 
     def _validate_signature(self, project, request):
         secret_key = request.GET.get("key", None)

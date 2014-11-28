@@ -45,6 +45,13 @@ class BaseWebhookApiViewSet(GenericViewSet):
         except Project.DoesNotExist:
             return None
 
+    def _get_payload(self, request):
+        try:
+            payload = json.loads(request.body.decode("utf-8"))
+        except ValueError:
+            raise exc.BadRequest(_("The payload is not a valid json"))
+        return payload
+
     def _get_event_name(self, request):
         raise NotImplemented
 
@@ -58,10 +65,7 @@ class BaseWebhookApiViewSet(GenericViewSet):
 
         event_name = self._get_event_name(request)
 
-        try:
-            payload = json.loads(request.body.decode("utf-8"))
-        except ValueError:
-            raise exc.BadRequest(_("The payload is not a valid json"))
+        payload = self._get_payload(request)
 
         event_hook_class = self.event_hook_classes.get(event_name, None)
         if event_hook_class is not None:
