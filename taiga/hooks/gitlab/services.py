@@ -31,7 +31,7 @@ def get_or_generate_config(project):
 
     url = reverse("gitlab-hook-list")
     url = get_absolute_url(url)
-    url = "%s?project=%s"%(url, project.id)
+    url = "{}?project={}&key={}".format(url, project.id, g_config["secret"])
     g_config["webhooks_url"] = url
     return g_config
 
