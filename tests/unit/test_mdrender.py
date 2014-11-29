@@ -97,14 +97,6 @@ def test_render_wiki_strike():
     assert render(dummy_project, "~~test~~") == "<p><del>test</del></p>"
 
 
-def test_render_absolute_link():
-    assert render(dummy_project, "[test](/test)") == "<p><a href=\"/test\">test</a></p>"
-
-
-def test_render_relative_link():
-    assert render(dummy_project, "[test](test)") == "<p><a href=\"test\">test</a></p>"
-
-
 def test_render_wikilink():
     expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/test\" title=\"test\">test</a></p>"
     assert render(dummy_project, "[[test]]") == expected_result
@@ -113,6 +105,16 @@ def test_render_wikilink():
 def test_render_wikilink_with_custom_title():
     expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/test\" title=\"custom\">custom</a></p>"
     assert render(dummy_project, "[[test|custom]]") == expected_result
+
+
+def test_render_wikilink_slug_to_wikipages():
+    expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/wiki_page\" title=\"wiki page\">wiki</a></p>"
+    assert render(dummy_project, "[wiki](wiki_page \"wiki page\")") == expected_result
+
+
+def test_render_wikilink_relative_to_absolute():
+    expected_result = "<p><a href=\"http://localhost:9001/project/test/\">test project</a></p>"
+    assert render(dummy_project, "[test project](/project/test/)") == expected_result
 
 
 def test_render_reference_links():
