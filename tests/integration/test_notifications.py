@@ -432,3 +432,15 @@ def test_watchers_assignation_for_us(client):
     url = reverse("userstories-list")
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
+
+
+def test_retrieve_notify_policies_by_anonymous_user(client):
+    project = f.ProjectFactory.create()
+
+    policy_model_cls = apps.get_model("notifications", "NotifyPolicy")
+    policy = services.get_notify_policy(project, project.owner)
+
+    url = reverse("notifications-detail", args=[policy.pk])
+    response = client.get(url, content_type="application/json")
+    assert response.status_code == 404, response.status_code
+    assert json.loads(response.content.decode("utf-8"))["_error_message"] == "No NotifyPolicy matches the given query.", response.content
