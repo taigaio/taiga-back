@@ -8,6 +8,9 @@
   + for anonymous users
   + for authenticated users
   + in import mode
+- Add project members stats endpoint.
+- Support of leave project.
+- Control of leave a project without admin user.
 
 ### Misc
 - Lots of small and not so small bugfixes.
