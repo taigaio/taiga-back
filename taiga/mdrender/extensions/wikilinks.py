@@ -17,10 +17,13 @@
 
 from markdown import Extension
 from markdown.inlinepatterns import Pattern
+from markdown.treeprocessors import Treeprocessor
+
 from markdown.util import etree
 
 from taiga.front import resolve
 
+import re
 
 class WikiLinkExtension(Extension):
     def __init__(self, project, *args, **kwargs):
@@ -29,14 +32,18 @@ class WikiLinkExtension(Extension):
 
     def extendMarkdown(self, md, md_globals):
         WIKILINK_RE = r"\[\[([\w0-9_ -]+)(\|[\w0-9_ -]+)?\]\]"
-        wikilinkPattern = WikiLinksPattern(WIKILINK_RE, self.project)
-        wikilinkPattern.md = md
-        md.inlinePatterns.add("wikilink", wikilinkPattern, "<not_strong")
+        md.inlinePatterns.add("wikilinks",
+                              WikiLinksPattern(md, WIKILINK_RE, self.project),
+                              "<not_strong")
+        md.treeprocessors.add("relative_to_absolute_links",
+                              RelativeLinksTreeprocessor(md, self.project),
+                              "<prettify")
 
 
 class WikiLinksPattern(Pattern):
-    def __init__(self, pattern, project):
+    def __init__(self, md, pattern, project):
         self.project = project
+        self.md = md
         super().__init__(pattern)
 
     def handleMatch(self, m):
@@ -54,3 +61,27 @@ class WikiLinksPattern(Pattern):
         a.set("title", title)
         a.set("class", "reference wiki")
         return a
+
+
+SLUG_RE = re.compile(r"^[-a-zA-Z0-9_]+$")
+
+class RelativeLinksTreeprocessor(Treeprocessor):
+    def __init__(self, md, project):
+        self.project = project
+        super().__init__(md)
+
+    def run(self, root):
+        links = root.getiterator("a")
+        for a in links:
+            href = a.get("href", "")
+
+            if SLUG_RE.search(href):
+                # [wiki](wiki_page) -> <a href="FRONT_HOST/.../wiki/wiki_page" ...
+                url = resolve("wiki", self.project.slug, href)
+                a.set("href", url)
+                a.set("class", "reference wiki")
+
+            elif href and href[0] == "/":
+                # [some link](/some/link) -> <a href="FRONT_HOST/some/link" ...
+                url = "{}{}".format(resolve("home"), href[1:])
+                a.set("href", url)
