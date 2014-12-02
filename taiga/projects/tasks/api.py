@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext_lazy as _
+from django.shortcuts import get_object_or_404
 
 from taiga.base import filters, response
 from taiga.base import exceptions as exc
@@ -79,3 +80,27 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
             return response.Ok(tasks_serialized.data)
 
         return response.BadRequest(serializer.errors)
+
+    def _bulk_update_order(self, order_field, request, **kwargs):
+        serializer = serializers.UpdateTasksOrderBulkSerializer(data=request.DATA)
+        if not serializer.is_valid():
+            return response.BadRequest(serializer.errors)
+
+        data = serializer.data
+        project = get_object_or_404(Project, pk=data["project_id"])
+
+        self.check_permissions(request, "bulk_update_order", project)
+        services.update_tasks_order_in_bulk(data["bulk_tasks"],
+                                                  project=project,
+                                                  field=order_field)
+        services.snapshot_tasks_in_bulk(data["bulk_tasks"], request.user)
+
+        return response.NoContent()
+
+    @list_route(methods=["POST"])
+    def bulk_update_taskboard_order(self, request, **kwargs):
+        return self._bulk_update_order("taskboard_order", request, **kwargs)
+
+    @list_route(methods=["POST"])
+    def bulk_update_us_order(self, request, **kwargs):
+        return self._bulk_update_order("us_order", request, **kwargs)

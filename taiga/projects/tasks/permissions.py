@@ -27,3 +27,4 @@ class TaskPermission(TaigaResourcePermission):
     destroy_perms = HasProjectPerm('delete_task')
     list_perms = AllowAny()
     bulk_create_perms = HasProjectPerm('add_task')
+    bulk_update_order_perms = HasProjectPerm('modify_task')
