@@ -210,12 +210,16 @@ class TagsFilter(FilterBackend):
         self.filter_name = filter_name
 
     def _get_tags_queryparams(self, params):
-        return params.get(self.filter_name, "")
+        tags = params.get(self.filter_name, None)
+        if tags:
+            return tags.split(",")
+
+        return None
 
     def filter_queryset(self, request, queryset, view):
         query_tags = self._get_tags_queryparams(request.QUERY_PARAMS)
         if query_tags:
-            queryset = tags.filter(queryset, contains=query_tags)
+            queryset = queryset.filter(tags__contains=query_tags)
 
         return super().filter_queryset(request, queryset, view)
 
