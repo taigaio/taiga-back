@@ -171,16 +171,19 @@ def test_send_notifications_using_services_method(settings, mail):
     history_change.user = {"pk": member1.user.pk}
     history_change.comment = ""
     history_change.type = HistoryType.change
+    history_change.is_hidden = False
 
     history_create = MagicMock()
     history_create.user = {"pk": member1.user.pk}
     history_create.comment = ""
     history_create.type = HistoryType.create
+    history_create.is_hidden = False
 
     history_delete = MagicMock()
     history_delete.user = {"pk": member1.user.pk}
     history_delete.comment = ""
     history_delete.type = HistoryType.delete
+    history_delete.is_hidden = False
 
     # Issues
     issue = f.IssueFactory.create(project=project, owner=member2.user)
