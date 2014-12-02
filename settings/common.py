@@ -194,7 +194,9 @@ INSTALLED_APPS = [
     "taiga.mdrender",
     "taiga.export_import",
     "taiga.feedback",
-    "taiga.github_hook",
+    "taiga.hooks.github",
+    "taiga.hooks.gitlab",
+    "taiga.hooks.bitbucket",
 
     "rest_framework",
     "djmail",
@@ -352,9 +354,13 @@ CHANGE_NOTIFICATIONS_MIN_INTERVAL = 0 #seconds
 # List of functions called for filling correctly the ProjectModulesConfig associated to a project
 # This functions should receive a Project parameter and return a dict with the desired configuration
 PROJECT_MODULES_CONFIGURATORS = {
-    "github": "taiga.github_hook.services.get_or_generate_config",
+    "github": "taiga.hooks.github.services.get_or_generate_config",
+    "gitlab": "taiga.hooks.gitlab.services.get_or_generate_config",
+    "bitbucket": "taiga.hooks.bitbucket.services.get_or_generate_config",
 }
 
+BITBUCKET_VALID_ORIGIN_IPS = ["131.103.20.165", "131.103.20.166"]
+GITLAB_VALID_ORIGIN_IPS = []
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"
