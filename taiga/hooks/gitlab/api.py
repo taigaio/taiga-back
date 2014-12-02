@@ -53,7 +53,7 @@ class GitLabViewSet(BaseWebhookApiViewSet):
 
         valid_origin_ips = project.modules_config.config.get("gitlab", {}).get("valid_origin_ips", settings.GITLAB_VALID_ORIGIN_IPS)
         origin_ip = get_real_ip(request)
-        if not origin_ip or origin_ip not in valid_origin_ips:
+        if valid_origin_ips and (not origin_ip or origin_ip not in valid_origin_ips):
             return False
 
         return project_secret == secret_key

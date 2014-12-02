@@ -63,7 +63,7 @@ class BitBucketViewSet(BaseWebhookApiViewSet):
 
         valid_origin_ips = project.modules_config.config.get("bitbucket", {}).get("valid_origin_ips", settings.BITBUCKET_VALID_ORIGIN_IPS)
         origin_ip = get_real_ip(request)
-        if not origin_ip or not origin_ip in valid_origin_ips:
+        if valid_origin_ips and (not origin_ip or not origin_ip in valid_origin_ips):
             return False
 
         return project_secret == secret_key
