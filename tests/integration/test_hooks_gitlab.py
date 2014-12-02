@@ -58,6 +58,46 @@ def test_ok_signature(client):
     assert response.status_code == 200
 
 
+def test_invalid_ip(client):
+    project=f.ProjectFactory()
+    f.ProjectModulesConfigFactory(project=project, config={
+        "gitlab": {
+            "secret": "tpnIwJDz4e",
+            "valid_origin_ips": ["111.111.111.111"],
+        }
+    })
+
+    url = reverse("gitlab-hook-list")
+    url = "{}?project={}&key={}".format(url, project.id, "tpnIwJDz4e")
+    data = {"test:": "data"}
+    response = client.post(url,
+                           json.dumps(data),
+                           content_type="application/json",
+                           REMOTE_ADDR="111.111.111.112")
+
+    assert response.status_code == 400
+
+
+def test_not_ip_filter(client):
+    project=f.ProjectFactory()
+    f.ProjectModulesConfigFactory(project=project, config={
+        "gitlab": {
+            "secret": "tpnIwJDz4e",
+            "valid_origin_ips": [],
+        }
+    })
+
+    url = reverse("gitlab-hook-list")
+    url = "{}?project={}&key={}".format(url, project.id, "tpnIwJDz4e")
+    data = {"test:": "data"}
+    response = client.post(url,
+                           json.dumps(data),
+                           content_type="application/json",
+                           REMOTE_ADDR="111.111.111.111")
+
+    assert response.status_code == 200
+
+
 def test_push_event_detected(client):
     project=f.ProjectFactory()
     url = reverse("gitlab-hook-list")
