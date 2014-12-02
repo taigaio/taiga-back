@@ -207,6 +207,9 @@ def _make_template_mail(name:str):
 
 @transaction.atomic
 def send_notifications(obj, *, history):
+    if history.is_hidden:
+        return None
+
     key = make_key_from_model_object(obj)
     owner = User.objects.get(pk=history.user["pk"])
     notification, created = (HistoryChangeNotification.objects.select_for_update()
