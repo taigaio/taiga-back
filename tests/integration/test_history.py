@@ -26,7 +26,7 @@ from .. import factories as f
 from taiga.projects.history import services
 from taiga.projects.history.models import HistoryEntry
 from taiga.projects.history.choices import HistoryType
-
+from taiga.projects.history.services import make_key_from_model_object
 
 pytestmark = pytest.mark.django_db
 
@@ -216,3 +216,19 @@ def test_history_with_only_comment_shouldnot_be_hidden(client):
     assert response.status_code == 200, response.content
     assert qs_all.count() == 1
     assert qs_hidden.count() == 0
+
+
+def test_delete_comment_by_project_owner(client):
+    project = f.create_project()
+    us = f.create_userstory(project=project)
+    membership = f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
+    key = make_key_from_model_object(us)
+    history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                                            comment="testing",
+                                                                            key=key)
+
+    client.login(project.owner)
+    url = reverse("userstory-history-delete-comment", args=(us.id,))
+    url = "%s?id=%s"%(url, history_entry.id)
+    response = client.post(url, content_type="application/json")
+    assert 200 == response.status_code, response.status_code

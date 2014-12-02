@@ -400,6 +400,13 @@ class AttachmentFactory(Factory):
     attached_file = factory.django.FileField(data=b"File contents")
 
 
+class HistoryEntryFactory(Factory):
+    class Meta:
+        model = "history.HistoryEntry"
+        strategy = factory.CREATE_STRATEGY
+
+    type = 1
+
 def create_issue(**kwargs):
     "Create an issue and along with its dependencies."
     owner = kwargs.pop("owner", None)
