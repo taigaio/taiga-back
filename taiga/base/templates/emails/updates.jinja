@@ -1,7 +1,11 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+{% set home_url = resolve_front_url("home") %}
+{% set home_url_name = "Taiga" %}
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Taiga</title>
+        <title>[Taiga] Jesús Espino updated the US #1680 "Rediseño de emails"</title>
         <style type="text/css">
             /* /\/\/\/\/\/\/\/\/ CLIENT-SPECIFIC STYLES /\/\/\/\/\/\/\/\/ */
             #outlook a{padding:0;} /* Force Outlook to provide a "view in browser" message */
@@ -391,35 +395,12 @@
                                         <tr>
                                             <td valign="top" class="headerContent">
                                                 <img src="{{ static("emails/top-bg-update.png") }}" />
-                                                <a href="{{ home_url }}" title="{{ home_url_name }}">
+                                                <a href="{{ home_url }}"
+                                                   title="{{ home_url_name }}">
                                                     <img src="{{ static("emails/logo-color.png") }}" id="headerImage" alt="Taiga logo" />
                                                 </a>
-
-    <h1>Feedback</h1>
-    <p>Taiga has received feedback from {{ feedback_entry.full_name }} <{{ feedback_entry.email }}></p>
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateBody">
-        <tr>
-            <td colspan="2" valign="top" class="bodyContent">
-                <h3>Comment</h3>
-                <p>{{ feedback_entry.comment }}</p>
-            </td>
-        </tr>
-
-        {% if extra %}
-        <tr>
-            <td valign="top" valign="top" class="bodyContent">
-                <h3>Extra:</h3>
-                <dl>
-                    {% for k, v in extra.items() %}
-                        <dt>{{ k }}</dt>
-                        <dd>{{ v }}</dd>
-                    {% endfor %}
-                </dl>
-            </td>
-        </tr>
-        {% endif %}
-    </table>
-
+                                                {% block head %}
+                                                {% endblock %}
                                             </td>
                                         </tr>
                                     </table>
@@ -428,13 +409,35 @@
                             </tr>
                             <tr>
                                 <td align="center" valign="top">
+                                    <!-- BEGIN BODY // -->
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateBody">
+                                        <tr>
+                                            <td valign="top" class="bodyContent">
+                                                <table class="update-row" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                    {% block body %}
+                                                    {% endblock %}
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top" class="social-links">
+                                                <a href="https://twitter.com/taigaio" title="Follow us on Twitter">Twitter</a>
+                                                <a href="https://github.com/taigaio" title="Get the code on Github">Github</a>
+                                                <a href="https://taiga.io/" title="Visit our website">Taiga.io</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <!-- // END BODY -->
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" valign="top">
                                     <!-- BEGIN FOOTER // -->
                                     <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateFooter">
                                         <tr>
                                             <td valign="top" class="footerContent">
-
-
-
+                                                {% block footer %}
+                                                {% endblock %}
                                             </td>
                                         </tr>
                                     </table>

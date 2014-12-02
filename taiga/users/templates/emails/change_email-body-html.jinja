@@ -4,24 +4,21 @@
 {% set final_url_name = "Taiga - Change email" %}
 
 {% block body %}
-<table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
-    <tr>
-        <td>
-            <h1>Change your email:</h1>
-            <p>Hello {{ user.get_full_name() }},</p>
-            <p>you can confirm your change of email by going to the following url:</p>
-            <p><a style="color: #669900;" href="{{ final_url }}">{{ final_url }}</a>
-            <p>You can ignore this message if you did not request.</p>
-            <p>Regards</p>
-            <p>--<br />The Taiga Team</p>
-        </td>
-    </tr>
-</table>
+    <h1>Change your email</h1>
+    <p>Hello {{ user.get_full_name() }},<br />please confirm your email</p>
+    <a class="button" href="{{ final_url }}" title="Confirm email">Confirm email</a>
+    <p>You can ignore this message if you did not request.</p>
+    <p><small>The Taiga Team</small></p>
 {% endblock %}
 
 {% block footer %}
-<p style="padding: 10px; border-top: 1px solid #eee;">
-    More info at:
-    <a href="{{ final_url }}" style="color: #666;">{{ final_url_name }}</a>
-</p>
+    <em>Copyright © 2014 Taiga Agile, LLC, All rights reserved.</em>
+    <br>
+    <strong>Contact us:</strong>
+    <br>
+    <strong>Support:</strong>
+    <a href="mailto:support@taiga.io" title="Taiga Support">support@taiga.io</a>
+    <br>
+    <strong>Our mailing address is:</strong>
+    <a href="https://groups.google.com/forum/#!forum/taigaio" title="Taiga mailing list">https://groups.google.com/forum/#!forum/taigaio</a>
 {% endblock %}

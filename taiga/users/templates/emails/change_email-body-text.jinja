@@ -1,12 +1,5 @@
-Hello {{ user.get_full_name() }},
-
-you can confirm your change of email by going to the following url:
-
-{{ resolve_front_url('change-email', user.email_token) }}
+Hello {{ user.get_full_name() }}, please confirm your email {{ resolve_front_url('change-email', user.email_token) }}
 
 You can ignore this message if you did not request.
 
-Regards
-
---
 The Taiga Team

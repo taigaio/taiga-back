@@ -280,6 +280,7 @@ class TaskFactory(Factory):
     status = factory.SubFactory("tests.factories.TaskStatusFactory")
     milestone = factory.SubFactory("tests.factories.MilestoneFactory")
     user_story = factory.SubFactory("tests.factories.UserStoryFactory")
+    tags = []
 
 
 class WikiPageFactory(Factory):

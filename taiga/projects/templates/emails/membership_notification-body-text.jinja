@@ -1,8 +1,6 @@
 {% set final_url = resolve_front_url("project", membership.project.slug) %}
 
-Hi {{ membership.user.get_full_name() }},
+You have been added to a project
+Hello {{ membership.user.get_full_name() }},you have been added to the project {{ membership.project }}
 
-you have been added to the project '{{ membership.project }}' ({{ final_url }}).
-
-
-** More info at ({{ final_url }}) **
+See project at ({{ final_url }})

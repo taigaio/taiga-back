@@ -16,14 +16,14 @@
 
 from django.conf import settings
 
-from djmail.template_mail import MagicMailBuilder
+from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
 
 
 def send_feedback(feedback_entry, extra):
     support_email = settings.FEEDBACK_EMAIL
 
     if support_email:
-        mbuilder = MagicMailBuilder()
+        mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
         email = mbuilder.feedback_notification(support_email, {"feedback_entry": feedback_entry,
                                                                "extra": extra})
         email.send()

@@ -1,7 +1,11 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% set home_url = resolve_front_url("home") %}
+{% set home_url_name = "Taiga" %}
+
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Taiga</title>
+        <title>You have been Taigatized</title>
         <style type="text/css">
             /* /\/\/\/\/\/\/\/\/ CLIENT-SPECIFIC STYLES /\/\/\/\/\/\/\/\/ */
             #outlook a{padding:0;} /* Force Outlook to provide a "view in browser" message */
@@ -32,7 +36,6 @@
             * @section email border
             */
             #templateContainer{
-                background-color:#FFF;
                 border:1px solid #CDCDCD;
             }
 
@@ -40,7 +43,7 @@
             * @section heading 1
             */
             h1{
-                color: #6e6e6e !important;
+                color: #fff !important;
                 display:block;
                 font-family: 'Open Sans', Arial;
                 font-size:25px;
@@ -59,7 +62,7 @@
             * @style heading 2
             */
             h2{
-                color: #6e6e6e !important;
+                color: #b8b8b8 !important;
                 display:block;
                 font-family: 'Open Sans', Arial;
                 font-size:20px;
@@ -75,7 +78,6 @@
             }
 
             /**
-            * @tab Page
             * @section heading 3
             */
             h3{
@@ -95,7 +97,6 @@
             }
 
             /**
-            * @tab Page
             * @section heading 4
             */
             h4{
@@ -119,7 +120,7 @@
 
             .headerContent {
                 text-align: center;
-                color:#b8b8b8 !important;
+                color:#fff !important;
                 font-family: 'Open Sans', Arial, Helvetica;
                 font-size:14px;
                 margin-bottom:16px;
@@ -135,9 +136,7 @@
             /* ========== Body Styles ========== */
 
             /**
-            * @tab Body
             * @section body style
-            * @tip Set the background color and borders for your email's body area.
             */
             #templateBody{
                 background-color:#FFF;
@@ -170,7 +169,7 @@
             /**
             * @section body link button class
             */
-            a.button {
+            .bodyContent a.button {
                 background: #699b05;
                 color: #fff;
                 display: block;
@@ -182,7 +181,7 @@
                 padding: .8rem 3rem;
             }
 
-            a.button:hover {
+            .bodyContent a.button:hover {
                 background: #aad400;
             }
 
@@ -190,36 +189,6 @@
                 display:inline;
                 height:auto;
                 max-width:560px;
-            }
-
-            .update-row h1,
-            .update-row h2,
-            .update-row h3 {
-                text-align: left;
-            }
-
-            .update-row tr {
-                border-bottom: 1px solid #cdcdcd;
-                padding: 10px;
-            }
-
-            .update-row tr:first-child,
-            .update-row tr:last-child {
-                border-bottom: 3px solid #cdcdcd;
-            }
-
-            .update-row td {
-                padding: 15px;
-                text-align: left;
-            }
-
-            .update-row td.update-row-name {
-                width: 40%;
-                text-align: center;
-            }
-
-            .update-row td.update-row-from {
-                border-bottom: 1px solid #f5f5f5;
             }
 
             .social-links {
@@ -264,14 +233,12 @@
             }
 
             /**
-            * @tab Footer
             * @section footer link
-            * @tip Set the styling for your email's footer links. Choose a color that helps them stand out from your text.
             */
             .footerContent a:link, .footerContent a:visited, /* Yahoo! Mail Override */ .footerContent a .yshortcuts, .footerContent a span /* Yahoo! Mail Override */{
-                /*@editable*/ color:#699b05;
-                /*@editable*/ font-weight:normal;
-                /*@editable*/ text-decoration:underline;
+                color:#699b05;
+                font-weight:normal;
+                text-decoration:underline;
             }
 
             /* /\/\/\/\/\/\/\/\/ MOBILE STYLES /\/\/\/\/\/\/\/\/ */
@@ -293,7 +260,7 @@
                 */
                 #templateContainer{
                     max-width:600px !important;
-                    width:100% !important;
+                    /*@editable*/ width:100% !important;
                 }
 
                 /**
@@ -337,9 +304,7 @@
                 /* ======== Body Styles ======== */
 
                 /**
-                * @tab Mobile Styles
                 * @section body image
-                * @tip Make the main body image fluid for portrait or landscape view adaptability, and set the image's original width as the max-width. If a fluid setting doesn't work, set the image width to half its original size instead.
                 */
                 #bodyImage{
                     height:auto !important;
@@ -389,37 +354,12 @@
                                     <!-- BEGIN HEADER // -->
                                     <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateHeader">
                                         <tr>
-                                            <td valign="top" class="headerContent">
-                                                <img src="{{ static("emails/top-bg-update.png") }}" />
+                                            <td valign="top" class="headerContent" background="{{ static("emails/top-bg-hero.png") }}" style="background-position: center center">
                                                 <a href="{{ home_url }}" title="{{ home_url_name }}">
-                                                    <img src="{{ static("emails/logo-color.png") }}" id="headerImage" alt="Taiga logo" />
+                                                    <img src="{{ static("emails/logo.png") }}" alt="Taiga" id="headerImage" />
                                                 </a>
-
-    <h1>Feedback</h1>
-    <p>Taiga has received feedback from {{ feedback_entry.full_name }} <{{ feedback_entry.email }}></p>
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateBody">
-        <tr>
-            <td colspan="2" valign="top" class="bodyContent">
-                <h3>Comment</h3>
-                <p>{{ feedback_entry.comment }}</p>
-            </td>
-        </tr>
-
-        {% if extra %}
-        <tr>
-            <td valign="top" valign="top" class="bodyContent">
-                <h3>Extra:</h3>
-                <dl>
-                    {% for k, v in extra.items() %}
-                        <dt>{{ k }}</dt>
-                        <dd>{{ v }}</dd>
-                    {% endfor %}
-                </dl>
-            </td>
-        </tr>
-        {% endif %}
-    </table>
-
+                                                <h1>You have been Taigatized!</h1>
+                                                <p>Welcome to Taiga, an Open Source, Agile Project Management Tool</p>
                                             </td>
                                         </tr>
                                     </table>
@@ -428,13 +368,31 @@
                             </tr>
                             <tr>
                                 <td align="center" valign="top">
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateBody">
+                                        <tr>
+                                            <td valign="top" class="bodyContent">
+                                                {% block body %}{% endblock %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top" class="social-links">
+                                                <a href="https://twitter.com/taigaio" title="Follow us on Twitter">Twitter</a>
+                                                <a href="https://github.com/taigaio" title="Get the code on Github">Github</a>
+                                                <a href="https://taiga.io/" title="Visit our website">Taiga.io</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" valign="top">
                                     <!-- BEGIN FOOTER // -->
                                     <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateFooter">
+
                                         <tr>
                                             <td valign="top" class="footerContent">
-
-
-
+                                                {% block footer %}
+                                                {% endblock %}
                                             </td>
                                         </tr>
                                     </table>
