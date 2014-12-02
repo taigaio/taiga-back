@@ -116,7 +116,7 @@ class TestIssues:
         issue2 = f.IssueFactory.create(project=project, severity=severity1)
         issue3 = f.IssueFactory.create(project=project, severity=severity1)
 
-        issues = Issue.objects.filter(project=project).order_by("severity")
+        issues = Issue.objects.filter(project=project).order_by("severity", "-id")
 
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
@@ -135,7 +135,7 @@ class TestIssues:
         issue2 = f.IssueFactory.create(project=project, severity=severity1)
         issue3 = f.IssueFactory.create(project=project, severity=severity1)
 
-        issues = Issue.objects.filter(project=project).order_by("-severity")
+        issues = Issue.objects.filter(project=project).order_by("-severity", "-id")
 
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
@@ -154,7 +154,7 @@ class TestIssues:
         issue2 = f.IssueFactory.create(project=project, status=status1)
         issue3 = f.IssueFactory.create(project=project, status=status1)
 
-        issues = Issue.objects.filter(project=project).order_by("status")
+        issues = Issue.objects.filter(project=project).order_by("status", "-id")
 
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
@@ -173,7 +173,7 @@ class TestIssues:
         issue2 = f.IssueFactory.create(project=project, status=status1)
         issue3 = f.IssueFactory.create(project=project, status=status1)
 
-        issues = Issue.objects.filter(project=project).order_by("-status")
+        issues = Issue.objects.filter(project=project).order_by("-status", "-id")
 
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
@@ -192,7 +192,7 @@ class TestIssues:
         issue2 = f.IssueFactory.create(project=project, priority=priority1)
         issue3 = f.IssueFactory.create(project=project, priority=priority1)
 
-        issues = Issue.objects.filter(project=project).order_by("priority")
+        issues = Issue.objects.filter(project=project).order_by("priority", "-id")
 
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
@@ -211,7 +211,7 @@ class TestIssues:
         issue2 = f.IssueFactory.create(project=project, priority=priority1)
         issue3 = f.IssueFactory.create(project=project, priority=priority1)
 
-        issues = Issue.objects.filter(project=project).order_by("-priority")
+        issues = Issue.objects.filter(project=project).order_by("-priority", "-id")
 
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
@@ -230,7 +230,7 @@ class TestIssues:
         issue2 = f.IssueFactory.create(project=project, owner=owner1)
         issue3 = f.IssueFactory.create(project=project, owner=owner1)
 
-        issues = Issue.objects.filter(project=project).order_by("owner__full_name")
+        issues = Issue.objects.filter(project=project).order_by("owner__full_name", "-id")
 
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
@@ -249,7 +249,7 @@ class TestIssues:
         issue2 = f.IssueFactory.create(project=project, owner=owner1)
         issue3 = f.IssueFactory.create(project=project, owner=owner1)
 
-        issues = Issue.objects.filter(project=project).order_by("-owner__full_name")
+        issues = Issue.objects.filter(project=project).order_by("-owner__full_name", "-id")
 
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
@@ -268,7 +268,7 @@ class TestIssues:
         issue2 = f.IssueFactory.create(project=project, assigned_to=assigned_to1)
         issue3 = f.IssueFactory.create(project=project, assigned_to=assigned_to1)
 
-        issues = Issue.objects.filter(project=project).order_by("assigned_to__full_name")
+        issues = Issue.objects.filter(project=project).order_by("assigned_to__full_name", "-id")
 
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
         issue3_neighbors = n.get_neighbors(issue3, results_set=issues)
@@ -287,7 +287,7 @@ class TestIssues:
         issue2 = f.IssueFactory.create(project=project, assigned_to=assigned_to1)
         issue3 = f.IssueFactory.create(project=project, assigned_to=assigned_to1)
 
-        issues = Issue.objects.filter(project=project).order_by("-assigned_to__full_name")
+        issues = Issue.objects.filter(project=project).order_by("-assigned_to__full_name", "-id")
 
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
@@ -304,7 +304,7 @@ class TestIssues:
         issue2 = f.IssueFactory.create(project=project, assigned_to=None)
         issue3 = f.IssueFactory.create(project=project, assigned_to=None)
 
-        issues = Issue.objects.filter(project=project).order_by("-assigned_to__full_name")
+        issues = Issue.objects.filter(project=project).order_by("-assigned_to__full_name", "-id")
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
 
@@ -320,7 +320,7 @@ class TestIssues:
         issue2 = f.IssueFactory.create(project=project, assigned_to=assigned_to1)
         issue3 = f.IssueFactory.create(project=project, assigned_to=None)
 
-        issues = Issue.objects.filter(project=project).order_by("-assigned_to__full_name")
+        issues = Issue.objects.filter(project=project).order_by("-assigned_to__full_name", "-id")
 
         issue1_neighbors = n.get_neighbors(issue1, results_set=issues)
         issue2_neighbors = n.get_neighbors(issue2, results_set=issues)
