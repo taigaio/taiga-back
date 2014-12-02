@@ -75,6 +75,7 @@ def _make_extensions_list(project=None):
             TaigaReferencesExtension(project),
             "extra",
             "codehilite",
+            "sane_lists",
             "nl2br"]
 
 
