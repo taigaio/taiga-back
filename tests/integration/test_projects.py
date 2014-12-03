@@ -9,6 +9,18 @@ import pytest
 pytestmark = pytest.mark.django_db
 
 
+def test_get_project_by_slug(client):
+    project = f.create_project()
+    url = reverse("projects-detail", kwargs={"pk": project.slug})
+
+    response = client.json.get(url)
+    assert response.status_code == 404
+
+    client.login(project.owner)
+    response = client.json.get(url)
+    assert response.status_code == 404
+
+
 def test_create_project(client):
     user = f.create_user()
     url = reverse("projects-list")
