@@ -22,7 +22,6 @@ import warnings
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.core.paginator import Paginator, InvalidPage
 from django.http import Http404
-from django.shortcuts import get_object_or_404 as _get_object_or_404
 from django.utils.translation import ugettext as _
 
 from rest_framework import exceptions
@@ -31,6 +30,7 @@ from rest_framework.settings import api_settings
 
 from . import views
 from . import mixins
+from .utils import get_object_or_404
 
 
 def strict_positive_int(integer_string, cutoff=None):
@@ -43,17 +43,6 @@ def strict_positive_int(integer_string, cutoff=None):
     if cutoff:
         ret = min(ret, cutoff)
     return ret
-
-
-def get_object_or_404(queryset, *filter_args, **filter_kwargs):
-    """
-    Same as Django's standard shortcut, but make sure to raise 404
-    if the filter_kwargs don't match the required types.
-    """
-    try:
-        return _get_object_or_404(queryset, *filter_args, **filter_kwargs)
-    except (TypeError, ValueError):
-        raise Http404
 
 
 class GenericAPIView(views.APIView):

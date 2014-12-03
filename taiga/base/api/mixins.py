@@ -20,7 +20,6 @@
 import warnings
 
 from django.core.exceptions import ValidationError
-from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.db import transaction as tx
 
@@ -28,6 +27,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import clone_request
 from rest_framework.settings import api_settings
+
+from .utils import get_object_or_404
 
 
 def _get_validation_exclusions(obj, pk=None, slug_field=None, lookup_field=None):
