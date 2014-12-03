@@ -3,9 +3,12 @@ from django.core.urlresolvers import reverse
 from taiga.base.utils import json
 from taiga.projects.userstories.serializers import UserStorySerializer
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.projects.occ import OCCResourceMixin
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
+
+from unittest import mock
 
 import pytest
 pytestmark = pytest.mark.django_db
@@ -130,23 +133,24 @@ def test_user_story_update(client, data):
         data.project_owner
     ]
 
-    user_story_data = UserStorySerializer(data.public_user_story).data
-    user_story_data["subject"] = "test"
-    user_story_data = json.dumps(user_story_data)
-    results = helper_test_http_method(client, 'put', public_url, user_story_data, users)
-    assert results == [401, 403, 403, 200, 200]
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version") as _validate_and_update_version_mock:
+            user_story_data = UserStorySerializer(data.public_user_story).data
+            user_story_data["subject"] = "test"
+            user_story_data = json.dumps(user_story_data)
+            results = helper_test_http_method(client, 'put', public_url, user_story_data, users)
+            assert results == [401, 403, 403, 200, 200]
 
-    user_story_data = UserStorySerializer(data.private_user_story1).data
-    user_story_data["subject"] = "test"
-    user_story_data = json.dumps(user_story_data)
-    results = helper_test_http_method(client, 'put', private_url1, user_story_data, users)
-    assert results == [401, 403, 403, 200, 200]
+            user_story_data = UserStorySerializer(data.private_user_story1).data
+            user_story_data["subject"] = "test"
+            user_story_data = json.dumps(user_story_data)
+            results = helper_test_http_method(client, 'put', private_url1, user_story_data, users)
+            assert results == [401, 403, 403, 200, 200]
 
-    user_story_data = UserStorySerializer(data.private_user_story2).data
-    user_story_data["subject"] = "test"
-    user_story_data = json.dumps(user_story_data)
-    results = helper_test_http_method(client, 'put', private_url2, user_story_data, users)
-    assert results == [401, 403, 403, 200, 200]
+            user_story_data = UserStorySerializer(data.private_user_story2).data
+            user_story_data["subject"] = "test"
+            user_story_data = json.dumps(user_story_data)
+            results = helper_test_http_method(client, 'put', private_url2, user_story_data, users)
+            assert results == [401, 403, 403, 200, 200]
 
 
 def test_user_story_delete(client, data):
@@ -235,17 +239,18 @@ def test_user_story_patch(client, data):
         data.project_owner
     ]
 
-    patch_data = json.dumps({"subject": "test", "version": data.public_user_story.version})
-    results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
-    assert results == [401, 403, 403, 200, 200]
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version") as _validate_and_update_version_mock:
+            patch_data = json.dumps({"subject": "test", "version": data.public_user_story.version})
+            results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
+            assert results == [401, 403, 403, 200, 200]
 
-    patch_data = json.dumps({"subject": "test", "version": data.private_user_story1.version})
-    results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
-    assert results == [401, 403, 403, 200, 200]
+            patch_data = json.dumps({"subject": "test", "version": data.private_user_story1.version})
+            results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
+            assert results == [401, 403, 403, 200, 200]
 
-    patch_data = json.dumps({"subject": "test", "version": data.private_user_story2.version})
-    results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
-    assert results == [401, 403, 403, 200, 200]
+            patch_data = json.dumps({"subject": "test", "version": data.private_user_story2.version})
+            results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
+            assert results == [401, 403, 403, 200, 200]
 
 
 def test_user_story_action_bulk_create(client, data):

@@ -26,16 +26,20 @@ class OCCResourceMixin(object):
     Rest Framework resource mixin for resources that need to have concurrent
     accesses and editions controlled.
     """
-    def pre_save(self, obj):
-        current_version = obj.version
-        param_version = self.request.DATA.get('version', None)
+    def _validate_and_update_version(self, obj):
+        current_version = None
+        if obj.id:
+            current_version = type(obj).objects.model.objects.get(id=obj.id).version
 
-        if obj.id is not None and current_version != param_version:
+        param_version = self.request.DATA.get('version', None)
+        if current_version != param_version:
             raise exc.WrongArguments({"version": "The version doesn't match with the current one"})
 
         if obj.id:
             obj.version = models.F('version') + 1
 
+    def pre_save(self, obj):
+        self._validate_and_update_version(obj)
         super().pre_save(obj)
 
     def post_save(self, obj, created=False):

@@ -41,7 +41,7 @@ def test_invalid_concurrent_save_for_issue(client):
     mock_path = "taiga.projects.issues.api.IssueViewSet.pre_conditions_on_save"
     with patch(mock_path) as m:
         url = reverse("issues-detail", args=(issue.id,))
-        data = {}
+        data = {"version":9}
         response = client.patch(url, json.dumps(data), content_type="application/json")
         assert response.status_code == 400
 
@@ -71,7 +71,7 @@ def test_invalid_concurrent_save_for_wiki_page(client):
     client.login(user)
 
     url = reverse("wiki-detail", args=(wiki_page.id,))
-    data = {}
+    data = {"version":9}
     response = client.patch(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
 
@@ -98,7 +98,7 @@ def test_invalid_concurrent_save_for_us(client):
     client.login(user)
 
     url = reverse("userstories-detail", args=(userstory.id,))
-    data = {}
+    data = {"version":9}
     response = client.patch(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
 
@@ -143,7 +143,7 @@ def test_invalid_concurrent_save_for_task(client):
     mock_path = "taiga.projects.tasks.api.TaskViewSet.pre_conditions_on_save"
     with patch(mock_path) as m:
         url = reverse("tasks-detail", args=(task.id,))
-        data = {}
+        data = {"version":9}
         response = client.patch(url, json.dumps(data), content_type="application/json")
         assert response.status_code == 400
 
