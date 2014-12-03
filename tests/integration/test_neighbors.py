@@ -21,7 +21,6 @@ import pytest
 
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.issues.models import Issue
-from taiga.base import tags
 from taiga.base import neighbors as n
 
 from .. import factories as f
@@ -58,7 +57,7 @@ class TestUserStories:
         us1 = f.UserStoryFactory.create(project=project, tags=tag_names)
         us2 = f.UserStoryFactory.create(project=project, tags=tag_names)
 
-        test_user_stories = tags.filter(UserStory.objects.get_queryset(), contains=tag_names)
+        test_user_stories = UserStory.objects.get_queryset().filter(tags__contains=tag_names)
 
         neighbors = n.get_neighbors(us1, results_set=test_user_stories)
 
