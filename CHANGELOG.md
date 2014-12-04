@@ -4,6 +4,11 @@
 ## 1.4.0  (Unreleased)
 
 ### Features
+- Bitbucket integration:
+  + Change status of user stories, tasks and issues with the commit messages.
+- Gitlab integration:
+  + Change status of user stories, tasks and issues with the commit messages.
+  + Sync issues creation in Taiga from Gitlab.
 - Support throttling.
   + for anonymous users
   + for authenticated users
@@ -23,7 +28,7 @@
   + Login/singin connector.
   + Change status of user stories, tasks and issues with the commit messages.
   + Sync issues creation in Taiga from GitHub.
-  + Sync comments  in Taiga from GitHub issues.
+  + Sync comments in Taiga from GitHub issues.
 
 ### Misc
 - Lots of small and not so small bugfixes.
