@@ -1,7 +1,7 @@
 # Changelog #
 
 
-## 1.4.0  (Unreleased)
+## 1.4.0 Abies veitchii (2014-12-10)
 
 ### Features
 - Bitbucket integration:
@@ -16,6 +16,8 @@
 - Add project members stats endpoint.
 - Support of leave project.
 - Control of leave a project without admin user.
+- Improving OCC (Optimistic concurrency control)
+- Improving some SQL queries using djrom directly
 
 ### Misc
 - Lots of small and not so small bugfixes.
