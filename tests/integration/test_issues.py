@@ -46,6 +46,7 @@ def test_update_issues_order_in_bulk():
 
 def test_api_create_issues_in_bulk(client):
     project = f.create_project()
+    membership = f.MembershipFactory(project=project, user=project.owner, is_owner=True)
 
     url = reverse("issues-bulk-create")
 
@@ -59,9 +60,10 @@ def test_api_create_issues_in_bulk(client):
 
 
 def test_api_filter_by_subject(client):
-    f.create_issue()
-    issue = f.create_issue(subject="some random subject")
-    url = reverse("issues-list") + "?subject=some subject"
+    user = f.UserFactory(is_superuser=True)
+    f.create_issue(owner=user)
+    issue = f.create_issue(subject="some random subject", owner=user)
+    url = reverse("issues-list") + "?q=some subject"
 
     client.login(issue.owner)
     response = client.get(url)
@@ -72,8 +74,9 @@ def test_api_filter_by_subject(client):
 
 
 def test_api_filter_by_text_1(client):
-    f.create_issue()
-    issue = f.create_issue(subject="this is the issue one")
+    user = f.UserFactory(is_superuser=True)
+    f.create_issue(owner=user)
+    issue = f.create_issue(subject="this is the issue one", owner=user)
     f.create_issue(subject="this is the issue two", owner=issue.owner)
     url = reverse("issues-list") + "?q=one"
 
@@ -85,8 +88,9 @@ def test_api_filter_by_text_1(client):
     assert number_of_issues == 1
 
 def test_api_filter_by_text_2(client):
-    f.create_issue()
-    issue = f.create_issue(subject="this is the issue one")
+    user = f.UserFactory(is_superuser=True)
+    f.create_issue(owner=user)
+    issue = f.create_issue(subject="this is the issue one", owner=user)
     f.create_issue(subject="this is the issue two", owner=issue.owner)
     url = reverse("issues-list") + "?q=this is the issue one"
 
@@ -98,8 +102,9 @@ def test_api_filter_by_text_2(client):
     assert number_of_issues == 1
 
 def test_api_filter_by_text_3(client):
-    f.create_issue()
-    issue = f.create_issue(subject="this is the issue one")
+    user = f.UserFactory(is_superuser=True)
+    f.create_issue(owner=user)
+    issue = f.create_issue(subject="this is the issue one", owner=user)
     f.create_issue(subject="this is the issue two", owner=issue.owner)
     url = reverse("issues-list") + "?q=this is the issue"
 
@@ -111,8 +116,9 @@ def test_api_filter_by_text_3(client):
     assert number_of_issues == 2
 
 def test_api_filter_by_text_4(client):
-    f.create_issue()
-    issue = f.create_issue(subject="this is the issue one")
+    user = f.UserFactory(is_superuser=True)
+    f.create_issue(owner=user)
+    issue = f.create_issue(subject="this is the issue one", owner=user)
     f.create_issue(subject="this is the issue two", owner=issue.owner)
     url = reverse("issues-list") + "?q=one two"
 
@@ -124,8 +130,9 @@ def test_api_filter_by_text_4(client):
     assert number_of_issues == 0
 
 def test_api_filter_by_text_5(client):
-    f.create_issue()
-    issue = f.create_issue(subject="python 3")
+    user = f.UserFactory(is_superuser=True)
+    f.create_issue(owner=user)
+    issue = f.create_issue(subject="python 3", owner=user)
     url = reverse("issues-list") + "?q=python 3"
 
     client.login(issue.owner)
@@ -137,9 +144,13 @@ def test_api_filter_by_text_5(client):
 
 
 def test_api_filter_by_text_6(client):
-    f.create_issue()
-    issue = f.create_issue(subject="test")
-    url = reverse("issues-list") + "?q=%s"%(issue.ref)
+    user = f.UserFactory(is_superuser=True)
+    f.create_issue(owner=user)
+    issue = f.create_issue(subject="test", owner=user)
+    issue.ref = 123
+    issue.save()
+    print(issue.ref, issue.subject)
+    url = reverse("issues-list") + "?q=%s" % (issue.ref)
 
     client.login(issue.owner)
     response = client.get(url)

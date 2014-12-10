@@ -22,44 +22,20 @@ from taiga.base import exceptions as exc
 from taiga.base.utils import json
 from taiga.projects.models import Project
 
-from . import event_hooks
 from .exceptions import ActionSyntaxException
 
-import hmac
-import hashlib
 
-
-class GitHubViewSet(GenericViewSet):
+class BaseWebhookApiViewSet(GenericViewSet):
     # We don't want rest framework to parse the request body and transform it in
     # a dict in request.DATA, we need it raw
     parser_classes = ()
 
     # This dict associates the event names we are listening for
     # with their reponsible classes (extending event_hooks.BaseEventHook)
-    event_hook_classes = {
-        "push": event_hooks.PushEventHook,
-        "issues": event_hooks.IssuesEventHook,
-        "issue_comment": event_hooks.IssueCommentEventHook,
-    }
+    event_hook_classes = {}
 
     def _validate_signature(self, project, request):
-        x_hub_signature = request.META.get("HTTP_X_HUB_SIGNATURE", None)
-        if not x_hub_signature:
-            return False
-
-        sha_name, signature = x_hub_signature.split('=')
-        if sha_name != 'sha1':
-            return False
-
-        if not hasattr(project, "modules_config"):
-            return False
-
-        if project.modules_config.config is None:
-            return False
-
-        secret = bytes(project.modules_config.config.get("github", {}).get("secret", "").encode("utf-8"))
-        mac = hmac.new(secret, msg=request.body,digestmod=hashlib.sha1)
-        return hmac.compare_digest(mac.hexdigest(), signature)
+        raise NotImplemented
 
     def _get_project(self, request):
         project_id = request.GET.get("project", None)
@@ -69,6 +45,16 @@ class GitHubViewSet(GenericViewSet):
         except Project.DoesNotExist:
             return None
 
+    def _get_payload(self, request):
+        try:
+            payload = json.loads(request.body.decode("utf-8"))
+        except ValueError:
+            raise exc.BadRequest(_("The payload is not a valid json"))
+        return payload
+
+    def _get_event_name(self, request):
+        raise NotImplemented
+
     def create(self, request, *args, **kwargs):
         project = self._get_project(request)
         if not project:
@@ -77,12 +63,9 @@ class GitHubViewSet(GenericViewSet):
         if not self._validate_signature(project, request):
             raise exc.BadRequest(_("Bad signature"))
 
-        event_name = request.META.get("HTTP_X_GITHUB_EVENT", None)
+        event_name = self._get_event_name(request)
 
-        try:
-            payload = json.loads(request.body.decode("utf-8"))
-        except ValueError:
-            raise exc.BadRequest(_("The payload is not a valid json"))
+        payload = self._get_payload(request)
 
         event_hook_class = self.event_hook_classes.get(event_name, None)
         if event_hook_class is not None:

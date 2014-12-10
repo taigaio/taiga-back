@@ -44,6 +44,7 @@ def data():
                                                 email=m.project_member_with_perms.email,
                                                 role__project=m.private_project1,
                                                 role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_member_without_perms,
                         email=m.project_member_without_perms.email,
@@ -59,6 +60,18 @@ def data():
                         email=m.project_member_without_perms.email,
                         role__project=m.private_project2,
                         role__permissions=[])
+
+    f.MembershipFactory(project=m.public_project,
+                        user=m.project_owner,
+                        is_owner=True)
+
+    f.MembershipFactory(project=m.private_project1,
+                        user=m.project_owner,
+                        is_owner=True)
+
+    f.MembershipFactory(project=m.private_project2,
+                        user=m.project_owner,
+                        is_owner=True)
 
     m.public_points = f.PointsFactory(project=m.public_project)
     m.private_points1 = f.PointsFactory(project=m.private_project1)
@@ -1427,31 +1440,31 @@ def test_membership_list(client, data):
 
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 3
+    assert len(projects_data) == 5
     assert response.status_code == 200
 
     client.login(data.registered_user)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 3
+    assert len(projects_data) == 5
     assert response.status_code == 200
 
     client.login(data.project_member_without_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 3
+    assert len(projects_data) == 5
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 5
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
     client.login(data.project_owner)
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 5
+    assert len(projects_data) == 8
     assert response.status_code == 200
 
 

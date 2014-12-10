@@ -168,6 +168,7 @@ def test_invalid_project_import_with_extra_data(client):
 def test_invalid_issue_import(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
 
     url = reverse("importer-issue", args=[project.pk])
@@ -179,6 +180,7 @@ def test_invalid_issue_import(client):
 def test_valid_user_story_import(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_us_status = f.UserStoryStatusFactory.create(project=project)
     project.save()
     client.login(user)
@@ -199,6 +201,7 @@ def test_valid_user_story_import(client):
 def test_valid_issue_import_without_extra_data(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_issue_type = f.IssueTypeFactory.create(project=project)
     project.default_issue_status = f.IssueStatusFactory.create(project=project)
     project.default_severity = f.SeverityFactory.create(project=project)
@@ -220,6 +223,7 @@ def test_valid_issue_import_without_extra_data(client):
 def test_valid_issue_import_with_extra_data(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_issue_type = f.IssueTypeFactory.create(project=project)
     project.default_issue_status = f.IssueStatusFactory.create(project=project)
     project.default_severity = f.SeverityFactory.create(project=project)
@@ -252,6 +256,7 @@ def test_valid_issue_import_with_extra_data(client):
 def test_invalid_issue_import_with_extra_data(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_issue_type = f.IssueTypeFactory.create(project=project)
     project.default_issue_status = f.IssueStatusFactory.create(project=project)
     project.default_severity = f.SeverityFactory.create(project=project)
@@ -275,6 +280,7 @@ def test_invalid_issue_import_with_extra_data(client):
 def test_invalid_issue_import_with_bad_choices(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_issue_type = f.IssueTypeFactory.create(project=project)
     project.default_issue_status = f.IssueStatusFactory.create(project=project)
     project.default_severity = f.SeverityFactory.create(project=project)
@@ -333,6 +339,7 @@ def test_invalid_issue_import_with_bad_choices(client):
 def test_invalid_us_import(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
 
     url = reverse("importer-us", args=[project.pk])
@@ -344,6 +351,7 @@ def test_invalid_us_import(client):
 def test_valid_us_import_without_extra_data(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_us_status = f.UserStoryStatusFactory.create(project=project)
     project.save()
     client.login(user)
@@ -362,6 +370,7 @@ def test_valid_us_import_without_extra_data(client):
 def test_valid_us_import_with_extra_data(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_us_status = f.UserStoryStatusFactory.create(project=project)
     project.save()
     client.login(user)
@@ -389,6 +398,7 @@ def test_valid_us_import_with_extra_data(client):
 def test_invalid_us_import_with_extra_data(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_us_status = f.UserStoryStatusFactory.create(project=project)
     project.save()
     client.login(user)
@@ -409,6 +419,7 @@ def test_invalid_us_import_with_extra_data(client):
 def test_invalid_us_import_with_bad_choices(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_us_status = f.UserStoryStatusFactory.create(project=project)
     project.save()
     client.login(user)
@@ -428,6 +439,7 @@ def test_invalid_us_import_with_bad_choices(client):
 def test_invalid_task_import(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
 
     url = reverse("importer-task", args=[project.pk])
@@ -439,6 +451,7 @@ def test_invalid_task_import(client):
 def test_valid_task_import_without_extra_data(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_task_status = f.TaskStatusFactory.create(project=project)
     project.save()
     client.login(user)
@@ -457,6 +470,7 @@ def test_valid_task_import_without_extra_data(client):
 def test_valid_task_import_with_extra_data(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_task_status = f.TaskStatusFactory.create(project=project)
     project.save()
     client.login(user)
@@ -484,6 +498,7 @@ def test_valid_task_import_with_extra_data(client):
 def test_invalid_task_import_with_extra_data(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_task_status = f.TaskStatusFactory.create(project=project)
     project.save()
     client.login(user)
@@ -504,6 +519,7 @@ def test_invalid_task_import_with_extra_data(client):
 def test_invalid_task_import_with_bad_choices(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_task_status = f.TaskStatusFactory.create(project=project)
     project.save()
     client.login(user)
@@ -523,6 +539,7 @@ def test_invalid_task_import_with_bad_choices(client):
 def test_valid_task_with_user_story(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_task_status = f.TaskStatusFactory.create(project=project)
     us = f.UserStoryFactory.create(project=project)
     project.save()
@@ -542,6 +559,7 @@ def test_valid_task_with_user_story(client):
 def test_invalid_wiki_page_import(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
 
     url = reverse("importer-wiki-page", args=[project.pk])
@@ -553,6 +571,7 @@ def test_invalid_wiki_page_import(client):
 def test_valid_wiki_page_import_without_extra_data(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
 
     url = reverse("importer-wiki-page", args=[project.pk])
@@ -568,6 +587,7 @@ def test_valid_wiki_page_import_without_extra_data(client):
 def test_valid_wiki_page_import_with_extra_data(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
 
     url = reverse("importer-wiki-page", args=[project.pk])
@@ -592,6 +612,7 @@ def test_valid_wiki_page_import_with_extra_data(client):
 def test_invalid_wiki_page_import_with_extra_data(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
 
     url = reverse("importer-wiki-page", args=[project.pk])
@@ -610,6 +631,7 @@ def test_invalid_wiki_page_import_with_extra_data(client):
 def test_invalid_wiki_link_import(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
 
     url = reverse("importer-wiki-link", args=[project.pk])
@@ -621,6 +643,7 @@ def test_invalid_wiki_link_import(client):
 def test_valid_wiki_link_import(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
 
     url = reverse("importer-wiki-link", args=[project.pk])
@@ -636,6 +659,7 @@ def test_valid_wiki_link_import(client):
 def test_invalid_milestone_import(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
 
     url = reverse("importer-milestone", args=[project.pk])
@@ -647,6 +671,7 @@ def test_invalid_milestone_import(client):
 def test_valid_milestone_import(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
 
     url = reverse("importer-milestone", args=[project.pk])
@@ -663,6 +688,7 @@ def test_valid_milestone_import(client):
 def test_milestone_import_duplicated_milestone(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
 
     url = reverse("importer-milestone", args=[project.pk])

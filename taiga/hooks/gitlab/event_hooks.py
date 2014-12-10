@@ -14,6 +14,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+import os
+
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.projects.models import Project, IssueStatus, TaskStatus, UserStoryStatus
@@ -23,20 +26,10 @@ from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.notifications.services import send_notifications
+from taiga.hooks.event_hooks import BaseEventHook
+from taiga.hooks.exceptions import ActionSyntaxException
 
-from .exceptions import ActionSyntaxException
-from .services import get_github_user
-
-import re
-
-
-class BaseEventHook:
-    def __init__(self, project, payload):
-        self.project = project
-        self.payload = payload
-
-    def process_event(self):
-        raise NotImplementedError("process_event must be overwritten")
+from .services import get_gitlab_user
 
 
 class PushEventHook(BaseEventHook):
@@ -44,14 +37,12 @@ class PushEventHook(BaseEventHook):
         if self.payload is None:
             return
 
-        github_user = self.payload.get('sender', {}).get('id', None)
-
         commits = self.payload.get("commits", [])
         for commit in commits:
             message = commit.get("message", None)
-            self._process_message(message, github_user)
+            self._process_message(message, None)
 
-    def _process_message(self, message, github_user):
+    def _process_message(self, message, gitlab_user):
         """
           The message we will be looking for seems like
             TG-XX #yyyyyy
@@ -67,9 +58,9 @@ class PushEventHook(BaseEventHook):
         if m:
             ref = m.group(1)
             status_slug = m.group(2)
-            self._change_status(ref, status_slug, github_user)
+            self._change_status(ref, status_slug, gitlab_user)
 
-    def _change_status(self, ref, status_slug, github_user):
+    def _change_status(self, ref, status_slug, gitlab_user):
         if Issue.objects.filter(project=self.project, ref=ref).exists():
             modelClass = Issue
             statusClass = IssueStatus
@@ -93,67 +84,44 @@ class PushEventHook(BaseEventHook):
         element.save()
 
         snapshot = take_snapshot(element,
-                                 comment="Status changed from GitHub commit",
-                                 user=get_github_user(github_user))
+                                 comment="Status changed from GitLab commit",
+                                 user=get_gitlab_user(gitlab_user))
         send_notifications(element, history=snapshot)
 
 
-def replace_github_references(project_url, wiki_text):
-    template = "\g<1>[GitHub#\g<2>]({}/issues/\g<2>)\g<3>".format(project_url)
+def replace_gitlab_references(project_url, wiki_text):
+    template = "\g<1>[GitLab#\g<2>]({}/issues/\g<2>)\g<3>".format(project_url)
     return re.sub(r"(\s|^)#(\d+)(\s|$)", template, wiki_text, 0, re.M)
 
 
 class IssuesEventHook(BaseEventHook):
     def process_event(self):
-        if self.payload.get('action', None) != "opened":
+        if self.payload.get('object_attributes', {}).get("action", "") != "open":
             return
 
-        subject = self.payload.get('issue', {}).get('title', None)
-        description = self.payload.get('issue', {}).get('body', None)
-        github_url = self.payload.get('issue', {}).get('html_url', None)
-        github_user = self.payload.get('issue', {}).get('user', {}).get('id', None)
-        project_url = self.payload.get('repository', {}).get('html_url', None)
+        subject = self.payload.get('object_attributes', {}).get('title', None)
+        description = self.payload.get('object_attributes', {}).get('description', None)
+        gitlab_reference = self.payload.get('object_attributes', {}).get('url', None)
 
-        if not all([subject, github_url, project_url]):
+        project_url = None
+        if gitlab_reference:
+            project_url = os.path.basename(os.path.basename(gitlab_reference))
+
+        if not all([subject, gitlab_reference, project_url]):
             raise ActionSyntaxException(_("Invalid issue information"))
 
         issue = Issue.objects.create(
             project=self.project,
             subject=subject,
-            description=replace_github_references(project_url, description),
+            description=replace_gitlab_references(project_url, description),
             status=self.project.default_issue_status,
             type=self.project.default_issue_type,
             severity=self.project.default_severity,
             priority=self.project.default_priority,
-            external_reference=['github', github_url],
-            owner=get_github_user(github_user)
+            external_reference=['gitlab', gitlab_reference],
+            owner=get_gitlab_user(None)
         )
-        take_snapshot(issue, user=get_github_user(github_user))
+        take_snapshot(issue, user=get_gitlab_user(None))
 
-        snapshot = take_snapshot(issue, comment="Created from GitHub", user=get_github_user(github_user))
+        snapshot = take_snapshot(issue, comment="Created from GitLab", user=get_gitlab_user(None))
         send_notifications(issue, history=snapshot)
-
-
-class IssueCommentEventHook(BaseEventHook):
-    def process_event(self):
-        if self.payload.get('action', None) != "created":
-            raise ActionSyntaxException(_("Invalid issue comment information"))
-
-        github_url = self.payload.get('issue', {}).get('html_url', None)
-        comment_message = self.payload.get('comment', {}).get('body', None)
-        github_user = self.payload.get('sender', {}).get('id', None)
-        project_url = self.payload.get('repository', {}).get('html_url', None)
-        comment_message = replace_github_references(project_url, comment_message)
-
-        if not all([comment_message, github_url, project_url]):
-            raise ActionSyntaxException(_("Invalid issue comment information"))
-
-        issues = Issue.objects.filter(external_reference=["github", github_url])
-        tasks = Task.objects.filter(external_reference=["github", github_url])
-        uss = UserStory.objects.filter(external_reference=["github", github_url])
-
-        for item in list(issues) + list(tasks) + list(uss):
-            snapshot = take_snapshot(item,
-                                     comment="From GitHub:\n\n{}".format(comment_message),
-                                     user=get_github_user(github_user))
-            send_notifications(item, history=snapshot)

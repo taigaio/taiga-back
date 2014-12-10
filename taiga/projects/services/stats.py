@@ -18,6 +18,8 @@ from django.db.models import Q, Count
 import datetime
 import copy
 
+from taiga.projects.history.models import HistoryEntry
+
 
 def _get_milestones_stats_for_backlog(project):
     """
@@ -212,3 +214,77 @@ def get_stats_for_project(project):
         'speed': speed,
     }
     return project_stats
+
+
+def _get_closed_bugs_per_member_stats(project):
+    # Closed bugs per user
+    closed_bugs = project.issues.filter(status__is_closed=True)\
+        .values('assigned_to')\
+        .annotate(count=Count('assigned_to'))\
+        .order_by()
+    closed_bugs = { p["assigned_to"]: p["count"] for p in closed_bugs}
+    return closed_bugs
+
+
+def _get_iocaine_tasks_per_member_stats(project):
+    # Iocaine tasks assigned per user
+    iocaine_tasks = project.tasks.filter(is_iocaine=True)\
+        .values('assigned_to')\
+        .annotate(count=Count('assigned_to'))\
+        .order_by()
+    iocaine_tasks = { t["assigned_to"]: t["count"] for t in iocaine_tasks}
+    return iocaine_tasks
+
+
+def _get_wiki_changes_per_member_stats(project):
+    # Wiki changes
+    wiki_changes = {}
+    wiki_page_keys = ["wiki.wikipage:%s"%id for id in project.wiki_pages.values_list("id", flat=True)]
+    history_entries = HistoryEntry.objects.filter(key__in=wiki_page_keys).values('user')
+    for entry in history_entries:
+        editions = wiki_changes.get(entry["user"]["pk"], 0)
+        wiki_changes[entry["user"]["pk"]] = editions + 1
+
+    return wiki_changes
+
+
+def _get_created_bugs_per_member_stats(project):
+    # Created_bugs
+    created_bugs = project.issues\
+        .values('owner')\
+        .annotate(count=Count('owner'))\
+        .order_by()
+    created_bugs = { p["owner"]: p["count"] for p in created_bugs }
+    return created_bugs
+
+
+def _get_closed_tasks_per_member_stats(project):
+    # Closed tasks
+    closed_tasks = project.tasks.filter(status__is_closed=True)\
+        .values('assigned_to')\
+        .annotate(count=Count('assigned_to'))\
+        .order_by()
+    closed_tasks = {p["assigned_to"]: p["count"] for p in closed_tasks}
+    return closed_tasks
+
+def get_member_stats_for_project(project):
+    base_counters = {id: 0 for id in project.members.values_list("id", flat=True)}
+    closed_bugs = base_counters.copy()
+    closed_bugs.update(_get_closed_bugs_per_member_stats(project))
+    iocaine_tasks = base_counters.copy()
+    iocaine_tasks.update(_get_iocaine_tasks_per_member_stats(project))
+    wiki_changes = base_counters.copy()
+    wiki_changes.update(_get_wiki_changes_per_member_stats(project))
+    created_bugs = base_counters.copy()
+    created_bugs.update(_get_created_bugs_per_member_stats(project))
+    closed_tasks = base_counters.copy()
+    closed_tasks.update(_get_closed_tasks_per_member_stats(project))
+
+    member_stats = {
+        "closed_bugs": closed_bugs,
+        "iocaine_tasks": iocaine_tasks,
+        "wiki_changes": wiki_changes,
+        "created_bugs": created_bugs,
+        "closed_tasks": closed_tasks,
+    }
+    return member_stats

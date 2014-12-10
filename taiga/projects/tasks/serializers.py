@@ -18,9 +18,9 @@ from rest_framework import serializers
 
 from taiga.base.serializers import Serializer, PickleField, NeighborsSerializerMixin, PgArrayField
 from taiga.mdrender.service import render as mdrender
-from taiga.projects.validators import ProjectExistsValidator, TaskStatusExistsValidator
+from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.milestones.validators import SprintExistsValidator
-from taiga.projects.userstories.validators import UserStoryExistsValidator
+from taiga.projects.tasks.validators import TaskExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
 
 from . import models
@@ -70,10 +70,21 @@ class NeighborTaskSerializer(serializers.ModelSerializer):
         depth = 0
 
 
-class TasksBulkSerializer(ProjectExistsValidator, SprintExistsValidator, TaskStatusExistsValidator,
-                          UserStoryExistsValidator, Serializer):
+class TasksBulkSerializer(ProjectExistsValidator, SprintExistsValidator,
+                          TaskExistsValidator, Serializer):
     project_id = serializers.IntegerField()
     sprint_id = serializers.IntegerField()
     status_id = serializers.IntegerField(required=False)
     us_id = serializers.IntegerField(required=False)
     bulk_tasks = serializers.CharField()
+
+## Order bulk serializers
+
+class _TaskOrderBulkSerializer(TaskExistsValidator, Serializer):
+    task_id = serializers.IntegerField()
+    order = serializers.IntegerField()
+
+
+class UpdateTasksOrderBulkSerializer(ProjectExistsValidator, Serializer):
+    project_id = serializers.IntegerField()
+    bulk_tasks = _TaskOrderBulkSerializer(many=True)

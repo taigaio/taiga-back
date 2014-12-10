@@ -43,7 +43,7 @@ def test_proccessor_valid_us_reference():
         instance.content_type.model = "userstory"
         instance.content_object.subject = "test"
         result = render(dummy_project, "**#1**")
-        expected_result = '<p><strong><a alt="test" class="reference user-story" href="http://localhost:9001/project/test/us/1" title="test">#1</a></strong></p>'
+        expected_result = '<p><strong><a class="reference user-story" href="http://localhost:9001/project/test/us/1" title="test">#1</a></strong></p>'
         assert result == expected_result
 
 
@@ -53,7 +53,7 @@ def test_proccessor_valid_issue_reference():
         instance.content_type.model = "issue"
         instance.content_object.subject = "test"
         result = render(dummy_project, "**#2**")
-        expected_result = '<p><strong><a alt="test" class="reference issue" href="http://localhost:9001/project/test/issue/2" title="test">#2</a></strong></p>'
+        expected_result = '<p><strong><a class="reference issue" href="http://localhost:9001/project/test/issue/2" title="test">#2</a></strong></p>'
         assert result == expected_result
 
 
@@ -63,7 +63,7 @@ def test_proccessor_valid_task_reference():
         instance.content_type.model = "task"
         instance.content_object.subject = "test"
         result = render(dummy_project, "**#3**")
-        expected_result = '<p><strong><a alt="test" class="reference task" href="http://localhost:9001/project/test/task/3" title="test">#3</a></strong></p>'
+        expected_result = '<p><strong><a class="reference task" href="http://localhost:9001/project/test/task/3" title="test">#3</a></strong></p>'
         assert result == expected_result
 
 
@@ -97,22 +97,24 @@ def test_render_wiki_strike():
     assert render(dummy_project, "~~test~~") == "<p><del>test</del></p>"
 
 
-def test_render_absolute_link():
-    assert render(dummy_project, "[test](/test)") == "<p><a href=\"/test\">test</a></p>"
-
-
-def test_render_relative_link():
-    assert render(dummy_project, "[test](test)") == "<p><a href=\"test\">test</a></p>"
-
-
 def test_render_wikilink():
-    expected_result = "<p><a class=\"wikilink\" href=\"/project/test/wiki/test\">test</a></p>"
+    expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/test\" title=\"test\">test</a></p>"
     assert render(dummy_project, "[[test]]") == expected_result
 
 
 def test_render_wikilink_with_custom_title():
-    expected_result = "<p><a class=\"wikilink\" href=\"/project/test/wiki/test\">custom</a></p>"
+    expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/test\" title=\"custom\">custom</a></p>"
     assert render(dummy_project, "[[test|custom]]") == expected_result
+
+
+def test_render_wikilink_slug_to_wikipages():
+    expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/wiki_page\" title=\"wiki page\">wiki</a></p>"
+    assert render(dummy_project, "[wiki](wiki_page \"wiki page\")") == expected_result
+
+
+def test_render_wikilink_relative_to_absolute():
+    expected_result = "<p><a href=\"http://localhost:9001/project/test/\">test project</a></p>"
+    assert render(dummy_project, "[test project](/project/test/)") == expected_result
 
 
 def test_render_reference_links():

@@ -79,7 +79,7 @@ class IssuesFilter(filters.FilterBackend):
         filterdata = self._prepare_filters_data(request)
 
         if "tags" in filterdata:
-            queryset = tags.filter(queryset, contains=filterdata["tags"])
+            queryset = queryset.filter(tags__contains=filterdata["tags"])
 
         for name, value in filter(lambda x: x[0] != "tags", filterdata.items()):
             if None in value:

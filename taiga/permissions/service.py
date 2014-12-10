@@ -39,13 +39,14 @@ def _get_object_project(obj):
 
 
 def is_project_owner(user, obj):
+    """
+    The owner attribute of a project is just an historical reference
+    """
+
     if user.is_superuser:
         return True
 
     project = _get_object_project(obj)
-
-    if project and project.owner == user:
-        return True
 
     membership = _get_user_project_membership(user, project)
     if membership and membership.is_owner:
@@ -80,17 +81,14 @@ def get_user_project_permissions(user, project):
         members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
         public_permissions = list(map(lambda perm: perm[0], USER_PERMISSIONS))
         anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
-    elif project.owner == user:
-        owner_permissions = list(map(lambda perm: perm[0], OWNERS_PERMISSIONS))
-        members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
-        public_permissions = project.public_permissions if project.public_permissions is not None else []
-        anon_permissions = project.anon_permissions if project.anon_permissions is not None else []
     elif membership:
         if membership.is_owner:
             owner_permissions = list(map(lambda perm: perm[0], OWNERS_PERMISSIONS))
+            members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
         else:
             owner_permissions = []
-        members_permissions = _get_membership_permissions(membership)
+            members_permissions = []
+        members_permissions = members_permissions + _get_membership_permissions(membership)
         public_permissions = project.public_permissions if project.public_permissions is not None else []
         anon_permissions = project.anon_permissions if project.anon_permissions is not None else []
     elif user.is_authenticated():

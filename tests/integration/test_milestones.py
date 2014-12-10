@@ -33,9 +33,8 @@ def test_update_milestone_with_userstories_list(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     role = f.RoleFactory.create(project=project)
-    member = f.MembershipFactory.create(project=project, user=user, role=role)
+    member = f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
     sprint = f.MilestoneFactory.create(project=project, owner=user)
-
     points = f.PointsFactory.create(project=project, value=None)
     us = f.UserStoryFactory.create(project=project, owner=user)
 
@@ -49,4 +48,3 @@ def test_update_milestone_with_userstories_list(client):
     client.login(user)
     response = client.json.patch(url, json.dumps(form_data))
     assert response.status_code == 200
-

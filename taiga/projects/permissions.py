@@ -13,20 +13,41 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
                                         IsAuthenticated, IsProjectOwner,
-                                        AllowAny, IsSuperUser)
+                                        AllowAny, IsSuperUser, PermissionComponent)
+
+from taiga.base import exceptions as exc
+from taiga.projects.models import Membership
+
+from . import services
+
+class CanLeaveProject(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        if not obj or not request.user.is_authenticated():
+            return False
+
+        try:
+            if not services.can_user_leave_project(request.user, obj):
+                raise exc.PermissionDenied(_("You can't leave the project if there are no more owners"))
+
+            return True
+        except Membership.DoesNotExist:
+            return False
 
 
 class ProjectPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsAuthenticated()
     update_perms = IsProjectOwner()
+    partial_update_perms = IsProjectOwner()
     destroy_perms = IsProjectOwner()
     modules_perms = IsProjectOwner()
     list_perms = AllowAny()
     stats_perms = AllowAny()
+    member_stats_perms = HasProjectPerm('view_project')
     star_perms = IsAuthenticated()
     unstar_perms = IsAuthenticated()
     issues_stats_perms = AllowAny()
@@ -35,6 +56,7 @@ class ProjectPermission(TaigaResourcePermission):
     tags_colors_perms = HasProjectPerm('view_project')
     fans_perms = HasProjectPerm('view_project')
     create_template_perms = IsSuperUser()
+    leave_perms = CanLeaveProject()
 
 
 class MembershipPermission(TaigaResourcePermission):

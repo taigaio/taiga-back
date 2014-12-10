@@ -43,7 +43,8 @@ def test_update_userstories_order_in_bulk():
 
 
 def test_api_delete_userstory(client):
-    us = f.create_userstory()
+    us = f.UserStoryFactory.create()
+    f.MembershipFactory.create(project=us.project, user=us.owner, is_owner=True)
     url = reverse("userstories-detail", kwargs={"pk": us.pk})
 
     client.login(us.owner)
@@ -52,12 +53,16 @@ def test_api_delete_userstory(client):
     assert response.status_code == 204
 
 
-def test_api_filter_by_subject(client):
-    f.create_userstory()
-    us = f.create_userstory(subject="some random subject")
-    url = reverse("userstories-list") + "?subject=some subject"
+def test_api_filter_by_subject_or_ref(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
 
-    client.login(us.owner)
+    f.UserStoryFactory.create(project=project)
+    f.UserStoryFactory.create(project=project, subject="some random subject")
+    url = reverse("userstories-list") + "?q=some subject"
+
+    client.login(project.owner)
     response = client.get(url)
     number_of_stories = len(response.data)
 
@@ -67,6 +72,7 @@ def test_api_filter_by_subject(client):
 
 def test_api_create_in_bulk_with_status(client):
     project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
     url = reverse("userstories-bulk-create")
     data = {
         "bulk_stories": "Story #1\nStory #2",
@@ -83,6 +89,7 @@ def test_api_create_in_bulk_with_status(client):
 
 def test_api_update_backlog_order_in_bulk(client):
     project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
     us1 = f.create_userstory(project=project)
     us2 = f.create_userstory(project=project)
 
@@ -102,9 +109,9 @@ def test_api_update_backlog_order_in_bulk(client):
     response2 = client.json.post(url2, json.dumps(data))
     response3 = client.json.post(url3, json.dumps(data))
 
-    assert response1.status_code == 204, response.data
-    assert response2.status_code == 204, response.data
-    assert response3.status_code == 204, response.data
+    assert response1.status_code == 204, response1.data
+    assert response2.status_code == 204, response2.data
+    assert response3.status_code == 204, response3.data
 
 
 from taiga.projects.userstories.serializers import UserStorySerializer
@@ -118,7 +125,7 @@ def test_update_userstory_points(client):
     role1 = f.RoleFactory.create(project=project)
     role2 = f.RoleFactory.create(project=project)
 
-    member = f.MembershipFactory.create(project=project, user=user1, role=role1)
+    member = f.MembershipFactory.create(project=project, user=user1, role=role1, is_owner=True)
     member = f.MembershipFactory.create(project=project, user=user2, role=role2)
 
     points1 = f.PointsFactory.create(project=project, value=None)
@@ -142,7 +149,7 @@ def test_update_userstory_points(client):
 
     # Api should save successful
     data = {}
-    data["version"] = usdata["version"]
+    data["version"] = usdata["version"] + 1
     data["points"] = copy.copy(usdata["points"])
     data["points"].update({str(role1.pk):points3.pk})
 
@@ -181,7 +188,7 @@ def test_update_userstory_rolepoints_on_add_new_role(client):
 def test_archived_filter(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory.create(project=project, user=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
     f.UserStoryFactory.create(project=project)
     f.UserStoryFactory.create(is_archived=True, project=project)
 

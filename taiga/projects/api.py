@@ -81,6 +81,12 @@ class ProjectViewSet(ModelCrudViewSet):
         return Response(services.get_stats_for_project(project))
 
     @detail_route(methods=['get'])
+    def member_stats(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, 'member_stats', project)
+        return Response(services.get_member_stats_for_project(project))
+
+    @detail_route(methods=['get'])
     def issues_stats(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, 'issues_stats', project)
@@ -147,6 +153,13 @@ class ProjectViewSet(ModelCrudViewSet):
         template.load_data_from_project(project)
         template.save()
         return Response(serializers.ProjectTemplateSerializer(template).data, status=201)
+
+    @detail_route(methods=['post'])
+    def leave(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, 'leave', project)
+        services.remove_user_from_project(request.user, project)
+        return Response(status=status.HTTP_200_OK)
 
     def pre_save(self, obj):
         if not obj.id:
@@ -227,6 +240,10 @@ class MembershipViewSet(ModelCrudViewSet):
 
         services.send_invitation(invitation=invitation)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def pre_delete(self, obj):
+        if obj.user is not None and not services.can_user_leave_project(obj.user, obj.project):
+            raise exc.BadRequest(_("At least one of the user must be an active admin"))
 
     def pre_save(self, obj):
         if not obj.token:

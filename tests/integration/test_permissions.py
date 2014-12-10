@@ -53,9 +53,7 @@ def test_owner_get_user_project_permissions():
     factories.MembershipFactory(user=user1, project=project, role=role)
 
     expected_perms = set(
-        ["test1", "test2"] +
-        [x[0] for x in permissions.OWNERS_PERMISSIONS] +
-        [x[0] for x in permissions.MEMBERS_PERMISSIONS]
+        ["test1", "test2", "view_us"]
     )
     assert service.get_user_project_permissions(user1, project) == expected_perms
 
@@ -70,7 +68,8 @@ def test_owner_member_get_user_project_permissions():
 
     expected_perms = set(
         ["test1", "test2", "test3"] +
-        [x[0] for x in permissions.OWNERS_PERMISSIONS]
+        [x[0] for x in permissions.OWNERS_PERMISSIONS] +
+        [x[0] for x in permissions.MEMBERS_PERMISSIONS]
     )
     assert service.get_user_project_permissions(user1, project) == expected_perms
 

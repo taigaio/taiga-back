@@ -73,7 +73,6 @@ class TaigaReferencesPattern(Pattern):
         a = etree.Element('a')
         a.text = link_text
         a.set('href', url)
-        a.set('alt', subject)
         a.set('title', subject)
         a.set('class', html_classes)
 

@@ -26,6 +26,7 @@ pytestmark = pytest.mark.django_db
 def test_project_owner_star_project(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, is_owner=True, user=user)
     url = reverse("projects-star", args=(project.id,))
 
     client.login(user)
@@ -37,6 +38,7 @@ def test_project_owner_star_project(client):
 def test_project_owner_unstar_project(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, is_owner=True, user=user)
     url = reverse("projects-unstar", args=(project.id,))
 
     client.login(user)
@@ -74,6 +76,7 @@ def test_project_member_unstar_project(client):
 def test_list_project_fans(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
     fan = f.VoteFactory.create(content_object=project)
     url = reverse("projects-fans", args=(project.id,))
 
@@ -100,6 +103,7 @@ def test_list_user_starred_projects(client):
 def test_get_project_stars(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
     url = reverse("projects-detail", args=(project.id,))
     f.VotesFactory.create(content_object=project, count=5)
     f.VotesFactory.create(count=3)
