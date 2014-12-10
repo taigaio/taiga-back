@@ -36,7 +36,6 @@ bleach._serialize = _serialize
 
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
-from django.template.defaultfilters import slugify
 
 from markdown import Markdown
 
@@ -101,9 +100,6 @@ def cache_by_sha(func):
 
 
 def _get_markdown(project):
-    def build_url(*args, **kwargs):
-        return args[1] + slugify(args[0])
-
     extensions = _make_extensions_list(project=project)
     md = Markdown(extensions=extensions)
     md.extracted_data = {"mentions": [], "references": []}
