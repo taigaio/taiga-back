@@ -101,6 +101,17 @@ def test_render_wikilink():
     expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/test\" title=\"test\">test</a></p>"
     assert render(dummy_project, "[[test]]") == expected_result
 
+def test_render_wikilink_1():
+    expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/test\" title=\"test\">test</a></p>"
+    assert render(dummy_project, "[[test]]") == expected_result
+
+def test_render_wikilink_2():
+    expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/test-page\" title=\"test page\">test page</a></p>"
+    assert render(dummy_project, "[[test page]]") == expected_result
+
+def test_render_wikilink_3():
+    expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/testpage\" title=\"TestPage\">TestPage</a></p>"
+    assert render(dummy_project, "[[TestPage]]") == expected_result
 
 def test_render_wikilink_with_custom_title():
     expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/test\" title=\"custom\">custom</a></p>"
