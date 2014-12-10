@@ -22,6 +22,7 @@ from markdown.treeprocessors import Treeprocessor
 from markdown.util import etree
 
 from taiga.front import resolve
+from taiga.base.utils.slug import slugify
 
 import re
 
@@ -48,7 +49,7 @@ class WikiLinksPattern(Pattern):
 
     def handleMatch(self, m):
         label = m.group(2).strip()
-        url = resolve("wiki", self.project.slug, label)
+        url = resolve("wiki", self.project.slug, slugify(label))
 
         if m.group(3):
             title = m.group(3).strip()[1:]

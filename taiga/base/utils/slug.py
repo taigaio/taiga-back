@@ -15,11 +15,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils import baseconv
-from django.template.defaultfilters import slugify
+from django.template.defaultfilters import slugify as django_slugify
 
 import time
 
 from unidecode import unidecode
+
+
+def slugify(value):
+    """
+    Return a slug
+    """
+    return django_slugify(unidecode(value or ""))
 
 
 def slugify_uniquely(value, model, slugfield="slug"):
@@ -28,7 +35,7 @@ def slugify_uniquely(value, model, slugfield="slug"):
     """
 
     suffix = 0
-    potential = base = slugify(unidecode(value))
+    potential = base = django_slugify(unidecode(value))
     if len(potential) == 0:
         potential = 'null'
     while True:
@@ -45,7 +52,7 @@ def slugify_uniquely_for_queryset(value, queryset, slugfield="slug"):
     """
 
     suffix = 0
-    potential = base = slugify(unidecode(value))
+    potential = base = django_slugify(unidecode(value))
     if len(potential) == 0:
         potential = 'null'
     while True:
