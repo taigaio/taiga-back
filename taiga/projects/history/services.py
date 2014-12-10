@@ -251,6 +251,24 @@ def get_last_snapshot_for_key(key:str) -> FrozenObj:
 
 # Public api
 
+def get_modified_fields(obj:object, last_modifications):
+    """
+    Get the modified fields for an object through his last modifications
+    """
+    key = make_key_from_model_object(obj)
+    entry_model = apps.get_model("history", "HistoryEntry")
+    history_entries = (entry_model.objects
+                                    .filter(key=key)
+                                    .order_by("-created_at")
+                                    .values_list("diff", flat=True)
+                                    [0:last_modifications])
+
+    modified_fields = []
+    for history_entry in history_entries:
+        modified_fields += history_entry.keys()
+
+    return modified_fields
+
 @tx.atomic
 def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
     """
