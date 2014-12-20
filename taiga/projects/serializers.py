@@ -148,6 +148,7 @@ class MembershipSerializer(ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False, read_only=True)
     full_name = serializers.CharField(source='user.get_full_name', required=False, read_only=True)
     user_email = serializers.EmailField(source='user.email', required=False, read_only=True)
+    is_user_active = serializers.BooleanField(source='user.is_active', required=False, read_only=True)
     email = serializers.EmailField(required=True)
     color = serializers.CharField(source='user.color', required=False, read_only=True)
     photo = serializers.SerializerMethodField("get_photo")
