@@ -24,7 +24,7 @@ Taiga only runs with python 3.4+
 Initial auth data: admin/123123
 
 If you want a complete environment for production usage, you can try the taiga bootstrapping
-scripts https://github.com/taigaio/taiga-scripts (warning: alpha state)
+scripts https://github.com/taigaio/taiga-scripts (warning: alpha state). All the information about the different installation methods (production, development, vagrant, docker...) can be found here http://taigaio.github.io/taiga-doc/dist/#_installation_guide. 
 
 ## Community ##
 
