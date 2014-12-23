@@ -95,6 +95,13 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
 
         super().post_save(obj, created)
 
+    @list_route(methods=["GET"])
+    def by_ref(self, request):
+        ref = request.QUERY_PARAMS.get("ref", None)
+        project_id = request.QUERY_PARAMS.get("project", None)
+        userstory = get_object_or_404(models.UserStory, ref=ref, project_id=project_id)
+        return self.retrieve(request, pk=userstory.pk)
+
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
         serializer = serializers.UserStoriesBulkSerializer(data=request.DATA)

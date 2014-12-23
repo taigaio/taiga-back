@@ -60,6 +60,12 @@ class ProjectViewSet(ModelCrudViewSet):
         qs = models.Project.objects.all()
         return attach_votescount_to_queryset(qs, as_field="stars_count")
 
+    @list_route(methods=["GET"])
+    def by_slug(self, request):
+        slug = request.QUERY_PARAMS.get("slug", None)
+        project = get_object_or_404(models.Project, slug=slug)
+        return self.retrieve(request, pk=project.pk)
+
     @detail_route(methods=["GET", "PATCH"])
     def modules(self, request, pk=None):
         project = self.get_object()
