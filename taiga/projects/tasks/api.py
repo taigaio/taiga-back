@@ -64,6 +64,13 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
         if obj.milestone and obj.user_story and obj.milestone != obj.user_story.milestone:
             raise exc.WrongArguments(_("You don't have permissions for add/modify this task."))
 
+    @list_route(methods=["GET"])
+    def by_ref(self, request):
+        ref = request.QUERY_PARAMS.get("ref", None)
+        project_id = request.QUERY_PARAMS.get("project", None)
+        task = get_object_or_404(models.Task, ref=ref, project_id=project_id)
+        return self.retrieve(request, pk=task.pk)
+
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
         serializer = serializers.TasksBulkSerializer(data=request.DATA)

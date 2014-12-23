@@ -236,6 +236,7 @@ class ProjectSerializer(ModelSerializer):
     my_permissions = serializers.SerializerMethodField("get_my_permissions")
     i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
     tags_colors = TagsColorsField(required=False)
+    users = serializers.SerializerMethodField("get_users")
 
     class Meta:
         model = models.Project
@@ -255,6 +256,9 @@ class ProjectSerializer(ModelSerializer):
         if "request" in self.context:
             return is_project_owner(self.context["request"].user, obj)
         return False
+
+    def get_users(self, obj):
+        return UserSerializer(obj.members.all(), many=True).data
 
     def validate_total_milestones(self, attrs, source):
         """

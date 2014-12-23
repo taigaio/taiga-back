@@ -45,6 +45,13 @@ class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
     filter_backends = (filters.CanViewWikiPagesFilterBackend,)
     filter_fields = ("project", "slug")
 
+    @list_route(methods=["GET"])
+    def by_slug(self, request):
+        slug = request.QUERY_PARAMS.get("slug", None)
+        project_id = request.QUERY_PARAMS.get("project", None)
+        wiki_page = get_object_or_404(models.WikiPage, slug=slug, project_id=project_id)
+        return self.retrieve(request, pk=wiki_page.pk)
+
     @list_route(methods=["POST"])
     def render(self, request, **kwargs):
         content = request.DATA.get("content", None)
