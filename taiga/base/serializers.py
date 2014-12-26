@@ -21,7 +21,7 @@ from rest_framework import serializers
 from .neighbors import get_neighbors
 
 
-class PickleField(serializers.WritableField):
+class TagsField(serializers.WritableField):
     """
     Pickle objects serializer.
     """
@@ -29,7 +29,11 @@ class PickleField(serializers.WritableField):
         return obj
 
     def from_native(self, data):
-        return data
+        if not data:
+            return data
+            
+        ret = sum([tag.split(",") for tag in data], [])
+        return ret
 
 
 class JsonField(serializers.WritableField):
