@@ -33,7 +33,7 @@ LANGUAGES = (
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "transaction_hooks.backends.postgresql_psycopg2",
         "NAME": "taiga",
     }
 }
@@ -204,6 +204,7 @@ INSTALLED_APPS = [
     "django_jinja.contrib._humanize",
     "easy_thumbnails",
     "raven.contrib.django.raven_compat",
+    "django_transactional_cleanup",
 ]
 
 WSGI_APPLICATION = "taiga.wsgi.application"
