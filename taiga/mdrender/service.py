@@ -51,9 +51,10 @@ from .extensions.references import TaigaReferencesExtension
 
 
 # Bleach configuration
-bleach.ALLOWED_TAGS += ["p", "table", "thead", "tbody", "th", "tr", "td", "h1", "h2", "h3",
-                        "div", "pre", "span", "hr", "dl", "dt", "dd", "sup",
-                        "img", "del", "br", "ins"]
+bleach.ALLOWED_TAGS += ["p", "table", "thead", "tbody", "th", "tr", "td", "h1",
+                        "h2", "h3", "h4", "h5", "h6", "div", "pre", "span",
+                        "hr", "dl", "dt", "dd", "sup", "img", "del", "br",
+                        "ins"]
 
 bleach.ALLOWED_STYLES.append("background")
 
