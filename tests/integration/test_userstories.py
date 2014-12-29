@@ -190,7 +190,8 @@ def test_archived_filter(client):
     project = f.ProjectFactory.create(owner=user)
     f.MembershipFactory.create(project=project, user=user, is_owner=True)
     f.UserStoryFactory.create(project=project)
-    f.UserStoryFactory.create(is_archived=True, project=project)
+    archived_status = f.UserStoryStatusFactory.create(is_archived=True)
+    f.UserStoryFactory.create(status=archived_status, project=project)
 
     client.login(user)
 
@@ -200,11 +201,11 @@ def test_archived_filter(client):
     response = client.get(url, data)
     assert len(json.loads(response.content)) == 2
 
-    data = {"is_archived": 0}
+    data = {"status__is_archived": 0}
     response = client.get(url, data)
     assert len(json.loads(response.content)) == 1
 
-    data = {"is_archived": 1}
+    data = {"status__is_archived": 1}
     response = client.get(url, data)
     assert len(json.loads(response.content)) == 1
 
