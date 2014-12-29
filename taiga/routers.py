@@ -45,9 +45,10 @@ router.register(r"search", SearchViewSet, base_name="search")
 
 
 # Importer
-from taiga.export_import.api import ProjectImporterViewSet
+from taiga.export_import.api import ProjectImporterViewSet, ProjectExporterViewSet
 
 router.register(r"importer", ProjectImporterViewSet, base_name="importer")
+router.register(r"exporter", ProjectExporterViewSet, base_name="exporter")
 
 
 # Projects & Types

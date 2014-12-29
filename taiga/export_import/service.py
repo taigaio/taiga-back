@@ -84,7 +84,7 @@ def store_choice(project, data, field, serializer):
 
 def store_choices(project, data, field, serializer):
     result = []
-    for choice_data in data[field]:
+    for choice_data in data.get(field, []):
         result.append(store_choice(project, choice_data, field, serializer))
     return result
 
@@ -102,7 +102,7 @@ def store_role(project, role):
 
 def store_roles(project, data):
     results = []
-    for role in data['roles']:
+    for role in data.get('roles', []):
         results.append(store_role(project, role))
     return results
 

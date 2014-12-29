@@ -21,7 +21,7 @@ diff-match-patch==20121119
 requests==2.4.1
 
 easy-thumbnails==2.1
-celery==3.1.12
+celery==3.1.17
 redis==2.10.3
 Unidecode==0.04.16
 raven==5.1.1

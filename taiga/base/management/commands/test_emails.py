@@ -14,7 +14,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import datetime
+
 from django.core.management.base import BaseCommand, CommandError
+from django.utils import timezone
 
 from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
 
@@ -74,6 +77,32 @@ class Command(BaseCommand):
         # Change email
         context = {"user": User.objects.all().order_by("?").first()}
         email = mbuilder.change_email(test_email, context)
+        email.send()
+
+        # Export/Import emails
+        context = {
+            "user": User.objects.all().order_by("?").first(),
+            "error_subject": "Error generating project dump",
+            "error_message": "Error generating project dump",
+        }
+        email = mbuilder.export_import_error(test_email, context)
+        email.send()
+
+        deletion_date = timezone.now() + datetime.timedelta(seconds=60*60*24)
+        context = {
+            "url": "http://dummyurl.com",
+            "user": User.objects.all().order_by("?").first(),
+            "project": Project.objects.all().order_by("?").first(),
+            "deletion_date": deletion_date,
+        }
+        email = mbuilder.dump_project(test_email, context)
+        email.send()
+
+        context = {
+            "user": User.objects.all().order_by("?").first(),
+            "project": Project.objects.all().order_by("?").first(),
+        }
+        email = mbuilder.load_dump(test_email, context)
         email.send()
 
         # Notification emails

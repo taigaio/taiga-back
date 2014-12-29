@@ -70,7 +70,7 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     class Meta:
         verbose_name = "task"
         verbose_name_plural = "tasks"
-        ordering = ["project", "created_date"]
+        ordering = ["project", "created_date", "ref"]
         # unique_together = ("ref", "project")
         permissions = (
             ("view_task", "Can view task"),
