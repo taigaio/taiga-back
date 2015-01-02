@@ -323,6 +323,8 @@ class UserStoryStatus(models.Model):
                                 verbose_name=_("order"))
     is_closed = models.BooleanField(default=False, null=False, blank=True,
                                     verbose_name=_("is closed"))
+    is_archived = models.BooleanField(default=False, null=False, blank=True,
+                                verbose_name=_("is archived"))
     color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
                              verbose_name=_("color"))
     wip_limit = models.IntegerField(null=True, blank=True, default=None,
@@ -690,6 +692,7 @@ class ProjectTemplate(models.Model):
                 name=us_status["name"],
                 slug=us_status["slug"],
                 is_closed=us_status["is_closed"],
+                is_archived=us_status["is_archived"],
                 color=us_status["color"],
                 wip_limit=us_status["wip_limit"],
                 order=us_status["order"],

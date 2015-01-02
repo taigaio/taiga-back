@@ -40,19 +40,19 @@ def update_many(objects, fields=[], using="default"):
 
 
 def update_slug(apps, schema_editor):
-    update_qs = UserStoryStatus.objects.all()
+    update_qs = UserStoryStatus.objects.all().only("name")
     for us_status in update_qs:
         us_status.slug = slugify(unidecode(us_status.name))
 
     update_many(update_qs, fields=["slug"])
 
-    update_qs = TaskStatus.objects.all()
+    update_qs = TaskStatus.objects.all().only("name")
     for task_status in update_qs:
         task_status.slug = slugify(unidecode(task_status.name))
 
     update_many(update_qs, fields=["slug"])
 
-    update_qs = IssueStatus.objects.all()
+    update_qs = IssueStatus.objects.all().only("name")
     for issue_status in update_qs:
         issue_status.slug = slugify(unidecode(issue_status.name))
 
