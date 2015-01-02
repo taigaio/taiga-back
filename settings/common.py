@@ -197,6 +197,7 @@ INSTALLED_APPS = [
     "taiga.hooks.github",
     "taiga.hooks.gitlab",
     "taiga.hooks.bitbucket",
+    "taiga.webhooks",
 
     "rest_framework",
     "djmail",
@@ -366,6 +367,7 @@ GITLAB_VALID_ORIGIN_IPS = []
 
 EXPORTS_TTL = 60 * 60 * 24  # 24 hours
 CELERY_ENABLED = False
+WEBHOOKS_ENABLED = False
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"
