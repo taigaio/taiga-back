@@ -40,7 +40,7 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
     serializer_class = serializers.MilestoneSerializer
     permission_classes = (permissions.MilestonePermission,)
     filter_backends = (filters.CanViewMilestonesFilterBackend,)
-    filter_fields = ("project",)
+    filter_fields = ("project", "closed")
 
     def get_queryset(self):
         qs = models.Milestone.objects.all()
