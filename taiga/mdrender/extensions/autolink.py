@@ -38,8 +38,6 @@ class AutolinkExtension(markdown.Extension):
     """
 
     def extendMarkdown(self, md, md_globals):
-        url_re = r'(?i)\b((?:(?:ftp|https?)://|www\d{0,3}[.])(?:[^\s()<>]+|' + \
-            r'\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()' + \
-            r'<>]+\)))*\)|[^\s`!()\[\]{};:' + r"'" + r'".,<>?«»“”‘’]))'
+        url_re = r'(?i)\b((?:(?:ftp|https?)://|www\d{0,3}[.])([^\s<>]+))'
         autolink = AutolinkPattern(url_re, md)
         md.inlinePatterns.add('gfm-autolink', autolink, '_end')
