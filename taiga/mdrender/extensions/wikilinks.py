@@ -32,7 +32,7 @@ class WikiLinkExtension(Extension):
         return super().__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
-        WIKILINK_RE = r"\[\[([\w0-9_ -]+)(\|[\w0-9_ -]+)?\]\]"
+        WIKILINK_RE = r"\[\[([\w0-9_ -]+)(\|[^\]]+)?\]\]"
         md.inlinePatterns.add("wikilinks",
                               WikiLinksPattern(md, WIKILINK_RE, self.project),
                               "<not_strong")
