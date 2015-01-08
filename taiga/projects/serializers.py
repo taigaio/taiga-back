@@ -238,6 +238,7 @@ class ProjectSerializer(ModelSerializer):
     i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
     tags_colors = TagsColorsField(required=False)
     users = serializers.SerializerMethodField("get_users")
+    total_closed_milestones = serializers.SerializerMethodField("get_total_closed_milestones")
 
     class Meta:
         model = models.Project
@@ -260,6 +261,9 @@ class ProjectSerializer(ModelSerializer):
 
     def get_users(self, obj):
         return UserSerializer(obj.members.all(), many=True).data
+
+    def get_total_closed_milestones(self, obj):
+        return obj.milestones.filter(closed=True).count()
 
     def validate_total_milestones(self, attrs, source):
         """
