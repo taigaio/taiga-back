@@ -4,7 +4,7 @@
 
 [![Travis Badge](https://img.shields.io/travis/taigaio/taiga-back.svg?style=flat)](https://travis-ci.org/taigaio/taiga-back "Travis Badge")
 
-[![Coveralls](http://img.shields.io/coveralls/taigaio/taiga-back.svg?style=flat)](https://travis-ci.org/taigaio/taiga-back "Coveralls")
+[![Coveralls](http://img.shields.io/coveralls/taigaio/taiga-back.svg?style=flat)](https://coveralls.io/r/taigaio/taiga-back?branch=master "Coveralls")
 
 ## Setup development environment ##
 
