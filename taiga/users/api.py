@@ -31,7 +31,7 @@ from rest_framework.response import Response
 from rest_framework.filters import BaseFilterBackend
 from rest_framework import status
 
-from djmail.template_mail import MagicMailBuilder
+from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
 
 from taiga.auth.tokens import get_user_for_token
 from taiga.base.decorators import list_route, detail_route
@@ -103,7 +103,7 @@ class UsersViewSet(ModelCrudViewSet):
         user.token = str(uuid.uuid1())
         user.save(update_fields=["token"])
 
-        mbuilder = MagicMailBuilder()
+        mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
         email = mbuilder.password_recovery(user.email, {"user": user})
         email.send()
 
@@ -234,7 +234,7 @@ class UsersViewSet(ModelCrudViewSet):
             request.user.email_token = str(uuid.uuid1())
             request.user.new_email = new_email
             request.user.save(update_fields=["email_token", "new_email"])
-            mbuilder = MagicMailBuilder()
+            mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
             email = mbuilder.change_email(request.user.new_email, {"user": request.user})
             email.send()
 

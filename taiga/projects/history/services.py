@@ -173,7 +173,7 @@ def is_hidden_snapshot(obj:FrozenDiff) -> bool:
     nfields = _not_important_fields[content_type]
     result = snapshot_fields - nfields
 
-    if len(result) == 0:
+    if snapshot_fields and len(result) == 0:
         return True
 
     return False

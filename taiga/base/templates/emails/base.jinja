@@ -1,159 +1,431 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 {% set home_url = resolve_front_url("home") %}
 {% set home_url_name = "Taiga" %}
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Taiga</title>
+        <style type="text/css">
+            /* /\/\/\/\/\/\/\/\/ CLIENT-SPECIFIC STYLES /\/\/\/\/\/\/\/\/ */
+            #outlook a{padding:0;} /* Force Outlook to provide a "view in browser" message */
+            .ReadMsgBody{width:100%;} .ExternalClass{width:100%;} /* Force Hotmail to display emails at full width */
+            .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {line-height: 100%;} /* Force Hotmail to display normal line spacing */
+            body, table, td, p, a, li, blockquote{-webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;} /* Prevent WebKit and Windows mobile changing default text sizes */
+            table, td{mso-table-lspace:0pt; mso-table-rspace:0pt;} /* Remove spacing between tables in Outlook 2007 and up */
+            img{-ms-interpolation-mode:bicubic;} /* Allow smoother rendering of resized image in Internet Explorer */
 
-<html lang="en">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!-- So that mobile webkit will display zoomed in -->
-    <meta name="viewport" content="initial-scale=1.0">
-    <!-- disable auto telephone linking in iOS -->
-    <meta name="format-detection" content="telephone=no">
+            /* /\/\/\/\/\/\/\/\/ RESET STYLES /\/\/\/\/\/\/\/\/ */
+            body{margin:0; padding:0;}
+            img{border:0; height:auto; line-height:100%; outline:none; text-decoration:none;}
+            table{border-collapse:collapse !important;}
+            body, #bodyTable, #bodyCell{height:100% !important; margin:0; padding:0; width:100% !important;}
 
-    <title>Taiga</title>
-    <style type="text/css">
+            /* /\/\/\/\/\/\/\/\/ TEMPLATE STYLES /\/\/\/\/\/\/\/\/ */
 
-        /* Resets: see reset.css for details */
-        body {-webkit-text-size-adjust:none; -ms-text-size-adjust:none;}
-        body {margin:0; padding:0;}
-        table {border-spacing:0;}
-        table td {border-collapse:collapse;}
+            #bodyCell{padding:20px;}
+            #templateContainer{width:600px;}
 
-        /* Constrain email width for small screens */
-        @media screen and (max-width: 600px) {
-            table[class="container"] {
-                width: 95% !important;
+            /* ========== Page Styles ========== */
+
+            body, #bodyTable{
+                background-color:#f5f5f5;
             }
-        }
 
-        /* Give content more room on mobile */
-        @media screen and (max-width: 480px) {
-            td[class="container-padding"] {
-                padding-left: 12px !important;
-                padding-right: 12px !important;
+            /**
+            * @section email border
+            */
+            #templateContainer{
+                background-color:#FFF;
+                border:1px solid #CDCDCD;
             }
-        }
+
+            /**
+            * @section heading 1
+            */
+            h1{
+                color: #6e6e6e !important;
+                display:block;
+                font-family: 'Open Sans', Arial;
+                font-size:25px;
+                font-style:normal;
+                font-weight:bold;
+                line-height:100%;
+                letter-spacing:normal;
+                margin-top:0;
+                margin-right:0;
+                margin-bottom:16px;
+                margin-left:0;
+                text-align:center;
+            }
+
+            /**
+            * @style heading 2
+            */
+            h2{
+                color: #6e6e6e !important;
+                display:block;
+                font-family: 'Open Sans', Arial;
+                font-size:20px;
+                font-style:normal;
+                font-weight:bold;
+                line-height:100%;
+                letter-spacing:normal;
+                margin-top:0;
+                margin-right:0;
+                margin-bottom:16px;
+                margin-left:0;
+                text-align:center;
+            }
+
+            /**
+            * @tab Page
+            * @section heading 3
+            */
+            h3{
+                color:#6e6e6e !important;
+                display:block;
+                font-family: 'Open Sans', Arial, Helvetica;
+                font-size:16px;
+                font-weight:normal;
+                line-height:100%;
+                font-weight:bold;
+                letter-spacing:normal;
+                margin-top:0;
+                margin-right:0;
+                margin-bottom:16px;
+                margin-left:0;
+                text-align:center;
+            }
+
+            /**
+            * @tab Page
+            * @section heading 4
+            */
+            h4{
+                color:#808080 !important;
+                display:block;
+                font-family: 'Open Sans', Arial, Helvetica;
+                font-size:14px;
+                font-weight:bold;
+                line-height:100%;
+                letter-spacing:normal;
+                margin-top:0;
+                margin-right:0;
+                margin-bottom:16px;
+                margin-left:0;
+                text-align:left;
+            }
 
 
-        /* Styles for forcing columns to rows */
-        @media only screen and (max-width : 600px) {
 
-            /* force container columns to (horizontal) blocks */
-            td[class="force-col"] {
+            /* ========== Header Styles ========== */
+
+            .headerContent {
+                text-align: center;
+                color:#b8b8b8 !important;
+                font-family: 'Open Sans', Arial, Helvetica;
+                font-size:14px;
+                margin-bottom:16px;
+                text-align:center;
+            }
+
+            #headerImage{
+                height:auto;
+                width:80px;
+                margin: 20px auto;
+            }
+
+            /* ========== Body Styles ========== */
+
+            /**
+            * @tab Body
+            * @section body style
+            * @tip Set the background color and borders for your email's body area.
+            */
+            #templateBody{
+                background-color:#FFF;
+            }
+
+            /**
+            * @section body text
+            */
+            .bodyContent{
+                color:#505050;
+                font-family: 'Open Sans', Arial, Helvetica;
+                font-size:16px;
+                line-height:150%;
+                padding-right:20px;
+                padding-bottom:20px;
+                padding-left:20px;
+                padding-top:20px;
+                text-align:center;
+            }
+
+            /**
+            * @section body link
+            */
+            .bodyContent a:link, .bodyContent a:visited, /* Yahoo! Mail Override */ .bodyContent a .yshortcuts /* Yahoo! Mail Override */{
+                color:#699b05;
+                font-weight:normal;
+                text-decoration:underline;
+            }
+
+            /**
+            * @section body link button class
+            */
+            a.button {
+                background: #699b05;
+                color: #fff;
                 display: block;
-                padding-right: 0 !important;
-            }
-            table[class="col-3"] {
-                /* unset table align="left/right" */
-                float: none !important;
-                width: 100% !important;
-
-                /* change left/right padding and margins to top/bottom ones */
-                margin-bottom: 12px;
-                padding-bottom: 12px;
-                border-bottom: 1px solid #eee;
+                width: 50%;
+                text-decoration: none;
+                text-align: center;
+                margin: 0 auto 16px;
+                text-transform: uppercase;
+                padding: .8rem 3rem;
             }
 
-            /* remove bottom border for last column/row */
-            table[id="last-col-3"] {
-                border-bottom: none !important;
-                margin-bottom: 0;
+            a.button:hover {
+                background: #aad400;
             }
 
-            /* align images right and shrink them a bit */
-            img[class="col-3-img"] {
-                float: right;
-                margin-left: 6px;
-                max-width: 130px;
+            .bodyContent img{
+                display:inline;
+                height:auto;
+                max-width:560px;
             }
-        }
 
-    </style>
-</head>
-<body style="margin:20px auto; padding:10px 0;" bgcolor="#eee" leftmargin="0" topmargin="0"
-      marginwidth="0" marginheight="0">
-<!-- background -->
-<table border="0" width="100%" height="100%" cellpadding="0" cellspacing="0" bgcolor="#eee">
-    <tr>
-        <td align="center" valign="top" bgcolor="#eee" style="background-color: #eee;">
+            .update-row h1,
+            .update-row h2,
+            .update-row h3 {
+                text-align: left;
+            }
 
-            <!-- container -->
-            <table border="0" width="600" cellpadding="0" cellspacing="0" class="container"
-                   bgcolor="#f1f1f1">
-                <thead>
-                    <tr>
-                        <th border="0" class="container-padding" bgcolor="#669933"
-                            style="background-color: #669900; margin-top: 20px;
-                                   padding: 20px; font-size: 13px; line-height: 20px;
-                                   font-family: Arial, Helvetica, sans-serif;
-                                   color: #FFF; border-bottom: 5px solid #333;" align="left">
-                            <table border="0" width="100%" cellpadding="0" cellspacing="0"
-                                   class="table-header">
-                                <tr>
-                                    <td>
-                                        <a href="{{ home_url }}"
-                                           title="{{ home_url_name }}">
-                                           <img src="{{ static("emails/email-logo.png") }}" alt="Taiga" height="32" />
-                                        </a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td border="0" style="background: #FFFFFF; padding: 20px;
-                                              font-size: 14px; line-height: 20px;
-                                              margin-bottom: 180px;
-                                              font-family: Arial, Helvetica, sans-serif;
-                                              color: #6c6c6c;" align="left">
-                        <!-- BODY -->
-                        {% block body %}{% endblock %}
-                        {#
-                            <table border="0" width="100%" cellpadding="0" cellspacing="0"
-                                   class="table-body">
-                                <tr>
-                                    <td>
-                                        <h1>{{ project_name }}</h1>
-                                        <h2>{{ type }}: {{ subject }}</h2>
-                                        <p>Updated fields by <b>{{ user.get_full_name() }}</b></p>
-                                        {% block body_changes %}
-                                        <ul>
-                                            <li><b>severity</b>: from "10" to "project 2 - Normal".</li>
-                                        </ul>
-                                        {% endblock %}
-                                    </td>
-                                </tr>
-                            </table>
-                        #}
-                        </td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td border="0" style="background-color: #fff; padding: 0 20px;
-                                              font-size: 14px; line-height: 20px;
-                                              font-family: Arial, Helvetica, sans-serif;
-                                              color: #CCC;" align="left">
-                        {% block footer %}
-                        {#
-                            <p style="padding: 10px; border-top: 1px solid #eee;">
-                                More info at:
-                                <a href="{{ final_url }}" style="color: #666;">
-                                    {{ final_url_name }}
-                                </a>
-                            </p>
-                        #}
-                        {% endblock %}
-                        </td>
-                    </tr>
-                </tfoot>
+            .update-row tr {
+                border-bottom: 1px solid #cdcdcd;
+                padding: 10px;
+            }
+
+            .update-row tr:first-child,
+            .update-row tr:last-child {
+                border-bottom: 3px solid #cdcdcd;
+            }
+
+            .update-row td {
+                padding: 15px;
+                text-align: left;
+            }
+
+            .update-row td.update-row-name {
+                width: 40%;
+                text-align: center;
+            }
+
+            .update-row td.update-row-from {
+                border-bottom: 1px solid #f5f5f5;
+            }
+
+            .social-links {
+                font-family: 'Open Sans', Arial, Helvetica;
+                font-size:13px;
+                padding-right:20px;
+                padding-bottom:20px;
+                padding-left:20px;
+                text-align:center;
+            }
+
+            .social-links a:link, .social-links a:visited{
+                color:#699b05;
+                font-weight:normal;
+                text-decoration:underline;
+                text-align: center;
+                margin: 0 5px;
+            }
+
+            /* ========== Footer Styles ========== */
+
+            /**
+            * @section footer style
+            */
+            #templateFooter{
+                background-color:#555555;
+            }
+
+            /**
+            * @section footer text
+            */
+            .footerContent{
+                color:#f5f5f5;
+                font-family: 'Open Sans', Arial, Helvetica;
+                font-size:10px;
+                line-height:150%;
+                padding-top:20px;
+                padding-right:20px;
+                padding-bottom:20px;
+                padding-left:20px;
+                text-align:left;
+            }
+
+            /**
+            * @tab Footer
+            * @section footer link
+            * @tip Set the styling for your email's footer links. Choose a color that helps them stand out from your text.
+            */
+            .footerContent a:link, .footerContent a:visited, /* Yahoo! Mail Override */ .footerContent a .yshortcuts, .footerContent a span /* Yahoo! Mail Override */{
+                /*@editable*/ color:#699b05;
+                /*@editable*/ font-weight:normal;
+                /*@editable*/ text-decoration:underline;
+            }
+
+            /* /\/\/\/\/\/\/\/\/ MOBILE STYLES /\/\/\/\/\/\/\/\/ */
+
+            @media only screen and (max-width: 480px){
+                /* /\/\/\/\/\/\/ CLIENT-SPECIFIC MOBILE STYLES /\/\/\/\/\/\/ */
+                body, table, td, p, a, li, blockquote{-webkit-text-size-adjust:none !important;} /* Prevent Webkit platforms from changing default text sizes */
+                body{width:100% !important; min-width:100% !important;} /* Prevent iOS Mail from adding padding to the body */
+
+                /* /\/\/\/\/\/\/ MOBILE RESET STYLES /\/\/\/\/\/\/ */
+                #bodyCell{padding:10px !important;}
+
+                /* /\/\/\/\/\/\/ MOBILE TEMPLATE STYLES /\/\/\/\/\/\/ */
+
+                /* ======== Page Styles ======== */
+
+                /**
+                * @section template width
+                */
+                #templateContainer{
+                    max-width:600px !important;
+                    width:100% !important;
+                }
+
+                /**
+                * @section heading 1
+                */
+                h1{
+                    font-size:18px !important;
+                    line-height:100% !important;
+                }
+
+                /**
+                * @section heading 2
+                */
+                h2{
+                    font-size:16px !important;
+                    line-height:100% !important;
+                }
+
+                /**
+                * @section heading 3
+                */
+                h3{
+                    font-size:14px !important;
+                    line-height:100% !important;
+                }
+
+
+                /* ======== Header Styles ======== */
+
+                #templatePreheader{display:none !important;} /* Hide the template preheader to save space */
+
+                /**
+                * @section header image
+                */
+                #headerImage{
+                    height:auto !important;
+                    max-width:600px !important;
+                    width:20% !important;
+                }
+
+                /* ======== Body Styles ======== */
+
+                /**
+                * @tab Mobile Styles
+                * @section body image
+                * @tip Make the main body image fluid for portrait or landscape view adaptability, and set the image's original width as the max-width. If a fluid setting doesn't work, set the image width to half its original size instead.
+                */
+                #bodyImage{
+                    height:auto !important;
+                    max-width:560px !important;
+                    width:100% !important;
+                }
+
+                /**
+                * @section body text
+                */
+                .bodyContent{
+                    font-size:16px !important;
+                    line-height:125% !important;
+                }
+
+                /**
+                * @section body link button class
+                */
+                .bodyContent a.button {
+                    font-size:14px !important;
+                    width: auto;
+                }
+
+                /* ======== Footer Styles ======== */
+
+                /**
+                * @section footer text
+                */
+                .footerContent{
+                    font-size:14px !important;
+                    line-height:115% !important;
+                }
+
+                .footerContent a{display:block !important;} /* Place footer social and utility links on their own lines, for easier access */
+            }
+        </style>
+    </head>
+    <body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0">
+        <center>
+            <table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable">
+                <tr>
+                    <td align="center" valign="top" id="bodyCell">
+                        <!-- BEGIN TEMPLATE // -->
+                        <table border="0" cellpadding="0" cellspacing="0" id="templateContainer">
+                            <tr>
+                                <td align="center" valign="top">
+                                    <!-- BEGIN HEADER // -->
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateHeader">
+                                        <tr>
+                                            <td valign="top" class="headerContent">
+                                                <img src="{{ static("emails/top-bg-update.png") }}" />
+                                                <a href="{{ home_url }}"
+                                                   title="{{ home_url_name }}">
+                                                    <img src="{{ static("emails/logo-color.png") }}" id="headerImage" alt="Taiga logo" />
+                                                </a>
+                                                {% block body %}
+                                                {% endblock %}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <!-- // END HEADER -->
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" valign="top">
+                                    <!-- BEGIN FOOTER // -->
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateFooter">
+                                        <tr>
+                                            <td valign="top" class="footerContent">
+                                                {% block footer %}
+                                                {% endblock %}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <!-- // END FOOTER -->
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- // END TEMPLATE -->
+                    </td>
+                </tr>
             </table>
-        </td>
-    </tr>
-</table>
-</body>
+        </center>
+    </body>
 </html>

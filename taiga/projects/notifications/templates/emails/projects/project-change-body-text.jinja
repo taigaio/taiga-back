@@ -7,11 +7,11 @@
     {% if entry.comment %}
     Comment: {{ entry.comment|linebreaksbr }}
     {% endif %}
+
     {% set changed_fields = entry.values_diff %}
-        {% for field_name, values in changed_fields.items() %}
-        * {{ verbose_name(object, field_name) }}</b>: from '{{ values.0 }}' to '{{ values.1 }}'.
-        {% endfor %}
-    {% endif %}
+    {% for field_name, values in changed_fields.items() %}
+    * {{ verbose_name(object, field_name) }}</b>: from '{{ values.0 }}' to '{{ values.1 }}'.
+    {% endfor %}
 {% endfor %}
 
 ** More info at {{ final_url_name }} ({{ final_url }}) **

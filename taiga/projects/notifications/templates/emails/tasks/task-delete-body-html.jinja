@@ -1,14 +1,21 @@
 {% extends "emails/base.jinja" %}
 
 {% block body %}
-<table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
-    <tr>
-        <td>
-            <h1>{{ project.name }}</h1>
-            <h2>Task #{{ snapshot.ref }}: {{ snapshot.subject }}</h2>
-            <p>Deleted by <b>{{ changer.get_full_name() }}</b></p>
-        </td>
-    </tr>
-</table>
+    <h1>Task deleted</h1>
+    <p>Hello {{ user.get_full_name() }},<br />{{ changer.get_full_name() }} has deleted a task on {{ project.name }}</p>
+    <p>Task #{{ snapshot.ref }} {{ snapshot.subject }}</p>
+    <p><small>The Taiga Team</small></p>
+{% endblock %}
+
+{% block footer %}
+    <em>Copyright © 2014 Taiga Agile, LLC, All rights reserved.</em>
+    <br>
+    <strong>Contact us:</strong>
+    <br>
+    <strong>Support:</strong>
+    <a href="mailto:support@taiga.io" title="Taiga Support">support@taiga.io</a>
+    <br>
+    <strong>Our mailing address is:</strong>
+    <a href="https://groups.google.com/forum/#!forum/taigaio" title="Taiga mailing list">https://groups.google.com/forum/#!forum/taigaio</a>
 {% endblock %}
 

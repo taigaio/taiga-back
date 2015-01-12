@@ -1,30 +1,42 @@
-{% extends "emails/base.jinja" %}
+{% extends "emails/updates.jinja" %}
 
 {% set final_url = resolve_front_url("task", project.slug, snapshot.ref) %}
 {% set final_url_name = "Taiga - View task #{0}".format(snapshot.ref) %}
 
-{% block body %}
-<table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
-    <tr>
-        <td>
-            <h1>Project: {{ project.name }}</h1>
-            <h2>Task #{{ snapshot.ref }}: {{ snapshot.subject }}</h2>
-            <p>Updated by <b>{{ changer.get_full_name() }}</b>.</p>
-            {% for entry in history_entries%}
-                {% if entry.comment %}
-                    <p>Comment <b>{{ mdrender(project, entry.comment) }}</b></p>
-                {% endif %}
-                {% set changed_fields = entry.values_diff %}
-                {% if changed_fields %}
-                    {% include "emails/includes/fields_diff-html.jinja" %}
-                {% endif %}
-            {% endfor %}
-        </td>
-    </tr>
-</table>
+{% block head %}
+    <h1>Task #{{ snapshot.ref }} {{ snapshot.subject }} updated</h1>
+    <p>Hello {{ user.get_full_name() }}, <br> {{ changer.get_full_name() }} has updated a task on {{ project.name }}</p>
+    <a class="button" href="{{ final_url }}" title="See task in Taiga">See task</a>
 {% endblock %}
+
+{% block body %}
+<tr>
+    <th colspan="2"><h2>Updates</h2></th>
+</tr>
+    {% for entry in history_entries%}
+        {% if entry.comment %}
+            <tr>
+                <td colspan="2">
+                    <h3>Comment</h3>
+                    <p>{{ mdrender(project, entry.comment) }}</p>
+                </td>
+            </tr>
+        {% endif %}
+        {% set changed_fields = entry.values_diff %}
+        {% if changed_fields %}
+            {% include "emails/includes/fields_diff-html.jinja" %}
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
 {% block footer %}
-<p style="padding: 10px; border-top: 1px solid #eee;">
-    More info at: <a href="{{ final_url }}" style="color: #666;">{{ final_url_name }}</a>
-</p>
+    <em>Copyright © 2014 Taiga Agile, LLC, All rights reserved.</em>
+    <br>
+    <strong>Contact us:</strong>
+    <br>
+    <strong>Support:</strong>
+    <a href="mailto:support@taiga.io" title="Taiga Support">support@taiga.io</a>
+    <br>
+    <strong>Our mailing address is:</strong>
+    <a href="https://groups.google.com/forum/#!forum/taigaio" title="Taiga mailing list">https://groups.google.com/forum/#!forum/taigaio</a>
 {% endblock %}
