@@ -59,10 +59,10 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
 
     def get_queryset(self):
         qs = self.model.objects.all()
-        qs = qs.prefetch_related("points",
-                                 "role_points",
+        qs = qs.prefetch_related("role_points",
                                  "role_points__points",
-                                 "role_points__role")
+                                 "role_points__role",
+                                 "watchers")
         qs = qs.select_related("milestone", "project")
         return qs
 

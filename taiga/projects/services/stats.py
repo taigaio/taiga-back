@@ -15,11 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db.models import Q, Count
+from django.apps import apps
 import datetime
 import copy
 
 from taiga.projects.history.models import HistoryEntry
-
 
 def _get_milestones_stats_for_backlog(project):
     """
@@ -37,20 +37,27 @@ def _get_milestones_stats_for_backlog(project):
     future_team_increment = sum(project.future_team_increment.values())
     future_client_increment = sum(project.future_client_increment.values())
 
-    milestones = project.milestones.order_by('estimated_start')
+    milestones = project.milestones.order_by('estimated_start').\
+            prefetch_related("user_stories",
+                             "user_stories__role_points",
+                             "user_stories__role_points__points")
 
+    milestones = list(milestones)
+    milestones_count = len(milestones)
     optimal_points = 0
     team_increment = 0
     client_increment = 0
-    for current_milestone in range(0, max(milestones.count(), project.total_milestones)):
+
+    for current_milestone in range(0, max(milestones_count, project.total_milestones)):
         optimal_points = (project.total_story_points -
                             (optimal_points_per_sprint * current_milestone))
 
         evolution = (project.total_story_points - current_evolution
                         if current_evolution is not None else None)
 
-        if current_milestone < milestones.count():
+        if current_milestone < milestones_count:
             ml = milestones[current_milestone]
+
             milestone_name = ml.name
             team_increment = current_team_increment
             client_increment = current_client_increment
@@ -58,6 +65,7 @@ def _get_milestones_stats_for_backlog(project):
             current_evolution += sum(ml.closed_points.values())
             current_team_increment += sum(ml.team_increment_points.values())
             current_client_increment += sum(ml.client_increment_points.values())
+
         else:
             milestone_name = "Future sprint"
             team_increment = current_team_increment + future_team_increment,
@@ -194,7 +202,13 @@ def get_stats_for_project_issues(project):
 
 
 def get_stats_for_project(project):
-    closed_points = sum(project.closed_points.values())
+    project = apps.get_model("projects", "Project").objects.\
+        prefetch_related("milestones",
+                                     "user_stories").\
+        get(id=project.id)
+
+    points = project.calculated_points
+    closed_points = sum(points["closed"].values())
     closed_milestones = project.milestones.filter(closed=True).count()
     speed = 0
     if closed_milestones != 0:
@@ -205,11 +219,11 @@ def get_stats_for_project(project):
         'total_milestones': project.total_milestones,
         'total_points': project.total_story_points,
         'closed_points': closed_points,
-        'closed_points_per_role': project.closed_points,
-        'defined_points': sum(project.defined_points.values()),
-        'defined_points_per_role': project.defined_points,
-        'assigned_points': sum(project.assigned_points.values()),
-        'assigned_points_per_role': project.assigned_points,
+        'closed_points_per_role': points["closed"],
+        'defined_points': sum(points["defined"].values()),
+        'defined_points_per_role': points["defined"],
+        'assigned_points': sum(points["assigned"].values()),
+        'assigned_points_per_role': points["assigned"],
         'milestones': _get_milestones_stats_for_backlog(project),
         'speed': speed,
     }
