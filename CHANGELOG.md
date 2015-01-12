@@ -1,5 +1,13 @@
 # Changelog #
 
+## 1.5.0 ??? (unreleased)
+
+### Features
+- Improving some SQL queries
+
+### Misc
+- Lots of small and not so small bugfixes.
+
 
 ## 1.4.0 Abies veitchii (2014-12-10)
 
