@@ -205,6 +205,25 @@ def test_issue_list(client, data):
     assert response.status_code == 200
 
 
+def test_issue_list_filter_by_project_ok(client, data):
+    url = "{}?project={}".format(reverse("issues-list"), data.public_project.pk)
+
+    client.login(data.project_owner)
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert len(response.data) == 1
+
+
+def test_issue_list_filter_by_project_error(client, data):
+    url = "{}?project={}".format(reverse("issues-list"), "-ERROR-")
+
+    client.login(data.project_owner)
+    response = client.get(url)
+
+    assert response.status_code == 400
+
+
 def test_issue_create(client, data):
     url = reverse('issues-list')
 
