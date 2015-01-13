@@ -5,9 +5,9 @@
 
 {% block body %}
 <h2>You, or someone you know, has invited you to Taiga</h2>
-<p>The Taiga.io Deputy System Admin is commanded by His Highness The Chief Lord Oompa Loompa to extend a membership invitation to </br> {{ membership.email}} </br> and delights in the pleasure of welcoming you to join <b>{{ membership.invited_by.full_name }}<b> and others in the team as a new and right honorable member in good standing of the project titled: <b>'{{ membership.project }}'</b>.</p>
+<p>The Taiga.io Deputy System Admin is commanded by His Highness The Chief Lord Oompa Loompa to extend a membership invitation to </br> {{ membership.email}} </br> and delights in the pleasure of welcoming you to join <b>{{ membership.invited_by.full_name }}</b> and others in the team as a new and right honorable member in good standing of the project titled: <b>'{{ membership.project }}'</b>.</p>
 <small>You may indicate your humble desire to accept this invitation by gently clicking here</small>
-<a class="button" href="#" title="Accept your invitation to Taiga">Accept your invitation</a>
+<a class="button" href="{{ final_url }}" title="Accept your invitation to Taiga">Accept your invitation</a>
 {% if membership.invitation_extra_text %}
 <h3>And now some words from the jolly good fellow or sistren who thought so kindly as to invite you:</h3>
 <p>{{ membership.invitation_extra_text }}</p>
