@@ -89,10 +89,6 @@ def test_response_200_in_public_registration(client, settings):
     assert response.data["full_name"] == "martin seamus mcfly"
     assert len(mail.outbox) == 1
     assert mail.outbox[0].subject == "You've been Taigatized!"
-    user = models.User.objects.get(username="mmcfly")
-    cancel_token = get_token_for_user(user, "cancel_account")
-    cancel_url = resolve_front_url("cancel-account", cancel_token)
-    assert mail.outbox[0].body.index(cancel_url) > 0
 
 def test_response_200_in_registration_with_github_account(client, settings):
     settings.PUBLIC_REGISTER_ENABLED = False
