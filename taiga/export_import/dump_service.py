@@ -72,6 +72,12 @@ def store_issues(project, data):
     return issues
 
 
+def store_tags_colors(project, data):
+    project.tags_colors = data.get("tags_colors", [])
+    project.save()
+    return None
+
+
 def dict_to_project(data, owner=None):
     if owner:
         data['owner'] = owner
@@ -148,3 +154,7 @@ def dict_to_project(data, owner=None):
 
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing issues')
+
+    store_tags_colors(proj, data)
+
+    return proj

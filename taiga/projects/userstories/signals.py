@@ -35,6 +35,7 @@ def cached_prev_us(sender, instance, **kwargs):
 def update_role_points_when_create_or_edit_us(sender, instance, **kwargs):
     if instance._importing:
         return
+
     instance.project.update_role_points(user_stories=[instance])
 
 
@@ -52,15 +53,24 @@ def update_milestone_of_tasks_when_edit_us(sender, instance, created, **kwargs):
 ####################################
 
 def try_to_close_or_open_us_and_milestone_when_create_or_edit_us(sender, instance, created, **kwargs):
+    if instance._importing:
+        return
+
     _try_to_close_or_open_us_when_create_or_edit_us(instance)
     _try_to_close_or_open_milestone_when_create_or_edit_us(instance)
 
 def try_to_close_milestone_when_delete_us(sender, instance, **kwargs):
+    if instance._importing:
+        return
+
     _try_to_close_milestone_when_delete_us(instance)
 
 
 # US
 def _try_to_close_or_open_us_when_create_or_edit_us(instance):
+    if instance._importing:
+        return
+
     from . import services as us_service
 
     if us_service.calculate_userstory_is_closed(instance):
@@ -71,6 +81,9 @@ def _try_to_close_or_open_us_when_create_or_edit_us(instance):
 
 # Milestone
 def _try_to_close_or_open_milestone_when_create_or_edit_us(instance):
+    if instance._importing:
+        return
+
     from taiga.projects.milestones import services as milestone_service
 
     if instance.milestone_id:
@@ -87,6 +100,9 @@ def _try_to_close_or_open_milestone_when_create_or_edit_us(instance):
 
 
 def _try_to_close_milestone_when_delete_us(instance):
+    if instance._importing:
+        return
+
     from taiga.projects.milestones import services as milestone_service
 
     with suppress(ObjectDoesNotExist):

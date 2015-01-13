@@ -20,6 +20,7 @@ import base64
 import datetime
 
 from django.core.urlresolvers import reverse
+from django.core.files.base import ContentFile
 
 from .. import factories as f
 
@@ -703,3 +704,96 @@ def test_milestone_import_duplicated_milestone(client):
     assert response.status_code == 400
     response_data = json.loads(response.content.decode("utf-8"))
     assert response_data["milestones"][0]["name"][0] == "Name duplicated for the project"
+
+def test_invalid_dump_import(client):
+    user = f.UserFactory.create()
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(b"test")
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 400
+    response_data = json.loads(response.content.decode("utf-8"))
+    assert response_data["_error_message"] == "Invalid dump format"
+
+def test_valid_dump_import_with_celery_disabled(client, settings):
+    settings.CELERY_ENABLED = False
+
+    user = f.UserFactory.create()
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": "valid-project",
+        "name": "Valid project",
+        "description": "Valid project desc"
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 204
+
+def test_valid_dump_import_with_celery_enabled(client, settings):
+    settings.CELERY_ENABLED = True
+
+    user = f.UserFactory.create()
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": "valid-project",
+        "name": "Valid project",
+        "description": "Valid project desc"
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 202
+    response_data = json.loads(response.content.decode("utf-8"))
+    assert "import-id" in response_data
+
+def test_dump_import_duplicated_project(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": project.slug,
+        "name": "Test import",
+        "description": "Valid project desc"
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 204
+    new_project = Project.objects.all().order_by("-id").first()
+    assert new_project.name == "Test import"
+    assert new_project.slug == "{}-test-import".format(user.username)
+
+def test_dump_import_throttling(client, settings):
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["import-dump-mode"] = "1/minute"
+
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": project.slug,
+        "name": "Test import",
+        "description": "Valid project desc"
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 204
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 429
