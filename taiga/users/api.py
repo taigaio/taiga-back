@@ -142,7 +142,10 @@ class UsersViewSet(ModelCrudViewSet):
 
         current_password = request.DATA.get("current_password")
         password = request.DATA.get("password")
-        if not current_password:
+
+        # NOTE: GitHub users have no password yet (request.user.passwor == '') so
+        #       current_password can be None
+        if not current_password and request.user.password:
             raise exc.WrongArguments(_("Current password parameter needed"))
 
         if not password:
@@ -151,7 +154,7 @@ class UsersViewSet(ModelCrudViewSet):
         if len(password) < 6:
             raise exc.WrongArguments(_("Invalid password length at least 6 charaters needed"))
 
-        if not request.user.check_password(current_password):
+        if current_password and not request.user.check_password(current_password):
             raise exc.WrongArguments(_("Invalid current password"))
 
         request.user.set_password(password)
