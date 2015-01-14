@@ -14,21 +14,27 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .development import *
+from taiga.base.api.permissions import (TaigaResourcePermission, IsProjectOwner,
+                                        AllowAny, PermissionComponent)
 
-SKIP_SOUTH_TESTS = True
-SOUTH_TESTS_MIGRATE = False
-CELERY_ALWAYS_EAGER = True
-CELERY_ENABLED = False
+from taiga.permissions.service import is_project_owner
 
-MEDIA_ROOT = "/tmp"
 
-EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
-INSTALLED_APPS = INSTALLED_APPS + ["tests"]
+class IsWebhookProjectOwner(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        return is_project_owner(request.user, obj.webhook.project)
 
-REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
-    "anon": None,
-    "user": None,
-    "import-mode": None,
-    "import-dump-mode": None,
-}
+
+class WebhookPermission(TaigaResourcePermission):
+    retrieve_perms = IsProjectOwner()
+    create_perms = IsProjectOwner()
+    update_perms = IsProjectOwner()
+    destroy_perms = IsProjectOwner()
+    list_perms = AllowAny()
+    test_perms = IsProjectOwner()
+
+
+class WebhookLogPermission(TaigaResourcePermission):
+    retrieve_perms = IsWebhookProjectOwner()
+    list_perms = AllowAny()
+    resend_perms = IsWebhookProjectOwner()
