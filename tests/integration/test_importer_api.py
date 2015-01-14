@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import json
 import base64
 import datetime
 
@@ -24,6 +23,7 @@ from django.core.files.base import ContentFile
 
 from .. import factories as f
 
+from taiga.base.utils import json
 from taiga.projects.models import Project
 from taiga.projects.issues.models import Issue
 from taiga.projects.userstories.models import UserStory

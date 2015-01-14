@@ -1,11 +1,11 @@
 import pytest
-import json
 
 from unittest import mock
 
 from django.core.urlresolvers import reverse
 from django.core import mail
 
+from taiga.base.utils import json
 from taiga.hooks.gitlab import event_hooks
 from taiga.hooks.gitlab.api import GitLabViewSet
 from taiga.hooks.exceptions import ActionSyntaxException

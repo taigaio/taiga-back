@@ -1,5 +1,4 @@
 import pytest
-import json
 import urllib
 
 from unittest import mock
@@ -8,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.conf import settings
 
+from taiga.base.utils import json
 from taiga.hooks.bitbucket import event_hooks
 from taiga.hooks.bitbucket.api import BitBucketViewSet
 from taiga.hooks.exceptions import ActionSyntaxException

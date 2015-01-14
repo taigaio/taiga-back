@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
 import pytest
 from unittest.mock import MagicMock
 from unittest.mock import patch
@@ -23,6 +22,7 @@ from unittest.mock import patch
 from django.core.urlresolvers import reverse
 from .. import factories as f
 
+from taiga.base.utils import json
 from taiga.projects.history import services
 from taiga.projects.history.models import HistoryEntry
 from taiga.projects.history.choices import HistoryType

@@ -15,12 +15,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
 import pytest
 
 from django.core.urlresolvers import reverse
 from .. import factories
 
+from taiga.base.utils import json
 
 pytestmark = pytest.mark.django_db
 

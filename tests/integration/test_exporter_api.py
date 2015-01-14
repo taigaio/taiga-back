@@ -15,11 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import json
 
 from django.core.urlresolvers import reverse
 
 from .. import factories as f
+from taiga.base.utils import json
 
 
 pytestmark = pytest.mark.django_db

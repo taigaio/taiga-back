@@ -15,11 +15,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
 import pytest
 
 from .. import factories
 
+from taiga.base.utils import json
 from taiga.timeline import service
 from taiga.timeline.models import Timeline
 

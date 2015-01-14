@@ -1,11 +1,11 @@
 import pytest
-import json
 from tempfile import NamedTemporaryFile
 
 from django.core.urlresolvers import reverse
 
 from .. import factories as f
 
+from taiga.base.utils import json
 from taiga.users import models
 from taiga.auth.tokens import get_token_for_user
 

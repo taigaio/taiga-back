@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import functools
-import json
 
 from django.db.models import signals
+from taiga.base.utils import json
 
 
 def signals_switch():
