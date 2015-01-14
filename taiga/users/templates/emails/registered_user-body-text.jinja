@@ -1,3 +1,4 @@
+{% trans %}
 Thank you for registering in Taiga
 
 We hope you enjoy it
@@ -8,11 +9,7 @@ We built it to be beautiful, elegant, simple to use and fun - without forsaking 
 
 --
 The taiga Team
-
-Copyright © 2014 Taiga Agile, LLC, All rights reserved.
-
-Contact us:
-
-Support: mailto:support@taiga.io
-Our mailing list is: https://groups.google.com/forum/#!forum/taigaio
-You may remove your account from this service: {{ resolve_front_url('cancel-account', cancel_token) }}
+{% endtrans %}
+{% trans url=resolve_front_url('cancel-account', cancel_token) %}
+You may remove your account from this service: {{ url }}
+{% endtrans %}

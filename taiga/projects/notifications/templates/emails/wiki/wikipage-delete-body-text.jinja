@@ -1,4 +1,13 @@
+{% trans user=user.get_full_name()|safe,
+         changer=changer.get_full_name()|safe,
+         project=project.name|safe,
+         page=snapshot.slug %}
 Wiki page deleted
-Hello {{ user.get_full_name() }}, {{ changer.get_full_name() }} has deleted a wiki page on {{ project.name }}
-Wiki page {{ snapshot.slug }}
+
+Hello {{ user }}, {{ changer }} has deleted a wiki page on {{ project }}
+
+Wiki page {{ page }}
+
+---
 The Taiga Team
+{% endtrans %}

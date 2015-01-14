@@ -1,1 +1,4 @@
-[{{ project.name|safe }}] Updated the milestone #{{ snapshot.slug|safe }} "{{ snapshot.name|safe }}"
+{% trans project=project.name|safe,
+         milestone=snapshot.name|safe %}
+[{{ project }}] Updated the sprint "{{ milestone }}"
+{% endtrans %}

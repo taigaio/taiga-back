@@ -1,9 +1,15 @@
-Hello {{ user.get_full_name() }},
+{% trans user=user.get_full_name()|safe,
+         project=project.name|safe,
+         url=url,
+         deletion_date=deletion_date|date("d/M/Y H:i") %}
+Hello {{ user }},
 
-Your project dump has been correctly generated. You can download it from here:
+Your dump from project {{ project }} has been correctly generated. You can download it here:
 
 {{ url }}
 
-This file will be deleted on {{ deletion_date|date("r") }}.
+This file will be deleted on {{ deletion_date }}.
 
+---
 The Taiga Team
+{% endtrans %}

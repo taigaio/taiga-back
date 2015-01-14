@@ -1,11 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-{% set home_url = resolve_front_url("home") %}
-{% set home_url_name = "Taiga" %}
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>[Taiga] Jesús Espino updated the US #1680 "Rediseño de emails"</title>
+        <title>{{ _("Taiga") }}</title>
         <style type="text/css">
             /* /\/\/\/\/\/\/\/\/ CLIENT-SPECIFIC STYLES /\/\/\/\/\/\/\/\/ */
             #outlook a{padding:0;} /* Force Outlook to provide a "view in browser" message */
@@ -395,39 +393,24 @@
                                         <tr>
                                             <td valign="top" class="headerContent">
                                                 <img src="{{ static("emails/top-bg-update.png") }}" />
-                                                <a href="{{ home_url }}"
-                                                   title="{{ home_url_name }}">
+                                                <a href="{{ resolve_front_url("home") }}" title="Taiga">
                                                     <img src="{{ static("emails/logo-color.png") }}" id="headerImage" alt="Taiga logo" />
                                                 </a>
-                                                {% block head %}
+                                                {% block body %}
                                                 {% endblock %}
                                             </td>
                                         </tr>
-                                    </table>
-                                    <!-- // END HEADER -->
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="center" valign="top">
-                                    <!-- BEGIN BODY // -->
-                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateBody">
-                                        <tr>
-                                            <td valign="top" class="bodyContent">
-                                                <table class="update-row" border="0" cellpadding="0" cellspacing="0" width="100%">
-                                                    {% block body %}
-                                                    {% endblock %}
-                                                </table>
-                                            </td>
-                                        </tr>
+                                        {% block social %}
                                         <tr>
                                             <td valign="top" class="social-links">
-                                                <a href="https://twitter.com/taigaio" title="Follow us on Twitter">Twitter</a>
-                                                <a href="https://github.com/taigaio" title="Get the code on Github">Github</a>
-                                                <a href="https://taiga.io/" title="Visit our website">Taiga.io</a>
+                                                <a href="{{ sr("social.twitter_url") }}" title="{{ _("Follow us on Twitter") }}" style="color: #9dce0a">{{ _("Twitter") }}</a>
+                                                <a href="{{ sr("social.github_url") }}" title="{{ _("Get the code on GitHub") }}" style="color: #9dce0a">{{ _("GitHub") }}</a>
+                                                <a href="{{ sr("taigaio_url") }}" title="{{ _("Visit our website") }}" style="color: #9dce0a">{{ _("Taiga.io") }}</a>
                                             </td>
                                         </tr>
+                                        {% endblock %}
                                     </table>
-                                    <!-- // END BODY -->
+                                    <!-- // END HEADER -->
                                 </td>
                             </tr>
                             <tr>
@@ -437,6 +420,22 @@
                                         <tr>
                                             <td valign="top" class="footerContent">
                                                 {% block footer %}
+                                                    {% trans support_url=sr("support.url"),
+                                                             support_email=sr("support.email"),
+                                                             mailing_list_url=sr("support.mailing_list") %}
+                                                    <strong>Taiga Support:</strong>
+                                                    <a href="{{ support_url }}" title="Support page" style="color: #9dce0a">{{ support_url}}</a>
+                                                    <br>
+                                                    <strong>Contact us:</strong>
+                                                     <a href="mailto:{{ support_email }}" title="Supporti email" style="color: #9dce0a">
+                                                        {{ support_email }}
+                                                    </a>
+                                                    <br>
+                                                    <strong>Mailing list:</strong>
+                                                    <a href="{{ mailing_list_url }}" title="Mailing list" style="color: #9dce0a">
+                                                        {{ mailing_list_url }}
+                                                    </a>
+                                                    {% endtrans %}
                                                 {% endblock %}
                                             </td>
                                         </tr>

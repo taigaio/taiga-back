@@ -1,10 +1,11 @@
----------
-- From: {{ feedback_entry.full_name }} [{{ feedback_entry.email }}]
+{% trans full_name=feedback_entry.full_name|safe, email=feedback_entry.email, comment=feedback_entry.comment %}---------
+- From: {{ full_name }} <{{ email }}>
 ---------
 - Comment:
-{{ feedback_entry.comment }}
----------{% if extra %}
-- Extra:
+{{ comment }}
+---------{% endtrans %}
+{% if extra %}
+{{ _("- Extra info:") }}
 {% for k, v in extra.items() %}
     - {{ k }}: {{ v }}
 {% endfor %}

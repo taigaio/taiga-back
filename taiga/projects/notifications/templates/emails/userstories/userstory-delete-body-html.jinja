@@ -1,20 +1,15 @@
-{% extends "emails/base.jinja" %}
+{% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-    <h1>User story deleted</h1>
-    <p>Hello {{ user.get_full_name() }},<br />{{ changer.get_full_name() }} has deleted a user story on {{ project.name }}</p>
-    <p>User story #{{ snapshot.ref }} {{ snapshot.subject }}</p>
+    {% trans user=user.get_full_name()|safe,
+             changer=changer.get_full_name()|safe,
+             project=project.name|safe,
+             ref=snapshot.ref,
+             subject=snapshot.subject|safe %}
+    <h1>User Story deleted</h1>
+    <p>Hello {{ user }},<br />{{ changer }} has deleted a user story on {{ project }}</p>
+    <p>User Story #{{ ref }} {{ subject }}</p>
     <p><small>The Taiga Team</small></p>
+    {% endtrans %}
 {% endblock %}
 
-{% block footer %}
-    <em>Copyright © 2014 Taiga Agile, LLC, All rights reserved.</em>
-    <br>
-    <strong>Contact us:</strong>
-    <br>
-    <strong>Support:</strong>
-    <a href="mailto:support@taiga.io" title="Taiga Support">support@taiga.io</a>
-    <br>
-    <strong>Our mailing address is:</strong>
-    <a href="https://groups.google.com/forum/#!forum/taigaio" title="Taiga mailing list">https://groups.google.com/forum/#!forum/taigaio</a>
-{% endblock %}

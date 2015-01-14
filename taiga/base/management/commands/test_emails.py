@@ -16,6 +16,7 @@
 
 import datetime
 
+from django.db.models.loading import get_model
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
@@ -23,6 +24,7 @@ from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
 
 from taiga.projects.models import Project, Membership
 from taiga.projects.history.models import HistoryEntry
+from taiga.projects.history.services import get_history_queryset_by_model_instance
 from taiga.users.models import User
 
 
@@ -45,7 +47,11 @@ class Command(BaseCommand):
         email.send()
 
         # Membership invitation
-        context = {"membership": Membership.objects.order_by("?").filter(user__isnull=True).first()}
+        membership = Membership.objects.order_by("?").filter(user__isnull=True).first()
+        membership.invited_by = User.objects.all().order_by("?").first()
+        membership.invitation_extra_text = "Text example, Text example,\nText example,\n\nText example"
+
+        context = {"membership": membership}
         email = mbuilder.membership_invitation(test_email, context)
         email.send()
 
@@ -82,10 +88,13 @@ class Command(BaseCommand):
         # Export/Import emails
         context = {
             "user": User.objects.all().order_by("?").first(),
+            "project": Project.objects.all().order_by("?").first(),
             "error_subject": "Error generating project dump",
             "error_message": "Error generating project dump",
         }
-        email = mbuilder.export_import_error(test_email, context)
+        email = mbuilder.export_error(test_email, context)
+        email.send()
+        email = mbuilder.import_error(test_email, context)
         email.send()
 
         deletion_date = timezone.now() + datetime.timedelta(seconds=60*60*24)
@@ -107,28 +116,24 @@ class Command(BaseCommand):
 
         # Notification emails
         notification_emails = [
-            "issues/issue-change",
-            "issues/issue-create",
-            "issues/issue-delete",
-            "milestones/milestone-change",
-            "milestones/milestone-create",
-            "milestones/milestone-delete",
-            "projects/project-change",
-            "projects/project-create",
-            "projects/project-delete",
-            "tasks/task-change",
-            "tasks/task-create",
-            "tasks/task-delete",
-            "userstories/userstory-change",
-            "userstories/userstory-create",
-            "userstories/userstory-delete",
-            "wiki/wikipage-change",
-            "wiki/wikipage-create",
-            "wiki/wikipage-delete",
+            ("issues.Issue", "issues/issue-change"),
+            ("issues.Issue", "issues/issue-create"),
+            ("issues.Issue", "issues/issue-delete"),
+            ("tasks.Task", "tasks/task-change"),
+            ("tasks.Task", "tasks/task-create"),
+            ("tasks.Task", "tasks/task-delete"),
+            ("userstories.UserStory", "userstories/userstory-change"),
+            ("userstories.UserStory", "userstories/userstory-create"),
+            ("userstories.UserStory", "userstories/userstory-delete"),
+            ("milestones.Milestone", "milestones/milestone-change"),
+            ("milestones.Milestone", "milestones/milestone-create"),
+            ("milestones.Milestone", "milestones/milestone-delete"),
+            ("wiki.WikiPage", "wiki/wikipage-change"),
+            ("wiki.WikiPage", "wiki/wikipage-create"),
+            ("wiki.WikiPage", "wiki/wikipage-delete"),
         ]
 
         context = {
-           "snapshot": HistoryEntry.objects.filter(is_snapshot=True).order_by("?")[0].snapshot,
            "project": Project.objects.all().order_by("?").first(),
            "changer": User.objects.all().order_by("?").first(),
            "history_entries": HistoryEntry.objects.all().order_by("?")[0:5],
@@ -136,6 +141,27 @@ class Command(BaseCommand):
         }
 
         for notification_email in notification_emails:
-            cls = type("InlineCSSTemplateMail", (InlineCSSTemplateMail,), {"name": notification_email})
+            model = get_model(*notification_email[0].split("."))
+            snapshot = {
+                "subject": "Tests subject",
+                "ref": 123123,
+                "name": "Tests name",
+                "slug": "test-slug"
+            }
+            queryset = model.objects.all().order_by("?")
+            for obj in queryset:
+                end = False
+                entries = get_history_queryset_by_model_instance(obj).filter(is_snapshot=True).order_by("?")
+
+                for entry in entries:
+                    if entry.snapshot:
+                        snapshot = entry.snapshot
+                        end = True
+                        break
+                if end:
+                    break
+            context["snapshot"] = snapshot
+
+            cls = type("InlineCSSTemplateMail", (InlineCSSTemplateMail,), {"name": notification_email[1]})
             email = cls()
             email.send(test_email, context)

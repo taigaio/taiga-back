@@ -1,1 +1,3 @@
-[Taiga] Invitation to join to the project '{{ membership.project|safe }}'
+{% trans project=membership.project|safe %}
+[Taiga] Invitation to join to the project '{{ project }}'
+{% endtrans %}

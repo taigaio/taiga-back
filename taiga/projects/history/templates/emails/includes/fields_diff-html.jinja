@@ -16,16 +16,16 @@
             {% for role, points in values.items() %}
             <tr>
                 <td valign="middle" rowspan="2" class="update-row-name">
-                    <h3>{{ role }} role points</h3>
+                    <h3>{% trans role=role %}{{ role }} role points{% endtrans %}</h3>
                 </td>
                 <td valign="top" class="update-row-from">
-                    <span>from</span><br>
+                    <span>{{ _("from") }}</span><br>
                     <strong>{{ points.1 }}</strong>
                 </td>
             </tr>
             <tr>
                 <td valign="top">
-                    <span>to</span><br>
+                    <span>{{ _("to") }}</span><br>
                     <strong>{{ points.0 }}</strong>
                 </td>
             </tr>
@@ -40,11 +40,11 @@
                         <h3>{{ _("Added new attachment") }}</h3>
                         <p>
                             <a href="{{ att.url }}" target="_blank">
-                                {{ att.filename|linebreaksbr }}
+                                {{ att.filename }}
                             </a>
                         </p>
                         {% if att.description %}
-                        <p>{{ att.description|linebreaksbr }}</p>
+                        <p>{{ att.description }}</p>
                         {% endif %}
                     </td>
                 </tr>
@@ -61,9 +61,9 @@
                                 {{ att.filename|linebreaksbr }}
                                 {% if att.changes.is_deprecated %}
                                     {% if att.changes.is_deprecated.1 %}
-                                        [<i>deprecated</i>]
+                                        [<i>{{ _("deprecated") }}</i>]
                                     {% else %}
-                                        [<i>not deprecated</i>]
+                                        [<i>{{ _("not deprecated") }}</i>]
                                     {% endif %}
                                 {% endif %}
                             </a>
@@ -94,21 +94,21 @@
                     <h3>{{ field_name }}</h3>
                 </td>
                 <td valign="top" class="update-row-from">
-                    <span>from</span><br>
-                    <strong>{{ ', '.join(values.0)|linebreaksbr }}</strong>
+                    <span>{{ _("from") }}</span><br>
+                    <strong>{{ ', '.join(values.0) }}</strong>
                 </td>
             </tr>
             <tr>
                 <td valign="top">
-                    <span>to</span><br>
-                    <strong>{{ ', '.join(values.1)|linebreaksbr }}</strong>
+                    <span>{{ _("to") }}</span><br>
+                    <strong>{{ ', '.join(values.1) }}</strong>
                 </td>
             </tr>
     {# DESCRIPTIONS #}
         {% elif field_name in ["description_diff"] %}
             <tr>
                 <td colspan="2">
-                    <h3>Description diff</h3>
+                    <h3>{{ _("Description diff") }}</h3>
                     <p>{{ mdrender(project, values.1) }}</p>
                 </td>
             </tr>
@@ -116,7 +116,7 @@
         {% elif field_name in ["content_diff"] %}
             <tr>
                 <td colspan="2">
-                    <h3>Content diff</h3>
+                    <h3>{{ _("Content diff") }}</h3>
                     <p>{{ mdrender(project, values.1) }}</p>
                 </td>
             </tr>
@@ -128,10 +128,10 @@
                 </td>
                 <td valign="top" class="update-row-from">
                     {% if values.0 != None and values.0 != "" %}
-                        <span>from</span><br>
-                        <strong>{{ values.0|linebreaksbr }}</strong>
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ values.0 }}</strong>
                     {% else %}
-                        <span>from</span><br>
+                        <span>{{ _("from") }}</span><br>
                         <strong>{{ _("Unassigned") }}</strong>
                     {% endif %}
                 </td>
@@ -139,10 +139,10 @@
             <tr>
                 <td valign="top">
                     {% if values.1 != None and values.1 != "" %}
-                        <span>to</span><br>
-                        <strong>{{ values.1|linebreaksbr }}</strong>
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ values.1 }}</strong>
                     {% else %}
-                        <span>to</span><br>
+                        <span>{{ _("to") }}</span><br>
                         <strong>{{ _("Unassigned") }}</strong>
                     {% endif %}
                 </td>
@@ -155,13 +155,13 @@
                     <h3>{{ field_name }}</h3>
                 </td>
                 <td valign="top" class="update-row-from">
-                    <span>from</span><br>
+                    <span>{{ _("from") }}</span><br>
                     <strong>{{ values.1|linebreaksbr }}</strong>
                 </td>
             </tr>
             <tr>
                 <td valign="top">
-                    <span>to</span><br>
+                    <span>{{ _("to") }}</span><br>
                     <strong>{{ values.0|linebreaksbr }}</strong>
                 </td>
             </tr>

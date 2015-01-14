@@ -203,6 +203,7 @@ INSTALLED_APPS = [
     "djmail",
     "django_jinja",
     "django_jinja.contrib._humanize",
+    "sr",
     "easy_thumbnails",
     "raven.contrib.django.raven_compat",
     "django_transactional_cleanup",
@@ -369,6 +370,9 @@ GITLAB_VALID_ORIGIN_IPS = []
 EXPORTS_TTL = 60 * 60 * 24  # 24 hours
 CELERY_ENABLED = False
 WEBHOOKS_ENABLED = False
+
+from .sr import *
+
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"

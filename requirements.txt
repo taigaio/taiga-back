@@ -19,7 +19,7 @@ Markdown==2.4.1
 fn==0.2.13
 diff-match-patch==20121119
 requests==2.4.1
-
+django-sr==0.0.4
 easy-thumbnails==2.1
 celery==3.1.17
 redis==2.10.3
