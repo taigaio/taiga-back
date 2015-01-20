@@ -1,16 +1,15 @@
 {% extends "emails/hero-body-html.jinja" %}
 
 {% block body %}
-    {% trans full_name=membership.invited_by.get_full_name(),
-             project=membership.project %}
-    <h2>You, or someone you know, has invited you to Taiga</h2>
-    <p>Hi! {{ full_name }} has sent you an invitation to join a project called {{ project }}  which is being managed on Taiga, a Free, open Source Agile Project Management Tool.</p>
+    {% trans full_name=membership.invited_by.get_full_name(), project=membership.project %}
+    <h2>You have been invited to Taiga!</h2>
+<p>Hi! {{ full_name }} has sent you an invitation to join project <em>{{ project }}</em> in Taiga.</br> Taiga is a Free, open Source Agile Project Management Tool.</p>
     {% endtrans %}
 
     {% if membership.invitation_extra_text %}
         {% trans extra=membership.invitation_extra_text|linebreaksbr %}
-    <p>And now a few words from the jolly good fellow or sistren who thought so kindly as to invite you:</p>
-    <h3>{{ extra }}</h3>
+    <p><small>And now a few words from the jolly good fellow or sistren<br/> who thought so kindly as to invite you</small></p>
+    <p><strong>{{ extra }}</strong></p>
         {% endtrans %}
     {% endif %}
 
