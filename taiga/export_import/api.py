@@ -16,8 +16,8 @@
 
 import json
 import codecs
+import uuid
 
-from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from rest_framework.decorators import throttle_classes
 from rest_framework import status
@@ -27,6 +27,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.transaction import atomic
 from django.db.models import signals
 from django.conf import settings
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 from taiga.base.api.mixins import CreateModelMixin
 from taiga.base.api.viewsets import GenericViewSet
@@ -42,12 +44,9 @@ from . import permissions
 from . import tasks
 from . import dump_service
 from . import throttling
+from .renderers import ExportRenderer
 
 from taiga.base.api.utils import get_object_or_404
-
-
-class Http400(APIException):
-    status_code = 400
 
 
 class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet):
@@ -68,13 +67,15 @@ class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet)
             tasks.delete_project_dump.apply_async((project.pk,), countdown=settings.EXPORTS_TTL)
             return Response({"export-id": task.id}, status=status.HTTP_202_ACCEPTED)
 
-        return Response(
-            service.project_to_dict(project),
-            status=status.HTTP_200_OK,
-            headers={
-                "Content-Disposition": "attachment; filename={}.json".format(project.slug)
-            }
-        )
+        path = "exports/{}/{}.json".format(project.pk, uuid.uuid4().hex)
+        content = ContentFile(ExportRenderer().render(service.project_to_dict(project),
+            renderer_context={"indent": 4}).decode('utf-8'))
+
+        default_storage.save(path, content)
+        response_data = {
+            "url": default_storage.url(path)
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
 
 class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixin, GenericViewSet):
     model = Project
@@ -90,7 +91,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         project_serialized = service.store_project(data)
 
         if project_serialized is None:
-            raise Http400(service.get_errors())
+            raise exc.BadRequest(service.get_errors())
 
         if "points" in data:
             service.store_choices(project_serialized.object, data,
@@ -144,7 +145,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         errors = service.get_errors()
         if errors:
-            raise Http400(errors)
+            raise exc.BadRequest(errors)
 
         response_data = project_serialized.data
         response_data['id'] = project_serialized.object.id
@@ -197,7 +198,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         errors = service.get_errors()
         if errors:
-            raise Http400(errors)
+            raise exc.BadRequest(errors)
 
         headers = self.get_success_headers(issue.data)
         return Response(issue.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -212,7 +213,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         errors = service.get_errors()
         if errors:
-            raise Http400(errors)
+            raise exc.BadRequest(errors)
 
         headers = self.get_success_headers(task.data)
         return Response(task.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -227,7 +228,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         errors = service.get_errors()
         if errors:
-            raise Http400(errors)
+            raise exc.BadRequest(errors)
 
         headers = self.get_success_headers(us.data)
         return Response(us.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -242,7 +243,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         errors = service.get_errors()
         if errors:
-            raise Http400(errors)
+            raise exc.BadRequest(errors)
 
         headers = self.get_success_headers(milestone.data)
         return Response(milestone.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -257,7 +258,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         errors = service.get_errors()
         if errors:
-            raise Http400(errors)
+            raise exc.BadRequest(errors)
 
         headers = self.get_success_headers(wiki_page.data)
         return Response(wiki_page.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -272,7 +273,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         errors = service.get_errors()
         if errors:
-            raise Http400(errors)
+            raise exc.BadRequest(errors)
 
         headers = self.get_success_headers(wiki_link.data)
         return Response(wiki_link.data, status=status.HTTP_201_CREATED, headers=headers)
