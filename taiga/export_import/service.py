@@ -44,6 +44,7 @@ def add_errors(section, errors):
     else:
         _errors_log[section] = [errors]
 
+
 def project_to_dict(project):
     return serializers.ProjectExportSerializer(project).data
 
