@@ -1,9 +1,10 @@
 # Changelog #
 
-## 1.5.0 ??? (unreleased)
+## 1.5.0 Betula Pendula - FOSDEM 2015 (unreleased)
 
 ### Features
 - Improving some SQL queries
+- Now you can export and import projects between Taiga instances.
 
 ### Misc
 - Lots of small and not so small bugfixes.
