@@ -65,10 +65,10 @@ class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet)
 
         if settings.CELERY_ENABLED:
             task = tasks.dump_project.delay(request.user, project)
-            tasks.delete_project_dump.apply_async((project.pk,), countdown=settings.EXPORTS_TTL)
+            tasks.delete_project_dump.apply_async((project.pk, project.slug), countdown=settings.EXPORTS_TTL)
             return Response({"export-id": task.id}, status=status.HTTP_202_ACCEPTED)
 
-        path = "exports/{}/{}.json".format(project.pk, uuid.uuid4().hex)
+        path = "exports/{}/{}-{}.json".format(project.pk, project.slug, uuid.uuid4().hex)
         content = ContentFile(ExportRenderer().render(service.project_to_dict(project),
             renderer_context={"indent": 4}).decode('utf-8'))
 
@@ -77,6 +77,7 @@ class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet)
             "url": default_storage.url(path)
         }
         return Response(response_data, status=status.HTTP_200_OK)
+
 
 class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixin, GenericViewSet):
     model = Project

@@ -33,32 +33,41 @@ from .renderers import ExportRenderer
 @app.task(bind=True)
 def dump_project(self, user, project):
     mbuilder = MagicMailBuilder()
-
-    path = "exports/{}/{}.json".format(project.pk, self.request.id)
+    path = "exports/{}/{}-{}.json".format(project.pk, project.slug, self.request.id)
 
     try:
-        content = ContentFile(ExportRenderer().render(project_to_dict(project), renderer_context={"indent": 4}).decode('utf-8'))
+        content = ExportRenderer().render(project_to_dict(project), renderer_context={"indent": 4})
+        content = content.decode('utf-8')
+        content = ContentFile(content)
+
         default_storage.save(path, content)
         url = default_storage.url(path)
     except Exception:
-        email = mbuilder.export_import_error(
-            user.email,
-            {
-                "user": user,
-                "error_subject": "Error generating project dump",
-                "error_message": "Error generating project dump",
-            }
-        )
+        ctx = {
+            "user": user,
+            "error_subject": "Error generating project dump",
+            "error_message": "Error generating project dump",
+        }
+        email = mbuilder.export_import_error(user.email, ctx)
         email.send()
         return
 
+
     deletion_date = timezone.now() + datetime.timedelta(seconds=settings.EXPORTS_TTL)
-    email = mbuilder.dump_project(user.email, {"url": url, "project": project, "user": user, "deletion_date": deletion_date})
+    ctx = {
+        "url": url,
+        "project": project,
+        "user": user,
+        "deletion_date": deletion_datei
+    }
+    email = mbuilder.dump_project(user.email, ctx)
     email.send()
 
+
 @app.task
-def delete_project_dump(project_id, task_id):
-    default_storage.delete("exports/{}/{}.json".format(project_id, task_id))
+def delete_project_dump(project_id, project_slug, task_id):
+    default_storage.delete("exports/{}/{}-{}.json".format(project_id, project_slug, task_id))
+
 
 @app.task
 def load_project_dump(user, dump):
