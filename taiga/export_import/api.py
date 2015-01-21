@@ -36,6 +36,7 @@ from taiga.base.decorators import detail_route, list_route
 from taiga.base import exceptions as exc
 from taiga.projects.models import Project, Membership
 from taiga.projects.issues.models import Issue
+from taiga.projects.serializers import ProjectSerializer
 
 from . import mixins
 from . import serializers
@@ -181,8 +182,9 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             task = tasks.load_project_dump.delay(request.user, dump)
             return Response({"import-id": task.id}, status=status.HTTP_202_ACCEPTED)
 
-        dump_service.dict_to_project(dump, request.user.email)
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
+        project = dump_service.dict_to_project(dump, request.user.email)
+        response_data = ProjectSerializer(project).data
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
 
     @detail_route(methods=['post'])
