@@ -735,7 +735,10 @@ def test_valid_dump_import_with_celery_disabled(client, settings):
     data.name = "test"
 
     response = client.post(url, {'dump': data})
-    assert response.status_code == 204
+    assert response.status_code == 201
+    response_data = json.loads(response.content.decode("utf-8"))
+    assert "id" in response_data
+    assert response_data["name"] == "Valid project"
 
 def test_valid_dump_import_with_celery_enabled(client, settings):
     settings.CELERY_ENABLED = True
@@ -772,10 +775,10 @@ def test_dump_import_duplicated_project(client):
     data.name = "test"
 
     response = client.post(url, {'dump': data})
-    assert response.status_code == 204
-    new_project = Project.objects.all().order_by("-id").first()
-    assert new_project.name == "Test import"
-    assert new_project.slug == "{}-test-import".format(user.username)
+    assert response.status_code == 201
+    response_data = json.loads(response.content.decode("utf-8"))
+    assert response_data["name"] == "Test import"
+    assert response_data["slug"] == "{}-test-import".format(user.username)
 
 def test_dump_import_throttling(client, settings):
     settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["import-dump-mode"] = "1/minute"
@@ -794,6 +797,6 @@ def test_dump_import_throttling(client, settings):
     data.name = "test"
 
     response = client.post(url, {'dump': data})
-    assert response.status_code == 204
+    assert response.status_code == 201
     response = client.post(url, {'dump': data})
     assert response.status_code == 429
