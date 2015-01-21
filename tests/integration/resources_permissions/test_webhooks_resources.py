@@ -137,6 +137,7 @@ def test_webhook_create(client, data):
     ]
 
     create_data = json.dumps({
+        "name": "Test",
         "url": "http://test.com",
         "key": "test",
         "project": data.project1.pk,
@@ -145,6 +146,7 @@ def test_webhook_create(client, data):
     assert results == [401, 403, 201]
 
     create_data = json.dumps({
+        "name": "Test",
         "url": "http://test.com",
         "key": "test",
         "project": data.project2.pk,
