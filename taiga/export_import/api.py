@@ -66,7 +66,7 @@ class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet)
         if settings.CELERY_ENABLED:
             task = tasks.dump_project.delay(request.user, project)
             tasks.delete_project_dump.apply_async((project.pk, project.slug), countdown=settings.EXPORTS_TTL)
-            return Response({"export-id": task.id}, status=status.HTTP_202_ACCEPTED)
+            return Response({"export_id": task.id}, status=status.HTTP_202_ACCEPTED)
 
         path = "exports/{}/{}-{}.json".format(project.pk, project.slug, uuid.uuid4().hex)
         content = ContentFile(ExportRenderer().render(service.project_to_dict(project),
@@ -181,7 +181,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         if settings.CELERY_ENABLED:
             task = tasks.load_project_dump.delay(request.user, dump)
-            return Response({"import-id": task.id}, status=status.HTTP_202_ACCEPTED)
+            return Response({"import_id": task.id}, status=status.HTTP_202_ACCEPTED)
 
         project = dump_service.dict_to_project(dump, request.user.email)
         response_data = ProjectSerializer(project).data
