@@ -758,7 +758,7 @@ def test_valid_dump_import_with_celery_enabled(client, settings):
     response = client.post(url, {'dump': data})
     assert response.status_code == 202
     response_data = json.loads(response.content.decode("utf-8"))
-    assert "import-id" in response_data
+    assert "import_id" in response_data
 
 def test_dump_import_duplicated_project(client):
     user = f.UserFactory.create()
