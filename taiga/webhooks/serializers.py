@@ -34,8 +34,13 @@ class HistoryDiffField(serializers.Field):
 
 
 class WebhookSerializer(serializers.ModelSerializer):
+    logs_counter = serializers.SerializerMethodField("get_logs_counter")
     class Meta:
         model = Webhook
+
+    def get_logs_counter(self, obj):
+        return obj.logs.count()
+
 
 class WebhookLogSerializer(serializers.ModelSerializer):
     request_data = JsonField()

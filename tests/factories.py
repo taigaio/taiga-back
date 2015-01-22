@@ -205,6 +205,7 @@ class WebhookFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
     url = "http://localhost:8080/test"
     key = "factory-key"
+    name = "Factory-name"
 
 
 class WebhookLogFactory(Factory):

@@ -62,17 +62,29 @@ def _send_request(webhook_id, url, key, data):
     signature = _generate_signature(serialized_data, key)
     headers = {
         "X-TAIGA-WEBHOOK-SIGNATURE": signature,
+        "Content-Type": "application/json"
     }
+    request = requests.Request('POST', url, data=serialized_data, headers=headers)
+    prepared_request = request.prepare()
+
+    session = requests.Session()
     try:
-        response = requests.post(url, data=serialized_data, headers=headers)
+        response = session.send(prepared_request)
         WebhookLog.objects.create(webhook_id=webhook_id, url=url,
                                   status=response.status_code,
                                   request_data=data,
-                                  response_data=response.content)
-    except RequestException:
+                                  request_headers=dict(prepared_request.headers),
+                                  response_data=response.content,
+                                  response_headers=dict(response.headers),
+                                  duration=response.elapsed.total_seconds())
+    except RequestException as e:
         WebhookLog.objects.create(webhook_id=webhook_id, url=url, status=0,
                                   request_data=data,
-                                  response_data="error-in-request")
+                                  request_headers=dict(prepared_request.headers),
+                                  response_data="error-in-request: {}".format(str(e)),
+                                  response_headers={},
+                                  duration=0)
+    session.close()
 
     ids = [webhook_log.id for webhook_log in WebhookLog.objects.filter(webhook_id=webhook_id).order_by("-id")[10:]]
     WebhookLog.objects.filter(id__in=ids).delete()
