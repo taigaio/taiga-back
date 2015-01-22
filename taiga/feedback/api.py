@@ -46,6 +46,6 @@ class FeedbackViewSet(viewsets.ViewSet):
             "HTTP_REFERER": request.META.get("HTTP_REFERER", None),
             "HTTP_USER_AGENT": request.META.get("HTTP_USER_AGENT", None),
         }
-        services.send_feedback(self.object, extra)
+        services.send_feedback(self.object, extra, reply_to=[request.user.email])
 
         return response.Ok(serializer.data)
