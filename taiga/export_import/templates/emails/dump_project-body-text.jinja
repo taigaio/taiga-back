@@ -1,7 +1,7 @@
 {% trans user=user.get_full_name()|safe,
          project=project.name|safe,
          url=url,
-         deletion_date=deletion_date|date("d/M/Y H:i") %}
+         deletion_date=deletion_date|date("SHORT_DATETIME_FORMAT") + deletion_date|date(" T") %}
 Hello {{ user }},
 
 Your dump from project {{ project }} has been correctly generated. You can download it here:

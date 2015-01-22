@@ -4,7 +4,7 @@
     {% trans user=user.get_full_name()|safe,
              project=project.name|safe,
              url=url,
-             deletion_date=deletion_date|date("d/M/Y H:i") %}
+             deletion_date=deletion_date|date("SHORT_DATETIME_FORMAT") + deletion_date|date(" T") %}
     <h1>Project dump generated</h1>
     <p>Hello {{ user }},</p>
     <h3>Your dump from project {{ project }} has been correctly generated.</h3>
