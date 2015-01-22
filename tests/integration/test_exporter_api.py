@@ -64,7 +64,7 @@ def test_valid_project_export_with_celery_enabled(client, settings):
     response = client.get(url, content_type="application/json")
     assert response.status_code == 202
     response_data = json.loads(response.content.decode("utf-8"))
-    assert "export-id" in response_data
+    assert "export_id" in response_data
 
 
 def test_valid_project_with_throttling(client, settings):
