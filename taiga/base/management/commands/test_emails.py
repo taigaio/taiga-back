@@ -94,6 +94,11 @@ class Command(BaseCommand):
         }
         email = mbuilder.export_error(test_email, context)
         email.send()
+        context = {
+            "user": User.objects.all().order_by("?").first(),
+            "error_subject": "Error importing project dump",
+            "error_message": "Error importing project dump",
+        }
         email = mbuilder.import_error(test_email, context)
         email.send()
 

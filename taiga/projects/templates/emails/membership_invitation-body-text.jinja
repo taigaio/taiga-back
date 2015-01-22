@@ -1,4 +1,9 @@
-{% trans full_name=membership.invited_by.get_full_name(),
+{% if membership.invited_by %}
+    {% set sender_full_name=membership.invited_by.get_full_name() %}
+{% else %}
+    {% set sender_full_name=_("someone") %}
+{% endif %}
+{% trans full_name=sender_full_name,
          project=membership.project %}
 You, or someone you know, has invited you to Taiga
 
