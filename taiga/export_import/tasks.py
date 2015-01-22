@@ -58,7 +58,7 @@ def dump_project(self, user, project):
         "url": url,
         "project": project,
         "user": user,
-        "deletion_date": deletion_datei
+        "deletion_date": deletion_date
     }
     email = mbuilder.dump_project(user.email, ctx)
     email.send()
