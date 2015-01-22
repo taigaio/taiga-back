@@ -44,6 +44,8 @@ class WebhookSerializer(serializers.ModelSerializer):
 
 class WebhookLogSerializer(serializers.ModelSerializer):
     request_data = JsonField()
+    request_headers = JsonField()
+    response_headers = JsonField()
 
     class Meta:
         model = WebhookLog
