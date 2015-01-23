@@ -70,24 +70,25 @@ def _send_request(webhook_id, url, key, data):
     session = requests.Session()
     try:
         response = session.send(prepared_request)
-        WebhookLog.objects.create(webhook_id=webhook_id, url=url,
-                                  status=response.status_code,
-                                  request_data=data,
-                                  request_headers=dict(prepared_request.headers),
-                                  response_data=response.content,
-                                  response_headers=dict(response.headers),
-                                  duration=response.elapsed.total_seconds())
+        webhook_log = WebhookLog.objects.create(webhook_id=webhook_id, url=url,
+                                                status=response.status_code,
+                                                request_data=data,
+                                                request_headers=dict(prepared_request.headers),
+                                                response_data=response.content,
+                                                response_headers=dict(response.headers),
+                                                duration=response.elapsed.total_seconds())
     except RequestException as e:
-        WebhookLog.objects.create(webhook_id=webhook_id, url=url, status=0,
-                                  request_data=data,
-                                  request_headers=dict(prepared_request.headers),
-                                  response_data="error-in-request: {}".format(str(e)),
-                                  response_headers={},
-                                  duration=0)
+        webhook_log = WebhookLog.objects.create(webhook_id=webhook_id, url=url, status=0,
+                                                request_data=data,
+                                                request_headers=dict(prepared_request.headers),
+                                                response_data="error-in-request: {}".format(str(e)),
+                                                response_headers={},
+                                                duration=0)
     session.close()
 
     ids = [webhook_log.id for webhook_log in WebhookLog.objects.filter(webhook_id=webhook_id).order_by("-id")[10:]]
     WebhookLog.objects.filter(id__in=ids).delete()
+    return webhook_log
 
 
 @app.task
@@ -98,7 +99,7 @@ def change_webhook(webhook_id, url, key, obj, change):
     data['type'] = _get_type(obj)
     data['change'] = _serialize(change)
 
-    _send_request(webhook_id, url, key, data)
+    return _send_request(webhook_id, url, key, data)
 
 
 @app.task
@@ -108,7 +109,7 @@ def create_webhook(webhook_id, url, key, obj):
     data['action'] = "create"
     data['type'] = _get_type(obj)
 
-    _send_request(webhook_id, url, key, data)
+    return _send_request(webhook_id, url, key, data)
 
 
 @app.task
@@ -118,12 +119,12 @@ def delete_webhook(webhook_id, url, key, obj):
     data['action'] = "delete"
     data['type'] = _get_type(obj)
 
-    _send_request(webhook_id, url, key, data)
+    return _send_request(webhook_id, url, key, data)
 
 
 @app.task
 def resend_webhook(webhook_id, url, key, data):
-    _send_request(webhook_id, url, key, data)
+    return _send_request(webhook_id, url, key, data)
 
 
 @app.task
@@ -133,5 +134,5 @@ def test_webhook(webhook_id, url, key):
     data['action'] = "test"
     data['type'] = "test"
 
-    _send_request(webhook_id, url, key, data)
+    return _send_request(webhook_id, url, key, data)
 

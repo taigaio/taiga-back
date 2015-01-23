@@ -42,9 +42,10 @@ class WebhookViewSet(ModelCrudViewSet):
         webhook = self.get_object()
         self.check_permissions(request, 'test', webhook)
 
-        tasks.test_webhook(webhook.id, webhook.url, webhook.key)
+        webhooklog = tasks.test_webhook(webhook.id, webhook.url, webhook.key)
+        log = serializers.WebhookLogSerializer(webhooklog)
 
-        return Response()
+        return Response(log.data)
 
 class WebhookLogViewSet(ModelListViewSet):
     model = models.WebhookLog
@@ -60,6 +61,7 @@ class WebhookLogViewSet(ModelListViewSet):
 
         webhook = webhooklog.webhook
 
-        tasks.resend_webhook(webhook.id, webhook.url, webhook.key, webhooklog.request_data)
+        webhooklog = tasks.resend_webhook(webhook.id, webhook.url, webhook.key, webhooklog.request_data)
+        log = serializers.WebhookLogSerializer(webhooklog)
 
-        return Response()
+        return Response(log.data)
