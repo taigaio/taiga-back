@@ -1,3 +1,12 @@
+{% trans user=user.get_full_name()|safe,
+         changer=changer.get_full_name()|safe,
+         project=project.name|safe,
+         ref=snapshot.ref,
+         subject=snapshot.subject|safe %}
 Task deleted
-Hello {{ user.get_full_name() }}, {{ changer.get_full_name() }} has deleted a task on {{ project.name }}
-Task #{{ snapshot.ref }} {{ snapshot.subject }}
+Hello {{ user }}, {{ changer }} has deleted a task on {{ project }}
+Task #{{ ref }} {{ subject }}
+
+---
+The Taiga Team
+{% endtrans %}

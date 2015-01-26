@@ -1,7 +1,14 @@
-Hello {{ user.get_full_name() }},
+{% trans user=user.get_full_name()|safe,
+         url=resolve_front_url("project", project.slug),
+         project=project.name|safe %}
+Hello {{ user }},
 
-Your project dump has been correctly imported. You can see the project here:
+Your project dump has been correctly imported.
 
-{{ resolve_front_url('project', project.slug) }}
+You can see the project {{ project }} here:
 
+{{ url }}
+
+---
 The Taiga Team
+{% endtrans %}

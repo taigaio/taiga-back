@@ -1,23 +1,12 @@
-{% extends "emails/hero.jinja" %}
-
-{% set final_url = resolve_front_url("project", membership.project.slug) %}
-{% set final_url_name = "Taiga - Project '{0}'.".format(membership.project) %}
+{% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
+    {% trans url=resolve_front_url("project", membership.project.slug),
+             full_name=membership.user.get_full_name(),
+             project=membership.project %}
     <h1>You have been added to a project</h1>
-    <p>Hello {{ membership.user.get_full_name() }},<br />you have been added to the project {{ membership.project }}</p>
-    <a class="button" href="{{ final_url }}" title="{{ membership.project }}">Go to project</a>
+    <p>Hello {{ full_name }},<br />you have been added to the project {{ project }}</p>
+    <a class="button" href="{{ url }}" title="Go to{{ project }}">Go to project</a>
     <p><small>The Taiga Team</small></p>
-{% endblock %}
-
-{% block footer %}
-    <em>Copyright © 2014 Taiga Agile, LLC, All rights reserved.</em>
-    <br>
-    <strong>Contact us:</strong>
-    <br>
-    <strong>Support:</strong>
-    <a href="mailto:support@taiga.io" title="Taiga Support">support@taiga.io</a>
-    <br>
-    <strong>Our mailing address is:</strong>
-    <a href="https://groups.google.com/forum/#!forum/taigaio" title="Taiga mailing list">https://groups.google.com/forum/#!forum/taigaio</a>
+    {% endtrans %}
 {% endblock %}

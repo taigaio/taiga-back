@@ -1,1 +1,5 @@
-[{{ project.name|safe }}] Created the issue #{{ snapshot.ref|safe }} "{{ snapshot.subject|safe }}"
+{% trans project=project.name|safe,
+         ref=snapshot.ref,
+         subject=snapshot.subject|safe %}
+[{{ project }}] Created the issue #{{ ref }} "{{ subject }}"
+{% endtrans %}

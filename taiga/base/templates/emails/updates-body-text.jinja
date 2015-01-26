@@ -1,0 +1,15 @@
+{% block head %}{% endblock %}
+
+{% block body %}
+{% for entry in history_entries %}
+    {% if entry.comment %}
+        {% trans comment=entry.comment %}
+    Comment: {{ comment }}
+        {% endtrans %}
+    {% endif %}
+    {% set changed_fields = entry.values_diff %}
+    {% if changed_fields %}
+        {% include "emails/includes/fields_diff-text.jinja" %}
+    {% endif %}
+{% endfor %}
+{% endblock %}

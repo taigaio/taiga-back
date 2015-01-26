@@ -47,8 +47,9 @@ def dump_project(self, user, project):
             "user": user,
             "error_subject": "Error generating project dump",
             "error_message": "Error generating project dump",
+            "project": project
         }
-        email = mbuilder.export_import_error(user.email, ctx)
+        email = mbuilder.export_error(user.email, ctx)
         email.send()
         return
 
@@ -76,16 +77,15 @@ def load_project_dump(user, dump):
     try:
         project = dict_to_project(dump, user.email)
     except Exception:
-        email = mbuilder.export_import_error(
-            user.email,
-            {
-                "user": user,
-                "error_subject": "Error loading project dump",
-                "error_message": "Error loading project dump",
-            }
-        )
+        ctx = {
+            "user": user,
+            "error_subject": "Error loading project dump",
+            "error_message": "Error loading project dump",
+        }
+        email = mbuilder.import_error(user.email, ctx)
         email.send()
         return
 
-    email = mbuilder.load_dump(user.email, {"user": user, "project": project})
+    ctx = {"user": user, "project": project}
+    email = mbuilder.load_dump(user.email, ctx)
     email.send()

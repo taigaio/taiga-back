@@ -1,4 +1,12 @@
-User story deleted
-Hello {{ user.get_full_name() }}, {{ changer.get_full_name() }} hasdeleted a user story on {{ project.name }}
-User story #{{ snapshot.ref }} {{ snapshot.subject }}
+{% trans user=user.get_full_name()|safe,
+         changer=changer.get_full_name()|safe,
+         project=project.name|safe,
+         ref=snapshot.ref,
+         subject=snapshot.subject|safe %}
+User Story deleted
+Hello {{ user }}, {{ changer }} has deleted a user story on {{ project }}
+User Story #{{ ref }} {{ subject }}
+
+---
 The Taiga Team
+{% endtrans %}

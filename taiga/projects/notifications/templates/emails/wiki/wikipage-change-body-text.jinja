@@ -1,16 +1,14 @@
-{% set final_url = resolve_front_url("wiki", project.slug, snapshot.slug) %}
-{% set final_url_name = "Taiga - View Wiki Page '{0}'".format(snapshot.slug) %}
+{% extends "emails/updates-body-text.jinja" %}
+{% block head %}
+{% trans user=user.get_full_name()|safe,
+         changer=changer.get_full_name()|safe,
+         project=project.name|safe,
+         page=snapshot.slug,
+         url=resolve_front_url("wiki", project.slug, snapshot.slug) %}
+Wiki Page updated
 
-Wiki Page {{ snapshot.slug }} updated
-Hello {{ user.get_full_name() }}, {{ changer.get_full_name() }} has updated a wiki page on {{ project.name }}
-See wiki page in Taiga {{ final_url_name }} ({{ final_url }})
+Hello {{ user }}, {{ changer }} has updated a wiki page on {{ project }}
 
-{% for entry in history_entries%}
-    {% if entry.comment %}
-    Comment: {{ entry.comment|linebreaksbr }}
-    {% endif %}
-    {% set changed_fields = entry.values_diff %}
-    {% if changed_fields %}
-        {% include "emails/includes/fields_diff-text.jinja" %}
-    {% endif %}
-{% endfor %}
+See wiki page {{ page }} at {{ url }}
+{% endtrans %}
+{% endblock %}

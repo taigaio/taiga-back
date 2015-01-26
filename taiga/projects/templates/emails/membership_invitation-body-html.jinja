@@ -1,28 +1,27 @@
-{% extends "emails/hero.jinja" %}
+{% extends "emails/hero-body-html.jinja" %}
 
-{% set final_url = resolve_front_url("invitation", membership.token) %}
-{% set final_url_name = "Taiga - Invitation to join on {0} project.".format(membership.project) %}
+{% if membership.invited_by %}
+    {% set sender_full_name=membership.invited_by.get_full_name() %}
+{% else %}
+    {% set sender_full_name=_("someone") %}
+{% endif %}
+
 
 {% block body %}
-<h2>You, or someone you know, has invited you to Taiga</h2>
-<p>The Taiga.io Deputy System Admin is commanded by His Highness The Chief Lord Oompa Loompa to extend a membership invitation to </br> {{ membership.email}} </br> and delights in the pleasure of welcoming you to join <b>{{ membership.invited_by.full_name }}</b> and others in the team as a new and right honorable member in good standing of the project titled: <b>'{{ membership.project }}'</b>.</p>
-<small>You may indicate your humble desire to accept this invitation by gently clicking here</small>
-<a class="button" href="{{ final_url }}" title="Accept your invitation to Taiga">Accept your invitation</a>
-{% if membership.invitation_extra_text %}
-<h3>And now some words from the jolly good fellow or sistren who thought so kindly as to invite you:</h3>
-<p>{{ membership.invitation_extra_text }}</p>
-{% endif %}
-<p><small>Dress: Morning Suit, Uniform, Lounge Suit, Birthday Suit or hoodie.</small></p>
-{% endblock %}
+    {% trans full_name=sender_full_name,
+             project=membership.project %}
+    <h2>You have been invited to Taiga!</h2>
+<p>Hi! {{ full_name }} has sent you an invitation to join project <em>{{ project }}</em> in Taiga.</br> Taiga is a Free, open Source Agile Project Management Tool.</p>
+    {% endtrans %}
 
-{% block footer %}
-<em>Copyright © 2014 Taiga Agile, LLC, All rights reserved.</em>
-<br>
-<strong>Contact us:</strong>
-<br>
-<strong>Support:</strong>
-<a href="mailto:support@taiga.io" title="Taiga Support">support@taiga.io</a>
-<br>
-<strong>Our mailing address is:</strong>
-<a href="https://groups.google.com/forum/#!forum/taigaio" title="Taiga mailing list">https://groups.google.com/forum/#!forum/taigaio</a>
+    {% if membership.invitation_extra_text %}
+        {% trans extra=membership.invitation_extra_text|linebreaksbr %}
+    <p><small>And now a few words from the jolly good fellow or sistren<br/> who thought so kindly as to invite you</small></p>
+    <p><strong>{{ extra }}</strong></p>
+        {% endtrans %}
+    {% endif %}
+
+    <a class="button" href="{{ resolve_front_url("invitation", membership.token) }}"
+       title="{{ _("Accept your invitation to Taiga") }}">{{ _("Accept your invitation") }}</a>
+    <p><small>{{ _("The Taiga Team") }}</small></p>
 {% endblock %}
