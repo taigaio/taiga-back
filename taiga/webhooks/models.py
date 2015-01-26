@@ -28,6 +28,9 @@ class Webhook(models.Model):
     url = models.URLField(null=False, blank=False, verbose_name=_("URL"))
     key = models.TextField(null=False, blank=False, verbose_name=_("secret key"))
 
+    class Meta:
+        ordering = ['name', '-id']
+
 
 class WebhookLog(models.Model):
     webhook = models.ForeignKey(Webhook, null=False, blank=False,
@@ -40,3 +43,6 @@ class WebhookLog(models.Model):
     response_headers = JsonField(null=False, blank=False, verbose_name=_("Response headers"), default={})
     duration = models.FloatField(null=False, blank=False, verbose_name=_("Duration"), default=0)
     created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created', '-id']
