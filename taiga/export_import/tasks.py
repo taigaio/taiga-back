@@ -21,7 +21,7 @@ from django.core.files.base import ContentFile
 from django.utils import timezone
 from django.conf import settings
 
-from djmail.template_mail import MagicMailBuilder
+from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
 
 from taiga.celery import app
 
@@ -32,7 +32,7 @@ from .renderers import ExportRenderer
 
 @app.task(bind=True)
 def dump_project(self, user, project):
-    mbuilder = MagicMailBuilder()
+    mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
     path = "exports/{}/{}-{}.json".format(project.pk, project.slug, self.request.id)
 
     try:
@@ -72,7 +72,7 @@ def delete_project_dump(project_id, project_slug, task_id):
 
 @app.task
 def load_project_dump(user, dump):
-    mbuilder = MagicMailBuilder()
+    mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
 
     try:
         project = dict_to_project(dump, user.email)
