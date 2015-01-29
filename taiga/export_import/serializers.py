@@ -59,7 +59,55 @@ class AttachedFileField(serializers.WritableField):
         return ContentFile(base64.b64decode(data['data']), name=data['name'])
 
 
-class UserRelatedField(serializers.RelatedField):
+class RelatedNoneSafeField(serializers.RelatedField):
+    def field_from_native(self, data, files, field_name, into):
+        if self.read_only:
+            return
+
+        try:
+            if self.many:
+                try:
+                    # Form data
+                    value = data.getlist(field_name)
+                    if value == [''] or value == []:
+                        raise KeyError
+                except AttributeError:
+                    # Non-form data
+                    value = data[field_name]
+            else:
+                value = data[field_name]
+        except KeyError:
+            if self.partial:
+                return
+            value = self.get_default_value()
+
+        if value in self.null_values:
+            if self.required:
+                raise ValidationError(self.error_messages['required'])
+            into[(self.source or field_name)] = None
+        elif self.many:
+            into[(self.source or field_name)] = [self.from_native(item) for item in value if self.from_native(item) is not None]
+        else:
+            into[(self.source or field_name)] = self.from_native(value)
+
+
+
+class IssueRefField(RelatedNoneSafeField):
+    read_only = False
+
+    def to_native(self, obj):
+        if obj:
+            return obj.ref
+        return None
+
+    def from_native(self, data):
+        try:
+            return issues_models.Issue.objects.get(ref=data)
+        except issues_models.Issue.DoesNotExist:
+            return None
+
+
+class UserRelatedField(RelatedNoneSafeField):
     read_only = False
 
     def to_native(self, obj):
@@ -188,6 +236,7 @@ class HistoryExportSerializer(serializers.ModelSerializer):
     snapshot = JsonField(required=False)
     values = HistoryValuesField(required=False)
     comment = CommentField(required=False)
+    delete_comment_date = serializers.DateTimeField(required=False)
     delete_comment_user = HistoryUserField(required=False)
 
     class Meta:
@@ -342,6 +391,7 @@ class UserStoryExportSerializer(HistoryExportSerializerMixin, AttachmentExportSe
     milestone = ProjectRelatedField(slug_field="name", required=False)
     watchers = UserRelatedField(many=True, required=False)
     modified_date = serializers.DateTimeField(required=False)
+    generated_from_issue = IssueRefField(required=False)
 
     class Meta:
         model = userstories_models.UserStory
