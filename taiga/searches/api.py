@@ -20,6 +20,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 
 from taiga.base import exceptions as excp
+from taiga.base.api.utils import get_object_or_404
 from taiga.projects.userstories.serializers import UserStorySerializer
 from taiga.projects.tasks.serializers import TaskSerializer
 from taiga.projects.issues.serializers import IssueSerializer
@@ -31,15 +32,10 @@ from . import services
 
 class SearchViewSet(viewsets.ViewSet):
     def list(self, request, **kwargs):
-        project_model = apps.get_model("projects", "Project")
-
         text = request.QUERY_PARAMS.get('text', "")
         project_id = request.QUERY_PARAMS.get('project', None)
 
-        try:
-            project = self._get_project(project_id)
-        except (project_model.DoesNotExist, TypeError):
-            raise excp.PermissionDenied({"detail": "Wrong project id"})
+        project = self._get_project(project_id)
 
         result = {}
         if user_has_perm(request.user, "view_us", project):
@@ -56,7 +52,7 @@ class SearchViewSet(viewsets.ViewSet):
 
     def _get_project(self, project_id):
         project_model = apps.get_model("projects", "Project")
-        return project_model.objects.get(pk=project_id)
+        return get_object_or_404(project_model, pk=project_id)
 
     def _search_user_stories(self, project, text):
         queryset = services.search_user_stories(project, text)
