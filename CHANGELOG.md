@@ -1,6 +1,6 @@
 # Changelog #
 
-## 1.5.0 Betula Pendula - FOSDEM 2015 (unreleased)
+## 1.5.0 Betula Pendula - FOSDEM 2015 (2015-01-29)
 
 ### Features
 - Improving SQL queries and performance.
