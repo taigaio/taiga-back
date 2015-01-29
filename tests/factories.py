@@ -197,6 +197,29 @@ class InvitationFactory(Factory):
     email = factory.Sequence(lambda n: "user{}@email.com".format(n))
 
 
+class WebhookFactory(Factory):
+    class Meta:
+        model = "webhooks.Webhook"
+        strategy = factory.CREATE_STRATEGY
+
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    url = "http://localhost:8080/test"
+    key = "factory-key"
+    name = "Factory-name"
+
+
+class WebhookLogFactory(Factory):
+    class Meta:
+        model = "webhooks.WebhookLog"
+        strategy = factory.CREATE_STRATEGY
+
+    webhook = factory.SubFactory("tests.factories.WebhookFactory")
+    url = "http://localhost:8080/test"
+    status = "200"
+    request_data = "test-request"
+    response_data = "test-response"
+
+
 class StorageEntryFactory(Factory):
     class Meta:
         model = "userstorage.StorageEntry"
@@ -280,6 +303,7 @@ class TaskFactory(Factory):
     status = factory.SubFactory("tests.factories.TaskStatusFactory")
     milestone = factory.SubFactory("tests.factories.MilestoneFactory")
     user_story = factory.SubFactory("tests.factories.UserStoryFactory")
+    tags = []
 
 
 class WikiPageFactory(Factory):

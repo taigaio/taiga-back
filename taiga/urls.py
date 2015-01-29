@@ -20,9 +20,11 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 
 from .routers import router
+from .contrib_routers import router as contrib_router
 
 urlpatterns = [
     url(r'^api/v1/', include(router.urls)),
+    url(r'^api/v1/', include(contrib_router.urls)),
     url(r'^api/v1/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', include(admin.site.urls)),
 ]

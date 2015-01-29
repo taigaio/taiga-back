@@ -33,7 +33,7 @@ LANGUAGES = (
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "transaction_hooks.backends.postgresql_psycopg2",
         "NAME": "taiga",
     }
 }
@@ -197,12 +197,16 @@ INSTALLED_APPS = [
     "taiga.hooks.github",
     "taiga.hooks.gitlab",
     "taiga.hooks.bitbucket",
+    "taiga.webhooks",
 
     "rest_framework",
     "djmail",
     "django_jinja",
+    "django_jinja.contrib._humanize",
+    "sr",
     "easy_thumbnails",
     "raven.contrib.django.raven_compat",
+    "django_transactional_cleanup",
 ]
 
 WSGI_APPLICATION = "taiga.wsgi.application"
@@ -300,7 +304,8 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "anon": None,
         "user": None,
-        "import-mode": None
+        "import-mode": None,
+        "import-dump-mode": "1/minute",
     },
     "FILTER_BACKEND": "taiga.base.filters.FilterBackend",
     "EXCEPTION_HANDLER": "taiga.base.exceptions.exception_handler",
@@ -361,6 +366,13 @@ PROJECT_MODULES_CONFIGURATORS = {
 
 BITBUCKET_VALID_ORIGIN_IPS = ["131.103.20.165", "131.103.20.166"]
 GITLAB_VALID_ORIGIN_IPS = []
+
+EXPORTS_TTL = 60 * 60 * 24  # 24 hours
+CELERY_ENABLED = False
+WEBHOOKS_ENABLED = False
+
+from .sr import *
+
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"

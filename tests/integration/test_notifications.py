@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
 import pytest
 import time
 from unittest.mock import MagicMock, patch
@@ -24,6 +23,7 @@ from django.core.urlresolvers import reverse
 from django.apps import apps
 from .. import factories as f
 
+from taiga.base.utils import json
 from taiga.projects.notifications import services
 from taiga.projects.notifications import models
 from taiga.projects.notifications.choices import NotifyLevel

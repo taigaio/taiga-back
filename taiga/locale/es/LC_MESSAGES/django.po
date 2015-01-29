@@ -1,16 +1,19 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# SPANISH LANGUAGE PACKAGE FOR TAIGA IO.
+# Copyright (C) 2014
+# This file is distributed under the same license as the taiga io package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#. Spanish Translators: please, consider don't use informal expressions
+#. Traductores al español, por favor, es necesario considerar el uso
+#. de la 3era persona en lugar del "tú"
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-09 22:06+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2014-12-19 19:48-0430\n"
+"Last-Translator: Hector Colina <hcolina@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -28,7 +31,7 @@ msgstr "No encontrado."
 
 #: base/exceptions.py:36 base/exceptions.py:44
 msgid "Wrong arguments."
-msgstr "Argumentos erroneos."
+msgstr "Argumentos erróneos."
 
 #: base/exceptions.py:59
 msgid "Precondition error"
@@ -48,23 +51,23 @@ msgstr "Permiso denegado"
 
 #: base/auth/api.py:52
 msgid "Public register is disabled for this domain."
-msgstr "El registro publico está deshabilitado para este dominio."
+msgstr "El registro público está deshabilitado para este dominio."
 
 #: base/auth/api.py:91
 msgid "Invalid token"
-msgstr "Token invalido"
+msgstr "Token inválido"
 
 #: base/auth/api.py:100
 msgid "Incorrect password"
-msgstr "Password incorrecto"
+msgstr "Contraseña incorrecta"
 
 #: base/auth/api.py:133
 msgid "invalid register type"
-msgstr "tipo de registro no valido"
+msgstr "tipo de registro no válido"
 
 #: base/auth/api.py:142 base/auth/api.py:145
 msgid "Invalid username or password"
-msgstr "usuario o contraseña invalidos"
+msgstr "usuario o contraseña inválidos"
 
 #: base/domains/__init__.py:54
 msgid "domain not found"
@@ -72,7 +75,7 @@ msgstr "dominio no encontrado"
 
 #: base/domains/models.py:24
 msgid "The domain name cannot contain any spaces or tabs."
-msgstr "El nombre de dominio no puede tener espacios o tabs."
+msgstr "El nombre de dominio no puede tener espacios o tabuladores."
 
 #: base/domains/models.py:30
 msgid "domain name"
@@ -100,15 +103,15 @@ msgstr "Todos los eventos en mis proyectos"
 
 #: base/notifications/models.py:13
 msgid "Only events for objects i watch"
-msgstr "Solo eventos para objetos que observo"
+msgstr "Sólo eventos para objetos a los cuales les hago seguimiento"
 
 #: base/notifications/models.py:14
 msgid "Only events for objects assigned to me"
-msgstr "Solo eventos para objetos asignados a mi"
+msgstr "Sólo eventos para objetos que me han sido asignados"
 
 #: base/notifications/models.py:15
 msgid "Only events for objects owned by me"
-msgstr "Solo eventos para mis objetos"
+msgstr "Sólo eventos para mis objetos"
 
 #: base/notifications/models.py:16
 msgid "No events"
@@ -144,11 +147,11 @@ msgstr "fechas importantes"
 
 #: base/users/api.py:45 base/users/api.py:52
 msgid "Invalid username or email"
-msgstr "usuario o email invalido"
+msgstr "usuario o correos inválidos"
 
 #: base/users/api.py:61
 msgid "Mail sended successful!"
-msgstr "¡Mail enviado correctamente!"
+msgstr "¡Correo enviado correctamente!"
 
 #: base/users/api.py:70
 msgid "Token is invalid"
@@ -160,7 +163,7 @@ msgstr "Argumentos incompletos"
 
 #: base/users/api.py:90
 msgid "Invalid password length"
-msgstr "longitud del password no válida"
+msgstr "longitud de la contraseña no válida"
 
 #: base/users/models.py:13 projects/models.py:281 projects/models.py:331
 #: projects/models.py:356 projects/models.py:379 projects/models.py:404
@@ -176,7 +179,7 @@ msgstr "descripción"
 
 #: base/users/models.py:17
 msgid "photo"
-msgstr "foto"
+msgstr "fotografía"
 
 #: base/users/models.py:21
 msgid "default timezone"
@@ -216,11 +219,11 @@ msgstr "orden"
 
 #: base/users/serializers.py:33
 msgid "invalid token"
-msgstr "token invalido"
+msgstr "token inválido"
 
 #: projects/api.py:89
 msgid "Email address is already taken."
-msgstr ""
+msgstr "Dirección de correo ya utilizada"
 
 #: projects/choices.py:7
 msgid "Open"
@@ -273,7 +276,7 @@ msgstr "Importante"
 
 #: projects/choices.py:45
 msgid "Critical"
-msgstr "Critica"
+msgstr "Crítica"
 
 #: projects/choices.py:54
 msgid "Rejected"
@@ -357,19 +360,19 @@ msgstr "miembros"
 
 #: projects/models.py:105
 msgid "public"
-msgstr "publico"
+msgstr "público"
 
 #: projects/models.py:107
 msgid "last us ref"
-msgstr "ultima referencia de US"
+msgstr "última referencia de US"
 
 #: projects/models.py:109
 msgid "last task ref"
-msgstr "ultima referencia de tarea"
+msgstr "última referencia de tarea"
 
 #: projects/models.py:111
 msgid "last issue ref"
-msgstr "ultima referencia de issue"
+msgstr "última referencia de issue"
 
 #: projects/models.py:113
 msgid "total of milestones"
@@ -418,7 +421,7 @@ msgstr "valor"
 
 #: projects/documents/models.py:15
 msgid "title"
-msgstr "titulo"
+msgstr "título"
 
 #: projects/documents/models.py:30
 msgid "attached_file"
@@ -428,11 +431,11 @@ msgstr "fichero_adjunto"
 #: projects/issues/api.py:88 projects/issues/api.py:91
 #: projects/issues/api.py:94 projects/issues/api.py:97
 msgid "You don't have permissions for add/modify this issue."
-msgstr "Tu no tienes permisos para crear/modificar esta peticion."
+msgstr "No tienes permisos para crear/modificar esta petición."
 
 #: projects/issues/api.py:131
 msgid "You don't have permissions for add attachments to this issue"
-msgstr "Tu no tienes permisos para añadir ficheros adjuntos a esta peticion"
+msgstr "No tienes permisos para añadir ficheros adjuntos a esta petición"
 
 #: projects/issues/models.py:20 projects/questions/models.py:20
 #: projects/tasks/models.py:22 projects/userstories/models.py:42
@@ -487,7 +490,7 @@ msgstr "Sin asignar"
 
 #: projects/milestones/api.py:37
 msgid "You must not add a new milestone to this project."
-msgstr "Tu no debes añadir un nuevo sprint a este proyecto."
+msgstr "No debes añadir un nuevo sprint a este proyecto."
 
 #: projects/milestones/models.py:28
 msgid "estimated start"
@@ -511,12 +514,12 @@ msgstr "assignada_a"
 
 #: projects/tasks/api.py:47
 msgid "You don't have permissions for add attachments to this task."
-msgstr "Tu no tienes permisos para añadir ficheros adjuntos a esta tarea."
+msgstr "No tienes permisos para añadir ficheros adjuntos a esta tarea."
 
 #: projects/tasks/api.py:74 projects/tasks/api.py:77 projects/tasks/api.py:80
 #: projects/tasks/api.py:83
 msgid "You don't have permissions for add/modify this task."
-msgstr "Tu no tienes permisos para añadir/modificar esta tarea."
+msgstr "No tienes permisos para añadir/modificar esta tarea."
 
 #: projects/tasks/models.py:20 projects/userstories/models.py:20
 msgid "user story"
@@ -529,29 +532,29 @@ msgstr "es iocaina"
 #: projects/userstories/api.py:55
 msgid "You don't have permissions for add attachments to this user story"
 msgstr ""
-"Tu no tienes permisos para añadir ficheros adjuntos a esta historia de "
+"No tienes permisos para añadir ficheros adjuntos a esta historia de "
 "usuario."
 
 #: projects/userstories/api.py:75 projects/userstories/api.py:99
 msgid "bulkStories parameter is mandatory"
-msgstr ""
+msgstr "El parámetro bulkStories es obligatorio"
 
 #: projects/userstories/api.py:79
 msgid "projectId parameter is mandatory"
-msgstr ""
+msgstr "El parámetro projectID es obligatorio"
 
 #: projects/userstories/api.py:84 projects/userstories/api.py:108
 msgid "You don't have permisions to create user stories."
-msgstr "Tu no tienes permisos para crear historias de usuario."
+msgstr "No tienes permisos para crear historias de usuario."
 
 #: projects/userstories/api.py:103
 msgid "projectId parameter ir mandatory"
-msgstr ""
+msgstr "El parámetro projectID es obligatorio"
 
 #: projects/userstories/api.py:126 projects/userstories/api.py:129
 #: projects/userstories/api.py:132
 msgid "You don't have permissions for add/modify this user story"
-msgstr "Tu no tienes permisos para crear o modificar esta historia de usuario."
+msgstr "No tienes permisos para crear o modificar esta historia de usuario."
 
 #: projects/userstories/models.py:23
 msgid "role"
@@ -576,15 +579,15 @@ msgstr "es requisito del equipo"
 #: projects/wiki/api.py:39
 msgid "You don't have permissions for add attachments to this wiki page."
 msgstr ""
-"Tu no tienes permisos para añadir ficheros adjuntos a esta pagina de wiki."
+"No tienes permisos para añadir ficheros adjuntos a esta página de wiki."
 
 #: projects/wiki/api.py:65
 msgid "You don't haver permissions for add/modify this wiki page."
-msgstr "Tu no tienes permisos para crear or modificar esta pagina de wiki."
+msgstr "No tienes permisos para crear or modificar esta página de wiki."
 
 #: settings/common.py:28
 msgid "English"
-msgstr "Ingles"
+msgstr "Inglés"
 
 #: settings/common.py:29
 msgid "Spanish"

@@ -1,0 +1,489 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>{{ _("[Taiga] Updates") }}</title>
+        <style type="text/css">
+            /* /\/\/\/\/\/\/\/\/ CLIENT-SPECIFIC STYLES /\/\/\/\/\/\/\/\/ */
+            #outlook a{padding:0;} /* Force Outlook to provide a "view in browser" message */
+            .ReadMsgBody{width:100%;} .ExternalClass{width:100%;} /* Force Hotmail to display emails at full width */
+            .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {line-height: 100%;} /* Force Hotmail to display normal line spacing */
+            body, table, td, p, a, li, blockquote{-webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;} /* Prevent WebKit and Windows mobile changing default text sizes */
+            table, td{mso-table-lspace:0pt; mso-table-rspace:0pt;} /* Remove spacing between tables in Outlook 2007 and up */
+            img{-ms-interpolation-mode:bicubic;} /* Allow smoother rendering of resized image in Internet Explorer */
+
+            /* /\/\/\/\/\/\/\/\/ RESET STYLES /\/\/\/\/\/\/\/\/ */
+            body{margin:0; padding:0;}
+            img{border:0; height:auto; line-height:100%; outline:none; text-decoration:none;}
+            table{border-collapse:collapse !important;}
+            body, #bodyTable, #bodyCell{height:100% !important; margin:0; padding:0; width:100% !important;}
+
+            /* /\/\/\/\/\/\/\/\/ TEMPLATE STYLES /\/\/\/\/\/\/\/\/ */
+
+            #bodyCell{padding:20px;}
+            #templateContainer{width:600px;}
+
+            /* ========== Page Styles ========== */
+
+            body, #bodyTable{
+                background-color:#f5f5f5;
+            }
+
+            /**
+            * @section email border
+            */
+            #templateContainer{
+                background-color:#FFF;
+                border:1px solid #CDCDCD;
+            }
+
+            /**
+            * @section heading 1
+            */
+            h1{
+                color: #6e6e6e !important;
+                display:block;
+                font-family: 'Open Sans', Arial;
+                font-size:25px;
+                font-style:normal;
+                font-weight:bold;
+                line-height:100%;
+                letter-spacing:normal;
+                margin-top:0;
+                margin-right:0;
+                margin-bottom:16px;
+                margin-left:0;
+                text-align:center;
+            }
+
+            /**
+            * @style heading 2
+            */
+            h2{
+                color: #6e6e6e !important;
+                display:block;
+                font-family: 'Open Sans', Arial;
+                font-size:20px;
+                font-style:normal;
+                font-weight:bold;
+                line-height:100%;
+                letter-spacing:normal;
+                margin-top:0;
+                margin-right:0;
+                margin-bottom:16px;
+                margin-left:0;
+                text-align:center;
+            }
+
+            /**
+            * @tab Page
+            * @section heading 3
+            */
+            h3{
+                color:#6e6e6e !important;
+                display:block;
+                font-family: 'Open Sans', Arial, Helvetica;
+                font-size:16px;
+                font-weight:normal;
+                line-height:100%;
+                font-weight:bold;
+                letter-spacing:normal;
+                margin-top:0;
+                margin-right:0;
+                margin-bottom:16px;
+                margin-left:0;
+                text-align:center;
+            }
+
+            /**
+            * @tab Page
+            * @section heading 4
+            */
+            h4{
+                color:#808080 !important;
+                display:block;
+                font-family: 'Open Sans', Arial, Helvetica;
+                font-size:14px;
+                font-weight:bold;
+                line-height:100%;
+                letter-spacing:normal;
+                margin-top:0;
+                margin-right:0;
+                margin-bottom:16px;
+                margin-left:0;
+                text-align:left;
+            }
+
+
+
+            /* ========== Header Styles ========== */
+
+            .headerContent {
+                text-align: center;
+                color:#b8b8b8 !important;
+                font-family: 'Open Sans', Arial, Helvetica;
+                font-size:14px;
+                margin-bottom:16px;
+                text-align:center;
+            }
+
+            #headerImage{
+                height:auto;
+                width:80px;
+                margin: 20px auto;
+            }
+
+            /* ========== Body Styles ========== */
+
+            /**
+            * @tab Body
+            * @section body style
+            * @tip Set the background color and borders for your email's body area.
+            */
+            #templateBody{
+                background-color:#FFF;
+            }
+
+            /**
+            * @section body text
+            */
+            .bodyContent{
+                color:#505050;
+                font-family: 'Open Sans', Arial, Helvetica;
+                font-size:16px;
+                line-height:150%;
+                padding-right:20px;
+                padding-bottom:20px;
+                padding-left:20px;
+                padding-top:20px;
+                text-align:center;
+            }
+
+            /**
+            * @section body link
+            */
+            .bodyContent a:link, .bodyContent a:visited, /* Yahoo! Mail Override */ .bodyContent a .yshortcuts /* Yahoo! Mail Override */{
+                color:#699b05;
+                font-weight:normal;
+                text-decoration:underline;
+            }
+
+            /**
+            * @section body link button class
+            */
+            a.button {
+                background: #699b05;
+                color: #fff;
+                display: block;
+                width: 50%;
+                text-decoration: none;
+                text-align: center;
+                margin: 0 auto 16px;
+                text-transform: uppercase;
+                padding: .8rem 3rem;
+            }
+
+            a.button:hover {
+                background: #aad400;
+            }
+
+            .bodyContent img{
+                display:inline;
+                height:auto;
+                max-width:560px;
+            }
+
+            .update-row h1,
+            .update-row h2,
+            .update-row h3 {
+                text-align: left;
+            }
+
+            .update-row tr {
+                border-bottom: 1px solid #cdcdcd;
+                padding: 10px;
+            }
+
+            .update-row tr:first-child,
+            .update-row tr:last-child {
+                border-bottom: 3px solid #cdcdcd;
+            }
+
+            .update-row td {
+                padding: 15px;
+                text-align: left;
+            }
+
+            .update-row td.update-row-name {
+                width: 40%;
+                text-align: center;
+            }
+
+            .update-row td.update-row-from {
+                border-bottom: 1px solid #f5f5f5;
+            }
+
+            .social-links {
+                font-family: 'Open Sans', Arial, Helvetica;
+                font-size:13px;
+                padding-right:20px;
+                padding-bottom:20px;
+                padding-left:20px;
+                text-align:center;
+            }
+
+            .social-links a:link, .social-links a:visited{
+                color:#699b05;
+                font-weight:normal;
+                text-decoration:underline;
+                text-align: center;
+                margin: 0 5px;
+            }
+
+            /* ========== Footer Styles ========== */
+
+            /**
+            * @section footer style
+            */
+            #templateFooter{
+                background-color:#555555;
+            }
+
+            /**
+            * @section footer text
+            */
+            .footerContent{
+                color:#f5f5f5;
+                font-family: 'Open Sans', Arial, Helvetica;
+                font-size:10px;
+                line-height:150%;
+                padding-top:20px;
+                padding-right:20px;
+                padding-bottom:20px;
+                padding-left:20px;
+                text-align:left;
+            }
+
+            /**
+            * @tab Footer
+            * @section footer link
+            * @tip Set the styling for your email's footer links. Choose a color that helps them stand out from your text.
+            */
+            .footerContent a:link, .footerContent a:visited, /* Yahoo! Mail Override */ .footerContent a .yshortcuts, .footerContent a span /* Yahoo! Mail Override */{
+                /*@editable*/ color:#699b05;
+                /*@editable*/ font-weight:normal;
+                /*@editable*/ text-decoration:underline;
+            }
+
+            /* /\/\/\/\/\/\/\/\/ MOBILE STYLES /\/\/\/\/\/\/\/\/ */
+
+            @media only screen and (max-width: 480px){
+                /* /\/\/\/\/\/\/ CLIENT-SPECIFIC MOBILE STYLES /\/\/\/\/\/\/ */
+                body, table, td, p, a, li, blockquote{-webkit-text-size-adjust:none !important;} /* Prevent Webkit platforms from changing default text sizes */
+                body{width:100% !important; min-width:100% !important;} /* Prevent iOS Mail from adding padding to the body */
+
+                /* /\/\/\/\/\/\/ MOBILE RESET STYLES /\/\/\/\/\/\/ */
+                #bodyCell{padding:10px !important;}
+
+                /* /\/\/\/\/\/\/ MOBILE TEMPLATE STYLES /\/\/\/\/\/\/ */
+
+                /* ======== Page Styles ======== */
+
+                /**
+                * @section template width
+                */
+                #templateContainer{
+                    max-width:600px !important;
+                    width:100% !important;
+                }
+
+                /**
+                * @section heading 1
+                */
+                h1{
+                    font-size:18px !important;
+                    line-height:100% !important;
+                }
+
+                /**
+                * @section heading 2
+                */
+                h2{
+                    font-size:16px !important;
+                    line-height:100% !important;
+                }
+
+                /**
+                * @section heading 3
+                */
+                h3{
+                    font-size:14px !important;
+                    line-height:100% !important;
+                }
+
+
+                /* ======== Header Styles ======== */
+
+                #templatePreheader{display:none !important;} /* Hide the template preheader to save space */
+
+                /**
+                * @section header image
+                */
+                #headerImage{
+                    height:auto !important;
+                    max-width:600px !important;
+                    width:20% !important;
+                }
+
+                /* ======== Body Styles ======== */
+
+                /**
+                * @tab Mobile Styles
+                * @section body image
+                * @tip Make the main body image fluid for portrait or landscape view adaptability, and set the image's original width as the max-width. If a fluid setting doesn't work, set the image width to half its original size instead.
+                */
+                #bodyImage{
+                    height:auto !important;
+                    max-width:560px !important;
+                    width:100% !important;
+                }
+
+                /**
+                * @section body text
+                */
+                .bodyContent{
+                    font-size:16px !important;
+                    line-height:125% !important;
+                }
+
+                /**
+                * @section body link button class
+                */
+                .bodyContent a.button {
+                    font-size:14px !important;
+                    width: auto;
+                }
+
+                /* ======== Footer Styles ======== */
+
+                /**
+                * @section footer text
+                */
+                .footerContent{
+                    font-size:14px !important;
+                    line-height:115% !important;
+                }
+
+                .footerContent a{display:block !important;} /* Place footer social and utility links on their own lines, for easier access */
+            }
+        </style>
+    </head>
+    <body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0">
+        <center>
+            <table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable">
+                <tr>
+                    <td align="center" valign="top" id="bodyCell">
+                        <!-- BEGIN TEMPLATE // -->
+                        <table border="0" cellpadding="0" cellspacing="0" id="templateContainer">
+                            <tr>
+                                <td align="center" valign="top">
+                                    <!-- BEGIN HEADER // -->
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateHeader">
+                                        <tr>
+                                            <td valign="top" class="headerContent">
+                                                <img src="{{ static("emails/top-bg-update.png") }}" />
+                                                <a href="{{ resolve_front_url("home") }}"
+                                                   title="Taiga">
+                                                    <img src="{{ static("emails/logo-color.png") }}" id="headerImage" alt="Taiga logo" />
+                                                </a>
+                                                {% block head %}
+                                                {% endblock %}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <!-- // END HEADER -->
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" valign="top">
+                                    <!-- BEGIN BODY // -->
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateBody">
+                                        <tr>
+                                            <td valign="top" class="bodyContent">
+                                                <table class="update-row" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                    {% block body %}
+                                                        <tr>
+                                                            <th colspan="2"><h2>{{ _("Updates") }}</h2></th>
+                                                        </tr>
+                                                        {% for entry in history_entries%}
+                                                            {% if entry.comment %}
+                                                        <tr>
+                                                            <td colspan="2">
+                                                                {% trans comment=mdrender(project, entry.comment) %}
+                                                                <h3>comment:</h3>
+                                                                <p>{{ comment }}</p>
+                                                                {% endtrans %}
+                                                            </td>
+                                                        </tr>
+                                                            {% endif %}
+                                                            {% set changed_fields = entry.values_diff %}
+                                                            {% if changed_fields %}
+                                                            {% include "emails/includes/fields_diff-html.jinja" %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    {% endblock %}
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        {% block social %}
+                                        <tr>
+                                            <td valign="top" class="social-links">
+                                                <a href="{{ sr("social.twitter_url") }}" title="{{ _("Follow us on Twitter") }}" style="color: #9dce0a">{{ _("Twitter") }}</a>
+                                                <a href="{{ sr("social.github_url") }}" title="{{ _("Get the code on GitHub") }}" style="color: #9dce0a">{{ _("GitHub") }}</a>
+                                                <a href="{{ sr("taigaio_url") }}" title="{{ _("Visit our website") }}" style="color: #9dce0a">{{ _("Taiga.io") }}</a>
+                                            </td>
+                                        </tr>
+                                        {% endblock %}
+                                    </table>
+                                    <!-- // END BODY -->
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" valign="top">
+                                    <!-- BEGIN FOOTER // -->
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateFooter">
+                                        <tr>
+                                            <td valign="top" class="footerContent">
+                                                {% block footer %}
+                                                    {% trans support_url=sr("support.url"),
+                                                             support_email=sr("support.email"),
+                                                             mailing_list_url=sr("support.mailing_list") %}
+                                                    <strong>Taiga Support:</strong>
+                                                    <a href="{{ support_url }}" title="Support page" style="color: #9dce0a">{{ support_url}}</a>
+                                                    <br>
+                                                    <strong>Contact us:</strong>
+                                                     <a href="mailto:{{ support_email }}" title="Supporti email" style="color: #9dce0a">
+                                                        {{ support_email }}
+                                                    </a>
+                                                    <br>
+                                                    <strong>Mailing list:</strong>
+                                                    <a href="{{ mailing_list_url }}" title="Mailing list" style="color: #9dce0a">
+                                                        {{ mailing_list_url }}
+                                                    </a>
+                                                    {% endtrans %}
+                                                {% endblock %}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <!-- // END FOOTER -->
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- // END TEMPLATE -->
+                    </td>
+                </tr>
+            </table>
+        </center>
+    </body>
+</html>

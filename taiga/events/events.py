@@ -18,6 +18,7 @@ import collections
 from django.contrib.contenttypes.models import ContentType
 
 from taiga.base.utils import json
+from taiga.base.utils.db import get_typename_for_model_instance
 from . import middleware as mw
 from . import backends
 
@@ -30,14 +31,6 @@ watched_types = set([
     "wiki.wiki_page",
     "milestones.milestone",
 ])
-
-
-def _get_type_for_model(model_instance):
-    """
-    Get content type tuple from model instance.
-    """
-    ct = ContentType.objects.get_for_model(model_instance)
-    return ".".join([ct.app_label, ct.model])
 
 
 def emit_event(data:dict, routing_key:str, *,
@@ -64,7 +57,7 @@ def emit_event_for_model(obj, *, type:str="change", channel:str="events",
     assert hasattr(obj, "project_id")
 
     if not content_type:
-        content_type = _get_type_for_model(obj)
+        content_type = get_typename_for_model_instance(obj)
 
     projectid = getattr(obj, "project_id")
     pk = getattr(obj, "pk", None)

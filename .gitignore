@@ -11,3 +11,4 @@ media
 .coverage
 .cache
 .\#*
+.project

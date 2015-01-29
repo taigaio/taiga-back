@@ -1,30 +1,14 @@
-{% extends "emails/base.jinja" %}
+{% extends "emails/updates-body-html.jinja" %}
 
-{% set final_url = resolve_front_url("taskboard", project.slug, snapshot.slug) %}
-{% set final_url_name = "Taiga - View milestone #{0}".format(snapshot.slug) %}
-
-{% block body %}
-<table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
-    <tr>
-        <td>
-            <h1>Project: {{ project.name }}</h1>
-            <h2>Milestone #{{ snapshot.slug }}: {{ snapshot.name }}</h2>
-            <p>Updated by <b>{{ changer.get_full_name() }}</b>.</p>
-            {% for entry in history_entries%}
-                {% if entry.comment %}
-                    <p>Comment <b>{{ entry.comment|linebreaksbr }}</b></p>
-                {% endif %}
-                {% set changed_fields = entry.values_diff %}
-                {% if changed_fields %}
-                    {% include "emails/includes/fields_diff-html.jinja" %}
-                {% endif %}
-            {% endfor %}
-        </td>
-    </tr>
-</table>
-{% endblock %}
-{% block footer %}
-<p style="padding: 10px; border-top: 1px solid #eee;">
-    More info at: <a href="{{ final_url }}" style="color: #666;">{{ final_url_name }}</a>
-</p>
+{% block head %}
+    {% trans user=user.get_full_name()|safe,
+             changer=changer.get_full_name()|safe,
+             project=project.name|safe,
+             name=snapshot.name|safe,
+             url=resolve_front_url("taskboard", project.slug, snapshot.slug) %}
+    <h1>Sprint updated</h1>
+    <p>Hello {{ user }}, <br> {{ changer }} has updated an sprint on {{ project }}</p>
+    <p>Sprint {{ name }}</p>
+    <a class="button" href="{{ url }}" title="See Sprint: {{ name }} in Taiga">See sprint</a>
+    {% endtrans %}
 {% endblock %}

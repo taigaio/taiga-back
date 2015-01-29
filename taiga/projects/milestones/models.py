@@ -91,46 +91,62 @@ class Milestone(WatchedModelMixin, models.Model):
     @property
     def total_points(self):
         return self._get_user_stories_points(
-            [us for us in self.user_stories.all().prefetch_related('role_points', 'role_points__points')]
+            [us for us in self.user_stories.all()]
         )
 
     @property
     def closed_points(self):
         return self._get_user_stories_points(
-            [us for us in self.user_stories.all().prefetch_related('role_points', 'role_points__points') if us.is_closed]
+            [us for us in self.user_stories.all() if us.is_closed]
         )
 
-    def _get_points_increment(self, client_requirement, team_requirement):
+    def _get_increment_points(self):
+        if hasattr(self, "_increments"):
+            return self._increments
+
+        self._increments = {
+            "client_increment": {},
+            "team_increment": {},
+            "shared_increment": {},
+        }
         user_stories = UserStory.objects.none()
         if self.estimated_start and self.estimated_finish:
-            user_stories = UserStory.objects.filter(
-                created_date__gte=self.estimated_start,
-                created_date__lt=self.estimated_finish,
-                project_id=self.project_id,
-                client_requirement=client_requirement,
-                team_requirement=team_requirement
-            ).prefetch_related('role_points', 'role_points__points')
-        return self._get_user_stories_points(user_stories)
+            user_stories = filter(
+                lambda x: x.created_date.date() >= self.estimated_start and x.created_date.date() < self.estimated_finish,
+                self.project.user_stories.all()
+            )
+            self._increments['client_increment'] = self._get_user_stories_points(
+                [us for us in user_stories if us.client_requirement is True and us.team_requirement is False]
+            )
+            self._increments['team_increment'] = self._get_user_stories_points(
+                [us for us in user_stories if us.client_requirement is False and us.team_requirement is True]
+            )
+            self._increments['shared_increment'] = self._get_user_stories_points(
+                [us for us in user_stories if us.client_requirement is True and us.team_requirement is True]
+            )
+        return self._increments
+
 
     @property
     def client_increment_points(self):
-        client_increment = self._get_points_increment(True, False)
+        self._get_increment_points()
+        client_increment = self._get_increment_points()["client_increment"]
         shared_increment = {
-            key: value/2 for key, value in self.shared_increment_points.items()
+            key: value/2 for key, value in self._get_increment_points()["shared_increment"].items()
         }
         return dict_sum(client_increment, shared_increment)
 
     @property
     def team_increment_points(self):
-        team_increment = self._get_points_increment(False, True)
+        team_increment = self._get_increment_points()["team_increment"]
         shared_increment = {
-            key: value/2 for key, value in self.shared_increment_points.items()
+            key: value/2 for key, value in self._get_increment_points()["shared_increment"].items()
         }
         return dict_sum(team_increment, shared_increment)
 
     @property
     def shared_increment_points(self):
-        return self._get_points_increment(True, True)
+        return self._get_increment_points()["shared_increment"]
 
     def closed_points_by_date(self, date):
         return self._get_user_stories_points([

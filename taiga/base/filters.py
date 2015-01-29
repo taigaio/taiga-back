@@ -204,6 +204,52 @@ class IsProjectMemberFilterBackend(FilterBackend):
 
         return super().filter_queryset(request, queryset.distinct(), view)
 
+class BaseIsProjectAdminFilterBackend(object):
+    def get_project_ids(self, request, view):
+        project_id = None
+        if hasattr(view, "filter_fields") and "project" in view.filter_fields:
+            project_id = request.QUERY_PARAMS.get("project", None)
+
+        if request.user.is_authenticated() and request.user.is_superuser:
+            return None
+
+        if not request.user.is_authenticated():
+            return []
+
+        memberships_qs = Membership.objects.filter(user=request.user, is_owner=True)
+        if project_id:
+            memberships_qs = memberships_qs.filter(project_id=project_id)
+
+        projects_list = [membership.project_id for membership in memberships_qs]
+
+        return projects_list
+
+
+class IsProjectAdminFilterBackend(FilterBackend, BaseIsProjectAdminFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        project_ids = self.get_project_ids(request, view)
+        if project_ids is None:
+            queryset = queryset
+        elif project_ids == []:
+            queryset = queryset.none()
+        else:
+            queryset = queryset.filter(project_id__in=project_ids)
+
+        return super().filter_queryset(request, queryset.distinct(), view)
+
+
+class IsProjectAdminFromWebhookLogFilterBackend(FilterBackend, BaseIsProjectAdminFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        project_ids = self.get_project_ids(request, view)
+        if project_ids is None:
+            queryset = queryset
+        elif project_ids == []:
+            queryset = queryset.none()
+        else:
+            queryset = queryset.filter(webhook__project_id__in=project_ids)
+
+        return super().filter_queryset(request, queryset, view)
+
 
 class TagsFilter(FilterBackend):
     def __init__(self, filter_name='tags'):

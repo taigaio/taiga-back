@@ -254,23 +254,20 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         return dict_sum(*flat_role_dicts)
 
     def _get_points_increment(self, client_requirement, team_requirement):
-        userstory_model = apps.get_model("userstories", "UserStory")
-        user_stories = userstory_model.objects.none()
         last_milestones = self.milestones.order_by('-estimated_finish')
         last_milestone = last_milestones[0] if last_milestones else None
         if last_milestone:
-            user_stories = userstory_model.objects.filter(
+            user_stories = self.user_stories.filter(
                 created_date__gte=last_milestone.estimated_finish,
-                project_id=self.id,
                 client_requirement=client_requirement,
                 team_requirement=team_requirement
-            ).prefetch_related('role_points', 'role_points__points')
+            )
         else:
-            user_stories = userstory_model.objects.filter(
-                project_id=self.id,
+            user_stories = self.user_stories.filter(
                 client_requirement=client_requirement,
                 team_requirement=team_requirement
-            ).prefetch_related('role_points', 'role_points__points')
+            )
+        user_stories = user_stories.prefetch_related('role_points', 'role_points__points')
         return self._get_user_stories_points(user_stories)
 
     @property
@@ -291,15 +288,26 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
 
     @property
     def closed_points(self):
-        return self._get_user_stories_points(self.user_stories.filter(is_closed=True).prefetch_related('role_points', 'role_points__points'))
+        return self.calculated_points["closed"]
 
     @property
     def defined_points(self):
-        return self._get_user_stories_points(self.user_stories.all().prefetch_related('role_points', 'role_points__points'))
+        return self.calculated_points["defined"]
 
     @property
     def assigned_points(self):
-        return self._get_user_stories_points(self.user_stories.filter(milestone__isnull=False).prefetch_related('role_points', 'role_points__points'))
+        return self.calculated_points["assigned"]
+
+    @property
+    def calculated_points(self):
+        user_stories = self.user_stories.all().prefetch_related('role_points', 'role_points__points')
+        closed_user_stories = user_stories.filter(is_closed=True)
+        assigned_user_stories = user_stories.filter(milestone__isnull=False)
+        return {
+            "defined": self._get_user_stories_points(user_stories),
+            "closed": self._get_user_stories_points(closed_user_stories),
+            "assigned": self._get_user_stories_points(assigned_user_stories),
+        }
 
 
 class ProjectModulesConfig(models.Model):
@@ -323,6 +331,8 @@ class UserStoryStatus(models.Model):
                                 verbose_name=_("order"))
     is_closed = models.BooleanField(default=False, null=False, blank=True,
                                     verbose_name=_("is closed"))
+    is_archived = models.BooleanField(default=False, null=False, blank=True,
+                                verbose_name=_("is archived"))
     color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
                              verbose_name=_("color"))
     wip_limit = models.IntegerField(null=True, blank=True, default=None,
@@ -690,6 +700,7 @@ class ProjectTemplate(models.Model):
                 name=us_status["name"],
                 slug=us_status["slug"],
                 is_closed=us_status["is_closed"],
+                is_archived=us_status["is_archived"],
                 color=us_status["color"],
                 wip_limit=us_status["wip_limit"],
                 order=us_status["order"],

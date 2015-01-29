@@ -1,31 +1,27 @@
-{% extends "emails/base.jinja" %}
+{% extends "emails/hero-body-html.jinja" %}
 
-{% set final_url = resolve_front_url("invitation", membership.token) %}
-{% set final_url_name = "Taiga - Invitation to join on {0} project.".format(membership.project) %}
+{% if membership.invited_by %}
+    {% set sender_full_name=membership.invited_by.get_full_name() %}
+{% else %}
+    {% set sender_full_name=_("someone") %}
+{% endif %}
+
 
 {% block body %}
-<table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
-    <tr>
-        <td>
-            <p>The Taiga.io Deputy System Admin is commanded by His Highness The Chief Lord Oompa Loompa to extend a membership invitation to {{ membership.email}} and delights in the pleasure of welcoming you to join {{ membership.invited_by.full_name }} and others in the team as a new and right honorable member in good standing of the project titled: '{{ membership.project }}'.</p>
-            <p>You may indicate your humble desire to accept this invitation by gently clicking here: {{ final_url }}</p>
+    {% trans full_name=sender_full_name,
+             project=membership.project %}
+    <h2>You have been invited to Taiga!</h2>
+<p>Hi! {{ full_name }} has sent you an invitation to join project <em>{{ project }}</em> in Taiga.</br> Taiga is a Free, open Source Agile Project Management Tool.</p>
+    {% endtrans %}
 
-            {% if membership.invitation_extra_text %}
-            <p>
-            And now some words from the jolly good fellow or sistren who thought so kindly as to invite you:<br/>
-            {{ membership.invitation_extra_text }}
-            </p>
-            {% endif %}
+    {% if membership.invitation_extra_text %}
+        {% trans extra=membership.invitation_extra_text|linebreaksbr %}
+    <p><small>And now a few words from the jolly good fellow or sistren<br/> who thought so kindly as to invite you</small></p>
+    <p><strong>{{ extra }}</strong></p>
+        {% endtrans %}
+    {% endif %}
 
-            <p>Dress: Morning Suit, Uniform, Lounge Suit, Birthday Suit or hoodie.</p>
-
-        </td>
-    </tr>
-</table>
-{% endblock %}
-
-{% block footer %}
-<p style="padding: 10px; border-top: 1px solid #eee;">
-    Further details: <a href="{{ final_url }}" style="color: #666;">{{ final_url_name }}</a>
-</p>
+    <a class="button" href="{{ resolve_front_url("invitation", membership.token) }}"
+       title="{{ _("Accept your invitation to Taiga") }}">{{ _("Accept your invitation") }}</a>
+    <p><small>{{ _("The Taiga Team") }}</small></p>
 {% endblock %}

@@ -69,7 +69,7 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.
     class Meta:
         verbose_name = "issue"
         verbose_name_plural = "issues"
-        ordering = ["project", "-created_date"]
+        ordering = ["project", "-id"]
         permissions = (
             ("view_issue", "Can view issue"),
         )

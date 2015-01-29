@@ -1,1 +1,5 @@
-[{{ project.name|safe }}] Updated the US #{{ snapshot.ref }} "{{ snapshot.subject|safe }}"
+{% trans project=project.name|safe,
+         ref=snapshot.ref,
+         subject=snapshot.subject|safe %}
+[{{ project }}] Updated the US #{{ ref }} "{{ subject }}"
+{% endtrans %}

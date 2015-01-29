@@ -40,14 +40,19 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
     serializer_class = serializers.MilestoneSerializer
     permission_classes = (permissions.MilestonePermission,)
     filter_backends = (filters.CanViewMilestonesFilterBackend,)
-    filter_fields = ("project",)
+    filter_fields = ("project", "closed")
 
     def get_queryset(self):
         qs = models.Milestone.objects.all()
         qs = qs.prefetch_related("user_stories",
                                  "user_stories__role_points",
                                  "user_stories__role_points__points",
-                                 "user_stories__role_points__role")
+                                 "user_stories__role_points__role",
+                                 "user_stories__generated_from_issue",
+                                 "user_stories__project",
+                                 "watchers",
+                                 "user_stories__watchers")
+        qs = qs.select_related("project")
         qs = qs.order_by("-estimated_start")
         return qs
 

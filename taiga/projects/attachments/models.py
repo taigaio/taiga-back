@@ -80,7 +80,7 @@ class Attachment(models.Model):
     class Meta:
         verbose_name = "attachment"
         verbose_name_plural = "attachments"
-        ordering = ["project", "created_date"]
+        ordering = ["project", "created_date", "id"]
         permissions = (
             ("view_attachment", "Can view attachment"),
         )

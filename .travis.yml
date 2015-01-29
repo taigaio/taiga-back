@@ -8,6 +8,7 @@ addons:
 before_script:
   - psql -c 'create database taiga;' -U postgres
 install:
+  - sudo apt-get update
   - sudo apt-get install postgresql-plpython-9.3
   - pip install -r requirements-devel.txt --use-mirrors
 script:

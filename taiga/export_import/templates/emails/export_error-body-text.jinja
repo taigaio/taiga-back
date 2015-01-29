@@ -1,0 +1,16 @@
+{% trans user=user.get_full_name()|safe,
+         error_message=error_message,
+         support_email=sr("support.email"),
+         project=project.name|safe %}
+Hello {{ user }},
+
+{{ error_message }}
+Your project {{ project }} has not been exported correctly.
+
+The Taiga system administrators have been informed.
+
+Please, try it again or contact with the support team at {{ support_email }}
+
+---
+The Taiga Team
+{% endtrans %}

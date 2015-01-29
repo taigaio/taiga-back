@@ -19,14 +19,16 @@ Markdown==2.4.1
 fn==0.2.13
 diff-match-patch==20121119
 requests==2.4.1
-
+django-sr==0.0.4
 easy-thumbnails==2.1
-celery==3.1.12
+celery==3.1.17
 redis==2.10.3
 Unidecode==0.04.16
 raven==5.1.1
 bleach==1.4
 django-ipware==0.1.0
+premailer==2.8.1
+django-transactional-cleanup==0.1.12
 
 # Comment it if you are using python >= 3.4
 enum34==1.0

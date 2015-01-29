@@ -1,5 +1,19 @@
 # Changelog #
 
+## 1.5.0 Betula Pendula - FOSDEM 2015 (2015-01-29)
+
+### Features
+- Improving SQL queries and performance.
+- Now you can export and import projects between Taiga instances.
+- Email redesign.
+- Support for archived status (not shown by default in Kanban).
+- Removing files from filesystem when deleting attachments.
+- Support for contrib plugins (existing yet: slack, hall and gogs).
+- Webhooks added (crazy integrations are welcome).
+
+### Misc
+- Lots of small and not so small bugfixes.
+
 
 ## 1.4.0 Abies veitchii (2014-12-10)
 

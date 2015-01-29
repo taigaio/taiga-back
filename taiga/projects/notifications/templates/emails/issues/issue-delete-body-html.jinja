@@ -1,13 +1,14 @@
-{% extends "emails/base.jinja" %}
+{% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-<table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
-    <tr>
-        <td>
-            <h1>{{ project.name }}</h1>
-            <h2>Issue #{{ snapshot.ref }}: {{ snapshot.subject }}</h2>
-            <p>Deleted by <b>{{ changer.get_full_name() }}</b></p>
-        </td>
-    </tr>
-</table>
+    {% trans user=user.get_full_name()|safe,
+             changer=changer.get_full_name()|safe,
+             project=project.name|safe,
+             ref=snapshot.ref,
+             subject=snapshot.subject|safe %}
+    <h1>Issue deleted</h1>
+    <p>Hello {{ user }},<br />{{ changer }} has deleted an issue on {{ project }}</p>
+    <p>Issue #{{ ref }} {{ subject }}</p>
+    <p><small>The Taiga Team</small></p>
+    {% endtrans %}
 {% endblock %}

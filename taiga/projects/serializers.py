@@ -148,6 +148,7 @@ class MembershipSerializer(ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False, read_only=True)
     full_name = serializers.CharField(source='user.get_full_name', required=False, read_only=True)
     user_email = serializers.EmailField(source='user.email', required=False, read_only=True)
+    is_user_active = serializers.BooleanField(source='user.is_active', required=False, read_only=True)
     email = serializers.EmailField(required=True)
     color = serializers.CharField(source='user.color', required=False, read_only=True)
     photo = serializers.SerializerMethodField("get_photo")
@@ -237,6 +238,7 @@ class ProjectSerializer(ModelSerializer):
     i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
     tags_colors = TagsColorsField(required=False)
     users = serializers.SerializerMethodField("get_users")
+    total_closed_milestones = serializers.SerializerMethodField("get_total_closed_milestones")
 
     class Meta:
         model = models.Project
@@ -259,6 +261,9 @@ class ProjectSerializer(ModelSerializer):
 
     def get_users(self, obj):
         return UserSerializer(obj.members.all(), many=True).data
+
+    def get_total_closed_milestones(self, obj):
+        return obj.milestones.filter(closed=True).count()
 
     def validate_total_milestones(self, attrs, source):
         """

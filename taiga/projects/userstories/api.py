@@ -52,17 +52,17 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
     filter_backends = (filters.CanViewUsFilterBackend, filters.TagsFilter,
                        filters.QFilter)
     retrieve_exclude_filters = (filters.TagsFilter,)
-    filter_fields = ['project', 'milestone', 'milestone__isnull', 'status', 'is_archived']
+    filter_fields = ['project', 'milestone', 'milestone__isnull', 'status', 'is_archived', 'status__is_archived']
 
     # Specific filter used for filtering neighbor user stories
     _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')
 
     def get_queryset(self):
         qs = self.model.objects.all()
-        qs = qs.prefetch_related("points",
-                                 "role_points",
+        qs = qs.prefetch_related("role_points",
                                  "role_points__points",
-                                 "role_points__role")
+                                 "role_points__role",
+                                 "watchers")
         qs = qs.select_related("milestone", "project")
         return qs
 

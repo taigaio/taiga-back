@@ -9,141 +9,162 @@
     "us_order"
 ] %}
 
-<dl>
 {% for field_name, values in changed_fields.items() %}
     {% if field_name not in excluded_fields %}
-        <dt style="background: #669933; padding: 5px 15px; color: #fff">
-            <b>{{ verbose_name(object, field_name) }}</b>
-        </dt>
-
-    {# POINTS #}
+        {# POINTS #}
         {% if field_name == "points" %}
-
             {% for role, points in values.items() %}
-                <dd style="background: #b2cc99; padding: 5px 15px; color: #fff">
-                    <b>{{ role }}</b>
-                </dd>
-                <dd style="background: #eee; padding: 5px 15px; color: #444">
-                    <b>to:</b> <i>{{ points.1|linebreaksbr }}</i>
-                </dd>
-                <dd style="padding: 5px 15px; color: #bbb">
-                    <b>from:</b> <i>{{ points.0|linebreaksbr }}</i>
-                </dd>
+            <tr>
+                <td valign="middle" rowspan="2" class="update-row-name">
+                    <h3>{% trans role=role %}{{ role }} role points{% endtrans %}</h3>
+                </td>
+                <td valign="top" class="update-row-from">
+                    <span>{{ _("from") }}</span><br>
+                    <strong>{{ points.1 }}</strong>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <span>{{ _("to") }}</span><br>
+                    <strong>{{ points.0 }}</strong>
+                </td>
+            </tr>
             {% endfor %}
 
     {# ATTACHMENTS #}
         {% elif field_name == "attachments" %}
-
             {% if values.new %}
-                <dd style="background: #b2cc99; padding: 5px 15px; color: #fff">
-                    <b>{{ _("Added") }}</b>
-                </dd>
-
                 {% for att in values['new']%}
-                <dd style="background: #eee; padding: 5px 15px; color: #444">
-                    <a href="{{ att.url }}" target="_blank" style="font-weight: bold; color: #444">
-                        {{ att.filename|linebreaksbr }}
-                    </a>
-                    {% if att.description %}<i>  {{ att.description|linebreaksbr }}</i>{% endif %}
-                </dd>
+                <tr>
+                    <td colspan="2">
+                        <h3>{{ _("Added new attachment") }}</h3>
+                        <p>
+                            <a href="{{ att.url }}" target="_blank">
+                                {{ att.filename }}
+                            </a>
+                        </p>
+                        {% if att.description %}
+                        <p>{{ att.description }}</p>
+                        {% endif %}
+                    </td>
+                </tr>
                 {% endfor %}
             {% endif %}
 
             {% if values.changed %}
-                <dd style="background: #b2cc99; padding: 5px 15px; color: #fff">
-                    <b>{{ _("Changed") }}</b>
-                </dd>
-
                 {% for att in values['changed'] %}
-                <dd style="background: #eee; padding: 5px 15px; color: #444">
-                    <a href="{{ att.url }}" target="_blank" style="font-weight: bold; color: #444">
-                        {{ att.filename|linebreaksbr }}
-                    </a>
-                    <ul>
-                        {% if att.changes.is_deprecated %}
-                            {% if att.changes.is_deprecated.1 %}
-                                <li>to <i>deprecated</i></li>
-                            {% else %}
-                                <li>to <i>not deprecated</i></li>
-                            {% endif %}
-                        {% endif %}
+                <tr>
+                    <td colspan="2">
+                        <h3>{{ _("Updated attachment") }}</h3>
+                        <p>
+                            <a href="{{ att.url }}" target="_blank">
+                                {{ att.filename|linebreaksbr }}
+                                {% if att.changes.is_deprecated %}
+                                    {% if att.changes.is_deprecated.1 %}
+                                        [<i>{{ _("deprecated") }}</i>]
+                                    {% else %}
+                                        [<i>{{ _("not deprecated") }}</i>]
+                                    {% endif %}
+                                {% endif %}
+                            </a>
+                        </p>
                         {% if att.changes.description %}
-                            <li>description to <i>{{ att.changes.description.1 }}</i></li>
+                            <p>{{ att.changes.description.1 }}</p>
                         {% endif %}
-                    </ul>
-                </dd>
+                    </td>
+                </tr>
                 {% endfor %}
             {% endif %}
-
             {% if values.deleted %}
-                <dd style="background: #b2cc99; padding: 5px 15px; color: #fff">
-                    <b>{{ _("Deleted") }}</b>
-                </dd>
-
                 {% for att in values['deleted']%}
-                <dd style="padding: 5px 15px; color: #bbb">
-                    <i>{{ att.filename|linebreaksbr }}</i>
-                </dd>
+                <tr>
+                    <td colspan="2">
+                        <h3>{{ _("Deleted attachment") }}</h3>
+                        {% if att.changes.description %}
+                        <p>{{ att.filename|linebreaksbr }}</p>
+                        {% endif %}
+                    </td>
+                </tr>
                 {% endfor %}
             {% endif %}
-
     {# TAGS AND WATCHERS #}
         {% elif field_name in ["tags", "watchers"] %}
-
-            <dd style="background: #eee; padding: 5px 15px; color: #444">
-                <b>to:</b> <i>{{ ', '.join(values.1)|linebreaksbr }}</i>
-            </dd>
-
-            {% if values.0 %}
-            <dd style="padding: 5px 15px; color: #bbb">
-                <b>from:</b> <i>{{ ', '.join(values.0)|linebreaksbr }}</i>
-            </dd>
-            {% endif %}
-
+            <tr>
+                <td valign="middle" rowspan="2" class="update-row-name">
+                    <h3>{{ field_name }}</h3>
+                </td>
+                <td valign="top" class="update-row-from">
+                    <span>{{ _("from") }}</span><br>
+                    <strong>{{ ', '.join(values.0) }}</strong>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <span>{{ _("to") }}</span><br>
+                    <strong>{{ ', '.join(values.1) }}</strong>
+                </td>
+            </tr>
     {# DESCRIPTIONS #}
         {% elif field_name in ["description_diff"] %}
-                <dd style="background: #eee; padding: 5px 15px; color: #444">
-                    <b>diff:</b> <i>{{ mdrender(project, values.1) }}</i>
-                </dd>
+            <tr>
+                <td colspan="2">
+                    <h3>{{ _("Description diff") }}</h3>
+                    <p>{{ mdrender(project, values.1) }}</p>
+                </td>
+            </tr>
     {# CONTENT #}
         {% elif field_name in ["content_diff"] %}
-                <dd style="background: #eee; padding: 5px 15px; color: #444">
-                    <b>diff:</b> <i>{{ mdrender(project, values.1) }}</i>
-                </dd>
+            <tr>
+                <td colspan="2">
+                    <h3>{{ _("Content diff") }}</h3>
+                    <p>{{ mdrender(project, values.1) }}</p>
+                </td>
+            </tr>
     {# ASSIGNED TO #}
         {% elif field_name == "assigned_to" %}
-                <dd style="background: #eee; padding: 5px 15px; color: #444">
-            {% if values.1 != None and values.1 != "" %}
-                    <b>to:</b> <i>{{ values.1|linebreaksbr }}</i>
-            {% else %}
-                    <b>to:</b> <i>{{ _("Unassigned") }}</i>
-            {% endif %}
-                </dd>
-
-                <dd style="padding: 5px 15px; color: #bbb">
-            {% if values.0 != None and values.0 != "" %}
-                    <b>from:</b> <i>{{ values.0|linebreaksbr }}</i>
-            {% else %}
-                    <b>from:</b> <i>{{ _("Unassigned") }}</i>
-            {% endif %}
-                </dd>
+            <tr>
+                <td valign="middle" rowspan="2" class="update-row-name">
+                    <h3>{{ field_name }}</h3>
+                </td>
+                <td valign="top" class="update-row-from">
+                    {% if values.0 != None and values.0 != "" %}
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ values.0 }}</strong>
+                    {% else %}
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ _("Unassigned") }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    {% if values.1 != None and values.1 != "" %}
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ values.1 }}</strong>
+                    {% else %}
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ _("Unassigned") }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
     {# * #}
         {% else %}
-            {% if values.1 != None and values.1 != "" %}
-                <dd style="background: #eee; padding: 5px 15px; color: #444">
-                    <b>to:</b> <i>{{ values.1|linebreaksbr }}</i>
-                </dd>
-            {% endif %}
 
-            {% if values.0 != None and values.0 != "" %}
-                <dd style="padding: 5px 15px; color: #bbb">
-                    <b>from:</b> <i>{{ values.0|linebreaksbr }}</i>
-                </dd>
-            {% endif %}
-
+            <tr>
+                <td valign="middle" rowspan="2" class="update-row-name">
+                    <h3>{{ field_name }}</h3>
+                </td>
+                <td valign="top" class="update-row-from">
+                    <span>{{ _("from") }}</span><br>
+                    <strong>{{ values.1|linebreaksbr }}</strong>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <span>{{ _("to") }}</span><br>
+                    <strong>{{ values.0|linebreaksbr }}</strong>
+                </td>
+            </tr>
         {% endif %}
-
     {% endif %}
-
 {% endfor %}
-</dl>

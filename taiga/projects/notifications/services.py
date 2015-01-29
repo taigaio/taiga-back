@@ -198,8 +198,8 @@ def _make_template_mail(name:str):
     instance for specified name, and return an instance
     of it.
     """
-    cls = type("TemplateMail",
-               (template_mail.TemplateMail,),
+    cls = type("InlineCSSTemplateMail",
+               (template_mail.InlineCSSTemplateMail,),
                {"name": name})
 
     return cls()
@@ -250,7 +250,8 @@ def send_sync_notifications(notification_id):
     history_entries = tuple(notification.history_entries.all().order_by("created_at"))
     obj, _ = get_last_snapshot_for_key(notification.key)
 
-    context = {"snapshot": obj.snapshot,
+    context = {
+               "snapshot": obj.snapshot,
                "project": notification.project,
                "changer": notification.owner,
                "history_entries": history_entries}
@@ -260,6 +261,7 @@ def send_sync_notifications(notification_id):
     email = _make_template_mail(template_name)
 
     for user in notification.notify_users.distinct():
+        context["user"] = user
         email.send(user.email, context)
 
     notification.delete()

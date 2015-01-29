@@ -31,7 +31,7 @@ from rest_framework.response import Response
 from rest_framework.filters import BaseFilterBackend
 from rest_framework import status
 
-from djmail.template_mail import MagicMailBuilder
+from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
 
 from taiga.auth.tokens import get_user_for_token
 from taiga.base.decorators import list_route, detail_route
@@ -103,7 +103,7 @@ class UsersViewSet(ModelCrudViewSet):
         user.token = str(uuid.uuid1())
         user.save(update_fields=["token"])
 
-        mbuilder = MagicMailBuilder()
+        mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
         email = mbuilder.password_recovery(user.email, {"user": user})
         email.send()
 
@@ -142,7 +142,10 @@ class UsersViewSet(ModelCrudViewSet):
 
         current_password = request.DATA.get("current_password")
         password = request.DATA.get("password")
-        if not current_password:
+
+        # NOTE: GitHub users have no password yet (request.user.passwor == '') so
+        #       current_password can be None
+        if not current_password and request.user.password:
             raise exc.WrongArguments(_("Current password parameter needed"))
 
         if not password:
@@ -151,7 +154,7 @@ class UsersViewSet(ModelCrudViewSet):
         if len(password) < 6:
             raise exc.WrongArguments(_("Invalid password length at least 6 charaters needed"))
 
-        if not request.user.check_password(current_password):
+        if current_password and not request.user.check_password(current_password):
             raise exc.WrongArguments(_("Invalid current password"))
 
         request.user.set_password(password)
@@ -234,7 +237,7 @@ class UsersViewSet(ModelCrudViewSet):
             request.user.email_token = str(uuid.uuid1())
             request.user.new_email = new_email
             request.user.save(update_fields=["email_token", "new_email"])
-            mbuilder = MagicMailBuilder()
+            mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
             email = mbuilder.change_email(request.user.new_email, {"user": request.user})
             email.send()
 

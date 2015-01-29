@@ -1,1 +1,3 @@
-[{{ project.name|safe }}] Created the Wiki Page "{{ snapshot.slug }}"
+{% trans project=project.name|safe, page=snapshot.slug %}
+[{{ project }}] Created the Wiki Page "{{ page }}"
+{% endtrans %}
