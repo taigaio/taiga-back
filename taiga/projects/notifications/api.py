@@ -15,12 +15,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from taiga.base.api.utils import get_object_or_404
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.decorators import detail_route
