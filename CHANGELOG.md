@@ -1,5 +1,15 @@
 # Changelog #
 
+
+## 1.6.0 ??? (Unreleased)
+
+### Features
+- ...
+
+### Misc
+- Lots of small and not so small bugfixes.
+
+
 ## 1.5.0 Betula Pendula - FOSDEM 2015 (2015-01-29)
 
 ### Features
