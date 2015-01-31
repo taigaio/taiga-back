@@ -324,6 +324,7 @@ class RoleExportSerializer(serializers.ModelSerializer):
 class MembershipExportSerializer(serializers.ModelSerializer):
     user = UserRelatedField(required=False)
     role = ProjectRelatedField(slug_field="name")
+    invited_by = UserRelatedField(required=False)
 
     class Meta:
         model = projects_models.Membership
