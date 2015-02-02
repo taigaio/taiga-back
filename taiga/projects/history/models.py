@@ -99,6 +99,19 @@ class HistoryEntry(models.Model):
         result = {}
         users_keys = ["assigned_to", "owner"]
 
+        def resolve_diff_value(key):
+            value = None
+            diff = get_diff_of_htmls(
+                self.diff[key][0] or "",
+                self.diff[key][1] or ""
+            )
+
+            if diff:
+                key = "{}_diff".format(key)
+                value = (None, diff)
+
+            return (key, value)
+
         def resolve_value(field, key):
             data = self.values[field]
             key = str(key)
@@ -114,24 +127,12 @@ class HistoryEntry(models.Model):
             #       on old HistoryEntry objects.
             if key == "description_diff":
                 continue
-            elif key == "description":
-                description_diff = get_diff_of_htmls(
-                    self.diff[key][0],
-                    self.diff[key][1]
-                )
-
-                if description_diff:
-                    key = "description_diff"
-                    value = (None, description_diff)
-            elif key == "content":
-                content_diff = get_diff_of_htmls(
-                    self.diff[key][0],
-                    self.diff[key][1]
-                )
-
-                if content_diff:
-                    key = "content_diff"
-                    value = (None, content_diff)
+            elif key == "content_diff":
+                continue
+            elif key == "blocked_note_diff":
+                continue
+            elif key in["description", "content", "blocked_note"]:
+                (key, value) = resolve_diff_value(key)
             elif key in users_keys:
                 value = [resolve_value("users", x) for x in self.diff[key]]
             elif key == "watchers":
