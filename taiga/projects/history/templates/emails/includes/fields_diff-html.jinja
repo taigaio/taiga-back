@@ -89,19 +89,21 @@
             {% endif %}
     {# TAGS AND WATCHERS #}
         {% elif field_name in ["tags", "watchers"] %}
+            {% set values_from = values.0 or [] %}
+            {% set values_to = values.1 or [] %}
             <tr>
                 <td valign="middle" rowspan="2" class="update-row-name">
                     <h3>{{ field_name }}</h3>
                 </td>
                 <td valign="top" class="update-row-from">
                     <span>{{ _("from") }}</span><br>
-                    <strong>{{ ', '.join(values.0) }}</strong>
+                    <strong>{{ ', '.join(values_from) }}</strong>
                 </td>
             </tr>
             <tr>
                 <td valign="top">
                     <span>{{ _("to") }}</span><br>
-                    <strong>{{ ', '.join(values.1) }}</strong>
+                    <strong>{{ ', '.join(values_to) }}</strong>
                 </td>
             </tr>
     {# DESCRIPTIONS #}
