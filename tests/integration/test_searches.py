@@ -130,3 +130,13 @@ def test_search_text_query_in_my_project(client, searches_initial_data):
     assert len(response.data["tasks"]) == 1
     assert len(response.data["issues"]) == 0
     assert len(response.data["wikipages"]) == 0
+
+
+def test_search_text_query_with_an_invalid_project_id(client, searches_initial_data):
+    data = searches_initial_data
+
+    client.login(data.member1.user)
+
+    response = client.get(reverse("search-list"), {"project": "new", "text": "future"})
+    assert response.status_code == 404
+
