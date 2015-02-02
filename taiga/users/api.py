@@ -264,6 +264,15 @@ class UsersViewSet(ModelCrudViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @list_route(methods=["GET"])
+    def me(self, request, pk=None):
+        """
+        Get me.
+        """
+        self.check_permissions(request, "me", None)
+        user_data = serializers.UserSerializer(request.user).data
+        return Response(user_data, status=status.HTTP_200_OK)
+
     @list_route(methods=["POST"])
     def cancel(self, request, pk=None):
         """
