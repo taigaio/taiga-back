@@ -15,12 +15,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
 from rest_framework.response import Response
 from rest_framework import status
 
+from taiga.base.api.utils import get_object_or_404
 from taiga.base.decorators import detail_route
 from taiga.base.api import ReadOnlyListViewSet
 

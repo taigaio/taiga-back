@@ -21,7 +21,7 @@ import mimetypes
 mimetypes.init()
 
 from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import get_object_or_404
+from taiga.base.api.utils import get_object_or_404
 from django.conf import settings
 from django import http
 

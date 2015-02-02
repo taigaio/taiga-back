@@ -18,14 +18,12 @@ import uuid
 
 from django.apps import apps
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.conf import settings
 
 from easy_thumbnails.source_generators import pil_image
-
 
 from rest_framework.response import Response
 from rest_framework.filters import BaseFilterBackend
@@ -37,6 +35,7 @@ from taiga.auth.tokens import get_user_for_token
 from taiga.base.decorators import list_route, detail_route
 from taiga.base import exceptions as exc
 from taiga.base.api import ModelCrudViewSet
+from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.projects.votes import services as votes_service
 from taiga.projects.serializers import StarredSerializer

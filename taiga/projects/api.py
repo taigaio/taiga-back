@@ -18,7 +18,7 @@ import uuid
 
 from django.db.models import Q, signals
 from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import get_object_or_404
+from taiga.base.api.utils import get_object_or_404
 from django.db import transaction as tx
 from django.core.exceptions import ValidationError
 

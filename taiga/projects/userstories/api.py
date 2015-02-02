@@ -19,12 +19,12 @@ from contextlib import suppress
 from django.apps import apps
 from django.db import transaction
 from django.utils.translation import ugettext as _
-from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.response import Response
 from rest_framework import status
 
+from taiga.base.api.utils import get_object_or_404
 from taiga.base import filters, response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
