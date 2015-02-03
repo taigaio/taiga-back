@@ -47,6 +47,18 @@ def test_user_retrieve(client, data):
     assert results == [401, 200, 403, 200]
 
 
+def test_user_me(client, data):
+    url = reverse('users-me')
+
+    users = [
+        None,
+        data.registered_user
+    ]
+
+    results = helper_test_http_method(client, 'get', url, None, users)
+    assert results == [401, 200]
+
+
 def test_user_update(client, data):
     url = reverse('users-detail', kwargs={"pk": data.registered_user.pk})
 
