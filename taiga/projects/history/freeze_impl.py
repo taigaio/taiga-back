@@ -228,6 +228,9 @@ def userstory_freezer(us) -> dict:
         "tags": us.tags,
         "points": points,
         "from_issue": us.generated_from_issue_id,
+        "is_blocked": us.is_blocked,
+        "blocked_note": us.blocked_note,
+        "blocked_note_html": mdrender(us.project, us.blocked_note),
     }
 
     return snapshot
@@ -249,6 +252,9 @@ def issue_freezer(issue) -> dict:
         "watchers": [x.pk for x in issue.watchers.all()],
         "attachments": extract_attachments(issue),
         "tags": issue.tags,
+        "is_blocked": issue.is_blocked,
+        "blocked_note": issue.blocked_note,
+        "blocked_note_html": mdrender(issue.project, issue.blocked_note),
     }
 
     return snapshot
@@ -271,6 +277,9 @@ def task_freezer(task) -> dict:
         "tags": task.tags,
         "user_story": task.user_story_id,
         "is_iocaine": task.is_iocaine,
+        "is_blocked": task.is_blocked,
+        "blocked_note": task.blocked_note,
+        "blocked_note_html": mdrender(task.project, task.blocked_note),
     }
 
     return snapshot
