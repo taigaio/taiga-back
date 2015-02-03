@@ -91,22 +91,6 @@ class RelatedNoneSafeField(serializers.RelatedField):
             into[(self.source or field_name)] = self.from_native(value)
 
 
-
-class IssueRefField(RelatedNoneSafeField):
-    read_only = False
-
-    def to_native(self, obj):
-        if obj:
-            return obj.ref
-        return None
-
-    def from_native(self, data):
-        try:
-            return issues_models.Issue.objects.get(ref=data)
-        except issues_models.Issue.DoesNotExist:
-            return None
-
-
 class UserRelatedField(RelatedNoneSafeField):
     read_only = False
 
@@ -361,7 +345,7 @@ class MilestoneExportSerializer(serializers.ModelSerializer):
         name = attrs[source]
         qs = self.project.milestones.filter(name=name)
         if qs.exists():
-              raise serializers.ValidationError("Name duplicated for the project")
+            raise serializers.ValidationError("Name duplicated for the project")
 
         return attrs
 
@@ -392,7 +376,7 @@ class UserStoryExportSerializer(HistoryExportSerializerMixin, AttachmentExportSe
     milestone = ProjectRelatedField(slug_field="name", required=False)
     watchers = UserRelatedField(many=True, required=False)
     modified_date = serializers.DateTimeField(required=False)
-    generated_from_issue = IssueRefField(required=False)
+    generated_from_issue = ProjectRelatedField(slug_field="ref", required=False)
 
     class Meta:
         model = userstories_models.UserStory
