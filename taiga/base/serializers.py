@@ -31,7 +31,7 @@ class TagsField(serializers.WritableField):
     def from_native(self, data):
         if not data:
             return data
-            
+
         ret = sum([tag.split(",") for tag in data], [])
         return ret
 
@@ -144,3 +144,16 @@ class ModelSerializer(serializers.ModelSerializer):
             if field:
                 field.required = True
         return super().perform_validation(attrs)
+
+    def save(self, **kwargs):
+        """
+        Due to DRF bug with M2M fields we refresh object state from database
+        directly if object is models.Model type and it contains m2m fields
+
+        See: https://github.com/tomchristie/django-rest-framework/issues/1556
+        """
+        self.object = super(serializers.ModelSerializer, self).save(**kwargs)
+        model = self.Meta.model
+        if model._meta.model._meta.local_many_to_many and self.object.pk:
+            self.object = model.objects.get(pk=self.object.pk)
+        return self.object

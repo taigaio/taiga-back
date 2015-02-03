@@ -18,7 +18,9 @@ import json
 from django.apps import apps
 from rest_framework import serializers
 
-from taiga.base.serializers import Serializer, TagsField, NeighborsSerializerMixin, PgArrayField
+from taiga.base.serializers import (Serializer, TagsField, NeighborsSerializerMixin,
+        PgArrayField, ModelSerializer)
+
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator, UserStoryStatusExistsValidator
 from taiga.projects.userstories.validators import UserStoryExistsValidator
@@ -37,7 +39,7 @@ class RolePointsField(serializers.WritableField):
         return json.loads(obj)
 
 
-class UserStorySerializer(WatchersValidator, serializers.ModelSerializer):
+class UserStorySerializer(WatchersValidator, ModelSerializer):
     tags = TagsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
     points = RolePointsField(source="role_points", required=False)
@@ -95,7 +97,7 @@ class UserStoryNeighborsSerializer(NeighborsSerializerMixin, UserStorySerializer
         return NeighborUserStorySerializer(neighbor).data
 
 
-class NeighborUserStorySerializer(serializers.ModelSerializer):
+class NeighborUserStorySerializer(ModelSerializer):
     class Meta:
         model = models.UserStory
         fields = ("id", "ref", "subject")
