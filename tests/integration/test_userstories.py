@@ -133,8 +133,9 @@ def test_update_userstory_points(client):
     points3 = f.PointsFactory.create(project=project, value=2)
 
     us = f.UserStoryFactory.create(project=project, owner=user1)
-    url = reverse("userstories-detail", args=[us.pk])
     usdata = UserStorySerializer(us).data
+
+    url = reverse("userstories-detail", args=[us.pk])
 
     client.login(user1)
 
@@ -145,7 +146,8 @@ def test_update_userstory_points(client):
     data["points"].update({'2000':points3.pk})
 
     response = client.json.patch(url, json.dumps(data))
-    assert response.status_code == 200, response.data
+    assert response.status_code == 200
+    assert response.data["points"] == usdata['points']
 
     # Api should save successful
     data = {}
@@ -153,14 +155,13 @@ def test_update_userstory_points(client):
     data["points"] = copy.copy(usdata["points"])
     data["points"].update({str(role1.pk):points3.pk})
 
+
     response = client.json.patch(url, json.dumps(data))
-    assert response.status_code == 200, response.data
-
     us = models.UserStory.objects.get(pk=us.pk)
-    rp = list(us.role_points.values_list("role_id", "points_id"))
-
-    assert rp == [(role1.pk, points3.pk), (role2.pk, points1.pk)]
-
+    usdatanew = UserStorySerializer(us).data
+    assert response.status_code == 200
+    assert response.data["points"] == usdatanew['points']
+    assert response.data["points"] != usdata['points']
 
 def test_update_userstory_rolepoints_on_add_new_role(client):
     # This test is explicitly without assertions. It simple should
