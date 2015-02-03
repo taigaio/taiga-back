@@ -140,15 +140,15 @@ def dict_to_project(data, owner=None):
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing wiki links')
 
-    store_user_stories(proj, data)
-
-    if service.get_errors(clear=False):
-        raise TaigaImportError('error importing user stories')
-
     store_issues(proj, data)
 
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing issues')
+
+    store_user_stories(proj, data)
+
+    if service.get_errors(clear=False):
+        raise TaigaImportError('error importing user stories')
 
     store_tasks(proj, data)
 
