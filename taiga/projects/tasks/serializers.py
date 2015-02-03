@@ -16,7 +16,9 @@
 
 from rest_framework import serializers
 
-from taiga.base.serializers import Serializer, TagsField, NeighborsSerializerMixin, PgArrayField
+from taiga.base.serializers import (Serializer, TagsField, NeighborsSerializerMixin,
+        PgArrayField, ModelSerializer)
+        
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.milestones.validators import SprintExistsValidator
@@ -26,7 +28,7 @@ from taiga.projects.notifications.validators import WatchersValidator
 from . import models
 
 
-class TaskSerializer(WatchersValidator, serializers.ModelSerializer):
+class TaskSerializer(WatchersValidator, ModelSerializer):
     tags = TagsField(required=False, default=[])
     external_reference = PgArrayField(required=False)
     comment = serializers.SerializerMethodField("get_comment")
@@ -63,7 +65,7 @@ class TaskNeighborsSerializer(NeighborsSerializerMixin, TaskSerializer):
         return NeighborTaskSerializer(neighbor).data
 
 
-class NeighborTaskSerializer(serializers.ModelSerializer):
+class NeighborTaskSerializer(ModelSerializer):
     class Meta:
         model = models.Task
         fields = ("id", "ref", "subject")

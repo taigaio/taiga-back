@@ -16,7 +16,9 @@
 
 from rest_framework import serializers
 
-from taiga.base.serializers import Serializer, TagsField, NeighborsSerializerMixin, PgArrayField
+from taiga.base.serializers import (Serializer, TagsField, NeighborsSerializerMixin, 
+        PgArrayField, ModelSerializer)
+
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
@@ -24,7 +26,7 @@ from taiga.projects.notifications.validators import WatchersValidator
 from . import models
 
 
-class IssueSerializer(WatchersValidator, serializers.ModelSerializer):
+class IssueSerializer(WatchersValidator, ModelSerializer):
     tags = TagsField(required=False)
     external_reference = PgArrayField(required=False)
     is_closed = serializers.Field(source="is_closed")
@@ -61,7 +63,7 @@ class IssueNeighborsSerializer(NeighborsSerializerMixin, IssueSerializer):
         return NeighborIssueSerializer(neighbor).data
 
 
-class NeighborIssueSerializer(serializers.ModelSerializer):
+class NeighborIssueSerializer(ModelSerializer):
     class Meta:
         model = models.Issue
         fields = ("id", "ref", "subject")
