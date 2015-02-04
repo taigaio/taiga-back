@@ -180,6 +180,7 @@ INSTALLED_APPS = [
     "taiga.userstorage",
     "taiga.projects",
     "taiga.projects.references",
+    "taiga.projects.custom_attributes",
     "taiga.projects.history",
     "taiga.projects.notifications",
     "taiga.projects.attachments",
