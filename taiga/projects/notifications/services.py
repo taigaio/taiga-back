@@ -249,8 +249,10 @@ def send_sync_notifications(notification_id):
 
     history_entries = tuple(notification.history_entries.all().order_by("created_at"))
     obj, _ = get_last_snapshot_for_key(notification.key)
+    obj_class = get_model_from_key(obj.key)
 
     context = {
+               "obj_class": obj_class,
                "snapshot": obj.snapshot,
                "project": notification.project,
                "changer": notification.owner,
