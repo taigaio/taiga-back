@@ -16,39 +16,40 @@
 
 import uuid
 
-from django.db.models import Q, signals
-from django.utils.translation import ugettext_lazy as _
-from taiga.base.api.utils import get_object_or_404
-from django.db import transaction as tx
+from django.db.models import signals
 from django.core.exceptions import ValidationError
-
-from rest_framework.response import Response
-from rest_framework.exceptions import ParseError
-from rest_framework import viewsets
-from rest_framework import status
+from django.utils.translation import ugettext_lazy as _
 
 from taiga.base import filters, response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
-from taiga.base.api.mixins import RetrieveModelMixin
-from taiga.base.api.permissions import IsAuthenticatedPermission, AllowAnyPermission
+from taiga.base.api.permissions import AllowAnyPermission
+from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.slug import slugify_uniquely
+
+from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
+from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
+
 from taiga.users.models import Role
-from taiga.projects.issues.models import Issue
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.tasks.models import Task
+from taiga.projects.issues.models import Issue
 
 from . import serializers
 from . import models
 from . import permissions
 from . import services
 
-from .votes.utils import attach_votescount_to_queryset
-from .votes import services as votes_service
 from .votes import serializers as votes_serializers
+from .votes import services as votes_service
+from .votes.utils import attach_votescount_to_queryset
 
+
+######################################################
+## Project
+######################################################
 
 class ProjectViewSet(ModelCrudViewSet):
     serializer_class = serializers.ProjectDetailSerializer
@@ -73,65 +74,65 @@ class ProjectViewSet(ModelCrudViewSet):
         modules_config = services.get_modules_config(project)
 
         if request.method == "GET":
-            return Response(modules_config.config)
+            return response.Ok(data=modules_config.config)
 
         else:
             modules_config.config.update(request.DATA)
             modules_config.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return response.NoContent()
 
-    @detail_route(methods=['get'])
+    @detail_route(methods=["GET"])
     def stats(self, request, pk=None):
         project = self.get_object()
-        self.check_permissions(request, 'stats', project)
-        return Response(services.get_stats_for_project(project))
+        self.check_permissions(request, "stats", project)
+        return response.Ok(data=services.get_stats_for_project(project))
 
-    @detail_route(methods=['get'])
+    @detail_route(methods=["GET"])
     def member_stats(self, request, pk=None):
         project = self.get_object()
-        self.check_permissions(request, 'member_stats', project)
-        return Response(services.get_member_stats_for_project(project))
+        self.check_permissions(request, "member_stats", project)
+        return response.Ok(data=services.get_member_stats_for_project(project))
 
-    @detail_route(methods=['get'])
+    @detail_route(methods=["GET"])
     def issues_stats(self, request, pk=None):
         project = self.get_object()
-        self.check_permissions(request, 'issues_stats', project)
-        return Response(services.get_stats_for_project_issues(project))
+        self.check_permissions(request, "issues_stats", project)
+        return response.Ok(data=services.get_stats_for_project_issues(project))
 
-    @detail_route(methods=['get'])
+    @detail_route(methods=["GET"])
     def issue_filters_data(self, request, pk=None):
         project = self.get_object()
-        self.check_permissions(request, 'issues_filters_data', project)
-        return Response(services.get_issues_filters_data(project))
+        self.check_permissions(request, "issues_filters_data", project)
+        return response.Ok(data=services.get_issues_filters_data(project))
 
-    @detail_route(methods=['get'])
+    @detail_route(methods=["GET"])
     def tags_colors(self, request, pk=None):
         project = self.get_object()
-        self.check_permissions(request, 'tags_colors', project)
-        return Response(dict(project.tags_colors))
+        self.check_permissions(request, "tags_colors", project)
+        return response.Ok(data=dict(project.tags_colors))
 
-    @detail_route(methods=['post'])
+    @detail_route(methods=["POST"])
     def star(self, request, pk=None):
         project = self.get_object()
-        self.check_permissions(request, 'star', project)
+        self.check_permissions(request, "star", project)
         votes_service.add_vote(project, user=request.user)
-        return Response(status=status.HTTP_200_OK)
+        return response.Ok()
 
-    @detail_route(methods=['post'])
+    @detail_route(methods=["POST"])
     def unstar(self, request, pk=None):
         project = self.get_object()
-        self.check_permissions(request, 'unstar', project)
+        self.check_permissions(request, "unstar", project)
         votes_service.remove_vote(project, user=request.user)
-        return Response(status=status.HTTP_200_OK)
+        return response.Ok()
 
-    @detail_route(methods=['get'])
+    @detail_route(methods=["GET"])
     def fans(self, request, pk=None):
         project = self.get_object()
-        self.check_permissions(request, 'fans', project)
+        self.check_permissions(request, "fans", project)
 
         voters = votes_service.get_voters(project)
         voters_data = votes_serializers.VoterSerializer(voters, many=True)
-        return Response(voters_data.data)
+        return response.Ok(data=voters_data.data)
 
     @detail_route(methods=["POST"])
     def create_template(self, request, **kwargs):
@@ -139,10 +140,10 @@ class ProjectViewSet(ModelCrudViewSet):
         template_description = request.DATA.get('template_description', None)
 
         if not template_name:
-            raise ParseError("Not valid template name")
+            raise response.BadRequest("Not valid template name")
 
         if not template_description:
-            raise ParseError("Not valid template description")
+            raise response.BadRequest("Not valid template description")
 
         template_slug = slugify_uniquely(template_name, models.ProjectTemplate)
 
@@ -158,14 +159,14 @@ class ProjectViewSet(ModelCrudViewSet):
 
         template.load_data_from_project(project)
         template.save()
-        return Response(serializers.ProjectTemplateSerializer(template).data, status=201)
+        return response.Created(serializers.ProjectTemplateSerializer(template).data)
 
     @detail_route(methods=['post'])
     def leave(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, 'leave', project)
         services.remove_user_from_project(request.user, project)
-        return Response(status=status.HTTP_200_OK)
+        return response.Ok()
 
     def pre_save(self, obj):
         if not obj.id:
@@ -181,13 +182,18 @@ class ProjectViewSet(ModelCrudViewSet):
         obj = self.get_object_or_none()
         self.check_permissions(request, 'destroy', obj)
 
-        signals.post_delete.disconnect(sender=UserStory, dispatch_uid="user_story_update_project_colors_on_delete")
-        signals.post_delete.disconnect(sender=Issue, dispatch_uid="issue_update_project_colors_on_delete")
+        signals.post_delete.disconnect(sender=UserStory,
+                                       dispatch_uid="user_story_update_project_colors_on_delete")
+        signals.post_delete.disconnect(sender=Issue,
+                                       dispatch_uid="issue_update_project_colors_on_delete")
+        signals.post_delete.disconnect(sender=Task,
+                                       dispatch_uid="tasks_milestone_close_handler_on_delete")
+        signals.post_delete.disconnect(sender=Task,
+                                       dispatch_uid="tasks_us_close_handler_on_delete")
+        signals.post_delete.disconnect(sender=Task,
+                                       dispatch_uid="task_update_project_colors_on_delete")
         signals.post_delete.disconnect(dispatch_uid="refprojdel")
         signals.post_delete.disconnect(dispatch_uid='update_watchers_on_membership_post_delete')
-        signals.post_delete.disconnect(sender=Task, dispatch_uid="tasks_milestone_close_handler_on_delete")
-        signals.post_delete.disconnect(sender=Task, dispatch_uid="tasks_us_close_handler_on_delete")
-        signals.post_delete.disconnect(sender=Task, dispatch_uid="task_update_project_colors_on_delete")
 
         obj.tasks.all().delete()
         obj.user_stories.all().delete()
@@ -202,133 +208,13 @@ class ProjectViewSet(ModelCrudViewSet):
         self.pre_conditions_on_delete(obj)
         obj.delete()
         self.post_delete(obj)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return response.NoContent()
 
 
-class MembershipViewSet(ModelCrudViewSet):
-    model = models.Membership
-    serializer_class = serializers.MembershipSerializer
-    permission_classes = (permissions.MembershipPermission,)
-    filter_backends = (filters.CanViewProjectFilterBackend,)
-    filter_fields = ("project", "role")
 
-    @list_route(methods=["POST"])
-    def bulk_create(self, request, **kwargs):
-        serializer = serializers.MembersBulkSerializer(data=request.DATA)
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
-
-        data = serializer.data
-        project = models.Project.objects.get(id=data["project_id"])
-        invitation_extra_text = data.get("invitation_extra_text", None)
-        self.check_permissions(request, 'bulk_create', project)
-
-        # TODO: this should be moved to main exception handler instead
-        # of handling explicit exception catchin here.
-
-        try:
-            members = services.create_members_in_bulk(data["bulk_memberships"],
-                                                      project=project,
-                                                      invitation_extra_text=invitation_extra_text,
-                                                      callback=self.post_save,
-                                                      precall=self.pre_save)
-        except ValidationError as err:
-            return response.BadRequest(err.message_dict)
-
-        members_serialized = self.serializer_class(members, many=True)
-        return response.Ok(data=members_serialized.data)
-
-    @detail_route(methods=["POST"])
-    def resend_invitation(self, request, **kwargs):
-        invitation = self.get_object()
-
-        self.check_permissions(request, 'resend_invitation', invitation.project)
-
-        services.send_invitation(invitation=invitation)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def pre_delete(self, obj):
-        if obj.user is not None and not services.can_user_leave_project(obj.user, obj.project):
-            raise exc.BadRequest(_("At least one of the user must be an active admin"))
-
-    def pre_save(self, obj):
-        if not obj.token:
-            obj.token = str(uuid.uuid1())
-
-        obj.invited_by = self.request.user
-        obj.user = services.find_invited_user(obj.email, default=obj.user)
-        super().pre_save(obj)
-
-    def post_save(self, object, created=False):
-        super().post_save(object, created=created)
-
-        if not created:
-            return
-
-        # Send email only if a new membership is created
-        services.send_invitation(invitation=object)
-
-
-class InvitationViewSet(ModelListViewSet):
-    """
-    Only used by front for get invitation by it token.
-    """
-    queryset = models.Membership.objects.filter(user__isnull=True)
-    serializer_class = serializers.MembershipSerializer
-    lookup_field = "token"
-    permission_classes = (AllowAnyPermission,)
-
-    def list(self, *args, **kwargs):
-        raise exc.PermissionDenied(_("You don't have permisions to see that."))
-
-
-class RolesViewSet(ModelCrudViewSet):
-    model = Role
-    serializer_class = serializers.RoleSerializer
-    permission_classes = (permissions.RolesPermission, )
-    filter_backends = (filters.CanViewProjectFilterBackend,)
-    filter_fields = ('project',)
-
-    def pre_delete(self, obj):
-        move_to = self.request.QUERY_PARAMS.get('moveTo', None)
-        if move_to:
-            role_dest = get_object_or_404(self.model, project=obj.project, id=move_to)
-            qs = models.Membership.objects.filter(project_id=obj.project.pk, role=obj)
-            qs.update(role=role_dest)
-
-        super().pre_delete(obj)
-
-
-# User Stories commin ViewSets
-
-class BulkUpdateOrderMixin(object):
-    """
-    This mixin need three fields in the child class:
-
-    - bulk_update_param: that the name of the field of the data received from
-      the cliente that contains the pairs (id, order) to sort the objects.
-    - bulk_update_perm: that containts the codename of the permission needed to sort.
-    - bulk_update_order: method with bulk update order logic
-    """
-
-    @list_route(methods=["POST"])
-    def bulk_update_order(self, request, **kwargs):
-        bulk_data = request.DATA.get(self.bulk_update_param, None)
-
-        if bulk_data is None:
-            raise exc.BadRequest(_("%s parameter is mandatory") % self.bulk_update_param)
-
-        project_id = request.DATA.get('project', None)
-        if project_id is None:
-            raise exc.BadRequest(_("project parameter is mandatory"))
-
-        project = get_object_or_404(models.Project, id=project_id)
-
-        self.check_permissions(request, 'bulk_update_order', project)
-
-        self.__class__.bulk_update_order_action(project, request.user, bulk_data)
-        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
-
+######################################################
+## Custom values for selectors
+######################################################
 
 class PointsViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.Points
@@ -339,26 +225,6 @@ class PointsViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_param = "bulk_points"
     bulk_update_perm = "change_points"
     bulk_update_order_action = services.bulk_update_points_order
-
-
-class MoveOnDestroyMixin(object):
-    @tx.atomic
-    def destroy(self, request, *args, **kwargs):
-        move_to = self.request.QUERY_PARAMS.get('moveTo', None)
-        if move_to is None:
-            return super().destroy(request, *args, **kwargs)
-
-        obj = self.get_object_or_none()
-
-        move_item = get_object_or_404(self.model, project=obj.project, id=move_to)
-
-        self.check_permissions(request, 'destroy', obj)
-        kwargs = {self.move_on_destroy_related_field: move_item}
-        self.move_on_destroy_related_class.objects.filter(project=obj.project, **{self.move_on_destroy_related_field: obj}).update(**kwargs)
-        if getattr(obj.project, self.move_on_destroy_project_default_field) == obj:
-            setattr(obj.project, self.move_on_destroy_project_default_field, move_item)
-            obj.project.save()
-        return super().destroy(request, *args, **kwargs)
 
 
 class UserStoryStatusViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
@@ -445,6 +311,10 @@ class IssueStatusViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMi
     move_on_destroy_project_default_field = "default_issue_status"
 
 
+######################################################
+## Project Template
+######################################################
+
 class ProjectTemplateViewSet(ModelCrudViewSet):
     model = models.ProjectTemplate
     serializer_class = serializers.ProjectTemplateSerializer
@@ -452,3 +322,101 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
 
     def get_queryset(self):
         return models.ProjectTemplate.objects.all()
+
+
+######################################################
+## Members Invitations and Roles
+######################################################
+
+class MembershipViewSet(ModelCrudViewSet):
+    model = models.Membership
+    serializer_class = serializers.MembershipSerializer
+    permission_classes = (permissions.MembershipPermission,)
+    filter_backends = (filters.CanViewProjectFilterBackend,)
+    filter_fields = ("project", "role")
+
+    @list_route(methods=["POST"])
+    def bulk_create(self, request, **kwargs):
+        serializer = serializers.MembersBulkSerializer(data=request.DATA)
+        if not serializer.is_valid():
+            return response.BadRequest(serializer.errors)
+
+        data = serializer.data
+        project = models.Project.objects.get(id=data["project_id"])
+        invitation_extra_text = data.get("invitation_extra_text", None)
+        self.check_permissions(request, 'bulk_create', project)
+
+        # TODO: this should be moved to main exception handler instead
+        # of handling explicit exception catchin here.
+
+        try:
+            members = services.create_members_in_bulk(data["bulk_memberships"],
+                                                      project=project,
+                                                      invitation_extra_text=invitation_extra_text,
+                                                      callback=self.post_save,
+                                                      precall=self.pre_save)
+        except ValidationError as err:
+            return response.BadRequest(err.message_dict)
+
+        members_serialized = self.serializer_class(members, many=True)
+        return response.Ok(data=members_serialized.data)
+
+    @detail_route(methods=["POST"])
+    def resend_invitation(self, request, **kwargs):
+        invitation = self.get_object()
+
+        self.check_permissions(request, 'resend_invitation', invitation.project)
+
+        services.send_invitation(invitation=invitation)
+        return response.NoContent()
+
+    def pre_delete(self, obj):
+        if obj.user is not None and not services.can_user_leave_project(obj.user, obj.project):
+            raise exc.BadRequest(_("At least one of the user must be an active admin"))
+
+    def pre_save(self, obj):
+        if not obj.token:
+            obj.token = str(uuid.uuid1())
+
+        obj.invited_by = self.request.user
+        obj.user = services.find_invited_user(obj.email, default=obj.user)
+        super().pre_save(obj)
+
+    def post_save(self, object, created=False):
+        super().post_save(object, created=created)
+
+        if not created:
+            return
+
+        # Send email only if a new membership is created
+        services.send_invitation(invitation=object)
+
+
+class InvitationViewSet(ModelListViewSet):
+    """
+    Only used by front for get invitation by it token.
+    """
+    queryset = models.Membership.objects.filter(user__isnull=True)
+    serializer_class = serializers.MembershipSerializer
+    lookup_field = "token"
+    permission_classes = (AllowAnyPermission,)
+
+    def list(self, *args, **kwargs):
+        raise exc.PermissionDenied(_("You don't have permisions to see that."))
+
+
+class RolesViewSet(ModelCrudViewSet):
+    model = Role
+    serializer_class = serializers.RoleSerializer
+    permission_classes = (permissions.RolesPermission, )
+    filter_backends = (filters.CanViewProjectFilterBackend,)
+    filter_fields = ('project',)
+
+    def pre_delete(self, obj):
+        move_to = self.request.QUERY_PARAMS.get('moveTo', None)
+        if move_to:
+            role_dest = get_object_or_404(self.model, project=obj.project, id=move_to)
+            qs = models.Membership.objects.filter(project_id=obj.project.pk, role=obj)
+            qs.update(role=role_dest)
+
+        super().pre_delete(obj)
