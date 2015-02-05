@@ -86,7 +86,7 @@ def test_user_delete(client, data):
     ]
 
     results = helper_test_http_method(client, 'delete', url, None, users)
-    assert results == [401, 403, 204]
+    assert results == [404, 404, 204]
 
 
 def test_user_list(client, data):
@@ -101,14 +101,14 @@ def test_user_list(client, data):
 
     response = client.get(url)
     users_data = json.loads(response.content.decode('utf-8'))
-    assert len(users_data) == 0
+    assert len(users_data) == 1
     assert response.status_code == 200
 
     client.login(data.other_user)
 
     response = client.get(url)
     users_data = json.loads(response.content.decode('utf-8'))
-    assert len(users_data) == 0
+    assert len(users_data) == 1
     assert response.status_code == 200
 
     client.login(data.superuser)
@@ -146,7 +146,7 @@ def test_user_patch(client, data):
 
     patch_data = json.dumps({"full_name": "test"})
     results = helper_test_http_method(client, 'patch', url, patch_data, users)
-    assert results == [401, 200, 403, 200]
+    assert results == [404, 200, 404, 200]
 
 
 def test_user_action_change_password(client, data):
