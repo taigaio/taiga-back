@@ -14,15 +14,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
 from django.apps import apps
 from rest_framework import serializers
 
-from taiga.base.serializers import (Serializer, TagsField, NeighborsSerializerMixin,
-        PgArrayField, ModelSerializer)
+from taiga.base.serializers import Serializer
+from taiga.base.serializers import TagsField
+from taiga.base.serializers import NeighborsSerializerMixin
+from taiga.base.serializers import PgArrayField
+from taiga.base.serializers import ModelSerializer
+from taiga.base.utils import json
 
 from taiga.mdrender.service import render as mdrender
-from taiga.projects.validators import ProjectExistsValidator, UserStoryStatusExistsValidator
+from taiga.projects.validators import ProjectExistsValidator
+from taiga.projects.validators import UserStoryStatusExistsValidator
 from taiga.projects.userstories.validators import UserStoryExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
 
@@ -92,7 +96,6 @@ class UserStorySerializer(WatchersValidator, ModelSerializer):
 
 
 class UserStoryNeighborsSerializer(NeighborsSerializerMixin, UserStorySerializer):
-
     def serialize_neighbor(self, neighbor):
         return NeighborUserStorySerializer(neighbor).data
 
@@ -104,8 +107,7 @@ class NeighborUserStorySerializer(ModelSerializer):
         depth = 0
 
 
-class UserStoriesBulkSerializer(ProjectExistsValidator, UserStoryStatusExistsValidator,
-                                Serializer):
+class UserStoriesBulkSerializer(ProjectExistsValidator, UserStoryStatusExistsValidator, Serializer):
     project_id = serializers.IntegerField()
     status_id = serializers.IntegerField(required=False)
     bulk_stories = serializers.CharField()
@@ -118,8 +120,6 @@ class _UserStoryOrderBulkSerializer(UserStoryExistsValidator, Serializer):
     order = serializers.IntegerField()
 
 
-class UpdateUserStoriesOrderBulkSerializer(ProjectExistsValidator,
-                                                 UserStoryStatusExistsValidator,
-                                                 Serializer):
+class UpdateUserStoriesOrderBulkSerializer(ProjectExistsValidator, UserStoryStatusExistsValidator, Serializer):
     project_id = serializers.IntegerField()
     bulk_stories = _UserStoryOrderBulkSerializer(many=True)

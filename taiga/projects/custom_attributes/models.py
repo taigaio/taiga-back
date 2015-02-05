@@ -18,9 +18,13 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
+from django_pgjson.fields import JsonField
+
+from taiga.projects.occ.mixins import OCCModelMixin
+
 
 ######################################################
-# Base Model Class
+#  Custom Attribute Models
 #######################################################
 
 class AbstractCustomAttribute(models.Model):
@@ -51,11 +55,6 @@ class AbstractCustomAttribute(models.Model):
         return super().save(*args, **kwargs)
 
 
-
-######################################################
-#  Custom Field Models
-#######################################################
-
 class UserStoryCustomAttribute(AbstractCustomAttribute):
     class Meta(AbstractCustomAttribute.Meta):
         verbose_name = "user story custom attribute"
@@ -72,3 +71,60 @@ class IssueCustomAttribute(AbstractCustomAttribute):
     class Meta(AbstractCustomAttribute.Meta):
         verbose_name = "issue custom attribute"
         verbose_name_plural = "issue custom attributes"
+
+
+######################################################
+#  Custom Attributes Values Models
+#######################################################
+
+class AbstractCustomAttributesValues(OCCModelMixin, models.Model):
+    values = JsonField(null=False, blank=False, default={}, verbose_name=_("values"))
+
+    class Meta:
+        abstract = True
+        ordering = ["id"]
+
+
+class UserStoryCustomAttributesValues(AbstractCustomAttributesValues):
+    user_story = models.OneToOneField("userstories.UserStory",
+                                      null=False, blank=False, related_name="custom_attributes_values",
+                                      verbose_name=_("user story"))
+
+    class Meta(AbstractCustomAttributesValues.Meta):
+        verbose_name = "user story ustom attributes values"
+        verbose_name_plural = "user story custom attributes values"
+
+    @property
+    def project(self):
+        # NOTE: This property simplifies checking permissions
+        return self.user_story.project
+
+
+class TaskCustomAttributesValues(AbstractCustomAttributesValues):
+    task = models.OneToOneField("tasks.Task",
+                                null=False, blank=False, related_name="custom_attributes_values",
+                                verbose_name=_("task"))
+
+    class Meta(AbstractCustomAttributesValues.Meta):
+        verbose_name = "task ustom attributes values"
+        verbose_name_plural = "task custom attributes values"
+
+    @property
+    def project(self):
+        # NOTE: This property simplifies checking permissions
+        return self.task.project
+
+
+class IssueCustomAttributesValues(AbstractCustomAttributesValues):
+    issue = models.OneToOneField("issues.Issue",
+                                 null=False, blank=False, related_name="custom_attributes_values",
+                                 verbose_name=_("issue"))
+
+    class Meta(AbstractCustomAttributesValues.Meta):
+        verbose_name = "issue ustom attributes values"
+        verbose_name_plural = "issue custom attributes values"
+
+    @property
+    def project(self):
+        # NOTE: This property simplifies checking permissions
+        return self.issue.project

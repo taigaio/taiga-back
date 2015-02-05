@@ -14,15 +14,27 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils.translation import ugettext_lazy as _
+
 from taiga.base.api import ModelCrudViewSet
+from taiga.base.api.viewsets import ModelViewSet
+from taiga.base import exceptions as exc
 from taiga.base import filters
+from taiga.base import response
+
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
+from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.occ.mixins import OCCResourceMixin
 
 from . import models
 from . import serializers
 from . import permissions
 from . import services
 
+
+######################################################
+# Custom Attribute ViewSets
+#######################################################
 
 class UserStoryCustomAttributeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.UserStoryCustomAttribute
@@ -55,3 +67,45 @@ class IssueCustomAttributeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_param = "bulk_issue_custom_attributes"
     bulk_update_perm = "change_issue_custom_attributes"
     bulk_update_order_action = services.bulk_update_issue_custom_attribute_order
+
+
+######################################################
+# Custom Attributes Values ViewSets
+#######################################################
+
+class BaseCustomAttributesValuesViewSet(OCCResourceMixin, HistoryResourceMixin,  ModelViewSet):
+    def list(self, request, *args, **kwargs):
+        return response.NotFound()
+
+    def post_delete(self, obj):
+        # NOTE: When destroy a custom attributes values object, the
+        #       content_object change after and not before
+        self.persist_history_snapshot(obj, delete=True)
+        super().pre_delete(obj)
+
+    def get_object_for_snapshot(self, obj):
+        return getattr(obj, self.content_object)
+
+
+class UserStoryCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
+    model = models.UserStoryCustomAttributesValues
+    serializer_class = serializers.UserStoryCustomAttributesValuesSerializer
+    permission_classes = (permissions.UserStoryCustomAttributesValuesPermission,)
+    lookup_field = "user_story_id"
+    content_object = "user_story"
+
+
+class TaskCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
+    model = models.TaskCustomAttributesValues
+    serializer_class = serializers.TaskCustomAttributesValuesSerializer
+    permission_classes = (permissions.TaskCustomAttributesValuesPermission,)
+    lockup_fields = "task_id"
+    content_object = "task"
+
+
+class IssueCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
+    model = models.IssueCustomAttributesValues
+    serializer_class = serializers.IssueCustomAttributesValuesSerializer
+    permission_classes = (permissions.IssueCustomAttributesValuesPermission,)
+    lockup_fields = "issue_id"
+    content_object = "issue"

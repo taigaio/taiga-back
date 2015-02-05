@@ -197,6 +197,35 @@ class HistoryEntry(models.Model):
                 if attachments["new"] or attachments["changed"] or attachments["deleted"]:
                     value = attachments
 
+            elif key == "custom_attributes":
+                custom_attributes = {
+                    "new": [],
+                    "changed": [],
+                    "deleted": [],
+                }
+
+                oldcustattrs = {x["id"]:x for x in self.diff["custom_attributes"][0]}
+                newcustattrs = {x["id"]:x for x in self.diff["custom_attributes"][1]}
+
+                for aid in set(tuple(oldcustattrs.keys()) + tuple(newcustattrs.keys())):
+                    if aid in oldcustattrs and aid in newcustattrs:
+                        changes = make_diff_from_dicts(oldcustattrs[aid], newcustattrs[aid],
+                                                       excluded_keys=("name"))
+
+                        if changes:
+                            change = {
+                                "name": newcustattrs.get(aid, {}).get("name", ""),
+                                "changes": changes
+                            }
+                            custom_attributes["changed"].append(change)
+                    elif aid in oldcustattrs and aid not in newcustattrs:
+                        custom_attributes["deleted"].append(oldcustattrs[aid])
+                    elif aid not in oldcustattrs and aid in newcustattrs:
+                        custom_attributes["new"].append(newcustattrs[aid])
+
+                if custom_attributes["new"] or custom_attributes["changed"] or custom_attributes["deleted"]:
+                    value = custom_attributes
+
             elif key in self.values:
                 value = [resolve_value(key, x) for x in self.diff[key]]
             else:

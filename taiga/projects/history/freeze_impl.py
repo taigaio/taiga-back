@@ -14,9 +14,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from contextlib import suppress
+
 from functools import partial
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
+
 from taiga.base.utils.iterators import as_tuple
 from taiga.base.utils.iterators import as_dict
 from taiga.mdrender.service import render as mdrender
@@ -181,6 +185,42 @@ def extract_attachments(obj) -> list:
                "order": attach.order}
 
 
+@as_tuple
+def extract_user_story_custom_attributes(obj) -> list:
+    with suppress(ObjectDoesNotExist):
+        custom_attributes_values =  obj.custom_attributes_values.values
+        for attr in obj.project.userstorycustomattributes.all():
+            with suppress(KeyError):
+                value = custom_attributes_values[str(attr.id)]
+                yield {"id": attr.id,
+                       "name": attr.name,
+                       "values": value}
+
+
+@as_tuple
+def extract_task_custom_attributes(obj) -> list:
+    with suppress(ObjectDoesNotExist):
+        custom_attributes_values =  obj.custom_attributes_values.values
+        for attr in obj.project.taskcustomattributes.all():
+            with suppress(KeyError):
+                value = custom_attributes_values[str(attr.id)]
+                yield {"id": attr.id,
+                       "name": attr.name,
+                       "values": value}
+
+
+@as_tuple
+def extract_issue_custom_attributes(obj) -> list:
+    with suppress(ObjectDoesNotExist):
+        custom_attributes_values =  obj.custom_attributes_values.values
+        for attr in obj.project.issuecustomattributes.all():
+            with suppress(KeyError):
+                value = custom_attributes_values[str(attr.id)]
+                yield {"id": attr.id,
+                       "name": attr.name,
+                       "values": value}
+
+
 def project_freezer(project) -> dict:
     fields = ("name",
               "slug",
@@ -243,6 +283,7 @@ def userstory_freezer(us) -> dict:
         "is_blocked": us.is_blocked,
         "blocked_note": us.blocked_note,
         "blocked_note_html": mdrender(us.project, us.blocked_note),
+        "custom_attributes": extract_user_story_custom_attributes(us),
     }
 
     return snapshot
@@ -267,6 +308,7 @@ def issue_freezer(issue) -> dict:
         "is_blocked": issue.is_blocked,
         "blocked_note": issue.blocked_note,
         "blocked_note_html": mdrender(issue.project, issue.blocked_note),
+        "custom_attributes": extract_issue_custom_attributes(issue),
     }
 
     return snapshot
@@ -292,6 +334,7 @@ def task_freezer(task) -> dict:
         "is_blocked": task.is_blocked,
         "blocked_note": task.blocked_note,
         "blocked_note_html": mdrender(task.project, task.blocked_note),
+        "custom_attributes": extract_task_custom_attributes(task),
     }
 
     return snapshot

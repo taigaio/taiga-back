@@ -14,20 +14,26 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
+from django.apps import apps
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.serializers import ValidationError
 
 from taiga.base.serializers import ModelSerializer
+from taiga.base.serializers import JsonField
 
 from . import models
 
 
 ######################################################
-# Base Serializer  Class
+# Custom Attribute Serializer
 #######################################################
 
 class BaseCustomAttributeSerializer(ModelSerializer):
+    class Meta:
+        read_only_fields = ('id', 'created_date', 'modified_date')
+
     def validate(self, data):
         """
         Check the name is not duplicated in the project. Check when:
@@ -49,20 +55,78 @@ class BaseCustomAttributeSerializer(ModelSerializer):
         return data
 
 
-######################################################
-#  Custom Field Serializers
-#######################################################
-
 class UserStoryCustomAttributeSerializer(BaseCustomAttributeSerializer):
-    class Meta:
+    class Meta(BaseCustomAttributeSerializer.Meta):
         model = models.UserStoryCustomAttribute
 
 
 class TaskCustomAttributeSerializer(BaseCustomAttributeSerializer):
-    class Meta:
+    class Meta(BaseCustomAttributeSerializer.Meta):
         model = models.TaskCustomAttribute
 
 
 class IssueCustomAttributeSerializer(BaseCustomAttributeSerializer):
-    class Meta:
+    class Meta(BaseCustomAttributeSerializer.Meta):
         model = models.IssueCustomAttribute
+
+
+######################################################
+# Custom Attribute Serializer
+#######################################################
+
+
+class BaseCustomAttributesValuesSerializer:
+    values = JsonField(source="values", label="values", required=True)
+    _custom_attribute_model = None
+    _container_field = None
+
+    def validate_values(self, attrs, source):
+        # values must be a dict
+        data_values = attrs.get("values", None)
+        if self.object:
+            data_values = (data_values or self.object.values)
+
+        if type(data_values) is not dict:
+            raise ValidationError(_("Invalid content. It must be {\"key\": \"value\",...}"))
+
+        # Values keys must be in the container object project
+        data_container = attrs.get(self._container_field, None)
+        if data_container:
+            project_id = data_container.project_id
+        elif self.object:
+            project_id = getattr(self.object, self._container_field).project_id
+        else:
+            project_id = None
+
+        values_ids = list(data_values.keys())
+        qs = self._custom_attribute_model.objects.filter(project=project_id,
+                                                         id__in=values_ids)
+        if qs.count() != len(values_ids):
+            raise ValidationError(_("It contain invalid custom fields."))
+
+        return attrs
+
+
+class UserStoryCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerializer, ModelSerializer):
+    _custom_attribute_model = models.UserStoryCustomAttribute
+    _container_model = "userstories.UserStory"
+    _container_field = "user_story"
+
+    class Meta:
+        model = models.UserStoryCustomAttributesValues
+
+
+class TaskCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerializer, ModelSerializer):
+    _custom_attribute_model = models.TaskCustomAttribute
+    _container_field = "task"
+
+    class Meta:
+        model = models.TaskCustomAttributesValues
+
+
+class IssueCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerializer, ModelSerializer):
+    _custom_attribute_model = models.IssueCustomAttribute
+    _container_field = "issue"
+
+    class Meta:
+        model = models.IssueCustomAttributesValues

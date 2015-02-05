@@ -6,7 +6,8 @@
     "backlog_order",
     "kanban_order",
     "taskboard_order",
-    "us_order"
+    "us_order",
+    "custom_attributes"
 ] %}
 
 {% for field_name, values in changed_fields.items() %}
@@ -80,9 +81,7 @@
                 <tr>
                     <td colspan="2">
                         <h3>{{ _("Deleted attachment") }}</h3>
-                        {% if att.changes.description %}
                         <p>{{ att.filename|linebreaksbr }}</p>
-                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
@@ -155,7 +154,6 @@
             </tr>
     {# * #}
         {% else %}
-
             <tr>
                 <td valign="middle" rowspan="2" class="update-row-name">
                     <h3>{{ verbose_name(obj_class, field_name) }}</h3>
@@ -171,6 +169,53 @@
                     <strong>{{ values.1|linebreaksbr }}</strong>
                 </td>
             </tr>
+        {% endif %}
+
+    {% elif field_name == "custom_attributes" %}
+    {# CUSTOM ATTRIBUTES #}
+        {% if values.new %}
+            {% for attr in values['new']%}
+            <tr>
+                <td valign="middle" rowspan="2" class="update-row-name">
+                    <h3>{{ attr.name }}</h3>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <span>{{ _("to") }}</span><br>
+                    <strong>{{ attr.value|linebreaksbr }}</strong>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+        {% if values.changed %}
+            {% for attr in values['changed'] %}
+            <tr>
+                <td valign="middle" rowspan="2" class="update-row-name">
+                    <h3>{{ attr.name }}</h3>
+                </td>
+                <td valign="top" class="update-row-from">
+                    <span>{{ _("from") }}</span><br>
+                    <strong>{{ attr.changes.value.0|linebreaksbr }}</strong>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    <span>{{ _("to") }}</span><br>
+                    <strong>{{ attr.changes.value.1|linebreaksbr }}</strong>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+        {% if values.deleted %}
+            {% for attr in values['deleted']%}
+            <tr>
+                <td colspan="2">
+                    <h3>{{ attr.name }}</h3>
+                    <p>{{ _("-deleted-") }}</p>
+                </td>
+            </tr>
+            {% endfor %}
         {% endif %}
     {% endif %}
 {% endfor %}

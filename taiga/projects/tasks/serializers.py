@@ -18,7 +18,7 @@ from rest_framework import serializers
 
 from taiga.base.serializers import (Serializer, TagsField, NeighborsSerializerMixin,
         PgArrayField, ModelSerializer)
-        
+
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.milestones.validators import SprintExistsValidator

@@ -71,6 +71,9 @@ router.register(r"severities",SeverityViewSet , base_name="severities")
 from taiga.projects.custom_attributes.api import UserStoryCustomAttributeViewSet
 from taiga.projects.custom_attributes.api import TaskCustomAttributeViewSet
 from taiga.projects.custom_attributes.api import IssueCustomAttributeViewSet
+from taiga.projects.custom_attributes.api import UserStoryCustomAttributesValuesViewSet
+from taiga.projects.custom_attributes.api import TaskCustomAttributesValuesViewSet
+from taiga.projects.custom_attributes.api import IssueCustomAttributesValuesViewSet
 
 router.register(r"userstory-custom-attributes", UserStoryCustomAttributeViewSet,
                 base_name="userstory-custom-attributes")
@@ -78,6 +81,13 @@ router.register(r"task-custom-attributes", TaskCustomAttributeViewSet,
                 base_name="task-custom-attributes")
 router.register(r"issue-custom-attributes", IssueCustomAttributeViewSet,
                 base_name="issue-custom-attributes")
+
+router.register(r"userstories/custom-attributes-values", UserStoryCustomAttributesValuesViewSet,
+                base_name="userstory-custom-attributes-values")
+router.register(r"tasks/custom-attributes-values", TaskCustomAttributesValuesViewSet,
+                base_name="task-custom-attributes-values")
+router.register(r"issues/custom-attributes-values", IssueCustomAttributesValuesViewSet,
+                base_name="issue-custom-attributes-values")
 
 
 # Search
