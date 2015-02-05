@@ -57,7 +57,8 @@ def store_project(data):
             "default_priority", "default_severity", "default_issue_status",
             "default_issue_type", "memberships", "points", "us_statuses",
             "task_statuses", "issue_statuses", "priorities", "severities",
-            "issue_types", "roles", "milestones", "wiki_pages",
+            "issue_types", "userstorycustomattributes", "taskcustomattributes",
+            "issuecustomattributes", "roles", "milestones", "wiki_pages",
             "wiki_links", "notify_policies", "user_stories", "issues", "tasks",
         ]
         if key not in excluded_fields:
@@ -72,7 +73,7 @@ def store_project(data):
     return None
 
 
-def store_choice(project, data, field, serializer):
+def _store_choice(project, data, field, serializer):
     serialized = serializer(data=data)
     if serialized.is_valid():
         serialized.object.project = project
@@ -86,7 +87,25 @@ def store_choice(project, data, field, serializer):
 def store_choices(project, data, field, serializer):
     result = []
     for choice_data in data.get(field, []):
-        result.append(store_choice(project, choice_data, field, serializer))
+        result.append(_store_choice(project, choice_data, field, serializer))
+    return result
+
+
+def _store_custom_attribute(project, data, field, serializer):
+    serialized = serializer(data=data)
+    if serialized.is_valid():
+        serialized.object.project = project
+        serialized.object._importing = True
+        serialized.save()
+        return serialized.object
+    add_errors(field, serialized.errors)
+    return None
+
+
+def store_custom_attributes(project, data, field, serializer):
+    result = []
+    for custom_attribute_data in data.get(field, []):
+        result.append(_store_custom_attribute(project, custom_attribute_data, field, serializer))
     return result
 
 

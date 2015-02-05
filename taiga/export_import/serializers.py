@@ -20,11 +20,13 @@ from collections import OrderedDict
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 
 from rest_framework import serializers
 
 from taiga.projects import models as projects_models
+from taiga.projects.custom_attributes import models as custom_attributes_models
 from taiga.projects.userstories import models as userstories_models
 from taiga.projects.tasks import models as tasks_models
 from taiga.projects.issues import models as issues_models
@@ -81,14 +83,15 @@ class RelatedNoneSafeField(serializers.RelatedField):
                 return
             value = self.get_default_value()
 
+        key = self.source or field_name
         if value in self.null_values:
             if self.required:
                 raise ValidationError(self.error_messages['required'])
-            into[(self.source or field_name)] = None
+            into[key] = None
         elif self.many:
-            into[(self.source or field_name)] = [self.from_native(item) for item in value if self.from_native(item) is not None]
+            into[key] = [self.from_native(item) for item in value if self.from_native(item) is not None]
         else:
-            into[(self.source or field_name)] = self.from_native(value)
+            into[key] = self.from_native(value)
 
 
 class UserRelatedField(RelatedNoneSafeField):
@@ -251,7 +254,8 @@ class AttachmentExportSerializerMixin(serializers.ModelSerializer):
 
     def get_attachments(self, obj):
         content_type = ContentType.objects.get_for_model(obj.__class__)
-        attachments_qs = attachments_models.Attachment.objects.filter(object_id=obj.pk, content_type=content_type)
+        attachments_qs = attachments_models.Attachment.objects.filter(object_id=obj.pk,
+                                                                      content_type=content_type)
         return AttachmentExportSerializer(attachments_qs, many=True).data
 
 
@@ -305,6 +309,30 @@ class RoleExportSerializer(serializers.ModelSerializer):
         exclude = ('id', 'project')
 
 
+class UserStoryCustomAttributeExportSerializer(serializers.ModelSerializer):
+    modified_date = serializers.DateTimeField(required=False)
+
+    class Meta:
+        model = custom_attributes_models.UserStoryCustomAttribute
+        exclude = ('id', 'project')
+
+
+class TaskCustomAttributeExportSerializer(serializers.ModelSerializer):
+    modified_date = serializers.DateTimeField(required=False)
+
+    class Meta:
+        model = custom_attributes_models.TaskCustomAttribute
+        exclude = ('id', 'project')
+
+
+class IssueCustomAttributeExportSerializer(serializers.ModelSerializer):
+    modified_date = serializers.DateTimeField(required=False)
+
+    class Meta:
+        model = custom_attributes_models.IssueCustomAttribute
+        exclude = ('id', 'project')
+
+
 class MembershipExportSerializer(serializers.ModelSerializer):
     user = UserRelatedField(required=False)
     role = ProjectRelatedField(slug_field="name")
@@ -354,7 +382,8 @@ class MilestoneExportSerializer(serializers.ModelSerializer):
         exclude = ('id', 'project')
 
 
-class TaskExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin, serializers.ModelSerializer):
+class TaskExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin,
+                           serializers.ModelSerializer):
     owner = UserRelatedField(required=False)
     status = ProjectRelatedField(slug_field="name")
     user_story = ProjectRelatedField(slug_field="ref", required=False)
@@ -368,7 +397,8 @@ class TaskExportSerializer(HistoryExportSerializerMixin, AttachmentExportSeriali
         exclude = ('id', 'project')
 
 
-class UserStoryExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin, serializers.ModelSerializer):
+class UserStoryExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin,
+                                serializers.ModelSerializer):
     role_points = RolePointsExportSerializer(many=True, required=False)
     owner = UserRelatedField(required=False)
     assigned_to = UserRelatedField(required=False)
@@ -383,7 +413,8 @@ class UserStoryExportSerializer(HistoryExportSerializerMixin, AttachmentExportSe
         exclude = ('id', 'project', 'points', 'tasks')
 
 
-class IssueExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin, serializers.ModelSerializer):
+class IssueExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin,
+                            serializers.ModelSerializer):
     owner = UserRelatedField(required=False)
     status = ProjectRelatedField(slug_field="name")
     assigned_to = UserRelatedField(required=False)
@@ -403,7 +434,8 @@ class IssueExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerial
         exclude = ('id', 'project')
 
 
-class WikiPageExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin, serializers.ModelSerializer):
+class WikiPageExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin,
+                               serializers.ModelSerializer):
     owner = UserRelatedField(required=False)
     last_modifier = UserRelatedField(required=False)
     watchers = UserRelatedField(many=True, required=False)
@@ -437,6 +469,9 @@ class ProjectExportSerializer(serializers.ModelSerializer):
     priorities = PriorityExportSerializer(many=True, required=False)
     severities = SeverityExportSerializer(many=True, required=False)
     issue_types = IssueTypeExportSerializer(many=True, required=False)
+    userstorycustomattributes = UserStoryCustomAttributeExportSerializer(many=True, required=False)
+    taskcustomattributes = TaskCustomAttributeExportSerializer(many=True, required=False)
+    issuecustomattributes = IssueCustomAttributeExportSerializer(many=True, required=False)
     roles = RoleExportSerializer(many=True, required=False)
     milestones = MilestoneExportSerializer(many=True, required=False)
     wiki_pages = WikiPageExportSerializer(many=True, required=False)

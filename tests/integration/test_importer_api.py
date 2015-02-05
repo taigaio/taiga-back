@@ -167,6 +167,61 @@ def test_invalid_project_import_with_extra_data(client):
     assert Project.objects.filter(slug="imported-project").count() == 0
 
 
+def test_valid_project_import_with_custom_attributes(client):
+    user = f.UserFactory.create()
+
+    url = reverse("importer-list")
+    data = {
+        "name": "Imported project",
+        "description": "Imported project",
+        "userstorycustomattributes": [{
+            "name": "custom attribute example 1",
+            "description": "short description 1",
+            "order": 1
+        }],
+        "taskcustomattributes": [{
+            "name": "custom attribute example 1",
+            "description": "short description 1",
+            "order": 1
+        }],
+        "issuecustomattributes": [{
+            "name": "custom attribute example 1",
+            "description": "short description 1",
+            "order": 1
+        }]
+    }
+
+    must_empty_children = ["issues", "user_stories", "wiki_pages", "milestones", "wiki_links"]
+    must_one_instance_children = ["userstorycustomattributes", "taskcustomattributes", "issuecustomattributes"]
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    assert all(map(lambda x: len(response.data[x]) == 0, must_empty_children))
+    # Allwais is created at least the owner membership
+    assert all(map(lambda x: len(response.data[x]) == 1, must_one_instance_children))
+    assert response.data["owner"] == user.email
+
+
+def test_invalid_project_import_with_custom_attributes(client):
+    user = f.UserFactory.create()
+
+    url = reverse("importer-list")
+    data = {
+        "name": "Imported project",
+        "description": "Imported project",
+        "userstorycustomattributes": [{ }],
+        "taskcustomattributes": [{ }],
+        "issuecustomattributes": [{ }]
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert len(response.data) == 3
+    assert Project.objects.filter(slug="imported-project").count() == 0
+
+
 def test_invalid_issue_import(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
