@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from taiga.base.utils import json
 from taiga.projects.services import stats as stats_services
 from taiga.projects.history.services import take_snapshot
+from taiga.permissions.permissions import ANON_PERMISSIONS
 
 from .. import factories as f
 
@@ -235,3 +236,19 @@ def test_edit_membership_only_owner(client):
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 400
     assert response.data["is_owner"][0] == "At least one of the user must be an active admin"
+
+
+def test_anon_permissions_generation_when_making_project_public(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(is_private=True)
+    role = f.RoleFactory.create(project=project, permissions=["view_project", "modify_project"])
+    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+    assert project.anon_permissions == []
+    client.login(user)
+    url = reverse("projects-detail", kwargs={"pk": project.pk})
+    data = {"is_private": False}
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200
+    anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
+    assert set(anon_permissions).issubset(set(response.data["anon_permissions"]))
+    assert set(anon_permissions).issubset(set(response.data["public_permissions"]))

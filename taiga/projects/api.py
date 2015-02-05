@@ -36,6 +36,7 @@ from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
+from taiga.permissions import service as permissions_service
 
 from . import serializers
 from . import models
@@ -45,7 +46,6 @@ from . import services
 from .votes import serializers as votes_serializers
 from .votes import services as votes_service
 from .votes.utils import attach_votescount_to_queryset
-
 
 ######################################################
 ## Project
@@ -175,6 +175,10 @@ class ProjectViewSet(ModelCrudViewSet):
         # TODO REFACTOR THIS
         if not obj.id:
             obj.template = self.request.QUERY_PARAMS.get('template', None)
+
+        # Update anon permissions if the project is public
+        if obj.is_private == False:
+            permissions_service.set_base_permissions_for_public_project(obj)
 
         super().pre_save(obj)
 

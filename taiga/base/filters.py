@@ -250,6 +250,7 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
         if request.user.is_authenticated() and request.user.is_superuser:
             qs = qs
         elif request.user.is_authenticated():
+            Membership = apps.get_model('projects', 'Membership')
             memberships_qs = Membership.objects.filter(user=request.user)
             if project_id:
                 memberships_qs = memberships_qs.filter(project_id=project_id)
