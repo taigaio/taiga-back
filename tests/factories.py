@@ -216,8 +216,8 @@ class WebhookLogFactory(Factory):
     webhook = factory.SubFactory("tests.factories.WebhookFactory")
     url = "http://localhost:8080/test"
     status = "200"
-    request_data = "test-request"
-    response_data = "test-response"
+    request_data = {"text": "test-request-data"}
+    response_data = {"text": "test-response-data"}
 
 
 class StorageEntryFactory(Factory):
@@ -227,7 +227,7 @@ class StorageEntryFactory(Factory):
 
     owner = factory.SubFactory("tests.factories.UserFactory")
     key = factory.Sequence(lambda n: "key-{}".format(n))
-    value = factory.Sequence(lambda n: "value {}".format(n))
+    value = factory.Sequence(lambda n: {"value": "value-{}".format(n)})
 
 
 class UserStoryFactory(Factory):

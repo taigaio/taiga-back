@@ -103,7 +103,7 @@ def test_storage_create(client, data):
 
     create_data = json.dumps({
         "key": "test",
-        "value": "test",
+        "value": {"test": "test-value"},
     })
     results = helper_test_http_method(client, 'post', url, create_data, users, lambda: StorageEntry.objects.all().delete())
     assert results == [401, 201, 201]
@@ -118,6 +118,6 @@ def test_storage_patch(client, data):
         data.user2,
     ]
 
-    patch_data = json.dumps({"value": "test"})
+    patch_data = json.dumps({"value": {"test": "test-value"}})
     results = helper_test_http_method(client, 'patch', url, patch_data, users)
     assert results == [401, 200, 201]
