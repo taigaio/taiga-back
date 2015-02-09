@@ -33,9 +33,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "username", "full_name", "full_name_display", "email",
-                  "github_id", "color", "bio", "default_language",
+                  "color", "bio", "default_language",
                   "default_timezone", "is_active", "photo", "big_photo")
-        read_only_fields = ("id", "email", "github_id")
+        read_only_fields = ("id", "email")
 
     def validate_username(self, attrs, source):
         value = attrs[source]
