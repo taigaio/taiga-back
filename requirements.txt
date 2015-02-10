@@ -28,7 +28,7 @@ raven==5.1.1
 bleach==1.4
 django-ipware==0.1.0
 premailer==2.8.1
-django-transactional-cleanup==0.1.12
+django-transactional-cleanup==0.1.13
 lxml==3.4.1
 
 # Comment it if you are using python >= 3.4
