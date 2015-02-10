@@ -282,13 +282,6 @@ AUTHENTICATION_BACKENDS = (
 MAX_AGE_AUTH_TOKEN = None
 MAX_AGE_CANCEL_ACCOUNT = 30 * 24 * 60 * 60 # 30 days in seconds
 
-ANONYMOUS_USER_ID = -1
-
-MAX_SEARCH_RESULTS = 100
-
-# FIXME: this seems not be used by any module
-API_LIMIT_PER_PAGE = 0
-
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         # Mainly used by taiga-front
