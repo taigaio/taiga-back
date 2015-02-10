@@ -27,10 +27,13 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status, exceptions
 from rest_framework.compat import smart_text, HttpResponseBase, View
 from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from rest_framework.utils import formatting
 
+from taiga.base.response import Response
+from taiga.base.response import Ok
+from taiga.base.response import NotFound
+from taiga.base.response import Forbidden
 from taiga.base.utils.iterators import as_tuple
 
 from django.conf import settings
@@ -89,12 +92,10 @@ def exception_handler(exc):
                         headers=headers)
 
     elif isinstance(exc, Http404):
-        return Response({'detail': 'Not found'},
-                        status=status.HTTP_404_NOT_FOUND)
+        return NotFound({'detail': 'Not found'})
 
     elif isinstance(exc, PermissionDenied):
-        return Response({'detail': 'Permission denied'},
-                        status=status.HTTP_403_FORBIDDEN)
+        return Forbidden({'detail': 'Permission denied'})
 
     # Note: Unhandled exceptions will raise a 500 error.
     return None
@@ -425,7 +426,7 @@ class APIView(View):
         We may as well implement this as Django will otherwise provide
         a less useful default implementation.
         """
-        return Response(self.metadata(request), status=status.HTTP_200_OK)
+        return Ok(self.metadata(request))
 
     def metadata(self, request):
         """

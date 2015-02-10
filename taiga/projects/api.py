@@ -74,7 +74,7 @@ class ProjectViewSet(ModelCrudViewSet):
         modules_config = services.get_modules_config(project)
 
         if request.method == "GET":
-            return response.Ok(data=modules_config.config)
+            return response.Ok(modules_config.config)
 
         else:
             modules_config.config.update(request.DATA)
@@ -85,31 +85,31 @@ class ProjectViewSet(ModelCrudViewSet):
     def stats(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "stats", project)
-        return response.Ok(data=services.get_stats_for_project(project))
+        return response.Ok(services.get_stats_for_project(project))
 
     @detail_route(methods=["GET"])
     def member_stats(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "member_stats", project)
-        return response.Ok(data=services.get_member_stats_for_project(project))
+        return response.Ok(services.get_member_stats_for_project(project))
 
     @detail_route(methods=["GET"])
     def issues_stats(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "issues_stats", project)
-        return response.Ok(data=services.get_stats_for_project_issues(project))
+        return response.Ok(services.get_stats_for_project_issues(project))
 
     @detail_route(methods=["GET"])
     def issue_filters_data(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "issues_filters_data", project)
-        return response.Ok(data=services.get_issues_filters_data(project))
+        return response.Ok(services.get_issues_filters_data(project))
 
     @detail_route(methods=["GET"])
     def tags_colors(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "tags_colors", project)
-        return response.Ok(data=dict(project.tags_colors))
+        return response.Ok(dict(project.tags_colors))
 
     @detail_route(methods=["POST"])
     def star(self, request, pk=None):
@@ -132,7 +132,7 @@ class ProjectViewSet(ModelCrudViewSet):
 
         voters = votes_service.get_voters(project)
         voters_data = votes_serializers.VoterSerializer(voters, many=True)
-        return response.Ok(data=voters_data.data)
+        return response.Ok(voters_data.data)
 
     @detail_route(methods=["POST"])
     def create_template(self, request, **kwargs):
@@ -359,7 +359,7 @@ class MembershipViewSet(ModelCrudViewSet):
             return response.BadRequest(err.message_dict)
 
         members_serialized = self.serializer_class(members, many=True)
-        return response.Ok(data=members_serialized.data)
+        return response.Ok(members_serialized.data)
 
     @detail_route(methods=["POST"])
     def resend_invitation(self, request, **kwargs):

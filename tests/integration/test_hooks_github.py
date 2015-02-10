@@ -50,7 +50,7 @@ def test_ok_signature(client):
         HTTP_X_HUB_SIGNATURE="sha1=3c8e83fdaa266f81c036ea0b71e98eb5e054581a",
         content_type="application/json")
 
-    assert response.status_code == 200
+    assert response.status_code == 204
 
 
 def test_push_event_detected(client):
@@ -70,7 +70,7 @@ def test_push_event_detected(client):
 
         assert process_event_mock.call_count == 1
 
-    assert response.status_code == 200
+    assert response.status_code == 204
 
 
 def test_push_event_issue_processing(client):

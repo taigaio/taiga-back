@@ -29,12 +29,10 @@ from django.db import transaction as tx
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
 
-from rest_framework.response import Response
-from rest_framework import status
-
 from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
 
 from taiga.base import exceptions as exc
+from taiga.base import response
 from taiga.users.serializers import UserSerializer
 from taiga.users.services import get_and_validate_user
 from taiga.base.utils.slug import slugify_uniquely
@@ -203,7 +201,7 @@ def normal_login_func(request):
 
     user = get_and_validate_user(username=username, password=password)
     data = make_auth_response_data(user)
-    return Response(data, status=status.HTTP_200_OK)
+    return response.Ok(data)
 
 
 register_auth_plugin("normal", normal_login_func);

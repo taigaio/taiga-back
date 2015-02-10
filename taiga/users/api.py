@@ -23,24 +23,22 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.conf import settings
 
-from easy_thumbnails.source_generators import pil_image
-
-from rest_framework.response import Response
-from rest_framework import status
-
-from djmail.template_mail import MagicMailBuilder
-from djmail.template_mail import InlineCSSTemplateMail
-
+from taiga.base import exceptions as exc
+from taiga.base import filters
+from taiga.base import response
 from taiga.auth.tokens import get_user_for_token
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
-from taiga.base import exceptions as exc
-from taiga.base import filters
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.filters import MembersFilterBackend
 from taiga.projects.votes import services as votes_service
 from taiga.projects.serializers import StarredSerializer
+
+from easy_thumbnails.source_generators import pil_image
+
+from djmail.template_mail import MagicMailBuilder
+from djmail.template_mail import InlineCSSTemplateMail
 
 from . import models
 from . import serializers
@@ -71,7 +69,7 @@ class UsersViewSet(ModelCrudViewSet):
         else:
             serializer = self.get_serializer(self.object_list, many=True)
 
-        return Response(serializer.data)
+        return response.Ok(serializer.data)
 
     @list_route(methods=["POST"])
     def password_recovery(self, request, pk=None):
@@ -96,8 +94,8 @@ class UsersViewSet(ModelCrudViewSet):
         email = mbuilder.password_recovery(user.email, {"user": user})
         email.send()
 
-        return Response({"detail": _("Mail sended successful!"),
-                         "email": user.email})
+        return response.Ok({"detail": _("Mail sended successful!"),
+                            "email": user.email})
 
     @list_route(methods=["POST"])
     def change_password_from_recovery(self, request, pk=None):
@@ -120,7 +118,7 @@ class UsersViewSet(ModelCrudViewSet):
         user.token = None
         user.save(update_fields=["password", "token"])
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return response.NoContent()
 
     @list_route(methods=["POST"])
     def change_password(self, request, pk=None):
@@ -148,7 +146,7 @@ class UsersViewSet(ModelCrudViewSet):
 
         request.user.set_password(password)
         request.user.save(update_fields=["password"])
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return response.NoContent()
 
     @list_route(methods=["POST"])
     def change_avatar(self, request):
@@ -171,7 +169,7 @@ class UsersViewSet(ModelCrudViewSet):
         request.user.save(update_fields=["photo"])
         user_data = serializers.UserSerializer(request.user).data
 
-        return Response(user_data, status=status.HTTP_200_OK)
+        return response.Ok(user_data)
 
     @list_route(methods=["POST"])
     def remove_avatar(self, request):
@@ -182,7 +180,7 @@ class UsersViewSet(ModelCrudViewSet):
         request.user.photo = None
         request.user.save(update_fields=["photo"])
         user_data = serializers.UserSerializer(request.user).data
-        return Response(user_data, status=status.HTTP_200_OK)
+        return response.Ok(user_data)
 
     @detail_route(methods=["GET"])
     def starred(self, request, pk=None):
@@ -191,7 +189,7 @@ class UsersViewSet(ModelCrudViewSet):
 
         stars = votes_service.get_voted(user.pk, model=apps.get_model('projects', 'Project'))
         stars_data = StarredSerializer(stars, many=True)
-        return Response(stars_data.data)
+        return response.Ok(stars_data.data)
 
     #TODO: commit_on_success
     def partial_update(self, request, *args, **kwargs):
@@ -254,7 +252,7 @@ class UsersViewSet(ModelCrudViewSet):
         user.email_token = None
         user.save(update_fields=["email", "new_email", "email_token"])
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return response.NoContent()
 
     @list_route(methods=["GET"])
     def me(self, request, pk=None):
@@ -263,7 +261,7 @@ class UsersViewSet(ModelCrudViewSet):
         """
         self.check_permissions(request, "me", None)
         user_data = serializers.UserSerializer(request.user).data
-        return Response(user_data, status=status.HTTP_200_OK)
+        return response.Ok(user_data)
 
     @list_route(methods=["POST"])
     def cancel(self, request, pk=None):
@@ -286,7 +284,7 @@ class UsersViewSet(ModelCrudViewSet):
             raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
 
         user.cancel()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return response.NoContent()
 
     def destroy(self, request, pk=None):
         user = self.get_object()
@@ -295,7 +293,7 @@ class UsersViewSet(ModelCrudViewSet):
         request_data = stream is not None and stream.GET or None
         user_cancel_account_signal.send(sender=user.__class__, user=user, request_data=request_data)
         user.cancel()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return response.NoContent()
 
 
 ######################################################

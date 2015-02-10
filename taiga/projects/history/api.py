@@ -17,12 +17,10 @@
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 
-from rest_framework.response import Response
-from rest_framework import status
-
-from taiga.base.api.utils import get_object_or_404
+from taiga.base import response
 from taiga.base.decorators import detail_route
 from taiga.base.api import ReadOnlyListViewSet
+from taiga.base.api.utils import get_object_or_404
 
 from . import permissions
 from . import serializers
@@ -54,7 +52,7 @@ class HistoryViewSet(ReadOnlyListViewSet):
         else:
             serializer = self.get_serializer(queryset, many=True)
 
-        return Response(serializer.data)
+        return response.Ok(serializer.data)
 
     @detail_route(methods=['post'])
     def delete_comment(self, request, pk):
@@ -65,15 +63,15 @@ class HistoryViewSet(ReadOnlyListViewSet):
         self.check_permissions(request, 'delete_comment', comment)
 
         if comment is None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return response.NotFound()
 
         if comment.delete_comment_date or comment.delete_comment_user:
-            return Response({"error": "Comment already deleted"}, status=status.HTTP_400_BAD_REQUEST)
+            return response.BadRequest({"error": "Comment already deleted"})
 
         comment.delete_comment_date = timezone.now()
         comment.delete_comment_user = {"pk": request.user.pk, "name": request.user.get_full_name()}
         comment.save()
-        return Response(status=status.HTTP_200_OK)
+        return response.Ok()
 
     @detail_route(methods=['post'])
     def undelete_comment(self, request, pk):
@@ -84,20 +82,20 @@ class HistoryViewSet(ReadOnlyListViewSet):
         self.check_permissions(request, 'undelete_comment', comment)
 
         if comment is None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return response.NotFound()
 
         if not comment.delete_comment_date and not comment.delete_comment_user:
-            return Response({"error": "Comment not deleted"}, status=status.HTTP_400_BAD_REQUEST)
+            return response.BadRequest({"error": "Comment not deleted"})
 
         comment.delete_comment_date = None
         comment.delete_comment_user = None
         comment.save()
-        return Response(status=status.HTTP_200_OK)
+        return response.Ok()
 
     # Just for restframework! Because it raises
     # 404 on main api root if this method not exists.
     def list(self, request):
-        return Response({})
+        return response.NotFound()
 
     def retrieve(self, request, pk):
         obj = self.get_object()

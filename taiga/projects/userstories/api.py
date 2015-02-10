@@ -16,19 +16,19 @@
 
 from contextlib import suppress
 
+from rest_framework import status
+
 from django.apps import apps
 from django.db import transaction
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist
 
-from rest_framework.response import Response
-from rest_framework import status
-
-from taiga.base.api.utils import get_object_or_404
-from taiga.base import filters, response
+from taiga.base import filters
 from taiga.base import exceptions as exc
+from taiga.base import response
 from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet
+from taiga.base.api.utils import get_object_or_404
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin

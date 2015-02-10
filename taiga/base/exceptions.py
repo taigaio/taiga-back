@@ -14,17 +14,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 from rest_framework import exceptions
 from rest_framework import status
-from rest_framework.response import Response
 
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.http import Http404
 
-from .utils.json import to_json
+from taiga.base import response
+from taiga.base.utils.json import to_json
 
 
 class BaseException(exceptions.APIException):
@@ -129,15 +128,13 @@ def exception_handler(exc):
             headers["X-Throttle-Wait-Seconds"] = "%d" % exc.wait
 
         detail = format_exception(exc)
-        return Response(detail, status=exc.status_code, headers=headers)
+        return response.Response(detail, status=exc.status_code, headers=headers)
 
     elif isinstance(exc, Http404):
-        return Response({'_error_message': str(exc)},
-                        status=status.HTTP_404_NOT_FOUND)
+        return response.NotFound({'_error_message': str(exc)})
 
     elif isinstance(exc, DjangoPermissionDenied):
-        return Response({"_error_message": str(exc)},
-                        status=status.HTTP_403_FORBIDDEN)
+        return response.Forbidden({"_error_message": str(exc)})
 
     # Note: Unhandled exceptions will raise a 500 error.
     return None

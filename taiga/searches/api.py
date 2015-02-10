@@ -16,10 +16,9 @@
 
 from django.apps import apps
 
-from rest_framework.response import Response
 from rest_framework import viewsets
 
-from taiga.base import exceptions as excp
+from taiga.base import response
 from taiga.base.api.utils import get_object_or_404
 from taiga.projects.userstories.serializers import UserStorySerializer
 from taiga.projects.tasks.serializers import TaskSerializer
@@ -48,7 +47,7 @@ class SearchViewSet(viewsets.ViewSet):
             result["wikipages"] = self._search_wiki_pages(project, text)
 
         result["count"] = sum(map(lambda x: len(x), result.values()))
-        return Response(result)
+        return response.Ok(result)
 
     def _get_project(self, project_id):
         project_model = apps.get_model("projects", "Project")
