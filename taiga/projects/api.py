@@ -20,7 +20,8 @@ from django.db.models import signals
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from taiga.base import filters, response
+from taiga.base import filters
+from taiga.base import response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
@@ -32,7 +33,6 @@ from taiga.base.utils.slug import slugify_uniquely
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 
-from taiga.users.models import Role
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
@@ -325,7 +325,7 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
 
 
 ######################################################
-## Members Invitations and Roles
+## Members & Invitations
 ######################################################
 
 class MembershipViewSet(ModelCrudViewSet):
@@ -403,20 +403,3 @@ class InvitationViewSet(ModelListViewSet):
 
     def list(self, *args, **kwargs):
         raise exc.PermissionDenied(_("You don't have permisions to see that."))
-
-
-class RolesViewSet(ModelCrudViewSet):
-    model = Role
-    serializer_class = serializers.RoleSerializer
-    permission_classes = (permissions.RolesPermission, )
-    filter_backends = (filters.CanViewProjectFilterBackend,)
-    filter_fields = ('project',)
-
-    def pre_delete(self, obj):
-        move_to = self.request.QUERY_PARAMS.get('moveTo', None)
-        if move_to:
-            role_dest = get_object_or_404(self.model, project=obj.project, id=move_to)
-            qs = models.Membership.objects.filter(project_id=obj.project.pk, role=obj)
-            qs.update(role=role_dest)
-
-        super().pre_delete(obj)

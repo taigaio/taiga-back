@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
 from taiga.projects import serializers
+from taiga.users.serializers import RoleSerializer
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS
 
 from tests import factories as f
@@ -140,19 +141,19 @@ def test_roles_update(client, data):
         data.project_owner
     ]
 
-    role_data = serializers.RoleSerializer(data.public_project.roles.all()[0]).data
+    role_data = RoleSerializer(data.public_project.roles.all()[0]).data
     role_data["name"] = "test"
     role_data = json.dumps(role_data)
     results = helper_test_http_method(client, 'put', public_url, role_data, users)
     assert results == [401, 403, 403, 403, 200]
 
-    role_data = serializers.RoleSerializer(data.private_project1.roles.all()[0]).data
+    role_data = RoleSerializer(data.private_project1.roles.all()[0]).data
     role_data["name"] = "test"
     role_data = json.dumps(role_data)
     results = helper_test_http_method(client, 'put', private1_url, role_data, users)
     assert results == [401, 403, 403, 403, 200]
 
-    role_data = serializers.RoleSerializer(data.private_project2.roles.all()[0]).data
+    role_data = RoleSerializer(data.private_project2.roles.all()[0]).data
     role_data["name"] = "test"
     role_data = json.dumps(role_data)
     results = helper_test_http_method(client, 'put', private2_url, role_data, users)

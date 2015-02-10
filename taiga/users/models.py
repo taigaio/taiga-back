@@ -174,6 +174,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.save()
         self.auth_data.all().delete()
 
+
 class Role(models.Model):
     name = models.CharField(max_length=200, null=False, blank=False,
                             verbose_name=_("name"))

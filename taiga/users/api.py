@@ -26,20 +26,21 @@ from django.conf import settings
 from easy_thumbnails.source_generators import pil_image
 
 from rest_framework.response import Response
-from rest_framework.filters import BaseFilterBackend
 from rest_framework import status
 
-from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
+from djmail.template_mail import MagicMailBuilder
+from djmail.template_mail import InlineCSSTemplateMail
 
 from taiga.auth.tokens import get_user_for_token
-from taiga.base.decorators import list_route, detail_route
+from taiga.base.decorators import list_route
+from taiga.base.decorators import detail_route
 from taiga.base import exceptions as exc
+from taiga.base import filters
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api.utils import get_object_or_404
-from taiga.base.utils.slug import slugify_uniquely
+from taiga.base.filters import MembersFilterBackend
 from taiga.projects.votes import services as votes_service
 from taiga.projects.serializers import StarredSerializer
-from taiga.permissions.service import is_project_owner
 
 from . import models
 from . import serializers
@@ -47,22 +48,9 @@ from . import permissions
 from .signals import user_cancel_account as user_cancel_account_signal
 
 
-class MembersFilterBackend(BaseFilterBackend):
-    def filter_queryset(self, request, queryset, view):
-        project_id = request.QUERY_PARAMS.get('project', None)
-        if project_id:
-            Project = apps.get_model('projects', 'Project')
-            project = get_object_or_404(Project, pk=project_id)
-            if request.user.is_authenticated() and project.memberships.filter(user=request.user).exists():
-                return queryset.filter(memberships__project=project).distinct()
-            else:
-                raise exc.PermissionDenied(_("You don't have permisions to see this project users."))
-
-        if request.user.is_superuser:
-            return queryset
-
-        return []
-
+######################################################
+## User
+######################################################
 
 class UsersViewSet(ModelCrudViewSet):
     permission_classes = (permissions.UserPermission,)
@@ -73,7 +61,9 @@ class UsersViewSet(ModelCrudViewSet):
         raise exc.NotSupported()
 
     def list(self, request, *args, **kwargs):
-        self.object_list = MembersFilterBackend().filter_queryset(request, self.get_queryset(), self)
+        self.object_list = MembersFilterBackend().filter_queryset(request,
+                                                                  self.get_queryset(),
+                                                                  self)
 
         page = self.paginate_queryset(self.object_list)
         if page is not None:
@@ -249,12 +239,14 @@ class UsersViewSet(ModelCrudViewSet):
         """
         serializer = serializers.ChangeEmailSerializer(data=request.DATA, many=False)
         if not serializer.is_valid():
-            raise exc.WrongArguments(_("Invalid, are you sure the token is correct and you didn't use it before?"))
+            raise exc.WrongArguments(_("Invalid, are you sure the token is correct and you "
+                                       "didn't use it before?"))
 
         try:
             user = models.User.objects.get(email_token=serializer.data["email_token"])
         except models.User.DoesNotExist:
-            raise exc.WrongArguments(_("Invalid, are you sure the token is correct and you didn't use it before?"))
+            raise exc.WrongArguments(_("Invalid, are you sure the token is correct and you "
+                                       "didn't use it before?"))
 
         self.check_permissions(request, "change_email", user)
         user.email = user.new_email
@@ -304,3 +296,25 @@ class UsersViewSet(ModelCrudViewSet):
         user_cancel_account_signal.send(sender=user.__class__, user=user, request_data=request_data)
         user.cancel()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+######################################################
+## Role
+######################################################
+
+class RolesViewSet(ModelCrudViewSet):
+    model = models.Role
+    serializer_class = serializers.RoleSerializer
+    permission_classes = (permissions.RolesPermission, )
+    filter_backends = (filters.CanViewProjectFilterBackend,)
+    filter_fields = ('project',)
+
+    def pre_delete(self, obj):
+        move_to = self.request.QUERY_PARAMS.get('moveTo', None)
+        if move_to:
+            membership_model = apps.get_model("projects", "Membership")
+            role_dest = get_object_or_404(self.model, project=obj.project, id=move_to)
+            qs = membership_model.objects.filter(project_id=obj.project.pk, role=obj)
+            qs.update(role=role_dest)
+
+        super().pre_delete(obj)
