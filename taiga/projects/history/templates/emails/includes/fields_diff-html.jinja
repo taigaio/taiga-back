@@ -91,19 +91,23 @@
         {% elif field_name in ["tags", "watchers"] %}
             {% set values_from = values.0 or [] %}
             {% set values_to = values.1 or [] %}
+            {% set values_added = lists_diff(values_to, values_from) %}
+            {% set values_removed = lists_diff(values_from, values_to) %}
+
             <tr>
                 <td valign="middle" rowspan="2" class="update-row-name">
-                    <h3>{{ field_name }}</h3>
+                    <h3>{{ verbose_name(obj_class, field_name) }}</h3>
                 </td>
                 <td valign="top" class="update-row-from">
-                    <span>{{ _("from") }}</span><br>
-                    <strong>{{ ', '.join(values_from) }}</strong>
-                </td>
-            </tr>
-            <tr>
-                <td valign="top">
-                    <span>{{ _("to") }}</span><br>
-                    <strong>{{ ', '.join(values_to) }}</strong>
+                    {% if values_added %}
+                    <span>{{ _("added") }}</span><br>
+                    <strong>{{ ', '.join(values_added) }}</strong>
+                    {% endif %}
+
+                    {% if values_removed %}
+                    <span>{{ _("removed") }}</span><br>
+                    <strong>{{ ', '.join(values_removed) }}</strong>
+                    {% endif %}
                 </td>
             </tr>
     {# DESCRIPTIONS #}
@@ -126,7 +130,7 @@
         {% elif field_name == "assigned_to" %}
             <tr>
                 <td valign="middle" rowspan="2" class="update-row-name">
-                    <h3>{{ field_name }}</h3>
+                    <h3>{{ verbose_name(obj_class, field_name) }}</h3>
                 </td>
                 <td valign="top" class="update-row-from">
                     {% if values.0 != None and values.0 != "" %}
@@ -154,7 +158,7 @@
 
             <tr>
                 <td valign="middle" rowspan="2" class="update-row-name">
-                    <h3>{{ field_name }}</h3>
+                    <h3>{{ verbose_name(obj_class, field_name) }}</h3>
                 </td>
                 <td valign="top" class="update-row-from">
                     <span>{{ _("from") }}</span><br>

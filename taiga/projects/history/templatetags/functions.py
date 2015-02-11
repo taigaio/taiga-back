@@ -29,11 +29,15 @@ EXTRA_FIELD_VERBOSE_NAMES = {
 
 
 @register.global_function
-def verbose_name(obj:object, field_name:str) -> str:
+def verbose_name(obj_class, field_name):
     if field_name in EXTRA_FIELD_VERBOSE_NAMES:
         return EXTRA_FIELD_VERBOSE_NAMES[field_name]
 
     try:
-        return obj._meta.get_field(field_name).verbose_name
+        return obj_class._meta.get_field(field_name).verbose_name
     except Exception:
         return field_name
+
+@register.global_function
+def lists_diff(list1, list2):
+    return (list(set(list1) - set(list2)))

@@ -12,7 +12,7 @@
 ] %}
 {% for field_name, values in changed_fields.items() %}
     {% if field_name not in excluded_fields %}
-    - {{ verbose_name(object, field_name) }}:
+    - {{ verbose_name(obj_class, field_name) }}:
     {# POINTS #}
         {% if field_name == "points" %}
             {% for role, points in values.items() %}
@@ -42,17 +42,16 @@
             {% endif %}
     {# TAGS AND WATCHERS #}
         {% elif field_name in ["tags", "watchers"] %}
-    * {{ _("to:") }} {{ ', '.join(values.1) }}
-            {% if values.0 %}
-    * {{ _("from:") }} {{ ', '.join(values.0) }}
+            {% set values_from = values.0 or [] %}
+            {% set values_to = values.1 or [] %}
+            {% set values_added = lists_diff(values_to, values_from) %}
+            {% set values_removed = lists_diff(values_from, values_to) %}
+
+            {% if values_added %}
+            * {{ _("added:") }} {{ ', '.join(values_added) }}
             {% endif %}
-    {# * #}
-        {% else %}
-            {% if values.1 != None and values.1 != "" %}
-    * {{ _("to:") }} {{ values.1|linebreaksbr }}
-            {% endif %}
-            {% if values.0 != None and values.0 != "" %}
-    * {{ _("from:") }} {{ values.0|linebreaksbr }}
+            {% if values_removed %}
+            * {{ _("removed:") }} {{ ', '.join(values_removed) }}
             {% endif %}
         {% endif %}
     {% endif %}
