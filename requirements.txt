@@ -9,7 +9,7 @@ pytz==2014.4
 six==1.8.0
 amqp==1.4.6
 djmail==0.9
-django-pgjson==0.2.1
+django-pgjson==0.2.2
 djorm-pgarray==1.0.4
 django-jinja==1.0.4
 jinja2==2.7.2
