@@ -18,8 +18,7 @@
 import pytest
 
 from unittest.mock import patch, Mock
-from taiga.base.connectors import github
-from taiga.base.connectors import exceptions as exc
+from taiga_contrib_github_auth import connector as github
 
 
 def test_url_builder():
@@ -34,8 +33,8 @@ def test_url_builder():
 
 
 def test_login_without_settings_params():
-    with pytest.raises(exc.GitHubApiError) as e, \
-            patch("taiga.base.connectors.github.requests") as m_requests:
+    with pytest.raises(github.GitHubApiError) as e, \
+            patch("taiga_contrib_github_auth.connector.requests") as m_requests:
         m_requests.post.return_value = m_response = Mock()
         m_response.status_code = 200
         m_response.json.return_value = {"access_token": "xxxxxxxx"}
@@ -46,9 +45,9 @@ def test_login_without_settings_params():
 
 
 def test_login_success():
-    with patch("taiga.base.connectors.github.requests") as m_requests, \
-            patch("taiga.base.connectors.github.CLIENT_ID") as CLIENT_ID, \
-            patch("taiga.base.connectors.github.CLIENT_SECRET") as CLIENT_SECRET:
+    with patch("taiga_contrib_github_auth.connector.requests") as m_requests, \
+            patch("taiga_contrib_github_auth.connector.CLIENT_ID") as CLIENT_ID, \
+            patch("taiga_contrib_github_auth.connector.CLIENT_SECRET") as CLIENT_SECRET:
         CLIENT_ID = "*CLIENT_ID*"
         CLIENT_SECRET = "*CLIENT_SECRET*"
         m_requests.post.return_value = m_response = Mock()
@@ -67,10 +66,10 @@ def test_login_success():
 
 
 def test_login_whit_errors():
-    with pytest.raises(exc.GitHubApiError) as e, \
-            patch("taiga.base.connectors.github.requests") as m_requests, \
-            patch("taiga.base.connectors.github.CLIENT_ID") as CLIENT_ID, \
-            patch("taiga.base.connectors.github.CLIENT_SECRET") as CLIENT_SECRET:
+    with pytest.raises(github.GitHubApiError) as e, \
+            patch("taiga_contrib_github_auth.connector.requests") as m_requests, \
+            patch("taiga_contrib_github_auth.connector.CLIENT_ID") as CLIENT_ID, \
+            patch("taiga_contrib_github_auth.connector.CLIENT_SECRET") as CLIENT_SECRET:
         CLIENT_ID = "*CLIENT_ID*"
         CLIENT_SECRET = "*CLIENT_SECRET*"
         m_requests.post.return_value = m_response = Mock()
@@ -84,7 +83,7 @@ def test_login_whit_errors():
 
 
 def test_get_user_profile_success():
-    with patch("taiga.base.connectors.github.requests") as m_requests:
+    with patch("taiga_contrib_github_auth.connector.requests") as m_requests:
         m_requests.get.return_value = m_response = Mock()
         m_response.status_code = 200
         m_response.json.return_value = {"id": 1955,
@@ -103,8 +102,8 @@ def test_get_user_profile_success():
 
 
 def test_get_user_profile_whit_errors():
-    with pytest.raises(exc.GitHubApiError) as e, \
-            patch("taiga.base.connectors.github.requests") as m_requests:
+    with pytest.raises(github.GitHubApiError) as e, \
+            patch("taiga_contrib_github_auth.connector.requests") as m_requests:
         m_requests.get.return_value = m_response = Mock()
         m_response.status_code = 401
         m_response.json.return_value = {"error": "Invalid credentials"}
@@ -116,7 +115,7 @@ def test_get_user_profile_whit_errors():
 
 
 def test_get_user_emails_success():
-    with patch("taiga.base.connectors.github.requests") as m_requests:
+    with patch("taiga_contrib_github_auth.connector.requests") as m_requests:
         m_requests.get.return_value = m_response = Mock()
         m_response.status_code = 200
         m_response.json.return_value = [{"email": "darth-vader@bttf.com", "primary": False},
@@ -134,8 +133,8 @@ def test_get_user_emails_success():
 
 
 def test_get_user_emails_whit_errors():
-    with pytest.raises(exc.GitHubApiError) as e, \
-            patch("taiga.base.connectors.github.requests") as m_requests:
+    with pytest.raises(github.GitHubApiError) as e, \
+            patch("taiga_contrib_github_auth.connector.requests") as m_requests:
         m_requests.get.return_value = m_response = Mock()
         m_response.status_code = 401
         m_response.json.return_value = {"error": "Invalid credentials"}
@@ -147,9 +146,9 @@ def test_get_user_emails_whit_errors():
 
 
 def test_me():
-    with patch("taiga.base.connectors.github.login") as m_login, \
-            patch("taiga.base.connectors.github.get_user_profile") as m_get_user_profile, \
-            patch("taiga.base.connectors.github.get_user_emails") as m_get_user_emails:
+    with patch("taiga_contrib_github_auth.connector.login") as m_login, \
+            patch("taiga_contrib_github_auth.connector.get_user_profile") as m_get_user_profile, \
+            patch("taiga_contrib_github_auth.connector.get_user_emails") as m_get_user_emails:
         m_login.return_value = github.AuthInfo(access_token="xxxxxxxx")
         m_get_user_profile.return_value = github.User(id=1955,
                                                       username="mmcfly",

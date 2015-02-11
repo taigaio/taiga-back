@@ -32,6 +32,7 @@ from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.template.defaultfilters import slugify
 
+from django_pgjson.fields import JsonField
 from djorm_pgarray.fields import TextArrayField
 
 from taiga.auth.tokens import get_token_for_user
@@ -129,7 +130,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     new_email = models.EmailField(_('new email address'), null=True, blank=True)
 
-    github_id = models.IntegerField(null=True, blank=True, verbose_name=_("github ID"), db_index=True)
     is_system = models.BooleanField(null=False, blank=False, default=False)
 
     USERNAME_FIELD = 'username'
@@ -170,9 +170,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.default_timezone = ""
         self.colorize_tags = True
         self.token = None
-        self.github_id = None
         self.set_unusable_password()
         self.save()
+        self.auth_data.all().delete()
 
 class Role(models.Model):
     name = models.CharField(max_length=200, null=False, blank=False,
@@ -209,6 +209,16 @@ class Role(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class AuthData(models.Model):
+    user = models.ForeignKey('users.User', related_name="auth_data")
+    key = models.SlugField(max_length=50)
+    value = models.CharField(max_length=300)
+    extra = JsonField()
+
+    class Meta:
+        unique_together = ["key", "value"]
 
 
 # On Role object is changed, update all membership
