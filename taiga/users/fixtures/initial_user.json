@@ -13,7 +13,6 @@
             "default_timezone": "",
             "is_superuser": true,
             "token": "",
-            "github_id": null,
             "last_login": "2013-04-04T07:36:09.880Z",
             "password": "pbkdf2_sha256$10000$oRIbCKOL1U3w$/gaYMnOlc/GnN4mn3UUXvXpk2Hx0vvht6Uqhu46aikI=",
             "email": "admin@admin.com",
