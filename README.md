@@ -2,6 +2,8 @@
 
 ![Kaleidos Project](http://kaleidos.net/static/img/badge.png "Kaleidos Project")
 
+[![Managed with Taiga](https://taiga.io/media/support/attachments/article-22/banner-gh.png)](https://taiga.io "Managed with Taiga")
+
 [![Travis Badge](https://img.shields.io/travis/taigaio/taiga-back.svg?style=flat)](https://travis-ci.org/taigaio/taiga-back "Travis Badge")
 
 [![Coveralls](http://img.shields.io/coveralls/taigaio/taiga-back.svg?style=flat)](https://coveralls.io/r/taigaio/taiga-back?branch=master "Coveralls")
