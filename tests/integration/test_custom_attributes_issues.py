@@ -269,3 +269,37 @@ def test_issue_custom_attributes_values_delete_us(client):
     assert response.status_code == 204
     assert not issue.__class__.objects.filter(id=issue.id).exists()
     assert not custom_attrs_val.__class__.objects.filter(id=custom_attrs_val.id).exists()
+
+
+#########################################################
+# Test tristres triggers :-P
+#########################################################
+
+def test_trigger_update_issuecustomvalues_afeter_remove_issuecustomattribute():
+    issue = f.IssueFactory()
+    member = f.MembershipFactory(user=issue.project.owner,
+                                 project=issue.project,
+                                 is_owner=True)
+
+    custom_attr_1 = f.IssueCustomAttributeFactory(project=issue.project)
+    ct1_id = "{}".format(custom_attr_1.id)
+    custom_attr_2 = f.IssueCustomAttributeFactory(project=issue.project)
+    ct2_id = "{}".format(custom_attr_2.id)
+
+    custom_attrs_val = f.IssueCustomAttributesValuesFactory(
+        project=issue.project,
+        issue=issue,
+        values= {
+            ct1_id: "test_1",
+            ct2_id: "test_2"
+        },
+    )
+
+    assert ct1_id in custom_attrs_val.values.keys()
+    assert ct2_id in custom_attrs_val.values.keys()
+
+    custom_attr_2.delete()
+    custom_attrs_val = custom_attrs_val.__class__.objects.get(id=custom_attrs_val.id)
+
+    assert ct1_id in custom_attrs_val.values.keys()
+    assert ct2_id not in custom_attrs_val.values.keys()
