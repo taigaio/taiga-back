@@ -1,12 +1,13 @@
 -r requirements.txt
 
 factory_boy==2.4.1
-py==1.4.23
-pytest==2.6.1
-pytest-django==2.6.2
-pytest-pythonpath==0.3
+py==1.4.26
+pytest==2.6.4
+pytest-django==2.8.0
+pytest-pythonpath==0.6
 
 coverage==3.7.1
 coveralls==0.4.2
 django-slowdown==0.0.1
+
 taiga-contrib-github-auth==0.0.2
