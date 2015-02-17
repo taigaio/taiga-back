@@ -20,7 +20,8 @@ from django.db.models import signals
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from taiga.base import filters, response
+from taiga.base import filters
+from taiga.base import response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
@@ -32,7 +33,6 @@ from taiga.base.utils.slug import slugify_uniquely
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 
-from taiga.users.models import Role
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
@@ -74,7 +74,7 @@ class ProjectViewSet(ModelCrudViewSet):
         modules_config = services.get_modules_config(project)
 
         if request.method == "GET":
-            return response.Ok(data=modules_config.config)
+            return response.Ok(modules_config.config)
 
         else:
             modules_config.config.update(request.DATA)
@@ -85,31 +85,31 @@ class ProjectViewSet(ModelCrudViewSet):
     def stats(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "stats", project)
-        return response.Ok(data=services.get_stats_for_project(project))
+        return response.Ok(services.get_stats_for_project(project))
 
     @detail_route(methods=["GET"])
     def member_stats(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "member_stats", project)
-        return response.Ok(data=services.get_member_stats_for_project(project))
+        return response.Ok(services.get_member_stats_for_project(project))
 
     @detail_route(methods=["GET"])
     def issues_stats(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "issues_stats", project)
-        return response.Ok(data=services.get_stats_for_project_issues(project))
+        return response.Ok(services.get_stats_for_project_issues(project))
 
     @detail_route(methods=["GET"])
     def issue_filters_data(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "issues_filters_data", project)
-        return response.Ok(data=services.get_issues_filters_data(project))
+        return response.Ok(services.get_issues_filters_data(project))
 
     @detail_route(methods=["GET"])
     def tags_colors(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "tags_colors", project)
-        return response.Ok(data=dict(project.tags_colors))
+        return response.Ok(dict(project.tags_colors))
 
     @detail_route(methods=["POST"])
     def star(self, request, pk=None):
@@ -132,7 +132,7 @@ class ProjectViewSet(ModelCrudViewSet):
 
         voters = votes_service.get_voters(project)
         voters_data = votes_serializers.VoterSerializer(voters, many=True)
-        return response.Ok(data=voters_data.data)
+        return response.Ok(voters_data.data)
 
     @detail_route(methods=["POST"])
     def create_template(self, request, **kwargs):
@@ -325,7 +325,7 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
 
 
 ######################################################
-## Members Invitations and Roles
+## Members & Invitations
 ######################################################
 
 class MembershipViewSet(ModelCrudViewSet):
@@ -359,7 +359,7 @@ class MembershipViewSet(ModelCrudViewSet):
             return response.BadRequest(err.message_dict)
 
         members_serialized = self.serializer_class(members, many=True)
-        return response.Ok(data=members_serialized.data)
+        return response.Ok(members_serialized.data)
 
     @detail_route(methods=["POST"])
     def resend_invitation(self, request, **kwargs):
@@ -403,20 +403,3 @@ class InvitationViewSet(ModelListViewSet):
 
     def list(self, *args, **kwargs):
         raise exc.PermissionDenied(_("You don't have permisions to see that."))
-
-
-class RolesViewSet(ModelCrudViewSet):
-    model = Role
-    serializer_class = serializers.RoleSerializer
-    permission_classes = (permissions.RolesPermission, )
-    filter_backends = (filters.CanViewProjectFilterBackend,)
-    filter_fields = ('project',)
-
-    def pre_delete(self, obj):
-        move_to = self.request.QUERY_PARAMS.get('moveTo', None)
-        if move_to:
-            role_dest = get_object_or_404(self.model, project=obj.project, id=move_to)
-            qs = models.Membership.objects.filter(project_id=obj.project.pk, role=obj)
-            qs.update(role=role_dest)
-
-        super().pre_delete(obj)

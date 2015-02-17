@@ -55,7 +55,7 @@ def test_ok_signature(client):
                            content_type="application/json",
                            REMOTE_ADDR="111.111.111.111")
 
-    assert response.status_code == 200
+    assert response.status_code == 204
 
 
 def test_invalid_ip(client):
@@ -95,7 +95,7 @@ def test_not_ip_filter(client):
                            content_type="application/json",
                            REMOTE_ADDR="111.111.111.111")
 
-    assert response.status_code == 200
+    assert response.status_code == 204
 
 
 def test_push_event_detected(client):
@@ -115,7 +115,7 @@ def test_push_event_detected(client):
 
         assert process_event_mock.call_count == 1
 
-    assert response.status_code == 200
+    assert response.status_code == 204
 
 
 def test_push_event_issue_processing(client):
@@ -338,7 +338,6 @@ def test_issues_event_bad_issue(client):
 
     assert Issue.objects.count() == 1
     assert len(mail.outbox) == 0
-
 
 
 def test_api_get_project_modules(client):

@@ -14,18 +14,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rest_framework.response import Response
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from taiga.base.api.viewsets import GenericViewSet
 from taiga.base import exceptions as exc
-from taiga.base.utils import json
 from taiga.projects.models import Project
 from taiga.hooks.api import BaseWebhookApiViewSet
 
 from . import event_hooks
-from ..exceptions import ActionSyntaxException
 
 from urllib.parse import parse_qs
 from ipware.ip import get_real_ip
@@ -61,7 +57,9 @@ class BitBucketViewSet(BaseWebhookApiViewSet):
         if not project_secret:
             return False
 
-        valid_origin_ips = project.modules_config.config.get("bitbucket", {}).get("valid_origin_ips", settings.BITBUCKET_VALID_ORIGIN_IPS)
+        bitbucket_config = project.modules_config.config.get("bitbucket", {})
+        valid_origin_ips = bitbucket_config.get("valid_origin_ips",
+                                                settings.BITBUCKET_VALID_ORIGIN_IPS)
         origin_ip = get_real_ip(request)
         if valid_origin_ips and (not origin_ip or not origin_ip in valid_origin_ips):
             return False

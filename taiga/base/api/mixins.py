@@ -23,9 +23,7 @@ from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.db import transaction as tx
 
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.request import clone_request
+from taiga.base import response
 from rest_framework.settings import api_settings
 
 from .utils import get_object_or_404
@@ -73,10 +71,9 @@ class CreateModelMixin(object):
             self.object = serializer.save(force_insert=True)
             self.post_save(self.object, created=True)
             headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED,
-                            headers=headers)
+            return response.Created(serializer.data, headers=headers)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return response.BadRequest(serializer.errors)
 
     def get_success_headers(self, data):
         try:
@@ -114,7 +111,7 @@ class ListModelMixin(object):
         else:
             serializer = self.get_serializer(self.object_list, many=True)
 
-        return Response(serializer.data)
+        return response.Ok(serializer.data)
 
 
 class RetrieveModelMixin(object):
@@ -130,7 +127,7 @@ class RetrieveModelMixin(object):
             raise Http404
 
         serializer = self.get_serializer(self.object)
-        return Response(serializer.data)
+        return response.Ok(serializer.data)
 
 
 class UpdateModelMixin(object):
@@ -149,7 +146,7 @@ class UpdateModelMixin(object):
                                          files=request.FILES, partial=partial)
 
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return response.BadRequest(serializer.errors)
 
         # Hooks
         try:
@@ -158,16 +155,16 @@ class UpdateModelMixin(object):
         except ValidationError as err:
             # full_clean on model instance may be called in pre_save,
             # so we have to handle eventual errors.
-            return Response(err.message_dict, status=status.HTTP_400_BAD_REQUEST)
+            return response.BadRequest(err.message_dict)
 
         if self.object is None:
             self.object = serializer.save(force_insert=True)
             self.post_save(self.object, created=True)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return response.Created(serializer.data)
 
         self.object = serializer.save(force_update=True)
         self.post_save(self.object, created=False)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return response.Ok(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
@@ -216,4 +213,4 @@ class DestroyModelMixin(object):
         self.pre_conditions_on_delete(obj)
         obj.delete()
         self.post_delete(obj)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return response.NoContent()

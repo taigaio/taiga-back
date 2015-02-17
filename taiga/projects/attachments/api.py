@@ -21,14 +21,15 @@ import mimetypes
 mimetypes.init()
 
 from django.contrib.contenttypes.models import ContentType
-from taiga.base.api.utils import get_object_or_404
 from django.conf import settings
 from django import http
 
-from taiga.base.api import ModelCrudViewSet
-from taiga.base.api import generics
 from taiga.base import filters
 from taiga.base import exceptions as exc
+from taiga.base.api import generics
+from taiga.base.api import ModelCrudViewSet
+from taiga.base.api.utils import get_object_or_404
+
 from taiga.users.models import User
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin

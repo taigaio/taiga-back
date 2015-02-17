@@ -55,7 +55,7 @@ def test_ok_signature(client):
                            urllib.parse.urlencode(data, True),
                            content_type="application/x-www-form-urlencoded",
                            REMOTE_ADDR=settings.BITBUCKET_VALID_ORIGIN_IPS[0])
-    assert response.status_code == 200
+    assert response.status_code == 204
 
 def test_invalid_ip(client):
     project=f.ProjectFactory()
@@ -91,7 +91,7 @@ def test_not_ip_filter(client):
                            urllib.parse.urlencode(data, True),
                            content_type="application/x-www-form-urlencoded",
                            REMOTE_ADDR="111.111.111.112")
-    assert response.status_code == 200
+    assert response.status_code == 204
 
 
 def test_push_event_detected(client):
@@ -108,7 +108,7 @@ def test_push_event_detected(client):
 
         assert process_event_mock.call_count == 1
 
-    assert response.status_code == 200
+    assert response.status_code == 204
 
 
 def test_push_event_issue_processing(client):

@@ -16,10 +16,11 @@
 
 import json
 
-from rest_framework.response import Response
-
 from taiga.base import filters
-from taiga.base.api import ModelCrudViewSet, ModelListViewSet
+from taiga.base import response
+from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelListViewSet
+
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.decorators import detail_route
 
@@ -44,7 +45,8 @@ class WebhookViewSet(ModelCrudViewSet):
         webhooklog = tasks.test_webhook(webhook.id, webhook.url, webhook.key)
         log = serializers.WebhookLogSerializer(webhooklog)
 
-        return Response(log.data)
+        return response.Ok(log.data)
+
 
 class WebhookLogViewSet(ModelListViewSet):
     model = models.WebhookLog
@@ -60,7 +62,9 @@ class WebhookLogViewSet(ModelListViewSet):
 
         webhook = webhooklog.webhook
 
-        webhooklog = tasks.resend_webhook(webhook.id, webhook.url, webhook.key, webhooklog.request_data)
+        webhooklog = tasks.resend_webhook(webhook.id, webhook.url, webhook.key,
+                                          webhooklog.request_data)
+
         log = serializers.WebhookLogSerializer(webhooklog)
 
-        return Response(log.data)
+        return response.Ok(log.data)

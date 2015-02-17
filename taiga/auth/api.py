@@ -20,13 +20,13 @@ from enum import Enum
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework import serializers
 
 from taiga.base.api import viewsets
 from taiga.base.decorators import list_route
 from taiga.base import exceptions as exc
+from taiga.base import response
+
 from taiga.users.services import get_and_validate_user
 
 from .serializers import PublicRegisterSerializer
@@ -108,7 +108,7 @@ class AuthViewSet(viewsets.ViewSet):
             raise exc.BadRequest(e.detail)
 
         data = make_auth_response_data(user)
-        return Response(data, status=status.HTTP_201_CREATED)
+        return response.Created(data)
 
     def _private_register(self, request):
         register_type = parse_register_type(request.DATA)
@@ -121,7 +121,7 @@ class AuthViewSet(viewsets.ViewSet):
             user = private_register_for_new_user(**data)
 
         data = make_auth_response_data(user)
-        return Response(data, status=status.HTTP_201_CREATED)
+        return response.Created(data)
 
     @list_route(methods=["POST"])
     def register(self, request, **kwargs):
@@ -133,7 +133,6 @@ class AuthViewSet(viewsets.ViewSet):
         elif type == "private":
             return self._private_register(request)
         raise exc.BadRequest(_("invalid register type"))
-
 
     # Login view: /api/v1/auth
     def create(self, request, **kwargs):

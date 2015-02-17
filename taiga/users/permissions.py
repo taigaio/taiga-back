@@ -14,9 +14,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api.permissions import (TaigaResourcePermission, IsSuperUser,
-                                        AllowAny, PermissionComponent,
-                                        IsAuthenticated)
+from taiga.base.api.permissions import TaigaResourcePermission
+from taiga.base.api.permissions import IsSuperUser
+from taiga.base.api.permissions import AllowAny
+from taiga.base.api.permissions import IsAuthenticated
+from taiga.base.api.permissions import HasProjectPerm
+from taiga.base.api.permissions import IsProjectOwner
+from taiga.base.api.permissions import PermissionComponent
 
 
 class IsTheSameUser(PermissionComponent):
@@ -39,3 +43,11 @@ class UserPermission(TaigaResourcePermission):
     remove_avatar_perms = IsAuthenticated()
     starred_perms = AllowAny()
     change_email_perms = IsTheSameUser()
+
+
+class RolesPermission(TaigaResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectOwner()
+    update_perms = IsProjectOwner()
+    destroy_perms = IsProjectOwner()
+    list_perms = AllowAny()
