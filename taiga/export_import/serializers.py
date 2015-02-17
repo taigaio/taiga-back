@@ -333,6 +333,93 @@ class IssueCustomAttributeExportSerializer(serializers.ModelSerializer):
         exclude = ('id', 'project')
 
 
+class CustomAttributesValuesExportSerializerMixin:
+    custom_attributes_values = serializers.SerializerMethodField("get_custom_attributes_values")
+
+    def custom_attributes_queryset(self, project):
+        raise NotImplementedError()
+
+    def get_custom_attributes_values(self, obj):
+        def _use_name_instead_id_as_key_in_custom_attributes_values(custom_attributes, values):
+            ret = {}
+            for attr in custom_attributes:
+                value = values.get(str(attr["id"]), None)
+                if value is not  None:
+                    ret[attr["name"]] = value
+
+            return ret
+
+        try:
+            values =  obj.custom_attributes_values.values
+            custom_attributes = self.custom_attribute_queryset(obj.project).values('id', 'name')
+
+            return _use_name_instead_id_as_key_in_custom_attributes_values(custom_attributes, values)
+        except ObjectDoesNotExist:
+            return None
+
+
+class BaseCustomAttributesValuesExportSerializer:
+    values = JsonField(source="values", label="values", required=True)
+    _custom_attribute_model = None
+    _container_field = None
+
+    def validate_values(self, attrs, source):
+        # values must be a dict
+        data_values = attrs.get("values", None)
+        if self.object:
+            data_values = (data_values or self.object.values)
+
+        if type(data_values) is not dict:
+            raise ValidationError(_("Invalid content. It must be {\"key\": \"value\",...}"))
+
+        # Values keys must be in the container object project
+        data_container = attrs.get(self._container_field, None)
+        if data_container:
+            project_id = data_container.project_id
+        elif self.object:
+            project_id = getattr(self.object, self._container_field).project_id
+        else:
+            project_id = None
+
+        values_ids = list(data_values.keys())
+        qs = self._custom_attribute_model.objects.filter(project=project_id,
+                                                         id__in=values_ids)
+        if qs.count() != len(values_ids):
+            raise ValidationError(_("It contain invalid custom fields."))
+
+        return attrs
+
+class UserStoryCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer,
+                                                      serializers.ModelSerializer):
+    _custom_attribute_model = custom_attributes_models.UserStoryCustomAttribute
+    _container_model = "userstories.UserStory"
+    _container_field = "user_story"
+
+    class Meta:
+        model = custom_attributes_models.UserStoryCustomAttributesValues
+        exclude = ("id",)
+
+
+class TaskCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer,
+                                                 serializers.ModelSerializer):
+    _custom_attribute_model = custom_attributes_models.TaskCustomAttribute
+    _container_field = "task"
+
+    class Meta:
+        model = custom_attributes_models.TaskCustomAttributesValues
+        exclude = ("id",)
+
+
+class IssueCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer,
+                                                  serializers.ModelSerializer):
+    _custom_attribute_model = custom_attributes_models.IssueCustomAttribute
+    _container_field = "issue"
+
+    class Meta:
+        model = custom_attributes_models.IssueCustomAttributesValues
+        exclude = ("id",)
+
+
 class MembershipExportSerializer(serializers.ModelSerializer):
     user = UserRelatedField(required=False)
     role = ProjectRelatedField(slug_field="name")
@@ -382,8 +469,8 @@ class MilestoneExportSerializer(serializers.ModelSerializer):
         exclude = ('id', 'project')
 
 
-class TaskExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin,
-                           serializers.ModelSerializer):
+class TaskExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
+                           AttachmentExportSerializerMixin, serializers.ModelSerializer):
     owner = UserRelatedField(required=False)
     status = ProjectRelatedField(slug_field="name")
     user_story = ProjectRelatedField(slug_field="ref", required=False)
@@ -396,9 +483,12 @@ class TaskExportSerializer(HistoryExportSerializerMixin, AttachmentExportSeriali
         model = tasks_models.Task
         exclude = ('id', 'project')
 
+    def custom_attributes_queryset(self, project):
+        return project.taskcustomattributes.all()
 
-class UserStoryExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin,
-                                serializers.ModelSerializer):
+
+class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
+                                AttachmentExportSerializerMixin, serializers.ModelSerializer):
     role_points = RolePointsExportSerializer(many=True, required=False)
     owner = UserRelatedField(required=False)
     assigned_to = UserRelatedField(required=False)
@@ -412,9 +502,12 @@ class UserStoryExportSerializer(HistoryExportSerializerMixin, AttachmentExportSe
         model = userstories_models.UserStory
         exclude = ('id', 'project', 'points', 'tasks')
 
+    def custom_attributes_queryset(self, project):
+        return project.userstorycustomattributes.all()
 
-class IssueExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin,
-                            serializers.ModelSerializer):
+
+class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
+                            AttachmentExportSerializerMixin, serializers.ModelSerializer):
     owner = UserRelatedField(required=False)
     status = ProjectRelatedField(slug_field="name")
     assigned_to = UserRelatedField(required=False)
@@ -426,12 +519,15 @@ class IssueExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerial
     votes = serializers.SerializerMethodField("get_votes")
     modified_date = serializers.DateTimeField(required=False)
 
-    def get_votes(self, obj):
-        return [x.email for x in votes_service.get_voters(obj)]
-
     class Meta:
         model = issues_models.Issue
         exclude = ('id', 'project')
+
+    def get_votes(self, obj):
+        return [x.email for x in votes_service.get_voters(obj)]
+
+    def custom_attributes_queryset(self, project):
+        return project.issuecustomattributes.all()
 
 
 class WikiPageExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin,
