@@ -142,6 +142,7 @@ class AuthViewSet(viewsets.ViewSet):
         login_type = request.DATA.get("type", None)
 
         if login_type in auth_plugins:
-            return auth_plugins[login_type]['login_func'](request)
+            data = auth_plugins[login_type]['login_func'](request)
+            return response.Ok(data)
 
         raise exc.BadRequest(_("invalid login type"))

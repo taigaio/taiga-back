@@ -201,7 +201,7 @@ def normal_login_func(request):
 
     user = get_and_validate_user(username=username, password=password)
     data = make_auth_response_data(user)
-    return response.Ok(data)
+    return data
 
 
 register_auth_plugin("normal", normal_login_func);
