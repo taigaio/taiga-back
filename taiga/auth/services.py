@@ -24,7 +24,6 @@ not uses clasess and uses simple functions.
 """
 
 from django.apps import apps
-from django.db.models import Q
 from django.db import transaction as tx
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
@@ -32,10 +31,8 @@ from django.utils.translation import ugettext as _
 from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
 
 from taiga.base import exceptions as exc
-from taiga.base import response
 from taiga.users.serializers import UserSerializer
 from taiga.users.services import get_and_validate_user
-from taiga.base.utils.slug import slugify_uniquely
 
 from .tokens import get_token_for_user
 from .signals import user_registered as user_registered_signal
@@ -204,4 +201,4 @@ def normal_login_func(request):
     return data
 
 
-register_auth_plugin("normal", normal_login_func);
+register_auth_plugin("normal", normal_login_func)
