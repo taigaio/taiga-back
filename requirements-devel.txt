@@ -10,4 +10,4 @@ coverage==3.7.1
 coveralls==0.4.2
 django-slowdown==0.0.1
 
-taiga-contrib-github-auth==0.0.2
+taiga-contrib-github-auth==0.0.3
