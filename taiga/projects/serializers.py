@@ -35,7 +35,9 @@ from taiga.permissions.service import is_project_owner
 from . import models
 from . import services
 from . validators import ProjectExistsValidator
-
+from . custom_attributes.serializers import(UserStoryCustomAttributeSerializer,
+                                                                     TaskCustomAttributeSerializer,
+                                                                     IssueCustomAttributeSerializer)
 
 ######################################################
 ## Custom values for selectors
@@ -262,6 +264,9 @@ class ProjectSerializer(ModelSerializer):
     tags_colors = TagsColorsField(required=False)
     users = serializers.SerializerMethodField("get_users")
     total_closed_milestones = serializers.SerializerMethodField("get_total_closed_milestones")
+    userstory_custom_attributes = serializers.SerializerMethodField("get_userstory_custom_attributes")
+    task_custom_attributes = serializers.SerializerMethodField("get_task_custom_attributes")
+    issue_custom_attributes = serializers.SerializerMethodField("get_issue_custom_attributes")
 
     class Meta:
         model = models.Project
@@ -298,6 +303,14 @@ class ProjectSerializer(ModelSerializer):
             raise serializers.ValidationError("Total milestones must be major or equal to zero")
         return attrs
 
+    def get_userstory_custom_attributes(self, obj):
+        return UserStoryCustomAttributeSerializer(obj.userstorycustomattributes.all(), many=True).data
+
+    def get_task_custom_attributes(self, obj):
+        return TaskCustomAttributeSerializer(obj.taskcustomattributes.all(), many=True).data
+
+    def get_issue_custom_attributes(self, obj):
+        return IssueCustomAttributeSerializer(obj.issuecustomattributes.all(), many=True).data
 
 class ProjectDetailSerializer(ProjectSerializer):
     roles = serializers.SerializerMethodField("get_roles")
