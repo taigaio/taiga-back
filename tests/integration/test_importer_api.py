@@ -279,7 +279,7 @@ def test_valid_user_story_import_with_custom_attributes_values(client):
     assert response.status_code == 201
     custom_attributes_values = apps.get_model("custom_attributes.UserStoryCustomAttributesValues").objects.get(
                                                         user_story__subject=response.data["subject"])
-    assert custom_attributes_values.values == {str(custom_attr.id): "test_value"}
+    assert custom_attributes_values.attributes_values == {str(custom_attr.id): "test_value"}
 
 
 def test_valid_issue_import_without_extra_data(client):
@@ -329,7 +329,7 @@ def test_valid_issue_import_with_custom_attributes_values(client):
     assert response.status_code == 201
     custom_attributes_values = apps.get_model("custom_attributes.IssueCustomAttributesValues").objects.get(
                                                         issue__subject=response.data["subject"])
-    assert custom_attributes_values.values == {str(custom_attr.id): "test_value"}
+    assert custom_attributes_values.attributes_values == {str(custom_attr.id): "test_value"}
 
 
 def test_valid_issue_import_with_extra_data(client):
@@ -610,7 +610,7 @@ def test_valid_task_import_with_custom_attributes_values(client):
     assert response.status_code == 201
     custom_attributes_values = apps.get_model("custom_attributes.TaskCustomAttributesValues").objects.get(
                                                         task__subject=response.data["subject"])
-    assert custom_attributes_values.values == {str(custom_attr.id): "test_value"}
+    assert custom_attributes_values.attributes_values == {str(custom_attr.id): "test_value"}
 
 
 def test_valid_task_import_with_extra_data(client):

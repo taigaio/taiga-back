@@ -42,7 +42,8 @@ class Migration(migrations.Migration):
                                        tablename := TG_ARGV[0]::text;
 
                                      EXECUTE 'UPDATE ' || quote_ident(tablename) || '
-                                                 SET values = json_object_delete_keys(values, ' || quote_literal(key) || ')';
+                                                 SET attributes_values = json_object_delete_keys(attributes_values, ' ||
+                                                                                                 quote_literal(key) || ')';
 
                                        RETURN NULL;
                                    END; $clean_key_in_custom_attributes_values$

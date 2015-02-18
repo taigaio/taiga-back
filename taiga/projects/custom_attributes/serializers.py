@@ -76,15 +76,15 @@ class IssueCustomAttributeSerializer(BaseCustomAttributeSerializer):
 
 
 class BaseCustomAttributesValuesSerializer:
-    values = JsonField(source="values", label="values", required=True)
+    attributes_values = JsonField(source="attributes_values", label="attributes values", required=True)
     _custom_attribute_model = None
     _container_field = None
 
-    def validate_values(self, attrs, source):
+    def validate_attributes_values(self, attrs, source):
         # values must be a dict
-        data_values = attrs.get("values", None)
+        data_values = attrs.get("attributes_values", None)
         if self.object:
-            data_values = (data_values or self.object.values)
+            data_values = (data_values or self.object.attributes_values)
 
         if type(data_values) is not dict:
             raise ValidationError(_("Invalid content. It must be {\"key\": \"value\",...}"))

@@ -350,7 +350,7 @@ class CustomAttributesValuesExportSerializerMixin:
             return ret
 
         try:
-            values =  obj.custom_attributes_values.values
+            values =  obj.custom_attributes_values.attributes_values
             custom_attributes = self.custom_attribute_queryset(obj.project).values('id', 'name')
 
             return _use_name_instead_id_as_key_in_custom_attributes_values(custom_attributes, values)
@@ -359,15 +359,15 @@ class CustomAttributesValuesExportSerializerMixin:
 
 
 class BaseCustomAttributesValuesExportSerializer:
-    values = JsonField(source="values", label="values", required=True)
+    attributes_values = JsonField(source="attributes_values",required=True)
     _custom_attribute_model = None
     _container_field = None
 
-    def validate_values(self, attrs, source):
+    def validate_attributes_values(self, attrs, source):
         # values must be a dict
-        data_values = attrs.get("values", None)
+        data_values = attrs.get("attributes_values", None)
         if self.object:
-            data_values = (data_values or self.object.values)
+            data_values = (data_values or self.object.attributes_values)
 
         if type(data_values) is not dict:
             raise ValidationError(_("Invalid content. It must be {\"key\": \"value\",...}"))

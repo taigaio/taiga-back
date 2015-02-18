@@ -111,7 +111,7 @@ def store_custom_attributes(project, data, field, serializer):
 def store_custom_attributes_values(obj, data_values, obj_field, serializer_class):
     data = {
         obj_field: obj.id,
-        "values": data_values,
+        "attributes_values": data_values,
     }
 
     serializer = serializer_class(data=data)

@@ -270,10 +270,11 @@ class Command(BaseCommand):
                                                                                  project=project)),
                                    tags=self.sd.words(1, 10).split(" "))
 
-        custom_attributes_values = {str(ca.id): self.sd.paragraph() for ca in project.issuecustomattributes.all() if self.sd.boolean()}
+        custom_attributes_values = {str(ca.id): self.sd.paragraph() for ca in project.issuecustomattributes.all()
+                                                                                             if self.sd.boolean()}
         if custom_attributes_values:
             IssueCustomAttributesValues.objects.create(issue=bug,
-                                                       values=custom_attributes_values)
+                                                       attributes_values=custom_attributes_values)
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
             attachment = self.create_attachment(bug, i+1)
@@ -318,10 +319,11 @@ class Command(BaseCommand):
 
         task.save()
 
-        custom_attributes_values = {str(ca.id): self.sd.paragraph() for ca in project.taskcustomattributes.all() if self.sd.boolean()}
+        custom_attributes_values = {str(ca.id): self.sd.paragraph() for ca in project.taskcustomattributes.all()
+                                                                                            if self.sd.boolean()}
         if custom_attributes_values:
             TaskCustomAttributesValues.objects.create(task=task,
-                                                      values=custom_attributes_values)
+                                                      attributes_values=custom_attributes_values)
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
             attachment = self.create_attachment(task, i+1)
@@ -360,10 +362,11 @@ class Command(BaseCommand):
 
             role_points.save()
 
-        custom_attributes_values = {str(ca.id): self.sd.paragraph() for ca in project.userstorycustomattributes.all() if self.sd.boolean()}
+        custom_attributes_values = {str(ca.id): self.sd.paragraph() for ca in project.userstorycustomattributes.all()
+                                                                                                 if self.sd.boolean()}
         if custom_attributes_values:
             UserStoryCustomAttributesValues.objects.create(user_story=us,
-                                                           values=custom_attributes_values)
+                                                           attributes_values=custom_attributes_values)
 
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):

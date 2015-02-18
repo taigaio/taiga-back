@@ -107,7 +107,7 @@ def test_task_custom_attributes_values_create(client):
     url = reverse("task-custom-attributes-values-list")
     data = {
         "task": task.id,
-        "values": {
+        "attributes_values": {
             ct1_id: "test_1",
             ct2_id: "test_2"
         },
@@ -116,9 +116,9 @@ def test_task_custom_attributes_values_create(client):
     client.login(member.user)
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
-    assert json.loads(response.data["values"]) == data["values"]
+    assert json.loads(response.data["attributes_values"]) == data["attributes_values"]
     task = task.__class__.objects.get(id=task.id)
-    assert task.custom_attributes_values.values == data["values"]
+    assert task.custom_attributes_values.attributes_values == data["attributes_values"]
 
 
 def test_task_custom_attributes_values_create_with_error_invalid_key(client):
@@ -134,7 +134,7 @@ def test_task_custom_attributes_values_create_with_error_invalid_key(client):
     url = reverse("task-custom-attributes-values-list")
     data = {
         "task": task.id,
-        "values": {
+        "attributes_values": {
             ct1_id: "test_1",
             "123456": "test_2"
         },
@@ -158,7 +158,7 @@ def test_task_custom_attributes_values_update(client):
 
     custom_attrs_val = f.TaskCustomAttributesValuesFactory(
         task=task,
-        values= {
+        attributes_values= {
             ct1_id: "test_1",
             ct2_id: "test_2"
         },
@@ -166,7 +166,7 @@ def test_task_custom_attributes_values_update(client):
 
     url = reverse("task-custom-attributes-values-detail", args=[task.id])
     data = {
-        "values": {
+        "attributes_values": {
             ct1_id: "test_1_updated",
             ct2_id: "test_2_updated"
         },
@@ -176,9 +176,9 @@ def test_task_custom_attributes_values_update(client):
     client.login(member.user)
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 200
-    assert json.loads(response.data["values"]) == data["values"]
+    assert json.loads(response.data["attributes_values"]) == data["attributes_values"]
     task = task.__class__.objects.get(id=task.id)
-    assert task.custom_attributes_values.values == data["values"]
+    assert task.custom_attributes_values.attributes_values == data["attributes_values"]
 
 
 def test_task_custom_attributes_values_update_with_error_invalid_key(client):
@@ -194,14 +194,14 @@ def test_task_custom_attributes_values_update_with_error_invalid_key(client):
 
     custom_attrs_val = f.TaskCustomAttributesValuesFactory(
         task=task,
-        values= {
+        attributes_values= {
             ct1_id: "test_1",
             ct2_id: "test_2"
         },
     )
     url = reverse("task-custom-attributes-values-detail", args=[task.id])
     data = {
-        "values": {
+        "attributes_values": {
             ct1_id: "test_1_updated",
             "123456": "test_2_updated"
         },
@@ -228,7 +228,7 @@ def test_task_custom_attributes_values_delete(client):
     url = reverse("task-custom-attributes-values-detail", args=[task.id])
     custom_attrs_val = f.TaskCustomAttributesValuesFactory(
         task=task,
-        values= {
+        attributes_values= {
             ct1_id: "test_1",
             ct2_id: "test_2"
         },
@@ -255,7 +255,7 @@ def test_task_custom_attributes_values_delete_us(client):
     url = reverse("tasks-detail", args=[task.id])
     custom_attrs_val = f.TaskCustomAttributesValuesFactory(
         task=task,
-        values= {
+        attributes_values= {
             ct1_id: "test_1",
             ct2_id: "test_2"
         },
@@ -284,19 +284,18 @@ def test_trigger_update_userstorycustomvalues_afeter_remove_userstorycustomattri
     ct2_id = "{}".format(custom_attr_2.id)
 
     custom_attrs_val = f.UserStoryCustomAttributesValuesFactory(
-        project=user_story.project,
         user_story=user_story,
-        values= {
+        attributes_values= {
             ct1_id: "test_1",
             ct2_id: "test_2"
         },
     )
 
-    assert ct1_id in custom_attrs_val.values.keys()
-    assert ct2_id in custom_attrs_val.values.keys()
+    assert ct1_id in custom_attrs_val.attributes_values.keys()
+    assert ct2_id in custom_attrs_val.attributes_values.keys()
 
     custom_attr_2.delete()
     custom_attrs_val = custom_attrs_val.__class__.objects.get(id=custom_attrs_val.id)
 
-    assert ct1_id in custom_attrs_val.values.keys()
-    assert ct2_id not in custom_attrs_val.values.keys()
+    assert ct1_id in custom_attrs_val.attributes_values.keys()
+    assert ct2_id not in custom_attrs_val.attributes_values.keys()

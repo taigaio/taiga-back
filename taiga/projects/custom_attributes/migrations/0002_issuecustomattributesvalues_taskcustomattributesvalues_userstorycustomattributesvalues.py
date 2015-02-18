@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
                 ('version', models.IntegerField(default=1, verbose_name='version')),
-                ('values', django_pgjson.fields.JsonField(default={}, verbose_name='values')),
+                ('attributes_values', django_pgjson.fields.JsonField(default={}, verbose_name='attributes values')),
                 ('issue', models.OneToOneField(related_name='custom_attributes_values', to='issues.Issue', verbose_name='issue')),
             ],
             options={
@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
                 ('version', models.IntegerField(default=1, verbose_name='version')),
-                ('values', django_pgjson.fields.JsonField(default={}, verbose_name='values')),
+                ('attributes_values', django_pgjson.fields.JsonField(default={}, verbose_name='attributes values')),
                 ('task', models.OneToOneField(related_name='custom_attributes_values', to='tasks.Task', verbose_name='task')),
             ],
             options={
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
                 ('version', models.IntegerField(default=1, verbose_name='version')),
-                ('values', django_pgjson.fields.JsonField(default={}, verbose_name='values')),
+                ('attributes_values', django_pgjson.fields.JsonField(default={}, verbose_name='attributes values')),
                 ('user_story', models.OneToOneField(related_name='custom_attributes_values', to='userstories.UserStory', verbose_name='user story')),
             ],
             options={

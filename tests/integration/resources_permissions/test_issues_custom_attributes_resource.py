@@ -102,15 +102,15 @@ def data():
     #m.public_issue_cav = f.IssueCustomAttributesValuesFactory(project=m.public_project,
     #                                                          issue=f.IssueFactory(project=m.public_project,
     #                                                                               owner=m.project_owner),
-    #                                                          values={str(m.public_issue_ca.id):"test"})
+    #                                                          attributes_values={str(m.public_issue_ca.id):"test"})
     #m.private_issue_cav1 = f.IssueCustomAttributesValuesFactory(project=m.private_project1,
     #                                                            issue=f.IssueFactory(project=m.private_project1,
     #                                                                                 owner=m.project_owner),
-    #                                                            values={str(m.private_issue_ca1.id):"test"})
+    #                                                            attributes_values={str(m.private_issue_ca1.id):"test"})
     #m.private_issue_cav2 = f.IssueCustomAttributesValuesFactory(project=m.private_project2,
     #                                                            issue=f.IssueFactory(project=m.private_project2,
     #                                                                                 owner=m.project_owner),
-    #                                                            values={str(m.private_issue_ca2.id):"test"})
+    #                                                            attributes_values={str(m.private_issue_ca2.id):"test"})
 
     return m
 
