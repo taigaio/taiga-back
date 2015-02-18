@@ -80,6 +80,9 @@ class BaseCustomAttributesValuesSerializer(ModelSerializer):
     _custom_attribute_model = None
     _container_field = None
 
+    class Meta:
+        exclude = ("id",)
+
     def validate_attributes_values(self, attrs, source):
         # values must be a dict
         data_values = attrs.get("attributes_values", None)
@@ -112,7 +115,7 @@ class UserStoryCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerial
     _container_model = "userstories.UserStory"
     _container_field = "user_story"
 
-    class Meta:
+    class Meta(BaseCustomAttributesValuesSerializer.Meta):
         model = models.UserStoryCustomAttributesValues
 
 
@@ -120,7 +123,7 @@ class TaskCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerializer,
     _custom_attribute_model = models.TaskCustomAttribute
     _container_field = "task"
 
-    class Meta:
+    class Meta(BaseCustomAttributesValuesSerializer.Meta):
         model = models.TaskCustomAttributesValues
 
 
@@ -128,5 +131,5 @@ class IssueCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerializer
     _custom_attribute_model = models.IssueCustomAttribute
     _container_field = "issue"
 
-    class Meta:
+    class Meta(BaseCustomAttributesValuesSerializer.Meta):
         model = models.IssueCustomAttributesValues

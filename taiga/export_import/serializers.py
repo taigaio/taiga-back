@@ -363,6 +363,9 @@ class BaseCustomAttributesValuesExportSerializer(serializers.ModelSerializer):
     _custom_attribute_model = None
     _container_field = None
 
+    class Meta:
+        exclude = ("id",)
+
     def validate_attributes_values(self, attrs, source):
         # values must be a dict
         data_values = attrs.get("attributes_values", None)
@@ -394,27 +397,24 @@ class UserStoryCustomAttributesValuesExportSerializer(BaseCustomAttributesValues
     _container_model = "userstories.UserStory"
     _container_field = "user_story"
 
-    class Meta:
+    class Meta(BaseCustomAttributesValuesExportSerializer.Meta):
         model = custom_attributes_models.UserStoryCustomAttributesValues
-        exclude = ("id",)
 
 
 class TaskCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer):
     _custom_attribute_model = custom_attributes_models.TaskCustomAttribute
     _container_field = "task"
 
-    class Meta:
+    class Meta(BaseCustomAttributesValuesExportSerializer.Meta):
         model = custom_attributes_models.TaskCustomAttributesValues
-        exclude = ("id",)
 
 
 class IssueCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer):
     _custom_attribute_model = custom_attributes_models.IssueCustomAttribute
     _container_field = "issue"
 
-    class Meta:
+    class Meta(BaseCustomAttributesValuesExportSerializer.Meta):
         model = custom_attributes_models.IssueCustomAttributesValues
-        exclude = ("id",)
 
 
 class MembershipExportSerializer(serializers.ModelSerializer):
