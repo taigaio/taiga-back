@@ -19,10 +19,12 @@ import logging
 
 from django.apps import apps
 from django.db.models import Q
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import filters
 
 from taiga.base import exceptions as exc
+from taiga.base.api.utils import get_object_or_404
 
 
 logger = logging.getLogger(__name__)
