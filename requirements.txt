@@ -28,7 +28,7 @@ raven==5.1.1
 bleach==1.4
 django-ipware==0.1.0
 premailer==2.8.1
-django-transactional-cleanup==0.1.13
+django-transactional-cleanup==0.1.14
 lxml==3.4.1
 git+https://github.com/Xof/django-pglocks.git@dbb8d7375066859f897604132bd437832d2014ea
 
