@@ -116,7 +116,7 @@ def test_userstory_custom_attributes_values_create(client):
     client.login(member.user)
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
-    assert json.loads(response.data["attributes_values"]) == data["attributes_values"]
+    assert response.data["attributes_values"] == data["attributes_values"]
     user_story = user_story.__class__.objects.get(id=user_story.id)
     assert user_story.custom_attributes_values.attributes_values == data["attributes_values"]
 
@@ -176,7 +176,7 @@ def test_userstory_custom_attributes_values_update(client):
     client.login(member.user)
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 200
-    assert json.loads(response.data["attributes_values"]) == data["attributes_values"]
+    assert response.data["attributes_values"] == data["attributes_values"]
     user_story = user_story.__class__.objects.get(id=user_story.id)
     assert user_story.custom_attributes_values.attributes_values == data["attributes_values"]
 

@@ -333,7 +333,7 @@ class IssueCustomAttributeExportSerializer(serializers.ModelSerializer):
         exclude = ('id', 'project')
 
 
-class CustomAttributesValuesExportSerializerMixin:
+class CustomAttributesValuesExportSerializerMixin(serializers.ModelSerializer):
     custom_attributes_values = serializers.SerializerMethodField("get_custom_attributes_values")
 
     def custom_attributes_queryset(self, project):
@@ -351,14 +351,14 @@ class CustomAttributesValuesExportSerializerMixin:
 
         try:
             values =  obj.custom_attributes_values.attributes_values
-            custom_attributes = self.custom_attribute_queryset(obj.project).values('id', 'name')
+            custom_attributes = self.custom_attributes_queryset(obj.project).values('id', 'name')
 
             return _use_name_instead_id_as_key_in_custom_attributes_values(custom_attributes, values)
         except ObjectDoesNotExist:
             return None
 
 
-class BaseCustomAttributesValuesExportSerializer:
+class BaseCustomAttributesValuesExportSerializer(serializers.ModelSerializer):
     attributes_values = JsonField(source="attributes_values",required=True)
     _custom_attribute_model = None
     _container_field = None
@@ -389,8 +389,7 @@ class BaseCustomAttributesValuesExportSerializer:
 
         return attrs
 
-class UserStoryCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer,
-                                                      serializers.ModelSerializer):
+class UserStoryCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer):
     _custom_attribute_model = custom_attributes_models.UserStoryCustomAttribute
     _container_model = "userstories.UserStory"
     _container_field = "user_story"
@@ -400,8 +399,7 @@ class UserStoryCustomAttributesValuesExportSerializer(BaseCustomAttributesValues
         exclude = ("id",)
 
 
-class TaskCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer,
-                                                 serializers.ModelSerializer):
+class TaskCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer):
     _custom_attribute_model = custom_attributes_models.TaskCustomAttribute
     _container_field = "task"
 
@@ -410,8 +408,7 @@ class TaskCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExpor
         exclude = ("id",)
 
 
-class IssueCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer,
-                                                  serializers.ModelSerializer):
+class IssueCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer):
     _custom_attribute_model = custom_attributes_models.IssueCustomAttribute
     _container_field = "issue"
 

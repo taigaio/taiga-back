@@ -75,8 +75,8 @@ class IssueCustomAttributeSerializer(BaseCustomAttributeSerializer):
 #######################################################
 
 
-class BaseCustomAttributesValuesSerializer:
-    attributes_values = JsonField(source="attributes_values", label="attributes values", required=True)
+class BaseCustomAttributesValuesSerializer(ModelSerializer):
+    attributes_values = JsonField(source="attributes_values", label="attributes values")
     _custom_attribute_model = None
     _container_field = None
 
@@ -107,7 +107,7 @@ class BaseCustomAttributesValuesSerializer:
         return attrs
 
 
-class UserStoryCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerializer, ModelSerializer):
+class UserStoryCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerializer):
     _custom_attribute_model = models.UserStoryCustomAttribute
     _container_model = "userstories.UserStory"
     _container_field = "user_story"
