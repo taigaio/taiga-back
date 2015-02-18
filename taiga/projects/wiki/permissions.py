@@ -22,6 +22,7 @@ class WikiPagePermission(TaigaResourcePermission):
     enought_perms = IsProjectOwner() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_wiki_pages')
+    by_slug_perms = HasProjectPerm('view_wiki_pages')
     create_perms = HasProjectPerm('add_wiki_page')
     update_perms = HasProjectPerm('modify_wiki_page')
     partial_update_perms = HasProjectPerm('modify_wiki_page')
