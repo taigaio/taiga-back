@@ -41,14 +41,18 @@ class BaseCustomAttributeSerializer(ModelSerializer):
           - update the name
           - update the project (move to another project)
         """
+        data_id = data.get("id", None)
         data_name = data.get("name", None)
         data_project = data.get("project", None)
+
         if self.object:
+            data_id = data_id or self.object.id
             data_name = data_name or self.object.name
             data_project = data_project or self.object.project
 
         model = self.Meta.model
-        qs = model.objects.filter(project=data_project, name=data_name)
+        qs = (model.objects.filter(project=data_project, name=data_name)
+                           .exclude(id=data_id))
         if qs.exists():
             raise ValidationError(_("There is a custom field with the same name in this project."))
 
