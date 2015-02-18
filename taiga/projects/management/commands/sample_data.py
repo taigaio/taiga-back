@@ -34,6 +34,7 @@ from taiga.projects.tasks.models import *
 from taiga.projects.issues.models import *
 from taiga.projects.wiki.models import *
 from taiga.projects.attachments.models import *
+from taiga.projects.custom_attributes.models import *
 
 from taiga.projects.history.services import take_snapshot
 from taiga.events.apps import disconnect_events_signals
@@ -150,6 +151,27 @@ class Command(BaseCommand):
                 if role.computable:
                     computable_project_roles.add(role)
 
+            # added custom attributes
+            if self.sd.boolean:
+                for i in range(1, 4):
+                    UserStoryCustomAttribute.objects.create(name=self.sd.words(1, 3),
+                                                            description=self.sd.words(3, 12),
+                                                            project=project,
+                                                            order=i)
+            if self.sd.boolean:
+                for i in range(1, 4):
+                    TaskCustomAttribute.objects.create(name=self.sd.words(1, 3),
+                                                       description=self.sd.words(3, 12),
+                                                       project=project,
+                                                       order=i)
+            if self.sd.boolean:
+                for i in range(1, 4):
+                    IssueCustomAttribute.objects.create(name=self.sd.words(1, 3),
+                                                        description=self.sd.words(3, 12),
+                                                        project=project,
+                                                        order=i)
+
+
             if x < NUM_PROJECTS:
                 start_date = now() - datetime.timedelta(55)
 
@@ -248,6 +270,11 @@ class Command(BaseCommand):
                                                                                  project=project)),
                                    tags=self.sd.words(1, 10).split(" "))
 
+        custom_attributes_values = {str(ca.id): self.sd.paragraph() for ca in project.issuecustomattributes.all() if self.sd.boolean()}
+        if custom_attributes_values:
+            IssueCustomAttributesValues.objects.create(issue=bug,
+                                                       values=custom_attributes_values)
+
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
             attachment = self.create_attachment(bug, i+1)
 
@@ -291,6 +318,11 @@ class Command(BaseCommand):
 
         task.save()
 
+        custom_attributes_values = {str(ca.id): self.sd.paragraph() for ca in project.taskcustomattributes.all() if self.sd.boolean()}
+        if custom_attributes_values:
+            TaskCustomAttributesValues.objects.create(task=task,
+                                                      values=custom_attributes_values)
+
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
             attachment = self.create_attachment(task, i+1)
 
@@ -328,6 +360,12 @@ class Command(BaseCommand):
 
             role_points.save()
 
+        custom_attributes_values = {str(ca.id): self.sd.paragraph() for ca in project.userstorycustomattributes.all() if self.sd.boolean()}
+        if custom_attributes_values:
+            UserStoryCustomAttributesValues.objects.create(user_story=us,
+                                                           values=custom_attributes_values)
+
+
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
             attachment = self.create_attachment(us, i+1)
 
@@ -345,7 +383,7 @@ class Command(BaseCommand):
         take_snapshot(us,
               comment=self.sd.paragraph(),
               user=us.owner)
-              
+
         return us
 
     def create_milestone(self, project, start_date, end_date):
@@ -375,9 +413,9 @@ class Command(BaseCommand):
 
     def create_user(self, counter=None, username=None, full_name=None, email=None):
         counter = counter or self.sd.int()
-        username = username or 'user{0}'.format(counter)
+        username = username or "user{0}".format(counter)
         full_name = full_name or "{} {}".format(self.sd.name('es'), self.sd.surname('es', number=1))
-        email = email or self.sd.email()
+        email = email or "user{0}@taigaio.demo".format(counter)
 
         user = User.objects.create(username=username,
                                    full_name=full_name,
