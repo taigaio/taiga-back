@@ -36,7 +36,7 @@ from . import services
 # Custom Attribute ViewSets
 #######################################################
 
-class UserStoryCustomAttributeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
+class UserStoryCustomAttributeViewSet(BulkUpdateOrderMixin, ModelCrudViewSet):
     model = models.UserStoryCustomAttribute
     serializer_class = serializers.UserStoryCustomAttributeSerializer
     permission_classes = (permissions.UserStoryCustomAttributePermission,)
@@ -47,7 +47,7 @@ class UserStoryCustomAttributeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_order_action = services.bulk_update_userstory_custom_attribute_order
 
 
-class TaskCustomAttributeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
+class TaskCustomAttributeViewSet(BulkUpdateOrderMixin, ModelCrudViewSet):
     model = models.TaskCustomAttribute
     serializer_class = serializers.TaskCustomAttributeSerializer
     permission_classes = (permissions.TaskCustomAttributePermission,)
@@ -58,7 +58,7 @@ class TaskCustomAttributeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_order_action = services.bulk_update_task_custom_attribute_order
 
 
-class IssueCustomAttributeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
+class IssueCustomAttributeViewSet(BulkUpdateOrderMixin, ModelCrudViewSet):
     model = models.IssueCustomAttribute
     serializer_class = serializers.IssueCustomAttributeSerializer
     permission_classes = (permissions.IssueCustomAttributePermission,)
