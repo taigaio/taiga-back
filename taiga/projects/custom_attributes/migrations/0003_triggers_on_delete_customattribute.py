@@ -25,7 +25,8 @@ class Migration(migrations.Migration):
                                           WHERE "key" <> ALL ("keys_to_delete")),
                                         '{}')::json $function$;
             """,
-            reverse_sql="""DROP FUNCTION IF EXISTS "json_object_delete_keys";"""
+            reverse_sql="""DROP FUNCTION IF EXISTS "json_object_delete_keys"("json" json, VARIADIC "keys_to_delete" text[])
+                                           CASCADE;"""
         ),
 
         # Function: Romeve a key in the json field of *_custom_attributes_values.values
@@ -50,39 +51,46 @@ class Migration(migrations.Migration):
                               LANGUAGE plpgsql;
 
             """,
-            reverse_sql="""DROP FUNCTION IF EXISTS "clean_key_in_custom_attributes_values";"""
+            reverse_sql="""DROP FUNCTION IF EXISTS "clean_key_in_custom_attributes_values"()
+                                           CASCADE;"""
         ),
 
         # Trigger: Clean userstorycustomattributes values before remove a userstorycustomattribute
         migrations.RunSQL(
             """
-            CREATE TRIGGER "update_userstorycustomvalues_afeter_remove_userstorycustomattribute"
+            CREATE TRIGGER "update_userstorycustomvalues_after_remove_userstorycustomattribute"
           BEFORE DELETE ON custom_attributes_userstorycustomattribute
               FOR EACH ROW
          EXECUTE PROCEDURE clean_key_in_custom_attributes_values('custom_attributes_userstorycustomattributesvalues');
             """,
-            reverse_sql="""DROP TRIGGER "update_userstorycustomvalues_afeter_remove_userstorycustomattribute";"""
+            reverse_sql="""DROP TRIGGER IF EXISTS "update_userstorycustomvalues_after_remove_userstorycustomattribute"
+                                               ON custom_attributes_userstorycustomattribute
+                                          CASCADE;"""
         ),
 
         # Trigger: Clean taskcustomattributes values before remove a taskcustomattribute
         migrations.RunSQL(
             """
-            CREATE TRIGGER "update_taskcustomvalues_afeter_remove_taskcustomattribute"
+            CREATE TRIGGER "update_taskcustomvalues_after_remove_taskcustomattribute"
           BEFORE DELETE ON custom_attributes_taskcustomattribute
               FOR EACH ROW
          EXECUTE PROCEDURE clean_key_in_custom_attributes_values('custom_attributes_taskcustomattributesvalues');
             """,
-            reverse_sql="""DROP TRIGGER "update_taskcustomvalues_afeter_remove_taskcustomattribute";"""
+            reverse_sql="""DROP TRIGGER IF EXISTS "update_taskcustomvalues_after_remove_taskcustomattribute"
+                                               ON custom_attributes_taskcustomattribute
+                                          CASCADE;"""
         ),
 
         # Trigger: Clean issuecustomattributes values before remove a issuecustomattribute
         migrations.RunSQL(
             """
-            CREATE TRIGGER "update_issuecustomvalues_afeter_remove_issuecustomattribute"
+            CREATE TRIGGER "update_issuecustomvalues_after_remove_issuecustomattribute"
           BEFORE DELETE ON custom_attributes_issuecustomattribute
               FOR EACH ROW
          EXECUTE PROCEDURE clean_key_in_custom_attributes_values('custom_attributes_issuecustomattributesvalues');
             """,
-            reverse_sql="""DROP TRIGGER "update_issuecustomvalues_afeter_remove_issuecustomattribute";"""
+            reverse_sql="""DROP TRIGGER IF EXISTS "update_issuecustomvalues_after_remove_issuecustomattribute"
+                                               ON custom_attributes_issuecustomattribute
+                                          CASCADE;"""
         )
     ]

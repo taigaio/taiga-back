@@ -20,6 +20,7 @@ from unidecode import unidecode
 
 from django.template.defaultfilters import slugify
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 
 from taiga.projects.history.services import make_key_from_model_object
 from taiga.projects.references import sequences as seq
@@ -108,13 +109,19 @@ def store_custom_attributes(project, data, field, serializer):
         result.append(_store_custom_attribute(project, custom_attribute_data, field, serializer))
     return result
 
+
 def store_custom_attributes_values(obj, data_values, obj_field, serializer_class):
     data = {
         obj_field: obj.id,
         "attributes_values": data_values,
     }
 
-    serializer = serializer_class(data=data)
+    try:
+        custom_attributes_values = obj.custom_attributes_values
+        serializer = serializer_class(custom_attributes_values, data=data)
+    except ObjectDoesNotExist:
+        serializer = serializer_class(data=data)
+
     if serializer.is_valid():
         serializer.save()
         return serializer

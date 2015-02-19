@@ -17,7 +17,7 @@
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.api import ModelCrudViewSet
-from taiga.base.api.viewsets import ModelViewSet
+from taiga.base.api import ModelUpdateRetrieveViewSet
 from taiga.base import exceptions as exc
 from taiga.base import filters
 from taiga.base import response
@@ -73,16 +73,7 @@ class IssueCustomAttributeViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
 # Custom Attributes Values ViewSets
 #######################################################
 
-class BaseCustomAttributesValuesViewSet(OCCResourceMixin, HistoryResourceMixin,  ModelViewSet):
-    def list(self, request, *args, **kwargs):
-        return response.NotFound()
-
-    def post_delete(self, obj):
-        # NOTE: When destroy a custom attributes values object, the
-        #       content_object change after and not before
-        self.persist_history_snapshot(obj, delete=True)
-        super().pre_delete(obj)
-
+class BaseCustomAttributesValuesViewSet(OCCResourceMixin, HistoryResourceMixin, ModelUpdateRetrieveViewSet):
     def get_object_for_snapshot(self, obj):
         return getattr(obj, self.content_object)
 

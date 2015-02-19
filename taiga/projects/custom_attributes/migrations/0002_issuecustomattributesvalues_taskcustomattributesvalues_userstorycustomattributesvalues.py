@@ -9,8 +9,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('tasks', '0005_auto_20150114_0954'),
-        ('userstories', '0009_remove_userstory_is_archived'),
         ('issues', '0004_auto_20150114_0954'),
+        ('userstories', '0009_remove_userstory_is_archived'),
         ('custom_attributes', '0001_initial'),
     ]
 
@@ -18,14 +18,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IssueCustomAttributesValues',
             fields=[
-                ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('version', models.IntegerField(default=1, verbose_name='version')),
-                ('attributes_values', django_pgjson.fields.JsonField(default={}, verbose_name='attributes values')),
-                ('issue', models.OneToOneField(related_name='custom_attributes_values', to='issues.Issue', verbose_name='issue')),
+                ('attributes_values', django_pgjson.fields.JsonField(default={}, verbose_name='attributes_values')),
+                ('issue', models.OneToOneField(verbose_name='issue', to='issues.Issue', related_name='custom_attributes_values')),
             ],
             options={
-                'ordering': ['id'],
                 'verbose_name_plural': 'issue custom attributes values',
+                'ordering': ['id'],
                 'verbose_name': 'issue ustom attributes values',
                 'abstract': False,
             },
@@ -34,14 +34,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TaskCustomAttributesValues',
             fields=[
-                ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('version', models.IntegerField(default=1, verbose_name='version')),
-                ('attributes_values', django_pgjson.fields.JsonField(default={}, verbose_name='attributes values')),
-                ('task', models.OneToOneField(related_name='custom_attributes_values', to='tasks.Task', verbose_name='task')),
+                ('attributes_values', django_pgjson.fields.JsonField(default={}, verbose_name='attributes_values')),
+                ('task', models.OneToOneField(verbose_name='task', to='tasks.Task', related_name='custom_attributes_values')),
             ],
             options={
-                'ordering': ['id'],
                 'verbose_name_plural': 'task custom attributes values',
+                'ordering': ['id'],
                 'verbose_name': 'task ustom attributes values',
                 'abstract': False,
             },
@@ -50,14 +50,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UserStoryCustomAttributesValues',
             fields=[
-                ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('version', models.IntegerField(default=1, verbose_name='version')),
-                ('attributes_values', django_pgjson.fields.JsonField(default={}, verbose_name='attributes values')),
-                ('user_story', models.OneToOneField(related_name='custom_attributes_values', to='userstories.UserStory', verbose_name='user story')),
+                ('attributes_values', django_pgjson.fields.JsonField(default={}, verbose_name='attributes_values')),
+                ('user_story', models.OneToOneField(verbose_name='user story', to='userstories.UserStory', related_name='custom_attributes_values')),
             ],
             options={
-                'ordering': ['id'],
                 'verbose_name_plural': 'user story custom attributes values',
+                'ordering': ['id'],
                 'verbose_name': 'user story ustom attributes values',
                 'abstract': False,
             },

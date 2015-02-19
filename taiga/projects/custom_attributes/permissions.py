@@ -66,24 +66,18 @@ class UserStoryCustomAttributesValuesPermission(TaigaResourcePermission):
     enought_perms = IsProjectOwner() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_us')
-    create_perms = HasProjectPerm('add_us')
     update_perms = HasProjectPerm('modify_us')
-    destroy_perms = HasProjectPerm('delete_us')
 
 
 class TaskCustomAttributesValuesPermission(TaigaResourcePermission):
     enought_perms = IsProjectOwner() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_tasks')
-    create_perms = HasProjectPerm('add_task')
     update_perms = HasProjectPerm('modify_task')
-    destroy_perms = HasProjectPerm('delete_task')
 
 
 class IssueCustomAttributesValuesPermission(TaigaResourcePermission):
     enought_perms = IsProjectOwner() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_issues')
-    create_perms = HasProjectPerm('add_issue')
     update_perms = HasProjectPerm('modify_issue')
-    destroy_perms = HasProjectPerm('delete_issue')

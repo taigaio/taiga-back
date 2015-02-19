@@ -21,7 +21,7 @@ from taiga.base.utils import json
 from .. import factories as f
 
 import pytest
-pytestmark = pytest.mark.django_db(transaction=True)
+pytestmark = pytest.mark.django_db
 
 
 #########################################################
@@ -83,68 +83,9 @@ def test_issue_custom_attribute_duplicate_name_error_on_move_between_projects(cl
 # Issue Custom Attributes Values
 #########################################################
 
-def test_issue_custom_attributes_values_list(client):
-    member = f.MembershipFactory(is_owner=True)
-
-    url = reverse("issue-custom-attributes-values-list")
-
-    client.login(member.user)
-    response = client.json.get(url)
-    assert response.status_code == 404
-
-
-def test_issue_custom_attributes_values_create(client):
+def test_issue_custom_attributes_values_when_create_us(client):
     issue = f.IssueFactory()
-    member = f.MembershipFactory(user=issue.project.owner,
-                                 project=issue.project,
-                                 is_owner=True)
-
-    custom_attr_1 = f.IssueCustomAttributeFactory(project=issue.project)
-    ct1_id = "{}".format(custom_attr_1.id)
-    custom_attr_2 = f.IssueCustomAttributeFactory(project=issue.project)
-    ct2_id = "{}".format(custom_attr_2.id)
-
-    url = reverse("issue-custom-attributes-values-list")
-    data = {
-        "issue": issue.id,
-        "attributes_values": {
-            ct1_id: "test_1",
-            ct2_id: "test_2"
-        },
-    }
-
-
-    client.login(member.user)
-    response = client.json.post(url, json.dumps(data))
-    assert response.status_code == 201
-    assert response.data["attributes_values"] == data["attributes_values"]
-    issue = issue.__class__.objects.get(id=issue.id)
-    assert issue.custom_attributes_values.attributes_values == data["attributes_values"]
-
-
-def test_issue_custom_attributes_values_create_with_error_invalid_key(client):
-    issue = f.IssueFactory()
-    member = f.MembershipFactory(user=issue.project.owner,
-                                 project=issue.project,
-                                 is_owner=True)
-
-    custom_attr_1 = f.IssueCustomAttributeFactory(project=issue.project)
-    ct1_id = "{}".format(custom_attr_1.id)
-    custom_attr_2 = f.IssueCustomAttributeFactory(project=issue.project)
-
-    url = reverse("issue-custom-attributes-values-list")
-    data = {
-        "issue": issue.id,
-        "attributes_values": {
-            ct1_id: "test_1",
-            "123456": "test_2"
-        },
-    }
-
-
-    client.login(member.user)
-    response = client.json.post(url, json.dumps(data))
-    assert response.status_code == 400
+    assert issue.custom_attributes_values.attributes_values == {}
 
 
 def test_issue_custom_attributes_values_update(client):
@@ -158,13 +99,7 @@ def test_issue_custom_attributes_values_update(client):
     custom_attr_2 = f.IssueCustomAttributeFactory(project=issue.project)
     ct2_id = "{}".format(custom_attr_2.id)
 
-    custom_attrs_val = f.IssueCustomAttributesValuesFactory(
-        issue=issue,
-        attributes_values= {
-            ct1_id: "test_1",
-            ct2_id: "test_2"
-        },
-    )
+    custom_attrs_val = issue.custom_attributes_values
 
     url = reverse("issue-custom-attributes-values-detail", args=[issue.id])
     data = {
@@ -176,6 +111,7 @@ def test_issue_custom_attributes_values_update(client):
     }
 
 
+    assert issue.custom_attributes_values.attributes_values == {}
     client.login(member.user)
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 200
@@ -193,15 +129,8 @@ def test_issue_custom_attributes_values_update_with_error_invalid_key(client):
     custom_attr_1 = f.IssueCustomAttributeFactory(project=issue.project)
     ct1_id = "{}".format(custom_attr_1.id)
     custom_attr_2 = f.IssueCustomAttributeFactory(project=issue.project)
-    ct2_id = "{}".format(custom_attr_2.id)
 
-    custom_attrs_val = f.IssueCustomAttributesValuesFactory(
-        issue=issue,
-        attributes_values= {
-            ct1_id: "test_1",
-            ct2_id: "test_2"
-        },
-    )
+    custom_attrs_val = issue.custom_attributes_values
 
     url = reverse("issue-custom-attributes-values-detail", args=[issue.id])
     data = {
@@ -216,8 +145,7 @@ def test_issue_custom_attributes_values_update_with_error_invalid_key(client):
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 400
 
-
-def test_issue_custom_attributes_values_delete(client):
+def test_issue_custom_attributes_values_delete_issue(client):
     issue = f.IssueFactory()
     member = f.MembershipFactory(user=issue.project.owner,
                                  project=issue.project,
@@ -228,41 +156,9 @@ def test_issue_custom_attributes_values_delete(client):
     custom_attr_2 = f.IssueCustomAttributeFactory(project=issue.project)
     ct2_id = "{}".format(custom_attr_2.id)
 
-    url = reverse("issue-custom-attributes-values-detail", args=[issue.id])
-    custom_attrs_val = f.IssueCustomAttributesValuesFactory(
-        issue=issue,
-        attributes_values= {
-            ct1_id: "test_1",
-            ct2_id: "test_2"
-        },
-    )
-
-    client.login(member.user)
-    response = client.json.delete(url)
-    assert response.status_code == 204
-    assert issue.__class__.objects.filter(id=issue.id).exists()
-    assert not custom_attrs_val.__class__.objects.filter(id=custom_attrs_val.id).exists()
-
-
-def test_issue_custom_attributes_values_delete_us(client):
-    issue = f.IssueFactory()
-    member = f.MembershipFactory(user=issue.project.owner,
-                                 project=issue.project,
-                                 is_owner=True)
-
-    custom_attr_1 = f.IssueCustomAttributeFactory(project=issue.project)
-    ct1_id = "{}".format(custom_attr_1.id)
-    custom_attr_2 = f.IssueCustomAttributeFactory(project=issue.project)
-    ct2_id = "{}".format(custom_attr_2.id)
+    custom_attrs_val = issue.custom_attributes_values
 
     url = reverse("issues-detail", args=[issue.id])
-    custom_attrs_val = f.IssueCustomAttributesValuesFactory(
-        issue=issue,
-        attributes_values= {
-            ct1_id: "test_1",
-            ct2_id: "test_2"
-        },
-    )
 
     client.login(member.user)
     response = client.json.delete(url)
@@ -286,13 +182,9 @@ def test_trigger_update_issuecustomvalues_afeter_remove_issuecustomattribute():
     custom_attr_2 = f.IssueCustomAttributeFactory(project=issue.project)
     ct2_id = "{}".format(custom_attr_2.id)
 
-    custom_attrs_val = f.IssueCustomAttributesValuesFactory(
-        issue=issue,
-        attributes_values= {
-            ct1_id: "test_1",
-            ct2_id: "test_2"
-        },
-    )
+    custom_attrs_val = issue.custom_attributes_values
+    custom_attrs_val.attributes_values = {ct1_id: "test_1", ct2_id: "test_2"}
+    custom_attrs_val.save()
 
     assert ct1_id in custom_attrs_val.attributes_values.keys()
     assert ct2_id in custom_attrs_val.attributes_values.keys()
