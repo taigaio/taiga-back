@@ -49,6 +49,16 @@ def _get_users_values(ids:set) -> dict:
         yield str(user.pk), user.get_full_name()
 
 
+@as_dict
+def _get_user_story_values(ids:set) -> dict:
+    userstory_model = apps.get_model("userstories", "UserStory")
+    ids = filter(lambda x: x is not None, ids)
+    qs = userstory_model.objects.filter(pk__in=tuple(ids))
+
+    for userstory in qs:
+        yield str(userstory.pk), "#{} {}".format(userstory.ref, userstory.subject)
+
+
 _get_us_status_values = partial(_get_generic_values, typename="projects.userstorystatus")
 _get_task_status_values = partial(_get_generic_values, typename="projects.taskstatus")
 _get_issue_status_values = partial(_get_generic_values, typename="projects.issuestatus")
@@ -137,6 +147,8 @@ def task_values(diff):
         values["status"] = _get_task_status_values(diff["status"])
     if "milestone" in diff:
         values["milestone"] = _get_milestone_values(diff["milestone"])
+    if "user_story" in diff:
+        values["user_story"] = _get_user_story_values(diff["user_story"])
 
     return values
 
