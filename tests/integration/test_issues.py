@@ -161,3 +161,21 @@ def test_api_filter_by_text_6(client):
 
     assert response.status_code == 200
     assert number_of_issues == 1
+
+
+def test_get_invalid_csv(client):
+    url = reverse("issues-csv")
+
+    response = client.get(url)
+    assert response.status_code == 404
+
+    response = client.get("{}?uuid={}".format(url, "not-valid-uuid"))
+    assert response.status_code == 404
+
+
+def test_get_valid_csv(client):
+    url = reverse("issues-csv")
+    project = f.ProjectFactory.create()
+
+    response = client.get("{}?uuid={}".format(url, project.issues_csv_uuid))
+    assert response.status_code == 200

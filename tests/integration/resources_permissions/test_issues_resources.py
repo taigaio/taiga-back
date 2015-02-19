@@ -437,3 +437,27 @@ def test_issue_voters_retrieve(client, data):
 
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+
+
+def test_issues_csv(client, data):
+    url = reverse('issues-csv')
+    csv_public_uuid = data.public_project.issues_csv_uuid
+    csv_private1_uuid = data.private_project1.issues_csv_uuid
+    csv_private2_uuid = data.private_project1.issues_csv_uuid
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_public_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private1_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private2_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]

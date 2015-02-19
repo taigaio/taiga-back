@@ -241,3 +241,21 @@ def test_get_total_points(client):
     f.RolePointsFactory.create(user_story=us_mixed, role=role2, points=points2)
 
     assert us_mixed.get_total_points() == 1.0
+
+
+def test_get_invalid_csv(client):
+    url = reverse("userstories-csv")
+
+    response = client.get(url)
+    assert response.status_code == 404
+
+    response = client.get("{}?uuid={}".format(url, "not-valid-uuid"))
+    assert response.status_code == 404
+
+
+def test_get_valid_csv(client):
+    url = reverse("userstories-csv")
+    project = f.ProjectFactory.create()
+
+    response = client.get("{}?uuid={}".format(url, project.userstories_csv_uuid))
+    assert response.status_code == 200

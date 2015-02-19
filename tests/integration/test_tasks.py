@@ -110,3 +110,21 @@ def test_api_update_order_in_bulk(client):
 
     assert response1.status_code == 204, response1.data
     assert response2.status_code == 204, response2.data
+
+
+def test_get_invalid_csv(client):
+    url = reverse("tasks-csv")
+
+    response = client.get(url)
+    assert response.status_code == 404
+
+    response = client.get("{}?uuid={}".format(url, "not-valid-uuid"))
+    assert response.status_code == 404
+
+
+def test_get_valid_csv(client):
+    url = reverse("tasks-csv")
+    project = f.ProjectFactory.create()
+
+    response = client.get("{}?uuid={}".format(url, project.tasks_csv_uuid))
+    assert response.status_code == 200

@@ -22,6 +22,7 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet
 from taiga.projects.models import Project
+from django.http import HttpResponse
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
@@ -71,6 +72,19 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
         task = get_object_or_404(models.Task, ref=ref, project_id=project_id)
         return self.retrieve(request, pk=task.pk)
 
+    @list_route(methods=["GET"])
+    def csv(self, request):
+        uuid = request.QUERY_PARAMS.get("uuid", None)
+        if uuid is None:
+            return response.NotFound()
+
+        project = get_object_or_404(Project, tasks_csv_uuid=uuid)
+        queryset = project.tasks.all().order_by('ref')
+        data = services.tasks_to_csv(queryset)
+        csv_response = HttpResponse(data.getvalue(), content_type='application/csv')
+        csv_response['Content-Disposition'] = 'attachment; filename="tasks.csv"'
+        return csv_response
+
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
         serializer = serializers.TasksBulkSerializer(data=request.DATA)
@@ -98,8 +112,8 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
 
         self.check_permissions(request, "bulk_update_order", project)
         services.update_tasks_order_in_bulk(data["bulk_tasks"],
-                                                  project=project,
-                                                  field=order_field)
+                                            project=project,
+                                            field=order_field)
         services.snapshot_tasks_in_bulk(data["bulk_tasks"], request.user)
 
         return response.NoContent()

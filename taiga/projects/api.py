@@ -87,6 +87,33 @@ class ProjectViewSet(ModelCrudViewSet):
         self.check_permissions(request, "stats", project)
         return response.Ok(services.get_stats_for_project(project))
 
+    def _regenerate_csv_uuid(self, project, field):
+        uuid_value = uuid.uuid4().hex
+        setattr(project, field, uuid_value)
+        project.save()
+        return uuid_value
+
+    @detail_route(methods=["POST"])
+    def regenerate_userstories_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "regenerate_userstories_csv_uuid", project)
+        data = {"uuid": self._regenerate_csv_uuid(project, "userstories_csv_uuid")}
+        return response.Ok(data)
+
+    @detail_route(methods=["POST"])
+    def regenerate_issues_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "regenerate_issues_csv_uuid", project)
+        data = {"uuid": self._regenerate_csv_uuid(project, "issues_csv_uuid")}
+        return response.Ok(data)
+
+    @detail_route(methods=["POST"])
+    def regenerate_tasks_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "regenerate_tasks_csv_uuid", project)
+        data = {"uuid": self._regenerate_csv_uuid(project, "tasks_csv_uuid")}
+        return response.Ok(data)
+
     @detail_route(methods=["GET"])
     def member_stats(self, request, pk=None):
         project = self.get_object()

@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import itertools
+import uuid
+
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -163,6 +165,15 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     is_private = models.BooleanField(default=True, null=False, blank=True,
                                      verbose_name=_("is private"))
 
+    userstories_csv_uuid = models.CharField(max_length=32, editable=False,
+                                            null=True, blank=True,
+                                            default=None, db_index=True)
+    tasks_csv_uuid = models.CharField(max_length=32, editable=False, null=True,
+                                      blank=True, default=None, db_index=True)
+    issues_csv_uuid = models.CharField(max_length=32, editable=False,
+                                       null=True, blank=True, default=None,
+                                       db_index=True)
+
     tags_colors = TextArrayField(dimension=2, null=False, blank=True, verbose_name=_("tags colors"), default=[])
     _importing = None
 
@@ -181,6 +192,15 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         return "<Project {0}>".format(self.id)
 
     def save(self, *args, **kwargs):
+        if not self._importing and not self.userstories_csv_uuid:
+            self.userstories_csv_uuid = uuid.uuid4().hex
+
+        if not self._importing and not self.tasks_csv_uuid:
+            self.tasks_csv_uuid = uuid.uuid4().hex
+
+        if not self._importing and not self.issues_csv_uuid:
+            self.issues_csv_uuid = uuid.uuid4().hex
+
         if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
 
