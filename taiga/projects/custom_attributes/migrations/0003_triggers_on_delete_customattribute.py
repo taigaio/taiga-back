@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
         migrations.RunSQL(
             """
             CREATE TRIGGER "update_userstorycustomvalues_after_remove_userstorycustomattribute"
-          BEFORE DELETE ON custom_attributes_userstorycustomattribute
+           AFTER DELETE ON custom_attributes_userstorycustomattribute
               FOR EACH ROW
          EXECUTE PROCEDURE clean_key_in_custom_attributes_values('custom_attributes_userstorycustomattributesvalues');
             """,
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
         migrations.RunSQL(
             """
             CREATE TRIGGER "update_taskcustomvalues_after_remove_taskcustomattribute"
-          BEFORE DELETE ON custom_attributes_taskcustomattribute
+           AFTER DELETE ON custom_attributes_taskcustomattribute
               FOR EACH ROW
          EXECUTE PROCEDURE clean_key_in_custom_attributes_values('custom_attributes_taskcustomattributesvalues');
             """,
@@ -85,7 +85,7 @@ class Migration(migrations.Migration):
         migrations.RunSQL(
             """
             CREATE TRIGGER "update_issuecustomvalues_after_remove_issuecustomattribute"
-          BEFORE DELETE ON custom_attributes_issuecustomattribute
+           AFTER DELETE ON custom_attributes_issuecustomattribute
               FOR EACH ROW
          EXECUTE PROCEDURE clean_key_in_custom_attributes_values('custom_attributes_issuecustomattributesvalues');
             """,

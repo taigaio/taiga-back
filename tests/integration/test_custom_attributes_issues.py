@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from django.db.transaction import atomic
 from django.core.urlresolvers import reverse
 from taiga.base.utils import json
 
@@ -171,12 +172,11 @@ def test_issue_custom_attributes_values_delete_issue(client):
 # Test tristres triggers :-P
 #########################################################
 
-def test_trigger_update_issuecustomvalues_afeter_remove_issuecustomattribute():
+def test_trigger_update_issuecustomvalues_afeter_remove_issuecustomattribute(client):
     issue = f.IssueFactory()
     member = f.MembershipFactory(user=issue.project.owner,
                                  project=issue.project,
                                  is_owner=True)
-
     custom_attr_1 = f.IssueCustomAttributeFactory(project=issue.project)
     ct1_id = "{}".format(custom_attr_1.id)
     custom_attr_2 = f.IssueCustomAttributeFactory(project=issue.project)
@@ -189,8 +189,12 @@ def test_trigger_update_issuecustomvalues_afeter_remove_issuecustomattribute():
     assert ct1_id in custom_attrs_val.attributes_values.keys()
     assert ct2_id in custom_attrs_val.attributes_values.keys()
 
-    custom_attr_2.delete()
-    custom_attrs_val = custom_attrs_val.__class__.objects.get(id=custom_attrs_val.id)
+    url = reverse("issue-custom-attributes-detail", kwargs={"pk": custom_attr_2.pk})
+    client.login(member.user)
+    response = client.json.delete(url)
+    assert response.status_code == 204
 
+    custom_attrs_val = custom_attrs_val.__class__.objects.get(id=custom_attrs_val.id)
+    assert not custom_attr_2.__class__.objects.filter(pk=custom_attr_2.pk).exists()
     assert ct1_id in custom_attrs_val.attributes_values.keys()
     assert ct2_id not in custom_attrs_val.attributes_values.keys()

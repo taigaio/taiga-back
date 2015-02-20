@@ -150,7 +150,7 @@ def test_userstory_custom_attributes_values_update_with_error_invalid_key(client
 # Test tristres triggers :-P
 #########################################################
 
-def test_trigger_update_userstorycustomvalues_afeter_remove_userstorycustomattribute():
+def test_trigger_update_userstorycustomvalues_afeter_remove_userstorycustomattribute(client):
     user_story = f.UserStoryFactory()
     member = f.MembershipFactory(user=user_story.project.owner,
                                  project=user_story.project,
@@ -169,8 +169,11 @@ def test_trigger_update_userstorycustomvalues_afeter_remove_userstorycustomattri
     assert ct1_id in custom_attrs_val.attributes_values.keys()
     assert ct2_id in custom_attrs_val.attributes_values.keys()
 
-    custom_attr_2.delete()
-    custom_attrs_val = custom_attrs_val.__class__.objects.get(id=custom_attrs_val.id)
+    url = reverse("userstory-custom-attributes-detail", kwargs={"pk": custom_attr_2.pk})
+    client.login(member.user)
+    response = client.json.delete(url)
+    assert response.status_code == 204
 
+    custom_attrs_val = custom_attrs_val.__class__.objects.get(id=custom_attrs_val.id)
     assert ct1_id in custom_attrs_val.attributes_values.keys()
     assert ct2_id not in custom_attrs_val.attributes_values.keys()
