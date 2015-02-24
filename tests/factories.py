@@ -279,6 +279,7 @@ class IssueFactory(Factory):
         model = "issues.Issue"
         strategy = factory.CREATE_STRATEGY
 
+    ref = factory.Sequence(lambda n: n)
     subject = factory.Sequence(lambda n: "Issue {}".format(n))
     description = factory.Sequence(lambda n: "Issue {} description".format(n))
     owner = factory.SubFactory("tests.factories.UserFactory")
