@@ -3,7 +3,6 @@ from django.core.urlresolvers import reverse
 from taiga.base.utils import json
 from taiga.webhooks.serializers import WebhookSerializer
 from taiga.webhooks.models import Webhook
-from taiga.webhooks import tasks
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
@@ -187,12 +186,12 @@ def test_webhook_action_test(client, data):
     with mock.patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
         results = helper_test_http_method(client, 'post', url1, None, users)
         assert results == [404, 404, 200]
-        assert _send_request_mock.called == True
+        assert _send_request_mock.called is True
 
     with mock.patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
         results = helper_test_http_method(client, 'post', url2, None, users)
         assert results == [404, 404, 404]
-        assert _send_request_mock.called == False
+        assert _send_request_mock.called is False
 
 
 def test_webhooklogs_list(client, data):

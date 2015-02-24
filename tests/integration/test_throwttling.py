@@ -33,7 +33,7 @@ import_rate_path = "taiga.export_import.throttling.ImportModeRateThrottle.get_ra
 
 
 def test_anonimous_throttling_policy(client, settings):
-    project = f.create_project()
+    f.create_project()
     url = reverse("projects-list")
 
     with mock.patch(anon_rate_path) as anon_rate, \
@@ -54,7 +54,7 @@ def test_anonimous_throttling_policy(client, settings):
 
 def test_user_throttling_policy(client, settings):
     project = f.create_project()
-    membership = f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
     url = reverse("projects-detail", kwargs={"pk": project.pk})
 
     client.login(project.owner)
@@ -83,7 +83,7 @@ def test_user_throttling_policy(client, settings):
 
 def test_import_mode_throttling_policy(client, settings):
     project = f.create_project()
-    membership = f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
     project.default_issue_type = f.IssueTypeFactory.create(project=project)
     project.default_issue_status = f.IssueStatusFactory.create(project=project)
     project.default_severity = f.SeverityFactory.create(project=project)

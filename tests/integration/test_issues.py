@@ -45,7 +45,7 @@ def test_update_issues_order_in_bulk():
 
 def test_api_create_issues_in_bulk(client):
     project = f.create_project()
-    membership = f.MembershipFactory(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory(project=project, user=project.owner, is_owner=True)
 
     url = reverse("issues-bulk-create")
 
@@ -86,6 +86,7 @@ def test_api_filter_by_text_1(client):
     assert response.status_code == 200
     assert number_of_issues == 1
 
+
 def test_api_filter_by_text_2(client):
     user = f.UserFactory(is_superuser=True)
     f.create_issue(owner=user)
@@ -99,6 +100,7 @@ def test_api_filter_by_text_2(client):
 
     assert response.status_code == 200
     assert number_of_issues == 1
+
 
 def test_api_filter_by_text_3(client):
     user = f.UserFactory(is_superuser=True)
@@ -114,6 +116,7 @@ def test_api_filter_by_text_3(client):
     assert response.status_code == 200
     assert number_of_issues == 2
 
+
 def test_api_filter_by_text_4(client):
     user = f.UserFactory(is_superuser=True)
     f.create_issue(owner=user)
@@ -127,6 +130,7 @@ def test_api_filter_by_text_4(client):
 
     assert response.status_code == 200
     assert number_of_issues == 0
+
 
 def test_api_filter_by_text_5(client):
     user = f.UserFactory(is_superuser=True)

@@ -17,9 +17,6 @@
 
 import pytest
 
-from django.core import management
-from django.conf import settings
-
 from .. import factories
 
 

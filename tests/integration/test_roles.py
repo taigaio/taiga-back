@@ -16,22 +16,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-from unittest.mock import patch, Mock
 
-from django.apps import apps
 from django.core.urlresolvers import reverse
-
-from taiga.base.utils import json
 
 from taiga.users.models import Role
 from taiga.projects.models import Membership
 from taiga.projects.models import Project
-from taiga.projects.userstories.serializers import UserStorySerializer
 
 from .. import factories as f
 
 
 pytestmark = pytest.mark.django_db
+
 
 def test_destroy_role_and_reassign_members(client):
     user1 = f.UserFactory.create()
@@ -39,8 +35,8 @@ def test_destroy_role_and_reassign_members(client):
     project = f.ProjectFactory.create(owner=user1)
     role1 = f.RoleFactory.create(project=project)
     role2 = f.RoleFactory.create(project=project)
-    member = f.MembershipFactory.create(project=project, user=user1, role=role1, is_owner=True)
-    member = f.MembershipFactory.create(project=project, user=user2, role=role2)
+    f.MembershipFactory.create(project=project, user=user1, role=role1, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user2, role=role2)
 
     url = reverse("roles-detail", args=[role2.pk]) + "?moveTo={}".format(role1.pk)
 
@@ -58,6 +54,7 @@ def test_destroy_role_and_reassign_members(client):
     qs = Membership.objects.filter(project=project, role_id=role1.pk)
     assert qs.count() == 2
 
+
 def test_destroy_role_and_reassign_members_with_deleted_project(client):
     """
     Regression test, that fixes some 500 errors on production
@@ -68,8 +65,8 @@ def test_destroy_role_and_reassign_members_with_deleted_project(client):
     project = f.ProjectFactory.create(owner=user1)
     role1 = f.RoleFactory.create(project=project)
     role2 = f.RoleFactory.create(project=project)
-    member = f.MembershipFactory.create(project=project, user=user1, role=role1)
-    member = f.MembershipFactory.create(project=project, user=user2, role=role2)
+    f.MembershipFactory.create(project=project, user=user1, role=role1)
+    f.MembershipFactory.create(project=project, user=user2, role=role2)
 
     Project.objects.filter(pk=project.id).delete()
 

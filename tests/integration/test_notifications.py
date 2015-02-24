@@ -45,7 +45,7 @@ def mail():
 
 def test_attach_notify_policy_to_project_queryset():
     project1 = f.ProjectFactory.create()
-    project2 = f.ProjectFactory.create()
+    f.ProjectFactory.create()
 
     qs = project1.__class__.objects.order_by("id")
     qs = services.attach_notify_policy_to_project_queryset(project1.owner, qs)
@@ -115,7 +115,7 @@ def test_users_to_notify():
     policy_model_cls = apps.get_model("notifications", "NotifyPolicy")
 
     policy1 = policy_model_cls.objects.get(user=member1.user)
-    policy2 = policy_model_cls.objects.get(user=member2.user)
+    policy_model_cls.objects.get(user=member2.user)
     policy3 = policy_model_cls.objects.get(user=member3.user)
 
     history = MagicMock()
@@ -197,7 +197,6 @@ def test_send_notifications_using_services_method(settings, mail):
     services.send_notifications(issue,
                                 history=history_delete)
 
-
     # Userstories
     us = f.UserStoryFactory.create(project=project, owner=member2.user)
     take_snapshot(us)
@@ -240,6 +239,7 @@ def test_send_notifications_using_services_method(settings, mail):
     services.process_sync_notifications()
     assert len(mail.outbox) == 12
 
+
 def test_resource_notification_test(client, settings, mail):
     settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL = 1
 
@@ -247,8 +247,8 @@ def test_resource_notification_test(client, settings, mail):
     user2 = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user1)
     role = f.RoleFactory.create(project=project, permissions=["view_issues"])
-    member1 = f.MembershipFactory.create(project=project, user=user1, role=role, is_owner=True)
-    member2 = f.MembershipFactory.create(project=project, user=user2, role=role)
+    f.MembershipFactory.create(project=project, user=user1, role=role, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user2, role=role)
     issue = f.IssueFactory.create(owner=user2, project=project)
 
     mock_path = "taiga.projects.issues.api.IssueViewSet.pre_conditions_on_save"
@@ -256,7 +256,7 @@ def test_resource_notification_test(client, settings, mail):
 
     client.login(user1)
 
-    with patch(mock_path) as m:
+    with patch(mock_path):
         data = {"subject": "Fooooo", "version": issue.version}
         response = client.patch(url, json.dumps(data), content_type="application/json")
         assert response.status_code == 200
@@ -267,7 +267,7 @@ def test_resource_notification_test(client, settings, mail):
         assert len(mail.outbox) == 1
         assert models.HistoryChangeNotification.objects.count() == 0
 
-    with patch(mock_path) as m:
+    with patch(mock_path):
         response = client.delete(url)
         assert response.status_code == 204
         assert len(mail.outbox) == 1
@@ -285,8 +285,8 @@ def test_watchers_assignation_for_issue(client):
     project2 = f.ProjectFactory.create(owner=user2)
     role1 = f.RoleFactory.create(project=project1)
     role2 = f.RoleFactory.create(project=project2)
-    member1 = f.MembershipFactory.create(project=project1, user=user1, role=role1, is_owner=True)
-    member2 = f.MembershipFactory.create(project=project2, user=user2, role=role2)
+    f.MembershipFactory.create(project=project1, user=user1, role=role1, is_owner=True)
+    f.MembershipFactory.create(project=project2, user=user2, role=role2)
 
     client.login(user1)
 
@@ -297,7 +297,6 @@ def test_watchers_assignation_for_issue(client):
     url = reverse("issues-detail", args=[issue.pk])
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 200, response.content
-
 
     issue = f.create_issue(project=project1, owner=user1)
     data = {"version": issue.version,
@@ -338,8 +337,8 @@ def test_watchers_assignation_for_task(client):
     project2 = f.ProjectFactory.create(owner=user2)
     role1 = f.RoleFactory.create(project=project1)
     role2 = f.RoleFactory.create(project=project2)
-    member1 = f.MembershipFactory.create(project=project1, user=user1, role=role1, is_owner=True)
-    member2 = f.MembershipFactory.create(project=project2, user=user2, role=role2)
+    f.MembershipFactory.create(project=project1, user=user1, role=role1, is_owner=True)
+    f.MembershipFactory.create(project=project2, user=user2, role=role2)
 
     client.login(user1)
 
@@ -350,7 +349,6 @@ def test_watchers_assignation_for_task(client):
     url = reverse("tasks-detail", args=[task.pk])
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 200, response.content
-
 
     task = f.create_task(project=project1, owner=user1)
     data = {"version": task.version,
@@ -391,8 +389,8 @@ def test_watchers_assignation_for_us(client):
     project2 = f.ProjectFactory.create(owner=user2)
     role1 = f.RoleFactory.create(project=project1)
     role2 = f.RoleFactory.create(project=project2)
-    member1 = f.MembershipFactory.create(project=project1, user=user1, role=role1, is_owner=True)
-    member2 = f.MembershipFactory.create(project=project2, user=user2, role=role2)
+    f.MembershipFactory.create(project=project1, user=user1, role=role1, is_owner=True)
+    f.MembershipFactory.create(project=project2, user=user2, role=role2)
 
     client.login(user1)
 
@@ -403,7 +401,6 @@ def test_watchers_assignation_for_us(client):
     url = reverse("userstories-detail", args=[us.pk])
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 200
-
 
     us = f.create_userstory(project=project1, owner=user1)
     data = {"version": us.version,
@@ -440,7 +437,6 @@ def test_watchers_assignation_for_us(client):
 def test_retrieve_notify_policies_by_anonymous_user(client):
     project = f.ProjectFactory.create()
 
-    policy_model_cls = apps.get_model("notifications", "NotifyPolicy")
     policy = services.get_notify_policy(project, project.owner)
 
     url = reverse("notifications-detail", args=[policy.pk])

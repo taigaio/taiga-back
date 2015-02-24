@@ -49,9 +49,9 @@ def data():
                                           owner=m.project_owner)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
-                                          user=m.project_member_with_perms,
-                                          role__project=m.public_project,
-                                          role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+                                              user=m.project_member_with_perms,
+                                              role__project=m.public_project,
+                                              role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     m.private_membership1 = f.MembershipFactory(project=m.private_project1,
                                                 user=m.project_member_with_perms,
                                                 role__project=m.private_project1,
@@ -83,6 +83,7 @@ def data():
 
     return m
 
+
 @pytest.fixture
 def data_us(data):
     m = type("Models", (object,), {})
@@ -97,6 +98,7 @@ def data_us(data):
                                                                     content_object=m.private_user_story2)
     return m
 
+
 @pytest.fixture
 def data_task(data):
     m = type("Models", (object,), {})
@@ -107,6 +109,7 @@ def data_task(data):
     m.private_task2 = f.TaskFactory(project=data.private_project2, ref=10)
     m.private_task2_attachment = f.TaskAttachmentFactory(project=data.private_project2, content_object=m.private_task2)
     return m
+
 
 @pytest.fixture
 def data_issue(data):
@@ -119,6 +122,7 @@ def data_issue(data):
     m.private_issue2_attachment = f.IssueAttachmentFactory(project=data.private_project2, content_object=m.private_issue2)
     return m
 
+
 @pytest.fixture
 def data_wiki(data):
     m = type("Models", (object,), {})
@@ -129,6 +133,7 @@ def data_wiki(data):
     m.private_wiki2 = f.WikiPageFactory(project=data.private_project2, slug=12)
     m.private_wiki2_attachment = f.WikiAttachmentFactory(project=data.private_project2, content_object=m.private_wiki2)
     return m
+
 
 def test_user_story_attachment_retrieve(client, data, data_us):
     public_url = reverse('userstory-attachments-detail', kwargs={"pk": data_us.public_user_story_attachment.pk})
@@ -506,6 +511,7 @@ def test_wiki_attachment_delete(client, data, data_wiki):
     assert results == [401, 204]
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+
 
 def test_user_story_attachment_create(client, data, data_us):
     url = reverse('userstory-attachments-list')

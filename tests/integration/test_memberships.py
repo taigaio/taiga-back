@@ -34,7 +34,7 @@ def test_api_create_bulk_members(client):
     joseph = f.UserFactory.create()
     tester = f.RoleFactory(project=project, name="Tester")
     gamer = f.RoleFactory(project=project, name="Gamer")
-    membership = f.MembershipFactory(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory(project=project, user=project.owner, is_owner=True)
 
     url = reverse("memberships-bulk-create")
 
@@ -52,10 +52,11 @@ def test_api_create_bulk_members(client):
     assert response.data[0]["email"] == john.email
     assert response.data[1]["email"] == joseph.email
 
+
 def test_api_create_bulk_members_with_extra_text(client, outbox):
     project = f.ProjectFactory()
     tester = f.RoleFactory(project=project, name="Tester")
-    membership = f.MembershipFactory(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory(project=project, user=project.owner, is_owner=True)
     url = reverse("memberships-bulk-create")
 
     invitation_extra_text = "this is a not so random invitation text"
@@ -77,9 +78,10 @@ def test_api_create_bulk_members_with_extra_text(client, outbox):
     assert message.to == ["john@email.com"]
     assert "this is a not so random invitation text" in message.body
 
+
 def test_api_resend_invitation(client, outbox):
     invitation = f.create_invitation()
-    membership = f.MembershipFactory(project=invitation.project, user=invitation.project.owner, is_owner=True)
+    f.MembershipFactory(project=invitation.project, user=invitation.project.owner, is_owner=True)
     url = reverse("memberships-resend-invitation", kwargs={"pk": invitation.pk})
 
     client.login(invitation.project.owner)
@@ -94,7 +96,7 @@ def test_api_invite_existing_user(client, outbox):
     "Should create the invitation linked to that user"
     user = f.UserFactory.create()
     role = f.RoleFactory.create()
-    membership = f.MembershipFactory(project=role.project, user=role.project.owner, is_owner=True)
+    f.MembershipFactory(project=role.project, user=role.project.owner, is_owner=True)
 
     client.login(role.project.owner)
 
@@ -189,7 +191,7 @@ def test_api_delete_membership(client):
 def test_api_delete_membership_without_user(client):
     membership_owner = f.MembershipFactory(is_owner=True)
     membership_without_user_one = f.MembershipFactory(project=membership_owner.project, user=None)
-    membership_without_user_two = f.MembershipFactory(project=membership_owner.project, user=None)
+    f.MembershipFactory(project=membership_owner.project, user=None)
     client.login(membership_owner.user)
     url = reverse("memberships-detail", args=[membership_without_user_one.id])
     response = client.json.delete(url)

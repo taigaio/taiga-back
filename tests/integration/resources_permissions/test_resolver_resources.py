@@ -1,6 +1,5 @@
 from django.core.urlresolvers import reverse
 
-from taiga.base.utils import json
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 
 from tests import factories as f
@@ -45,9 +44,9 @@ def data():
                                           slug="private2")
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
-                                          user=m.project_member_with_perms,
-                                          role__project=m.public_project,
-                                          role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+                                              user=m.project_member_with_perms,
+                                              role__project=m.public_project,
+                                              role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     m.private_membership1 = f.MembershipFactory(project=m.private_project1,
                                                 user=m.project_member_with_perms,
                                                 role__project=m.private_project1,
@@ -78,9 +77,9 @@ def data():
                         is_owner=True)
 
     m.view_only_membership = f.MembershipFactory(project=m.private_project2,
-                                                user=m.other_user,
-                                                role__project=m.private_project2,
-                                                role__permissions=["view_project"])
+                                                 user=m.other_user,
+                                                 role__project=m.private_project2,
+                                                 role__permissions=["view_project"])
 
     m.us = f.UserStoryFactory(project=m.private_project2, ref=1)
     m.task = f.TaskFactory(project=m.private_project2, ref=2)
@@ -103,7 +102,7 @@ def test_resolver_list(client, data):
 
     results = helper_test_http_method(client, 'get', "{}?project={}".format(url, data.public_project.slug), None, users)
     assert results == [200, 200, 200, 200, 200]
-    results = helper_test_http_method(client, 'get', "{}?project={}".format(url,data.private_project1.slug), None, users)
+    results = helper_test_http_method(client, 'get', "{}?project={}".format(url, data.private_project1.slug), None, users)
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', "{}?project={}".format(url, data.private_project2.slug), None, users)
     assert results == [401, 403, 403, 200, 200]
