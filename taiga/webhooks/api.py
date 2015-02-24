@@ -14,14 +14,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
-
 from taiga.base import filters
 from taiga.base import response
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelListViewSet
 
-from taiga.base.api.utils import get_object_or_404
 from taiga.base.decorators import detail_route
 
 from . import models

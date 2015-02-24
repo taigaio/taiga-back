@@ -23,7 +23,6 @@ from taiga.base.api import GenericViewSet
 from . import serializers
 from . import service
 from . import permissions
-from . import models
 
 
 class TimelineViewSet(GenericViewSet):

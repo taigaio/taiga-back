@@ -24,7 +24,7 @@ class Webhook(models.Model):
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="webhooks")
     name = models.CharField(max_length=250, null=False, blank=False,
-                        verbose_name=_("name"))
+                            verbose_name=_("name"))
     url = models.URLField(null=False, blank=False, verbose_name=_("URL"))
     key = models.TextField(null=False, blank=False, verbose_name=_("secret key"))
 

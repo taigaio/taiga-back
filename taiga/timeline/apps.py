@@ -36,5 +36,3 @@ class TimelineAppConfig(AppConfig):
                                  sender=apps.get_model("projects", "Membership"))
         signals.post_delete.connect(handlers.delete_membership_push_to_timeline,
                                     sender=apps.get_model("projects", "Membership"))
-
-

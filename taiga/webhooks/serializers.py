@@ -35,6 +35,7 @@ class HistoryDiffField(serializers.Field):
 
 class WebhookSerializer(serializers.ModelSerializer):
     logs_counter = serializers.SerializerMethodField("get_logs_counter")
+
     class Meta:
         model = Webhook
 
@@ -60,6 +61,7 @@ class UserSerializer(serializers.Serializer):
 
     def get_name(self, obj):
         return obj.full_name
+
 
 class PointSerializer(serializers.Serializer):
     id = serializers.SerializerMethodField("get_pk")

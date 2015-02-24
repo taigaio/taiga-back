@@ -31,6 +31,7 @@ def get_typename_for_model_class(model:object, for_concrete_model=True) -> str:
 
     return "{0}.{1}".format(model._meta.app_label, model._meta.model_name)
 
+
 def get_typename_for_model_instance(model_instance):
     """
     Get content type tuple from model instance.

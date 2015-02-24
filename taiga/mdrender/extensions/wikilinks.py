@@ -26,6 +26,7 @@ from taiga.base.utils.slug import slugify
 
 import re
 
+
 class WikiLinkExtension(Extension):
     def __init__(self, project, *args, **kwargs):
         self.project = project
@@ -65,6 +66,7 @@ class WikiLinksPattern(Pattern):
 
 
 SLUG_RE = re.compile(r"^[-a-zA-Z0-9_]+$")
+
 
 class RelativeLinksTreeprocessor(Treeprocessor):
     def __init__(self, md, project):

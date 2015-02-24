@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
-
 from django import http
 
 
@@ -33,7 +31,7 @@ COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated", "x-paginated-by",
 
 class CoorsMiddleware(object):
     def _populate_response(self, response):
-        response["Access-Control-Allow-Origin"]  = COORS_ALLOWED_ORIGINS
+        response["Access-Control-Allow-Origin"] = COORS_ALLOWED_ORIGINS
         response["Access-Control-Allow-Methods"] = ",".join(COORS_ALLOWED_METHODS)
         response["Access-Control-Allow-Headers"] = ",".join(COORS_ALLOWED_HEADERS)
         response["Access-Control-Expose-Headers"] = ",".join(COORS_EXPOSE_HEADERS)

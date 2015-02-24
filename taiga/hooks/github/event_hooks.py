@@ -16,7 +16,7 @@
 
 from django.utils.translation import ugettext_lazy as _
 
-from taiga.projects.models import Project, IssueStatus, TaskStatus, UserStoryStatus
+from taiga.projects.models import IssueStatus, TaskStatus, UserStoryStatus
 
 from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task

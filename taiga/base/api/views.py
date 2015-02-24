@@ -56,6 +56,7 @@ def get_view_name(view_cls, suffix=None):
 
     return name
 
+
 def get_view_description(view_cls, html=False):
     """
     Given a view class, return a textual description to represent the view.
@@ -140,7 +141,6 @@ class APIView(View):
         if len(self.renderer_classes) > 1:
             headers['Vary'] = 'Accept'
         return headers
-
 
     def http_method_not_allowed(self, request, *args, **kwargs):
         """
@@ -445,7 +445,7 @@ class APIView(View):
 
 
 def api_server_error(request, *args, **kwargs):
-    if settings.DEBUG == False and request.META['CONTENT_TYPE'] == "application/json":
+    if settings.DEBUG is False and request.META['CONTENT_TYPE'] == "application/json":
         return HttpResponse(json.dumps({"error": "Server application error"}),
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return server_error(request, *args, **kwargs)

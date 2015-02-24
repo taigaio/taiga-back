@@ -27,11 +27,11 @@ def get_or_generate_config(project):
     if config and "github" in config:
         g_config = project.modules_config.config["github"]
     else:
-        g_config = {"secret": uuid.uuid4().hex }
+        g_config = {"secret": uuid.uuid4().hex}
 
     url = reverse("github-hook-list")
     url = get_absolute_url(url)
-    url = "%s?project=%s"%(url, project.id)
+    url = "%s?project=%s" % (url, project.id)
     g_config["webhooks_url"] = url
     return g_config
 

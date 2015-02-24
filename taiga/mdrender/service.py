@@ -22,6 +22,7 @@ import bleach
 import html5lib
 from html5lib.serializer.htmlserializer import HTMLSerializer
 
+
 def _serialize(domtree):
     walker = html5lib.treewalkers.getTreeWalker('etree')
     stream = walker(domtree)
@@ -32,7 +33,7 @@ def _serialize(domtree):
     return serializer.render(stream)
 
 bleach._serialize = _serialize
-### END PATCH
+# END PATCH
 
 from django.core.cache import cache
 from django.utils.encoding import force_bytes

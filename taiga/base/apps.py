@@ -20,6 +20,7 @@ import sys
 from django.apps import AppConfig
 from . import monkey
 
+
 class BaseAppConfig(AppConfig):
     name = "taiga.base"
     verbose_name = "Base App Config"
@@ -28,4 +29,3 @@ class BaseAppConfig(AppConfig):
         print("Monkey patching...", file=sys.stderr)
         monkey.patch_restframework()
         monkey.patch_serializer()
-

@@ -35,7 +35,7 @@ def get_or_generate_config(project):
 
     url = reverse("bitbucket-hook-list")
     url = get_absolute_url(url)
-    url = "%s?project=%s&key=%s"%(url, project.id, g_config["secret"])
+    url = "%s?project=%s&key=%s" % (url, project.id, g_config["secret"])
     g_config["webhooks_url"] = url
     return g_config
 

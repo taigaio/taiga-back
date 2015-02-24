@@ -17,7 +17,7 @@
 import datetime
 
 from django.db.models.loading import get_model
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
@@ -139,10 +139,10 @@ class Command(BaseCommand):
         ]
 
         context = {
-           "project": Project.objects.all().order_by("?").first(),
-           "changer": User.objects.all().order_by("?").first(),
-           "history_entries": HistoryEntry.objects.all().order_by("?")[0:5],
-           "user": User.objects.all().order_by("?").first(),
+            "project": Project.objects.all().order_by("?").first(),
+            "changer": User.objects.all().order_by("?").first(),
+            "history_entries": HistoryEntry.objects.all().order_by("?")[0:5],
+            "user": User.objects.all().order_by("?").first(),
         }
 
         for notification_email in notification_emails:
