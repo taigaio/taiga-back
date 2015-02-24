@@ -26,7 +26,6 @@ MEDIA_ROOT = "/tmp"
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 INSTALLED_APPS = INSTALLED_APPS + [
     "tests",
-    "taiga_contrib_github_auth",
 ]
 
 REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
