@@ -155,16 +155,6 @@ class WikiAttachmentFactory(Factory):
         strategy = factory.CREATE_STRATEGY
 
 
-class RolePointsFactory(Factory):
-    class Meta:
-        model = "userstories.RolePoints"
-        strategy = factory.CREATE_STRATEGY
-
-    user_story = factory.SubFactory("tests.factories.UserStoryFactory")
-    role = factory.SubFactory("tests.factories.RoleFactory")
-    points = factory.SubFactory("tests.factories.PointsFactory")
-
-
 class UserFactory(Factory):
     class Meta:
         model = "users.User"
@@ -252,7 +242,6 @@ class UserStoryStatusFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
-
 class TaskStatusFactory(Factory):
     class Meta:
         model = "projects.TaskStatus"
@@ -335,15 +324,6 @@ class IssueStatusFactory(Factory):
         strategy = factory.CREATE_STRATEGY
 
     name = factory.Sequence(lambda n: "Issue Status {}".format(n))
-    project = factory.SubFactory("tests.factories.ProjectFactory")
-
-
-class UserStoryStatusFactory(Factory):
-    class Meta:
-        model = "projects.UserStoryStatus"
-        strategy = factory.CREATE_STRATEGY
-
-    name = factory.Sequence(lambda n: "User Story Status {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
@@ -431,6 +411,7 @@ class HistoryEntryFactory(Factory):
         strategy = factory.CREATE_STRATEGY
 
     type = 1
+
 
 def create_issue(**kwargs):
     "Create an issue and along with its dependencies."
