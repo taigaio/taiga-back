@@ -26,8 +26,6 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
-from rest_framework.decorators import throttle_classes
-
 from taiga.base.decorators import detail_route, list_route
 from taiga.base import exceptions as exc
 from taiga.base import response
@@ -70,7 +68,7 @@ class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet)
 
         path = "exports/{}/{}-{}.json".format(project.pk, project.slug, uuid.uuid4().hex)
         content = ContentFile(ExportRenderer().render(service.project_to_dict(project),
-            renderer_context={"indent": 4}).decode('utf-8'))
+                                                      renderer_context={"indent": 4}).decode('utf-8'))
 
         default_storage.save(path, content)
         response_data = {
@@ -187,7 +185,6 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         response_data = ProjectSerializer(project).data
         return response.Created(response_data)
 
-
     @detail_route(methods=['post'])
     @method_decorator(atomic)
     def issue(self, request, *args, **kwargs):
@@ -195,7 +192,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         self.check_permissions(request, 'import_item', project)
 
         signals.pre_save.disconnect(sender=Issue,
-            dispatch_uid="set_finished_date_when_edit_issue")
+                                    dispatch_uid="set_finished_date_when_edit_issue")
 
         issue = service.store_issue(project, request.DATA.copy())
 

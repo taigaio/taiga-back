@@ -27,8 +27,6 @@ from taiga.base.decorators import list_route
 from taiga.base import exceptions as exc
 from taiga.base import response
 
-from taiga.users.services import get_and_validate_user
-
 from .serializers import PublicRegisterSerializer
 from .serializers import PrivateRegisterForExistingUserSerializer
 from .serializers import PrivateRegisterForNewUserSerializer

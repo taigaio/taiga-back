@@ -86,7 +86,7 @@ def _send_request(webhook_id, url, key, data):
                                                 duration=0)
     session.close()
 
-    ids = [webhook_log.id for webhook_log in WebhookLog.objects.filter(webhook_id=webhook_id).order_by("-id")[10:]]
+    ids = [log.id for log in WebhookLog.objects.filter(webhook_id=webhook_id).order_by("-id")[10:]]
     WebhookLog.objects.filter(id__in=ids).delete()
     return webhook_log
 
@@ -135,4 +135,3 @@ def test_webhook(webhook_id, url, key):
     data['type'] = "test"
 
     return _send_request(webhook_id, url, key, data)
-

@@ -19,13 +19,11 @@
 
 import warnings
 
-from django.core.exceptions import ImproperlyConfigured, PermissionDenied
+from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import Paginator, InvalidPage
 from django.http import Http404
 from django.utils.translation import ugettext as _
 
-from rest_framework import exceptions
-from rest_framework.request import clone_request
 from rest_framework.settings import api_settings
 
 from . import views
@@ -166,8 +164,8 @@ class GenericAPIView(views.APIView):
             page = paginator.page(page_number)
         except InvalidPage as e:
             raise Http404(_('Invalid page (%(page_number)s): %(message)s') % {
-                                'page_number': page_number,
-                                'message': str(e)
+                'page_number': page_number,
+                'message': str(e)
             })
 
         if deprecated_style:
@@ -193,16 +191,16 @@ class GenericAPIView(views.APIView):
         """
         filter_backends = self.filter_backends or []
         if not filter_backends and hasattr(self, 'filter_backend'):
-            raise RuntimeException('The `filter_backend` attribute and `FILTER_BACKEND` setting '
-                                   'are due to be deprecated in favor of a `filter_backends` '
-                                   'attribute and `DEFAULT_FILTER_BACKENDS` setting, that take '
-                                   'a *list* of filter backend classes.')
+            raise RuntimeError('The `filter_backend` attribute and `FILTER_BACKEND` setting '
+                               'are due to be deprecated in favor of a `filter_backends` '
+                               'attribute and `DEFAULT_FILTER_BACKENDS` setting, that take '
+                               'a *list* of filter backend classes.')
         return filter_backends
 
-
-    ########################
-    ### The following methods provide default implementations
-    ### that you may want to override for more complex cases.
+    ###########################################################
+    # The following methods provide default implementations   #
+    # that you may want to override for more complex cases.   #
+    ###########################################################
 
     def get_paginate_by(self, queryset=None):
         """
@@ -214,8 +212,8 @@ class GenericAPIView(views.APIView):
         Otherwise defaults to using `self.paginate_by`.
         """
         if queryset is not None:
-            raise RuntimeException('The `queryset` parameter to `get_paginate_by()` '
-                                   'is due to be deprecated.')
+            raise RuntimeError('The `queryset` parameter to `get_paginate_by()` '
+                               'is due to be deprecated.')
         if self.paginate_by_param:
             try:
                 return strict_positive_int(
@@ -263,8 +261,7 @@ class GenericAPIView(views.APIView):
         if self.model is not None:
             return self.model._default_manager.all()
 
-        raise ImproperlyConfigured("'%s' must define 'queryset' or 'model'"
-                                    % self.__class__.__name__)
+        raise ImproperlyConfigured("'%s' must define 'queryset' or 'model'" % self.__class__.__name__)
 
     def get_object(self, queryset=None):
         """
@@ -280,7 +277,7 @@ class GenericAPIView(views.APIView):
         else:
             # NOTE: explicit exception for avoid and fix
             # usage of deprecated way of get_object
-            raise RuntimeException("DEPRECATED")
+            raise RuntimeError("DEPRECATED")
 
         # Perform the lookup filtering.
         # Note that `pk` and `slug` are deprecated styles of lookup filtering.
@@ -292,11 +289,11 @@ class GenericAPIView(views.APIView):
         if lookup is not None:
             filter_kwargs = {self.lookup_field: lookup}
         elif pk is not None and self.lookup_field == 'pk':
-            raise RuntimeException('The `pk_url_kwarg` attribute is due to be deprecated. '
-                                   'Use the `lookup_field` attribute instead')
+            raise RuntimeError('The `pk_url_kwarg` attribute is due to be deprecated. '
+                               'Use the `lookup_field` attribute instead')
         elif slug is not None and self.lookup_field == 'pk':
-            raise RuntimeException('The `slug_url_kwarg` attribute is due to be deprecated. '
-                                   'Use the `lookup_field` attribute instead')
+            raise RuntimeError('The `slug_url_kwarg` attribute is due to be deprecated. '
+                               'Use the `lookup_field` attribute instead')
         else:
             raise ImproperlyConfigured(
                 'Expected view %s to be called with a URL keyword argument '
@@ -314,12 +311,13 @@ class GenericAPIView(views.APIView):
         except Http404:
             return None
 
-    ########################
-    ### The following are placeholder methods,
-    ### and are intended to be overridden.
-    ###
-    ### The are not called by GenericAPIView directly,
-    ### but are used by the mixin methods.
+    ###################################################
+    # The following are placeholder methods,          #
+    # and are intended to be overridden.              #
+    #                                                 #
+    # The are not called by GenericAPIView directly,  #
+    # but are used by the mixin methods.              #
+    ###################################################
 
     def pre_conditions_on_save(self, obj):
         """
@@ -363,11 +361,11 @@ class GenericAPIView(views.APIView):
         pass
 
 
-##########################################################
-### Concrete view classes that provide method handlers ###
-### by composing the mixin classes with the base view. ###
-### NOTE: not used by taiga.                           ###
-##########################################################
+######################################################
+# Concrete view classes that provide method handlers #
+# by composing the mixin classes with the base view. #
+# NOTE: not used by taiga.                           #
+######################################################
 
 class CreateAPIView(mixins.CreateModelMixin,
                     GenericAPIView):

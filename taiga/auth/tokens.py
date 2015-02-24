@@ -19,12 +19,13 @@ from taiga.base import exceptions as exc
 from django.apps import apps
 from django.core import signing
 
+
 def get_token_for_user(user, scope):
     """
     Generate a new signed token containing
     a specified user limited for a scope (identified as a string).
     """
-    data = {"user_%s_id"%(scope): user.id}
+    data = {"user_%s_id" % (scope): user.id}
     return signing.dumps(data)
 
 
@@ -47,7 +48,7 @@ def get_user_for_token(token, scope, max_age=None):
     model_cls = apps.get_model("users", "User")
 
     try:
-        user = model_cls.objects.get(pk=data["user_%s_id"%(scope)])
+        user = model_cls.objects.get(pk=data["user_%s_id" % (scope)])
     except (model_cls.DoesNotExist, KeyError):
         raise exc.NotAuthenticated("Invalid token")
     else:

@@ -36,4 +36,3 @@ def without_signals(*disablers):
         for disabler in disablers:
             signal, *ids = disabler
             signal.receivers = signal.backup_receivers
-

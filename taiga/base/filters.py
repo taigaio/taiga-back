@@ -102,7 +102,8 @@ class PermissionBasedFilterBackend(FilterBackend):
                 project_id = int(request.QUERY_PARAMS["project"])
             except:
                 logger.error("Filtering project diferent value than an integer: {}".format(
-                                                           request.QUERY_PARAMS["project"]))
+                    request.QUERY_PARAMS["project"]
+                ))
                 raise exc.BadRequest("'project' must be an integer value.")
 
         qs = queryset
@@ -190,7 +191,8 @@ class CanViewProjectObjFilterBackend(FilterBackend):
                 project_id = int(request.QUERY_PARAMS["project"])
             except:
                 logger.error("Filtering project diferent value than an integer: {}".format(
-                                                           request.QUERY_PARAMS["project"]))
+                    request.QUERY_PARAMS["project"]
+                ))
                 raise exc.BadRequest("'project' must be an integer value.")
 
         qs = queryset

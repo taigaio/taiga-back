@@ -32,13 +32,13 @@ selfcontained tokens. This trust tokes from external
 fraudulent modifications.
 """
 
-import base64
 import re
 
 from django.conf import settings
 from rest_framework.authentication import BaseAuthentication
 
 from .tokens import get_user_for_token
+
 
 class Session(BaseAuthentication):
     """
@@ -82,8 +82,8 @@ class Token(BaseAuthentication):
         token = token_rx_match.group(1)
         max_age_auth_token = getattr(settings, "MAX_AGE_AUTH_TOKEN", None)
         user = get_user_for_token(token, "authentication",
-            max_age=max_age_auth_token)
-            
+                                  max_age=max_age_auth_token)
+
         return (user, token)
 
     def authenticate_header(self, request):

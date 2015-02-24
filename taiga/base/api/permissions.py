@@ -219,8 +219,10 @@ class IsObjectOwner(PermissionComponent):
 class AllowAnyPermission(ResourcePermission):
     enought_perms = AllowAny()
 
+
 class IsAuthenticatedPermission(ResourcePermission):
     enought_perms = IsAuthenticated()
+
 
 class TaigaResourcePermission(ResourcePermission):
     enought_perms = IsSuperUser()

@@ -23,7 +23,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.http import Http404
 
 from taiga.base import response
-from taiga.base.utils.json import to_json
 
 
 class BaseException(exceptions.APIException):

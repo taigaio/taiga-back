@@ -46,7 +46,7 @@ class GitHubViewSet(BaseWebhookApiViewSet):
 
         secret = project.modules_config.config.get("github", {}).get("secret", "")
         secret = bytes(secret.encode("utf-8"))
-        mac = hmac.new(secret, msg=request.body,digestmod=hashlib.sha1)
+        mac = hmac.new(secret, msg=request.body, digestmod=hashlib.sha1)
         return hmac.compare_digest(mac.hexdigest(), signature)
 
     def _get_event_name(self, request):

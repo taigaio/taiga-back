@@ -15,10 +15,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from functools import partial
 from collections import namedtuple
 
-from django.db.models import Q
 from django.db import connection
 
 Neighbor = namedtuple("Neighbor", "left right")
@@ -46,7 +44,7 @@ def get_neighbors(obj, results_set=None):
             (SELECT "id" as id, ROW_NUMBER() OVER()
                 FROM (%s) as ID_AND_ROW)
         AS SELECTED_ID_AND_ROW
-        """%(base_sql)
+        """ % (base_sql)
     query += " WHERE id=%s;"
     params = list(base_params) + [obj.id]
 
