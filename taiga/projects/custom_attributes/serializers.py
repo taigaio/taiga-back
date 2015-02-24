@@ -34,16 +34,16 @@ class BaseCustomAttributeSerializer(ModelSerializer):
     class Meta:
         read_only_fields = ('id', 'created_date', 'modified_date')
 
-    def validate(self, data):
+    def _validate_integrity_between_project_and_name(self, attrs, source):
         """
         Check the name is not duplicated in the project. Check when:
           - create a new one
           - update the name
           - update the project (move to another project)
         """
-        data_id = data.get("id", None)
-        data_name = data.get("name", None)
-        data_project = data.get("project", None)
+        data_id = attrs.get("id", None)
+        data_name = attrs.get("name", None)
+        data_project = attrs.get("project", None)
 
         if self.object:
             data_id = data_id or self.object.id
@@ -54,9 +54,15 @@ class BaseCustomAttributeSerializer(ModelSerializer):
         qs = (model.objects.filter(project=data_project, name=data_name)
                            .exclude(id=data_id))
         if qs.exists():
-            raise ValidationError(_("There is a custom field with the same name in this project."))
+            raise ValidationError(_("Already exists one with the same name."))
 
-        return data
+        return attrs
+
+    def validate_name(self, attrs, source):
+        return self._validate_integrity_between_project_and_name(attrs, source)
+
+    def validate_project(self, attrs, source):
+        return self._validate_integrity_between_project_and_name(attrs, source)
 
 
 class UserStoryCustomAttributeSerializer(BaseCustomAttributeSerializer):
