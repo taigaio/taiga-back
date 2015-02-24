@@ -25,7 +25,7 @@ from tests import factories as f
 from tests.utils import helper_test_http_method
 
 import pytest
-pytestmark = pytest.mark.django_db(transaction=True)
+pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
@@ -94,6 +94,23 @@ def data():
     m.public_task_ca = f.TaskCustomAttributeFactory(project=m.public_project)
     m.private_task_ca1 = f.TaskCustomAttributeFactory(project=m.private_project1)
     m.private_task_ca2 = f.TaskCustomAttributeFactory(project=m.private_project2)
+
+    m.public_task = f.TaskFactory(project=m.public_project,
+                                  status__project=m.public_project,
+                                  milestone__project=m.public_project,
+                                  user_story__project=m.public_project)
+    m.private_task1 = f.TaskFactory(project=m.private_project1,
+                                    status__project=m.private_project1,
+                                    milestone__project=m.private_project1,
+                                    user_story__project=m.private_project1)
+    m.private_task2 = f.TaskFactory(project=m.private_project2,
+                                    status__project=m.private_project2,
+                                    milestone__project=m.private_project2,
+                                    user_story__project=m.private_project2)
+
+    m.public_task_cav = m.public_task.custom_attributes_values
+    m.private_task_cav1 = m.private_task1.custom_attributes_values
+    m.private_task_cav2 = m.private_task2.custom_attributes_values
 
     return m
 
@@ -285,3 +302,90 @@ def test_task_custom_attribute_action_bulk_update_order(client, data):
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 403, 204]
+
+
+#########################################################
+# Task Custom Attribute
+#########################################################
+
+
+def test_task_custom_attributes_values_retrieve(client, data):
+    public_url = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.public_task.pk})
+    private_url1 = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.private_task1.pk})
+    private_url2 = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.private_task2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_task_custom_attributes_values_update(client, data):
+    public_url = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.public_task.pk})
+    private_url1 = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.private_task1.pk})
+    private_url2 = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.private_task2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    task_data = serializers.TaskCustomAttributesValuesSerializer(data.public_task_cav).data
+    task_data["attributes_values"] = {str(data.public_task_ca.pk): "test"}
+    task_data = json.dumps(task_data)
+    results = helper_test_http_method(client, 'put', public_url, task_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    task_data = serializers.TaskCustomAttributesValuesSerializer(data.private_task_cav1).data
+    task_data["attributes_values"] = {str(data.private_task_ca1.pk): "test"}
+    task_data = json.dumps(task_data)
+    results = helper_test_http_method(client, 'put', private_url1, task_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    task_data = serializers.TaskCustomAttributesValuesSerializer(data.private_task_cav2).data
+    task_data["attributes_values"] = {str(data.private_task_ca2.pk): "test"}
+    task_data = json.dumps(task_data)
+    results = helper_test_http_method(client, 'put', private_url2, task_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_task_custom_attributes_values_patch(client, data):
+    public_url = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.public_task.pk})
+    private_url1 = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.private_task1.pk})
+    private_url2 = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.private_task2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    patch_data = json.dumps({"attributes_values": {str(data.public_task_ca.pk): "test"},
+                             "version": data.public_task.version})
+    results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    patch_data = json.dumps({"attributes_values": {str(data.private_task_ca1.pk): "test"},
+                             "version": data.private_task1.version})
+    results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    patch_data = json.dumps({"attributes_values": {str(data.private_task_ca2.pk): "test"},
+                             "version": data.private_task2.version})
+    results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
+    assert results == [401, 403, 403, 200, 200]

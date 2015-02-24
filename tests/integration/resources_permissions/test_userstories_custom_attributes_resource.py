@@ -25,7 +25,7 @@ from tests import factories as f
 from tests.utils import helper_test_http_method
 
 import pytest
-pytestmark = pytest.mark.django_db(transaction=True)
+pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
@@ -94,6 +94,18 @@ def data():
     m.public_userstory_ca = f.UserStoryCustomAttributeFactory(project=m.public_project)
     m.private_userstory_ca1 = f.UserStoryCustomAttributeFactory(project=m.private_project1)
     m.private_userstory_ca2 = f.UserStoryCustomAttributeFactory(project=m.private_project2)
+
+
+    m.public_user_story = f.UserStoryFactory(project=m.public_project,
+                                             status__project=m.public_project)
+    m.private_user_story1 = f.UserStoryFactory(project=m.private_project1,
+                                               status__project=m.private_project1)
+    m.private_user_story2 = f.UserStoryFactory(project=m.private_project2,
+                                               status__project=m.private_project2)
+
+    m.public_user_story_cav = m.public_user_story.custom_attributes_values
+    m.private_user_story_cav1 = m.private_user_story1.custom_attributes_values
+    m.private_user_story_cav2 = m.private_user_story2.custom_attributes_values
 
     return m
 
@@ -285,3 +297,100 @@ def test_userstory_custom_attribute_action_bulk_update_order(client, data):
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 403, 204]
+
+
+
+#########################################################
+# UserStory Custom Attribute
+#########################################################
+
+
+def test_userstory_custom_attributes_values_retrieve(client, data):
+    public_url = reverse('userstory-custom-attributes-values-detail', kwargs={
+                                    "user_story_id": data.public_user_story.pk})
+    private_url1 = reverse('userstory-custom-attributes-values-detail', kwargs={
+                                    "user_story_id": data.private_user_story1.pk})
+    private_url2 = reverse('userstory-custom-attributes-values-detail', kwargs={
+                                    "user_story_id": data.private_user_story2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_userstory_custom_attributes_values_update(client, data):
+    public_url = reverse('userstory-custom-attributes-values-detail', kwargs={
+                                    "user_story_id": data.public_user_story.pk})
+    private_url1 = reverse('userstory-custom-attributes-values-detail', kwargs={
+                                    "user_story_id": data.private_user_story1.pk})
+    private_url2 = reverse('userstory-custom-attributes-values-detail', kwargs={
+                                    "user_story_id": data.private_user_story2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    user_story_data = serializers.UserStoryCustomAttributesValuesSerializer(data.public_user_story_cav).data
+    user_story_data["attributes_values"] = {str(data.public_userstory_ca.pk): "test"}
+    user_story_data = json.dumps(user_story_data)
+    results = helper_test_http_method(client, 'put', public_url, user_story_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    user_story_data = serializers.UserStoryCustomAttributesValuesSerializer(data.private_user_story_cav1).data
+    user_story_data["attributes_values"] = {str(data.private_userstory_ca1.pk): "test"}
+    user_story_data = json.dumps(user_story_data)
+    results = helper_test_http_method(client, 'put', private_url1, user_story_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    user_story_data = serializers.UserStoryCustomAttributesValuesSerializer(data.private_user_story_cav2).data
+    user_story_data["attributes_values"] = {str(data.private_userstory_ca2.pk): "test"}
+    user_story_data = json.dumps(user_story_data)
+    results = helper_test_http_method(client, 'put', private_url2, user_story_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_userstory_custom_attributes_values_patch(client, data):
+    public_url = reverse('userstory-custom-attributes-values-detail', kwargs={
+                                    "user_story_id": data.public_user_story.pk})
+    private_url1 = reverse('userstory-custom-attributes-values-detail', kwargs={
+                                    "user_story_id": data.private_user_story1.pk})
+    private_url2 = reverse('userstory-custom-attributes-values-detail', kwargs={
+                                    "user_story_id": data.private_user_story2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    patch_data = json.dumps({"attributes_values": {str(data.public_userstory_ca.pk): "test"},
+                             "version": data.public_user_story.version})
+    results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    patch_data = json.dumps({"attributes_values": {str(data.private_userstory_ca1.pk): "test"},
+                             "version": data.private_user_story1.version})
+    results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    patch_data = json.dumps({"attributes_values": {str(data.private_userstory_ca2.pk): "test"},
+                             "version": data.private_user_story2.version})
+    results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
+    assert results == [401, 403, 403, 200, 200]

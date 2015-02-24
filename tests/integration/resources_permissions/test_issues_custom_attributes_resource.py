@@ -25,7 +25,7 @@ from tests import factories as f
 from tests.utils import helper_test_http_method
 
 import pytest
-pytestmark = pytest.mark.django_db(transaction=True)
+pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
@@ -94,6 +94,29 @@ def data():
     m.public_issue_ca = f.IssueCustomAttributeFactory(project=m.public_project)
     m.private_issue_ca1 = f.IssueCustomAttributeFactory(project=m.private_project1)
     m.private_issue_ca2 = f.IssueCustomAttributeFactory(project=m.private_project2)
+
+    m.public_issue = f.IssueFactory(project=m.public_project,
+                                    status__project=m.public_project,
+                                    severity__project=m.public_project,
+                                    priority__project=m.public_project,
+                                    type__project=m.public_project,
+                                    milestone__project=m.public_project)
+    m.private_issue1 = f.IssueFactory(project=m.private_project1,
+                                      status__project=m.private_project1,
+                                      severity__project=m.private_project1,
+                                      priority__project=m.private_project1,
+                                      type__project=m.private_project1,
+                                      milestone__project=m.private_project1)
+    m.private_issue2 = f.IssueFactory(project=m.private_project2,
+                                      status__project=m.private_project2,
+                                      severity__project=m.private_project2,
+                                      priority__project=m.private_project2,
+                                      type__project=m.private_project2,
+                                      milestone__project=m.private_project2)
+
+    m.public_issue_cav = m.public_issue.custom_attributes_values
+    m.private_issue_cav1 = m.private_issue1.custom_attributes_values
+    m.private_issue_cav2 = m.private_issue2.custom_attributes_values
 
     return m
 
@@ -285,3 +308,90 @@ def test_issue_custom_attribute_action_bulk_update_order(client, data):
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 403, 204]
+
+
+#########################################################
+# Issue Custom Attribute
+#########################################################
+
+
+def test_issue_custom_attributes_values_retrieve(client, data):
+    public_url = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.public_issue.pk})
+    private_url1 = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.private_issue1.pk})
+    private_url2 = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.private_issue2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_issue_custom_attributes_values_update(client, data):
+    public_url = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.public_issue.pk})
+    private_url1 = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.private_issue1.pk})
+    private_url2 = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.private_issue2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    issue_data = serializers.IssueCustomAttributesValuesSerializer(data.public_issue_cav).data
+    issue_data["attributes_values"] = {str(data.public_issue_ca.pk): "test"}
+    issue_data = json.dumps(issue_data)
+    results = helper_test_http_method(client, 'put', public_url, issue_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    issue_data = serializers.IssueCustomAttributesValuesSerializer(data.private_issue_cav1).data
+    issue_data["attributes_values"] = {str(data.private_issue_ca1.pk): "test"}
+    issue_data = json.dumps(issue_data)
+    results = helper_test_http_method(client, 'put', private_url1, issue_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    issue_data = serializers.IssueCustomAttributesValuesSerializer(data.private_issue_cav2).data
+    issue_data["attributes_values"] = {str(data.private_issue_ca2.pk): "test"}
+    issue_data = json.dumps(issue_data)
+    results = helper_test_http_method(client, 'put', private_url2, issue_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_issue_custom_attributes_values_patch(client, data):
+    public_url = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.public_issue.pk})
+    private_url1 = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.private_issue1.pk})
+    private_url2 = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.private_issue2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    patch_data = json.dumps({"attributes_values": {str(data.public_issue_ca.pk): "test"},
+                             "version": data.public_issue.version})
+    results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    patch_data = json.dumps({"attributes_values": {str(data.private_issue_ca1.pk): "test"},
+                             "version": data.private_issue1.version})
+    results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    patch_data = json.dumps({"attributes_values": {str(data.private_issue_ca2.pk): "test"},
+                             "version": data.private_issue2.version})
+    results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
+    assert results == [401, 403, 403, 200, 200]
