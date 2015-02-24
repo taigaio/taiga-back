@@ -125,11 +125,11 @@ def test_update_userstory_points(client):
     role1 = f.RoleFactory.create(project=project)
     role2 = f.RoleFactory.create(project=project)
 
-    member = f.MembershipFactory.create(project=project, user=user1, role=role1, is_owner=True)
-    member = f.MembershipFactory.create(project=project, user=user2, role=role2)
+    f.MembershipFactory.create(project=project, user=user1, role=role1, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user2, role=role2)
 
-    points1 = f.PointsFactory.create(project=project, value=None)
-    points2 = f.PointsFactory.create(project=project, value=1)
+    f.PointsFactory.create(project=project, value=None)
+    f.PointsFactory.create(project=project, value=1)
     points3 = f.PointsFactory.create(project=project, value=2)
 
     us = f.UserStoryFactory.create(project=project, owner=user1)
@@ -143,7 +143,7 @@ def test_update_userstory_points(client):
     data = {}
     data["version"] = usdata["version"]
     data["points"] = copy.copy(usdata["points"])
-    data["points"].update({'2000':points3.pk})
+    data["points"].update({'2000': points3.pk})
 
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 200
@@ -153,8 +153,7 @@ def test_update_userstory_points(client):
     data = {}
     data["version"] = usdata["version"] + 1
     data["points"] = copy.copy(usdata["points"])
-    data["points"].update({str(role1.pk):points3.pk})
-
+    data["points"].update({str(role1.pk): points3.pk})
 
     response = client.json.patch(url, json.dumps(data))
     us = models.UserStory.objects.get(pk=us.pk)
@@ -162,6 +161,7 @@ def test_update_userstory_points(client):
     assert response.status_code == 200
     assert response.data["points"] == usdatanew['points']
     assert response.data["points"] != usdata['points']
+
 
 def test_update_userstory_rolepoints_on_add_new_role(client):
     # This test is explicitly without assertions. It simple should
@@ -173,16 +173,16 @@ def test_update_userstory_rolepoints_on_add_new_role(client):
 
     role1 = f.RoleFactory.create(project=project)
 
-    member1 = f.MembershipFactory.create(project=project, user=user1, role=role1)
+    f.MembershipFactory.create(project=project, user=user1, role=role1)
 
-    points1 = f.PointsFactory.create(project=project, value=2)
+    f.PointsFactory.create(project=project, value=2)
 
     us = f.UserStoryFactory.create(project=project, owner=user1)
     # url = reverse("userstories-detail", args=[us.pk])
     # client.login(user1)
 
     role2 = f.RoleFactory.create(project=project, computable=True)
-    member2 = f.MembershipFactory.create(project=project, user=user2, role=role2)
+    f.MembershipFactory.create(project=project, user=user2, role=role2)
     us.save()
 
 
@@ -209,6 +209,7 @@ def test_archived_filter(client):
     data = {"status__is_archived": 1}
     response = client.get(url, data)
     assert len(json.loads(response.content)) == 1
+
 
 def test_get_total_points(client):
     project = f.ProjectFactory.create()

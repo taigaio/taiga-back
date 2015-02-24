@@ -46,9 +46,9 @@ def data():
                                           owner=m.project_owner)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
-                                          user=m.project_member_with_perms,
-                                          role__project=m.public_project,
-                                          role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+                                              user=m.project_member_with_perms,
+                                              role__project=m.public_project,
+                                              role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     m.private_membership1 = f.MembershipFactory(project=m.private_project1,
                                                 user=m.project_member_with_perms,
                                                 role__project=m.private_project1,
@@ -135,7 +135,7 @@ def test_task_update(client, data):
         data.project_owner
     ]
 
-    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version") as _validate_and_update_version_mock:
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
             task_data = TaskSerializer(data.public_task).data
             task_data["subject"] = "test"
             task_data = json.dumps(task_data)
@@ -256,7 +256,7 @@ def test_task_patch(client, data):
         data.project_owner
     ]
 
-    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version") as _validate_and_update_version_mock:
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
             patch_data = json.dumps({"subject": "test", "version": data.public_task.version})
             results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
             assert results == [401, 403, 403, 200, 200]

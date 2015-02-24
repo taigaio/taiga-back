@@ -23,20 +23,20 @@ pytestmark = pytest.mark.django_db
 
 
 def test_bad_signature(client):
-    project=f.ProjectFactory()
+    project = f.ProjectFactory()
     url = reverse("github-hook-list")
-    url = "%s?project=%s"%(url, project.id)
+    url = "%s?project=%s" % (url, project.id)
     data = {}
     response = client.post(url, json.dumps(data),
-        HTTP_X_HUB_SIGNATURE="sha1=badbadbad",
-        content_type="application/json")
+                           HTTP_X_HUB_SIGNATURE="sha1=badbadbad",
+                           content_type="application/json")
     response_content = json.loads(response.content.decode("utf-8"))
     assert response.status_code == 400
     assert "Bad signature" in response_content["_error_message"]
 
 
 def test_ok_signature(client):
-    project=f.ProjectFactory()
+    project = f.ProjectFactory()
     f.ProjectModulesConfigFactory(project=project, config={
         "github": {
             "secret": "tpnIwJDz4e"
@@ -44,29 +44,29 @@ def test_ok_signature(client):
     })
 
     url = reverse("github-hook-list")
-    url = "%s?project=%s"%(url, project.id)
+    url = "%s?project=%s" % (url, project.id)
     data = {"test:": "data"}
     response = client.post(url, json.dumps(data),
-        HTTP_X_HUB_SIGNATURE="sha1=3c8e83fdaa266f81c036ea0b71e98eb5e054581a",
-        content_type="application/json")
+                           HTTP_X_HUB_SIGNATURE="sha1=3c8e83fdaa266f81c036ea0b71e98eb5e054581a",
+                           content_type="application/json")
 
     assert response.status_code == 204
 
 
 def test_push_event_detected(client):
-    project=f.ProjectFactory()
+    project = f.ProjectFactory()
     url = reverse("github-hook-list")
-    url = "%s?project=%s"%(url, project.id)
+    url = "%s?project=%s" % (url, project.id)
     data = {"commits": [
-      {"message": "test message"},
+        {"message": "test message"},
     ]}
 
     GitHubViewSet._validate_signature = mock.Mock(return_value=True)
 
     with mock.patch.object(event_hooks.PushEventHook, "process_event") as process_event_mock:
         response = client.post(url, json.dumps(data),
-            HTTP_X_GITHUB_EVENT="push",
-            content_type="application/json")
+                               HTTP_X_GITHUB_EVENT="push",
+                               content_type="application/json")
 
         assert process_event_mock.call_count == 1
 
@@ -76,14 +76,14 @@ def test_push_event_detected(client):
 def test_push_event_issue_processing(client):
     creation_status = f.IssueStatusFactory()
     role = f.RoleFactory(project=creation_status.project, permissions=["view_issues"])
-    membership = f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.IssueStatusFactory(project=creation_status.project)
     issue = f.IssueFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     payload = {"commits": [
         {"message": """test message
             test   TG-%s    #%s   ok
             bye!
-        """%(issue.ref, new_status.slug)},
+        """ % (issue.ref, new_status.slug)},
     ]}
     mail.outbox = []
     ev_hook = event_hooks.PushEventHook(issue.project, payload)
@@ -96,14 +96,14 @@ def test_push_event_issue_processing(client):
 def test_push_event_task_processing(client):
     creation_status = f.TaskStatusFactory()
     role = f.RoleFactory(project=creation_status.project, permissions=["view_tasks"])
-    membership = f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.TaskStatusFactory(project=creation_status.project)
     task = f.TaskFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     payload = {"commits": [
         {"message": """test message
             test   TG-%s    #%s   ok
             bye!
-        """%(task.ref, new_status.slug)},
+        """ % (task.ref, new_status.slug)},
     ]}
     mail.outbox = []
     ev_hook = event_hooks.PushEventHook(task.project, payload)
@@ -116,14 +116,14 @@ def test_push_event_task_processing(client):
 def test_push_event_user_story_processing(client):
     creation_status = f.UserStoryStatusFactory()
     role = f.RoleFactory(project=creation_status.project, permissions=["view_us"])
-    membership = f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.UserStoryStatusFactory(project=creation_status.project)
     user_story = f.UserStoryFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     payload = {"commits": [
         {"message": """test message
             test   TG-%s    #%s   ok
             bye!
-        """%(user_story.ref, new_status.slug)},
+        """ % (user_story.ref, new_status.slug)},
     ]}
 
     mail.outbox = []
@@ -137,14 +137,14 @@ def test_push_event_user_story_processing(client):
 def test_push_event_processing_case_insensitive(client):
     creation_status = f.TaskStatusFactory()
     role = f.RoleFactory(project=creation_status.project, permissions=["view_tasks"])
-    membership = f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.TaskStatusFactory(project=creation_status.project)
     task = f.TaskFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     payload = {"commits": [
         {"message": """test message
             test   tg-%s    #%s   ok
             bye!
-        """%(task.ref, new_status.slug.upper())},
+        """ % (task.ref, new_status.slug.upper())},
     ]}
     mail.outbox = []
     ev_hook = event_hooks.PushEventHook(task.project, payload)
@@ -160,7 +160,7 @@ def test_push_event_task_bad_processing_non_existing_ref(client):
         {"message": """test message
             test   TG-6666666    #%s   ok
             bye!
-        """%(issue_status.slug)},
+        """ % (issue_status.slug)},
     ]}
     mail.outbox = []
 
@@ -178,7 +178,7 @@ def test_push_event_us_bad_processing_non_existing_status(client):
         {"message": """test message
             test   TG-%s    #non-existing-slug   ok
             bye!
-        """%(user_story.ref)},
+        """ % (user_story.ref)},
     ]}
 
     mail.outbox = []
@@ -197,7 +197,7 @@ def test_push_event_bad_processing_non_existing_status(client):
         {"message": """test message
             test   TG-%s    #non-existing-slug   ok
             bye!
-        """%(issue.ref)},
+        """ % (issue.ref)},
     ]}
 
     mail.outbox = []
@@ -244,6 +244,7 @@ def test_issues_event_opened_issue(client):
     assert Issue.objects.count() == 2
     assert len(mail.outbox) == 1
 
+
 def test_issues_event_other_than_opened_issue(client):
     issue = f.IssueFactory.create()
     issue.project.default_issue_status = issue.status
@@ -270,6 +271,7 @@ def test_issues_event_other_than_opened_issue(client):
 
     assert Issue.objects.count() == 1
     assert len(mail.outbox) == 0
+
 
 def test_issues_event_bad_issue(client):
     issue = f.IssueFactory.create()
@@ -301,7 +303,7 @@ def test_issues_event_bad_issue(client):
 def test_issue_comment_event_on_existing_issue_task_and_us(client):
     project = f.ProjectFactory()
     role = f.RoleFactory(project=project, permissions=["view_tasks", "view_issues", "view_us"])
-    membership = f.MembershipFactory(project=project, role=role, user=project.owner)
+    f.MembershipFactory(project=project, role=role, user=project.owner)
     user = f.UserFactory()
 
     issue = f.IssueFactory.create(external_reference=["github", "http://github.com/test/project/issues/11"], owner=project.owner, project=project)
@@ -412,7 +414,7 @@ def test_issues_event_bad_comment(client):
 
 def test_api_get_project_modules(client):
     project = f.create_project()
-    membership = f.MembershipFactory(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory(project=project, user=project.owner, is_owner=True)
 
     url = reverse("projects-modules", args=(project.id,))
 
@@ -427,7 +429,7 @@ def test_api_get_project_modules(client):
 
 def test_api_patch_project_modules(client):
     project = f.create_project()
-    membership = f.MembershipFactory(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory(project=project, user=project.owner, is_owner=True)
 
     url = reverse("projects-modules", args=(project.id,))
 
@@ -445,6 +447,7 @@ def test_api_patch_project_modules(client):
     assert "github" in config
     assert config["github"]["secret"] == "test_secret"
     assert config["github"]["webhooks_url"] != "test_url"
+
 
 def test_replace_github_references():
     assert event_hooks.replace_github_references("project-url", "#2") == "[GitHub#2](project-url/issues/2)"

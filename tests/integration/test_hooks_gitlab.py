@@ -13,7 +13,6 @@ from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.models import Membership
-from taiga.projects.history.services import get_history_queryset_by_model_instance, take_snapshot
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.models import NotifyPolicy
 from taiga.projects import services
@@ -21,8 +20,9 @@ from .. import factories as f
 
 pytestmark = pytest.mark.django_db
 
+
 def test_bad_signature(client):
-    project=f.ProjectFactory()
+    project = f.ProjectFactory()
     f.ProjectModulesConfigFactory(project=project, config={
         "gitlab": {
             "secret": "tpnIwJDz4e"
@@ -39,7 +39,7 @@ def test_bad_signature(client):
 
 
 def test_ok_signature(client):
-    project=f.ProjectFactory()
+    project = f.ProjectFactory()
     f.ProjectModulesConfigFactory(project=project, config={
         "gitlab": {
             "secret": "tpnIwJDz4e",
@@ -59,7 +59,7 @@ def test_ok_signature(client):
 
 
 def test_invalid_ip(client):
-    project=f.ProjectFactory()
+    project = f.ProjectFactory()
     f.ProjectModulesConfigFactory(project=project, config={
         "gitlab": {
             "secret": "tpnIwJDz4e",
@@ -79,7 +79,7 @@ def test_invalid_ip(client):
 
 
 def test_not_ip_filter(client):
-    project=f.ProjectFactory()
+    project = f.ProjectFactory()
     f.ProjectModulesConfigFactory(project=project, config={
         "gitlab": {
             "secret": "tpnIwJDz4e",
@@ -99,19 +99,19 @@ def test_not_ip_filter(client):
 
 
 def test_push_event_detected(client):
-    project=f.ProjectFactory()
+    project = f.ProjectFactory()
     url = reverse("gitlab-hook-list")
-    url = "%s?project=%s"%(url, project.id)
+    url = "%s?project=%s" % (url, project.id)
     data = {"commits": [
-      {"message": "test message"},
+        {"message": "test message"},
     ]}
 
     GitLabViewSet._validate_signature = mock.Mock(return_value=True)
 
     with mock.patch.object(event_hooks.PushEventHook, "process_event") as process_event_mock:
         response = client.post(url, json.dumps(data),
-            HTTP_X_GITHUB_EVENT="push",
-            content_type="application/json")
+                               HTTP_X_GITHUB_EVENT="push",
+                               content_type="application/json")
 
         assert process_event_mock.call_count == 1
 
@@ -121,14 +121,14 @@ def test_push_event_detected(client):
 def test_push_event_issue_processing(client):
     creation_status = f.IssueStatusFactory()
     role = f.RoleFactory(project=creation_status.project, permissions=["view_issues"])
-    membership = f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.IssueStatusFactory(project=creation_status.project)
     issue = f.IssueFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     payload = {"commits": [
         {"message": """test message
             test   TG-%s    #%s   ok
             bye!
-        """%(issue.ref, new_status.slug)},
+        """ % (issue.ref, new_status.slug)},
     ]}
     mail.outbox = []
     ev_hook = event_hooks.PushEventHook(issue.project, payload)
@@ -141,14 +141,14 @@ def test_push_event_issue_processing(client):
 def test_push_event_task_processing(client):
     creation_status = f.TaskStatusFactory()
     role = f.RoleFactory(project=creation_status.project, permissions=["view_tasks"])
-    membership = f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.TaskStatusFactory(project=creation_status.project)
     task = f.TaskFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     payload = {"commits": [
         {"message": """test message
             test   TG-%s    #%s   ok
             bye!
-        """%(task.ref, new_status.slug)},
+        """ % (task.ref, new_status.slug)},
     ]}
     mail.outbox = []
     ev_hook = event_hooks.PushEventHook(task.project, payload)
@@ -161,14 +161,14 @@ def test_push_event_task_processing(client):
 def test_push_event_user_story_processing(client):
     creation_status = f.UserStoryStatusFactory()
     role = f.RoleFactory(project=creation_status.project, permissions=["view_us"])
-    membership = f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.UserStoryStatusFactory(project=creation_status.project)
     user_story = f.UserStoryFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     payload = {"commits": [
         {"message": """test message
             test   TG-%s    #%s   ok
             bye!
-        """%(user_story.ref, new_status.slug)},
+        """ % (user_story.ref, new_status.slug)},
     ]}
 
     mail.outbox = []
@@ -182,14 +182,14 @@ def test_push_event_user_story_processing(client):
 def test_push_event_processing_case_insensitive(client):
     creation_status = f.TaskStatusFactory()
     role = f.RoleFactory(project=creation_status.project, permissions=["view_tasks"])
-    membership = f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.TaskStatusFactory(project=creation_status.project)
     task = f.TaskFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     payload = {"commits": [
         {"message": """test message
             test   tg-%s    #%s   ok
             bye!
-        """%(task.ref, new_status.slug.upper())},
+        """ % (task.ref, new_status.slug.upper())},
     ]}
     mail.outbox = []
     ev_hook = event_hooks.PushEventHook(task.project, payload)
@@ -205,7 +205,7 @@ def test_push_event_task_bad_processing_non_existing_ref(client):
         {"message": """test message
             test   TG-6666666    #%s   ok
             bye!
-        """%(issue_status.slug)},
+        """ % (issue_status.slug)},
     ]}
     mail.outbox = []
 
@@ -223,7 +223,7 @@ def test_push_event_us_bad_processing_non_existing_status(client):
         {"message": """test message
             test   TG-%s    #non-existing-slug   ok
             bye!
-        """%(user_story.ref)},
+        """ % (user_story.ref)},
     ]}
 
     mail.outbox = []
@@ -242,7 +242,7 @@ def test_push_event_bad_processing_non_existing_status(client):
         {"message": """test message
             test   TG-%s    #non-existing-slug   ok
             bye!
-        """%(issue.ref)},
+        """ % (issue.ref)},
     ]}
 
     mail.outbox = []
@@ -342,7 +342,7 @@ def test_issues_event_bad_issue(client):
 
 def test_api_get_project_modules(client):
     project = f.create_project()
-    membership = f.MembershipFactory(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory(project=project, user=project.owner, is_owner=True)
 
     url = reverse("projects-modules", args=(project.id,))
 
@@ -357,7 +357,7 @@ def test_api_get_project_modules(client):
 
 def test_api_patch_project_modules(client):
     project = f.create_project()
-    membership = f.MembershipFactory(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory(project=project, user=project.owner, is_owner=True)
 
     url = reverse("projects-modules", args=(project.id,))
 
@@ -375,6 +375,7 @@ def test_api_patch_project_modules(client):
     assert "gitlab" in config
     assert config["gitlab"]["secret"] == "test_secret"
     assert config["gitlab"]["webhooks_url"] != "test_url"
+
 
 def test_replace_gitlab_references():
     assert event_hooks.replace_gitlab_references("project-url", "#2") == "[GitLab#2](project-url/issues/2)"

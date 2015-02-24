@@ -1,8 +1,6 @@
 from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
-from taiga.projects.votes.services import add_vote
 from taiga.userstorage.serializers import StorageEntrySerializer
 from taiga.userstorage.models import StorageEntry
 

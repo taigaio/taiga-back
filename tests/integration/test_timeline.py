@@ -19,7 +19,6 @@ import pytest
 
 from .. import factories
 
-from taiga.base.utils import json
 from taiga.timeline import service
 from taiga.timeline.models import Timeline
 
@@ -38,6 +37,7 @@ def test_add_to_object_timeline():
 
     assert Timeline.objects.filter(object_id=user1.id).count() == 1
     assert Timeline.objects.order_by("-id")[0].data == id(user2)
+
 
 def test_get_timeline():
     Timeline.objects.all().delete()

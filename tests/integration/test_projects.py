@@ -118,7 +118,7 @@ def test_points_name_duplicated(client):
 
 def test_update_points_when_not_null_values_for_points(client):
     points = f.PointsFactory(name="?", value="6")
-    role = f.RoleFactory(project=points.project, computable=True)
+    f.RoleFactory(project=points.project, computable=True)
     assert points.project.points.filter(value__isnull=True).count() == 0
     points.project.update_role_points()
     assert points.project.points.filter(value__isnull=True).count() == 1
@@ -130,33 +130,33 @@ def test_get_closed_bugs_per_member_stats():
     membership_2 = f.MembershipFactory(project=project)
     issue_closed_status = f.IssueStatusFactory(is_closed=True, project=project)
     issue_open_status = f.IssueStatusFactory(is_closed=False, project=project)
-    issue_closed = f.IssueFactory(project=project,
-                                  status=issue_closed_status,
-                                  owner=membership_1.user,
-                                  assigned_to=membership_1.user)
-    issue_open = f.IssueFactory(project=project,
-                                status=issue_open_status,
-                                owner=membership_2.user,
-                                assigned_to=membership_2.user)
+    f.IssueFactory(project=project,
+                   status=issue_closed_status,
+                   owner=membership_1.user,
+                   assigned_to=membership_1.user)
+    f.IssueFactory(project=project,
+                   status=issue_open_status,
+                   owner=membership_2.user,
+                   assigned_to=membership_2.user)
     task_closed_status = f.TaskStatusFactory(is_closed=True, project=project)
     task_open_status = f.TaskStatusFactory(is_closed=False, project=project)
-    task_closed = f.TaskFactory(project=project,
-                              status=task_closed_status,
-                              owner=membership_1.user,
-                              assigned_to=membership_1.user)
-    task_open = f.TaskFactory(project=project,
-                                status=task_open_status,
-                                owner=membership_2.user,
-                                assigned_to=membership_2.user)
-    task_iocaine = f.TaskFactory(project=project,
-                                status=task_open_status,
-                                owner=membership_2.user,
-                                assigned_to=membership_2.user,
-                                is_iocaine=True)
+    f.TaskFactory(project=project,
+                  status=task_closed_status,
+                  owner=membership_1.user,
+                  assigned_to=membership_1.user)
+    f.TaskFactory(project=project,
+                  status=task_open_status,
+                  owner=membership_2.user,
+                  assigned_to=membership_2.user)
+    f.TaskFactory(project=project,
+                  status=task_open_status,
+                  owner=membership_2.user,
+                  assigned_to=membership_2.user,
+                  is_iocaine=True)
 
     wiki_page = f.WikiPageFactory.create(project=project, owner=membership_1.user)
     take_snapshot(wiki_page, user=membership_1.user)
-    wiki_page.content="Frontend, future"
+    wiki_page.content = "Frontend, future"
     wiki_page.save()
     take_snapshot(wiki_page, user=membership_1.user)
 

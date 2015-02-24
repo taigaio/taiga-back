@@ -14,11 +14,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api.permissions import (PermissionComponent,
-                                        AllowAny as TruePermissionComponent,
+from taiga.base.api.permissions import (AllowAny as TruePermissionComponent,
                                         DenyAll as FalsePermissionComponent)
-
-import pytest
 
 
 def test_permission_component_composition():

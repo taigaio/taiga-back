@@ -100,7 +100,7 @@ def test_api_update_order_in_bulk(client):
     data = {
         "project_id": project.id,
         "bulk_tasks": [{"task_id": task1.id, "order": 1},
-                         {"task_id": task2.id, "order": 2}]
+                       {"task_id": task2.id, "order": 2}]
     }
 
     client.login(project.owner)

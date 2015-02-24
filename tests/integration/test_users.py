@@ -74,8 +74,8 @@ def test_update_user_with_valid_email(client):
 
     assert response.status_code == 200
     user = models.User.objects.get(pk=user.id)
-    assert  user.email_token != None
-    assert  user.new_email == "new@email.com"
+    assert user.email_token is not None
+    assert user.new_email == "new@email.com"
 
 
 def test_validate_requested_email_change(client):
@@ -88,9 +88,9 @@ def test_validate_requested_email_change(client):
 
     assert response.status_code == 204
     user = models.User.objects.get(pk=user.id)
-    assert  user.email_token == None
-    assert  user.new_email == None
-    assert  user.email == "new@email.com"
+    assert user.email_token is None
+    assert user.new_email is None
+    assert user.email == "new@email.com"
 
 
 def test_validate_requested_email_change_without_token(client):

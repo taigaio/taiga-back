@@ -47,9 +47,9 @@ def data():
                                           owner=m.project_owner)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
-                                          user=m.project_member_with_perms,
-                                          role__project=m.public_project,
-                                          role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+                                              user=m.project_member_with_perms,
+                                              role__project=m.public_project,
+                                              role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     m.private_membership1 = f.MembershipFactory(project=m.private_project1,
                                                 user=m.project_member_with_perms,
                                                 role__project=m.private_project1,
@@ -135,7 +135,7 @@ def test_issue_update(client, data):
         data.project_owner
     ]
 
-    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version") as _validate_and_update_version_mock:
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
             issue_data = IssueSerializer(data.public_issue).data
             issue_data["subject"] = "test"
             issue_data = json.dumps(issue_data)
@@ -285,7 +285,7 @@ def test_issue_patch(client, data):
         data.project_owner
     ]
 
-    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version") as _validate_and_update_version_mock:
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
             patch_data = json.dumps({"subject": "test", "version": data.public_issue.version})
             results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
             assert results == [401, 403, 403, 200, 200]
@@ -411,6 +411,7 @@ def test_issue_voters_list(client, data):
 
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+
 
 def test_issue_voters_retrieve(client, data):
     add_vote(data.public_issue, data.project_owner)
