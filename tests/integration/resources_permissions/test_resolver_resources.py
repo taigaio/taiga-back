@@ -115,7 +115,6 @@ def test_resolver_list(client, data):
                                                                                           data.task.ref,
                                                                                           data.issue.ref,
                                                                                           data.milestone.slug))
-    import ipdb; ipdb.set_trace()
     assert response.data == {"project": data.private_project2.pk}
 
     client.login(data.project_owner)
