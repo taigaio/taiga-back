@@ -85,6 +85,11 @@ class UserStoryCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
     lookup_field = "user_story_id"
     content_object = "user_story"
 
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        qs = qs.select_related("user_story", "user_story__project")
+        return qs
+
 
 class TaskCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
     model = models.TaskCustomAttributesValues
@@ -93,6 +98,11 @@ class TaskCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
     lockup_fields = "task_id"
     content_object = "task"
 
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        qs = qs.select_related("task", "task__project")
+        return qs
+
 
 class IssueCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
     model = models.IssueCustomAttributesValues
@@ -100,3 +110,8 @@ class IssueCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
     permission_classes = (permissions.IssueCustomAttributesValuesPermission,)
     lockup_fields = "issue_id"
     content_object = "issue"
+
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        qs = qs.select_related("issue", "issue__project")
+        return qs
