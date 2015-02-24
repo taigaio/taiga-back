@@ -37,7 +37,7 @@ def on_save_any_model(sender, instance, created, **kwargs):
 
     type = "change"
     if created:
-        type = "created"
+        type = "create"
 
     emit_event = lambda: events.emit_event_for_model(instance, sessionid=sesionid, type=type)
     connection.on_commit(emit_event)
