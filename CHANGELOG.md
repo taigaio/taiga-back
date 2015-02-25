@@ -7,6 +7,7 @@
 - ...
 
 ### Misc
+- New contrib plugin for hipchat (by Δndrea Stagi)
 - Lots of small and not so small bugfixes.
 
 
