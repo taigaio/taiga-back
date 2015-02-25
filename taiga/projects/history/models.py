@@ -204,8 +204,8 @@ class HistoryEntry(models.Model):
                     "deleted": [],
                 }
 
-                oldcustattrs = {x["id"]:x for x in self.diff["custom_attributes"][0]}
-                newcustattrs = {x["id"]:x for x in self.diff["custom_attributes"][1]}
+                oldcustattrs = {x["id"]:x for x in self.diff["custom_attributes"][0] or []}
+                newcustattrs = {x["id"]:x for x in self.diff["custom_attributes"][1] or []}
 
                 for aid in set(tuple(oldcustattrs.keys()) + tuple(newcustattrs.keys())):
                     if aid in oldcustattrs and aid in newcustattrs:
