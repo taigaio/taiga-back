@@ -311,9 +311,9 @@ def test_task_custom_attribute_action_bulk_update_order(client, data):
 
 
 def test_task_custom_attributes_values_retrieve(client, data):
-    public_url = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.public_task.pk})
-    private_url1 = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.private_task1.pk})
-    private_url2 = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.private_task2.pk})
+    public_url = reverse('task-custom-attributes-values-detail', kwargs={"task_id": data.public_task.pk})
+    private_url1 = reverse('task-custom-attributes-values-detail', kwargs={"task_id": data.private_task1.pk})
+    private_url2 = reverse('task-custom-attributes-values-detail', kwargs={"task_id": data.private_task2.pk})
 
     users = [
         None,
@@ -332,9 +332,9 @@ def test_task_custom_attributes_values_retrieve(client, data):
 
 
 def test_task_custom_attributes_values_update(client, data):
-    public_url = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.public_task.pk})
-    private_url1 = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.private_task1.pk})
-    private_url2 = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.private_task2.pk})
+    public_url = reverse('task-custom-attributes-values-detail', kwargs={"task_id": data.public_task.pk})
+    private_url1 = reverse('task-custom-attributes-values-detail', kwargs={"task_id": data.private_task1.pk})
+    private_url2 = reverse('task-custom-attributes-values-detail', kwargs={"task_id": data.private_task2.pk})
 
     users = [
         None,
@@ -364,9 +364,9 @@ def test_task_custom_attributes_values_update(client, data):
 
 
 def test_task_custom_attributes_values_patch(client, data):
-    public_url = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.public_task.pk})
-    private_url1 = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.private_task1.pk})
-    private_url2 = reverse('task-custom-attributes-values-detail', kwargs={"pk": data.private_task2.pk})
+    public_url = reverse('task-custom-attributes-values-detail', kwargs={"task_id": data.public_task.pk})
+    private_url1 = reverse('task-custom-attributes-values-detail', kwargs={"task_id": data.private_task1.pk})
+    private_url2 = reverse('task-custom-attributes-values-detail', kwargs={"task_id": data.private_task2.pk})
 
     users = [
         None,

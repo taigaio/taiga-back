@@ -317,9 +317,9 @@ def test_issue_custom_attribute_action_bulk_update_order(client, data):
 
 
 def test_issue_custom_attributes_values_retrieve(client, data):
-    public_url = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.public_issue.pk})
-    private_url1 = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.private_issue1.pk})
-    private_url2 = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.private_issue2.pk})
+    public_url = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.public_issue.pk})
+    private_url1 = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.private_issue1.pk})
+    private_url2 = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.private_issue2.pk})
 
     users = [
         None,
@@ -338,9 +338,9 @@ def test_issue_custom_attributes_values_retrieve(client, data):
 
 
 def test_issue_custom_attributes_values_update(client, data):
-    public_url = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.public_issue.pk})
-    private_url1 = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.private_issue1.pk})
-    private_url2 = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.private_issue2.pk})
+    public_url = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.public_issue.pk})
+    private_url1 = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.private_issue1.pk})
+    private_url2 = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.private_issue2.pk})
 
     users = [
         None,
@@ -370,9 +370,9 @@ def test_issue_custom_attributes_values_update(client, data):
 
 
 def test_issue_custom_attributes_values_patch(client, data):
-    public_url = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.public_issue.pk})
-    private_url1 = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.private_issue1.pk})
-    private_url2 = reverse('issue-custom-attributes-values-detail', kwargs={"pk": data.private_issue2.pk})
+    public_url = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.public_issue.pk})
+    private_url1 = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.private_issue1.pk})
+    private_url2 = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.private_issue2.pk})
 
     users = [
         None,

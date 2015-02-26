@@ -95,7 +95,7 @@ class TaskCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
     model = models.TaskCustomAttributesValues
     serializer_class = serializers.TaskCustomAttributesValuesSerializer
     permission_classes = (permissions.TaskCustomAttributesValuesPermission,)
-    lockup_fields = "task_id"
+    lookup_field = "task_id"
     content_object = "task"
 
     def get_queryset(self):
@@ -108,7 +108,7 @@ class IssueCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
     model = models.IssueCustomAttributesValues
     serializer_class = serializers.IssueCustomAttributesValuesSerializer
     permission_classes = (permissions.IssueCustomAttributesValuesPermission,)
-    lockup_fields = "issue_id"
+    lookup_field = "issue_id"
     content_object = "issue"
 
     def get_queryset(self):
