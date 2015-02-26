@@ -4,7 +4,7 @@
 ## 1.6.0 ??? (Unreleased)
 
 ### Features
-- ...
+- Added custom fields per project for user stories, tasks and issues.
 
 ### Misc
 - New contrib plugin for hipchat (by Δndrea Stagi)
