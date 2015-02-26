@@ -19,7 +19,8 @@ from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
 from taiga.projects.custom_attributes import serializers
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+from taiga.permissions.permissions import (MEMBERS_PERMISSIONS,
+                                           ANON_PERMISSIONS, USER_PERMISSIONS)
 
 from tests import factories as f
 from tests.utils import helper_test_http_method
@@ -39,12 +40,12 @@ def data():
     m.superuser = f.UserFactory.create(is_superuser=True)
 
     m.public_project = f.ProjectFactory(is_private=False,
-                                        anon_permissions=['view_project'],
-                                        public_permissions=['view_project'],
+                                        anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
+                                        public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
                                         owner=m.project_owner)
     m.private_project1 = f.ProjectFactory(is_private=True,
-                                          anon_permissions=['view_project'],
-                                          public_permissions=['view_project'],
+                                          anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
+                                          public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
                                           owner=m.project_owner)
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
