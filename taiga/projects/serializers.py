@@ -34,10 +34,11 @@ from taiga.permissions.service import is_project_owner
 
 from . import models
 from . import services
-from . validators import ProjectExistsValidator
-from . custom_attributes.serializers import(UserStoryCustomAttributeSerializer,
-                                                                     TaskCustomAttributeSerializer,
-                                                                     IssueCustomAttributeSerializer)
+from .validators import ProjectExistsValidator
+from .custom_attributes.serializers import UserStoryCustomAttributeSerializer
+from .custom_attributes.serializers import TaskCustomAttributeSerializer
+from .custom_attributes.serializers import IssueCustomAttributeSerializer
+
 
 ######################################################
 ## Custom values for selectors
@@ -264,9 +265,6 @@ class ProjectSerializer(ModelSerializer):
     tags_colors = TagsColorsField(required=False)
     users = serializers.SerializerMethodField("get_users")
     total_closed_milestones = serializers.SerializerMethodField("get_total_closed_milestones")
-    userstory_custom_attributes = serializers.SerializerMethodField("get_userstory_custom_attributes")
-    task_custom_attributes = serializers.SerializerMethodField("get_task_custom_attributes")
-    issue_custom_attributes = serializers.SerializerMethodField("get_issue_custom_attributes")
 
     class Meta:
         model = models.Project
@@ -303,15 +301,6 @@ class ProjectSerializer(ModelSerializer):
             raise serializers.ValidationError("Total milestones must be major or equal to zero")
         return attrs
 
-    def get_userstory_custom_attributes(self, obj):
-        return UserStoryCustomAttributeSerializer(obj.userstorycustomattributes.all(), many=True).data
-
-    def get_task_custom_attributes(self, obj):
-        return TaskCustomAttributeSerializer(obj.taskcustomattributes.all(), many=True).data
-
-    def get_issue_custom_attributes(self, obj):
-        return IssueCustomAttributeSerializer(obj.issuecustomattributes.all(), many=True).data
-
 class ProjectDetailSerializer(ProjectSerializer):
     roles = serializers.SerializerMethodField("get_roles")
     memberships = serializers.SerializerMethodField("get_memberships")
@@ -322,6 +311,12 @@ class ProjectDetailSerializer(ProjectSerializer):
     issue_types = IssueTypeSerializer(many=True, required=False)
     priorities = PrioritySerializer(many=True, required=False)               # Issues
     severities = SeveritySerializer(many=True, required=False)
+    userstory_custom_attributes = UserStoryCustomAttributeSerializer(source="userstorycustomattributes",
+                                                                     many=True, required=False)
+    task_custom_attributes = TaskCustomAttributeSerializer(source="taskcustomattributes",
+                                                           many=True, required=False)
+    issue_custom_attributes = IssueCustomAttributeSerializer(source="issuecustomattributes",
+                                                             many=True, required=False)
 
     def get_memberships(self, obj):
         qs = obj.memberships.filter(user__isnull=False)

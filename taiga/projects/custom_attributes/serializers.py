@@ -32,7 +32,8 @@ from . import models
 
 class BaseCustomAttributeSerializer(ModelSerializer):
     class Meta:
-        read_only_fields = ('id', 'created_date', 'modified_date')
+        read_only_fields = ('id',)
+        exclude = ('created_date', 'modified_date')
 
     def _validate_integrity_between_project_and_name(self, attrs, source):
         """
