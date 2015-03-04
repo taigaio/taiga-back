@@ -24,6 +24,7 @@ from taiga.base import response
 
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.occ.mixins import OCCResourceMixin
 
 from . import models
@@ -73,7 +74,8 @@ class IssueCustomAttributeViewSet(BulkUpdateOrderMixin, ModelCrudViewSet):
 # Custom Attributes Values ViewSets
 #######################################################
 
-class BaseCustomAttributesValuesViewSet(OCCResourceMixin, HistoryResourceMixin, ModelUpdateRetrieveViewSet):
+class BaseCustomAttributesValuesViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
+                                        ModelUpdateRetrieveViewSet):
     def get_object_for_snapshot(self, obj):
         return getattr(obj, self.content_object)
 
