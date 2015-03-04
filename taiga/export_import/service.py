@@ -338,8 +338,8 @@ def store_user_story(project, data):
     if "status" not in data and project.default_us_status:
         data["status"] = project.default_us_status.name
 
-    data_data = {key: value for key, value in data.items() if key not in ["role_points", "custom_attributes_values"]}
-    serialized = serializers.UserStoryExportSerializer(data=data_data, context={"project": project})
+    us_data = {key: value for key, value in data.items() if key not in ["role_points", "custom_attributes_values"]}
+    serialized = serializers.UserStoryExportSerializer(data=us_data, context={"project": project})
 
     if serialized.is_valid():
         serialized.object.project = project
