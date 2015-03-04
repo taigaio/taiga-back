@@ -19,6 +19,7 @@ from django.db.models import Q
 from taiga.base.api import ModelCrudViewSet
 
 from taiga.projects.notifications.choices import NotifyLevel
+from taiga.projects.models import Project
 
 from . import serializers
 from . import models
