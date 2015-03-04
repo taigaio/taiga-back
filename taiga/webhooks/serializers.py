@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.core.exceptions import ObjectDoesNotExist
+
 from rest_framework import serializers
 
 from taiga.base.serializers import TagsField, PgArrayField, JsonField
@@ -63,6 +65,30 @@ class UserSerializer(serializers.Serializer):
         return obj.full_name
 
 
+class CustomAttributesValuesWebhookSerializerMixin(serializers.ModelSerializer):
+    custom_attributes_values = serializers.SerializerMethodField("get_custom_attributes_values")
+
+    def custom_attributes_queryset(self, project):
+        raise NotImplementedError()
+
+    def get_custom_attributes_values(self, obj):
+        def _use_name_instead_id_as_key_in_custom_attributes_values(custom_attributes, values):
+            ret = {}
+            for attr in custom_attributes:
+                value = values.get(str(attr["id"]), None)
+                if value is not  None:
+                    ret[attr["name"]] = value
+
+            return ret
+
+        try:
+            values =  obj.custom_attributes_values.attributes_values
+            custom_attributes = self.custom_attributes_queryset(obj.project).values('id', 'name')
+
+            return _use_name_instead_id_as_key_in_custom_attributes_values(custom_attributes, values)
+        except ObjectDoesNotExist:
+            return None
+
 class PointSerializer(serializers.Serializer):
     id = serializers.SerializerMethodField("get_pk")
     name = serializers.SerializerMethodField("get_name")
@@ -78,7 +104,7 @@ class PointSerializer(serializers.Serializer):
         return obj.value
 
 
-class UserStorySerializer(serializers.ModelSerializer):
+class UserStorySerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.ModelSerializer):
     tags = TagsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
     owner = UserSerializer()
@@ -90,8 +116,11 @@ class UserStorySerializer(serializers.ModelSerializer):
         model = us_models.UserStory
         exclude = ("backlog_order", "sprint_order", "kanban_order", "version")
 
+    def custom_attributes_queryset(self, project):
+        return project.userstorycustomattributes.all()
 
-class TaskSerializer(serializers.ModelSerializer):
+
+class TaskSerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.ModelSerializer):
     tags = TagsField(default=[], required=False)
     owner = UserSerializer()
     assigned_to = UserSerializer()
@@ -100,8 +129,11 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = task_models.Task
 
+    def custom_attributes_queryset(self, project):
+        return project.taskcustomattributes.all()
 
-class IssueSerializer(serializers.ModelSerializer):
+
+class IssueSerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.ModelSerializer):
     tags = TagsField(default=[], required=False)
     owner = UserSerializer()
     assigned_to = UserSerializer()
@@ -109,6 +141,9 @@ class IssueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = issue_models.Issue
+
+    def custom_attributes_queryset(self, project):
+        return project.issuecustomattributes.all()
 
 
 class WikiPageSerializer(serializers.ModelSerializer):

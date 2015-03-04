@@ -8,7 +8,8 @@
     "taskboard_order",
     "us_order",
     "blocked_note_diff",
-    "blocked_note_html"
+    "blocked_note_html",
+    "custom_attributes"
 ] %}
 {% for field_name, values in changed_fields.items() %}
     {% if field_name not in excluded_fields %}
@@ -18,6 +19,7 @@
             {% for role, points in values.items() %}
        * {{ role }} {{ _("to:") }} {{ points.1 }} {{ _("from:") }} {{ points.0 }}
             {% endfor %}
+
     {# ATTACHMENTS #}
         {% elif field_name == "attachments" %}
             {% if values.new %}
@@ -40,6 +42,7 @@
             - {{ att.filename }}
                 {% endfor %}
             {% endif %}
+
     {# TAGS AND WATCHERS #}
         {% elif field_name in ["tags", "watchers"] %}
             {% set values_from = values.0 or [] %}
@@ -53,6 +56,36 @@
             {% if values_removed %}
             * {{ _("removed:") }} {{ ', '.join(values_removed) }}
             {% endif %}
+
+    {# * #}
+        {% else %}
+        * {{ _("From:") }} {{ values.0 }}
+        * {{ _("To:") }} {{ values.1 }}
         {% endif %}
+
+    {% elif field_name == "custom_attributes" %}
+    {# CUSTOM ATTRIBUTES #}
+        {% elif field_name == "attachments" %}
+            {% if values.new %}
+                {% for attr in values['new']%}
+    - {{ attr.name }}:
+        * {{ attr.value }}
+                {% endfor %}
+            {% endif %}
+
+            {% if values.changed %}
+                {% for attr in values['changed'] %}
+    - {{ attr.name }}:
+        * {{ _("From:") }} {{ attr.changes.value.0 }}
+        * {{ _("To:") }} {{ attr.changes.value.1 }}
+                {% endfor %}
+            {% endif %}
+
+            {% if values.deleted %}
+                {% for attr in values['deleted']%}
+    - {{ attr.name }}: {{ _("-deleted-") }}
+        * {{ attr.value }}
+                {% endfor %}
+            {% endif %}
     {% endif %}
 {% endfor %}

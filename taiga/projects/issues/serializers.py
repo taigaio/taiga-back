@@ -16,7 +16,7 @@
 
 from rest_framework import serializers
 
-from taiga.base.serializers import (Serializer, TagsField, NeighborsSerializerMixin, 
+from taiga.base.serializers import (Serializer, TagsField, NeighborsSerializerMixin,
         PgArrayField, ModelSerializer)
 
 from taiga.mdrender.service import render as mdrender

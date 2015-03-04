@@ -103,6 +103,16 @@ def dict_to_project(data, owner=None):
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing default choices')
 
+    service.store_custom_attributes(proj, data, "userstorycustomattributes",
+                                    serializers.UserStoryCustomAttributeExportSerializer)
+    service.store_custom_attributes(proj, data, "taskcustomattributes",
+                                    serializers.TaskCustomAttributeExportSerializer)
+    service.store_custom_attributes(proj, data, "issuecustomattributes",
+                                    serializers.IssueCustomAttributeExportSerializer)
+
+    if service.get_errors(clear=False):
+        raise TaigaImportError('error importing custom attributes')
+
     service.store_roles(proj, data)
 
     if service.get_errors(clear=False):

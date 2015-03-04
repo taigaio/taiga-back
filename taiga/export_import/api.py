@@ -127,6 +127,21 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
                 "severities" in data):
             service.store_default_choices(project_serialized.object, data)
 
+        if "userstorycustomattributes" in data:
+            service.store_custom_attributes(project_serialized.object, data,
+                                            "userstorycustomattributes",
+                                            serializers.UserStoryCustomAttributeExportSerializer)
+
+        if "taskcustomattributes" in data:
+            service.store_custom_attributes(project_serialized.object, data,
+                                            "taskcustomattributes",
+                                            serializers.TaskCustomAttributeExportSerializer)
+
+        if "issuecustomattributes" in data:
+            service.store_custom_attributes(project_serialized.object, data,
+                                            "issuecustomattributes",
+                                            serializers.IssueCustomAttributeExportSerializer)
+
         if "roles" in data:
             service.store_roles(project_serialized.object, data)
 

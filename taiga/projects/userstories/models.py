@@ -22,10 +22,10 @@ from django.utils import timezone
 
 from djorm_pgarray.fields import TextArrayField
 
+from taiga.base.tags import TaggedMixin
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
-from taiga.base.tags import TaggedMixin
 
 
 class RolePoints(models.Model):

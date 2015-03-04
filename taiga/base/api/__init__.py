@@ -19,10 +19,12 @@
 
 from .viewsets import ModelListViewSet
 from .viewsets import ModelCrudViewSet
+from .viewsets import ModelUpdateRetrieveViewSet
 from .viewsets import GenericViewSet
 from .viewsets import ReadOnlyListViewSet
 
 __all__ = ["ModelCrudViewSet",
            "ModelListViewSet",
+           "ModelUpdateRetrieveViewSet",
            "GenericViewSet",
            "ReadOnlyListViewSet"]
