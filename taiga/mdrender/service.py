@@ -77,6 +77,7 @@ def _make_extensions_list(project=None):
             "extra",
             "codehilite",
             "sane_lists",
+            "toc",
             "nl2br"]
 
 
