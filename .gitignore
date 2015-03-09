@@ -12,3 +12,4 @@ media
 .cache
 .\#*
 .project
+.env
