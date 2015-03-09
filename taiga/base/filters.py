@@ -212,7 +212,7 @@ class CanViewProjectObjFilterBackend(FilterBackend):
             qs = qs.filter((Q(id__in=projects_list) |
                             Q(public_permissions__contains=["view_project"])))
         else:
-            qs = qs.filter(public_permissions__contains=["view_project"])
+            qs = qs.filter(anon_permissions__contains=["view_project"])
 
         return super().filter_queryset(request, qs.distinct(), view)
 
@@ -229,22 +229,50 @@ class IsProjectMemberFilterBackend(FilterBackend):
         return super().filter_queryset(request, queryset.distinct(), view)
 
 
-class MembersFilterBackend(filters.BaseFilterBackend):
+class MembersFilterBackend(PermissionBasedFilterBackend):
+    permission = "view_project"
+
     def filter_queryset(self, request, queryset, view):
-        project_id = request.QUERY_PARAMS.get('project', None)
+        project_id = None
+        project = None
+        qs = queryset
+        if "project" in request.QUERY_PARAMS:
+            try:
+                project_id = int(request.QUERY_PARAMS["project"])
+            except:
+                logger.error("Filtering project diferent value than an integer: {}".format(request.QUERY_PARAMS["project"]))
+                raise exc.BadRequest("'project' must be an integer value.")
+
         if project_id:
-            project_model = apps.get_model('projects', 'Project')
-            project = get_object_or_404(project_model, pk=project_id)
-            if (request.user.is_authenticated() and
-                    project.memberships.filter(user=request.user).exists()):
-                return queryset.filter(memberships__project=project).distinct()
-            else:
-                raise exc.PermissionDenied(_("You don't have permisions to see this project users."))
+            Project = apps.get_model('projects', 'Project')
+            project = get_object_or_404(Project, pk=project_id)
 
-        if request.user.is_superuser:
-            return queryset
+        if request.user.is_authenticated() and request.user.is_superuser:
+            qs = qs
+        elif request.user.is_authenticated():
+            Membership = apps.get_model('projects', 'Membership')
+            memberships_qs = Membership.objects.filter(user=request.user)
+            if project_id:
+                memberships_qs = memberships_qs.filter(project_id=project_id)
+            memberships_qs = memberships_qs.filter(Q(role__permissions__contains=[self.permission]) |
+                                                   Q(is_owner=True))
 
-        return []
+            projects_list = [membership.project_id for membership in memberships_qs]
+
+            if project and not "view_project" in project.public_permissions:
+                qs = qs.none()
+
+            qs = qs.filter(Q(memberships__project_id__in=projects_list) |
+                           Q(memberships__project__public_permissions__contains=[self.permission])|
+                           Q(id=request.user.id))
+
+        else:
+            if project and not "view_project" in project.anon_permissions:
+                qs = qs.none()
+
+            qs = qs.filter(memberships__project__anon_permissions__contains=[self.permission])
+
+        return qs.distinct()
 
 
 class BaseIsProjectAdminFilterBackend(object):

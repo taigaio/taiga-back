@@ -160,7 +160,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                                         default=[],
                                         verbose_name=_("user permissions"),
                                         choices=USER_PERMISSIONS)
-    is_private = models.BooleanField(default=False, null=False, blank=True,
+    is_private = models.BooleanField(default=True, null=False, blank=True,
                                      verbose_name=_("is private"))
 
     tags_colors = TextArrayField(dimension=2, null=False, blank=True, verbose_name=_("tags colors"), default=[])

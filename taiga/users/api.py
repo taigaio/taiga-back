@@ -30,6 +30,7 @@ from taiga.auth.tokens import get_user_for_token
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet
+from taiga.base.filters import PermissionBasedFilterBackend
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.filters import MembersFilterBackend
 from taiga.projects.votes import services as votes_service
@@ -46,14 +47,11 @@ from . import permissions
 from .signals import user_cancel_account as user_cancel_account_signal
 
 
-######################################################
-## User
-######################################################
-
 class UsersViewSet(ModelCrudViewSet):
     permission_classes = (permissions.UserPermission,)
     serializer_class = serializers.UserSerializer
     queryset = models.User.objects.all()
+    filter_backends = (MembersFilterBackend,)
 
     def create(self, *args, **kwargs):
         raise exc.NotSupported()
