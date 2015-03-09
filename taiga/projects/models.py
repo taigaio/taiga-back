@@ -192,15 +192,6 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         return "<Project {0}>".format(self.id)
 
     def save(self, *args, **kwargs):
-        if not self._importing and not self.userstories_csv_uuid:
-            self.userstories_csv_uuid = uuid.uuid4().hex
-
-        if not self._importing and not self.tasks_csv_uuid:
-            self.tasks_csv_uuid = uuid.uuid4().hex
-
-        if not self._importing and not self.issues_csv_uuid:
-            self.issues_csv_uuid = uuid.uuid4().hex
-
         if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
 
