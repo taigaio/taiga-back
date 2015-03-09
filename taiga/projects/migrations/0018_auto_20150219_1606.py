@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0016_fix_json_field_not_null'),
+        ('projects', '0017_fix_is_private_for_projects'),
     ]
 
     operations = [
