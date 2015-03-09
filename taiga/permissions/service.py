@@ -105,10 +105,15 @@ def get_user_project_permissions(user, project):
     return set(owner_permissions + members_permissions + public_permissions + anon_permissions)
 
 
-def set_base_permissions_for_public_project(project):
-    """
-    If a project is public anonymous and registered users should have at least visualization permissions
-    """
-    anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
-    project.anon_permissions = list(set(project.anon_permissions + anon_permissions))
-    project.public_permissions = list(set(project.public_permissions + anon_permissions))
+def set_base_permissions_for_project(project):
+    if project.is_private:
+        project.anon_permissions = []
+        project.public_permissions = []
+
+    else:
+        """
+        If a project is public anonymous and registered users should have at least visualization permissions
+        """
+        anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
+        project.anon_permissions = list(set(project.anon_permissions + anon_permissions))
+        project.public_permissions = list(set(project.public_permissions + anon_permissions))

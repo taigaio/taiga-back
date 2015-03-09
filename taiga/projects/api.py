@@ -168,6 +168,20 @@ class ProjectViewSet(ModelCrudViewSet):
         services.remove_user_from_project(request.user, project)
         return response.Ok()
 
+    def _set_base_permissions(self, obj):
+        update_permissions = False
+        if not obj.id:
+            if not obj.is_private:
+                # Creating a public project
+                update_permissions = True
+        else:
+            if self.get_object().is_private != obj.is_private:
+                # Changing project public state
+                update_permissions = True
+
+        if update_permissions:
+            permissions_service.set_base_permissions_for_project(obj)
+
     def pre_save(self, obj):
         if not obj.id:
             obj.owner = self.request.user
@@ -176,10 +190,7 @@ class ProjectViewSet(ModelCrudViewSet):
         if not obj.id:
             obj.template = self.request.QUERY_PARAMS.get('template', None)
 
-        # Update anon permissions if the project is public
-        if obj.is_private == False:
-            permissions_service.set_base_permissions_for_public_project(obj)
-
+        self._set_base_permissions(obj)
         super().pre_save(obj)
 
     def destroy(self, request, *args, **kwargs):
