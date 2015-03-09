@@ -28,7 +28,7 @@ from django.utils import timezone
 
 from django_pgjson.fields import JsonField
 from djorm_pgarray.fields import TextArrayField
-from taiga.permissions.permissions import ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.permissions.permissions import ANON_PERMISSIONS, MEMBERS_PERMISSIONS
 
 from taiga.base.tags import TaggedMixin
 from taiga.base.utils.slug import slugify_uniquely
@@ -159,7 +159,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     public_permissions = TextArrayField(blank=True, null=True,
                                         default=[],
                                         verbose_name=_("user permissions"),
-                                        choices=USER_PERMISSIONS)
+                                        choices=MEMBERS_PERMISSIONS)
     is_private = models.BooleanField(default=True, null=False, blank=True,
                                      verbose_name=_("is private"))
 
