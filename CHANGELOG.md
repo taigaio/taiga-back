@@ -5,6 +5,7 @@
 
 ### Features
 - Added custom fields per project for user stories, tasks and issues.
+- Allow public projects.
 
 ### Misc
 - New contrib plugin for hipchat (by Δndrea Stagi)
