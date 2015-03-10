@@ -8,8 +8,9 @@
 - Allow public projects.
 
 ### Misc
-- New contrib plugin for hipchat (by Δndrea Stagi)
+- New contrib plugin for HipChat (by Δndrea Stagi).
 - Lots of small and not so small bugfixes.
+- Updated some requirements.
 
 
 ## 1.5.0 Betula Pendula - FOSDEM 2015 (2015-01-29)
