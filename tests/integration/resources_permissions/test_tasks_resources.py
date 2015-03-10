@@ -1,3 +1,5 @@
+import uuid
+
 from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
@@ -35,15 +37,18 @@ def data():
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
-                                        owner=m.project_owner)
+                                        owner=m.project_owner,
+                                        tasks_csv_uuid=uuid.uuid4().hex)
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
-                                          owner=m.project_owner)
+                                          owner=m.project_owner,
+                                          tasks_csv_uuid=uuid.uuid4().hex)
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
                                           public_permissions=[],
-                                          owner=m.project_owner)
+                                          owner=m.project_owner,
+                                          tasks_csv_uuid=uuid.uuid4().hex)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
                                               user=m.project_member_with_perms,

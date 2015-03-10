@@ -1,3 +1,5 @@
+import uuid
+
 from unittest import mock
 
 from django.core.urlresolvers import reverse
@@ -124,7 +126,7 @@ def test_get_invalid_csv(client):
 
 def test_get_valid_csv(client):
     url = reverse("tasks-csv")
-    project = f.ProjectFactory.create()
+    project = f.ProjectFactory.create(tasks_csv_uuid=uuid.uuid4().hex)
 
     response = client.get("{}?uuid={}".format(url, project.tasks_csv_uuid))
     assert response.status_code == 200
