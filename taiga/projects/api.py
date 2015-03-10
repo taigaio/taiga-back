@@ -399,11 +399,16 @@ class MembershipViewSet(ModelCrudViewSet):
     def get_serializer_class(self):
         project_id = self.request.QUERY_PARAMS.get("project", None)
         if project_id is None:
+            # Creation
+            if self.request.method == 'POST':
+                return self.admin_serializer_class
+            
             return self.serializer_class
 
         project = get_object_or_404(models.Project, pk=project_id)
         if permissions_service.is_project_owner(self.request.user, project):
             return self.admin_serializer_class
+
         return self.serializer_class
 
     @list_route(methods=["POST"])
@@ -429,7 +434,7 @@ class MembershipViewSet(ModelCrudViewSet):
         except ValidationError as err:
             return response.BadRequest(err.message_dict)
 
-        members_serialized = self.serializer_class(members, many=True)
+        members_serialized = self.admin_serializer_class(members, many=True)
         return response.Ok(members_serialized.data)
 
     @detail_route(methods=["POST"])
