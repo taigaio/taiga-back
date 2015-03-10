@@ -27,6 +27,7 @@ from django.contrib.contenttypes.models import ContentType
 from sampledatahelper.helper import SampleDataHelper
 
 from taiga.users.models import *
+from taiga.permissions.permissions import ANON_PERMISSIONS
 from taiga.projects.models import *
 from taiga.projects.milestones.models import *
 from taiga.projects.userstories.models import *
@@ -35,7 +36,6 @@ from taiga.projects.issues.models import *
 from taiga.projects.wiki.models import *
 from taiga.projects.attachments.models import *
 from taiga.projects.custom_attributes.models import *
-
 from taiga.projects.history.services import take_snapshot
 from taiga.events.apps import disconnect_events_signals
 
@@ -409,10 +409,15 @@ class Command(BaseCommand):
         return milestone
 
     def create_project(self, counter):
+        is_private=self.sd.boolean()
+        anon_permissions = not is_private and list(map(lambda perm: perm[0], ANON_PERMISSIONS)) or []
+        public_permissions = not is_private and list(map(lambda perm: perm[0], ANON_PERMISSIONS)) or []
         project = Project.objects.create(name='Project Example {0}'.format(counter),
                                          description='Project example {0} description'.format(counter),
                                          owner=random.choice(self.users),
-                                         is_private=False,
+                                         is_private=is_private,
+                                         anon_permissions=anon_permissions,
+                                         public_permissions=public_permissions,
                                          total_story_points=self.sd.int(600, 3000),
                                          total_milestones=self.sd.int(5,10))
 
