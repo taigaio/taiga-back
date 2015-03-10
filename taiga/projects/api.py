@@ -53,6 +53,7 @@ from .votes.utils import attach_votescount_to_queryset
 
 class ProjectViewSet(ModelCrudViewSet):
     serializer_class = serializers.ProjectDetailSerializer
+    admin_serializer_class = serializers.ProjectDetailAdminSerializer
     list_serializer_class = serializers.ProjectSerializer
     permission_classes = (permissions.ProjectPermission, )
     filter_backends = (filters.CanViewProjectObjFilterBackend,)
@@ -60,6 +61,23 @@ class ProjectViewSet(ModelCrudViewSet):
     def get_queryset(self):
         qs = models.Project.objects.all()
         return attach_votescount_to_queryset(qs, as_field="stars_count")
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return self.list_serializer_class
+        elif self.action == "create":
+            return self.serializer_class
+
+        if self.action == "by_slug":
+            slug = self.request.QUERY_PARAMS.get("slug", None)
+            project = get_object_or_404(models.Project, slug=slug)
+        else:
+            project = self.get_object()
+
+        if permissions_service.is_project_owner(self.request.user, project):
+            return self.admin_serializer_class
+
+        return self.serializer_class
 
     @list_route(methods=["GET"])
     def by_slug(self, request):
@@ -86,6 +104,33 @@ class ProjectViewSet(ModelCrudViewSet):
         project = self.get_object()
         self.check_permissions(request, "stats", project)
         return response.Ok(services.get_stats_for_project(project))
+
+    def _regenerate_csv_uuid(self, project, field):
+        uuid_value = uuid.uuid4().hex
+        setattr(project, field, uuid_value)
+        project.save()
+        return uuid_value
+
+    @detail_route(methods=["POST"])
+    def regenerate_userstories_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "regenerate_userstories_csv_uuid", project)
+        data = {"uuid": self._regenerate_csv_uuid(project, "userstories_csv_uuid")}
+        return response.Ok(data)
+
+    @detail_route(methods=["POST"])
+    def regenerate_issues_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "regenerate_issues_csv_uuid", project)
+        data = {"uuid": self._regenerate_csv_uuid(project, "issues_csv_uuid")}
+        return response.Ok(data)
+
+    @detail_route(methods=["POST"])
+    def regenerate_tasks_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "regenerate_tasks_csv_uuid", project)
+        data = {"uuid": self._regenerate_csv_uuid(project, "tasks_csv_uuid")}
+        return response.Ok(data)
 
     @detail_route(methods=["GET"])
     def member_stats(self, request, pk=None):

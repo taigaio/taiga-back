@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import itertools
+import uuid
+
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -162,6 +164,15 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                                         choices=MEMBERS_PERMISSIONS)
     is_private = models.BooleanField(default=True, null=False, blank=True,
                                      verbose_name=_("is private"))
+
+    userstories_csv_uuid = models.CharField(max_length=32, editable=False,
+                                            null=True, blank=True,
+                                            default=None, db_index=True)
+    tasks_csv_uuid = models.CharField(max_length=32, editable=False, null=True,
+                                      blank=True, default=None, db_index=True)
+    issues_csv_uuid = models.CharField(max_length=32, editable=False,
+                                       null=True, blank=True, default=None,
+                                       db_index=True)
 
     tags_colors = TextArrayField(dimension=2, null=False, blank=True, verbose_name=_("tags colors"), default=[])
     _importing = None

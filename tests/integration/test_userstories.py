@@ -1,4 +1,7 @@
 import copy
+import uuid
+import csv
+
 from unittest import mock
 from django.core.urlresolvers import reverse
 
@@ -241,3 +244,38 @@ def test_get_total_points(client):
     f.RolePointsFactory.create(user_story=us_mixed, role=role2, points=points2)
 
     assert us_mixed.get_total_points() == 1.0
+
+
+def test_get_invalid_csv(client):
+    url = reverse("userstories-csv")
+
+    response = client.get(url)
+    assert response.status_code == 404
+
+    response = client.get("{}?uuid={}".format(url, "not-valid-uuid"))
+    assert response.status_code == 404
+
+
+def test_get_valid_csv(client):
+    url = reverse("userstories-csv")
+    project = f.ProjectFactory.create(userstories_csv_uuid=uuid.uuid4().hex)
+
+    response = client.get("{}?uuid={}".format(url, project.userstories_csv_uuid))
+    assert response.status_code == 200
+
+
+def test_custom_fields_csv_generation():
+    project = f.ProjectFactory.create(userstories_csv_uuid=uuid.uuid4().hex)
+    attr = f.UserStoryCustomAttributeFactory.create(project=project, name="attr1", description="desc")
+    us = f.UserStoryFactory.create(project=project)
+    attr_values = us.custom_attributes_values
+    attr_values.attributes_values = {str(attr.id):"val1"}
+    attr_values.save()
+    queryset = project.user_stories.all()
+    data = services.userstories_to_csv(project, queryset)
+    data.seek(0)
+    reader = csv.reader(data)
+    row = next(reader)
+    assert row[23] == attr.name
+    row = next(reader)
+    assert row[23] == "val1"

@@ -1,3 +1,6 @@
+import uuid
+import csv
+
 from unittest import mock
 
 from django.core.urlresolvers import reverse
@@ -152,7 +155,6 @@ def test_api_filter_by_text_6(client):
     issue = f.create_issue(subject="test", owner=user)
     issue.ref = 123
     issue.save()
-    print(issue.ref, issue.subject)
     url = reverse("issues-list") + "?q=%s" % (issue.ref)
 
     client.login(issue.owner)
@@ -161,3 +163,38 @@ def test_api_filter_by_text_6(client):
 
     assert response.status_code == 200
     assert number_of_issues == 1
+
+
+def test_get_invalid_csv(client):
+    url = reverse("issues-csv")
+
+    response = client.get(url)
+    assert response.status_code == 404
+
+    response = client.get("{}?uuid={}".format(url, "not-valid-uuid"))
+    assert response.status_code == 404
+
+
+def test_get_valid_csv(client):
+    url = reverse("issues-csv")
+    project = f.ProjectFactory.create(issues_csv_uuid=uuid.uuid4().hex)
+
+    response = client.get("{}?uuid={}".format(url, project.issues_csv_uuid))
+    assert response.status_code == 200
+
+
+def test_custom_fields_csv_generation():
+    project = f.ProjectFactory.create(issues_csv_uuid=uuid.uuid4().hex)
+    attr = f.IssueCustomAttributeFactory.create(project=project, name="attr1", description="desc")
+    issue = f.IssueFactory.create(project=project)
+    attr_values = issue.custom_attributes_values
+    attr_values.attributes_values = {str(attr.id):"val1"}
+    attr_values.save()
+    queryset = project.issues.all()
+    data = services.issues_to_csv(project, queryset)
+    data.seek(0)
+    reader = csv.reader(data)
+    row = next(reader)
+    assert row[15] == attr.name
+    row = next(reader)
+    assert row[15] == "val1"

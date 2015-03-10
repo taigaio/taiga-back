@@ -25,5 +25,6 @@ class UserStoryPermission(TaigaResourcePermission):
     update_perms = HasProjectPerm('modify_us')
     destroy_perms = HasProjectPerm('delete_us')
     list_perms = AllowAny()
+    csv_perms = AllowAny()
     bulk_create_perms = IsAuthenticated() & (HasProjectPerm('add_us_to_project') | HasProjectPerm('add_us'))
     bulk_update_order_perms = HasProjectPerm('modify_us')

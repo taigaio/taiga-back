@@ -369,3 +369,66 @@ def test_invitations_retrieve(client, data):
     ]
     results = helper_test_http_method(client, 'get', url, None, users)
     assert results == [200, 200, 200, 200]
+
+
+def test_regenerate_userstories_csv_uuid(client, data):
+    public_url = reverse('projects-regenerate-userstories-csv-uuid', kwargs={"pk": data.public_project.pk})
+    private1_url = reverse('projects-regenerate-userstories-csv-uuid', kwargs={"pk": data.private_project1.pk})
+    private2_url = reverse('projects-regenerate-userstories-csv-uuid', kwargs={"pk": data.private_project2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+    results = helper_test_http_method(client, 'post', public_url, None, users)
+    assert results == [401, 403, 403, 200]
+
+    results = helper_test_http_method(client, 'post', private1_url, None, users)
+    assert results == [401, 403, 403, 200]
+
+    results = helper_test_http_method(client, 'post', private2_url, None, users)
+    assert results == [404, 404, 403, 200]
+
+
+def test_regenerate_tasks_csv_uuid(client, data):
+    public_url = reverse('projects-regenerate-tasks-csv-uuid', kwargs={"pk": data.public_project.pk})
+    private1_url = reverse('projects-regenerate-tasks-csv-uuid', kwargs={"pk": data.private_project1.pk})
+    private2_url = reverse('projects-regenerate-tasks-csv-uuid', kwargs={"pk": data.private_project2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+    results = helper_test_http_method(client, 'post', public_url, None, users)
+    assert results == [401, 403, 403, 200]
+
+    results = helper_test_http_method(client, 'post', private1_url, None, users)
+    assert results == [401, 403, 403, 200]
+
+    results = helper_test_http_method(client, 'post', private2_url, None, users)
+    assert results == [404, 404, 403, 200]
+
+
+def test_regenerate_issues_csv_uuid(client, data):
+    public_url = reverse('projects-regenerate-issues-csv-uuid', kwargs={"pk": data.public_project.pk})
+    private1_url = reverse('projects-regenerate-issues-csv-uuid', kwargs={"pk": data.private_project1.pk})
+    private2_url = reverse('projects-regenerate-issues-csv-uuid', kwargs={"pk": data.private_project2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+    results = helper_test_http_method(client, 'post', public_url, None, users)
+    assert results == [401, 403, 403, 200]
+
+    results = helper_test_http_method(client, 'post', private1_url, None, users)
+    assert results == [401, 403, 403, 200]
+
+    results = helper_test_http_method(client, 'post', private2_url, None, users)
+    assert results == [404, 404, 403, 200]

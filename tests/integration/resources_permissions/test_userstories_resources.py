@@ -1,3 +1,5 @@
+import uuid
+
 from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
@@ -35,15 +37,18 @@ def data():
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
-                                        owner=m.project_owner)
+                                        owner=m.project_owner,
+                                        userstories_csv_uuid=uuid.uuid4().hex)
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
-                                          owner=m.project_owner)
+                                          owner=m.project_owner,
+                                          userstories_csv_uuid=uuid.uuid4().hex)
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
                                           public_permissions=[],
-                                          owner=m.project_owner)
+                                          owner=m.project_owner,
+                                          userstories_csv_uuid=uuid.uuid4().hex)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
                                               user=m.project_member_with_perms,
@@ -308,3 +313,27 @@ def test_user_story_action_bulk_update_order(client, data):
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 204, 204]
+
+
+def test_user_stories_csv(client, data):
+    url = reverse('userstories-csv')
+    csv_public_uuid = data.public_project.userstories_csv_uuid
+    csv_private1_uuid = data.private_project1.userstories_csv_uuid
+    csv_private2_uuid = data.private_project1.userstories_csv_uuid
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_public_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private1_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private2_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
