@@ -390,10 +390,21 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
 
 class MembershipViewSet(ModelCrudViewSet):
     model = models.Membership
+    admin_serializer_class = serializers.MembershipAdminSerializer
     serializer_class = serializers.MembershipSerializer
     permission_classes = (permissions.MembershipPermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ("project", "role")
+
+    def get_serializer_class(self):
+        project_id = self.request.QUERY_PARAMS.get("project", None)
+        if project_id is None:
+            return self.serializer_class
+
+        project = get_object_or_404(models.Project, pk=project_id)
+        if permissions_service.is_project_owner(self.request.user, project):
+            return self.admin_serializer_class
+        return self.serializer_class
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):

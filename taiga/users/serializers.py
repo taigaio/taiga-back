@@ -40,10 +40,12 @@ class UserSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "username", "full_name", "full_name_display", "email",
+        # IMPORTANT: Maintain the UserAdminSerializer Meta up to date
+        # with this info (including there the email)
+        fields = ("id", "username", "full_name", "full_name_display",
                   "color", "bio", "default_language",
                   "default_timezone", "is_active", "photo", "big_photo")
-        read_only_fields = ("id", "email")
+        read_only_fields = ("id",)
 
     def validate_username(self, attrs, source):
         value = attrs[source]
@@ -71,6 +73,17 @@ class UserSerializer(ModelSerializer):
 
     def get_big_photo(self, user):
         return get_big_photo_or_gravatar_url(user)
+
+
+class UserAdminSerializer(UserSerializer):
+    class Meta:
+        model = User
+        # IMPORTANT: Maintain the UserSerializer Meta up to date
+        # with this info (including here the email)
+        fields = ("id", "username", "full_name", "full_name_display", "email",
+                  "color", "bio", "default_language",
+                  "default_timezone", "is_active", "photo", "big_photo")
+        read_only_fields = ("id", "email")
 
 
 class RecoverySerializer(Serializer):

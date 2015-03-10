@@ -31,7 +31,7 @@ from django.utils.translation import ugettext as _
 from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
 
 from taiga.base import exceptions as exc
-from taiga.users.serializers import UserSerializer
+from taiga.users.serializers import UserAdminSerializer
 from taiga.users.services import get_and_validate_user
 
 from .tokens import get_token_for_user
@@ -186,7 +186,7 @@ def make_auth_response_data(user) -> dict:
     using python dict containing a representation
     of the logged user.
     """
-    serializer = UserSerializer(user)
+    serializer = UserAdminSerializer(user)
     data = dict(serializer.data)
     data["auth_token"] = get_token_for_user(user, "authentication")
     return data

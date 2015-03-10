@@ -49,9 +49,17 @@ from .signals import user_cancel_account as user_cancel_account_signal
 
 class UsersViewSet(ModelCrudViewSet):
     permission_classes = (permissions.UserPermission,)
+    admin_serializer_class = serializers.UserAdminSerializer
     serializer_class = serializers.UserSerializer
     queryset = models.User.objects.all()
     filter_backends = (MembersFilterBackend,)
+
+    def get_serializer_class(self):
+        if self.action in ["partial_update", "update", "retrieve"]:
+            user = self.get_object()
+            if self.request.user == user:
+                return self.admin_serializer_class
+        return self.serializer_class
 
     def create(self, *args, **kwargs):
         raise exc.NotSupported()
@@ -165,7 +173,7 @@ class UsersViewSet(ModelCrudViewSet):
 
         request.user.photo = avatar
         request.user.save(update_fields=["photo"])
-        user_data = serializers.UserSerializer(request.user).data
+        user_data = self.admin_serializer_class(request.user).data
 
         return response.Ok(user_data)
 
@@ -177,7 +185,7 @@ class UsersViewSet(ModelCrudViewSet):
         self.check_permissions(request, "remove_avatar", None)
         request.user.photo = None
         request.user.save(update_fields=["photo"])
-        user_data = serializers.UserSerializer(request.user).data
+        user_data = self.admin_serializer_class(request.user).data
         return response.Ok(user_data)
 
     @detail_route(methods=["GET"])
@@ -258,7 +266,7 @@ class UsersViewSet(ModelCrudViewSet):
         Get me.
         """
         self.check_permissions(request, "me", None)
-        user_data = serializers.UserSerializer(request.user).data
+        user_data = self.admin_serializer_class(request.user).data
         return response.Ok(user_data)
 
     @list_route(methods=["POST"])
