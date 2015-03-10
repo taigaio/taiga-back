@@ -168,8 +168,10 @@ class MembershipSerializer(ModelSerializer):
 
     class Meta:
         model = models.Membership
+        # IMPORTANT: Maintain the MembershipAdminSerializer Meta up to date
+        # with this info (excluding here user_email and email)
         read_only_fields = ("user",)
-        exclude = ("token",)
+        exclude = ("token", "user_email", "email")
 
     def get_photo(self, project):
         return get_photo_or_gravatar_url(project.user)
@@ -225,6 +227,15 @@ class MembershipSerializer(ModelSerializer):
             raise serializers.ValidationError(_("At least one of the user must be an active admin"))
 
         return attrs
+
+
+class MembershipAdminSerializer(MembershipSerializer):
+    class Meta:
+        model = models.Membership
+        # IMPORTANT: Maintain the MembershipSerializer Meta up to date
+        # with this info (excluding there user_email and email)
+        read_only_fields = ("user",)
+        exclude = ("token",)
 
 
 class ProjectMembershipSerializer(ModelSerializer):
