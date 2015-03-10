@@ -123,6 +123,9 @@ def userstories_to_csv(project,queryset):
                    "client_requirement", "team_requirement", "attachments",
                    "generated_from_issue", "external_reference", "tasks"]
 
+    for custom_attr in project.userstorycustomattributes.all():
+        fieldnames.append(custom_attr.name)
+
     writer = csv.DictWriter(csv_data, fieldnames=fieldnames)
     writer.writeheader()
     for us in queryset:
@@ -157,6 +160,10 @@ def userstories_to_csv(project,queryset):
             else:
                 row["{}-points".format(role.slug)] = 0
         row['total-points'] = us.get_total_points()
+
+        for custom_attr in project.userstorycustomattributes.all():
+            value = us.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
+            row[custom_attr.name] = value
 
         writer.writerow(row)
 

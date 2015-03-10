@@ -1,4 +1,5 @@
 import uuid
+import csv
 
 from unittest import mock
 
@@ -154,7 +155,6 @@ def test_api_filter_by_text_6(client):
     issue = f.create_issue(subject="test", owner=user)
     issue.ref = 123
     issue.save()
-    print(issue.ref, issue.subject)
     url = reverse("issues-list") + "?q=%s" % (issue.ref)
 
     client.login(issue.owner)
@@ -181,3 +181,20 @@ def test_get_valid_csv(client):
 
     response = client.get("{}?uuid={}".format(url, project.issues_csv_uuid))
     assert response.status_code == 200
+
+
+def test_custom_fields_csv_generation():
+    project = f.ProjectFactory.create(issues_csv_uuid=uuid.uuid4().hex)
+    attr = f.IssueCustomAttributeFactory.create(project=project, name="attr1", description="desc")
+    issue = f.IssueFactory.create(project=project)
+    attr_values = issue.custom_attributes_values
+    attr_values.attributes_values = {str(attr.id):"val1"}
+    attr_values.save()
+    queryset = project.issues.all()
+    data = services.issues_to_csv(project, queryset)
+    data.seek(0)
+    reader = csv.reader(data)
+    row = next(reader)
+    assert row[15] == attr.name
+    row = next(reader)
+    assert row[15] == "val1"

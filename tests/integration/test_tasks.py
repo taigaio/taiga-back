@@ -1,4 +1,5 @@
 import uuid
+import csv
 
 from unittest import mock
 
@@ -130,3 +131,20 @@ def test_get_valid_csv(client):
 
     response = client.get("{}?uuid={}".format(url, project.tasks_csv_uuid))
     assert response.status_code == 200
+
+
+def test_custom_fields_csv_generation():
+    project = f.ProjectFactory.create(tasks_csv_uuid=uuid.uuid4().hex)
+    attr = f.TaskCustomAttributeFactory.create(project=project, name="attr1", description="desc")
+    task = f.TaskFactory.create(project=project)
+    attr_values = task.custom_attributes_values
+    attr_values.attributes_values = {str(attr.id):"val1"}
+    attr_values.save()
+    queryset = project.tasks.all()
+    data = services.tasks_to_csv(project, queryset)
+    data.seek(0)
+    reader = csv.reader(data)
+    row = next(reader)
+    assert row[16] == attr.name
+    row = next(reader)
+    assert row[16] == "val1"

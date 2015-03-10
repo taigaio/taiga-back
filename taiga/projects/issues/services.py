@@ -63,16 +63,19 @@ def update_issues_order_in_bulk(bulk_data):
     db.update_in_bulk_with_ids(issue_ids, new_order_values, model=models.Issue)
 
 
-def issues_to_csv(queryset):
+def issues_to_csv(project, queryset):
     csv_data = io.StringIO()
     fieldnames = ["ref", "subject", "description", "milestone", "owner",
                   "owner_full_name", "assigned_to", "assigned_to_full_name",
                   "status", "severity", "priority", "type", "is_closed",
                   "attachments", "external_reference"]
+    for custom_attr in project.issuecustomattributes.all():
+        fieldnames.append(custom_attr.name)
+
     writer = csv.DictWriter(csv_data, fieldnames=fieldnames)
     writer.writeheader()
     for issue in queryset:
-        writer.writerow({
+        issue_data = {
             "ref": issue.ref,
             "subject": issue.subject,
             "description": issue.description,
@@ -88,6 +91,12 @@ def issues_to_csv(queryset):
             "is_closed": issue.is_closed,
             "attachments": issue.attachments.count(),
             "external_reference": issue.external_reference,
-        })
+        }
+
+        for custom_attr in project.issuecustomattributes.all():
+            value = issue.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
+            issue_data[custom_attr.name] = value
+
+        writer.writerow(issue_data)
 
     return csv_data
