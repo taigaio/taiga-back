@@ -65,6 +65,8 @@ class ProjectViewSet(ModelCrudViewSet):
     def get_serializer_class(self):
         if self.action == "list":
             return self.list_serializer_class
+        elif self.action == "create":
+            return self.serializer_class
 
         if self.action == "by_slug":
             slug = self.request.QUERY_PARAMS.get("slug", None)
