@@ -269,7 +269,8 @@ class ProjectSerializer(ModelSerializer):
     class Meta:
         model = models.Project
         read_only_fields = ("created_date", "modified_date", "owner")
-        exclude = ("last_us_ref", "last_task_ref", "last_issue_ref")
+        exclude = ("last_us_ref", "last_task_ref", "last_issue_ref",
+                   "issues_csv_uuid", "tasks_csv_uuid", "userstories_csv_uuid")
 
     def get_stars_number(self, obj):
         # The "stars_count" attribute is attached in the get_queryset of the viewset.
@@ -301,6 +302,7 @@ class ProjectSerializer(ModelSerializer):
             raise serializers.ValidationError("Total milestones must be major or equal to zero")
         return attrs
 
+
 class ProjectDetailSerializer(ProjectSerializer):
     roles = serializers.SerializerMethodField("get_roles")
     memberships = serializers.SerializerMethodField("get_memberships")
@@ -329,6 +331,13 @@ class ProjectDetailSerializer(ProjectSerializer):
     def get_roles(self, obj):
         serializer = ProjectRoleSerializer(obj.roles.all(), many=True)
         return serializer.data
+
+
+class ProjectDetailAdminSerializer(ProjectDetailSerializer):
+    class Meta:
+        model = models.Project
+        read_only_fields = ("created_date", "modified_date", "owner")
+        exclude = ("last_us_ref", "last_task_ref", "last_issue_ref")
 
 
 ######################################################

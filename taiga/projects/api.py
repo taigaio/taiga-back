@@ -53,6 +53,7 @@ from .votes.utils import attach_votescount_to_queryset
 
 class ProjectViewSet(ModelCrudViewSet):
     serializer_class = serializers.ProjectDetailSerializer
+    admin_serializer_class = serializers.ProjectDetailAdminSerializer
     list_serializer_class = serializers.ProjectSerializer
     permission_classes = (permissions.ProjectPermission, )
     filter_backends = (filters.CanViewProjectObjFilterBackend,)
@@ -60,6 +61,21 @@ class ProjectViewSet(ModelCrudViewSet):
     def get_queryset(self):
         qs = models.Project.objects.all()
         return attach_votescount_to_queryset(qs, as_field="stars_count")
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return self.list_serializer_class
+
+        if self.action == "by_slug":
+            slug = self.request.QUERY_PARAMS.get("slug", None)
+            project = get_object_or_404(models.Project, slug=slug)
+        else:
+            project = self.get_object()
+
+        if permissions_service.is_project_owner(self.request.user, project):
+            return self.admin_serializer_class
+
+        return self.serializer_class
 
     @list_route(methods=["GET"])
     def by_slug(self, request):
