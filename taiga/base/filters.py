@@ -57,7 +57,10 @@ class QueryParamsFilterMixin(filters.BaseFilterBackend):
                     query_params[field_name] = field_data
 
         if query_params:
-            queryset = queryset.filter(**query_params)
+            try:
+                queryset = queryset.filter(**query_params)
+            except ValueError:
+                raise exc.BadRequest("Error in filter params types.")
 
         return queryset
 

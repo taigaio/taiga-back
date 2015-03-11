@@ -57,6 +57,7 @@ class ProjectViewSet(ModelCrudViewSet):
     list_serializer_class = serializers.ProjectSerializer
     permission_classes = (permissions.ProjectPermission, )
     filter_backends = (filters.CanViewProjectObjFilterBackend,)
+    filter_fields = (('member', 'members'),)
 
     def get_queryset(self):
         qs = models.Project.objects.all()
@@ -402,7 +403,7 @@ class MembershipViewSet(ModelCrudViewSet):
             # Creation
             if self.request.method == 'POST':
                 return self.admin_serializer_class
-            
+
             return self.serializer_class
 
         project = get_object_or_404(models.Project, pk=project_id)
