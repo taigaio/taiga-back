@@ -19,6 +19,7 @@ import uuid
 from django.core.urlresolvers import reverse
 
 from taiga.users.models import User
+from taiga.users.models import AuthData
 from taiga.base.utils.urls import get_absolute_url
 
 
@@ -36,13 +37,13 @@ def get_or_generate_config(project):
     return g_config
 
 
-def get_github_user(user_id):
+def get_github_user(github_id):
     user = None
 
-    if user_id:
+    if github_id:
         try:
-            user = User.objects.get(github_id=user_id)
-        except User.DoesNotExist:
+            user = AuthData.objects.get(key="github", value=github_id).user
+        except AuthData.DoesNotExist:
             pass
 
     if user is None:
