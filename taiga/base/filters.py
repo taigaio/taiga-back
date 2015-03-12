@@ -238,7 +238,7 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
     def filter_queryset(self, request, queryset, view):
         project_id = None
         project = None
-        qs = queryset
+        qs = queryset.filter(is_active=True)
         if "project" in request.QUERY_PARAMS:
             try:
                 project_id = int(request.QUERY_PARAMS["project"])
@@ -262,8 +262,11 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
 
             projects_list = [membership.project_id for membership in memberships_qs]
 
-            if project and not "view_project" in project.public_permissions:
-                qs = qs.none()
+            if project:
+                is_member = project.id in projects_list
+                has_project_public_view_permission = "view_project" in project.public_permissions
+                if not is_member and not has_project_public_view_permission:
+                    qs = qs.none()
 
             qs = qs.filter(Q(memberships__project_id__in=projects_list) |
                            Q(memberships__project__public_permissions__contains=[self.permission])|

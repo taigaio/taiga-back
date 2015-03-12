@@ -115,7 +115,7 @@ def test_user_list(client, data):
 
     response = client.get(url)
     users_data = json.loads(response.content.decode('utf-8'))
-    assert len(users_data) == 6
+    assert len(users_data) == 3
     assert response.status_code == 200
 
 
