@@ -139,6 +139,10 @@ def _filter_by_permissions(obj, user):
     return False
 
 
+def _filter_notificable(user):
+    return user.is_active and not user.is_system
+
+
 def get_users_to_notify(obj, *, discard_users=None) -> list:
     """
     Get filtered set of users to notify for specified
@@ -168,7 +172,8 @@ def get_users_to_notify(obj, *, discard_users=None) -> list:
         candidates = candidates - set(discard_users)
 
     candidates = filter(partial(_filter_by_permissions, obj), candidates)
-
+    # Filter disabled and system users
+    candidates = filter(partial(_filter_notificable), candidates)
     return frozenset(candidates)
 
 

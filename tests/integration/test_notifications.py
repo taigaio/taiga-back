@@ -109,14 +109,25 @@ def test_users_to_notify():
     member3 = f.MembershipFactory.create(project=project, role=role1)
     member4 = f.MembershipFactory.create(project=project, role=role1)
     member5 = f.MembershipFactory.create(project=project, role=role2)
+    inactive_member1 = f.MembershipFactory.create(project=project, role=role1)
+    inactive_member1.user.is_active =  False
+    inactive_member1.user.save()
+    system_member1 = f.MembershipFactory.create(project=project, role=role1)
+    system_member1.user.is_system = True
+    system_member1.user.save()
 
     issue = f.IssueFactory.create(project=project, owner=member4.user)
 
     policy_model_cls = apps.get_model("notifications", "NotifyPolicy")
 
     policy1 = policy_model_cls.objects.get(user=member1.user)
-    policy_model_cls.objects.get(user=member2.user)
-    policy3 = policy_model_cls.objects.get(user=member3.user)
+    policy2 = policy_model_cls.objects.get(user=member3.user)
+    policy3 = policy_model_cls.objects.get(user=inactive_member1.user)
+    policy3.notify_level = NotifyLevel.watch
+    policy3.save()
+    policy4 = policy_model_cls.objects.get(user=system_member1.user)
+    policy4.notify_level = NotifyLevel.watch
+    policy4.save()
 
     history = MagicMock()
     history.owner = member2.user
@@ -144,8 +155,8 @@ def test_users_to_notify():
     assert users == {member1.user, member3.user, issue.get_owner()}
 
     # Test with watchers with ignore policy
-    policy3.notify_level = NotifyLevel.ignore
-    policy3.save()
+    policy2.notify_level = NotifyLevel.ignore
+    policy2.save()
 
     issue.watchers.add(member3.user)
     users = services.get_users_to_notify(issue)
@@ -155,6 +166,16 @@ def test_users_to_notify():
     # Test with watchers without permissions
     issue.watchers.add(member5.user)
     users = services.get_users_to_notify(issue)
+    assert len(users) == 2
+    assert users == {member1.user, issue.get_owner()}
+
+    # Test with inactive user
+    issue.watchers.add(inactive_member1.user)
+    assert len(users) == 2
+    assert users == {member1.user, issue.get_owner()}
+
+    # Test with system user
+    issue.watchers.add(system_member1.user)
     assert len(users) == 2
     assert users == {member1.user, issue.get_owner()}
 
