@@ -133,25 +133,25 @@ def test_render_wikilink_relative_to_absolute():
 
 
 def test_render_reference_links():
-    expected_result = "<p>An <a href=\"http://example.com/\" title=\"Title\">example</a> of reference link</p>"
+    expected_result = "<p>An <a href=\"http://example.com/\" target=\"_blank\" title=\"Title\">example</a> of reference link</p>"
     source = "An [example][id] of reference link\n  [id]: http://example.com/  \"Title\""
     assert render(dummy_project, source) == expected_result
 
 
 def test_render_url_autolinks():
-    expected_result = "<p>Test the <a href=\"http://example.com/\">http://example.com/</a> autolink</p>"
+    expected_result = "<p>Test the <a href=\"http://example.com/\" target=\"_blank\">http://example.com/</a> autolink</p>"
     source = "Test the http://example.com/ autolink"
     assert render(dummy_project, source) == expected_result
 
 
 def test_render_url_autolinks_without_http():
-    expected_result = "<p>Test the <a href=\"http://www.example.com\">www.example.com</a> autolink</p>"
+    expected_result = "<p>Test the <a href=\"http://www.example.com\" target=\"_blank\">www.example.com</a> autolink</p>"
     source = "Test the www.example.com autolink"
     assert render(dummy_project, source) == expected_result
 
 
 def test_render_url_automail():
-    expected_result = "<p>Test the <a href=\"mailto:example@example.com\">example@example.com</a> automail</p>"
+    expected_result = "<p>Test the <a href=\"mailto:example@example.com\" target=\"_blank\">example@example.com</a> automail</p>"
     source = "Test the example@example.com automail"
     assert render(dummy_project, source) == expected_result
 
