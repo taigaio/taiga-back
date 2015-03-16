@@ -48,6 +48,9 @@ class RolePoints(models.Model):
     def __str__(self):
         return "{}: {}".format(self.role.name, self.points.name)
 
+    @property
+    def project(self):
+        return self.user_story.project
 
 class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,

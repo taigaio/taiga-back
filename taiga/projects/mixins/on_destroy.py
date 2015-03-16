@@ -32,12 +32,11 @@ class MoveOnDestroyMixin:
             return super().destroy(request, *args, **kwargs)
 
         obj = self.get_object_or_none()
-        move_item = get_object_or_404(self.model, project=obj.project, id=move_to)
+        move_item = get_object_or_404(self.model, id=move_to)
 
         self.check_permissions(request, 'destroy', obj)
 
-        qs = self.move_on_destroy_related_class.objects.filter(project=obj.project,
-                                                               **{self.move_on_destroy_related_field: obj})
+        qs = self.move_on_destroy_related_class.objects.filter(**{self.move_on_destroy_related_field: obj})
         qs.update(**{self.move_on_destroy_related_field: move_item})
 
         if getattr(obj.project, self.move_on_destroy_project_default_field) == obj:

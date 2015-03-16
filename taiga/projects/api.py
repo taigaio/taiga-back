@@ -33,7 +33,7 @@ from taiga.base.utils.slug import slugify_uniquely
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 
-from taiga.projects.userstories.models import UserStory
+from taiga.projects.userstories.models import UserStory, RolePoints
 from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
 from taiga.permissions import service as permissions_service
@@ -277,7 +277,7 @@ class ProjectViewSet(ModelCrudViewSet):
 ## Custom values for selectors
 ######################################################
 
-class PointsViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
+class PointsViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.Points
     serializer_class = serializers.PointsSerializer
     permission_classes = (permissions.PointsPermission,)
@@ -286,7 +286,9 @@ class PointsViewSet(ModelCrudViewSet, BulkUpdateOrderMixin):
     bulk_update_param = "bulk_points"
     bulk_update_perm = "change_points"
     bulk_update_order_action = services.bulk_update_points_order
-
+    move_on_destroy_related_class = RolePoints
+    move_on_destroy_related_field = "points"
+    move_on_destroy_project_default_field = "default_points"
 
 class UserStoryStatusViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.UserStoryStatus
