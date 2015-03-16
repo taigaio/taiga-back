@@ -3,6 +3,7 @@ from taiga.base.utils import json
 from taiga.projects.services import stats as stats_services
 from taiga.projects.history.services import take_snapshot
 from taiga.permissions.permissions import ANON_PERMISSIONS
+from taiga.projects.models import Project
 
 from .. import factories as f
 
@@ -252,3 +253,27 @@ def test_anon_permissions_generation_when_making_project_public(client):
     anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
     assert set(anon_permissions).issubset(set(response.data["anon_permissions"]))
     assert set(anon_permissions).issubset(set(response.data["public_permissions"]))
+
+
+def test_destroy_point_and_reassign(client):
+    project = f.ProjectFactory.create()
+    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
+    p1 = f.PointsFactory(project=project)
+    project.default_points = p1
+    project.save()
+    p2 = f.PointsFactory(project=project)
+    user_story =  f.UserStoryFactory.create(project=project)
+    rp1 = f.RolePointsFactory.create(user_story=user_story, points=p1)
+
+    url = reverse("points-detail", args=[p1.pk]) + "?moveTo={}".format(p2.pk)
+
+    client.login(project.owner)
+
+    assert user_story.role_points.all()[0].points.id == p1.id
+    assert project.default_points.id == p1.id
+
+    response = client.delete(url)
+
+    assert user_story.role_points.all()[0].points.id == p2.id
+    project = Project.objects.get(id=project.id)
+    assert project.default_points.id == p2.id
