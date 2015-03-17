@@ -1,6 +1,8 @@
 {% set excluded_fields = [
     "description",
     "description_html",
+    "blocked_note",
+    "blocked_note_html",
     "content",
     "content_html",
     "backlog_order",
@@ -109,19 +111,11 @@
                     {% endif %}
                 </td>
             </tr>
-    {# DESCRIPTIONS #}
-        {% elif field_name in ["description_diff"] %}
+    {# DESCRIPTIONS, CONTENT, BLOCKED_NOTE #}
+        {% elif field_name in ["description_diff", "content_diff", "blocked_note_diff"] %}
             <tr>
                 <td colspan="2">
-                    <h3>{{ _("Description diff") }}</h3>
-                    <p>{{ mdrender(project, values.1) }}</p>
-                </td>
-            </tr>
-    {# CONTENT #}
-        {% elif field_name in ["content_diff"] %}
-            <tr>
-                <td colspan="2">
-                    <h3>{{ _("Content diff") }}</h3>
+                    <h3>{{ verbose_name(obj_class, field_name) }}</h3>
                     <p>{{ mdrender(project, values.1) }}</p>
                 </td>
             </tr>
