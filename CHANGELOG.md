@@ -1,7 +1,8 @@
 # Changelog #
 
 
-## 1.6.0 Abies Bifolia (Unreleased)
+## 1.6.0 Abies Bifolia (2015-03-17)
+
 
 ### Features
 - Added custom fields per project for user stories, tasks and issues.
