@@ -171,7 +171,7 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
         project = get_object_or_404(Project, issues_csv_uuid=uuid)
         queryset = project.issues.all().order_by('ref')
         data = services.issues_to_csv(project, queryset)
-        csv_response = HttpResponse(data.getvalue(), content_type='application/csv')
+        csv_response = HttpResponse(data.getvalue(), content_type='application/csv; charset=utf-8')
         csv_response['Content-Disposition'] = 'attachment; filename="issues.csv"'
         return csv_response
 

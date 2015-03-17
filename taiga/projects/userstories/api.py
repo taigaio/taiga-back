@@ -112,7 +112,7 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
         project = get_object_or_404(Project, userstories_csv_uuid=uuid)
         queryset = project.user_stories.all().order_by('ref')
         data = services.userstories_to_csv(project, queryset)
-        csv_response = HttpResponse(data.getvalue(), content_type='application/csv')
+        csv_response = HttpResponse(data.getvalue(), content_type='application/csv; charset=utf-8')
         csv_response['Content-Disposition'] = 'attachment; filename="userstories.csv"'
         return csv_response
 

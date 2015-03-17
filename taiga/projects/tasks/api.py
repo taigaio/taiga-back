@@ -81,7 +81,7 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
         project = get_object_or_404(Project, tasks_csv_uuid=uuid)
         queryset = project.tasks.all().order_by('ref')
         data = services.tasks_to_csv(project, queryset)
-        csv_response = HttpResponse(data.getvalue(), content_type='application/csv')
+        csv_response = HttpResponse(data.getvalue(), content_type='application/csv; charset=utf-8')
         csv_response['Content-Disposition'] = 'attachment; filename="tasks.csv"'
         return csv_response
 
