@@ -14,16 +14,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import get_object_or_404
-
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-
 from taiga.base import filters
-from taiga.base import exceptions as exc
+from taiga.base import response
 from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet
+from taiga.base.api.utils import get_object_or_404
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
@@ -97,4 +92,4 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
             current_date = current_date + datetime.timedelta(days=1)
             optimal_points -= optimal_points_per_day
 
-        return Response(milestone_stats)
+        return response.Ok(milestone_stats)

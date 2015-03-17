@@ -1,3 +1,6 @@
+import uuid
+import csv
+
 from unittest import mock
 
 from django.core.urlresolvers import reverse
@@ -100,7 +103,7 @@ def test_api_update_order_in_bulk(client):
     data = {
         "project_id": project.id,
         "bulk_tasks": [{"task_id": task1.id, "order": 1},
-                         {"task_id": task2.id, "order": 2}]
+                       {"task_id": task2.id, "order": 2}]
     }
 
     client.login(project.owner)
@@ -110,3 +113,38 @@ def test_api_update_order_in_bulk(client):
 
     assert response1.status_code == 204, response1.data
     assert response2.status_code == 204, response2.data
+
+
+def test_get_invalid_csv(client):
+    url = reverse("tasks-csv")
+
+    response = client.get(url)
+    assert response.status_code == 404
+
+    response = client.get("{}?uuid={}".format(url, "not-valid-uuid"))
+    assert response.status_code == 404
+
+
+def test_get_valid_csv(client):
+    url = reverse("tasks-csv")
+    project = f.ProjectFactory.create(tasks_csv_uuid=uuid.uuid4().hex)
+
+    response = client.get("{}?uuid={}".format(url, project.tasks_csv_uuid))
+    assert response.status_code == 200
+
+
+def test_custom_fields_csv_generation():
+    project = f.ProjectFactory.create(tasks_csv_uuid=uuid.uuid4().hex)
+    attr = f.TaskCustomAttributeFactory.create(project=project, name="attr1", description="desc")
+    task = f.TaskFactory.create(project=project)
+    attr_values = task.custom_attributes_values
+    attr_values.attributes_values = {str(attr.id):"val1"}
+    attr_values.save()
+    queryset = project.tasks.all()
+    data = services.tasks_to_csv(project, queryset)
+    data.seek(0)
+    reader = csv.reader(data)
+    row = next(reader)
+    assert row[16] == attr.name
+    row = next(reader)
+    assert row[16] == "val1"

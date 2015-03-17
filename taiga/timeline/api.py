@@ -15,16 +15,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import get_object_or_404
 
-from rest_framework.response import Response
-
+from taiga.base import response
+from taiga.base.api.utils import get_object_or_404
 from taiga.base.api import GenericViewSet
 
 from . import serializers
 from . import service
 from . import permissions
-from . import models
 
 
 class TimelineViewSet(GenericViewSet):
@@ -52,12 +50,12 @@ class TimelineViewSet(GenericViewSet):
         else:
             serializer = self.get_serializer(queryset, many=True)
 
-        return Response(serializer.data)
+        return response.Ok(serializer.data)
 
     # Just for restframework! Because it raises
     # 404 on main api root if this method not exists.
     def list(self, request):
-        return Response({})
+        return response.NotFound()
 
     def retrieve(self, request, pk):
         obj = self.get_object()

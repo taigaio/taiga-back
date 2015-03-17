@@ -17,7 +17,6 @@
 
 import pytest
 from django.core.urlresolvers import reverse
-from django.contrib.contenttypes.models import ContentType
 
 from .. import factories as f
 

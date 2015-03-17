@@ -2,6 +2,8 @@ from django.core.urlresolvers import reverse
 from taiga.base.utils import json
 from taiga.projects.services import stats as stats_services
 from taiga.projects.history.services import take_snapshot
+from taiga.permissions.permissions import ANON_PERMISSIONS
+from taiga.projects.models import Project
 
 from .. import factories as f
 
@@ -118,7 +120,7 @@ def test_points_name_duplicated(client):
 
 def test_update_points_when_not_null_values_for_points(client):
     points = f.PointsFactory(name="?", value="6")
-    role = f.RoleFactory(project=points.project, computable=True)
+    f.RoleFactory(project=points.project, computable=True)
     assert points.project.points.filter(value__isnull=True).count() == 0
     points.project.update_role_points()
     assert points.project.points.filter(value__isnull=True).count() == 1
@@ -130,33 +132,33 @@ def test_get_closed_bugs_per_member_stats():
     membership_2 = f.MembershipFactory(project=project)
     issue_closed_status = f.IssueStatusFactory(is_closed=True, project=project)
     issue_open_status = f.IssueStatusFactory(is_closed=False, project=project)
-    issue_closed = f.IssueFactory(project=project,
-                                  status=issue_closed_status,
-                                  owner=membership_1.user,
-                                  assigned_to=membership_1.user)
-    issue_open = f.IssueFactory(project=project,
-                                status=issue_open_status,
-                                owner=membership_2.user,
-                                assigned_to=membership_2.user)
+    f.IssueFactory(project=project,
+                   status=issue_closed_status,
+                   owner=membership_1.user,
+                   assigned_to=membership_1.user)
+    f.IssueFactory(project=project,
+                   status=issue_open_status,
+                   owner=membership_2.user,
+                   assigned_to=membership_2.user)
     task_closed_status = f.TaskStatusFactory(is_closed=True, project=project)
     task_open_status = f.TaskStatusFactory(is_closed=False, project=project)
-    task_closed = f.TaskFactory(project=project,
-                              status=task_closed_status,
-                              owner=membership_1.user,
-                              assigned_to=membership_1.user)
-    task_open = f.TaskFactory(project=project,
-                                status=task_open_status,
-                                owner=membership_2.user,
-                                assigned_to=membership_2.user)
-    task_iocaine = f.TaskFactory(project=project,
-                                status=task_open_status,
-                                owner=membership_2.user,
-                                assigned_to=membership_2.user,
-                                is_iocaine=True)
+    f.TaskFactory(project=project,
+                  status=task_closed_status,
+                  owner=membership_1.user,
+                  assigned_to=membership_1.user)
+    f.TaskFactory(project=project,
+                  status=task_open_status,
+                  owner=membership_2.user,
+                  assigned_to=membership_2.user)
+    f.TaskFactory(project=project,
+                  status=task_open_status,
+                  owner=membership_2.user,
+                  assigned_to=membership_2.user,
+                  is_iocaine=True)
 
     wiki_page = f.WikiPageFactory.create(project=project, owner=membership_1.user)
     take_snapshot(wiki_page, user=membership_1.user)
-    wiki_page.content="Frontend, future"
+    wiki_page.content = "Frontend, future"
     wiki_page.save()
     take_snapshot(wiki_page, user=membership_1.user)
 
@@ -235,3 +237,43 @@ def test_edit_membership_only_owner(client):
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 400
     assert response.data["is_owner"][0] == "At least one of the user must be an active admin"
+
+
+def test_anon_permissions_generation_when_making_project_public(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(is_private=True)
+    role = f.RoleFactory.create(project=project, permissions=["view_project", "modify_project"])
+    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+    assert project.anon_permissions == []
+    client.login(user)
+    url = reverse("projects-detail", kwargs={"pk": project.pk})
+    data = {"is_private": False}
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200
+    anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
+    assert set(anon_permissions).issubset(set(response.data["anon_permissions"]))
+    assert set(anon_permissions).issubset(set(response.data["public_permissions"]))
+
+
+def test_destroy_point_and_reassign(client):
+    project = f.ProjectFactory.create()
+    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
+    p1 = f.PointsFactory(project=project)
+    project.default_points = p1
+    project.save()
+    p2 = f.PointsFactory(project=project)
+    user_story =  f.UserStoryFactory.create(project=project)
+    rp1 = f.RolePointsFactory.create(user_story=user_story, points=p1)
+
+    url = reverse("points-detail", args=[p1.pk]) + "?moveTo={}".format(p2.pk)
+
+    client.login(project.owner)
+
+    assert user_story.role_points.all()[0].points.id == p1.id
+    assert project.default_points.id == p1.id
+
+    response = client.delete(url)
+
+    assert user_story.role_points.all()[0].points.id == p2.id
+    project = Project.objects.get(id=project.id)
+    assert project.default_points.id == p2.id

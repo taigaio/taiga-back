@@ -19,6 +19,7 @@ from django.apps import apps
 from django.db.models import signals
 
 from taiga.projects import signals as generic_handlers
+from taiga.projects.custom_attributes import signals as custom_attributes_handlers
 from . import signals as handlers
 
 
@@ -52,3 +53,8 @@ class UserStoriesAppConfig(AppConfig):
                                   sender=apps.get_model("userstories", "UserStory"))
         signals.post_delete.connect(generic_handlers.update_project_tags_when_delete_taggable_item,
                                     sender=apps.get_model("userstories", "UserStory"))
+
+        # Custom Attributes
+        signals.post_save.connect(custom_attributes_handlers.create_custom_attribute_value_when_create_user_story,
+                                  sender=apps.get_model("userstories", "UserStory"),
+                                  dispatch_uid="create_custom_attribute_value_when_create_user_story")

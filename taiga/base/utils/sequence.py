@@ -20,6 +20,7 @@ def first(iterable):
         return None
     return iterable[0]
 
+
 def next(data:list):
     return data[1:]
 

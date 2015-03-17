@@ -19,6 +19,7 @@ from unittest import mock
 from taiga import celery
 from taiga.deferred import defer, call_async, apply_async
 
+
 def test_defer():
     # settings.CELERY_ALWAYS_EAGER = True
     name = "task name"

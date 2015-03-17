@@ -20,15 +20,12 @@ from enum import Enum
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework import serializers
 
 from taiga.base.api import viewsets
 from taiga.base.decorators import list_route
 from taiga.base import exceptions as exc
-from taiga.base.connectors import github
-from taiga.users.services import get_and_validate_user
+from taiga.base import response
 
 from .serializers import PublicRegisterSerializer
 from .serializers import PrivateRegisterForExistingUserSerializer
@@ -37,8 +34,8 @@ from .serializers import PrivateRegisterForNewUserSerializer
 from .services import private_register_for_existing_user
 from .services import private_register_for_new_user
 from .services import public_register
-from .services import github_register
 from .services import make_auth_response_data
+from .services import get_auth_plugins
 
 from .permissions import AuthPermission
 
@@ -109,7 +106,7 @@ class AuthViewSet(viewsets.ViewSet):
             raise exc.BadRequest(e.detail)
 
         data = make_auth_response_data(user)
-        return Response(data, status=status.HTTP_201_CREATED)
+        return response.Created(data)
 
     def _private_register(self, request):
         register_type = parse_register_type(request.DATA)
@@ -122,7 +119,7 @@ class AuthViewSet(viewsets.ViewSet):
             user = private_register_for_new_user(**data)
 
         data = make_auth_response_data(user)
-        return Response(data, status=status.HTTP_201_CREATED)
+        return response.Created(data)
 
     @list_route(methods=["POST"])
     def register(self, request, **kwargs):
@@ -135,36 +132,15 @@ class AuthViewSet(viewsets.ViewSet):
             return self._private_register(request)
         raise exc.BadRequest(_("invalid register type"))
 
-    def _login(self, request):
-        username = request.DATA.get('username', None)
-        password = request.DATA.get('password', None)
-
-        user = get_and_validate_user(username=username, password=password)
-        data = make_auth_response_data(user)
-        return Response(data, status=status.HTTP_200_OK)
-
-    def _github_login(self, request):
-        code = request.DATA.get('code', None)
-        token = request.DATA.get('token', None)
-
-        email, user_info = github.me(code)
-
-        user = github_register(username=user_info.username,
-                               email=email,
-                               full_name=user_info.full_name,
-                               github_id=user_info.id,
-                               bio=user_info.bio,
-                               token=token)
-        data = make_auth_response_data(user)
-        return Response(data, status=status.HTTP_200_OK)
-
     # Login view: /api/v1/auth
     def create(self, request, **kwargs):
         self.check_permissions(request, 'create', None)
+        auth_plugins = get_auth_plugins()
 
-        type = request.DATA.get("type", None)
-        if type == "normal":
-            return self._login(request)
-        elif type == "github":
-            return self._github_login(request)
+        login_type = request.DATA.get("type", None)
+
+        if login_type in auth_plugins:
+            data = auth_plugins[login_type]['login_func'](request)
+            return response.Ok(data)
+
         raise exc.BadRequest(_("invalid login type"))

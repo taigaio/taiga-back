@@ -16,19 +16,20 @@
 
 from contextlib import suppress
 
+from rest_framework import status
+
 from django.apps import apps
 from django.db import transaction
 from django.utils.translation import ugettext as _
-from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
 
-from rest_framework.response import Response
-from rest_framework import status
-
-from taiga.base import filters, response
+from taiga.base import filters
 from taiga.base import exceptions as exc
+from taiga.base import response
 from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet
+from taiga.base.api.utils import get_object_or_404
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
@@ -101,6 +102,19 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
         project_id = request.QUERY_PARAMS.get("project", None)
         userstory = get_object_or_404(models.UserStory, ref=ref, project_id=project_id)
         return self.retrieve(request, pk=userstory.pk)
+
+    @list_route(methods=["GET"])
+    def csv(self, request):
+        uuid = request.QUERY_PARAMS.get("uuid", None)
+        if uuid is None:
+            return response.NotFound()
+
+        project = get_object_or_404(Project, userstories_csv_uuid=uuid)
+        queryset = project.user_stories.all().order_by('ref')
+        data = services.userstories_to_csv(project, queryset)
+        csv_response = HttpResponse(data.getvalue(), content_type='application/csv')
+        csv_response['Content-Disposition'] = 'attachment; filename="userstories.csv"'
+        return csv_response
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):

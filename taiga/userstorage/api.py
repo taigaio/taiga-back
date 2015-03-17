@@ -17,8 +17,6 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db import IntegrityError
 
-from rest_framework.permissions import IsAuthenticated
-
 from taiga.base.api import ModelCrudViewSet
 from taiga.base import exceptions as exc
 

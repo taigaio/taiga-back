@@ -18,10 +18,6 @@ import json
 import codecs
 import uuid
 
-from rest_framework.response import Response
-from rest_framework.decorators import throttle_classes
-from rest_framework import status
-
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.db.transaction import atomic
@@ -30,10 +26,11 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
-from taiga.base.api.mixins import CreateModelMixin
-from taiga.base.api.viewsets import GenericViewSet
 from taiga.base.decorators import detail_route, list_route
 from taiga.base import exceptions as exc
+from taiga.base import response
+from taiga.base.api.mixins import CreateModelMixin
+from taiga.base.api.viewsets import GenericViewSet
 from taiga.projects.models import Project, Membership
 from taiga.projects.issues.models import Issue
 from taiga.projects.serializers import ProjectSerializer
@@ -65,18 +62,19 @@ class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet)
 
         if settings.CELERY_ENABLED:
             task = tasks.dump_project.delay(request.user, project)
-            tasks.delete_project_dump.apply_async((project.pk, project.slug), countdown=settings.EXPORTS_TTL)
-            return Response({"export_id": task.id}, status=status.HTTP_202_ACCEPTED)
+            tasks.delete_project_dump.apply_async((project.pk, project.slug),
+                                                  countdown=settings.EXPORTS_TTL)
+            return response.Accepted({"export_id": task.id})
 
         path = "exports/{}/{}-{}.json".format(project.pk, project.slug, uuid.uuid4().hex)
         content = ContentFile(ExportRenderer().render(service.project_to_dict(project),
-            renderer_context={"indent": 4}).decode('utf-8'))
+                                                      renderer_context={"indent": 4}).decode('utf-8'))
 
         default_storage.save(path, content)
         response_data = {
             "url": default_storage.url(path)
         }
-        return Response(response_data, status=status.HTTP_200_OK)
+        return response.Ok(response_data)
 
 
 class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixin, GenericViewSet):
@@ -129,6 +127,21 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
                 "severities" in data):
             service.store_default_choices(project_serialized.object, data)
 
+        if "userstorycustomattributes" in data:
+            service.store_custom_attributes(project_serialized.object, data,
+                                            "userstorycustomattributes",
+                                            serializers.UserStoryCustomAttributeExportSerializer)
+
+        if "taskcustomattributes" in data:
+            service.store_custom_attributes(project_serialized.object, data,
+                                            "taskcustomattributes",
+                                            serializers.TaskCustomAttributeExportSerializer)
+
+        if "issuecustomattributes" in data:
+            service.store_custom_attributes(project_serialized.object, data,
+                                            "issuecustomattributes",
+                                            serializers.IssueCustomAttributeExportSerializer)
+
         if "roles" in data:
             service.store_roles(project_serialized.object, data)
 
@@ -152,7 +165,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         response_data = project_serialized.data
         response_data['id'] = project_serialized.object.id
         headers = self.get_success_headers(response_data)
-        return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
+        return response.Created(response_data, headers=headers)
 
     @list_route(methods=["POST"])
     @method_decorator(atomic)
@@ -181,12 +194,11 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         if settings.CELERY_ENABLED:
             task = tasks.load_project_dump.delay(request.user, dump)
-            return Response({"import_id": task.id}, status=status.HTTP_202_ACCEPTED)
+            return response.Accepted({"import_id": task.id})
 
         project = dump_service.dict_to_project(dump, request.user.email)
         response_data = ProjectSerializer(project).data
-        return Response(response_data, status=status.HTTP_201_CREATED)
-
+        return response.Created(response_data)
 
     @detail_route(methods=['post'])
     @method_decorator(atomic)
@@ -195,7 +207,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         self.check_permissions(request, 'import_item', project)
 
         signals.pre_save.disconnect(sender=Issue,
-            dispatch_uid="set_finished_date_when_edit_issue")
+                                    dispatch_uid="set_finished_date_when_edit_issue")
 
         issue = service.store_issue(project, request.DATA.copy())
 
@@ -204,7 +216,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             raise exc.BadRequest(errors)
 
         headers = self.get_success_headers(issue.data)
-        return Response(issue.data, status=status.HTTP_201_CREATED, headers=headers)
+        return response.Created(issue.data, headers=headers)
 
     @detail_route(methods=['post'])
     @method_decorator(atomic)
@@ -219,7 +231,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             raise exc.BadRequest(errors)
 
         headers = self.get_success_headers(task.data)
-        return Response(task.data, status=status.HTTP_201_CREATED, headers=headers)
+        return response.Created(task.data, headers=headers)
 
     @detail_route(methods=['post'])
     @method_decorator(atomic)
@@ -234,7 +246,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             raise exc.BadRequest(errors)
 
         headers = self.get_success_headers(us.data)
-        return Response(us.data, status=status.HTTP_201_CREATED, headers=headers)
+        return response.Created(us.data, headers=headers)
 
     @detail_route(methods=['post'])
     @method_decorator(atomic)
@@ -249,7 +261,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             raise exc.BadRequest(errors)
 
         headers = self.get_success_headers(milestone.data)
-        return Response(milestone.data, status=status.HTTP_201_CREATED, headers=headers)
+        return response.Created(milestone.data, headers=headers)
 
     @detail_route(methods=['post'])
     @method_decorator(atomic)
@@ -264,7 +276,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             raise exc.BadRequest(errors)
 
         headers = self.get_success_headers(wiki_page.data)
-        return Response(wiki_page.data, status=status.HTTP_201_CREATED, headers=headers)
+        return response.Created(wiki_page.data, headers=headers)
 
     @detail_route(methods=['post'])
     @method_decorator(atomic)
@@ -279,4 +291,4 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             raise exc.BadRequest(errors)
 
         headers = self.get_success_headers(wiki_link.data)
-        return Response(wiki_link.data, status=status.HTTP_201_CREATED, headers=headers)
+        return response.Created(wiki_link.data, headers=headers)

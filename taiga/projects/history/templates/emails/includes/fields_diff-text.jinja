@@ -6,16 +6,20 @@
     "backlog_order",
     "kanban_order",
     "taskboard_order",
-    "us_order"
+    "us_order",
+    "blocked_note_diff",
+    "blocked_note_html",
+    "custom_attributes"
 ] %}
 {% for field_name, values in changed_fields.items() %}
     {% if field_name not in excluded_fields %}
-    - {{ verbose_name(object, field_name) }}:
+    - {{ verbose_name(obj_class, field_name) }}:
     {# POINTS #}
         {% if field_name == "points" %}
             {% for role, points in values.items() %}
        * {{ role }} {{ _("to:") }} {{ points.1 }} {{ _("from:") }} {{ points.0 }}
             {% endfor %}
+
     {# ATTACHMENTS #}
         {% elif field_name == "attachments" %}
             {% if values.new %}
@@ -38,20 +42,50 @@
             - {{ att.filename }}
                 {% endfor %}
             {% endif %}
+
     {# TAGS AND WATCHERS #}
         {% elif field_name in ["tags", "watchers"] %}
-    * {{ _("to:") }} {{ ', '.join(values.1) }}
-            {% if values.0 %}
-    * {{ _("from:") }} {{ ', '.join(values.0) }}
+            {% set values_from = values.0 or [] %}
+            {% set values_to = values.1 or [] %}
+            {% set values_added = lists_diff(values_to, values_from) %}
+            {% set values_removed = lists_diff(values_from, values_to) %}
+
+            {% if values_added %}
+            * {{ _("added:") }} {{ ', '.join(values_added) }}
             {% endif %}
+            {% if values_removed %}
+            * {{ _("removed:") }} {{ ', '.join(values_removed) }}
+            {% endif %}
+
     {# * #}
         {% else %}
-            {% if values.1 != None and values.1 != "" %}
-    * {{ _("to:") }} {{ values.1|linebreaksbr }}
-            {% endif %}
-            {% if values.0 != None and values.0 != "" %}
-    * {{ _("from:") }} {{ values.0|linebreaksbr }}
-            {% endif %}
+        * {{ _("From:") }} {{ values.0 }}
+        * {{ _("To:") }} {{ values.1 }}
         {% endif %}
+
+    {% elif field_name == "custom_attributes" %}
+    {# CUSTOM ATTRIBUTES #}
+        {% elif field_name == "attachments" %}
+            {% if values.new %}
+                {% for attr in values['new']%}
+    - {{ attr.name }}:
+        * {{ attr.value }}
+                {% endfor %}
+            {% endif %}
+
+            {% if values.changed %}
+                {% for attr in values['changed'] %}
+    - {{ attr.name }}:
+        * {{ _("From:") }} {{ attr.changes.value.0 }}
+        * {{ _("To:") }} {{ attr.changes.value.1 }}
+                {% endfor %}
+            {% endif %}
+
+            {% if values.deleted %}
+                {% for attr in values['deleted']%}
+    - {{ attr.name }}: {{ _("-deleted-") }}
+        * {{ attr.value }}
+                {% endfor %}
+            {% endif %}
     {% endif %}
 {% endfor %}

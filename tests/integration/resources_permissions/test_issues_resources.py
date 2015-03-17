@@ -1,3 +1,5 @@
+import uuid
+
 from django.core.urlresolvers import reverse
 
 from taiga.projects.issues.serializers import IssueSerializer
@@ -36,20 +38,23 @@ def data():
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
-                                        owner=m.project_owner)
+                                        owner=m.project_owner,
+                                        issues_csv_uuid=uuid.uuid4().hex)
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
-                                          owner=m.project_owner)
+                                          owner=m.project_owner,
+                                          issues_csv_uuid=uuid.uuid4().hex)
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
                                           public_permissions=[],
-                                          owner=m.project_owner)
+                                          owner=m.project_owner,
+                                          issues_csv_uuid=uuid.uuid4().hex)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
-                                          user=m.project_member_with_perms,
-                                          role__project=m.public_project,
-                                          role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+                                              user=m.project_member_with_perms,
+                                              role__project=m.public_project,
+                                              role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     m.private_membership1 = f.MembershipFactory(project=m.private_project1,
                                                 user=m.project_member_with_perms,
                                                 role__project=m.private_project1,
@@ -135,7 +140,7 @@ def test_issue_update(client, data):
         data.project_owner
     ]
 
-    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version") as _validate_and_update_version_mock:
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
             issue_data = IssueSerializer(data.public_issue).data
             issue_data["subject"] = "test"
             issue_data = json.dumps(issue_data)
@@ -205,6 +210,25 @@ def test_issue_list(client, data):
     assert response.status_code == 200
 
 
+def test_issue_list_filter_by_project_ok(client, data):
+    url = "{}?project={}".format(reverse("issues-list"), data.public_project.pk)
+
+    client.login(data.project_owner)
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert len(response.data) == 1
+
+
+def test_issue_list_filter_by_project_error(client, data):
+    url = "{}?project={}".format(reverse("issues-list"), "-ERROR-")
+
+    client.login(data.project_owner)
+    response = client.get(url)
+
+    assert response.status_code == 400
+
+
 def test_issue_create(client, data):
     url = reverse('issues-list')
 
@@ -266,7 +290,7 @@ def test_issue_patch(client, data):
         data.project_owner
     ]
 
-    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version") as _validate_and_update_version_mock:
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
             patch_data = json.dumps({"subject": "test", "version": data.public_issue.version})
             results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
             assert results == [401, 403, 403, 200, 200]
@@ -393,6 +417,7 @@ def test_issue_voters_list(client, data):
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
 
+
 def test_issue_voters_retrieve(client, data):
     add_vote(data.public_issue, data.project_owner)
     public_url = reverse('issue-voters-detail', kwargs={"issue_id": data.public_issue.pk, "pk": data.project_owner.pk})
@@ -417,3 +442,27 @@ def test_issue_voters_retrieve(client, data):
 
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+
+
+def test_issues_csv(client, data):
+    url = reverse('issues-csv')
+    csv_public_uuid = data.public_project.issues_csv_uuid
+    csv_private1_uuid = data.private_project1.issues_csv_uuid
+    csv_private2_uuid = data.private_project1.issues_csv_uuid
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_public_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private1_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private2_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]

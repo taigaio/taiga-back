@@ -14,11 +14,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rest_framework.response import Response
 from django.utils.translation import ugettext_lazy as _
 
-from taiga.base.api.viewsets import GenericViewSet
 from taiga.base import exceptions as exc
+from taiga.base import response
+from taiga.base.api.viewsets import GenericViewSet
 from taiga.base.utils import json
 from taiga.projects.models import Project
 
@@ -75,4 +75,4 @@ class BaseWebhookApiViewSet(GenericViewSet):
             except ActionSyntaxException as e:
                 raise exc.BadRequest(e)
 
-        return Response({})
+        return response.NoContent()

@@ -15,15 +15,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.apps import apps
-from django.shortcuts import get_object_or_404
-
-from rest_framework.response import Response
 
 from taiga.base import exceptions as exc
+from taiga.base import response
 from taiga.base.api import viewsets
-from .serializers import ResolverSerializer
+from taiga.base.api.utils import get_object_or_404
 from taiga.permissions.service import user_has_perm
 
+from .serializers import ResolverSerializer
 from . import permissions
 
 
@@ -42,19 +41,22 @@ class ResolverViewSet(viewsets.ViewSet):
 
         self.check_permissions(request, "list", project)
 
-        result = {
-            "project": project.pk
-        }
+        result = {"project": project.pk}
 
         if data["us"] and user_has_perm(request.user, "view_us", project):
-            result["us"] = get_object_or_404(project.user_stories.all(), ref=data["us"]).pk
+            result["us"] = get_object_or_404(project.user_stories.all(),
+                                             ref=data["us"]).pk
         if data["task"] and user_has_perm(request.user, "view_tasks", project):
-            result["task"] = get_object_or_404(project.tasks.all(), ref=data["task"]).pk
+            result["task"] = get_object_or_404(project.tasks.all(),
+                                               ref=data["task"]).pk
         if data["issue"] and user_has_perm(request.user, "view_issues", project):
-            result["issue"] = get_object_or_404(project.issues.all(), ref=data["issue"]).pk
+            result["issue"] = get_object_or_404(project.issues.all(),
+                                                ref=data["issue"]).pk
         if data["milestone"] and user_has_perm(request.user, "view_milestones", project):
-            result["milestone"] = get_object_or_404(project.milestones.all(), slug=data["milestone"]).pk
+            result["milestone"] = get_object_or_404(project.milestones.all(),
+                                                    slug=data["milestone"]).pk
         if data["wikipage"] and user_has_perm(request.user, "view_wiki_pages", project):
-            result["wikipage"] = get_object_or_404(project.wiki_pages.all(), slug=data["wikipage"]).pk
+            result["wikipage"] = get_object_or_404(project.wiki_pages.all(),
+                                                   slug=data["wikipage"]).pk
 
-        return Response(result)
+        return response.Ok(result)

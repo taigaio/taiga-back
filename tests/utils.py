@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import functools
 
 from django.db.models import signals
 from taiga.base.utils import json
@@ -60,6 +59,7 @@ def _helper_test_http_method_responses(client, method, url, data, users, after_e
             after_each_request()
     return results
 
+
 def helper_test_http_method(client, method, url, data, users, after_each_request=None,
                             content_type="application/json"):
     responses = _helper_test_http_method_responses(client, method, url, data, users, after_each_request,
@@ -70,6 +70,7 @@ def helper_test_http_method(client, method, url, data, users, after_each_request
 def helper_test_http_method_and_count(client, method, url, data, users, after_each_request=None):
     responses = _helper_test_http_method_responses(client, method, url, data, users, after_each_request)
     return list(map(lambda r: (r.status_code, len(json.loads(r.content.decode('utf-8')))), responses))
+
 
 def helper_test_http_method_and_keys(client, method, url, data, users, after_each_request=None):
     responses = _helper_test_http_method_responses(client, method, url, data, users, after_each_request)

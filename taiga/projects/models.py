@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import itertools
+import uuid
+
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -28,7 +30,7 @@ from django.utils import timezone
 
 from django_pgjson.fields import JsonField
 from djorm_pgarray.fields import TextArrayField
-from taiga.permissions.permissions import ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.permissions.permissions import ANON_PERMISSIONS, MEMBERS_PERMISSIONS
 
 from taiga.base.tags import TaggedMixin
 from taiga.base.utils.slug import slugify_uniquely
@@ -159,9 +161,18 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     public_permissions = TextArrayField(blank=True, null=True,
                                         default=[],
                                         verbose_name=_("user permissions"),
-                                        choices=USER_PERMISSIONS)
-    is_private = models.BooleanField(default=False, null=False, blank=True,
+                                        choices=MEMBERS_PERMISSIONS)
+    is_private = models.BooleanField(default=True, null=False, blank=True,
                                      verbose_name=_("is private"))
+
+    userstories_csv_uuid = models.CharField(max_length=32, editable=False,
+                                            null=True, blank=True,
+                                            default=None, db_index=True)
+    tasks_csv_uuid = models.CharField(max_length=32, editable=False, null=True,
+                                      blank=True, default=None, db_index=True)
+    issues_csv_uuid = models.CharField(max_length=32, editable=False,
+                                       null=True, blank=True, default=None,
+                                       db_index=True)
 
     tags_colors = TextArrayField(dimension=2, null=False, blank=True, verbose_name=_("tags colors"), default=[])
     _importing = None

@@ -14,9 +14,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from contextlib import suppress
+
 from functools import partial
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
+
 from taiga.base.utils.iterators import as_tuple
 from taiga.base.utils.iterators import as_dict
 from taiga.mdrender.service import render as mdrender
@@ -47,6 +51,16 @@ def _get_users_values(ids:set) -> dict:
 
     for user in qs:
         yield str(user.pk), user.get_full_name()
+
+
+@as_dict
+def _get_user_story_values(ids:set) -> dict:
+    userstory_model = apps.get_model("userstories", "UserStory")
+    ids = filter(lambda x: x is not None, ids)
+    qs = userstory_model.objects.filter(pk__in=tuple(ids))
+
+    for userstory in qs:
+        yield str(userstory.pk), "#{} {}".format(userstory.ref, userstory.subject)
 
 
 _get_us_status_values = partial(_get_generic_values, typename="projects.userstorystatus")
@@ -137,6 +151,8 @@ def task_values(diff):
         values["status"] = _get_task_status_values(diff["status"])
     if "milestone" in diff:
         values["milestone"] = _get_milestone_values(diff["milestone"])
+    if "user_story" in diff:
+        values["user_story"] = _get_user_story_values(diff["user_story"])
 
     return values
 
@@ -167,6 +183,42 @@ def extract_attachments(obj) -> list:
                "is_deprecated": attach.is_deprecated,
                "description": attach.description,
                "order": attach.order}
+
+
+@as_tuple
+def extract_user_story_custom_attributes(obj) -> list:
+    with suppress(ObjectDoesNotExist):
+        custom_attributes_values =  obj.custom_attributes_values.attributes_values
+        for attr in obj.project.userstorycustomattributes.all():
+            with suppress(KeyError):
+                value = custom_attributes_values[str(attr.id)]
+                yield {"id": attr.id,
+                       "name": attr.name,
+                       "value": value}
+
+
+@as_tuple
+def extract_task_custom_attributes(obj) -> list:
+    with suppress(ObjectDoesNotExist):
+        custom_attributes_values =  obj.custom_attributes_values.attributes_values
+        for attr in obj.project.taskcustomattributes.all():
+            with suppress(KeyError):
+                value = custom_attributes_values[str(attr.id)]
+                yield {"id": attr.id,
+                       "name": attr.name,
+                       "value": value}
+
+
+@as_tuple
+def extract_issue_custom_attributes(obj) -> list:
+    with suppress(ObjectDoesNotExist):
+        custom_attributes_values =  obj.custom_attributes_values.attributes_values
+        for attr in obj.project.issuecustomattributes.all():
+            with suppress(KeyError):
+                value = custom_attributes_values[str(attr.id)]
+                yield {"id": attr.id,
+                       "name": attr.name,
+                       "value": value}
 
 
 def project_freezer(project) -> dict:
@@ -228,6 +280,10 @@ def userstory_freezer(us) -> dict:
         "tags": us.tags,
         "points": points,
         "from_issue": us.generated_from_issue_id,
+        "is_blocked": us.is_blocked,
+        "blocked_note": us.blocked_note,
+        "blocked_note_html": mdrender(us.project, us.blocked_note),
+        "custom_attributes": extract_user_story_custom_attributes(us),
     }
 
     return snapshot
@@ -249,6 +305,10 @@ def issue_freezer(issue) -> dict:
         "watchers": [x.pk for x in issue.watchers.all()],
         "attachments": extract_attachments(issue),
         "tags": issue.tags,
+        "is_blocked": issue.is_blocked,
+        "blocked_note": issue.blocked_note,
+        "blocked_note_html": mdrender(issue.project, issue.blocked_note),
+        "custom_attributes": extract_issue_custom_attributes(issue),
     }
 
     return snapshot
@@ -271,6 +331,10 @@ def task_freezer(task) -> dict:
         "tags": task.tags,
         "user_story": task.user_story_id,
         "is_iocaine": task.is_iocaine,
+        "is_blocked": task.is_blocked,
+        "blocked_note": task.blocked_note,
+        "blocked_note_html": mdrender(task.project, task.blocked_note),
+        "custom_attributes": extract_task_custom_attributes(task),
     }
 
     return snapshot

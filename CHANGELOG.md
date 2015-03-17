@@ -1,5 +1,20 @@
 # Changelog #
 
+
+## 1.6.0 Abies Bifolia (2015-03-17)
+
+
+### Features
+- Added custom fields per project for user stories, tasks and issues.
+- Support of export to CSV user stories, tasks and issues.
+- Allow public projects.
+
+### Misc
+- New contrib plugin for HipChat (by Δndrea Stagi).
+- Lots of small and not so small bugfixes.
+- Updated some requirements.
+
+
 ## 1.5.0 Betula Pendula - FOSDEM 2015 (2015-01-29)
 
 ### Features

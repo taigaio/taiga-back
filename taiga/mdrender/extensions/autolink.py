@@ -36,7 +36,6 @@ class AutolinkExtension(markdown.Extension):
     * GitHub only accepts URLs with protocols or "www.", whereas Gruber's regex
       accepts things like "foo.com/bar".
     """
-
     def extendMarkdown(self, md, md_globals):
         url_re = r'(?i)\b((?:(?:ftp|https?)://|www\d{0,3}[.])([^\s<>]+))'
         autolink = AutolinkPattern(url_re, md)

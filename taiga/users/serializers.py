@@ -16,39 +16,52 @@
 
 from django.core import validators
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
+from taiga.base.serializers import Serializer
+from taiga.base.serializers import ModelSerializer
+from taiga.base.serializers import PgArrayField
 
-from .models import User
+from .models import User, Role
 from .services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
 
 import re
 
 
-class UserSerializer(serializers.ModelSerializer):
+######################################################
+## User
+######################################################
+
+class UserSerializer(ModelSerializer):
     full_name_display = serializers.SerializerMethodField("get_full_name_display")
     photo = serializers.SerializerMethodField("get_photo")
     big_photo = serializers.SerializerMethodField("get_big_photo")
 
     class Meta:
         model = User
-        fields = ("id", "username", "full_name", "full_name_display", "email",
-                  "github_id", "color", "bio", "default_language",
+        # IMPORTANT: Maintain the UserAdminSerializer Meta up to date
+        # with this info (including there the email)
+        fields = ("id", "username", "full_name", "full_name_display",
+                  "color", "bio", "default_language",
                   "default_timezone", "is_active", "photo", "big_photo")
-        read_only_fields = ("id", "email", "github_id")
+        read_only_fields = ("id",)
 
     def validate_username(self, attrs, source):
         value = attrs[source]
-        validator = validators.RegexValidator(re.compile('^[\w.-]+$'), "invalid username", "invalid")
+        validator = validators.RegexValidator(re.compile('^[\w.-]+$'), _("invalid username"),
+                                              _("invalid"))
 
         try:
             validator(value)
         except ValidationError:
-            raise serializers.ValidationError("Required. 255 characters or fewer. Letters, numbers "
-                                              "and /./-/_ characters'")
+            raise serializers.ValidationError(_("Required. 255 characters or fewer. Letters, "
+                                                "numbers and /./-/_ characters'"))
 
-        if self.object and self.object.username != value and User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("Invalid username. Try with a different one.")
+        if (self.object and
+                self.object.username != value and
+                User.objects.filter(username=value).exists()):
+            raise serializers.ValidationError(_("Invalid username. Try with a different one."))
 
         return attrs
 
@@ -62,14 +75,47 @@ class UserSerializer(serializers.ModelSerializer):
         return get_big_photo_or_gravatar_url(user)
 
 
-class RecoverySerializer(serializers.Serializer):
+class UserAdminSerializer(UserSerializer):
+    class Meta:
+        model = User
+        # IMPORTANT: Maintain the UserSerializer Meta up to date
+        # with this info (including here the email)
+        fields = ("id", "username", "full_name", "full_name_display", "email",
+                  "color", "bio", "default_language",
+                  "default_timezone", "is_active", "photo", "big_photo")
+        read_only_fields = ("id", "email")
+
+
+class RecoverySerializer(Serializer):
     token = serializers.CharField(max_length=200)
     password = serializers.CharField(min_length=6)
 
 
-class ChangeEmailSerializer(serializers.Serializer):
+class ChangeEmailSerializer(Serializer):
     email_token = serializers.CharField(max_length=200)
 
 
-class CancelAccountSerializer(serializers.Serializer):
+class CancelAccountSerializer(Serializer):
     cancel_token = serializers.CharField(max_length=200)
+
+
+######################################################
+## Role
+######################################################
+
+class RoleSerializer(ModelSerializer):
+    members_count = serializers.SerializerMethodField("get_members_count")
+    permissions = PgArrayField(required=False)
+
+    class Meta:
+        model = Role
+        fields = ('id', 'name', 'permissions', 'computable', 'project', 'order', 'members_count')
+
+    def get_members_count(self, obj):
+        return obj.memberships.count()
+
+
+class ProjectRoleSerializer(ModelSerializer):
+    class Meta:
+        model = Role
+        fields = ('id', 'name', 'slug', 'order', 'computable')

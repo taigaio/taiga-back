@@ -1,10 +1,8 @@
 import pytest
 
 from django.core.urlresolvers import reverse
-from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from taiga.projects.attachments.serializers import AttachmentSerializer
 from .. import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -15,7 +13,7 @@ def test_create_user_story_attachment_without_file(client):
     Bug test "Don't create attachments without attached_file"
     """
     us = f.UserStoryFactory.create()
-    membership = f.MembershipFactory(project=us.project, user=us.owner, is_owner=True)
+    f.MembershipFactory(project=us.project, user=us.owner, is_owner=True)
     attachment_data = {
         "description": "test",
         "attached_file": None,
@@ -32,7 +30,7 @@ def test_create_user_story_attachment_without_file(client):
 def test_create_attachment_on_wrong_project(client):
     issue1 = f.create_issue()
     issue2 = f.create_issue(owner=issue1.owner)
-    membership = f.MembershipFactory(project=issue1.project, user=issue1.owner, is_owner=True)
+    f.MembershipFactory(project=issue1.project, user=issue1.owner, is_owner=True)
 
     assert issue1.owner == issue2.owner
     assert issue1.project.owner == issue2.project.owner

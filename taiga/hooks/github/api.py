@@ -14,13 +14,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rest_framework.response import Response
-from django.utils.translation import ugettext_lazy as _
-
-from taiga.base.api.viewsets import GenericViewSet
-from taiga.base import exceptions as exc
-from taiga.base.utils import json
-from taiga.projects.models import Project
 from taiga.hooks.api import BaseWebhookApiViewSet
 
 from . import event_hooks
@@ -51,8 +44,9 @@ class GitHubViewSet(BaseWebhookApiViewSet):
         if project.modules_config.config is None:
             return False
 
-        secret = bytes(project.modules_config.config.get("github", {}).get("secret", "").encode("utf-8"))
-        mac = hmac.new(secret, msg=request.body,digestmod=hashlib.sha1)
+        secret = project.modules_config.config.get("github", {}).get("secret", "")
+        secret = bytes(secret.encode("utf-8"))
+        mac = hmac.new(secret, msg=request.body, digestmod=hashlib.sha1)
         return hmac.compare_digest(mac.hexdigest(), signature)
 
     def _get_event_name(self, request):

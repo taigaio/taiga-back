@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils import baseconv
 from django.template.defaultfilters import slugify as django_slugify
 
 import time

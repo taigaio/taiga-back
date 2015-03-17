@@ -16,6 +16,7 @@
 
 from taiga.base import filters
 
+
 class StorageEntriesFilterBackend(filters.FilterBackend):
     def filter_queryset(self, request, queryset, view):
         queryset = super().filter_queryset(request, queryset, view)

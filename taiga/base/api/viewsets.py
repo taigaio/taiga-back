@@ -124,6 +124,7 @@ class GenericViewSet(ViewSetMixin, generics.GenericAPIView):
     """
     pass
 
+
 class ReadOnlyListViewSet(pagination.HeadersPaginationMixin,
                           pagination.ConditionalPaginationMixin,
                           GenericViewSet):
@@ -131,6 +132,7 @@ class ReadOnlyListViewSet(pagination.HeadersPaginationMixin,
     A viewset that provides default `list()` action.
     """
     pass
+
 
 class ReadOnlyModelViewSet(mixins.RetrieveModelMixin,
                            mixins.ListModelMixin,
@@ -165,4 +167,9 @@ class ModelListViewSet(pagination.HeadersPaginationMixin,
                        mixins.RetrieveModelMixin,
                        mixins.ListModelMixin,
                        GenericViewSet):
+    pass
+
+class ModelUpdateRetrieveViewSet(mixins.UpdateModelMixin,
+                                 mixins.RetrieveModelMixin,
+                                 GenericViewSet):
     pass

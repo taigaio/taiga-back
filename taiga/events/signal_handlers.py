@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db.models import signals
+from django.db import connection
+
 from django.dispatch import receiver
 
 from taiga.base.utils.db import get_typename_for_model_instance
@@ -33,10 +35,12 @@ def on_save_any_model(sender, instance, created, **kwargs):
 
     sesionid = mw.get_current_session_id()
 
+    type = "change"
     if created:
-        events.emit_event_for_model(instance, sessionid=sesionid, type="create")
-    else:
-        events.emit_event_for_model(instance, sessionid=sesionid, type="change")
+        type = "create"
+
+    emit_event = lambda: events.emit_event_for_model(instance, sessionid=sesionid, type=type)
+    connection.on_commit(emit_event)
 
 
 def on_delete_any_model(sender, instance, **kwargs):
@@ -48,4 +52,5 @@ def on_delete_any_model(sender, instance, **kwargs):
         return
 
     sesionid = mw.get_current_session_id()
-    events.emit_event_for_model(instance, sessionid=sesionid, type="delete")
+    emit_event = lambda: events.emit_event_for_model(instance, sessionid=sesionid, type="delete")
+    connection.on_commit(emit_event)

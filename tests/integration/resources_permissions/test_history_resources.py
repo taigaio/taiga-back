@@ -41,9 +41,9 @@ def data():
                                           owner=m.project_owner)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
-                                          user=m.project_member_with_perms,
-                                          role__project=m.public_project,
-                                          role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+                                              user=m.project_member_with_perms,
+                                              role__project=m.public_project,
+                                              role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     m.private_membership1 = f.MembershipFactory(project=m.private_project1,
                                                 user=m.project_member_with_perms,
                                                 role__project=m.private_project1,
@@ -75,6 +75,7 @@ def data():
                         is_owner=True)
     return m
 
+
 @pytest.fixture
 def data_us(data):
     m = type("Models", (object,), {})
@@ -82,6 +83,7 @@ def data_us(data):
     m.private_user_story1 = f.UserStoryFactory(project=data.private_project1, ref=5)
     m.private_user_story2 = f.UserStoryFactory(project=data.private_project2, ref=9)
     return m
+
 
 @pytest.fixture
 def data_task(data):
@@ -91,6 +93,7 @@ def data_task(data):
     m.private_task2 = f.TaskFactory(project=data.private_project2, ref=10)
     return m
 
+
 @pytest.fixture
 def data_issue(data):
     m = type("Models", (object,), {})
@@ -98,6 +101,7 @@ def data_issue(data):
     m.private_issue1 = f.IssueFactory(project=data.private_project1, ref=7)
     m.private_issue2 = f.IssueFactory(project=data.private_project2, ref=11)
     return m
+
 
 @pytest.fixture
 def data_wiki(data):

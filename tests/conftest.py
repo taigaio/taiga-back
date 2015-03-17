@@ -34,4 +34,3 @@ def pytest_runtest_setup(item):
 
 def pytest_configure(config):
     django.setup()
-

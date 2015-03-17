@@ -17,7 +17,7 @@
 import warnings
 
 
-## Rest Framework 2.4 backport some decorators.
+# Rest Framework 2.4 backport some decorators.
 
 def detail_route(methods=['get'], **kwargs):
     """
@@ -51,12 +51,14 @@ def link(**kwargs):
     """
     msg = 'link is pending deprecation. Use detail_route instead.'
     warnings.warn(msg, PendingDeprecationWarning, stacklevel=2)
+
     def decorator(func):
         func.bind_to_methods = ['get']
         func.detail = True
         func.permission_classes = kwargs.get('permission_classes', [])
         func.kwargs = kwargs
         return func
+
     return decorator
 
 
@@ -66,10 +68,12 @@ def action(methods=['post'], **kwargs):
     """
     msg = 'action is pending deprecation. Use detail_route instead.'
     warnings.warn(msg, PendingDeprecationWarning, stacklevel=2)
+
     def decorator(func):
         func.bind_to_methods = methods
         func.detail = True
         func.permission_classes = kwargs.get('permission_classes', [])
         func.kwargs = kwargs
         return func
+
     return decorator

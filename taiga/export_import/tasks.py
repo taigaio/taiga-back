@@ -53,7 +53,6 @@ def dump_project(self, user, project):
         email.send()
         return
 
-
     deletion_date = timezone.now() + datetime.timedelta(seconds=settings.EXPORTS_TTL)
     ctx = {
         "url": url,

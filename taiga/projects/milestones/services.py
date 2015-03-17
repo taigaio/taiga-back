@@ -21,7 +21,8 @@ from . import models
 
 
 def calculate_milestone_is_closed(milestone):
-    return (all([task.status.is_closed for task in milestone.tasks.all()]) and
+    return (milestone.user_stories.all().count() > 0 and
+            all([task.status.is_closed for task in milestone.tasks.all()]) and
             all([user_story.is_closed for user_story in milestone.user_stories.all()]))
 
 

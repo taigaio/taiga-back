@@ -1,10 +1,9 @@
 # Taiga Backend #
 
 ![Kaleidos Project](http://kaleidos.net/static/img/badge.png "Kaleidos Project")
-
-[![Travis Badge](https://img.shields.io/travis/taigaio/taiga-back.svg?style=flat)](https://travis-ci.org/taigaio/taiga-back "Travis Badge")
-
-[![Coveralls](http://img.shields.io/coveralls/taigaio/taiga-back.svg?style=flat)](https://coveralls.io/r/taigaio/taiga-back?branch=master "Coveralls")
+[![Managed with Taiga.io](https://taiga.io/media/support/attachments/article-22/banner-gh.png)](https://taiga.io "Managed with Taiga.io")
+[![Build Status](https://travis-ci.org/taigaio/taiga-back.svg?branch=master)](https://travis-ci.org/taigaio/taiga-back "Build Status")
+[![Coverage Status](https://coveralls.io/repos/taigaio/taiga-back/badge.svg?branch=master)](https://coveralls.io/r/taigaio/taiga-back?branch=master "Coverage Status")
 
 ## Setup development environment ##
 
@@ -19,7 +18,7 @@ python manage.py loaddata initial_role
 python manage.py sample_data
 ```
 
-Taiga only runs with python 3.4+
+**IMPORTANT: Taiga only runs with python 3.4+**
 
 Initial auth data: admin/123123
 

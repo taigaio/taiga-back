@@ -1,8 +1,5 @@
 import pytest
 
-from django.conf import settings
-from django.core.urlresolvers import reverse
-
 from .. import factories as f
 from tests.utils import disconnect_signals, reconnect_signals
 

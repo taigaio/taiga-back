@@ -24,7 +24,6 @@ not uses clasess and uses simple functions.
 """
 
 from django.apps import apps
-from django.db.models import Q
 from django.db import transaction as tx
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
@@ -32,12 +31,24 @@ from django.utils.translation import ugettext as _
 from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
 
 from taiga.base import exceptions as exc
-from taiga.users.serializers import UserSerializer
+from taiga.users.serializers import UserAdminSerializer
 from taiga.users.services import get_and_validate_user
-from taiga.base.utils.slug import slugify_uniquely
 
 from .tokens import get_token_for_user
 from .signals import user_registered as user_registered_signal
+
+auth_plugins = {}
+
+
+def register_auth_plugin(name, login_func):
+    auth_plugins[name] = {
+        "login_func": login_func,
+    }
+
+
+def get_auth_plugins():
+    return auth_plugins
+
 
 def send_register_email(user) -> bool:
     """
@@ -169,54 +180,25 @@ def private_register_for_new_user(token:str, username:str, email:str,
     return user
 
 
-@tx.atomic
-def github_register(username:str, email:str, full_name:str, github_id:int, bio:str, token:str=None):
-    """
-    Register a new user from github.
-
-    This can raise `exc.IntegrityError` exceptions in
-    case of conflics found.
-
-    :returns: User
-    """
-    user_model = apps.get_model("users", "User")
-
-    try:
-        # Github user association exist?
-        user = user_model.objects.get(github_id=github_id)
-    except user_model.DoesNotExist:
-        try:
-            # Is a user with the same email as the github user?
-            user = user_model.objects.get(email=email)
-            user.github_id = github_id
-            user.save(update_fields=["github_id"])
-        except user_model.DoesNotExist:
-            # Create a new user
-            username_unique = slugify_uniquely(username, user_model, slugfield="username")
-            user = user_model.objects.create(email=email,
-                                             username=username_unique,
-                                             github_id=github_id,
-                                             full_name=full_name,
-                                             bio=bio)
-
-            send_register_email(user)
-            user_registered_signal.send(sender=user.__class__, user=user)
-
-    if token:
-        membership = get_membership_by_token(token)
-        membership.user = user
-        membership.save(update_fields=["user"])
-
-    return user
-
-
 def make_auth_response_data(user) -> dict:
     """
     Given a domain and user, creates data structure
     using python dict containing a representation
     of the logged user.
     """
-    serializer = UserSerializer(user)
+    serializer = UserAdminSerializer(user)
     data = dict(serializer.data)
     data["auth_token"] = get_token_for_user(user, "authentication")
     return data
+
+
+def normal_login_func(request):
+    username = request.DATA.get('username', None)
+    password = request.DATA.get('password', None)
+
+    user = get_and_validate_user(username=username, password=password)
+    data = make_auth_response_data(user)
+    return data
+
+
+register_auth_plugin("normal", normal_login_func)

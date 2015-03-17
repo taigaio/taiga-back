@@ -15,15 +15,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework import status
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
+from taiga.base import response
 from taiga.base.api import ModelCrudViewSet
+from taiga.base.api.utils import get_object_or_404
 from taiga.base.decorators import list_route
 from taiga.projects.models import Project
 from taiga.mdrender.service import render as mdrender
@@ -58,17 +57,17 @@ class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
         project_id = request.DATA.get("project_id", None)
 
         if not content:
-            raise exc.WrongArguments({"content": "No content parameter"})
+            raise exc.WrongArguments({"content": _("No content parameter")})
 
         if not project_id:
-            raise exc.WrongArguments({"project_id": "No project_id parameter"})
+            raise exc.WrongArguments({"project_id": _("No project_id parameter")})
 
         project = get_object_or_404(Project, pk=project_id)
 
         self.check_permissions(request, "render", project)
 
         data = mdrender(project, content)
-        return Response({"data": data})
+        return response.Ok({"data": data})
 
     def pre_save(self, obj):
         if not obj.owner:

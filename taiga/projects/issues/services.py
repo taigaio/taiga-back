@@ -14,6 +14,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import io
+import csv
+
 from taiga.base.utils import db, text
 
 from . import models
@@ -58,3 +61,42 @@ def update_issues_order_in_bulk(bulk_data):
         issue_ids.append(issue_id)
         new_order_values.append({"order": new_order_value})
     db.update_in_bulk_with_ids(issue_ids, new_order_values, model=models.Issue)
+
+
+def issues_to_csv(project, queryset):
+    csv_data = io.StringIO()
+    fieldnames = ["ref", "subject", "description", "milestone", "owner",
+                  "owner_full_name", "assigned_to", "assigned_to_full_name",
+                  "status", "severity", "priority", "type", "is_closed",
+                  "attachments", "external_reference"]
+    for custom_attr in project.issuecustomattributes.all():
+        fieldnames.append(custom_attr.name)
+
+    writer = csv.DictWriter(csv_data, fieldnames=fieldnames)
+    writer.writeheader()
+    for issue in queryset:
+        issue_data = {
+            "ref": issue.ref,
+            "subject": issue.subject,
+            "description": issue.description,
+            "milestone": issue.milestone.name if issue.milestone else None,
+            "owner": issue.owner.username,
+            "owner_full_name": issue.owner.get_full_name(),
+            "assigned_to": issue.assigned_to.username if issue.assigned_to else None,
+            "assigned_to_full_name": issue.assigned_to.get_full_name() if issue.assigned_to else None,
+            "status": issue.status.name,
+            "severity": issue.severity.name,
+            "priority": issue.priority.name,
+            "type": issue.type.name,
+            "is_closed": issue.is_closed,
+            "attachments": issue.attachments.count(),
+            "external_reference": issue.external_reference,
+        }
+
+        for custom_attr in project.issuecustomattributes.all():
+            value = issue.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
+            issue_data[custom_attr.name] = value
+
+        writer.writerow(issue_data)
+
+    return csv_data

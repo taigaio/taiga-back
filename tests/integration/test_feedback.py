@@ -1,7 +1,6 @@
 from django.core.urlresolvers import reverse
 
 from tests import factories as f
-from tests.utils import helper_test_http_method
 
 from taiga.base.utils import json
 

@@ -1,4 +1,7 @@
 import copy
+import uuid
+import csv
+
 from unittest import mock
 from django.core.urlresolvers import reverse
 
@@ -125,16 +128,17 @@ def test_update_userstory_points(client):
     role1 = f.RoleFactory.create(project=project)
     role2 = f.RoleFactory.create(project=project)
 
-    member = f.MembershipFactory.create(project=project, user=user1, role=role1, is_owner=True)
-    member = f.MembershipFactory.create(project=project, user=user2, role=role2)
+    f.MembershipFactory.create(project=project, user=user1, role=role1, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user2, role=role2)
 
-    points1 = f.PointsFactory.create(project=project, value=None)
-    points2 = f.PointsFactory.create(project=project, value=1)
+    f.PointsFactory.create(project=project, value=None)
+    f.PointsFactory.create(project=project, value=1)
     points3 = f.PointsFactory.create(project=project, value=2)
 
     us = f.UserStoryFactory.create(project=project, owner=user1)
-    url = reverse("userstories-detail", args=[us.pk])
     usdata = UserStorySerializer(us).data
+
+    url = reverse("userstories-detail", args=[us.pk])
 
     client.login(user1)
 
@@ -142,24 +146,24 @@ def test_update_userstory_points(client):
     data = {}
     data["version"] = usdata["version"]
     data["points"] = copy.copy(usdata["points"])
-    data["points"].update({'2000':points3.pk})
+    data["points"].update({'2000': points3.pk})
 
     response = client.json.patch(url, json.dumps(data))
-    assert response.status_code == 200, response.data
+    assert response.status_code == 200
+    assert response.data["points"] == usdata['points']
 
     # Api should save successful
     data = {}
     data["version"] = usdata["version"] + 1
     data["points"] = copy.copy(usdata["points"])
-    data["points"].update({str(role1.pk):points3.pk})
+    data["points"].update({str(role1.pk): points3.pk})
 
     response = client.json.patch(url, json.dumps(data))
-    assert response.status_code == 200, response.data
-
     us = models.UserStory.objects.get(pk=us.pk)
-    rp = list(us.role_points.values_list("role_id", "points_id"))
-
-    assert rp == [(role1.pk, points3.pk), (role2.pk, points1.pk)]
+    usdatanew = UserStorySerializer(us).data
+    assert response.status_code == 200
+    assert response.data["points"] == usdatanew['points']
+    assert response.data["points"] != usdata['points']
 
 
 def test_update_userstory_rolepoints_on_add_new_role(client):
@@ -172,16 +176,16 @@ def test_update_userstory_rolepoints_on_add_new_role(client):
 
     role1 = f.RoleFactory.create(project=project)
 
-    member1 = f.MembershipFactory.create(project=project, user=user1, role=role1)
+    f.MembershipFactory.create(project=project, user=user1, role=role1)
 
-    points1 = f.PointsFactory.create(project=project, value=2)
+    f.PointsFactory.create(project=project, value=2)
 
     us = f.UserStoryFactory.create(project=project, owner=user1)
     # url = reverse("userstories-detail", args=[us.pk])
     # client.login(user1)
 
     role2 = f.RoleFactory.create(project=project, computable=True)
-    member2 = f.MembershipFactory.create(project=project, user=user2, role=role2)
+    f.MembershipFactory.create(project=project, user=user2, role=role2)
     us.save()
 
 
@@ -208,6 +212,7 @@ def test_archived_filter(client):
     data = {"status__is_archived": 1}
     response = client.get(url, data)
     assert len(json.loads(response.content)) == 1
+
 
 def test_get_total_points(client):
     project = f.ProjectFactory.create()
@@ -239,3 +244,38 @@ def test_get_total_points(client):
     f.RolePointsFactory.create(user_story=us_mixed, role=role2, points=points2)
 
     assert us_mixed.get_total_points() == 1.0
+
+
+def test_get_invalid_csv(client):
+    url = reverse("userstories-csv")
+
+    response = client.get(url)
+    assert response.status_code == 404
+
+    response = client.get("{}?uuid={}".format(url, "not-valid-uuid"))
+    assert response.status_code == 404
+
+
+def test_get_valid_csv(client):
+    url = reverse("userstories-csv")
+    project = f.ProjectFactory.create(userstories_csv_uuid=uuid.uuid4().hex)
+
+    response = client.get("{}?uuid={}".format(url, project.userstories_csv_uuid))
+    assert response.status_code == 200
+
+
+def test_custom_fields_csv_generation():
+    project = f.ProjectFactory.create(userstories_csv_uuid=uuid.uuid4().hex)
+    attr = f.UserStoryCustomAttributeFactory.create(project=project, name="attr1", description="desc")
+    us = f.UserStoryFactory.create(project=project)
+    attr_values = us.custom_attributes_values
+    attr_values.attributes_values = {str(attr.id):"val1"}
+    attr_values.save()
+    queryset = project.user_stories.all()
+    data = services.userstories_to_csv(project, queryset)
+    data.seek(0)
+    reader = csv.reader(data)
+    row = next(reader)
+    assert row[23] == attr.name
+    row = next(reader)
+    assert row[23] == "val1"

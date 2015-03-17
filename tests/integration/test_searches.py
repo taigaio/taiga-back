@@ -56,20 +56,19 @@ def searches_initial_data():
     m.points2 = f.PointsFactory(project=m.project2, value=None)
 
     m.role_points1 = f.RolePointsFactory.create(role=m.project1.roles.all()[0],
-                                         points=m.points1,
-                                         user_story__project=m.project1)
+                                                points=m.points1,
+                                                user_story__project=m.project1)
     m.role_points2 = f.RolePointsFactory.create(role=m.project1.roles.all()[0],
-                                         points=m.points1,
-                                         user_story__project=m.project1,
-                                         user_story__description="Back to the future")
+                                                points=m.points1,
+                                                user_story__project=m.project1,
+                                                user_story__description="Back to the future")
     m.role_points3 = f.RolePointsFactory.create(role=m.project2.roles.all()[0],
-                                         points=m.points2,
-                                         user_story__project=m.project2)
+                                                points=m.points2,
+                                                user_story__project=m.project2)
 
     m.us1 = m.role_points1.user_story
     m.us2 = m.role_points2.user_story
     m.us3 = m.role_points3.user_story
-
 
     m.tsk1 = f.TaskFactory.create(project=m.project2)
     m.tsk2 = f.TaskFactory.create(project=m.project1)
@@ -79,9 +78,9 @@ def searches_initial_data():
     m.iss2 = f.IssueFactory.create(project=m.project2)
     m.iss3 = f.IssueFactory.create(project=m.project1)
 
-    m.wiki1  = f.WikiPageFactory.create(project=m.project1)
-    m.wiki2  = f.WikiPageFactory.create(project=m.project1, content="Frontend, future")
-    m.wiki3  = f.WikiPageFactory.create(project=m.project2)
+    m.wiki1 = f.WikiPageFactory.create(project=m.project1)
+    m.wiki2 = f.WikiPageFactory.create(project=m.project1, content="Frontend, future")
+    m.wiki3 = f.WikiPageFactory.create(project=m.project2)
 
     return m
 
@@ -130,3 +129,12 @@ def test_search_text_query_in_my_project(client, searches_initial_data):
     assert len(response.data["tasks"]) == 1
     assert len(response.data["issues"]) == 0
     assert len(response.data["wikipages"]) == 0
+
+
+def test_search_text_query_with_an_invalid_project_id(client, searches_initial_data):
+    data = searches_initial_data
+
+    client.login(data.member1.user)
+
+    response = client.get(reverse("search-list"), {"project": "new", "text": "future"})
+    assert response.status_code == 404

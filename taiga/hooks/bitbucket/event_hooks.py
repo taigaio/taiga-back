@@ -15,12 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
-import os
 
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.base import exceptions as exc
-from taiga.projects.models import Project, IssueStatus, TaskStatus, UserStoryStatus
+from taiga.projects.models import IssueStatus, TaskStatus, UserStoryStatus
 from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.models import UserStory
@@ -32,6 +31,7 @@ from taiga.hooks.exceptions import ActionSyntaxException
 from .services import get_bitbucket_user
 
 import json
+
 
 class PushEventHook(BaseEventHook):
     def process_event(self):

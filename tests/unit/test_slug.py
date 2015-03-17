@@ -43,6 +43,7 @@ def test_project_slug_with_special_chars():
 
     assert project.slug == "test-han-zi"
 
+
 def test_project_with_existing_name_slug_with_special_chars():
     user = User.objects.create(username="test")
     Project.objects.create(name="漢字", description="漢字", owner=user)

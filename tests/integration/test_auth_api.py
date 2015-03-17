@@ -16,18 +16,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-from unittest.mock import patch, Mock
 
-from django.apps import apps
 from django.core.urlresolvers import reverse
 from django.core import mail
 
 from .. import factories
-
-from taiga.base.connectors import github
-from taiga.front import resolve as resolve_front_url
-from taiga.users import models
-from taiga.auth.tokens import get_token_for_user
 
 pytestmark = pytest.mark.django_db
 
@@ -89,136 +82,6 @@ def test_response_200_in_public_registration(client, settings):
     assert response.data["full_name"] == "martin seamus mcfly"
     assert len(mail.outbox) == 1
     assert mail.outbox[0].subject == "You've been Taigatized!"
-
-def test_response_200_in_registration_with_github_account(client, settings):
-    settings.PUBLIC_REGISTER_ENABLED = False
-    form = {"type": "github",
-            "code": "xxxxxx"}
-
-    with patch("taiga.base.connectors.github.me") as m_me:
-        m_me.return_value = ("mmcfly@bttf.com",
-                             github.User(id=1955,
-                                        username="mmcfly",
-                                        full_name="martin seamus mcfly",
-                                        bio="time traveler"))
-
-        response = client.post(reverse("auth-list"), form)
-        assert response.status_code == 200
-        assert response.data["username"] == "mmcfly"
-        assert response.data["auth_token"] != "" and response.data["auth_token"] != None
-        assert response.data["email"] == "mmcfly@bttf.com"
-        assert response.data["full_name"] == "martin seamus mcfly"
-        assert response.data["bio"] == "time traveler"
-        assert response.data["github_id"] == 1955
-
-def test_response_200_in_registration_with_github_account_and_existed_user_by_email(client, settings):
-    settings.PUBLIC_REGISTER_ENABLED = False
-    form = {"type": "github",
-            "code": "xxxxxx"}
-    user = factories.UserFactory()
-    user.email = "mmcfly@bttf.com"
-    user.github_id = None
-    user.save()
-
-    with patch("taiga.base.connectors.github.me") as m_me:
-        m_me.return_value = ("mmcfly@bttf.com",
-                             github.User(id=1955,
-                                        username="mmcfly",
-                                        full_name="martin seamus mcfly",
-                                        bio="time traveler"))
-
-        response = client.post(reverse("auth-list"), form)
-        assert response.status_code == 200
-        assert response.data["username"] == user.username
-        assert response.data["auth_token"] != "" and response.data["auth_token"] != None
-        assert response.data["email"] ==  user.email
-        assert response.data["full_name"] == user.full_name
-        assert response.data["bio"] == user.bio
-        assert response.data["github_id"] == 1955
-
-def test_response_200_in_registration_with_github_account_and_existed_user_by_github_id(client, settings):
-    settings.PUBLIC_REGISTER_ENABLED = False
-    form = {"type": "github",
-            "code": "xxxxxx"}
-    user = factories.UserFactory()
-    user.github_id = 1955
-    user.save()
-
-    with patch("taiga.base.connectors.github.me") as m_me:
-        m_me.return_value = ("mmcfly@bttf.com",
-                             github.User(id=1955,
-                                        username="mmcfly",
-                                        full_name="martin seamus mcfly",
-                                        bio="time traveler"))
-
-        response = client.post(reverse("auth-list"), form)
-        assert response.status_code == 200
-        assert response.data["username"] != "mmcfly"
-        assert response.data["auth_token"] != "" and response.data["auth_token"] != None
-        assert response.data["email"] != "mmcfly@bttf.com"
-        assert response.data["full_name"] != "martin seamus mcfly"
-        assert response.data["bio"] != "time traveler"
-        assert response.data["github_id"] == user.github_id
-
-def test_response_200_in_registration_with_github_account_and_change_github_username(client, settings):
-    settings.PUBLIC_REGISTER_ENABLED = False
-    form = {"type": "github",
-            "code": "xxxxxx"}
-    user = factories.UserFactory()
-    user.username = "mmcfly"
-    user.save()
-
-    with patch("taiga.base.connectors.github.me") as m_me:
-        m_me.return_value = ("mmcfly@bttf.com",
-                             github.User(id=1955,
-                                        username="mmcfly",
-                                        full_name="martin seamus mcfly",
-                                        bio="time traveler"))
-
-        response = client.post(reverse("auth-list"), form)
-        assert response.status_code == 200
-        assert response.data["username"] == "mmcfly-1"
-        assert response.data["auth_token"] != "" and response.data["auth_token"] != None
-        assert response.data["email"] == "mmcfly@bttf.com"
-        assert response.data["full_name"] == "martin seamus mcfly"
-        assert response.data["bio"] == "time traveler"
-        assert response.data["github_id"] == 1955
-
-def test_response_200_in_registration_with_github_account_in_a_project(client, settings):
-    settings.PUBLIC_REGISTER_ENABLED = False
-    membership_model = apps.get_model("projects", "Membership")
-    membership = factories.MembershipFactory(user=None)
-    form = {"type": "github",
-            "code": "xxxxxx",
-            "token": membership.token}
-
-    with patch("taiga.base.connectors.github.me") as m_me:
-        m_me.return_value = ("mmcfly@bttf.com",
-                             github.User(id=1955,
-                                        username="mmcfly",
-                                        full_name="martin seamus mcfly",
-                                        bio="time traveler"))
-
-        response = client.post(reverse("auth-list"), form)
-        assert response.status_code == 200
-        assert membership_model.objects.get(token=form["token"]).user.username == "mmcfly"
-
-
-def test_response_404_in_registration_with_github_in_a_project_with_invalid_token(client, settings):
-    settings.PUBLIC_REGISTER_ENABLED = False
-    form = {"type": "github",
-            "code": "xxxxxx",
-            "token": "123456"}
-
-    with patch("taiga.base.connectors.github.me") as m_me:
-        m_me.return_value = ("mmcfly@bttf.com",
-                             github.User(id=1955,
-                                        username="mmcfly",
-                                        full_name="martin seamus mcfly",
-                                        bio="time traveler"))
-
-        response = client.post(reverse("auth-list"), form)
-        assert response.status_code == 404
 
 
 def test_respond_400_if_username_is_invalid(client, settings, register_form):

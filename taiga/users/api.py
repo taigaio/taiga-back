@@ -18,29 +18,28 @@ import uuid
 
 from django.apps import apps
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.conf import settings
 
-from easy_thumbnails.source_generators import pil_image
-
-
-from rest_framework.response import Response
-from rest_framework.filters import BaseFilterBackend
-from rest_framework import status
-
-from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
-
-from taiga.auth.tokens import get_user_for_token
-from taiga.base.decorators import list_route, detail_route
 from taiga.base import exceptions as exc
+from taiga.base import filters
+from taiga.base import response
+from taiga.auth.tokens import get_user_for_token
+from taiga.base.decorators import list_route
+from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet
-from taiga.base.utils.slug import slugify_uniquely
+from taiga.base.filters import PermissionBasedFilterBackend
+from taiga.base.api.utils import get_object_or_404
+from taiga.base.filters import MembersFilterBackend
 from taiga.projects.votes import services as votes_service
 from taiga.projects.serializers import StarredSerializer
-from taiga.permissions.service import is_project_owner
+
+from easy_thumbnails.source_generators import pil_image
+
+from djmail.template_mail import MagicMailBuilder
+from djmail.template_mail import InlineCSSTemplateMail
 
 from . import models
 from . import serializers
@@ -48,33 +47,27 @@ from . import permissions
 from .signals import user_cancel_account as user_cancel_account_signal
 
 
-class MembersFilterBackend(BaseFilterBackend):
-    def filter_queryset(self, request, queryset, view):
-        project_id = request.QUERY_PARAMS.get('project', None)
-        if project_id:
-            Project = apps.get_model('projects', 'Project')
-            project = get_object_or_404(Project, pk=project_id)
-            if request.user.is_authenticated() and project.memberships.filter(user=request.user).exists():
-                return queryset.filter(memberships__project=project).distinct()
-            else:
-                raise exc.PermissionDenied(_("You don't have permisions to see this project users."))
-
-        if request.user.is_superuser:
-            return queryset
-
-        return []
-
-
 class UsersViewSet(ModelCrudViewSet):
     permission_classes = (permissions.UserPermission,)
+    admin_serializer_class = serializers.UserAdminSerializer
     serializer_class = serializers.UserSerializer
     queryset = models.User.objects.all()
+    filter_backends = (MembersFilterBackend,)
+
+    def get_serializer_class(self):
+        if self.action in ["partial_update", "update", "retrieve"]:
+            user = self.get_object()
+            if self.request.user == user:
+                return self.admin_serializer_class
+        return self.serializer_class
 
     def create(self, *args, **kwargs):
         raise exc.NotSupported()
 
     def list(self, request, *args, **kwargs):
-        self.object_list = MembersFilterBackend().filter_queryset(request, self.get_queryset(), self)
+        self.object_list = MembersFilterBackend().filter_queryset(request,
+                                                                  self.get_queryset(),
+                                                                  self)
 
         page = self.paginate_queryset(self.object_list)
         if page is not None:
@@ -82,7 +75,7 @@ class UsersViewSet(ModelCrudViewSet):
         else:
             serializer = self.get_serializer(self.object_list, many=True)
 
-        return Response(serializer.data)
+        return response.Ok(serializer.data)
 
     @list_route(methods=["POST"])
     def password_recovery(self, request, pk=None):
@@ -107,8 +100,8 @@ class UsersViewSet(ModelCrudViewSet):
         email = mbuilder.password_recovery(user.email, {"user": user})
         email.send()
 
-        return Response({"detail": _("Mail sended successful!"),
-                         "email": user.email})
+        return response.Ok({"detail": _("Mail sended successful!"),
+                            "email": user.email})
 
     @list_route(methods=["POST"])
     def change_password_from_recovery(self, request, pk=None):
@@ -131,7 +124,7 @@ class UsersViewSet(ModelCrudViewSet):
         user.token = None
         user.save(update_fields=["password", "token"])
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return response.NoContent()
 
     @list_route(methods=["POST"])
     def change_password(self, request, pk=None):
@@ -159,7 +152,7 @@ class UsersViewSet(ModelCrudViewSet):
 
         request.user.set_password(password)
         request.user.save(update_fields=["password"])
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return response.NoContent()
 
     @list_route(methods=["POST"])
     def change_avatar(self, request):
@@ -180,9 +173,9 @@ class UsersViewSet(ModelCrudViewSet):
 
         request.user.photo = avatar
         request.user.save(update_fields=["photo"])
-        user_data = serializers.UserSerializer(request.user).data
+        user_data = self.admin_serializer_class(request.user).data
 
-        return Response(user_data, status=status.HTTP_200_OK)
+        return response.Ok(user_data)
 
     @list_route(methods=["POST"])
     def remove_avatar(self, request):
@@ -192,8 +185,8 @@ class UsersViewSet(ModelCrudViewSet):
         self.check_permissions(request, "remove_avatar", None)
         request.user.photo = None
         request.user.save(update_fields=["photo"])
-        user_data = serializers.UserSerializer(request.user).data
-        return Response(user_data, status=status.HTTP_200_OK)
+        user_data = self.admin_serializer_class(request.user).data
+        return response.Ok(user_data)
 
     @detail_route(methods=["GET"])
     def starred(self, request, pk=None):
@@ -202,7 +195,7 @@ class UsersViewSet(ModelCrudViewSet):
 
         stars = votes_service.get_voted(user.pk, model=apps.get_model('projects', 'Project'))
         stars_data = StarredSerializer(stars, many=True)
-        return Response(stars_data.data)
+        return response.Ok(stars_data.data)
 
     #TODO: commit_on_success
     def partial_update(self, request, *args, **kwargs):
@@ -250,12 +243,14 @@ class UsersViewSet(ModelCrudViewSet):
         """
         serializer = serializers.ChangeEmailSerializer(data=request.DATA, many=False)
         if not serializer.is_valid():
-            raise exc.WrongArguments(_("Invalid, are you sure the token is correct and you didn't use it before?"))
+            raise exc.WrongArguments(_("Invalid, are you sure the token is correct and you "
+                                       "didn't use it before?"))
 
         try:
             user = models.User.objects.get(email_token=serializer.data["email_token"])
         except models.User.DoesNotExist:
-            raise exc.WrongArguments(_("Invalid, are you sure the token is correct and you didn't use it before?"))
+            raise exc.WrongArguments(_("Invalid, are you sure the token is correct and you "
+                                       "didn't use it before?"))
 
         self.check_permissions(request, "change_email", user)
         user.email = user.new_email
@@ -263,7 +258,16 @@ class UsersViewSet(ModelCrudViewSet):
         user.email_token = None
         user.save(update_fields=["email", "new_email", "email_token"])
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return response.NoContent()
+
+    @list_route(methods=["GET"])
+    def me(self, request, pk=None):
+        """
+        Get me.
+        """
+        self.check_permissions(request, "me", None)
+        user_data = self.admin_serializer_class(request.user).data
+        return response.Ok(user_data)
 
     @list_route(methods=["POST"])
     def cancel(self, request, pk=None):
@@ -286,7 +290,7 @@ class UsersViewSet(ModelCrudViewSet):
             raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
 
         user.cancel()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return response.NoContent()
 
     def destroy(self, request, pk=None):
         user = self.get_object()
@@ -295,4 +299,26 @@ class UsersViewSet(ModelCrudViewSet):
         request_data = stream is not None and stream.GET or None
         user_cancel_account_signal.send(sender=user.__class__, user=user, request_data=request_data)
         user.cancel()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return response.NoContent()
+
+
+######################################################
+## Role
+######################################################
+
+class RolesViewSet(ModelCrudViewSet):
+    model = models.Role
+    serializer_class = serializers.RoleSerializer
+    permission_classes = (permissions.RolesPermission, )
+    filter_backends = (filters.CanViewProjectFilterBackend,)
+    filter_fields = ('project',)
+
+    def pre_delete(self, obj):
+        move_to = self.request.QUERY_PARAMS.get('moveTo', None)
+        if move_to:
+            membership_model = apps.get_model("projects", "Membership")
+            role_dest = get_object_or_404(self.model, project=obj.project, id=move_to)
+            qs = membership_model.objects.filter(project_id=obj.project.pk, role=obj)
+            qs.update(role=role_dest)
+
+        super().pre_delete(obj)

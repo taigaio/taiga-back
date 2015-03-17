@@ -1,6 +1,5 @@
 from django.core.urlresolvers import reverse
 
-from taiga.base.utils import json
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 
 from tests import factories as f
@@ -45,9 +44,9 @@ def data():
                                           slug="private2")
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
-                                          user=m.project_member_with_perms,
-                                          role__project=m.public_project,
-                                          role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+                                              user=m.project_member_with_perms,
+                                              role__project=m.public_project,
+                                              role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     m.private_membership1 = f.MembershipFactory(project=m.private_project1,
                                                 user=m.project_member_with_perms,
                                                 role__project=m.private_project1,
@@ -78,14 +77,14 @@ def data():
                         is_owner=True)
 
     m.view_only_membership = f.MembershipFactory(project=m.private_project2,
-                                                user=m.other_user,
-                                                role__project=m.private_project2,
-                                                role__permissions=["view_project"])
+                                                 user=m.other_user,
+                                                 role__project=m.private_project2,
+                                                 role__permissions=["view_project"])
 
-    f.UserStoryFactory(project=m.private_project2, ref=1, pk=1)
-    f.TaskFactory(project=m.private_project2, ref=2, pk=1)
-    f.IssueFactory(project=m.private_project2, ref=3, pk=1)
-    m.milestone = f.MilestoneFactory(project=m.private_project2, slug=4, pk=1)
+    m.us = f.UserStoryFactory(project=m.private_project2, ref=1)
+    m.task = f.TaskFactory(project=m.private_project2, ref=2)
+    m.issue = f.IssueFactory(project=m.private_project2, ref=3)
+    m.milestone = f.MilestoneFactory(project=m.private_project2, slug="milestone-test-1")
 
     return m
 
@@ -101,17 +100,31 @@ def test_resolver_list(client, data):
         data.project_owner
     ]
 
-    results = helper_test_http_method(client, 'get', "{}?project=public".format(url), None, users)
+    results = helper_test_http_method(client, 'get', "{}?project={}".format(url, data.public_project.slug), None, users)
     assert results == [200, 200, 200, 200, 200]
-    results = helper_test_http_method(client, 'get', "{}?project=private1".format(url), None, users)
+    results = helper_test_http_method(client, 'get', "{}?project={}".format(url, data.private_project1.slug), None, users)
     assert results == [200, 200, 200, 200, 200]
-    results = helper_test_http_method(client, 'get', "{}?project=private2".format(url), None, users)
+    results = helper_test_http_method(client, 'get', "{}?project={}".format(url, data.private_project2.slug), None, users)
     assert results == [401, 403, 403, 200, 200]
 
     client.login(data.other_user)
-    response = client.get("{}?project=private2&us=1&task=2&issue=3&milestone=4".format(url))
-    assert json.loads(response.content.decode('utf-8')) == {"project": data.private_project2.pk}
+    response = client.json.get("{}?project={}&us={}&task={}&issue={}&milestone={}".format(url,
+                                                                                          data.private_project2.slug,
+                                                                                          data.us.ref,
+                                                                                          data.task.ref,
+                                                                                          data.issue.ref,
+                                                                                          data.milestone.slug))
+    assert response.data == {"project": data.private_project2.pk}
 
     client.login(data.project_owner)
-    response = client.get("{}?project=private2&us=1&task=2&issue=3&milestone=4".format(url))
-    assert json.loads(response.content.decode('utf-8')) == {"project": data.private_project2.pk, "us": 1, "task": 1, "issue": 1, "milestone": data.milestone.pk}
+    response = client.json.get("{}?project={}&us={}&task={}&issue={}&milestone={}".format(url,
+                                                                                          data.private_project2.slug,
+                                                                                          data.us.ref,
+                                                                                          data.task.ref,
+                                                                                          data.issue.ref,
+                                                                                          data.milestone.slug))
+    assert response.data == {"project": data.private_project2.pk,
+                             "us": data.us.pk,
+                             "task": data.task.pk,
+                             "issue": data.issue.pk,
+                             "milestone": data.milestone.pk}

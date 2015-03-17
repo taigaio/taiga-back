@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models import signals
-
 from taiga.projects.models import Membership
 
 from . import serializers
@@ -104,6 +102,16 @@ def dict_to_project(data, owner=None):
 
     if service.get_errors(clear=False):
         raise TaigaImportError('error importing default choices')
+
+    service.store_custom_attributes(proj, data, "userstorycustomattributes",
+                                    serializers.UserStoryCustomAttributeExportSerializer)
+    service.store_custom_attributes(proj, data, "taskcustomattributes",
+                                    serializers.TaskCustomAttributeExportSerializer)
+    service.store_custom_attributes(proj, data, "issuecustomattributes",
+                                    serializers.IssueCustomAttributeExportSerializer)
+
+    if service.get_errors(clear=False):
+        raise TaigaImportError('error importing custom attributes')
 
     service.store_roles(proj, data)
 
