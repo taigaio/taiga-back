@@ -455,3 +455,4 @@ def test_replace_github_references():
     assert event_hooks.replace_github_references("project-url", " #2 ") == " [GitHub#2](project-url/issues/2) "
     assert event_hooks.replace_github_references("project-url", " #2") == " [GitHub#2](project-url/issues/2)"
     assert event_hooks.replace_github_references("project-url", "#test") == "#test"
+    assert event_hooks.replace_github_references("project-url", None) == ""
