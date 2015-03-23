@@ -40,7 +40,7 @@ def _make_rabbitmq_connection(url):
 
     vhost = parse_result.path
     return AmqpConnection(host=host, userid=user,
-                          password=password, virtual_host=vhost)
+                          password=password, virtual_host=vhost[1:])
 
 
 class EventsPushBackend(base.BaseEventsPushBackend):
