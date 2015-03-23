@@ -383,3 +383,4 @@ def test_replace_gitlab_references():
     assert event_hooks.replace_gitlab_references("project-url", " #2 ") == " [GitLab#2](project-url/issues/2) "
     assert event_hooks.replace_gitlab_references("project-url", " #2") == " [GitLab#2](project-url/issues/2)"
     assert event_hooks.replace_gitlab_references("project-url", "#test") == "#test"
+    assert event_hooks.replace_gitlab_references("project-url", None) == ""
