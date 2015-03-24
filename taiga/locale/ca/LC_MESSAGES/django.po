@@ -3,91 +3,91 @@
 # This file is distributed under the same license as the taiga-back package.
 #
 # Translators:
-# Esther Moreno <soyesthermoreno@yahoo.es>, 2015
+# Javier Julián Olmos <xaviju@gmail.com>, 2015
 # Taiga Dev Team <support@taiga.io>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-03-25 20:09+0100\n"
-"PO-Revision-Date: 2015-03-26 09:53+0000\n"
-"Last-Translator: Esther Moreno <soyesthermoreno@yahoo.es>\n"
-"Language-Team: Spanish (http://www.transifex.com/projects/p/taiga-back/"
-"language/es/)\n"
+"PO-Revision-Date: 2015-03-25 13:03+0000\n"
+"Last-Translator: Javier Julián Olmos <xaviju@gmail.com>\n"
+"Language-Team: Catalan (http://www.transifex.com/projects/p/taiga-back/"
+"language/ca/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
+"Language: ca\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: taiga/auth/api.py:100
 msgid "Public register is disabled."
-msgstr "El registro público está deshabilitado."
+msgstr "El registre públic està deshabilitat"
 
 #: taiga/auth/api.py:133
 msgid "invalid register type"
-msgstr "Tipo de registro inválido"
+msgstr "Sistema de registre invàlid"
 
 #: taiga/auth/api.py:146
 msgid "invalid login type"
-msgstr "Tipo de login inválido"
+msgstr "Sistema de login invàlid"
 
 #: taiga/auth/services.py:75
 msgid "Username is already in use."
-msgstr "Nombre de usuario no disponible"
+msgstr "El mot d'usuari ja està en ús."
 
 #: taiga/auth/services.py:78
 msgid "Email is already in use."
-msgstr "Email no disponible"
+msgstr "Aquest e-mail ja està en ús."
 
 #: taiga/auth/services.py:172
 msgid "Error on creating new user."
-msgstr "Error al crear un nuevo usuario "
+msgstr "Error creant un nou usuari."
 
 #: taiga/base/api/generics.py:162
 msgid "Page is not 'last', nor can it be converted to an int."
-msgstr ""
+msgstr "La página no es 'last' ni pot ser convertida a un 'int'"
 
 #: taiga/base/api/generics.py:166
 #, python-format
 msgid "Invalid page (%(page_number)s): %(message)s"
-msgstr "Página no válida (%(page_number)s): %(message)s"
+msgstr "Pàgina invàlida (%(page_number)s): %(message)s"
 
 #: taiga/base/connectors/exceptions.py:24
 msgid "Connection error."
-msgstr "Error de conexión"
+msgstr "Error de connexió."
 
 #: taiga/base/exceptions.py:30
 msgid "Unexpected error"
-msgstr "Error inesperado"
+msgstr "Error inesperat."
 
 #: taiga/base/exceptions.py:42
 msgid "Not found."
-msgstr ""
+msgstr "No s'ha trobat."
 
 #: taiga/base/exceptions.py:47
 msgid "Method not supported for this endpoint."
-msgstr ""
+msgstr "Mètode no suportat per aquest endpoint."
 
 #: taiga/base/exceptions.py:55 taiga/base/exceptions.py:63
 msgid "Wrong arguments."
-msgstr ""
+msgstr "Arguments invàlids."
 
 #: taiga/base/exceptions.py:67
 msgid "Data validation error"
-msgstr ""
+msgstr "Validació de data errònia"
 
 #: taiga/base/exceptions.py:79
 msgid "Integrity Error for wrong or invalid arguments"
-msgstr ""
+msgstr "Error d'integritat per argument invàlid o erroni."
 
 #: taiga/base/exceptions.py:86
 msgid "Precondition error"
-msgstr ""
+msgstr "Precondició errònia."
 
 #: taiga/base/tags.py:25
 msgid "tags"
-msgstr "etiquetas"
+msgstr "tags"
 
 #: taiga/base/templates/emails/base-body-html.jinja:6
 msgid "Taiga"
@@ -97,7 +97,7 @@ msgstr "Taiga"
 #: taiga/base/templates/emails/hero-body-html.jinja:380
 #: taiga/base/templates/emails/updates-body-html.jinja:442
 msgid "Follow us on Twitter"
-msgstr "Síguenos en Twitter"
+msgstr "Segueix-nos a Twitter"
 
 #: taiga/base/templates/emails/base-body-html.jinja:406
 #: taiga/base/templates/emails/hero-body-html.jinja:380
@@ -109,7 +109,7 @@ msgstr "Twitter"
 #: taiga/base/templates/emails/hero-body-html.jinja:381
 #: taiga/base/templates/emails/updates-body-html.jinja:443
 msgid "Get the code on GitHub"
-msgstr "Copia el código en GitHub"
+msgstr "Aconsegueix el codi a Github"
 
 #: taiga/base/templates/emails/base-body-html.jinja:407
 #: taiga/base/templates/emails/hero-body-html.jinja:381
@@ -121,7 +121,7 @@ msgstr "GitHub"
 #: taiga/base/templates/emails/hero-body-html.jinja:382
 #: taiga/base/templates/emails/updates-body-html.jinja:444
 msgid "Visit our website"
-msgstr "Visita nuestra web"
+msgstr "Visita la nostra pàgina web"
 
 #: taiga/base/templates/emails/base-body-html.jinja:408
 #: taiga/base/templates/emails/hero-body-html.jinja:382
@@ -131,7 +131,7 @@ msgstr "Taiga.io"
 
 #: taiga/base/templates/emails/hero-body-html.jinja:6
 msgid "You have been Taigatized"
-msgstr "Te hemos Taigatizado"
+msgstr "Has sigut Taigatizat"
 
 #: taiga/base/templates/emails/hero-body-html.jinja:359
 msgid ""
@@ -145,11 +145,11 @@ msgstr ""
 
 #: taiga/base/templates/emails/updates-body-html.jinja:6
 msgid "[Taiga] Updates"
-msgstr ""
+msgstr "[Taiga] Actualitzacions"
 
 #: taiga/base/templates/emails/updates-body-html.jinja:417
 msgid "Updates"
-msgstr ""
+msgstr "Actualitzacions"
 
 #: taiga/base/templates/emails/updates-body-html.jinja:423
 #, python-format
@@ -161,6 +161,10 @@ msgid ""
 "%(comment)s</p>\n"
 "                                                                "
 msgstr ""
+"\n"
+"<h3>Comentari:</h3>\n"
+" <p>%(comment)s</p>\n"
+"                                                                "
 
 #: taiga/base/templates/emails/updates-body-text.jinja:6
 #, python-format
@@ -169,56 +173,59 @@ msgid ""
 "    Comment: %(comment)s\n"
 "        "
 msgstr ""
+"\n"
+"    Comentari: %(comment)s\n"
+"        "
 
 #: taiga/export_import/api.py:183
 msgid "Needed dump file"
-msgstr ""
+msgstr "Es necessita arxiu dump."
 
 #: taiga/export_import/api.py:190
 msgid "Invalid dump format"
-msgstr ""
+msgstr "Format d'arxiu dump invàlid"
 
 #: taiga/export_import/serializers.py:377
 #: taiga/projects/custom_attributes/serializers.py:104
 msgid "Invalid content. It must be {\"key\": \"value\",...}"
-msgstr ""
+msgstr "Contingut invàlid. Deu ser {\"key\": \"value\",...}"
 
 #: taiga/export_import/serializers.py:392
 #: taiga/projects/custom_attributes/serializers.py:119
 msgid "It contain invalid custom fields."
-msgstr ""
+msgstr "Conté camps personalitzats invàlids."
 
 #: taiga/export_import/templates/emails/dump_project-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your project dump has been generated"
-msgstr ""
+msgstr "[%(project)s] El bolcat de dades del teu projecte ha sigut generat "
 
 #: taiga/export_import/templates/emails/export_error-subject.jinja:1
 #, python-format
 msgid "[%(project)s] %(error_subject)s"
-msgstr ""
+msgstr "[%(project)s] %(error_subject)s"
 
 #: taiga/export_import/templates/emails/import_error-subject.jinja:1
 #, python-format
 msgid "[Taiga] %(error_subject)s"
-msgstr ""
+msgstr "[Taiga] %(error_subject)s"
 
 #: taiga/export_import/templates/emails/load_dump-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your project dump has been imported"
-msgstr ""
+msgstr "[%(project)s] El teu bolcat de dades ha sigut importat"
 
 #: taiga/feedback/models.py:23 taiga/users/models.py:111
 msgid "full name"
-msgstr "nombre completo"
+msgstr "Nom complet"
 
 #: taiga/feedback/models.py:25 taiga/users/models.py:106
 msgid "email address"
-msgstr "dirección de email"
+msgstr "Adreça d'email"
 
 #: taiga/feedback/models.py:27
 msgid "comment"
-msgstr ""
+msgstr "Comentari"
 
 #: taiga/feedback/models.py:29 taiga/projects/attachments/models.py:63
 #: taiga/projects/custom_attributes/models.py:38
@@ -227,7 +234,7 @@ msgstr ""
 #: taiga/projects/tasks/models.py:46 taiga/projects/userstories/models.py:82
 #: taiga/projects/wiki/models.py:38 taiga/userstorage/models.py:27
 msgid "created date"
-msgstr ""
+msgstr "Data de creació"
 
 #: taiga/feedback/templates/emails/feedback_notification-body-html.jinja:4
 #, python-format
@@ -237,6 +244,10 @@ msgid ""
 "    <p>Taiga has received feedback from %(full_name)s <%(email)s></p>\n"
 "    "
 msgstr ""
+"\n"
+"<h1>Feedback</h1>\n"
+"<p>Taiga ha rebut feedback de %(full_name)s <%(email)s></p>\n"
+"    "
 
 #: taiga/feedback/templates/emails/feedback_notification-body-html.jinja:9
 #, python-format
@@ -246,11 +257,15 @@ msgid ""
 "    <p>%(comment)s</p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h3>Comentari</h3>\n"
+"    <p>%(comment)s</p>\n"
+"    "
 
 #: taiga/feedback/templates/emails/feedback_notification-body-html.jinja:18
 #: taiga/users/admin.py:51
 msgid "Extra info"
-msgstr ""
+msgstr "Informació extra"
 
 #: taiga/feedback/templates/emails/feedback_notification-body-text.jinja:1
 #, python-format
@@ -262,10 +277,16 @@ msgid ""
 "%(comment)s\n"
 "---------"
 msgstr ""
+"---------\n"
+"- De: %(full_name)s <%(email)s>\n"
+"---------\n"
+"- Comentari:\n"
+"%(comment)s\n"
+"---------"
 
 #: taiga/feedback/templates/emails/feedback_notification-body-text.jinja:8
 msgid "- Extra info:"
-msgstr ""
+msgstr "- Informació extra:"
 
 #: taiga/feedback/templates/emails/feedback_notification-subject.jinja:1
 #, python-format
@@ -273,221 +294,223 @@ msgid ""
 "\n"
 "[Taiga] Feedback from %(full_name)s <%(email)s>\n"
 msgstr ""
+"\n"
+"[Taiga] Feedback de %(full_name)s <%(email)s>\n"
 
 #: taiga/hooks/api.py:52
 msgid "The payload is not a valid json"
-msgstr ""
+msgstr "El payload no és un arxiu json vàlid"
 
 #: taiga/hooks/api.py:61
 msgid "The project doesn't exist"
-msgstr "El proyecto no existe"
+msgstr "El projecte no existeix"
 
 #: taiga/hooks/api.py:64
 msgid "Bad signature"
-msgstr ""
+msgstr "Firma no vàlida."
 
 #: taiga/hooks/bitbucket/api.py:40
 msgid "The payload is not a valid application/x-www-form-urlencoded"
-msgstr ""
+msgstr "El payload no és un application/x-www-form-urlencoded vàlid"
 
 #: taiga/hooks/bitbucket/event_hooks.py:46
 msgid "The payload is not valid"
-msgstr ""
+msgstr "El payload no és vàlid"
 
 #: taiga/hooks/bitbucket/event_hooks.py:82
 #: taiga/hooks/github/event_hooks.py:75 taiga/hooks/gitlab/event_hooks.py:74
 msgid "The referenced element doesn't exist"
-msgstr ""
+msgstr "L'element referenciat no existeix"
 
 #: taiga/hooks/bitbucket/event_hooks.py:89
 #: taiga/hooks/github/event_hooks.py:82 taiga/hooks/gitlab/event_hooks.py:81
 msgid "The status doesn't exist"
-msgstr ""
+msgstr "L'estatus no existeix."
 
 #: taiga/hooks/github/event_hooks.py:113 taiga/hooks/gitlab/event_hooks.py:114
 msgid "Invalid issue information"
-msgstr ""
+msgstr "Informació d'incidència no vàlida."
 
 #: taiga/hooks/github/event_hooks.py:135 taiga/hooks/github/event_hooks.py:144
 msgid "Invalid issue comment information"
-msgstr ""
+msgstr "Informació del comentari a l'incidència no vàlid."
 
 #: taiga/permissions/permissions.py:21 taiga/permissions/permissions.py:31
 #: taiga/permissions/permissions.py:52
 msgid "View project"
-msgstr ""
+msgstr "Veure projecte"
 
 #: taiga/permissions/permissions.py:22 taiga/permissions/permissions.py:32
 #: taiga/permissions/permissions.py:54
 msgid "View milestones"
-msgstr ""
+msgstr "Veure fita"
 
 #: taiga/permissions/permissions.py:23 taiga/permissions/permissions.py:33
 msgid "View user stories"
-msgstr "Ver historias de usuarios"
+msgstr "Veure història d'usuari"
 
 #: taiga/permissions/permissions.py:24 taiga/permissions/permissions.py:36
 #: taiga/permissions/permissions.py:64
 msgid "View tasks"
-msgstr "Ver tareas"
+msgstr "Veure tasca"
 
 #: taiga/permissions/permissions.py:25 taiga/permissions/permissions.py:34
 #: taiga/permissions/permissions.py:69
 msgid "View issues"
-msgstr ""
+msgstr "Veure incidència"
 
 #: taiga/permissions/permissions.py:26 taiga/permissions/permissions.py:37
 #: taiga/permissions/permissions.py:75
 msgid "View wiki pages"
-msgstr "Ver páginas del wiki"
+msgstr "Veure pàgina del wiki"
 
 #: taiga/permissions/permissions.py:27 taiga/permissions/permissions.py:38
 #: taiga/permissions/permissions.py:80
 msgid "View wiki links"
-msgstr "Ver enlaces del wiki"
+msgstr "Veure links del wiki"
 
 #: taiga/permissions/permissions.py:35 taiga/permissions/permissions.py:70
 msgid "Vote issues"
-msgstr ""
+msgstr "Vota incidéncies"
 
 #: taiga/permissions/permissions.py:39
 msgid "Request membership"
-msgstr ""
+msgstr "Demana membresía"
 
 #: taiga/permissions/permissions.py:40
 msgid "Add user story to project"
-msgstr "Añadir historias de usuario al proyecto"
+msgstr "Afegeix història d'usuari a projecte"
 
 #: taiga/permissions/permissions.py:41
 msgid "Add comments to user stories"
-msgstr ""
+msgstr "Afegeix comentaris a històries d'usuari"
 
 #: taiga/permissions/permissions.py:42
 msgid "Add comments to tasks"
-msgstr ""
+msgstr "Afegeix comentaris a tasques"
 
 #: taiga/permissions/permissions.py:43
 msgid "Add issues"
-msgstr ""
+msgstr "Afegeix incidéncies"
 
 #: taiga/permissions/permissions.py:44
 msgid "Add comments to issues"
-msgstr ""
+msgstr "Afegeix comentaris a incidéncies"
 
 #: taiga/permissions/permissions.py:45 taiga/permissions/permissions.py:76
 msgid "Add wiki page"
-msgstr ""
+msgstr "Afegeix pàgina del wiki"
 
 #: taiga/permissions/permissions.py:46 taiga/permissions/permissions.py:77
 msgid "Modify wiki page"
-msgstr ""
+msgstr "Modifica pàgina del wiki"
 
 #: taiga/permissions/permissions.py:47 taiga/permissions/permissions.py:81
 msgid "Add wiki link"
-msgstr ""
+msgstr "Afegeix enllaç de wiki"
 
 #: taiga/permissions/permissions.py:48 taiga/permissions/permissions.py:82
 msgid "Modify wiki link"
-msgstr ""
+msgstr "Modifica enllaç de wiki"
 
 #: taiga/permissions/permissions.py:55
 msgid "Add milestone"
-msgstr ""
+msgstr "Afegeix fita"
 
 #: taiga/permissions/permissions.py:56
 msgid "Modify milestone"
-msgstr ""
+msgstr "Modifica fita"
 
 #: taiga/permissions/permissions.py:57
 msgid "Delete milestone"
-msgstr ""
+msgstr "Borra fita"
 
 #: taiga/permissions/permissions.py:59
 msgid "View user story"
-msgstr ""
+msgstr "Veure història d'usuari"
 
 #: taiga/permissions/permissions.py:60
 msgid "Add user story"
-msgstr ""
+msgstr "Afegeix història d'usuari"
 
 #: taiga/permissions/permissions.py:61
 msgid "Modify user story"
-msgstr ""
+msgstr "Modifica història d'usuari"
 
 #: taiga/permissions/permissions.py:62
 msgid "Delete user story"
-msgstr ""
+msgstr "Borra història d'usuari"
 
 #: taiga/permissions/permissions.py:65
 msgid "Add task"
-msgstr ""
+msgstr "Afegeix tasca"
 
 #: taiga/permissions/permissions.py:66
 msgid "Modify task"
-msgstr ""
+msgstr "Modifica tasca"
 
 #: taiga/permissions/permissions.py:67
 msgid "Delete task"
-msgstr ""
+msgstr "Borra tasca"
 
 #: taiga/permissions/permissions.py:71
 msgid "Add issue"
-msgstr ""
+msgstr "Afegeix incidència"
 
 #: taiga/permissions/permissions.py:72
 msgid "Modify issue"
-msgstr ""
+msgstr "Modifica incidència"
 
 #: taiga/permissions/permissions.py:73
 msgid "Delete issue"
-msgstr ""
+msgstr "Borra incidència"
 
 #: taiga/permissions/permissions.py:78
 msgid "Delete wiki page"
-msgstr ""
+msgstr "Borra pàgina de wiki"
 
 #: taiga/permissions/permissions.py:83
 msgid "Delete wiki link"
-msgstr ""
+msgstr "Borra enllaç de wiki"
 
 #: taiga/permissions/permissions.py:87
 msgid "Modify project"
-msgstr ""
+msgstr "Modifica projecte"
 
 #: taiga/permissions/permissions.py:88
 msgid "Add member"
-msgstr ""
+msgstr "Afegeix membre"
 
 #: taiga/permissions/permissions.py:89
 msgid "Remove member"
-msgstr ""
+msgstr "Borra membre"
 
 #: taiga/permissions/permissions.py:90
 msgid "Delete project"
-msgstr ""
+msgstr "Borra projecte"
 
 #: taiga/permissions/permissions.py:91
 msgid "Admin project values"
-msgstr ""
+msgstr "Administrar valors de projecte"
 
 #: taiga/permissions/permissions.py:92
 msgid "Admin roles"
-msgstr ""
+msgstr "Administrar rols"
 
 #: taiga/projects/api.py:454 taiga/projects/serializers.py:227
 msgid "At least one of the user must be an active admin"
-msgstr ""
+msgstr "Al menys un del usuaris ha de ser administrador"
 
 #: taiga/projects/api.py:484
 msgid "You don't have permisions to see that."
-msgstr ""
+msgstr "No tens permisos per a veure açò."
 
 #: taiga/projects/attachments/models.py:54 taiga/projects/issues/models.py:38
 #: taiga/projects/milestones/models.py:39 taiga/projects/models.py:131
 #: taiga/projects/tasks/models.py:37 taiga/projects/userstories/models.py:64
 #: taiga/projects/wiki/models.py:34 taiga/userstorage/models.py:25
 msgid "owner"
-msgstr ""
+msgstr "Amo"
 
 #: taiga/projects/attachments/models.py:56
 #: taiga/projects/custom_attributes/models.py:35
@@ -500,15 +523,15 @@ msgstr ""
 #: taiga/projects/wiki/models.py:28 taiga/projects/wiki/models.py:66
 #: taiga/users/models.py:193
 msgid "project"
-msgstr ""
+msgstr "Projecte"
 
 #: taiga/projects/attachments/models.py:58
 msgid "content type"
-msgstr ""
+msgstr "Tipus de contingut"
 
 #: taiga/projects/attachments/models.py:60
 msgid "object id"
-msgstr ""
+msgstr "Id d'objecte"
 
 #: taiga/projects/attachments/models.py:66
 #: taiga/projects/custom_attributes/models.py:40
@@ -517,15 +540,15 @@ msgstr ""
 #: taiga/projects/tasks/models.py:49 taiga/projects/userstories/models.py:85
 #: taiga/projects/wiki/models.py:41 taiga/userstorage/models.py:29
 msgid "modified date"
-msgstr ""
+msgstr "Data de modificació"
 
 #: taiga/projects/attachments/models.py:71
 msgid "attached file"
-msgstr ""
+msgstr "Arxiu adjunt"
 
 #: taiga/projects/attachments/models.py:74
 msgid "is deprecated"
-msgstr ""
+msgstr "està obsolet "
 
 #: taiga/projects/attachments/models.py:75
 #: taiga/projects/custom_attributes/models.py:32
@@ -534,7 +557,7 @@ msgstr ""
 #: taiga/projects/models.py:547 taiga/projects/tasks/models.py:60
 #: taiga/projects/userstories/models.py:90
 msgid "description"
-msgstr ""
+msgstr "Descripció"
 
 #: taiga/projects/attachments/models.py:76
 #: taiga/projects/custom_attributes/models.py:33
@@ -544,7 +567,7 @@ msgstr ""
 #: taiga/projects/models.py:489 taiga/projects/models.py:522
 #: taiga/projects/wiki/models.py:71 taiga/users/models.py:188
 msgid "order"
-msgstr ""
+msgstr "Ordre"
 
 #: taiga/projects/custom_attributes/models.py:31
 #: taiga/projects/milestones/models.py:34 taiga/projects/models.py:120
@@ -554,45 +577,45 @@ msgstr ""
 #: taiga/projects/models.py:520 taiga/projects/models.py:543
 #: taiga/users/models.py:180 taiga/webhooks/models.py:27
 msgid "name"
-msgstr ""
+msgstr "Nom"
 
 #: taiga/projects/custom_attributes/models.py:81
 msgid "attributes_values"
-msgstr ""
+msgstr "valors_atributs"
 
 #: taiga/projects/custom_attributes/models.py:91
 #: taiga/projects/tasks/models.py:33 taiga/projects/userstories/models.py:34
 msgid "user story"
-msgstr ""
+msgstr "història d'usuari"
 
 #: taiga/projects/custom_attributes/models.py:106
 msgid "task"
-msgstr ""
+msgstr "tasca"
 
 #: taiga/projects/custom_attributes/models.py:121
 msgid "issue"
-msgstr ""
+msgstr "incidéncia"
 
 #: taiga/projects/custom_attributes/serializers.py:58
 msgid "Already exists one with the same name."
-msgstr ""
+msgstr "Ja existix altre amb el matex nom."
 
 #: taiga/projects/history/choices.py:27
 msgid "Change"
-msgstr ""
+msgstr "Canvia"
 
 #: taiga/projects/history/choices.py:28
 msgid "Create"
-msgstr ""
+msgstr "Crea"
 
 #: taiga/projects/history/choices.py:29
 msgid "Delete"
-msgstr ""
+msgstr "Borra"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:22
 #, python-format
 msgid "%(role)s role points"
-msgstr ""
+msgstr "%(role)s punts de rol"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:25
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:130
@@ -600,7 +623,7 @@ msgstr ""
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:156
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:192
 msgid "from"
-msgstr ""
+msgstr "De"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:31
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:141
@@ -609,392 +632,392 @@ msgstr ""
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:179
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:198
 msgid "to"
-msgstr ""
+msgstr "a"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:43
 msgid "Added new attachment"
-msgstr ""
+msgstr "Afegir nou arxiu"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:61
 msgid "Updated attachment"
-msgstr ""
+msgstr "Arxiu actualitzat"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:67
 msgid "deprecated"
-msgstr ""
+msgstr "Obsolet"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:69
 msgid "not deprecated"
-msgstr ""
+msgstr "No obsolet"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:85
 msgid "Deleted attachment"
-msgstr ""
+msgstr "Arxiu borrat"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:104
 msgid "added"
-msgstr ""
+msgstr "Afegit"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:109
 msgid "removed"
-msgstr ""
+msgstr "Borrat"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:134
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:145
 msgid "Unassigned"
-msgstr ""
+msgstr "Sense assignar"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:209
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:86
 msgid "-deleted-"
-msgstr ""
+msgstr "-borrat-"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:20
 msgid "to:"
-msgstr ""
+msgstr "a:"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:20
 msgid "from:"
-msgstr ""
+msgstr "desde:"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:26
 msgid "Added"
-msgstr ""
+msgstr "Afegit"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:33
 msgid "Changed"
-msgstr ""
+msgstr "Canviat"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:40
 msgid "Deleted"
-msgstr ""
+msgstr "Borrat"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:54
 msgid "added:"
-msgstr ""
+msgstr "afegit:"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:57
 msgid "removed:"
-msgstr ""
+msgstr "borrat:"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:62
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:79
 msgid "From:"
-msgstr ""
+msgstr "Desde:"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:63
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:80
 msgid "To:"
-msgstr ""
+msgstr "A:"
 
 #: taiga/projects/history/templatetags/functions.py:26
 #: taiga/projects/wiki/models.py:32
 msgid "content"
-msgstr ""
+msgstr "contingut"
 
 #: taiga/projects/history/templatetags/functions.py:27
 #: taiga/projects/mixins/blocked.py:31
 msgid "blocked note"
-msgstr ""
+msgstr "nota de bloqueig"
 
 #: taiga/projects/issues/api.py:139
 msgid "You don't have permissions to set this sprint to this issue."
-msgstr ""
+msgstr "No tens permissos per a ficar aquest sprint a aquesta incidència"
 
 #: taiga/projects/issues/api.py:143
 msgid "You don't have permissions to set this status to this issue."
-msgstr ""
+msgstr "No tens permissos per a ficar aquest status a aquesta tasca"
 
 #: taiga/projects/issues/api.py:147
 msgid "You don't have permissions to set this severity to this issue."
-msgstr ""
+msgstr "No tens permissos per a ficar aquesta severitat a aquesta tasca"
 
 #: taiga/projects/issues/api.py:151
 msgid "You don't have permissions to set this priority to this issue."
-msgstr ""
+msgstr "No tens permissos per a ficar aquesta prioritat a aquesta incidència"
 
 #: taiga/projects/issues/api.py:155
 msgid "You don't have permissions to set this type to this issue."
-msgstr ""
+msgstr "No tens permissos per a ficar aquest tipus a aquesta incidència"
 
 #: taiga/projects/issues/models.py:36 taiga/projects/tasks/models.py:35
 #: taiga/projects/userstories/models.py:57
 msgid "ref"
-msgstr ""
+msgstr "ref"
 
 #: taiga/projects/issues/models.py:40 taiga/projects/tasks/models.py:39
 #: taiga/projects/userstories/models.py:67
 msgid "status"
-msgstr ""
+msgstr "estatus"
 
 #: taiga/projects/issues/models.py:42
 msgid "severity"
-msgstr ""
+msgstr "severitat"
 
 #: taiga/projects/issues/models.py:44
 msgid "priority"
-msgstr ""
+msgstr "prioritat"
 
 #: taiga/projects/issues/models.py:46
 msgid "type"
-msgstr ""
+msgstr "tipus"
 
 #: taiga/projects/issues/models.py:49 taiga/projects/tasks/models.py:44
 #: taiga/projects/userstories/models.py:60
 msgid "milestone"
-msgstr ""
+msgstr "fita"
 
 #: taiga/projects/issues/models.py:58 taiga/projects/tasks/models.py:51
 msgid "finished date"
-msgstr ""
+msgstr "Data de finalització"
 
 #: taiga/projects/issues/models.py:60 taiga/projects/tasks/models.py:53
 #: taiga/projects/userstories/models.py:89
 msgid "subject"
-msgstr ""
+msgstr "tema"
 
 #: taiga/projects/issues/models.py:64 taiga/projects/tasks/models.py:63
 #: taiga/projects/userstories/models.py:93
 msgid "assigned to"
-msgstr ""
+msgstr "assignada a"
 
 #: taiga/projects/issues/models.py:66 taiga/projects/tasks/models.py:67
 #: taiga/projects/userstories/models.py:103
 msgid "external reference"
-msgstr ""
+msgstr "referència externa"
 
 #: taiga/projects/milestones/models.py:37 taiga/projects/models.py:122
 #: taiga/projects/models.py:340 taiga/projects/models.py:404
 #: taiga/projects/models.py:487 taiga/projects/models.py:545
 #: taiga/projects/wiki/models.py:30 taiga/users/models.py:182
 msgid "slug"
-msgstr ""
+msgstr "slug"
 
 #: taiga/projects/milestones/models.py:42
 msgid "estimated start date"
-msgstr ""
+msgstr "Data estimada d'inici"
 
 #: taiga/projects/milestones/models.py:43
 msgid "estimated finish date"
-msgstr ""
+msgstr "Data estimada de finalització"
 
 #: taiga/projects/milestones/models.py:50 taiga/projects/models.py:344
 #: taiga/projects/models.py:408 taiga/projects/models.py:491
 msgid "is closed"
-msgstr ""
+msgstr "està tancat"
 
 #: taiga/projects/milestones/models.py:52
 msgid "disponibility"
-msgstr ""
+msgstr "disponibilitat"
 
 #: taiga/projects/milestones/validators.py:12
 msgid "There's no sprint with that id"
-msgstr ""
+msgstr "No hi ha cap sprint amb aquest id"
 
 #: taiga/projects/mixins/blocked.py:29
 msgid "is blocked"
-msgstr ""
+msgstr "està bloquejat"
 
 #: taiga/projects/mixins/ordering.py:47
 #, python-brace-format
 msgid "{param} parameter is mandatory"
-msgstr ""
+msgstr "{param} paràmetre és obligatori"
 
 #: taiga/projects/mixins/ordering.py:51
 msgid "project parameter is mandatory"
-msgstr ""
+msgstr "el paràmetre de projecte és obligatori"
 
 #: taiga/projects/models.py:59
 msgid "email"
-msgstr ""
+msgstr "email"
 
 #: taiga/projects/models.py:61
 msgid "creado el"
-msgstr ""
+msgstr "creat el"
 
 #: taiga/projects/models.py:63 taiga/users/models.py:126
 msgid "token"
-msgstr ""
+msgstr "token"
 
 #: taiga/projects/models.py:69
 msgid "invitation extra text"
-msgstr ""
+msgstr "text extra d'invitació"
 
 #: taiga/projects/models.py:75
 msgid "The user is already member of the project"
-msgstr ""
+msgstr "L'usuari ja es membre del projecte"
 
 #: taiga/projects/models.py:90
 msgid "default points"
-msgstr ""
+msgstr "Points per defecte"
 
 #: taiga/projects/models.py:94
 msgid "default US status"
-msgstr ""
+msgstr "estatus d'història d'usuai per defecte"
 
 #: taiga/projects/models.py:98
 msgid "default task status"
-msgstr ""
+msgstr "Estatus de tasca per defecte"
 
 #: taiga/projects/models.py:101
 msgid "default priority"
-msgstr ""
+msgstr "Prioritat per defecte"
 
 #: taiga/projects/models.py:104
 msgid "default severity"
-msgstr ""
+msgstr "Severitat per defecte"
 
 #: taiga/projects/models.py:108
 msgid "default issue status"
-msgstr ""
+msgstr "Status d'incidència per defecte"
 
 #: taiga/projects/models.py:112
 msgid "default issue type"
-msgstr ""
+msgstr "Tipus d'incidència per defecte"
 
 #: taiga/projects/models.py:133
 msgid "members"
-msgstr ""
+msgstr "membres"
 
 #: taiga/projects/models.py:136
 msgid "total of milestones"
-msgstr ""
+msgstr "total de fites"
 
 #: taiga/projects/models.py:137
 msgid "total story points"
-msgstr ""
+msgstr "total de punts d'història"
 
 #: taiga/projects/models.py:140 taiga/projects/models.py:558
 msgid "active backlog panel"
-msgstr ""
+msgstr "activa panell de backlog"
 
 #: taiga/projects/models.py:142 taiga/projects/models.py:560
 msgid "active kanban panel"
-msgstr ""
+msgstr "activa panell de kanban"
 
 #: taiga/projects/models.py:144 taiga/projects/models.py:562
 msgid "active wiki panel"
-msgstr ""
+msgstr "activa panell de wiki"
 
 #: taiga/projects/models.py:146 taiga/projects/models.py:564
 msgid "active issues panel"
-msgstr ""
+msgstr "activa panell d'incidències"
 
 #: taiga/projects/models.py:149 taiga/projects/models.py:567
 msgid "videoconference system"
-msgstr ""
+msgstr "sistema de videoconferència"
 
 #: taiga/projects/models.py:151 taiga/projects/models.py:569
 msgid "videoconference room salt"
-msgstr ""
+msgstr "sala videoconferència"
 
 #: taiga/projects/models.py:156
 msgid "creation template"
-msgstr ""
+msgstr "template de creació"
 
 #: taiga/projects/models.py:159
 msgid "anonymous permissions"
-msgstr ""
+msgstr "permisos d'anònims"
 
 #: taiga/projects/models.py:163
 msgid "user permissions"
-msgstr ""
+msgstr "permisos d'usuaris"
 
 #: taiga/projects/models.py:166
 msgid "is private"
-msgstr ""
+msgstr "es privat"
 
 #: taiga/projects/models.py:177
 msgid "tags colors"
-msgstr ""
+msgstr "colors de tags"
 
 #: taiga/projects/models.py:327
 msgid "modules config"
-msgstr ""
+msgstr "configuració de mòdules"
 
 #: taiga/projects/models.py:346
 msgid "is archived"
-msgstr ""
+msgstr "està arxivat"
 
 #: taiga/projects/models.py:348 taiga/projects/models.py:410
 #: taiga/projects/models.py:443 taiga/projects/models.py:466
 #: taiga/projects/models.py:493 taiga/projects/models.py:524
 #: taiga/users/models.py:113
 msgid "color"
-msgstr ""
+msgstr "color"
 
 #: taiga/projects/models.py:350
 msgid "work in progress limit"
-msgstr ""
+msgstr "limit de treball en progrés"
 
 #: taiga/projects/models.py:381 taiga/userstorage/models.py:31
 msgid "value"
-msgstr ""
+msgstr "valor"
 
 #: taiga/projects/models.py:555
 msgid "default owner's role"
-msgstr ""
+msgstr "rol d'amo per defecte"
 
 #: taiga/projects/models.py:571
 msgid "default options"
-msgstr ""
+msgstr "opcions per defecte"
 
 #: taiga/projects/models.py:572
 msgid "us statuses"
-msgstr ""
+msgstr "status d'històries d'usuari"
 
 #: taiga/projects/models.py:573 taiga/projects/userstories/models.py:40
 #: taiga/projects/userstories/models.py:72
 msgid "points"
-msgstr ""
+msgstr "punts"
 
 #: taiga/projects/models.py:574
 msgid "task statuses"
-msgstr ""
+msgstr "status de tasques"
 
 #: taiga/projects/models.py:575
 msgid "issue statuses"
-msgstr ""
+msgstr "status d'incidències"
 
 #: taiga/projects/models.py:576
 msgid "issue types"
-msgstr ""
+msgstr "tipus d'incidències"
 
 #: taiga/projects/models.py:577
 msgid "priorities"
-msgstr ""
+msgstr "prioritats"
 
 #: taiga/projects/models.py:578
 msgid "severities"
-msgstr ""
+msgstr "severitats"
 
 #: taiga/projects/models.py:579
 msgid "roles"
-msgstr ""
+msgstr "rols"
 
 #: taiga/projects/notifications/choices.py:28
 msgid "Not watching"
-msgstr ""
+msgstr "No observant"
 
 #: taiga/projects/notifications/choices.py:29
 msgid "Watching"
-msgstr ""
+msgstr "Observant"
 
 #: taiga/projects/notifications/choices.py:30
 msgid "Ignoring"
-msgstr ""
+msgstr "Ignorant"
 
 #: taiga/projects/notifications/mixins.py:87
 msgid "watchers"
-msgstr ""
+msgstr "Observadors"
 
 #: taiga/projects/notifications/models.py:57
 msgid "created date time"
-msgstr ""
+msgstr "creada data"
 
 #: taiga/projects/notifications/models.py:59
 msgid "updated date time"
-msgstr ""
+msgstr "Actualitzada data"
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-change-subject.jinja:1
 #, python-format
@@ -1002,6 +1025,8 @@ msgid ""
 "\n"
 "[%(project)s] Updated the Wiki Page \"%(page)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Actualizada pàgina de Wiki \"%(page)s\"\n"
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-create-subject.jinja:1
 #, python-format
@@ -1009,6 +1034,8 @@ msgid ""
 "\n"
 "[%(project)s] Created the Wiki Page \"%(page)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Creada pàgina de Wiki \"%(page)s\"\n"
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-delete-subject.jinja:1
 #, python-format
@@ -1016,84 +1043,86 @@ msgid ""
 "\n"
 "[%(project)s] Deleted the Wiki Page \"%(page)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Borrada pàgina de Wiki \"%(page)s\"\n"
 
 #: taiga/projects/occ/mixins.py:91
 msgid "version"
-msgstr ""
+msgstr "Versió"
 
 #: taiga/projects/permissions.py:39
 msgid "You can't leave the project if there are no more owners"
-msgstr ""
+msgstr "No pots deixar el projecte si no hi ha més amos"
 
 #: taiga/projects/serializers.py:203
 msgid "Email address is already taken"
-msgstr ""
+msgstr "Aquest e-mail ja està en ús"
 
 #: taiga/projects/serializers.py:215
 msgid "Invalid role for the project"
-msgstr ""
+msgstr "Rol invàlid per al projecte"
 
 #: taiga/projects/serializers.py:370
 msgid "Default options"
-msgstr ""
+msgstr "Opcions per defecte"
 
 #: taiga/projects/serializers.py:371
 msgid "User story's statuses"
-msgstr ""
+msgstr "Estatus d'històries d'usuari"
 
 #: taiga/projects/serializers.py:372
 msgid "Points"
-msgstr ""
+msgstr "Punts"
 
 #: taiga/projects/serializers.py:373
 msgid "Task's statuses"
-msgstr ""
+msgstr "Estatus de tasques"
 
 #: taiga/projects/serializers.py:374
 msgid "Issue's statuses"
-msgstr ""
+msgstr "Estatus d'incidéncies"
 
 #: taiga/projects/serializers.py:375
 msgid "Issue's types"
-msgstr ""
+msgstr "Tipus d'incidéncies"
 
 #: taiga/projects/serializers.py:376
 msgid "Priorities"
-msgstr ""
+msgstr "Prioritats"
 
 #: taiga/projects/serializers.py:377
 msgid "Severities"
-msgstr ""
+msgstr "Severitats"
 
 #: taiga/projects/serializers.py:378
 msgid "Roles"
-msgstr ""
+msgstr "Rols"
 
 #: taiga/projects/tasks/api.py:57 taiga/projects/tasks/api.py:60
 #: taiga/projects/tasks/api.py:63 taiga/projects/tasks/api.py:66
 msgid "You don't have permissions for add/modify this task."
-msgstr ""
+msgstr "No tens permissos per a afegir/modificar aquesta tasca."
 
 #: taiga/projects/tasks/models.py:56
 msgid "us order"
-msgstr ""
+msgstr "order d'històries d'usuari"
 
 #: taiga/projects/tasks/models.py:58
 msgid "taskboard order"
-msgstr ""
+msgstr "ordre de taskboard"
 
 #: taiga/projects/tasks/models.py:66
 msgid "is iocaine"
-msgstr ""
+msgstr "es iocaina"
 
 #: taiga/projects/tasks/validators.py:12
 msgid "There's no task with that id"
-msgstr ""
+msgstr "No hi ha cap tasca amb eixe id"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:6
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:4
 msgid "someone"
-msgstr ""
+msgstr "algú"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:18
 #, python-format
@@ -1104,18 +1133,23 @@ msgid ""
 "    <p><strong>%(extra)s</strong></p>\n"
 "        "
 msgstr ""
+"\n"
+"<p><small>I ara unes poques paraules del bon company o companya<br/> que ha "
+"tingut el bon pensament de convidar-te</small></p>\n"
+"<p><strong>%(extra)s</strong></p>\n"
+"        "
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:25
 msgid "Accept your invitation to Taiga"
-msgstr ""
+msgstr "Acepta la invitació a Taiga"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:25
 msgid "Accept your invitation"
-msgstr ""
+msgstr "Acepta la invitació"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:26
 msgid "The Taiga Team"
-msgstr ""
+msgstr "El equip de Taiga"
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:13
 #, python-format
@@ -1127,10 +1161,16 @@ msgid ""
 "%(extra)s\n"
 "    "
 msgstr ""
+"\n"
+"I ara unes poques paraules del bon company o companya que ha tingut el bon "
+"pensament de convidar-te\n"
+"\n"
+"%(extra)s\n"
+"    "
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:19
 msgid "Accept your invitation to Taiga following whis link:"
-msgstr ""
+msgstr "Acepta la invitació a Taiga fent click a aquest link:"
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:21
 msgid ""
@@ -1138,6 +1178,9 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"---\n"
+"El equip de Taiga\n"
 
 #: taiga/projects/templates/emails/membership_invitation-subject.jinja:1
 #, python-format
@@ -1145,6 +1188,8 @@ msgid ""
 "\n"
 "[Taiga] Invitation to join to the project '%(project)s'\n"
 msgstr ""
+"\n"
+"[Taiga] Invitació de Taiga per al projecte '%(project)s'\n"
 
 #: taiga/projects/templates/emails/membership_notification-subject.jinja:1
 #, python-format
@@ -1152,6 +1197,8 @@ msgid ""
 "\n"
 "[Taiga] Added to the project '%(project)s'\n"
 msgstr ""
+"\n"
+"[Taiga] Afegit al projecte '%(project)s'\n"
 
 #: taiga/projects/userstories/api.py:170
 #, python-brace-format
@@ -1159,231 +1206,238 @@ msgid ""
 "Generating the user story [US #{ref} - {subject}](:us:{ref} \"US #{ref} - "
 "{subject}\")"
 msgstr ""
+"Generant l'història d'usuari [US #{ref} - {subject}](:us:{ref} \"US #{ref} - "
+"{subject}\")"
 
 #: taiga/projects/userstories/models.py:37
 msgid "role"
-msgstr ""
+msgstr "rol"
 
 #: taiga/projects/userstories/models.py:75
 msgid "backlog order"
-msgstr ""
+msgstr "ordre de backlog"
 
 #: taiga/projects/userstories/models.py:77
 #: taiga/projects/userstories/models.py:79
 msgid "sprint order"
-msgstr ""
+msgstr "ordre d'sprint"
 
 #: taiga/projects/userstories/models.py:87
 msgid "finish date"
-msgstr ""
+msgstr "data de finalització"
 
 #: taiga/projects/userstories/models.py:95
 msgid "is client requirement"
-msgstr ""
+msgstr "requeriment de client"
 
 #: taiga/projects/userstories/models.py:97
 msgid "is team requirement"
-msgstr ""
+msgstr "requeriment d'equip"
 
 #: taiga/projects/userstories/models.py:102
 msgid "generated from issue"
-msgstr ""
+msgstr "generat desde incidéncia"
 
 #: taiga/projects/userstories/validators.py:12
 msgid "There's no user story with that id"
-msgstr ""
+msgstr "No hi ha cap història d'usuari amb eixe id"
 
 #: taiga/projects/validators.py:12
 msgid "There's no project with that id"
-msgstr ""
+msgstr "No hi ha cap projecte amb eixe id"
 
 #: taiga/projects/validators.py:21
 msgid "There's no user story status with that id"
-msgstr ""
+msgstr "No hi ha cap estatis d'història d'usuari amb eixe id"
 
 #: taiga/projects/validators.py:30
 msgid "There's no task status with that id"
-msgstr ""
+msgstr "No hi ha cap estatus de tasca amb eixe id"
 
 #: taiga/projects/votes/models.py:31 taiga/projects/votes/models.py:32
 #: taiga/projects/votes/models.py:54
 msgid "Votes"
-msgstr ""
+msgstr "Vots"
 
 #: taiga/projects/votes/models.py:50
 msgid "votes"
-msgstr ""
+msgstr "vots"
 
 #: taiga/projects/votes/models.py:53
 msgid "Vote"
-msgstr ""
+msgstr "Vot"
 
 #: taiga/projects/wiki/api.py:60
 msgid "No content parameter"
-msgstr ""
+msgstr "No hi ha parametre de contingut"
 
 #: taiga/projects/wiki/api.py:63
 msgid "No project_id parameter"
-msgstr ""
+msgstr "No hi ha parametre de project_id"
 
 #: taiga/projects/wiki/models.py:36
 msgid "last modifier"
-msgstr "última modificación por"
+msgstr "últim a modificar"
 
 #: taiga/projects/wiki/models.py:69
 msgid "href"
-msgstr ""
+msgstr "href"
 
 #: taiga/users/admin.py:50
 msgid "Personal info"
-msgstr "Información personal"
+msgstr "Informació personal"
 
 #: taiga/users/admin.py:52
 msgid "Permissions"
-msgstr "Permisos"
+msgstr "Permissos"
 
 #: taiga/users/admin.py:53
 msgid "Important dates"
-msgstr ""
+msgstr "Dates importants"
 
 #: taiga/users/api.py:87 taiga/users/api.py:94
 msgid "Invalid username or email"
-msgstr "Nombre de usuario o email no válidos"
+msgstr "Nom d'usuari o email invàlid"
 
 #: taiga/users/api.py:103
 msgid "Mail sended successful!"
-msgstr "¡Correo enviado con éxito!"
+msgstr "Correu enviat satisfactòriament"
 
 #: taiga/users/api.py:116 taiga/users/api.py:121
 msgid "Token is invalid"
-msgstr ""
+msgstr "Token invàlid"
 
 #: taiga/users/api.py:142
 msgid "Current password parameter needed"
-msgstr ""
+msgstr "Paràmetre de password actual requerit"
 
 #: taiga/users/api.py:145
 msgid "New password parameter needed"
-msgstr ""
+msgstr "Paràmetre de password requerit"
 
 #: taiga/users/api.py:148
 msgid "Invalid password length at least 6 charaters needed"
-msgstr ""
+msgstr "Password invàlid, al menys 6 caràcters requerits"
 
 #: taiga/users/api.py:151
 msgid "Invalid current password"
-msgstr ""
+msgstr "Password actual invàlid"
 
 #: taiga/users/api.py:167
 msgid "Incomplete arguments"
-msgstr ""
+msgstr "Arguments incomplets."
 
 #: taiga/users/api.py:172
 msgid "Invalid image format"
-msgstr "Formato de imagen no válido"
+msgstr "Format d'image invàlid"
 
 #: taiga/users/api.py:225
 msgid "Duplicated email"
-msgstr "Email duplicado"
+msgstr "Email duplicat"
 
 #: taiga/users/api.py:227
 msgid "Not valid email"
-msgstr "Email no válido"
+msgstr "Email no vàlid"
 
 #: taiga/users/api.py:246 taiga/users/api.py:252
 msgid ""
 "Invalid, are you sure the token is correct and you didn't use it before?"
 msgstr ""
+"Invàlid. Estás segur que el token es correcte i que no l'has usat abans?"
 
 #: taiga/users/api.py:279 taiga/users/api.py:287 taiga/users/api.py:290
 msgid "Invalid, are you sure the token is correct?"
-msgstr ""
+msgstr "Invàlid. Estás segur que el token es correcte?"
 
 #: taiga/users/models.py:69
 msgid "superuser status"
-msgstr ""
+msgstr "estatus de superusuari"
 
 #: taiga/users/models.py:70
 msgid ""
 "Designates that this user has all permissions without explicitly assigning "
 "them."
 msgstr ""
+"Designa que aquest usuari te tots els permisos sense asignarli-los "
+"explícitament."
 
 #: taiga/users/models.py:100
 msgid "username"
-msgstr ""
+msgstr "mot d'usuari"
 
 #: taiga/users/models.py:101
 msgid ""
 "Required. 30 characters or fewer. Letters, numbers and /./-/_ characters"
-msgstr ""
+msgstr "Requerit. 30 caràcters o menys. Lletres, nombres i caràcters /./-/_"
 
 #: taiga/users/models.py:104
 msgid "Enter a valid username."
-msgstr ""
+msgstr "Introdueix un nom d'usuari vàlid"
 
 #: taiga/users/models.py:107
 msgid "active"
-msgstr ""
+msgstr "actiu"
 
 #: taiga/users/models.py:108
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
 msgstr ""
+"Designa si aquest usuari ha de se tractac com actiu. Deselecciona açó en "
+"lloc de borrar el compte."
 
 #: taiga/users/models.py:114
 msgid "biography"
-msgstr ""
+msgstr "biografia"
 
 #: taiga/users/models.py:117
 msgid "photo"
-msgstr ""
+msgstr "foto"
 
 #: taiga/users/models.py:118
 msgid "date joined"
-msgstr ""
+msgstr "data d'unió"
 
 #: taiga/users/models.py:120
 msgid "default language"
-msgstr "idioma por defecto"
+msgstr "llenguatge per defecte"
 
 #: taiga/users/models.py:122
 msgid "default timezone"
-msgstr "zona horaria por defecto"
+msgstr "zona horaria per defecte"
 
 #: taiga/users/models.py:124
 msgid "colorize tags"
-msgstr "añade color a las etiquetas"
+msgstr "coloritza tags"
 
 #: taiga/users/models.py:129
 msgid "email token"
-msgstr ""
+msgstr "token de correu"
 
 #: taiga/users/models.py:131
 msgid "new email address"
-msgstr "nueva dirección de email"
+msgstr "nova adreça de correu"
 
 #: taiga/users/models.py:185
 msgid "permissions"
-msgstr "permisos"
+msgstr "permissos"
 
 #: taiga/users/serializers.py:52
 msgid "invalid username"
-msgstr "nombre de usuario no válido"
+msgstr "nom d'usuari invàlid"
 
 #: taiga/users/serializers.py:53
 msgid "invalid"
-msgstr "no válido"
+msgstr "invàlid"
 
 #: taiga/users/serializers.py:58
 msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
-msgstr ""
+msgstr "Requerit. 255 caràcters o menys. Lletres, nombres i caràcters /./-/_"
 
 #: taiga/users/serializers.py:64
 msgid "Invalid username. Try with a different one."
-msgstr ""
+msgstr "Nom d'usuari invàlid"
 
 #: taiga/users/templates/emails/change_email-body-html.jinja:4
 #, python-format
@@ -1487,7 +1541,7 @@ msgstr ""
 
 #: taiga/users/templates/emails/registered_user-subject.jinja:1
 msgid "You've been Taigatized!"
-msgstr "¡Te hemos Taigatizado!"
+msgstr ""
 
 #: taiga/users/validators.py:29
 msgid "There's no role with that id"
@@ -1504,7 +1558,7 @@ msgstr ""
 
 #: taiga/webhooks/models.py:28 taiga/webhooks/models.py:38
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: taiga/webhooks/models.py:29
 msgid "secret key"
@@ -1532,4 +1586,4 @@ msgstr ""
 
 #: taiga/webhooks/models.py:44
 msgid "Duration"
-msgstr "Duración"
+msgstr ""

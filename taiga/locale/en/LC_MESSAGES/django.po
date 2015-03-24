@@ -1,48 +1,44 @@
 # taiga-back.taiga.
 # Copyright (C) 2015 Taiga Dev Team <support@taiga.io>
 # This file is distributed under the same license as the taiga-back package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-# Translators:
-# Esther Moreno <soyesthermoreno@yahoo.es>, 2015
-# Taiga Dev Team <support@taiga.io>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-03-25 20:09+0100\n"
-"PO-Revision-Date: 2015-03-26 09:53+0000\n"
-"Last-Translator: Esther Moreno <soyesthermoreno@yahoo.es>\n"
-"Language-Team: Spanish (http://www.transifex.com/projects/p/taiga-back/"
-"language/es/)\n"
+"PO-Revision-Date: 2015-03-25 20:09+0100\n"
+"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"Language-Team: Taiga Dev Team <support@taiga.io>\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: taiga/auth/api.py:100
 msgid "Public register is disabled."
-msgstr "El registro público está deshabilitado."
+msgstr ""
 
 #: taiga/auth/api.py:133
 msgid "invalid register type"
-msgstr "Tipo de registro inválido"
+msgstr ""
 
 #: taiga/auth/api.py:146
 msgid "invalid login type"
-msgstr "Tipo de login inválido"
+msgstr ""
 
 #: taiga/auth/services.py:75
 msgid "Username is already in use."
-msgstr "Nombre de usuario no disponible"
+msgstr ""
 
 #: taiga/auth/services.py:78
 msgid "Email is already in use."
-msgstr "Email no disponible"
+msgstr ""
 
 #: taiga/auth/services.py:172
 msgid "Error on creating new user."
-msgstr "Error al crear un nuevo usuario "
+msgstr ""
 
 #: taiga/base/api/generics.py:162
 msgid "Page is not 'last', nor can it be converted to an int."
@@ -51,15 +47,15 @@ msgstr ""
 #: taiga/base/api/generics.py:166
 #, python-format
 msgid "Invalid page (%(page_number)s): %(message)s"
-msgstr "Página no válida (%(page_number)s): %(message)s"
+msgstr ""
 
 #: taiga/base/connectors/exceptions.py:24
 msgid "Connection error."
-msgstr "Error de conexión"
+msgstr ""
 
 #: taiga/base/exceptions.py:30
 msgid "Unexpected error"
-msgstr "Error inesperado"
+msgstr ""
 
 #: taiga/base/exceptions.py:42
 msgid "Not found."
@@ -87,51 +83,51 @@ msgstr ""
 
 #: taiga/base/tags.py:25
 msgid "tags"
-msgstr "etiquetas"
+msgstr ""
 
 #: taiga/base/templates/emails/base-body-html.jinja:6
 msgid "Taiga"
-msgstr "Taiga"
+msgstr ""
 
 #: taiga/base/templates/emails/base-body-html.jinja:406
 #: taiga/base/templates/emails/hero-body-html.jinja:380
 #: taiga/base/templates/emails/updates-body-html.jinja:442
 msgid "Follow us on Twitter"
-msgstr "Síguenos en Twitter"
+msgstr ""
 
 #: taiga/base/templates/emails/base-body-html.jinja:406
 #: taiga/base/templates/emails/hero-body-html.jinja:380
 #: taiga/base/templates/emails/updates-body-html.jinja:442
 msgid "Twitter"
-msgstr "Twitter"
+msgstr ""
 
 #: taiga/base/templates/emails/base-body-html.jinja:407
 #: taiga/base/templates/emails/hero-body-html.jinja:381
 #: taiga/base/templates/emails/updates-body-html.jinja:443
 msgid "Get the code on GitHub"
-msgstr "Copia el código en GitHub"
+msgstr ""
 
 #: taiga/base/templates/emails/base-body-html.jinja:407
 #: taiga/base/templates/emails/hero-body-html.jinja:381
 #: taiga/base/templates/emails/updates-body-html.jinja:443
 msgid "GitHub"
-msgstr "GitHub"
+msgstr ""
 
 #: taiga/base/templates/emails/base-body-html.jinja:408
 #: taiga/base/templates/emails/hero-body-html.jinja:382
 #: taiga/base/templates/emails/updates-body-html.jinja:444
 msgid "Visit our website"
-msgstr "Visita nuestra web"
+msgstr ""
 
 #: taiga/base/templates/emails/base-body-html.jinja:408
 #: taiga/base/templates/emails/hero-body-html.jinja:382
 #: taiga/base/templates/emails/updates-body-html.jinja:444
 msgid "Taiga.io"
-msgstr "Taiga.io"
+msgstr ""
 
 #: taiga/base/templates/emails/hero-body-html.jinja:6
 msgid "You have been Taigatized"
-msgstr "Te hemos Taigatizado"
+msgstr ""
 
 #: taiga/base/templates/emails/hero-body-html.jinja:359
 msgid ""
@@ -210,11 +206,11 @@ msgstr ""
 
 #: taiga/feedback/models.py:23 taiga/users/models.py:111
 msgid "full name"
-msgstr "nombre completo"
+msgstr ""
 
 #: taiga/feedback/models.py:25 taiga/users/models.py:106
 msgid "email address"
-msgstr "dirección de email"
+msgstr ""
 
 #: taiga/feedback/models.py:27
 msgid "comment"
@@ -280,7 +276,7 @@ msgstr ""
 
 #: taiga/hooks/api.py:61
 msgid "The project doesn't exist"
-msgstr "El proyecto no existe"
+msgstr ""
 
 #: taiga/hooks/api.py:64
 msgid "Bad signature"
@@ -324,12 +320,12 @@ msgstr ""
 
 #: taiga/permissions/permissions.py:23 taiga/permissions/permissions.py:33
 msgid "View user stories"
-msgstr "Ver historias de usuarios"
+msgstr ""
 
 #: taiga/permissions/permissions.py:24 taiga/permissions/permissions.py:36
 #: taiga/permissions/permissions.py:64
 msgid "View tasks"
-msgstr "Ver tareas"
+msgstr ""
 
 #: taiga/permissions/permissions.py:25 taiga/permissions/permissions.py:34
 #: taiga/permissions/permissions.py:69
@@ -339,12 +335,12 @@ msgstr ""
 #: taiga/permissions/permissions.py:26 taiga/permissions/permissions.py:37
 #: taiga/permissions/permissions.py:75
 msgid "View wiki pages"
-msgstr "Ver páginas del wiki"
+msgstr ""
 
 #: taiga/permissions/permissions.py:27 taiga/permissions/permissions.py:38
 #: taiga/permissions/permissions.py:80
 msgid "View wiki links"
-msgstr "Ver enlaces del wiki"
+msgstr ""
 
 #: taiga/permissions/permissions.py:35 taiga/permissions/permissions.py:70
 msgid "Vote issues"
@@ -356,7 +352,7 @@ msgstr ""
 
 #: taiga/permissions/permissions.py:40
 msgid "Add user story to project"
-msgstr "Añadir historias de usuario al proyecto"
+msgstr ""
 
 #: taiga/permissions/permissions.py:41
 msgid "Add comments to user stories"
@@ -1228,7 +1224,7 @@ msgstr ""
 
 #: taiga/projects/wiki/models.py:36
 msgid "last modifier"
-msgstr "última modificación por"
+msgstr ""
 
 #: taiga/projects/wiki/models.py:69
 msgid "href"
@@ -1236,11 +1232,11 @@ msgstr ""
 
 #: taiga/users/admin.py:50
 msgid "Personal info"
-msgstr "Información personal"
+msgstr ""
 
 #: taiga/users/admin.py:52
 msgid "Permissions"
-msgstr "Permisos"
+msgstr ""
 
 #: taiga/users/admin.py:53
 msgid "Important dates"
@@ -1248,11 +1244,11 @@ msgstr ""
 
 #: taiga/users/api.py:87 taiga/users/api.py:94
 msgid "Invalid username or email"
-msgstr "Nombre de usuario o email no válidos"
+msgstr ""
 
 #: taiga/users/api.py:103
 msgid "Mail sended successful!"
-msgstr "¡Correo enviado con éxito!"
+msgstr ""
 
 #: taiga/users/api.py:116 taiga/users/api.py:121
 msgid "Token is invalid"
@@ -1280,15 +1276,15 @@ msgstr ""
 
 #: taiga/users/api.py:172
 msgid "Invalid image format"
-msgstr "Formato de imagen no válido"
+msgstr ""
 
 #: taiga/users/api.py:225
 msgid "Duplicated email"
-msgstr "Email duplicado"
+msgstr ""
 
 #: taiga/users/api.py:227
 msgid "Not valid email"
-msgstr "Email no válido"
+msgstr ""
 
 #: taiga/users/api.py:246 taiga/users/api.py:252
 msgid ""
@@ -1346,15 +1342,15 @@ msgstr ""
 
 #: taiga/users/models.py:120
 msgid "default language"
-msgstr "idioma por defecto"
+msgstr ""
 
 #: taiga/users/models.py:122
 msgid "default timezone"
-msgstr "zona horaria por defecto"
+msgstr ""
 
 #: taiga/users/models.py:124
 msgid "colorize tags"
-msgstr "añade color a las etiquetas"
+msgstr ""
 
 #: taiga/users/models.py:129
 msgid "email token"
@@ -1362,19 +1358,19 @@ msgstr ""
 
 #: taiga/users/models.py:131
 msgid "new email address"
-msgstr "nueva dirección de email"
+msgstr ""
 
 #: taiga/users/models.py:185
 msgid "permissions"
-msgstr "permisos"
+msgstr ""
 
 #: taiga/users/serializers.py:52
 msgid "invalid username"
-msgstr "nombre de usuario no válido"
+msgstr ""
 
 #: taiga/users/serializers.py:53
 msgid "invalid"
-msgstr "no válido"
+msgstr ""
 
 #: taiga/users/serializers.py:58
 msgid ""
@@ -1487,7 +1483,7 @@ msgstr ""
 
 #: taiga/users/templates/emails/registered_user-subject.jinja:1
 msgid "You've been Taigatized!"
-msgstr "¡Te hemos Taigatizado!"
+msgstr ""
 
 #: taiga/users/validators.py:29
 msgid "There's no role with that id"
@@ -1504,7 +1500,7 @@ msgstr ""
 
 #: taiga/webhooks/models.py:28 taiga/webhooks/models.py:38
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: taiga/webhooks/models.py:29
 msgid "secret key"
@@ -1532,4 +1528,4 @@ msgstr ""
 
 #: taiga/webhooks/models.py:44
 msgid "Duration"
-msgstr "Duración"
+msgstr ""

@@ -15,7 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os.path, sys, os
-from django.utils.translation import ugettext_lazy as _
+
+# This is defined here as a do-nothing function because we can't import
+# django.utils.translation -- that module depends on the settings.
+gettext_noop = lambda s: s
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -24,11 +28,6 @@ ALLOWED_HOSTS = ["*"]
 
 ADMINS = (
     ("Admin", "example@example.com"),
-)
-
-LANGUAGES = (
-    ("en", _("English")),
-    ("es", _("Spanish")),
 )
 
 DATABASES = {
@@ -60,11 +59,107 @@ IGNORABLE_404_STARTS = ("/phpmyadmin/",)
 
 ATOMIC_REQUESTS = True
 TIME_ZONE = "UTC"
-LANGUAGE_CODE = "en"
-USE_I18N = True
-USE_L10N = True
 LOGIN_URL="/auth/login/"
 USE_TZ = True
+
+USE_I18N = True
+USE_L10N = True
+# Language code for this installation. All choices can be found here:
+# http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGE_CODE = 'en-us'
+
+# Languages we provide translations for, out of the box.
+LANGUAGES = [
+    ('af', gettext_noop('Afrikaans')),
+    ('ar', gettext_noop('Arabic')),
+    ('ast', gettext_noop('Asturian')),
+    ('az', gettext_noop('Azerbaijani')),
+    ('bg', gettext_noop('Bulgarian')),
+    ('be', gettext_noop('Belarusian')),
+    ('bn', gettext_noop('Bengali')),
+    ('br', gettext_noop('Breton')),
+    ('bs', gettext_noop('Bosnian')),
+    ('ca', gettext_noop('Catalan')),
+    ('cs', gettext_noop('Czech')),
+    ('cy', gettext_noop('Welsh')),
+    ('da', gettext_noop('Danish')),
+    ('de', gettext_noop('German')),
+    ('el', gettext_noop('Greek')),
+    ('en', gettext_noop('English')),
+    ('en-au', gettext_noop('Australian English')),
+    ('en-gb', gettext_noop('British English')),
+    ('eo', gettext_noop('Esperanto')),
+    ('es', gettext_noop('Spanish')),
+    ('es-ar', gettext_noop('Argentinian Spanish')),
+    ('es-mx', gettext_noop('Mexican Spanish')),
+    ('es-ni', gettext_noop('Nicaraguan Spanish')),
+    ('es-ve', gettext_noop('Venezuelan Spanish')),
+    ('et', gettext_noop('Estonian')),
+    ('eu', gettext_noop('Basque')),
+    ('fa', gettext_noop('Persian')),
+    ('fi', gettext_noop('Finnish')),
+    ('fr', gettext_noop('French')),
+    ('fy', gettext_noop('Frisian')),
+    ('ga', gettext_noop('Irish')),
+    ('gl', gettext_noop('Galician')),
+    ('he', gettext_noop('Hebrew')),
+    ('hi', gettext_noop('Hindi')),
+    ('hr', gettext_noop('Croatian')),
+    ('hu', gettext_noop('Hungarian')),
+    ('ia', gettext_noop('Interlingua')),
+    ('id', gettext_noop('Indonesian')),
+    ('io', gettext_noop('Ido')),
+    ('is', gettext_noop('Icelandic')),
+    ('it', gettext_noop('Italian')),
+    ('ja', gettext_noop('Japanese')),
+    ('ka', gettext_noop('Georgian')),
+    ('kk', gettext_noop('Kazakh')),
+    ('km', gettext_noop('Khmer')),
+    ('kn', gettext_noop('Kannada')),
+    ('ko', gettext_noop('Korean')),
+    ('lb', gettext_noop('Luxembourgish')),
+    ('lt', gettext_noop('Lithuanian')),
+    ('lv', gettext_noop('Latvian')),
+    ('mk', gettext_noop('Macedonian')),
+    ('ml', gettext_noop('Malayalam')),
+    ('mn', gettext_noop('Mongolian')),
+    ('mr', gettext_noop('Marathi')),
+    ('my', gettext_noop('Burmese')),
+    ('nb', gettext_noop('Norwegian Bokmal')),
+    ('ne', gettext_noop('Nepali')),
+    ('nl', gettext_noop('Dutch')),
+    ('nn', gettext_noop('Norwegian Nynorsk')),
+    ('os', gettext_noop('Ossetic')),
+    ('pa', gettext_noop('Punjabi')),
+    ('pl', gettext_noop('Polish')),
+    ('pt', gettext_noop('Portuguese')),
+    ('pt-br', gettext_noop('Brazilian Portuguese')),
+    ('ro', gettext_noop('Romanian')),
+    ('ru', gettext_noop('Russian')),
+    ('sk', gettext_noop('Slovak')),
+    ('sl', gettext_noop('Slovenian')),
+    ('sq', gettext_noop('Albanian')),
+    ('sr', gettext_noop('Serbian')),
+    ('sr-latn', gettext_noop('Serbian Latin')),
+    ('sv', gettext_noop('Swedish')),
+    ('sw', gettext_noop('Swahili')),
+    ('ta', gettext_noop('Tamil')),
+    ('te', gettext_noop('Telugu')),
+    ('th', gettext_noop('Thai')),
+    ('tr', gettext_noop('Turkish')),
+    ('tt', gettext_noop('Tatar')),
+    ('udm', gettext_noop('Udmurt')),
+    ('uk', gettext_noop('Ukrainian')),
+    ('ur', gettext_noop('Urdu')),
+    ('vi', gettext_noop('Vietnamese')),
+    ('zh-hans', gettext_noop('Simplified Chinese')),
+    ('zh-hant', gettext_noop('Traditional Chinese')),
+]
+
+# Languages using BiDi (right-to-left) layout
+LANGUAGES_BIDI = ["he", "ar", "fa", "ur"]
+
+
 
 SITES = {
     "api": {"domain": "localhost:8000", "scheme": "http", "name": "api"},
