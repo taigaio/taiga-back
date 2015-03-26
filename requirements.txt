@@ -8,7 +8,7 @@ pillow==2.5.3
 pytz==2014.4
 six==1.8.0
 amqp==1.4.6
-djmail==0.9
+djmail==0.10
 django-pgjson==0.2.2
 djorm-pgarray==1.0.4
 django-jinja==1.0.4
