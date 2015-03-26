@@ -58,7 +58,7 @@ def send_register_email(user) -> bool:
     cancel_token = get_token_for_user(user, "cancel_account")
     context = {"user": user, "cancel_token": cancel_token}
     mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
-    email = mbuilder.registered_user(user.email, context)
+    email = mbuilder.registered_user(user, context)
     return bool(email.send())
 
 

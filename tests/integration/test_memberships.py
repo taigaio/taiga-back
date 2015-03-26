@@ -80,7 +80,7 @@ def test_api_create_bulk_members_with_extra_text(client, outbox):
 
 
 def test_api_resend_invitation(client, outbox):
-    invitation = f.create_invitation()
+    invitation = f.create_invitation(user=None)
     f.MembershipFactory(project=invitation.project, user=invitation.project.owner, is_owner=True)
     url = reverse("memberships-resend-invitation", kwargs={"pk": invitation.pk})
 

@@ -9,10 +9,11 @@ def send_invitation(invitation):
     mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
     if invitation.user:
         template = mbuilder.membership_notification
+        email = template(invitation.user, {"membership": invitation})
     else:
         template = mbuilder.membership_invitation
+        email = template(invitation.email, {"membership": invitation})
 
-    email = template(invitation.email, {"membership": invitation})
     email.send()
 
 

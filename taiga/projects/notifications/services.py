@@ -269,6 +269,7 @@ def send_sync_notifications(notification_id):
 
     for user in notification.notify_users.distinct():
         context["user"] = user
+        context["lang"] = user.lang
         email.send(user.email, context)
 
     notification.delete()
