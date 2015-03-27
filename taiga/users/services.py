@@ -21,6 +21,7 @@ This model contains a domain logic for users application.
 from django.apps import apps
 from django.db.models import Q
 from django.conf import settings
+from django.utils.translation import ugettext as _
 
 from easy_thumbnails.files import get_thumbnailer
 from easy_thumbnails.exceptions import InvalidImageFormatError
@@ -44,11 +45,11 @@ def get_and_validate_user(*, username:str, password:str) -> bool:
     qs = user_model.objects.filter(Q(username=username) |
                                    Q(email=username))
     if len(qs) == 0:
-        raise exc.WrongArguments("Username or password does not matches user.")
+        raise exc.WrongArguments(_("Username or password does not matches user."))
 
     user = qs[0]
     if not user.check_password(password):
-        raise exc.WrongArguments("Username or password does not matches user.")
+        raise exc.WrongArguments(_("Username or password does not matches user."))
 
     return user
 
@@ -80,6 +81,10 @@ def get_big_photo_url(photo):
 
 def get_big_photo_or_gravatar_url(user):
     """Get the user's big photo/gravatar url."""
-    if user:
-        return get_big_photo_url(user.photo) if user.photo else get_gravatar_url(user.email, size=settings.DEFAULT_BIG_AVATAR_SIZE)
-    return ""
+    if not user:
+        return ""
+
+    if user.photo:
+        return get_big_photo_url(user.photo)
+    else:
+        return get_gravatar_url(user.email, size=settings.DEFAULT_BIG_AVATAR_SIZE)

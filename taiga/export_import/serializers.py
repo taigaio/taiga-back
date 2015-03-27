@@ -18,11 +18,12 @@ import base64
 import os
 from collections import OrderedDict
 
-from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers
 
@@ -153,7 +154,7 @@ class ProjectRelatedField(serializers.RelatedField):
             kwargs = {self.slug_field: data, "project": self.context['project']}
             return self.queryset.get(**kwargs)
         except ObjectDoesNotExist:
-            raise ValidationError("{}=\"{}\" not found in this project".format(self.slug_field, data))
+            raise ValidationError(_("{}=\"{}\" not found in this project".format(self.slug_field, data)))
 
 
 class HistoryUserField(JsonField):
@@ -458,7 +459,7 @@ class MilestoneExportSerializer(serializers.ModelSerializer):
         name = attrs[source]
         qs = self.project.milestones.filter(name=name)
         if qs.exists():
-            raise serializers.ValidationError("Name duplicated for the project")
+            raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
 

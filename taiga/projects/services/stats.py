@@ -14,12 +14,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils.translation import ugettext as _
 from django.db.models import Q, Count
 from django.apps import apps
 import datetime
 import copy
 
 from taiga.projects.history.models import HistoryEntry
+
 
 def _get_milestones_stats_for_backlog(project):
     """
@@ -67,7 +69,7 @@ def _get_milestones_stats_for_backlog(project):
             current_client_increment += sum(ml.client_increment_points.values())
 
         else:
-            milestone_name = "Future sprint"
+            milestone_name = _("Future sprint")
             team_increment = current_team_increment + future_team_increment,
             client_increment = current_client_increment + future_client_increment,
             current_evolution = None
@@ -84,7 +86,7 @@ def _get_milestones_stats_for_backlog(project):
     evolution = (project.total_story_points - current_evolution
                     if current_evolution is not None and project.total_story_points else None)
     yield {
-        'name': 'Project End',
+        'name': _('Project End'),
         'optimal': optimal_points,
         'evolution': evolution,
         'team-increment': team_increment,
@@ -119,8 +121,8 @@ def _count_owned_object(user_obj, counting_storage):
         else:
             counting_storage[0] = {}
             counting_storage[0]['count'] = 1
-            counting_storage[0]['username'] = 'Unassigned'
-            counting_storage[0]['name'] = 'Unassigned'
+            counting_storage[0]['username'] = _('Unassigned')
+            counting_storage[0]['name'] = _('Unassigned')
             counting_storage[0]['id'] = 0
             counting_storage[0]['color'] = 'black'
 

@@ -19,6 +19,7 @@
 
 from functools import update_wrapper
 from django.utils.decorators import classonlymethod
+from django.utils.translation import ugettext as _
 
 from . import views
 from . import mixins
@@ -53,12 +54,12 @@ class ViewSetMixin(object):
         # sanitize keyword arguments
         for key in initkwargs:
             if key in cls.http_method_names:
-                raise TypeError("You tried to pass in the %s method name as a "
-                                "keyword argument to %s(). Don't do that."
-                                % (key, cls.__name__))
+                raise TypeError(_("You tried to pass in the %s method name as a "
+                                  "keyword argument to %s(). Don't do that."
+                                  % (key, cls.__name__)))
             if not hasattr(cls, key):
-                raise TypeError("%s() received an invalid keyword %r" % (
-                    cls.__name__, key))
+                raise TypeError(_("%s() received an invalid keyword %r"
+                                  % (cls.__name__, key)))
 
         def view(request, *args, **kwargs):
             self = cls(**initkwargs)

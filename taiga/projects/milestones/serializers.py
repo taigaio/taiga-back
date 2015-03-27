@@ -14,13 +14,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
+from django.utils.translation import ugettext as _
 
 from rest_framework import serializers
 
+from taiga.base.utils import json
+
 from ..userstories.serializers import UserStorySerializer
 from . import models
-
 
 
 class MilestoneSerializer(serializers.ModelSerializer):
@@ -59,6 +60,6 @@ class MilestoneSerializer(serializers.ModelSerializer):
             qs = models.Milestone.objects.filter(project=attrs["project"], name=attrs[source])
 
         if qs and qs.exists():
-              raise serializers.ValidationError("Name duplicated for the project")
+              raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs

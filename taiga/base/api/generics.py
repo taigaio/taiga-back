@@ -126,11 +126,11 @@ class GenericAPIView(views.APIView):
         """
         deprecated_style = False
         if page_size is not None:
-            warnings.warn('The `page_size` parameter to `paginate_queryset()` '
-                          'is due to be deprecated. '
-                          'Note that the return style of this method is also '
-                          'changed, and will simply return a page object '
-                          'when called without a `page_size` argument.',
+            warnings.warn(_('The `page_size` parameter to `paginate_queryset()` '
+                            'is due to be deprecated. '
+                            'Note that the return style of this method is also '
+                            'changed, and will simply return a page object '
+                            'when called without a `page_size` argument.'),
                           PendingDeprecationWarning, stacklevel=2)
             deprecated_style = True
         else:
@@ -141,12 +141,10 @@ class GenericAPIView(views.APIView):
                 return None
 
         if not self.allow_empty:
-            warnings.warn(
-                'The `allow_empty` parameter is due to be deprecated. '
-                'To use `allow_empty=False` style behavior, You should override '
-                '`get_queryset()` and explicitly raise a 404 on empty querysets.',
-                PendingDeprecationWarning, stacklevel=2
-            )
+            warnings.warn(_('The `allow_empty` parameter is due to be deprecated. '
+                            'To use `allow_empty=False` style behavior, You should override '
+                            '`get_queryset()` and explicitly raise a 404 on empty querysets.'),
+                          PendingDeprecationWarning, stacklevel=2)
 
         paginator = self.paginator_class(queryset, page_size,
                                          allow_empty_first_page=self.allow_empty)
@@ -191,10 +189,10 @@ class GenericAPIView(views.APIView):
         """
         filter_backends = self.filter_backends or []
         if not filter_backends and hasattr(self, 'filter_backend'):
-            raise RuntimeError('The `filter_backend` attribute and `FILTER_BACKEND` setting '
-                               'are due to be deprecated in favor of a `filter_backends` '
-                               'attribute and `DEFAULT_FILTER_BACKENDS` setting, that take '
-                               'a *list* of filter backend classes.')
+            raise RuntimeError(_('The `filter_backend` attribute and `FILTER_BACKEND` setting '
+                                 'are due to be deprecated in favor of a `filter_backends` '
+                                 'attribute and `DEFAULT_FILTER_BACKENDS` setting, that take '
+                                 'a *list* of filter backend classes.'))
         return filter_backends
 
     ###########################################################
@@ -212,8 +210,8 @@ class GenericAPIView(views.APIView):
         Otherwise defaults to using `self.paginate_by`.
         """
         if queryset is not None:
-            raise RuntimeError('The `queryset` parameter to `get_paginate_by()` '
-                               'is due to be deprecated.')
+            raise RuntimeError(_('The `queryset` parameter to `get_paginate_by()` '
+                                 'is due to be deprecated.'))
         if self.paginate_by_param:
             try:
                 return strict_positive_int(
@@ -233,11 +231,9 @@ class GenericAPIView(views.APIView):
         if serializer_class is not None:
             return serializer_class
 
-        assert self.model is not None, \
-            "'%s' should either include a 'serializer_class' attribute, " \
-            "or use the 'model' attribute as a shortcut for " \
-            "automatically generating a serializer class." \
-            % self.__class__.__name__
+        assert self.model is not None, _("'%s' should either include a 'serializer_class' attribute, "
+                                         "or use the 'model' attribute as a shortcut for "
+                                         "automatically generating a serializer class." % self.__class__.__name__)
 
         class DefaultSerializer(self.model_serializer_class):
             class Meta:
@@ -261,7 +257,7 @@ class GenericAPIView(views.APIView):
         if self.model is not None:
             return self.model._default_manager.all()
 
-        raise ImproperlyConfigured("'%s' must define 'queryset' or 'model'" % self.__class__.__name__)
+        raise ImproperlyConfigured(_("'%s' must define 'queryset' or 'model'" % self.__class__.__name__))
 
     def get_object(self, queryset=None):
         """
@@ -289,18 +285,16 @@ class GenericAPIView(views.APIView):
         if lookup is not None:
             filter_kwargs = {self.lookup_field: lookup}
         elif pk is not None and self.lookup_field == 'pk':
-            raise RuntimeError('The `pk_url_kwarg` attribute is due to be deprecated. '
-                               'Use the `lookup_field` attribute instead')
+            raise RuntimeError(_('The `pk_url_kwarg` attribute is due to be deprecated. '
+                                 'Use the `lookup_field` attribute instead'))
         elif slug is not None and self.lookup_field == 'pk':
-            raise RuntimeError('The `slug_url_kwarg` attribute is due to be deprecated. '
-                               'Use the `lookup_field` attribute instead')
+            raise RuntimeError(_('The `slug_url_kwarg` attribute is due to be deprecated. '
+                                 'Use the `lookup_field` attribute instead'))
         else:
-            raise ImproperlyConfigured(
-                'Expected view %s to be called with a URL keyword argument '
-                'named "%s". Fix your URL conf, or set the `.lookup_field` '
-                'attribute on the view correctly.' %
-                (self.__class__.__name__, self.lookup_field)
-            )
+            raise ImproperlyConfigured(_('Expected view %s to be called with a URL keyword argument '
+                                         'named "%s". Fix your URL conf, or set the `.lookup_field` '
+                                         'attribute on the view correctly.' %
+                                         (self.__class__.__name__, self.lookup_field)))
 
         obj = get_object_or_404(queryset, **filter_kwargs)
         return obj

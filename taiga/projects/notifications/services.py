@@ -22,6 +22,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.db import transaction
 from django.conf import settings
+from django.utils.translation import ugettext as _
 
 from djmail import template_mail
 
@@ -36,6 +37,7 @@ from taiga.permissions.service import user_has_perm
 from taiga.users.models import User
 
 from .models import HistoryChangeNotification
+
 
 def notify_policy_exists(project, user) -> bool:
     """
@@ -58,7 +60,7 @@ def create_notify_policy(project, user, level=NotifyLevel.notwatch):
                                         user=user,
                                         notify_level=level)
     except IntegrityError as e:
-        raise exc.IntegrityError("Notify exists for specified user and project") from e
+        raise exc.IntegrityError(_("Notify exists for specified user and project")) from e
 
 
 def create_notify_policy_if_not_exists(project, user, level=NotifyLevel.notwatch):
@@ -72,7 +74,7 @@ def create_notify_policy_if_not_exists(project, user, level=NotifyLevel.notwatch
                                                defaults={"notify_level": level})
         return result[0]
     except IntegrityError as e:
-        raise exc.IntegrityError("Notify exists for specified user and project") from e
+        raise exc.IntegrityError(_("Notify exists for specified user and project")) from e
 
 
 def get_notify_policy(project, user):
@@ -256,8 +258,7 @@ def send_sync_notifications(notification_id):
     obj, _ = get_last_snapshot_for_key(notification.key)
     obj_class = get_model_from_key(obj.key)
 
-    context = {
-               "obj_class": obj_class,
+    context = {"obj_class": obj_class,
                "snapshot": obj.snapshot,
                "project": notification.project,
                "changer": notification.owner,

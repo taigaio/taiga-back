@@ -19,7 +19,7 @@ import logging
 
 from django.apps import apps
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from rest_framework import filters
 
@@ -60,7 +60,7 @@ class QueryParamsFilterMixin(filters.BaseFilterBackend):
             try:
                 queryset = queryset.filter(**query_params)
             except ValueError:
-                raise exc.BadRequest("Error in filter params types.")
+                raise exc.BadRequest(_("Error in filter params types."))
 
         return queryset
 
@@ -104,10 +104,10 @@ class PermissionBasedFilterBackend(FilterBackend):
             try:
                 project_id = int(request.QUERY_PARAMS["project"])
             except:
-                logger.error("Filtering project diferent value than an integer: {}".format(
+                logger.error(_("Filtering project diferent value than an integer: {}".format(
                     request.QUERY_PARAMS["project"]
-                ))
-                raise exc.BadRequest("'project' must be an integer value.")
+                )))
+                raise exc.BadRequest(_("'project' must be an integer value."))
 
         qs = queryset
 
@@ -193,10 +193,10 @@ class CanViewProjectObjFilterBackend(FilterBackend):
             try:
                 project_id = int(request.QUERY_PARAMS["project"])
             except:
-                logger.error("Filtering project diferent value than an integer: {}".format(
+                logger.error(_("Filtering project diferent value than an integer: {}".format(
                     request.QUERY_PARAMS["project"]
-                ))
-                raise exc.BadRequest("'project' must be an integer value.")
+                )))
+                raise exc.BadRequest(_("'project' must be an integer value."))
 
         qs = queryset
 
@@ -250,8 +250,9 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
             try:
                 project_id = int(request.QUERY_PARAMS["project"])
             except:
-                logger.error("Filtering project diferent value than an integer: {}".format(request.QUERY_PARAMS["project"]))
-                raise exc.BadRequest("'project' must be an integer value.")
+                logger.error(_("Filtering project diferent value than an integer: {}".format(
+                                                              request.QUERY_PARAMS["project"])))
+                raise exc.BadRequest(_("'project' must be an integer value."))
 
         if project_id:
             Project = apps.get_model('projects', 'Project')

@@ -16,7 +16,7 @@
 
 import re
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from taiga.base import exceptions as exc
 from taiga.projects.models import IssueStatus, TaskStatus, UserStoryStatus
@@ -27,10 +27,9 @@ from taiga.projects.history.services import take_snapshot
 from taiga.projects.notifications.services import send_notifications
 from taiga.hooks.event_hooks import BaseEventHook
 from taiga.hooks.exceptions import ActionSyntaxException
+from taiga.base.utils import json
 
 from .services import get_bitbucket_user
-
-import json
 
 
 class PushEventHook(BaseEventHook):
@@ -92,7 +91,7 @@ class PushEventHook(BaseEventHook):
         element.save()
 
         snapshot = take_snapshot(element,
-                                 comment="Status changed from BitBucket commit",
+                                 comment=_("Status changed from BitBucket commit"),
                                  user=get_bitbucket_user(bitbucket_user))
         send_notifications(element, history=snapshot)
 

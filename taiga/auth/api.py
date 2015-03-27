@@ -17,7 +17,7 @@
 from functools import partial
 from enum import Enum
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.conf import settings
 
 from rest_framework import serializers

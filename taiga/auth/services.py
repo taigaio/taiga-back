@@ -91,7 +91,7 @@ def get_membership_by_token(token:str):
     membership_model = apps.get_model("projects", "Membership")
     qs = membership_model.objects.filter(token=token)
     if len(qs) == 0:
-        raise exc.NotFound("Token not matches any valid invitation.")
+        raise exc.NotFound(_("Token not matches any valid invitation."))
     return qs[0]
 
 
@@ -119,7 +119,7 @@ def public_register(username:str, password:str, email:str, full_name:str):
     try:
         user.save()
     except IntegrityError:
-        raise exc.WrongArguments("User is already register.")
+        raise exc.WrongArguments(_("User is already register."))
 
     send_register_email(user)
     user_registered_signal.send(sender=user.__class__, user=user)
@@ -143,7 +143,7 @@ def private_register_for_existing_user(token:str, username:str, password:str):
         membership.user = user
         membership.save(update_fields=["user"])
     except IntegrityError:
-        raise exc.IntegrityError("Membership with user is already exists.")
+        raise exc.IntegrityError(_("Membership with user is already exists."))
 
     send_register_email(user)
     return user

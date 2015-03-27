@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from taiga.projects.models import IssueStatus, TaskStatus, UserStoryStatus
 
@@ -85,7 +85,7 @@ class PushEventHook(BaseEventHook):
         element.save()
 
         snapshot = take_snapshot(element,
-                                 comment="Status changed from GitHub commit",
+                                 comment=_("Status changed from GitHub commit"),
                                  user=get_github_user(github_user))
         send_notifications(element, history=snapshot)
 
@@ -93,7 +93,7 @@ class PushEventHook(BaseEventHook):
 def replace_github_references(project_url, wiki_text):
     if wiki_text == None:
         wiki_text = ""
-        
+
     template = "\g<1>[GitHub#\g<2>]({}/issues/\g<2>)\g<3>".format(project_url)
     return re.sub(r"(\s|^)#(\d+)(\s|$)", template, wiki_text, 0, re.M)
 
@@ -125,7 +125,7 @@ class IssuesEventHook(BaseEventHook):
         )
         take_snapshot(issue, user=get_github_user(github_user))
 
-        snapshot = take_snapshot(issue, comment="Created from GitHub", user=get_github_user(github_user))
+        snapshot = take_snapshot(issue, comment=_("Created from GitHub"), user=get_github_user(github_user))
         send_notifications(issue, history=snapshot)
 
 
@@ -149,6 +149,6 @@ class IssueCommentEventHook(BaseEventHook):
 
         for item in list(issues) + list(tasks) + list(uss):
             snapshot = take_snapshot(item,
-                                     comment="From GitHub:\n\n{}".format(comment_message),
+                                     comment=_("From GitHub:\n\n{}".format(comment_message)),
                                      user=get_github_user(github_user))
             send_notifications(item, history=snapshot)

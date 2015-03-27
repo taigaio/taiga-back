@@ -18,7 +18,7 @@ import uuid
 
 from django.db.models import signals
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from taiga.base import filters
 from taiga.base import response
@@ -186,10 +186,10 @@ class ProjectViewSet(ModelCrudViewSet):
         template_description = request.DATA.get('template_description', None)
 
         if not template_name:
-            raise response.BadRequest("Not valid template name")
+            raise response.BadRequest(_("Not valid template name"))
 
         if not template_description:
-            raise response.BadRequest("Not valid template description")
+            raise response.BadRequest(_("Not valid template description"))
 
         template_slug = slugify_uniquely(template_name, models.ProjectTemplate)
 

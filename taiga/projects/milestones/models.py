@@ -72,7 +72,7 @@ class Milestone(WatchedModelMixin, models.Model):
     def clean(self):
         # Don't allow draft entries to have a pub_date.
         if self.estimated_start and self.estimated_finish and self.estimated_start > self.estimated_finish:
-            raise ValidationError('The estimated start must be previous to the estimated finish.')
+            raise ValidationError(_('The estimated start must be previous to the estimated finish.'))
 
     def save(self, *args, **kwargs):
         if not self._importing or not self.modified_date:

@@ -20,6 +20,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.utils import timezone
 from django.conf import settings
+from django.utils.translation import ugettext as _
 
 from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
 
@@ -45,8 +46,8 @@ def dump_project(self, user, project):
     except Exception:
         ctx = {
             "user": user,
-            "error_subject": "Error generating project dump",
-            "error_message": "Error generating project dump",
+            "error_subject": _("Error generating project dump"),
+            "error_message": _("Error generating project dump"),
             "project": project
         }
         email = mbuilder.export_error(user, ctx)
@@ -78,8 +79,8 @@ def load_project_dump(user, dump):
     except Exception:
         ctx = {
             "user": user,
-            "error_subject": "Error loading project dump",
-            "error_message": "Error loading project dump",
+            "error_subject": _("Error loading project dump"),
+            "error_message": _("Error loading project dump"),
         }
         email = mbuilder.import_error(user, ctx)
         email.send()

@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils.translation import ugettext as _
+
 from contextlib import contextmanager
 
 
@@ -22,7 +24,7 @@ from contextlib import contextmanager
 def without_signals(*disablers):
     for disabler in disablers:
         if not (isinstance(disabler, list) or isinstance(disabler, tuple)) or len(disabler) == 0:
-            raise ValueError("The parameters must be lists of at least one parameter (the signal)")
+            raise ValueError(_("The parameters must be lists of at least one parameter (the signal)."))
 
         signal, *ids = disabler
         signal.backup_receivers = signal.receivers

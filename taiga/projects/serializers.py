@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.db.models import Q
 
 from rest_framework import serializers
@@ -61,7 +61,7 @@ class PointsSerializer(ModelSerializer):
             qs = models.Points.objects.filter(project=attrs["project"], name=attrs[source])
 
         if qs and qs.exists():
-              raise serializers.ValidationError("Name duplicated for the project")
+              raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
 
@@ -85,7 +85,7 @@ class UserStoryStatusSerializer(ModelSerializer):
                                                        name=attrs[source])
 
         if qs and qs.exists():
-              raise serializers.ValidationError("Name duplicated for the project")
+              raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
 
@@ -107,7 +107,7 @@ class TaskStatusSerializer(ModelSerializer):
             qs = models.TaskStatus.objects.filter(project=attrs["project"], name=attrs[source])
 
         if qs and qs.exists():
-              raise serializers.ValidationError("Name duplicated for the project")
+              raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
 
@@ -139,7 +139,7 @@ class IssueStatusSerializer(ModelSerializer):
             qs = models.IssueStatus.objects.filter(project=attrs["project"], name=attrs[source])
 
         if qs and qs.exists():
-              raise serializers.ValidationError("Name duplicated for the project")
+              raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
 
@@ -310,7 +310,7 @@ class ProjectSerializer(ModelSerializer):
         """
         value = attrs[source]
         if value is None:
-            raise serializers.ValidationError("Total milestones must be major or equal to zero")
+            raise serializers.ValidationError(_("Total milestones must be major or equal to zero"))
         return attrs
 
 
