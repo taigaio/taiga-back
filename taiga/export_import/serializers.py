@@ -425,7 +425,7 @@ class MembershipExportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = projects_models.Membership
-        exclude = ('id', 'project')
+        exclude = ('id', 'project', 'token')
 
     def full_clean(self, instance):
         return instance
