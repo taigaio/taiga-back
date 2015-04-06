@@ -30,6 +30,7 @@ from taiga.base.api.permissions import AllowAnyPermission
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.slug import slugify_uniquely
 
+from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 
@@ -51,7 +52,7 @@ from .votes.utils import attach_votescount_to_queryset
 ## Project
 ######################################################
 
-class ProjectViewSet(ModelCrudViewSet):
+class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
     serializer_class = serializers.ProjectDetailSerializer
     admin_serializer_class = serializers.ProjectDetailAdminSerializer
     list_serializer_class = serializers.ProjectSerializer
