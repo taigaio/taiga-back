@@ -19,6 +19,7 @@ from django.apps import apps
 from django.db.models import signals
 
 from . import signals as handlers
+from taiga.projects.history.models import HistoryEntry
 
 
 class TimelineAppConfig(AppConfig):
@@ -26,13 +27,8 @@ class TimelineAppConfig(AppConfig):
     verbose_name = "Timeline"
 
     def ready(self):
-        signals.post_save.connect(handlers.create_project_push_to_timeline,
-                                  sender=apps.get_model("projects", "Project"))
-        signals.post_save.connect(handlers.create_user_story_push_to_timeline,
-                                  sender=apps.get_model("userstories", "UserStory"))
-        signals.post_save.connect(handlers.create_issue_push_to_timeline,
-                                  sender=apps.get_model("issues", "Issue"))
+        signals.post_save.connect(handlers.on_new_history_entry, sender=HistoryEntry, dispatch_uid="timeline")
         signals.pre_save.connect(handlers.create_membership_push_to_timeline,
-                                 sender=apps.get_model("projects", "Membership"))
+                                                 sender=apps.get_model("projects", "Membership"))
         signals.post_delete.connect(handlers.delete_membership_push_to_timeline,
-                                    sender=apps.get_model("projects", "Membership"))
+                                                sender=apps.get_model("projects", "Membership"))

@@ -23,14 +23,17 @@ from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey
 
+from taiga.projects.models import Project
 
 class Timeline(models.Model):
-    content_type = models.ForeignKey(ContentType)
+    content_type = models.ForeignKey(ContentType, related_name="content_type_timelines")
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     namespace = models.SlugField(default="default")
     event_type = models.SlugField()
+    project = models.ForeignKey(Project)
     data = JsonField()
+    data_content_type = models.ForeignKey(ContentType, related_name="data_timelines")
     created = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):

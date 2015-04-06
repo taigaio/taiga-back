@@ -14,43 +14,90 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.timeline.service import push_to_timeline
+from django.conf import settings
+
+from taiga.projects.history import services as history_services
+from taiga.projects.models import Project
+from taiga.users.models import User
+from taiga.projects.history.choices import HistoryType
+from taiga.timeline.service import push_to_timeline, build_user_namespace, build_project_namespace
 
 # TODO: Add events to followers timeline when followers are implemented.
 # TODO: Add events to project watchers timeline when project watchers are implemented.
 
-
-def create_project_push_to_timeline(sender, instance, created, **kwargs):
-    if created:
-        push_to_timeline(instance, instance, "create")
-
-
-def create_user_story_push_to_timeline(sender, instance, created, **kwargs):
-    if created:
-        push_to_timeline(instance.project, instance, "create")
+def _push_to_timeline(*args, **kwargs):
+    if settings.CELERY_ENABLED:
+        push_to_timeline.delay(*args, **kwargs)
+    else:
+        push_to_timeline(*args, **kwargs)
 
 
-def create_issue_push_to_timeline(sender, instance, created, **kwargs):
-    if created:
-        push_to_timeline(instance.project, instance, "create")
+def _push_to_timelines(project, user, obj, event_type, extra_data={}):
+    # Project timeline
+    _push_to_timeline(project, obj, event_type,
+        namespace=build_project_namespace(project),
+        extra_data=extra_data)
+
+    # User timeline
+    _push_to_timeline(user, obj, event_type,
+        namespace=build_user_namespace(user),
+        extra_data=extra_data)
+
+    # Related people: watchers and assigned to
+    if hasattr(obj, "assigned_to") and obj.assigned_to and user != obj.assigned_to:
+        _push_to_timeline(obj.assigned_to, obj, event_type,
+            namespace=build_user_namespace(user),
+            extra_data=extra_data)
+
+    watchers = hasattr(obj, "watchers") and obj.watchers.exclude(id=user.id) or []
+    if watchers:
+        _push_to_timeline(watchers, obj, event_type,
+            namespace=build_user_namespace(user),
+            extra_data=extra_data)
+
+
+def on_new_history_entry(sender, instance, created, **kwargs):
+    if instance.is_hidden:
+        return None
+
+    model = history_services.get_model_from_key(instance.key)
+    pk = history_services.get_pk_from_key(instance.key)
+    obj = model.objects.get(pk=pk)
+    project = obj.project
+
+    if instance.type == HistoryType.create:
+        event_type = "create"
+    elif instance.type == HistoryType.change:
+        event_type = "change"
+    elif instance.type == HistoryType.delete:
+        event_type = "delete"
+
+    extra_data = {
+        "values_diff": instance.values_diff,
+        "user": instance.user,
+        "comment": instance.comment,
+    }
+
+    user = User.objects.get(id=instance.user["pk"])
+    _push_to_timelines(project, user, obj, event_type, extra_data=extra_data)
 
 
 def create_membership_push_to_timeline(sender, instance, **kwargs):
+    # Creating new membership with associated user
     if not instance.pk and instance.user:
-        push_to_timeline(instance.project, instance, "create")
+        _push_to_timelines(instance.project, instance.user, instance, "create")
+
+    #Updating existing membership
     elif instance.pk:
         prev_instance = sender.objects.get(pk=instance.pk)
-        if prev_instance.user != prev_instance.user:
-            push_to_timeline(instance.project, instance, "create")
-        elif prev_instance.role != prev_instance.role:
-            extra_data = {
-                "prev_role": {
-                    "id": prev_instance.role.pk,
-                    "name": prev_instance.role.name,
-                }
-            }
-            push_to_timeline(instance.project, instance, "role-changed", extra_data=extra_data)
+        if instance.user != prev_instance.user:
+            # The new member
+            _push_to_timelines(instance.project, instance.user, instance, "create")
+            # If we are updating the old user is removed from project
+            if prev_instance.user:
+                _push_to_timelines(instance.project, prev_instance.user, prev_instance, "delete")
 
 
 def delete_membership_push_to_timeline(sender, instance, **kwargs):
-    push_to_timeline(instance.project, instance, "delete")
+    if instance.user:
+        _push_to_timelines(instance.project, instance.user, instance, "delete")
