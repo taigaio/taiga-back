@@ -25,8 +25,8 @@ from django.db import transaction as tx
 from django.utils.translation import ugettext as _
 
 from taiga.base import response
-from rest_framework.settings import api_settings
 
+from .settings import api_settings
 from .utils import get_object_or_404
 
 

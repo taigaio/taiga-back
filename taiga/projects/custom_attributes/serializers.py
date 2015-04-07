@@ -18,10 +18,9 @@
 from django.apps import apps
 from django.utils.translation import ugettext_lazy as _
 
-from rest_framework.serializers import ValidationError
-
-from taiga.base.serializers import ModelSerializer
-from taiga.base.serializers import JsonField
+from taiga.base.fields import JsonField
+from taiga.base.api.serializers import ValidationError
+from taiga.base.api.serializers import ModelSerializer
 
 from . import models
 

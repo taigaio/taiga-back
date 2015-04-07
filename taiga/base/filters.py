@@ -21,8 +21,6 @@ from django.apps import apps
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 
-from rest_framework import filters
-
 from taiga.base import exceptions as exc
 from taiga.base.api.utils import get_object_or_404
 
@@ -30,7 +28,20 @@ from taiga.base.api.utils import get_object_or_404
 logger = logging.getLogger(__name__)
 
 
-class QueryParamsFilterMixin(filters.BaseFilterBackend):
+
+class BaseFilterBackend(object):
+    """
+    A base class from which all filter backend classes should inherit.
+    """
+
+    def filter_queryset(self, request, queryset, view):
+        """
+        Return a filtered queryset.
+        """
+        raise NotImplementedError(".filter_queryset() must be overridden.")
+
+
+class QueryParamsFilterMixin(BaseFilterBackend):
     _special_values_dict = {
         'true': True,
         'false': False,

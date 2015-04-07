@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-06 17:04+0200\n"
+"POT-Creation-Date: 2015-04-09 20:07+0200\n"
 "PO-Revision-Date: 2015-03-25 20:09+0100\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Taiga Dev Team <support@taiga.io>\n"
@@ -16,23 +16,23 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: taiga/auth/api.py:100
+#: taiga/auth/api.py:99
 msgid "Public register is disabled."
 msgstr ""
 
-#: taiga/auth/api.py:133
+#: taiga/auth/api.py:132
 msgid "invalid register type"
 msgstr ""
 
-#: taiga/auth/api.py:146
+#: taiga/auth/api.py:145
 msgid "invalid login type"
 msgstr ""
 
-#: taiga/auth/serializers.py:33 taiga/users/serializers.py:52
+#: taiga/auth/serializers.py:34 taiga/users/serializers.py:50
 msgid "invalid username"
 msgstr ""
 
-#: taiga/auth/serializers.py:38 taiga/users/serializers.py:58
+#: taiga/auth/serializers.py:39 taiga/users/serializers.py:56
 msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
 msgstr ""
@@ -65,105 +65,228 @@ msgstr ""
 msgid "Invalid token"
 msgstr ""
 
-#: taiga/base/api/generics.py:129
-msgid ""
-"The `page_size` parameter to `paginate_queryset()` is due to be deprecated. "
-"Note that the return style of this method is also changed, and will simply "
-"return a page object when called without a `page_size` argument."
+#: taiga/base/api/fields.py:265
+msgid "This field is required."
 msgstr ""
 
-#: taiga/base/api/generics.py:144 taiga/base/api/mixins.py:98
+#: taiga/base/api/fields.py:266 taiga/base/api/relations.py:311
+msgid "Invalid value."
+msgstr ""
+
+#: taiga/base/api/fields.py:449
+#, python-format
+msgid "'%s' value must be either True or False."
+msgstr ""
+
+#: taiga/base/api/fields.py:506
+msgid ""
+"Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."
+msgstr ""
+
+#: taiga/base/api/fields.py:521
+#, python-format
+msgid "Select a valid choice. %(value)s is not one of the available choices."
+msgstr ""
+
+#: taiga/base/api/fields.py:584
+msgid "Enter a valid email address."
+msgstr ""
+
+#: taiga/base/api/fields.py:626
+#, python-format
+msgid "Date has wrong format. Use one of these formats instead: %s"
+msgstr ""
+
+#: taiga/base/api/fields.py:690
+#, python-format
+msgid "Datetime has wrong format. Use one of these formats instead: %s"
+msgstr ""
+
+#: taiga/base/api/fields.py:760
+#, python-format
+msgid "Time has wrong format. Use one of these formats instead: %s"
+msgstr ""
+
+#: taiga/base/api/fields.py:817
+msgid "Enter a whole number."
+msgstr ""
+
+#: taiga/base/api/fields.py:818 taiga/base/api/fields.py:871
+#, python-format
+msgid "Ensure this value is less than or equal to %(limit_value)s."
+msgstr ""
+
+#: taiga/base/api/fields.py:819 taiga/base/api/fields.py:872
+#, python-format
+msgid "Ensure this value is greater than or equal to %(limit_value)s."
+msgstr ""
+
+#: taiga/base/api/fields.py:849
+#, python-format
+msgid "\"%s\" value must be a float."
+msgstr ""
+
+#: taiga/base/api/fields.py:870
+msgid "Enter a number."
+msgstr ""
+
+#: taiga/base/api/fields.py:873
+#, python-format
+msgid "Ensure that there are no more than %s digits in total."
+msgstr ""
+
+#: taiga/base/api/fields.py:874
+#, python-format
+msgid "Ensure that there are no more than %s decimal places."
+msgstr ""
+
+#: taiga/base/api/fields.py:875
+#, python-format
+msgid "Ensure that there are no more than %s digits before the decimal point."
+msgstr ""
+
+#: taiga/base/api/fields.py:942
+msgid "No file was submitted. Check the encoding type on the form."
+msgstr ""
+
+#: taiga/base/api/fields.py:943
+msgid "No file was submitted."
+msgstr ""
+
+#: taiga/base/api/fields.py:944
+msgid "The submitted file is empty."
+msgstr ""
+
+#: taiga/base/api/fields.py:945
+#, python-format
+msgid ""
+"Ensure this filename has at most %(max)d characters (it has %(length)d)."
+msgstr ""
+
+#: taiga/base/api/fields.py:946
+msgid "Please either submit a file or check the clear checkbox, not both."
+msgstr ""
+
+#: taiga/base/api/fields.py:986
+msgid ""
+"Upload a valid image. The file you uploaded was either not an image or a "
+"corrupted image."
+msgstr ""
+
+#: taiga/base/api/mixins.py:98
 msgid ""
 "The `allow_empty` parameter is due to be deprecated. To use "
 "`allow_empty=False` style behavior, You should override `get_queryset()` and "
 "explicitly raise a 404 on empty querysets."
 msgstr ""
 
-#: taiga/base/api/generics.py:160
+#: taiga/base/api/pagination.py:115
 msgid "Page is not 'last', nor can it be converted to an int."
 msgstr ""
 
-#: taiga/base/api/generics.py:164
+#: taiga/base/api/pagination.py:119
 #, python-format
 msgid "Invalid page (%(page_number)s): %(message)s"
-msgstr ""
-
-#: taiga/base/api/generics.py:192
-msgid ""
-"The `filter_backend` attribute and `FILTER_BACKEND` setting are due to be "
-"deprecated in favor of a `filter_backends` attribute and "
-"`DEFAULT_FILTER_BACKENDS` setting, that take a *list* of filter backend "
-"classes."
-msgstr ""
-
-#: taiga/base/api/generics.py:213
-msgid ""
-"The `queryset` parameter to `get_paginate_by()` is due to be deprecated."
-msgstr ""
-
-#: taiga/base/api/generics.py:234
-#, python-format
-msgid ""
-"'%s' should either include a 'serializer_class' attribute, or use the "
-"'model' attribute as a shortcut for automatically generating a serializer "
-"class."
-msgstr ""
-
-#: taiga/base/api/generics.py:260
-#, python-format
-msgid "'%s' must define 'queryset' or 'model'"
-msgstr ""
-
-#: taiga/base/api/generics.py:288
-msgid ""
-"The `pk_url_kwarg` attribute is due to be deprecated. Use the `lookup_field` "
-"attribute instead"
-msgstr ""
-
-#: taiga/base/api/generics.py:291
-msgid ""
-"The `slug_url_kwarg` attribute is due to be deprecated. Use the "
-"`lookup_field` attribute instead"
-msgstr ""
-
-#: taiga/base/api/generics.py:294
-#, python-format
-msgid ""
-"Expected view %s to be called with a URL keyword argument named \"%s\". Fix "
-"your URL conf, or set the `.lookup_field` attribute on the view correctly."
 msgstr ""
 
 #: taiga/base/api/permissions.py:61
 msgid "Invalid permission definition."
 msgstr ""
 
-#: taiga/base/api/views.py:97
-msgid "Not found"
+#: taiga/base/api/relations.py:221
+#, python-format
+msgid "Invalid pk '%s' - object does not exist."
+msgstr ""
+
+#: taiga/base/api/relations.py:222
+#, python-format
+msgid "Incorrect type. Expected pk value, received %s."
+msgstr ""
+
+#: taiga/base/api/relations.py:310
+#, python-format
+msgid "Object with %s=%s does not exist."
+msgstr ""
+
+#: taiga/base/api/relations.py:346
+msgid "Invalid hyperlink - No URL match"
+msgstr ""
+
+#: taiga/base/api/relations.py:347
+msgid "Invalid hyperlink - Incorrect URL match"
+msgstr ""
+
+#: taiga/base/api/relations.py:348
+msgid "Invalid hyperlink due to configuration error"
+msgstr ""
+
+#: taiga/base/api/relations.py:349
+msgid "Invalid hyperlink - object does not exist."
+msgstr ""
+
+#: taiga/base/api/relations.py:350
+#, python-format
+msgid "Incorrect type.  Expected url string, received %s."
+msgstr ""
+
+#: taiga/base/api/serializers.py:77
+#, python-brace-format
+msgid "{0} is not a Django model"
+msgstr ""
+
+#: taiga/base/api/serializers.py:226
+msgid "instance should be a queryset or other iterable with many=True"
+msgstr ""
+
+#: taiga/base/api/serializers.py:229
+msgid ""
+"allow_add_remove should only be used for bulk updates, but you have not set "
+"many=True"
+msgstr ""
+
+#: taiga/base/api/serializers.py:296
+msgid "Invalid data"
+msgstr ""
+
+#: taiga/base/api/serializers.py:388
+msgid "No input provided"
+msgstr ""
+
+#: taiga/base/api/serializers.py:548
+msgid "Cannot create a new item, only existing items may be updated."
+msgstr ""
+
+#: taiga/base/api/serializers.py:559
+msgid "Expected a list of items."
 msgstr ""
 
 #: taiga/base/api/views.py:100
+msgid "Not found"
+msgstr ""
+
+#: taiga/base/api/views.py:103
 msgid "Permission denied"
 msgstr ""
 
-#: taiga/base/api/views.py:349
+#: taiga/base/api/views.py:352
 #, python-format
 msgid ""
 "Expected a `Response`, `HttpResponse` or `HttpStreamingResponse` to be "
 "returned from the view, but received a `%s`"
 msgstr ""
 
-#: taiga/base/api/views.py:448
+#: taiga/base/api/views.py:451
 msgid "Server application error"
 msgstr ""
 
-#: taiga/base/api/viewsets.py:57
+#: taiga/base/api/viewsets.py:56
 #, python-format
 msgid ""
 "You tried to pass in the %s method name as a keyword argument to %s(). Don't "
 "do that."
 msgstr ""
 
-#: taiga/base/api/viewsets.py:61
+#: taiga/base/api/viewsets.py:60
 #, python-format
 msgid "%s() received an invalid keyword %r"
 msgstr ""
@@ -172,45 +295,84 @@ msgstr ""
 msgid "Connection error."
 msgstr ""
 
-#: taiga/base/exceptions.py:30
+#: taiga/base/exceptions.py:53
+msgid "Malformed request."
+msgstr ""
+
+#: taiga/base/exceptions.py:58
+msgid "Incorrect authentication credentials."
+msgstr ""
+
+#: taiga/base/exceptions.py:63
+msgid "Authentication credentials were not provided."
+msgstr ""
+
+#: taiga/base/exceptions.py:68
+msgid "You do not have permission to perform this action."
+msgstr ""
+
+#: taiga/base/exceptions.py:73
+#, python-format
+msgid "Method '%s' not allowed."
+msgstr ""
+
+#: taiga/base/exceptions.py:81
+msgid "Could not satisfy the request's Accept header"
+msgstr ""
+
+#: taiga/base/exceptions.py:90
+#, python-format
+msgid "Unsupported media type '%s' in request."
+msgstr ""
+
+#: taiga/base/exceptions.py:98
+msgid "Request was throttled."
+msgstr ""
+
+#: taiga/base/exceptions.py:99
+#, python-format
+msgid "Expected available in %d second%s."
+msgstr ""
+
+#: taiga/base/exceptions.py:113
 msgid "Unexpected error"
 msgstr ""
 
-#: taiga/base/exceptions.py:42
+#: taiga/base/exceptions.py:125
 msgid "Not found."
 msgstr ""
 
-#: taiga/base/exceptions.py:47
+#: taiga/base/exceptions.py:130
 msgid "Method not supported for this endpoint."
 msgstr ""
 
-#: taiga/base/exceptions.py:55 taiga/base/exceptions.py:63
+#: taiga/base/exceptions.py:138 taiga/base/exceptions.py:146
 msgid "Wrong arguments."
 msgstr ""
 
-#: taiga/base/exceptions.py:67
+#: taiga/base/exceptions.py:150
 msgid "Data validation error"
 msgstr ""
 
-#: taiga/base/exceptions.py:79
+#: taiga/base/exceptions.py:162
 msgid "Integrity Error for wrong or invalid arguments"
 msgstr ""
 
-#: taiga/base/exceptions.py:86
+#: taiga/base/exceptions.py:169
 msgid "Precondition error"
 msgstr ""
 
-#: taiga/base/filters.py:63
+#: taiga/base/filters.py:74
 msgid "Error in filter params types."
 msgstr ""
 
-#: taiga/base/filters.py:107 taiga/base/filters.py:196
-#: taiga/base/filters.py:253
+#: taiga/base/filters.py:118 taiga/base/filters.py:207
+#: taiga/base/filters.py:264
 msgid "Filtering project diferent value than an integer: {}"
 msgstr ""
 
-#: taiga/base/filters.py:110 taiga/base/filters.py:199
-#: taiga/base/filters.py:255
+#: taiga/base/filters.py:121 taiga/base/filters.py:210
+#: taiga/base/filters.py:266
 msgid "'project' must be an integer value."
 msgstr ""
 
@@ -356,21 +518,21 @@ msgstr ""
 msgid "error importing user stories"
 msgstr ""
 
-#: taiga/export_import/serializers.py:157
+#: taiga/export_import/serializers.py:158
 msgid "{}=\"{}\" not found in this project"
 msgstr ""
 
-#: taiga/export_import/serializers.py:378
-#: taiga/projects/custom_attributes/serializers.py:104
+#: taiga/export_import/serializers.py:379
+#: taiga/projects/custom_attributes/serializers.py:103
 msgid "Invalid content. It must be {\"key\": \"value\",...}"
 msgstr ""
 
-#: taiga/export_import/serializers.py:393
-#: taiga/projects/custom_attributes/serializers.py:119
+#: taiga/export_import/serializers.py:394
+#: taiga/projects/custom_attributes/serializers.py:118
 msgid "It contain invalid custom fields."
 msgstr ""
 
-#: taiga/export_import/serializers.py:462
+#: taiga/export_import/serializers.py:463
 #: taiga/projects/milestones/serializers.py:63
 #: taiga/projects/serializers.py:64 taiga/projects/serializers.py:88
 #: taiga/projects/serializers.py:110 taiga/projects/serializers.py:142
@@ -822,7 +984,7 @@ msgstr ""
 msgid "issue"
 msgstr ""
 
-#: taiga/projects/custom_attributes/serializers.py:58
+#: taiga/projects/custom_attributes/serializers.py:57
 msgid "Already exists one with the same name."
 msgstr ""
 
@@ -855,7 +1017,7 @@ msgstr ""
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:130
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:133
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:156
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:192
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:193
 msgid "from"
 msgstr ""
 
@@ -864,7 +1026,7 @@ msgstr ""
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:144
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:162
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:179
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:198
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:199
 msgid "to"
 msgstr ""
 
@@ -902,7 +1064,7 @@ msgstr ""
 msgid "Unassigned"
 msgstr ""
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:209
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:211
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:86
 msgid "-deleted-"
 msgstr ""
@@ -1292,23 +1454,23 @@ msgid ""
 "[%(project)s] Deleted the Wiki Page \"%(page)s\"\n"
 msgstr ""
 
-#: taiga/projects/notifications/validators.py:43
+#: taiga/projects/notifications/validators.py:44
 msgid "Watchers contains invalid users"
 msgstr ""
 
-#: taiga/projects/occ/mixins.py:34
+#: taiga/projects/occ/mixins.py:35
 msgid "The version must be an integer"
 msgstr ""
 
-#: taiga/projects/occ/mixins.py:55
+#: taiga/projects/occ/mixins.py:56
 msgid "The version is not valid"
 msgstr ""
 
-#: taiga/projects/occ/mixins.py:71
+#: taiga/projects/occ/mixins.py:72
 msgid "The version doesn't match with the current one"
 msgstr ""
 
-#: taiga/projects/occ/mixins.py:91
+#: taiga/projects/occ/mixins.py:92
 msgid "version"
 msgstr ""
 
@@ -1492,7 +1654,7 @@ msgstr ""
 msgid "generated from issue"
 msgstr ""
 
-#: taiga/projects/userstories/validators.py:12
+#: taiga/projects/userstories/validators.py:28
 msgid "There's no user story with that id"
 msgstr ""
 
@@ -1671,11 +1833,11 @@ msgstr ""
 msgid "permissions"
 msgstr ""
 
-#: taiga/users/serializers.py:53
+#: taiga/users/serializers.py:51
 msgid "invalid"
 msgstr ""
 
-#: taiga/users/serializers.py:64
+#: taiga/users/serializers.py:62
 msgid "Invalid username. Try with a different one."
 msgstr ""
 

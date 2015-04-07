@@ -16,7 +16,7 @@
 
 from django.utils.translation import ugettext as _
 
-from rest_framework.permissions import IsAuthenticated
+from taiga.base.api.permissions import IsAuthenticated
 
 from taiga.base import filters
 from taiga.base import exceptions as exc

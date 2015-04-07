@@ -21,6 +21,7 @@ from taiga.base import exceptions as exc
 from taiga.base.utils import db
 from taiga.projects.history.services import get_modified_fields
 
+
 class OCCResourceMixin(object):
     """
     Rest Framework resource mixin for resources that need to have concurrent

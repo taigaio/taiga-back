@@ -18,10 +18,8 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from rest_framework import serializers
-from taiga.base.serializers import Serializer
-from taiga.base.serializers import ModelSerializer
-from taiga.base.serializers import PgArrayField
+from taiga.base.api import serializers
+from taiga.base.fields import PgArrayField
 
 from .models import User, Role
 from .services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
@@ -33,7 +31,7 @@ import re
 ## User
 ######################################################
 
-class UserSerializer(ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     full_name_display = serializers.SerializerMethodField("get_full_name_display")
     photo = serializers.SerializerMethodField("get_photo")
     big_photo = serializers.SerializerMethodField("get_big_photo")
@@ -86,16 +84,16 @@ class UserAdminSerializer(UserSerializer):
         read_only_fields = ("id", "email")
 
 
-class RecoverySerializer(Serializer):
+class RecoverySerializer(serializers.Serializer):
     token = serializers.CharField(max_length=200)
     password = serializers.CharField(min_length=6)
 
 
-class ChangeEmailSerializer(Serializer):
+class ChangeEmailSerializer(serializers.Serializer):
     email_token = serializers.CharField(max_length=200)
 
 
-class CancelAccountSerializer(Serializer):
+class CancelAccountSerializer(serializers.Serializer):
     cancel_token = serializers.CharField(max_length=200)
 
 
@@ -103,7 +101,7 @@ class CancelAccountSerializer(Serializer):
 ## Role
 ######################################################
 
-class RoleSerializer(ModelSerializer):
+class RoleSerializer(serializers.ModelSerializer):
     members_count = serializers.SerializerMethodField("get_members_count")
     permissions = PgArrayField(required=False)
 
@@ -115,7 +113,7 @@ class RoleSerializer(ModelSerializer):
         return obj.memberships.count()
 
 
-class ProjectRoleSerializer(ModelSerializer):
+class ProjectRoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = ('id', 'name', 'slug', 'order', 'computable')

@@ -18,12 +18,12 @@
 from django.utils.translation import ugettext as _
 from django.db.models import Q
 
-from rest_framework import serializers
+from taiga.base.api import serializers
 
-from taiga.base.serializers import JsonField
-from taiga.base.serializers import PgArrayField
-from taiga.base.serializers import ModelSerializer
-from taiga.base.serializers import TagsColorsField
+from taiga.base.fields import JsonField
+from taiga.base.fields import PgArrayField
+from taiga.base.fields import TagsColorsField
+
 from taiga.users.services import get_photo_or_gravatar_url
 from taiga.users.serializers import UserSerializer
 from taiga.users.serializers import ProjectRoleSerializer
@@ -44,7 +44,7 @@ from .custom_attributes.serializers import IssueCustomAttributeSerializer
 ## Custom values for selectors
 ######################################################
 
-class PointsSerializer(ModelSerializer):
+class PointsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Points
 
@@ -66,7 +66,7 @@ class PointsSerializer(ModelSerializer):
         return attrs
 
 
-class UserStoryStatusSerializer(ModelSerializer):
+class UserStoryStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserStoryStatus
 
@@ -90,7 +90,7 @@ class UserStoryStatusSerializer(ModelSerializer):
         return attrs
 
 
-class TaskStatusSerializer(ModelSerializer):
+class TaskStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaskStatus
 
@@ -112,17 +112,17 @@ class TaskStatusSerializer(ModelSerializer):
         return attrs
 
 
-class SeveritySerializer(ModelSerializer):
+class SeveritySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Severity
 
 
-class PrioritySerializer(ModelSerializer):
+class PrioritySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Priority
 
 
-class IssueStatusSerializer(ModelSerializer):
+class IssueStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.IssueStatus
 
@@ -144,7 +144,7 @@ class IssueStatusSerializer(ModelSerializer):
         return attrs
 
 
-class IssueTypeSerializer(ModelSerializer):
+class IssueTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.IssueType
 
@@ -153,7 +153,7 @@ class IssueTypeSerializer(ModelSerializer):
 ## Members
 ######################################################
 
-class MembershipSerializer(ModelSerializer):
+class MembershipSerializer(serializers.ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False, read_only=True)
     full_name = serializers.CharField(source='user.get_full_name', required=False, read_only=True)
     user_email = serializers.EmailField(source='user.email', required=False, read_only=True)
@@ -238,7 +238,7 @@ class MembershipAdminSerializer(MembershipSerializer):
         exclude = ("token",)
 
 
-class ProjectMembershipSerializer(ModelSerializer):
+class ProjectMembershipSerializer(serializers.ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False)
     full_name = serializers.CharField(source='user.get_full_name', required=False)
     color = serializers.CharField(source='user.color', required=False)
@@ -266,7 +266,7 @@ class MembersBulkSerializer(ProjectExistsValidator, serializers.Serializer):
 ## Projects
 ######################################################
 
-class ProjectSerializer(ModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
     tags = PgArrayField(required=False)
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
@@ -355,7 +355,7 @@ class ProjectDetailAdminSerializer(ProjectDetailSerializer):
 ## Starred
 ######################################################
 
-class StarredSerializer(ModelSerializer):
+class StarredSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Project
         fields = ['id', 'name', 'slug']
@@ -366,7 +366,7 @@ class StarredSerializer(ModelSerializer):
 ## Project Templates
 ######################################################
 
-class ProjectTemplateSerializer(ModelSerializer):
+class ProjectTemplateSerializer(serializers.ModelSerializer):
     default_options = JsonField(required=False, label=_("Default options"))
     us_statuses = JsonField(required=False, label=_("User story's statuses"))
     points = JsonField(required=False, label=_("Points"))

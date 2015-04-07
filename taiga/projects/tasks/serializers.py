@@ -14,10 +14,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rest_framework import serializers
+from taiga.base.api import serializers
 
-from taiga.base.serializers import (Serializer, TagsField, NeighborsSerializerMixin,
-        PgArrayField, ModelSerializer)
+from taiga.base.fields import TagsField
+from taiga.base.fields import PgArrayField
+
+from taiga.base.neighbors import NeighborsSerializerMixin
 
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator
@@ -28,7 +30,7 @@ from taiga.projects.notifications.validators import WatchersValidator
 from . import models
 
 
-class TaskSerializer(WatchersValidator, ModelSerializer):
+class TaskSerializer(WatchersValidator, serializers.ModelSerializer):
     tags = TagsField(required=False, default=[])
     external_reference = PgArrayField(required=False)
     comment = serializers.SerializerMethodField("get_comment")
@@ -65,7 +67,7 @@ class TaskNeighborsSerializer(NeighborsSerializerMixin, TaskSerializer):
         return NeighborTaskSerializer(neighbor).data
 
 
-class NeighborTaskSerializer(ModelSerializer):
+class NeighborTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Task
         fields = ("id", "ref", "subject")
@@ -73,7 +75,7 @@ class NeighborTaskSerializer(ModelSerializer):
 
 
 class TasksBulkSerializer(ProjectExistsValidator, SprintExistsValidator,
-                          TaskExistsValidator, Serializer):
+                          TaskExistsValidator, serializers.Serializer):
     project_id = serializers.IntegerField()
     sprint_id = serializers.IntegerField()
     status_id = serializers.IntegerField(required=False)
@@ -82,11 +84,11 @@ class TasksBulkSerializer(ProjectExistsValidator, SprintExistsValidator,
 
 ## Order bulk serializers
 
-class _TaskOrderBulkSerializer(TaskExistsValidator, Serializer):
+class _TaskOrderBulkSerializer(TaskExistsValidator, serializers.Serializer):
     task_id = serializers.IntegerField()
     order = serializers.IntegerField()
 
 
-class UpdateTasksOrderBulkSerializer(ProjectExistsValidator, Serializer):
+class UpdateTasksOrderBulkSerializer(ProjectExistsValidator, serializers.Serializer):
     project_id = serializers.IntegerField()
     bulk_tasks = _TaskOrderBulkSerializer(many=True)

@@ -24,7 +24,6 @@ from django.utils.translation import ugettext as _
 from . import views
 from . import mixins
 from . import generics
-from . import pagination
 
 
 class ViewSetMixin(object):
@@ -126,9 +125,7 @@ class GenericViewSet(ViewSetMixin, generics.GenericAPIView):
     pass
 
 
-class ReadOnlyListViewSet(pagination.HeadersPaginationMixin,
-                          pagination.ConditionalPaginationMixin,
-                          GenericViewSet):
+class ReadOnlyListViewSet(GenericViewSet):
     """
     A viewset that provides default `list()` action.
     """
@@ -157,15 +154,11 @@ class ModelViewSet(mixins.CreateModelMixin,
     pass
 
 
-class ModelCrudViewSet(pagination.HeadersPaginationMixin,
-                       pagination.ConditionalPaginationMixin,
-                       ModelViewSet):
+class ModelCrudViewSet(ModelViewSet):
     pass
 
 
-class ModelListViewSet(pagination.HeadersPaginationMixin,
-                       pagination.ConditionalPaginationMixin,
-                       mixins.RetrieveModelMixin,
+class ModelListViewSet(mixins.RetrieveModelMixin,
                        mixins.ListModelMixin,
                        GenericViewSet):
     pass

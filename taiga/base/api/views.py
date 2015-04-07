@@ -19,26 +19,29 @@
 
 import json
 
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponse
-from django.utils.datastructures import SortedDict
+from django.http.response import HttpResponseBase
 from django.views.decorators.csrf import csrf_exempt
+from django.views.defaults import server_error
+from django.views.generic import View
+from django.utils.datastructures import SortedDict
+from django.utils.encoding import smart_text
 from django.utils.translation import ugettext as _
 
-from rest_framework import status, exceptions
-from rest_framework.compat import smart_text, HttpResponseBase, View
-from rest_framework.request import Request
-from rest_framework.settings import api_settings
-from rest_framework.utils import formatting
+from .request import Request
+from .settings import api_settings
+from .utils import formatting
 
+from taiga.base import status
+from taiga.base import exceptions
 from taiga.base.response import Response
 from taiga.base.response import Ok
 from taiga.base.response import NotFound
 from taiga.base.response import Forbidden
 from taiga.base.utils.iterators import as_tuple
 
-from django.conf import settings
-from django.views.defaults import server_error
 
 
 def get_view_name(view_cls, suffix=None):
@@ -293,7 +296,7 @@ class APIView(View):
         """
         request.user
 
-    def check_permissions(self, request, action, obj=None):
+    def check_permissions(self, request, action:str=None, obj=None):
         if action is None:
             self.permission_denied(request)
 

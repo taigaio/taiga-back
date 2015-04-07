@@ -14,11 +14,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rest_framework import serializers
-
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+
+from taiga.base.api import serializers
+
 import re
 
 

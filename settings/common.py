@@ -269,6 +269,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "taiga.base",
+    "taiga.base.api",
     "taiga.events",
     "taiga.front",
     "taiga.users",
@@ -295,7 +296,6 @@ INSTALLED_APPS = [
     "taiga.hooks.bitbucket",
     "taiga.webhooks",
 
-    "rest_framework",
     "djmail",
     "django_jinja",
     "django_jinja.contrib._humanize",

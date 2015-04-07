@@ -19,9 +19,8 @@ import hashlib
 
 from django.conf import settings
 
-from rest_framework import serializers
+from taiga.base.api import serializers
 
-from taiga.base.serializers import ModelSerializer
 from taiga.base.utils.urls import reverse
 
 from . import models

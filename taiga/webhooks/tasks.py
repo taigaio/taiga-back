@@ -19,8 +19,7 @@ import hashlib
 import requests
 from requests.exceptions import RequestException
 
-from rest_framework.renderers import UnicodeJSONRenderer
-
+from taiga.base.api.renderers import UnicodeJSONRenderer
 from taiga.base.utils.db import get_typename_for_model_instance
 from taiga.celery import app
 
