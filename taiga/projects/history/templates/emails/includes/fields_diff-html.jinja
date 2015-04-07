@@ -184,21 +184,23 @@
         {% endif %}
         {% if values.changed %}
             {% for attr in values['changed'] %}
-            <tr>
-                <td valign="middle" rowspan="2" class="update-row-name">
-                    <h3>{{ attr.name }}</h3>
-                </td>
-                <td valign="top" class="update-row-from">
-                    <span>{{ _("from") }}</span><br>
-                    <strong>{{ attr.changes.value.0|linebreaksbr }}</strong>
-                </td>
-            </tr>
-            <tr>
-                <td valign="top">
-                    <span>{{ _("to") }}</span><br>
-                    <strong>{{ attr.changes.value.1|linebreaksbr }}</strong>
-                </td>
-            </tr>
+                {% if attr.changes.value%}
+                <tr>
+                    <td valign="middle" rowspan="2" class="update-row-name">
+                        <h3>{{ attr.name }}</h3>
+                    </td>
+                    <td valign="top" class="update-row-from">
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ attr.changes.value.0|linebreaksbr }}</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top">
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ attr.changes.value.1|linebreaksbr }}</strong>
+                    </td>
+                </tr>
+                {% endif %}
             {% endfor %}
         {% endif %}
         {% if values.deleted %}
