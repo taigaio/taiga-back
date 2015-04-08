@@ -15,18 +15,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.timeline.service import register_timeline_implementation
-
+from . import service
 
 @register_timeline_implementation("projects.project", "create")
 @register_timeline_implementation("projects.project", "change")
 @register_timeline_implementation("projects.project", "delete")
 def project_timeline(instance, extra_data={}):
     result ={
-        "project": {
-            "id": instance.pk,
-            "slug": instance.slug,
-            "name": instance.name,
-        },
+        "project": service.extract_project_info(instance),
     }
     result.update(extra_data)
     return result
@@ -37,16 +33,8 @@ def project_timeline(instance, extra_data={}):
 @register_timeline_implementation("milestones.milestone", "delete")
 def project_timeline(instance, extra_data={}):
     result ={
-        "milestone": {
-            "id": instance.pk,
-            "slug": instance.slug,
-            "name": instance.name,
-        },
-        "project": {
-            "id": instance.project.pk,
-            "slug": instance.project.slug,
-            "name": instance.project.name,
-        }
+        "milestone": service.extract_milestone_info(instance),
+        "project": service.extract_project_info(instance.project),
     }
     result.update(extra_data)
     return result
@@ -57,15 +45,8 @@ def project_timeline(instance, extra_data={}):
 @register_timeline_implementation("userstories.userstory", "delete")
 def userstory_timeline(instance, extra_data={}):
     result ={
-        "userstory": {
-            "id": instance.pk,
-            "subject": instance.subject,
-        },
-        "project": {
-            "id": instance.project.pk,
-            "slug": instance.project.slug,
-            "name": instance.project.name,
-        }
+        "userstory": service.extract_userstory_info(instance),
+        "project": service.extract_project_info(instance.project),
     }
     result.update(extra_data)
     return result
@@ -76,15 +57,8 @@ def userstory_timeline(instance, extra_data={}):
 @register_timeline_implementation("issues.issue", "delete")
 def issue_timeline(instance, extra_data={}):
     result ={
-        "issue": {
-            "id": instance.pk,
-            "subject": instance.subject,
-        },
-        "project": {
-            "id": instance.project.pk,
-            "slug": instance.project.slug,
-            "name": instance.project.name,
-        }
+        "issue": service.extract_issue_info(instance),
+        "project": service.extract_project_info(instance.project),
     }
     result.update(extra_data)
     return result
@@ -95,15 +69,8 @@ def issue_timeline(instance, extra_data={}):
 @register_timeline_implementation("tasks.task", "delete")
 def task_timeline(instance, extra_data={}):
     result ={
-        "task": {
-            "id": instance.pk,
-            "subject": instance.subject,
-        },
-        "project": {
-            "id": instance.project.pk,
-            "slug": instance.project.slug,
-            "name": instance.project.name,
-        }
+        "task": service.extract_task_info(instance),
+        "project": service.extract_project_info(instance.project),
     }
     result.update(extra_data)
     return result
@@ -114,15 +81,8 @@ def task_timeline(instance, extra_data={}):
 @register_timeline_implementation("wiki.wikipage", "delete")
 def wiki_page_timeline(instance, extra_data={}):
     result ={
-        "wiki_page": {
-            "id": instance.pk,
-            "slug": instance.slug,
-        },
-        "project": {
-            "id": instance.project.pk,
-            "slug": instance.project.slug,
-            "name": instance.project.name,
-        }
+        "wiki_page": service.extract_wiki_page_info(instance),
+        "project": service.extract_project_info(instance.project),
     }
     result.update(extra_data)
     return result
@@ -132,15 +92,8 @@ def wiki_page_timeline(instance, extra_data={}):
 @register_timeline_implementation("projects.membership", "delete")
 def membership_create_timeline(instance, extra_data={}):
     result =  {
-        "user": {
-            "id": instance.user.pk,
-            "name": instance.user.get_full_name(),
-        },
-        "project": {
-            "id": instance.project.pk,
-            "slug": instance.project.slug,
-            "name": instance.project.name,
-        },
+        "user": service.extract_user_info(instance.user),
+        "project": service.extract_project_info(instance.project),
     }
     result.update(extra_data)
     return result

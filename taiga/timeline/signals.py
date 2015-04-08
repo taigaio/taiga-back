@@ -20,7 +20,8 @@ from taiga.projects.history import services as history_services
 from taiga.projects.models import Project
 from taiga.users.models import User
 from taiga.projects.history.choices import HistoryType
-from taiga.timeline.service import push_to_timeline, build_user_namespace, build_project_namespace
+from taiga.timeline.service import (push_to_timeline, build_user_namespace,
+    build_project_namespace, extract_user_info)
 
 # TODO: Add events to followers timeline when followers are implemented.
 # TODO: Add events to project watchers timeline when project watchers are implemented.
@@ -72,13 +73,14 @@ def on_new_history_entry(sender, instance, created, **kwargs):
     elif instance.type == HistoryType.delete:
         event_type = "delete"
 
+    user = User.objects.get(id=instance.user["pk"])
+
     extra_data = {
         "values_diff": instance.values_diff,
-        "user": instance.user,
+        "user": extract_user_info(user),
         "comment": instance.comment,
     }
 
-    user = User.objects.get(id=instance.user["pk"])
     _push_to_timelines(project, user, obj, event_type, extra_data=extra_data)
 
 

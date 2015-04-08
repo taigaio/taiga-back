@@ -24,6 +24,7 @@ from functools import partial, wraps
 
 from taiga.base.utils.db import get_typename_for_model_class
 from taiga.celery import app
+from taiga.users.services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
 
 _timeline_impl_map = {}
 
@@ -165,3 +166,61 @@ def register_timeline_implementation(typename:str, event_type:str, fn=None):
 
     _timeline_impl_map[key] = _wrapper
     return _wrapper
+
+
+
+def extract_project_info(instance):
+    return {
+        "id": instance.pk,
+        "slug": instance.slug,
+        "name": instance.name,
+    }
+
+
+def extract_user_info(instance):
+    return {
+        "id": instance.pk,
+        "name": instance.get_full_name(),
+        "photo": get_photo_or_gravatar_url(instance),
+        "big_photo": get_big_photo_or_gravatar_url(instance),
+        "username": instance.username,
+    }
+
+
+def extract_milestone_info(instance):
+    return {
+        "id": instance.pk,
+        "slug": instance.slug,
+        "name": instance.name,
+    }
+
+
+def extract_userstory_info(instance):
+    return {
+        "id": instance.pk,
+        "ref": instance.ref,
+        "subject": instance.subject,
+    }
+
+
+def extract_issue_info(instance):
+    return {
+        "id": instance.pk,
+        "ref": instance.ref,
+        "subject": instance.subject,
+    }
+
+
+def extract_task_info(instance):
+    return {
+        "id": instance.pk,
+        "ref": instance.ref,
+        "subject": instance.subject,
+    }
+
+
+def extract_wiki_page_info(instance):
+    return {
+        "id": instance.pk,
+        "slug": instance.slug,
+    }

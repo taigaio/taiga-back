@@ -134,7 +134,7 @@ def test_create_project_timeline():
     project_timeline = service.get_project_timeline(project)
     assert project_timeline[0].event_type == "projects.project.create"
     assert project_timeline[0].data["project"]["name"] == "test project timeline"
-    assert project_timeline[0].data["user"]["pk"] == project.owner.id
+    assert project_timeline[0].data["user"]["id"] == project.owner.id
     assert project_timeline[0].data["user"]["name"] == project.owner.get_full_name()
 
 
@@ -144,7 +144,7 @@ def test_create_milestone_timeline():
     milestone_timeline = service.get_project_timeline(milestone.project)
     assert milestone_timeline[0].event_type == "milestones.milestone.create"
     assert milestone_timeline[0].data["milestone"]["name"] == "test milestone timeline"
-    assert milestone_timeline[0].data["user"]["pk"] == milestone.owner.id
+    assert milestone_timeline[0].data["user"]["id"] == milestone.owner.id
     assert milestone_timeline[0].data["user"]["name"] == milestone.owner.get_full_name()
 
 
@@ -154,7 +154,7 @@ def test_create_user_story_timeline():
     project_timeline = service.get_project_timeline(user_story.project)
     assert project_timeline[0].event_type == "userstories.userstory.create"
     assert project_timeline[0].data["userstory"]["subject"] == "test us timeline"
-    assert project_timeline[0].data["user"]["pk"] == user_story.owner.id
+    assert project_timeline[0].data["user"]["id"] == user_story.owner.id
     assert project_timeline[0].data["user"]["name"] == user_story.owner.get_full_name()
 
 
@@ -164,7 +164,7 @@ def test_create_issue_timeline():
     project_timeline = service.get_project_timeline(issue.project)
     assert project_timeline[0].event_type == "issues.issue.create"
     assert project_timeline[0].data["issue"]["subject"] == "test issue timeline"
-    assert project_timeline[0].data["user"]["pk"] == issue.owner.id
+    assert project_timeline[0].data["user"]["id"] == issue.owner.id
     assert project_timeline[0].data["user"]["name"] == issue.owner.get_full_name()
 
 
@@ -174,7 +174,7 @@ def test_create_task_timeline():
     project_timeline = service.get_project_timeline(task.project)
     assert project_timeline[0].event_type == "tasks.task.create"
     assert project_timeline[0].data["task"]["subject"] == "test task timeline"
-    assert project_timeline[0].data["user"]["pk"] == task.owner.id
+    assert project_timeline[0].data["user"]["id"] == task.owner.id
     assert project_timeline[0].data["user"]["name"] == task.owner.get_full_name()
 
 
@@ -184,7 +184,7 @@ def test_create_wiki_page_timeline():
     project_timeline = service.get_project_timeline(page.project)
     assert project_timeline[0].event_type == "wiki.wikipage.create"
     assert project_timeline[0].data["wiki_page"]["slug"] == "test wiki page timeline"
-    assert project_timeline[0].data["user"]["pk"] == page.owner.id
+    assert project_timeline[0].data["user"]["id"] == page.owner.id
     assert project_timeline[0].data["user"]["name"] == page.owner.get_full_name()
 
 
