@@ -25,7 +25,7 @@ from .. import factories as f
 from django.apps import apps
 
 from taiga.base.utils import json
-from taiga.projects.models import Project
+from taiga.projects.models import Project, Membership
 from taiga.projects.issues.models import Issue
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.tasks.models import Task
@@ -88,6 +88,28 @@ def test_valid_project_import_with_not_existing_memberships(client):
     response_data = json.loads(response.content.decode("utf-8"))
     # The new membership and the owner membership
     assert len(response_data["memberships"]) == 2
+
+
+def test_valid_project_import_with_membership_uuid_rewrite(client):
+    user = f.UserFactory.create()
+    client.login(user)
+
+    url = reverse("importer-list")
+    data = {
+        "name": "Imported project",
+        "description": "Imported project",
+        "memberships": [{
+            "email": "with-uuid@email.com",
+            "role": "Role",
+            "token": "123",
+        }],
+        "roles": [{"name": "Role"}]
+    }
+
+    response = client.post(url, json.dumps(data), content_type="application/json")
+    assert response.status_code == 201
+    response_data = json.loads(response.content.decode("utf-8"))
+    assert Membership.objects.filter(email="with-uuid@email.com", token="123").count() == 0
 
 
 def test_valid_project_import_with_extra_data(client):
