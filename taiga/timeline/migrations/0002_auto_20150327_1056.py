@@ -12,7 +12,7 @@ from taiga.projects.history.choices import HistoryType
 from taiga.projects.history.models import HistoryEntry
 from taiga.timeline.models import Timeline
 from taiga.timeline.service import (_add_to_object_timeline, _get_impl_key_from_model,
-    _timeline_impl_map)
+    _timeline_impl_map, extract_user_info)
 from taiga.timeline.signals import on_new_history_entry, _push_to_timelines
 from taiga.users.models import User
 
@@ -55,10 +55,7 @@ def generate_timeline(apps, schema_editor):
             print("Project:", created)
             extra_data = {
                 "values_diff": {},
-                "user": {
-                    "pk": project.owner.id,
-                    "user_name": project.owner.get_full_name(),
-                },
+                "user": extract_user_info(project.owner),
             }
             _push_to_timelines(project, project.owner, project, "create", extra_data=extra_data)
 
