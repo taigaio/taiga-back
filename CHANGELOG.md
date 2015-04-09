@@ -1,8 +1,17 @@
 # Changelog #
 
 
-## 1.6.0 Abies Bifolia (2015-03-17)
+## 1.7.0 ??? (unreleased)
 
+### Features
+- Make Taiga translatable (i18n support).
+
+### Misc
+- Lots of small and not so small bugfixes.
+- Remove djangorestframework from requirements. Move useful code to core.
+
+
+## 1.6.0 Abies Bifolia (2015-03-17)
 
 ### Features
 - Added custom fields per project for user stories, tasks and issues.
