@@ -174,6 +174,7 @@ def extract_project_info(instance):
         "id": instance.pk,
         "slug": instance.slug,
         "name": instance.name,
+        "description": instance.description,
     }
 
 
