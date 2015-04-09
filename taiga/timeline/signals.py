@@ -44,17 +44,30 @@ def _push_to_timelines(project, user, obj, event_type, extra_data={}):
         namespace=build_user_namespace(user),
         extra_data=extra_data)
 
-    # Related people: watchers and assigned to
-    if hasattr(obj, "assigned_to") and obj.assigned_to and user != obj.assigned_to:
-        _push_to_timeline(obj.assigned_to, obj, event_type,
-            namespace=build_user_namespace(user),
-            extra_data=extra_data)
+    # Calculating related people
+    related_people = User.objects.none()
 
-    watchers = hasattr(obj, "watchers") and obj.watchers.exclude(id=user.id) or []
+    # Assigned to
+    if hasattr(obj, "assigned_to") and obj.assigned_to and user != obj.assigned_to:
+        related_people |= User.objects.filter(id=obj.assigned_to.id)
+
+    # Watchers
+    watchers = hasattr(obj, "watchers") and obj.watchers.exclude(id=user.id) or User.objects.none()
     if watchers:
-        _push_to_timeline(watchers, obj, event_type,
-            namespace=build_user_namespace(user),
-            extra_data=extra_data)
+        related_people |= watchers
+
+    # Team
+    team_members_ids = project.memberships.filter(user__isnull=False).values_list("id", flat=True)
+    team = User.objects.filter(id__in=team_members_ids)
+    related_people |= team
+
+    related_people = related_people.distinct()
+
+    _push_to_timeline(related_people, obj, event_type,
+        namespace=build_user_namespace(user),
+        extra_data=extra_data)
+
+    #Related people: team members
 
 
 def on_new_history_entry(sender, instance, created, **kwargs):
