@@ -71,6 +71,9 @@ def _push_to_timelines(project, user, obj, event_type, extra_data={}):
 
 
 def on_new_history_entry(sender, instance, created, **kwargs):
+    if instance._importing:
+        return
+
     if instance.is_hidden:
         return None
 

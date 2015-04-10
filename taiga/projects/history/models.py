@@ -76,6 +76,8 @@ class HistoryEntry(models.Model):
     # snapshot. The rest are partial snapshot.
     is_snapshot = models.BooleanField(default=False)
 
+    _importing = None
+    
     @cached_property
     def is_change(self):
       return self.type == HistoryType.change

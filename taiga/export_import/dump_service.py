@@ -65,6 +65,14 @@ def store_user_stories(project, data):
     return results
 
 
+def store_timeline_entries(project, data):
+    results = []
+    for timeline in data.get('timeline', []):
+        tl = service.store_timeline_entry(project, timeline)
+        results.append(tl)
+    return results
+
+
 def store_issues(project, data):
     issues = []
     for issue in data.get('issues', []):
@@ -166,5 +174,12 @@ def dict_to_project(data, owner=None):
         raise TaigaImportError(_('error importing issues'))
 
     store_tags_colors(proj, data)
+
+    if service.get_errors(clear=False):
+        raise TaigaImportError('error importing colors')
+
+    store_timeline_entries(proj, data)
+    if service.get_errors(clear=False):
+        raise TaigaImportError('error importing timelines')
 
     return proj
