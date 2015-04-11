@@ -113,7 +113,7 @@ def dict_to_project(data, owner=None):
                                     serializers.IssueCustomAttributeExportSerializer)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError(_('error importing custom attributes'))
+        raise TaigaImportError(_('error importing custom fields'))
 
     service.store_roles(proj, data)
 

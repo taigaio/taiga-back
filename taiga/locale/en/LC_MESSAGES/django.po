@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-09 20:07+0200\n"
+"POT-Creation-Date: 2015-04-13 11:23+0200\n"
 "PO-Revision-Date: 2015-03-25 20:09+0100\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Taiga Dev Team <support@taiga.io>\n"
@@ -50,7 +50,7 @@ msgid "Token not matches any valid invitation."
 msgstr ""
 
 #: taiga/auth/services.py:122
-msgid "User is already register."
+msgid "User is already registered."
 msgstr ""
 
 #: taiga/auth/services.py:146
@@ -486,7 +486,7 @@ msgid "error importing default choices"
 msgstr ""
 
 #: taiga/export_import/dump_service.py:116
-msgid "error importing custom attributes"
+msgid "error importing custom fields"
 msgstr ""
 
 #: taiga/export_import/dump_service.py:121
@@ -968,7 +968,7 @@ msgid "name"
 msgstr ""
 
 #: taiga/projects/custom_attributes/models.py:81
-msgid "attributes_values"
+msgid "values"
 msgstr ""
 
 #: taiga/projects/custom_attributes/models.py:91

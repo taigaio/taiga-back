@@ -119,7 +119,7 @@ def public_register(username:str, password:str, email:str, full_name:str):
     try:
         user.save()
     except IntegrityError:
-        raise exc.WrongArguments(_("User is already register."))
+        raise exc.WrongArguments(_("User is already registered."))
 
     send_register_email(user)
     user_registered_signal.send(sender=user.__class__, user=user)
