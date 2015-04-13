@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-13 11:23+0200\n"
+"POT-Creation-Date: 2015-04-14 16:26+0200\n"
 "PO-Revision-Date: 2015-03-25 20:09+0100\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Taiga Dev Team <support@taiga.io>\n"
@@ -65,109 +65,109 @@ msgstr ""
 msgid "Invalid token"
 msgstr ""
 
-#: taiga/base/api/fields.py:265
+#: taiga/base/api/fields.py:268
 msgid "This field is required."
 msgstr ""
 
-#: taiga/base/api/fields.py:266 taiga/base/api/relations.py:311
+#: taiga/base/api/fields.py:269 taiga/base/api/relations.py:311
 msgid "Invalid value."
 msgstr ""
 
-#: taiga/base/api/fields.py:449
+#: taiga/base/api/fields.py:453
 #, python-format
 msgid "'%s' value must be either True or False."
 msgstr ""
 
-#: taiga/base/api/fields.py:506
+#: taiga/base/api/fields.py:517
 msgid ""
 "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."
 msgstr ""
 
-#: taiga/base/api/fields.py:521
+#: taiga/base/api/fields.py:532
 #, python-format
 msgid "Select a valid choice. %(value)s is not one of the available choices."
 msgstr ""
 
-#: taiga/base/api/fields.py:584
+#: taiga/base/api/fields.py:595
 msgid "Enter a valid email address."
 msgstr ""
 
-#: taiga/base/api/fields.py:626
+#: taiga/base/api/fields.py:637
 #, python-format
 msgid "Date has wrong format. Use one of these formats instead: %s"
 msgstr ""
 
-#: taiga/base/api/fields.py:690
+#: taiga/base/api/fields.py:701
 #, python-format
 msgid "Datetime has wrong format. Use one of these formats instead: %s"
 msgstr ""
 
-#: taiga/base/api/fields.py:760
+#: taiga/base/api/fields.py:771
 #, python-format
 msgid "Time has wrong format. Use one of these formats instead: %s"
 msgstr ""
 
-#: taiga/base/api/fields.py:817
+#: taiga/base/api/fields.py:828
 msgid "Enter a whole number."
 msgstr ""
 
-#: taiga/base/api/fields.py:818 taiga/base/api/fields.py:871
+#: taiga/base/api/fields.py:829 taiga/base/api/fields.py:882
 #, python-format
 msgid "Ensure this value is less than or equal to %(limit_value)s."
 msgstr ""
 
-#: taiga/base/api/fields.py:819 taiga/base/api/fields.py:872
+#: taiga/base/api/fields.py:830 taiga/base/api/fields.py:883
 #, python-format
 msgid "Ensure this value is greater than or equal to %(limit_value)s."
 msgstr ""
 
-#: taiga/base/api/fields.py:849
+#: taiga/base/api/fields.py:860
 #, python-format
 msgid "\"%s\" value must be a float."
 msgstr ""
 
-#: taiga/base/api/fields.py:870
+#: taiga/base/api/fields.py:881
 msgid "Enter a number."
 msgstr ""
 
-#: taiga/base/api/fields.py:873
+#: taiga/base/api/fields.py:884
 #, python-format
 msgid "Ensure that there are no more than %s digits in total."
 msgstr ""
 
-#: taiga/base/api/fields.py:874
+#: taiga/base/api/fields.py:885
 #, python-format
 msgid "Ensure that there are no more than %s decimal places."
 msgstr ""
 
-#: taiga/base/api/fields.py:875
+#: taiga/base/api/fields.py:886
 #, python-format
 msgid "Ensure that there are no more than %s digits before the decimal point."
 msgstr ""
 
-#: taiga/base/api/fields.py:942
+#: taiga/base/api/fields.py:953
 msgid "No file was submitted. Check the encoding type on the form."
 msgstr ""
 
-#: taiga/base/api/fields.py:943
+#: taiga/base/api/fields.py:954
 msgid "No file was submitted."
 msgstr ""
 
-#: taiga/base/api/fields.py:944
+#: taiga/base/api/fields.py:955
 msgid "The submitted file is empty."
 msgstr ""
 
-#: taiga/base/api/fields.py:945
+#: taiga/base/api/fields.py:956
 #, python-format
 msgid ""
 "Ensure this filename has at most %(max)d characters (it has %(length)d)."
 msgstr ""
 
-#: taiga/base/api/fields.py:946
+#: taiga/base/api/fields.py:957
 msgid "Please either submit a file or check the clear checkbox, not both."
 msgstr ""
 
-#: taiga/base/api/fields.py:986
+#: taiga/base/api/fields.py:997
 msgid ""
 "Upload a valid image. The file you uploaded was either not an image or a "
 "corrupted image."
@@ -534,8 +534,8 @@ msgstr ""
 
 #: taiga/export_import/serializers.py:463
 #: taiga/projects/milestones/serializers.py:63
-#: taiga/projects/serializers.py:64 taiga/projects/serializers.py:88
-#: taiga/projects/serializers.py:110 taiga/projects/serializers.py:142
+#: taiga/projects/serializers.py:65 taiga/projects/serializers.py:91
+#: taiga/projects/serializers.py:114 taiga/projects/serializers.py:149
 msgid "Name duplicated for the project"
 msgstr ""
 
@@ -868,7 +868,7 @@ msgstr ""
 msgid "Not valid template description"
 msgstr ""
 
-#: taiga/projects/api.py:454 taiga/projects/serializers.py:227
+#: taiga/projects/api.py:454 taiga/projects/serializers.py:235
 msgid "At least one of the user must be an active admin"
 msgstr ""
 
@@ -1478,51 +1478,51 @@ msgstr ""
 msgid "You can't leave the project if there are no more owners"
 msgstr ""
 
-#: taiga/projects/serializers.py:203
+#: taiga/projects/serializers.py:211
 msgid "Email address is already taken"
 msgstr ""
 
-#: taiga/projects/serializers.py:215
+#: taiga/projects/serializers.py:223
 msgid "Invalid role for the project"
 msgstr ""
 
-#: taiga/projects/serializers.py:313
+#: taiga/projects/serializers.py:321
 msgid "Total milestones must be major or equal to zero"
 msgstr ""
 
-#: taiga/projects/serializers.py:370
+#: taiga/projects/serializers.py:378
 msgid "Default options"
 msgstr ""
 
-#: taiga/projects/serializers.py:371
+#: taiga/projects/serializers.py:379
 msgid "User story's statuses"
 msgstr ""
 
-#: taiga/projects/serializers.py:372
+#: taiga/projects/serializers.py:380
 msgid "Points"
 msgstr ""
 
-#: taiga/projects/serializers.py:373
+#: taiga/projects/serializers.py:381
 msgid "Task's statuses"
 msgstr ""
 
-#: taiga/projects/serializers.py:374
+#: taiga/projects/serializers.py:382
 msgid "Issue's statuses"
 msgstr ""
 
-#: taiga/projects/serializers.py:375
+#: taiga/projects/serializers.py:383
 msgid "Issue's types"
 msgstr ""
 
-#: taiga/projects/serializers.py:376
+#: taiga/projects/serializers.py:384
 msgid "Priorities"
 msgstr ""
 
-#: taiga/projects/serializers.py:377
+#: taiga/projects/serializers.py:385
 msgid "Severities"
 msgstr ""
 
-#: taiga/projects/serializers.py:378
+#: taiga/projects/serializers.py:386
 msgid "Roles"
 msgstr ""
 
@@ -1616,6 +1616,162 @@ msgstr ""
 msgid ""
 "\n"
 "[Taiga] Added to the project '%(project)s'\n"
+msgstr ""
+
+#: taiga/projects/translations.py:3
+msgid "?"
+msgstr ""
+
+#: taiga/projects/translations.py:4
+msgid "0"
+msgstr ""
+
+#: taiga/projects/translations.py:5
+msgid "1/2"
+msgstr ""
+
+#: taiga/projects/translations.py:6
+msgid "1"
+msgstr ""
+
+#: taiga/projects/translations.py:7
+msgid "2"
+msgstr ""
+
+#: taiga/projects/translations.py:8
+msgid "3"
+msgstr ""
+
+#: taiga/projects/translations.py:9
+msgid "5"
+msgstr ""
+
+#: taiga/projects/translations.py:10
+msgid "8"
+msgstr ""
+
+#: taiga/projects/translations.py:11
+msgid "10"
+msgstr ""
+
+#: taiga/projects/translations.py:12
+msgid "15"
+msgstr ""
+
+#: taiga/projects/translations.py:13
+msgid "20"
+msgstr ""
+
+#: taiga/projects/translations.py:14
+msgid "40"
+msgstr ""
+
+#: taiga/projects/translations.py:15
+msgid "Scrum"
+msgstr ""
+
+#: taiga/projects/translations.py:16
+msgid "Archived"
+msgstr ""
+
+#: taiga/projects/translations.py:17
+msgid "Back"
+msgstr ""
+
+#: taiga/projects/translations.py:18
+msgid "Bug"
+msgstr ""
+
+#: taiga/projects/translations.py:19
+msgid "Closed"
+msgstr ""
+
+#: taiga/projects/translations.py:20
+msgid "Critical"
+msgstr ""
+
+#: taiga/projects/translations.py:21
+msgid "Design"
+msgstr ""
+
+#: taiga/projects/translations.py:22
+msgid "Done"
+msgstr ""
+
+#: taiga/projects/translations.py:23
+msgid "Enhancement"
+msgstr ""
+
+#: taiga/projects/translations.py:24
+msgid "Front"
+msgstr ""
+
+#: taiga/projects/translations.py:25
+msgid "High"
+msgstr ""
+
+#: taiga/projects/translations.py:26
+msgid "Important"
+msgstr ""
+
+#: taiga/projects/translations.py:27
+msgid "In progress"
+msgstr ""
+
+#: taiga/projects/translations.py:28
+msgid "Low"
+msgstr ""
+
+#: taiga/projects/translations.py:29
+msgid "Minor"
+msgstr ""
+
+#: taiga/projects/translations.py:30
+msgid "Needs Info"
+msgstr ""
+
+#: taiga/projects/translations.py:31
+msgid "New"
+msgstr ""
+
+#: taiga/projects/translations.py:32
+msgid "Normal"
+msgstr ""
+
+#: taiga/projects/translations.py:33
+msgid "Postponed"
+msgstr ""
+
+#: taiga/projects/translations.py:34
+msgid "Product Owner"
+msgstr ""
+
+#: taiga/projects/translations.py:35
+msgid "Question"
+msgstr ""
+
+#: taiga/projects/translations.py:36
+msgid "Ready"
+msgstr ""
+
+#: taiga/projects/translations.py:37
+msgid "Ready for test"
+msgstr ""
+
+#: taiga/projects/translations.py:38
+msgid "Rejected"
+msgstr ""
+
+#: taiga/projects/translations.py:39
+msgid "Stakeholder"
+msgstr ""
+
+#: taiga/projects/translations.py:40
+msgid "UX"
+msgstr ""
+
+#: taiga/projects/translations.py:41
+msgid "Wishlist"
 msgstr ""
 
 #: taiga/projects/userstories/api.py:170

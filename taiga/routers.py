@@ -18,6 +18,11 @@ from taiga.base import routers
 
 router = routers.DefaultRouter(trailing_slash=False)
 
+# Locales
+from taiga.locale.api import LocalesViewSet
+
+router.register(r"locales", LocalesViewSet, base_name="locales")
+
 
 # Users & Roles
 from taiga.auth.api import AuthViewSet

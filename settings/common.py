@@ -270,6 +270,7 @@ INSTALLED_APPS = [
 
     "taiga.base",
     "taiga.base.api",
+    "taiga.locale",
     "taiga.events",
     "taiga.front",
     "taiga.users",
