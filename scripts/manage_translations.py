@@ -31,11 +31,9 @@ from subprocess import PIPE, Popen, call
 from django_jinja.management.commands import makemessages
 
 
-
-def _get_locale_dirs(resources, include_main=True):
+def _get_locale_dirs(resources):
     """
-    Return a tuple (app name, absolute path) for all locale directories,
-    optionally including the main catalog.
+    Return a tuple (app name, absolute path) for all locale directories.
     If resources list is not None, filter directories matching resources content.
     """
     contrib_dir = os.getcwd()
@@ -46,8 +44,6 @@ def _get_locale_dirs(resources, include_main=True):
         path = os.path.join(contrib_dir, contrib_name, "locale")
         if os.path.isdir(path):
             dirs.append((contrib_name, path))
-    if include_main:
-        dirs.insert(0, ("main", os.path.join(os.getcwd(), "locale")))
 
     # Filter by resources, if any
     if resources is not None:

@@ -70,90 +70,90 @@ LANGUAGE_CODE = 'en-us'
 
 # Languages we provide translations for, out of the box.
 LANGUAGES = [
-    ('af', gettext_noop('Afrikaans')),
-    ('ar', gettext_noop('Arabic')),
-    ('ast', gettext_noop('Asturian')),
-    ('az', gettext_noop('Azerbaijani')),
-    ('bg', gettext_noop('Bulgarian')),
-    ('be', gettext_noop('Belarusian')),
-    ('bn', gettext_noop('Bengali')),
-    ('br', gettext_noop('Breton')),
-    ('bs', gettext_noop('Bosnian')),
-    ('ca', gettext_noop('Catalan')),
-    ('cs', gettext_noop('Czech')),
-    ('cy', gettext_noop('Welsh')),
-    ('da', gettext_noop('Danish')),
-    ('de', gettext_noop('German')),
-    ('el', gettext_noop('Greek')),
-    ('en', gettext_noop('English')),
-    ('en-au', gettext_noop('Australian English')),
-    ('en-gb', gettext_noop('British English')),
-    ('eo', gettext_noop('Esperanto')),
-    ('es', gettext_noop('Spanish')),
-    ('es-ar', gettext_noop('Argentinian Spanish')),
-    ('es-mx', gettext_noop('Mexican Spanish')),
-    ('es-ni', gettext_noop('Nicaraguan Spanish')),
-    ('es-ve', gettext_noop('Venezuelan Spanish')),
-    ('et', gettext_noop('Estonian')),
-    ('eu', gettext_noop('Basque')),
-    ('fa', gettext_noop('Persian')),
-    ('fi', gettext_noop('Finnish')),
-    ('fr', gettext_noop('French')),
-    ('fy', gettext_noop('Frisian')),
-    ('ga', gettext_noop('Irish')),
-    ('gl', gettext_noop('Galician')),
-    ('he', gettext_noop('Hebrew')),
-    ('hi', gettext_noop('Hindi')),
-    ('hr', gettext_noop('Croatian')),
-    ('hu', gettext_noop('Hungarian')),
-    ('ia', gettext_noop('Interlingua')),
-    ('id', gettext_noop('Indonesian')),
-    ('io', gettext_noop('Ido')),
-    ('is', gettext_noop('Icelandic')),
-    ('it', gettext_noop('Italian')),
-    ('ja', gettext_noop('Japanese')),
-    ('ka', gettext_noop('Georgian')),
-    ('kk', gettext_noop('Kazakh')),
-    ('km', gettext_noop('Khmer')),
-    ('kn', gettext_noop('Kannada')),
-    ('ko', gettext_noop('Korean')),
-    ('lb', gettext_noop('Luxembourgish')),
-    ('lt', gettext_noop('Lithuanian')),
-    ('lv', gettext_noop('Latvian')),
-    ('mk', gettext_noop('Macedonian')),
-    ('ml', gettext_noop('Malayalam')),
-    ('mn', gettext_noop('Mongolian')),
-    ('mr', gettext_noop('Marathi')),
-    ('my', gettext_noop('Burmese')),
-    ('nb', gettext_noop('Norwegian Bokmal')),
-    ('ne', gettext_noop('Nepali')),
-    ('nl', gettext_noop('Dutch')),
-    ('nn', gettext_noop('Norwegian Nynorsk')),
-    ('os', gettext_noop('Ossetic')),
-    ('pa', gettext_noop('Punjabi')),
-    ('pl', gettext_noop('Polish')),
-    ('pt', gettext_noop('Portuguese')),
-    ('pt-br', gettext_noop('Brazilian Portuguese')),
-    ('ro', gettext_noop('Romanian')),
-    ('ru', gettext_noop('Russian')),
-    ('sk', gettext_noop('Slovak')),
-    ('sl', gettext_noop('Slovenian')),
-    ('sq', gettext_noop('Albanian')),
-    ('sr', gettext_noop('Serbian')),
-    ('sr-latn', gettext_noop('Serbian Latin')),
-    ('sv', gettext_noop('Swedish')),
-    ('sw', gettext_noop('Swahili')),
-    ('ta', gettext_noop('Tamil')),
-    ('te', gettext_noop('Telugu')),
-    ('th', gettext_noop('Thai')),
-    ('tr', gettext_noop('Turkish')),
-    ('tt', gettext_noop('Tatar')),
-    ('udm', gettext_noop('Udmurt')),
-    ('uk', gettext_noop('Ukrainian')),
-    ('ur', gettext_noop('Urdu')),
-    ('vi', gettext_noop('Vietnamese')),
-    ('zh-hans', gettext_noop('Simplified Chinese')),
-    ('zh-hant', gettext_noop('Traditional Chinese')),
+    ("af", "Afrikaans"),  # Afrikaans
+    ("ar", "العربية‏"),  # Arabic
+    ("ast", "Asturiano"),  # Asturian
+    ("az", "Azərbaycan dili"),  # Azerbaijani
+    ("bg", "Български"),  # Bulgarian
+    ("be", "Беларуская"),  # Belarusian
+    ("bn", "বাংলা"),  # Bengali
+    ("br", "Bretón"),  # Breton
+    ("bs", "Bosanski"),  # Bosnian
+    ("ca", "Català"),  # Catalan
+    ("cs", "Čeština"),  # Czech
+    ("cy", "Cymraeg"),  # Welsh
+    ("da", "Dansk"),  # Danish
+    ("de", "Deutsch"),  # German
+    ("el", "Ελληνικά"),  # Greek
+    ("en", "English (US)"),  # English
+    ("en-au", "English (Australia)"),  # Australian English
+    ("en-gb", "English (UK)"),  # British English
+    ("eo", "esperanta"),  # Esperanto
+    ("es", "Español"),  # Spanish
+    ("es-ar", "Español (Argentina)"),  # Argentinian Spanish
+    ("es-mx", "Español (México)"),  # Mexican Spanish
+    ("es-ni", "Español (Nicaragua)"),  # Nicaraguan Spanish
+    ("es-ve", "Español (Venezuela)"),  # Venezuelan Spanish
+    ("et", "Eesti"),  # Estonian
+    ("eu", "Euskara"),  # Basque
+    ("fa", "فارسی‏"),  # Persian
+    ("fi", "Suomi"),  # Finnish
+    ("fr", "Français"),  # French
+    ("fy", "Frysk"),  # Frisian
+    ("ga", "Irish"),  # Irish
+    ("gl", "Galego"),  # Galician
+    ("he", "עברית‏"),  # Hebrew
+    ("hi", "हिन्दी"),  # Hindi
+    ("hr", "Hrvatski"),  # Croatian
+    ("hu", "Magyar"),  # Hungarian
+    ("ia", "Interlingua"),  # Interlingua
+    ("id", "Bahasa Indonesia"),  # Indonesian
+    ("io", "IDO"),  # Ido
+    ("is", "Íslenska"),  # Icelandic
+    ("it", "Italiano"),  # Italian
+    ("ja", "日本語"),  # Japanese
+    ("ka", "ქართული"),  # Georgian
+    ("kk", "Қазақша"),  # Kazakh
+    ("km", "ភាសាខ្មែរ"),  # Khmer
+    ("kn", "ಕನ್ನಡ"),  # Kannada
+    ("ko", "한국어"),  # Korean
+    ("lb", "Lëtzebuergesch"),  # Luxembourgish
+    ("lt", "Lietuvių"),  # Lithuanian
+    ("lv", "Latviešu"),  # Latvian
+    ("mk", "Македонски"),  # Macedonian
+    ("ml", "മലയാളം"),  # Malayalam
+    ("mn", "Монгол"),  # Mongolian
+    ("mr", "मराठी"),  # Marathi
+    ("my", "မြန်မာ"),  # Burmese
+    ("nb", "Norsk (bokmål)"),  # Norwegian Bokmal
+    ("ne", "नेपाली"),  # Nepali
+    ("nl", "Nederlands"),  # Dutch
+    ("nn", "Norsk (nynorsk)"),  # Norwegian Nynorsk
+    ("os", "Ирон æвзаг"),  # Ossetic
+    ("pa", "ਪੰਜਾਬੀ"),  # Punjabi
+    ("pl", "Polski"),  # Polish
+    ("pt", "Português (Portugal)"),  # Portuguese
+    ("pt-br", "Português (Brasil)"),  # Brazilian Portuguese
+    ("ro", "Română"),  # Romanian
+    ("ru", "Русский"),  # Russian
+    ("sk", "Slovenčina"),  # Slovak
+    ("sl", "Slovenščina"),  # Slovenian
+    ("sq", "Shqip"),  # Albanian
+    ("sr", "Српски"),  # Serbian
+    ("sr-latn", "srpski"),  # Serbian Latin
+    ("sv", "Svenska"),  # Swedish
+    ("sw", "Kiswahili"),  # Swahili
+    ("ta", "தமிழ்"),  # Tamil
+    ("te", "తెలుగు"),  # Telugu
+    ("th", "ภาษาไทย"),  # Thai
+    ("tr", "Türkçe"),  # Turkish
+    ("tt", "татар теле"),  # Tatar
+    ("udm", "удмурт кыл"),  # Udmurt
+    ("uk", "Українська"),  # Ukrainian
+    ("ur", "اردو‏"),  # Urdu
+    ("vi", "Tiếng Việt"),  # Vietnamese
+    ("zh-hans", "中文(简体)"),  # Simplified Chinese
+    ("zh-hant", "中文(香港)"),  # Traditional Chinese
 ]
 
 # Languages using BiDi (right-to-left) layout
