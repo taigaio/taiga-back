@@ -48,6 +48,10 @@ def userstory_timeline(instance, extra_data={}):
         "userstory": service.extract_userstory_info(instance),
         "project": service.extract_project_info(instance.project),
     }
+
+    if instance.milestone is not None:
+        result["milestone"] = service.extract_milestone_info(instance.milestone)
+        
     result.update(extra_data)
     return result
 
