@@ -95,6 +95,7 @@ def on_new_history_entry(sender, instance, created, **kwargs):
         "values_diff": instance.values_diff,
         "user": extract_user_info(user),
         "comment": instance.comment,
+        "comment_html": instance.comment_html,
     }
 
     _push_to_timelines(project, user, obj, event_type, extra_data=extra_data)

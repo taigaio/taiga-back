@@ -225,3 +225,10 @@ def extract_wiki_page_info(instance):
         "id": instance.pk,
         "slug": instance.slug,
     }
+
+
+def extract_role_info(instance):
+    return {
+        "id": instance.pk,
+        "name": instance.name,
+    }

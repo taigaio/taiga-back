@@ -94,10 +94,11 @@ def wiki_page_timeline(instance, extra_data={}):
 
 @register_timeline_implementation("projects.membership", "create")
 @register_timeline_implementation("projects.membership", "delete")
-def membership_create_timeline(instance, extra_data={}):
+def membership_timeline(instance, extra_data={}):
     result =  {
         "user": service.extract_user_info(instance.user),
         "project": service.extract_project_info(instance.project),
+        "role": service.extract_role_info(instance.role),
     }
     result.update(extra_data)
     return result
