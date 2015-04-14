@@ -673,6 +673,7 @@ class ModelSerializerOptions(SerializerOptions):
     def __init__(self, meta):
         super(ModelSerializerOptions, self).__init__(meta)
         self.model = getattr(meta, "model", None)
+        self.i18n_fields = getattr(meta, "i18n_fields", ())
         self.read_only_fields = getattr(meta, "read_only_fields", ())
         self.write_only_fields = getattr(meta, "write_only_fields", ())
 
@@ -837,6 +838,11 @@ class ModelSerializer((six.with_metaclass(SerializerMetaclass, BaseSerializer)))
                 (field_name, self.__class__.__name__))
             ret[field_name].write_only = True
 
+        # Add the `i18n` flag to any fields that have been specified
+        # in the `i18n_fields` option
+        for field_name in self.opts.i18n_fields:
+            ret[field_name].i18n = True
+
         return ret
 
     def get_pk_field(self, model_field):
@@ -928,6 +934,9 @@ class ModelSerializer((six.with_metaclass(SerializerMetaclass, BaseSerializer)))
             attributes = attribute_dict[model_field.__class__]
             for attribute in attributes:
                 kwargs.update({attribute: getattr(model_field, attribute)})
+
+        if model_field.name in self.opts.i18n_fields:
+            kwargs["i18n"] = True
 
         try:
             return self.field_mapping[model_field.__class__](**kwargs)

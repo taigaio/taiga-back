@@ -38,6 +38,7 @@ from django.utils.encoding import smart_text
 from django.utils.encoding import force_text
 from django.utils.encoding import is_protected_type
 from django.utils.functional import Promise
+from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from django.utils.datastructures import SortedDict
 
@@ -133,6 +134,7 @@ def humanize_strptime(format_string):
 
 class Field(object):
     read_only = True
+    i18n = False
     creation_counter = 0
     empty = ""
     type_name = None
@@ -142,7 +144,7 @@ class Field(object):
     type_label = "field"
     widget = None
 
-    def __init__(self, source=None, label=None, help_text=None):
+    def __init__(self, source=None, label=None, help_text=None, i18n=False):
         self.parent = None
 
         self.creation_counter = Field.creation_counter
@@ -159,6 +161,7 @@ class Field(object):
         self._errors = []
         self._value = None
         self._name = None
+        self.i18n = i18n
 
     @property
     def errors(self):
@@ -271,7 +274,7 @@ class WritableField(Field):
     def __init__(self, source=None, label=None, help_text=None,
                  read_only=False, write_only=False, required=None,
                  validators=[], error_messages=None, widget=None,
-                 default=None, blank=None):
+                 default=None, blank=None, i18n=False):
 
         # "blank" is to be deprecated in favor of "required"
         if blank is not None:
@@ -280,7 +283,8 @@ class WritableField(Field):
                           DeprecationWarning, stacklevel=2)
             required = not(blank)
 
-        super(WritableField, self).__init__(source=source, label=label, help_text=help_text)
+        super(WritableField, self).__init__(source=source, label=label,
+                help_text=help_text, i18n=i18n)
 
         self.read_only = read_only
         self.write_only = write_only
@@ -485,6 +489,13 @@ class CharField(WritableField):
         if isinstance(value, six.string_types) or value is None:
             return value
         return smart_text(value)
+
+    def to_native(self, value):
+        ret = super(CharField, self).to_native(value)
+        if self.i18n:
+            ret = ugettext(ret)
+
+        return ret
 
 
 class URLField(CharField):

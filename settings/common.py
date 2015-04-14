@@ -221,6 +221,7 @@ DEFAULT_FILE_STORAGE = "taiga.base.storage.FileSystemStorage"
 
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, "locale"),
+    os.path.join(BASE_DIR, "taiga", "locale"),
 )
 
 SECRET_KEY = "aw3+t2r(8(0kkrhg8)gx6i96v5^kv%6cfep9wxfom0%7dy0m9e"

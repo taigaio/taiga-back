@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-14 16:26+0200\n"
+"POT-Creation-Date: 2015-04-14 18:00+0200\n"
 "PO-Revision-Date: 2015-03-25 20:09+0100\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Taiga Dev Team <support@taiga.io>\n"
@@ -1618,160 +1618,236 @@ msgid ""
 "[Taiga] Added to the project '%(project)s'\n"
 msgstr ""
 
-#: taiga/projects/translations.py:3
-msgid "?"
-msgstr ""
-
-#: taiga/projects/translations.py:4
-msgid "0"
-msgstr ""
-
-#: taiga/projects/translations.py:5
-msgid "1/2"
-msgstr ""
-
-#: taiga/projects/translations.py:6
-msgid "1"
-msgstr ""
-
-#: taiga/projects/translations.py:7
-msgid "2"
-msgstr ""
-
-#: taiga/projects/translations.py:8
-msgid "3"
-msgstr ""
-
-#: taiga/projects/translations.py:9
-msgid "5"
-msgstr ""
-
-#: taiga/projects/translations.py:10
-msgid "8"
-msgstr ""
-
-#: taiga/projects/translations.py:11
-msgid "10"
-msgstr ""
-
-#: taiga/projects/translations.py:12
-msgid "15"
-msgstr ""
-
-#: taiga/projects/translations.py:13
-msgid "20"
-msgstr ""
-
-#: taiga/projects/translations.py:14
-msgid "40"
-msgstr ""
-
-#: taiga/projects/translations.py:15
+#. Translators: Name of scrum project template.
+#: taiga/projects/translations.py:28
 msgid "Scrum"
 msgstr ""
 
-#: taiga/projects/translations.py:16
-msgid "Archived"
-msgstr ""
-
-#: taiga/projects/translations.py:17
-msgid "Back"
-msgstr ""
-
-#: taiga/projects/translations.py:18
-msgid "Bug"
-msgstr ""
-
-#: taiga/projects/translations.py:19
-msgid "Closed"
-msgstr ""
-
-#: taiga/projects/translations.py:20
-msgid "Critical"
-msgstr ""
-
-#: taiga/projects/translations.py:21
-msgid "Design"
-msgstr ""
-
-#: taiga/projects/translations.py:22
-msgid "Done"
-msgstr ""
-
-#: taiga/projects/translations.py:23
-msgid "Enhancement"
-msgstr ""
-
-#: taiga/projects/translations.py:24
-msgid "Front"
-msgstr ""
-
-#: taiga/projects/translations.py:25
-msgid "High"
-msgstr ""
-
-#: taiga/projects/translations.py:26
-msgid "Important"
-msgstr ""
-
-#: taiga/projects/translations.py:27
-msgid "In progress"
-msgstr ""
-
-#: taiga/projects/translations.py:28
-msgid "Low"
-msgstr ""
-
-#: taiga/projects/translations.py:29
-msgid "Minor"
-msgstr ""
-
+#. Translators: Description of scrum project template.
 #: taiga/projects/translations.py:30
-msgid "Needs Info"
+msgid ""
+"The agile product backlog in Scrum is a prioritized features list, "
+"containing short descriptions of all functionality desired in the product. "
+"When applying Scrum, it's not necessary to start a project with a lengthy, "
+"upfront effort to document all requirements. The Scrum product backlog is "
+"then allowed to grow and change as more is learned about the product and its "
+"customers"
 msgstr ""
 
-#: taiga/projects/translations.py:31
+#. Translators: Name of kanban project template.
+#: taiga/projects/translations.py:33
+msgid "Kanban"
+msgstr ""
+
+#. Translators: Description of kanban project template.
+#: taiga/projects/translations.py:35
+msgid ""
+"Kanban is a method for managing knowledge work with an emphasis on just-in-"
+"time delivery while not overloading the team members. In this approach, the "
+"process, from definition of a task to its delivery to the customer, is "
+"displayed for participants to see and team members pull work from a queue."
+msgstr ""
+
+#. Translators: User story point value (value = undefined)
+#: taiga/projects/translations.py:43
+msgid "?"
+msgstr ""
+
+#. Translators: User story point value (value = 0)
+#: taiga/projects/translations.py:45
+msgid "0"
+msgstr ""
+
+#. Translators: User story point value (value = 0.5)
+#: taiga/projects/translations.py:47
+msgid "1/2"
+msgstr ""
+
+#. Translators: User story point value (value = 1)
+#: taiga/projects/translations.py:49
+msgid "1"
+msgstr ""
+
+#. Translators: User story point value (value = 2)
+#: taiga/projects/translations.py:51
+msgid "2"
+msgstr ""
+
+#. Translators: User story point value (value = 3)
+#: taiga/projects/translations.py:53
+msgid "3"
+msgstr ""
+
+#. Translators: User story point value (value = 5)
+#: taiga/projects/translations.py:55
+msgid "5"
+msgstr ""
+
+#. Translators: User story point value (value = 8)
+#: taiga/projects/translations.py:57
+msgid "8"
+msgstr ""
+
+#. Translators: User story point value (value = 10)
+#: taiga/projects/translations.py:59
+msgid "10"
+msgstr ""
+
+#. Translators: User story point value (value = 15)
+#: taiga/projects/translations.py:61
+msgid "15"
+msgstr ""
+
+#. Translators: User story point value (value = 20)
+#: taiga/projects/translations.py:63
+msgid "20"
+msgstr ""
+
+#. Translators: User story point value (value = 40)
+#: taiga/projects/translations.py:65
+msgid "40"
+msgstr ""
+
+#. Translators: User story status
+#. Translators: Task status
+#. Translators: Issue status
+#: taiga/projects/translations.py:73 taiga/projects/translations.py:96
+#: taiga/projects/translations.py:112
 msgid "New"
 msgstr ""
 
-#: taiga/projects/translations.py:32
-msgid "Normal"
-msgstr ""
-
-#: taiga/projects/translations.py:33
-msgid "Postponed"
-msgstr ""
-
-#: taiga/projects/translations.py:34
-msgid "Product Owner"
-msgstr ""
-
-#: taiga/projects/translations.py:35
-msgid "Question"
-msgstr ""
-
-#: taiga/projects/translations.py:36
+#. Translators: User story status
+#: taiga/projects/translations.py:76
 msgid "Ready"
 msgstr ""
 
-#: taiga/projects/translations.py:37
+#. Translators: User story status
+#. Translators: Task status
+#. Translators: Issue status
+#: taiga/projects/translations.py:79 taiga/projects/translations.py:98
+#: taiga/projects/translations.py:114
+msgid "In progress"
+msgstr ""
+
+#. Translators: User story status
+#. Translators: Task status
+#. Translators: Issue status
+#: taiga/projects/translations.py:82 taiga/projects/translations.py:100
+#: taiga/projects/translations.py:116
 msgid "Ready for test"
 msgstr ""
 
-#: taiga/projects/translations.py:38
+#. Translators: User story status
+#: taiga/projects/translations.py:85
+msgid "Done"
+msgstr ""
+
+#. Translators: User story status
+#: taiga/projects/translations.py:88
+msgid "Archived"
+msgstr ""
+
+#. Translators: Task status
+#. Translators: Issue status
+#: taiga/projects/translations.py:102 taiga/projects/translations.py:118
+msgid "Closed"
+msgstr ""
+
+#. Translators: Task status
+#. Translators: Issue status
+#: taiga/projects/translations.py:104 taiga/projects/translations.py:120
+msgid "Needs Info"
+msgstr ""
+
+#. Translators: Issue status
+#: taiga/projects/translations.py:122
+msgid "Postponed"
+msgstr ""
+
+#. Translators: Issue status
+#: taiga/projects/translations.py:124
 msgid "Rejected"
 msgstr ""
 
-#: taiga/projects/translations.py:39
-msgid "Stakeholder"
+#. Translators: Issue type
+#: taiga/projects/translations.py:132
+msgid "Bug"
 msgstr ""
 
-#: taiga/projects/translations.py:40
+#. Translators: Issue type
+#: taiga/projects/translations.py:134
+msgid "Question"
+msgstr ""
+
+#. Translators: Issue type
+#: taiga/projects/translations.py:136
+msgid "Enhancement"
+msgstr ""
+
+#. Translators: Issue priority
+#: taiga/projects/translations.py:144
+msgid "Low"
+msgstr ""
+
+#. Translators: Issue priority
+#. Translators: Issue severity
+#: taiga/projects/translations.py:146 taiga/projects/translations.py:159
+msgid "Normal"
+msgstr ""
+
+#. Translators: Issue priority
+#: taiga/projects/translations.py:148
+msgid "High"
+msgstr ""
+
+#. Translators: Issue severity
+#: taiga/projects/translations.py:155
+msgid "Wishlist"
+msgstr ""
+
+#. Translators: Issue severity
+#: taiga/projects/translations.py:157
+msgid "Minor"
+msgstr ""
+
+#. Translators: Issue severity
+#: taiga/projects/translations.py:161
+msgid "Important"
+msgstr ""
+
+#. Translators: Issue severity
+#: taiga/projects/translations.py:163
+msgid "Critical"
+msgstr ""
+
+#. Translators: User role
+#: taiga/projects/translations.py:170
 msgid "UX"
 msgstr ""
 
-#: taiga/projects/translations.py:41
-msgid "Wishlist"
+#. Translators: User role
+#: taiga/projects/translations.py:172
+msgid "Design"
+msgstr ""
+
+#. Translators: User role
+#: taiga/projects/translations.py:174
+msgid "Front"
+msgstr ""
+
+#. Translators: User role
+#: taiga/projects/translations.py:176
+msgid "Back"
+msgstr ""
+
+#. Translators: User role
+#: taiga/projects/translations.py:178
+msgid "Product Owner"
+msgstr ""
+
+#. Translators: User role
+#: taiga/projects/translations.py:180
+msgid "Stakeholder"
 msgstr ""
 
 #: taiga/projects/userstories/api.py:170

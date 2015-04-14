@@ -15,20 +15,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
-
-from taiga.base.fields import JsonField
+from taiga.base.fields import JsonField, I18NJsonField
 
 from . import models
 
+HISTORY_ENTRY_I18N_FIELDS=("points", "status", "severity", "priority", "type")
 
 class HistoryEntrySerializer(serializers.ModelSerializer):
     diff = JsonField()
     snapshot = JsonField()
-    values = JsonField()
-    values_diff = JsonField()
+    values = I18NJsonField(i18n_fields=HISTORY_ENTRY_I18N_FIELDS)
+    values_diff = I18NJsonField(i18n_fields=HISTORY_ENTRY_I18N_FIELDS)
     user = JsonField()
     delete_comment_user = JsonField()
 
     class Meta:
         model = models.HistoryEntry
-

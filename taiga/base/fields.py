@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.forms import widgets
+from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
 
@@ -34,6 +35,37 @@ class JsonField(serializers.WritableField):
 
     def from_native(self, data):
         return data
+
+
+class I18NJsonField(JsonField):
+    """
+    Json objects serializer.
+    """
+    widget = widgets.Textarea
+
+    def __init__(self, i18n_fields=(), *args, **kwargs):
+        super(I18NJsonField, self).__init__(*args, **kwargs)
+        self.i18n_fields = i18n_fields
+
+    def translate_values(self, d):
+        i18n_d = {}
+        for key, value in d.items():
+            if isinstance(value, dict):
+                i18n_d[key] = self.translate_values(value)
+
+            if key in self.i18n_fields:
+                if isinstance(value, list):
+                    i18n_d[key] = [_(e) for e in value]
+                if isinstance(value, str):
+                    i18n_d[key] = _(value)
+            else:
+                i18n_d[key] = value
+
+        return i18n_d
+
+    def to_native(self, obj):
+        i18n_obj = self.translate_values(obj)
+        return i18n_obj
 
 
 class PgArrayField(serializers.WritableField):

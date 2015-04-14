@@ -47,6 +47,7 @@ from .custom_attributes.serializers import IssueCustomAttributeSerializer
 class PointsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Points
+        i18n_fields = ("name",)
 
     def validate_name(self, attrs, source):
         """
@@ -67,8 +68,10 @@ class PointsSerializer(serializers.ModelSerializer):
 
 
 class UserStoryStatusSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = models.UserStoryStatus
+        i18n_fields = ("name",)
 
     def validate_name(self, attrs, source):
         """
@@ -93,6 +96,7 @@ class UserStoryStatusSerializer(serializers.ModelSerializer):
 class TaskStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaskStatus
+        i18n_fields = ("name",)
 
     def validate_name(self, attrs, source):
         """
@@ -115,16 +119,19 @@ class TaskStatusSerializer(serializers.ModelSerializer):
 class SeveritySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Severity
+        i18n_fields = ("name",)
 
 
 class PrioritySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Priority
+        i18n_fields = ("name",)
 
 
 class IssueStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.IssueStatus
+        i18n_fields = ("name",)
 
     def validate_name(self, attrs, source):
         """
@@ -147,6 +154,7 @@ class IssueStatusSerializer(serializers.ModelSerializer):
 class IssueTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.IssueType
+        i18n_fields = ("name",)
 
 
 ######################################################
@@ -380,3 +388,4 @@ class ProjectTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ProjectTemplate
         read_only_fields = ("created_date", "modified_date")
+        i18n_fields = ("name", "description")
