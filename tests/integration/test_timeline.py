@@ -183,7 +183,7 @@ def test_create_wiki_page_timeline():
     history_services.take_snapshot(page, user=page.owner)
     project_timeline = service.get_project_timeline(page.project)
     assert project_timeline[0].event_type == "wiki.wikipage.create"
-    assert project_timeline[0].data["wiki_page"]["slug"] == "test wiki page timeline"
+    assert project_timeline[0].data["wikipage"]["slug"] == "test wiki page timeline"
     assert project_timeline[0].data["user"]["id"] == page.owner.id
     assert project_timeline[0].data["user"]["name"] == page.owner.get_full_name()
 
@@ -275,7 +275,7 @@ def test_update_wiki_page_timeline():
     history_services.take_snapshot(page, user=page.owner)
     project_timeline = service.get_project_timeline(page.project)
     assert project_timeline[0].event_type == "wiki.wikipage.change"
-    assert project_timeline[0].data["wiki_page"]["slug"] == "test wiki page timeline updated"
+    assert project_timeline[0].data["wikipage"]["slug"] == "test wiki page timeline updated"
     assert project_timeline[0].data["values_diff"]["slug"][0] == "test wiki page timeline"
     assert project_timeline[0].data["values_diff"]["slug"][1] == "test wiki page timeline updated"
 
@@ -352,7 +352,7 @@ def test_delete_wiki_page_timeline():
     history_services.take_snapshot(page, user=page.owner, delete=True)
     project_timeline = service.get_project_timeline(page.project)
     assert project_timeline[0].event_type == "wiki.wikipage.delete"
-    assert project_timeline[0].data["wiki_page"]["slug"] == "test wiki page timeline"
+    assert project_timeline[0].data["wikipage"]["slug"] == "test wiki page timeline"
 
 
 def test_delete_membership_timeline():

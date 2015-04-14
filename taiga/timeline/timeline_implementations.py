@@ -51,7 +51,7 @@ def userstory_timeline(instance, extra_data={}):
 
     if instance.milestone is not None:
         result["milestone"] = service.extract_milestone_info(instance.milestone)
-        
+
     result.update(extra_data)
     return result
 
@@ -85,7 +85,7 @@ def task_timeline(instance, extra_data={}):
 @register_timeline_implementation("wiki.wikipage", "delete")
 def wiki_page_timeline(instance, extra_data={}):
     result ={
-        "wiki_page": service.extract_wiki_page_info(instance),
+        "wikipage": service.extract_wiki_page_info(instance),
         "project": service.extract_project_info(instance.project),
     }
     result.update(extra_data)
