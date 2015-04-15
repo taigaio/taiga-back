@@ -42,7 +42,7 @@ def get_gravatar_url(email: str, **options) -> str:
     default_size = getattr(settings, "GRAVATAR_AVATAR_SIZE", None)
 
     if default_avatar:
-        params["default"] = static(default)
+        params["default"] = static(default_avatar)
 
     if default_size:
         params["size"] = default_size
