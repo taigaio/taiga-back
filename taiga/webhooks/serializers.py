@@ -16,9 +16,8 @@
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from rest_framework import serializers
-
-from taiga.base.serializers import TagsField, PgArrayField, JsonField
+from taiga.base.api import serializers
+from taiga.base.fields import TagsField, PgArrayField, JsonField
 
 from taiga.projects.userstories import models as us_models
 from taiga.projects.tasks import models as task_models

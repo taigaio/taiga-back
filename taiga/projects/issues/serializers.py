@@ -14,10 +14,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rest_framework import serializers
+from taiga.base.api import serializers
+from taiga.base.fields import TagsField
+from taiga.base.fields import PgArrayField
+from taiga.base.neighbors import NeighborsSerializerMixin
 
-from taiga.base.serializers import (Serializer, TagsField, NeighborsSerializerMixin,
-        PgArrayField, ModelSerializer)
 
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator
@@ -26,7 +27,7 @@ from taiga.projects.notifications.validators import WatchersValidator
 from . import models
 
 
-class IssueSerializer(WatchersValidator, ModelSerializer):
+class IssueSerializer(WatchersValidator, serializers.ModelSerializer):
     tags = TagsField(required=False)
     external_reference = PgArrayField(required=False)
     is_closed = serializers.Field(source="is_closed")
@@ -63,13 +64,13 @@ class IssueNeighborsSerializer(NeighborsSerializerMixin, IssueSerializer):
         return NeighborIssueSerializer(neighbor).data
 
 
-class NeighborIssueSerializer(ModelSerializer):
+class NeighborIssueSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Issue
         fields = ("id", "ref", "subject")
         depth = 0
 
 
-class IssuesBulkSerializer(ProjectExistsValidator, Serializer):
+class IssuesBulkSerializer(ProjectExistsValidator, serializers.Serializer):
     project_id = serializers.IntegerField()
     bulk_issues = serializers.CharField()

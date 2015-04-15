@@ -18,8 +18,10 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
-from .choices import NOTIFY_LEVEL_CHOICES
 from taiga.projects.history.choices import HISTORY_TYPE_CHOICES
+
+from .choices import NOTIFY_LEVEL_CHOICES
+
 
 class NotifyPolicy(models.Model):
     """
@@ -52,19 +54,19 @@ class HistoryChangeNotification(models.Model):
     """
     key = models.CharField(max_length=255, unique=False, editable=False)
     owner = models.ForeignKey("users.User", null=False, blank=False,
-                              verbose_name="owner",related_name="+")
+                              verbose_name=_("owner"), related_name="+")
     created_datetime = models.DateTimeField(null=False, blank=False, auto_now_add=True,
                                             verbose_name=_("created date time"))
     updated_datetime = models.DateTimeField(null=False, blank=False, auto_now_add=True,
                                             verbose_name=_("updated date time"))
     history_entries = models.ManyToManyField("history.HistoryEntry", null=True, blank=True,
-                                             verbose_name="history entries",
+                                             verbose_name=_("history entries"),
                                              related_name="+")
     notify_users = models.ManyToManyField("users.User", null=True, blank=True,
-                                             verbose_name="notify users",
+                                             verbose_name=_("notify users"),
                                              related_name="+")
     project = models.ForeignKey("projects.Project", null=False, blank=False,
-                                verbose_name="project",related_name="+")
+                                verbose_name=_("project"),related_name="+")
 
     history_type = models.SmallIntegerField(choices=HISTORY_TYPE_CHOICES)
 

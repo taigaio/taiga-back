@@ -15,15 +15,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.db.models import Q
 
-from rest_framework import serializers
+from taiga.base.api import serializers
 
-from taiga.base.serializers import JsonField
-from taiga.base.serializers import PgArrayField
-from taiga.base.serializers import ModelSerializer
-from taiga.base.serializers import TagsColorsField
+from taiga.base.fields import JsonField
+from taiga.base.fields import PgArrayField
+from taiga.base.fields import TagsColorsField
+
 from taiga.users.services import get_photo_or_gravatar_url
 from taiga.users.serializers import UserSerializer
 from taiga.users.serializers import ProjectRoleSerializer
@@ -44,9 +44,10 @@ from .custom_attributes.serializers import IssueCustomAttributeSerializer
 ## Custom values for selectors
 ######################################################
 
-class PointsSerializer(ModelSerializer):
+class PointsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Points
+        i18n_fields = ("name",)
 
     def validate_name(self, attrs, source):
         """
@@ -61,14 +62,16 @@ class PointsSerializer(ModelSerializer):
             qs = models.Points.objects.filter(project=attrs["project"], name=attrs[source])
 
         if qs and qs.exists():
-              raise serializers.ValidationError("Name duplicated for the project")
+              raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
 
 
-class UserStoryStatusSerializer(ModelSerializer):
+class UserStoryStatusSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = models.UserStoryStatus
+        i18n_fields = ("name",)
 
     def validate_name(self, attrs, source):
         """
@@ -85,14 +88,15 @@ class UserStoryStatusSerializer(ModelSerializer):
                                                        name=attrs[source])
 
         if qs and qs.exists():
-              raise serializers.ValidationError("Name duplicated for the project")
+              raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
 
 
-class TaskStatusSerializer(ModelSerializer):
+class TaskStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaskStatus
+        i18n_fields = ("name",)
 
     def validate_name(self, attrs, source):
         """
@@ -107,24 +111,27 @@ class TaskStatusSerializer(ModelSerializer):
             qs = models.TaskStatus.objects.filter(project=attrs["project"], name=attrs[source])
 
         if qs and qs.exists():
-              raise serializers.ValidationError("Name duplicated for the project")
+              raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
 
 
-class SeveritySerializer(ModelSerializer):
+class SeveritySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Severity
+        i18n_fields = ("name",)
 
 
-class PrioritySerializer(ModelSerializer):
+class PrioritySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Priority
+        i18n_fields = ("name",)
 
 
-class IssueStatusSerializer(ModelSerializer):
+class IssueStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.IssueStatus
+        i18n_fields = ("name",)
 
     def validate_name(self, attrs, source):
         """
@@ -139,21 +146,22 @@ class IssueStatusSerializer(ModelSerializer):
             qs = models.IssueStatus.objects.filter(project=attrs["project"], name=attrs[source])
 
         if qs and qs.exists():
-              raise serializers.ValidationError("Name duplicated for the project")
+              raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
 
 
-class IssueTypeSerializer(ModelSerializer):
+class IssueTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.IssueType
+        i18n_fields = ("name",)
 
 
 ######################################################
 ## Members
 ######################################################
 
-class MembershipSerializer(ModelSerializer):
+class MembershipSerializer(serializers.ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False, read_only=True)
     full_name = serializers.CharField(source='user.get_full_name', required=False, read_only=True)
     user_email = serializers.EmailField(source='user.email', required=False, read_only=True)
@@ -238,7 +246,7 @@ class MembershipAdminSerializer(MembershipSerializer):
         exclude = ("token",)
 
 
-class ProjectMembershipSerializer(ModelSerializer):
+class ProjectMembershipSerializer(serializers.ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False)
     full_name = serializers.CharField(source='user.get_full_name', required=False)
     color = serializers.CharField(source='user.color', required=False)
@@ -266,7 +274,7 @@ class MembersBulkSerializer(ProjectExistsValidator, serializers.Serializer):
 ## Projects
 ######################################################
 
-class ProjectSerializer(ModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
     tags = PgArrayField(required=False)
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
@@ -310,7 +318,7 @@ class ProjectSerializer(ModelSerializer):
         """
         value = attrs[source]
         if value is None:
-            raise serializers.ValidationError("Total milestones must be major or equal to zero")
+            raise serializers.ValidationError(_("Total milestones must be major or equal to zero"))
         return attrs
 
 
@@ -355,7 +363,7 @@ class ProjectDetailAdminSerializer(ProjectDetailSerializer):
 ## Starred
 ######################################################
 
-class StarredSerializer(ModelSerializer):
+class StarredSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Project
         fields = ['id', 'name', 'slug']
@@ -366,7 +374,7 @@ class StarredSerializer(ModelSerializer):
 ## Project Templates
 ######################################################
 
-class ProjectTemplateSerializer(ModelSerializer):
+class ProjectTemplateSerializer(serializers.ModelSerializer):
     default_options = JsonField(required=False, label=_("Default options"))
     us_statuses = JsonField(required=False, label=_("User story's statuses"))
     points = JsonField(required=False, label=_("Points"))
@@ -380,3 +388,4 @@ class ProjectTemplateSerializer(ModelSerializer):
     class Meta:
         model = models.ProjectTemplate
         read_only_fields = ("created_date", "modified_date")
+        i18n_fields = ("name", "description")

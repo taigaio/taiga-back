@@ -33,7 +33,7 @@ class HistoryResourceMixin(object):
 
     def get_last_history(self):
         if not self.__object_saved:
-            message = ("get_last_history() function called before any object  are saved. "
+            message = ("get_last_history() function called before any object are saved. "
                        "Seems you have a wrong mixing order on your resource.")
             warnings.warn(message, RuntimeWarning)
         return self.__last_history

@@ -14,23 +14,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import os.path as path
-import hashlib
 import mimetypes
 mimetypes.init()
 
+from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
-from django.conf import settings
-from django import http
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
-from taiga.base.api import generics
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api.utils import get_object_or_404
-
-from taiga.users.models import User
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
@@ -50,7 +44,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCru
     def update(self, *args, **kwargs):
         partial = kwargs.get("partial", False)
         if not partial:
-            raise exc.NotSupported("Non partial updates not supported")
+            raise exc.NotSupported(_("Non partial updates not supported"))
         return super().update(*args, **kwargs)
 
     def get_content_type(self):
@@ -65,7 +59,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCru
             obj.name = path.basename(obj.attached_file.name).lower()
 
         if obj.project_id != obj.content_object.project_id:
-            raise exc.WrongArguments("Project ID not matches between object and project")
+            raise exc.WrongArguments(_("Project ID not matches between object and project"))
 
         super().pre_save(obj)
 

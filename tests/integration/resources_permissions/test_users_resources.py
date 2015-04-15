@@ -72,6 +72,7 @@ def test_user_update(client, data):
     user_data = UserSerializer(data.registered_user).data
     user_data["full_name"] = "test"
     user_data = json.dumps(user_data)
+
     results = helper_test_http_method(client, 'put', url, user_data, users)
     assert results == [401, 200, 403, 200]
 

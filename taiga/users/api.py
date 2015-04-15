@@ -18,7 +18,7 @@ import uuid
 
 from django.apps import apps
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.conf import settings
@@ -97,7 +97,7 @@ class UsersViewSet(ModelCrudViewSet):
         user.save(update_fields=["token"])
 
         mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
-        email = mbuilder.password_recovery(user.email, {"user": user})
+        email = mbuilder.password_recovery(user, {"user": user})
         email.send()
 
         return response.Ok({"detail": _("Mail sended successful!"),
@@ -231,7 +231,8 @@ class UsersViewSet(ModelCrudViewSet):
             request.user.new_email = new_email
             request.user.save(update_fields=["email_token", "new_email"])
             mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
-            email = mbuilder.change_email(request.user.new_email, {"user": request.user})
+            email = mbuilder.change_email(request.user.new_email, {"user": request.user,
+                                                                   "lang": request.user.lang})
             email.send()
 
         return ret

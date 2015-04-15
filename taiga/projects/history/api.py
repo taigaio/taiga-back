@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import ugettext as _
 from django.utils import timezone
 
 from taiga.base import response
@@ -66,7 +67,7 @@ class HistoryViewSet(ReadOnlyListViewSet):
             return response.NotFound()
 
         if comment.delete_comment_date or comment.delete_comment_user:
-            return response.BadRequest({"error": "Comment already deleted"})
+            return response.BadRequest({"error": _("Comment already deleted")})
 
         comment.delete_comment_date = timezone.now()
         comment.delete_comment_user = {"pk": request.user.pk, "name": request.user.get_full_name()}
@@ -85,7 +86,7 @@ class HistoryViewSet(ReadOnlyListViewSet):
             return response.NotFound()
 
         if not comment.delete_comment_date and not comment.delete_comment_user:
-            return response.BadRequest({"error": "Comment not deleted"})
+            return response.BadRequest({"error": _("Comment not deleted")})
 
         comment.delete_comment_date = None
         comment.delete_comment_user = None

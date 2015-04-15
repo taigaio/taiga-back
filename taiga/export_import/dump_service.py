@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils.translation import ugettext as _
+
 from taiga.projects.models import Membership
 
 from . import serializers
@@ -83,7 +85,7 @@ def dict_to_project(data, owner=None):
     project_serialized = service.store_project(data)
 
     if not project_serialized:
-        raise TaigaImportError('error importing project')
+        raise TaigaImportError(_('error importing project'))
 
     proj = project_serialized.object
 
@@ -96,12 +98,12 @@ def dict_to_project(data, owner=None):
     service.store_choices(proj, data, "severities", serializers.SeverityExportSerializer)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError('error importing choices')
+        raise TaigaImportError(_('error importing choices'))
 
     service.store_default_choices(proj, data)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError('error importing default choices')
+        raise TaigaImportError(_('error importing default choices'))
 
     service.store_custom_attributes(proj, data, "userstorycustomattributes",
                                     serializers.UserStoryCustomAttributeExportSerializer)
@@ -111,12 +113,12 @@ def dict_to_project(data, owner=None):
                                     serializers.IssueCustomAttributeExportSerializer)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError('error importing custom attributes')
+        raise TaigaImportError(_('error importing custom fields'))
 
     service.store_roles(proj, data)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError('error importing roles')
+        raise TaigaImportError(_('error importing roles'))
 
     service.store_memberships(proj, data)
 
@@ -131,37 +133,37 @@ def dict_to_project(data, owner=None):
             )
 
     if service.get_errors(clear=False):
-        raise TaigaImportError('error importing memberships')
+        raise TaigaImportError(_('error importing memberships'))
 
     store_milestones(proj, data)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError('error importing milestones')
+        raise TaigaImportError(_('error importing milestones'))
 
     store_wiki_pages(proj, data)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError('error importing wiki pages')
+        raise TaigaImportError(_('error importing wiki pages'))
 
     store_wiki_links(proj, data)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError('error importing wiki links')
+        raise TaigaImportError(_('error importing wiki links'))
 
     store_issues(proj, data)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError('error importing issues')
+        raise TaigaImportError(_('error importing issues'))
 
     store_user_stories(proj, data)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError('error importing user stories')
+        raise TaigaImportError(_('error importing user stories'))
 
     store_tasks(proj, data)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError('error importing issues')
+        raise TaigaImportError(_('error importing issues'))
 
     store_tags_colors(proj, data)
 

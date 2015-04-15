@@ -18,13 +18,17 @@ import base64
 import os
 from collections import OrderedDict
 
-from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType
 
-from rest_framework import serializers
+
+from taiga import mdrender
+from taiga.base.api import serializers
+from taiga.base.fields import JsonField, PgArrayField
 
 from taiga.projects import models as projects_models
 from taiga.projects.custom_attributes import models as custom_attributes_models
@@ -38,8 +42,6 @@ from taiga.projects.attachments import models as attachments_models
 from taiga.users import models as users_models
 from taiga.projects.votes import services as votes_service
 from taiga.projects.history import services as history_service
-from taiga.base.serializers import JsonField, PgArrayField
-from taiga import mdrender
 
 
 class AttachedFileField(serializers.WritableField):
@@ -153,7 +155,7 @@ class ProjectRelatedField(serializers.RelatedField):
             kwargs = {self.slug_field: data, "project": self.context['project']}
             return self.queryset.get(**kwargs)
         except ObjectDoesNotExist:
-            raise ValidationError("{}=\"{}\" not found in this project".format(self.slug_field, data))
+            raise ValidationError(_("{}=\"{}\" not found in this project".format(self.slug_field, data)))
 
 
 class HistoryUserField(JsonField):
@@ -458,7 +460,7 @@ class MilestoneExportSerializer(serializers.ModelSerializer):
         name = attrs[source]
         qs = self.project.milestones.filter(name=name)
         if qs.exists():
-            raise serializers.ValidationError("Name duplicated for the project")
+            raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
 

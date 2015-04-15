@@ -35,7 +35,7 @@ fraudulent modifications.
 import re
 
 from django.conf import settings
-from rest_framework.authentication import BaseAuthentication
+from taiga.base.api.authentication import BaseAuthentication
 
 from .tokens import get_user_for_token
 
@@ -43,7 +43,7 @@ from .tokens import get_user_for_token
 class Session(BaseAuthentication):
     """
     Session based authentication like the standard
-    `rest_framework.authentication.SessionAuthentication`
+    `taiga.base.api.authentication.SessionAuthentication`
     but with csrf disabled (for obvious reasons because
     it is for api.
 

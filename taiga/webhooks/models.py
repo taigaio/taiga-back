@@ -36,12 +36,12 @@ class WebhookLog(models.Model):
     webhook = models.ForeignKey(Webhook, null=False, blank=False,
                                 related_name="logs")
     url = models.URLField(null=False, blank=False, verbose_name=_("URL"))
-    status = models.IntegerField(null=False, blank=False, verbose_name=_("Status code"))
-    request_data = JsonField(null=False, blank=False, verbose_name=_("Request data"))
-    request_headers = JsonField(null=False, blank=False, verbose_name=_("Request headers"), default={})
-    response_data = models.TextField(null=False, blank=False, verbose_name=_("Response data"))
-    response_headers = JsonField(null=False, blank=False, verbose_name=_("Response headers"), default={})
-    duration = models.FloatField(null=False, blank=False, verbose_name=_("Duration"), default=0)
+    status = models.IntegerField(null=False, blank=False, verbose_name=_("status code"))
+    request_data = JsonField(null=False, blank=False, verbose_name=_("request data"))
+    request_headers = JsonField(null=False, blank=False, verbose_name=_("request headers"), default={})
+    response_data = models.TextField(null=False, blank=False, verbose_name=_("response data"))
+    response_headers = JsonField(null=False, blank=False, verbose_name=_("response headers"), default={})
+    duration = models.FloatField(null=False, blank=False, verbose_name=_("duration"), default=0)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:

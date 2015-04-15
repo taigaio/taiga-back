@@ -19,25 +19,29 @@
 
 import json
 
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponse
-from django.utils.datastructures import SortedDict
+from django.http.response import HttpResponseBase
 from django.views.decorators.csrf import csrf_exempt
+from django.views.defaults import server_error
+from django.views.generic import View
+from django.utils.datastructures import SortedDict
+from django.utils.encoding import smart_text
+from django.utils.translation import ugettext as _
 
-from rest_framework import status, exceptions
-from rest_framework.compat import smart_text, HttpResponseBase, View
-from rest_framework.request import Request
-from rest_framework.settings import api_settings
-from rest_framework.utils import formatting
+from .request import Request
+from .settings import api_settings
+from .utils import formatting
 
+from taiga.base import status
+from taiga.base import exceptions
 from taiga.base.response import Response
 from taiga.base.response import Ok
 from taiga.base.response import NotFound
 from taiga.base.response import Forbidden
 from taiga.base.utils.iterators import as_tuple
 
-from django.conf import settings
-from django.views.defaults import server_error
 
 
 def get_view_name(view_cls, suffix=None):
@@ -93,10 +97,10 @@ def exception_handler(exc):
                         headers=headers)
 
     elif isinstance(exc, Http404):
-        return NotFound({'detail': 'Not found'})
+        return NotFound({'detail': _('Not found')})
 
     elif isinstance(exc, PermissionDenied):
-        return Forbidden({'detail': 'Permission denied'})
+        return Forbidden({'detail': _('Permission denied')})
 
     # Note: Unhandled exceptions will raise a 500 error.
     return None
@@ -292,7 +296,7 @@ class APIView(View):
         """
         request.user
 
-    def check_permissions(self, request, action, obj=None):
+    def check_permissions(self, request, action:str=None, obj=None):
         if action is None:
             self.permission_denied(request)
 
@@ -345,11 +349,9 @@ class APIView(View):
         Returns the final response object.
         """
         # Make the error obvious if a proper response is not returned
-        assert isinstance(response, HttpResponseBase), (
-            'Expected a `Response`, `HttpResponse` or `HttpStreamingResponse` '
-            'to be returned from the view, but received a `%s`'
-            % type(response)
-        )
+        assert isinstance(response, HttpResponseBase), _('Expected a `Response`, `HttpResponse` or '
+                                                         '`HttpStreamingResponse` to be returned from the view, '
+                                                         'but received a `%s`' % type(response))
 
         if isinstance(response, Response):
             if not getattr(request, 'accepted_renderer', None):
@@ -446,6 +448,6 @@ class APIView(View):
 
 def api_server_error(request, *args, **kwargs):
     if settings.DEBUG is False and request.META['CONTENT_TYPE'] == "application/json":
-        return HttpResponse(json.dumps({"error": "Server application error"}),
+        return HttpResponse(json.dumps({"error": _("Server application error")}),
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return server_error(request, *args, **kwargs)

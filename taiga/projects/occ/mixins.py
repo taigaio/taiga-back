@@ -21,6 +21,7 @@ from taiga.base import exceptions as exc
 from taiga.base.utils import db
 from taiga.projects.history.services import get_modified_fields
 
+
 class OCCResourceMixin(object):
     """
     Rest Framework resource mixin for resources that need to have concurrent
@@ -31,7 +32,7 @@ class OCCResourceMixin(object):
         try:
             param_version = param_version and int(param_version)
         except (ValueError, TypeError):
-            raise exc.WrongArguments({"version": "The version must be an integer"})
+            raise exc.WrongArguments({"version": _("The version must be an integer")})
 
         return param_version
 
@@ -52,7 +53,7 @@ class OCCResourceMixin(object):
         # Extract param version
         param_version = self._extract_param_version()
         if not self._validate_param_version(param_version, current_version):
-            raise exc.WrongArguments({"version": "The version is not valid"})
+            raise exc.WrongArguments({"version": _("The version is not valid")})
 
         if current_version != param_version:
             diff_versions = current_version - param_version
@@ -68,7 +69,7 @@ class OCCResourceMixin(object):
             both_modified = modifying_fields & modified_fields
 
             if both_modified:
-                raise exc.WrongArguments({"version": "The version doesn't match with the current one"})
+                raise exc.WrongArguments({"version": _("The version doesn't match with the current one")})
 
         if obj.id:
             obj.version = models.F('version') + 1

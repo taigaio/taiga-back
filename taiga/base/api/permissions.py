@@ -20,6 +20,7 @@ from taiga.base.utils import sequence as sq
 from taiga.permissions.service import user_has_perm, is_project_owner
 from django.apps import apps
 
+from django.utils.translation import ugettext as _
 
 ######################################################################
 # Base permissiones definition
@@ -57,7 +58,7 @@ class ResourcePermission(object):
         elif inspect.isclass(permset) and issubclass(permset, PermissionComponent):
             permset = permset()
         else:
-            raise RuntimeError("Invalid permission definition.")
+            raise RuntimeError(_("Invalid permission definition."))
 
         if self.global_perms:
             permset = (self.global_perms & permset)

@@ -16,7 +16,6 @@
 
 from contextlib import suppress
 
-from rest_framework import status
 
 from django.apps import apps
 from django.db import transaction
@@ -27,6 +26,7 @@ from django.http import HttpResponse
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base import response
+from taiga.base import status
 from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api.utils import get_object_or_404

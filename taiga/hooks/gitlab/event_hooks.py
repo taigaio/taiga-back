@@ -17,7 +17,7 @@
 import re
 import os
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from taiga.projects.models import IssueStatus, TaskStatus, UserStoryStatus
 
@@ -84,7 +84,7 @@ class PushEventHook(BaseEventHook):
         element.save()
 
         snapshot = take_snapshot(element,
-                                 comment="Status changed from GitLab commit",
+                                 comment=_("Status changed from GitLab commit"),
                                  user=get_gitlab_user(gitlab_user))
         send_notifications(element, history=snapshot)
 
@@ -126,5 +126,5 @@ class IssuesEventHook(BaseEventHook):
         )
         take_snapshot(issue, user=get_gitlab_user(None))
 
-        snapshot = take_snapshot(issue, comment="Created from GitLab", user=get_gitlab_user(None))
+        snapshot = take_snapshot(issue, comment=_("Created from GitLab"), user=get_gitlab_user(None))
         send_notifications(issue, history=snapshot)
