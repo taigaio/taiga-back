@@ -119,7 +119,12 @@ def lang_stats(resources=None, languages=None):
 
     for name, dir_ in locale_dirs:
         print("\nShowing translations stats for '{res}':".format(res=name))
-        langs = sorted([d for d in os.listdir(dir_) if not d.startswith('_')])
+
+        langs = []
+        for d in os.listdir(dir_):
+            if not d.startswith('_') and os.path.isdir(os.path.join(dir_, d)):
+                langs.append(d)
+        langs = sorted(langs)
 
         for lang in langs:
             if languages and lang not in languages:
