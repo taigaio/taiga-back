@@ -213,7 +213,7 @@ You need transifex-client, install it.
 
     or
 
-       $ pip install --upgrade transifex-client==0.11.1b0
+       $ pip install --upgrade transifex-client==0.11.1.beta
 
  2. Create ~/.transifexrc file:
 
@@ -221,6 +221,7 @@ You need transifex-client, install it.
 
        [https://www.transifex.com]
        hostname = https://www.transifex.com
+       token =
        username = <YOUR_USERNAME>
        password = <YOUR_PASSWOR>
                   """)
