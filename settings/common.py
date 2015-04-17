@@ -70,90 +70,90 @@ LANGUAGE_CODE = 'en-us'
 
 # Languages we provide translations for, out of the box.
 LANGUAGES = [
-    ("af", "Afrikaans"),  # Afrikaans
-    ("ar", "العربية‏"),  # Arabic
-    ("ast", "Asturiano"),  # Asturian
-    ("az", "Azərbaycan dili"),  # Azerbaijani
-    ("bg", "Български"),  # Bulgarian
-    ("be", "Беларуская"),  # Belarusian
-    ("bn", "বাংলা"),  # Bengali
-    ("br", "Bretón"),  # Breton
-    ("bs", "Bosanski"),  # Bosnian
-    ("ca", "Català"),  # Catalan
-    ("cs", "Čeština"),  # Czech
-    ("cy", "Cymraeg"),  # Welsh
-    ("da", "Dansk"),  # Danish
-    ("de", "Deutsch"),  # German
-    ("el", "Ελληνικά"),  # Greek
+    #("af", "Afrikaans"),  # Afrikaans
+    #("ar", "العربية‏"),  # Arabic
+    #("ast", "Asturiano"),  # Asturian
+    #("az", "Azərbaycan dili"),  # Azerbaijani
+    #("bg", "Български"),  # Bulgarian
+    #("be", "Беларуская"),  # Belarusian
+    #("bn", "বাংলা"),  # Bengali
+    #("br", "Bretón"),  # Breton
+    #("bs", "Bosanski"),  # Bosnian
+    #("ca", "Català"),  # Catalan
+    #("cs", "Čeština"),  # Czech
+    #("cy", "Cymraeg"),  # Welsh
+    #("da", "Dansk"),  # Danish
+    #("de", "Deutsch"),  # German
+    #("el", "Ελληνικά"),  # Greek
     ("en", "English (US)"),  # English
-    ("en-au", "English (Australia)"),  # Australian English
-    ("en-gb", "English (UK)"),  # British English
-    ("eo", "esperanta"),  # Esperanto
+    #("en-au", "English (Australia)"),  # Australian English
+    #("en-gb", "English (UK)"),  # British English
+    #("eo", "esperanta"),  # Esperanto
     ("es", "Español"),  # Spanish
-    ("es-ar", "Español (Argentina)"),  # Argentinian Spanish
-    ("es-mx", "Español (México)"),  # Mexican Spanish
-    ("es-ni", "Español (Nicaragua)"),  # Nicaraguan Spanish
-    ("es-ve", "Español (Venezuela)"),  # Venezuelan Spanish
-    ("et", "Eesti"),  # Estonian
-    ("eu", "Euskara"),  # Basque
-    ("fa", "فارسی‏"),  # Persian
-    ("fi", "Suomi"),  # Finnish
+    #("es-ar", "Español (Argentina)"),  # Argentinian Spanish
+    #("es-mx", "Español (México)"),  # Mexican Spanish
+    #("es-ni", "Español (Nicaragua)"),  # Nicaraguan Spanish
+    #("es-ve", "Español (Venezuela)"),  # Venezuelan Spanish
+    #("et", "Eesti"),  # Estonian
+    #("eu", "Euskara"),  # Basque
+    #("fa", "فارسی‏"),  # Persian
+    #("fi", "Suomi"),  # Finnish
     ("fr", "Français"),  # French
-    ("fy", "Frysk"),  # Frisian
-    ("ga", "Irish"),  # Irish
-    ("gl", "Galego"),  # Galician
-    ("he", "עברית‏"),  # Hebrew
-    ("hi", "हिन्दी"),  # Hindi
-    ("hr", "Hrvatski"),  # Croatian
-    ("hu", "Magyar"),  # Hungarian
-    ("ia", "Interlingua"),  # Interlingua
-    ("id", "Bahasa Indonesia"),  # Indonesian
-    ("io", "IDO"),  # Ido
-    ("is", "Íslenska"),  # Icelandic
-    ("it", "Italiano"),  # Italian
-    ("ja", "日本語"),  # Japanese
-    ("ka", "ქართული"),  # Georgian
-    ("kk", "Қазақша"),  # Kazakh
-    ("km", "ភាសាខ្មែរ"),  # Khmer
-    ("kn", "ಕನ್ನಡ"),  # Kannada
-    ("ko", "한국어"),  # Korean
-    ("lb", "Lëtzebuergesch"),  # Luxembourgish
-    ("lt", "Lietuvių"),  # Lithuanian
-    ("lv", "Latviešu"),  # Latvian
-    ("mk", "Македонски"),  # Macedonian
-    ("ml", "മലയാളം"),  # Malayalam
-    ("mn", "Монгол"),  # Mongolian
-    ("mr", "मराठी"),  # Marathi
-    ("my", "မြန်မာ"),  # Burmese
-    ("nb", "Norsk (bokmål)"),  # Norwegian Bokmal
-    ("ne", "नेपाली"),  # Nepali
-    ("nl", "Nederlands"),  # Dutch
-    ("nn", "Norsk (nynorsk)"),  # Norwegian Nynorsk
-    ("os", "Ирон æвзаг"),  # Ossetic
-    ("pa", "ਪੰਜਾਬੀ"),  # Punjabi
-    ("pl", "Polski"),  # Polish
-    ("pt", "Português (Portugal)"),  # Portuguese
-    ("pt-br", "Português (Brasil)"),  # Brazilian Portuguese
-    ("ro", "Română"),  # Romanian
-    ("ru", "Русский"),  # Russian
-    ("sk", "Slovenčina"),  # Slovak
-    ("sl", "Slovenščina"),  # Slovenian
-    ("sq", "Shqip"),  # Albanian
-    ("sr", "Српски"),  # Serbian
-    ("sr-latn", "srpski"),  # Serbian Latin
-    ("sv", "Svenska"),  # Swedish
-    ("sw", "Kiswahili"),  # Swahili
-    ("ta", "தமிழ்"),  # Tamil
-    ("te", "తెలుగు"),  # Telugu
-    ("th", "ภาษาไทย"),  # Thai
-    ("tr", "Türkçe"),  # Turkish
-    ("tt", "татар теле"),  # Tatar
-    ("udm", "удмурт кыл"),  # Udmurt
-    ("uk", "Українська"),  # Ukrainian
-    ("ur", "اردو‏"),  # Urdu
-    ("vi", "Tiếng Việt"),  # Vietnamese
-    ("zh-hans", "中文(简体)"),  # Simplified Chinese
-    ("zh-hant", "中文(香港)"),  # Traditional Chinese
+    #("fy", "Frysk"),  # Frisian
+    #("ga", "Irish"),  # Irish
+    #("gl", "Galego"),  # Galician
+    #("he", "עברית‏"),  # Hebrew
+    #("hi", "हिन्दी"),  # Hindi
+    #("hr", "Hrvatski"),  # Croatian
+    #("hu", "Magyar"),  # Hungarian
+    #("ia", "Interlingua"),  # Interlingua
+    #("id", "Bahasa Indonesia"),  # Indonesian
+    #("io", "IDO"),  # Ido
+    #("is", "Íslenska"),  # Icelandic
+    #("it", "Italiano"),  # Italian
+    #("ja", "日本語"),  # Japanese
+    #("ka", "ქართული"),  # Georgian
+    #("kk", "Қазақша"),  # Kazakh
+    #("km", "ភាសាខ្មែរ"),  # Khmer
+    #("kn", "ಕನ್ನಡ"),  # Kannada
+    #("ko", "한국어"),  # Korean
+    #("lb", "Lëtzebuergesch"),  # Luxembourgish
+    #("lt", "Lietuvių"),  # Lithuanian
+    #("lv", "Latviešu"),  # Latvian
+    #("mk", "Македонски"),  # Macedonian
+    #("ml", "മലയാളം"),  # Malayalam
+    #("mn", "Монгол"),  # Mongolian
+    #("mr", "मराठी"),  # Marathi
+    #("my", "မြန်မာ"),  # Burmese
+    #("nb", "Norsk (bokmål)"),  # Norwegian Bokmal
+    #("ne", "नेपाली"),  # Nepali
+    #("nl", "Nederlands"),  # Dutch
+    #("nn", "Norsk (nynorsk)"),  # Norwegian Nynorsk
+    #("os", "Ирон æвзаг"),  # Ossetic
+    #("pa", "ਪੰਜਾਬੀ"),  # Punjabi
+    #("pl", "Polski"),  # Polish
+    #("pt", "Português (Portugal)"),  # Portuguese
+    #("pt-br", "Português (Brasil)"),  # Brazilian Portuguese
+    #("ro", "Română"),  # Romanian
+    #("ru", "Русский"),  # Russian
+    #("sk", "Slovenčina"),  # Slovak
+    #("sl", "Slovenščina"),  # Slovenian
+    #("sq", "Shqip"),  # Albanian
+    #("sr", "Српски"),  # Serbian
+    #("sr-latn", "srpski"),  # Serbian Latin
+    #("sv", "Svenska"),  # Swedish
+    #("sw", "Kiswahili"),  # Swahili
+    #("ta", "தமிழ்"),  # Tamil
+    #("te", "తెలుగు"),  # Telugu
+    #("th", "ภาษาไทย"),  # Thai
+    #("tr", "Türkçe"),  # Turkish
+    #("tt", "татар теле"),  # Tatar
+    #("udm", "удмурт кыл"),  # Udmurt
+    #("uk", "Українська"),  # Ukrainian
+    #("ur", "اردو‏"),  # Urdu
+    #("vi", "Tiếng Việt"),  # Vietnamese
+    #("zh-hans", "中文(简体)"),  # Simplified Chinese
+    #("zh-hant", "中文(香港)"),  # Traditional Chinese
 ]
 
 # Languages using BiDi (right-to-left) layout
