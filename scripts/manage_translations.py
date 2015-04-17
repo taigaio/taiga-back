@@ -15,6 +15,8 @@
 #
 # * fetch: fetch translations from transifex.com
 #
+# * commit: update resources in transifex.com with the local files
+#
 # Each command support the --languages and --resources options to limit their
 # operation to the specified language or resource. For example, to get stats
 # for Spanish in contrib.admin, run:
