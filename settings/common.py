@@ -16,11 +16,6 @@
 
 import os.path, sys, os
 
-# This is defined here as a do-nothing function because we can't import
-# django.utils.translation -- that module depends on the settings.
-gettext_noop = lambda s: s
-
-
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 APPEND_SLASH = False
@@ -159,7 +154,10 @@ LANGUAGES = [
 # Languages using BiDi (right-to-left) layout
 LANGUAGES_BIDI = ["he", "ar", "fa", "ur"]
 
-
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, "locale"),
+    os.path.join(BASE_DIR, "taiga", "locale"),
+)
 
 SITES = {
     "api": {"domain": "localhost:8000", "scheme": "http", "name": "api"},
@@ -197,12 +195,10 @@ MEDIA_URL = "http://localhost:8000/media/"
 # Static url is not widelly used by taiga (only
 # if admin is activated).
 STATIC_URL = "http://localhost:8000/static/"
-ADMIN_MEDIA_PREFIX = "http://localhost:8000/static/admin/"
 
 # Static configuration.
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -214,15 +210,8 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-
 # Defautl storage
 DEFAULT_FILE_STORAGE = "taiga.base.storage.FileSystemStorage"
-
-
-LOCALE_PATHS = (
-    os.path.join(BASE_DIR, "locale"),
-    os.path.join(BASE_DIR, "taiga", "locale"),
-)
 
 SECRET_KEY = "aw3+t2r(8(0kkrhg8)gx6i96v5^kv%6cfep9wxfom0%7dy0m9e"
 
@@ -366,6 +355,7 @@ LOGGING = {
 
 AUTH_USER_MODEL = "users.User"
 FORMAT_MODULE_PATH = "taiga.base.formats"
+
 DATE_INPUT_FORMATS = (
     "%Y-%m-%d", "%m/%d/%Y", "%d/%m/%Y", "%b %d %Y",
     "%b %d, %Y", "%d %b %Y", "%d %b, %Y", "%B %d %Y",
