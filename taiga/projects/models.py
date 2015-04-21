@@ -281,6 +281,11 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         user_stories = user_stories.prefetch_related('role_points', 'role_points__points')
         return self._get_user_stories_points(user_stories)
 
+
+    @property
+    def project(self):
+        return self
+
     @property
     def future_team_increment(self):
         team_increment = self._get_points_increment(False, True)

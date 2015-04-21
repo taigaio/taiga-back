@@ -96,10 +96,13 @@ def _common_users_values(diff):
 
     return values
 
+def project_values(diff):
+    values = _common_users_values(diff)
+    return values
 
+    
 def milestone_values(diff):
     values = _common_users_values(diff)
-
     return values
 
 

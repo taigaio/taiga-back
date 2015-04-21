@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import base64
+import copy
 import os
 from collections import OrderedDict
 
@@ -39,6 +40,8 @@ from taiga.projects.milestones import models as milestones_models
 from taiga.projects.wiki import models as wiki_models
 from taiga.projects.history import models as history_models
 from taiga.projects.attachments import models as attachments_models
+from taiga.timeline import models as timeline_models
+from taiga.timeline import service as timeline_service
 from taiga.users import models as users_models
 from taiga.projects.votes import services as votes_service
 from taiga.projects.history import services as history_service
@@ -548,6 +551,39 @@ class WikiLinkExportSerializer(serializers.ModelSerializer):
         exclude = ('id', 'project')
 
 
+
+class TimelineDataField(serializers.WritableField):
+    read_only = False
+
+    def to_native(self, data):
+        new_data = copy.deepcopy(data)
+        try:
+            user = users_models.User.objects.get(pk=new_data["user"]["id"])
+            new_data["user"]["email"] = user.email
+            del new_data["user"]["id"]
+        except users_models.User.DoesNotExist:
+            pass
+        return new_data
+
+    def from_native(self, data):
+        new_data = copy.deepcopy(data)
+        try:
+            user = users_models.User.objects.get(email=new_data["user"]["email"])
+            new_data["user"]["id"] = user.id
+            del new_data["user"]["email"]
+        except users_models.User.DoesNotExist:
+            pass
+
+        return new_data
+
+
+class TimelineExportSerializer(serializers.ModelSerializer):
+    data = TimelineDataField()
+    class Meta:
+        model = timeline_models.Timeline
+        exclude = ('id', 'project', 'namespace', 'object_id')
+
+
 class ProjectExportSerializer(serializers.ModelSerializer):
     owner = UserRelatedField(required=False)
     default_points = serializers.SlugRelatedField(slug_field="name", required=False)
@@ -579,7 +615,12 @@ class ProjectExportSerializer(serializers.ModelSerializer):
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
     modified_date = serializers.DateTimeField(required=False)
+    timeline = serializers.SerializerMethodField("get_timeline")
 
     class Meta:
         model = projects_models.Project
         exclude = ('id', 'creation_template', 'members')
+
+    def get_timeline(self, obj):
+        timeline_qs = timeline_service.get_project_timeline(obj)
+        return TimelineExportSerializer(timeline_qs, many=True).data

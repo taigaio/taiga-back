@@ -76,12 +76,6 @@ def test_get_impl_key_from_typename():
         service._get_impl_key(None)
 
 
-def test_get_class_implementation():
-    service._timeline_impl_map["timeline.timeline.test"] = "test"
-    assert service._get_class_implementation(Timeline, "test") == "test"
-    assert service._get_class_implementation(Timeline, "other") is None
-
-
 def test_register_timeline_implementation():
     test_func = lambda x: "test-func-result"
     service.register_timeline_implementation("timeline.timeline", "test", test_func)

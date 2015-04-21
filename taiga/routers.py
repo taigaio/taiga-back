@@ -150,9 +150,11 @@ router.register(r"history/wiki", WikiHistory, base_name="wiki-history")
 
 
 # Timelines
+from taiga.timeline.api import ProfileTimeline
 from taiga.timeline.api import UserTimeline
 from taiga.timeline.api import ProjectTimeline
 
+router.register(r"timeline/profile", ProfileTimeline, base_name="profile-timeline")
 router.register(r"timeline/user", UserTimeline, base_name="user-timeline")
 router.register(r"timeline/project", ProjectTimeline, base_name="project-timeline")
 
