@@ -389,3 +389,11 @@ class ProjectTemplateSerializer(serializers.ModelSerializer):
         model = models.ProjectTemplate
         read_only_fields = ("created_date", "modified_date")
         i18n_fields = ("name", "description")
+
+######################################################
+## Project order bulk serializers
+######################################################
+
+class UpdateProjectOrderBulkSerializer(ProjectExistsValidator, serializers.Serializer):
+    project_id = serializers.IntegerField()
+    order = serializers.IntegerField()

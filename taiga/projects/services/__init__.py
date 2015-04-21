@@ -17,6 +17,7 @@
 # This makes all code that import services works and
 # is not the baddest practice ;)
 
+from .bulk_update_order import update_projects_order_in_bulk
 from .bulk_update_order import bulk_update_severity_order
 from .bulk_update_order import bulk_update_priority_order
 from .bulk_update_order import bulk_update_issue_type_order
