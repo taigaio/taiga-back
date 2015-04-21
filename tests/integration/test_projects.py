@@ -277,3 +277,21 @@ def test_destroy_point_and_reassign(client):
     assert user_story.role_points.all()[0].points.id == p2.id
     project = Project.objects.get(id=project.id)
     assert project.default_points.id == p2.id
+
+def test_update_projects_order_in_bulk(client):
+    user = f.create_user()
+    client.login(user)
+    membership_1 = f.MembershipFactory(user=user)
+    membership_2 = f.MembershipFactory(user=user)
+
+    url = reverse("projects-bulk-update-order")
+    data = [
+        {"project_id": membership_1.project.id, "order":100},
+        {"project_id": membership_2.project.id, "order":200}
+    ]
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 204
+    assert user.memberships.get(project=membership_1.project).user_order == 100
+    assert user.memberships.get(project=membership_2.project).user_order == 200

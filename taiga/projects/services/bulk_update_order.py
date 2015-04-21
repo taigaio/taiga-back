@@ -16,6 +16,26 @@
 
 from django.db import transaction
 from django.db import connection
+from taiga.projects import models
+
+def update_projects_order_in_bulk(bulk_data:list, field:str, user):
+    """
+    Update the order of user projects in the user membership.
+    `bulk_data` should be a list of tuples with the following format:
+
+    [(<project id>, {<field>: <value>, ...}), ...]
+    """
+    membership_ids = []
+    new_order_values = []
+    for membership_data in bulk_data:
+        project_id = membership_data["project_id"]
+        membership = user.memberships.get(project_id=project_id)
+        membership_ids.append(membership.id)
+        new_order_values.append({field: membership_data["order"]})
+
+    from taiga.base.utils import db
+
+    db.update_in_bulk_with_ids(membership_ids, new_order_values, model=models.Membership)
 
 
 @transaction.atomic
