@@ -108,6 +108,7 @@ class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = ('id', 'name', 'permissions', 'computable', 'project', 'order', 'members_count')
+        i18n_fields = ("name",)
 
     def get_members_count(self, obj):
         return obj.memberships.count()
@@ -117,3 +118,4 @@ class ProjectRoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = ('id', 'name', 'slug', 'order', 'computable')
+        i18n_fields = ("name",)
