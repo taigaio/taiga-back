@@ -44,6 +44,7 @@ from djmail.template_mail import InlineCSSTemplateMail
 from . import models
 from . import serializers
 from . import permissions
+from . import filters as user_filters
 from .signals import user_cancel_account as user_cancel_account_signal
 
 
@@ -51,7 +52,7 @@ class UsersViewSet(ModelCrudViewSet):
     permission_classes = (permissions.UserPermission,)
     admin_serializer_class = serializers.UserAdminSerializer
     serializer_class = serializers.UserSerializer
-    queryset = models.User.objects.all()
+    queryset = models.User.objects.all().prefetch_related("memberships")
     filter_backends = (MembersFilterBackend,)
 
     def get_serializer_class(self):
@@ -74,6 +75,23 @@ class UsersViewSet(ModelCrudViewSet):
             serializer = self.get_pagination_serializer(page)
         else:
             serializer = self.get_serializer(self.object_list, many=True)
+
+        return response.Ok(serializer.data)
+
+    @detail_route(methods=["GET"])
+    def contacts(self, request, *args, **kwargs):
+        user = self.get_object()
+        self.check_permissions(request, 'contacts', user)
+
+        self.object_list = user_filters.ContactsFilterBackend().filter_queryset(request,
+                                                                  self.get_queryset(),
+                                                                  self)
+
+        page = self.paginate_queryset(self.object_list)
+        if page is not None:
+            serializer = self.serializer_class(page.object_list, many=True)
+        else:
+            serializer = self.serializer_class(self.object_list, many=True)
 
         return response.Ok(serializer.data)
 

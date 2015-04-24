@@ -8,6 +8,7 @@ from .. import factories as f
 from taiga.base.utils import json
 from taiga.users import models
 from taiga.auth.tokens import get_token_for_user
+from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 
 pytestmark = pytest.mark.django_db
 
@@ -176,3 +177,63 @@ def test_change_avatar(client):
         avatar.seek(0)
         response = client.post(url, post_data)
         assert response.status_code == 200
+
+
+def test_list_contacts_private_projects(client):
+    project = f.ProjectFactory.create()
+    user_1 = f.UserFactory.create()
+    user_2 = f.UserFactory.create()
+    role = f.RoleFactory(project=project, permissions=["view_project"])
+    membership_1 = f.MembershipFactory.create(project=project, user=user_1, role=role)
+    membership_2 = f.MembershipFactory.create(project=project, user=user_2, role=role)
+
+    url = reverse('users-contacts', kwargs={"pk": user_1.pk})
+    response = client.get(url, content_type="application/json")
+    assert response.status_code == 404
+
+    client.login(user_1)
+    response = client.get(url, content_type="application/json")
+    assert response.status_code == 200
+
+    response_content = json.loads(response.content.decode("utf-8"))
+    assert len(response_content) == 1
+    assert response_content[0]["id"] == user_2.id
+
+
+def test_list_contacts_no_projects(client):
+    user_1 = f.UserFactory.create()
+    user_2 = f.UserFactory.create()
+    role_1 = f.RoleFactory(permissions=["view_project"])
+    role_2 = f.RoleFactory(permissions=["view_project"])
+    membership_1 = f.MembershipFactory.create(project=role_1.project, user=user_1, role=role_1)
+    membership_2 = f.MembershipFactory.create(project=role_2.project, user=user_2, role=role_2)
+
+    client.login(user_1)
+
+    url = reverse('users-contacts', kwargs={"pk": user_1.pk})
+    response = client.get(url, content_type="application/json")
+    assert response.status_code == 200
+
+    response_content = json.loads(response.content.decode("utf-8"))
+    assert len(response_content) == 0
+
+
+def test_list_contacts_public_projects(client):
+    project = f.ProjectFactory.create(is_private=False,
+            anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
+            public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)))
+
+    user_1 = f.UserFactory.create()
+    user_2 = f.UserFactory.create()
+    role = f.RoleFactory(project=project)
+    membership_1 = f.MembershipFactory.create(project=project, user=user_1, role=role)
+    membership_2 = f.MembershipFactory.create(project=project, user=user_2, role=role)
+
+    url = reverse('users-contacts', kwargs={"pk": user_1.pk})
+    response = client.get(url, content_type="application/json")
+    assert response.status_code == 200
+
+    response_content = json.loads(response.content.decode("utf-8"))
+    assert len(response_content) == 2
+    assert response_content[0]["id"] == user_1.id
+    assert response_content[1]["id"] == user_2.id
