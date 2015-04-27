@@ -110,7 +110,7 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
                        IssuesFilter, IssuesOrdering,)
     retrieve_exclude_filters = (IssuesFilter,)
 
-    filter_fields = ("project",)
+    filter_fields = ("project", "assigned_to", "status__is_closed", "watchers")
     order_by_fields = ("type",
                        "severity",
                        "status",

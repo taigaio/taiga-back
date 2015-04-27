@@ -41,7 +41,8 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
     list_serializer_class = serializers.TaskSerializer
     permission_classes = (permissions.TaskPermission,)
     filter_backends = (filters.CanViewTasksFilterBackend,)
-    filter_fields = ["user_story", "milestone", "project"]
+    filter_fields = ["user_story", "milestone", "project", "assigned_to",
+        "status__is_closed", "watchers"]
 
     def pre_save(self, obj):
         if obj.user_story:
