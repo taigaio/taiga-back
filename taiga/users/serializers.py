@@ -20,7 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.api import serializers
 from taiga.base.fields import PgArrayField
-
+from taiga.projects.models import Project
 from .models import User, Role
 from .services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
 
@@ -31,10 +31,18 @@ import re
 ## User
 ######################################################
 
+class ContactProjectDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ("id", "slug", "name")
+
+
 class UserSerializer(serializers.ModelSerializer):
     full_name_display = serializers.SerializerMethodField("get_full_name_display")
     photo = serializers.SerializerMethodField("get_photo")
     big_photo = serializers.SerializerMethodField("get_big_photo")
+    roles = serializers.SerializerMethodField("get_roles")
+    projects_with_me = serializers.SerializerMethodField("get_projects_with_me")
 
     class Meta:
         model = User
@@ -42,7 +50,7 @@ class UserSerializer(serializers.ModelSerializer):
         # with this info (including there the email)
         fields = ("id", "username", "full_name", "full_name_display",
                   "color", "bio", "lang", "timezone", "is_active",
-                  "photo", "big_photo")
+                  "photo", "big_photo", "roles", "projects_with_me")
         read_only_fields = ("id",)
 
     def validate_username(self, attrs, source):
@@ -72,6 +80,22 @@ class UserSerializer(serializers.ModelSerializer):
     def get_big_photo(self, user):
         return get_big_photo_or_gravatar_url(user)
 
+    def get_roles(self, user):
+        return user.memberships. order_by("role__name").values_list("role__name", flat=True).distinct()
+
+    def get_projects_with_me(self, user):
+        request = self.context.get("request", None)
+        requesting_user = request and request.user or None
+
+        if not requesting_user or not requesting_user.is_authenticated():
+            return []
+
+        else:
+            project_ids = requesting_user.memberships.values_list("project__id", flat=True)
+            memberships = requesting_user.memberships.filter(project__id__in=project_ids)
+            project_ids = memberships.values_list("project__id", flat=True)
+            projects = Project.objects.filter(id__in=project_ids)
+            return ContactProjectDetailSerializer(projects, many=True).data
 
 class UserAdminSerializer(UserSerializer):
     class Meta:
