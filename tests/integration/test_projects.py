@@ -320,5 +320,4 @@ def test_create_and_use_template(client):
         "creation_template": template_id,
     }
     response = client.json.post(url, json.dumps(data))
-    print(response.content)
     assert response.status_code == 201
