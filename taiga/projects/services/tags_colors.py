@@ -17,6 +17,7 @@
 from django.conf import settings
 
 from taiga.projects.services.filters import get_all_tags
+from taiga.projects.models import Project
 
 from hashlib import sha1
 
@@ -52,6 +53,8 @@ def update_project_tags_colors_handler(instance):
             new_color = _get_new_color(tag, settings.TAGS_PREDEFINED_COLORS,
                                        exclude=used_colors)
             instance.project.tags_colors.append([tag, new_color])
-
+        
     remove_unused_tags(instance.project)
-    instance.project.save()
+
+    if not isinstance(instance, Project):
+        instance.project.save()
