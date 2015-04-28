@@ -277,3 +277,28 @@ def test_destroy_point_and_reassign(client):
     assert user_story.role_points.all()[0].points.id == p2.id
     project = Project.objects.get(id=project.id)
     assert project.default_points.id == p2.id
+
+def test_create_and_use_template(client):
+    user = f.UserFactory.create(is_superuser=True)
+    project = f.create_project()
+    role = f.RoleFactory(project=project)
+    f.MembershipFactory(user=user, project=project, is_owner=True, role=role)
+    client.login(user)
+
+    url = reverse("projects-create-template", kwargs={"pk": project.pk})
+    data = {
+        "template_name": "test template",
+        "template_description": "test template description"
+    }
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+
+    template_id = response.data["id"]
+    url = reverse("projects-list")
+    data = {
+        "name": "test project based on template",
+        "description": "test project based on template",
+        "creation_template": template_id,
+    }
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201

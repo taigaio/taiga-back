@@ -619,6 +619,7 @@ class ProjectTemplate(models.Model):
                 "name": us_status.name,
                 "slug": us_status.slug,
                 "is_closed": us_status.is_closed,
+                "is_archived": us_status.is_archived,
                 "color": us_status.color,
                 "wip_limit": us_status.wip_limit,
                 "order": us_status.order,
