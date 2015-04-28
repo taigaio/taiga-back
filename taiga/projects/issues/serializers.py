@@ -23,6 +23,8 @@ from taiga.base.neighbors import NeighborsSerializerMixin
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
+from taiga.projects.serializers import BasicIssueStatusSerializer
+from taiga.users.serializers import BasicInfoSerializer as UserBasicInfoSerializer
 
 from . import models
 
@@ -36,6 +38,8 @@ class IssueSerializer(WatchersValidator, serializers.ModelSerializer):
     blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
     description_html = serializers.SerializerMethodField("get_description_html")
     votes = serializers.SerializerMethodField("get_votes_number")
+    status_extra_info = BasicIssueStatusSerializer(source="status", required=False, read_only=True)
+    assigned_to_extra_info = UserBasicInfoSerializer(source="assigned_to", required=False, read_only=True)
 
     class Meta:
         model = models.Issue
