@@ -295,3 +295,30 @@ def test_update_projects_order_in_bulk(client):
     assert response.status_code == 204
     assert user.memberships.get(project=membership_1.project).user_order == 100
     assert user.memberships.get(project=membership_2.project).user_order == 200
+
+
+def test_create_and_use_template(client):
+    user = f.UserFactory.create(is_superuser=True)
+    project = f.create_project()
+    role = f.RoleFactory(project=project)
+    f.MembershipFactory(user=user, project=project, is_owner=True, role=role)
+    client.login(user)
+
+    url = reverse("projects-create-template", kwargs={"pk": project.pk})
+    data = {
+        "template_name": "test template",
+        "template_description": "test template description"
+    }
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+
+    template_id = response.data["id"]
+    url = reverse("projects-list")
+    data = {
+        "name": "test project based on template",
+        "description": "test project based on template",
+        "creation_template": template_id,
+    }
+    response = client.json.post(url, json.dumps(data))
+    print(response.content)
+    assert response.status_code == 201
