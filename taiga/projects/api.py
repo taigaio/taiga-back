@@ -30,7 +30,6 @@ from taiga.base.api.permissions import AllowAnyPermission
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.slug import slugify_uniquely
 
-from taiga.projects import filters as project_filters
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
@@ -58,8 +57,9 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
     admin_serializer_class = serializers.ProjectDetailAdminSerializer
     list_serializer_class = serializers.ProjectSerializer
     permission_classes = (permissions.ProjectPermission, )
-    filter_backends = (filters.CanViewProjectObjFilterBackend, project_filters.ProjectsFilterBackend)
+    filter_backends = (filters.CanViewProjectObjFilterBackend,)
     filter_fields = (('member', 'members'),)
+    order_by_fields = ("memberships__user_order",)
 
     @list_route(methods=["POST"])
     def bulk_update_order(self, request, **kwargs):

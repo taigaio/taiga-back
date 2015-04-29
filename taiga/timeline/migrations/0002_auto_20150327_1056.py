@@ -78,6 +78,7 @@ class Migration(migrations.Migration):
         ('projects', '0019_auto_20150311_0821'),
         ('contenttypes', '0001_initial'),
         ('timeline', '0001_initial'),
+        ('users', '0010_auto_20150414_0936'),
     ]
 
     operations = [

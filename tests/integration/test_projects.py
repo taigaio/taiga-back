@@ -321,3 +321,31 @@ def test_create_and_use_template(client):
     }
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
+
+
+def test_projects_user_order(client):
+    user = f.UserFactory.create(is_superuser=True)
+    project_1 = f.create_project()
+    role_1 = f.RoleFactory(project=project_1)
+    f.MembershipFactory(user=user, project=project_1, is_owner=True, role=role_1, user_order=2)
+
+    project_2 = f.create_project()
+    role_2 = f.RoleFactory(project=project_2)
+    f.MembershipFactory(user=user, project=project_2, is_owner=True, role=role_2, user_order=1)
+
+    client.login(user)
+    #Testing default id order
+    url = reverse("projects-list")
+    url = "%s?member=%s" % (url, user.id)
+    response = client.json.get(url)
+    response_content = json.loads(response.content.decode("utf-8"))
+    assert response.status_code == 200
+    assert(response_content[0]["id"] == project_1.id)
+
+    #Testing user order
+    url = reverse("projects-list")
+    url = "%s?member=%s&order_by=memberships__user_order" % (url, user.id)
+    response = client.json.get(url)
+    response_content = json.loads(response.content.decode("utf-8"))
+    assert response.status_code == 200
+    assert(response_content[0]["id"] == project_2.id)
