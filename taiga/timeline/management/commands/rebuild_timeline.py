@@ -31,18 +31,18 @@ from taiga.users.models import User
 from unittest.mock import patch
 from django.contrib.contenttypes.models import ContentType
 
-timelime_objects = []
+timeline_objects = []
 created = None
 
 def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, namespace:str="default", extra_data:dict={}):
     global created
-    global timelime_objects
+    global timeline_objects
     assert isinstance(obj, Model), "obj must be a instance of Model"
     assert isinstance(instance, Model), "instance must be a instance of Model"
     event_type_key = _get_impl_key_from_model(instance.__class__, event_type)
     impl = _timeline_impl_map.get(event_type_key, None)
 
-    timelime_objects.append(Timeline(
+    timeline_objects.append(Timeline(
         content_object=obj,
         namespace=namespace,
         event_type=event_type_key,
@@ -52,10 +52,14 @@ def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, n
         created = created,
     ))
 
+def bulk_create():
+    global timeline_objects
+    if len(timeline_objects) > 10000:
+        Timeline.objects.bulk_create(timeline_objects, batch_size=10000)
+        timeline_objects = []
 
 def generate_timeline():
     global created
-    global timelime_objects
     with patch('taiga.timeline.service._add_to_object_timeline', new=custom_add_to_object_timeline):
         # Projects api wasn't a HistoryResourceMixin so we can't interate on the HistoryEntries in this case
         for project in Project.objects.order_by("created_date").iterator():
@@ -66,9 +70,7 @@ def generate_timeline():
                 "user": extract_user_info(project.owner),
             }
             _push_to_timelines(project, project.owner, project, "create", extra_data=extra_data)
-
-        Timeline.objects.bulk_create(timelime_objects, batch_size=10000)
-        timelime_objects = []
+            bulk_create()
 
         for historyEntry in HistoryEntry.objects.order_by("created_at").iterator():
             print("History entry:", historyEntry.created_at)
@@ -78,7 +80,7 @@ def generate_timeline():
             except ObjectDoesNotExist as e:
                 print("Ignoring")
 
-        Timeline.objects.bulk_create(timelime_objects, batch_size=10000)
+            bulk_create()
 
 
 class Command(BaseCommand):
