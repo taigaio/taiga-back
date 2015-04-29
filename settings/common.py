@@ -92,7 +92,7 @@ LANGUAGES = [
     #("et", "Eesti"),  # Estonian
     #("eu", "Euskara"),  # Basque
     #("fa", "فارسی‏"),  # Persian
-    #("fi", "Suomi"),  # Finnish
+    ("fi", "Suomi"),  # Finnish
     ("fr", "Français"),  # French
     #("fy", "Frysk"),  # Frisian
     #("ga", "Irish"),  # Irish
