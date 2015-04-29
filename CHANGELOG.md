@@ -5,10 +5,16 @@
 
 ### Features
 - Make Taiga translatable (i18n support).
+- i18n.
+  - Add spanish translation.
+  - Add french translation.
+  - Add finish translation.
+
 
 ### Misc
-- Lots of small and not so small bugfixes.
+- New contrib plugin for letschat (by Δndrea Stagi)
 - Remove djangorestframework from requirements. Move useful code to core.
+- Lots of small and not so small bugfixes.
 
 
 ## 1.6.0 Abies Bifolia (2015-03-17)
