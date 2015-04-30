@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from django.db.models import Model
@@ -111,5 +112,10 @@ def generate_timeline():
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        debug_enabled = settings.DEBUG
+        if debug_enabled:
+            print("Please, execute this script only with DEBUG mode disabled (DEBUG=False)")
+            return
+
         Timeline.objects.all().delete()
         generate_timeline()
