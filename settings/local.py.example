@@ -16,17 +16,17 @@
 
 from .development import *
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'transaction_hooks.backends.postgresql_psycopg2',
-#        'NAME': 'taiga',
-#        'USER': 'taiga',
-#        'PASSWORD': '',
-#        'HOST': '',
-#        'PORT': '',
-#    }
-#}
-#
+DATABASES = {
+    'default': {
+        'ENGINE': 'transaction_hooks.backends.postgresql_psycopg2',
+        'NAME': 'taiga',
+        'USER': 'taiga',
+        'PASSWORD': 'changeme',
+        'HOST': '',
+        'PORT': '',
+    }
+}
+
 #HOST="http://taiga.projects.kaleidos.net"
 #
 #MEDIA_ROOT = '/home/taiga/media'
