@@ -74,7 +74,7 @@ LANGUAGES = [
     #("bn", "বাংলা"),  # Bengali
     #("br", "Bretón"),  # Breton
     #("bs", "Bosanski"),  # Bosnian
-    #("ca", "Català"),  # Catalan
+    ("ca", "Català"),  # Catalan
     #("cs", "Čeština"),  # Czech
     #("cy", "Cymraeg"),  # Welsh
     #("da", "Dansk"),  # Danish
