@@ -148,7 +148,7 @@ LANGUAGES = [
     #("ur", "اردو‏"),  # Urdu
     #("vi", "Tiếng Việt"),  # Vietnamese
     #("zh-hans", "中文(简体)"),  # Simplified Chinese
-    #("zh-hant", "中文(香港)"),  # Traditional Chinese
+    ("zh-hant", "中文(香港)"),  # Traditional Chinese
 ]
 
 # Languages using BiDi (right-to-left) layout
