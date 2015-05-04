@@ -6,9 +6,12 @@
 ### Features
 - Make Taiga translatable (i18n support).
 - i18n.
-  - Add spanish translation.
-  - Add french translation.
-  - Add finish translation.
+  - Add spanish (es) translation.
+  - Add french (fr) translation.
+  - Add finish (fi) translation.
+  - Add catalan (ca) translation.
+  - Add traditional chinese (zh-Hant) translation.
+- Add Jitsi to our supported videoconference apps list
 
 
 ### Misc
