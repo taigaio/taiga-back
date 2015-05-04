@@ -5,14 +5,15 @@
 # Translators:
 # Alvis <pwmvx1289@hotmail.com>, 2015
 # Chi-Hsun Tsai <chihsun.tsai@gmail.com>, 2015
+# David Barragán <bameda@gmail.com>, 2015
 # Matthew Lien <BlueT@bluet.org>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-28 16:20+0200\n"
-"PO-Revision-Date: 2015-04-28 14:21+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2015-05-04 11:07+0200\n"
+"PO-Revision-Date: 2015-05-04 09:09+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Chinese Traditional (http://www.transifex.com/projects/p/"
 "taiga-back/language/zh-Hant/)\n"
 "MIME-Version: 1.0\n"
@@ -86,7 +87,7 @@ msgstr "'%s' 數值必須為「是」或「否」。"
 #: taiga/base/api/fields.py:517
 msgid ""
 "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."
-msgstr "輸入有效的短語，其包括字母,數字,底底線與連字符號"
+msgstr "輸入有效的代稱，其包括字母,數字,底底線與連字符號"
 
 #: taiga/base/api/fields.py:532
 #, python-format
@@ -995,6 +996,10 @@ msgid "AppearIn"
 msgstr "AppearIn"
 
 #: taiga/projects/choices.py:22
+msgid "Jitsi"
+msgstr "Jitsi"
+
+#: taiga/projects/choices.py:23
 msgid "Talky"
 msgstr "Talky"
 
@@ -1229,7 +1234,7 @@ msgstr "外部參考"
 #: taiga/projects/models.py:499 taiga/projects/models.py:557
 #: taiga/projects/wiki/models.py:30 taiga/users/models.py:182
 msgid "slug"
-msgstr "短語　"
+msgstr "代稱"
 
 #: taiga/projects/milestones/models.py:42
 msgid "estimated start date"
@@ -1287,7 +1292,7 @@ msgstr "額外文案邀請"
 
 #: taiga/projects/models.py:72
 msgid "user order"
-msgstr ""
+msgstr "使用者次序"
 
 #: taiga/projects/models.py:78
 msgid "The user is already member of the project"
@@ -1335,7 +1340,7 @@ msgstr "全部故事點數"
 
 #: taiga/projects/models.py:143 taiga/projects/models.py:570
 msgid "active backlog panel"
-msgstr "活躍的堆疊式面板"
+msgstr "活躍的待辦任務優先表面板"
 
 #: taiga/projects/models.py:145 taiga/projects/models.py:572
 msgid "active kanban panel"
@@ -1600,7 +1605,7 @@ msgstr "任務板次序"
 
 #: taiga/projects/tasks/models.py:66
 msgid "is iocaine"
-msgstr "iocaine"
+msgstr "挑戰全新任務"
 
 #: taiga/projects/tasks/validators.py:12
 msgid "There's no task with that id"
@@ -1766,7 +1771,7 @@ msgstr "10"
 #. Translators: User story point value (value = 13)
 #: taiga/projects/translations.py:61
 msgid "13"
-msgstr ""
+msgstr "13"
 
 #. Translators: User story point value (value = 20)
 #: taiga/projects/translations.py:63
@@ -1934,7 +1939,7 @@ msgstr "角色"
 
 #: taiga/projects/userstories/models.py:75
 msgid "backlog order"
-msgstr "積壓次序"
+msgstr "待辦任務先後次序"
 
 #: taiga/projects/userstories/models.py:77
 #: taiga/projects/userstories/models.py:79

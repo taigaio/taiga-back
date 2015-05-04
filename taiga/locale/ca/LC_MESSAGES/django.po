@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-28 16:20+0200\n"
-"PO-Revision-Date: 2015-04-28 14:21+0000\n"
+"POT-Creation-Date: 2015-05-04 11:07+0200\n"
+"PO-Revision-Date: 2015-05-04 09:07+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Catalan (http://www.transifex.com/projects/p/taiga-back/"
 "language/ca/)\n"
@@ -993,6 +993,10 @@ msgid "AppearIn"
 msgstr ""
 
 #: taiga/projects/choices.py:22
+msgid "Jitsi"
+msgstr ""
+
+#: taiga/projects/choices.py:23
 msgid "Talky"
 msgstr ""
 
