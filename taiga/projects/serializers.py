@@ -93,6 +93,13 @@ class UserStoryStatusSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class BasicUserStoryStatusSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.UserStoryStatus
+        fields = ("name", "color")
+
+
 class TaskStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaskStatus
@@ -114,6 +121,13 @@ class TaskStatusSerializer(serializers.ModelSerializer):
               raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
+
+
+class BasicTaskStatusSerializerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.TaskStatus
+        fields = ("name", "color")
 
 
 class SeveritySerializer(serializers.ModelSerializer):
@@ -149,6 +163,13 @@ class IssueStatusSerializer(serializers.ModelSerializer):
               raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
+
+
+class BasicIssueStatusSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.IssueStatus
+        fields = ("name", "color")
 
 
 class IssueTypeSerializer(serializers.ModelSerializer):

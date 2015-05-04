@@ -26,6 +26,8 @@ from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.validators import UserStoryStatusExistsValidator
 from taiga.projects.userstories.validators import UserStoryExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
+from taiga.projects.serializers import UserStoryStatusSerializer
+from taiga.users.serializers import BasicInfoSerializer as UserBasicInfoSerializer
 
 from . import models
 
@@ -51,6 +53,8 @@ class UserStorySerializer(WatchersValidator, serializers.ModelSerializer):
     origin_issue = serializers.SerializerMethodField("get_origin_issue")
     blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
     description_html = serializers.SerializerMethodField("get_description_html")
+    status_extra_info = UserStoryStatusSerializer(source="status", required=False, read_only=True)
+    assigned_to_extra_info = UserBasicInfoSerializer(source="assigned_to", required=False, read_only=True)
 
     class Meta:
         model = models.UserStory

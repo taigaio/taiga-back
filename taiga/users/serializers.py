@@ -108,6 +108,11 @@ class UserAdminSerializer(UserSerializer):
         read_only_fields = ("id", "email")
 
 
+class BasicInfoSerializer(UserSerializer):
+    class Meta:
+        model = User
+        fields = ("username", "full_name_display","photo", "big_photo")
+
 class RecoverySerializer(serializers.Serializer):
     token = serializers.CharField(max_length=200)
     password = serializers.CharField(min_length=6)

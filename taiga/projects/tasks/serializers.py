@@ -26,6 +26,8 @@ from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.milestones.validators import SprintExistsValidator
 from taiga.projects.tasks.validators import TaskExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
+from taiga.projects.serializers import BasicTaskStatusSerializerSerializer
+from taiga.users.serializers import BasicInfoSerializer as UserBasicInfoSerializer
 
 from . import models
 
@@ -38,6 +40,8 @@ class TaskSerializer(WatchersValidator, serializers.ModelSerializer):
     blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
     description_html = serializers.SerializerMethodField("get_description_html")
     is_closed =  serializers.SerializerMethodField("get_is_closed")
+    status_extra_info = BasicTaskStatusSerializerSerializer(source="status", required=False, read_only=True)
+    assigned_to_extra_info = UserBasicInfoSerializer(source="assigned_to", required=False, read_only=True)
 
     class Meta:
         model = models.Task
