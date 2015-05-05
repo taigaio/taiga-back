@@ -349,9 +349,9 @@ class APIView(View):
         Returns the final response object.
         """
         # Make the error obvious if a proper response is not returned
-        assert isinstance(response, HttpResponseBase), _('Expected a `Response`, `HttpResponse` or '
-                                                         '`HttpStreamingResponse` to be returned from the view, '
-                                                         'but received a `%s`' % type(response))
+        assert isinstance(response, HttpResponseBase), ('Expected a `Response`, `HttpResponse` or '
+                                                        '`HttpStreamingResponse` to be returned from the view, '
+                                                        'but received a `%s`' % type(response))
 
         if isinstance(response, Response):
             if not getattr(request, 'accepted_renderer', None):

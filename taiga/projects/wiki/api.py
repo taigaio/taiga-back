@@ -57,10 +57,10 @@ class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
         project_id = request.DATA.get("project_id", None)
 
         if not content:
-            raise exc.WrongArguments({"content": _("No content parameter")})
+            raise exc.WrongArguments({"content": _("'content' parameter is mandatory")})
 
         if not project_id:
-            raise exc.WrongArguments({"project_id": _("No project_id parameter")})
+            raise exc.WrongArguments({"project_id": _("'project_id' parameter is mandatory")})
 
         project = get_object_or_404(Project, pk=project_id)
 

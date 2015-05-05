@@ -93,7 +93,7 @@ def dict_to_project(data, owner=None):
     project_serialized = service.store_project(data)
 
     if not project_serialized:
-        raise TaigaImportError(_("error importing project"))
+        raise TaigaImportError(_("error importing project data"))
 
     proj = project_serialized.object
 
@@ -106,12 +106,12 @@ def dict_to_project(data, owner=None):
     service.store_choices(proj, data, "severities", serializers.SeverityExportSerializer)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError(_("error importing choices"))
+        raise TaigaImportError(_("error importing lists of project attributes"))
 
     service.store_default_choices(proj, data)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError(_("error importing default choices"))
+        raise TaigaImportError(_("error importing default project attributes values"))
 
     service.store_custom_attributes(proj, data, "userstorycustomattributes",
                                     serializers.UserStoryCustomAttributeExportSerializer)
@@ -121,7 +121,7 @@ def dict_to_project(data, owner=None):
                                     serializers.IssueCustomAttributeExportSerializer)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError(_("error importing custom fields"))
+        raise TaigaImportError(_("error importing custom attributes"))
 
     service.store_roles(proj, data)
 
@@ -146,7 +146,7 @@ def dict_to_project(data, owner=None):
     store_milestones(proj, data)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError(_("error importing milestones"))
+        raise TaigaImportError(_("error importing sprints"))
 
     store_wiki_pages(proj, data)
 
@@ -171,12 +171,12 @@ def dict_to_project(data, owner=None):
     store_tasks(proj, data)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError(_("error importing issues"))
+        raise TaigaImportError(_("error importing tasks"))
 
     store_tags_colors(proj, data)
 
     if service.get_errors(clear=False):
-        raise TaigaImportError(_("error importing colors"))
+        raise TaigaImportError(_("error importing tags"))
 
     store_timeline_entries(proj, data)
     if service.get_errors(clear=False):

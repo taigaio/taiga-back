@@ -58,7 +58,7 @@ class Membership(models.Model):
     email = models.EmailField(max_length=255, default=None, null=True, blank=True,
                               verbose_name=_("email"))
     created_at = models.DateTimeField(default=timezone.now,
-                                      verbose_name=_("creado el"))
+                                      verbose_name=_("create at"))
     token = models.CharField(max_length=60, blank=True, null=True, default=None,
                              verbose_name=_("token"))
 

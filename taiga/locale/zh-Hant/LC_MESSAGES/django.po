@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-04 11:07+0200\n"
-"PO-Revision-Date: 2015-05-04 09:09+0000\n"
-"Last-Translator: David Barragán <bameda@gmail.com>\n"
+"POT-Creation-Date: 2015-05-04 18:39+0200\n"
+"PO-Revision-Date: 2015-05-05 01:14+0000\n"
+"Last-Translator: Chi-Hsun Tsai <chihsun.tsai@gmail.com>\n"
 "Language-Team: Chinese Traditional (http://www.transifex.com/projects/p/"
 "taiga-back/language/zh-Hant/)\n"
 "MIME-Version: 1.0\n"
@@ -179,15 +179,6 @@ msgid ""
 "corrupted image."
 msgstr "上傳有效圖片，你所上傳的檔案非圖檔或已損壞"
 
-#: taiga/base/api/mixins.py:98
-msgid ""
-"The `allow_empty` parameter is due to be deprecated. To use "
-"`allow_empty=False` style behavior, You should override `get_queryset()` and "
-"explicitly raise a 404 on empty querysets."
-msgstr ""
-"`allow_empty`參數將被棄用，要使用`allow_empty=False` 格式行為。你應覆蓋"
-"`get_queryset()`並利用404找不到檔案來表明其空白的查詢組"
-
 #: taiga/base/api/pagination.py:115
 msgid "Page is not 'last', nor can it be converted to an int."
 msgstr "頁數不是最後，或者它無法轉成整數　"
@@ -237,21 +228,6 @@ msgstr "無效的超鏈接 - 物件並不存在"
 msgid "Incorrect type.  Expected url string, received %s."
 msgstr "不正確類型，預期為網址格式，收到的是 %s."
 
-#: taiga/base/api/serializers.py:77
-#, python-brace-format
-msgid "{0} is not a Django model"
-msgstr "{0} 非Django 模式"
-
-#: taiga/base/api/serializers.py:226
-msgid "instance should be a queryset or other iterable with many=True"
-msgstr "物件類別應是一個詢問組或是其它迭代著many=True"
-
-#: taiga/base/api/serializers.py:229
-msgid ""
-"allow_add_remove should only be used for bulk updates, but you have not set "
-"many=True"
-msgstr "allow_add_remove s只能用於批次更新, 但你不能設 many=True"
-
 #: taiga/base/api/serializers.py:296
 msgid "Invalid data"
 msgstr "無效的資料"
@@ -276,30 +252,9 @@ msgstr "找不到"
 msgid "Permission denied"
 msgstr "許可遭拒絕 "
 
-#: taiga/base/api/views.py:352
-#, python-format
-msgid ""
-"Expected a `Response`, `HttpResponse` or `HttpStreamingResponse` to be "
-"returned from the view, but received a `%s`"
-msgstr ""
-"預期 `Response`, `HttpResponse` 或 `HttpStreamingResponse`或返回這個檢視，而"
-"接收到 `%s`"
-
 #: taiga/base/api/views.py:451
 msgid "Server application error"
 msgstr "伺服器應用出錯"
-
-#: taiga/base/api/viewsets.py:56
-#, python-format
-msgid ""
-"You tried to pass in the %s method name as a keyword argument to %s(). Don't "
-"do that."
-msgstr "你試著要通過 %s 方式名稱作為一個關鍵值 %s(). 別這麼做"
-
-#: taiga/base/api/viewsets.py:60
-#, python-format
-msgid "%s() received an invalid keyword %r"
-msgstr "%s() 接到一個無效的關鍵字 %r"
 
 #: taiga/base/connectors/exceptions.py:24
 msgid "Connection error."
@@ -375,11 +330,6 @@ msgstr "前提出錯"
 #: taiga/base/filters.py:74
 msgid "Error in filter params types."
 msgstr "過濾參數類型出錯"
-
-#: taiga/base/filters.py:118 taiga/base/filters.py:207
-#: taiga/base/filters.py:264
-msgid "Filtering project diferent value than an integer: {}"
-msgstr "過濾專案diferent值大於整數: {}"
 
 #: taiga/base/filters.py:121 taiga/base/filters.py:210
 #: taiga/base/filters.py:266
@@ -479,10 +429,6 @@ msgstr ""
 "\n"
 "評論: %(comment)s"
 
-#: taiga/base/utils/signals.py:27
-msgid "The parameters must be lists of at least one parameter (the signal)."
-msgstr "參數必須為列表中的一個 (信號)."
-
 #: taiga/export_import/api.py:183
 msgid "Needed dump file"
 msgstr "需要的堆存檔案"
@@ -492,57 +438,60 @@ msgid "Invalid dump format"
 msgstr "無效堆存格式"
 
 #: taiga/export_import/dump_service.py:96
-msgid "error importing project"
-msgstr "滙入專案有誤"
+msgid "error importing project data"
+msgstr "滙入重要專案資料出錯"
 
 #: taiga/export_import/dump_service.py:109
-msgid "error importing choices"
-msgstr "滙入選項有誤"
+msgid "error importing lists of project attributes"
+msgstr "滙入標籤出錯"
 
 #: taiga/export_import/dump_service.py:114
-msgid "error importing default choices"
-msgstr "滙入預設選項有誤"
+msgid "error importing default project attributes values"
+msgstr "滙入預設專案屬性數值出錯"
 
 #: taiga/export_import/dump_service.py:124
-msgid "error importing custom fields"
-msgstr "滙入慣例欄位有誤"
+msgid "error importing custom attributes"
+msgstr "滙入客制性屬出錯"
 
 #: taiga/export_import/dump_service.py:129
 msgid "error importing roles"
-msgstr "滙入角色有誤"
+msgstr "滙入角色出錯"
 
 #: taiga/export_import/dump_service.py:144
 msgid "error importing memberships"
-msgstr "滙入成員資格有誤"
+msgstr "滙入成員資格出錯"
 
 #: taiga/export_import/dump_service.py:149
-msgid "error importing milestones"
-msgstr "滙入里程碑有誤"
+msgid "error importing sprints"
+msgstr "滙入衝刺任務出錯"
 
 #: taiga/export_import/dump_service.py:154
 msgid "error importing wiki pages"
-msgstr "滙入維基頁有誤"
+msgstr "滙入維基頁出錯"
 
 #: taiga/export_import/dump_service.py:159
 msgid "error importing wiki links"
-msgstr "滙入維基連結有誤"
+msgstr "滙入維基連結出錯"
 
 #: taiga/export_import/dump_service.py:164
-#: taiga/export_import/dump_service.py:174
 msgid "error importing issues"
-msgstr "滙入問題有誤　"
+msgstr "滙入問題出錯"
 
 #: taiga/export_import/dump_service.py:169
 msgid "error importing user stories"
-msgstr "滙入使用者故事有誤"
+msgstr "滙入使用者故事出錯"
+
+#: taiga/export_import/dump_service.py:174
+msgid "error importing tasks"
+msgstr "滙入任務出錯"
 
 #: taiga/export_import/dump_service.py:179
-msgid "error importing colors"
-msgstr "滙入顏色有誤"
+msgid "error importing tags"
+msgstr "滙入標籤出錯"
 
 #: taiga/export_import/dump_service.py:183
 msgid "error importing timelines"
-msgstr "滙入時間軸有誤　"
+msgstr "滙入時間軸出錯"
 
 #: taiga/export_import/serializers.py:161
 msgid "{}=\"{}\" not found in this project"
@@ -561,7 +510,7 @@ msgstr "包括無效慣例欄位"
 #: taiga/export_import/serializers.py:466
 #: taiga/projects/milestones/serializers.py:63
 #: taiga/projects/serializers.py:65 taiga/projects/serializers.py:91
-#: taiga/projects/serializers.py:114 taiga/projects/serializers.py:149
+#: taiga/projects/serializers.py:121 taiga/projects/serializers.py:163
 msgid "Name duplicated for the project"
 msgstr "專案的名稱被複製了"
 
@@ -910,7 +859,7 @@ msgstr "非有效樣板名稱　"
 msgid "Not valid template description"
 msgstr "無效樣板描述"
 
-#: taiga/projects/api.py:469 taiga/projects/serializers.py:235
+#: taiga/projects/api.py:469 taiga/projects/serializers.py:256
 msgid "At least one of the user must be an active admin"
 msgstr "至少需有一位使用者擔任管理員"
 
@@ -1267,20 +1216,20 @@ msgstr "已封鎖"
 
 #: taiga/projects/mixins/ordering.py:47
 #, python-brace-format
-msgid "{param} parameter is mandatory"
-msgstr "{param} 參數為必要"
+msgid "'{param}' parameter is mandatory"
+msgstr "'{param}' 參數為必要"
 
 #: taiga/projects/mixins/ordering.py:51
-msgid "project parameter is mandatory"
-msgstr "專案參數為必要"
+msgid "'project' parameter is mandatory"
+msgstr "'project'參數為必要"
 
 #: taiga/projects/models.py:59
 msgid "email"
 msgstr "電子郵件"
 
 #: taiga/projects/models.py:61
-msgid "creado el"
-msgstr "creado el"
+msgid "create at"
+msgstr "創建於"
 
 #: taiga/projects/models.py:63 taiga/users/models.py:126
 msgid "token"
@@ -1534,51 +1483,51 @@ msgstr "版本"
 msgid "You can't leave the project if there are no more owners"
 msgstr "如果專案無所有者，你將無法脫離該專案"
 
-#: taiga/projects/serializers.py:211
+#: taiga/projects/serializers.py:232
 msgid "Email address is already taken"
 msgstr "電子郵件已使用"
 
-#: taiga/projects/serializers.py:223
+#: taiga/projects/serializers.py:244
 msgid "Invalid role for the project"
 msgstr "專案無效的角色"
 
-#: taiga/projects/serializers.py:321
+#: taiga/projects/serializers.py:342
 msgid "Total milestones must be major or equal to zero"
 msgstr "Kanban"
 
-#: taiga/projects/serializers.py:378
+#: taiga/projects/serializers.py:399
 msgid "Default options"
 msgstr "預設選項"
 
-#: taiga/projects/serializers.py:379
+#: taiga/projects/serializers.py:400
 msgid "User story's statuses"
 msgstr "使用者故事狀態"
 
-#: taiga/projects/serializers.py:380
+#: taiga/projects/serializers.py:401
 msgid "Points"
 msgstr "點數"
 
-#: taiga/projects/serializers.py:381
+#: taiga/projects/serializers.py:402
 msgid "Task's statuses"
 msgstr "任務狀態"
 
-#: taiga/projects/serializers.py:382
+#: taiga/projects/serializers.py:403
 msgid "Issue's statuses"
 msgstr "問題狀態"
 
-#: taiga/projects/serializers.py:383
+#: taiga/projects/serializers.py:404
 msgid "Issue's types"
 msgstr "問題類型"
 
-#: taiga/projects/serializers.py:384
+#: taiga/projects/serializers.py:405
 msgid "Priorities"
 msgstr "優先性"
 
-#: taiga/projects/serializers.py:385
+#: taiga/projects/serializers.py:406
 msgid "Severities"
 msgstr "嚴重性"
 
-#: taiga/projects/serializers.py:386
+#: taiga/projects/serializers.py:407
 msgid "Roles"
 msgstr "角色"
 
@@ -1657,8 +1606,8 @@ msgstr ""
 "%(extra)s　"
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:19
-msgid "Accept your invitation to Taiga following whis link:"
-msgstr "依下方連結接受Taiga使用邀請　"
+msgid "Accept your invitation to Taiga following this link:"
+msgstr "接受Taiga加入邀請請依下面連結指示"
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:21
 msgid ""
@@ -1992,12 +1941,12 @@ msgid "Vote"
 msgstr "投票　"
 
 #: taiga/projects/wiki/api.py:60
-msgid "No content parameter"
-msgstr "無內容參數"
+msgid "'content' parameter is mandatory"
+msgstr "'content'參數為必要"
 
 #: taiga/projects/wiki/api.py:63
-msgid "No project_id parameter"
-msgstr "無 project_id 參數"
+msgid "'project_id' parameter is mandatory"
+msgstr "'project_id'參數為必要"
 
 #: taiga/projects/wiki/models.py:36
 msgid "last modifier"

@@ -55,6 +55,7 @@ def _get_locale_dirs(resources):
             print("You have specified some unknown resources. "
                   "Available resource names are: {0}".format(", ".join(res_names)))
             exit(1)
+
     return dirs
 
 
@@ -155,7 +156,7 @@ def fetch(resources=None, languages=None):
         # Transifex pull
         if languages is None:
             call("tx pull -r {res} -a -f  --minimum-perc=5".format(res=_tx_resource_for_name(name)), shell=True)
-            languages = sorted([d for d in os.listdir(dir_) if not d.startswith("_") and d != "en"])
+            languages = sorted([d for d in os.listdir(dir_) if not d.startswith("_") and os.path.isdir(os.path.join(dir_, d)) and d != "en"])
         else:
             for lang in languages:
                 call("tx pull -r {res} -f -l {lang}".format(res=_tx_resource_for_name(name), lang=lang), shell=True)

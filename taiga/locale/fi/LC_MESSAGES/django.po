@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-04 11:07+0200\n"
-"PO-Revision-Date: 2015-05-04 09:08+0000\n"
+"POT-Creation-Date: 2015-05-04 18:39+0200\n"
+"PO-Revision-Date: 2015-05-04 19:22+0000\n"
 "Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Finnish (http://www.transifex.com/projects/p/taiga-back/"
 "language/fi/)\n"
@@ -183,16 +183,6 @@ msgstr ""
 "Anna kelvollinen kuva. Annettu ei ollut tunnistettava kuva tai se oli "
 "vioittunut."
 
-#: taiga/base/api/mixins.py:98
-msgid ""
-"The `allow_empty` parameter is due to be deprecated. To use "
-"`allow_empty=False` style behavior, You should override `get_queryset()` and "
-"explicitly raise a 404 on empty querysets."
-msgstr ""
-"`allow_empty` parametri tullaan poistamaan. Käyttääksesi `allow_empty=False` "
-"merkintää uudelleen määrittele `get_queryset()` ja anna 404 virhe tyhjälle "
-"kyselylle."
-
 #: taiga/base/api/pagination.py:115
 msgid "Page is not 'last', nor can it be converted to an int."
 msgstr "Sivu ei ole 'viimeinen', ekä sitä pystytä muuntamaan numeroksi."
@@ -242,23 +232,6 @@ msgstr "Virheellinen linkki - kohdetta ei löydy."
 msgid "Incorrect type.  Expected url string, received %s."
 msgstr "Väärä tyyppi. Odotan URL-merkkijonoa, sain %s."
 
-#: taiga/base/api/serializers.py:77
-#, python-brace-format
-msgid "{0} is not a Django model"
-msgstr "{0} ei ole Django malli"
-
-#: taiga/base/api/serializers.py:226
-msgid "instance should be a queryset or other iterable with many=True"
-msgstr "instanssin pitäisi olla kyselysetti tai iteroitavissa: monta=True"
-
-#: taiga/base/api/serializers.py:229
-msgid ""
-"allow_add_remove should only be used for bulk updates, but you have not set "
-"many=True"
-msgstr ""
-"allow_add_remove should only be used for bulk updates, but you have not set "
-"many=True"
-
 #: taiga/base/api/serializers.py:296
 msgid "Invalid data"
 msgstr "Virheellinen data"
@@ -283,32 +256,9 @@ msgstr "Ei löytynyt"
 msgid "Permission denied"
 msgstr "Ei käyttöoikeutta"
 
-#: taiga/base/api/views.py:352
-#, python-format
-msgid ""
-"Expected a `Response`, `HttpResponse` or `HttpStreamingResponse` to be "
-"returned from the view, but received a `%s`"
-msgstr ""
-"Expected a `Response`, `HttpResponse` or `HttpStreamingResponse` to be "
-"returned from the view, but received a `%s`"
-
 #: taiga/base/api/views.py:451
 msgid "Server application error"
 msgstr "Palvelinsovelluksen virhe"
-
-#: taiga/base/api/viewsets.py:56
-#, python-format
-msgid ""
-"You tried to pass in the %s method name as a keyword argument to %s(). Don't "
-"do that."
-msgstr ""
-"You tried to pass in the %s method name as a keyword argument to %s(). Don't "
-"do that."
-
-#: taiga/base/api/viewsets.py:60
-#, python-format
-msgid "%s() received an invalid keyword %r"
-msgstr "%s() received an invalid keyword %r"
 
 #: taiga/base/connectors/exceptions.py:24
 msgid "Connection error."
@@ -384,11 +334,6 @@ msgstr "Precondition error"
 #: taiga/base/filters.py:74
 msgid "Error in filter params types."
 msgstr "Error in filter params types."
-
-#: taiga/base/filters.py:118 taiga/base/filters.py:207
-#: taiga/base/filters.py:264
-msgid "Filtering project diferent value than an integer: {}"
-msgstr "Filtering project diferent value than an integer: {}"
 
 #: taiga/base/filters.py:121 taiga/base/filters.py:210
 #: taiga/base/filters.py:266
@@ -489,10 +434,6 @@ msgstr ""
 "\n"
 "Kommentti: %(comment)s"
 
-#: taiga/base/utils/signals.py:27
-msgid "The parameters must be lists of at least one parameter (the signal)."
-msgstr "The parameters must be lists of at least one parameter (the signal)."
-
 #: taiga/export_import/api.py:183
 msgid "Needed dump file"
 msgstr "Tarvitaan tiedosto"
@@ -502,20 +443,20 @@ msgid "Invalid dump format"
 msgstr "Virheellinen tiedostomuoto"
 
 #: taiga/export_import/dump_service.py:96
-msgid "error importing project"
-msgstr "virhe projektin tuonnissa"
+msgid "error importing project data"
+msgstr ""
 
 #: taiga/export_import/dump_service.py:109
-msgid "error importing choices"
-msgstr "virhe vaihtoehtojen tuonnissa"
+msgid "error importing lists of project attributes"
+msgstr ""
 
 #: taiga/export_import/dump_service.py:114
-msgid "error importing default choices"
-msgstr "virhe oletusvalintojen tuonnissa"
+msgid "error importing default project attributes values"
+msgstr ""
 
 #: taiga/export_import/dump_service.py:124
-msgid "error importing custom fields"
-msgstr "virhe omien kenttien tuonnissa"
+msgid "error importing custom attributes"
+msgstr ""
 
 #: taiga/export_import/dump_service.py:129
 msgid "error importing roles"
@@ -526,8 +467,8 @@ msgid "error importing memberships"
 msgstr "virhe jäsenyyksien tuonnissa"
 
 #: taiga/export_import/dump_service.py:149
-msgid "error importing milestones"
-msgstr "virhe virstapylväiden tuonnissa"
+msgid "error importing sprints"
+msgstr ""
 
 #: taiga/export_import/dump_service.py:154
 msgid "error importing wiki pages"
@@ -538,7 +479,6 @@ msgid "error importing wiki links"
 msgstr "virhe viki-linkkien tuonnissa"
 
 #: taiga/export_import/dump_service.py:164
-#: taiga/export_import/dump_service.py:174
 msgid "error importing issues"
 msgstr "virhe pyyntöjen tuonnissa"
 
@@ -546,9 +486,13 @@ msgstr "virhe pyyntöjen tuonnissa"
 msgid "error importing user stories"
 msgstr "virhe käyttäjätarinoiden tuonnissa"
 
+#: taiga/export_import/dump_service.py:174
+msgid "error importing tasks"
+msgstr ""
+
 #: taiga/export_import/dump_service.py:179
-msgid "error importing colors"
-msgstr "virhe värien tuonnissa"
+msgid "error importing tags"
+msgstr ""
 
 #: taiga/export_import/dump_service.py:183
 msgid "error importing timelines"
@@ -571,7 +515,7 @@ msgstr "Sisältää vieheellisiä omia kenttiä."
 #: taiga/export_import/serializers.py:466
 #: taiga/projects/milestones/serializers.py:63
 #: taiga/projects/serializers.py:65 taiga/projects/serializers.py:91
-#: taiga/projects/serializers.py:114 taiga/projects/serializers.py:149
+#: taiga/projects/serializers.py:121 taiga/projects/serializers.py:163
 msgid "Name duplicated for the project"
 msgstr "Nimi on tuplana projektille"
 
@@ -924,7 +868,7 @@ msgstr "Virheellinen mallipohjan nimi"
 msgid "Not valid template description"
 msgstr "Virheellinen mallipohjan kuvaus"
 
-#: taiga/projects/api.py:469 taiga/projects/serializers.py:235
+#: taiga/projects/api.py:469 taiga/projects/serializers.py:256
 msgid "At least one of the user must be an active admin"
 msgstr "Vähintään yhden käyttäjän pitää olla aktiivinen ylläpitäjä"
 
@@ -1281,20 +1225,20 @@ msgstr "on lukittu"
 
 #: taiga/projects/mixins/ordering.py:47
 #, python-brace-format
-msgid "{param} parameter is mandatory"
-msgstr "{param} parametri on pakollinen"
+msgid "'{param}' parameter is mandatory"
+msgstr "'{param}' parametri on pakollinen"
 
 #: taiga/projects/mixins/ordering.py:51
-msgid "project parameter is mandatory"
-msgstr "projekti-parametri on pakollinen"
+msgid "'project' parameter is mandatory"
+msgstr "'project' parametri on pakollinen"
 
 #: taiga/projects/models.py:59
 msgid "email"
 msgstr "sähköposti"
 
 #: taiga/projects/models.py:61
-msgid "creado el"
-msgstr "creado el"
+msgid "create at"
+msgstr ""
 
 #: taiga/projects/models.py:63 taiga/users/models.py:126
 msgid "token"
@@ -1548,51 +1492,51 @@ msgstr "versio"
 msgid "You can't leave the project if there are no more owners"
 msgstr "Et voi jättää projektia, jos olet ainoa omistaja"
 
-#: taiga/projects/serializers.py:211
+#: taiga/projects/serializers.py:232
 msgid "Email address is already taken"
 msgstr "Sähköpostiosoite on jo käytössä"
 
-#: taiga/projects/serializers.py:223
+#: taiga/projects/serializers.py:244
 msgid "Invalid role for the project"
 msgstr "Virheellinen rooli projektille"
 
-#: taiga/projects/serializers.py:321
+#: taiga/projects/serializers.py:342
 msgid "Total milestones must be major or equal to zero"
 msgstr "Virstapylväitä yhteensä pitää olla vähintään 0."
 
-#: taiga/projects/serializers.py:378
+#: taiga/projects/serializers.py:399
 msgid "Default options"
 msgstr "Oletusoptiot"
 
-#: taiga/projects/serializers.py:379
+#: taiga/projects/serializers.py:400
 msgid "User story's statuses"
 msgstr "Käyttäjätarinatilat"
 
-#: taiga/projects/serializers.py:380
+#: taiga/projects/serializers.py:401
 msgid "Points"
 msgstr "Pisteet"
 
-#: taiga/projects/serializers.py:381
+#: taiga/projects/serializers.py:402
 msgid "Task's statuses"
 msgstr "Tehtävien tilat"
 
-#: taiga/projects/serializers.py:382
+#: taiga/projects/serializers.py:403
 msgid "Issue's statuses"
 msgstr "Pyyntöjen tilat"
 
-#: taiga/projects/serializers.py:383
+#: taiga/projects/serializers.py:404
 msgid "Issue's types"
 msgstr "pyyntötyypit"
 
-#: taiga/projects/serializers.py:384
+#: taiga/projects/serializers.py:405
 msgid "Priorities"
 msgstr "Kiireellisyydet"
 
-#: taiga/projects/serializers.py:385
+#: taiga/projects/serializers.py:406
 msgid "Severities"
 msgstr "Vakavuudet"
 
-#: taiga/projects/serializers.py:386
+#: taiga/projects/serializers.py:407
 msgid "Roles"
 msgstr "Roolit"
 
@@ -1673,8 +1617,8 @@ msgstr ""
 "%(extra)s"
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:19
-msgid "Accept your invitation to Taiga following whis link:"
-msgstr "Hyväksy kutsu Taigaan tästä linkistä: "
+msgid "Accept your invitation to Taiga following this link:"
+msgstr ""
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:21
 msgid ""
@@ -2013,12 +1957,12 @@ msgid "Vote"
 msgstr "Äänestä"
 
 #: taiga/projects/wiki/api.py:60
-msgid "No content parameter"
-msgstr "Ei sisältöparametri"
+msgid "'content' parameter is mandatory"
+msgstr "'content' parametri on pakollinen"
 
 #: taiga/projects/wiki/api.py:63
-msgid "No project_id parameter"
-msgstr "No project_id parameter"
+msgid "'project_id' parameter is mandatory"
+msgstr "'project_id' parametri on pakollinen"
 
 #: taiga/projects/wiki/models.py:36
 msgid "last modifier"

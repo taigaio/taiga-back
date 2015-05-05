@@ -74,7 +74,7 @@ def _resolve_model(obj):
     elif inspect.isclass(obj) and issubclass(obj, models.Model):
         return obj
     else:
-        raise ValueError(_("{0} is not a Django model".format(obj)))
+        raise ValueError("{0} is not a Django model".format(obj))
 
 
 def pretty_name(name):
@@ -223,10 +223,10 @@ class BaseSerializer(WritableField):
         self._errors = None
 
         if many and instance is not None and not hasattr(instance, "__iter__"):
-            raise ValueError(_("instance should be a queryset or other iterable with many=True"))
+            raise ValueError("instance should be a queryset or other iterable with many=True")
 
         if allow_add_remove and not many:
-            raise ValueError(_("allow_add_remove should only be used for bulk updates, but you have not set many=True"))
+            raise ValueError("allow_add_remove should only be used for bulk updates, but you have not set many=True")
 
     #####
     # Methods to determine which fields to use when (de)serializing objects.
