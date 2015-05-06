@@ -68,7 +68,7 @@ def issues_to_csv(project, queryset):
     fieldnames = ["ref", "subject", "description", "milestone", "owner",
                   "owner_full_name", "assigned_to", "assigned_to_full_name",
                   "status", "severity", "priority", "type", "is_closed",
-                  "attachments", "external_reference"]
+                  "attachments", "external_reference", "tags"]
     for custom_attr in project.issuecustomattributes.all():
         fieldnames.append(custom_attr.name)
 
@@ -91,6 +91,7 @@ def issues_to_csv(project, queryset):
             "is_closed": issue.is_closed,
             "attachments": issue.attachments.count(),
             "external_reference": issue.external_reference,
+            "tags": ",".join(issue.tags or []),
         }
 
         for custom_attr in project.issuecustomattributes.all():

@@ -85,7 +85,7 @@ def tasks_to_csv(project, queryset):
     fieldnames = ["ref", "subject", "description", "user_story", "milestone", "owner",
                   "owner_full_name", "assigned_to", "assigned_to_full_name",
                   "status", "is_iocaine", "is_closed", "us_order",
-                  "taskboard_order", "attachments", "external_reference"]
+                  "taskboard_order", "attachments", "external_reference", "tags"]
     for custom_attr in project.taskcustomattributes.all():
         fieldnames.append(custom_attr.name)
 
@@ -109,6 +109,7 @@ def tasks_to_csv(project, queryset):
             "taskboard_order": task.taskboard_order,
             "attachments": task.attachments.count(),
             "external_reference": task.external_reference,
+            "tags": ",".join(task.tags or []),
         }
         for custom_attr in project.taskcustomattributes.all():
             value = task.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)

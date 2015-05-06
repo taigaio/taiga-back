@@ -12,7 +12,7 @@
   - Add catalan (ca) translation.
   - Add traditional chinese (zh-Hant) translation.
 - Add Jitsi to our supported videoconference apps list
-
+- Add tags field to CSV reports.
 
 ### Misc
 - New contrib plugin for letschat (by Δndrea Stagi)
