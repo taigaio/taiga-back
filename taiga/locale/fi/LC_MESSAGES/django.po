@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-04 18:39+0200\n"
-"PO-Revision-Date: 2015-05-04 19:22+0000\n"
+"POT-Creation-Date: 2015-05-08 09:55+0200\n"
+"PO-Revision-Date: 2015-05-08 09:10+0000\n"
 "Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Finnish (http://www.transifex.com/projects/p/taiga-back/"
 "language/fi/)\n"
@@ -651,12 +651,12 @@ msgid "The payload is not valid"
 msgstr "The payload is not valid"
 
 #: taiga/hooks/bitbucket/event_hooks.py:81
-#: taiga/hooks/github/event_hooks.py:75 taiga/hooks/gitlab/event_hooks.py:74
+#: taiga/hooks/github/event_hooks.py:76 taiga/hooks/gitlab/event_hooks.py:74
 msgid "The referenced element doesn't exist"
 msgstr "Viitattu elementtiä ei löydy"
 
 #: taiga/hooks/bitbucket/event_hooks.py:88
-#: taiga/hooks/github/event_hooks.py:82 taiga/hooks/gitlab/event_hooks.py:81
+#: taiga/hooks/github/event_hooks.py:83 taiga/hooks/gitlab/event_hooks.py:81
 msgid "The status doesn't exist"
 msgstr "Tilaa ei löydy"
 
@@ -664,31 +664,59 @@ msgstr "Tilaa ei löydy"
 msgid "Status changed from BitBucket commit"
 msgstr "Tila muutettu BitBucket kommitilla"
 
-#: taiga/hooks/github/event_hooks.py:88
-msgid "Status changed from GitHub commit"
-msgstr "Tila muutettu GitHub kommitilla"
+#: taiga/hooks/github/event_hooks.py:97
+#, python-brace-format
+msgid ""
+"Status changed by [@{github_user_name}]({github_user_url} \"See "
+"@{github_user_name}'s GitHub profile\") from GitHub commit [#{commit_id}]"
+"({commit_url} \"See commit '#{commit_id}: {commit_message}'\")."
+msgstr ""
 
-#: taiga/hooks/github/event_hooks.py:113 taiga/hooks/gitlab/event_hooks.py:114
+#: taiga/hooks/github/event_hooks.py:108
+msgid "Status changed from GitHub commit."
+msgstr ""
+
+#: taiga/hooks/github/event_hooks.py:142 taiga/hooks/gitlab/event_hooks.py:114
 msgid "Invalid issue information"
 msgstr "Virheellinen pyynnön tieto"
 
-#: taiga/hooks/github/event_hooks.py:128
-msgid "Created from GitHub"
-msgstr "Luotu GitHubissa"
+#: taiga/hooks/github/event_hooks.py:158
+#, python-brace-format
+msgid ""
+"Issue created by [@{github_user_name}]({github_user_url} \"See "
+"@{github_user_name}'s GitHub profile\") from GitHub.\n"
+"Origin GitHub issue: [{number}: {subject}]({github_url} \"Go to '{number}: "
+"{subject}'\"):\n"
+"\n"
+"{description}"
+msgstr ""
 
-#: taiga/hooks/github/event_hooks.py:135 taiga/hooks/github/event_hooks.py:144
+#: taiga/hooks/github/event_hooks.py:169
+msgid "Issue created from GitHub."
+msgstr ""
+
+#: taiga/hooks/github/event_hooks.py:178 taiga/hooks/github/event_hooks.py:193
 msgid "Invalid issue comment information"
 msgstr "Virheellinen pyynnön kommentin tieto"
 
-#: taiga/hooks/github/event_hooks.py:152
+#: taiga/hooks/github/event_hooks.py:201
+#, python-brace-format
 msgid ""
-"From GitHub:\n"
+"Comment by [@{github_user_name}]({github_user_url} \"See "
+"@{github_user_name}'s GitHub profile\") from GitHub.\n"
+"Origin GitHub issue: [{number}: {subject}]({github_url} \"Go to '{number}: "
+"{subject}'\")\n"
 "\n"
-"{}"
+"{message}"
 msgstr ""
-"GitHubista:\n"
+
+#: taiga/hooks/github/event_hooks.py:212
+#, python-brace-format
+msgid ""
+"Comment From GitHub:\n"
 "\n"
-"{}"
+"{message}"
+msgstr ""
 
 #: taiga/hooks/gitlab/event_hooks.py:87
 msgid "Status changed from GitLab commit"
@@ -1992,50 +2020,50 @@ msgstr "Tuntematon käyttäjänimi tai sähköposti"
 msgid "Mail sended successful!"
 msgstr "Sähköposti lähetetty."
 
-#: taiga/users/api.py:134 taiga/users/api.py:139
+#: taiga/users/api.py:133 taiga/users/api.py:138
 msgid "Token is invalid"
 msgstr "Tunniste on virheellinen"
 
-#: taiga/users/api.py:160
+#: taiga/users/api.py:159
 msgid "Current password parameter needed"
 msgstr "Nykyinen salasanaparametri tarvitaan"
 
-#: taiga/users/api.py:163
+#: taiga/users/api.py:162
 msgid "New password parameter needed"
 msgstr "Uusi salasanaparametri tarvitaan"
 
-#: taiga/users/api.py:166
+#: taiga/users/api.py:165
 msgid "Invalid password length at least 6 charaters needed"
 msgstr "Salasanan pitää olla vähintään 6 merkkiä pitkä"
 
-#: taiga/users/api.py:169
+#: taiga/users/api.py:168
 msgid "Invalid current password"
 msgstr "Virheellinen nykyinen salasana"
 
-#: taiga/users/api.py:185
+#: taiga/users/api.py:184
 msgid "Incomplete arguments"
 msgstr "Puutteelliset argumentit"
 
-#: taiga/users/api.py:190
+#: taiga/users/api.py:189
 msgid "Invalid image format"
 msgstr "Väärä kuvaformaatti"
 
-#: taiga/users/api.py:243
+#: taiga/users/api.py:242
 msgid "Duplicated email"
 msgstr "Sähköposti on jo olemassa"
 
-#: taiga/users/api.py:245
+#: taiga/users/api.py:244
 msgid "Not valid email"
 msgstr "Virheellinen sähköposti"
 
-#: taiga/users/api.py:265 taiga/users/api.py:271
+#: taiga/users/api.py:264 taiga/users/api.py:270
 msgid ""
 "Invalid, are you sure the token is correct and you didn't use it before?"
 msgstr ""
 "Virheellinen. Oletko varma, että tunniste on oikea ja et ole jo käyttänyt "
 "sitä?"
 
-#: taiga/users/api.py:298 taiga/users/api.py:306 taiga/users/api.py:309
+#: taiga/users/api.py:297 taiga/users/api.py:305 taiga/users/api.py:308
 msgid "Invalid, are you sure the token is correct?"
 msgstr "Virheellinen, oletko varma että tunniste on oikea?"
 
@@ -2212,19 +2240,18 @@ msgid ""
 "            <p>We built it to be beautiful, elegant, simple to use and fun - "
 "without forsaking flexibility and power.</p>\n"
 "            <small>The taiga Team</small>\n"
-"        </td\n"
+"        </td>\n"
 "        "
 msgstr ""
 "\n"
-"        <td>\n"
-"            <h2>Kiitos rekisteröitymisestäsi Taigaan</h2>\n"
-"            <h3>Toivottavasti siitä on sinulle hyötyä</h3>\n"
-"            <p>Rakensimme Taigan koska halusimme projektinhallintatyökalun, "
-"joka on avoin, ja auttaa työskentelemään yhdessä.</p>\n"
-"            <p>Teimme siitä mahdollisimman kauniin ja helppokäyttöisen.</p>\n"
-"            <small>Taiga tiimi</small>\n"
-"        </td\n"
-"        "
+"<td>\n"
+"<h2>Kiitos rekisteröitymisestäsi Taigaan</h2> \n"
+"<h3>Toivottavasti siitä on sinulle hyötyä</h3> \n"
+"<p>Rakensimme Taigan koska halusimme projektinhallintatyökalun, joka on "
+"avoin, ja auttaa työskentelemään yhdessä.</p>\n"
+"<p>Teimme siitä mahdollisimman kauniin ja helppokäyttöisen.</p>\n"
+"<small>Taiga tiimi</small>\n"
+"</td>"
 
 #: taiga/users/templates/emails/registered_user-body-html.jinja:23
 #, python-format

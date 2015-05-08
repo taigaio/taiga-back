@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-04 18:39+0200\n"
-"PO-Revision-Date: 2015-05-05 09:54+0000\n"
+"POT-Creation-Date: 2015-05-08 09:55+0200\n"
+"PO-Revision-Date: 2015-05-08 09:06+0000\n"
 "Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/taiga-back/"
 "language/es/)\n"
@@ -664,12 +664,12 @@ msgid "The payload is not valid"
 msgstr "El payload no es válido"
 
 #: taiga/hooks/bitbucket/event_hooks.py:81
-#: taiga/hooks/github/event_hooks.py:75 taiga/hooks/gitlab/event_hooks.py:74
+#: taiga/hooks/github/event_hooks.py:76 taiga/hooks/gitlab/event_hooks.py:74
 msgid "The referenced element doesn't exist"
 msgstr "El elemento referenciado no existe"
 
 #: taiga/hooks/bitbucket/event_hooks.py:88
-#: taiga/hooks/github/event_hooks.py:82 taiga/hooks/gitlab/event_hooks.py:81
+#: taiga/hooks/github/event_hooks.py:83 taiga/hooks/gitlab/event_hooks.py:81
 msgid "The status doesn't exist"
 msgstr "El estado no existe"
 
@@ -677,31 +677,76 @@ msgstr "El estado no existe"
 msgid "Status changed from BitBucket commit"
 msgstr "Estado cambiado desde un commit de BitBucket"
 
-#: taiga/hooks/github/event_hooks.py:88
-msgid "Status changed from GitHub commit"
-msgstr "Estado cambiado desde un commit de GitHub"
+#: taiga/hooks/github/event_hooks.py:97
+#, python-brace-format
+msgid ""
+"Status changed by [@{github_user_name}]({github_user_url} \"See "
+"@{github_user_name}'s GitHub profile\") from GitHub commit [#{commit_id}]"
+"({commit_url} \"See commit '#{commit_id}: {commit_message}'\")."
+msgstr ""
+"[@{github_user_name}]({github_user_url} \"Ver el perfil de "
+"@{github_user_name} en GitHub\") ha cambiado el estado a través del commit "
+"de GitHub [#{commit_id}]({commit_url} \"Ver commit '#{commit_id}: "
+"{commit_message}'\")."
 
-#: taiga/hooks/github/event_hooks.py:113 taiga/hooks/gitlab/event_hooks.py:114
+#: taiga/hooks/github/event_hooks.py:108
+msgid "Status changed from GitHub commit."
+msgstr "Estado cambiado a través de un commit en GitHub."
+
+#: taiga/hooks/github/event_hooks.py:142 taiga/hooks/gitlab/event_hooks.py:114
 msgid "Invalid issue information"
 msgstr "Información inválida de Issue"
 
-#: taiga/hooks/github/event_hooks.py:128
-msgid "Created from GitHub"
-msgstr "Creado en GitHub"
+#: taiga/hooks/github/event_hooks.py:158
+#, python-brace-format
+msgid ""
+"Issue created by [@{github_user_name}]({github_user_url} \"See "
+"@{github_user_name}'s GitHub profile\") from GitHub.\n"
+"Origin GitHub issue: [{number}: {subject}]({github_url} \"Go to '{number}: "
+"{subject}'\"):\n"
+"\n"
+"{description}"
+msgstr ""
+"Petición creada por [@{github_user_name}]({github_user_url} \"Ver el perfil "
+"de @{github_user_name} en GitHub\") a través de la petición de  GitHub "
+"[{number}: {subject}]({github_url} \"Ir a '{number}: {subject}'\"):\n"
+"\n"
+"{description}"
 
-#: taiga/hooks/github/event_hooks.py:135 taiga/hooks/github/event_hooks.py:144
+#: taiga/hooks/github/event_hooks.py:169
+msgid "Issue created from GitHub."
+msgstr "Petición creada a través de GitHub."
+
+#: taiga/hooks/github/event_hooks.py:178 taiga/hooks/github/event_hooks.py:193
 msgid "Invalid issue comment information"
 msgstr "Información de comentario de Issue inválida"
 
-#: taiga/hooks/github/event_hooks.py:152
+#: taiga/hooks/github/event_hooks.py:201
+#, python-brace-format
 msgid ""
-"From GitHub:\n"
+"Comment by [@{github_user_name}]({github_user_url} \"See "
+"@{github_user_name}'s GitHub profile\") from GitHub.\n"
+"Origin GitHub issue: [{number}: {subject}]({github_url} \"Go to '{number}: "
+"{subject}'\")\n"
 "\n"
-"{}"
+"{message}"
 msgstr ""
-"De GitHub:\n"
+"Commentario de [@{github_user_name}]({github_user_url} \"Ver el perfil de "
+"GitHub de @{github_user_name}\") a través de la petición de Github "
+"[{number}: {subject}]({github_url} \"Ir a '{number}: {subject}'\")\n"
 "\n"
-"{}"
+"{message}"
+
+#: taiga/hooks/github/event_hooks.py:212
+#, python-brace-format
+msgid ""
+"Comment From GitHub:\n"
+"\n"
+"{message}"
+msgstr ""
+"Comentario a través de GitHub:\n"
+"\n"
+"{message}"
 
 #: taiga/hooks/gitlab/event_hooks.py:87
 msgid "Status changed from GitLab commit"
@@ -2014,49 +2059,49 @@ msgstr "Nombre de usuario o email no válidos"
 msgid "Mail sended successful!"
 msgstr "¡Correo enviado con éxito!"
 
-#: taiga/users/api.py:134 taiga/users/api.py:139
+#: taiga/users/api.py:133 taiga/users/api.py:138
 msgid "Token is invalid"
 msgstr "token inválido"
 
-#: taiga/users/api.py:160
+#: taiga/users/api.py:159
 msgid "Current password parameter needed"
 msgstr "La contraseña actual es obligatoria."
 
-#: taiga/users/api.py:163
+#: taiga/users/api.py:162
 msgid "New password parameter needed"
 msgstr "La nueva contraseña es obligatoria"
 
-#: taiga/users/api.py:166
+#: taiga/users/api.py:165
 msgid "Invalid password length at least 6 charaters needed"
 msgstr "La longitud de la contraseña debe de ser de al menos 6 caracteres"
 
-#: taiga/users/api.py:169
+#: taiga/users/api.py:168
 msgid "Invalid current password"
 msgstr "Contraseña actual inválida"
 
-#: taiga/users/api.py:185
+#: taiga/users/api.py:184
 msgid "Incomplete arguments"
 msgstr "Argumentos incompletos"
 
-#: taiga/users/api.py:190
+#: taiga/users/api.py:189
 msgid "Invalid image format"
 msgstr "Formato de imagen no válido"
 
-#: taiga/users/api.py:243
+#: taiga/users/api.py:242
 msgid "Duplicated email"
 msgstr "Email duplicado"
 
-#: taiga/users/api.py:245
+#: taiga/users/api.py:244
 msgid "Not valid email"
 msgstr "Email no válido"
 
-#: taiga/users/api.py:265 taiga/users/api.py:271
+#: taiga/users/api.py:264 taiga/users/api.py:270
 msgid ""
 "Invalid, are you sure the token is correct and you didn't use it before?"
 msgstr ""
 "Invalido, ¿estás seguro de que el token es correcto y no se ha usado antes?"
 
-#: taiga/users/api.py:298 taiga/users/api.py:306 taiga/users/api.py:309
+#: taiga/users/api.py:297 taiga/users/api.py:305 taiga/users/api.py:308
 msgid "Invalid, are you sure the token is correct?"
 msgstr "Inválido, ¿estás seguro de que el token es correcto?"
 
@@ -2233,13 +2278,13 @@ msgid ""
 "            <p>We built it to be beautiful, elegant, simple to use and fun - "
 "without forsaking flexibility and power.</p>\n"
 "            <small>The taiga Team</small>\n"
-"        </td\n"
+"        </td>\n"
 "        "
 msgstr ""
 "\n"
 "<td>\n"
-"<h2>Gracias por registrarte en Taiga</h2>\n"
-"<h3>Esperamos que lo disfrutes<./h3>\n"
+"<h2>Gracias por registrarte Taiga</h2>\n"
+"<h3>Esperamos que lo disfrutes</h3>\n"
 "<p>Hemos creado Taiga porque queríamos que la herramienta de gestión de "
 "proyectos que se encuentra abierta durante todo el día en nuestros PCs "
 "sirviese para recordarnos continuamente por qué amamos nuestro trabajo: el "
@@ -2247,7 +2292,8 @@ msgstr ""
 "<p>Hemos contruido Taiga teniendo siempre presente que debía ser una "
 "herramienta bonita, elegante, fácil de usar y, sobre todo, divertida- sin "
 "renunciar a la flexibilidad y al poder.</p>\n"
-"<small>El Equipo de Taiga</small></td>"
+"<small>El Equipo de Taiga</small>\n"
+"</td>"
 
 #: taiga/users/templates/emails/registered_user-body-html.jinja:23
 #, python-format
