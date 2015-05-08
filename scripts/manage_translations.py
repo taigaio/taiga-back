@@ -155,7 +155,7 @@ def fetch(resources=None, languages=None):
     for name, dir_ in locale_dirs:
         # Transifex pull
         if languages is None:
-            call("tx pull -r {res} -a -f  --minimum-perc=5".format(res=_tx_resource_for_name(name)), shell=True)
+            call("tx pull -r {res} -f  --minimum-perc=5".format(res=_tx_resource_for_name(name)), shell=True)
             languages = sorted([d for d in os.listdir(dir_) if not d.startswith("_") and os.path.isdir(os.path.join(dir_, d)) and d != "en"])
         else:
             for lang in languages:
