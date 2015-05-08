@@ -45,6 +45,7 @@ from . import models
 from . import serializers
 from . import permissions
 from . import filters as user_filters
+from . import services
 from .signals import user_cancel_account as user_cancel_account_signal
 
 
@@ -94,6 +95,12 @@ class UsersViewSet(ModelCrudViewSet):
             serializer = self.serializer_class(self.object_list, many=True)
 
         return response.Ok(serializer.data)
+
+    @detail_route(methods=["GET"])
+    def stats(self, request, pk=None):
+        user = self.get_object()
+        self.check_permissions(request, "stats", user)
+        return response.Ok(services.get_stats_for_user(user))
 
     @list_route(methods=["POST"])
     def password_recovery(self, request, pk=None):
