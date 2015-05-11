@@ -41,10 +41,17 @@ def get_gravatar_url(email: str, **options) -> str:
     default_avatar = getattr(settings, "GRAVATAR_DEFAULT_AVATAR", None)
     default_size = getattr(settings, "GRAVATAR_AVATAR_SIZE", None)
 
-    if default_avatar:
+    avatar = options.get("default", None)
+    size = options.get("size", None)
+
+    if avatar:
+        params["default"] = avatar
+    elif default_avatar:
         params["default"] = static(default_avatar)
 
-    if default_size:
+    if size:
+        params["size"] = size
+    elif default_size:
         params["size"] = default_size
 
     email_hash = hashlib.md5(email.lower().encode()).hexdigest()
