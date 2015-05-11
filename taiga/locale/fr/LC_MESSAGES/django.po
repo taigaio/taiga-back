@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-05-08 09:55+0200\n"
-"PO-Revision-Date: 2015-05-08 09:09+0000\n"
+"PO-Revision-Date: 2015-05-11 08:52+0000\n"
 "Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/taiga-back/"
 "language/fr/)\n"
@@ -477,7 +477,7 @@ msgstr ""
 
 #: taiga/export_import/dump_service.py:124
 msgid "error importing custom attributes"
-msgstr ""
+msgstr "Erreur à l'importation des champs personnalisés"
 
 #: taiga/export_import/dump_service.py:129
 msgid "error importing roles"
@@ -693,7 +693,7 @@ msgstr ""
 
 #: taiga/hooks/github/event_hooks.py:108
 msgid "Status changed from GitHub commit."
-msgstr ""
+msgstr "Statut changé depuis un commit GitHub."
 
 #: taiga/hooks/github/event_hooks.py:142 taiga/hooks/gitlab/event_hooks.py:114
 msgid "Invalid issue information"
@@ -1667,7 +1667,7 @@ msgstr ""
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:19
 msgid "Accept your invitation to Taiga following this link:"
-msgstr ""
+msgstr "Acceptez votre invitation à Taiga en cliquant sur ce lien: "
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:21
 msgid ""
