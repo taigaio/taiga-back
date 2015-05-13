@@ -183,6 +183,37 @@ def fetch(resources=None, languages=None):
         exit(1)
 
 
+def regenerate(resources=None, languages=None):
+    """
+    Wrap long lines and generate mo files.
+    """
+    locale_dirs = _get_locale_dirs(resources)
+    errors = []
+
+    for name, dir_ in locale_dirs:
+        if languages is None:
+            languages = sorted([d for d in os.listdir(dir_) if not d.startswith("_") and os.path.isdir(os.path.join(dir_, d)) and d != "en"])
+
+        for lang in languages:
+            po_path = "{path}/{lang}/LC_MESSAGES/django.po".format(path=dir_, lang=lang)
+
+            if not os.path.exists(po_path):
+                print("No {lang} translation for resource {res}".format(lang=lang, res=name))
+                continue
+
+            call("msgcat -o {0} {0}".format(po_path), shell=True)
+            res = call("msgfmt -c -o {0}.mo {1}".format(po_path[:-3], po_path), shell=True)
+
+            if res != 0:
+                errors.append((name, lang))
+
+    if errors:
+        print("\nWARNING: Errors have occurred in following cases:")
+        for resource, lang in errors:
+            print("\tResource {res} for language {lang}".format(res=resource, lang=lang))
+
+        exit(1)
+
 def commit(resources=None, languages=None):
     """
     Commit messages to Transifex,
@@ -232,6 +263,7 @@ You need transifex-client, install it.
         "update_catalogs": "regenerate .po files of main lang (en).",
         "commit": "send .po file to transifex ('en' by default).",
         "fetch": "get .po files from transifex and regenerate .mo files.",
+        "regenerate": "regenerate .mo files.",
         "lang_stats": "get stats of local translations",
     }
 
