@@ -3,8 +3,7 @@
 {% else %}
     {% set sender_full_name=_("someone") %}
 {% endif %}
-{% trans full_name=sender_full_name,
-         project=membership.project %}
+{% trans full_name=sender_full_name, project=membership.project %}
 You, or someone you know, has invited you to Taiga
 
 Hi! {{ full_name }} has sent you an invitation to join a project called {{ project }}  which is being managed on Taiga, a Free, open Source Agile Project Management Tool.

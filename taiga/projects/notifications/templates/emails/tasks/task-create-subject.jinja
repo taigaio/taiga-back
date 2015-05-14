@@ -1,5 +1,3 @@
-{% trans project=project.name|safe,
-         ref=snapshot.ref,
-         subject=snapshot.subject|safe %}
+{% trans project=project.name|safe, ref=snapshot.ref, subject=snapshot.subject|safe %}
 [{{ project }}] Created the task #{{ ref }} "{{ subject }}"
 {% endtrans %}
