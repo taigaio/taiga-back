@@ -135,7 +135,6 @@ def test_create_project_timeline():
     assert project_timeline[0].event_type == "projects.project.create"
     assert project_timeline[0].data["project"]["name"] == "test project timeline"
     assert project_timeline[0].data["user"]["id"] == project.owner.id
-    assert project_timeline[0].data["user"]["name"] == project.owner.get_full_name()
 
 
 def test_create_milestone_timeline():
@@ -145,7 +144,6 @@ def test_create_milestone_timeline():
     assert milestone_timeline[0].event_type == "milestones.milestone.create"
     assert milestone_timeline[0].data["milestone"]["name"] == "test milestone timeline"
     assert milestone_timeline[0].data["user"]["id"] == milestone.owner.id
-    assert milestone_timeline[0].data["user"]["name"] == milestone.owner.get_full_name()
 
 
 def test_create_user_story_timeline():
@@ -155,7 +153,6 @@ def test_create_user_story_timeline():
     assert project_timeline[0].event_type == "userstories.userstory.create"
     assert project_timeline[0].data["userstory"]["subject"] == "test us timeline"
     assert project_timeline[0].data["user"]["id"] == user_story.owner.id
-    assert project_timeline[0].data["user"]["name"] == user_story.owner.get_full_name()
 
 
 def test_create_issue_timeline():
@@ -165,7 +162,6 @@ def test_create_issue_timeline():
     assert project_timeline[0].event_type == "issues.issue.create"
     assert project_timeline[0].data["issue"]["subject"] == "test issue timeline"
     assert project_timeline[0].data["user"]["id"] == issue.owner.id
-    assert project_timeline[0].data["user"]["name"] == issue.owner.get_full_name()
 
 
 def test_create_task_timeline():
@@ -175,7 +171,6 @@ def test_create_task_timeline():
     assert project_timeline[0].event_type == "tasks.task.create"
     assert project_timeline[0].data["task"]["subject"] == "test task timeline"
     assert project_timeline[0].data["user"]["id"] == task.owner.id
-    assert project_timeline[0].data["user"]["name"] == task.owner.get_full_name()
 
 
 def test_create_wiki_page_timeline():
@@ -185,7 +180,6 @@ def test_create_wiki_page_timeline():
     assert project_timeline[0].event_type == "wiki.wikipage.create"
     assert project_timeline[0].data["wikipage"]["slug"] == "test wiki page timeline"
     assert project_timeline[0].data["user"]["id"] == page.owner.id
-    assert project_timeline[0].data["user"]["name"] == page.owner.get_full_name()
 
 
 def test_create_membership_timeline():
@@ -195,11 +189,9 @@ def test_create_membership_timeline():
     assert project_timeline[0].event_type == "projects.membership.create"
     assert project_timeline[0].data["project"]["id"] == membership.project.id
     assert project_timeline[0].data["user"]["id"] == membership.user.id
-    assert project_timeline[0].data["user"]["name"] == membership.user.get_full_name()
     assert user_timeline[0].event_type == "projects.membership.create"
     assert user_timeline[0].data["project"]["id"] == membership.project.id
     assert user_timeline[0].data["user"]["id"] == membership.user.id
-    assert user_timeline[0].data["user"]["name"] == membership.user.get_full_name()
 
 
 def test_update_project_timeline():
@@ -292,19 +284,15 @@ def test_update_membership_timeline():
     assert project_timeline[0].event_type == "projects.membership.delete"
     assert project_timeline[0].data["project"]["id"] == membership.project.id
     assert project_timeline[0].data["user"]["id"] == user_1.id
-    assert project_timeline[0].data["user"]["name"] == user_1.get_full_name()
     assert project_timeline[1].event_type == "projects.membership.create"
     assert project_timeline[1].data["project"]["id"] == membership.project.id
     assert project_timeline[1].data["user"]["id"] == user_2.id
-    assert project_timeline[1].data["user"]["name"] == user_2.get_full_name()
     assert user_1_timeline[0].event_type == "projects.membership.delete"
     assert user_1_timeline[0].data["project"]["id"] == membership.project.id
     assert user_1_timeline[0].data["user"]["id"] == user_1.id
-    assert user_1_timeline[0].data["user"]["name"] == user_1.get_full_name()
     assert user_2_timeline[0].event_type == "projects.membership.create"
     assert user_2_timeline[0].data["project"]["id"] == membership.project.id
     assert user_2_timeline[0].data["user"]["id"] == user_2.id
-    assert user_2_timeline[0].data["user"]["name"] == user_2.get_full_name()
 
 
 def test_delete_project_timeline():
@@ -363,11 +351,9 @@ def test_delete_membership_timeline():
     assert project_timeline[0].event_type == "projects.membership.delete"
     assert project_timeline[0].data["project"]["id"] == membership.project.id
     assert project_timeline[0].data["user"]["id"] == membership.user.id
-    assert project_timeline[0].data["user"]["name"] == membership.user.get_full_name()
     assert user_timeline[0].event_type == "projects.membership.delete"
     assert user_timeline[0].data["project"]["id"] == membership.project.id
     assert user_timeline[0].data["user"]["id"] == membership.user.id
-    assert user_timeline[0].data["user"]["name"] == membership.user.get_full_name()
 
 
 def test_comment_user_story_timeline():

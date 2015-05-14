@@ -180,11 +180,7 @@ def extract_project_info(instance):
 
 def extract_user_info(instance):
     return {
-        "id": instance.pk,
-        "name": instance.get_full_name(),
-        "photo": get_photo_or_gravatar_url(instance),
-        "big_photo": get_big_photo_or_gravatar_url(instance),
-        "username": instance.username,
+        "id": instance.pk
     }
 
 
