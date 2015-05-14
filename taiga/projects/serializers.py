@@ -22,6 +22,7 @@ from taiga.base.api import serializers
 
 from taiga.base.fields import JsonField
 from taiga.base.fields import PgArrayField
+from taiga.base.fields import TagsField
 from taiga.base.fields import TagsColorsField
 
 from taiga.users.services import get_photo_or_gravatar_url
@@ -296,7 +297,7 @@ class MembersBulkSerializer(ProjectExistsValidator, serializers.Serializer):
 ######################################################
 
 class ProjectSerializer(serializers.ModelSerializer):
-    tags = PgArrayField(required=False)
+    tags = TagsField(default=[], required=False)
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
     stars = serializers.SerializerMethodField("get_stars_number")
