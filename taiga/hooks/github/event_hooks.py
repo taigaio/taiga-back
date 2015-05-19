@@ -96,8 +96,8 @@ class PushEventHook(BaseEventHook):
                 commit_id and commit_url and commit_message):
             comment = _("Status changed by [@{github_user_name}]({github_user_url} "
                         "\"See @{github_user_name}'s GitHub profile\") "
-                        "from GitHub commit [#{commit_id}]({commit_url} "
-                        "\"See commit '#{commit_id}: {commit_message}'\").").format(
+                        "from GitHub commit [{commit_id}]({commit_url} "
+                        "\"See commit '{commit_id} - {commit_message}'\").").format(
                                                                github_user_name=github_user_name,
                                                                github_user_url=github_user_url,
                                                                commit_id=commit_id[:7],
@@ -157,8 +157,8 @@ class IssuesEventHook(BaseEventHook):
         if number and subject and github_user_name and github_user_url:
             comment = _("Issue created by [@{github_user_name}]({github_user_url} "
                         "\"See @{github_user_name}'s GitHub profile\") "
-                        "from GitHub.\nOrigin GitHub issue: [{number}: {subject}]({github_url} "
-                        "\"Go to '{number}: {subject}'\"):\n\n"
+                        "from GitHub.\nOrigin GitHub issue: [gh#{number} - {subject}]({github_url} "
+                        "\"Go to 'gh#{number} - {subject}'\"):\n\n"
                         "{description}").format(github_user_name=github_user_name,
                                                 github_user_url=github_user_url,
                                                 number=number,
@@ -200,8 +200,8 @@ class IssueCommentEventHook(BaseEventHook):
             if number and subject and github_user_name and github_user_url:
                 comment = _("Comment by [@{github_user_name}]({github_user_url} "
                             "\"See @{github_user_name}'s GitHub profile\") "
-                            "from GitHub.\nOrigin GitHub issue: [{number}: {subject}]({github_url} "
-                            "\"Go to '{number}: {subject}'\")\n\n"
+                            "from GitHub.\nOrigin GitHub issue: [gh#{number} - {subject}]({github_url} "
+                            "\"Go to 'gh#{number} - {subject}'\")\n\n"
                             "{message}").format(github_user_name=github_user_name,
                                                 github_user_url=github_user_url,
                                                 number=number,
