@@ -1,7 +1,7 @@
 # Changelog #
 
 
-## 1.7.0 ??? (unreleased)
+## 1.7.0 Empetrum Nigrum (unreleased)
 
 ### Features
 - Make Taiga translatable (i18n support).
