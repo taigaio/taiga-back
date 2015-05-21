@@ -287,9 +287,13 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
                 if not is_member and not has_project_public_view_permission:
                     qs = qs.none()
 
-            qs = qs.filter(Q(memberships__project_id__in=projects_list) |
-                           Q(memberships__project__public_permissions__contains=[self.permission])|
-                           Q(id=request.user.id))
+            q = Q(memberships__project_id__in=projects_list) | Q(id=request.user.id)
+
+            #If there is no selected project we want access to users from public projects
+            if not project:
+                q = q | Q(memberships__project__public_permissions__contains=[self.permission])
+
+            qs = qs.filter(q)
 
         else:
             if project and not "view_project" in project.anon_permissions:
