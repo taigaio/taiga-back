@@ -53,7 +53,8 @@ DATABASES = {
 #REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
 #    "anon": "20/min",
 #    "user": "200/min",
-#    "import-mode": "20/sec"
+#    "import-mode": "20/sec",
+#    "import-dump-mode": "1/minute"
 #}
 
 # GITHUB SETTINGS
