@@ -405,6 +405,7 @@ class Command(BaseCommand):
                                               estimated_start=start_date,
                                               estimated_finish=end_date,
                                               order=10)
+        take_snapshot(milestone, user=milestone.owner)
 
         return milestone
 
@@ -421,6 +422,7 @@ class Command(BaseCommand):
                                          total_story_points=self.sd.int(600, 3000),
                                          total_milestones=self.sd.int(5,10))
 
+        take_snapshot(project, user=project.owner)
         return project
 
     def create_user(self, counter=None, username=None, full_name=None, email=None):

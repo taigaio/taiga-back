@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from taiga.base.api.utils import get_object_or_404
 from taiga.base import filters, response
@@ -41,7 +41,8 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
     list_serializer_class = serializers.TaskSerializer
     permission_classes = (permissions.TaskPermission,)
     filter_backends = (filters.CanViewTasksFilterBackend,)
-    filter_fields = ["user_story", "milestone", "project"]
+    filter_fields = ["user_story", "milestone", "project", "assigned_to",
+        "status__is_closed", "watchers"]
 
     def pre_save(self, obj):
         if obj.user_story:

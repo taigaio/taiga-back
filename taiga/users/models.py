@@ -116,10 +116,10 @@ class User(AbstractBaseUser, PermissionsMixin):
                              max_length=500, null=True, blank=True,
                              verbose_name=_("photo"))
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
-    default_language = models.CharField(max_length=20, null=False, blank=True, default="",
-                                        verbose_name=_("default language"))
-    default_timezone = models.CharField(max_length=20, null=False, blank=True, default="",
-                                        verbose_name=_("default timezone"))
+    lang = models.CharField(max_length=20, null=True, blank=True, default="",
+                            verbose_name=_("default language"))
+    timezone = models.CharField(max_length=20, null=True, blank=True, default="",
+                                verbose_name=_("default timezone"))
     colorize_tags = models.BooleanField(null=False, blank=True, default=False,
                                         verbose_name=_("colorize tags"))
     token = models.CharField(max_length=200, null=True, blank=True, default=None,
@@ -166,8 +166,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.full_name = "Deleted user"
         self.color = ""
         self.bio = ""
-        self.default_language = ""
-        self.default_timezone = ""
+        self.lang = ""
+        self.timezone = ""
         self.colorize_tags = True
         self.token = None
         self.set_unusable_password()

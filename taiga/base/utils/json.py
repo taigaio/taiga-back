@@ -14,9 +14,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
-from rest_framework.utils import encoders
 from django.utils.encoding import force_text
+
+from taiga.base.api.utils import encoders
+
+import json
 
 
 def dumps(data, ensure_ascii=True, encoder_class=encoders.JSONEncoder):

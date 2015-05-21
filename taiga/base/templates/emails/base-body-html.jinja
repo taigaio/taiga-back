@@ -420,9 +420,7 @@
                                         <tr>
                                             <td valign="top" class="footerContent">
                                                 {% block footer %}
-                                                    {% trans support_url=sr("support.url"),
-                                                             support_email=sr("support.email"),
-                                                             mailing_list_url=sr("support.mailing_list") %}
+                                                    {% trans support_url=sr("support.url"), support_email=sr("support.email"), mailing_list_url=sr("support.mailing_list") %}
                                                     <strong>Taiga Support:</strong>
                                                     <a href="{{ support_url }}" title="Support page" style="color: #9dce0a">{{ support_url}}</a>
                                                     <br>

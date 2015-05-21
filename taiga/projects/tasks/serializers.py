@@ -14,21 +14,25 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rest_framework import serializers
+from taiga.base.api import serializers
 
-from taiga.base.serializers import (Serializer, TagsField, NeighborsSerializerMixin,
-        PgArrayField, ModelSerializer)
+from taiga.base.fields import TagsField
+from taiga.base.fields import PgArrayField
+
+from taiga.base.neighbors import NeighborsSerializerMixin
 
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.milestones.validators import SprintExistsValidator
 from taiga.projects.tasks.validators import TaskExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
+from taiga.projects.serializers import BasicTaskStatusSerializerSerializer
+from taiga.users.serializers import BasicInfoSerializer as UserBasicInfoSerializer
 
 from . import models
 
 
-class TaskSerializer(WatchersValidator, ModelSerializer):
+class TaskSerializer(WatchersValidator, serializers.ModelSerializer):
     tags = TagsField(required=False, default=[])
     external_reference = PgArrayField(required=False)
     comment = serializers.SerializerMethodField("get_comment")
@@ -36,6 +40,8 @@ class TaskSerializer(WatchersValidator, ModelSerializer):
     blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
     description_html = serializers.SerializerMethodField("get_description_html")
     is_closed =  serializers.SerializerMethodField("get_is_closed")
+    status_extra_info = BasicTaskStatusSerializerSerializer(source="status", required=False, read_only=True)
+    assigned_to_extra_info = UserBasicInfoSerializer(source="assigned_to", required=False, read_only=True)
 
     class Meta:
         model = models.Task
@@ -65,7 +71,7 @@ class TaskNeighborsSerializer(NeighborsSerializerMixin, TaskSerializer):
         return NeighborTaskSerializer(neighbor).data
 
 
-class NeighborTaskSerializer(ModelSerializer):
+class NeighborTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Task
         fields = ("id", "ref", "subject")
@@ -73,7 +79,7 @@ class NeighborTaskSerializer(ModelSerializer):
 
 
 class TasksBulkSerializer(ProjectExistsValidator, SprintExistsValidator,
-                          TaskExistsValidator, Serializer):
+                          TaskExistsValidator, serializers.Serializer):
     project_id = serializers.IntegerField()
     sprint_id = serializers.IntegerField()
     status_id = serializers.IntegerField(required=False)
@@ -82,11 +88,11 @@ class TasksBulkSerializer(ProjectExistsValidator, SprintExistsValidator,
 
 ## Order bulk serializers
 
-class _TaskOrderBulkSerializer(TaskExistsValidator, Serializer):
+class _TaskOrderBulkSerializer(TaskExistsValidator, serializers.Serializer):
     task_id = serializers.IntegerField()
     order = serializers.IntegerField()
 
 
-class UpdateTasksOrderBulkSerializer(ProjectExistsValidator, Serializer):
+class UpdateTasksOrderBulkSerializer(ProjectExistsValidator, serializers.Serializer):
     project_id = serializers.IntegerField()
     bulk_tasks = _TaskOrderBulkSerializer(many=True)

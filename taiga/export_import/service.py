@@ -23,6 +23,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 
 from taiga.projects.history.services import make_key_from_model_object
+from taiga.timeline.service import build_project_namespace
 from taiga.projects.references import sequences as seq
 from taiga.projects.references import models as refs
 from taiga.projects.services import find_invited_user
@@ -182,8 +183,7 @@ def store_membership(project, membership):
     if serialized.is_valid():
         serialized.object.project = project
         serialized.object._importing = True
-        if not serialized.object.token:
-            serialized.object.token = str(uuid.uuid1())
+        serialized.object.token = str(uuid.uuid1())
         serialized.object.user = find_invited_user(serialized.object.email,
                                                    default=serialized.object.user)
         serialized.save()
@@ -273,6 +273,19 @@ def store_attachment(project, obj, attachment):
         serialized.save()
         return serialized
     add_errors("attachments", serialized.errors)
+    return serialized
+
+
+def store_timeline_entry(project, timeline):
+    serialized = serializers.TimelineExportSerializer(data=timeline, context={"project": project})
+    if serialized.is_valid():
+        serialized.object.project = project
+        serialized.object.namespace = build_project_namespace(project)
+        serialized.object.object_id = project.id
+        serialized.object._importing = True
+        serialized.save()
+        return serialized
+    add_errors("timeline", serialized.errors)
     return serialized
 
 

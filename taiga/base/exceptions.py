@@ -14,18 +14,101 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rest_framework import exceptions
-from rest_framework import status
+# This code is partially taken from django-rest-framework:
+# Copyright (c) 2011-2015, Tom Christie
+
+
+"""
+Handled exceptions raised by REST framework.
+
+In addition Django's built in 403 and 404 exceptions are handled.
+(`django.http.Http404` and `django.core.exceptions.PermissionDenied`)
+"""
 
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.http import Http404
 
-from taiga.base import response
+from . import response
+from . import status
+
+import math
 
 
-class BaseException(exceptions.APIException):
+class APIException(Exception):
+    """
+    Base class for REST framework exceptions.
+    Subclasses should provide `.status_code` and `.default_detail` properties.
+    """
+    status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+    default_detail = ""
+
+    def __init__(self, detail=None):
+        self.detail = detail or self.default_detail
+
+
+class ParseError(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = _("Malformed request.")
+
+
+class AuthenticationFailed(APIException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    default_detail = _("Incorrect authentication credentials.")
+
+
+class NotAuthenticated(APIException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    default_detail = _("Authentication credentials were not provided.")
+
+
+class PermissionDenied(APIException):
+    status_code = status.HTTP_403_FORBIDDEN
+    default_detail = _("You do not have permission to perform this action.")
+
+
+class MethodNotAllowed(APIException):
+    status_code = status.HTTP_405_METHOD_NOT_ALLOWED
+    default_detail = _("Method '%s' not allowed.")
+
+    def __init__(self, method, detail=None):
+        self.detail = (detail or self.default_detail) % method
+
+
+class NotAcceptable(APIException):
+    status_code = status.HTTP_406_NOT_ACCEPTABLE
+    default_detail = _("Could not satisfy the request's Accept header")
+
+    def __init__(self, detail=None, available_renderers=None):
+        self.detail = detail or self.default_detail
+        self.available_renderers = available_renderers
+
+
+class UnsupportedMediaType(APIException):
+    status_code = status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
+    default_detail = _("Unsupported media type '%s' in request.")
+
+    def __init__(self, media_type, detail=None):
+        self.detail = (detail or self.default_detail) % media_type
+
+
+class Throttled(APIException):
+    status_code = status.HTTP_429_TOO_MANY_REQUESTS
+    default_detail = _("Request was throttled.")
+    extra_detail = _("Expected available in %d second%s.")
+
+    def __init__(self, wait=None, detail=None):
+        if wait is None:
+            self.detail = detail or self.default_detail
+            self.wait = None
+        else:
+            format = "%s%s" % ((detail or self.default_detail), self.extra_detail)
+            self.detail = format % (wait, wait != 1 and "s" or "")
+            self.wait = math.ceil(wait)
+
+
+class BaseException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = _("Unexpected error")
 
@@ -67,7 +150,7 @@ class RequestValidationError(BadRequest):
     default_detail = _("Data validation error")
 
 
-class PermissionDenied(exceptions.PermissionDenied):
+class PermissionDenied(PermissionDenied):
     """
     Compatibility subclass of restframework `PermissionDenied`
     exception.
@@ -86,7 +169,7 @@ class PreconditionError(BadRequest):
     default_detail = _("Precondition error")
 
 
-class NotAuthenticated(exceptions.NotAuthenticated):
+class NotAuthenticated(NotAuthenticated):
     """
     Compatibility subclass of restframework `NotAuthenticated`
     exception.
@@ -119,7 +202,7 @@ def exception_handler(exc):
     to be raised.
     """
 
-    if isinstance(exc, exceptions.APIException):
+    if isinstance(exc, APIException):
         headers = {}
         if getattr(exc, "auth_header", None):
             headers["WWW-Authenticate"] = exc.auth_header

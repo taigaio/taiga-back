@@ -14,14 +14,47 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rest_framework import serializers
-from taiga.base.serializers import JsonField
+from django.apps import apps
+from django.forms import widgets
+
+from taiga.base.api import serializers
+from taiga.base.fields import JsonField
+from taiga.users.services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
 
 from . import models
+from . import service
+
+class TimelineDataJsonField(serializers.WritableField):
+    """
+    Timeline Json objects serializer.
+    """
+    widget = widgets.Textarea
+
+    def to_native(self, obj):
+        #Updates the data user info saved if the user exists
+        User = apps.get_model("users", "User")
+        userData = obj.get("user", None)
+        if userData:
+            try:
+                user = User.objects.get(id=userData["id"])
+                obj["user"] = {
+                    "id": user.pk,
+                    "name": user.get_full_name(),
+                    "photo": get_photo_or_gravatar_url(user),
+                    "big_photo": get_big_photo_or_gravatar_url(user),
+                    "username": user.username,
+                }
+            except User.DoesNotExist:
+                pass
+
+        return obj
+
+    def from_native(self, data):
+        return data
 
 
 class TimelineSerializer(serializers.ModelSerializer):
-    data = JsonField()
+    data = TimelineDataJsonField()
 
     class Meta:
         model = models.Timeline

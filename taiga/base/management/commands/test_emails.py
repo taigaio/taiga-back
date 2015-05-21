@@ -16,6 +16,8 @@
 
 import datetime
 
+from optparse import make_option
+
 from django.db.models.loading import get_model
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -30,6 +32,11 @@ from taiga.users.models import User
 
 class Command(BaseCommand):
     args = '<email>'
+    option_list = BaseCommand.option_list + (
+        make_option('--locale', '-l', default=None, dest='locale',
+            help='Send emails in an specific language.'),
+    )
+
     help = 'Send an example of all emails'
 
     def handle(self, *args, **options):
@@ -37,12 +44,13 @@ class Command(BaseCommand):
             print("Usage: ./manage.py test_emails <email-address>")
             return
 
+        locale = options.get('locale')
         test_email = args[0]
 
         mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
 
         # Register email
-        context = {"user": User.objects.all().order_by("?").first(), "cancel_token": "cancel-token"}
+        context = {"lang": locale, "user": User.objects.all().order_by("?").first(), "cancel_token": "cancel-token"}
         email = mbuilder.registered_user(test_email, context)
         email.send()
 
@@ -51,17 +59,18 @@ class Command(BaseCommand):
         membership.invited_by = User.objects.all().order_by("?").first()
         membership.invitation_extra_text = "Text example, Text example,\nText example,\n\nText example"
 
-        context = {"membership": membership}
+        context = {"lang": locale, "membership": membership}
         email = mbuilder.membership_invitation(test_email, context)
         email.send()
 
         # Membership notification
-        context = {"membership": Membership.objects.order_by("?").filter(user__isnull=False).first()}
+        context = {"lang": locale, "membership": Membership.objects.order_by("?").filter(user__isnull=False).first()}
         email = mbuilder.membership_notification(test_email, context)
         email.send()
 
         # Feedback
         context = {
+            "lang": locale,
             "feedback_entry": {
                 "full_name": "Test full name",
                 "email": "test@email.com",
@@ -76,17 +85,18 @@ class Command(BaseCommand):
         email.send()
 
         # Password recovery
-        context = {"user": User.objects.all().order_by("?").first()}
+        context = {"lang": locale, "user": User.objects.all().order_by("?").first()}
         email = mbuilder.password_recovery(test_email, context)
         email.send()
 
         # Change email
-        context = {"user": User.objects.all().order_by("?").first()}
+        context = {"lang": locale, "user": User.objects.all().order_by("?").first()}
         email = mbuilder.change_email(test_email, context)
         email.send()
 
         # Export/Import emails
         context = {
+            "lang": locale,
             "user": User.objects.all().order_by("?").first(),
             "project": Project.objects.all().order_by("?").first(),
             "error_subject": "Error generating project dump",
@@ -95,6 +105,7 @@ class Command(BaseCommand):
         email = mbuilder.export_error(test_email, context)
         email.send()
         context = {
+            "lang": locale,
             "user": User.objects.all().order_by("?").first(),
             "error_subject": "Error importing project dump",
             "error_message": "Error importing project dump",
@@ -104,6 +115,7 @@ class Command(BaseCommand):
 
         deletion_date = timezone.now() + datetime.timedelta(seconds=60*60*24)
         context = {
+            "lang": locale,
             "url": "http://dummyurl.com",
             "user": User.objects.all().order_by("?").first(),
             "project": Project.objects.all().order_by("?").first(),
@@ -113,6 +125,7 @@ class Command(BaseCommand):
         email.send()
 
         context = {
+            "lang": locale,
             "user": User.objects.all().order_by("?").first(),
             "project": Project.objects.all().order_by("?").first(),
         }
@@ -139,6 +152,7 @@ class Command(BaseCommand):
         ]
 
         context = {
+            "lang": locale,
             "project": Project.objects.all().order_by("?").first(),
             "changer": User.objects.all().order_by("?").first(),
             "history_entries": HistoryEntry.objects.all().order_by("?")[0:5],

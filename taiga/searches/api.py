@@ -16,7 +16,7 @@
 
 from django.apps import apps
 
-from rest_framework import viewsets
+from taiga.base.api import viewsets
 
 from taiga.base import response
 from taiga.base.api.utils import get_object_or_404

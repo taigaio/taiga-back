@@ -17,33 +17,18 @@
 # This code is partially taken from django-rest-framework:
 # Copyright (c) 2011-2014, Tom Christie
 
-import warnings
-
 from django.core.exceptions import ImproperlyConfigured
-from django.core.paginator import Paginator, InvalidPage
 from django.http import Http404
-from django.utils.translation import ugettext as _
-
-from rest_framework.settings import api_settings
 
 from . import views
 from . import mixins
+from . import pagination
+from .settings import api_settings
 from .utils import get_object_or_404
 
 
-def strict_positive_int(integer_string, cutoff=None):
-    """
-    Cast a string to a strictly positive integer.
-    """
-    ret = int(integer_string)
-    if ret <= 0:
-        raise ValueError()
-    if cutoff:
-        ret = min(ret, cutoff)
-    return ret
-
-
-class GenericAPIView(views.APIView):
+class GenericAPIView(pagination.PaginationMixin,
+                     views.APIView):
     """
     Base class for all other generic views.
     """
@@ -63,20 +48,12 @@ class GenericAPIView(views.APIView):
     lookup_field = 'pk'
     lookup_url_kwarg = None
 
-    # Pagination settings
-    paginate_by = api_settings.PAGINATE_BY
-    paginate_by_param = api_settings.PAGINATE_BY_PARAM
-    max_paginate_by = api_settings.MAX_PAGINATE_BY
-    pagination_serializer_class = api_settings.DEFAULT_PAGINATION_SERIALIZER_CLASS
-    page_kwarg = 'page'
-
     # The filter backend classes to use for queryset filtering
     filter_backends = api_settings.DEFAULT_FILTER_BACKENDS
 
     # The following attributes may be subject to change,
     # and should be considered private API.
     model_serializer_class = api_settings.DEFAULT_MODEL_SERIALIZER_CLASS
-    paginator_class = Paginator
 
     ######################################
     # These are pending deprecation...
@@ -107,70 +84,6 @@ class GenericAPIView(views.APIView):
         return serializer_class(instance, data=data, files=files,
                                 many=many, partial=partial, context=context)
 
-    def get_pagination_serializer(self, page):
-        """
-        Return a serializer instance to use with paginated data.
-        """
-        class SerializerClass(self.pagination_serializer_class):
-            class Meta:
-                object_serializer_class = self.get_serializer_class()
-
-        pagination_serializer_class = SerializerClass
-        context = self.get_serializer_context()
-        return pagination_serializer_class(instance=page, context=context)
-
-    def paginate_queryset(self, queryset, page_size=None):
-        """
-        Paginate a queryset if required, either returning a page object,
-        or `None` if pagination is not configured for this view.
-        """
-        deprecated_style = False
-        if page_size is not None:
-            warnings.warn('The `page_size` parameter to `paginate_queryset()` '
-                          'is due to be deprecated. '
-                          'Note that the return style of this method is also '
-                          'changed, and will simply return a page object '
-                          'when called without a `page_size` argument.',
-                          PendingDeprecationWarning, stacklevel=2)
-            deprecated_style = True
-        else:
-            # Determine the required page size.
-            # If pagination is not configured, simply return None.
-            page_size = self.get_paginate_by()
-            if not page_size:
-                return None
-
-        if not self.allow_empty:
-            warnings.warn(
-                'The `allow_empty` parameter is due to be deprecated. '
-                'To use `allow_empty=False` style behavior, You should override '
-                '`get_queryset()` and explicitly raise a 404 on empty querysets.',
-                PendingDeprecationWarning, stacklevel=2
-            )
-
-        paginator = self.paginator_class(queryset, page_size,
-                                         allow_empty_first_page=self.allow_empty)
-        page_kwarg = self.kwargs.get(self.page_kwarg)
-        page_query_param = self.request.QUERY_PARAMS.get(self.page_kwarg)
-        page = page_kwarg or page_query_param or 1
-        try:
-            page_number = paginator.validate_number(page)
-        except InvalidPage:
-            if page == 'last':
-                page_number = paginator.num_pages
-            else:
-                raise Http404(_("Page is not 'last', nor can it be converted to an int."))
-        try:
-            page = paginator.page(page_number)
-        except InvalidPage as e:
-            raise Http404(_('Invalid page (%(page_number)s): %(message)s') % {
-                'page_number': page_number,
-                'message': str(e)
-            })
-
-        if deprecated_style:
-            return (paginator, page, page.object_list, page.has_other_pages())
-        return page
 
     def filter_queryset(self, queryset):
         """
@@ -202,29 +115,6 @@ class GenericAPIView(views.APIView):
     # that you may want to override for more complex cases.   #
     ###########################################################
 
-    def get_paginate_by(self, queryset=None):
-        """
-        Return the size of pages to use with pagination.
-
-        If `PAGINATE_BY_PARAM` is set it will attempt to get the page size
-        from a named query parameter in the url, eg. ?page_size=100
-
-        Otherwise defaults to using `self.paginate_by`.
-        """
-        if queryset is not None:
-            raise RuntimeError('The `queryset` parameter to `get_paginate_by()` '
-                               'is due to be deprecated.')
-        if self.paginate_by_param:
-            try:
-                return strict_positive_int(
-                    self.request.QUERY_PARAMS[self.paginate_by_param],
-                    cutoff=self.max_paginate_by
-                )
-            except (KeyError, ValueError):
-                pass
-
-        return self.paginate_by
-
     def get_serializer_class(self):
         if self.action == "list" and hasattr(self, "list_serializer_class"):
             return self.list_serializer_class
@@ -233,11 +123,9 @@ class GenericAPIView(views.APIView):
         if serializer_class is not None:
             return serializer_class
 
-        assert self.model is not None, \
-            "'%s' should either include a 'serializer_class' attribute, " \
-            "or use the 'model' attribute as a shortcut for " \
-            "automatically generating a serializer class." \
-            % self.__class__.__name__
+        assert self.model is not None, ("'%s' should either include a 'serializer_class' attribute, "
+                                        "or use the 'model' attribute as a shortcut for "
+                                        "automatically generating a serializer class." % self.__class__.__name__)
 
         class DefaultSerializer(self.model_serializer_class):
             class Meta:
@@ -261,7 +149,7 @@ class GenericAPIView(views.APIView):
         if self.model is not None:
             return self.model._default_manager.all()
 
-        raise ImproperlyConfigured("'%s' must define 'queryset' or 'model'" % self.__class__.__name__)
+        raise ImproperlyConfigured(("'%s' must define 'queryset' or 'model'" % self.__class__.__name__))
 
     def get_object(self, queryset=None):
         """
@@ -289,18 +177,16 @@ class GenericAPIView(views.APIView):
         if lookup is not None:
             filter_kwargs = {self.lookup_field: lookup}
         elif pk is not None and self.lookup_field == 'pk':
-            raise RuntimeError('The `pk_url_kwarg` attribute is due to be deprecated. '
-                               'Use the `lookup_field` attribute instead')
+            raise RuntimeError(('The `pk_url_kwarg` attribute is due to be deprecated. '
+                                'Use the `lookup_field` attribute instead'))
         elif slug is not None and self.lookup_field == 'pk':
-            raise RuntimeError('The `slug_url_kwarg` attribute is due to be deprecated. '
-                               'Use the `lookup_field` attribute instead')
+            raise RuntimeError(('The `slug_url_kwarg` attribute is due to be deprecated. '
+                                'Use the `lookup_field` attribute instead'))
         else:
-            raise ImproperlyConfigured(
-                'Expected view %s to be called with a URL keyword argument '
-                'named "%s". Fix your URL conf, or set the `.lookup_field` '
-                'attribute on the view correctly.' %
-                (self.__class__.__name__, self.lookup_field)
-            )
+            raise ImproperlyConfigured(('Expected view %s to be called with a URL keyword argument '
+                                        'named "%s". Fix your URL conf, or set the `.lookup_field` '
+                                        'attribute on the view correctly.' %
+                                        (self.__class__.__name__, self.lookup_field)))
 
         obj = get_object_or_404(queryset, **filter_kwargs)
         return obj

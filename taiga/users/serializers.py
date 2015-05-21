@@ -18,11 +18,9 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from rest_framework import serializers
-from taiga.base.serializers import Serializer
-from taiga.base.serializers import ModelSerializer
-from taiga.base.serializers import PgArrayField
-
+from taiga.base.api import serializers
+from taiga.base.fields import PgArrayField
+from taiga.projects.models import Project
 from .models import User, Role
 from .services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
 
@@ -33,18 +31,26 @@ import re
 ## User
 ######################################################
 
-class UserSerializer(ModelSerializer):
+class ContactProjectDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ("id", "slug", "name")
+
+
+class UserSerializer(serializers.ModelSerializer):
     full_name_display = serializers.SerializerMethodField("get_full_name_display")
     photo = serializers.SerializerMethodField("get_photo")
     big_photo = serializers.SerializerMethodField("get_big_photo")
+    roles = serializers.SerializerMethodField("get_roles")
+    projects_with_me = serializers.SerializerMethodField("get_projects_with_me")
 
     class Meta:
         model = User
         # IMPORTANT: Maintain the UserAdminSerializer Meta up to date
         # with this info (including there the email)
         fields = ("id", "username", "full_name", "full_name_display",
-                  "color", "bio", "default_language",
-                  "default_timezone", "is_active", "photo", "big_photo")
+                  "color", "bio", "lang", "timezone", "is_active",
+                  "photo", "big_photo", "roles", "projects_with_me")
         read_only_fields = ("id",)
 
     def validate_username(self, attrs, source):
@@ -74,6 +80,22 @@ class UserSerializer(ModelSerializer):
     def get_big_photo(self, user):
         return get_big_photo_or_gravatar_url(user)
 
+    def get_roles(self, user):
+        return user.memberships. order_by("role__name").values_list("role__name", flat=True).distinct()
+
+    def get_projects_with_me(self, user):
+        request = self.context.get("request", None)
+        requesting_user = request and request.user or None
+
+        if not requesting_user or not requesting_user.is_authenticated():
+            return []
+
+        else:
+            project_ids = requesting_user.memberships.values_list("project__id", flat=True)
+            memberships = requesting_user.memberships.filter(project__id__in=project_ids)
+            project_ids = memberships.values_list("project__id", flat=True)
+            projects = Project.objects.filter(id__in=project_ids)
+            return ContactProjectDetailSerializer(projects, many=True).data
 
 class UserAdminSerializer(UserSerializer):
     class Meta:
@@ -81,21 +103,26 @@ class UserAdminSerializer(UserSerializer):
         # IMPORTANT: Maintain the UserSerializer Meta up to date
         # with this info (including here the email)
         fields = ("id", "username", "full_name", "full_name_display", "email",
-                  "color", "bio", "default_language",
-                  "default_timezone", "is_active", "photo", "big_photo")
+                  "color", "bio", "lang", "timezone", "is_active", "photo",
+                  "big_photo")
         read_only_fields = ("id", "email")
 
 
-class RecoverySerializer(Serializer):
+class BasicInfoSerializer(UserSerializer):
+    class Meta:
+        model = User
+        fields = ("username", "full_name_display","photo", "big_photo")
+
+class RecoverySerializer(serializers.Serializer):
     token = serializers.CharField(max_length=200)
     password = serializers.CharField(min_length=6)
 
 
-class ChangeEmailSerializer(Serializer):
+class ChangeEmailSerializer(serializers.Serializer):
     email_token = serializers.CharField(max_length=200)
 
 
-class CancelAccountSerializer(Serializer):
+class CancelAccountSerializer(serializers.Serializer):
     cancel_token = serializers.CharField(max_length=200)
 
 
@@ -103,19 +130,21 @@ class CancelAccountSerializer(Serializer):
 ## Role
 ######################################################
 
-class RoleSerializer(ModelSerializer):
+class RoleSerializer(serializers.ModelSerializer):
     members_count = serializers.SerializerMethodField("get_members_count")
     permissions = PgArrayField(required=False)
 
     class Meta:
         model = Role
         fields = ('id', 'name', 'permissions', 'computable', 'project', 'order', 'members_count')
+        i18n_fields = ("name",)
 
     def get_members_count(self, obj):
         return obj.memberships.count()
 
 
-class ProjectRoleSerializer(ModelSerializer):
+class ProjectRoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = ('id', 'name', 'slug', 'order', 'computable')
+        i18n_fields = ("name",)

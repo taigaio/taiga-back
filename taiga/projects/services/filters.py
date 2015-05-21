@@ -18,6 +18,14 @@ from contextlib import closing
 from django.db import connection
 
 
+def _get_project_tags(project):
+    result = set()
+    tags = project.tags or []
+    for tag in tags:
+        result.add(tag)
+    return result
+
+
 def _get_stories_tags(project):
     result = set()
     for tags in project.user_stories.values_list("tags", flat=True):
@@ -157,6 +165,7 @@ def get_all_tags(project):
     tags found on it.
     """
     result = set()
+    result.update(_get_project_tags(project))
     result.update(_get_issues_tags(project))
     result.update(_get_stories_tags(project))
     result.update(_get_tasks_tags(project))

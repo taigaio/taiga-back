@@ -8,8 +8,7 @@
 
 
 {% block body %}
-    {% trans full_name=sender_full_name,
-             project=membership.project %}
+    {% trans full_name=sender_full_name, project=membership.project %}
     <h2>You have been invited to Taiga!</h2>
 <p>Hi! {{ full_name }} has sent you an invitation to join project <em>{{ project }}</em> in Taiga.</br> Taiga is a Free, open Source Agile Project Management Tool.</p>
     {% endtrans %}

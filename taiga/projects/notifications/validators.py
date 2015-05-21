@@ -14,8 +14,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext_lazy as _
-from rest_framework import serializers
+from django.utils.translation import ugettext as _
+
+from taiga.base.api import serializers
 
 
 class WatchersValidator:
@@ -40,6 +41,6 @@ class WatchersValidator:
         # in project members list
         result = set(users).difference(set(project.members.all()))
         if result:
-            raise serializers.ValidationError("Watchers contains invalid users")
+            raise serializers.ValidationError(_("Watchers contains invalid users"))
 
         return attrs

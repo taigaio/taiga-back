@@ -18,7 +18,7 @@ import uuid
 
 from django.apps import apps
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.conf import settings
@@ -44,6 +44,8 @@ from djmail.template_mail import InlineCSSTemplateMail
 from . import models
 from . import serializers
 from . import permissions
+from . import filters as user_filters
+from . import services
 from .signals import user_cancel_account as user_cancel_account_signal
 
 
@@ -51,7 +53,7 @@ class UsersViewSet(ModelCrudViewSet):
     permission_classes = (permissions.UserPermission,)
     admin_serializer_class = serializers.UserAdminSerializer
     serializer_class = serializers.UserSerializer
-    queryset = models.User.objects.all()
+    queryset = models.User.objects.all().prefetch_related("memberships")
     filter_backends = (MembersFilterBackend,)
 
     def get_serializer_class(self):
@@ -77,6 +79,29 @@ class UsersViewSet(ModelCrudViewSet):
 
         return response.Ok(serializer.data)
 
+    @detail_route(methods=["GET"])
+    def contacts(self, request, *args, **kwargs):
+        user = self.get_object()
+        self.check_permissions(request, 'contacts', user)
+
+        self.object_list = user_filters.ContactsFilterBackend().filter_queryset(request,
+                                                                  self.get_queryset(),
+                                                                  self)
+
+        page = self.paginate_queryset(self.object_list)
+        if page is not None:
+            serializer = self.serializer_class(page.object_list, many=True)
+        else:
+            serializer = self.serializer_class(self.object_list, many=True)
+
+        return response.Ok(serializer.data)
+
+    @detail_route(methods=["GET"])
+    def stats(self, request, pk=None):
+        user = self.get_object()
+        self.check_permissions(request, "stats", user)
+        return response.Ok(services.get_stats_for_user(user))
+
     @list_route(methods=["POST"])
     def password_recovery(self, request, pk=None):
         username_or_email = request.DATA.get('username', None)
@@ -97,7 +122,7 @@ class UsersViewSet(ModelCrudViewSet):
         user.save(update_fields=["token"])
 
         mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
-        email = mbuilder.password_recovery(user.email, {"user": user})
+        email = mbuilder.password_recovery(user, {"user": user})
         email.send()
 
         return response.Ok({"detail": _("Mail sended successful!")})
@@ -230,7 +255,8 @@ class UsersViewSet(ModelCrudViewSet):
             request.user.new_email = new_email
             request.user.save(update_fields=["email_token", "new_email"])
             mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
-            email = mbuilder.change_email(request.user.new_email, {"user": request.user})
+            email = mbuilder.change_email(request.user.new_email, {"user": request.user,
+                                                                   "lang": request.user.lang})
             email.send()
 
         return ret

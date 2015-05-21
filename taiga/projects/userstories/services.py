@@ -121,7 +121,8 @@ def userstories_to_csv(project,queryset):
     fieldnames += ["backlog_order", "sprint_order", "kanban_order",
                    "created_date", "modified_date", "finish_date",
                    "client_requirement", "team_requirement", "attachments",
-                   "generated_from_issue", "external_reference", "tasks"]
+                   "generated_from_issue", "external_reference", "tasks",
+                   "tags"]
 
     for custom_attr in project.userstorycustomattributes.all():
         fieldnames.append(custom_attr.name)
@@ -152,6 +153,7 @@ def userstories_to_csv(project,queryset):
             "generated_from_issue": us.generated_from_issue.ref if us.generated_from_issue else None,
             "external_reference": us.external_reference,
             "tasks": ",".join([str(task.ref) for task in us.tasks.all()]),
+            "tags": ",".join(us.tags or []),
         }
 
         for role in us.project.roles.filter(computable=True).order_by('name'):

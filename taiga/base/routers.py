@@ -22,10 +22,10 @@ from django.conf.urls import patterns, url
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import NoReverseMatch
 
-from rest_framework import views
+from taiga.base.api import views
 from taiga.base import response
-from rest_framework.reverse import reverse
-from rest_framework.urlpatterns import format_suffix_patterns
+from taiga.base.api.reverse import reverse
+from taiga.base.api.urlpatterns import format_suffix_patterns
 
 
 Route = namedtuple('Route', ['url', 'mapping', 'name', 'initkwargs'])

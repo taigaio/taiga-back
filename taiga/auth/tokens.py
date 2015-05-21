@@ -18,6 +18,7 @@ from taiga.base import exceptions as exc
 
 from django.apps import apps
 from django.core import signing
+from django.utils.translation import ugettext as _
 
 
 def get_token_for_user(user, scope):
@@ -43,13 +44,13 @@ def get_user_for_token(token, scope, max_age=None):
     try:
         data = signing.loads(token, max_age=max_age)
     except signing.BadSignature:
-        raise exc.NotAuthenticated("Invalid token")
+        raise exc.NotAuthenticated(_("Invalid token"))
 
     model_cls = apps.get_model("users", "User")
 
     try:
         user = model_cls.objects.get(pk=data["user_%s_id" % (scope)])
     except (model_cls.DoesNotExist, KeyError):
-        raise exc.NotAuthenticated("Invalid token")
+        raise exc.NotAuthenticated(_("Invalid token"))
     else:
         return user

@@ -45,3 +45,9 @@ class ProjectsAppConfig(AppConfig):
         signals.post_save.connect(handlers.project_post_save,
                                   sender=apps.get_model("projects", "Project"),
                                   dispatch_uid='project_post_save')
+
+        # Tags
+        signals.pre_save.connect(handlers.tags_normalization,
+                                 sender=apps.get_model("projects", "Project"))
+        signals.pre_save.connect(handlers.update_project_tags_when_create_or_edit_taggable_item,
+                                  sender=apps.get_model("projects", "Project"))

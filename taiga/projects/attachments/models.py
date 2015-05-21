@@ -49,7 +49,7 @@ def get_attachment_file_path(instance, filename):
 
 
 class Attachment(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=False,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                               related_name="change_attachments",
                               verbose_name=_("owner"))
     project = models.ForeignKey("projects.Project", null=False, blank=False,

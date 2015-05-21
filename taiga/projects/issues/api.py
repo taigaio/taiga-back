@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.db.models import Q
 from django.http import Http404, HttpResponse
 
@@ -110,7 +110,7 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
                        IssuesFilter, IssuesOrdering,)
     retrieve_exclude_filters = (IssuesFilter,)
 
-    filter_fields = ("project",)
+    filter_fields = ("project", "assigned_to", "status__is_closed", "watchers")
     order_by_fields = ("type",
                        "severity",
                        "status",

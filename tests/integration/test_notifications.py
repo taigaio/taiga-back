@@ -208,7 +208,7 @@ def test_send_notifications_using_services_method(settings, mail):
 
     # Issues
     issue = f.IssueFactory.create(project=project, owner=member2.user)
-    take_snapshot(issue)
+    take_snapshot(issue, user=issue.owner)
     services.send_notifications(issue,
                                 history=history_create)
 
@@ -220,7 +220,7 @@ def test_send_notifications_using_services_method(settings, mail):
 
     # Userstories
     us = f.UserStoryFactory.create(project=project, owner=member2.user)
-    take_snapshot(us)
+    take_snapshot(us, user=us.owner)
     services.send_notifications(us,
                                 history=history_create)
 
@@ -232,7 +232,7 @@ def test_send_notifications_using_services_method(settings, mail):
 
     # Tasks
     task = f.TaskFactory.create(project=project, owner=member2.user)
-    take_snapshot(task)
+    take_snapshot(task, user=task.owner)
     services.send_notifications(task,
                                 history=history_create)
 
@@ -244,7 +244,7 @@ def test_send_notifications_using_services_method(settings, mail):
 
     # Wiki pages
     wiki = f.WikiPageFactory.create(project=project, owner=member2.user)
-    take_snapshot(wiki)
+    take_snapshot(wiki, user=wiki.owner)
     services.send_notifications(wiki,
                                 history=history_create)
 

@@ -15,16 +15,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import base64
+import copy
 import os
 from collections import OrderedDict
 
-from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType
 
-from rest_framework import serializers
+
+from taiga import mdrender
+from taiga.base.api import serializers
+from taiga.base.fields import JsonField, PgArrayField
 
 from taiga.projects import models as projects_models
 from taiga.projects.custom_attributes import models as custom_attributes_models
@@ -35,11 +40,11 @@ from taiga.projects.milestones import models as milestones_models
 from taiga.projects.wiki import models as wiki_models
 from taiga.projects.history import models as history_models
 from taiga.projects.attachments import models as attachments_models
+from taiga.timeline import models as timeline_models
+from taiga.timeline import service as timeline_service
 from taiga.users import models as users_models
 from taiga.projects.votes import services as votes_service
 from taiga.projects.history import services as history_service
-from taiga.base.serializers import JsonField, PgArrayField
-from taiga import mdrender
 
 
 class AttachedFileField(serializers.WritableField):
@@ -153,7 +158,7 @@ class ProjectRelatedField(serializers.RelatedField):
             kwargs = {self.slug_field: data, "project": self.context['project']}
             return self.queryset.get(**kwargs)
         except ObjectDoesNotExist:
-            raise ValidationError("{}=\"{}\" not found in this project".format(self.slug_field, data))
+            raise ValidationError(_("{}=\"{}\" not found in this project".format(self.slug_field, data)))
 
 
 class HistoryUserField(JsonField):
@@ -425,7 +430,7 @@ class MembershipExportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = projects_models.Membership
-        exclude = ('id', 'project')
+        exclude = ('id', 'project', 'token')
 
     def full_clean(self, instance):
         return instance
@@ -458,7 +463,7 @@ class MilestoneExportSerializer(serializers.ModelSerializer):
         name = attrs[source]
         qs = self.project.milestones.filter(name=name)
         if qs.exists():
-            raise serializers.ValidationError("Name duplicated for the project")
+            raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
 
@@ -546,6 +551,39 @@ class WikiLinkExportSerializer(serializers.ModelSerializer):
         exclude = ('id', 'project')
 
 
+
+class TimelineDataField(serializers.WritableField):
+    read_only = False
+
+    def to_native(self, data):
+        new_data = copy.deepcopy(data)
+        try:
+            user = users_models.User.objects.get(pk=new_data["user"]["id"])
+            new_data["user"]["email"] = user.email
+            del new_data["user"]["id"]
+        except users_models.User.DoesNotExist:
+            pass
+        return new_data
+
+    def from_native(self, data):
+        new_data = copy.deepcopy(data)
+        try:
+            user = users_models.User.objects.get(email=new_data["user"]["email"])
+            new_data["user"]["id"] = user.id
+            del new_data["user"]["email"]
+        except users_models.User.DoesNotExist:
+            pass
+
+        return new_data
+
+
+class TimelineExportSerializer(serializers.ModelSerializer):
+    data = TimelineDataField()
+    class Meta:
+        model = timeline_models.Timeline
+        exclude = ('id', 'project', 'namespace', 'object_id')
+
+
 class ProjectExportSerializer(serializers.ModelSerializer):
     owner = UserRelatedField(required=False)
     default_points = serializers.SlugRelatedField(slug_field="name", required=False)
@@ -577,7 +615,12 @@ class ProjectExportSerializer(serializers.ModelSerializer):
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
     modified_date = serializers.DateTimeField(required=False)
+    timeline = serializers.SerializerMethodField("get_timeline")
 
     class Meta:
         model = projects_models.Project
         exclude = ('id', 'creation_template', 'members')
+
+    def get_timeline(self, obj):
+        timeline_qs = timeline_service.get_project_timeline(obj)
+        return TimelineExportSerializer(timeline_qs, many=True).data

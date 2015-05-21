@@ -19,7 +19,7 @@ import codecs
 import uuid
 
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.db.transaction import atomic
 from django.db.models import signals
 from django.conf import settings

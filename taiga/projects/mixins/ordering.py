@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from taiga.base import response
 from taiga.base import exceptions as exc
@@ -44,11 +44,11 @@ class BulkUpdateOrderMixin:
         bulk_data = request.DATA.get(self.bulk_update_param, None)
 
         if bulk_data is None:
-            raise exc.BadRequest(_("{param} parameter is mandatory".format(param=self.bulk_update_param)))
+            raise exc.BadRequest(_("'{param}' parameter is mandatory".format(param=self.bulk_update_param)))
 
         project_id = request.DATA.get('project', None)
         if project_id is None:
-            raise exc.BadRequest(_("project parameter is mandatory"))
+            raise exc.BadRequest(_("'project' parameter is mandatory"))
 
         project = get_object_or_404(Project, id=project_id)
 

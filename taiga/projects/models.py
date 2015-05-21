@@ -58,7 +58,7 @@ class Membership(models.Model):
     email = models.EmailField(max_length=255, default=None, null=True, blank=True,
                               verbose_name=_("email"))
     created_at = models.DateTimeField(default=timezone.now,
-                                      verbose_name=_("creado el"))
+                                      verbose_name=_("create at"))
     token = models.CharField(max_length=60, blank=True, null=True, default=None,
                              verbose_name=_("token"))
 
@@ -67,6 +67,9 @@ class Membership(models.Model):
 
     invitation_extra_text = models.TextField(null=True, blank=True,
                                    verbose_name=_("invitation extra text"))
+
+    user_order = models.IntegerField(default=10000, null=False, blank=False,
+                            verbose_name=_("user order"))
 
     def clean(self):
         # TODO: Review and do it more robust
@@ -280,6 +283,15 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
             )
         user_stories = user_stories.prefetch_related('role_points', 'role_points__points')
         return self._get_user_stories_points(user_stories)
+
+
+    @property
+    def project(self):
+        return self
+
+    @property
+    def project(self):
+        return self
 
     @property
     def future_team_increment(self):

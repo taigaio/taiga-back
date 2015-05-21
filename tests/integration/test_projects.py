@@ -278,6 +278,26 @@ def test_destroy_point_and_reassign(client):
     project = Project.objects.get(id=project.id)
     assert project.default_points.id == p2.id
 
+
+def test_update_projects_order_in_bulk(client):
+    user = f.create_user()
+    client.login(user)
+    membership_1 = f.MembershipFactory(user=user)
+    membership_2 = f.MembershipFactory(user=user)
+
+    url = reverse("projects-bulk-update-order")
+    data = [
+        {"project_id": membership_1.project.id, "order":100},
+        {"project_id": membership_2.project.id, "order":200}
+    ]
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 204
+    assert user.memberships.get(project=membership_1.project).user_order == 100
+    assert user.memberships.get(project=membership_2.project).user_order == 200
+
+
 def test_create_and_use_template(client):
     user = f.UserFactory.create(is_superuser=True)
     project = f.create_project()
@@ -302,3 +322,31 @@ def test_create_and_use_template(client):
     }
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
+
+
+def test_projects_user_order(client):
+    user = f.UserFactory.create(is_superuser=True)
+    project_1 = f.create_project()
+    role_1 = f.RoleFactory(project=project_1)
+    f.MembershipFactory(user=user, project=project_1, is_owner=True, role=role_1, user_order=2)
+
+    project_2 = f.create_project()
+    role_2 = f.RoleFactory(project=project_2)
+    f.MembershipFactory(user=user, project=project_2, is_owner=True, role=role_2, user_order=1)
+
+    client.login(user)
+    #Testing default id order
+    url = reverse("projects-list")
+    url = "%s?member=%s" % (url, user.id)
+    response = client.json.get(url)
+    response_content = json.loads(response.content.decode("utf-8"))
+    assert response.status_code == 200
+    assert(response_content[0]["id"] == project_1.id)
+
+    #Testing user order
+    url = reverse("projects-list")
+    url = "%s?member=%s&order_by=memberships__user_order" % (url, user.id)
+    response = client.json.get(url)
+    response_content = json.loads(response.content.decode("utf-8"))
+    assert response.status_code == 200
+    assert(response_content[0]["id"] == project_2.id)

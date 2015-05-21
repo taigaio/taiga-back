@@ -79,7 +79,7 @@ def emit_event_for_ids(ids, content_type:str, projectid:int, *,
                        type:str="change", channel:str="events", sessionid:str=None):
     assert type in set(["create", "change", "delete"])
     assert isinstance(ids, collections.Iterable)
-    assert content_type, "content_type parameter is mandatory"
+    assert content_type, "'content_type' parameter is mandatory"
 
     app_name, model_name = content_type.split(".", 1)
     routing_key = "changes.project.{0}.{1}".format(projectid, app_name)

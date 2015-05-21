@@ -337,15 +337,15 @@ def test_issue_comment_event_on_existing_issue_task_and_us(client):
 
     issue_history = get_history_queryset_by_model_instance(issue)
     assert issue_history.count() == 1
-    assert issue_history[0].comment == "From GitHub:\n\nTest body"
+    assert "Test body" in issue_history[0].comment
 
     task_history = get_history_queryset_by_model_instance(task)
     assert task_history.count() == 1
-    assert task_history[0].comment == "From GitHub:\n\nTest body"
+    assert "Test body" in issue_history[0].comment
 
     us_history = get_history_queryset_by_model_instance(us)
     assert us_history.count() == 1
-    assert us_history[0].comment == "From GitHub:\n\nTest body"
+    assert "Test body" in issue_history[0].comment
 
     assert len(mail.outbox) == 3
 

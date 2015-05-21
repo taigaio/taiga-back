@@ -45,26 +45,26 @@ class HistoryEntry(models.Model):
     id = models.CharField(primary_key=True, max_length=255, unique=True,
                           editable=False, default=_generate_uuid)
 
-    user = JsonField(blank=True, default=None, null=True)
+    user = JsonField(null=True, blank=True, default=None)
     created_at = models.DateTimeField(default=timezone.now)
     type = models.SmallIntegerField(choices=HISTORY_TYPE_CHOICES)
     key = models.CharField(max_length=255, null=True, default=None, blank=True, db_index=True)
 
     # Stores the last diff
-    diff = JsonField(null=True, default=None)
+    diff = JsonField(null=True, blank=True, default=None)
 
     # Stores the last complete frozen object snapshot
-    snapshot = JsonField(null=True, default=None)
+    snapshot = JsonField(null=True, blank=True, default=None)
 
     # Stores a values of all identifiers used in
-    values = JsonField(null=True, default=None)
+    values = JsonField(null=True, blank=True, default=None)
 
     # Stores a comment
     comment = models.TextField(blank=True)
     comment_html = models.TextField(blank=True)
 
     delete_comment_date = models.DateTimeField(null=True, blank=True, default=None)
-    delete_comment_user = JsonField(blank=True, default=None, null=True)
+    delete_comment_user = JsonField(null=True, blank=True, default=None)
 
     # Flag for mark some history entries as
     # hidden. Hidden history entries are important
@@ -75,6 +75,8 @@ class HistoryEntry(models.Model):
     # Flag for mark some history entries as complete
     # snapshot. The rest are partial snapshot.
     is_snapshot = models.BooleanField(default=False)
+
+    _importing = None
 
     @cached_property
     def is_change(self):

@@ -61,4 +61,3 @@ DATABASES = {
 #GITHUB_API_URL = "https://api.github.com/"
 #GITHUB_API_CLIENT_ID = "yourgithubclientid"
 #GITHUB_API_CLIENT_SECRET = "yourgithubclientsecret"
-

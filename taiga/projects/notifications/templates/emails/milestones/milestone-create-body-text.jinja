@@ -1,11 +1,7 @@
-{% trans user=user.get_full_name()|safe,
-         changer=changer.get_full_name()|safe,
-         project=project.name|safe,
-         name=snapshot.name|safe,
-         url=resolve_front_url("taskboard", project.slug, snapshot.slug) %}
+{% trans user=user.get_full_name()|safe, changer=changer.get_full_name()|safe, project=project.name|safe, name=snapshot.name|safe, url=resolve_front_url("taskboard", project.slug, snapshot.slug) %}
 New sprint created
 Hello {{ user }}, {{ changer }} has created a new sprint on {{ project }}
-See sprint {{ subject }} at {{ url }}
+See sprint {{ name }} at {{ url }}
 
 ---
 The Taiga Team

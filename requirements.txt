@@ -1,5 +1,5 @@
-djangorestframework==2.3.13
-Django==1.7.6
+Django==1.7.8
+#djangorestframework==2.3.13    # It's not necessary since Taiga 1.7
 django-picklefield==0.3.1
 django-sampledatahelper==0.2.2
 gunicorn==19.1.1
@@ -8,7 +8,7 @@ pillow==2.5.3
 pytz==2014.4
 six==1.8.0
 amqp==1.4.6
-djmail==0.9
+djmail==0.10
 django-pgjson==0.2.2
 djorm-pgarray==1.0.4
 django-jinja==1.0.4

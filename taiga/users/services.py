@@ -21,6 +21,7 @@ This model contains a domain logic for users application.
 from django.apps import apps
 from django.db.models import Q
 from django.conf import settings
+from django.utils.translation import ugettext as _
 
 from easy_thumbnails.files import get_thumbnailer
 from easy_thumbnails.exceptions import InvalidImageFormatError
@@ -44,11 +45,11 @@ def get_and_validate_user(*, username:str, password:str) -> bool:
     qs = user_model.objects.filter(Q(username=username) |
                                    Q(email=username))
     if len(qs) == 0:
-        raise exc.WrongArguments("Username or password does not matches user.")
+        raise exc.WrongArguments(_("Username or password does not matches user."))
 
     user = qs[0]
     if not user.check_password(password):
-        raise exc.WrongArguments("Username or password does not matches user.")
+        raise exc.WrongArguments(_("Username or password does not matches user."))
 
     return user
 
@@ -80,6 +81,34 @@ def get_big_photo_url(photo):
 
 def get_big_photo_or_gravatar_url(user):
     """Get the user's big photo/gravatar url."""
-    if user:
-        return get_big_photo_url(user.photo) if user.photo else get_gravatar_url(user.email, size=settings.DEFAULT_BIG_AVATAR_SIZE)
-    return ""
+    if not user:
+        return ""
+
+    if user.photo:
+        return get_big_photo_url(user.photo)
+    else:
+        return get_gravatar_url(user.email, size=settings.DEFAULT_BIG_AVATAR_SIZE)
+
+def get_stats_for_user(user):
+    """Get the user stats"""
+
+    project_ids = user.memberships.values_list("project__id", flat=True).distinct()
+    total_num_projects = project_ids.count()
+    roles = [_(r) for r in user.memberships.values_list("role__name", flat=True)]
+    roles = list(set(roles))
+    User = apps.get_model('users', 'User')
+    total_num_contacts = User.objects.filter(memberships__project__id__in=project_ids)\
+        .exclude(id=user.id)\
+        .distinct()\
+        .count()
+
+    UserStory = apps.get_model('userstories', 'UserStory')
+    total_num_closed_userstories = UserStory.objects.filter(is_closed=True, assigned_to=user).count()
+
+    project_stats = {
+        'total_num_projects': total_num_projects,
+        'roles': roles,
+        'total_num_contacts': total_num_contacts,
+        'total_num_closed_userstories': total_num_closed_userstories,
+    }
+    return project_stats

@@ -1,8 +1,27 @@
 # Changelog #
 
 
-## 1.6.0 Abies Bifolia (2015-03-17)
+## 1.7.0 Empetrum Nigrum (unreleased)
 
+### Features
+- Make Taiga translatable (i18n support).
+- i18n.
+  - Add spanish (es) translation.
+  - Add french (fr) translation.
+  - Add finish (fi) translation.
+  - Add catalan (ca) translation.
+  - Add traditional chinese (zh-Hant) translation.
+- Add Jitsi to our supported videoconference apps list
+- Add tags field to CSV reports.
+- Improve history (and email) comments created by all the GitHub actions
+
+### Misc
+- New contrib plugin for letschat (by Δndrea Stagi)
+- Remove djangorestframework from requirements. Move useful code to core.
+- Lots of small and not so small bugfixes.
+
+
+## 1.6.0 Abies Bifolia (2015-03-17)
 
 ### Features
 - Added custom fields per project for user stories, tasks and issues.

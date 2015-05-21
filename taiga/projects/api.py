@@ -18,7 +18,7 @@ import uuid
 
 from django.db.models import signals
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from taiga.base import filters
 from taiga.base import response
@@ -30,6 +30,7 @@ from taiga.base.api.permissions import AllowAnyPermission
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.slug import slugify_uniquely
 
+from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 
@@ -51,13 +52,27 @@ from .votes.utils import attach_votescount_to_queryset
 ## Project
 ######################################################
 
-class ProjectViewSet(ModelCrudViewSet):
+class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
     serializer_class = serializers.ProjectDetailSerializer
     admin_serializer_class = serializers.ProjectDetailAdminSerializer
     list_serializer_class = serializers.ProjectSerializer
     permission_classes = (permissions.ProjectPermission, )
     filter_backends = (filters.CanViewProjectObjFilterBackend,)
     filter_fields = (('member', 'members'),)
+    order_by_fields = ("memberships__user_order",)
+
+    @list_route(methods=["POST"])
+    def bulk_update_order(self, request, **kwargs):
+        if self.request.user.is_anonymous():
+            return response.Unauthorized()
+
+        serializer = serializers.UpdateProjectOrderBulkSerializer(data=request.DATA, many=True)
+        if not serializer.is_valid():
+            return response.BadRequest(serializer.errors)
+
+        data = serializer.data
+        services.update_projects_order_in_bulk(data, "user_order", request.user)
+        return response.NoContent(data=None)
 
     def get_queryset(self):
         qs = models.Project.objects.all()
@@ -186,10 +201,10 @@ class ProjectViewSet(ModelCrudViewSet):
         template_description = request.DATA.get('template_description', None)
 
         if not template_name:
-            raise response.BadRequest("Not valid template name")
+            raise response.BadRequest(_("Not valid template name"))
 
         if not template_description:
-            raise response.BadRequest("Not valid template description")
+            raise response.BadRequest(_("Not valid template description"))
 
         template_slug = slugify_uniquely(template_name, models.ProjectTemplate)
 

@@ -19,6 +19,8 @@ from collections import namedtuple
 
 from django.db import connection
 
+from taiga.base.api import serializers
+
 Neighbor = namedtuple("Neighbor", "left right")
 
 
@@ -67,3 +69,25 @@ def get_neighbors(obj, results_set=None):
         right = None
 
     return Neighbor(left, right)
+
+
+class NeighborsSerializerMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["neighbors"] = serializers.SerializerMethodField("get_neighbors")
+
+    def serialize_neighbor(self, neighbor):
+        raise NotImplementedError
+
+    def get_neighbors(self, obj):
+        view, request = self.context.get("view", None), self.context.get("request", None)
+        if view and request:
+            queryset = view.filter_queryset(view.get_queryset())
+            left, right = get_neighbors(obj, results_set=queryset)
+        else:
+            left = right = None
+
+        return {
+            "previous": self.serialize_neighbor(left),
+            "next": self.serialize_neighbor(right)
+        }
