@@ -44,7 +44,7 @@ def test_user_retrieve(client, data):
     ]
 
     results = helper_test_http_method(client, 'get', url, None, users)
-    assert results == [401, 200, 403, 200]
+    assert results == [200, 200, 200, 200]
 
 
 def test_user_me(client, data):
@@ -57,6 +57,20 @@ def test_user_me(client, data):
 
     results = helper_test_http_method(client, 'get', url, None, users)
     assert results == [401, 200]
+
+
+def test_user_by_username(client, data):
+    url = reverse('users-by-username')
+
+    users = [
+        None,
+        data.registered_user,
+        data.other_user,
+        data.superuser,
+    ]
+
+    results = helper_test_http_method(client, 'get', "{}?username={}".format(url, data.registered_user.username), None, users)
+    assert results == [200, 200, 200, 200]
 
 
 def test_user_update(client, data):
