@@ -88,11 +88,38 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         data = request.DATA.copy()
         data['owner'] = data.get('owner', request.user.email)
 
+        # Create Project
         project_serialized = service.store_project(data)
 
-        if project_serialized is None:
+        if not project_serialized:
             raise exc.BadRequest(service.get_errors())
 
+        # Create roles
+        roles_serialized = None
+        if "roles" in data:
+            roles_serialized = service.store_roles(project_serialized.object, data)
+
+        if not roles_serialized:
+            raise exc.BadRequest(_("We needed at least one role"))
+
+        # Create memberships
+        if "memberships" in data:
+            service.store_memberships(project_serialized.object, data)
+
+        try:
+            owner_membership = project_serialized.object.memberships.get(user=project_serialized.object.owner)
+            owner_membership.is_owner = True
+            owner_membership.save()
+        except Membership.DoesNotExist:
+            Membership.objects.create(
+                project=project_serialized.object,
+                email=project_serialized.object.owner.email,
+                user=project_serialized.object.owner,
+                role=project_serialized.object.roles.all().first(),
+                is_owner=True
+            )
+
+        # Create project values choicess
         if "points" in data:
             service.store_choices(project_serialized.object, data,
                                   "points", serializers.PointsExportSerializer)
@@ -127,6 +154,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
                 "severities" in data):
             service.store_default_choices(project_serialized.object, data)
 
+        # Created custom attributes
         if "userstorycustomattributes" in data:
             service.store_custom_attributes(project_serialized.object, data,
                                             "userstorycustomattributes",
@@ -142,26 +170,12 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
                                             "issuecustomattributes",
                                             serializers.IssueCustomAttributeExportSerializer)
 
-        if "roles" in data:
-            service.store_roles(project_serialized.object, data)
-
-        if "memberships" in data:
-            service.store_memberships(project_serialized.object, data)
-
-        if project_serialized.object.memberships.filter(user=project_serialized.object.owner).count() == 0:
-            if project_serialized.object.roles.all().count() > 0:
-                Membership.objects.create(
-                    project=project_serialized.object,
-                    email=project_serialized.object.owner.email,
-                    user=project_serialized.object.owner,
-                    role=project_serialized.object.roles.all().first(),
-                    is_owner=True
-                )
-
+        # Is there any error?
         errors = service.get_errors()
         if errors:
             raise exc.BadRequest(errors)
 
+        # Importer process is OK
         response_data = project_serialized.data
         response_data['id'] = project_serialized.object.id
         headers = self.get_success_headers(response_data)

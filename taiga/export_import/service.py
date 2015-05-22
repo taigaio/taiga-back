@@ -155,7 +155,10 @@ def store_role(project, role):
 def store_roles(project, data):
     results = []
     for role in data.get("roles", []):
-        results.append(store_role(project, role))
+        serialized = store_role(project, role)
+        if serialized:
+            results.append(serialized)
+
     return results
 
 
