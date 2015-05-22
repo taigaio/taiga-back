@@ -1,7 +1,15 @@
 # Changelog #
 
+## 1.8.0 Empetrum Nigrum (unreleased)
 
-## 1.7.0 Empetrum Nigrum (unreleased)
+### Features
+- ...
+
+### Misc
+- Lots of small and not so small bugfixes.
+
+
+## 1.7.0 Empetrum Nigrum (2015-05-21)
 
 ### Features
 - Make Taiga translatable (i18n support).
