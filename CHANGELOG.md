@@ -1,6 +1,7 @@
 # Changelog #
 
-## 1.8.0 Empetrum Nigrum (unreleased)
+
+## 1.8.0 ??? (unreleased)
 
 ### Features
 - ...
