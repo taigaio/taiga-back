@@ -57,10 +57,11 @@ class UsersViewSet(ModelCrudViewSet):
     filter_backends = (MembersFilterBackend,)
 
     def get_serializer_class(self):
-        if self.action in ["partial_update", "update", "retrieve"]:
-            user = self.get_object()
+        if self.action in ["partial_update", "update", "retrieve", "by_username"]:
+            user = self.object
             if self.request.user == user:
                 return self.admin_serializer_class
+
         return self.serializer_class
 
     def create(self, *args, **kwargs):
@@ -77,6 +78,17 @@ class UsersViewSet(ModelCrudViewSet):
         else:
             serializer = self.get_serializer(self.object_list, many=True)
 
+        return response.Ok(serializer.data)
+
+    @list_route(methods=["GET"])
+    def by_username(self, request, *args, **kwargs):
+        username = request.QUERY_PARAMS.get("username", None)
+        return self.retrieve(request, username=username)
+
+    def retrieve(self, request, *args, **kwargs):
+        self.object = get_object_or_404(models.User, **kwargs)
+        self.check_permissions(request, 'retrieve', self.object)
+        serializer = self.get_serializer(self.object)
         return response.Ok(serializer.data)
 
     @detail_route(methods=["GET"])
