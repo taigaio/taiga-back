@@ -92,7 +92,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         else:
             project_ids = requesting_user.memberships.values_list("project__id", flat=True)
-            memberships = requesting_user.memberships.filter(project__id__in=project_ids)
+            memberships = user.memberships.filter(project__id__in=project_ids)
             project_ids = memberships.values_list("project__id", flat=True)
             projects = Project.objects.filter(id__in=project_ids)
             return ContactProjectDetailSerializer(projects, many=True).data
