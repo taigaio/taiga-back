@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-15 18:06+0200\n"
-"PO-Revision-Date: 2015-05-23 12:25+0000\n"
-"Last-Translator: artol <arto.leskinen@tek.fi>\n"
+"POT-Creation-Date: 2015-05-25 17:31+0200\n"
+"PO-Revision-Date: 2015-05-25 15:44+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Finnish (http://www.transifex.com/projects/p/taiga-back/"
 "language/fi/)\n"
 "MIME-Version: 1.0\n"
@@ -336,7 +336,7 @@ msgid "Error in filter params types."
 msgstr "Error in filter params types."
 
 #: taiga/base/filters.py:121 taiga/base/filters.py:210
-#: taiga/base/filters.py:266
+#: taiga/base/filters.py:259
 msgid "'project' must be an integer value."
 msgstr "'project' must be an integer value."
 
@@ -481,11 +481,15 @@ msgstr ""
 "\n"
 "Kommentti: %(comment)s"
 
-#: taiga/export_import/api.py:183
+#: taiga/export_import/api.py:103
+msgid "We needed at least one role"
+msgstr ""
+
+#: taiga/export_import/api.py:197
 msgid "Needed dump file"
 msgstr "Tarvitaan tiedosto"
 
-#: taiga/export_import/api.py:190
+#: taiga/export_import/api.py:204
 msgid "Invalid dump format"
 msgstr "Virheellinen tiedostomuoto"
 
@@ -927,12 +931,12 @@ msgstr "Tila muutettu BitBucket kommitilla"
 #, python-brace-format
 msgid ""
 "Status changed by [@{github_user_name}]({github_user_url} \"See "
-"@{github_user_name}'s GitHub profile\") from GitHub commit [#{commit_id}]"
-"({commit_url} \"See commit '#{commit_id}: {commit_message}'\")."
+"@{github_user_name}'s GitHub profile\") from GitHub commit [{commit_id}]"
+"({commit_url} \"See commit '{commit_id} - {commit_message}'\")."
 msgstr ""
-"Tila muutettu: [@{github_user_name}]({github_user_url} \"Katso "
-"@{github_user_name}'s GitHub profiili\") GitHub commit [#{commit_id}]"
-"({commit_url} \"Katso commit '#{commit_id}: {commit_message}'\")."
+"Status changed by [@{github_user_name}]({github_user_url} \"See "
+"@{github_user_name}'s GitHub profile\") from GitHub commit [{commit_id}]"
+"({commit_url} \"See commit '{commit_id} - {commit_message}'\")."
 
 #: taiga/hooks/github/event_hooks.py:108
 msgid "Status changed from GitHub commit."
@@ -947,15 +951,15 @@ msgstr "Virheellinen pyynnön tieto"
 msgid ""
 "Issue created by [@{github_user_name}]({github_user_url} \"See "
 "@{github_user_name}'s GitHub profile\") from GitHub.\n"
-"Origin GitHub issue: [{number}: {subject}]({github_url} \"Go to '{number}: "
-"{subject}'\"):\n"
+"Origin GitHub issue: [gh#{number} - {subject}]({github_url} \"Go to "
+"'gh#{number} - {subject}'\"):\n"
 "\n"
 "{description}"
 msgstr ""
 "Pyyntö luotu [@{github_user_name}]({github_user_url} \"Katso "
 "@{github_user_name}'s GitHub profile\") GitHubista.\n"
-"ALkuperäinen GitHub pyyntö: [{number}: {subject}]({github_url} \"Siirry "
-"'{number}: {subject}'\"):\n"
+"ALkuperäinen GitHub pyyntö: [gh#{number} - {subject}]({github_url} \"Siirry "
+"'gh#{number} - {subject}'\"):\n"
 "\n"
 "{description}"
 
@@ -972,15 +976,15 @@ msgstr "Virheellinen pyynnön kommentin tieto"
 msgid ""
 "Comment by [@{github_user_name}]({github_user_url} \"See "
 "@{github_user_name}'s GitHub profile\") from GitHub.\n"
-"Origin GitHub issue: [{number}: {subject}]({github_url} \"Go to '{number}: "
-"{subject}'\")\n"
+"Origin GitHub issue: [gh#{number} - {subject}]({github_url} \"Go to "
+"'gh#{number} - {subject}'\")\n"
 "\n"
 "{message}"
 msgstr ""
 "Kommentti [@{github_user_name}]({github_user_url} \"Katso "
 "@{github_user_name}'s GitHub profile\") GitHubista.\n"
-"Alkuperäinen GitHub pyyntö: [{number}: {subject}]({github_url} \"Siirry "
-"'{number}: {subject}'\")\n"
+"Alkuperäinen GitHub pyyntö: [gh#{number} - {subject}]({github_url} \"Siirry "
+"'gh#{number} - {subject}'\")\n"
 "\n"
 "{message}"
 

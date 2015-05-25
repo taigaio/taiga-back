@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-15 18:06+0200\n"
+"POT-Creation-Date: 2015-05-25 17:31+0200\n"
 "PO-Revision-Date: 2015-03-25 20:09+0100\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Taiga Dev Team <support@taiga.io>\n"
@@ -326,7 +326,7 @@ msgid "Error in filter params types."
 msgstr ""
 
 #: taiga/base/filters.py:121 taiga/base/filters.py:210
-#: taiga/base/filters.py:266
+#: taiga/base/filters.py:259
 msgid "'project' must be an integer value."
 msgstr ""
 
@@ -442,11 +442,15 @@ msgid ""
 "        "
 msgstr ""
 
-#: taiga/export_import/api.py:183
+#: taiga/export_import/api.py:103
+msgid "We needed at least one role"
+msgstr ""
+
+#: taiga/export_import/api.py:197
 msgid "Needed dump file"
 msgstr ""
 
-#: taiga/export_import/api.py:190
+#: taiga/export_import/api.py:204
 msgid "Invalid dump format"
 msgstr ""
 
@@ -786,8 +790,8 @@ msgstr ""
 #, python-brace-format
 msgid ""
 "Status changed by [@{github_user_name}]({github_user_url} \"See "
-"@{github_user_name}'s GitHub profile\") from GitHub commit [#{commit_id}]"
-"({commit_url} \"See commit '#{commit_id}: {commit_message}'\")."
+"@{github_user_name}'s GitHub profile\") from GitHub commit [{commit_id}]"
+"({commit_url} \"See commit '{commit_id} - {commit_message}'\")."
 msgstr ""
 
 #: taiga/hooks/github/event_hooks.py:108
@@ -803,8 +807,8 @@ msgstr ""
 msgid ""
 "Issue created by [@{github_user_name}]({github_user_url} \"See "
 "@{github_user_name}'s GitHub profile\") from GitHub.\n"
-"Origin GitHub issue: [{number}: {subject}]({github_url} \"Go to '{number}: "
-"{subject}'\"):\n"
+"Origin GitHub issue: [gh#{number} - {subject}]({github_url} \"Go to "
+"'gh#{number} - {subject}'\"):\n"
 "\n"
 "{description}"
 msgstr ""
@@ -822,8 +826,8 @@ msgstr ""
 msgid ""
 "Comment by [@{github_user_name}]({github_user_url} \"See "
 "@{github_user_name}'s GitHub profile\") from GitHub.\n"
-"Origin GitHub issue: [{number}: {subject}]({github_url} \"Go to '{number}: "
-"{subject}'\")\n"
+"Origin GitHub issue: [gh#{number} - {subject}]({github_url} \"Go to "
+"'gh#{number} - {subject}'\")\n"
 "\n"
 "{message}"
 msgstr ""
