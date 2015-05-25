@@ -223,17 +223,10 @@ class CanViewProjectObjFilterBackend(FilterBackend):
 
             projects_list = [membership.project_id for membership in memberships_qs]
 
-        ####
-        # TODO: Temporary fix for visualization of public projects in the interface
-            qs = qs.filter(id__in=projects_list)
+            qs = qs.filter((Q(id__in=projects_list) |
+                            Q(public_permissions__contains=["view_project"])))
         else:
-            qs = qs.none()
-
-        #     qs = qs.filter((Q(id__in=projects_list) |
-        #                     Q(public_permissions__contains=["view_project"])))
-        # else:
-        #     qs = qs.filter(anon_permissions__contains=["view_project"])
-        ####
+            qs = qs.filter(anon_permissions__contains=["view_project"])
 
         return super().filter_queryset(request, qs.distinct(), view)
 
