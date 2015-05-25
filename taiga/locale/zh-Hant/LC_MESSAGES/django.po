@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-15 18:06+0200\n"
-"PO-Revision-Date: 2015-05-19 03:11+0000\n"
-"Last-Translator: Chi-Hsun Tsai <chihsun.tsai@gmail.com>\n"
+"POT-Creation-Date: 2015-05-25 17:31+0200\n"
+"PO-Revision-Date: 2015-05-25 15:44+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Chinese Traditional (http://www.transifex.com/projects/p/"
 "taiga-back/language/zh-Hant/)\n"
 "MIME-Version: 1.0\n"
@@ -332,7 +332,7 @@ msgid "Error in filter params types."
 msgstr "過濾參數類型出錯"
 
 #: taiga/base/filters.py:121 taiga/base/filters.py:210
-#: taiga/base/filters.py:266
+#: taiga/base/filters.py:259
 msgid "'project' must be an integer value."
 msgstr "專案須為整數值"
 
@@ -483,11 +483,15 @@ msgstr ""
 "\n"
 "評論: %(comment)s"
 
-#: taiga/export_import/api.py:183
+#: taiga/export_import/api.py:103
+msgid "We needed at least one role"
+msgstr ""
+
+#: taiga/export_import/api.py:197
 msgid "Needed dump file"
 msgstr "需要的堆存檔案"
 
-#: taiga/export_import/api.py:190
+#: taiga/export_import/api.py:204
 msgid "Invalid dump format"
 msgstr "無效堆存格式"
 
@@ -925,12 +929,12 @@ msgstr "來自BitBucket 投入的狀態更新"
 #, python-brace-format
 msgid ""
 "Status changed by [@{github_user_name}]({github_user_url} \"See "
-"@{github_user_name}'s GitHub profile\") from GitHub commit [#{commit_id}]"
-"({commit_url} \"See commit '#{commit_id}: {commit_message}'\")."
+"@{github_user_name}'s GitHub profile\") from GitHub commit [{commit_id}]"
+"({commit_url} \"See commit '{commit_id} - {commit_message}'\")."
 msgstr ""
 "來自 [@{github_user_name}]({github_user_url}之狀態變更 \"參見"
-"@{github_user_name}'s GitHub profile\") 來自GitHub之投入\n"
-"[#{commit_id}]({commit_url} \"See commit '#{commit_id}: {commit_message}'\")."
+"@{github_user_name}'s GitHub profile\") 來自GitHub之投入 [{commit_id}]"
+"({commit_url} \"See commit '{commit_id} - {commit_message}'\")."
 
 #: taiga/hooks/github/event_hooks.py:108
 msgid "Status changed from GitHub commit."
@@ -945,16 +949,14 @@ msgstr "無效的問題資訊"
 msgid ""
 "Issue created by [@{github_user_name}]({github_user_url} \"See "
 "@{github_user_name}'s GitHub profile\") from GitHub.\n"
-"Origin GitHub issue: [{number}: {subject}]({github_url} \"Go to '{number}: "
-"{subject}'\"):\n"
+"Origin GitHub issue: [gh#{number} - {subject}]({github_url} \"Go to "
+"'gh#{number} - {subject}'\"):\n"
 "\n"
 "{description}"
 msgstr ""
-"來自 [@{github_user_name}]({github_user_url}提出的問題  \"參見"
-"@{github_user_name}'s GitHub profile\") 來自GitHub.\n"
-"Gibhub上原始問題 : [{number}: {subject}]({github_url} ”跳至 '{number}: "
-"{subject}'\")\n"
-"\n"
+"來自 [@{github_user_name}]({github_user_url}提出的問題 \"參見"
+"@{github_user_name}'s GitHub profile\") 來自GitHub. Github上原始問題 : "
+"[gh#{number} - {subject}]({github_url} ”跳至 'gh#{number} - {subject}'\") \n"
 "{description}"
 
 #: taiga/hooks/github/event_hooks.py:169
@@ -970,16 +972,14 @@ msgstr "無效的議題評論資訊"
 msgid ""
 "Comment by [@{github_user_name}]({github_user_url} \"See "
 "@{github_user_name}'s GitHub profile\") from GitHub.\n"
-"Origin GitHub issue: [{number}: {subject}]({github_url} \"Go to '{number}: "
-"{subject}'\")\n"
+"Origin GitHub issue: [gh#{number} - {subject}]({github_url} \"Go to "
+"'gh#{number} - {subject}'\")\n"
 "\n"
 "{message}"
 msgstr ""
 "來自 [@{github_user_name}]({github_user_url}之評論 \"參見"
-"@{github_user_name}'s GitHub profile\") 來自GitHub.\n"
-"Gibhub上原始問題 : [{number}: {subject}]({github_url} ”跳至 '{number}: "
-"{subject}'\")\n"
-"\n"
+"@{github_user_name}'s GitHub profile\") 來自GitHub. Gibhub上原始問題 : "
+"[gh#{number} - {subject}]({github_url} ”跳至 'gh#{number} - {subject}'\")\n"
 "\n"
 "{message}"
 

@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-15 18:06+0200\n"
-"PO-Revision-Date: 2015-05-25 13:27+0000\n"
+"POT-Creation-Date: 2015-05-25 17:31+0200\n"
+"PO-Revision-Date: 2015-05-25 15:50+0000\n"
 "Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/taiga-back/"
 "language/es/)\n"
@@ -350,7 +350,7 @@ msgid "Error in filter params types."
 msgstr "Error en los típos de parámetros de filtrado"
 
 #: taiga/base/filters.py:121 taiga/base/filters.py:210
-#: taiga/base/filters.py:266
+#: taiga/base/filters.py:259
 msgid "'project' must be an integer value."
 msgstr "'project' debe ser un valor entero."
 
@@ -491,11 +491,15 @@ msgstr ""
 "\n"
 "Comentario: %(comment)s"
 
-#: taiga/export_import/api.py:183
+#: taiga/export_import/api.py:103
+msgid "We needed at least one role"
+msgstr "Necesitamos al menos un rol"
+
+#: taiga/export_import/api.py:197
 msgid "Needed dump file"
 msgstr "Se necesita el fichero con los datos exportados"
 
-#: taiga/export_import/api.py:190
+#: taiga/export_import/api.py:204
 msgid "Invalid dump format"
 msgstr "Formato de fichero de exportación inválido"
 
@@ -938,12 +942,12 @@ msgstr "Estado cambiado desde un commit de BitBucket"
 #, python-brace-format
 msgid ""
 "Status changed by [@{github_user_name}]({github_user_url} \"See "
-"@{github_user_name}'s GitHub profile\") from GitHub commit [#{commit_id}]"
-"({commit_url} \"See commit '#{commit_id}: {commit_message}'\")."
+"@{github_user_name}'s GitHub profile\") from GitHub commit [{commit_id}]"
+"({commit_url} \"See commit '{commit_id} - {commit_message}'\")."
 msgstr ""
 "[@{github_user_name}]({github_user_url} \"Ver el perfil de "
 "@{github_user_name} en GitHub\") ha cambiado el estado a través del commit "
-"de GitHub [#{commit_id}]({commit_url} \"Ver commit '#{commit_id}: "
+"de GitHub [{commit_id}]({commit_url} \"Ver commit '{commit_id} - "
 "{commit_message}'\")."
 
 #: taiga/hooks/github/event_hooks.py:108
@@ -959,14 +963,14 @@ msgstr "Información inválida de Issue"
 msgid ""
 "Issue created by [@{github_user_name}]({github_user_url} \"See "
 "@{github_user_name}'s GitHub profile\") from GitHub.\n"
-"Origin GitHub issue: [{number}: {subject}]({github_url} \"Go to '{number}: "
-"{subject}'\"):\n"
+"Origin GitHub issue: [gh#{number} - {subject}]({github_url} \"Go to "
+"'gh#{number} - {subject}'\"):\n"
 "\n"
 "{description}"
 msgstr ""
 "Petición creada por [@{github_user_name}]({github_user_url} \"Ver el perfil "
 "de @{github_user_name} en GitHub\") a través de la petición de  GitHub "
-"[{number}: {subject}]({github_url} \"Ir a '{number}: {subject}'\"):\n"
+"[gh#{number} - {subject}]({github_url} \"Ir a 'gh#{number} - {subject}'\"):\n"
 "\n"
 "{description}"
 
@@ -983,14 +987,14 @@ msgstr "Información de comentario de Issue inválida"
 msgid ""
 "Comment by [@{github_user_name}]({github_user_url} \"See "
 "@{github_user_name}'s GitHub profile\") from GitHub.\n"
-"Origin GitHub issue: [{number}: {subject}]({github_url} \"Go to '{number}: "
-"{subject}'\")\n"
+"Origin GitHub issue: [gh#{number} - {subject}]({github_url} \"Go to "
+"'gh#{number} - {subject}'\")\n"
 "\n"
 "{message}"
 msgstr ""
 "Commentario de [@{github_user_name}]({github_user_url} \"Ver el perfil de "
 "GitHub de @{github_user_name}\") a través de la petición de Github "
-"[{number}: {subject}]({github_url} \"Ir a '{number}: {subject}'\")\n"
+"[gh#{number} - {subject}]({github_url} \"Ir a 'gh#{number} - {subject}'\")\n"
 "\n"
 "{message}"
 
