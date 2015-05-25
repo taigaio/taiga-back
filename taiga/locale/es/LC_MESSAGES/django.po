@@ -6,13 +6,14 @@
 # David Barragán <bameda@gmail.com>, 2015
 # Esther Moreno <soyesthermoreno@yahoo.es>, 2015
 # gustavodiazjaimes <gustavodiazjaimes@gmail.com>, 2015
+# Hector Colina <hcolina@gmail.com>, 2015
 # Taiga Dev Team <support@taiga.io>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-05-15 18:06+0200\n"
-"PO-Revision-Date: 2015-05-16 14:05+0000\n"
+"PO-Revision-Date: 2015-05-25 13:27+0000\n"
 "Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/taiga-back/"
 "language/es/)\n"
@@ -113,7 +114,7 @@ msgstr ""
 #, python-format
 msgid "Datetime has wrong format. Use one of these formats instead: %s"
 msgstr ""
-"La fecha y hora posee un formato inválido. Utiliza alguno de los siguientes "
+"La fecha y hora poseen un formato inválido. Utiliza alguno de los siguientes "
 "formatos: %s"
 
 #: taiga/base/api/fields.py:771
