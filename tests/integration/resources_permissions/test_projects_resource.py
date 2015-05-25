@@ -97,9 +97,9 @@ def test_project_retrieve(client, data):
     ]
 
     results = helper_test_http_method(client, 'get', public_url, None, users)
-    assert results == [404, 404, 404, 200]
+    assert results == [200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private1_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private2_url, None, users)
     assert results == [401, 403, 200, 200]
 
@@ -140,21 +140,21 @@ def test_project_list(client, data):
 
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 0
+    assert len(projects_data) == 2
     assert response.status_code == 200
 
     client.login(data.registered_user)
 
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 0
+    assert len(projects_data) == 2
     assert response.status_code == 200
 
     client.login(data.project_member_with_perms)
 
     response = client.get(url)
     projects_data = json.loads(response.content.decode('utf-8'))
-    assert len(projects_data) == 2
+    assert len(projects_data) == 3
     assert response.status_code == 200
 
     client.login(data.project_owner)
@@ -191,9 +191,9 @@ def test_project_action_stats(client, data):
         data.project_owner
     ]
     results = helper_test_http_method(client, 'get', public_url, None, users)
-    assert results == [404, 404, 404, 200]
+    assert results == [200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private1_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private2_url, None, users)
     assert results == [404, 404, 200, 200]
 
@@ -210,9 +210,9 @@ def test_project_action_star(client, data):
         data.project_owner
     ]
     results = helper_test_http_method(client, 'post', public_url, None, users)
-    assert results == [404, 404, 404, 200]
+    assert results == [401, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private1_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [401, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private2_url, None, users)
     assert results == [404, 404, 200, 200]
 
@@ -229,9 +229,9 @@ def test_project_action_unstar(client, data):
         data.project_owner
     ]
     results = helper_test_http_method(client, 'post', public_url, None, users)
-    assert results == [404, 404, 404, 200]
+    assert results == [401, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private1_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [401, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private2_url, None, users)
     assert results == [404, 404, 200, 200]
 
@@ -248,9 +248,9 @@ def test_project_action_issues_stats(client, data):
         data.project_owner
     ]
     results = helper_test_http_method(client, 'get', public_url, None, users)
-    assert results == [404, 404, 404, 200]
+    assert results == [200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private1_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private2_url, None, users)
     assert results == [404, 404, 200, 200]
 
@@ -267,9 +267,9 @@ def test_project_action_issues_filters_data(client, data):
         data.project_owner
     ]
     results = helper_test_http_method(client, 'get', public_url, None, users)
-    assert results == [404, 404, 404, 200]
+    assert results == [200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private1_url, None, users)
-    assert results == [404, 404, 200, 200]
+    assert results == [200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private2_url, None, users)
     assert results == [404, 404, 200, 200]
 
@@ -288,9 +288,9 @@ def test_project_action_fans(client, data):
     ]
 
     results = helper_test_http_method_and_count(client, 'get', public_url, None, users)
-    assert results == [(404, 1), (404, 1), (404, 1), (404, 1), (200, 2)]
+    assert results == [(200, 2), (200, 2), (200, 2), (200, 2), (200, 2)]
     results = helper_test_http_method_and_count(client, 'get', private1_url, None, users)
-    assert results == [(404, 1), (404, 1), (404, 1), (200, 2), (200, 2)]
+    assert results == [(200, 2), (200, 2), (200, 2), (200, 2), (200, 2)]
     results = helper_test_http_method_and_count(client, 'get', private2_url, None, users)
     assert results == [(404, 1), (404, 1), (404, 1), (200, 2), (200, 2)]
 
@@ -336,9 +336,9 @@ def test_project_action_create_template(client, data):
     })
 
     results = helper_test_http_method(client, 'post', public_url, template_data, users)
-    assert results == [404, 404, 404, 404, 403, 201]
+    assert results == [401, 403, 403, 403, 403, 201]
     results = helper_test_http_method(client, 'post', private1_url, template_data, users)
-    assert results == [404, 404, 404, 403, 403, 201]
+    assert results == [401, 403, 403, 403, 403, 201]
     results = helper_test_http_method(client, 'post', private2_url, template_data, users)
     assert results == [404, 404, 404, 403, 403, 201]
 
@@ -383,10 +383,10 @@ def test_regenerate_userstories_csv_uuid(client, data):
         data.project_owner
     ]
     results = helper_test_http_method(client, 'post', public_url, None, users)
-    assert results == [404, 404, 404, 200]
+    assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private1_url, None, users)
-    assert results == [404, 404, 403, 200]
+    assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private2_url, None, users)
     assert results == [404, 404, 403, 200]
@@ -404,10 +404,10 @@ def test_regenerate_tasks_csv_uuid(client, data):
         data.project_owner
     ]
     results = helper_test_http_method(client, 'post', public_url, None, users)
-    assert results == [404, 404, 404, 200]
+    assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private1_url, None, users)
-    assert results == [404, 404, 403, 200]
+    assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private2_url, None, users)
     assert results == [404, 404, 403, 200]
@@ -425,10 +425,10 @@ def test_regenerate_issues_csv_uuid(client, data):
         data.project_owner
     ]
     results = helper_test_http_method(client, 'post', public_url, None, users)
-    assert results == [404, 404, 404, 200]
+    assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private1_url, None, users)
-    assert results == [404, 404, 403, 200]
+    assert results == [401, 403, 403, 200]
 
     results = helper_test_http_method(client, 'post', private2_url, None, users)
     assert results == [404, 404, 403, 200]
