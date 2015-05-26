@@ -271,6 +271,7 @@ class MembershipAdminSerializer(MembershipSerializer):
 class ProjectMembershipSerializer(serializers.ModelSerializer):
     role_name = serializers.CharField(source='role.name', required=False, i18n=True)
     full_name = serializers.CharField(source='user.get_full_name', required=False)
+    username = serializers.CharField(source='user.username', required=False)
     color = serializers.CharField(source='user.color', required=False)
     photo = serializers.SerializerMethodField("get_photo")
 
