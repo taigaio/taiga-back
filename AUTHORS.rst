@@ -23,4 +23,5 @@ answer newbie questions, and generally made taiga that much better:
 - Hector Colina <hcolina@gmail.com>
 - Julien Palard
 - Joe Letts
+- Chris Wilson <chris.wilson@aridhia.com>
 
