@@ -189,12 +189,13 @@ def test_list_contacts_private_projects(client):
 
     url = reverse('users-contacts', kwargs={"pk": user_1.pk})
     response = client.get(url, content_type="application/json")
-    assert response.status_code == 404
+    assert response.status_code == 200
+    response_content = json.loads(response.content.decode("utf-8"))
+    assert len(response_content) == 0
 
     client.login(user_1)
     response = client.get(url, content_type="application/json")
     assert response.status_code == 200
-
     response_content = json.loads(response.content.decode("utf-8"))
     assert len(response_content) == 1
     assert response_content[0]["id"] == user_2.id
@@ -234,6 +235,5 @@ def test_list_contacts_public_projects(client):
     assert response.status_code == 200
 
     response_content = json.loads(response.content.decode("utf-8"))
-    assert len(response_content) == 2
-    assert response_content[0]["id"] == user_1.id
-    assert response_content[1]["id"] == user_2.id
+    assert len(response_content) == 1
+    assert response_content[0]["id"] == user_2.id
