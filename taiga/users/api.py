@@ -93,12 +93,11 @@ class UsersViewSet(ModelCrudViewSet):
 
     @detail_route(methods=["GET"])
     def contacts(self, request, *args, **kwargs):
-        user = self.get_object()
+        user = get_object_or_404(models.User, **kwargs)
         self.check_permissions(request, 'contacts', user)
 
-        self.object_list = user_filters.ContactsFilterBackend().filter_queryset(request,
-                                                                  self.get_queryset(),
-                                                                  self)
+        self.object_list = user_filters.ContactsFilterBackend().filter_queryset(
+            user, request, self.get_queryset(), self)
 
         page = self.paginate_queryset(self.object_list)
         if page is not None:
@@ -109,8 +108,8 @@ class UsersViewSet(ModelCrudViewSet):
         return response.Ok(serializer.data)
 
     @detail_route(methods=["GET"])
-    def stats(self, request, pk=None):
-        user = self.get_object()
+    def stats(self, request, *args, **kwargs):
+        user = get_object_or_404(models.User, **kwargs)
         self.check_permissions(request, "stats", user)
         return response.Ok(services.get_stats_for_user(user))
 

@@ -22,25 +22,23 @@ from taiga.base.filters import PermissionBasedFilterBackend
 class ContactsFilterBackend(PermissionBasedFilterBackend):
     permission = "view_project"
 
-    def filter_queryset(self, request, queryset, view):
+    def filter_queryset(self, user, request, queryset, view):
         qs = queryset.filter(is_active=True)
+        Membership = apps.get_model('projects', 'Membership')
+        memberships_qs = Membership.objects.filter(user=user)
 
         # Authenticated
         if request.user.is_authenticated():
             # if super user we don't need to filter anything
             if not request.user.is_superuser:
-                Membership = apps.get_model('projects', 'Membership')
-                memberships_qs = Membership.objects.filter(user=request.user)
                 memberships_qs = memberships_qs.filter(Q(role__permissions__contains=[self.permission]) |
                                                        Q(is_owner=True))
 
-                projects_list = [membership.project_id for membership in memberships_qs]
-                qs = qs.filter(memberships__project_id__in=projects_list)
-
-            qs = qs.exclude(id=request.user.id)
-
         # Anonymous
         else:
-            qs = qs.filter(memberships__project__anon_permissions__contains=[self.permission])
+            memberships_qs = memberships_qs.filter(project__anon_permissions__contains=[self.permission])
 
+        projects_list = [membership.project_id for membership in memberships_qs]
+        qs = qs.filter(memberships__project_id__in=projects_list)
+        qs = qs.exclude(id=user.id)
         return qs.distinct()
