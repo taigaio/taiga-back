@@ -305,6 +305,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     my_permissions = serializers.SerializerMethodField("get_my_permissions")
     i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
     tags_colors = TagsColorsField(required=False)
+    users = serializers.SerializerMethodField("get_users")
     total_closed_milestones = serializers.SerializerMethodField("get_total_closed_milestones")
 
     class Meta:
@@ -326,6 +327,9 @@ class ProjectSerializer(serializers.ModelSerializer):
         if "request" in self.context:
             return is_project_owner(self.context["request"].user, obj)
         return False
+
+    def get_users(self, obj):
+        return UserSerializer(obj.members.all(), many=True).data
 
     def get_total_closed_milestones(self, obj):
         return obj.milestones.filter(closed=True).count()
@@ -351,7 +355,6 @@ class ProjectDetailSerializer(ProjectSerializer):
     issue_types = IssueTypeSerializer(many=True, required=False)
     priorities = PrioritySerializer(many=True, required=False)               # Issues
     severities = SeveritySerializer(many=True, required=False)
-    users = serializers.SerializerMethodField("get_users")
     userstory_custom_attributes = UserStoryCustomAttributeSerializer(source="userstorycustomattributes",
                                                                      many=True, required=False)
     task_custom_attributes = TaskCustomAttributeSerializer(source="taskcustomattributes",
@@ -371,8 +374,6 @@ class ProjectDetailSerializer(ProjectSerializer):
         serializer = ProjectRoleSerializer(obj.roles.all(), many=True)
         return serializer.data
 
-    def get_users(self, obj):
-        return UserSerializer(obj.members.all(), many=True).data
 
 class ProjectDetailAdminSerializer(ProjectDetailSerializer):
     class Meta:
