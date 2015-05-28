@@ -21,7 +21,7 @@ from markdown.treeprocessors import Treeprocessor
 
 from markdown.util import etree
 
-from taiga.front import resolve
+from taiga.front.templatetags.functions import resolve
 from taiga.base.utils.slug import slugify
 
 import re

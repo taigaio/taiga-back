@@ -21,7 +21,7 @@ import markdown
 
 from markdown.treeprocessors import Treeprocessor
 
-from taiga.front import resolve
+from taiga.front.templatetags.functions import resolve
 
 
 class TargetBlankLinkExtension(markdown.Extension):
