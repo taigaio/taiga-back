@@ -36,11 +36,6 @@ class Timeline(models.Model):
     data_content_type = models.ForeignKey(ContentType, related_name="data_timelines")
     created = models.DateTimeField(default=timezone.now)
 
-    def save(self, *args, **kwargs):
-        if self.id:
-            raise ValidationError("Not modify allowed for timeline entries")
-        return super().save(*args, **kwargs)
-
     class Meta:
         index_together = [('content_type', 'object_id', 'namespace'), ]
 
