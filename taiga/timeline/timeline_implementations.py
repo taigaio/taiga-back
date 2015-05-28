@@ -75,7 +75,11 @@ def task_timeline(instance, extra_data={}):
     result ={
         "task": service.extract_task_info(instance),
         "project": service.extract_project_info(instance.project),
+        "userstory": None,
     }
+    if instance.user_story:
+        result["userstory"] = service.extract_userstory_info(instance.user_story)
+        
     result.update(extra_data)
     return result
 

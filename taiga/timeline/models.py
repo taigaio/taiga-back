@@ -37,8 +37,8 @@ class Timeline(models.Model):
     created = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):
-        if self.id:
-            raise ValidationError("Not modify allowed for timeline entries")
+        #if self.id:
+        #    raise ValidationError("Not modify allowed for timeline entries")
         return super().save(*args, **kwargs)
 
     class Meta:
