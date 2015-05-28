@@ -25,11 +25,14 @@ urls = {
     "cancel-account": "/cancel-account/{0}",
     "invitation": "/invitation/{0}",
 
+    "user": "/profile/{}",
+
     "project": "/project/{0}",
 
     "backlog": "/project/{0}/backlog/",
     "taskboard": "/project/{0}/taskboard/{1}",
     "kanban": "/project/{0}/kanban/",
+
     "userstory": "/project/{0}/us/{1}",
     "task": "/project/{0}/task/{1}",
 
@@ -37,6 +40,8 @@ urls = {
     "issue": "/project/{0}/issue/{1}",
 
     "wiki": "/project/{0}/wiki/{1}",
+
+    "team": "/project/{0}/team/",
 
     "project-admin": "/project/{0}/admin/project-profile/details",
 }
