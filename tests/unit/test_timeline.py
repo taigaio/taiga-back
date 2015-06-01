@@ -57,13 +57,6 @@ def test_add_to_objects_timeline():
             service.push_to_timeline(None, project, "test")
 
 
-def test_modify_created_timeline_entry():
-    timeline = Timeline()
-    timeline.pk = 3
-    with pytest.raises(ValidationError):
-        timeline.save()
-
-
 def test_get_impl_key_from_model():
     assert service._get_impl_key_from_model(Timeline, "test") == "timeline.timeline.test"
     with pytest.raises(Exception):

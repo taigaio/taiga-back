@@ -15,30 +15,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.apps import apps
-from django.db.models import Q
 
 from taiga.base.filters import PermissionBasedFilterBackend
+from . import services
 
 class ContactsFilterBackend(PermissionBasedFilterBackend):
-    permission = "view_project"
-
     def filter_queryset(self, user, request, queryset, view):
         qs = queryset.filter(is_active=True)
-        Membership = apps.get_model('projects', 'Membership')
-        memberships_qs = Membership.objects.filter(user=user)
-
-        # Authenticated
-        if request.user.is_authenticated():
-            # if super user we don't need to filter anything
-            if not request.user.is_superuser:
-                memberships_qs = memberships_qs.filter(Q(role__permissions__contains=[self.permission]) |
-                                                       Q(is_owner=True))
-
-        # Anonymous
-        else:
-            memberships_qs = memberships_qs.filter(project__anon_permissions__contains=[self.permission])
-
-        projects_list = [membership.project_id for membership in memberships_qs]
-        qs = qs.filter(memberships__project_id__in=projects_list)
+        project_ids = services.get_visible_project_ids(user, request.user)
+        qs = qs.filter(memberships__project_id__in=project_ids)
         qs = qs.exclude(id=user.id)
         return qs.distinct()

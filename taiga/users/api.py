@@ -111,7 +111,7 @@ class UsersViewSet(ModelCrudViewSet):
     def stats(self, request, *args, **kwargs):
         user = get_object_or_404(models.User, **kwargs)
         self.check_permissions(request, "stats", user)
-        return response.Ok(services.get_stats_for_user(user))
+        return response.Ok(services.get_stats_for_user(user, request.user))
 
     @list_route(methods=["POST"])
     def password_recovery(self, request, pk=None):
