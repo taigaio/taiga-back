@@ -118,6 +118,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     lang = models.CharField(max_length=20, null=True, blank=True, default="",
                             verbose_name=_("default language"))
+    theme = models.CharField(max_length=100, null=True, blank=True, default="",
+                            verbose_name=_("default theme"))
     timezone = models.CharField(max_length=20, null=True, blank=True, default="",
                                 verbose_name=_("default timezone"))
     colorize_tags = models.BooleanField(null=False, blank=True, default=False,
@@ -167,6 +169,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.color = ""
         self.bio = ""
         self.lang = ""
+        self.theme = ""
         self.timezone = ""
         self.colorize_tags = True
         self.token = None
