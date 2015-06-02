@@ -333,3 +333,26 @@ def test_valid_concurrent_save_for_task_different_fields(client):
         data = {"version": 1, "description": "test 2"}
         response = client.patch(url, json.dumps(data), content_type="application/json")
         assert response.status_code == 200
+
+
+
+def test_invalid_save_without_version_parameter(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    client.login(user)
+
+    mock_path = "taiga.projects.tasks.api.TaskViewSet.pre_conditions_on_save"
+    with patch(mock_path):
+        url = reverse("tasks-list")
+        data = {"subject": "test",
+                "project": project.id,
+                "status": f.TaskStatusFactory.create(project=project).id}
+        response = client.json.post(url, json.dumps(data))
+        assert response.status_code == 201
+
+        task_id = json.loads(response.content)["id"]
+        url = reverse("tasks-detail", args=(task_id,))
+        data = {"subject": "test 1"}
+        response = client.patch(url, json.dumps(data), content_type="application/json")
+        assert response.status_code == 400
