@@ -362,9 +362,9 @@ class ProjectDetailSerializer(ProjectSerializer):
 
     def get_memberships(self, obj):
         qs = obj.memberships.filter(user__isnull=False)
-        qs = qs.order_by('user__full_name', 'user__username')
+        qs = qs.extra(select={"complete_user_name":"concat(full_name, username)"})
+        qs = qs.order_by("complete_user_name")
         qs = qs.select_related("role", "user")
-
         serializer = ProjectMembershipSerializer(qs, many=True)
         return serializer.data
 
