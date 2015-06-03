@@ -55,7 +55,7 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
     retrieve_exclude_filters = (filters.TagsFilter,)
     filter_fields = ["project", "milestone", "milestone__isnull", "status",
         "is_archived", "status__is_archived", "assigned_to",
-        "status__is_closed", "watchers"]
+        "status__is_closed", "watchers", "is_closed"]
     order_by_fields = ["backlog_order", "sprint_order", "kanban_order"]
 
     # Specific filter used for filtering neighbor user stories
