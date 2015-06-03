@@ -43,6 +43,7 @@ class TimelineDataJsonField(serializers.WritableField):
                     "photo": get_photo_or_gravatar_url(user),
                     "big_photo": get_big_photo_or_gravatar_url(user),
                     "username": user.username,
+                    "date_joined": user.date_joined,
                 }
             except User.DoesNotExist:
                 pass

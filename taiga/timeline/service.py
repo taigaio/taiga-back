@@ -57,11 +57,15 @@ def _add_to_object_timeline(obj:object, instance:object, event_type:str, namespa
     event_type_key = _get_impl_key_from_model(instance.__class__, event_type)
     impl = _timeline_impl_map.get(event_type_key, None)
 
+    project = None
+    if hasattr(instance, "project"):
+        project = instance.project
+
     Timeline.objects.create(
         content_object=obj,
         namespace=namespace,
         event_type=event_type_key,
-        project=instance.project,
+        project=project,
         data=impl(instance, extra_data=extra_data),
         data_content_type = ContentType.objects.get_for_model(instance.__class__),
     )
@@ -96,8 +100,8 @@ def get_timeline(obj, namespace=None):
 
 
 def filter_timeline_for_user(timeline, user):
-    # Filtering public projects
-    tl_filter = Q(project__is_private=False)
+    # Filtering entities from public projects or entities without project
+    tl_filter = Q(project__is_private=False) | Q(project=None)
 
     # Filtering private project with some public parts
     content_types = {

@@ -34,10 +34,11 @@ def _push_to_timeline(*args, **kwargs):
 
 
 def _push_to_timelines(project, user, obj, event_type, extra_data={}):
+    if project is not None:
     # Project timeline
-    _push_to_timeline(project, obj, event_type,
-        namespace=build_project_namespace(project),
-        extra_data=extra_data)
+        _push_to_timeline(project, obj, event_type,
+            namespace=build_project_namespace(project),
+            extra_data=extra_data)
 
     # User timeline
     _push_to_timeline(user, obj, event_type,
@@ -56,18 +57,18 @@ def _push_to_timelines(project, user, obj, event_type, extra_data={}):
     if watchers:
         related_people |= watchers
 
-    # Team
-    team_members_ids = project.memberships.filter(user__isnull=False).values_list("id", flat=True)
-    team = User.objects.filter(id__in=team_members_ids)
-    related_people |= team
+    if project is not None:
+        # Team
+        team_members_ids = project.memberships.filter(user__isnull=False).values_list("id", flat=True)
+        team = User.objects.filter(id__in=team_members_ids)
+        related_people |= team
+        related_people = related_people.distinct()
 
-    related_people = related_people.distinct()
+        _push_to_timeline(related_people, obj, event_type,
+            namespace=build_user_namespace(user),
+            extra_data=extra_data)
 
-    _push_to_timeline(related_people, obj, event_type,
-        namespace=build_user_namespace(user),
-        extra_data=extra_data)
-
-    #Related people: team members
+        #Related people: team members
 
 
 def on_new_history_entry(sender, instance, created, **kwargs):
@@ -122,3 +123,10 @@ def create_membership_push_to_timeline(sender, instance, **kwargs):
 def delete_membership_push_to_timeline(sender, instance, **kwargs):
     if instance.user:
         _push_to_timelines(instance.project, instance.user, instance, "delete")
+
+
+def create_user_push_to_timeline(sender, instance, created, **kwargs):
+    if created:
+        project = None
+        user = instance
+        _push_to_timelines(project, user, user, "create")
