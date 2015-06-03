@@ -25,22 +25,22 @@
 
 from markdown.extensions import Extension
 from markdown.inlinepatterns import Pattern
-from markdown.util import etree
+from markdown.util import etree, AtomicString
 
 from taiga.users.models import User
 
 
 class MentionsExtension(Extension):
     def extendMarkdown(self, md, md_globals):
-        MENTION_RE = r'(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9-]+)'
+        MENTION_RE = r'(@)([a-z0-9.-\.]+)'
         mentionsPattern = MentionsPattern(MENTION_RE)
         mentionsPattern.md = md
-        md.inlinePatterns.add('mentions', mentionsPattern, '_begin')
+        md.inlinePatterns.add('mentions', mentionsPattern, '_end')
 
 
 class MentionsPattern(Pattern):
     def handleMatch(self, m):
-        username = m.group(2)
+        username = m.group(3)
 
         try:
             user = User.objects.get(username=username)
@@ -49,10 +49,11 @@ class MentionsPattern(Pattern):
 
         url = "/profile/{}".format(username)
 
-        link_text = "&commat;{}".format(username)
+        link_text = "@{}".format(username)
 
         a = etree.Element('a')
-        a.text = link_text
+        a.text = AtomicString(link_text)
+
         a.set('href', url)
         a.set('title', user.get_full_name())
         a.set('class', "mention")
