@@ -121,7 +121,7 @@
 
             .headerContent {
                 text-align: center;
-                color:#b8b8b8 !important;
+                color:#8D8D8D !important;
                 font-family: 'Open Sans', Arial, Helvetica;
                 font-size:14px;
                 margin-bottom:16px;
@@ -418,14 +418,14 @@
                                                         </tr>
                                                         {% for entry in history_entries%}
                                                             {% if entry.comment %}
-                                                        <tr>
-                                                            <td colspan="2">
-                                                                {% trans comment=mdrender(project, entry.comment) %}
-                                                                <h3>comment:</h3>
-                                                                <p>{{ comment }}</p>
-                                                                {% endtrans %}
-                                                            </td>
-                                                        </tr>
+                                                            <tr>
+                                                                <td colspan="2">
+                                                                    {% trans comment=mdrender(project, entry.comment) %}
+                                                                    <h3>comment:</h3>
+                                                                    <p>{{ comment }}</p>
+                                                                    {% endtrans %}
+                                                                </td>
+                                                            </tr>
                                                             {% endif %}
                                                             {% set changed_fields = entry.values_diff %}
                                                             {% if changed_fields %}
