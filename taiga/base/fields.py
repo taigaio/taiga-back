@@ -49,6 +49,9 @@ class I18NJsonField(JsonField):
 
     def translate_values(self, d):
         i18n_d = {}
+        if d is None:
+            return d
+
         for key, value in d.items():
             if isinstance(value, dict):
                 i18n_d[key] = self.translate_values(value)
