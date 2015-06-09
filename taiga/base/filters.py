@@ -364,6 +364,26 @@ class TagsFilter(FilterBackend):
         return super().filter_queryset(request, queryset, view)
 
 
+class StatusFilter(FilterBackend):
+    def __init__(self, filter_name='status'):
+        self.filter_name = filter_name
+
+    def _get_status_queryparams(self, params):
+        status = params.get(self.filter_name, None)
+        if status is not None:
+            status = set([x.strip() for x in status.split(",")])
+            return list(status)
+
+        return None
+
+    def filter_queryset(self, request, queryset, view):
+        query_status = self._get_status_queryparams(request.QUERY_PARAMS)
+        if query_status:
+            queryset = queryset.filter(status__in=query_status)
+
+        return super().filter_queryset(request, queryset, view)
+
+
 class QFilter(FilterBackend):
     def filter_queryset(self, request, queryset, view):
         q = request.QUERY_PARAMS.get('q', None)
