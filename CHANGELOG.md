@@ -4,6 +4,8 @@
 ## 1.8.0 ??? (unreleased)
 
 ### Features
+- Improve timeline resource.
+- Add sitemap of taiga-front (the web client).
 - Search by reference (thanks to [@artlepool](https://github.com/artlepool))
 - Add call 'by_username' to the API resource User
 
