@@ -49,7 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
         # IMPORTANT: Maintain the UserAdminSerializer Meta up to date
         # with this info (including there the email)
         fields = ("id", "username", "full_name", "full_name_display",
-                  "color", "bio", "lang", "timezone", "is_active",
+                  "color", "bio", "lang", "theme", "timezone", "is_active",
                   "photo", "big_photo", "roles", "projects_with_me")
         read_only_fields = ("id",)
 
@@ -103,7 +103,7 @@ class UserAdminSerializer(UserSerializer):
         # IMPORTANT: Maintain the UserSerializer Meta up to date
         # with this info (including here the email)
         fields = ("id", "username", "full_name", "full_name_display", "email",
-                  "color", "bio", "lang", "timezone", "is_active", "photo",
+                  "color", "bio", "lang", "theme", "timezone", "is_active", "photo",
                   "big_photo")
         read_only_fields = ("id", "email")
 

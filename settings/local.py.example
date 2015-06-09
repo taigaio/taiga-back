@@ -62,3 +62,8 @@ DATABASES = {
 #GITHUB_API_URL = "https://api.github.com/"
 #GITHUB_API_CLIENT_ID = "yourgithubclientid"
 #GITHUB_API_CLIENT_SECRET = "yourgithubclientsecret"
+
+# SITEMAP
+# If is True /front/sitemap.xml show a valid sitemap of taiga-front client
+#FRONT_SITEMAP_ENABLED = False
+#FRONT_SITEMAP_CACHE_TIMEOUT = 24*60*60  # In second

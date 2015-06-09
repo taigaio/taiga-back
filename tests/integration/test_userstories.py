@@ -214,6 +214,25 @@ def test_archived_filter(client):
     assert len(json.loads(response.content)) == 1
 
 
+def test_filter_by_multiple_status(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.UserStoryFactory.create(project=project)
+    us1 = f.UserStoryFactory.create(project=project)
+    us2 = f.UserStoryFactory.create(project=project)
+
+    client.login(user)
+
+    url = reverse("userstories-list")
+    url = "{}?status={},{}".format(reverse("userstories-list"), us1.status.id, us2.status.id)
+
+
+    data = {}
+    response = client.get(url, data)
+    assert len(json.loads(response.content)) == 2
+
+
 def test_get_total_points(client):
     project = f.ProjectFactory.create()
 

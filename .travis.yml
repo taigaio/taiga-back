@@ -17,7 +17,6 @@ notifications:
   email:
     recipients:
       - jespinog@gmail.com
-      - andrei.antoukh@gmail.com
       - bameda@dbarragan.com
     on_success: change
     on_failure: change

@@ -89,21 +89,51 @@ def get_big_photo_or_gravatar_url(user):
     else:
         return get_gravatar_url(user.email, size=settings.DEFAULT_BIG_AVATAR_SIZE)
 
-def get_stats_for_user(user):
-    """Get the user stats"""
 
-    project_ids = user.memberships.values_list("project__id", flat=True).distinct()
-    total_num_projects = project_ids.count()
-    roles = [_(r) for r in user.memberships.values_list("role__name", flat=True)]
+def get_visible_project_ids(from_user, by_user):
+    """Calculate the project_ids from one user visible by another"""
+    required_permissions = ["view_project"]
+    #Or condition for membership filtering, the basic one is the access to projects allowing anonymous visualization
+    member_perm_conditions = Q(project__anon_permissions__contains=required_permissions)
+
+    # Authenticated
+    if by_user.is_authenticated():
+        #Calculating the projects wich from_user user is member
+        by_user_project_ids = by_user.memberships.values_list("project__id", flat=True)
+        #Adding to the condition two OR situations:
+        #- The from user has a role that allows access to the project
+        #- The to user is the owner
+        member_perm_conditions |= \
+            Q(project__id__in=by_user_project_ids, role__permissions__contains=required_permissions) |\
+            Q(project__id__in=by_user_project_ids, is_owner=True)
+
+    Membership = apps.get_model('projects', 'Membership')
+    #Calculating the user memberships adding the permission filter for the by user
+    memberships_qs = Membership.objects.filter(member_perm_conditions, user=from_user)
+    project_ids = memberships_qs.values_list("project__id", flat=True)
+    return project_ids
+
+
+def get_stats_for_user(from_user, by_user):
+    """Get the user stats"""
+    project_ids = get_visible_project_ids(from_user, by_user)
+
+    total_num_projects = len(project_ids)
+
+    roles = [_(r) for r in from_user.memberships.filter(project__id__in=project_ids).values_list("role__name", flat=True)]
     roles = list(set(roles))
+
     User = apps.get_model('users', 'User')
     total_num_contacts = User.objects.filter(memberships__project__id__in=project_ids)\
-        .exclude(id=user.id)\
+        .exclude(id=from_user.id)\
         .distinct()\
         .count()
 
     UserStory = apps.get_model('userstories', 'UserStory')
-    total_num_closed_userstories = UserStory.objects.filter(is_closed=True, assigned_to=user).count()
+    total_num_closed_userstories = UserStory.objects.filter(
+        is_closed=True,
+        project__id__in=project_ids,
+        assigned_to=from_user).count()
 
     project_stats = {
         'total_num_projects': total_num_projects,

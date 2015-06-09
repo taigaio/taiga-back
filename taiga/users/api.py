@@ -17,7 +17,7 @@
 import uuid
 
 from django.apps import apps
-from django.db.models import Q
+from django.db.models import Q, F
 from django.utils.translation import ugettext as _
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -97,7 +97,8 @@ class UsersViewSet(ModelCrudViewSet):
         self.check_permissions(request, 'contacts', user)
 
         self.object_list = user_filters.ContactsFilterBackend().filter_queryset(
-            user, request, self.get_queryset(), self)
+            user, request, self.get_queryset(), self).extra(
+            select={"complete_user_name":"concat(full_name, username)"}).order_by("complete_user_name")
 
         page = self.paginate_queryset(self.object_list)
         if page is not None:
@@ -111,7 +112,7 @@ class UsersViewSet(ModelCrudViewSet):
     def stats(self, request, *args, **kwargs):
         user = get_object_or_404(models.User, **kwargs)
         self.check_permissions(request, "stats", user)
-        return response.Ok(services.get_stats_for_user(user))
+        return response.Ok(services.get_stats_for_user(user, request.user))
 
     @list_route(methods=["POST"])
     def password_recovery(self, request, pk=None):
