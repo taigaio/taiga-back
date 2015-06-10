@@ -8,6 +8,9 @@
 - Add sitemap of taiga-front (the web client).
 - Search by reference (thanks to [@artlepool](https://github.com/artlepool))
 - Add call 'by_username' to the API resource User
+- i18n.
+  - Add deutsch (de) translation.
+  - Add nederlands (nl) translation.
 
 ### Misc
 - Lots of small and not so small bugfixes.
