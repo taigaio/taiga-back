@@ -85,7 +85,7 @@ class GenericAPIView(pagination.PaginationMixin,
                                 many=many, partial=partial, context=context)
 
 
-    def filter_queryset(self, queryset):
+    def filter_queryset(self, queryset, filter_backends=None):
         """
         Given a queryset, filter it with whichever filter backend is in use.
 
@@ -94,7 +94,10 @@ class GenericAPIView(pagination.PaginationMixin,
         method if you want to apply the configured filtering backend to the
         default queryset.
         """
-        for backend in self.get_filter_backends():
+        #NOTE TAIGA: Added filter_backends to overwrite the default behavior.
+
+        backends = filter_backends or self.get_filter_backends()
+        for backend in backends:
             queryset = backend().filter_queryset(self.request, queryset, self)
         return queryset
 

@@ -29,6 +29,11 @@ logger = logging.getLogger(__name__)
 
 
 
+#####################################################################
+# Base and Mixins
+#####################################################################
+
+
 class BaseFilterBackend(object):
     """
     A base class from which all filter backend classes should inherit.
@@ -95,6 +100,9 @@ class OrderByFilterMixin(QueryParamsFilterMixin):
         if field_name not in order_by_fields:
             return queryset
 
+        if raw_fieldname in ["owner", "-owner", "assigned_to", "-assigned_to"]:
+            raw_fieldname = "{}__full_name".format(raw_fieldname)
+
         return super().filter_queryset(request, queryset.order_by(raw_fieldname), view)
 
 
@@ -104,6 +112,10 @@ class FilterBackend(OrderByFilterMixin):
     """
     pass
 
+
+#####################################################################
+# Permissions filters
+#####################################################################
 
 class PermissionBasedFilterBackend(FilterBackend):
     permission = None
@@ -345,9 +357,84 @@ class IsProjectAdminFromWebhookLogFilterBackend(FilterBackend, BaseIsProjectAdmi
         return super().filter_queryset(request, queryset, view)
 
 
+#####################################################################
+# Generic Attributes filters
+#####################################################################
+
+class BaseRelatedFieldsFilter(FilterBackend):
+    def __init__(self, filter_name=None):
+        if filter_name:
+            self.filter_name = filter_name
+
+    def _prepare_filter_data(self, query_param_value):
+        def _transform_value(value):
+            try:
+                return int(value)
+            except:
+                if value in self._special_values_dict:
+                    return self._special_values_dict[value]
+            raise exc.BadRequest()
+
+        values = set([x.strip() for x in query_param_value.split(",")])
+        values = map(_transform_value, values)
+        return list(values)
+
+    def _get_queryparams(self, params):
+        raw_value = params.get(self.filter_name, None)
+
+        if raw_value:
+            value = self._prepare_filter_data(raw_value)
+
+            if None in value:
+                qs_in_kwargs = {"{}__in".format(self.filter_name): [v for v in value if v is not None]}
+                qs_isnull_kwargs = {"{}__isnull".format(self.filter_name): True}
+                return Q(**qs_in_kwargs) | Q(**qs_isnull_kwargs)
+            else:
+                return {"{}__in".format(self.filter_name): value}
+
+        return None
+
+    def filter_queryset(self, request, queryset, view):
+        query = self._get_queryparams(request.QUERY_PARAMS)
+        if query:
+            if isinstance(query, dict):
+                queryset = queryset.filter(**query)
+            else:
+                queryset = queryset.filter(query)
+
+        return super().filter_queryset(request, queryset, view)
+
+
+class OwnersFilter(BaseRelatedFieldsFilter):
+    filter_name = 'owner'
+
+
+class AssignedToFilter(BaseRelatedFieldsFilter):
+    filter_name = 'assigned_to'
+
+
+class StatusesFilter(BaseRelatedFieldsFilter):
+    filter_name = 'status'
+
+
+class IssueTypesFilter(BaseRelatedFieldsFilter):
+    filter_name = 'type'
+
+
+class PrioritiesFilter(BaseRelatedFieldsFilter):
+    filter_name = 'priority'
+
+
+class SeveritiesFilter(BaseRelatedFieldsFilter):
+    filter_name = 'severity'
+
+
 class TagsFilter(FilterBackend):
-    def __init__(self, filter_name='tags'):
-        self.filter_name = filter_name
+    filter_name = 'tags'
+
+    def __init__(self, filter_name=None):
+        if filter_name:
+            self.filter_name = filter_name
 
     def _get_tags_queryparams(self, params):
         tags = params.get(self.filter_name, None)
@@ -364,25 +451,9 @@ class TagsFilter(FilterBackend):
         return super().filter_queryset(request, queryset, view)
 
 
-class StatusFilter(FilterBackend):
-    def __init__(self, filter_name='status'):
-        self.filter_name = filter_name
-
-    def _get_status_queryparams(self, params):
-        status = params.get(self.filter_name, None)
-        if status is not None:
-            status = set([x.strip() for x in status.split(",")])
-            return list(status)
-
-        return None
-
-    def filter_queryset(self, request, queryset, view):
-        query_status = self._get_status_queryparams(request.QUERY_PARAMS)
-        if query_status:
-            queryset = queryset.filter(status__in=query_status)
-
-        return super().filter_queryset(request, queryset, view)
-
+#####################################################################
+# Text search filters
+#####################################################################
 
 class QFilter(FilterBackend):
     def filter_queryset(self, request, queryset, view):

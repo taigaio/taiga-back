@@ -60,7 +60,6 @@ class ProjectPermission(TaigaResourcePermission):
     star_perms = IsAuthenticated()
     unstar_perms = IsAuthenticated()
     issues_stats_perms = HasProjectPerm('view_project')
-    issues_filters_data_perms = HasProjectPerm('view_project')
     tags_perms = HasProjectPerm('view_project')
     tags_colors_perms = HasProjectPerm('view_project')
     fans_perms = HasProjectPerm('view_project')
