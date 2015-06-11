@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-09 09:47+0200\n"
+"POT-Creation-Date: 2015-06-11 10:13+0200\n"
 "PO-Revision-Date: 2015-06-09 07:47+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Chinese Traditional (http://www.transifex.com/projects/p/"
@@ -2946,7 +2946,7 @@ msgstr "產品所有人"
 msgid "Stakeholder"
 msgstr "利害關係人"
 
-#: taiga/projects/userstories/api.py:173
+#: taiga/projects/userstories/api.py:174
 #, python-brace-format
 msgid ""
 "Generating the user story [US #{ref} - {subject}](:us:{ref} \"US #{ref} - "

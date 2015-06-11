@@ -12,9 +12,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-09 09:47+0200\n"
-"PO-Revision-Date: 2015-06-09 07:47+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2015-06-11 10:13+0200\n"
+"PO-Revision-Date: 2015-06-10 09:34+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/taiga-back/"
 "language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -477,6 +477,9 @@ msgid ""
 "%(comment)s</p>\n"
 "                                                                    "
 msgstr ""
+"\n"
+"<h3>comentario:</h3>\n"
+"<p>%(comment)s</p>"
 
 #: taiga/base/templates/emails/updates-body-text.jinja:6
 #, python-format
@@ -2477,7 +2480,7 @@ msgstr "La versión debe ser un número entero"
 
 #: taiga/projects/occ/mixins.py:58
 msgid "The version parameter is not valid"
-msgstr ""
+msgstr "La versión no es válida"
 
 #: taiga/projects/occ/mixins.py:74
 msgid "The version doesn't match with the current one"
@@ -2961,7 +2964,7 @@ msgstr "Product Owner"
 msgid "Stakeholder"
 msgstr "Stakeholder"
 
-#: taiga/projects/userstories/api.py:173
+#: taiga/projects/userstories/api.py:174
 #, python-brace-format
 msgid ""
 "Generating the user story [US #{ref} - {subject}](:us:{ref} \"US #{ref} - "
@@ -3165,7 +3168,7 @@ msgstr "idioma por defecto"
 
 #: taiga/users/models.py:122
 msgid "default theme"
-msgstr ""
+msgstr "tema por defecto"
 
 #: taiga/users/models.py:124
 msgid "default timezone"
