@@ -31,7 +31,7 @@ class Timeline(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
     namespace = models.CharField(max_length=250, default="default", db_index=True)
     event_type = models.CharField(max_length=250, db_index=True)
-    project = models.ForeignKey(Project)
+    project = models.ForeignKey(Project, null=True)
     data = JsonField()
     data_content_type = models.ForeignKey(ContentType, related_name="data_timelines")
     created = models.DateTimeField(default=timezone.now)

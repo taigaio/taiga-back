@@ -105,3 +105,11 @@ def membership_timeline(instance, extra_data={}):
     }
     result.update(extra_data)
     return result
+
+@register_timeline_implementation("users.user", "create")
+def user_timeline(instance, extra_data={}):
+    result =  {
+        "user": service.extract_user_info(instance),
+    }
+    result.update(extra_data)
+    return result
