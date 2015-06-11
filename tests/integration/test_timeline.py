@@ -125,7 +125,7 @@ def test_filter_timeline_private_project_member_permissions():
     service._add_to_object_timeline(user1, task2, "test")
     timeline = Timeline.objects.all()
     timeline = service.filter_timeline_for_user(timeline, user2)
-    assert timeline.count() == 1
+    assert timeline.count() == 3
 
 
 def test_create_project_timeline():

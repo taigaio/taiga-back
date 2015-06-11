@@ -115,6 +115,10 @@ def filter_timeline_for_user(timeline, user):
                                             project__anon_permissions__contains=[content_type_key],
                                             data_content_type=content_type)
 
+    # There is no specific permission for seeing new memberships
+    membership_content_type = ContentType.objects.get(app_label="projects", model="membership")
+    tl_filter |= Q(project__is_private=True, data_content_type=membership_content_type)
+
     # Filtering private projects where user is member
     if not user.is_anonymous():
         membership_model = apps.get_model('projects', 'Membership')
