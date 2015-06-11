@@ -103,7 +103,9 @@ def on_new_history_entry(sender, instance, created, **kwargs):
 
 def create_membership_push_to_timeline(sender, instance, **kwargs):
     # Creating new membership with associated user
-    if not instance.pk and instance.user:
+    # If the user is the project owner we don't do anything because that info will
+    # be shown in created project timeline entry
+    if not instance.pk and instance.user and instance.user != instance.project.owner:
         _push_to_timelines(instance.project, instance.user, instance, "create")
 
     #Updating existing membership
