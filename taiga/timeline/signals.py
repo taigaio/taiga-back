@@ -99,6 +99,10 @@ def on_new_history_entry(sender, instance, created, **kwargs):
         "comment_html": instance.comment_html,
     }
 
+    # Detect deleted comment
+    if instance.delete_comment_date:
+        extra_data["comment_deleted"] = True
+
     _push_to_timelines(project, user, obj, event_type, extra_data=extra_data)
 
 
