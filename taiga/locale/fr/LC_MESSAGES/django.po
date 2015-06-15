@@ -8,15 +8,16 @@
 # Florent B. <me@kxrz.me>, 2015
 # Louis-Michel Couture <louim_1@hotmail.com>, 2015
 # Matthieu Durocher <matthieu@technocyclope.com>, 2015
+# Nlko <nospam1@thomasson.fr>, 2015
 # Stéphane Mor <stephanemor@gmail.com>, 2015
 # William Godin <williamgodin@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-11 10:13+0200\n"
-"PO-Revision-Date: 2015-06-09 07:47+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2015-06-15 12:34+0200\n"
+"PO-Revision-Date: 2015-06-12 21:30+0000\n"
+"Last-Translator: Nlko <nospam1@thomasson.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/taiga-back/"
 "language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -469,6 +470,9 @@ msgid ""
 "%(comment)s</p>\n"
 "                                                                    "
 msgstr ""
+"\n"
+"<h3>commentaire:</h3>\n"
+"<p>%(comment)s</p>"
 
 #: taiga/base/templates/emails/updates-body-text.jinja:6
 #, python-format
@@ -894,6 +898,9 @@ msgid ""
 "\n"
 "{message}"
 msgstr ""
+"Commentaire provenant de GitHub:\n"
+"\n"
+"{message}"
 
 #: taiga/hooks/gitlab/event_hooks.py:87
 msgid "Status changed from GitLab commit"
@@ -1800,6 +1807,8 @@ msgid ""
 "\n"
 "[%(project)s] Created the sprint \"%(milestone)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Sprint \"%(milestone)s\" créé\n"
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-delete-body-html.jinja:4
 #, python-format
@@ -1831,6 +1840,8 @@ msgid ""
 "\n"
 "[%(project)s] Deleted the Sprint \"%(milestone)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Sprint \"%(milestone)s\" Éffacé\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-body-html.jinja:4
 #, python-format
@@ -1860,6 +1871,8 @@ msgid ""
 "\n"
 "[%(project)s] Updated the task #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Tâche #%(ref)s \"%(subject)s\" mise à jour\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-create-body-html.jinja:4
 #, python-format
@@ -1893,6 +1906,8 @@ msgid ""
 "\n"
 "[%(project)s] Created the task #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Tâche #%(ref)s \"%(subject)s\" créée\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-delete-body-html.jinja:4
 #, python-format
@@ -1924,6 +1939,8 @@ msgid ""
 "\n"
 "[%(project)s] Deleted the task #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Tâche #%(ref)s \"%(subject)s\" supprimée\n"
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-change-body-html.jinja:4
 #, python-format
@@ -1953,6 +1970,8 @@ msgid ""
 "\n"
 "[%(project)s] Updated the US #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] US #%(ref)s \"%(subject)s\" mise à jour\n"
 
 #: taiga/projects/notifications/templates/emails/userstories/userstory-create-body-html.jinja:4
 #, python-format
