@@ -19,4 +19,4 @@ python manage.py loaddata initial_role --traceback
 echo "-> Generate sample data"
 python manage.py sample_data --traceback
 echo "-> Rebuilding timeline"
-python manage.py --purge rebuild_timeline
+python manage.py rebuild_timeline --purge
