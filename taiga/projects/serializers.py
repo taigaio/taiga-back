@@ -98,6 +98,7 @@ class BasicUserStoryStatusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.UserStoryStatus
+        i18n_fields = ("name",)
         fields = ("name", "color")
 
 
@@ -128,6 +129,7 @@ class BasicTaskStatusSerializerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.TaskStatus
+        i18n_fields = ("name",)
         fields = ("name", "color")
 
 
@@ -170,6 +172,7 @@ class BasicIssueStatusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.IssueStatus
+        i18n_fields = ("name",)
         fields = ("name", "color")
 
 
