@@ -46,13 +46,16 @@ class BulkCreator(object):
         self.timeline_objects = []
         self.created = None
 
-    def createElement(self, element):
+    def create_element(self, element):
         self.timeline_objects.append(element)
         if len(self.timeline_objects) > 1000:
-            Timeline.objects.bulk_create(self.timeline_objects, batch_size=1000)
-            del self.timeline_objects
-            self.timeline_objects = []
-            gc.collect()
+            self.flush()
+
+    def flush(self):
+        Timeline.objects.bulk_create(self.timeline_objects, batch_size=1000)
+        del self.timeline_objects
+        self.timeline_objects = []
+        gc.collect()
 
 bulk_creator = BulkCreator()
 
@@ -63,7 +66,7 @@ def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, n
     event_type_key = _get_impl_key_from_model(instance.__class__, event_type)
     impl = _timeline_impl_map.get(event_type_key, None)
 
-    bulk_creator.createElement(Timeline(
+    bulk_creator.create_element(Timeline(
         content_object=obj,
         namespace=namespace,
         event_type=event_type_key,
@@ -74,13 +77,15 @@ def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, n
     ))
 
 
-def generate_timeline(initial_date, final_date):
-    if initial_date or final_date:
+def generate_timeline(initial_date, final_date, project_id):
+    if initial_date or final_date or project_id:
         timelines = Timeline.objects.all()
         if initial_date:
             timelines = timelines.filter(created__gte=initial_date)
         if final_date:
             timelines = timelines.filter(created__lt=final_date)
+        if project_id:
+            timelines = timelines.filter(project__id=project_id)
 
         timelines.delete()
 
@@ -96,6 +101,22 @@ def generate_timeline(initial_date, final_date):
         if final_date:
             projects = projects.filter(created_date__lt=final_date)
             history_entries = history_entries.filter(created_at__lt=final_date)
+
+        if project_id:
+            project = Project.objects.get(id=project_id)
+            us_keys = ['userstories.userstory:%s'%(id) for id in project.user_stories.values_list("id", flat=True)]
+            tasks_keys = ['tasks.task:%s'%(id) for id in project.tasks.values_list("id", flat=True)]
+            issue_keys = ['issues.issue:%s'%(id) for id in project.issues.values_list("id", flat=True)]
+            wiki_keys = ['wiki.wikipage:%s'%(id) for id in project.wiki_pages.values_list("id", flat=True)]
+            keys = us_keys + tasks_keys + issue_keys + wiki_keys
+
+            projects = projects.filter(id=project_id)
+            history_entries = history_entries.filter(key__in=keys)
+
+            #Memberships
+            for membership in project.memberships.exclude(user=None).exclude(user=project.owner):
+                bulk_creator.created = membership.created_at
+                _push_to_timelines(project, membership.user, membership, "create")
 
         for project in projects.iterator():
             bulk_creator.created = project.created_date
@@ -114,6 +135,8 @@ def generate_timeline(initial_date, final_date):
                 on_new_history_entry(None, historyEntry, None)
             except ObjectDoesNotExist as e:
                 print("Ignoring")
+
+    bulk_creator.flush()
 
 
 class Command(BaseCommand):
@@ -136,6 +159,12 @@ class Command(BaseCommand):
                     dest='final_date',
                     default=None,
                     help='Final date for timeline generation'),
+        ) + (
+        make_option('--project',
+                    action='store',
+                    dest='project',
+                    default=None,
+                    help='Selected project id for timeline generation'),
         )
 
 
@@ -148,4 +177,4 @@ class Command(BaseCommand):
         if options["purge"] == True:
             Timeline.objects.all().delete()
 
-        generate_timeline(options["initial_date"], options["final_date"])
+        generate_timeline(options["initial_date"], options["final_date"], options["project"])

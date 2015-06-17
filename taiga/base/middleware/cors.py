@@ -25,8 +25,8 @@ COORS_ALLOWED_HEADERS = ["content-type", "x-requested-with",
                          "x-session-id"]
 COORS_ALLOWED_CREDENTIALS = True
 COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated", "x-paginated-by",
-                        "x-paginated-by", "x-pagination-current", "x-site-host",
-                        "x-site-register"]
+                        "x-pagination-current", "x-pagination-next", "x-pagination-prev",
+                        "x-site-host", "x-site-register"]
 
 
 class CoorsMiddleware(object):

@@ -241,7 +241,9 @@ class HistoryExportSerializerMixin(serializers.ModelSerializer):
     history = serializers.SerializerMethodField("get_history")
 
     def get_history(self, obj):
-        history_qs = history_service.get_history_queryset_by_model_instance(obj)
+        history_qs = history_service.get_history_queryset_by_model_instance(obj,
+            types=(history_models.HistoryType.change, history_models.HistoryType.create,))
+            
         return HistoryExportSerializer(history_qs, many=True).data
 
 

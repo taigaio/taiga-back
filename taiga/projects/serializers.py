@@ -98,6 +98,7 @@ class BasicUserStoryStatusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.UserStoryStatus
+        i18n_fields = ("name",)
         fields = ("name", "color")
 
 
@@ -128,6 +129,7 @@ class BasicTaskStatusSerializerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.TaskStatus
+        i18n_fields = ("name",)
         fields = ("name", "color")
 
 
@@ -170,6 +172,7 @@ class BasicIssueStatusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.IssueStatus
+        i18n_fields = ("name",)
         fields = ("name", "color")
 
 
@@ -273,6 +276,7 @@ class ProjectMembershipSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='user.get_full_name', required=False)
     username = serializers.CharField(source='user.username', required=False)
     color = serializers.CharField(source='user.color', required=False)
+    is_active = serializers.BooleanField(source='user.is_active', required=False)
     photo = serializers.SerializerMethodField("get_photo")
 
     class Meta:

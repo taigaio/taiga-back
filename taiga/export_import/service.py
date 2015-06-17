@@ -22,7 +22,7 @@ from django.template.defaultfilters import slugify
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 
-from taiga.projects.history.services import make_key_from_model_object
+from taiga.projects.history.services import make_key_from_model_object, take_snapshot
 from taiga.timeline.service import build_project_namespace
 from taiga.projects.references import sequences as seq
 from taiga.projects.references import models as refs
@@ -229,8 +229,12 @@ def store_task(project, data):
         for task_attachment in data.get("attachments", []):
             store_attachment(project, serialized.object, task_attachment)
 
-        for history in data.get("history", []):
+        history_entries = data.get("history", [])
+        for history in history_entries:
             store_history(project, serialized.object, history)
+
+        if not history_entries:
+            take_snapshot(serialized.object, user=serialized.object.owner)
 
         custom_attributes_values = data.get("custom_attributes_values", None)
         if custom_attributes_values:
@@ -319,8 +323,12 @@ def store_wiki_page(project, wiki_page):
         for attachment in wiki_page.get("attachments", []):
             store_attachment(project, serialized.object, attachment)
 
-        for history in wiki_page.get("history", []):
+        history_entries = wiki_page.get("history", [])
+        for history in history_entries:
             store_history(project, serialized.object, history)
+
+        if not history_entries:
+            take_snapshot(serialized.object, user=serialized.object.owner)
 
         return serialized
 
@@ -381,8 +389,12 @@ def store_user_story(project, data):
         for role_point in data.get("role_points", []):
             store_role_point(project, serialized.object, role_point)
 
-        for history in data.get("history", []):
+        history_entries = data.get("history", [])
+        for history in history_entries:
             store_history(project, serialized.object, history)
+
+        if not history_entries:
+            take_snapshot(serialized.object, user=serialized.object.owner)
 
         custom_attributes_values = data.get("custom_attributes_values", None)
         if custom_attributes_values:
@@ -434,8 +446,12 @@ def store_issue(project, data):
         for attachment in data.get("attachments", []):
             store_attachment(project, serialized.object, attachment)
 
-        for history in data.get("history", []):
+        history_entries = data.get("history", [])
+        for history in history_entries:
             store_history(project, serialized.object, history)
+
+        if not history_entries:
+            take_snapshot(serialized.object, user=serialized.object.owner)
 
         custom_attributes_values = data.get("custom_attributes_values", None)
         if custom_attributes_values:

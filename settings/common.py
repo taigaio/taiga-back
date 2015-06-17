@@ -78,7 +78,7 @@ LANGUAGES = [
     #("cs", "Čeština"),  # Czech
     #("cy", "Cymraeg"),  # Welsh
     #("da", "Dansk"),  # Danish
-    #("de", "Deutsch"),  # German
+    ("de", "Deutsch"),  # German
     #("el", "Ελληνικά"),  # Greek
     ("en", "English (US)"),  # English
     #("en-au", "English (Australia)"),  # Australian English
@@ -122,7 +122,7 @@ LANGUAGES = [
     #("my", "မြန်မာ"),  # Burmese
     #("nb", "Norsk (bokmål)"),  # Norwegian Bokmal
     #("ne", "नेपाली"),  # Nepali
-    #("nl", "Nederlands"),  # Dutch
+    ("nl", "Nederlands"),  # Dutch
     #("nn", "Norsk (nynorsk)"),  # Norwegian Nynorsk
     #("os", "Ирон æвзаг"),  # Ossetic
     #("pa", "ਪੰਜਾਬੀ"),  # Punjabi
