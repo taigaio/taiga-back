@@ -114,7 +114,7 @@ def generate_timeline(initial_date, final_date, project_id):
             history_entries = history_entries.filter(key__in=keys)
 
             #Memberships
-            for membership in project.memberships.exclude(user=None):
+            for membership in project.memberships.exclude(user=None).exclude(user=project.owner):
                 bulk_creator.created = membership.created_at
                 _push_to_timelines(project, membership.user, membership, "create")
 
