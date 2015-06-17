@@ -1,7 +1,7 @@
 # Changelog #
 
 
-## 1.8.0 ??? (unreleased)
+## 1.8.0 Saracenia Purpurea (unreleased)
 
 ### Features
 - Improve timeline resource.
