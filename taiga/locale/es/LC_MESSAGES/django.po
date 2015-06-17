@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-06-15 12:34+0200\n"
-"PO-Revision-Date: 2015-06-10 09:34+0000\n"
+"PO-Revision-Date: 2015-06-17 07:24+0000\n"
 "Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/taiga-back/"
 "language/es/)\n"
@@ -854,7 +854,7 @@ msgid ""
 msgstr ""
 "\n"
 "<h1>Feedback</h1>\n"
-"<p>Taiga ha recivido feedback de %(full_name)s <%(email)s></p>"
+"<p>Taiga ha recibido feedback de %(full_name)s <%(email)s></p>"
 
 #: taiga/feedback/templates/emails/feedback_notification-body-html.jinja:9
 #, python-format
