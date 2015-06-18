@@ -28,7 +28,7 @@ from markdown.inlinepatterns import Pattern
 from markdown.util import etree
 
 from taiga.projects.references.services import get_instance_by_ref
-from taiga.front import resolve
+from taiga.front.templatetags.functions import resolve
 
 
 class TaigaReferencesExtension(Extension):

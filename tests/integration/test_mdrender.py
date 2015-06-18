@@ -46,3 +46,8 @@ def test_render_and_extract_mentions():
     user = factories.UserFactory(username="user1", full_name="test")
     (_, extracted) = render_and_extract(dummy_project, "**@user1**")
     assert extracted['mentions'] == [user]
+
+def test_proccessor_valid_email():
+    result = render(dummy_project, "**beta.tester@taiga.io**")
+    expected_result = "<p><strong><a href=\"mailto:beta.tester@taiga.io\" target=\"_blank\">beta.tester@taiga.io</a></strong></p>"
+    assert result == expected_result

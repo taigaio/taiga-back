@@ -24,6 +24,7 @@ MAX_RESULTS = getattr(settings, "SEARCHES_MAX_RESULTS", 150)
 def search_user_stories(project, text):
     model_cls = apps.get_model("userstories", "UserStory")
     where_clause = ("to_tsvector(coalesce(userstories_userstory.subject) || ' ' || "
+                    "coalesce(userstories_userstory.ref) || ' ' || "
                     "coalesce(userstories_userstory.description)) @@ plainto_tsquery(%s)")
 
     if text:
@@ -35,8 +36,9 @@ def search_user_stories(project, text):
 
 def search_tasks(project, text):
     model_cls = apps.get_model("tasks", "Task")
-    where_clause = ("to_tsvector(coalesce(tasks_task.subject, '') || ' ' || coalesce(tasks_task.description, '')) "
-                    "@@ plainto_tsquery(%s)")
+    where_clause = ("to_tsvector(coalesce(tasks_task.subject, '') || ' ' || "
+                    "coalesce(tasks_task.ref) || ' ' || "
+                    "coalesce(tasks_task.description, '')) @@ plainto_tsquery(%s)")
 
     if text:
         return (model_cls.objects.extra(where=[where_clause], params=[text])
@@ -47,8 +49,9 @@ def search_tasks(project, text):
 
 def search_issues(project, text):
     model_cls = apps.get_model("issues", "Issue")
-    where_clause = ("to_tsvector(coalesce(issues_issue.subject) || ' ' || coalesce(issues_issue.description)) "
-                    "@@ plainto_tsquery(%s)")
+    where_clause = ("to_tsvector(coalesce(issues_issue.subject) || ' ' || "
+                    "coalesce(issues_issue.ref) || ' ' || "
+                    "coalesce(issues_issue.description)) @@ plainto_tsquery(%s)")
 
     if text:
         return (model_cls.objects.extra(where=[where_clause], params=[text])

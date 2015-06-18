@@ -272,9 +272,10 @@ def test_user_action_password_recovery(client, data):
 def test_user_action_change_email(client, data):
     url = reverse('users-change-email')
 
-    data.registered_user.email_token = "test-token"
-    data.registered_user.new_email = "new@email.com"
-    data.registered_user.save()
+    def after_each_request():
+        data.registered_user.email_token = "test-token"
+        data.registered_user.new_email = "new@email.com"
+        data.registered_user.save()
 
     users = [
         None,
@@ -283,5 +284,6 @@ def test_user_action_change_email(client, data):
     ]
 
     patch_data = json.dumps({"email_token": "test-token"})
-    results = helper_test_http_method(client, 'post', url, patch_data, users)
-    assert results == [401, 204, 400]
+    after_each_request()
+    results = helper_test_http_method(client, 'post', url, patch_data, users, after_each_request=after_each_request)
+    assert results == [204, 204, 204]

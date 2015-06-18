@@ -37,7 +37,9 @@ class OCCResourceMixin(object):
         return param_version
 
     def _validate_param_version(self, param_version, current_version):
-        if param_version is not None:
+        if param_version is None:
+            return False
+        else:
             if param_version < 0:
                 return False
             if current_version is not None and param_version > current_version:
@@ -50,28 +52,27 @@ class OCCResourceMixin(object):
         if obj.id:
             current_version = type(obj).objects.model.objects.get(id=obj.id).version
 
-        # Extract param version
-        param_version = self._extract_param_version()
-        if not self._validate_param_version(param_version, current_version):
-            raise exc.WrongArguments({"version": _("The version is not valid")})
+            # Extract param version
+            param_version = self._extract_param_version()
+            if not self._validate_param_version(param_version, current_version):
+                raise exc.WrongArguments({"version": _("The version parameter is not valid")})
 
-        if current_version != param_version:
-            diff_versions = current_version - param_version
+            if current_version != param_version:
+                diff_versions = current_version - param_version
 
-            modifying_fields = set(self.request.DATA.keys())
-            if "version" in modifying_fields:
-                modifying_fields.remove("version")
+                modifying_fields = set(self.request.DATA.keys())
+                if "version" in modifying_fields:
+                    modifying_fields.remove("version")
 
-            modified_fields = set(get_modified_fields(obj, diff_versions))
-            if "version" in modifying_fields:
-                modified_fields.remove("version")
+                modified_fields = set(get_modified_fields(obj, diff_versions))
+                if "version" in modifying_fields:
+                    modified_fields.remove("version")
 
-            both_modified = modifying_fields & modified_fields
+                both_modified = modifying_fields & modified_fields
 
-            if both_modified:
-                raise exc.WrongArguments({"version": _("The version doesn't match with the current one")})
+                if both_modified:
+                    raise exc.WrongArguments({"version": _("The version doesn't match with the current one")})
 
-        if obj.id:
             obj.version = models.F('version') + 1
 
     def pre_save(self, obj):

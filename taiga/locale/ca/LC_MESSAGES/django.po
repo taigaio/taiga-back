@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-25 17:31+0200\n"
-"PO-Revision-Date: 2015-05-25 13:58+0000\n"
+"POT-Creation-Date: 2015-06-15 12:34+0200\n"
+"PO-Revision-Date: 2015-06-09 07:47+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Catalan (http://www.transifex.com/projects/p/taiga-back/"
 "language/ca/)\n"
@@ -435,16 +435,12 @@ msgstr "Actualitzacions"
 #, python-format
 msgid ""
 "\n"
-"                                                                <h3>comment:"
+"                                                                    <h3>comment:"
 "</h3>\n"
-"                                                                <p>"
+"                                                                    <p>"
 "%(comment)s</p>\n"
-"                                                                "
+"                                                                    "
 msgstr ""
-"\n"
-"<h3>Comentari:</h3>\n"
-" <p>%(comment)s</p>\n"
-"                                                                "
 
 #: taiga/base/templates/emails/updates-body-text.jinja:6
 #, python-format
@@ -1082,7 +1078,7 @@ msgstr "Amo"
 #: taiga/projects/models.py:507 taiga/projects/models.py:538
 #: taiga/projects/notifications/models.py:69 taiga/projects/tasks/models.py:41
 #: taiga/projects/userstories/models.py:62 taiga/projects/wiki/models.py:28
-#: taiga/projects/wiki/models.py:66 taiga/users/models.py:193
+#: taiga/projects/wiki/models.py:66 taiga/users/models.py:196
 msgid "project"
 msgstr "Projecte"
 
@@ -1126,7 +1122,7 @@ msgstr "Descripció"
 #: taiga/projects/models.py:391 taiga/projects/models.py:418
 #: taiga/projects/models.py:453 taiga/projects/models.py:476
 #: taiga/projects/models.py:501 taiga/projects/models.py:534
-#: taiga/projects/wiki/models.py:71 taiga/users/models.py:188
+#: taiga/projects/wiki/models.py:71 taiga/users/models.py:191
 msgid "order"
 msgstr "Ordre"
 
@@ -1148,7 +1144,7 @@ msgstr ""
 #: taiga/projects/models.py:414 taiga/projects/models.py:451
 #: taiga/projects/models.py:474 taiga/projects/models.py:497
 #: taiga/projects/models.py:532 taiga/projects/models.py:555
-#: taiga/users/models.py:180 taiga/webhooks/models.py:27
+#: taiga/users/models.py:183 taiga/webhooks/models.py:27
 msgid "name"
 msgstr "Nom"
 
@@ -1371,7 +1367,7 @@ msgstr "referència externa"
 #: taiga/projects/milestones/models.py:37 taiga/projects/models.py:125
 #: taiga/projects/models.py:352 taiga/projects/models.py:416
 #: taiga/projects/models.py:499 taiga/projects/models.py:557
-#: taiga/projects/wiki/models.py:30 taiga/users/models.py:182
+#: taiga/projects/wiki/models.py:30 taiga/users/models.py:185
 msgid "slug"
 msgstr "slug"
 
@@ -1421,7 +1417,7 @@ msgstr "email"
 msgid "create at"
 msgstr ""
 
-#: taiga/projects/models.py:63 taiga/users/models.py:126
+#: taiga/projects/models.py:63 taiga/users/models.py:128
 msgid "token"
 msgstr "token"
 
@@ -2107,15 +2103,15 @@ msgstr ""
 msgid "The version must be an integer"
 msgstr ""
 
-#: taiga/projects/occ/mixins.py:56
-msgid "The version is not valid"
+#: taiga/projects/occ/mixins.py:58
+msgid "The version parameter is not valid"
 msgstr ""
 
-#: taiga/projects/occ/mixins.py:72
+#: taiga/projects/occ/mixins.py:74
 msgid "The version doesn't match with the current one"
 msgstr ""
 
-#: taiga/projects/occ/mixins.py:92
+#: taiga/projects/occ/mixins.py:93
 msgid "version"
 msgstr "Versió"
 
@@ -2131,43 +2127,43 @@ msgstr "Aquest e-mail ja està en ús"
 msgid "Invalid role for the project"
 msgstr "Rol invàlid per al projecte"
 
-#: taiga/projects/serializers.py:343
+#: taiga/projects/serializers.py:340
 msgid "Total milestones must be major or equal to zero"
 msgstr ""
 
-#: taiga/projects/serializers.py:400
+#: taiga/projects/serializers.py:402
 msgid "Default options"
 msgstr "Opcions per defecte"
 
-#: taiga/projects/serializers.py:401
+#: taiga/projects/serializers.py:403
 msgid "User story's statuses"
 msgstr "Estatus d'històries d'usuari"
 
-#: taiga/projects/serializers.py:402
+#: taiga/projects/serializers.py:404
 msgid "Points"
 msgstr "Punts"
 
-#: taiga/projects/serializers.py:403
+#: taiga/projects/serializers.py:405
 msgid "Task's statuses"
 msgstr "Estatus de tasques"
 
-#: taiga/projects/serializers.py:404
+#: taiga/projects/serializers.py:406
 msgid "Issue's statuses"
 msgstr "Estatus d'incidéncies"
 
-#: taiga/projects/serializers.py:405
+#: taiga/projects/serializers.py:407
 msgid "Issue's types"
 msgstr "Tipus d'incidéncies"
 
-#: taiga/projects/serializers.py:406
+#: taiga/projects/serializers.py:408
 msgid "Priorities"
 msgstr "Prioritats"
 
-#: taiga/projects/serializers.py:407
+#: taiga/projects/serializers.py:409
 msgid "Severities"
 msgstr "Severitats"
 
-#: taiga/projects/serializers.py:408
+#: taiga/projects/serializers.py:410
 msgid "Roles"
 msgstr "Rols"
 
@@ -2558,7 +2554,7 @@ msgstr ""
 msgid "Stakeholder"
 msgstr ""
 
-#: taiga/projects/userstories/api.py:173
+#: taiga/projects/userstories/api.py:174
 #, python-brace-format
 msgid ""
 "Generating the user story [US #{ref} - {subject}](:us:{ref} \"US #{ref} - "
@@ -2653,57 +2649,57 @@ msgstr "Permissos"
 msgid "Important dates"
 msgstr "Dates importants"
 
-#: taiga/users/api.py:112 taiga/users/api.py:119
+#: taiga/users/api.py:124 taiga/users/api.py:131
 msgid "Invalid username or email"
 msgstr "Nom d'usuari o email invàlid"
 
-#: taiga/users/api.py:128
+#: taiga/users/api.py:140
 msgid "Mail sended successful!"
 msgstr "Correu enviat satisfactòriament"
 
-#: taiga/users/api.py:140 taiga/users/api.py:145
+#: taiga/users/api.py:152 taiga/users/api.py:157
 msgid "Token is invalid"
 msgstr "Token invàlid"
 
-#: taiga/users/api.py:166
+#: taiga/users/api.py:178
 msgid "Current password parameter needed"
 msgstr "Paràmetre de password actual requerit"
 
-#: taiga/users/api.py:169
+#: taiga/users/api.py:181
 msgid "New password parameter needed"
 msgstr "Paràmetre de password requerit"
 
-#: taiga/users/api.py:172
+#: taiga/users/api.py:184
 msgid "Invalid password length at least 6 charaters needed"
 msgstr "Password invàlid, al menys 6 caràcters requerits"
 
-#: taiga/users/api.py:175
+#: taiga/users/api.py:187
 msgid "Invalid current password"
 msgstr "Password actual invàlid"
 
-#: taiga/users/api.py:191
+#: taiga/users/api.py:203
 msgid "Incomplete arguments"
 msgstr "Arguments incomplets."
 
-#: taiga/users/api.py:196
+#: taiga/users/api.py:208
 msgid "Invalid image format"
 msgstr "Format d'image invàlid"
 
-#: taiga/users/api.py:249
+#: taiga/users/api.py:261
 msgid "Duplicated email"
 msgstr "Email duplicat"
 
-#: taiga/users/api.py:251
+#: taiga/users/api.py:263
 msgid "Not valid email"
 msgstr "Email no vàlid"
 
-#: taiga/users/api.py:271 taiga/users/api.py:277
+#: taiga/users/api.py:283 taiga/users/api.py:289
 msgid ""
 "Invalid, are you sure the token is correct and you didn't use it before?"
 msgstr ""
 "Invàlid. Estás segur que el token es correcte i que no l'has usat abans?"
 
-#: taiga/users/api.py:304 taiga/users/api.py:312 taiga/users/api.py:315
+#: taiga/users/api.py:316 taiga/users/api.py:324 taiga/users/api.py:327
 msgid "Invalid, are you sure the token is correct?"
 msgstr "Invàlid. Estás segur que el token es correcte?"
 
@@ -2761,22 +2757,26 @@ msgid "default language"
 msgstr "llenguatge per defecte"
 
 #: taiga/users/models.py:122
+msgid "default theme"
+msgstr ""
+
+#: taiga/users/models.py:124
 msgid "default timezone"
 msgstr "zona horaria per defecte"
 
-#: taiga/users/models.py:124
+#: taiga/users/models.py:126
 msgid "colorize tags"
 msgstr "coloritza tags"
 
-#: taiga/users/models.py:129
+#: taiga/users/models.py:131
 msgid "email token"
 msgstr "token de correu"
 
-#: taiga/users/models.py:131
+#: taiga/users/models.py:133
 msgid "new email address"
 msgstr "nova adreça de correu"
 
-#: taiga/users/models.py:185
+#: taiga/users/models.py:188
 msgid "permissions"
 msgstr "permissos"
 

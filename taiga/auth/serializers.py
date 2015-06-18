@@ -50,6 +50,6 @@ class PrivateRegisterForNewUserSerializer(BaseRegisterSerializer):
 
 
 class PrivateRegisterForExistingUserSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=30)
+    username = serializers.CharField(max_length=255)
     password = serializers.CharField(min_length=4)
     token = serializers.CharField(max_length=255, required=True)

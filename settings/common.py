@@ -78,7 +78,7 @@ LANGUAGES = [
     #("cs", "Čeština"),  # Czech
     #("cy", "Cymraeg"),  # Welsh
     #("da", "Dansk"),  # Danish
-    #("de", "Deutsch"),  # German
+    ("de", "Deutsch"),  # German
     #("el", "Ελληνικά"),  # Greek
     ("en", "English (US)"),  # English
     #("en-au", "English (Australia)"),  # Australian English
@@ -122,7 +122,7 @@ LANGUAGES = [
     #("my", "မြန်မာ"),  # Burmese
     #("nb", "Norsk (bokmål)"),  # Norwegian Bokmal
     #("ne", "नेपाली"),  # Nepali
-    #("nl", "Nederlands"),  # Dutch
+    ("nl", "Nederlands"),  # Dutch
     #("nn", "Norsk (nynorsk)"),  # Norwegian Nynorsk
     #("os", "Ирон æвзаг"),  # Ossetic
     #("pa", "ਪੰਜਾਬੀ"),  # Punjabi
@@ -257,6 +257,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.admin",
     "django.contrib.staticfiles",
+    "django.contrib.sitemaps",
 
     "taiga.base",
     "taiga.base.api",
@@ -449,8 +450,15 @@ BITBUCKET_VALID_ORIGIN_IPS = ["131.103.20.165", "131.103.20.166"]
 GITLAB_VALID_ORIGIN_IPS = []
 
 EXPORTS_TTL = 60 * 60 * 24  # 24 hours
+
 CELERY_ENABLED = False
 WEBHOOKS_ENABLED = False
+
+
+# If is True /front/sitemap.xml show a valid sitemap of taiga-front client
+FRONT_SITEMAP_ENABLED = False
+FRONT_SITEMAP_CACHE_TIMEOUT = 24*60*60  # In second
+
 
 from .sr import *
 

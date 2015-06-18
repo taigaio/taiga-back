@@ -30,7 +30,7 @@ class Command(BaseCommand):
         removing_timeline_ids = []
         for t in Timeline.objects.filter(event_type="projects.membership.create").order_by("created"):
             print(t.created)
-            if t.project.owner.id == t.data["user"]["id"]:
+            if t.project.owner.id == t.data["user"].get("id", None):
                 removing_timeline_ids.append(t.id)
 
         Timeline.objects.filter(id__in=removing_timeline_ids).delete()

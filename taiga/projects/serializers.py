@@ -98,6 +98,7 @@ class BasicUserStoryStatusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.UserStoryStatus
+        i18n_fields = ("name",)
         fields = ("name", "color")
 
 
@@ -128,6 +129,7 @@ class BasicTaskStatusSerializerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.TaskStatus
+        i18n_fields = ("name",)
         fields = ("name", "color")
 
 
@@ -170,6 +172,7 @@ class BasicIssueStatusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.IssueStatus
+        i18n_fields = ("name",)
         fields = ("name", "color")
 
 
@@ -273,6 +276,7 @@ class ProjectMembershipSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='user.get_full_name', required=False)
     username = serializers.CharField(source='user.username', required=False)
     color = serializers.CharField(source='user.color', required=False)
+    is_active = serializers.BooleanField(source='user.is_active', required=False)
     photo = serializers.SerializerMethodField("get_photo")
 
     class Meta:
@@ -305,12 +309,11 @@ class ProjectSerializer(serializers.ModelSerializer):
     my_permissions = serializers.SerializerMethodField("get_my_permissions")
     i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
     tags_colors = TagsColorsField(required=False)
-    users = serializers.SerializerMethodField("get_users")
     total_closed_milestones = serializers.SerializerMethodField("get_total_closed_milestones")
 
     class Meta:
         model = models.Project
-        read_only_fields = ("created_date", "modified_date", "owner")
+        read_only_fields = ("created_date", "modified_date", "owner", "slug")
         exclude = ("last_us_ref", "last_task_ref", "last_issue_ref",
                    "issues_csv_uuid", "tasks_csv_uuid", "userstories_csv_uuid")
 
@@ -327,9 +330,6 @@ class ProjectSerializer(serializers.ModelSerializer):
         if "request" in self.context:
             return is_project_owner(self.context["request"].user, obj)
         return False
-
-    def get_users(self, obj):
-        return UserSerializer(obj.members.all(), many=True).data
 
     def get_total_closed_milestones(self, obj):
         return obj.milestones.filter(closed=True).count()
@@ -355,12 +355,14 @@ class ProjectDetailSerializer(ProjectSerializer):
     issue_types = IssueTypeSerializer(many=True, required=False)
     priorities = PrioritySerializer(many=True, required=False)               # Issues
     severities = SeveritySerializer(many=True, required=False)
+
     userstory_custom_attributes = UserStoryCustomAttributeSerializer(source="userstorycustomattributes",
                                                                      many=True, required=False)
     task_custom_attributes = TaskCustomAttributeSerializer(source="taskcustomattributes",
                                                            many=True, required=False)
     issue_custom_attributes = IssueCustomAttributeSerializer(source="issuecustomattributes",
                                                              many=True, required=False)
+    users = serializers.SerializerMethodField("get_users")
 
     def get_memberships(self, obj):
         qs = obj.memberships.filter(user__isnull=False)
@@ -374,11 +376,14 @@ class ProjectDetailSerializer(ProjectSerializer):
         serializer = ProjectRoleSerializer(obj.roles.all(), many=True)
         return serializer.data
 
+    def get_users(self, obj):
+        return UserSerializer(obj.members.all(), many=True).data
+
 
 class ProjectDetailAdminSerializer(ProjectDetailSerializer):
     class Meta:
         model = models.Project
-        read_only_fields = ("created_date", "modified_date", "owner")
+        read_only_fields = ("created_date", "modified_date", "owner", "slug")
         exclude = ("last_us_ref", "last_task_ref", "last_issue_ref")
 
 

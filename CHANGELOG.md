@@ -1,7 +1,22 @@
 # Changelog #
 
 
-## 1.7.0 Empetrum Nigrum (unreleased)
+## 1.8.0 Saracenia Purpurea (2015-06-18)
+
+### Features
+- Improve timeline resource.
+- Add sitemap of taiga-front (the web client).
+- Search by reference (thanks to [@artlepool](https://github.com/artlepool))
+- Add call 'by_username' to the API resource User
+- i18n.
+  - Add deutsch (de) translation.
+  - Add nederlands (nl) translation.
+
+### Misc
+- Lots of small and not so small bugfixes.
+
+
+## 1.7.0 Empetrum Nigrum (2015-05-21)
 
 ### Features
 - Make Taiga translatable (i18n support).

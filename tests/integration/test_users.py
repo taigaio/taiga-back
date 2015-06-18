@@ -93,6 +93,18 @@ def test_validate_requested_email_change(client):
     assert user.new_email is None
     assert user.email == "new@email.com"
 
+def test_validate_requested_email_change_for_anonymous_user(client):
+    user = f.UserFactory.create(email_token="change_email_token", new_email="new@email.com")
+    url = reverse('users-change-email')
+    data = {"email_token": "change_email_token"}
+
+    response = client.post(url, json.dumps(data), content_type="application/json")
+
+    assert response.status_code == 204
+    user = models.User.objects.get(pk=user.id)
+    assert user.email_token is None
+    assert user.new_email is None
+    assert user.email == "new@email.com"
 
 def test_validate_requested_email_change_without_token(client):
     user = f.UserFactory.create(email_token="change_email_token", new_email="new@email.com")

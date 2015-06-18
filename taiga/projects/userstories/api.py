@@ -50,10 +50,11 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
     list_serializer_class = serializers.UserStorySerializer
     permission_classes = (permissions.UserStoryPermission,)
 
-    filter_backends = (filters.CanViewUsFilterBackend, filters.TagsFilter,
+    filter_backends = (filters.StatusFilter, filters.CanViewUsFilterBackend, filters.TagsFilter,
                        filters.QFilter, filters.OrderByFilterMixin)
-    retrieve_exclude_filters = (filters.TagsFilter,)
-    filter_fields = ["project", "milestone", "milestone__isnull", "status",
+
+    retrieve_exclude_filters = (filters.StatusFilter, filters.TagsFilter,)
+    filter_fields = ["project", "milestone", "milestone__isnull",
         "is_archived", "status__is_archived", "assigned_to",
         "status__is_closed", "watchers", "is_closed"]
     order_by_fields = ["backlog_order", "sprint_order", "kanban_order"]
