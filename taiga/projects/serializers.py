@@ -27,6 +27,7 @@ from taiga.base.fields import TagsColorsField
 
 from taiga.users.services import get_photo_or_gravatar_url
 from taiga.users.serializers import UserSerializer
+from taiga.users.serializers import UserBasicInfoSerializer
 from taiga.users.serializers import ProjectRoleSerializer
 from taiga.users.validators import RoleExistsValidator
 
@@ -197,7 +198,7 @@ class MembershipSerializer(serializers.ModelSerializer):
     photo = serializers.SerializerMethodField("get_photo")
     project_name = serializers.SerializerMethodField("get_project_name")
     project_slug = serializers.SerializerMethodField("get_project_slug")
-    invited_by = UserSerializer(read_only=True)
+    invited_by = UserBasicInfoSerializer(read_only=True)
 
     class Meta:
         model = models.Membership
@@ -346,11 +347,11 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectDetailSerializer(ProjectSerializer):
-    roles = serializers.SerializerMethodField("get_roles")
-    memberships = serializers.SerializerMethodField("get_memberships")
     us_statuses = UserStoryStatusSerializer(many=True, required=False)       # User Stories
     points = PointsSerializer(many=True, required=False)
+
     task_statuses = TaskStatusSerializer(many=True, required=False)          # Tasks
+
     issue_statuses = IssueStatusSerializer(many=True, required=False)
     issue_types = IssueTypeSerializer(many=True, required=False)
     priorities = PrioritySerializer(many=True, required=False)               # Issues
@@ -362,7 +363,10 @@ class ProjectDetailSerializer(ProjectSerializer):
                                                            many=True, required=False)
     issue_custom_attributes = IssueCustomAttributeSerializer(source="issuecustomattributes",
                                                              many=True, required=False)
-    users = serializers.SerializerMethodField("get_users")
+
+    roles = ProjectRoleSerializer(source="roles", many=True, read_only=True)
+    users = UserSerializer(source="members", many=True, read_only=True)
+    memberships = serializers.SerializerMethodField(method_name="get_memberships")
 
     def get_memberships(self, obj):
         qs = obj.memberships.filter(user__isnull=False)
@@ -371,13 +375,6 @@ class ProjectDetailSerializer(ProjectSerializer):
         qs = qs.select_related("role", "user")
         serializer = ProjectMembershipSerializer(qs, many=True)
         return serializer.data
-
-    def get_roles(self, obj):
-        serializer = ProjectRoleSerializer(obj.roles.all(), many=True)
-        return serializer.data
-
-    def get_users(self, obj):
-        return UserSerializer(obj.members.all(), many=True).data
 
 
 class ProjectDetailAdminSerializer(ProjectDetailSerializer):
