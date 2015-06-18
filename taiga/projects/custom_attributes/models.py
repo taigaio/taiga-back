@@ -35,7 +35,7 @@ class AbstractCustomAttribute(models.Model):
     )
     name = models.CharField(null=False, blank=False, max_length=64, verbose_name=_("name"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
-    field_type = models.CharField(null=False, blank=False, choices=FIELD_TYPES, max_length=5, verbose_name=_("type"))
+    field_type = models.CharField(null=False, blank=False, choices=FIELD_TYPES, max_length=5, default='TEXT', verbose_name=_("type"))
     order = models.IntegerField(null=False, blank=False, default=10000, verbose_name=_("order"))
     project = models.ForeignKey("projects.Project", null=False, blank=False, related_name="%(class)ss",
                                 verbose_name=_("project"))
