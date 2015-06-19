@@ -50,7 +50,7 @@ def build_project_namespace(project:object):
     return "{0}:{1}".format("project", project.id)
 
 
-def _add_to_object_timeline(obj:object, instance:object, event_type:str, namespace:str="default", extra_data:dict={}):
+def _add_to_object_timeline(obj:object, instance:object, event_type:str, created_datetime:object, namespace:str="default", extra_data:dict={}):
     assert isinstance(obj, Model), "obj must be a instance of Model"
     assert isinstance(instance, Model), "instance must be a instance of Model"
     from .models import Timeline
@@ -67,21 +67,22 @@ def _add_to_object_timeline(obj:object, instance:object, event_type:str, namespa
         event_type=event_type_key,
         project=project,
         data=impl(instance, extra_data=extra_data),
-        data_content_type = ContentType.objects.get_for_model(instance.__class__),
+        data_content_type=ContentType.objects.get_for_model(instance.__class__),
+        created=created_datetime,
     )
 
 
-def _add_to_objects_timeline(objects, instance:object, event_type:str, namespace:str="default", extra_data:dict={}):
+def _add_to_objects_timeline(objects, instance:object, event_type:str, created_datetime:object, namespace:str="default", extra_data:dict={}):
     for obj in objects:
-        _add_to_object_timeline(obj, instance, event_type, namespace, extra_data)
+        _add_to_object_timeline(obj, instance, event_type, created_datetime, namespace, extra_data)
 
 
 @app.task
-def push_to_timeline(objects, instance:object, event_type:str, namespace:str="default", extra_data:dict={}):
+def push_to_timeline(objects, instance:object, event_type:str, created_datetime:object, namespace:str="default", extra_data:dict={}):
     if isinstance(objects, Model):
-        _add_to_object_timeline(objects, instance, event_type, namespace, extra_data)
+        _add_to_object_timeline(objects, instance, event_type, created_datetime, namespace, extra_data)
     elif isinstance(objects, QuerySet) or isinstance(objects, list):
-        _add_to_objects_timeline(objects, instance, event_type, namespace, extra_data)
+        _add_to_objects_timeline(objects, instance, event_type, created_datetime, namespace, extra_data)
     else:
         raise Exception("Invalid objects parameter")
 
