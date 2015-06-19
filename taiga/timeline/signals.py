@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
+from django.utils import timezone
 
 from taiga.projects.history import services as history_services
 from taiga.projects.models import Project
@@ -33,15 +34,15 @@ def _push_to_timeline(*args, **kwargs):
         push_to_timeline(*args, **kwargs)
 
 
-def _push_to_timelines(project, user, obj, event_type, extra_data={}):
+def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_data={}):
     if project is not None:
     # Project timeline
-        _push_to_timeline(project, obj, event_type,
+        _push_to_timeline(project, obj, event_type, created_datetime,
             namespace=build_project_namespace(project),
             extra_data=extra_data)
 
     # User timeline
-    _push_to_timeline(user, obj, event_type,
+    _push_to_timeline(user, obj, event_type, created_datetime,
         namespace=build_user_namespace(user),
         extra_data=extra_data)
 
@@ -64,7 +65,7 @@ def _push_to_timelines(project, user, obj, event_type, extra_data={}):
         related_people |= team
         related_people = related_people.distinct()
 
-        _push_to_timeline(related_people, obj, event_type,
+        _push_to_timeline(related_people, obj, event_type, created_datetime,
             namespace=build_user_namespace(user),
             extra_data=extra_data)
 
@@ -103,7 +104,8 @@ def on_new_history_entry(sender, instance, created, **kwargs):
     if instance.delete_comment_date:
         extra_data["comment_deleted"] = True
 
-    _push_to_timelines(project, user, obj, event_type, extra_data=extra_data)
+    created_datetime = instance.created_at
+    _push_to_timelines(project, user, obj, event_type, created_datetime, extra_data=extra_data)
 
 
 def create_membership_push_to_timeline(sender, instance, **kwargs):
@@ -111,26 +113,29 @@ def create_membership_push_to_timeline(sender, instance, **kwargs):
     # If the user is the project owner we don't do anything because that info will
     # be shown in created project timeline entry
     if not instance.pk and instance.user and instance.user != instance.project.owner:
-        _push_to_timelines(instance.project, instance.user, instance, "create")
+        created_datetime = instance.created_at
+        _push_to_timelines(instance.project, instance.user, instance, "create", created_datetime)
 
     #Updating existing membership
     elif instance.pk:
         prev_instance = sender.objects.get(pk=instance.pk)
         if instance.user != prev_instance.user:
+            created_datetime = timezone.now()
             # The new member
-            _push_to_timelines(instance.project, instance.user, instance, "create")
+            _push_to_timelines(instance.project, instance.user, instance, "create", created_datetime)
             # If we are updating the old user is removed from project
             if prev_instance.user:
-                _push_to_timelines(instance.project, prev_instance.user, prev_instance, "delete")
+                _push_to_timelines(instance.project, prev_instance.user, prev_instance, "delete", created_datetime)
 
 
 def delete_membership_push_to_timeline(sender, instance, **kwargs):
     if instance.user:
-        _push_to_timelines(instance.project, instance.user, instance, "delete")
+        created_datetime = timezone.now()
+        _push_to_timelines(instance.project, instance.user, instance, "delete", created_datetime)
 
 
 def create_user_push_to_timeline(sender, instance, created, **kwargs):
     if created:
         project = None
         user = instance
-        _push_to_timelines(project, user, user, "create")
+        _push_to_timelines(project, user, user, "create", created_datetime=user.date_joined)

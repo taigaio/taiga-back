@@ -53,7 +53,7 @@ class BulkCreator(object):
 bulk_creator = BulkCreator()
 
 
-def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, namespace:str="default", extra_data:dict={}):
+def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, created_datetime:object, namespace:str="default", extra_data:dict={}):
     assert isinstance(obj, Model), "obj must be a instance of Model"
     assert isinstance(instance, Model), "instance must be a instance of Model"
     event_type_key = _get_impl_key_from_model(instance.__class__, event_type)
@@ -66,7 +66,7 @@ def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, n
         project=None,
         data=impl(instance, extra_data=extra_data),
         data_content_type = ContentType.objects.get_for_model(instance.__class__),
-        created = bulk_creator.created,
+        created=created_datetime,
     ))
 
 
@@ -75,13 +75,12 @@ def generate_timeline():
         # Users api wasn't a HistoryResourceMixin so we can't interate on the HistoryEntries in this case
         users = User.objects.order_by("date_joined")
         for user in users.iterator():
-            bulk_creator.created = user.date_joined
             print("User:", user.date_joined)
             extra_data = {
                 "values_diff": {},
                 "user": extract_user_info(user),
             }
-            _push_to_timelines(None, user, user, "create", extra_data=extra_data)
+            _push_to_timelines(None, user, user, "create", user.date_joined, extra_data=extra_data)
             del extra_data
 
     bulk_creator.flush()

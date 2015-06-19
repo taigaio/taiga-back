@@ -31,12 +31,12 @@ def test_push_to_timeline_many_objects():
     with patch("taiga.timeline.service._add_to_object_timeline") as mock:
         users = [User(), User(), User()]
         project = Project()
-        service.push_to_timeline(users, project, "test")
+        service.push_to_timeline(users, project, "test", project.created_date)
         assert mock.call_count == 3
         assert mock.mock_calls == [
-            call(users[0], project, "test", "default", {}),
-            call(users[1], project, "test", "default", {}),
-            call(users[2], project, "test", "default", {}),
+            call(users[0], project, "test", project.created_date, "default", {}),
+            call(users[1], project, "test", project.created_date, "default", {}),
+            call(users[2], project, "test", project.created_date, "default", {}),
         ]
         with pytest.raises(Exception):
             service.push_to_timeline(None, project, "test")
@@ -46,12 +46,12 @@ def test_add_to_objects_timeline():
     with patch("taiga.timeline.service._add_to_object_timeline") as mock:
         users = [User(), User(), User()]
         project = Project()
-        service._add_to_objects_timeline(users, project, "test")
+        service._add_to_objects_timeline(users, project, "test", project.created_date)
         assert mock.call_count == 3
         assert mock.mock_calls == [
-            call(users[0], project, "test", "default", {}),
-            call(users[1], project, "test", "default", {}),
-            call(users[2], project, "test", "default", {}),
+            call(users[0], project, "test", project.created_date, "default", {}),
+            call(users[1], project, "test", project.created_date, "default", {}),
+            call(users[2], project, "test", project.created_date, "default", {}),
         ]
         with pytest.raises(Exception):
             service.push_to_timeline(None, project, "test")
