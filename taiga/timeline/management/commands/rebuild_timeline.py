@@ -61,7 +61,7 @@ class BulkCreator(object):
 bulk_creator = BulkCreator()
 
 
-def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, namespace:str="default", extra_data:dict={}):
+def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, created_datetime:object, namespace:str="default", extra_data:dict={}):
     assert isinstance(obj, Model), "obj must be a instance of Model"
     assert isinstance(instance, Model), "instance must be a instance of Model"
     event_type_key = _get_impl_key_from_model(instance.__class__, event_type)
@@ -73,8 +73,8 @@ def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, n
         event_type=event_type_key,
         project=instance.project,
         data=impl(instance, extra_data=extra_data),
-        data_content_type = ContentType.objects.get_for_model(instance.__class__),
-        created = bulk_creator.created,
+        data_content_type=ContentType.objects.get_for_model(instance.__class__),
+        created=created_datetime,
     ))
 
 
@@ -116,23 +116,20 @@ def generate_timeline(initial_date, final_date, project_id):
 
             #Memberships
             for membership in project.memberships.exclude(user=None).exclude(user=project.owner):
-                bulk_creator.created = membership.created_at
-                _push_to_timelines(project, membership.user, membership, "create")
+                _push_to_timelines(project, membership.user, membership, "create", membership.created_at)
 
         for project in projects.iterator():
-            bulk_creator.created = project.created_date
             print("Project:", bulk_creator.created)
             extra_data = {
                 "values_diff": {},
                 "user": extract_user_info(project.owner),
             }
-            _push_to_timelines(project, project.owner, project, "create", extra_data=extra_data)
+            _push_to_timelines(project, project.owner, project, "create", project.created_date, extra_data=extra_data)
             del extra_data
 
         for historyEntry in history_entries.iterator():
             print("History entry:", historyEntry.created_at)
             try:
-                bulk_creator.created = historyEntry.created_at
                 on_new_history_entry(None, historyEntry, None)
             except ObjectDoesNotExist as e:
                 print("Ignoring")
