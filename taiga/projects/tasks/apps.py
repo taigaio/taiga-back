@@ -22,31 +22,49 @@ from taiga.projects import signals as generic_handlers
 from taiga.projects.custom_attributes import signals as custom_attributes_handlers
 from . import signals as handlers
 
+def connect_tasks_signals():
+    # Cached prev object version
+    signals.pre_save.connect(handlers.cached_prev_task,
+                             sender=apps.get_model("tasks", "Task"),
+                             dispatch_uid="cached_prev_task")
+
+    # Open/Close US and Milestone
+    signals.post_save.connect(handlers.try_to_close_or_open_us_and_milestone_when_create_or_edit_task,
+                              sender=apps.get_model("tasks", "Task"),
+                              dispatch_uid="try_to_close_or_open_us_and_milestone_when_create_or_edit_task")
+    signals.post_delete.connect(handlers.try_to_close_or_open_us_and_milestone_when_delete_task,
+                                sender=apps.get_model("tasks", "Task"),
+                                dispatch_uid="try_to_close_or_open_us_and_milestone_when_delete_task")
+
+    # Tags
+    signals.pre_save.connect(generic_handlers.tags_normalization,
+                             sender=apps.get_model("tasks", "Task"),
+                             dispatch_uid="tags_normalization_task")
+    signals.post_save.connect(generic_handlers.update_project_tags_when_create_or_edit_taggable_item,
+                              sender=apps.get_model("tasks", "Task"),
+                              dispatch_uid="update_project_tags_when_create_or_edit_tagglabe_item_task")
+    signals.post_delete.connect(generic_handlers.update_project_tags_when_delete_taggable_item,
+                                sender=apps.get_model("tasks", "Task"),
+                                dispatch_uid="update_project_tags_when_delete_tagglabe_item_task")
+
+    # Custom Attributes
+    signals.post_save.connect(custom_attributes_handlers.create_custom_attribute_value_when_create_task,
+                              sender=apps.get_model("tasks", "Task"),
+                              dispatch_uid="create_custom_attribute_value_when_create_task")
+
+def disconnect_tasks_signals():
+    signals.pre_save.disconnect(dispatch_uid="cached_prev_task")
+    signals.post_save.disconnect(dispatch_uid="try_to_close_or_open_us_and_milestone_when_create_or_edit_task")
+    signals.post_delete.disconnect(dispatch_uid="try_to_close_or_open_us_and_milestone_when_delete_task")
+    signals.pre_save.disconnect(dispatch_uid="tags_normalization")
+    signals.post_save.disconnect(dispatch_uid="update_project_tags_when_create_or_edit_tagglabe_item")
+    signals.post_delete.disconnect(dispatch_uid="update_project_tags_when_delete_tagglabe_item")
+    signals.post_save.disconnect(dispatch_uid="create_custom_attribute_value_when_create_task")
+
 
 class TasksAppConfig(AppConfig):
     name = "taiga.projects.tasks"
     verbose_name = "Tasks"
 
     def ready(self):
-        # Cached prev object version
-        signals.pre_save.connect(handlers.cached_prev_task,
-                                 sender=apps.get_model("tasks", "Task"))
-
-        # Open/Close US and Milestone
-        signals.post_save.connect(handlers.try_to_close_or_open_us_and_milestone_when_create_or_edit_task,
-                                 sender=apps.get_model("tasks", "Task"))
-        signals.post_delete.connect(handlers.try_to_close_or_open_us_and_milestone_when_delete_task,
-                                    sender=apps.get_model("tasks", "Task"))
-
-        # Tags
-        signals.pre_save.connect(generic_handlers.tags_normalization,
-                                 sender=apps.get_model("tasks", "Task"))
-        signals.post_save.connect(generic_handlers.update_project_tags_when_create_or_edit_taggable_item,
-                                  sender=apps.get_model("tasks", "Task"))
-        signals.post_delete.connect(generic_handlers.update_project_tags_when_delete_taggable_item,
-                                    sender=apps.get_model("tasks", "Task"))
-
-        # Custom Attributes
-        signals.post_save.connect(custom_attributes_handlers.create_custom_attribute_value_when_create_task,
-                                  sender=apps.get_model("tasks", "Task"),
-                                  dispatch_uid="create_custom_attribute_value_when_create_task")
+        connect_tasks_signals()
