@@ -255,30 +255,36 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
         super().pre_save(obj)
 
     def destroy(self, request, *args, **kwargs):
+        from taiga.events.apps import connect_events_signals, disconnect_events_signals
+        from taiga.projects.tasks.apps import connect_tasks_signals, disconnect_tasks_signals
+        from taiga.projects.userstories.apps import connect_userstories_signals, disconnect_userstories_signals
+        from taiga.projects.issues.apps import connect_issues_signals, disconnect_issues_signals
+        from taiga.projects.apps import connect_memberships_signals, disconnect_memberships_signals
+
         obj = self.get_object_or_none()
         self.check_permissions(request, 'destroy', obj)
 
-        signals.post_delete.disconnect(sender=UserStory,
-                                       dispatch_uid="user_story_update_project_colors_on_delete")
-        signals.post_delete.disconnect(sender=Issue,
-                                       dispatch_uid="issue_update_project_colors_on_delete")
-        signals.post_delete.disconnect(sender=Task,
-                                       dispatch_uid="tasks_milestone_close_handler_on_delete")
-        signals.post_delete.disconnect(sender=Task,
-                                       dispatch_uid="tasks_us_close_handler_on_delete")
-        signals.post_delete.disconnect(sender=Task,
-                                       dispatch_uid="task_update_project_colors_on_delete")
-        signals.post_delete.disconnect(dispatch_uid="refprojdel")
-        signals.post_delete.disconnect(dispatch_uid='update_watchers_on_membership_post_delete')
-
-        obj.tasks.all().delete()
-        obj.user_stories.all().delete()
-        obj.issues.all().delete()
-        obj.memberships.all().delete()
-        obj.roles.all().delete()
-
         if obj is None:
             raise Http404
+
+        disconnect_events_signals()
+        disconnect_issues_signals()
+        disconnect_tasks_signals()
+        disconnect_userstories_signals()
+        disconnect_memberships_signals()
+
+        try:
+            obj.tasks.all().delete()
+            obj.user_stories.all().delete()
+            obj.issues.all().delete()
+            obj.memberships.all().delete()
+            obj.roles.all().delete()
+        finally:
+            connect_events_signals()
+            connect_issues_signals()
+            connect_tasks_signals()
+            connect_userstories_signals()
+            connect_memberships_signals()
 
         self.pre_delete(obj)
         self.pre_conditions_on_delete(obj)
