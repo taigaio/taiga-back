@@ -47,7 +47,7 @@ def test_valid_project_export_with_celery_disabled(client, settings):
 
     response = client.get(url, content_type="application/json")
     assert response.status_code == 200
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert "url" in response_data
 
 
@@ -63,7 +63,7 @@ def test_valid_project_export_with_celery_enabled(client, settings):
 
     response = client.get(url, content_type="application/json")
     assert response.status_code == 202
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert "export_id" in response_data
 
 

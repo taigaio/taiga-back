@@ -200,7 +200,7 @@ def test_leave_project_valid_membership_only_owner(client):
     url = reverse("projects-leave", args=(project.id,))
     response = client.post(url)
     assert response.status_code == 403
-    assert json.loads(response.content)["_error_message"] == "You can't leave the project if there are no more owners"
+    assert response.data["_error_message"] == "You can't leave the project if there are no more owners"
 
 
 def test_leave_project_invalid_membership(client):
@@ -221,7 +221,7 @@ def test_delete_membership_only_owner(client):
     url = reverse("memberships-detail", args=(membership.id,))
     response = client.delete(url)
     assert response.status_code == 400
-    assert json.loads(response.content)["_error_message"] == "At least one of the user must be an active admin"
+    assert response.data["_error_message"] == "At least one of the user must be an active admin"
 
 
 def test_edit_membership_only_owner(client):
@@ -339,7 +339,7 @@ def test_projects_user_order(client):
     url = reverse("projects-list")
     url = "%s?member=%s" % (url, user.id)
     response = client.json.get(url)
-    response_content = json.loads(response.content.decode("utf-8"))
+    response_content = response.data
     assert response.status_code == 200
     assert(response_content[0]["id"] == project_1.id)
 
@@ -347,6 +347,6 @@ def test_projects_user_order(client):
     url = reverse("projects-list")
     url = "%s?member=%s&order_by=memberships__user_order" % (url, user.id)
     response = client.json.get(url)
-    response_content = json.loads(response.content.decode("utf-8"))
+    response_content = response.data
     assert response.status_code == 200
     assert(response_content[0]["id"] == project_2.id)

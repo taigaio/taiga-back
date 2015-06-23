@@ -203,15 +203,15 @@ def test_archived_filter(client):
 
     data = {}
     response = client.get(url, data)
-    assert len(json.loads(response.content)) == 2
+    assert len(response.data) == 2
 
     data = {"status__is_archived": 0}
     response = client.get(url, data)
-    assert len(json.loads(response.content)) == 1
+    assert len(response.data) == 1
 
     data = {"status__is_archived": 1}
     response = client.get(url, data)
-    assert len(json.loads(response.content)) == 1
+    assert len(response.data) == 1
 
 
 def test_filter_by_multiple_status(client):
@@ -230,7 +230,7 @@ def test_filter_by_multiple_status(client):
 
     data = {}
     response = client.get(url, data)
-    assert len(json.loads(response.content)) == 2
+    assert len(response.data) == 2
 
 
 def test_get_total_points(client):
