@@ -61,7 +61,7 @@ bleach.ALLOWED_STYLES.append("background")
 
 bleach.ALLOWED_ATTRIBUTES["a"] = ["href", "title", "alt", "target"]
 bleach.ALLOWED_ATTRIBUTES["img"] = ["alt", "src"]
-bleach.ALLOWED_ATTRIBUTES["*"] = ["class", "style"]
+bleach.ALLOWED_ATTRIBUTES["*"] = ["class", "style", "id"]
 
 
 def _make_extensions_list(project=None):
