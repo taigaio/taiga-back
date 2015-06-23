@@ -24,7 +24,7 @@ from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicIssueStatusSerializer
-from taiga.users.serializers import BasicInfoSerializer as UserBasicInfoSerializer
+from taiga.users.serializers import UserBasicInfoSerializer
 
 from . import models
 

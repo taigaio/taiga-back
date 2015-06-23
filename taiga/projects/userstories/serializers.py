@@ -27,7 +27,7 @@ from taiga.projects.validators import UserStoryStatusExistsValidator
 from taiga.projects.userstories.validators import UserStoryExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicUserStoryStatusSerializer
-from taiga.users.serializers import BasicInfoSerializer as UserBasicInfoSerializer
+from taiga.users.serializers import UserBasicInfoSerializer
 
 from . import models
 

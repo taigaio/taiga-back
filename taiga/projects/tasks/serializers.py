@@ -27,7 +27,7 @@ from taiga.projects.milestones.validators import SprintExistsValidator
 from taiga.projects.tasks.validators import TaskExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicTaskStatusSerializerSerializer
-from taiga.users.serializers import BasicInfoSerializer as UserBasicInfoSerializer
+from taiga.users.serializers import UserBasicInfoSerializer
 
 from . import models
 
