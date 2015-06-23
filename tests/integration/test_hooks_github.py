@@ -134,6 +134,30 @@ def test_push_event_user_story_processing(client):
     assert len(mail.outbox) == 1
 
 
+def test_push_event_multiple_actions(client):
+    creation_status = f.IssueStatusFactory()
+    role = f.RoleFactory(project=creation_status.project, permissions=["view_issues"])
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    new_status = f.IssueStatusFactory(project=creation_status.project)
+    issue1 = f.IssueFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
+    issue2 = f.IssueFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
+    payload = {"commits": [
+        {"message": """test message
+            test   TG-%s    #%s   ok
+            test   TG-%s    #%s   ok
+            bye!
+        """ % (issue1.ref, new_status.slug, issue2.ref, new_status.slug)},
+    ]}
+    mail.outbox = []
+    ev_hook1 = event_hooks.PushEventHook(issue1.project, payload)
+    ev_hook1.process_event()
+    issue1 = Issue.objects.get(id=issue1.id)
+    issue2 = Issue.objects.get(id=issue2.id)
+    assert issue1.status.id == new_status.id
+    assert issue2.status.id == new_status.id
+    assert len(mail.outbox) == 2
+
+
 def test_push_event_processing_case_insensitive(client):
     creation_status = f.TaskStatusFactory()
     role = f.RoleFactory(project=creation_status.project, permissions=["view_tasks"])

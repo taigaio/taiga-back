@@ -56,8 +56,7 @@ class PushEventHook(BaseEventHook):
             return
 
         p = re.compile("tg-(\d+) +#([-\w]+)")
-        m = p.search(message.lower())
-        if m:
+        for m in p.finditer(message.lower()):
             ref = m.group(1)
             status_slug = m.group(2)
             self._change_status(ref, status_slug, github_user, commit)

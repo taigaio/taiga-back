@@ -6,6 +6,7 @@
 - Add a "field type" property for custom fields: 'text' and 'multiline text' right now (thanks to [@artlepool](https://github.com/artlepool))
 
 ### Misc
+- Allow multiple actions in the commit messages.
 - Lots of small and not so small bugfixes.
 
 
