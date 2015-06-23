@@ -14,20 +14,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='issuecustomattribute',
             name='field_type',
-            field=models.CharField(default='TEXT', max_length=5, verbose_name='attribute field type'),
+            field=models.CharField(max_length=5, verbose_name='type', choices=[('TEXT', 'Text'), ('MULTI', 'Multi-Line Text')], default='TEXT'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='taskcustomattribute',
             name='field_type',
-            field=models.CharField(default='TEXT', max_length=5, verbose_name='attribute field type'),
+            field=models.CharField(max_length=5, verbose_name='type', choices=[('TEXT', 'Text'), ('MULTI', 'Multi-Line Text')], default='TEXT'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='userstorycustomattribute',
             name='field_type',
-            field=models.CharField(default='TEXT', max_length=5, verbose_name='attribute field type'),
+            field=models.CharField(max_length=5, verbose_name='type', choices=[('TEXT', 'Text'), ('MULTI', 'Multi-Line Text')], default='TEXT'),
             preserve_default=True,
         ),
-
     ]
