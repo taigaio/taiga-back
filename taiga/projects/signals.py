@@ -19,6 +19,7 @@ from django.conf import settings
 
 from taiga.projects.services.tags_colors import update_project_tags_colors_handler, remove_unused_tags
 from taiga.projects.notifications.services import create_notify_policy_if_not_exists
+from taiga.base.utils.db import get_typename_for_model_class
 
 
 ####################################
@@ -53,7 +54,13 @@ def update_watchers_on_membership_post_delete(sender, instance, using, **kwargs)
     # instance.user can contain pointer to now
     # removed object from a database.
     for model in models:
-        model.watchers.through.objects.filter(user_id=instance.user_id).delete()
+        #filter(project=instance.project)
+        filter = {
+            "user_id": instance.user_id,
+            "%s__project"%(model._meta.model_name): instance.project,
+        }
+
+        model.watchers.through.objects.filter(**filter).delete()
 
 
 def create_notify_policy(sender, instance, using, **kwargs):

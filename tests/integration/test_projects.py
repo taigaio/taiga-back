@@ -212,6 +212,22 @@ def test_leave_project_invalid_membership(client):
     assert response.status_code == 404
 
 
+def test_leave_project_respect_watching_items(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create()
+    role = f.RoleFactory.create(project=project, permissions=["view_project"])
+    f.MembershipFactory.create(project=project, user=user, role=role)
+    issue = f.IssueFactory(owner=user)
+    issue.watchers=[user]
+    issue.save()
+
+    client.login(user)
+    url = reverse("projects-leave", args=(project.id,))
+    response = client.post(url)
+    assert response.status_code == 200
+    assert list(issue.watchers.all()) == [user]
+
+
 def test_delete_membership_only_owner(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create()
