@@ -3,7 +3,7 @@
 
 ## 1.9.0 ??? (unreleased)
 ### Features
-- ...
+- Add a "field type" property for custom fields: 'text' and 'multiline text' right now (thanks to [@artlepool](https://github.com/artlepool))
 
 ### Misc
 - Lots of small and not so small bugfixes.
