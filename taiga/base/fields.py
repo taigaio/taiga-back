@@ -58,7 +58,7 @@ class I18NJsonField(JsonField):
 
             if key in self.i18n_fields:
                 if isinstance(value, list):
-                    i18n_d[key] = [e is not None and _(e) or e for e in value]
+                    i18n_d[key] = [e is not None and _(str(e)) or e for e in value]
                 if isinstance(value, str):
                     i18n_d[key] = value is not None and _(value) or value
             else:
