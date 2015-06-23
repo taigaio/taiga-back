@@ -36,13 +36,13 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
                               related_name="owned_issues", verbose_name=_("owner"))
-    status = models.ForeignKey("projects.IssueStatus", null=False, blank=False,
+    status = models.ForeignKey("projects.IssueStatus", null=True, blank=True,
                                related_name="issues", verbose_name=_("status"))
-    severity = models.ForeignKey("projects.Severity", null=False, blank=False,
+    severity = models.ForeignKey("projects.Severity", null=True, blank=True,
                                  related_name="issues", verbose_name=_("severity"))
-    priority = models.ForeignKey("projects.Priority", null=False, blank=False,
+    priority = models.ForeignKey("projects.Priority", null=True, blank=True,
                                  related_name="issues", verbose_name=_("priority"))
-    type = models.ForeignKey("projects.IssueType", null=False, blank=False,
+    type = models.ForeignKey("projects.IssueType", null=True, blank=True,
                              related_name="issues", verbose_name=_("type"))
     milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
                                   default=None, related_name="issues",

@@ -46,6 +46,31 @@ def test_update_issues_order_in_bulk():
                                                            model=models.Issue)
 
 
+def test_create_issue_without_status(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    status = f.IssueStatusFactory.create(project=project)
+    priority = f.PriorityFactory.create(project=project)
+    severity = f.SeverityFactory.create(project=project)
+    type = f.IssueTypeFactory.create(project=project)
+    project.default_issue_status = status
+    project.default_priority = priority
+    project.default_severity = severity
+    project.default_issue_type = type
+    project.save()
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    url = reverse("issues-list")
+
+    data = {"subject": "Test user story", "project": project.id}
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    assert response.data['status'] == project.default_issue_status.id
+    assert response.data['severity'] == project.default_severity.id
+    assert response.data['priority'] == project.default_priority.id
+    assert response.data['type'] == project.default_issue_type.id
+
+
 def test_api_create_issues_in_bulk(client):
     project = f.create_project()
     f.MembershipFactory(project=project, user=project.owner, is_owner=True)

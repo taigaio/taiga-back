@@ -36,6 +36,23 @@ Task #2
         db.save_in_bulk.assert_called_once_with(tasks, None, None)
 
 
+def test_create_task_without_status(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    status = f.TaskStatusFactory.create(project=project)
+    project.default_task_status = status
+    project.save()
+
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    url = reverse("tasks-list")
+
+    data = {"subject": "Test user story", "project": project.id}
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    assert response.data['status'] == project.default_task_status.id
+
+
 def test_api_update_task_tags(client):
     task = f.create_task()
     f.MembershipFactory.create(project=task.project, user=task.owner, is_owner=True)
