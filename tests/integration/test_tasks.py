@@ -54,8 +54,9 @@ def test_create_task_without_status(client):
 
 
 def test_api_update_task_tags(client):
-    task = f.create_task()
-    f.MembershipFactory.create(project=task.project, user=task.owner, is_owner=True)
+    project = f.ProjectFactory.create()
+    task = f.create_task(project=project, status__project=project, milestone=None, user_story=None)
+    f.MembershipFactory.create(project=project, user=task.owner, is_owner=True)
     url = reverse("tasks-detail", kwargs={"pk": task.pk})
     data = {"tags": ["back", "front"], "version": task.version}
 

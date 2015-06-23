@@ -74,3 +74,70 @@ def test_unique_reference_per_project(seq, refmodels):
 
     project.delete()
     assert not seq.exists(seqname)
+
+
+@pytest.mark.django_db
+def test_regenerate_us_reference_on_project_change(seq, refmodels):
+    project1 = factories.ProjectFactory.create()
+    seqname1 = refmodels.make_sequence_name(project1)
+    project2 = factories.ProjectFactory.create()
+    seqname2 = refmodels.make_sequence_name(project2)
+
+    seq.alter(seqname1, 100)
+    seq.alter(seqname2, 200)
+
+    user_story = factories.UserStoryFactory.create(project=project1)
+    assert user_story.ref == 101
+
+    user_story.subject = "other"
+    user_story.save()
+    assert user_story.ref == 101
+
+    user_story.project = project2
+    user_story.save()
+
+    assert user_story.ref == 201
+
+@pytest.mark.django_db
+def test_regenerate_task_reference_on_project_change(seq, refmodels):
+    project1 = factories.ProjectFactory.create()
+    seqname1 = refmodels.make_sequence_name(project1)
+    project2 = factories.ProjectFactory.create()
+    seqname2 = refmodels.make_sequence_name(project2)
+
+    seq.alter(seqname1, 100)
+    seq.alter(seqname2, 200)
+
+    task = factories.TaskFactory.create(project=project1)
+    assert task.ref == 101
+
+    task.subject = "other"
+    task.save()
+    assert task.ref == 101
+
+    task.project = project2
+    task.save()
+
+    assert task.ref == 201
+
+@pytest.mark.django_db
+def test_regenerate_issue_reference_on_project_change(seq, refmodels):
+    project1 = factories.ProjectFactory.create()
+    seqname1 = refmodels.make_sequence_name(project1)
+    project2 = factories.ProjectFactory.create()
+    seqname2 = refmodels.make_sequence_name(project2)
+
+    seq.alter(seqname1, 100)
+    seq.alter(seqname2, 200)
+
+    issue = factories.IssueFactory.create(project=project1)
+    assert issue.ref == 101
+
+    issue.subject = "other"
+    issue.save()
+    assert issue.ref == 101
+
+    issue.project = project2
+    issue.save()
+
+    assert issue.ref == 201

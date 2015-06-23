@@ -62,6 +62,33 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
     # Specific filter used for filtering neighbor user stories
     _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')
 
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object_or_none()
+        project_id = request.DATA.get('project', None)
+        if project_id and self.object and self.object.project.id != project_id:
+            try:
+                new_project = Project.objects.get(pk=project_id)
+                self.check_permissions(request, "destroy", self.object)
+                self.check_permissions(request, "create", new_project)
+
+                sprint_id = request.DATA.get('milestone', None)
+                if sprint_id is not None and new_project.milestones.filter(pk=sprint_id).count() == 0:
+                    request.DATA['milestone'] = None
+
+                status_id = request.DATA.get('status', None)
+                if status_id is not None:
+                    try:
+                        old_status = self.object.project.us_statuses.get(pk=status_id)
+                        new_status = new_project.us_statuses.get(slug=old_status.slug)
+                        request.DATA['status'] = new_status.id
+                    except UserStoryStatus.DoesNotExist:
+                        request.DATA['status'] = new_project.default_us_status.id
+            except Project.DoesNotExist:
+                return response.BadRequest(_("The project doesn't exist"))
+
+        return super().update(request, *args, **kwargs)
+
+
     def get_queryset(self):
         qs = self.model.objects.all()
         qs = qs.prefetch_related("role_points",
@@ -99,6 +126,17 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
                     role_points.save()
 
         super().post_save(obj, created)
+
+    def pre_conditions_on_save(self, obj):
+        super().pre_conditions_on_save(obj)
+
+        if obj.milestone and obj.milestone.project != obj.project:
+            raise exc.PermissionDenied(_("You don't have permissions to set this sprint "
+                                         "to this user story."))
+
+        if obj.status and obj.status.project != obj.project:
+            raise exc.PermissionDenied(_("You don't have permissions to set this status "
+                                         "to this user story."))
 
     @list_route(methods=["GET"])
     def by_ref(self, request):

@@ -152,7 +152,7 @@ def test_update_userstory_points(client):
     f.PointsFactory.create(project=project, value=1)
     points3 = f.PointsFactory.create(project=project, value=2)
 
-    us = f.UserStoryFactory.create(project=project, owner=user1)
+    us = f.UserStoryFactory.create(project=project, owner=user1, status__project=project, milestone__project=project)
     usdata = UserStorySerializer(us).data
 
     url = reverse("userstories-detail", args=[us.pk])
@@ -166,7 +166,7 @@ def test_update_userstory_points(client):
     data["points"].update({'2000': points3.pk})
 
     response = client.json.patch(url, json.dumps(data))
-    assert response.status_code == 200
+    assert response.status_code == 200, str(response.content)
     assert response.data["points"] == usdata['points']
 
     # Api should save successful

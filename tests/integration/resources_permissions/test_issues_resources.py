@@ -160,6 +160,119 @@ def test_issue_update(client, data):
             assert results == [401, 403, 403, 200, 200]
 
 
+def test_issue_update_with_project_change(client):
+    user1 = f.UserFactory.create()
+    user2 = f.UserFactory.create()
+    user3 = f.UserFactory.create()
+    user4 = f.UserFactory.create()
+    project1 = f.ProjectFactory()
+    project2 = f.ProjectFactory()
+
+    issue_status1 = f.IssueStatusFactory.create(project=project1)
+    issue_status2 = f.IssueStatusFactory.create(project=project2)
+
+    priority1 = f.PriorityFactory.create(project=project1)
+    priority2 = f.PriorityFactory.create(project=project2)
+
+    severity1 = f.SeverityFactory.create(project=project1)
+    severity2 = f.SeverityFactory.create(project=project2)
+
+    issue_type1 = f.IssueTypeFactory.create(project=project1)
+    issue_type2 = f.IssueTypeFactory.create(project=project2)
+
+    project1.default_issue_status = issue_status1
+    project2.default_issue_status = issue_status2
+
+    project1.default_priority = priority1
+    project2.default_priority = priority2
+
+    project1.default_severity = severity1
+    project2.default_severity = severity2
+
+    project1.default_issue_type = issue_type1
+    project2.default_issue_type = issue_type2
+
+    project1.save()
+    project2.save()
+
+    membership1 = f.MembershipFactory(project=project1,
+                                      user=user1,
+                                      role__project=project1,
+                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    membership2 = f.MembershipFactory(project=project2,
+                                      user=user1,
+                                      role__project=project2,
+                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    membership3 = f.MembershipFactory(project=project1,
+                                      user=user2,
+                                      role__project=project1,
+                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    membership4 = f.MembershipFactory(project=project2,
+                                      user=user3,
+                                      role__project=project2,
+                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+
+    issue = f.IssueFactory.create(project=project1)
+
+    url = reverse('issues-detail', kwargs={"pk": issue.pk})
+
+    # Test user with permissions in both projects
+    client.login(user1)
+
+    issue_data = IssueSerializer(issue).data
+    issue_data["project"] = project2.id
+    issue_data = json.dumps(issue_data)
+
+    response = client.put(url, data=issue_data, content_type="application/json")
+
+    assert response.status_code == 200
+
+    issue.project = project1
+    issue.save()
+
+    # Test user with permissions in only origin project
+    client.login(user2)
+
+    issue_data = IssueSerializer(issue).data
+    issue_data["project"] = project2.id
+    issue_data = json.dumps(issue_data)
+
+    response = client.put(url, data=issue_data, content_type="application/json")
+
+    assert response.status_code == 403
+
+    issue.project = project1
+    issue.save()
+
+    # Test user with permissions in only destionation project
+    client.login(user3)
+
+    issue_data = IssueSerializer(issue).data
+    issue_data["project"] = project2.id
+    issue_data = json.dumps(issue_data)
+
+    response = client.put(url, data=issue_data, content_type="application/json")
+
+    assert response.status_code == 403
+
+    issue.project = project1
+    issue.save()
+
+    # Test user without permissions in the projects
+    client.login(user4)
+
+    issue_data = IssueSerializer(issue).data
+    issue_data["project"] = project2.id
+    issue_data = json.dumps(issue_data)
+
+    response = client.put(url, data=issue_data, content_type="application/json")
+
+    assert response.status_code == 403
+
+    issue.project = project1
+    issue.save()
+
+
 def test_issue_delete(client, data):
     public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
     private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})

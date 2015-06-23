@@ -199,7 +199,7 @@ def test_take_hidden_snapshot():
 
 def test_history_with_only_comment_shouldnot_be_hidden(client):
     project = f.create_project()
-    us = f.create_userstory(project=project)
+    us = f.create_userstory(project=project, status__project=project)
     f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
 
     qs_all = HistoryEntry.objects.all()
@@ -213,7 +213,7 @@ def test_history_with_only_comment_shouldnot_be_hidden(client):
     client.login(project.owner)
     response = client.patch(url, data, content_type="application/json")
 
-    assert response.status_code == 200, response.content
+    assert response.status_code == 200, str(response.content)
     assert qs_all.count() == 1
     assert qs_hidden.count() == 0
 

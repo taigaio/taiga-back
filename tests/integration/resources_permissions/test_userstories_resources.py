@@ -89,13 +89,19 @@ def data():
 
     m.public_role_points = f.RolePointsFactory(role=m.public_project.roles.all()[0],
                                                points=m.public_points,
-                                               user_story__project=m.public_project)
+                                               user_story__project=m.public_project,
+                                               user_story__milestone__project=m.public_project,
+                                               user_story__status__project=m.public_project)
     m.private_role_points1 = f.RolePointsFactory(role=m.private_project1.roles.all()[0],
                                                  points=m.private_points1,
-                                                 user_story__project=m.private_project1)
+                                                 user_story__project=m.private_project1,
+                                                 user_story__milestone__project=m.private_project1,
+                                                 user_story__status__project=m.private_project1)
     m.private_role_points2 = f.RolePointsFactory(role=m.private_project2.roles.all()[0],
                                                  points=m.private_points2,
-                                                 user_story__project=m.private_project2)
+                                                 user_story__project=m.private_project2,
+                                                 user_story__milestone__project=m.private_project2,
+                                                 user_story__status__project=m.private_project2)
 
     m.public_user_story = m.public_role_points.user_story
     m.private_user_story1 = m.private_role_points1.user_story
@@ -156,6 +162,101 @@ def test_user_story_update(client, data):
             user_story_data = json.dumps(user_story_data)
             results = helper_test_http_method(client, 'put', private_url2, user_story_data, users)
             assert results == [401, 403, 403, 200, 200]
+
+
+def test_user_story_update_with_project_change(client):
+    user1 = f.UserFactory.create()
+    user2 = f.UserFactory.create()
+    user3 = f.UserFactory.create()
+    user4 = f.UserFactory.create()
+    project1 = f.ProjectFactory()
+    project2 = f.ProjectFactory()
+
+    us_status1 = f.UserStoryStatusFactory.create(project=project1)
+    us_status2 = f.UserStoryStatusFactory.create(project=project2)
+
+    project1.default_us_status = us_status1
+    project2.default_us_status = us_status2
+
+    project1.save()
+    project2.save()
+
+    membership1 = f.MembershipFactory(project=project1,
+                                      user=user1,
+                                      role__project=project1,
+                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    membership2 = f.MembershipFactory(project=project2,
+                                      user=user1,
+                                      role__project=project2,
+                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    membership3 = f.MembershipFactory(project=project1,
+                                      user=user2,
+                                      role__project=project1,
+                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    membership4 = f.MembershipFactory(project=project2,
+                                      user=user3,
+                                      role__project=project2,
+                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+
+    us = f.UserStoryFactory.create(project=project1)
+
+    url = reverse('userstories-detail', kwargs={"pk": us.pk})
+
+    # Test user with permissions in both projects
+    client.login(user1)
+
+    us_data = UserStorySerializer(us).data
+    us_data["project"] = project2.id
+    us_data = json.dumps(us_data)
+
+    response = client.put(url, data=us_data, content_type="application/json")
+
+    assert response.status_code == 200
+
+    us.project = project1
+    us.save()
+
+    # Test user with permissions in only origin project
+    client.login(user2)
+
+    us_data = UserStorySerializer(us).data
+    us_data["project"] = project2.id
+    us_data = json.dumps(us_data)
+
+    response = client.put(url, data=us_data, content_type="application/json")
+
+    assert response.status_code == 403
+
+    us.project = project1
+    us.save()
+
+    # Test user with permissions in only destionation project
+    client.login(user3)
+
+    us_data = UserStorySerializer(us).data
+    us_data["project"] = project2.id
+    us_data = json.dumps(us_data)
+
+    response = client.put(url, data=us_data, content_type="application/json")
+
+    assert response.status_code == 403
+
+    us.project = project1
+    us.save()
+
+    # Test user without permissions in the projects
+    client.login(user4)
+
+    us_data = UserStorySerializer(us).data
+    us_data["project"] = project2.id
+    us_data = json.dumps(us_data)
+
+    response = client.put(url, data=us_data, content_type="application/json")
+
+    assert response.status_code == 403
+
+    us.project = project1
+    us.save()
 
 
 def test_user_story_delete(client, data):
