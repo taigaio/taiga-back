@@ -272,21 +272,6 @@ class MembershipAdminSerializer(MembershipSerializer):
         exclude = ("token",)
 
 
-class ProjectMembershipSerializer(serializers.ModelSerializer):
-    role_name = serializers.CharField(source='role.name', required=False, i18n=True)
-    full_name = serializers.CharField(source='user.get_full_name', required=False)
-    username = serializers.CharField(source='user.username', required=False)
-    color = serializers.CharField(source='user.color', required=False)
-    is_active = serializers.BooleanField(source='user.is_active', required=False)
-    photo = serializers.SerializerMethodField("get_photo")
-
-    class Meta:
-        model = models.Membership
-
-    def get_photo(self, project):
-        return get_photo_or_gravatar_url(project.user)
-
-
 class MemberBulkSerializer(RoleExistsValidator, serializers.Serializer):
     email = serializers.EmailField()
     role_id = serializers.IntegerField()
@@ -296,6 +281,23 @@ class MembersBulkSerializer(ProjectExistsValidator, serializers.Serializer):
     project_id = serializers.IntegerField()
     bulk_memberships = MemberBulkSerializer(many=True)
     invitation_extra_text = serializers.CharField(required=False, max_length=255)
+
+
+class ProjectMemberSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="user.id", read_only=True)
+    username = serializers.CharField(source='user.username', read_only=True)
+    full_name = serializers.CharField(source='user.full_name', read_only=True)
+    full_name_display = serializers.CharField(source='user.get_full_name', read_only=True)
+    color = serializers.CharField(source='user.color', read_only=True)
+    photo = serializers.SerializerMethodField("get_photo")
+    is_active = serializers.BooleanField(source='user.is_active', read_only=True)
+    role_name = serializers.CharField(source='role.name', read_only=True, i18n=True)
+
+    class Meta:
+        model = models.Membership
+
+    def get_photo(self, membership):
+        return get_photo_or_gravatar_url(membership.user)
 
 
 ######################################################
@@ -365,15 +367,14 @@ class ProjectDetailSerializer(ProjectSerializer):
                                                              many=True, required=False)
 
     roles = ProjectRoleSerializer(source="roles", many=True, read_only=True)
-    users = UserSerializer(source="members", many=True, read_only=True)
-    memberships = serializers.SerializerMethodField(method_name="get_memberships")
+    members = serializers.SerializerMethodField(method_name="get_members")
 
-    def get_memberships(self, obj):
+    def get_members(self, obj):
         qs = obj.memberships.filter(user__isnull=False)
         qs = qs.extra(select={"complete_user_name":"concat(full_name, username)"})
         qs = qs.order_by("complete_user_name")
         qs = qs.select_related("role", "user")
-        serializer = ProjectMembershipSerializer(qs, many=True)
+        serializer = ProjectMemberSerializer(qs, many=True)
         return serializer.data
 
 
