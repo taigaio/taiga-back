@@ -74,11 +74,11 @@ def searches_initial_data():
     m.tsk2 = f.TaskFactory.create(project=m.project1)
     m.tsk3 = f.TaskFactory.create(project=m.project1, subject="Back to the future")
 
-    m.iss1 = f.IssueFactory.create(project=m.project1, subject="Backend and Frontend")
+    m.iss1 = f.IssueFactory.create(project=m.project1, subject="Design and Frontend")
     m.iss2 = f.IssueFactory.create(project=m.project2)
-    m.iss3 = f.IssueFactory.create(project=m.project1)
+    m.iss3 = f.IssueFactory.create(project=m.project1, subject="Green Frog")
 
-    m.wiki1 = f.WikiPageFactory.create(project=m.project1)
+    m.wiki1 = f.WikiPageFactory.create(project=m.project1, content="Final Frontier")
     m.wiki2 = f.WikiPageFactory.create(project=m.project1, content="Frontend, future")
     m.wiki3 = f.WikiPageFactory.create(project=m.project2)
 
@@ -129,6 +129,20 @@ def test_search_text_query_in_my_project(client, searches_initial_data):
     assert len(response.data["tasks"]) == 1
     assert len(response.data["issues"]) == 0
     assert len(response.data["wikipages"]) == 0
+
+
+def test_search_partial_text_query_in_my_project(client, searches_initial_data):
+    data = searches_initial_data
+
+    client.login(data.member1.user)
+
+    response = client.get(reverse("search-list"), {"project": data.project1.id, "text": "fron"})
+    assert response.status_code == 200
+    assert response.data["count"] == 3
+    assert len(response.data["userstories"]) == 0
+    assert len(response.data["tasks"]) == 0
+    assert len(response.data["issues"]) == 1
+    assert len(response.data["wikipages"]) == 2
 
 
 def test_search_text_query_with_an_invalid_project_id(client, searches_initial_data):

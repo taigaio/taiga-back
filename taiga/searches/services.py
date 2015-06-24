@@ -25,9 +25,10 @@ def search_user_stories(project, text):
     model_cls = apps.get_model("userstories", "UserStory")
     where_clause = ("to_tsvector(coalesce(userstories_userstory.subject) || ' ' || "
                     "coalesce(userstories_userstory.ref) || ' ' || "
-                    "coalesce(userstories_userstory.description)) @@ plainto_tsquery(%s)")
+                    "coalesce(userstories_userstory.description)) @@ to_tsquery(%s)")
 
     if text:
+        text += ":*"
         return (model_cls.objects.extra(where=[where_clause], params=[text])
                                  .filter(project_id=project.pk)[:MAX_RESULTS])
 
@@ -38,9 +39,10 @@ def search_tasks(project, text):
     model_cls = apps.get_model("tasks", "Task")
     where_clause = ("to_tsvector(coalesce(tasks_task.subject, '') || ' ' || "
                     "coalesce(tasks_task.ref) || ' ' || "
-                    "coalesce(tasks_task.description, '')) @@ plainto_tsquery(%s)")
+                    "coalesce(tasks_task.description, '')) @@ to_tsquery(%s)")
 
     if text:
+        text += ":*"
         return (model_cls.objects.extra(where=[where_clause], params=[text])
                                  .filter(project_id=project.pk)[:MAX_RESULTS])
 
@@ -51,9 +53,10 @@ def search_issues(project, text):
     model_cls = apps.get_model("issues", "Issue")
     where_clause = ("to_tsvector(coalesce(issues_issue.subject) || ' ' || "
                     "coalesce(issues_issue.ref) || ' ' || "
-                    "coalesce(issues_issue.description)) @@ plainto_tsquery(%s)")
+                    "coalesce(issues_issue.description)) @@ to_tsquery(%s)")
 
     if text:
+        text += ":*"
         return (model_cls.objects.extra(where=[where_clause], params=[text])
                                  .filter(project_id=project.pk)[:MAX_RESULTS])
 
@@ -63,9 +66,10 @@ def search_issues(project, text):
 def search_wiki_pages(project, text):
     model_cls = apps.get_model("wiki", "WikiPage")
     where_clause = ("to_tsvector(coalesce(wiki_wikipage.slug) || ' ' || coalesce(wiki_wikipage.content)) "
-                    "@@ plainto_tsquery(%s)")
+                    "@@ to_tsquery(%s)")
 
     if text:
+        text += ":*"
         return (model_cls.objects.extra(where=[where_clause], params=[text])
                                  .filter(project_id=project.pk)[:MAX_RESULTS])
 
