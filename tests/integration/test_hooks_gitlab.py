@@ -33,7 +33,7 @@ def test_bad_signature(client):
     url = "{}?project={}&key={}".format(url, project.id, "badbadbad")
     data = {}
     response = client.post(url, json.dumps(data), content_type="application/json")
-    response_content = json.loads(response.content.decode("utf-8"))
+    response_content = response.data
     assert response.status_code == 400
     assert "Bad signature" in response_content["_error_message"]
 
@@ -349,7 +349,7 @@ def test_api_get_project_modules(client):
     client.login(project.owner)
     response = client.get(url)
     assert response.status_code == 200
-    content = json.loads(response.content.decode("utf-8"))
+    content = response.data
     assert "gitlab" in content
     assert content["gitlab"]["secret"] != ""
     assert content["gitlab"]["webhooks_url"] != ""

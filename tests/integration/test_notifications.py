@@ -463,4 +463,4 @@ def test_retrieve_notify_policies_by_anonymous_user(client):
     url = reverse("notifications-detail", args=[policy.pk])
     response = client.get(url, content_type="application/json")
     assert response.status_code == 404, response.status_code
-    assert json.loads(response.content.decode("utf-8"))["_error_message"] == "No NotifyPolicy matches the given query.", response.content
+    assert response.data["_error_message"] == "No NotifyPolicy matches the given query.", response.content

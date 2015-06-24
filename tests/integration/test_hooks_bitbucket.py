@@ -32,7 +32,7 @@ def test_bad_signature(client):
     url = "{}?project={}&key={}".format(url, project.id, "badbadbad")
     data = {}
     response = client.post(url, urllib.parse.urlencode(data, True), content_type="application/x-www-form-urlencoded")
-    response_content = json.loads(response.content.decode("utf-8"))
+    response_content = response.data
     assert response.status_code == 400
     assert "Bad signature" in response_content["_error_message"]
 
@@ -232,7 +232,7 @@ def test_api_get_project_modules(client):
     client.login(project.owner)
     response = client.get(url)
     assert response.status_code == 200
-    content = json.loads(response.content.decode("utf-8"))
+    content = response.data
     assert "bitbucket" in content
     assert content["bitbucket"]["secret"] != ""
     assert content["bitbucket"]["webhooks_url"] != ""

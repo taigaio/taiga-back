@@ -58,7 +58,7 @@ def test_valid_project_import_without_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     must_empty_children = [
         "issues", "user_stories", "us_statuses", "wiki_pages", "priorities",
         "severities", "milestones", "points", "issue_types", "task_statuses",
@@ -85,7 +85,7 @@ def test_valid_project_import_with_not_existing_memberships(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     # The new membership and the owner membership
     assert len(response_data["memberships"]) == 2
 
@@ -108,7 +108,7 @@ def test_valid_project_import_with_membership_uuid_rewrite(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert Membership.objects.filter(email="with-uuid@email.com", token="123").count() == 0
 
 
@@ -149,7 +149,7 @@ def test_valid_project_import_with_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     must_empty_children = [
         "issues", "user_stories", "wiki_pages", "milestones",
         "wiki_links",
@@ -178,7 +178,7 @@ def test_invalid_project_import_without_roles(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data) == 2
     assert Project.objects.filter(slug="imported-project").count() == 0
 
@@ -205,7 +205,7 @@ def test_invalid_project_import_with_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data) == 7
     assert Project.objects.filter(slug="imported-project").count() == 0
 
@@ -302,7 +302,7 @@ def test_valid_user_story_import(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert response_data["subject"] == "Imported issue"
     assert response_data["finish_date"] == "2014-10-24T00:00:00+0000"
 
@@ -349,7 +349,7 @@ def test_valid_issue_import_without_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert response_data["owner"] == user.email
     assert response_data["ref"] is not None
 
@@ -408,7 +408,7 @@ def test_valid_issue_import_with_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data["attachments"]) == 1
     assert response_data["owner"] == user.email
     assert response_data["ref"] is not None
@@ -435,7 +435,7 @@ def test_invalid_issue_import_with_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data) == 1
     assert Issue.objects.filter(subject="Imported issue").count() == 0
 
@@ -460,7 +460,7 @@ def test_invalid_issue_import_with_bad_choices(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data) == 1
 
     url = reverse("importer-issue", args=[project.pk])
@@ -472,7 +472,7 @@ def test_invalid_issue_import_with_bad_choices(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data) == 1
 
     url = reverse("importer-issue", args=[project.pk])
@@ -484,7 +484,7 @@ def test_invalid_issue_import_with_bad_choices(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data) == 1
 
     url = reverse("importer-issue", args=[project.pk])
@@ -496,7 +496,7 @@ def test_invalid_issue_import_with_bad_choices(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data) == 1
 
 
@@ -528,7 +528,7 @@ def test_valid_us_import_without_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert response_data["owner"] == user.email
     assert response_data["ref"] is not None
 
@@ -556,7 +556,7 @@ def test_valid_us_import_with_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data["attachments"]) == 1
     assert response_data["owner"] == user.email
     assert response_data["ref"] is not None
@@ -579,7 +579,7 @@ def test_invalid_us_import_with_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data) == 1
     assert UserStory.objects.filter(subject="Imported us").count() == 0
 
@@ -601,7 +601,7 @@ def test_invalid_us_import_with_bad_choices(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data) == 1
 
 
@@ -633,7 +633,7 @@ def test_valid_task_import_without_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert response_data["owner"] == user.email
     assert response_data["ref"] is not None
 
@@ -685,7 +685,7 @@ def test_valid_task_import_with_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data["attachments"]) == 1
     assert response_data["owner"] == user.email
     assert response_data["ref"] is not None
@@ -708,7 +708,7 @@ def test_invalid_task_import_with_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data) == 1
     assert Task.objects.filter(subject="Imported task").count() == 0
 
@@ -730,7 +730,7 @@ def test_invalid_task_import_with_bad_choices(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data) == 1
 
 
@@ -781,7 +781,7 @@ def test_valid_wiki_page_import_without_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert response_data["owner"] == user.email
 
 
@@ -806,7 +806,7 @@ def test_valid_wiki_page_import_with_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data["attachments"]) == 1
     assert response_data["owner"] == user.email
 
@@ -826,7 +826,7 @@ def test_invalid_wiki_page_import_with_extra_data(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert len(response_data) == 1
     assert WikiPage.objects.filter(slug="imported-wiki-page").count() == 0
 
@@ -858,7 +858,7 @@ def test_valid_wiki_link_import(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    json.loads(response.content.decode("utf-8"))
+    response.data
 
 
 
@@ -890,7 +890,7 @@ def test_valid_milestone_import(client):
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    json.loads(response.content.decode("utf-8"))
+    response.data
 
 
 
@@ -910,7 +910,7 @@ def test_milestone_import_duplicated_milestone(client):
     response = client.post(url, json.dumps(data), content_type="application/json")
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert response_data["milestones"][0]["name"][0] == "Name duplicated for the project"
 
 
@@ -925,7 +925,7 @@ def test_invalid_dump_import(client):
 
     response = client.post(url, {'dump': data})
     assert response.status_code == 400
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert response_data["_error_message"] == "Invalid dump format"
 
 
@@ -946,7 +946,7 @@ def test_valid_dump_import_with_celery_disabled(client, settings):
 
     response = client.post(url, {'dump': data})
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert "id" in response_data
     assert response_data["name"] == "Valid project"
 
@@ -968,7 +968,7 @@ def test_valid_dump_import_with_celery_enabled(client, settings):
 
     response = client.post(url, {'dump': data})
     assert response.status_code == 202
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert "import_id" in response_data
 
 
@@ -988,7 +988,7 @@ def test_dump_import_duplicated_project(client):
 
     response = client.post(url, {'dump': data})
     assert response.status_code == 201
-    response_data = json.loads(response.content.decode("utf-8"))
+    response_data = response.data
     assert response_data["name"] == "Test import"
     assert response_data["slug"] == "{}-test-import".format(user.username)
 
