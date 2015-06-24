@@ -45,6 +45,23 @@ def test_update_userstories_order_in_bulk():
                                                            model=models.UserStory)
 
 
+def test_create_userstory_without_status(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    status = f.UserStoryStatusFactory.create(project=project)
+    project.default_us_status = status
+    project.save()
+
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    url = reverse("userstories-list")
+
+    data = {"subject": "Test user story", "project": project.id}
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    assert response.data['status'] == project.default_us_status.id
+
+
 def test_api_delete_userstory(client):
     us = f.UserStoryFactory.create()
     f.MembershipFactory.create(project=us.project, user=us.owner, is_owner=True)

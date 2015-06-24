@@ -35,7 +35,7 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
                                  verbose_name=_("ref"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, default=None,
                               related_name="owned_tasks", verbose_name=_("owner"))
-    status = models.ForeignKey("projects.TaskStatus", null=False, blank=False,
+    status = models.ForeignKey("projects.TaskStatus", null=True, blank=True,
                                related_name="tasks", verbose_name=_("status"))
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="tasks", verbose_name=_("project"))
