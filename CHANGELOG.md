@@ -2,11 +2,13 @@
 
 
 ## 1.9.0 ??? (unreleased)
+
 ### Features
 - Add a "field type" property for custom fields: 'text' and 'multiline text' right now (thanks to [@artlepool](https://github.com/artlepool))
+- Allow multiple actions in the commit messages.
 
 ### Misc
-- Allow multiple actions in the commit messages.
+- API: Mixin fields 'users', 'members' and 'memberships' in ProjectDetailSerializer
 - Lots of small and not so small bugfixes.
 
 
