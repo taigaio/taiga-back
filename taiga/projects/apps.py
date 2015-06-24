@@ -21,11 +21,7 @@ from django.db.models import signals
 from . import signals as handlers
 
 
-class ProjectsAppConfig(AppConfig):
-    name = "taiga.projects"
-    verbose_name = "Projects"
-
-    def ready(self):
+def connect_memberships_signals():
         # On membership object is deleted, update role-points relation.
         signals.pre_delete.connect(handlers.membership_post_delete,
                                    sender=apps.get_model("projects", "Membership"),
@@ -41,6 +37,8 @@ class ProjectsAppConfig(AppConfig):
                                   sender=apps.get_model("projects", "Membership"),
                                   dispatch_uid='create-notify-policy')
 
+
+def connect_projects_signals():
         # On project object is created apply template.
         signals.post_save.connect(handlers.project_post_save,
                                   sender=apps.get_model("projects", "Project"),
@@ -48,6 +46,29 @@ class ProjectsAppConfig(AppConfig):
 
         # Tags
         signals.pre_save.connect(handlers.tags_normalization,
-                                 sender=apps.get_model("projects", "Project"))
+                                 sender=apps.get_model("projects", "Project"),
+                                 dispatch_uid="tags_normalization_projects")
         signals.pre_save.connect(handlers.update_project_tags_when_create_or_edit_taggable_item,
-                                  sender=apps.get_model("projects", "Project"))
+                                 sender=apps.get_model("projects", "Project"),
+                                 dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_projects")
+
+
+def disconnect_memberships_signals():
+        signals.pre_delete.disconnect(dispatch_uid='membership_pre_delete')
+        signals.post_delete.disconnect(dispatch_uid='update_watchers_on_membership_post_delete')
+        signals.post_save.disconnect(dispatch_uid='create-notify-policy')
+
+
+def disconnect_projects_signals():
+        signals.post_save.disconnect(dispatch_uid='project_post_save')
+        signals.pre_save.disconnect(dispatch_uid="tags_normalization_projects")
+        signals.pre_save.disconnect(dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_projects")
+
+
+class ProjectsAppConfig(AppConfig):
+    name = "taiga.projects"
+    verbose_name = "Projects"
+
+    def ready(self):
+        connect_memberships_signals()
+        connect_projects_signals()

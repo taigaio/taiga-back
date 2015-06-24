@@ -23,38 +23,61 @@ from taiga.projects.custom_attributes import signals as custom_attributes_handle
 from . import signals as handlers
 
 
-class UserStoriesAppConfig(AppConfig):
-    name = "taiga.projects.userstories"
-    verbose_name = "User Stories"
-
-    def ready(self):
+def connect_userstories_signals():
         # Cached prev object version
         signals.pre_save.connect(handlers.cached_prev_us,
-                                  sender=apps.get_model("userstories", "UserStory"))
+                                 sender=apps.get_model("userstories", "UserStory"),
+                                 dispatch_uid="cached_prev_us")
 
         # Role Points
         signals.post_save.connect(handlers.update_role_points_when_create_or_edit_us,
-                                  sender=apps.get_model("userstories", "UserStory"))
+                                  sender=apps.get_model("userstories", "UserStory"),
+                                  dispatch_uid="update_role_points_when_create_or_edit_us")
 
         # Tasks
         signals.post_save.connect(handlers.update_milestone_of_tasks_when_edit_us,
-                                  sender=apps.get_model("userstories", "UserStory"))
+                                  sender=apps.get_model("userstories", "UserStory"),
+                                  dispatch_uid="update_milestone_of_tasks_when_edit_us")
 
         # Open/Close US and Milestone
         signals.post_save.connect(handlers.try_to_close_or_open_us_and_milestone_when_create_or_edit_us,
-                                 sender=apps.get_model("userstories", "UserStory"))
+                                  sender=apps.get_model("userstories", "UserStory"),
+                                  dispatch_uid="try_to_close_or_open_us_and_milestone_when_create_or_edit_us")
         signals.post_delete.connect(handlers.try_to_close_milestone_when_delete_us,
-                                    sender=apps.get_model("userstories", "UserStory"))
+                                    sender=apps.get_model("userstories", "UserStory"),
+                                    dispatch_uid="try_to_close_milestone_when_delete_us")
 
         # Tags
         signals.pre_save.connect(generic_handlers.tags_normalization,
-                                 sender=apps.get_model("userstories", "UserStory"))
+                                 sender=apps.get_model("userstories", "UserStory"),
+                                 dispatch_uid="tags_normalization_user_story")
         signals.post_save.connect(generic_handlers.update_project_tags_when_create_or_edit_taggable_item,
-                                  sender=apps.get_model("userstories", "UserStory"))
+                                  sender=apps.get_model("userstories", "UserStory"),
+                                  dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_user_story")
         signals.post_delete.connect(generic_handlers.update_project_tags_when_delete_taggable_item,
-                                    sender=apps.get_model("userstories", "UserStory"))
+                                    sender=apps.get_model("userstories", "UserStory"),
+                                    dispatch_uid="update_project_tags_when_delete_taggable_item_user_story")
 
         # Custom Attributes
         signals.post_save.connect(custom_attributes_handlers.create_custom_attribute_value_when_create_user_story,
                                   sender=apps.get_model("userstories", "UserStory"),
                                   dispatch_uid="create_custom_attribute_value_when_create_user_story")
+
+def disconnect_userstories_signals():
+        signals.pre_save.disconnect(dispatch_uid="cached_prev_us")
+        signals.post_save.disconnect(dispatch_uid="update_role_points_when_create_or_edit_us")
+        signals.post_save.disconnect(dispatch_uid="update_milestone_of_tasks_when_edit_us")
+        signals.post_save.disconnect(dispatch_uid="try_to_close_or_open_us_and_milestone_when_create_or_edit_us")
+        signals.post_delete.disconnect(dispatch_uid="try_to_close_milestone_when_delete_us")
+        signals.pre_save.disconnect(dispatch_uid="tags_normalization_user_story")
+        signals.post_save.disconnect(dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_user_story")
+        signals.post_delete.disconnect(dispatch_uid="update_project_tags_when_delete_taggable_item_user_story")
+        signals.post_save.disconnect(dispatch_uid="create_custom_attribute_value_when_create_user_story")
+
+
+class UserStoriesAppConfig(AppConfig):
+    name = "taiga.projects.userstories"
+    verbose_name = "User Stories"
+
+    def ready(self):
+        connect_userstories_signals()

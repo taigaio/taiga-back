@@ -53,6 +53,9 @@ def emit_event_for_model(obj, *, type:str="change", channel:str="events",
     Sends a model change event.
     """
 
+    if obj._importing:
+        return None
+
     assert type in set(["create", "change", "delete"])
     assert hasattr(obj, "project_id")
 
