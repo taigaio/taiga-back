@@ -20,13 +20,11 @@ from taiga.base.api import viewsets
 
 from taiga.base import response
 from taiga.base.api.utils import get_object_or_404
-from taiga.projects.userstories.serializers import UserStorySerializer
-from taiga.projects.tasks.serializers import TaskSerializer
-from taiga.projects.issues.serializers import IssueSerializer
-from taiga.projects.wiki.serializers import WikiPageSerializer
 from taiga.permissions.service import user_has_perm
 
 from . import services
+from . import serializers
+
 
 
 class SearchViewSet(viewsets.ViewSet):
@@ -55,20 +53,20 @@ class SearchViewSet(viewsets.ViewSet):
 
     def _search_user_stories(self, project, text):
         queryset = services.search_user_stories(project, text)
-        serializer = UserStorySerializer(queryset, many=True)
+        serializer = serializers.UserStorySearchResultsSerializer(queryset, many=True)
         return serializer.data
 
     def _search_tasks(self, project, text):
         queryset = services.search_tasks(project, text)
-        serializer = TaskSerializer(queryset, many=True)
+        serializer = serializers.TaskSearchResultsSerializer(queryset, many=True)
         return serializer.data
 
     def _search_issues(self, project, text):
         queryset = services.search_issues(project, text)
-        serializer = IssueSerializer(queryset, many=True)
+        serializer = serializers.IssueSearchResultsSerializer(queryset, many=True)
         return serializer.data
 
     def _search_wiki_pages(self, project, text):
         queryset = services.search_wiki_pages(project, text)
-        serializer = WikiPageSerializer(queryset, many=True)
+        serializer = serializers.WikiPageSearchResultsSerializer(queryset, many=True)
         return serializer.data
