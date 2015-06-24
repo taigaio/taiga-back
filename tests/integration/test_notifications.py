@@ -100,6 +100,36 @@ def test_analize_object_for_watchers():
     assert issue.watchers.add.call_count == 2
 
 
+def test_analize_object_for_watchers_adding_owner_non_empty_comment():
+    user1 = f.UserFactory.create()
+
+    issue = MagicMock()
+    issue.description = "Foo"
+    issue.content = ""
+
+    history = MagicMock()
+    history.comment = "Comment"
+    history.owner = user1
+
+    services.analize_object_for_watchers(issue, history)
+    assert issue.watchers.add.call_count == 1
+
+
+def test_analize_object_for_watchers_no_adding_owner_empty_comment():
+    user1 = f.UserFactory.create()
+
+    issue = MagicMock()
+    issue.description = "Foo"
+    issue.content = ""
+
+    history = MagicMock()
+    history.comment = ""
+    history.owner = user1
+
+    services.analize_object_for_watchers(issue, history)
+    assert issue.watchers.add.call_count == 0
+
+
 def test_users_to_notify():
     project = f.ProjectFactory.create()
     role1 = f.RoleFactory.create(project=project, permissions=['view_issues'])
