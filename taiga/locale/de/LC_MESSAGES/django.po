@@ -14,8 +14,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-06-15 12:34+0200\n"
-"PO-Revision-Date: 2015-06-20 14:15+0000\n"
-"Last-Translator: Hans Raaf\n"
+"PO-Revision-Date: 2015-06-24 10:12+0000\n"
+"Last-Translator: Regina <r.raaf@metatexx.de>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/taiga-back/"
 "language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -65,7 +65,7 @@ msgstr "Der Benutzer ist schon registriert."
 
 #: taiga/auth/services.py:146
 msgid "Membership with user is already exists."
-msgstr "Der Benutzer für diese Mitgliedschaft, existiert bereits."
+msgstr "Der Benutzer für diese Mitgliedschaft existiert bereits."
 
 #: taiga/auth/services.py:172
 msgid "Error on creating new user."
@@ -265,7 +265,7 @@ msgstr "Es gab keine Eingabe"
 #: taiga/base/api/serializers.py:548
 msgid "Cannot create a new item, only existing items may be updated."
 msgstr ""
-"Es können nur existierende Einträge aktualisiertwerden. Eine Neuerstellung "
+"Es können nur existierende Einträge aktualisiert werden. Eine Neuerstellung "
 "ist nicht möglich."
 
 #: taiga/base/api/serializers.py:559
@@ -337,7 +337,7 @@ msgstr "Nicht gefunden."
 
 #: taiga/base/exceptions.py:130
 msgid "Method not supported for this endpoint."
-msgstr ""
+msgstr "Methode wird für diesen Endpunkt nicht unterstützt. "
 
 #: taiga/base/exceptions.py:138 taiga/base/exceptions.py:146
 msgid "Wrong arguments."
@@ -357,7 +357,7 @@ msgstr "Voraussetzungsfehler"
 
 #: taiga/base/filters.py:74
 msgid "Error in filter params types."
-msgstr ""
+msgstr "Fehler in Filter Parameter Typen."
 
 #: taiga/base/filters.py:121 taiga/base/filters.py:210
 #: taiga/base/filters.py:259
@@ -470,6 +470,10 @@ msgid ""
 "%(comment)s</p>\n"
 "                                                                    "
 msgstr ""
+"\n"
+"<h3>Kommentar:</h3>\n"
+"<p>%(comment)s</p>\n"
+" "
 
 #: taiga/base/templates/emails/updates-body-text.jinja:6
 #, python-format
@@ -536,7 +540,7 @@ msgstr "Fehler beim Importieren der Tickets"
 
 #: taiga/export_import/dump_service.py:169
 msgid "error importing user stories"
-msgstr "Fehler beim Importieren der User Stories"
+msgstr "Fehler beim Importieren der User-Stories"
 
 #: taiga/export_import/dump_service.py:174
 msgid "error importing tasks"
@@ -569,7 +573,7 @@ msgstr "Enthält ungültige Benutzerfelder."
 #: taiga/projects/serializers.py:66 taiga/projects/serializers.py:92
 #: taiga/projects/serializers.py:122 taiga/projects/serializers.py:164
 msgid "Name duplicated for the project"
-msgstr ""
+msgstr "Der Name für das Projekt ist doppelt vergeben"
 
 #: taiga/export_import/tasks.py:49 taiga/export_import/tasks.py:50
 msgid "Error generating project dump"
@@ -781,6 +785,10 @@ msgid ""
 "    <p>%(comment)s</p>\n"
 "    "
 msgstr ""
+"\n"
+"<h3>Kommentar</h3>\n"
+"<p>%(comment)s</p>\n"
+" "
 
 #: taiga/feedback/templates/emails/feedback_notification-body-html.jinja:18
 #: taiga/users/admin.py:51
@@ -797,6 +805,12 @@ msgid ""
 "%(comment)s\n"
 "---------"
 msgstr ""
+"---------\n"
+"- Von: %(full_name)s <%(email)s>\n"
+"---------\n"
+"- Kommentar:\n"
+"%(comment)s\n"
+"---------"
 
 #: taiga/feedback/templates/emails/feedback_notification-body-text.jinja:8
 msgid "- Extra info:"
@@ -808,6 +822,9 @@ msgid ""
 "\n"
 "[Taiga] Feedback from %(full_name)s <%(email)s>\n"
 msgstr ""
+"\n"
+"[Taiga] Feedback von %(full_name)s <%(email)s>\n"
+"   \n"
 
 #: taiga/hooks/api.py:52
 msgid "The payload is not a valid json"
@@ -905,6 +922,9 @@ msgid ""
 "\n"
 "{message}"
 msgstr ""
+"Kommentar von GitHub:\n"
+"\n"
+"{message}"
 
 #: taiga/hooks/gitlab/event_hooks.py:87
 msgid "Status changed from GitLab commit"
@@ -926,7 +946,7 @@ msgstr "Meilensteine ansehen"
 
 #: taiga/permissions/permissions.py:23 taiga/permissions/permissions.py:33
 msgid "View user stories"
-msgstr "User Stories ansehen. "
+msgstr "User-Stories ansehen. "
 
 #: taiga/permissions/permissions.py:24 taiga/permissions/permissions.py:36
 #: taiga/permissions/permissions.py:64
@@ -958,11 +978,11 @@ msgstr "Mitgliedschaft beantragen"
 
 #: taiga/permissions/permissions.py:40
 msgid "Add user story to project"
-msgstr "User Story zu Projekt hinzufügen"
+msgstr "User-Story zu Projekt hinzufügen"
 
 #: taiga/permissions/permissions.py:41
 msgid "Add comments to user stories"
-msgstr "Kommentar zu User Stories hinzufügen"
+msgstr "Kommentar zu User-Stories hinzufügen"
 
 #: taiga/permissions/permissions.py:42
 msgid "Add comments to tasks"
@@ -1006,19 +1026,19 @@ msgstr "Meilenstein löschen"
 
 #: taiga/permissions/permissions.py:59
 msgid "View user story"
-msgstr "User Story ansehen"
+msgstr "User-Story ansehen"
 
 #: taiga/permissions/permissions.py:60
 msgid "Add user story"
-msgstr "User Story hinzufügen"
+msgstr "User-Story hinzufügen"
 
 #: taiga/permissions/permissions.py:61
 msgid "Modify user story"
-msgstr "User Story ändern"
+msgstr "User-Story ändern"
 
 #: taiga/permissions/permissions.py:62
 msgid "Delete user story"
-msgstr "User Story löschen"
+msgstr "User-Story löschen"
 
 #: taiga/permissions/permissions.py:65
 msgid "Add task"
@@ -1482,7 +1502,7 @@ msgstr "voreingestellte Punkte"
 
 #: taiga/projects/models.py:97
 msgid "default US status"
-msgstr "voreingesteller User Story Status "
+msgstr "voreingesteller User-Story Status "
 
 #: taiga/projects/models.py:101
 msgid "default task status"
@@ -1593,7 +1613,7 @@ msgstr "Vorgabe Optionen"
 
 #: taiga/projects/models.py:584
 msgid "us statuses"
-msgstr "User Story Status "
+msgstr "User-Story Status "
 
 #: taiga/projects/models.py:585 taiga/projects/userstories/models.py:40
 #: taiga/projects/userstories/models.py:72
@@ -1682,6 +1702,11 @@ msgid ""
 "Hello %(user)s, %(changer)s has updated an issue on %(project)s\n"
 "See issue #%(ref)s %(subject)s at %(url)s\n"
 msgstr ""
+"\n"
+"Ticket aktualisiert\n"
+"Hallo %(user)s, %(changer)s hat ein Ticket aktualisiert in %(project)s\n"
+"Ticket ansehen #%(ref)s %(subject)s auf %(url)s   \n"
+"    \n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-change-subject.jinja:1
 #, python-format
@@ -1689,6 +1714,9 @@ msgid ""
 "\n"
 "[%(project)s] Updated the issue #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Aktualisierte das Ticket #%(ref)s \"%(subject)s\"\n"
+"  \n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-create-body-html.jinja:4
 #, python-format
@@ -1715,6 +1743,13 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Neues Ticket wurde erstellt\n"
+"Hallo %(user)s, %(changer)s hat ein neues Ticket erstellt in %(project)s\n"
+"Ticket ansehen #%(ref)s %(subject)s auf %(url)s\n"
+"\n"
+"---\n"
+"Das Taiga Team\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-create-subject.jinja:1
 #, python-format
@@ -1722,6 +1757,9 @@ msgid ""
 "\n"
 "[%(project)s] Created the issue #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Erstellte das Ticket #%(ref)s \"%(subject)s\"\n"
+"\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-delete-body-html.jinja:4
 #, python-format
@@ -1746,6 +1784,14 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Ticket gelöscht\n"
+"Hallo %(user)s, %(changer)s hat ein Ticket gelöscht in %(project)s\n"
+"Ticket #%(ref)s %(subject)s\n"
+"\n"
+"---\n"
+"Das Taiga Team\n"
+"\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-delete-subject.jinja:1
 #, python-format
@@ -1753,6 +1799,10 @@ msgid ""
 "\n"
 "[%(project)s] Deleted the issue #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Löschte das Ticket #%(ref)s \"%(subject)s\"\n"
+" \n"
+"\n"
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-change-body-html.jinja:4
 #, python-format
@@ -1782,6 +1832,9 @@ msgid ""
 "\n"
 "[%(project)s] Updated the sprint \"%(milestone)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Aktualisierte den Sprint \"%(milestone)s\"\n"
+" \n"
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-create-body-html.jinja:4
 #, python-format
@@ -1815,6 +1868,9 @@ msgid ""
 "\n"
 "[%(project)s] Created the sprint \"%(milestone)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Erstellte den Sprint \"%(milestone)s\"\n"
+"\n"
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-delete-body-html.jinja:4
 #, python-format
@@ -1846,6 +1902,9 @@ msgid ""
 "\n"
 "[%(project)s] Deleted the Sprint \"%(milestone)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Löschte den Sprint \"%(milestone)s\"\n"
+" \n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-body-html.jinja:4
 #, python-format
@@ -1859,6 +1918,15 @@ msgid ""
 "%(subject)s in Taiga\">See task</a>\n"
 "    "
 msgstr ""
+"\n"
+"<h1>Aufgabe aktualisiert</h1>\n"
+"<p>Hallo %(user)s, <br> %(changer)s hat eine Aufgabe aktualisiert in "
+"%(project)s</p>\n"
+"<p>Aufgabe #%(ref)s %(subject)s</p>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"See Task #%(ref)s: %(subject)s "
+"in Taiga\">Aufgabe ansehen</a> \n"
+"\n"
+" "
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-body-text.jinja:3
 #, python-format
@@ -1868,6 +1936,11 @@ msgid ""
 "Hello %(user)s, %(changer)s has updated a task on %(project)s\n"
 "See task #%(ref)s %(subject)s at %(url)s\n"
 msgstr ""
+"\n"
+"Aufgabe aktualisiert\n"
+"Hallo %(user)s, %(changer)s hat eine Aufgabe aktualisiert in %(project)s\n"
+"Aufgabe ansehen #%(ref)s %(subject)s auf %(url)s\n"
+" \n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-change-subject.jinja:1
 #, python-format
@@ -1875,6 +1948,8 @@ msgid ""
 "\n"
 "[%(project)s] Updated the task #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Aktualisierte die Aufgabe #%(ref)s \"%(subject)s\"\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-create-body-html.jinja:4
 #, python-format
@@ -1901,6 +1976,15 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Neue Aufgabe wurde erstellt\n"
+"Hallo %(user)s, %(changer)s hat eine neue Aufgabe erstellt in %(project)s\n"
+"Aufgabe ansehen #%(ref)s %(subject)s auf %(url)s\n"
+"\n"
+"\n"
+"---\n"
+"Das Taiga Team\n"
+"\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-create-subject.jinja:1
 #, python-format
@@ -1908,6 +1992,9 @@ msgid ""
 "\n"
 "[%(project)s] Created the task #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Erstellte die Aufgabe #%(ref)s \"%(subject)s\"\n"
+"\n"
 
 #: taiga/projects/notifications/templates/emails/tasks/task-delete-body-html.jinja:4
 #, python-format
@@ -2142,7 +2229,7 @@ msgstr "Die Watcher beinhalten einen ungültigen Benutzer"
 
 #: taiga/projects/occ/mixins.py:58
 msgid "The version parameter is not valid"
-msgstr ""
+msgstr "Der Versionsparameter ist ungültig"
 
 #: taiga/projects/occ/mixins.py:74
 msgid "The version doesn't match with the current one"
@@ -2307,6 +2394,11 @@ msgid ""
 "The Taiga Team\n"
 msgstr ""
 "\n"
+"\n"
+"---\n"
+"\n"
+"Das Taiga Team\n"
+" \n"
 "\n"
 
 #: taiga/projects/templates/emails/membership_invitation-subject.jinja:1
@@ -2554,7 +2646,7 @@ msgstr "Kritisch"
 #. Translators: User role
 #: taiga/projects/translations.py:170
 msgid "UX"
-msgstr ""
+msgstr "UX"
 
 #. Translators: User role
 #: taiga/projects/translations.py:172
@@ -2621,7 +2713,7 @@ msgstr "erzeugt von Ticket"
 
 #: taiga/projects/userstories/validators.py:28
 msgid "There's no user story with that id"
-msgstr "Es gibt keine User Story mit dieser id"
+msgstr "Es gibt keine User-Story mit dieser id"
 
 #: taiga/projects/validators.py:28
 msgid "There's no project with that id"
@@ -2650,11 +2742,11 @@ msgstr "Stimme"
 
 #: taiga/projects/wiki/api.py:60
 msgid "'content' parameter is mandatory"
-msgstr ""
+msgstr "'content' Parameter ist erforderlich"
 
 #: taiga/projects/wiki/api.py:63
 msgid "'project_id' parameter is mandatory"
-msgstr ""
+msgstr "'project_id' Parameter ist erforderlich"
 
 #: taiga/projects/wiki/models.py:36
 msgid "last modifier"
@@ -2706,7 +2798,7 @@ msgstr "Ungültiges aktuelles Passwort"
 
 #: taiga/users/api.py:203
 msgid "Incomplete arguments"
-msgstr ""
+msgstr "Unvollständige Argumente"
 
 #: taiga/users/api.py:208
 msgid "Invalid image format"
