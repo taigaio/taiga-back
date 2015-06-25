@@ -24,7 +24,7 @@ from taiga.hooks.api import BaseWebhookApiViewSet
 from . import event_hooks
 
 from urllib.parse import parse_qs
-from ipware.ip import get_real_ip
+from ipware.ip import get_ip
 
 
 class BitBucketViewSet(BaseWebhookApiViewSet):
@@ -53,7 +53,7 @@ class BitBucketViewSet(BaseWebhookApiViewSet):
         bitbucket_config = project.modules_config.config.get("bitbucket", {})
         valid_origin_ips = bitbucket_config.get("valid_origin_ips",
                                                 settings.BITBUCKET_VALID_ORIGIN_IPS)
-        origin_ip = get_real_ip(request)
+        origin_ip = get_ip(request)
         if valid_origin_ips and (not origin_ip or origin_ip not in valid_origin_ips):
             return False
 
