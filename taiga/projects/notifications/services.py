@@ -123,6 +123,9 @@ def analize_object_for_watchers(obj:object, history:object):
         for user in data["mentions"]:
             obj.watchers.add(user)
 
+    # Adding the person who edited the object to the watchers
+    if history.comment and not history.owner.is_system:
+        obj.watchers.add(history.owner)
 
 def _filter_by_permissions(obj, user):
     UserStory = apps.get_model("userstories", "UserStory")
