@@ -295,6 +295,7 @@ class ProjectMemberSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Membership
+        exclude = ("project", "email", "created_at", "token", "invited_by", "invitation_extra_text", "user_order")
 
     def get_photo(self, membership):
         return get_photo_or_gravatar_url(membership.user)
