@@ -37,19 +37,23 @@ def data():
     m.role_points1 = f.RolePointsFactory(role=m.role1,
                                          points=m.points1,
                                          user_story__project=m.project,
-                                         user_story__status=m.open_status)
+                                         user_story__status=m.open_status,
+                                         user_story__milestone=None)
     m.role_points2 = f.RolePointsFactory(role=m.role1,
                                          points=m.points2,
                                          user_story__project=m.project,
-                                         user_story__status=m.open_status)
+                                         user_story__status=m.open_status,
+                                         user_story__milestone=None)
     m.role_points3 = f.RolePointsFactory(role=m.role1,
                                          points=m.points3,
                                          user_story__project=m.project,
-                                         user_story__status=m.open_status)
+                                         user_story__status=m.open_status,
+                                         user_story__milestone=None)
     m.role_points4 = f.RolePointsFactory(role=m.project.roles.all()[0],
                                          points=m.points4,
                                          user_story__project=m.project,
-                                         user_story__status=m.open_status)
+                                         user_story__status=m.open_status,
+                                         user_story__milestone=None)
 
     m.user_story1 = m.role_points1.user_story
     m.user_story2 = m.role_points2.user_story

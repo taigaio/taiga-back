@@ -31,7 +31,8 @@ from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 
-from taiga.projects.models import Project
+from taiga.projects.models import Project, IssueStatus, Severity, Priority, IssueType
+from taiga.projects.milestones.models import Milestone
 from taiga.projects.votes.utils import attach_votescount_to_queryset
 from taiga.projects.votes import services as votes_service
 from taiga.projects.votes import serializers as votes_serializers
@@ -121,6 +122,60 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
                        "assigned_to",
                        "subject")
 
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object_or_none()
+        project_id = request.DATA.get('project', None)
+        if project_id and self.object and self.object.project.id != project_id:
+            try:
+                new_project = Project.objects.get(pk=project_id)
+                self.check_permissions(request, "destroy", self.object)
+                self.check_permissions(request, "create", new_project)
+
+                sprint_id = request.DATA.get('milestone', None)
+                if sprint_id is not None and new_project.milestones.filter(pk=sprint_id).count() == 0:
+                    request.DATA['milestone'] = None
+
+                status_id = request.DATA.get('status', None)
+                if status_id is not None:
+                    try:
+                        old_status = self.object.project.issue_statuses.get(pk=status_id)
+                        new_status = new_project.issue_statuses.get(slug=old_status.slug)
+                        request.DATA['status'] = new_status.id
+                    except IssueStatus.DoesNotExist:
+                        request.DATA['status'] = new_project.default_issue_status.id
+
+                priority_id = request.DATA.get('priority', None)
+                if priority_id is not None:
+                    try:
+                        old_priority = self.object.project.priorities.get(pk=priority_id)
+                        new_priority = new_project.priorities.get(name=old_priority.name)
+                        request.DATA['priority'] = new_priority.id
+                    except Priority.DoesNotExist:
+                        request.DATA['priority'] = new_project.default_priority.id
+
+                severity_id = request.DATA.get('severity', None)
+                if severity_id is not None:
+                    try:
+                        old_severity = self.object.project.severities.get(pk=severity_id)
+                        new_severity = new_project.severities.get(name=old_severity.name)
+                        request.DATA['severity'] = new_severity.id
+                    except Severity.DoesNotExist:
+                        request.DATA['severity'] = new_project.default_severity.id
+
+                type_id = request.DATA.get('type', None)
+                if type_id is not None:
+                    try:
+                        old_type = self.object.project.issue_types.get(pk=type_id)
+                        new_type = new_project.issue_types.get(name=old_type.name)
+                        request.DATA['type'] = new_type.id
+                    except IssueType.DoesNotExist:
+                        request.DATA['type'] = new_project.default_issue_type.id
+
+            except Project.DoesNotExist:
+                return response.BadRequest(_("The project doesn't exist"))
+
+        return super().update(request, *args, **kwargs)
+
     def get_queryset(self):
         qs = models.Issue.objects.all()
         qs = qs.prefetch_related("attachments")
@@ -130,6 +185,7 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
     def pre_save(self, obj):
         if not obj.id:
             obj.owner = self.request.user
+
         super().pre_save(obj)
 
     def pre_conditions_on_save(self, obj):

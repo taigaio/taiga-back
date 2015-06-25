@@ -21,7 +21,7 @@ from taiga.base import filters, response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet
-from taiga.projects.models import Project
+from taiga.projects.models import Project, TaskStatus
 from django.http import HttpResponse
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin
@@ -44,6 +44,38 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
     filter_fields = ["user_story", "milestone", "project", "assigned_to",
         "status__is_closed", "watchers"]
 
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object_or_none()
+        project_id = request.DATA.get('project', None)
+        if project_id and self.object and self.object.project.id != project_id:
+            try:
+                new_project = Project.objects.get(pk=project_id)
+                self.check_permissions(request, "destroy", self.object)
+                self.check_permissions(request, "create", new_project)
+
+                sprint_id = request.DATA.get('milestone', None)
+                if sprint_id is not None and new_project.milestones.filter(pk=sprint_id).count() == 0:
+                    request.DATA['milestone'] = None
+
+                us_id = request.DATA.get('user_story', None)
+                if us_id is not None and new_project.user_stories.filter(pk=us_id).count() == 0:
+                    request.DATA['user_story'] = None
+
+                status_id = request.DATA.get('status', None)
+                if status_id is not None:
+                    try:
+                        old_status = self.object.project.task_statuses.get(pk=status_id)
+                        new_status = new_project.task_statuses.get(slug=old_status.slug)
+                        request.DATA['status'] = new_status.id
+                    except TaskStatus.DoesNotExist:
+                        request.DATA['status'] = new_project.default_task_status.id
+
+            except Project.DoesNotExist:
+                return response.BadRequest(_("The project doesn't exist"))
+
+        return super().update(request, *args, **kwargs)
+
+
     def pre_save(self, obj):
         if obj.user_story:
             obj.milestone = obj.user_story.milestone
@@ -55,16 +87,16 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
         super().pre_conditions_on_save(obj)
 
         if obj.milestone and obj.milestone.project != obj.project:
-            raise exc.WrongArguments(_("You don't have permissions for add/modify this task."))
+            raise exc.WrongArguments(_("You don't have permissions to set this sprint to this task."))
 
         if obj.user_story and obj.user_story.project != obj.project:
-            raise exc.WrongArguments(_("You don't have permissions for add/modify this task."))
+            raise exc.WrongArguments(_("You don't have permissions to set this user story to this task."))
 
         if obj.status and obj.status.project != obj.project:
-            raise exc.WrongArguments(_("You don't have permissions for add/modify this task."))
+            raise exc.WrongArguments(_("You don't have permissions to set this status to this task."))
 
         if obj.milestone and obj.user_story and obj.milestone != obj.user_story.milestone:
-            raise exc.WrongArguments(_("You don't have permissions for add/modify this task."))
+            raise exc.WrongArguments(_("You don't have permissions to set this sprint to this task."))
 
     @list_route(methods=["GET"])
     def by_ref(self, request):

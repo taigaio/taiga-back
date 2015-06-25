@@ -231,6 +231,7 @@ class UserStoryFactory(Factory):
     subject = factory.Sequence(lambda n: "User Story {}".format(n))
     description = factory.Sequence(lambda n: "User Story {} description".format(n))
     status = factory.SubFactory("tests.factories.UserStoryStatusFactory")
+    milestone = factory.SubFactory("tests.factories.MilestoneFactory")
 
 
 class UserStoryStatusFactory(Factory):
