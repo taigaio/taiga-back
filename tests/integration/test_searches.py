@@ -25,7 +25,7 @@ from taiga.permissions.permissions import MEMBERS_PERMISSIONS
 from tests.utils import disconnect_signals, reconnect_signals
 
 
-pytestmark = pytest.mark.django_db
+pytestmark = pytest.mark.django_db(transaction=True)
 
 
 def setup_module(module):
