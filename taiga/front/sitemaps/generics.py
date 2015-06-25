@@ -25,10 +25,10 @@ from .base import Sitemap
 class GenericSitemap(Sitemap):
     def items(self):
         return [
-            {"url_key": "home", "changefreq": "monthly", "priority": 0.6},
-            {"url_key": "login", "changefreq": "monthly", "priority": 0.6},
-            {"url_key": "register", "changefreq": "monthly", "priority": 0.6},
-            {"url_key": "forgot-password", "changefreq": "monthly", "priority": 0.6}
+            {"url_key": "home", "changefreq": "monthly", "priority": 1},
+            {"url_key": "login", "changefreq": "monthly", "priority": 1},
+            {"url_key": "register", "changefreq": "monthly", "priority": 1},
+            {"url_key": "forgot-password", "changefreq": "monthly", "priority": 1}
         ]
 
     def location(self, obj):
