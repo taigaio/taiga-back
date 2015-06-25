@@ -40,10 +40,10 @@ class ProjectsSitemap(Sitemap):
         return obj.modified_date
 
     def changefreq(self, obj):
-        return "daily"
+        return "hourly"
 
     def priority(self, obj):
-        return 0.6
+        return 0.9
 
 
 class ProjectBacklogsSitemap(Sitemap):
