@@ -97,3 +97,25 @@ def project_post_save(sender, instance, created, **kwargs):
         Membership = apps.get_model("projects", "Membership")
         Membership.objects.create(user=instance.owner, project=instance, role=owner_role,
                                   is_owner=True, email=instance.owner.email)
+
+
+def try_to_close_or_open_user_stories_when_edit_us_status(sender, instance, created, **kwargs):
+    from taiga.projects.userstories import services
+
+    for user_story in instance.user_stories.all():
+        if services.calculate_userstory_is_closed(user_story):
+            services.close_userstory(user_story)
+        else:
+            services.open_userstory(user_story)
+
+
+def try_to_close_or_open_user_stories_when_edit_task_status(sender, instance, created, **kwargs):
+    from taiga.projects.userstories import services
+
+    UserStory = apps.get_model("userstories", "UserStory")
+
+    for user_story in UserStory.objects.filter(tasks__status=instance).distinct():
+        if services.calculate_userstory_is_closed(user_story):
+            services.close_userstory(user_story)
+        else:
+            services.open_userstory(user_story)

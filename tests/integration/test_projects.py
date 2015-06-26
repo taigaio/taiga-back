@@ -45,6 +45,46 @@ def test_partially_update_project(client):
     assert response.status_code == 400
 
 
+def test_us_status_is_closed_changed_recalc_us_is_closed(client):
+    us_status = f.UserStoryStatusFactory(is_closed=False)
+    user_story = f.UserStoryFactory.create(project=us_status.project, status=us_status)
+
+    assert user_story.is_closed is False
+
+    us_status.is_closed = True
+    us_status.save()
+
+    user_story = user_story.__class__.objects.get(pk=user_story.pk)
+    assert user_story.is_closed is True
+
+    us_status.is_closed = False
+    us_status.save()
+
+    user_story = user_story.__class__.objects.get(pk=user_story.pk)
+    assert user_story.is_closed is False
+
+
+def test_task_status_is_closed_changed_recalc_us_is_closed(client):
+    us_status = f.UserStoryStatusFactory()
+    user_story = f.UserStoryFactory.create(project=us_status.project, status=us_status)
+    task_status = f.TaskStatusFactory.create(project=us_status.project, is_closed=False)
+    task = f.TaskFactory.create(project=us_status.project, status=task_status, user_story=user_story)
+
+    assert user_story.is_closed is False
+
+    task_status.is_closed = True
+    task_status.save()
+
+    user_story = user_story.__class__.objects.get(pk=user_story.pk)
+    assert user_story.is_closed is True
+
+    task_status.is_closed = False
+    task_status.save()
+
+    user_story = user_story.__class__.objects.get(pk=user_story.pk)
+    assert user_story.is_closed is False
+
+
 def test_us_status_slug_generation(client):
     us_status = f.UserStoryStatusFactory(name="NEW")
     f.MembershipFactory(user=us_status.project.owner, project=us_status.project, is_owner=True)
