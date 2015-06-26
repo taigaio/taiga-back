@@ -55,6 +55,7 @@ class UserStorySerializer(WatchersValidator, serializers.ModelSerializer):
     description_html = serializers.SerializerMethodField("get_description_html")
     status_extra_info = BasicUserStoryStatusSerializer(source="status", required=False, read_only=True)
     assigned_to_extra_info = UserBasicInfoSerializer(source="assigned_to", required=False, read_only=True)
+    owner_extra_info = UserBasicInfoSerializer(source="owner", required=False, read_only=True)
 
     class Meta:
         model = models.UserStory
