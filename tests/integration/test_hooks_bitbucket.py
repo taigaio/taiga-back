@@ -73,6 +73,25 @@ def test_invalid_ip(client):
     assert response.status_code == 400
 
 
+def test_valid_local_network_ip(client):
+    project = f.ProjectFactory()
+    f.ProjectModulesConfigFactory(project=project, config={
+        "bitbucket": {
+            "secret": "tpnIwJDz4e",
+            "valid_origin_ips": ["192.168.1.1"]
+        }
+    })
+
+    url = reverse("bitbucket-hook-list")
+    url = "{}?project={}&key={}".format(url, project.id, "tpnIwJDz4e")
+    data = {'payload': ['{"commits": []}']}
+    response = client.post(url,
+                           urllib.parse.urlencode(data, True),
+                           content_type="application/x-www-form-urlencoded",
+                           REMOTE_ADDR="192.168.1.1")
+    assert response.status_code == 204
+
+
 def test_not_ip_filter(client):
     project = f.ProjectFactory()
     f.ProjectModulesConfigFactory(project=project, config={
