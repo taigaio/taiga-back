@@ -17,17 +17,34 @@
 from taiga.base.api import serializers
 from taiga.base.fields import JsonField, I18NJsonField
 
+from taiga.users.services import get_photo_or_gravatar_url
+
 from . import models
 
+
 HISTORY_ENTRY_I18N_FIELDS=("points", "status", "severity", "priority", "type")
+
 
 class HistoryEntrySerializer(serializers.ModelSerializer):
     diff = JsonField()
     snapshot = JsonField()
     values = I18NJsonField(i18n_fields=HISTORY_ENTRY_I18N_FIELDS)
     values_diff = I18NJsonField(i18n_fields=HISTORY_ENTRY_I18N_FIELDS)
-    user = JsonField()
+    user = serializers.SerializerMethodField("get_user")
     delete_comment_user = JsonField()
 
     class Meta:
         model = models.HistoryEntry
+
+    def get_user(self, entry):
+        user = {"pk": None, "username": None, "name": None, "photo": None, "is_active": False}
+        user.update(entry.user)
+
+        user["photo"] = get_photo_or_gravatar_url(entry.owner)
+        user["is_active"] = entry.owner.is_active
+
+        if entry.owner.is_active or entry.owner.is_system:
+            user["name"] = entry.owner.get_full_name()
+            user["username"] = entry.owner.username
+
+        return user
