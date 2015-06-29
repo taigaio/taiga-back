@@ -39,7 +39,7 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
                                related_name="tasks", verbose_name=_("status"))
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="tasks", verbose_name=_("project"))
-    milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True,
+    milestone = models.ForeignKey("milestones.Milestone", null=True, blank=True, on_delete=models.SET_NULL,
                                   default=None, related_name="tasks",
                                   verbose_name=_("milestone"))
     created_date = models.DateTimeField(null=False, blank=False,
