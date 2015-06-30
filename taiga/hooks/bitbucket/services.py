@@ -40,16 +40,5 @@ def get_or_generate_config(project):
     return g_config
 
 
-def get_bitbucket_user(user_email):
-    user = None
-
-    if user_email:
-        try:
-            user = User.objects.get(email=user_email)
-        except User.DoesNotExist:
-            pass
-
-    if user is None:
-        user = User.objects.get(is_system=True, username__startswith="bitbucket")
-
-    return user
+def get_bitbucket_user(user_id):
+    return User.objects.get(is_system=True, username__startswith="bitbucket")
