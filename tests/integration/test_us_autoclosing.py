@@ -221,7 +221,7 @@ def test_auto_close_userstory_with_milestone_when_task_and_milestone_are_removed
     data.task3.delete()
 
     data.user_story1 = UserStory.objects.get(pk=data.user_story1.pk)
-    assert data.user_story1.is_closed is False
+    assert data.user_story1.is_closed is True
 
 
 def test_auto_close_us_when_all_tasks_are_changed_to_close_status(data):
