@@ -33,7 +33,7 @@ from taiga.base.utils.iterators import split_by_n
 
 
 def get_attachment_file_path(instance, filename):
-    basename = path.basename(filename).lower()
+    basename = path.basename(filename)
     basename = get_valid_filename(basename)
 
     hs = hashlib.sha256()
