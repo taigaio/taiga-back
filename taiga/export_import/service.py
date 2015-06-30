@@ -276,7 +276,7 @@ def store_attachment(project, obj, attachment):
             serialized.object.owner = serialized.object.project.owner
         serialized.object._importing = True
         serialized.object.size = serialized.object.attached_file.size
-        serialized.object.name = path.basename(serialized.object.attached_file.name).lower()
+        serialized.object.name = path.basename(serialized.object.attached_file.name)
         serialized.save()
         return serialized
     add_errors("attachments", serialized.errors)

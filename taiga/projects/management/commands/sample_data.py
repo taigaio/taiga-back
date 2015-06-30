@@ -221,7 +221,7 @@ class Command(BaseCommand):
         membership = self.sd.db_object_from_queryset(obj.project.memberships
                                                      .filter(user__isnull=False))
         attachment = Attachment.objects.create(project=obj.project,
-                                               name=path.basename(attached_file.name).lower(),
+                                               name=path.basename(attached_file.name),
                                                size=attached_file.size,
                                                content_object=obj,
                                                order=order,

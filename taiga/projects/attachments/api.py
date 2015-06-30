@@ -56,7 +56,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCru
             obj.content_type = self.get_content_type()
             obj.owner = self.request.user
             obj.size = obj.attached_file.size
-            obj.name = path.basename(obj.attached_file.name).lower()
+            obj.name = path.basename(obj.attached_file.name)
 
         if obj.project_id != obj.content_object.project_id:
             raise exc.WrongArguments(_("Project ID not matches between object and project"))
