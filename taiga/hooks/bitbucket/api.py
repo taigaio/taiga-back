@@ -29,17 +29,10 @@ from ipware.ip import get_ip
 
 class BitBucketViewSet(BaseWebhookApiViewSet):
     event_hook_classes = {
-        "push": event_hooks.PushEventHook,
+        "repo:push": event_hooks.PushEventHook,
+        "issue:created": event_hooks.IssuesEventHook,
+        "issue:comment_created": event_hooks.IssueCommentEventHook,
     }
-
-    def _get_payload(self, request):
-        try:
-            body = parse_qs(request.body.decode("utf-8"), strict_parsing=True)
-            payload = body["payload"]
-        except (ValueError, KeyError):
-            raise exc.BadRequest(_("The payload is not a valid application/x-www-form-urlencoded"))
-
-        return payload
 
     def _validate_signature(self, project, request):
         secret_key = request.GET.get("key", None)
@@ -75,4 +68,4 @@ class BitBucketViewSet(BaseWebhookApiViewSet):
             return None
 
     def _get_event_name(self, request):
-        return "push"
+        return request.META.get('HTTP_X_EVENT_KEY', None)

@@ -37,17 +37,10 @@ class PushEventHook(BaseEventHook):
         if self.payload is None:
             return
 
-        # In bitbucket the payload is a list! :(
-        for payload_element_text in self.payload:
-            try:
-                payload_element = json.loads(payload_element_text)
-            except ValueError:
-                raise exc.BadRequest(_("The payload is not valid"))
-
-            commits = payload_element.get("commits", [])
-            for commit in commits:
-                message = commit.get("message", None)
-                self._process_message(message, None)
+        changes = self.payload.get("push", {}).get('changes', [])
+        for change in changes:
+            message = change.get("new", {}).get("target", {}).get("message", None)
+            self._process_message(message, None)
 
     def _process_message(self, message, bitbucket_user):
         """
@@ -98,3 +91,98 @@ class PushEventHook(BaseEventHook):
 def replace_bitbucket_references(project_url, wiki_text):
     template = "\g<1>[BitBucket#\g<2>]({}/issues/\g<2>)\g<3>".format(project_url)
     return re.sub(r"(\s|^)#(\d+)(\s|$)", template, wiki_text, 0, re.M)
+
+
+class IssuesEventHook(BaseEventHook):
+    def process_event(self):
+        number = self.payload.get('issue', {}).get('id', None)
+        subject = self.payload.get('issue', {}).get('title', None)
+
+        bitbucket_url = self.payload.get('issue', {}).get('links', {}).get('html', {}).get('href', None)
+
+        bitbucket_user_id = self.payload.get('actor', {}).get('user', {}).get('uuid', None)
+        bitbucket_user_name = self.payload.get('actor', {}).get('user', {}).get('username', None)
+        bitbucket_user_url = self.payload.get('actor', {}).get('user', {}).get('links', {}).get('html', {}).get('href')
+
+        project_url = self.payload.get('repository', {}).get('links', {}).get('html', {}).get('href', None)
+
+        description = self.payload.get('issue', {}).get('content', {}).get('raw', '')
+        description = replace_bitbucket_references(project_url, description)
+
+        user = get_bitbucket_user(bitbucket_user_id)
+
+        if not all([subject, bitbucket_url, project_url]):
+            raise ActionSyntaxException(_("Invalid issue information"))
+
+        issue = Issue.objects.create(
+            project=self.project,
+            subject=subject,
+            description=description,
+            status=self.project.default_issue_status,
+            type=self.project.default_issue_type,
+            severity=self.project.default_severity,
+            priority=self.project.default_priority,
+            external_reference=['bitbucket', bitbucket_url],
+            owner=user
+        )
+        take_snapshot(issue, user=user)
+
+        if number and subject and bitbucket_user_name and bitbucket_user_url:
+            comment = _("Issue created by [@{bitbucket_user_name}]({bitbucket_user_url} "
+                        "\"See @{bitbucket_user_name}'s BitBucket profile\") "
+                        "from BitBucket.\nOrigin BitBucket issue: [gh#{number} - {subject}]({bitbucket_url} "
+                        "\"Go to 'gh#{number} - {subject}'\"):\n\n"
+                        "{description}").format(bitbucket_user_name=bitbucket_user_name,
+                                                bitbucket_user_url=bitbucket_user_url,
+                                                number=number,
+                                                subject=subject,
+                                                bitbucket_url=bitbucket_url,
+                                                description=description)
+        else:
+            comment = _("Issue created from BitBucket.")
+
+        snapshot = take_snapshot(issue, comment=comment, user=user)
+        send_notifications(issue, history=snapshot)
+
+
+class IssueCommentEventHook(BaseEventHook):
+    def process_event(self):
+        number = self.payload.get('issue', {}).get('id', None)
+        subject = self.payload.get('issue', {}).get('title', None)
+
+        bitbucket_url = self.payload.get('issue', {}).get('links', {}).get('html', {}).get('href', None)
+        bitbucket_user_id = self.payload.get('actor', {}).get('user', {}).get('uuid', None)
+        bitbucket_user_name = self.payload.get('actor', {}).get('user', {}).get('username', None)
+        bitbucket_user_url = self.payload.get('actor', {}).get('user', {}).get('links', {}).get('html', {}).get('href')
+
+        project_url = self.payload.get('repository', {}).get('links', {}).get('html', {}).get('href', None)
+
+        comment_message = self.payload.get('comment', {}).get('content', {}).get('raw', '')
+        comment_message = replace_bitbucket_references(project_url, comment_message)
+
+        user = get_bitbucket_user(bitbucket_user_id)
+
+        if not all([comment_message, bitbucket_url, project_url]):
+            raise ActionSyntaxException(_("Invalid issue comment information"))
+
+        issues = Issue.objects.filter(external_reference=["bitbucket", bitbucket_url])
+        tasks = Task.objects.filter(external_reference=["bitbucket", bitbucket_url])
+        uss = UserStory.objects.filter(external_reference=["bitbucket", bitbucket_url])
+
+        for item in list(issues) + list(tasks) + list(uss):
+            if number and subject and bitbucket_user_name and bitbucket_user_url:
+                comment = _("Comment by [@{bitbucket_user_name}]({bitbucket_user_url} "
+                            "\"See @{bitbucket_user_name}'s BitBucket profile\") "
+                            "from BitBucket.\nOrigin BitBucket issue: [gh#{number} - {subject}]({bitbucket_url} "
+                            "\"Go to 'gh#{number} - {subject}'\")\n\n"
+                            "{message}").format(bitbucket_user_name=bitbucket_user_name,
+                                                bitbucket_user_url=bitbucket_user_url,
+                                                number=number,
+                                                subject=subject,
+                                                bitbucket_url=bitbucket_url,
+                                                message=comment_message)
+            else:
+                comment = _("Comment From BitBucket:\n\n{message}").format(message=comment_message)
+
+            snapshot = take_snapshot(item, comment=comment, user=user)
+            send_notifications(item, history=snapshot)
