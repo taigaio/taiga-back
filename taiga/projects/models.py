@@ -150,8 +150,8 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     videoconferences = models.CharField(max_length=250, null=True, blank=True,
                                         choices=choices.VIDEOCONFERENCES_CHOICES,
                                         verbose_name=_("videoconference system"))
-    videoconferences_salt = models.CharField(max_length=250, null=True, blank=True,
-                                             verbose_name=_("videoconference room salt"))
+    videoconferences_extra_data = models.CharField(max_length=250, null=True, blank=True,
+                                             verbose_name=_("videoconference extra data"))
 
     creation_template = models.ForeignKey("projects.ProjectTemplate",
                                           related_name="projects", null=True,
@@ -209,7 +209,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
             self.slug = slug
 
         if not self.videoconferences:
-            self.videoconferences_salt = None
+            self.videoconferences_extra_data = None
 
         super().save(*args, **kwargs)
 
@@ -577,8 +577,8 @@ class ProjectTemplate(models.Model):
     videoconferences = models.CharField(max_length=250, null=True, blank=True,
                                         choices=choices.VIDEOCONFERENCES_CHOICES,
                                         verbose_name=_("videoconference system"))
-    videoconferences_salt = models.CharField(max_length=250, null=True, blank=True,
-                                             verbose_name=_("videoconference room salt"))
+    videoconferences_extra_data = models.CharField(max_length=250, null=True, blank=True,
+                                             verbose_name=_("videoconference extra data"))
 
     default_options = JsonField(null=True, blank=True, verbose_name=_("default options"))
     us_statuses = JsonField(null=True, blank=True, verbose_name=_("us statuses"))
@@ -613,7 +613,7 @@ class ProjectTemplate(models.Model):
         self.is_wiki_activated = project.is_wiki_activated
         self.is_issues_activated = project.is_issues_activated
         self.videoconferences = project.videoconferences
-        self.videoconferences_salt = project.videoconferences_salt
+        self.videoconferences_extra_data = project.videoconferences_extra_data
 
         self.default_options = {
             "points": getattr(project.default_points, "name", None),
@@ -717,7 +717,7 @@ class ProjectTemplate(models.Model):
         project.is_wiki_activated = self.is_wiki_activated
         project.is_issues_activated = self.is_issues_activated
         project.videoconferences = self.videoconferences
-        project.videoconferences_salt = self.videoconferences_salt
+        project.videoconferences_extra_data = self.videoconferences_extra_data
 
         for us_status in self.us_statuses:
             UserStoryStatus.objects.create(
