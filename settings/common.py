@@ -283,6 +283,7 @@ INSTALLED_APPS = [
     "taiga.mdrender",
     "taiga.export_import",
     "taiga.feedback",
+    "taiga.stats",
     "taiga.hooks.github",
     "taiga.hooks.gitlab",
     "taiga.hooks.bitbucket",
@@ -433,6 +434,9 @@ TAGS_PREDEFINED_COLORS = ["#fce94f", "#edd400", "#c4a000", "#8ae234",
 # Feedback module settings
 FEEDBACK_ENABLED = True
 FEEDBACK_EMAIL = "support@taiga.io"
+
+# Stats module settings
+STATS_ENABLED = False
 
 # 0 notifications will work in a synchronous way
 # >0 an external process will check the pending notifications and will send them

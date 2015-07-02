@@ -1,3 +1,4 @@
+
 # Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
 # Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
@@ -192,5 +193,9 @@ router.register(r"importer", ProjectImporterViewSet, base_name="importer")
 router.register(r"exporter", ProjectExporterViewSet, base_name="exporter")
 
 
-# feedback
+# Stats
+#   - see taiga.stats.routers and taiga.stats.apps
+
+
+# Feedback
 #   - see taiga.feedback.routers and taiga.feedback.apps
