@@ -20,5 +20,6 @@ from django.utils.translation import ugettext_lazy as _
 VIDEOCONFERENCES_CHOICES = (
     ("appear-in", _("AppearIn")),
     ("jitsi", _("Jitsi")),
+    ("custom", _("Custom")),
     ("talky", _("Talky")),
 )
