@@ -11,6 +11,7 @@
 
 ### Misc
 - API: Mixin fields 'users', 'members' and 'memberships' in ProjectDetailSerializer
+- API: Add stats/system resource with global server stats (total project, total users....)
 - Lots of small and not so small bugfixes.
 
 

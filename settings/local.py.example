@@ -63,6 +63,13 @@ DATABASES = {
 #GITHUB_API_CLIENT_ID = "yourgithubclientid"
 #GITHUB_API_CLIENT_SECRET = "yourgithubclientsecret"
 
+# FEEDBACK MODULE (See config in taiga-front too)
+#FEEDBACK_ENABLED = True
+#FEEDBACK_EMAIL = "support@taiga.io"
+
+# STATS MODULE
+#STATS_ENABLED = False
+
 # SITEMAP
 # If is True /front/sitemap.xml show a valid sitemap of taiga-front client
 #FRONT_SITEMAP_ENABLED = False
