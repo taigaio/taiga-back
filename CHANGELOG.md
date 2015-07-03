@@ -9,6 +9,7 @@
 - Now every user that coments USs, Issues or Tasks will be involved in it (add author to the watchers list).
 - Fix the compatibility with BitBucket webhooks and add issues and issues comments integration.
 - Add custom videoconference system.
+- Add support for comments in the Gitlab webhooks integration.
 
 ### Misc
 - API: Mixin fields 'users', 'members' and 'memberships' in ProjectDetailSerializer

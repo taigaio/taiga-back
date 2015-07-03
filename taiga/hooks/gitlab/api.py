@@ -30,6 +30,7 @@ class GitLabViewSet(BaseWebhookApiViewSet):
     event_hook_classes = {
         "push": event_hooks.PushEventHook,
         "issue": event_hooks.IssuesEventHook,
+        "note": event_hooks.IssueCommentEventHook,
     }
 
     def _validate_signature(self, project, request):
