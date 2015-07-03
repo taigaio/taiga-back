@@ -22,6 +22,7 @@ from .. import factories
 from taiga.projects.history import services as history_services
 from taiga.timeline import service
 from taiga.timeline.models import Timeline
+from taiga.timeline.serializers import TimelineSerializer
 
 
 pytestmark = pytest.mark.django_db
@@ -391,3 +392,29 @@ def test_watchers_to_user_story_timeline():
     user_timeline = service.get_profile_timeline(membership.user)
     assert user_timeline[0].event_type == "userstories.userstory.create"
     assert user_timeline[0].data["userstory"]["subject"] == "test us timeline"
+
+def test_user_data_for_system_users():
+    user_story = factories.UserStoryFactory.create(subject="test us timeline")
+    history_services.take_snapshot(user_story, user=user_story.owner)
+    project_timeline = service.get_project_timeline(user_story.project)
+    serialized_obj = TimelineSerializer(project_timeline[0])
+    serialized_obj.data["data"]["user"]["is_profile_visible"] = True
+
+def test_user_data_for_system_users():
+    user_story = factories.UserStoryFactory.create(subject="test us timeline")
+    user_story.owner.is_system = True
+    user_story.owner.save()
+    history_services.take_snapshot(user_story, user=user_story.owner)
+    project_timeline = service.get_project_timeline(user_story.project)
+    serialized_obj = TimelineSerializer(project_timeline[0])
+    serialized_obj.data["data"]["user"]["is_profile_visible"] = False
+
+def test_user_data_for_unactived_users():
+    user_story = factories.UserStoryFactory.create(subject="test us timeline")
+    user_story.owner.cancel()
+    user_story.owner.save()
+    history_services.take_snapshot(user_story, user=user_story.owner)
+    project_timeline = service.get_project_timeline(user_story.project)
+    serialized_obj = TimelineSerializer(project_timeline[0])
+    serialized_obj.data["data"]["user"]["is_profile_visible"] = False
+    serialized_obj.data["data"]["user"]["username"] = "deleted-user"
