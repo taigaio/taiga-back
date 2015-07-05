@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-15 12:34+0200\n"
-"PO-Revision-Date: 2015-06-09 07:47+0000\n"
+"POT-Creation-Date: 2015-07-05 11:14+0200\n"
+"PO-Revision-Date: 2015-07-05 09:14+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Catalan (http://www.transifex.com/projects/p/taiga-back/"
 "language/ca/)\n"
@@ -525,20 +525,20 @@ msgstr ""
 msgid "{}=\"{}\" not found in this project"
 msgstr ""
 
-#: taiga/export_import/serializers.py:382
+#: taiga/export_import/serializers.py:384
 #: taiga/projects/custom_attributes/serializers.py:103
 msgid "Invalid content. It must be {\"key\": \"value\",...}"
 msgstr "Contingut invàlid. Deu ser {\"key\": \"value\",...}"
 
-#: taiga/export_import/serializers.py:397
+#: taiga/export_import/serializers.py:399
 #: taiga/projects/custom_attributes/serializers.py:118
 msgid "It contain invalid custom fields."
 msgstr "Conté camps personalitzats invàlids."
 
-#: taiga/export_import/serializers.py:466
+#: taiga/export_import/serializers.py:468
 #: taiga/projects/milestones/serializers.py:63
-#: taiga/projects/serializers.py:66 taiga/projects/serializers.py:92
-#: taiga/projects/serializers.py:122 taiga/projects/serializers.py:164
+#: taiga/projects/serializers.py:67 taiga/projects/serializers.py:93
+#: taiga/projects/serializers.py:124 taiga/projects/serializers.py:167
 msgid "Name duplicated for the project"
 msgstr ""
 
@@ -709,8 +709,8 @@ msgstr "Adreça d'email"
 msgid "comment"
 msgstr "Comentari"
 
-#: taiga/feedback/models.py:29 taiga/projects/attachments/models.py:63
-#: taiga/projects/custom_attributes/models.py:38
+#: taiga/feedback/models.py:29 taiga/projects/attachments/models.py:61
+#: taiga/projects/custom_attributes/models.py:44
 #: taiga/projects/issues/models.py:53 taiga/projects/milestones/models.py:45
 #: taiga/projects/models.py:129 taiga/projects/models.py:561
 #: taiga/projects/tasks/models.py:46 taiga/projects/userstories/models.py:82
@@ -783,7 +783,8 @@ msgstr ""
 msgid "The payload is not a valid json"
 msgstr "El payload no és un arxiu json vàlid"
 
-#: taiga/hooks/api.py:61
+#: taiga/hooks/api.py:61 taiga/projects/issues/api.py:175
+#: taiga/projects/tasks/api.py:74 taiga/projects/userstories/api.py:87
 msgid "The project doesn't exist"
 msgstr "El projecte no existeix"
 
@@ -791,29 +792,66 @@ msgstr "El projecte no existeix"
 msgid "Bad signature"
 msgstr "Firma no vàlida."
 
-#: taiga/hooks/bitbucket/api.py:40
-msgid "The payload is not a valid application/x-www-form-urlencoded"
-msgstr "El payload no és un application/x-www-form-urlencoded vàlid"
-
-#: taiga/hooks/bitbucket/event_hooks.py:45
-msgid "The payload is not valid"
-msgstr "El payload no és vàlid"
-
-#: taiga/hooks/bitbucket/event_hooks.py:81
-#: taiga/hooks/github/event_hooks.py:76 taiga/hooks/gitlab/event_hooks.py:74
+#: taiga/hooks/bitbucket/event_hooks.py:73
+#: taiga/hooks/github/event_hooks.py:75 taiga/hooks/gitlab/event_hooks.py:73
 msgid "The referenced element doesn't exist"
 msgstr "L'element referenciat no existeix"
 
-#: taiga/hooks/bitbucket/event_hooks.py:88
-#: taiga/hooks/github/event_hooks.py:83 taiga/hooks/gitlab/event_hooks.py:81
+#: taiga/hooks/bitbucket/event_hooks.py:80
+#: taiga/hooks/github/event_hooks.py:82 taiga/hooks/gitlab/event_hooks.py:80
 msgid "The status doesn't exist"
 msgstr "L'estatus no existeix."
 
-#: taiga/hooks/bitbucket/event_hooks.py:94
+#: taiga/hooks/bitbucket/event_hooks.py:86
 msgid "Status changed from BitBucket commit"
 msgstr ""
 
-#: taiga/hooks/github/event_hooks.py:97
+#: taiga/hooks/bitbucket/event_hooks.py:115
+#: taiga/hooks/github/event_hooks.py:141 taiga/hooks/gitlab/event_hooks.py:113
+msgid "Invalid issue information"
+msgstr "Informació d'incidència no vàlida."
+
+#: taiga/hooks/bitbucket/event_hooks.py:131
+#, python-brace-format
+msgid ""
+"Issue created by [@{bitbucket_user_name}]({bitbucket_user_url} \"See "
+"@{bitbucket_user_name}'s BitBucket profile\") from BitBucket.\n"
+"Origin BitBucket issue: [gh#{number} - {subject}]({bitbucket_url} \"Go to "
+"'gh#{number} - {subject}'\"):\n"
+"\n"
+"{description}"
+msgstr ""
+
+#: taiga/hooks/bitbucket/event_hooks.py:142
+msgid "Issue created from BitBucket."
+msgstr ""
+
+#: taiga/hooks/bitbucket/event_hooks.py:166
+#: taiga/hooks/github/event_hooks.py:177 taiga/hooks/github/event_hooks.py:192
+#: taiga/hooks/gitlab/event_hooks.py:152
+msgid "Invalid issue comment information"
+msgstr "Informació del comentari a l'incidència no vàlid."
+
+#: taiga/hooks/bitbucket/event_hooks.py:174
+#, python-brace-format
+msgid ""
+"Comment by [@{bitbucket_user_name}]({bitbucket_user_url} \"See "
+"@{bitbucket_user_name}'s BitBucket profile\") from BitBucket.\n"
+"Origin BitBucket issue: [gh#{number} - {subject}]({bitbucket_url} \"Go to "
+"'gh#{number} - {subject}'\")\n"
+"\n"
+"{message}"
+msgstr ""
+
+#: taiga/hooks/bitbucket/event_hooks.py:185
+#, python-brace-format
+msgid ""
+"Comment From BitBucket:\n"
+"\n"
+"{message}"
+msgstr ""
+
+#: taiga/hooks/github/event_hooks.py:96
 #, python-brace-format
 msgid ""
 "Status changed by [@{github_user_name}]({github_user_url} \"See "
@@ -821,15 +859,11 @@ msgid ""
 "({commit_url} \"See commit '{commit_id} - {commit_message}'\")."
 msgstr ""
 
-#: taiga/hooks/github/event_hooks.py:108
+#: taiga/hooks/github/event_hooks.py:107
 msgid "Status changed from GitHub commit."
 msgstr ""
 
-#: taiga/hooks/github/event_hooks.py:142 taiga/hooks/gitlab/event_hooks.py:114
-msgid "Invalid issue information"
-msgstr "Informació d'incidència no vàlida."
-
-#: taiga/hooks/github/event_hooks.py:158
+#: taiga/hooks/github/event_hooks.py:157
 #, python-brace-format
 msgid ""
 "Issue created by [@{github_user_name}]({github_user_url} \"See "
@@ -840,15 +874,11 @@ msgid ""
 "{description}"
 msgstr ""
 
-#: taiga/hooks/github/event_hooks.py:169
+#: taiga/hooks/github/event_hooks.py:168
 msgid "Issue created from GitHub."
 msgstr ""
 
-#: taiga/hooks/github/event_hooks.py:178 taiga/hooks/github/event_hooks.py:193
-msgid "Invalid issue comment information"
-msgstr "Informació del comentari a l'incidència no vàlid."
-
-#: taiga/hooks/github/event_hooks.py:201
+#: taiga/hooks/github/event_hooks.py:200
 #, python-brace-format
 msgid ""
 "Comment by [@{github_user_name}]({github_user_url} \"See "
@@ -859,7 +889,7 @@ msgid ""
 "{message}"
 msgstr ""
 
-#: taiga/hooks/github/event_hooks.py:212
+#: taiga/hooks/github/event_hooks.py:211
 #, python-brace-format
 msgid ""
 "Comment From GitHub:\n"
@@ -867,12 +897,31 @@ msgid ""
 "{message}"
 msgstr ""
 
-#: taiga/hooks/gitlab/event_hooks.py:87
+#: taiga/hooks/gitlab/event_hooks.py:86
 msgid "Status changed from GitLab commit"
 msgstr ""
 
-#: taiga/hooks/gitlab/event_hooks.py:129
+#: taiga/hooks/gitlab/event_hooks.py:128
 msgid "Created from GitLab"
+msgstr ""
+
+#: taiga/hooks/gitlab/event_hooks.py:160
+#, python-brace-format
+msgid ""
+"Comment by [@{gitlab_user_name}]({gitlab_user_url} \"See "
+"@{gitlab_user_name}'s GitLab profile\") from GitLab.\n"
+"Origin GitLab issue: [gh#{number} - {subject}]({gitlab_url} \"Go to "
+"'gh#{number} - {subject}'\")\n"
+"\n"
+"{message}"
+msgstr ""
+
+#: taiga/hooks/gitlab/event_hooks.py:171
+#, python-brace-format
+msgid ""
+"Comment From GitLab:\n"
+"\n"
+"{message}"
 msgstr ""
 
 #: taiga/permissions/permissions.py:21 taiga/permissions/permissions.py:31
@@ -1045,11 +1094,11 @@ msgstr ""
 msgid "Not valid template description"
 msgstr ""
 
-#: taiga/projects/api.py:469 taiga/projects/serializers.py:257
+#: taiga/projects/api.py:475 taiga/projects/serializers.py:261
 msgid "At least one of the user must be an active admin"
 msgstr "Al menys un del usuaris ha de ser administrador"
 
-#: taiga/projects/api.py:499
+#: taiga/projects/api.py:505
 msgid "You don't have permisions to see that."
 msgstr "No tens permisos per a veure açò."
 
@@ -1061,7 +1110,7 @@ msgstr ""
 msgid "Project ID not matches between object and project"
 msgstr ""
 
-#: taiga/projects/attachments/models.py:54 taiga/projects/issues/models.py:38
+#: taiga/projects/attachments/models.py:52 taiga/projects/issues/models.py:38
 #: taiga/projects/milestones/models.py:39 taiga/projects/models.py:134
 #: taiga/projects/notifications/models.py:57 taiga/projects/tasks/models.py:37
 #: taiga/projects/userstories/models.py:64 taiga/projects/wiki/models.py:34
@@ -1069,8 +1118,8 @@ msgstr ""
 msgid "owner"
 msgstr "Amo"
 
-#: taiga/projects/attachments/models.py:56
-#: taiga/projects/custom_attributes/models.py:35
+#: taiga/projects/attachments/models.py:54
+#: taiga/projects/custom_attributes/models.py:41
 #: taiga/projects/issues/models.py:51 taiga/projects/milestones/models.py:41
 #: taiga/projects/models.py:338 taiga/projects/models.py:364
 #: taiga/projects/models.py:395 taiga/projects/models.py:424
@@ -1082,16 +1131,16 @@ msgstr "Amo"
 msgid "project"
 msgstr "Projecte"
 
-#: taiga/projects/attachments/models.py:58
+#: taiga/projects/attachments/models.py:56
 msgid "content type"
 msgstr "Tipus de contingut"
 
-#: taiga/projects/attachments/models.py:60
+#: taiga/projects/attachments/models.py:58
 msgid "object id"
 msgstr "Id d'objecte"
 
-#: taiga/projects/attachments/models.py:66
-#: taiga/projects/custom_attributes/models.py:40
+#: taiga/projects/attachments/models.py:64
+#: taiga/projects/custom_attributes/models.py:46
 #: taiga/projects/issues/models.py:56 taiga/projects/milestones/models.py:48
 #: taiga/projects/models.py:132 taiga/projects/models.py:564
 #: taiga/projects/tasks/models.py:49 taiga/projects/userstories/models.py:85
@@ -1099,16 +1148,16 @@ msgstr "Id d'objecte"
 msgid "modified date"
 msgstr "Data de modificació"
 
-#: taiga/projects/attachments/models.py:71
+#: taiga/projects/attachments/models.py:69
 msgid "attached file"
 msgstr "Arxiu adjunt"
 
-#: taiga/projects/attachments/models.py:74
+#: taiga/projects/attachments/models.py:72
 msgid "is deprecated"
 msgstr "està obsolet "
 
-#: taiga/projects/attachments/models.py:75
-#: taiga/projects/custom_attributes/models.py:32
+#: taiga/projects/attachments/models.py:73
+#: taiga/projects/custom_attributes/models.py:37
 #: taiga/projects/history/templatetags/functions.py:25
 #: taiga/projects/issues/models.py:61 taiga/projects/models.py:127
 #: taiga/projects/models.py:559 taiga/projects/tasks/models.py:60
@@ -1116,8 +1165,8 @@ msgstr "està obsolet "
 msgid "description"
 msgstr "Descripció"
 
-#: taiga/projects/attachments/models.py:76
-#: taiga/projects/custom_attributes/models.py:33
+#: taiga/projects/attachments/models.py:74
+#: taiga/projects/custom_attributes/models.py:39
 #: taiga/projects/milestones/models.py:54 taiga/projects/models.py:354
 #: taiga/projects/models.py:391 taiga/projects/models.py:418
 #: taiga/projects/models.py:453 taiga/projects/models.py:476
@@ -1135,10 +1184,22 @@ msgid "Jitsi"
 msgstr ""
 
 #: taiga/projects/choices.py:23
+msgid "Custom"
+msgstr ""
+
+#: taiga/projects/choices.py:24
 msgid "Talky"
 msgstr ""
 
-#: taiga/projects/custom_attributes/models.py:31
+#: taiga/projects/custom_attributes/models.py:33
+msgid "Text"
+msgstr ""
+
+#: taiga/projects/custom_attributes/models.py:34
+msgid "Multi-Line Text"
+msgstr ""
+
+#: taiga/projects/custom_attributes/models.py:36
 #: taiga/projects/milestones/models.py:34 taiga/projects/models.py:123
 #: taiga/projects/models.py:350 taiga/projects/models.py:389
 #: taiga/projects/models.py:414 taiga/projects/models.py:451
@@ -1148,20 +1209,25 @@ msgstr ""
 msgid "name"
 msgstr "Nom"
 
-#: taiga/projects/custom_attributes/models.py:81
+#: taiga/projects/custom_attributes/models.py:38
+#: taiga/projects/issues/models.py:46
+msgid "type"
+msgstr "tipus"
+
+#: taiga/projects/custom_attributes/models.py:87
 msgid "values"
 msgstr ""
 
-#: taiga/projects/custom_attributes/models.py:91
+#: taiga/projects/custom_attributes/models.py:97
 #: taiga/projects/tasks/models.py:33 taiga/projects/userstories/models.py:34
 msgid "user story"
 msgstr "història d'usuari"
 
-#: taiga/projects/custom_attributes/models.py:106
+#: taiga/projects/custom_attributes/models.py:112
 msgid "task"
 msgstr "tasca"
 
-#: taiga/projects/custom_attributes/models.py:121
+#: taiga/projects/custom_attributes/models.py:127
 msgid "issue"
 msgstr "incidéncia"
 
@@ -1298,23 +1364,27 @@ msgstr "contingut"
 msgid "blocked note"
 msgstr "nota de bloqueig"
 
-#: taiga/projects/issues/api.py:139
+#: taiga/projects/history/templatetags/functions.py:28
+msgid "sprint"
+msgstr ""
+
+#: taiga/projects/issues/api.py:195
 msgid "You don't have permissions to set this sprint to this issue."
 msgstr "No tens permissos per a ficar aquest sprint a aquesta incidència"
 
-#: taiga/projects/issues/api.py:143
+#: taiga/projects/issues/api.py:199
 msgid "You don't have permissions to set this status to this issue."
 msgstr "No tens permissos per a ficar aquest status a aquesta tasca"
 
-#: taiga/projects/issues/api.py:147
+#: taiga/projects/issues/api.py:203
 msgid "You don't have permissions to set this severity to this issue."
 msgstr "No tens permissos per a ficar aquesta severitat a aquesta tasca"
 
-#: taiga/projects/issues/api.py:151
+#: taiga/projects/issues/api.py:207
 msgid "You don't have permissions to set this priority to this issue."
 msgstr "No tens permissos per a ficar aquesta prioritat a aquesta incidència"
 
-#: taiga/projects/issues/api.py:155
+#: taiga/projects/issues/api.py:211
 msgid "You don't have permissions to set this type to this issue."
 msgstr "No tens permissos per a ficar aquest tipus a aquesta incidència"
 
@@ -1335,10 +1405,6 @@ msgstr "severitat"
 #: taiga/projects/issues/models.py:44
 msgid "priority"
 msgstr "prioritat"
-
-#: taiga/projects/issues/models.py:46
-msgid "type"
-msgstr "tipus"
 
 #: taiga/projects/issues/models.py:49 taiga/projects/tasks/models.py:44
 #: taiga/projects/userstories/models.py:60
@@ -1494,8 +1560,8 @@ msgid "videoconference system"
 msgstr "sistema de videoconferència"
 
 #: taiga/projects/models.py:154 taiga/projects/models.py:581
-msgid "videoconference room salt"
-msgstr "sala videoconferència"
+msgid "videoconference extra data"
+msgstr ""
 
 #: taiga/projects/models.py:159
 msgid "creation template"
@@ -2119,51 +2185,51 @@ msgstr "Versió"
 msgid "You can't leave the project if there are no more owners"
 msgstr "No pots deixar el projecte si no hi ha més amos"
 
-#: taiga/projects/serializers.py:233
+#: taiga/projects/serializers.py:237
 msgid "Email address is already taken"
 msgstr "Aquest e-mail ja està en ús"
 
-#: taiga/projects/serializers.py:245
+#: taiga/projects/serializers.py:249
 msgid "Invalid role for the project"
 msgstr "Rol invàlid per al projecte"
 
-#: taiga/projects/serializers.py:340
+#: taiga/projects/serializers.py:348
 msgid "Total milestones must be major or equal to zero"
 msgstr ""
 
-#: taiga/projects/serializers.py:402
+#: taiga/projects/serializers.py:405
 msgid "Default options"
 msgstr "Opcions per defecte"
 
-#: taiga/projects/serializers.py:403
+#: taiga/projects/serializers.py:406
 msgid "User story's statuses"
 msgstr "Estatus d'històries d'usuari"
 
-#: taiga/projects/serializers.py:404
+#: taiga/projects/serializers.py:407
 msgid "Points"
 msgstr "Punts"
 
-#: taiga/projects/serializers.py:405
+#: taiga/projects/serializers.py:408
 msgid "Task's statuses"
 msgstr "Estatus de tasques"
 
-#: taiga/projects/serializers.py:406
+#: taiga/projects/serializers.py:409
 msgid "Issue's statuses"
 msgstr "Estatus d'incidéncies"
 
-#: taiga/projects/serializers.py:407
+#: taiga/projects/serializers.py:410
 msgid "Issue's types"
 msgstr "Tipus d'incidéncies"
 
-#: taiga/projects/serializers.py:408
+#: taiga/projects/serializers.py:411
 msgid "Priorities"
 msgstr "Prioritats"
 
-#: taiga/projects/serializers.py:409
+#: taiga/projects/serializers.py:412
 msgid "Severities"
 msgstr "Severitats"
 
-#: taiga/projects/serializers.py:410
+#: taiga/projects/serializers.py:413
 msgid "Roles"
 msgstr "Rols"
 
@@ -2175,10 +2241,17 @@ msgstr ""
 msgid "Project End"
 msgstr ""
 
-#: taiga/projects/tasks/api.py:58 taiga/projects/tasks/api.py:61
-#: taiga/projects/tasks/api.py:64 taiga/projects/tasks/api.py:67
-msgid "You don't have permissions for add/modify this task."
-msgstr "No tens permissos per a afegir/modificar aquesta tasca."
+#: taiga/projects/tasks/api.py:90 taiga/projects/tasks/api.py:99
+msgid "You don't have permissions to set this sprint to this task."
+msgstr ""
+
+#: taiga/projects/tasks/api.py:93
+msgid "You don't have permissions to set this user story to this task."
+msgstr ""
+
+#: taiga/projects/tasks/api.py:96
+msgid "You don't have permissions to set this status to this task."
+msgstr ""
 
 #: taiga/projects/tasks/models.py:56
 msgid "us order"
@@ -2554,7 +2627,15 @@ msgstr ""
 msgid "Stakeholder"
 msgstr ""
 
-#: taiga/projects/userstories/api.py:174
+#: taiga/projects/userstories/api.py:134
+msgid "You don't have permissions to set this sprint to this user story."
+msgstr ""
+
+#: taiga/projects/userstories/api.py:138
+msgid "You don't have permissions to set this status to this user story."
+msgstr ""
+
+#: taiga/projects/userstories/api.py:212
 #, python-brace-format
 msgid ""
 "Generating the user story [US #{ref} - {subject}](:us:{ref} \"US #{ref} - "
