@@ -159,8 +159,8 @@ class IssueCommentEventHook(BaseEventHook):
             if number and subject and gitlab_user_name and gitlab_user_url:
                 comment = _("Comment by [@{gitlab_user_name}]({gitlab_user_url} "
                             "\"See @{gitlab_user_name}'s GitLab profile\") "
-                            "from GitLab.\nOrigin GitLab issue: [gh#{number} - {subject}]({gitlab_url} "
-                            "\"Go to 'gh#{number} - {subject}'\")\n\n"
+                            "from GitLab.\nOrigin GitLab issue: [gl#{number} - {subject}]({gitlab_url} "
+                            "\"Go to 'gl#{number} - {subject}'\")\n\n"
                             "{message}").format(gitlab_user_name=gitlab_user_name,
                                                 gitlab_user_url=gitlab_user_url,
                                                 number=number,
