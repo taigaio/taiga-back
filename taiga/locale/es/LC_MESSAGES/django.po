@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-05 11:14+0200\n"
-"PO-Revision-Date: 2015-07-05 09:16+0000\n"
+"POT-Creation-Date: 2015-07-06 16:06+0200\n"
+"PO-Revision-Date: 2015-07-06 14:16+0000\n"
 "Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/taiga-back/"
 "language/es/)\n"
@@ -941,15 +941,21 @@ msgstr "Información inválida de Issue"
 msgid ""
 "Issue created by [@{bitbucket_user_name}]({bitbucket_user_url} \"See "
 "@{bitbucket_user_name}'s BitBucket profile\") from BitBucket.\n"
-"Origin BitBucket issue: [gh#{number} - {subject}]({bitbucket_url} \"Go to "
-"'gh#{number} - {subject}'\"):\n"
+"Origin BitBucket issue: [bb#{number} - {subject}]({bitbucket_url} \"Go to "
+"'bb#{number} - {subject}'\"):\n"
 "\n"
 "{description}"
 msgstr ""
+"Petición creada por [@{bitbucket_user_name}]({bitbucket_user_url} \"Ver el "
+"perfil de @{bitbucket_user_name} en BitBucket\") desde BitBucket.\n"
+"Petición de origen en BitBucket:  [bb#{number} - {subject}]({bitbucket_url} "
+"\"Ir a 'bb#{number} - {subject}'\"):\n"
+"\n"
+"{description}"
 
 #: taiga/hooks/bitbucket/event_hooks.py:142
 msgid "Issue created from BitBucket."
-msgstr ""
+msgstr "Petición creada desde BitBucket."
 
 #: taiga/hooks/bitbucket/event_hooks.py:166
 #: taiga/hooks/github/event_hooks.py:177 taiga/hooks/github/event_hooks.py:192
@@ -962,11 +968,17 @@ msgstr "Información de comentario de Issue inválida"
 msgid ""
 "Comment by [@{bitbucket_user_name}]({bitbucket_user_url} \"See "
 "@{bitbucket_user_name}'s BitBucket profile\") from BitBucket.\n"
-"Origin BitBucket issue: [gh#{number} - {subject}]({bitbucket_url} \"Go to "
-"'gh#{number} - {subject}'\")\n"
+"Origin BitBucket issue: [bb#{number} - {subject}]({bitbucket_url} \"Go to "
+"'bb#{number} - {subject}'\")\n"
 "\n"
 "{message}"
 msgstr ""
+"Comentario de [@{bitbucket_user_name}]({bitbucket_user_url} \"\"Ver el "
+"perfil de @{bitbucket_user_name} en BitBucket\") desde BitBucket.\n"
+"Origin BitBucket issue: [bb#{number} - {subject}]({bitbucket_url} \"Go to "
+"'bb#{number} - {subject}'\")\n"
+"\n"
+"{message}"
 
 #: taiga/hooks/bitbucket/event_hooks.py:185
 #, python-brace-format
@@ -975,6 +987,9 @@ msgid ""
 "\n"
 "{message}"
 msgstr ""
+"Comentario desde BitBucket:\n"
+"\n"
+"{message}"
 
 #: taiga/hooks/github/event_hooks.py:96
 #, python-brace-format
@@ -1052,11 +1067,17 @@ msgstr "Creado desde Gitlab"
 msgid ""
 "Comment by [@{gitlab_user_name}]({gitlab_user_url} \"See "
 "@{gitlab_user_name}'s GitLab profile\") from GitLab.\n"
-"Origin GitLab issue: [gh#{number} - {subject}]({gitlab_url} \"Go to "
-"'gh#{number} - {subject}'\")\n"
+"Origin GitLab issue: [gl#{number} - {subject}]({gitlab_url} \"Go to "
+"'gl#{number} - {subject}'\")\n"
 "\n"
 "{message}"
 msgstr ""
+"Comentario de [@{gitlab_user_name}]({gitlab_user_url} \"Ver el perfil de "
+"@{gitlab_user_name}'s en GitLab\") desde GitLab.\n"
+"Petición de origen de GitLab: [gl#{number} - {subject}]({gitlab_url} \"Ir a "
+"'gl#{number} - {subject}'\")\n"
+"\n"
+"{message}"
 
 #: taiga/hooks/gitlab/event_hooks.py:171
 #, python-brace-format
@@ -1065,6 +1086,9 @@ msgid ""
 "\n"
 "{message}"
 msgstr ""
+"Comentario desde GitLab:\n"
+"\n"
+"{message}"
 
 #: taiga/permissions/permissions.py:21 taiga/permissions/permissions.py:31
 #: taiga/permissions/permissions.py:52
@@ -1705,7 +1729,7 @@ msgstr "sistema de videoconferencia"
 
 #: taiga/projects/models.py:154 taiga/projects/models.py:581
 msgid "videoconference extra data"
-msgstr ""
+msgstr "datos extra de videoconferencia"
 
 #: taiga/projects/models.py:159
 msgid "creation template"
@@ -2619,15 +2643,15 @@ msgstr "Final de proyecto"
 
 #: taiga/projects/tasks/api.py:90 taiga/projects/tasks/api.py:99
 msgid "You don't have permissions to set this sprint to this task."
-msgstr ""
+msgstr "No tienes permisos para asignar este sprint a esta tarea."
 
 #: taiga/projects/tasks/api.py:93
 msgid "You don't have permissions to set this user story to this task."
-msgstr ""
+msgstr "No tienes permisos para asignar esta historia a esta tarea."
 
 #: taiga/projects/tasks/api.py:96
 msgid "You don't have permissions to set this status to this task."
-msgstr ""
+msgstr "No tienes permisos para asignar este estado a esta tarea."
 
 #: taiga/projects/tasks/models.py:56
 msgid "us order"
@@ -3040,10 +3064,12 @@ msgstr "Stakeholder"
 #: taiga/projects/userstories/api.py:134
 msgid "You don't have permissions to set this sprint to this user story."
 msgstr ""
+"No tienes permisos para asignar este sprint a esta historia de usuario."
 
 #: taiga/projects/userstories/api.py:138
 msgid "You don't have permissions to set this status to this user story."
 msgstr ""
+"No tienes permisos para asignar este estado a esta historia de usuario."
 
 #: taiga/projects/userstories/api.py:212
 #, python-brace-format
