@@ -130,8 +130,8 @@ class IssuesEventHook(BaseEventHook):
         if number and subject and bitbucket_user_name and bitbucket_user_url:
             comment = _("Issue created by [@{bitbucket_user_name}]({bitbucket_user_url} "
                         "\"See @{bitbucket_user_name}'s BitBucket profile\") "
-                        "from BitBucket.\nOrigin BitBucket issue: [gh#{number} - {subject}]({bitbucket_url} "
-                        "\"Go to 'gh#{number} - {subject}'\"):\n\n"
+                        "from BitBucket.\nOrigin BitBucket issue: [bb#{number} - {subject}]({bitbucket_url} "
+                        "\"Go to 'bb#{number} - {subject}'\"):\n\n"
                         "{description}").format(bitbucket_user_name=bitbucket_user_name,
                                                 bitbucket_user_url=bitbucket_user_url,
                                                 number=number,
@@ -173,8 +173,8 @@ class IssueCommentEventHook(BaseEventHook):
             if number and subject and bitbucket_user_name and bitbucket_user_url:
                 comment = _("Comment by [@{bitbucket_user_name}]({bitbucket_user_url} "
                             "\"See @{bitbucket_user_name}'s BitBucket profile\") "
-                            "from BitBucket.\nOrigin BitBucket issue: [gh#{number} - {subject}]({bitbucket_url} "
-                            "\"Go to 'gh#{number} - {subject}'\")\n\n"
+                            "from BitBucket.\nOrigin BitBucket issue: [bb#{number} - {subject}]({bitbucket_url} "
+                            "\"Go to 'bb#{number} - {subject}'\")\n\n"
                             "{message}").format(bitbucket_user_name=bitbucket_user_name,
                                                 bitbucket_user_url=bitbucket_user_url,
                                                 number=number,
