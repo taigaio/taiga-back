@@ -377,7 +377,7 @@ def test_owner_user_story_timeline():
 
 def test_assigned_to_user_story_timeline():
     membership = factories.MembershipFactory.create()
-    user_story = factories.UserStoryFactory.create(subject="test us timeline", assigned_to=membership.user)
+    user_story = factories.UserStoryFactory.create(subject="test us timeline", assigned_to=membership.user, project=membership.project)
     history_services.take_snapshot(user_story, user=user_story.owner)
     user_timeline = service.get_profile_timeline(user_story.assigned_to)
     assert user_timeline[0].event_type == "userstories.userstory.create"
@@ -386,19 +386,21 @@ def test_assigned_to_user_story_timeline():
 
 def test_watchers_to_user_story_timeline():
     membership = factories.MembershipFactory.create()
-    user_story = factories.UserStoryFactory.create(subject="test us timeline")
+    user_story = factories.UserStoryFactory.create(subject="test us timeline", project=membership.project)
     user_story.watchers.add(membership.user)
     history_services.take_snapshot(user_story, user=user_story.owner)
     user_timeline = service.get_profile_timeline(membership.user)
     assert user_timeline[0].event_type == "userstories.userstory.create"
     assert user_timeline[0].data["userstory"]["subject"] == "test us timeline"
 
-def test_user_data_for_system_users():
+
+def test_user_data_for_non_system_users():
     user_story = factories.UserStoryFactory.create(subject="test us timeline")
     history_services.take_snapshot(user_story, user=user_story.owner)
     project_timeline = service.get_project_timeline(user_story.project)
     serialized_obj = TimelineSerializer(project_timeline[0])
     serialized_obj.data["data"]["user"]["is_profile_visible"] = True
+
 
 def test_user_data_for_system_users():
     user_story = factories.UserStoryFactory.create(subject="test us timeline")
@@ -409,6 +411,7 @@ def test_user_data_for_system_users():
     serialized_obj = TimelineSerializer(project_timeline[0])
     serialized_obj.data["data"]["user"]["is_profile_visible"] = False
 
+
 def test_user_data_for_unactived_users():
     user_story = factories.UserStoryFactory.create(subject="test us timeline")
     user_story.owner.cancel()
@@ -418,3 +421,25 @@ def test_user_data_for_unactived_users():
     serialized_obj = TimelineSerializer(project_timeline[0])
     serialized_obj.data["data"]["user"]["is_profile_visible"] = False
     serialized_obj.data["data"]["user"]["username"] = "deleted-user"
+
+def test_timeline_error_use_member_ids_instead_of_memberships_ids():
+    user_story = factories.UserStoryFactory.create(subject="test error use member ids instead of "
+                                                           "memberships ids")
+
+    member_user = user_story.owner
+    external_user = factories.UserFactory.create()
+
+    membership = factories.MembershipFactory.create(project=user_story.project,
+                                                    user=member_user,
+                                                    id=external_user.id)
+
+    history_services.take_snapshot(user_story, user=member_user)
+
+    user_timeline = service.get_profile_timeline(member_user)
+    assert len(user_timeline) == 2
+    assert user_timeline[0].event_type == "userstories.userstory.create"
+    assert user_timeline[1].event_type ==  "users.user.create"
+
+    external_user_timeline = service.get_profile_timeline(external_user)
+    assert len(external_user_timeline) == 1
+    assert external_user_timeline[0].event_type == "users.user.create"
