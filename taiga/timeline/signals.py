@@ -39,36 +39,42 @@ def _push_to_timeline(*args, **kwargs):
 
 def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_data={}):
     if project is not None:
-    # Project timeline
+        # Actions related with a project
+
+        ## Project timeline
         _push_to_timeline(project, obj, event_type, created_datetime,
             namespace=build_project_namespace(project),
             extra_data=extra_data)
 
-    # User timeline
-    _push_to_timeline(user, obj, event_type, created_datetime,
-        namespace=build_user_namespace(user),
-        extra_data=extra_data)
+        ## User profile timelines
+        ## - Me
+        related_people = User.objects.filter(id=user.id)
 
-    # Calculating related people
-    related_people = User.objects.none()
+        ## - Owner
+        if hasattr(obj, "owner_id") and obj.owner_id:
+            related_people |= User.objects.filter(id=obj.owner_id)
 
-    # Assigned to
-    if hasattr(obj, "assigned_to") and obj.assigned_to and user != obj.assigned_to:
-        related_people |= User.objects.filter(id=obj.assigned_to.id)
+        ## - Assigned to
+        if hasattr(obj, "assigned_to_id") and obj.assigned_to_id:
+            related_people |= User.objects.filter(id=obj.assigned_to_id)
 
-    # Watchers
-    watchers = hasattr(obj, "watchers") and obj.watchers.exclude(id=user.id) or User.objects.none()
-    if watchers:
-        related_people |= watchers
+        ## - Watchers
+        watchers = getattr(obj, "watchers", None)
+        if watchers:
+            related_people |= obj.watchers.all()
 
-    if project is not None:
-        # Team
-        team_members_ids = project.memberships.filter(user__isnull=False).values_list("id", flat=True)
-        team = User.objects.filter(id__in=team_members_ids)
-        related_people |= team
+        ## - Exclude inactive and system users and remove duplicate
+        related_people = related_people.exclude(is_active=False)
+        related_people = related_people.exclude(is_system=True)
         related_people = related_people.distinct()
 
         _push_to_timeline(related_people, obj, event_type, created_datetime,
+            namespace=build_user_namespace(user),
+            extra_data=extra_data)
+    else:
+        # Actions not related with a project
+        ## - Me
+        _push_to_timeline(user, obj, event_type, created_datetime,
             namespace=build_user_namespace(user),
             extra_data=extra_data)
 
@@ -110,27 +116,37 @@ def on_new_history_entry(sender, instance, created, **kwargs):
 
 
 def create_membership_push_to_timeline(sender, instance, **kwargs):
-    # Creating new membership with associated user
-    # If the user is the project owner we don't do anything because that info will
-    # be shown in created project timeline entry
+    """
+    Creating new membership with associated user. If the user is the project owner we don't
+    do anything because that info will be shown in created project timeline entry
+
+    @param sender: Membership model
+    @param instance: Membership object
+    """
+
+    # We shown in created project timeline entry
     if not instance.pk and instance.user and instance.user != instance.project.owner:
         created_datetime = instance.created_at
         _push_to_timelines(instance.project, instance.user, instance, "create", created_datetime)
 
-    #Updating existing membership
+    # Updating existing membership
     elif instance.pk:
-        prev_instance = sender.objects.get(pk=instance.pk)
-        if instance.user != prev_instance.user:
-            created_datetime = timezone.now()
-            # The new member
-            _push_to_timelines(instance.project, instance.user, instance, "create", created_datetime)
-            # If we are updating the old user is removed from project
-            if prev_instance.user:
-                _push_to_timelines(instance.project,
-                                   prev_instance.user,
-                                   prev_instance,
-                                   "delete",
-                                   created_datetime)
+        try:
+            prev_instance = sender.objects.get(pk=instance.pk)
+            if instance.user != prev_instance.user:
+                created_datetime = timezone.now()
+                # The new member
+                _push_to_timelines(instance.project, instance.user, instance, "create", created_datetime)
+                # If we are updating the old user is removed from project
+                if prev_instance.user:
+                    _push_to_timelines(instance.project,
+                                       prev_instance.user,
+                                       prev_instance,
+                                       "delete",
+                                       created_datetime)
+        except sender.DoesNotExist:
+            # This happens with some tests, when a membership is created with a concrete id
+            pass
 
 
 def delete_membership_push_to_timeline(sender, instance, **kwargs):
