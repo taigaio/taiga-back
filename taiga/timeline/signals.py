@@ -21,11 +21,14 @@ from taiga.projects.history import services as history_services
 from taiga.projects.models import Project
 from taiga.users.models import User
 from taiga.projects.history.choices import HistoryType
-from taiga.timeline.service import (push_to_timeline, build_user_namespace,
-    build_project_namespace, extract_user_info)
+from taiga.timeline.service import (push_to_timeline,
+                                    build_user_namespace,
+                                    build_project_namespace,
+                                    extract_user_info)
 
 # TODO: Add events to followers timeline when followers are implemented.
 # TODO: Add events to project watchers timeline when project watchers are implemented.
+
 
 def _push_to_timeline(*args, **kwargs):
     if settings.CELERY_ENABLED:
@@ -68,8 +71,6 @@ def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_d
         _push_to_timeline(related_people, obj, event_type, created_datetime,
             namespace=build_user_namespace(user),
             extra_data=extra_data)
-
-        #Related people: team members
 
 
 def on_new_history_entry(sender, instance, created, **kwargs):
@@ -125,7 +126,11 @@ def create_membership_push_to_timeline(sender, instance, **kwargs):
             _push_to_timelines(instance.project, instance.user, instance, "create", created_datetime)
             # If we are updating the old user is removed from project
             if prev_instance.user:
-                _push_to_timelines(instance.project, prev_instance.user, prev_instance, "delete", created_datetime)
+                _push_to_timelines(instance.project,
+                                   prev_instance.user,
+                                   prev_instance,
+                                   "delete",
+                                   created_datetime)
 
 
 def delete_membership_push_to_timeline(sender, instance, **kwargs):
