@@ -25,6 +25,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from django.db.models import Model
 from django.db import reset_queries
+from django.test.utils import override_settings
+
 
 from taiga.projects.models import Project
 from taiga.projects.history import services as history_services
@@ -165,13 +167,8 @@ class Command(BaseCommand):
                     help='Selected project id for timeline generation'),
         )
 
-
+    @override_settings(DEBUG=False)
     def handle(self, *args, **options):
-        debug_enabled = settings.DEBUG
-        if debug_enabled:
-            print("Please, execute this script only with DEBUG mode disabled (DEBUG=False)")
-            return
-
         if options["purge"] == True:
             Timeline.objects.all().delete()
 

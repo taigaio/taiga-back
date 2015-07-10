@@ -15,18 +15,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.test.utils import override_settings
 
 from taiga.timeline.models import Timeline
 from taiga.projects.models import Project
 
 class Command(BaseCommand):
     help = 'Regenerate unnecessary new memberships entry lines'
-    def handle(self, *args, **options):
-        debug_enabled = settings.DEBUG
-        if debug_enabled:
-            print("Please, execute this script only with DEBUG mode disabled (DEBUG=False)")
-            return
 
+    @override_settings(DEBUG=False)
+    def handle(self, *args, **options):
         removing_timeline_ids = []
         for t in Timeline.objects.filter(event_type="projects.membership.create").order_by("created"):
             print(t.created)
