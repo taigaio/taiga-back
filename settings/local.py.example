@@ -16,6 +16,10 @@
 
 from .development import *
 
+#ADMINS = (
+#    ("Admin", "example@example.com"),
+#)
+
 DATABASES = {
     'default': {
         'ENGINE': 'transaction_hooks.backends.postgresql_psycopg2',
@@ -27,10 +31,24 @@ DATABASES = {
     }
 }
 
-#HOST="http://taiga.projects.kaleidos.net"
-#
+#SITES = {
+#    "api": {
+#       "scheme": "http",
+#       "domain": "localhost:8000",
+#       "name": "api"
+#    },
+#    "front": {
+#       "scheme": "http",
+#       "domain": "localhost:9001",
+#       "name": "front"
+#    },
+#}
+
+#SITE_ID = "api"
+
 #MEDIA_ROOT = '/home/taiga/media'
 #STATIC_ROOT = '/home/taiga/static'
+
 
 # EMAIL SETTINGS EXAMPLE
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
