@@ -1,24 +1,25 @@
+sudo: false
 language: python
 python:
   - "3.4"
 services:
   - rabbitmq # will start rabbitmq-server
+cache:
+  - apt
+  - pip
 addons:
-  postgresql: "9.3"
+  postgresql: "9.4"
+  apt:
+    sources:
+      - deadsnakes
+      - ubuntu-toolchain-r-test
+    packages:
+      - postgresql-plpython-9.4
 before_script:
   - psql -c 'create database taiga;' -U postgres
 install:
-  - sudo apt-get update
-  - sudo apt-get install postgresql-plpython-9.3
-  - pip install -r requirements-devel.txt --use-mirrors
+  - pip install -r requirements-devel.txt
 script:
-    - coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' -m py.test -v --tb=native
-notifications:
-  email:
-    recipients:
-      - jespinog@gmail.com
-      - bameda@dbarragan.com
-    on_success: change
-    on_failure: change
+  - coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' -m py.test -v --tb=native
 after_success:
   - coveralls
