@@ -3,7 +3,7 @@
         "model": "users.user",
         "fields": {
             "username": "admin",
-            "full_name": "",
+            "full_name": "Administrator",
             "bio": "",
             "lang": "",
             "color": "",
