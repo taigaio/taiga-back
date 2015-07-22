@@ -286,6 +286,9 @@ class Command(BaseCommand):
                                                                       user__isnull=False)).user
             bug.save()
 
+        watching_user = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
+        bug.watchers.add(watching_user)
+
         take_snapshot(bug,
                       comment=self.sd.paragraph(),
                       user=bug.owner)
@@ -334,6 +337,9 @@ class Command(BaseCommand):
                       comment=self.sd.paragraph(),
                       user=task.owner)
 
+        watching_user = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
+        task.watchers.add(watching_user)
+
         # Add history entry
         task.status=self.sd.db_object_from_queryset(project.task_statuses.all())
         task.save()
@@ -379,6 +385,9 @@ class Command(BaseCommand):
         if self.sd.choice([True, True, False, True, True]):
             us.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
             us.save()
+
+        watching_user = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
+        us.watchers.add(watching_user)
 
         take_snapshot(us,
                       comment=self.sd.paragraph(),
