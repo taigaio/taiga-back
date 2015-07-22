@@ -80,13 +80,7 @@ class JSONRenderer(BaseRenderer):
     # See: http://www.ietf.org/rfc/rfc4627.txt
     # Also: http://lucumr.pocoo.org/2013/7/19/application-mimetypes-and-encodings/
 
-    def render(self, data, accepted_media_type=None, renderer_context=None):
-        """
-        Render `data` into JSON.
-        """
-        if data is None:
-            return bytes()
-
+    def _get_indent(self, accepted_media_type, renderer_context):
         # If "indent" is provided in the context, then pretty print the result.
         # E.g. If we"re being called by the BrowsableAPIRenderer.
         renderer_context = renderer_context or {}
@@ -102,6 +96,17 @@ class JSONRenderer(BaseRenderer):
             except (ValueError, TypeError):
                 indent = None
 
+        return indent
+
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        """
+        Render `data` into JSON.
+        """
+        if data is None:
+            return bytes()
+
+        indent = self._get_indent(accepted_media_type, renderer_context)
+
         ret = json.dumps(data, cls=self.encoder_class,
             indent=indent, ensure_ascii=self.ensure_ascii)
 
@@ -112,6 +117,18 @@ class JSONRenderer(BaseRenderer):
         if isinstance(ret, six.text_type):
             return bytes(ret.encode("utf-8"))
         return ret
+
+    def render_to_file(self, data, outputfile, accepted_media_type=None, renderer_context=None):
+        """
+        Render `data` into a file with JSON format.
+        """
+        if data is None:
+            return bytes()
+
+        indent = self._get_indent(accepted_media_type, renderer_context)
+
+        ret = json.dump(data, outputfile, cls=self.encoder_class,
+            indent=indent, ensure_ascii=self.ensure_ascii)
 
 
 class UnicodeJSONRenderer(JSONRenderer):
@@ -610,4 +627,3 @@ class MultiPartRenderer(BaseRenderer):
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
         return encode_multipart(self.BOUNDARY, data)
-

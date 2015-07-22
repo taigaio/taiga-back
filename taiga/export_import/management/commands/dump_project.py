@@ -35,4 +35,5 @@ class Command(BaseCommand):
                 raise CommandError('Project "%s" does not exist' % project_slug)
 
             data = project_to_dict(project)
-            print(self.renderer.render(data, renderer_context=self.renderer_context).decode('utf-8'))
+            with open('%s.json'%(project_slug), 'w') as outfile:
+                self.renderer.render_to_file(data, outfile, renderer_context=self.renderer_context)
