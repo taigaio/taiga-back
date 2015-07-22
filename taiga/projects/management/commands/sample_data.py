@@ -422,7 +422,8 @@ class Command(BaseCommand):
         is_private=self.sd.boolean()
         anon_permissions = not is_private and list(map(lambda perm: perm[0], ANON_PERMISSIONS)) or []
         public_permissions = not is_private and list(map(lambda perm: perm[0], ANON_PERMISSIONS)) or []
-        project = Project.objects.create(name='Project Example {0}'.format(counter),
+        project = Project.objects.create(slug='project-%s'%(counter),
+                                         name='Project Example {0}'.format(counter),
                                          description='Project example {0} description'.format(counter),
                                          owner=random.choice(self.users),
                                          is_private=is_private,
