@@ -10,6 +10,7 @@
 - Fix the compatibility with BitBucket webhooks and add issues and issues comments integration.
 - Add custom videoconference system.
 - Add support for comments in the Gitlab webhooks integration.
+- Now profile timelines only show content about the objects (US/Tasks/Issues/Wiki pages) you are involved.
 
 ### Misc
 - API: Mixin fields 'users', 'members' and 'memberships' in ProjectDetailSerializer
