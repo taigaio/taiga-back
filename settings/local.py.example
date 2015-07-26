@@ -87,6 +87,7 @@ DATABASES = {
 
 # STATS MODULE
 #STATS_ENABLED = False
+#FRONT_SITEMAP_CACHE_TIMEOUT = 60*60  # In second
 
 # SITEMAP
 # If is True /front/sitemap.xml show a valid sitemap of taiga-front client

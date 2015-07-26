@@ -12,6 +12,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import OrderedDict
+
+from django.conf import settings
+from django.views.decorators.cache import cache_page
 
 from taiga.base.api import viewsets
 from taiga.base import response
@@ -24,10 +28,15 @@ class SystemStatsViewSet(viewsets.ViewSet):
     permission_classes = (permissions.SystemStatsPermission,)
 
     def list(self, request, **kwargs):
-        stats = {
-            "total_users": services.get_total_users(),
-            "total_projects": services.get_total_projects(),
-            "total_userstories": services.grt_total_user_stories(),
-            "total_issues": services.get_total_issues(),
-        }
+        import ipdb; ipdb.set_trace()
+        stats = OrderedDict()
+        stats["users"] = services.get_users_stats()
+        stats["projects"] = services.get_projects_stats()
+        stats["userstories"] = services.get_user_stories_stats()
         return response.Ok(stats)
+
+    def _get_cache_timeout(self):
+        return getattr(settings, "STATS_CACHE_TIMEOUT", 0)
+
+    def dispatch(self, *args, **kwargs):
+        return cache_page(self._get_cache_timeout())(super().dispatch)(*args, **kwargs)
