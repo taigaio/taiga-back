@@ -126,7 +126,7 @@ LANGUAGES = [
     #("nn", "Norsk (nynorsk)"),  # Norwegian Nynorsk
     #("os", "Ирон æвзаг"),  # Ossetic
     #("pa", "ਪੰਜਾਬੀ"),  # Punjabi
-    #("pl", "Polski"),  # Polish
+    ("pl", "Polski"),  # Polish
     #("pt", "Português (Portugal)"),  # Portuguese
     #("pt-br", "Português (Brasil)"),  # Brazilian Portuguese
     #("ro", "Română"),  # Romanian

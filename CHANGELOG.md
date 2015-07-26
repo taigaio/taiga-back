@@ -11,6 +11,8 @@
 - Add custom videoconference system.
 - Add support for comments in the Gitlab webhooks integration.
 - Now profile timelines only show content about the objects (US/Tasks/Issues/Wiki pages) you are involved.
+- i18n.
+  - Add polish (pl) translation.
 
 ### Misc
 - API: Mixin fields 'users', 'members' and 'memberships' in ProjectDetailSerializer
