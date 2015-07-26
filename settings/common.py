@@ -437,6 +437,7 @@ FEEDBACK_EMAIL = "support@taiga.io"
 
 # Stats module settings
 STATS_ENABLED = False
+STATS_CACHE_TIMEOUT = 60*60  # In second
 
 # 0 notifications will work in a synchronous way
 # >0 an external process will check the pending notifications and will send them
