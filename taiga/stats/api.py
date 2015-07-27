@@ -28,7 +28,6 @@ class SystemStatsViewSet(viewsets.ViewSet):
     permission_classes = (permissions.SystemStatsPermission,)
 
     def list(self, request, **kwargs):
-        import ipdb; ipdb.set_trace()
         stats = OrderedDict()
         stats["users"] = services.get_users_stats()
         stats["projects"] = services.get_projects_stats()
