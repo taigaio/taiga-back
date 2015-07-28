@@ -102,8 +102,6 @@ class IssuesOrdering(filters.FilterBackend):
 
 
 class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
-    serializer_class = serializers.IssueNeighborsSerializer
-    list_serializer_class = serializers.IssueSerializer
     permission_classes = (permissions.IssuePermission, )
 
     filter_backends = (filters.CanViewIssuesFilterBackend, filters.QFilter,
@@ -120,6 +118,12 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
                        "owner",
                        "assigned_to",
                        "subject")
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.action in ["retrieve", "by_ref"]:
+            return serializers.IssueNeighborsSerializer
+
+        return serializers.IssueSerializer
 
     def get_queryset(self):
         qs = models.Issue.objects.all()
@@ -187,7 +191,7 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
                 status=project.default_issue_status, severity=project.default_severity,
                 priority=project.default_priority, type=project.default_issue_type,
                 callback=self.post_save, precall=self.pre_save)
-            issues_serialized = self.serializer_class(issues, many=True)
+            issues_serialized = self.get_serializer_class()(issues, many=True)
 
             return response.Ok(data=issues_serialized.data)
 

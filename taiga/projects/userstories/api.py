@@ -46,8 +46,6 @@ from . import services
 
 class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     model = models.UserStory
-    serializer_class = serializers.UserStoryNeighborsSerializer
-    list_serializer_class = serializers.UserStorySerializer
     permission_classes = (permissions.UserStoryPermission,)
 
     filter_backends = (filters.StatusFilter, filters.CanViewUsFilterBackend, filters.TagsFilter,
@@ -58,6 +56,12 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
         "is_archived", "status__is_archived", "assigned_to",
         "status__is_closed", "watchers", "is_closed"]
     order_by_fields = ["backlog_order", "sprint_order", "kanban_order"]
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.action in ["retrieve", "by_ref"]:
+            return serializers.UserStoryNeighborsSerializer
+
+        return serializers.UserStorySerializer
 
     # Specific filter used for filtering neighbor user stories
     _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')
@@ -131,7 +135,7 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
                 data["bulk_stories"], project=project, owner=request.user,
                 status_id=data.get("status_id") or project.default_us_status_id,
                 callback=self.post_save, precall=self.pre_save)
-            user_stories_serialized = self.serializer_class(user_stories, many=True)
+            user_stories_serialized = self.get_serializer_class()(user_stories, many=True)
             return response.Ok(user_stories_serialized.data)
         return response.BadRequest(serializer.errors)
 

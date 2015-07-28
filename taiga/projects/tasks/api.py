@@ -37,12 +37,16 @@ from . import services
 
 class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     model = models.Task
-    serializer_class = serializers.TaskNeighborsSerializer
-    list_serializer_class = serializers.TaskSerializer
     permission_classes = (permissions.TaskPermission,)
     filter_backends = (filters.CanViewTasksFilterBackend,)
     filter_fields = ["user_story", "milestone", "project", "assigned_to",
         "status__is_closed", "watchers"]
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.action in ["retrieve", "by_ref"]:
+            return serializers.TaskNeighborsSerializer
+
+        return serializers.TaskSerializer
 
     def pre_save(self, obj):
         if obj.user_story:
@@ -97,7 +101,7 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
                 data["bulk_tasks"], milestone_id=data["sprint_id"], user_story_id=data["us_id"],
                 status_id=data.get("status_id") or project.default_task_status_id,
                 project=project, owner=request.user, callback=self.post_save, precall=self.pre_save)
-            tasks_serialized = self.serializer_class(tasks, many=True)
+            tasks_serialized = self.get_serializer_class()(tasks, many=True)
 
             return response.Ok(tasks_serialized.data)
 
