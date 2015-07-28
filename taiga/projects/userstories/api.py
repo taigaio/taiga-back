@@ -49,15 +49,27 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
     serializer_class = serializers.UserStoryNeighborsSerializer
     list_serializer_class = serializers.UserStorySerializer
     permission_classes = (permissions.UserStoryPermission,)
-
-    filter_backends = (filters.StatusFilter, filters.CanViewUsFilterBackend, filters.TagsFilter,
-                       filters.QFilter, filters.OrderByFilterMixin)
-
-    retrieve_exclude_filters = (filters.StatusFilter, filters.TagsFilter,)
-    filter_fields = ["project", "milestone", "milestone__isnull",
-        "is_archived", "status__is_archived", "assigned_to",
-        "status__is_closed", "watchers", "is_closed"]
-    order_by_fields = ["backlog_order", "sprint_order", "kanban_order"]
+    filter_backends = (filters.CanViewUsFilterBackend,
+                       filters.OwnersFilter,
+                       filters.AssignedToFilter,
+                       filters.StatusesFilter,
+                       filters.TagsFilter,
+                       filters.QFilter,
+                       filters.OrderByFilterMixin)
+    retrieve_exclude_filters = (filters.OwnersFilter,
+                                filters.AssignedToFilter,
+                                filters.StatusesFilter,
+                                filters.TagsFilter)
+    filter_fields = ["project",
+                     "milestone",
+                     "milestone__isnull",
+                     "is_closed",
+                     "status__is_archived",
+                     "status__is_closed",
+                     "watchers"]
+    order_by_fields = ["backlog_order",
+                       "sprint_order",
+                       "kanban_order"]
 
     # Specific filter used for filtering neighbor user stories
     _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')
@@ -137,6 +149,26 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
         if obj.status and obj.status.project != obj.project:
             raise exc.PermissionDenied(_("You don't have permissions to set this status "
                                          "to this user story."))
+
+    @list_route(methods=["GET"])
+    def filters_data(self, request, *args, **kwargs):
+        project_id = request.QUERY_PARAMS.get("project", None)
+        project = get_object_or_404(Project, id=project_id)
+
+        filter_backends = self.get_filter_backends()
+        statuses_filter_backends = (f for f in filter_backends if f != filters.StatusesFilter)
+        assigned_to_filter_backends = (f for f in filter_backends if f != filters.AssignedToFilter)
+        owners_filter_backends = (f for f in filter_backends if f != filters.OwnersFilter)
+        tags_filter_backends = (f for f in filter_backends if f != filters.TagsFilter)
+
+        queryset = self.get_queryset()
+        querysets = {
+            "statuses": self.filter_queryset(queryset, filter_backends=statuses_filter_backends),
+            "assigned_to": self.filter_queryset(queryset, filter_backends=assigned_to_filter_backends),
+            "owners": self.filter_queryset(queryset, filter_backends=owners_filter_backends),
+            "tags": self.filter_queryset(queryset)
+        }
+        return response.Ok(services.get_userstories_filters_data(project, querysets))
 
     @list_route(methods=["GET"])
     def by_ref(self, request):

@@ -15,8 +15,9 @@
   - Add polish (pl) translation.
 
 ### Misc
-- API: Mixin fields 'users', 'members' and 'memberships' in ProjectDetailSerializer
+- API: Mixin fields 'users', 'members' and 'memberships' in ProjectDetailSerializer.
 - API: Add stats/system resource with global server stats (total project, total users....)
+- API: Improve and fix some errors in issues/filters_data and userstories/filters_data.
 - Lots of small and not so small bugfixes.
 
 

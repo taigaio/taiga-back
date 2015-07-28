@@ -161,12 +161,6 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
         return response.Ok(services.get_stats_for_project_issues(project))
 
     @detail_route(methods=["GET"])
-    def issue_filters_data(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "issues_filters_data", project)
-        return response.Ok(services.get_issues_filters_data(project))
-
-    @detail_route(methods=["GET"])
     def tags_colors(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "tags_colors", project)

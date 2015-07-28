@@ -42,79 +42,35 @@ from . import permissions
 from . import serializers
 
 
-class IssuesFilter(filters.FilterBackend):
-    filter_fields = ("status", "severity", "priority", "owner", "assigned_to", "tags", "type")
-    _special_values_dict = {
-        'true': True,
-        'false': False,
-        'null': None,
-    }
-
-    def _prepare_filters_data(self, request):
-        def _transform_value(value):
-            try:
-                return int(value)
-            except:
-                if value in self._special_values_dict.keys():
-                    return self._special_values_dict[value]
-            raise exc.BadRequest()
-
-        data = {}
-        for filtername in self.filter_fields:
-            if filtername not in request.QUERY_PARAMS:
-                continue
-
-            raw_value = request.QUERY_PARAMS[filtername]
-            values = set([x.strip() for x in raw_value.split(",")])
-
-            if filtername != "tags":
-                values = map(_transform_value, values)
-
-            data[filtername] = list(values)
-        return data
-
-    def filter_queryset(self, request, queryset, view):
-        filterdata = self._prepare_filters_data(request)
-
-        if "tags" in filterdata:
-            queryset = queryset.filter(tags__contains=filterdata["tags"])
-
-        for name, value in filter(lambda x: x[0] != "tags", filterdata.items()):
-            if None in value:
-                qs_in_kwargs = {"{0}__in".format(name): [v for v in value if v is not None]}
-                qs_isnull_kwargs = {"{0}__isnull".format(name): True}
-                queryset = queryset.filter(Q(**qs_in_kwargs) | Q(**qs_isnull_kwargs))
-            else:
-                qs_kwargs = {"{0}__in".format(name): value}
-                queryset = queryset.filter(**qs_kwargs)
-
-        return queryset
-
-
-class IssuesOrdering(filters.FilterBackend):
-    def filter_queryset(self, request, queryset, view):
-        order_by = request.QUERY_PARAMS.get('order_by', None)
-
-        if order_by in ['owner', '-owner', 'assigned_to', '-assigned_to']:
-            return queryset.order_by(
-                '{}__full_name'.format(order_by)
-            )
-        return queryset
-
-
 class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     serializer_class = serializers.IssueNeighborsSerializer
     list_serializer_class = serializers.IssueSerializer
     permission_classes = (permissions.IssuePermission, )
 
-    filter_backends = (filters.CanViewIssuesFilterBackend, filters.QFilter,
-                       IssuesFilter, IssuesOrdering,)
-    retrieve_exclude_filters = (IssuesFilter,)
+    filter_backends = (filters.CanViewIssuesFilterBackend,
+                       filters.OwnersFilter,
+                       filters.AssignedToFilter,
+                       filters.StatusesFilter,
+                       filters.IssueTypesFilter,
+                       filters.SeveritiesFilter,
+                       filters.PrioritiesFilter,
+                       filters.TagsFilter,
+                       filters.QFilter,
+                       filters.OrderByFilterMixin)
+    retrieve_exclude_filters = (filters.OwnersFilter,
+                                filters.AssignedToFilter,
+                                filters.StatusesFilter,
+                                filters.IssueTypesFilter,
+                                filters.SeveritiesFilter,
+                                filters.PrioritiesFilter,
+                                filters.TagsFilter,)
 
-    filter_fields = ("project", "status__is_closed", "watchers")
+    filter_fields = ("project",
+                     "status__is_closed",
+                     "watchers")
     order_by_fields = ("type",
-                       "severity",
                        "status",
+                       "severity",
                        "priority",
                        "created_date",
                        "modified_date",
@@ -217,6 +173,32 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
         project_id = request.QUERY_PARAMS.get("project", None)
         issue = get_object_or_404(models.Issue, ref=ref, project_id=project_id)
         return self.retrieve(request, pk=issue.pk)
+
+    @list_route(methods=["GET"])
+    def filters_data(self, request, *args, **kwargs):
+        project_id = request.QUERY_PARAMS.get("project", None)
+        project = get_object_or_404(Project, id=project_id)
+
+        filter_backends = self.get_filter_backends()
+        types_filter_backends = (f for f in filter_backends if f != filters.IssueTypesFilter)
+        statuses_filter_backends = (f for f in filter_backends if f != filters.StatusesFilter)
+        assigned_to_filter_backends = (f for f in filter_backends if f != filters.AssignedToFilter)
+        owners_filter_backends = (f for f in filter_backends if f != filters.OwnersFilter)
+        priorities_filter_backends = (f for f in filter_backends if f != filters.PrioritiesFilter)
+        severities_filter_backends = (f for f in filter_backends if f != filters.SeveritiesFilter)
+        tags_filter_backends = (f for f in filter_backends if f != filters.TagsFilter)
+
+        queryset = self.get_queryset()
+        querysets = {
+            "types": self.filter_queryset(queryset, filter_backends=types_filter_backends),
+            "statuses": self.filter_queryset(queryset, filter_backends=statuses_filter_backends),
+            "assigned_to": self.filter_queryset(queryset, filter_backends=assigned_to_filter_backends),
+            "owners": self.filter_queryset(queryset, filter_backends=owners_filter_backends),
+            "priorities": self.filter_queryset(queryset, filter_backends=priorities_filter_backends),
+            "severities": self.filter_queryset(queryset, filter_backends=severities_filter_backends),
+            "tags": self.filter_queryset(queryset)
+        }
+        return response.Ok(services.get_issues_filters_data(project, querysets))
 
     @list_route(methods=["GET"])
     def csv(self, request):
