@@ -54,15 +54,15 @@ def connect_projects_signals():
 
 
 def disconnect_memberships_signals():
-        signals.pre_delete.disconnect(dispatch_uid='membership_pre_delete')
-        signals.post_delete.disconnect(dispatch_uid='update_watchers_on_membership_post_delete')
-        signals.post_save.disconnect(dispatch_uid='create-notify-policy')
+        signals.pre_delete.disconnect(sender=apps.get_model("projects", "Membership"), dispatch_uid='membership_pre_delete')
+        signals.post_delete.disconnect(sender=apps.get_model("projects", "Membership"), dispatch_uid='update_watchers_on_membership_post_delete')
+        signals.post_save.disconnect(sender=apps.get_model("projects", "Membership"), dispatch_uid='create-notify-policy')
 
 
 def disconnect_projects_signals():
-        signals.post_save.disconnect(dispatch_uid='project_post_save')
-        signals.pre_save.disconnect(dispatch_uid="tags_normalization_projects")
-        signals.pre_save.disconnect(dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_projects")
+        signals.post_save.disconnect(sender=apps.get_model("projects", "Project"), dispatch_uid='project_post_save')
+        signals.pre_save.disconnect(sender=apps.get_model("projects", "Project"), dispatch_uid="tags_normalization_projects")
+        signals.pre_save.disconnect(sender=apps.get_model("projects", "Project"), dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_projects")
 
 
 class ProjectsAppConfig(AppConfig):

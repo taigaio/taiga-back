@@ -256,9 +256,9 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
 
     def destroy(self, request, *args, **kwargs):
         from taiga.events.apps import connect_events_signals, disconnect_events_signals
-        from taiga.projects.tasks.apps import connect_tasks_signals, disconnect_tasks_signals
-        from taiga.projects.userstories.apps import connect_userstories_signals, disconnect_userstories_signals
-        from taiga.projects.issues.apps import connect_issues_signals, disconnect_issues_signals
+        from taiga.projects.tasks.apps import connect_all_tasks_signals, disconnect_all_tasks_signals
+        from taiga.projects.userstories.apps import connect_all_userstories_signals, disconnect_all_userstories_signals
+        from taiga.projects.issues.apps import connect_all_issues_signals, disconnect_all_issues_signals
         from taiga.projects.apps import connect_memberships_signals, disconnect_memberships_signals
 
         obj = self.get_object_or_none()
@@ -268,9 +268,9 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
             raise Http404
 
         disconnect_events_signals()
-        disconnect_issues_signals()
-        disconnect_tasks_signals()
-        disconnect_userstories_signals()
+        disconnect_all_issues_signals()
+        disconnect_all_tasks_signals()
+        disconnect_all_userstories_signals()
         disconnect_memberships_signals()
 
         try:
@@ -281,9 +281,9 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
             obj.roles.all().delete()
         finally:
             connect_events_signals()
-            connect_issues_signals()
-            connect_tasks_signals()
-            connect_userstories_signals()
+            connect_all_issues_signals()
+            connect_all_tasks_signals()
+            connect_all_userstories_signals()
             connect_memberships_signals()
 
         self.pre_delete(obj)
