@@ -16,11 +16,11 @@ import pytest
 pytestmark = pytest.mark.django_db
 
 
-def setup_module(module):
+def setup_function(function):
     disconnect_signals()
 
 
-def teardown_module(module):
+def setup_function(function):
     reconnect_signals()
 
 
