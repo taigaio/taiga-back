@@ -24,6 +24,9 @@ from django.db import connection
 from django.utils.translation import ugettext as _
 
 from taiga.base.utils import db, text
+from taiga.projects.issues.apps import (
+    connect_issues_signals,
+    disconnect_issues_signals)
 
 from . import models
 
@@ -50,7 +53,14 @@ def create_issues_in_bulk(bulk_data, callback=None, precall=None, **additional_f
     :return: List of created `Issue` instances.
     """
     issues = get_issues_from_bulk(bulk_data, **additional_fields)
-    db.save_in_bulk(issues, callback, precall)
+
+    disconnect_issues_signals()
+
+    try:
+        db.save_in_bulk(issues, callback, precall)
+    finally:
+        connect_issues_signals()
+
     return issues
 
 

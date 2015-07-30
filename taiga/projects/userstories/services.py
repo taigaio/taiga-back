@@ -26,6 +26,10 @@ from django.utils.translation import ugettext as _
 
 from taiga.base.utils import db, text
 from taiga.projects.history.services import take_snapshot
+from taiga.projects.userstories.apps import (
+    connect_userstories_signals,
+    disconnect_userstories_signals)
+
 from taiga.events import events
 
 from . import models
@@ -53,7 +57,14 @@ def create_userstories_in_bulk(bulk_data, callback=None, precall=None, **additio
     :return: List of created `Task` instances.
     """
     userstories = get_userstories_from_bulk(bulk_data, **additional_fields)
-    db.save_in_bulk(userstories, callback, precall)
+
+    disconnect_userstories_signals()
+
+    try:
+        db.save_in_bulk(userstories, callback, precall)
+    finally:
+        connect_userstories_signals()
+
     return userstories
 
 

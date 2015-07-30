@@ -19,6 +19,9 @@ import csv
 
 from taiga.base.utils import db, text
 from taiga.projects.history.services import take_snapshot
+from taiga.projects.tasks.apps import (
+    connect_tasks_signals,
+    disconnect_tasks_signals)
 from taiga.events import events
 
 from . import models
@@ -46,7 +49,14 @@ def create_tasks_in_bulk(bulk_data, callback=None, precall=None, **additional_fi
     :return: List of created `Task` instances.
     """
     tasks = get_tasks_from_bulk(bulk_data, **additional_fields)
-    db.save_in_bulk(tasks, callback, precall)
+
+    disconnect_tasks_signals()
+
+    try:
+        db.save_in_bulk(tasks, callback, precall)
+    finally:
+        connect_tasks_signals()
+
     return tasks
 
 
