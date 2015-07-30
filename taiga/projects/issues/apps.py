@@ -40,17 +40,32 @@ def connect_issues_signals():
                                 sender=apps.get_model("issues", "Issue"),
                                 dispatch_uid="update_project_tags_when_delete_taggable_item_issue")
 
-    # Custom Attributes
+
+def connect_issues_custom_attributes_signals():
     signals.post_save.connect(custom_attributes_handlers.create_custom_attribute_value_when_create_issue,
                               sender=apps.get_model("issues", "Issue"),
                               dispatch_uid="create_custom_attribute_value_when_create_issue")
 
+
+def connect_all_issues_signals():
+    connect_issues_signals()
+    connect_issues_custom_attributes_signals()
+
+
 def disconnect_issues_signals():
-    signals.pre_save.disconnect(dispatch_uid="set_finished_date_when_edit_issue")
-    signals.pre_save.disconnect(dispatch_uid="tags_normalization_issue")
-    signals.post_save.disconnect(dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_issue")
-    signals.post_delete.disconnect(dispatch_uid="update_project_tags_when_delete_taggable_item_issue")
-    signals.post_save.disconnect(dispatch_uid="create_custom_attribute_value_when_create_issue")
+    signals.pre_save.disconnect(sender=apps.get_model("issues", "Issue"), dispatch_uid="set_finished_date_when_edit_issue")
+    signals.pre_save.disconnect(sender=apps.get_model("issues", "Issue"), dispatch_uid="tags_normalization_issue")
+    signals.post_save.disconnect(sender=apps.get_model("issues", "Issue"), dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_issue")
+    signals.post_delete.disconnect(sender=apps.get_model("issues", "Issue"), dispatch_uid="update_project_tags_when_delete_taggable_item_issue")
+
+
+def disconnect_issues_custom_attributes_signals():
+    signals.post_save.disconnect(sender=apps.get_model("issues", "Issue"), dispatch_uid="create_custom_attribute_value_when_create_issue")
+
+
+def disconnect_all_issues_signals():
+    disconnect_issues_signals()
+    disconnect_issues_custom_attributes_signals()
 
 
 class IssuesAppConfig(AppConfig):
@@ -58,4 +73,4 @@ class IssuesAppConfig(AppConfig):
     verbose_name = "Issues"
 
     def ready(self):
-        connect_issues_signals()
+        connect_all_issues_signals()

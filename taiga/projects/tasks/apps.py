@@ -47,19 +47,34 @@ def connect_tasks_signals():
                                 sender=apps.get_model("tasks", "Task"),
                                 dispatch_uid="update_project_tags_when_delete_tagglabe_item_task")
 
-    # Custom Attributes
+
+def connect_tasks_custom_attributes_signals():
     signals.post_save.connect(custom_attributes_handlers.create_custom_attribute_value_when_create_task,
                               sender=apps.get_model("tasks", "Task"),
                               dispatch_uid="create_custom_attribute_value_when_create_task")
 
+
+def connect_all_tasks_signals():
+    connect_tasks_signals()
+    connect_tasks_custom_attributes_signals()
+
+
 def disconnect_tasks_signals():
-    signals.pre_save.disconnect(dispatch_uid="cached_prev_task")
-    signals.post_save.disconnect(dispatch_uid="try_to_close_or_open_us_and_milestone_when_create_or_edit_task")
-    signals.post_delete.disconnect(dispatch_uid="try_to_close_or_open_us_and_milestone_when_delete_task")
-    signals.pre_save.disconnect(dispatch_uid="tags_normalization")
-    signals.post_save.disconnect(dispatch_uid="update_project_tags_when_create_or_edit_tagglabe_item")
-    signals.post_delete.disconnect(dispatch_uid="update_project_tags_when_delete_tagglabe_item")
-    signals.post_save.disconnect(dispatch_uid="create_custom_attribute_value_when_create_task")
+    signals.pre_save.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="cached_prev_task")
+    signals.post_save.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="try_to_close_or_open_us_and_milestone_when_create_or_edit_task")
+    signals.post_delete.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="try_to_close_or_open_us_and_milestone_when_delete_task")
+    signals.pre_save.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="tags_normalization")
+    signals.post_save.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="update_project_tags_when_create_or_edit_tagglabe_item")
+    signals.post_delete.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="update_project_tags_when_delete_tagglabe_item")
+
+
+def disconnect_tasks_custom_attributes_signals():
+    signals.post_save.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="create_custom_attribute_value_when_create_task")
+
+
+def disconnect_all_tasks_signals():
+    disconnect_tasks_signals()
+    disconnect_tasks_custom_attributes_signals()
 
 
 class TasksAppConfig(AppConfig):
@@ -67,4 +82,4 @@ class TasksAppConfig(AppConfig):
     verbose_name = "Tasks"
 
     def ready(self):
-        connect_tasks_signals()
+        connect_all_tasks_signals()
