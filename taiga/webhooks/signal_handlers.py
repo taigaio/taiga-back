@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
+from django.utils import timezone
 
 from taiga.projects.history import services as history_service
 from taiga.projects.history.choices import HistoryType
@@ -54,7 +55,7 @@ def on_new_history_entry(sender, instance, created, **kwargs):
         extra_args = [instance]
     elif instance.type == HistoryType.delete:
         task = tasks.delete_webhook
-        extra_args = []
+        extra_args = [timezone.now()]
 
     for webhook in webhooks:
         args = [webhook["id"], webhook["url"], webhook["key"], obj] + extra_args

@@ -112,11 +112,12 @@ def create_webhook(webhook_id, url, key, obj):
 
 
 @app.task
-def delete_webhook(webhook_id, url, key, obj):
+def delete_webhook(webhook_id, url, key, obj, deleted_date):
     data = {}
     data['data'] = _serialize(obj)
     data['action'] = "delete"
     data['type'] = _get_type(obj)
+    data['deleted_date'] = deleted_date
 
     return _send_request(webhook_id, url, key, data)
 
