@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-07-06 16:06+0200\n"
-"PO-Revision-Date: 2015-07-06 14:06+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"PO-Revision-Date: 2015-08-01 03:51+0000\n"
+"Last-Translator: Chi-Hsun Tsai <chihsun.tsai@gmail.com>\n"
 "Language-Team: Chinese Traditional (http://www.transifex.com/projects/p/"
 "taiga-back/language/zh-Hant/)\n"
 "MIME-Version: 1.0\n"
@@ -933,10 +933,16 @@ msgid ""
 "\n"
 "{description}"
 msgstr ""
+"來自[@{bitbucket_user_name}]({bitbucket_user_url} 的問題\"詳見 "
+"@{bitbucket_user_name}'s BitBucket profile\")  BitBucket.\n"
+"源自BitBucket 問題: [bb#{number} - {subject}]({bitbucket_url} \"Go to "
+"'bb#{number} - {subject}'\"):\n"
+"\n"
+"{description}"
 
 #: taiga/hooks/bitbucket/event_hooks.py:142
 msgid "Issue created from BitBucket."
-msgstr ""
+msgstr "來自BitBucket的問題:"
 
 #: taiga/hooks/bitbucket/event_hooks.py:166
 #: taiga/hooks/github/event_hooks.py:177 taiga/hooks/github/event_hooks.py:192
@@ -954,6 +960,12 @@ msgid ""
 "\n"
 "{message}"
 msgstr ""
+" [@{bitbucket_user_name}]({bitbucket_user_url}之評論 \"參見 "
+"@{bitbucket_user_name}'s BitBucket profile\") from BitBucket.\n"
+"源自BitBucket 問題: [bb#{number} - {subject}]({bitbucket_url} \"Go to "
+"'bb#{number} - {subject}'\")\n"
+"\n"
+"{message}"
 
 #: taiga/hooks/bitbucket/event_hooks.py:185
 #, python-brace-format
@@ -962,6 +974,9 @@ msgid ""
 "\n"
 "{message}"
 msgstr ""
+"來自BitBucket的評論:\n"
+"\n"
+"{message}"
 
 #: taiga/hooks/github/event_hooks.py:96
 #, python-brace-format
@@ -1042,6 +1057,12 @@ msgid ""
 "\n"
 "{message}"
 msgstr ""
+" [@{gitlab_user_name}]({gitlab_user_url}之評論 \"參見 @{gitlab_user_name}'s "
+"GitLab profile\") from GitLab.\n"
+"源自 GitLab 問題: [gl#{number} - {subject}]({gitlab_url} \"Go to "
+"'gl#{number} - {subject}'\")\n"
+"\n"
+"{message}"
 
 #: taiga/hooks/gitlab/event_hooks.py:171
 #, python-brace-format
@@ -1050,6 +1071,9 @@ msgid ""
 "\n"
 "{message}"
 msgstr ""
+"來自GitLab的評論:\n"
+"\n"
+"{message}"
 
 #: taiga/permissions/permissions.py:21 taiga/permissions/permissions.py:31
 #: taiga/permissions/permissions.py:52
@@ -1312,7 +1336,7 @@ msgstr "Jitsi"
 
 #: taiga/projects/choices.py:23
 msgid "Custom"
-msgstr ""
+msgstr "自定"
 
 #: taiga/projects/choices.py:24
 msgid "Talky"
@@ -1320,11 +1344,11 @@ msgstr "Talky"
 
 #: taiga/projects/custom_attributes/models.py:33
 msgid "Text"
-msgstr ""
+msgstr "單行文字"
 
 #: taiga/projects/custom_attributes/models.py:34
 msgid "Multi-Line Text"
-msgstr ""
+msgstr "多行列文字"
 
 #: taiga/projects/custom_attributes/models.py:36
 #: taiga/projects/milestones/models.py:34 taiga/projects/models.py:123
@@ -1493,7 +1517,7 @@ msgstr "封鎖筆記"
 
 #: taiga/projects/history/templatetags/functions.py:28
 msgid "sprint"
-msgstr ""
+msgstr "衝刺任務"
 
 #: taiga/projects/issues/api.py:195
 msgid "You don't have permissions to set this sprint to this issue."
@@ -1688,7 +1712,7 @@ msgstr "視訊會議系統"
 
 #: taiga/projects/models.py:154 taiga/projects/models.py:581
 msgid "videoconference extra data"
-msgstr ""
+msgstr "視訊會議額外資料"
 
 #: taiga/projects/models.py:159
 msgid "creation template"
@@ -2614,15 +2638,15 @@ msgstr "專案結束"
 
 #: taiga/projects/tasks/api.py:90 taiga/projects/tasks/api.py:99
 msgid "You don't have permissions to set this sprint to this task."
-msgstr ""
+msgstr "無權限更動此任務下的衝刺任務"
 
 #: taiga/projects/tasks/api.py:93
 msgid "You don't have permissions to set this user story to this task."
-msgstr ""
+msgstr "無權限更動此務下的使用者故事"
 
 #: taiga/projects/tasks/api.py:96
 msgid "You don't have permissions to set this status to this task."
-msgstr ""
+msgstr "無權限更動此任務下的狀態"
 
 #: taiga/projects/tasks/models.py:56
 msgid "us order"
@@ -3024,11 +3048,11 @@ msgstr "利害關係人"
 
 #: taiga/projects/userstories/api.py:134
 msgid "You don't have permissions to set this sprint to this user story."
-msgstr ""
+msgstr "無權限更動使用者故事的衝刺任務"
 
 #: taiga/projects/userstories/api.py:138
 msgid "You don't have permissions to set this status to this user story."
-msgstr ""
+msgstr "無權限更動此使用者故事的狀態"
 
 #: taiga/projects/userstories/api.py:212
 #, python-brace-format
