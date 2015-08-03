@@ -16,6 +16,7 @@
 
 from django.conf import settings
 from django.utils import timezone
+from django.utils.translation import ugettext as _
 
 from taiga.projects.history import services as history_services
 from taiga.projects.models import Project
@@ -79,7 +80,16 @@ def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_d
             extra_data=extra_data)
 
 
+def _clean_description_fields(values_diff):
+    # Description_diff and description_html if included can be huge, we are
+    # removing the html one and clearing the diff
+    values_diff.pop("description_html", None)
+    if "description_diff" in values_diff:
+        values_diff["description_diff"] = _("Check the history API for the exact diff")
+
+
 def on_new_history_entry(sender, instance, created, **kwargs):
+
     if instance._importing:
         return
 
@@ -99,9 +109,11 @@ def on_new_history_entry(sender, instance, created, **kwargs):
         event_type = "delete"
 
     user = User.objects.get(id=instance.user["pk"])
+    values_diff = instance.values_diff
+    _clean_description_fields(values_diff)
 
     extra_data = {
-        "values_diff": instance.values_diff,
+        "values_diff": values_diff,
         "user": extract_user_info(user),
         "comment": instance.comment,
         "comment_html": instance.comment_html,

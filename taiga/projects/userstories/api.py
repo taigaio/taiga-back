@@ -76,6 +76,9 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
         if self.action in ["retrieve", "by_ref"]:
             return serializers.UserStoryNeighborsSerializer
 
+        if self.action == "list":
+            return serializers.UserStoryListSerializer
+
         return serializers.UserStorySerializer
 
     def update(self, request, *args, **kwargs):
