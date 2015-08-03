@@ -123,6 +123,9 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
         if self.action in ["retrieve", "by_ref"]:
             return serializers.IssueNeighborsSerializer
 
+        if self.action == "list":
+            return serializers.IssueListSerializer
+
         return serializers.IssueSerializer
 
     def get_queryset(self):

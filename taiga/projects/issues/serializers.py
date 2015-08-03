@@ -63,6 +63,13 @@ class IssueSerializer(WatchersValidator, serializers.ModelSerializer):
         return getattr(obj, "votes_count", 0)
 
 
+class IssueListSerializer(IssueSerializer):
+    class Meta:
+        model = models.Issue
+        read_only_fields = ('id', 'ref', 'created_date', 'modified_date')
+        exclude=("description", "description_html")
+
+
 class IssueNeighborsSerializer(NeighborsSerializerMixin, IssueSerializer):
     def serialize_neighbor(self, neighbor):
         return NeighborIssueSerializer(neighbor).data

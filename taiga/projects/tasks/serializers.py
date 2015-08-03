@@ -66,6 +66,13 @@ class TaskSerializer(WatchersValidator, serializers.ModelSerializer):
         return obj.status.is_closed
 
 
+class TaskListSerializer(TaskSerializer):
+    class Meta:
+        model = models.Task
+        read_only_fields = ('id', 'ref', 'created_date', 'modified_date')
+        exclude=("description", "description_html")
+
+
 class TaskNeighborsSerializer(NeighborsSerializerMixin, TaskSerializer):
     def serialize_neighbor(self, neighbor):
         return NeighborTaskSerializer(neighbor).data

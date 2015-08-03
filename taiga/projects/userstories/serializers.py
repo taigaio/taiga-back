@@ -96,6 +96,14 @@ class UserStorySerializer(WatchersValidator, serializers.ModelSerializer):
         return mdrender(obj.project, obj.description)
 
 
+class UserStoryListSerializer(UserStorySerializer):
+    class Meta:
+        model = models.UserStory
+        depth = 0
+        read_only_fields = ('created_date', 'modified_date')
+        exclude=("description", "description_html")
+
+
 class UserStoryNeighborsSerializer(NeighborsSerializerMixin, UserStorySerializer):
     def serialize_neighbor(self, neighbor):
         return NeighborUserStorySerializer(neighbor).data

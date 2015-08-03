@@ -46,6 +46,9 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
         if self.action in ["retrieve", "by_ref"]:
             return serializers.TaskNeighborsSerializer
 
+        if self.action == "list":
+            return serializers.TaskListSerializer
+
         return serializers.TaskSerializer
 
     def pre_save(self, obj):
