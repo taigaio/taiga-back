@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-06 16:06+0200\n"
+"POT-Creation-Date: 2015-08-03 11:09+0200\n"
 "PO-Revision-Date: 2015-07-21 06:58+0000\n"
 "Last-Translator: Djyp Forest Fortin <contact@h3p.eu>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/taiga-back/"
@@ -353,12 +353,12 @@ msgstr "Erreur d'intégrité ou arguments invalides"
 msgid "Precondition error"
 msgstr "Erreur de précondition"
 
-#: taiga/base/filters.py:74
+#: taiga/base/filters.py:79
 msgid "Error in filter params types."
 msgstr "Erreur dans les types de paramètres de filtres"
 
-#: taiga/base/filters.py:121 taiga/base/filters.py:210
-#: taiga/base/filters.py:259
+#: taiga/base/filters.py:133 taiga/base/filters.py:222
+#: taiga/base/filters.py:271
 msgid "'project' must be an integer value."
 msgstr "'project' doit être une valeur entière."
 
@@ -880,8 +880,8 @@ msgstr ""
 msgid "The payload is not a valid json"
 msgstr "Le payload n'est pas un json valide"
 
-#: taiga/hooks/api.py:61 taiga/projects/issues/api.py:175
-#: taiga/projects/tasks/api.py:74 taiga/projects/userstories/api.py:87
+#: taiga/hooks/api.py:61 taiga/projects/issues/api.py:134
+#: taiga/projects/tasks/api.py:78 taiga/projects/userstories/api.py:103
 msgid "The project doesn't exist"
 msgstr "Le projet n'existe pas"
 
@@ -1186,19 +1186,19 @@ msgstr "Administrer les paramètres du projet"
 msgid "Admin roles"
 msgstr "Administrer les rôles"
 
-#: taiga/projects/api.py:204
+#: taiga/projects/api.py:198
 msgid "Not valid template name"
 msgstr "Nom de modèle non valide"
 
-#: taiga/projects/api.py:207
+#: taiga/projects/api.py:201
 msgid "Not valid template description"
 msgstr "Description du modèle non valide"
 
-#: taiga/projects/api.py:475 taiga/projects/serializers.py:261
+#: taiga/projects/api.py:469 taiga/projects/serializers.py:261
 msgid "At least one of the user must be an active admin"
 msgstr "Au moins un utilisateur doit être un administrateur actif"
 
-#: taiga/projects/api.py:505
+#: taiga/projects/api.py:499
 msgid "You don't have permisions to see that."
 msgstr "Vous n'avez pas les permissions pour consulter cet élément"
 
@@ -1468,23 +1468,23 @@ msgstr "note bloquée"
 msgid "sprint"
 msgstr "sprint"
 
-#: taiga/projects/issues/api.py:195
+#: taiga/projects/issues/api.py:154
 msgid "You don't have permissions to set this sprint to this issue."
 msgstr "Vous n'avez pas la permission d'affecter ce sprint à ce problème."
 
-#: taiga/projects/issues/api.py:199
+#: taiga/projects/issues/api.py:158
 msgid "You don't have permissions to set this status to this issue."
 msgstr "Vous n'avez pas la permission d'affecter ce statut à ce problème."
 
-#: taiga/projects/issues/api.py:203
+#: taiga/projects/issues/api.py:162
 msgid "You don't have permissions to set this severity to this issue."
 msgstr "Vous n'avez pas la permission d'affecter cette sévérité à ce problème."
 
-#: taiga/projects/issues/api.py:207
+#: taiga/projects/issues/api.py:166
 msgid "You don't have permissions to set this priority to this issue."
 msgstr "Vous n'avez pas la permission d'affecter cette priorité à ce problème."
 
-#: taiga/projects/issues/api.py:211
+#: taiga/projects/issues/api.py:170
 msgid "You don't have permissions to set this type to this issue."
 msgstr "Vous n'avez pas la permission d'affecter ce type à ce problème."
 
@@ -2354,15 +2354,15 @@ msgstr "Sprint futurs"
 msgid "Project End"
 msgstr "Fin du projet"
 
-#: taiga/projects/tasks/api.py:90 taiga/projects/tasks/api.py:99
+#: taiga/projects/tasks/api.py:94 taiga/projects/tasks/api.py:103
 msgid "You don't have permissions to set this sprint to this task."
 msgstr ""
 
-#: taiga/projects/tasks/api.py:93
+#: taiga/projects/tasks/api.py:97
 msgid "You don't have permissions to set this user story to this task."
 msgstr ""
 
-#: taiga/projects/tasks/api.py:96
+#: taiga/projects/tasks/api.py:100
 msgid "You don't have permissions to set this status to this task."
 msgstr ""
 
@@ -2759,15 +2759,15 @@ msgstr "Product Owner"
 msgid "Stakeholder"
 msgstr "Participant"
 
-#: taiga/projects/userstories/api.py:134
+#: taiga/projects/userstories/api.py:150
 msgid "You don't have permissions to set this sprint to this user story."
 msgstr ""
 
-#: taiga/projects/userstories/api.py:138
+#: taiga/projects/userstories/api.py:154
 msgid "You don't have permissions to set this status to this user story."
 msgstr ""
 
-#: taiga/projects/userstories/api.py:212
+#: taiga/projects/userstories/api.py:248
 #, python-brace-format
 msgid ""
 "Generating the user story [US #{ref} - {subject}](:us:{ref} \"US #{ref} - "

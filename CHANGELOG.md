@@ -13,6 +13,7 @@
 - Now profile timelines only show content about the objects (US/Tasks/Issues/Wiki pages) you are involved.
 - i18n.
   - Add polish (pl) translation.
+  - Add russian (ru) translation.
 
 ### Misc
 - API: Mixin fields 'users', 'members' and 'memberships' in ProjectDetailSerializer.

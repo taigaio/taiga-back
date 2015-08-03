@@ -130,7 +130,7 @@ LANGUAGES = [
     #("pt", "Português (Portugal)"),  # Portuguese
     #("pt-br", "Português (Brasil)"),  # Brazilian Portuguese
     #("ro", "Română"),  # Romanian
-    #("ru", "Русский"),  # Russian
+    ("ru", "Русский"),  # Russian
     #("sk", "Slovenčina"),  # Slovak
     #("sl", "Slovenščina"),  # Slovenian
     #("sq", "Shqip"),  # Albanian
