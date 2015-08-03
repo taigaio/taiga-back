@@ -56,11 +56,12 @@ class SearchViewSet(viewsets.ViewSet):
                 futures_list.append(wiki_pages_future)
 
             for future in futures.as_completed(futures_list):
+                data = []
                 try:
                     data = future.result()
                 except Exception as exc:
                     print('%s generated an exception: %s' % (future.result_key, exc))
-                else:
+                finally:
                     result[future.result_key] = data
 
         result["count"] = sum(map(lambda x: len(x), result.values()))
