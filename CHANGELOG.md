@@ -4,13 +4,15 @@
 ## 1.9.0 ??? (unreleased)
 
 ### Features
-- Add a "field type" property for custom fields: 'text' and 'multiline text' right now (thanks to [@artlepool](https://github.com/artlepool))
+- Add a "field type" property for custom fields: 'text' and 'multiline text' right now (thanks to [@artlepool](https://github.com/artlepool)).
 - Allow multiple actions in the commit messages.
 - Now every user that coments USs, Issues or Tasks will be involved in it (add author to the watchers list).
 - Fix the compatibility with BitBucket webhooks and add issues and issues comments integration.
 - Add custom videoconference system.
 - Add support for comments in the Gitlab webhooks integration.
 - Now profile timelines only show content about the objects (US/Tasks/Issues/Wiki pages) you are involved.
+- US, tasks and Issues can be upvoted or downvoted and the voters list can be obtained.
+- Project can be starred or unstarred and the fans list can be obtained.
 - i18n.
   - Add polish (pl) translation.
   - Add portuguese (Brazil) (pt_BR) translation.

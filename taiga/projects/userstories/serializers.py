@@ -27,6 +27,8 @@ from taiga.projects.validators import UserStoryStatusExistsValidator
 from taiga.projects.userstories.validators import UserStoryExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicUserStoryStatusSerializer
+from taiga.projects.votes.mixins.serializers import VotedResourceSerializerMixin
+
 from taiga.users.serializers import UserBasicInfoSerializer
 
 from . import models
@@ -42,7 +44,7 @@ class RolePointsField(serializers.WritableField):
         return json.loads(obj)
 
 
-class UserStorySerializer(WatchersValidator, serializers.ModelSerializer):
+class UserStorySerializer(WatchersValidator, VotedResourceSerializerMixin, serializers.ModelSerializer):
     tags = TagsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
     points = RolePointsField(source="role_points", required=False)

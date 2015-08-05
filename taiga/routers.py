@@ -1,4 +1,3 @@
-
 # Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
 # Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
@@ -49,6 +48,7 @@ router.register(r"notify-policies", NotifyPolicyViewSet, base_name="notification
 
 # Projects & Selectors
 from taiga.projects.api import ProjectViewSet
+from taiga.projects.api import ProjectFansViewSet
 from taiga.projects.api import MembershipViewSet
 from taiga.projects.api import InvitationViewSet
 from taiga.projects.api import UserStoryStatusViewSet
@@ -61,6 +61,7 @@ from taiga.projects.api import SeverityViewSet
 from taiga.projects.api import ProjectTemplateViewSet
 
 router.register(r"projects", ProjectViewSet, base_name="projects")
+router.register(r"projects/(?P<resource_id>\d+)/fans", ProjectFansViewSet, base_name="project-fans")
 router.register(r"project-templates", ProjectTemplateViewSet, base_name="project-templates")
 router.register(r"memberships", MembershipViewSet, base_name="memberships")
 router.register(r"invitations", InvitationViewSet, base_name="invitations")
@@ -124,18 +125,24 @@ router.register(r"wiki/attachments", WikiAttachmentViewSet, base_name="wiki-atta
 # Project components
 from taiga.projects.milestones.api import MilestoneViewSet
 from taiga.projects.userstories.api import UserStoryViewSet
+from taiga.projects.userstories.api import UserStoryVotersViewSet
 from taiga.projects.tasks.api import TaskViewSet
+from taiga.projects.tasks.api import TaskVotersViewSet
 from taiga.projects.issues.api import IssueViewSet
-from taiga.projects.issues.api import VotersViewSet
+from taiga.projects.issues.api import IssueVotersViewSet
 from taiga.projects.wiki.api import WikiViewSet, WikiLinkViewSet
 
 router.register(r"milestones", MilestoneViewSet, base_name="milestones")
 router.register(r"userstories", UserStoryViewSet, base_name="userstories")
+router.register(r"userstories/(?P<resource_id>\d+)/voters", UserStoryVotersViewSet, base_name="userstory-voters")
 router.register(r"tasks", TaskViewSet, base_name="tasks")
+router.register(r"tasks/(?P<resource_id>\d+)/voters", TaskVotersViewSet, base_name="task-voters")
 router.register(r"issues", IssueViewSet, base_name="issues")
-router.register(r"issues/(?P<issue_id>\d+)/voters", VotersViewSet, base_name="issue-voters")
+router.register(r"issues/(?P<resource_id>\d+)/voters", IssueVotersViewSet, base_name="issue-voters")
 router.register(r"wiki", WikiViewSet, base_name="wiki")
 router.register(r"wiki-links", WikiLinkViewSet, base_name="wiki-links")
+
+
 
 
 # History & Components

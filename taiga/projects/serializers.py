@@ -40,7 +40,7 @@ from .validators import ProjectExistsValidator
 from .custom_attributes.serializers import UserStoryCustomAttributeSerializer
 from .custom_attributes.serializers import TaskCustomAttributeSerializer
 from .custom_attributes.serializers import IssueCustomAttributeSerializer
-
+from .votes.mixins.serializers import StarredResourceSerializerMixin
 
 ######################################################
 ## Custom values for selectors
@@ -305,11 +305,10 @@ class ProjectMemberSerializer(serializers.ModelSerializer):
 ## Projects
 ######################################################
 
-class ProjectSerializer(serializers.ModelSerializer):
+class ProjectSerializer(StarredResourceSerializerMixin, serializers.ModelSerializer):
     tags = TagsField(default=[], required=False)
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
-    stars = serializers.SerializerMethodField("get_stars_number")
     my_permissions = serializers.SerializerMethodField("get_my_permissions")
     i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
     tags_colors = TagsColorsField(required=False)
@@ -320,10 +319,6 @@ class ProjectSerializer(serializers.ModelSerializer):
         read_only_fields = ("created_date", "modified_date", "owner", "slug")
         exclude = ("last_us_ref", "last_task_ref", "last_issue_ref",
                    "issues_csv_uuid", "tasks_csv_uuid", "userstories_csv_uuid")
-
-    def get_stars_number(self, obj):
-        # The "stars_count" attribute is attached in the get_queryset of the viewset.
-        return getattr(obj, "stars_count", 0)
 
     def get_my_permissions(self, obj):
         if "request" in self.context:

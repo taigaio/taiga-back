@@ -23,11 +23,11 @@ from .. import factories as f
 pytestmark = pytest.mark.django_db
 
 
-def test_upvote_issue(client):
+def test_star_project(client):
     user = f.UserFactory.create()
-    issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
-    url = reverse("issues-upvote", args=(issue.id,))
+    project = f.create_project(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    url = reverse("projects-star", args=(project.id,))
 
     client.login(user)
     response = client.post(url)
@@ -35,11 +35,11 @@ def test_upvote_issue(client):
     assert response.status_code == 200
 
 
-def test_downvote_issue(client):
+def test_unstar_project(client):
     user = f.UserFactory.create()
-    issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
-    url = reverse("issues-downvote", args=(issue.id,))
+    project = f.create_project(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    url = reverse("projects-unstar", args=(project.id,))
 
     client.login(user)
     response = client.post(url)
@@ -47,12 +47,12 @@ def test_downvote_issue(client):
     assert response.status_code == 200
 
 
-def test_list_issue_voters(client):
+def test_list_project_fans(client):
     user = f.UserFactory.create()
-    issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
-    f.VoteFactory.create(content_object=issue, user=user)
-    url = reverse("issue-voters-list", args=(issue.id,))
+    project = f.create_project(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.VoteFactory.create(content_object=project, user=user)
+    url = reverse("project-fans-list", args=(project.id,))
 
     client.login(user)
     response = client.get(url)
@@ -60,12 +60,13 @@ def test_list_issue_voters(client):
     assert response.status_code == 200
     assert response.data[0]['id'] == user.id
 
-def test_get_issue_voter(client):
+
+def test_get_project_fan(client):
     user = f.UserFactory.create()
-    issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
-    vote = f.VoteFactory.create(content_object=issue, user=user)
-    url = reverse("issue-voters-detail", args=(issue.id, vote.user.id))
+    project = f.create_project(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    vote = f.VoteFactory.create(content_object=project, user=user)
+    url = reverse("project-fans-detail", args=(project.id, vote.user.id))
 
     client.login(user)
     response = client.get(url)
@@ -73,49 +74,50 @@ def test_get_issue_voter(client):
     assert response.status_code == 200
     assert response.data['id'] == vote.user.id
 
-def test_get_issue_votes(client):
-    user = f.UserFactory.create()
-    issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
-    url = reverse("issues-detail", args=(issue.id,))
 
-    f.VotesFactory.create(content_object=issue, count=5)
+def test_get_project_stars(client):
+    user = f.UserFactory.create()
+    project = f.create_project(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    url = reverse("projects-detail", args=(project.id,))
+
+    f.VotesFactory.create(content_object=project, count=5)
 
     client.login(user)
     response = client.get(url)
 
     assert response.status_code == 200
-    assert response.data['votes'] == 5
+    assert response.data['stars'] == 5
 
 
-def test_get_issue_is_voted(client):
+def test_get_project_is_starred(client):
     user = f.UserFactory.create()
-    issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
-    f.VotesFactory.create(content_object=issue)
-    url_detail = reverse("issues-detail", args=(issue.id,))
-    url_upvote = reverse("issues-upvote", args=(issue.id,))
-    url_downvote = reverse("issues-downvote", args=(issue.id,))
+    project = f.create_project(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.VotesFactory.create(content_object=project)
+    url_detail = reverse("projects-detail", args=(project.id,))
+    url_star = reverse("projects-star", args=(project.id,))
+    url_unstar = reverse("projects-unstar", args=(project.id,))
 
     client.login(user)
 
     response = client.get(url_detail)
     assert response.status_code == 200
-    assert response.data['votes'] == 0
-    assert response.data['is_voted'] == False
+    assert response.data['stars'] == 0
+    assert response.data['is_starred'] == False
 
-    response = client.post(url_upvote)
+    response = client.post(url_star)
     assert response.status_code == 200
 
     response = client.get(url_detail)
     assert response.status_code == 200
-    assert response.data['votes'] == 1
-    assert response.data['is_voted'] == True
+    assert response.data['stars'] == 1
+    assert response.data['is_starred'] == True
 
-    response = client.post(url_downvote)
+    response = client.post(url_unstar)
     assert response.status_code == 200
 
     response = client.get(url_detail)
     assert response.status_code == 200
-    assert response.data['votes'] == 0
-    assert response.data['is_voted'] == False
+    assert response.data['stars'] == 0
+    assert response.data['is_starred'] == False

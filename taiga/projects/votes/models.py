@@ -16,16 +16,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
+from django.contrib.contenttypes import generic
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.contenttypes import generic
 
 
 class Votes(models.Model):
     content_type = models.ForeignKey("contenttypes.ContentType")
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey("content_type", "object_id")
-    count = models.PositiveIntegerField(default=0)
+    count = models.PositiveIntegerField(null=False, blank=False, default=0, verbose_name=_("count"))
 
     class Meta:
         verbose_name = _("Votes")
@@ -44,10 +44,12 @@ class Votes(models.Model):
 
 class Vote(models.Model):
     content_type = models.ForeignKey("contenttypes.ContentType")
-    object_id = models.PositiveIntegerField(null=False)
+    object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey("content_type", "object_id")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
-                             related_name="votes", verbose_name=_("votes"))
+                             related_name="votes", verbose_name=_("user"))
+    created_date = models.DateTimeField(null=False, blank=False, auto_now_add=True,
+                                        verbose_name=_("created date"))
 
     class Meta:
         verbose_name = _("Vote")

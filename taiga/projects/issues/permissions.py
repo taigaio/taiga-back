@@ -31,10 +31,10 @@ class IssuePermission(TaigaResourcePermission):
     list_perms = AllowAny()
     filters_data_perms = AllowAny()
     csv_perms = AllowAny()
-    upvote_perms = IsAuthenticated() & HasProjectPerm('vote_issues')
-    downvote_perms = IsAuthenticated() & HasProjectPerm('vote_issues')
     bulk_create_perms = HasProjectPerm('add_issue')
     delete_comment_perms= HasProjectPerm('modify_issue')
+    upvote_perms = IsAuthenticated() & HasProjectPerm('view_issues')
+    downvote_perms = IsAuthenticated() & HasProjectPerm('view_issues')
 
 
 class HasIssueIdUrlParam(PermissionComponent):
@@ -49,8 +49,4 @@ class IssueVotersPermission(TaigaResourcePermission):
     enought_perms = IsProjectOwner() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_issues')
-    create_perms = HasProjectPerm('add_issue')
-    update_perms = HasProjectPerm('modify_issue')
-    partial_update_perms = HasProjectPerm('modify_issue')
-    destroy_perms = HasProjectPerm('delete_issue')
     list_perms = HasProjectPerm('view_issues')

@@ -9,6 +9,7 @@ from taiga.projects.occ import OCCResourceMixin
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
+from taiga.projects.votes.services import add_vote
 
 from unittest import mock
 
@@ -414,6 +415,95 @@ def test_user_story_action_bulk_update_order(client, data):
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 204, 204]
+
+def test_user_story_action_upvote(client, data):
+    public_url = reverse('userstories-upvote', kwargs={"pk": data.public_user_story.pk})
+    private_url1 = reverse('userstories-upvote', kwargs={"pk": data.private_user_story1.pk})
+    private_url2 = reverse('userstories-upvote', kwargs={"pk": data.private_user_story2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]
+
+
+def test_user_story_action_downvote(client, data):
+    public_url = reverse('userstories-downvote', kwargs={"pk": data.public_user_story.pk})
+    private_url1 = reverse('userstories-downvote', kwargs={"pk": data.private_user_story1.pk})
+    private_url2 = reverse('userstories-downvote', kwargs={"pk": data.private_user_story2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]
+
+
+def test_user_story_voters_list(client, data):
+    public_url = reverse('userstory-voters-list', kwargs={"resource_id": data.public_user_story.pk})
+    private_url1 = reverse('userstory-voters-list', kwargs={"resource_id": data.private_user_story1.pk})
+    private_url2 = reverse('userstory-voters-list', kwargs={"resource_id": data.private_user_story2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_user_story_voters_retrieve(client, data):
+    add_vote(data.public_user_story, data.project_owner)
+    public_url = reverse('userstory-voters-detail', kwargs={"resource_id": data.public_user_story.pk,
+                                                            "pk": data.project_owner.pk})
+    add_vote(data.private_user_story1, data.project_owner)
+    private_url1 = reverse('userstory-voters-detail', kwargs={"resource_id": data.private_user_story1.pk,
+                                                              "pk": data.project_owner.pk})
+    add_vote(data.private_user_story2, data.project_owner)
+    private_url2 = reverse('userstory-voters-detail', kwargs={"resource_id": data.private_user_story2.pk,
+                                                              "pk": data.project_owner.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_user_stories_csv(client, data):

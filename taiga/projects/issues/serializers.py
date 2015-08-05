@@ -19,17 +19,18 @@ from taiga.base.fields import TagsField
 from taiga.base.fields import PgArrayField
 from taiga.base.neighbors import NeighborsSerializerMixin
 
-
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicIssueStatusSerializer
+from taiga.projects.votes.mixins.serializers import VotedResourceSerializerMixin
+
 from taiga.users.serializers import UserBasicInfoSerializer
 
 from . import models
 
 
-class IssueSerializer(WatchersValidator, serializers.ModelSerializer):
+class IssueSerializer(WatchersValidator, VotedResourceSerializerMixin, serializers.ModelSerializer):
     tags = TagsField(required=False)
     external_reference = PgArrayField(required=False)
     is_closed = serializers.Field(source="is_closed")
@@ -37,7 +38,6 @@ class IssueSerializer(WatchersValidator, serializers.ModelSerializer):
     generated_user_stories = serializers.SerializerMethodField("get_generated_user_stories")
     blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
     description_html = serializers.SerializerMethodField("get_description_html")
-    votes = serializers.SerializerMethodField("get_votes_number")
     status_extra_info = BasicIssueStatusSerializer(source="status", required=False, read_only=True)
     assigned_to_extra_info = UserBasicInfoSerializer(source="assigned_to", required=False, read_only=True)
     owner_extra_info = UserBasicInfoSerializer(source="owner", required=False, read_only=True)
@@ -58,10 +58,6 @@ class IssueSerializer(WatchersValidator, serializers.ModelSerializer):
 
     def get_description_html(self, obj):
         return mdrender(obj.project, obj.description)
-
-    def get_votes_number(self, obj):
-        # The "votes_count" attribute is attached in the get_queryset of the viewset.
-        return getattr(obj, "votes_count", 0)
 
 
 class IssueListSerializer(IssueSerializer):

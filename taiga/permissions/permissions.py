@@ -32,7 +32,6 @@ USER_PERMISSIONS = [
     ('view_milestones', _('View milestones')),
     ('view_us', _('View user stories')),
     ('view_issues', _('View issues')),
-    ('vote_issues', _('Vote issues')),
     ('view_tasks', _('View tasks')),
     ('view_wiki_pages', _('View wiki pages')),
     ('view_wiki_links', _('View wiki links')),
@@ -41,15 +40,20 @@ USER_PERMISSIONS = [
     ('add_comments_to_us', _('Add comments to user stories')),
     ('add_comments_to_task', _('Add comments to tasks')),
     ('add_issue', _('Add issues')),
-    ('add_comments_issue', _('Add comments to issues')),
+    ('add_comments_to_issue', _('Add comments to issues')),
     ('add_wiki_page', _('Add wiki page')),
     ('modify_wiki_page', _('Modify wiki page')),
     ('add_wiki_link', _('Add wiki link')),
     ('modify_wiki_link', _('Modify wiki link')),
+    ('star_project', _('Star project')),
+    ('vote_us', _('Vote user story')),
+    ('vote_task', _('Vote task')),
+    ('vote_issue', _('Vote issue')),
 ]
 
 MEMBERS_PERMISSIONS = [
     ('view_project', _('View project')),
+    ('star_project', _('Star project')),
     # Milestone permissions
     ('view_milestones', _('View milestones')),
     ('add_milestone', _('Add milestone')),
@@ -60,17 +64,19 @@ MEMBERS_PERMISSIONS = [
     ('add_us', _('Add user story')),
     ('modify_us', _('Modify user story')),
     ('delete_us', _('Delete user story')),
+    ('vote_us', _('Vote user story')),
     # Task permissions
     ('view_tasks', _('View tasks')),
     ('add_task', _('Add task')),
     ('modify_task', _('Modify task')),
     ('delete_task', _('Delete task')),
+    ('vote_task', _('Vote task')),
     # Issue permissions
     ('view_issues', _('View issues')),
-    ('vote_issues', _('Vote issues')),
     ('add_issue', _('Add issue')),
     ('modify_issue', _('Modify issue')),
     ('delete_issue', _('Delete issue')),
+    ('vote_issue', _('Vote issue')),
     # Wiki page permissions
     ('view_wiki_pages', _('View wiki pages')),
     ('add_wiki_page', _('Add wiki page')),

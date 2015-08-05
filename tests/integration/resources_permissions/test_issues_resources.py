@@ -477,12 +477,10 @@ def test_issue_action_upvote(client, data):
 
     results = helper_test_http_method(client, 'post', public_url, "", users)
     assert results == [401, 200, 200, 200, 200]
-
     results = helper_test_http_method(client, 'post', private_url1, "", users)
     assert results == [401, 200, 200, 200, 200]
-
     results = helper_test_http_method(client, 'post', private_url2, "", users)
-    assert results == [401, 403, 403, 200, 200]
+    assert results == [404, 404, 404, 200, 200]
 
 
 def test_issue_action_downvote(client, data):
@@ -500,18 +498,16 @@ def test_issue_action_downvote(client, data):
 
     results = helper_test_http_method(client, 'post', public_url, "", users)
     assert results == [401, 200, 200, 200, 200]
-
     results = helper_test_http_method(client, 'post', private_url1, "", users)
     assert results == [401, 200, 200, 200, 200]
-
     results = helper_test_http_method(client, 'post', private_url2, "", users)
-    assert results == [401, 403, 403, 200, 200]
+    assert results == [404, 404, 404, 200, 200]
 
 
 def test_issue_voters_list(client, data):
-    public_url = reverse('issue-voters-list', kwargs={"issue_id": data.public_issue.pk})
-    private_url1 = reverse('issue-voters-list', kwargs={"issue_id": data.private_issue1.pk})
-    private_url2 = reverse('issue-voters-list', kwargs={"issue_id": data.private_issue2.pk})
+    public_url = reverse('issue-voters-list', kwargs={"resource_id": data.public_issue.pk})
+    private_url1 = reverse('issue-voters-list', kwargs={"resource_id": data.private_issue1.pk})
+    private_url2 = reverse('issue-voters-list', kwargs={"resource_id": data.private_issue2.pk})
 
     users = [
         None,
@@ -523,21 +519,22 @@ def test_issue_voters_list(client, data):
 
     results = helper_test_http_method(client, 'get', public_url, None, users)
     assert results == [200, 200, 200, 200, 200]
-
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
-
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
 
 
 def test_issue_voters_retrieve(client, data):
     add_vote(data.public_issue, data.project_owner)
-    public_url = reverse('issue-voters-detail', kwargs={"issue_id": data.public_issue.pk, "pk": data.project_owner.pk})
+    public_url = reverse('issue-voters-detail', kwargs={"resource_id": data.public_issue.pk,
+                                                        "pk": data.project_owner.pk})
     add_vote(data.private_issue1, data.project_owner)
-    private_url1 = reverse('issue-voters-detail', kwargs={"issue_id": data.private_issue1.pk, "pk": data.project_owner.pk})
+    private_url1 = reverse('issue-voters-detail', kwargs={"resource_id": data.private_issue1.pk,
+                                                          "pk": data.project_owner.pk})
     add_vote(data.private_issue2, data.project_owner)
-    private_url2 = reverse('issue-voters-detail', kwargs={"issue_id": data.private_issue2.pk, "pk": data.project_owner.pk})
+    private_url2 = reverse('issue-voters-detail', kwargs={"resource_id": data.private_issue2.pk,
+                                                          "pk": data.project_owner.pk})
 
     users = [
         None,
@@ -549,10 +546,8 @@ def test_issue_voters_retrieve(client, data):
 
     results = helper_test_http_method(client, 'get', public_url, None, users)
     assert results == [200, 200, 200, 200, 200]
-
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
-
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
 

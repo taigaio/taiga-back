@@ -20,13 +20,14 @@ from taiga.base.api.utils import get_object_or_404
 from taiga.base import filters, response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
-from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.projects.models import Project, TaskStatus
 from django.http import HttpResponse
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.occ import OCCResourceMixin
+from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
 
 from . import models
@@ -35,8 +36,9 @@ from . import serializers
 from . import services
 
 
-class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
-    model = models.Task
+class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
+                  ModelCrudViewSet):
+    queryset = models.Task.objects.all()
     permission_classes = (permissions.TaskPermission,)
     filter_backends = (filters.CanViewTasksFilterBackend,)
     filter_fields = ["user_story", "milestone", "project", "assigned_to",
@@ -82,6 +84,9 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
 
         return super().update(request, *args, **kwargs)
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return self.attach_votes_attrs_to_queryset(qs)
 
     def pre_save(self, obj):
         if obj.user_story:
@@ -165,3 +170,8 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
     @list_route(methods=["POST"])
     def bulk_update_us_order(self, request, **kwargs):
         return self._bulk_update_order("us_order", request, **kwargs)
+
+
+class TaskVotersViewSet(VotersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.TaskVotersPermission,)
+    resource_model = models.Task

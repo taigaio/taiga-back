@@ -224,15 +224,6 @@ class UsersViewSet(ModelCrudViewSet):
         user_data = self.admin_serializer_class(request.user).data
         return response.Ok(user_data)
 
-    @detail_route(methods=["GET"])
-    def starred(self, request, pk=None):
-        user = self.get_object()
-        self.check_permissions(request, 'starred', user)
-
-        stars = votes_service.get_voted(user.pk, model=apps.get_model('projects', 'Project'))
-        stars_data = StarredSerializer(stars, many=True)
-        return response.Ok(stars_data.data)
-
     #TODO: commit_on_success
     def partial_update(self, request, *args, **kwargs):
         """

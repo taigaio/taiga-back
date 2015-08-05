@@ -23,11 +23,11 @@ from .. import factories as f
 pytestmark = pytest.mark.django_db
 
 
-def test_upvote_issue(client):
+def test_upvote_task(client):
     user = f.UserFactory.create()
-    issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
-    url = reverse("issues-upvote", args=(issue.id,))
+    task = f.create_task(owner=user)
+    f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
+    url = reverse("tasks-upvote", args=(task.id,))
 
     client.login(user)
     response = client.post(url)
@@ -35,11 +35,11 @@ def test_upvote_issue(client):
     assert response.status_code == 200
 
 
-def test_downvote_issue(client):
+def test_downvote_task(client):
     user = f.UserFactory.create()
-    issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
-    url = reverse("issues-downvote", args=(issue.id,))
+    task = f.create_task(owner=user)
+    f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
+    url = reverse("tasks-downvote", args=(task.id,))
 
     client.login(user)
     response = client.post(url)
@@ -47,12 +47,12 @@ def test_downvote_issue(client):
     assert response.status_code == 200
 
 
-def test_list_issue_voters(client):
+def test_list_task_voters(client):
     user = f.UserFactory.create()
-    issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
-    f.VoteFactory.create(content_object=issue, user=user)
-    url = reverse("issue-voters-list", args=(issue.id,))
+    task = f.create_task(owner=user)
+    f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
+    f.VoteFactory.create(content_object=task, user=user)
+    url = reverse("task-voters-list", args=(task.id,))
 
     client.login(user)
     response = client.get(url)
@@ -60,12 +60,13 @@ def test_list_issue_voters(client):
     assert response.status_code == 200
     assert response.data[0]['id'] == user.id
 
-def test_get_issue_voter(client):
+
+def test_get_task_voter(client):
     user = f.UserFactory.create()
-    issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
-    vote = f.VoteFactory.create(content_object=issue, user=user)
-    url = reverse("issue-voters-detail", args=(issue.id, vote.user.id))
+    task = f.create_task(owner=user)
+    f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
+    vote = f.VoteFactory.create(content_object=task, user=user)
+    url = reverse("task-voters-detail", args=(task.id, vote.user.id))
 
     client.login(user)
     response = client.get(url)
@@ -73,13 +74,14 @@ def test_get_issue_voter(client):
     assert response.status_code == 200
     assert response.data['id'] == vote.user.id
 
-def test_get_issue_votes(client):
-    user = f.UserFactory.create()
-    issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
-    url = reverse("issues-detail", args=(issue.id,))
 
-    f.VotesFactory.create(content_object=issue, count=5)
+def test_get_task_votes(client):
+    user = f.UserFactory.create()
+    task = f.create_task(owner=user)
+    f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
+    url = reverse("tasks-detail", args=(task.id,))
+
+    f.VotesFactory.create(content_object=task, count=5)
 
     client.login(user)
     response = client.get(url)
@@ -88,14 +90,14 @@ def test_get_issue_votes(client):
     assert response.data['votes'] == 5
 
 
-def test_get_issue_is_voted(client):
+def test_get_task_is_voted(client):
     user = f.UserFactory.create()
-    issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
-    f.VotesFactory.create(content_object=issue)
-    url_detail = reverse("issues-detail", args=(issue.id,))
-    url_upvote = reverse("issues-upvote", args=(issue.id,))
-    url_downvote = reverse("issues-downvote", args=(issue.id,))
+    task = f.create_task(owner=user)
+    f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
+    f.VotesFactory.create(content_object=task)
+    url_detail = reverse("tasks-detail", args=(task.id,))
+    url_upvote = reverse("tasks-upvote", args=(task.id,))
+    url_downvote = reverse("tasks-downvote", args=(task.id,))
 
     client.login(user)
 

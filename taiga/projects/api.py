@@ -44,15 +44,14 @@ from . import models
 from . import permissions
 from . import services
 
-from .votes import serializers as votes_serializers
-from .votes import services as votes_service
-from .votes.utils import attach_votescount_to_queryset
+from .votes.mixins.viewsets import StarredResourceMixin, VotersViewSetMixin
 
 ######################################################
 ## Project
 ######################################################
 
-class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
+class ProjectViewSet(StarredResourceMixin, HistoryResourceMixin, ModelCrudViewSet):
+    queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectDetailSerializer
     admin_serializer_class = serializers.ProjectDetailAdminSerializer
     list_serializer_class = serializers.ProjectSerializer
@@ -60,6 +59,10 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
     filter_backends = (filters.CanViewProjectObjFilterBackend,)
     filter_fields = (('member', 'members'),)
     order_by_fields = ("memberships__user_order",)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return self.attach_votes_attrs_to_queryset(qs)
 
     @list_route(methods=["POST"])
     def bulk_update_order(self, request, **kwargs):
@@ -73,10 +76,6 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
         data = serializer.data
         services.update_projects_order_in_bulk(data, "user_order", request.user)
         return response.NoContent(data=None)
-
-    def get_queryset(self):
-        qs = models.Project.objects.all()
-        return attach_votescount_to_queryset(qs, as_field="stars_count")
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -165,29 +164,6 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
         project = self.get_object()
         self.check_permissions(request, "tags_colors", project)
         return response.Ok(dict(project.tags_colors))
-
-    @detail_route(methods=["POST"])
-    def star(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "star", project)
-        votes_service.add_vote(project, user=request.user)
-        return response.Ok()
-
-    @detail_route(methods=["POST"])
-    def unstar(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "unstar", project)
-        votes_service.remove_vote(project, user=request.user)
-        return response.Ok()
-
-    @detail_route(methods=["GET"])
-    def fans(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "fans", project)
-
-        voters = votes_service.get_voters(project)
-        voters_data = votes_serializers.VoterSerializer(voters, many=True)
-        return response.Ok(voters_data.data)
 
     @detail_route(methods=["POST"])
     def create_template(self, request, **kwargs):
@@ -286,6 +262,10 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
         self.post_delete(obj)
         return response.NoContent()
 
+
+class ProjectFansViewSet(VotersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.ProjectFansPermission,)
+    resource_model = models.Project
 
 
 ######################################################

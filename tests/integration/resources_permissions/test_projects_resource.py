@@ -198,6 +198,25 @@ def test_project_action_stats(client, data):
     assert results == [404, 404, 200, 200]
 
 
+def test_project_action_issues_stats(client, data):
+    public_url = reverse('projects-issues-stats', kwargs={"pk": data.public_project.pk})
+    private1_url = reverse('projects-issues-stats', kwargs={"pk": data.private_project1.pk})
+    private2_url = reverse('projects-issues-stats', kwargs={"pk": data.private_project2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private1_url, None, users)
+    assert results == [200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private2_url, None, users)
+    assert results == [404, 404, 200, 200]
+
+
 def test_project_action_star(client, data):
     public_url = reverse('projects-star', kwargs={"pk": data.public_project.pk})
     private1_url = reverse('projects-star', kwargs={"pk": data.private_project1.pk})
@@ -236,29 +255,10 @@ def test_project_action_unstar(client, data):
     assert results == [404, 404, 200, 200]
 
 
-def test_project_action_issues_stats(client, data):
-    public_url = reverse('projects-issues-stats', kwargs={"pk": data.public_project.pk})
-    private1_url = reverse('projects-issues-stats', kwargs={"pk": data.private_project1.pk})
-    private2_url = reverse('projects-issues-stats', kwargs={"pk": data.private_project2.pk})
-
-    users = [
-        None,
-        data.registered_user,
-        data.project_member_with_perms,
-        data.project_owner
-    ]
-    results = helper_test_http_method(client, 'get', public_url, None, users)
-    assert results == [200, 200, 200, 200]
-    results = helper_test_http_method(client, 'get', private1_url, None, users)
-    assert results == [200, 200, 200, 200]
-    results = helper_test_http_method(client, 'get', private2_url, None, users)
-    assert results == [404, 404, 200, 200]
-
-
-def test_project_action_fans(client, data):
-    public_url = reverse('projects-fans', kwargs={"pk": data.public_project.pk})
-    private1_url = reverse('projects-fans', kwargs={"pk": data.private_project1.pk})
-    private2_url = reverse('projects-fans', kwargs={"pk": data.private_project2.pk})
+def test_project_fans_list(client, data):
+    public_url = reverse('project-fans-list', kwargs={"resource_id": data.public_project.pk})
+    private1_url = reverse('project-fans-list', kwargs={"resource_id": data.private_project1.pk})
+    private2_url = reverse('project-fans-list', kwargs={"resource_id": data.private_project2.pk})
 
     users = [
         None,
@@ -273,13 +273,16 @@ def test_project_action_fans(client, data):
     results = helper_test_http_method_and_count(client, 'get', private1_url, None, users)
     assert results == [(200, 2), (200, 2), (200, 2), (200, 2), (200, 2)]
     results = helper_test_http_method_and_count(client, 'get', private2_url, None, users)
-    assert results == [(404, 1), (404, 1), (404, 1), (200, 2), (200, 2)]
+    assert results == [(401, 0), (403, 0), (403, 0), (200, 2), (200, 2)]
 
 
-def test_user_action_starred(client, data):
-    url1 = reverse('users-starred', kwargs={"pk": data.project_member_without_perms.pk})
-    url2 = reverse('users-starred', kwargs={"pk": data.project_member_with_perms.pk})
-    url3 = reverse('users-starred', kwargs={"pk": data.project_owner.pk})
+def test_project_fans_retrieve(client, data):
+    public_url = reverse('project-fans-detail', kwargs={"resource_id": data.public_project.pk,
+                                                      "pk": data.project_owner.pk})
+    private1_url = reverse('project-fans-detail', kwargs={"resource_id": data.private_project1.pk,
+                                                      "pk": data.project_owner.pk})
+    private2_url = reverse('project-fans-detail', kwargs={"resource_id": data.private_project2.pk,
+                                                      "pk": data.project_owner.pk})
 
     users = [
         None,
@@ -289,12 +292,12 @@ def test_user_action_starred(client, data):
         data.project_owner
     ]
 
-    results = helper_test_http_method_and_count(client, 'get', url1, None, users)
-    assert results == [(200, 0), (200, 0), (200, 0), (200, 0), (200, 0)]
-    results = helper_test_http_method_and_count(client, 'get', url2, None, users)
-    assert results == [(200, 3), (200, 3), (200, 3), (200, 3), (200, 3)]
-    results = helper_test_http_method_and_count(client, 'get', url3, None, users)
-    assert results == [(200, 3), (200, 3), (200, 3), (200, 3), (200, 3)]
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private1_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private2_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_project_action_create_template(client, data):
