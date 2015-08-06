@@ -15,10 +15,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import datetime
+import logging
+import sys
 
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.utils import timezone
+
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
@@ -29,6 +32,8 @@ from taiga.celery import app
 from .service import project_to_dict
 from .dump_service import dict_to_project
 from .renderers import ExportRenderer
+
+logger = logging.getLogger('taiga.export_import')
 
 
 @app.task(bind=True)
@@ -52,6 +57,7 @@ def dump_project(self, user, project):
         }
         email = mbuilder.export_error(user, ctx)
         email.send()
+        logger.error('Error generating dump %s (by %s)', project.slug, user, exc_info=sys.exc_info())
         return
 
     deletion_date = timezone.now() + datetime.timedelta(seconds=settings.EXPORTS_TTL)
@@ -84,6 +90,7 @@ def load_project_dump(user, dump):
         }
         email = mbuilder.import_error(user, ctx)
         email.send()
+        logger.error('Error loading dump %s (by %s)', project.slug, user, exc_info=sys.exc_info())
         return
 
     ctx = {"user": user, "project": project}
