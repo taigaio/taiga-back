@@ -346,6 +346,11 @@ LOGGING = {
             "level": "ERROR",
             "propagate": False,
         },
+        "taiga.export_import": {
+            "handlers": ["mail_admins", "console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
         "taiga": {
             "handlers": ["console"],
             "level": "DEBUG",
