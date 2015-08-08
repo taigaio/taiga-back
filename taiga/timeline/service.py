@@ -122,7 +122,9 @@ def filter_timeline_for_user(timeline, user):
 
     # There is no specific permission for seeing new memberships
     membership_content_type = ContentType.objects.get(app_label="projects", model="membership")
-    tl_filter |= Q(project__is_private=True, data_content_type=membership_content_type)
+    tl_filter |= Q(project__is_private=True,
+                   project__anon_permissions__contains=["view_project"],
+                   data_content_type=membership_content_type)
 
     # Filtering private projects where user is member
     if not user.is_anonymous():
@@ -132,6 +134,7 @@ def filter_timeline_for_user(timeline, user):
             for content_type_key, content_type in content_types.items():
                 if content_type_key in membership.role.permissions or membership.is_owner:
                     tl_filter |= Q(project=membership.project, data_content_type=content_type)
+            tl_filter |= Q(project=membership.project, data_content_type=membership_content_type)
 
     timeline = timeline.filter(tl_filter)
     return timeline
