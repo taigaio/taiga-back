@@ -11,10 +11,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-03 11:09+0200\n"
-"PO-Revision-Date: 2015-08-01 03:51+0000\n"
-"Last-Translator: Chi-Hsun Tsai <chihsun.tsai@gmail.com>\n"
-"Language-Team: Chinese Traditional (http://www.transifex.com/projects/p/"
+"POT-Creation-Date: 2015-08-08 21:28+0200\n"
+"PO-Revision-Date: 2015-08-08 19:29+0000\n"
+"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"Language-Team: Chinese Traditional (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/zh-Hant/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -572,11 +572,11 @@ msgstr "包括無效慣例欄位"
 msgid "Name duplicated for the project"
 msgstr "專案的名稱被複製了"
 
-#: taiga/export_import/tasks.py:49 taiga/export_import/tasks.py:50
+#: taiga/export_import/tasks.py:54 taiga/export_import/tasks.py:55
 msgid "Error generating project dump"
 msgstr "產生專案傾倒時出錯"
 
-#: taiga/export_import/tasks.py:82 taiga/export_import/tasks.py:83
+#: taiga/export_import/tasks.py:88 taiga/export_import/tasks.py:89
 msgid "Error loading project dump"
 msgstr "載入專案傾倒時出錯"
 
@@ -895,8 +895,8 @@ msgstr ""
 msgid "The payload is not a valid json"
 msgstr "載荷為無效json"
 
-#: taiga/hooks/api.py:61 taiga/projects/issues/api.py:134
-#: taiga/projects/tasks/api.py:78 taiga/projects/userstories/api.py:103
+#: taiga/hooks/api.py:61 taiga/projects/issues/api.py:137
+#: taiga/projects/tasks/api.py:81 taiga/projects/userstories/api.py:106
 msgid "The project doesn't exist"
 msgstr "專案不存在"
 
@@ -1519,23 +1519,23 @@ msgstr "封鎖筆記"
 msgid "sprint"
 msgstr "衝刺任務"
 
-#: taiga/projects/issues/api.py:154
+#: taiga/projects/issues/api.py:157
 msgid "You don't have permissions to set this sprint to this issue."
 msgstr "您無權限設定此問題的衝刺任務"
 
-#: taiga/projects/issues/api.py:158
+#: taiga/projects/issues/api.py:161
 msgid "You don't have permissions to set this status to this issue."
 msgstr "您無權限設定此問題的狀態"
 
-#: taiga/projects/issues/api.py:162
+#: taiga/projects/issues/api.py:165
 msgid "You don't have permissions to set this severity to this issue."
 msgstr "您無權限設定此問題的嚴重性"
 
-#: taiga/projects/issues/api.py:166
+#: taiga/projects/issues/api.py:169
 msgid "You don't have permissions to set this priority to this issue."
 msgstr "您無權限設定此問題的優先性"
 
-#: taiga/projects/issues/api.py:170
+#: taiga/projects/issues/api.py:173
 msgid "You don't have permissions to set this type to this issue."
 msgstr "您無權限設定此問題的類型"
 
@@ -2636,15 +2636,15 @@ msgstr "未來之衝刺"
 msgid "Project End"
 msgstr "專案結束"
 
-#: taiga/projects/tasks/api.py:94 taiga/projects/tasks/api.py:103
+#: taiga/projects/tasks/api.py:97 taiga/projects/tasks/api.py:106
 msgid "You don't have permissions to set this sprint to this task."
 msgstr "無權限更動此任務下的衝刺任務"
 
-#: taiga/projects/tasks/api.py:97
+#: taiga/projects/tasks/api.py:100
 msgid "You don't have permissions to set this user story to this task."
 msgstr "無權限更動此務下的使用者故事"
 
-#: taiga/projects/tasks/api.py:100
+#: taiga/projects/tasks/api.py:103
 msgid "You don't have permissions to set this status to this task."
 msgstr "無權限更動此任務下的狀態"
 
@@ -3046,15 +3046,15 @@ msgstr "產品所有人"
 msgid "Stakeholder"
 msgstr "利害關係人"
 
-#: taiga/projects/userstories/api.py:150
+#: taiga/projects/userstories/api.py:153
 msgid "You don't have permissions to set this sprint to this user story."
 msgstr "無權限更動使用者故事的衝刺任務"
 
-#: taiga/projects/userstories/api.py:154
+#: taiga/projects/userstories/api.py:157
 msgid "You don't have permissions to set this status to this user story."
 msgstr "無權限更動此使用者故事的狀態"
 
-#: taiga/projects/userstories/api.py:248
+#: taiga/projects/userstories/api.py:251
 #, python-brace-format
 msgid ""
 "Generating the user story [US #{ref} - {subject}](:us:{ref} \"US #{ref} - "
@@ -3135,6 +3135,10 @@ msgstr "上次更改"
 #: taiga/projects/wiki/models.py:69
 msgid "href"
 msgstr "href"
+
+#: taiga/timeline/signals.py:88
+msgid "Check the history API for the exact diff"
+msgstr ""
 
 #: taiga/users/admin.py:50
 msgid "Personal info"

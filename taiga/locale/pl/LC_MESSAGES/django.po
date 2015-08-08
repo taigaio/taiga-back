@@ -8,10 +8,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-03 11:09+0200\n"
-"PO-Revision-Date: 2015-07-26 13:15+0000\n"
-"Last-Translator: Konrad Krawczuk <konrad.krawczuk@gmail.com>\n"
-"Language-Team: Polish (http://www.transifex.com/projects/p/taiga-back/"
+"POT-Creation-Date: 2015-08-08 21:28+0200\n"
+"PO-Revision-Date: 2015-08-08 19:29+0000\n"
+"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"Language-Team: Polish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -579,11 +579,11 @@ msgstr "Zawiera niewłaściwe pola niestandardowe."
 msgid "Name duplicated for the project"
 msgstr "Nazwa projektu zduplikowana"
 
-#: taiga/export_import/tasks.py:49 taiga/export_import/tasks.py:50
+#: taiga/export_import/tasks.py:54 taiga/export_import/tasks.py:55
 msgid "Error generating project dump"
 msgstr "Błąd w trakcie generowania zrzutu projektu"
 
-#: taiga/export_import/tasks.py:82 taiga/export_import/tasks.py:83
+#: taiga/export_import/tasks.py:88 taiga/export_import/tasks.py:89
 msgid "Error loading project dump"
 msgstr "Błąd w trakcie wczytywania zrzutu projektu"
 
@@ -909,8 +909,8 @@ msgstr ""
 msgid "The payload is not a valid json"
 msgstr "Źródło nie jest prawidłowym plikiem json"
 
-#: taiga/hooks/api.py:61 taiga/projects/issues/api.py:134
-#: taiga/projects/tasks/api.py:78 taiga/projects/userstories/api.py:103
+#: taiga/hooks/api.py:61 taiga/projects/issues/api.py:137
+#: taiga/projects/tasks/api.py:81 taiga/projects/userstories/api.py:106
 msgid "The project doesn't exist"
 msgstr "Projekt nie istnieje"
 
@@ -1537,23 +1537,23 @@ msgstr "zaglokowana notatka"
 msgid "sprint"
 msgstr "sprint"
 
-#: taiga/projects/issues/api.py:154
+#: taiga/projects/issues/api.py:157
 msgid "You don't have permissions to set this sprint to this issue."
 msgstr "Nie masz uprawnień do połączenia tego zgłoszenia ze sprintem."
 
-#: taiga/projects/issues/api.py:158
+#: taiga/projects/issues/api.py:161
 msgid "You don't have permissions to set this status to this issue."
 msgstr "Nie masz uprawnień do ustawienia statusu dla tego zgłoszenia."
 
-#: taiga/projects/issues/api.py:162
+#: taiga/projects/issues/api.py:165
 msgid "You don't have permissions to set this severity to this issue."
 msgstr "Nie masz uprawnień do ustawienia rygoru dla tego zgłoszenia."
 
-#: taiga/projects/issues/api.py:166
+#: taiga/projects/issues/api.py:169
 msgid "You don't have permissions to set this priority to this issue."
 msgstr "Nie masz uprawnień do ustawienia priorytetu dla tego zgłoszenia."
 
-#: taiga/projects/issues/api.py:170
+#: taiga/projects/issues/api.py:173
 msgid "You don't have permissions to set this type to this issue."
 msgstr "Nie masz uprawnień do ustawienia typu dla tego zgłoszenia."
 
@@ -2665,16 +2665,16 @@ msgstr "Przyszły sprint"
 msgid "Project End"
 msgstr "Zakończenie projektu"
 
-#: taiga/projects/tasks/api.py:94 taiga/projects/tasks/api.py:103
+#: taiga/projects/tasks/api.py:97 taiga/projects/tasks/api.py:106
 msgid "You don't have permissions to set this sprint to this task."
 msgstr "Nie masz uprawnień do ustawiania sprintu dla tego zadania."
 
-#: taiga/projects/tasks/api.py:97
+#: taiga/projects/tasks/api.py:100
 msgid "You don't have permissions to set this user story to this task."
 msgstr ""
 "Nie masz uprawnień do ustawiania historyjki użytkownika dla tego zadania"
 
-#: taiga/projects/tasks/api.py:100
+#: taiga/projects/tasks/api.py:103
 msgid "You don't have permissions to set this status to this task."
 msgstr "Nie masz uprawnień do ustawiania statusu dla tego zadania"
 
@@ -3085,17 +3085,17 @@ msgstr "Właściciel produktu"
 msgid "Stakeholder"
 msgstr "Interesariusz"
 
-#: taiga/projects/userstories/api.py:150
+#: taiga/projects/userstories/api.py:153
 msgid "You don't have permissions to set this sprint to this user story."
 msgstr ""
 "Nie masz uprawnień do ustawiania sprintu dla tej historyjki użytkownika."
 
-#: taiga/projects/userstories/api.py:154
+#: taiga/projects/userstories/api.py:157
 msgid "You don't have permissions to set this status to this user story."
 msgstr ""
 "Nie masz uprawnień do ustawiania statusu do tej historyjki użytkownika."
 
-#: taiga/projects/userstories/api.py:248
+#: taiga/projects/userstories/api.py:251
 #, python-brace-format
 msgid ""
 "Generating the user story [US #{ref} - {subject}](:us:{ref} \"US #{ref} - "
@@ -3177,6 +3177,10 @@ msgstr "ostatnio zmodyfikowane przez"
 #: taiga/projects/wiki/models.py:69
 msgid "href"
 msgstr "href"
+
+#: taiga/timeline/signals.py:88
+msgid "Check the history API for the exact diff"
+msgstr ""
 
 #: taiga/users/admin.py:50
 msgid "Personal info"
