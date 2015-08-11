@@ -25,3 +25,4 @@ answer newbie questions, and generally made taiga that much better:
 - Julien Palard
 - Ricky Posner <e@eposner.com>
 - Yamila Moreno <yamila.moreno@kaleidos.net>
+- Brett Profitt <brett.profitt@gmail.com>

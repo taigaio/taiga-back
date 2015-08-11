@@ -15,6 +15,7 @@
 - Project can be starred or unstarred and the fans list can be obtained.
 - Now users can watch public issues, tasks and user stories.
 - Add endpoints to show the watchers list for issues, tasks and user stories.
+- Add headers to allow threading for notification emails about changes to issues, tasks, user stories, and wiki pages. (thanks to [@brett](https://github.com/brettp)).
 - i18n.
   - Add polish (pl) translation.
   - Add portuguese (Brazil) (pt_BR) translation.
