@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-08-08 21:28+0200\n"
-"PO-Revision-Date: 2015-08-08 19:29+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"PO-Revision-Date: 2015-08-12 18:09+0000\n"
+"Last-Translator: Konrad Krawczuk <konrad.krawczuk@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -1547,7 +1547,7 @@ msgstr "Nie masz uprawnień do ustawienia statusu dla tego zgłoszenia."
 
 #: taiga/projects/issues/api.py:165
 msgid "You don't have permissions to set this severity to this issue."
-msgstr "Nie masz uprawnień do ustawienia rygoru dla tego zgłoszenia."
+msgstr "Nie masz uprawnień do ustawienia ważności dla tego zgłoszenia."
 
 #: taiga/projects/issues/api.py:169
 msgid "You don't have permissions to set this priority to this issue."
@@ -1569,7 +1569,7 @@ msgstr "status"
 
 #: taiga/projects/issues/models.py:42
 msgid "severity"
-msgstr "rygor"
+msgstr "ważność"
 
 #: taiga/projects/issues/models.py:44
 msgid "priority"
@@ -1686,7 +1686,7 @@ msgstr "domyślny priorytet"
 
 #: taiga/projects/models.py:107
 msgid "default severity"
-msgstr "domyślny rygor"
+msgstr "domyślna ważność"
 
 #: taiga/projects/models.py:111
 msgid "default issue status"
@@ -1810,7 +1810,7 @@ msgstr "priorytety"
 
 #: taiga/projects/models.py:590
 msgid "severities"
-msgstr "rygory"
+msgstr "ważność"
 
 #: taiga/projects/models.py:591
 msgid "roles"
@@ -2651,7 +2651,7 @@ msgstr "Priorytety"
 
 #: taiga/projects/serializers.py:412
 msgid "Severities"
-msgstr "Rygory"
+msgstr "Ważność"
 
 #: taiga/projects/serializers.py:413
 msgid "Roles"

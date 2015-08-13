@@ -4,6 +4,7 @@
 #
 # Translators:
 # Chris <christian.lenz@gmx.net>, 2015
+# Christoph Harrer, 2015
 # Hans Raaf, 2015
 # Hans Raaf, 2015
 # Regina <r.raaf@metatexx.de>, 2015
@@ -14,8 +15,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-08-08 21:28+0200\n"
-"PO-Revision-Date: 2015-08-08 19:29+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"PO-Revision-Date: 2015-08-12 11:36+0000\n"
+"Last-Translator: Christoph Harrer\n"
 "Language-Team: German (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -2705,6 +2706,7 @@ msgstr ""
 #: taiga/projects/tasks/api.py:103
 msgid "You don't have permissions to set this status to this task."
 msgstr ""
+"Sie haben nicht die Berechtigung, diesen Status auf diese Aufgabe zu setzen."
 
 #: taiga/projects/tasks/models.py:56
 msgid "us order"
@@ -3100,10 +3102,14 @@ msgstr "Stakeholder"
 #: taiga/projects/userstories/api.py:153
 msgid "You don't have permissions to set this sprint to this user story."
 msgstr ""
+"Sie haben nicht die Berechtigung, diesen Sprint auf diese User-Story zu "
+"setzen."
 
 #: taiga/projects/userstories/api.py:157
 msgid "You don't have permissions to set this status to this user story."
 msgstr ""
+"Sie haben nicht die Berechtigung, diesen Status auf diese User-Story zu "
+"setzen."
 
 #: taiga/projects/userstories/api.py:251
 #, python-brace-format
