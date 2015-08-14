@@ -26,6 +26,7 @@ from taiga.projects.history.services import make_key_from_model_object, take_sna
 from taiga.timeline.service import build_project_namespace
 from taiga.projects.references import sequences as seq
 from taiga.projects.references import models as refs
+from taiga.projects.userstories.models import RolePoints
 from taiga.projects.services import find_invited_user
 
 from . import serializers
@@ -351,9 +352,17 @@ def store_wiki_link(project, wiki_link):
 def store_role_point(project, us, role_point):
     serialized = serializers.RolePointsExportSerializer(data=role_point, context={"project": project})
     if serialized.is_valid():
-        serialized.object.user_story = us
-        serialized.save()
-        return serialized.object
+        try:
+            existing_role_point = us.role_points.get(role=serialized.object.role)
+            existing_role_point.points = serialized.object.points
+            existing_role_point.save()
+            return existing_role_point
+
+        except RolePoints.DoesNotExist:
+            serialized.object.user_story = us
+            serialized.save()
+            return serialized.object
+
     add_errors("role_points", serialized.errors)
     return None
 
