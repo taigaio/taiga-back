@@ -17,6 +17,8 @@
 from django.contrib import admin
 
 from taiga.projects.attachments.admin import AttachmentInline
+from taiga.projects.notifications.admin import WatchedInline
+from taiga.projects.votes.admin import VoteInline
 
 from . import models
 
@@ -41,7 +43,7 @@ class UserStoryAdmin(admin.ModelAdmin):
     list_display = ["project", "milestone",  "ref", "subject",]
     list_display_links = ["ref", "subject",]
     list_filter = ["project"]
-    inlines = [RolePointsInline]
+    inlines = [RolePointsInline, WatchedInline, VoteInline]
 
     def get_object(self, *args, **kwargs):
         self.obj = super().get_object(*args, **kwargs)

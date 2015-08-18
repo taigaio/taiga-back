@@ -17,7 +17,10 @@
 from django.contrib import admin
 
 from taiga.projects.milestones.admin import MilestoneInline
+from taiga.projects.notifications.admin import WatchedInline
+from taiga.projects.votes.admin import VoteInline
 from taiga.users.admin import RoleInline
+
 from . import models
 
 class MembershipAdmin(admin.ModelAdmin):
@@ -35,7 +38,7 @@ class ProjectAdmin(admin.ModelAdmin):
     list_display = ["name", "owner", "created_date", "total_milestones",
                     "total_story_points"]
     list_display_links = list_display
-    inlines = [RoleInline, MembershipInline, MilestoneInline]
+    inlines = [RoleInline, MembershipInline, MilestoneInline, WatchedInline, VoteInline]
 
     def get_object(self, *args, **kwargs):
         self.obj = super().get_object(*args, **kwargs)

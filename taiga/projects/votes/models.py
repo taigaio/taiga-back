@@ -63,4 +63,4 @@ class Vote(models.Model):
         return None
 
     def __str__(self):
-        return self.user
+        return self.user.get_full_name()

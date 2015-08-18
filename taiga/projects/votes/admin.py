@@ -15,24 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-from taiga.projects.notifications.admin import WatchedInline
-from taiga.projects.votes.admin import VoteInline
+from django.contrib.contenttypes.admin import GenericTabularInline
 
 from . import models
 
 
-class MilestoneInline(admin.TabularInline):
-    model = models.Milestone
+class VoteInline(GenericTabularInline):
+    model = models.Vote
     extra = 0
-
-
-class MilestoneAdmin(admin.ModelAdmin):
-    list_display = ["name", "project", "owner", "closed", "estimated_start",
-                    "estimated_finish"]
-    list_display_links = list_display
-    list_filter = ["project"]
-    readonly_fields = ["owner"]
-    inlines = [WatchedInline, VoteInline]
-
-
-admin.site.register(models.Milestone, MilestoneAdmin)
