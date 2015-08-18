@@ -114,6 +114,33 @@ class UsersViewSet(ModelCrudViewSet):
         self.check_permissions(request, "stats", user)
         return response.Ok(services.get_stats_for_user(user, request.user))
 
+    @detail_route(methods=["GET"])
+    def favourites(self, request, *args, **kwargs):
+        for_user = get_object_or_404(models.User, **kwargs)
+        from_user = request.user
+        self.check_permissions(request, 'favourites', for_user)
+        filters = {
+            "type": request.GET.get("type", None),
+            "action": request.GET.get("action", None),
+            "q": request.GET.get("q", None),
+        }
+
+        self.object_list = services.get_favourites_list(for_user, from_user, **filters)
+        page = self.paginate_queryset(self.object_list)
+
+        extra_args = {
+            "many": True,
+            "user_votes": services.get_voted_content_for_user(request.user),
+            "user_watching": services.get_watched_content_for_user(request.user),
+        }
+
+        if page is not None:
+            serializer = serializers.FavouriteSerializer(page.object_list, **extra_args)
+        else:
+            serializer = serializers.FavouriteSerializer(self.object_list, **extra_args)
+
+        return response.Ok(serializer.data)
+
     @list_route(methods=["POST"])
     def password_recovery(self, request, pk=None):
         username_or_email = request.DATA.get('username', None)
