@@ -42,3 +42,10 @@ class TaskVotersPermission(TaigaResourcePermission):
     global_perms = None
     retrieve_perms = HasProjectPerm('view_tasks')
     list_perms = HasProjectPerm('view_tasks')
+
+
+class TaskWatchersPermission(TaigaResourcePermission):
+    enought_perms = IsProjectOwner() | IsSuperUser()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_tasks')
+    list_perms = HasProjectPerm('view_tasks')

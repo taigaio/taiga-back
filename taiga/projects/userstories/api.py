@@ -31,7 +31,7 @@ from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.models import Project, UserStoryStatus
@@ -269,4 +269,9 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
 
 class UserStoryVotersViewSet(VotersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.UserStoryVotersPermission,)
+    resource_model = models.UserStory
+
+
+class UserStoryWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.UserStoryWatchersPermission,)
     resource_model = models.UserStory

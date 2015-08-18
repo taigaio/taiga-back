@@ -19,17 +19,21 @@ from operator import is_not
 
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.base import response
 from taiga.base.decorators import detail_route
 from taiga.base.api import serializers
+from taiga.base.api.utils import get_object_or_404
 from taiga.base.fields import WatchersField
 from taiga.projects.notifications import services
 from taiga.projects.notifications.utils import attach_watchers_to_queryset, attach_is_watched_to_queryset
 from taiga.users.models import User
 from . import models
+from . serializers import WatcherSerializer
+
 
 
 class WatchedResourceMixin:
@@ -121,7 +125,6 @@ class WatchedModelMixin(object):
         that should works in almost all cases.
         """
         return self.project
-        t
 
     def get_watchers(self) -> frozenset:
         """
@@ -138,6 +141,9 @@ class WatchedModelMixin(object):
         this momment is the simplest way.
         """
         return frozenset(services.get_watchers(self))
+
+    def get_watched(self, user_or_id):
+        return services.get_watched(user_or_id, type(self))
 
     def add_watcher(self, user):
         services.add_watcher(self, user)
@@ -209,7 +215,7 @@ class WatchedResourceModelSerializer(serializers.ModelSerializer):
     def to_native(self, obj):
         #watchers is wasn't attached via the get_queryset of the viewset we need to manually add it
         if not hasattr(obj, "watchers"):
-            obj.watchers = services.get_watchers(obj)
+            obj.watchers = [user.id for user in services.get_watchers(obj)]
 
         return super(WatchedResourceModelSerializer, self).to_native(obj)
 

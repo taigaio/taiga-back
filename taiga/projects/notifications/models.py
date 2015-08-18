@@ -22,7 +22,7 @@ from django.utils import timezone
 
 from taiga.projects.history.choices import HISTORY_TYPE_CHOICES
 
-from .choices import NOTIFY_LEVEL_CHOICES
+from .choices import NOTIFY_LEVEL_CHOICES, NotifyLevel
 
 
 class NotifyPolicy(models.Model):
@@ -84,8 +84,9 @@ class Watched(models.Model):
                               related_name="watched", verbose_name=_("user"))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
                                         verbose_name=_("created date"))
-
+    project = models.ForeignKey("projects.Project", null=False, blank=False,
+                                verbose_name=_("project"),related_name="watched")
     class Meta:
         verbose_name = _("Watched")
         verbose_name_plural = _("Watched")
-        unique_together = ("content_type", "object_id", "user")
+        unique_together = ("content_type", "object_id", "user", "project")

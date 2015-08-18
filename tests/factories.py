@@ -441,6 +441,17 @@ class VotesFactory(Factory):
     object_id = factory.Sequence(lambda n: n)
 
 
+class WatchedFactory(Factory):
+    class Meta:
+        model = "notifications.Watched"
+        strategy = factory.CREATE_STRATEGY
+
+    content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
+    object_id = factory.Sequence(lambda n: n)
+    user = factory.SubFactory("tests.factories.UserFactory")
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
 class ContentTypeFactory(Factory):
     class Meta:
         model = "contenttypes.ContentType"

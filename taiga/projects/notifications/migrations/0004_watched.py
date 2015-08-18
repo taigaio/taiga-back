@@ -5,10 +5,6 @@ from django.db import models, migrations
 from django.conf import settings
 
 
-def fill_watched_table(apps, schema_editor):
-    Watched = apps.get_model("notifications", "Watched")
-    print("test")
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -21,15 +17,22 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Watched',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('object_id', models.PositiveIntegerField()),
                 ('created_date', models.DateTimeField(verbose_name='created date', auto_now_add=True)),
                 ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
                 ('user', models.ForeignKey(related_name='watched', verbose_name='user', to=settings.AUTH_USER_MODEL)),
+                ('project', models.ForeignKey(to='projects.Project', verbose_name='project', related_name='watched')),
+
             ],
             options={
+                'verbose_name': 'Watched',
+                'verbose_name_plural': 'Watched',
             },
             bases=(models.Model,),
         ),
-        migrations.RunPython(fill_watched_table),
+        migrations.AlterUniqueTogether(
+            name='watched',
+            unique_together=set([('content_type', 'object_id', 'user', 'project')]),
+        ),
     ]

@@ -75,6 +75,13 @@ class ProjectFansPermission(TaigaResourcePermission):
     list_perms = HasProjectPerm('view_project')
 
 
+class ProjectWatchersPermission(TaigaResourcePermission):
+    enought_perms = IsProjectOwner() | IsSuperUser()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_project')
+    list_perms = HasProjectPerm('view_project')
+
+
 class MembershipPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()

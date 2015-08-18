@@ -31,7 +31,7 @@ from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.slug import slugify_uniquely
 
 from taiga.projects.history.mixins import HistoryResourceMixin
-from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 
@@ -269,6 +269,10 @@ class ProjectFansViewSet(VotersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.ProjectFansPermission,)
     resource_model = models.Project
 
+
+class ProjectWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.ProjectWatchersPermission,)
+    resource_model = models.Project
 
 ######################################################
 ## Custom values for selectors

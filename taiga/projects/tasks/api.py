@@ -24,7 +24,7 @@ from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.projects.models import Project, TaskStatus
 from django.http import HttpResponse
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
@@ -176,4 +176,9 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
 
 class TaskVotersViewSet(VotersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.TaskVotersPermission,)
+    resource_model = models.Task
+
+
+class TaskWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.TaskWatchersPermission,)
     resource_model = models.Task

@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db import connection
 from django.db import models, migrations
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.management import update_all_contenttypes
 
 def create_notifications(apps, schema_editor):
-    update_all_contenttypes() 
-    migrations.RunSQL(sql="""
-INSERT INTO notifications_watched (object_id, created_date, content_type_id, user_id)
-SELECT userstory_id AS object_id, now() AS created_date, {content_type_id} AS content_type_id, user_id
-FROM userstories_userstory_watchers""".format(content_type_id=ContentType.objects.get(model='userstory').id)),
+    update_all_contenttypes()
+    sql="""
+INSERT INTO notifications_watched (object_id, created_date, content_type_id, user_id, project_id)
+SELECT userstory_id AS object_id, now() AS created_date, {content_type_id} AS content_type_id, user_id, project_id
+FROM userstories_userstory_watchers INNER JOIN userstories_userstory ON userstories_userstory_watchers.userstory_id = userstories_userstory.id""".format(content_type_id=ContentType.objects.get(model='userstory').id)
+    cursor = connection.cursor()
+    cursor.execute(sql)
 
 
 class Migration(migrations.Migration):

@@ -17,7 +17,6 @@
 from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
-
 from taiga.base.utils import json
 from taiga.projects.notifications.mixins import WatchedResourceModelSerializer
 from taiga.projects.notifications.validators import WatchersValidator

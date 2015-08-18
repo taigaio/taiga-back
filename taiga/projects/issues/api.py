@@ -27,7 +27,7 @@ from taiga.base.api.utils import get_object_or_404
 
 from taiga.users.models import User
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 
@@ -242,4 +242,9 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
 
 class IssueVotersViewSet(VotersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.IssueVotersPermission,)
+    resource_model = models.Issue
+
+
+class IssueWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.IssueWatchersPermission,)
     resource_model = models.Issue

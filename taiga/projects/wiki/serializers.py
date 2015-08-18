@@ -22,10 +22,6 @@ from taiga.mdrender.service import render as mdrender
 
 from . import models
 
-from taiga.projects.history import services as history_service
-
-from taiga.mdrender.service import render as mdrender
-
 
 class WikiPageSerializer(WatchersValidator, WatchedResourceModelSerializer, serializers.ModelSerializer):
     html = serializers.SerializerMethodField("get_html")

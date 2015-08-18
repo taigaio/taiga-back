@@ -81,6 +81,13 @@ def data():
     f.VotesFactory(content_type=project_ct, object_id=m.private_project1.pk, count=2)
     f.VotesFactory(content_type=project_ct, object_id=m.private_project2.pk, count=2)
 
+    f.WatchedFactory(content_type=project_ct, object_id=m.public_project.pk, user=m.project_member_with_perms)
+    f.WatchedFactory(content_type=project_ct, object_id=m.public_project.pk, user=m.project_owner)
+    f.WatchedFactory(content_type=project_ct, object_id=m.private_project1.pk, user=m.project_member_with_perms)
+    f.WatchedFactory(content_type=project_ct, object_id=m.private_project1.pk, user=m.project_owner)
+    f.WatchedFactory(content_type=project_ct, object_id=m.private_project2.pk, user=m.project_member_with_perms)
+    f.WatchedFactory(content_type=project_ct, object_id=m.private_project2.pk, user=m.project_owner)
+
     return m
 
 
@@ -109,6 +116,7 @@ def test_project_update(client, data):
 
     project_data = ProjectDetailSerializer(data.private_project2).data
     project_data["is_private"] = False
+
     project_data = json.dumps(project_data)
 
     users = [
@@ -282,6 +290,51 @@ def test_project_fans_retrieve(client, data):
     private1_url = reverse('project-fans-detail', kwargs={"resource_id": data.private_project1.pk,
                                                       "pk": data.project_owner.pk})
     private2_url = reverse('project-fans-detail', kwargs={"resource_id": data.private_project2.pk,
+                                                      "pk": data.project_owner.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private1_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private2_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_project_watchers_list(client, data):
+    public_url = reverse('project-watchers-list', kwargs={"resource_id": data.public_project.pk})
+    private1_url = reverse('project-watchers-list', kwargs={"resource_id": data.private_project1.pk})
+    private2_url = reverse('project-watchers-list', kwargs={"resource_id": data.private_project2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method_and_count(client, 'get', public_url, None, users)
+    assert results == [(200, 2), (200, 2), (200, 2), (200, 2), (200, 2)]
+    results = helper_test_http_method_and_count(client, 'get', private1_url, None, users)
+    assert results == [(200, 2), (200, 2), (200, 2), (200, 2), (200, 2)]
+    results = helper_test_http_method_and_count(client, 'get', private2_url, None, users)
+    assert results == [(401, 0), (403, 0), (403, 0), (200, 2), (200, 2)]
+
+
+def test_project_watchers_retrieve(client, data):
+    public_url = reverse('project-watchers-detail', kwargs={"resource_id": data.public_project.pk,
+                                                      "pk": data.project_owner.pk})
+    private1_url = reverse('project-watchers-detail', kwargs={"resource_id": data.private_project1.pk,
+                                                      "pk": data.project_owner.pk})
+    private2_url = reverse('project-watchers-detail', kwargs={"resource_id": data.private_project2.pk,
                                                       "pk": data.project_owner.pk})
 
     users = [

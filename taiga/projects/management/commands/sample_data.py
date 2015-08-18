@@ -37,6 +37,7 @@ from taiga.projects.wiki.models import *
 from taiga.projects.attachments.models import *
 from taiga.projects.custom_attributes.models import *
 from taiga.projects.history.services import take_snapshot
+from taiga.projects.votes.services import add_vote
 from taiga.events.apps import disconnect_events_signals
 
 
@@ -97,7 +98,8 @@ NUM_TASKS = getattr(settings, "SAMPLE_DATA_NUM_TASKS", (0, 4))
 NUM_USS_BACK = getattr(settings, "SAMPLE_DATA_NUM_USS_BACK", (8, 20))
 NUM_ISSUES = getattr(settings, "SAMPLE_DATA_NUM_ISSUES", (12, 25))
 NUM_ATTACHMENTS = getattr(settings, "SAMPLE_DATA_NUM_ATTACHMENTS", (0, 4))
-
+NUM_VOTES = getattr(settings, "SAMPLE_DATA_NUM_VOTES", (0, 3))
+NUM_PROJECT_WATCHERS = getattr(settings, "SAMPLE_DATA_NUM_PROJECT_WATCHERS", (0, 3))
 
 class Command(BaseCommand):
     sd = SampleDataHelper(seed=12345678901)
@@ -215,6 +217,7 @@ class Command(BaseCommand):
             project.total_story_points = int(defined_points * self.sd.int(5,12) / 10)
             project.save()
 
+            self.create_votes(project, project)
 
     def create_attachment(self, obj, order):
         attached_file = self.sd.file_from_directory(*ATTACHMENT_SAMPLE_DATA)
@@ -287,7 +290,7 @@ class Command(BaseCommand):
             bug.save()
 
         watching_user = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
-        bug.watchers.add(watching_user)
+        bug.add_watcher(watching_user)
 
         take_snapshot(bug,
                       comment=self.sd.paragraph(),
@@ -300,6 +303,7 @@ class Command(BaseCommand):
               comment=self.sd.paragraph(),
               user=bug.owner)
 
+        self.create_votes(bug, project)
         return bug
 
     def create_task(self, project, milestone, us, min_date, max_date, closed=False):
@@ -338,7 +342,7 @@ class Command(BaseCommand):
                       user=task.owner)
 
         watching_user = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
-        task.watchers.add(watching_user)
+        task.add_watcher(watching_user)
 
         # Add history entry
         task.status=self.sd.db_object_from_queryset(project.task_statuses.all())
@@ -347,6 +351,7 @@ class Command(BaseCommand):
               comment=self.sd.paragraph(),
               user=task.owner)
 
+        self.create_votes(task, project)
         return task
 
     def create_us(self, project, milestone=None, computable_project_roles=[]):
@@ -387,7 +392,7 @@ class Command(BaseCommand):
             us.save()
 
         watching_user = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
-        us.watchers.add(watching_user)
+        us.add_watcher(watching_user)
 
         take_snapshot(us,
                       comment=self.sd.paragraph(),
@@ -400,6 +405,7 @@ class Command(BaseCommand):
               comment=self.sd.paragraph(),
               user=us.owner)
 
+        self.create_votes(us, project)
         return us
 
     def create_milestone(self, project, start_date, end_date):
@@ -434,6 +440,11 @@ class Command(BaseCommand):
         project.is_kanban_activated = True
         project.save()
         take_snapshot(project, user=project.owner)
+
+        for i in range(self.sd.int(*NUM_PROJECT_WATCHERS)):
+            watching_user = self.sd.db_object_from_queryset(User.objects.all())
+            project.add_watcher(watching_user)
+
         return project
 
     def create_user(self, counter=None, username=None, full_name=None, email=None):
@@ -452,3 +463,8 @@ class Command(BaseCommand):
         user.save()
 
         return user
+
+    def create_votes(self, obj, project):
+        for i in range(self.sd.int(*NUM_VOTES)):
+            voting_user=self.sd.db_object_from_queryset(project.members.all())
+            add_vote(obj, voting_user)

@@ -27,7 +27,7 @@ from taiga.base.utils import db, text
 from taiga.projects.issues.apps import (
     connect_issues_signals,
     disconnect_issues_signals)
-
+from taiga.projects.votes import services as votes_services
 from . import models
 
 
@@ -84,7 +84,8 @@ def issues_to_csv(project, queryset):
     fieldnames = ["ref", "subject", "description", "milestone", "owner",
                   "owner_full_name", "assigned_to", "assigned_to_full_name",
                   "status", "severity", "priority", "type", "is_closed",
-                  "attachments", "external_reference", "tags"]
+                  "attachments", "external_reference", "tags",
+                  "watchers", "voters"]
     for custom_attr in project.issuecustomattributes.all():
         fieldnames.append(custom_attr.name)
 
@@ -108,6 +109,8 @@ def issues_to_csv(project, queryset):
             "attachments": issue.attachments.count(),
             "external_reference": issue.external_reference,
             "tags": ",".join(issue.tags or []),
+            "watchers": [u.id for u in issue.get_watchers()],
+            "voters": votes_services.get_voters(issue).count(),
         }
 
         for custom_attr in project.issuecustomattributes.all():

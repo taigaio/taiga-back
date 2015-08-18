@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
+import json
 from django.core.urlresolvers import reverse
 
 from .. import factories as f
@@ -45,3 +46,78 @@ def test_unwatch_issue(client):
     response = client.post(url)
 
     assert response.status_code == 200
+
+
+def test_list_issue_watchers(client):
+    user = f.UserFactory.create()
+    issue = f.IssueFactory(owner=user)
+    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
+    f.WatchedFactory.create(content_object=issue, user=user)
+    url = reverse("issue-watchers-list", args=(issue.id,))
+
+    client.login(user)
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert response.data[0]['id'] == user.id
+
+
+def test_get_issue_watcher(client):
+    user = f.UserFactory.create()
+    issue = f.IssueFactory(owner=user)
+    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
+    watch = f.WatchedFactory.create(content_object=issue, user=user)
+    url = reverse("issue-watchers-detail", args=(issue.id, watch.user.id))
+
+    client.login(user)
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert response.data['id'] == watch.user.id
+
+
+def test_get_issue_watchers(client):
+    user = f.UserFactory.create()
+    issue = f.IssueFactory(owner=user)
+    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
+    url = reverse("issues-detail", args=(issue.id,))
+
+    f.WatchedFactory.create(content_object=issue, user=user)
+
+    client.login(user)
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert response.data['watchers'] == [user.id]
+
+
+def test_get_issue_is_watched(client):
+    user = f.UserFactory.create()
+    issue = f.IssueFactory(owner=user)
+    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
+    url_detail = reverse("issues-detail", args=(issue.id,))
+    url_watch = reverse("issues-watch", args=(issue.id,))
+    url_unwatch = reverse("issues-unwatch", args=(issue.id,))
+
+    client.login(user)
+
+    response = client.get(url_detail)
+    assert response.status_code == 200
+    assert response.data['watchers'] == []
+    assert response.data['is_watched'] == False
+
+    response = client.post(url_watch)
+    assert response.status_code == 200
+
+    response = client.get(url_detail)
+    assert response.status_code == 200
+    assert response.data['watchers'] == [user.id]
+    assert response.data['is_watched'] == True
+
+    response = client.post(url_unwatch)
+    assert response.status_code == 200
+
+    response = client.get(url_detail)
+    assert response.status_code == 200
+    assert response.data['watchers'] == []
+    assert response.data['is_watched'] == False

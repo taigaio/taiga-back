@@ -17,10 +17,10 @@
 from taiga.base import filters
 from taiga.base import response
 from taiga.base.decorators import detail_route
-from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 
 
@@ -36,9 +36,11 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
     permission_classes = (permissions.MilestonePermission,)
     filter_backends = (filters.CanViewMilestonesFilterBackend,)
     filter_fields = ("project", "closed")
+    queryset = models.Milestone.objects.all()
 
     def get_queryset(self):
-        qs = models.Milestone.objects.all()
+        qs = super().get_queryset()
+        qs = self.attach_watchers_attrs_to_queryset(qs)
         qs = qs.prefetch_related("user_stories",
                                  "user_stories__role_points",
                                  "user_stories__role_points__points",
@@ -91,3 +93,8 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
             optimal_points -= optimal_points_per_day
 
         return response.Ok(milestone_stats)
+
+
+class MilestoneWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.MilestoneWatchersPermission,)
+    resource_model = models.Milestone

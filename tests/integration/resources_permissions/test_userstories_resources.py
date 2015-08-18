@@ -10,6 +10,7 @@ from taiga.projects.occ import OCCResourceMixin
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
 from taiga.projects.votes.services import add_vote
+from taiga.projects.notifications.services import add_watcher
 
 from unittest import mock
 
@@ -570,3 +571,51 @@ def test_user_story_action_unwatch(client, data):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
     assert results == [404, 404, 404, 200, 200]
+
+
+def test_userstory_watchers_list(client, data):
+    public_url = reverse('userstory-watchers-list', kwargs={"resource_id": data.public_user_story.pk})
+    private_url1 = reverse('userstory-watchers-list', kwargs={"resource_id": data.private_user_story1.pk})
+    private_url2 = reverse('userstory-watchers-list', kwargs={"resource_id": data.private_user_story2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_userstory_watchers_retrieve(client, data):
+    add_watcher(data.public_user_story, data.project_owner)
+    public_url = reverse('userstory-watchers-detail', kwargs={"resource_id": data.public_user_story.pk,
+                                                            "pk": data.project_owner.pk})
+    add_watcher(data.private_user_story1, data.project_owner)
+    private_url1 = reverse('userstory-watchers-detail', kwargs={"resource_id": data.private_user_story1.pk,
+                                                              "pk": data.project_owner.pk})
+    add_watcher(data.private_user_story2, data.project_owner)
+    private_url2 = reverse('userstory-watchers-detail', kwargs={"resource_id": data.private_user_story2.pk,
+                                                              "pk": data.project_owner.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]

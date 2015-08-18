@@ -14,12 +14,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='project',
-            name='watchers',
-            field=models.ManyToManyField(blank=True, to=settings.AUTH_USER_MODEL, related_name='projects_project+', null=True, verbose_name='watchers'),
-            preserve_default=True,
-        ),
         migrations.AlterField(
             model_name='project',
             name='public_permissions',

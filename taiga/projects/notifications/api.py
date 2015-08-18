@@ -19,8 +19,9 @@ from django.db.models import Q
 from taiga.base.api import ModelCrudViewSet
 
 from taiga.projects.notifications.choices import NotifyLevel
+from taiga.projects.notifications.models import Watched
 from taiga.projects.models import Project
-
+from taiga.users import services as user_services
 from . import serializers
 from . import models
 from . import permissions
@@ -32,9 +33,13 @@ class NotifyPolicyViewSet(ModelCrudViewSet):
     permission_classes = (permissions.NotifyPolicyPermission,)
 
     def _build_needed_notify_policies(self):
+        watched_content = user_services.get_watched_content_for_user(self.request.user)
+        watched_content_project_ids = watched_content.values_list("project__id", flat=True).distinct()
+
         projects = Project.objects.filter(
             Q(owner=self.request.user) |
-            Q(memberships__user=self.request.user)
+            Q(memberships__user=self.request.user) |
+            Q(id__in=watched_content_project_ids)
         ).distinct()
 
         for project in projects:
@@ -45,5 +50,14 @@ class NotifyPolicyViewSet(ModelCrudViewSet):
             return models.NotifyPolicy.objects.none()
 
         self._build_needed_notify_policies()
-        qs = models.NotifyPolicy.objects.filter(user=self.request.user)
-        return qs.distinct()
+
+        # With really want to include the policies related to any content:
+        # - The user is the owner of the project
+        # - The user is member of the project
+        # - The user is watching any object from the project
+        watched_content = user_services.get_watched_content_for_user(self.request.user)
+        watched_content_project_ids = watched_content.values_list("project__id", flat=True).distinct()
+        return models.NotifyPolicy.objects.filter(Q(project__owner=self.request.user) |
+            Q(project__memberships__user=self.request.user) |
+            Q(project__id__in=watched_content_project_ids)
+        ).distinct()
