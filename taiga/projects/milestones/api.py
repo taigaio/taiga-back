@@ -44,9 +44,7 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
                                  "user_stories__role_points__points",
                                  "user_stories__role_points__role",
                                  "user_stories__generated_from_issue",
-                                 "user_stories__project",
-                                 "watchers",
-                                 "user_stories__watchers")
+                                 "user_stories__project")
         qs = qs.select_related("project")
         qs = qs.order_by("-estimated_start")
         return qs

@@ -32,7 +32,8 @@ class UserStoryPermission(TaigaResourcePermission):
     bulk_update_order_perms = HasProjectPerm('modify_us')
     upvote_perms = IsAuthenticated() & HasProjectPerm('view_us')
     downvote_perms = IsAuthenticated() & HasProjectPerm('view_us')
-
+    watch_perms = IsAuthenticated() & HasProjectPerm('view_us')
+    unwatch_perms = IsAuthenticated() & HasProjectPerm('view_us')
 
 class UserStoryVotersPermission(TaigaResourcePermission):
     enought_perms = IsProjectOwner() | IsSuperUser()

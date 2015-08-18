@@ -33,6 +33,8 @@ class TaskPermission(TaigaResourcePermission):
     bulk_update_order_perms = HasProjectPerm('modify_task')
     upvote_perms = IsAuthenticated() & HasProjectPerm('view_tasks')
     downvote_perms = IsAuthenticated() & HasProjectPerm('view_tasks')
+    watch_perms = IsAuthenticated() & HasProjectPerm('view_tasks')
+    unwatch_perms = IsAuthenticated() & HasProjectPerm('view_tasks')
 
 
 class TaskVotersPermission(TaigaResourcePermission):

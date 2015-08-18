@@ -27,6 +27,7 @@ from taiga.projects.milestones.validators import SprintExistsValidator
 from taiga.projects.tasks.validators import TaskExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicTaskStatusSerializerSerializer
+from taiga.projects.notifications.mixins import WatchedResourceModelSerializer
 from taiga.projects.votes.mixins.serializers import VotedResourceSerializerMixin
 
 from taiga.users.serializers import UserBasicInfoSerializer
@@ -34,7 +35,7 @@ from taiga.users.serializers import UserBasicInfoSerializer
 from . import models
 
 
-class TaskSerializer(WatchersValidator, VotedResourceSerializerMixin, serializers.ModelSerializer):
+class TaskSerializer(WatchersValidator, VotedResourceSerializerMixin, WatchedResourceModelSerializer, serializers.ModelSerializer):
     tags = TagsField(required=False, default=[])
     external_reference = PgArrayField(required=False)
     comment = serializers.SerializerMethodField("get_comment")

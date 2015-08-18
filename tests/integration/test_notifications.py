@@ -97,7 +97,7 @@ def test_analize_object_for_watchers():
     history.comment = ""
 
     services.analize_object_for_watchers(issue, history)
-    assert issue.watchers.add.call_count == 2
+    assert issue.add_watcher.call_count == 2
 
 
 def test_analize_object_for_watchers_adding_owner_non_empty_comment():
@@ -112,7 +112,7 @@ def test_analize_object_for_watchers_adding_owner_non_empty_comment():
     history.owner = user1
 
     services.analize_object_for_watchers(issue, history)
-    assert issue.watchers.add.call_count == 1
+    assert issue.add_watcher.call_count == 1
 
 
 def test_analize_object_for_watchers_no_adding_owner_empty_comment():
@@ -127,7 +127,7 @@ def test_analize_object_for_watchers_no_adding_owner_empty_comment():
     history.owner = user1
 
     services.analize_object_for_watchers(issue, history)
-    assert issue.watchers.add.call_count == 0
+    assert issue.add_watcher.call_count == 0
 
 
 def test_users_to_notify():
@@ -180,7 +180,7 @@ def test_users_to_notify():
     assert users == {member1.user, issue.get_owner()}
 
     # Test with watchers
-    issue.watchers.add(member3.user)
+    issue.add_watcher(member3.user)
     users = services.get_users_to_notify(issue)
     assert len(users) == 3
     assert users == {member1.user, member3.user, issue.get_owner()}
@@ -189,24 +189,24 @@ def test_users_to_notify():
     policy2.notify_level = NotifyLevel.ignore
     policy2.save()
 
-    issue.watchers.add(member3.user)
+    issue.add_watcher(member3.user)
     users = services.get_users_to_notify(issue)
     assert len(users) == 2
     assert users == {member1.user, issue.get_owner()}
 
     # Test with watchers without permissions
-    issue.watchers.add(member5.user)
+    issue.add_watcher(member5.user)
     users = services.get_users_to_notify(issue)
     assert len(users) == 2
     assert users == {member1.user, issue.get_owner()}
 
     # Test with inactive user
-    issue.watchers.add(inactive_member1.user)
+    issue.add_watcher(inactive_member1.user)
     assert len(users) == 2
     assert users == {member1.user, issue.get_owner()}
 
     # Test with system user
-    issue.watchers.add(system_member1.user)
+    issue.add_watcher(system_member1.user)
     assert len(users) == 2
     assert users == {member1.user, issue.get_owner()}
 
@@ -344,7 +344,7 @@ def test_watchers_assignation_for_issue(client):
 
     issue = f.create_issue(project=project1, owner=user1)
     data = {"version": issue.version,
-            "watchers": [user1.pk]}
+            "watchersa": [user1.pk]}
 
     url = reverse("issues-detail", args=[issue.pk])
     response = client.json.patch(url, json.dumps(data))

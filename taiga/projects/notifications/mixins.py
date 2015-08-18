@@ -17,14 +17,22 @@
 from functools import partial
 from operator import is_not
 
-from django.conf import settings
+from django.apps import apps
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from taiga.base import response
+from taiga.base.decorators import detail_route
+from taiga.base.api import serializers
+from taiga.base.fields import WatchersField
 from taiga.projects.notifications import services
+from taiga.projects.notifications.utils import attach_watchers_to_queryset, attach_is_watched_to_queryset
+from taiga.users.models import User
+from . import models
 
 
-class WatchedResourceMixin(object):
+class WatchedResourceMixin:
     """
     Rest Framework resource mixin for resources susceptible
     to be notifiable about their changes.
@@ -35,6 +43,27 @@ class WatchedResourceMixin(object):
     """
 
     _not_notify = False
+
+    def attach_watchers_attrs_to_queryset(self, queryset):
+        qs = attach_watchers_to_queryset(queryset)
+        if self.request.user.is_authenticated():
+            qs = attach_is_watched_to_queryset(self.request.user, qs)
+
+        return qs
+
+    @detail_route(methods=["POST"])
+    def watch(self, request, pk=None):
+        obj = self.get_object()
+        self.check_permissions(request, "watch", obj)
+        services.add_watcher(obj, request.user)
+        return response.Ok()
+
+    @detail_route(methods=["POST"])
+    def unwatch(self, request, pk=None):
+        obj = self.get_object()
+        self.check_permissions(request, "unwatch", obj)
+        services.remove_watcher(obj, request.user)
+        return response.Ok()
 
     def send_notifications(self, obj, history=None):
         """
@@ -73,7 +102,7 @@ class WatchedResourceMixin(object):
         super().pre_delete(obj)
 
 
-class WatchedModelMixin(models.Model):
+class WatchedModelMixin(object):
     """
     Generic model mixin that makes model compatible
     with notification system.
@@ -82,11 +111,6 @@ class WatchedModelMixin(models.Model):
     this mixin if you want send notifications about
     your model class.
     """
-    watchers = models.ManyToManyField(settings.AUTH_USER_MODEL, null=True, blank=True,
-                                      related_name="%(app_label)s_%(class)s+",
-                                      verbose_name=_("watchers"))
-    class Meta:
-        abstract = True
 
     def get_project(self) -> object:
         """
@@ -97,6 +121,7 @@ class WatchedModelMixin(models.Model):
         that should works in almost all cases.
         """
         return self.project
+        t
 
     def get_watchers(self) -> frozenset:
         """
@@ -112,7 +137,13 @@ class WatchedModelMixin(models.Model):
         very inefficient way for obtain watchers but at
         this momment is the simplest way.
         """
-        return frozenset(self.watchers.all())
+        return frozenset(services.get_watchers(self))
+
+    def add_watcher(self, user):
+        services.add_watcher(self, user)
+
+    def remove_watcher(self, user):
+        services.remove_watcher(self, user)
 
     def get_owner(self) -> object:
         """
@@ -140,3 +171,79 @@ class WatchedModelMixin(models.Model):
                         self.get_owner(),)
         is_not_none = partial(is_not, None)
         return frozenset(filter(is_not_none, participants))
+
+
+class WatchedResourceModelSerializer(serializers.ModelSerializer):
+    is_watched = serializers.SerializerMethodField("get_is_watched")
+    watchers = WatchersField(required=False)
+
+    def get_is_watched(self, obj):
+        # The "is_watched" attribute is attached in the get_queryset of the viewset.
+        return getattr(obj, "is_watched", False) or False
+
+    def restore_object(self, attrs, instance=None):
+        #watchers is not a field from the model but can be attached in the get_queryset of the viewset.
+        #If that's the case we need to remove it before calling the super method
+        watcher_field = self.fields.pop("watchers", None)
+        instance = super(WatchedResourceModelSerializer, self).restore_object(attrs, instance)
+        if instance is not None and self.validate_watchers(attrs, "watchers"):
+            new_watcher_ids = set(attrs.get("watchers", []))
+            old_watcher_ids = set(services.get_watchers(instance).values_list("id", flat=True))
+            adding_watcher_ids = list(new_watcher_ids.difference(old_watcher_ids))
+            removing_watcher_ids = list(old_watcher_ids.difference(new_watcher_ids))
+
+            User = apps.get_model("users", "User")
+            adding_users = User.objects.filter(id__in=adding_watcher_ids)
+            removing_users = User.objects.filter(id__in=removing_watcher_ids)
+            for user in adding_users:
+                services.add_watcher(instance, user)
+
+            for user in removing_users:
+                services.remove_watcher(instance, user)
+
+            instance.watchers = services.get_watchers(instance)
+
+        return instance
+
+
+    def to_native(self, obj):
+        #watchers is wasn't attached via the get_queryset of the viewset we need to manually add it
+        if not hasattr(obj, "watchers"):
+            obj.watchers = services.get_watchers(obj)
+
+        return super(WatchedResourceModelSerializer, self).to_native(obj)
+
+
+class WatchersViewSetMixin:
+    # Is a ModelListViewSet with two required params: permission_classes and resource_model
+    serializer_class = WatcherSerializer
+    list_serializer_class = WatcherSerializer
+    permission_classes = None
+    resource_model = None
+
+    def retrieve(self, request, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        resource_id = kwargs.get("resource_id", None)
+        resource = get_object_or_404(self.resource_model, pk=resource_id)
+
+        self.check_permissions(request, 'retrieve', resource)
+
+        try:
+            self.object = services.get_watchers(resource).get(pk=pk)
+        except ObjectDoesNotExist: # or User.DoesNotExist
+            return response.NotFound()
+
+        serializer = self.get_serializer(self.object)
+        return response.Ok(serializer.data)
+
+    def list(self, request, *args, **kwargs):
+        resource_id = kwargs.get("resource_id", None)
+        resource = get_object_or_404(self.resource_model, pk=resource_id)
+
+        self.check_permissions(request, 'list', resource)
+
+        return super().list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        resource = self.resource_model.objects.get(pk=self.kwargs.get("resource_id"))
+        return services.get_watchers(resource)

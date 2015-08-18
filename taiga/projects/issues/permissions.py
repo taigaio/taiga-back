@@ -35,6 +35,8 @@ class IssuePermission(TaigaResourcePermission):
     delete_comment_perms= HasProjectPerm('modify_issue')
     upvote_perms = IsAuthenticated() & HasProjectPerm('view_issues')
     downvote_perms = IsAuthenticated() & HasProjectPerm('view_issues')
+    watch_perms = IsAuthenticated() & HasProjectPerm('view_issues')
+    unwatch_perms = IsAuthenticated() & HasProjectPerm('view_issues')
 
 
 class HasIssueIdUrlParam(PermissionComponent):

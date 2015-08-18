@@ -528,3 +528,45 @@ def test_user_stories_csv(client, data):
 
     results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private2_uuid), None, users)
     assert results == [200, 200, 200, 200, 200]
+
+
+def test_user_story_action_watch(client, data):
+    public_url = reverse('userstories-watch', kwargs={"pk": data.public_user_story.pk})
+    private_url1 = reverse('userstories-watch', kwargs={"pk": data.private_user_story1.pk})
+    private_url2 = reverse('userstories-watch', kwargs={"pk": data.private_user_story2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]
+
+
+def test_user_story_action_unwatch(client, data):
+    public_url = reverse('userstories-unwatch', kwargs={"pk": data.public_user_story.pk})
+    private_url1 = reverse('userstories-unwatch', kwargs={"pk": data.private_user_story1.pk})
+    private_url2 = reverse('userstories-unwatch', kwargs={"pk": data.private_user_story2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]

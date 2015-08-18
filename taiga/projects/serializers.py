@@ -25,6 +25,8 @@ from taiga.base.fields import PgArrayField
 from taiga.base.fields import TagsField
 from taiga.base.fields import TagsColorsField
 
+from taiga.projects.notifications.validators import WatchersValidator
+
 from taiga.users.services import get_photo_or_gravatar_url
 from taiga.users.serializers import UserSerializer
 from taiga.users.serializers import UserBasicInfoSerializer
@@ -40,6 +42,7 @@ from .validators import ProjectExistsValidator
 from .custom_attributes.serializers import UserStoryCustomAttributeSerializer
 from .custom_attributes.serializers import TaskCustomAttributeSerializer
 from .custom_attributes.serializers import IssueCustomAttributeSerializer
+from .notifications.mixins import WatchedResourceModelSerializer
 from .votes.mixins.serializers import StarredResourceSerializerMixin
 
 ######################################################
@@ -305,7 +308,7 @@ class ProjectMemberSerializer(serializers.ModelSerializer):
 ## Projects
 ######################################################
 
-class ProjectSerializer(StarredResourceSerializerMixin, serializers.ModelSerializer):
+class ProjectSerializer(WatchersValidator, StarredResourceSerializerMixin, WatchedResourceModelSerializer, serializers.ModelSerializer):
     tags = TagsField(default=[], required=False)
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)

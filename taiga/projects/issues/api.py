@@ -53,6 +53,7 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
                        filters.SeveritiesFilter,
                        filters.PrioritiesFilter,
                        filters.TagsFilter,
+                       filters.WatchersFilter,
                        filters.QFilter,
                        filters.OrderByFilterMixin)
     retrieve_exclude_filters = (filters.OwnersFilter,
@@ -61,11 +62,11 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
                                 filters.IssueTypesFilter,
                                 filters.SeveritiesFilter,
                                 filters.PrioritiesFilter,
-                                filters.TagsFilter,)
+                                filters.TagsFilter,
+                                filters.WatchersFilter,)
 
     filter_fields = ("project",
-                     "status__is_closed",
-                     "watchers")
+                     "status__is_closed")
     order_by_fields = ("type",
                        "status",
                        "severity",
@@ -142,7 +143,8 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.prefetch_related("attachments")
-        return self.attach_votes_attrs_to_queryset(qs)
+        qs = self.attach_votes_attrs_to_queryset(qs)
+        return self.attach_watchers_attrs_to_queryset(qs)
 
     def pre_save(self, obj):
         if not obj.id:

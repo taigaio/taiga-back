@@ -21,7 +21,7 @@ from taiga.base.api import serializers
 
 class WatchersValidator:
     def validate_watchers(self, attrs, source):
-        users = attrs[source]
+        users = attrs.get(source, [])
 
         # Try obtain a valid project
         if self.object is None and "project" in attrs:
@@ -39,7 +39,8 @@ class WatchersValidator:
 
         # Check if incoming watchers are contained
         # in project members list
-        result = set(users).difference(set(project.members.all()))
+        member_ids = project.members.values_list("id", flat=True)
+        result = set(users).difference(member_ids)
         if result:
             raise serializers.ValidationError(_("Watchers contains invalid users"))
 

@@ -110,3 +110,12 @@ class TagsColorsField(serializers.WritableField):
 
     def from_native(self, data):
         return list(data.items())
+
+
+
+class WatchersField(serializers.WritableField):
+    def to_native(self, obj):
+        return obj
+
+    def from_native(self, data):
+        return data

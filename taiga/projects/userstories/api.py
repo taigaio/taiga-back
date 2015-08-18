@@ -53,19 +53,20 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                        filters.AssignedToFilter,
                        filters.StatusesFilter,
                        filters.TagsFilter,
+                       filters.WatchersFilter,
                        filters.QFilter,
                        filters.OrderByFilterMixin)
     retrieve_exclude_filters = (filters.OwnersFilter,
                                 filters.AssignedToFilter,
                                 filters.StatusesFilter,
-                                filters.TagsFilter)
+                                filters.TagsFilter,
+                                filters.WatchersFilter)
     filter_fields = ["project",
                      "milestone",
                      "milestone__isnull",
                      "is_closed",
                      "status__is_archived",
-                     "status__is_closed",
-                     "watchers"]
+                     "status__is_closed"]
     order_by_fields = ["backlog_order",
                        "sprint_order",
                        "kanban_order"]
@@ -113,10 +114,10 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
         qs = super().get_queryset()
         qs = qs.prefetch_related("role_points",
                                  "role_points__points",
-                                 "role_points__role",
-                                 "watchers")
+                                 "role_points__role")
         qs = qs.select_related("milestone", "project")
-        return self.attach_votes_attrs_to_queryset(qs)
+        qs = self.attach_votes_attrs_to_queryset(qs)
+        return self.attach_watchers_attrs_to_queryset(qs)
 
     def pre_save(self, obj):
         # This is very ugly hack, but having

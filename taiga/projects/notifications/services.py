@@ -17,10 +17,10 @@
 from functools import partial
 
 from django.apps import apps
-from django.db import IntegrityError
+from django.db.transaction import atomic
+from django.db import IntegrityError, transaction
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
-from django.db import transaction
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
@@ -36,7 +36,7 @@ from taiga.projects.history.services import (make_key_from_model_object,
 from taiga.permissions.service import user_has_perm
 from taiga.users.models import User
 
-from .models import HistoryChangeNotification
+from .models import HistoryChangeNotification, Watched
 
 
 def notify_policy_exists(project, user) -> bool:
@@ -121,11 +121,11 @@ def analize_object_for_watchers(obj:object, history:object):
 
     if data["mentions"]:
         for user in data["mentions"]:
-            obj.watchers.add(user)
+            obj.add_watcher(user)
 
     # Adding the person who edited the object to the watchers
     if history.comment and not history.owner.is_system:
-        obj.watchers.add(history.owner)
+        obj.add_watcher(history.owner)
 
 def _filter_by_permissions(obj, user):
     UserStory = apps.get_model("userstories", "UserStory")
@@ -282,3 +282,46 @@ def send_sync_notifications(notification_id):
 def process_sync_notifications():
     for notification in HistoryChangeNotification.objects.all():
         send_sync_notifications(notification.pk)
+
+
+def get_watchers(obj):
+    User = apps.get_model("users", "User")
+    Watched = apps.get_model("notifications", "Watched")
+    content_type = ContentType.objects.get_for_model(obj)
+    watching_user_ids = Watched.objects.filter(content_type=content_type, object_id=obj.id).values_list("user__id", flat=True)
+    return User.objects.filter(id__in=watching_user_ids)
+
+
+def add_watcher(obj, user):
+    """Add a watcher to an object.
+
+    If the user is already watching the object nothing happends, so this function can be considered
+    idempotent.
+
+    :param obj: Any Django model instance.
+    :param user: User adding the watch. :class:`~taiga.users.models.User` instance.
+    """
+    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
+    with atomic():
+        watched, created = Watched.objects.get_or_create(content_type=obj_type, object_id=obj.id, user=user)
+        if not created:
+            return
+    return watched
+
+
+def remove_watcher(obj, user):
+    """Remove an watching user from an object.
+
+    If the user has not watched the object nothing happens so this function can be considered
+    idempotent.
+
+    :param obj: Any Django model instance.
+    :param user: User removing the watch. :class:`~taiga.users.models.User` instance.
+    """
+    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
+    with atomic():
+        qs = Watched.objects.filter(content_type=obj_type, object_id=obj.id, user=user)
+        if not qs.exists():
+            return
+
+        qs.delete()

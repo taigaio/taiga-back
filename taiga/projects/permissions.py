@@ -62,6 +62,8 @@ class ProjectPermission(TaigaResourcePermission):
     tags_colors_perms = HasProjectPerm('view_project')
     star_perms = IsAuthenticated() & HasProjectPerm('view_project')
     unstar_perms = IsAuthenticated() & HasProjectPerm('view_project')
+    watch_perms = IsAuthenticated() & HasProjectPerm('view_project')
+    unwatch_perms = IsAuthenticated() & HasProjectPerm('view_project')
     create_template_perms = IsSuperUser()
     leave_perms = CanLeaveProject()
 

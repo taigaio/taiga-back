@@ -47,13 +47,15 @@ def test_invalid_project_import(client):
 
 def test_valid_project_import_without_extra_data(client):
     user = f.UserFactory.create()
+    user_watching = f.UserFactory.create(email="testing@taiga.io")
     client.login(user)
 
     url = reverse("importer-list")
     data = {
         "name": "Imported project",
         "description": "Imported project",
-        "roles": [{"name": "Role"}]
+        "roles": [{"name": "Role"}],
+        "watchers": ["testing@taiga.io"]
     }
 
     response = client.post(url, json.dumps(data), content_type="application/json")
@@ -66,6 +68,7 @@ def test_valid_project_import_without_extra_data(client):
     ]
     assert all(map(lambda x: len(response_data[x]) == 0, must_empty_children))
     assert response_data["owner"] == user.email
+    assert response_data["watchers"] == [user_watching.email]
 
 
 def test_valid_project_import_with_not_existing_memberships(client):
@@ -383,6 +386,7 @@ def test_valid_issue_import_with_custom_attributes_values(client):
 
 def test_valid_issue_import_with_extra_data(client):
     user = f.UserFactory.create()
+    user_watching = f.UserFactory.create(email="testing@taiga.io")
     project = f.ProjectFactory.create(owner=user)
     f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_issue_type = f.IssueTypeFactory.create(project=project)
@@ -403,7 +407,8 @@ def test_valid_issue_import_with_extra_data(client):
                 "name": "imported attachment",
                 "data": base64.b64encode(b"TEST").decode("utf-8")
             }
-        }]
+        }],
+        "watchers": ["testing@taiga.io"]
     }
 
     response = client.post(url, json.dumps(data), content_type="application/json")
@@ -413,6 +418,7 @@ def test_valid_issue_import_with_extra_data(client):
     assert response_data["owner"] == user.email
     assert response_data["ref"] is not None
     assert response_data["finished_date"] == "2014-10-24T00:00:00+0000"
+    assert response_data["watchers"] == [user_watching.email]
 
 
 def test_invalid_issue_import_with_extra_data(client):
@@ -535,6 +541,7 @@ def test_valid_us_import_without_extra_data(client):
 
 def test_valid_us_import_with_extra_data(client):
     user = f.UserFactory.create()
+    user_watching = f.UserFactory.create(email="testing@taiga.io")
     project = f.ProjectFactory.create(owner=user)
     f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_us_status = f.UserStoryStatusFactory.create(project=project)
@@ -551,7 +558,8 @@ def test_valid_us_import_with_extra_data(client):
                 "name": "imported attachment",
                 "data": base64.b64encode(b"TEST").decode("utf-8")
             }
-        }]
+        }],
+        "watchers": ["testing@taiga.io"]
     }
 
     response = client.post(url, json.dumps(data), content_type="application/json")
@@ -560,6 +568,7 @@ def test_valid_us_import_with_extra_data(client):
     assert len(response_data["attachments"]) == 1
     assert response_data["owner"] == user.email
     assert response_data["ref"] is not None
+    assert response_data["watchers"] == [user_watching.email]
 
 
 def test_invalid_us_import_with_extra_data(client):
@@ -664,6 +673,7 @@ def test_valid_task_import_with_custom_attributes_values(client):
 
 def test_valid_task_import_with_extra_data(client):
     user = f.UserFactory.create()
+    user_watching = f.UserFactory.create(email="testing@taiga.io")
     project = f.ProjectFactory.create(owner=user)
     f.MembershipFactory(project=project, user=user, is_owner=True)
     project.default_task_status = f.TaskStatusFactory.create(project=project)
@@ -680,7 +690,8 @@ def test_valid_task_import_with_extra_data(client):
                 "name": "imported attachment",
                 "data": base64.b64encode(b"TEST").decode("utf-8")
             }
-        }]
+        }],
+        "watchers": ["testing@taiga.io"]
     }
 
     response = client.post(url, json.dumps(data), content_type="application/json")
@@ -689,6 +700,7 @@ def test_valid_task_import_with_extra_data(client):
     assert len(response_data["attachments"]) == 1
     assert response_data["owner"] == user.email
     assert response_data["ref"] is not None
+    assert response_data["watchers"] == [user_watching.email]
 
 
 def test_invalid_task_import_with_extra_data(client):
@@ -787,6 +799,7 @@ def test_valid_wiki_page_import_without_extra_data(client):
 
 def test_valid_wiki_page_import_with_extra_data(client):
     user = f.UserFactory.create()
+    user_watching = f.UserFactory.create(email="testing@taiga.io")
     project = f.ProjectFactory.create(owner=user)
     f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
@@ -801,7 +814,8 @@ def test_valid_wiki_page_import_with_extra_data(client):
                 "name": "imported attachment",
                 "data": base64.b64encode(b"TEST").decode("utf-8")
             }
-        }]
+        }],
+        "watchers": ["testing@taiga.io"]
     }
 
     response = client.post(url, json.dumps(data), content_type="application/json")
@@ -809,6 +823,7 @@ def test_valid_wiki_page_import_with_extra_data(client):
     response_data = response.data
     assert len(response_data["attachments"]) == 1
     assert response_data["owner"] == user.email
+    assert response_data["watchers"] == [user_watching.email]
 
 
 def test_invalid_wiki_page_import_with_extra_data(client):
@@ -877,6 +892,7 @@ def test_invalid_milestone_import(client):
 
 def test_valid_milestone_import(client):
     user = f.UserFactory.create()
+    user_watching = f.UserFactory.create(email="testing@taiga.io")
     project = f.ProjectFactory.create(owner=user)
     f.MembershipFactory(project=project, user=user, is_owner=True)
     client.login(user)
@@ -886,11 +902,12 @@ def test_valid_milestone_import(client):
         "name": "Imported milestone",
         "estimated_start": "2014-10-10",
         "estimated_finish": "2014-10-20",
+        "watchers": ["testing@taiga.io"]
     }
 
     response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 201
-    response.data
+    assert response.data["watchers"] == [user_watching.email]
 
 
 

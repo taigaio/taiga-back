@@ -529,3 +529,45 @@ def test_tasks_csv(client, data):
 
     results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private2_uuid), None, users)
     assert results == [200, 200, 200, 200, 200]
+
+
+def test_task_action_watch(client, data):
+    public_url = reverse('tasks-watch', kwargs={"pk": data.public_task.pk})
+    private_url1 = reverse('tasks-watch', kwargs={"pk": data.private_task1.pk})
+    private_url2 = reverse('tasks-watch', kwargs={"pk": data.private_task2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]
+
+
+def test_task_action_unwatch(client, data):
+    public_url = reverse('tasks-unwatch', kwargs={"pk": data.public_task.pk})
+    private_url1 = reverse('tasks-unwatch', kwargs={"pk": data.private_task1.pk})
+    private_url2 = reverse('tasks-unwatch', kwargs={"pk": data.private_task2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]

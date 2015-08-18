@@ -31,6 +31,7 @@ from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.slug import slugify_uniquely
 
 from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 
@@ -50,7 +51,7 @@ from .votes.mixins.viewsets import StarredResourceMixin, VotersViewSetMixin
 ## Project
 ######################################################
 
-class ProjectViewSet(StarredResourceMixin, HistoryResourceMixin, ModelCrudViewSet):
+class ProjectViewSet(StarredResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectDetailSerializer
     admin_serializer_class = serializers.ProjectDetailAdminSerializer
@@ -62,7 +63,8 @@ class ProjectViewSet(StarredResourceMixin, HistoryResourceMixin, ModelCrudViewSe
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return self.attach_votes_attrs_to_queryset(qs)
+        qs = self.attach_votes_attrs_to_queryset(qs)
+        return self.attach_watchers_attrs_to_queryset(qs)
 
     @list_route(methods=["POST"])
     def bulk_update_order(self, request, **kwargs):

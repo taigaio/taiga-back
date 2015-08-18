@@ -13,6 +13,8 @@
 - Now profile timelines only show content about the objects (US/Tasks/Issues/Wiki pages) you are involved.
 - US, tasks and Issues can be upvoted or downvoted and the voters list can be obtained.
 - Project can be starred or unstarred and the fans list can be obtained.
+- Now users can watch public issues, tasks and user stories.
+- Add endpoints to show the watchers list for issues, tasks and user stories.
 - i18n.
   - Add polish (pl) translation.
   - Add portuguese (Brazil) (pt_BR) translation.

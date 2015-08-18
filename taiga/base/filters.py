@@ -18,6 +18,7 @@ from functools import reduce
 import logging
 
 from django.apps import apps
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 
@@ -447,6 +448,33 @@ class TagsFilter(FilterBackend):
         query_tags = self._get_tags_queryparams(request.QUERY_PARAMS)
         if query_tags:
             queryset = queryset.filter(tags__contains=query_tags)
+
+        return super().filter_queryset(request, queryset, view)
+
+
+
+class WatchersFilter(FilterBackend):
+    filter_name = 'watchers'
+
+    def __init__(self, filter_name=None):
+        if filter_name:
+            self.filter_name = filter_name
+
+    def _get_watchers_queryparams(self, params):
+        watchers = params.get(self.filter_name, None)
+        if watchers:
+            return watchers.split(",")
+
+        return None
+
+    def filter_queryset(self, request, queryset, view):
+        query_watchers = self._get_watchers_queryparams(request.QUERY_PARAMS)
+        model = queryset.model
+        if query_watchers:
+            WatchedModel = apps.get_model("notifications", "Watched")
+            watched_type = ContentType.objects.get_for_model(queryset.model)
+            watched_ids = WatchedModel.objects.filter(content_type=watched_type, user__id__in=query_watchers).values_list("object_id", flat=True)
+            queryset = queryset.filter(id__in=watched_ids)
 
         return super().filter_queryset(request, queryset, view)
 

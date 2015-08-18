@@ -16,8 +16,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
+from taiga.base.fields import TagsField
 
 from taiga.users.models import User
+from taiga.users.services import get_photo_or_gravatar_url
 
 
 class VoterSerializer(serializers.ModelSerializer):

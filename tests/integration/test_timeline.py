@@ -384,16 +384,6 @@ def test_assigned_to_user_story_timeline():
     assert user_timeline[0].data["userstory"]["subject"] == "test us timeline"
 
 
-def test_watchers_to_user_story_timeline():
-    membership = factories.MembershipFactory.create()
-    user_story = factories.UserStoryFactory.create(subject="test us timeline", project=membership.project)
-    user_story.watchers.add(membership.user)
-    history_services.take_snapshot(user_story, user=user_story.owner)
-    user_timeline = service.get_profile_timeline(membership.user)
-    assert user_timeline[0].event_type == "userstories.userstory.create"
-    assert user_timeline[0].data["userstory"]["subject"] == "test us timeline"
-
-
 def test_user_data_for_non_system_users():
     user_story = factories.UserStoryFactory.create(subject="test us timeline")
     history_services.take_snapshot(user_story, user=user_story.owner)

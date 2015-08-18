@@ -62,7 +62,7 @@ def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_d
         ## - Watchers
         watchers = getattr(obj, "watchers", None)
         if watchers:
-            related_people |= obj.watchers.all()
+            related_people |= obj.get_watchers()
 
         ## - Exclude inactive and system users and remove duplicate
         related_people = related_people.exclude(is_active=False)

@@ -40,6 +40,8 @@ from taiga.base.utils.slug import slugify_uniquely_for_queryset
 
 from . import choices
 
+from . notifications.mixins import WatchedModelMixin
+
 
 class Membership(models.Model):
     # This model stores all project memberships. Also
@@ -118,7 +120,7 @@ class ProjectDefaults(models.Model):
         abstract = True
 
 
-class Project(ProjectDefaults, TaggedMixin, models.Model):
+class Project(ProjectDefaults, WatchedModelMixin, TaggedMixin, models.Model):
     name = models.CharField(max_length=250, null=False, blank=False,
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,

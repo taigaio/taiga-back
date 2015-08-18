@@ -40,9 +40,10 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
                   ModelCrudViewSet):
     queryset = models.Task.objects.all()
     permission_classes = (permissions.TaskPermission,)
-    filter_backends = (filters.CanViewTasksFilterBackend,)
+    filter_backends = (filters.CanViewTasksFilterBackend, filters.WatchersFilter)
+    retrieve_exclude_filters = (filters.WatchersFilter,)
     filter_fields = ["user_story", "milestone", "project", "assigned_to",
-        "status__is_closed", "watchers"]
+        "status__is_closed"]
 
     def get_serializer_class(self, *args, **kwargs):
         if self.action in ["retrieve", "by_ref"]:
@@ -86,7 +87,8 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return self.attach_votes_attrs_to_queryset(qs)
+        qs = self.attach_votes_attrs_to_queryset(qs)
+        return self.attach_watchers_attrs_to_queryset(qs)
 
     def pre_save(self, obj):
         if obj.user_story:
