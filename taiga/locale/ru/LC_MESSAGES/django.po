@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-08 21:28+0200\n"
+"POT-Creation-Date: 2015-08-24 10:34+0200\n"
 "PO-Revision-Date: 2015-08-08 19:29+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Russian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
@@ -580,9 +580,9 @@ msgid "It contain invalid custom fields."
 msgstr "Содержит неверные специальные поля"
 
 #: taiga/export_import/serializers.py:468
-#: taiga/projects/milestones/serializers.py:63
-#: taiga/projects/serializers.py:67 taiga/projects/serializers.py:93
-#: taiga/projects/serializers.py:124 taiga/projects/serializers.py:167
+#: taiga/projects/milestones/serializers.py:63 taiga/projects/serializers.py:67
+#: taiga/projects/serializers.py:93 taiga/projects/serializers.py:124
+#: taiga/projects/serializers.py:167
 msgid "Name duplicated for the project"
 msgstr "Уже есть такое имя для проекта"
 
@@ -923,13 +923,13 @@ msgstr "Проект не существует"
 msgid "Bad signature"
 msgstr "Плохая подпись"
 
-#: taiga/hooks/bitbucket/event_hooks.py:73
-#: taiga/hooks/github/event_hooks.py:75 taiga/hooks/gitlab/event_hooks.py:73
+#: taiga/hooks/bitbucket/event_hooks.py:73 taiga/hooks/github/event_hooks.py:75
+#: taiga/hooks/gitlab/event_hooks.py:73
 msgid "The referenced element doesn't exist"
 msgstr "Указанный элемент не существует"
 
-#: taiga/hooks/bitbucket/event_hooks.py:80
-#: taiga/hooks/github/event_hooks.py:82 taiga/hooks/gitlab/event_hooks.py:80
+#: taiga/hooks/bitbucket/event_hooks.py:80 taiga/hooks/github/event_hooks.py:82
+#: taiga/hooks/gitlab/event_hooks.py:80
 msgid "The status doesn't exist"
 msgstr "Статус не существует"
 

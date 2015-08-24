@@ -7,6 +7,7 @@
 # Christoph Harrer, 2015
 # Hans Raaf, 2015
 # Hans Raaf, 2015
+# Henning Matthaei, 2015
 # Regina <r.raaf@metatexx.de>, 2015
 # Sebastian Blum <sebastian.alexander.blum@gmail.com>, 2015
 # Thomas McWork <thomas.mc.work@gmail.com>, 2015
@@ -14,9 +15,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-08 21:28+0200\n"
-"PO-Revision-Date: 2015-08-12 11:36+0000\n"
-"Last-Translator: Christoph Harrer\n"
+"POT-Creation-Date: 2015-08-24 10:34+0200\n"
+"PO-Revision-Date: 2015-08-16 08:52+0000\n"
+"Last-Translator: Henning Matthaei\n"
 "Language-Team: German (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -197,6 +198,8 @@ msgstr ""
 #: taiga/base/api/fields.py:957
 msgid "Please either submit a file or check the clear checkbox, not both."
 msgstr ""
+"Bitte senden Sie entweder eine Datei oder markieren Sie \"Löschen\", nicht "
+"beides."
 
 #: taiga/base/api/fields.py:997
 msgid ""
@@ -586,9 +589,9 @@ msgid "It contain invalid custom fields."
 msgstr "Enthält ungültige Benutzerfelder."
 
 #: taiga/export_import/serializers.py:468
-#: taiga/projects/milestones/serializers.py:63
-#: taiga/projects/serializers.py:67 taiga/projects/serializers.py:93
-#: taiga/projects/serializers.py:124 taiga/projects/serializers.py:167
+#: taiga/projects/milestones/serializers.py:63 taiga/projects/serializers.py:67
+#: taiga/projects/serializers.py:93 taiga/projects/serializers.py:124
+#: taiga/projects/serializers.py:167
 msgid "Name duplicated for the project"
 msgstr "Der Name für das Projekt ist doppelt vergeben"
 
@@ -935,13 +938,13 @@ msgstr "Das Projekt existiert nicht"
 msgid "Bad signature"
 msgstr "Falsche Signatur"
 
-#: taiga/hooks/bitbucket/event_hooks.py:73
-#: taiga/hooks/github/event_hooks.py:75 taiga/hooks/gitlab/event_hooks.py:73
+#: taiga/hooks/bitbucket/event_hooks.py:73 taiga/hooks/github/event_hooks.py:75
+#: taiga/hooks/gitlab/event_hooks.py:73
 msgid "The referenced element doesn't exist"
 msgstr "Das referenzierte Element existiert nicht"
 
-#: taiga/hooks/bitbucket/event_hooks.py:80
-#: taiga/hooks/github/event_hooks.py:82 taiga/hooks/gitlab/event_hooks.py:80
+#: taiga/hooks/bitbucket/event_hooks.py:80 taiga/hooks/github/event_hooks.py:82
+#: taiga/hooks/gitlab/event_hooks.py:80
 msgid "The status doesn't exist"
 msgstr "Der Status existiert nicht"
 
@@ -1364,7 +1367,7 @@ msgstr "Text"
 
 #: taiga/projects/custom_attributes/models.py:34
 msgid "Multi-Line Text"
-msgstr ""
+msgstr "Mehrzeiliger Text"
 
 #: taiga/projects/custom_attributes/models.py:36
 #: taiga/projects/milestones/models.py:34 taiga/projects/models.py:123
@@ -3514,6 +3517,8 @@ msgid ""
 "\n"
 "You may remove your account from this service: %(url)s\n"
 msgstr ""
+"\n"
+"Sie können Ihren Account von diesem Dienst trennen: %(url)s\n"
 
 #: taiga/users/templates/emails/registered_user-subject.jinja:1
 msgid "You've been Taigatized!"
