@@ -34,6 +34,7 @@ class UserPermission(TaigaResourcePermission):
     retrieve_perms = AllowAny()
     by_username_perms = retrieve_perms
     update_perms = IsTheSameUser()
+    partial_update_perms = IsTheSameUser()
     destroy_perms = IsTheSameUser()
     list_perms = AllowAny()
     stats_perms = AllowAny()
@@ -52,5 +53,6 @@ class RolesPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
+    partial_update_perms = IsProjectOwner()
     destroy_perms = IsProjectOwner()
     list_perms = AllowAny()
