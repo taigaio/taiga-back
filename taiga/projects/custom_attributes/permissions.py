@@ -31,6 +31,7 @@ class UserStoryCustomAttributePermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
+    partial_update_perms = IsProjectOwner()
     destroy_perms = IsProjectOwner()
     list_perms = AllowAny()
     bulk_update_order_perms = IsProjectOwner()
@@ -42,6 +43,7 @@ class TaskCustomAttributePermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
+    partial_update_perms = IsProjectOwner()
     destroy_perms = IsProjectOwner()
     list_perms = AllowAny()
     bulk_update_order_perms = IsProjectOwner()
@@ -53,6 +55,7 @@ class IssueCustomAttributePermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
+    partial_update_perms = IsProjectOwner()
     destroy_perms = IsProjectOwner()
     list_perms = AllowAny()
     bulk_update_order_perms = IsProjectOwner()
@@ -67,6 +70,7 @@ class UserStoryCustomAttributesValuesPermission(TaigaResourcePermission):
     global_perms = None
     retrieve_perms = HasProjectPerm('view_us')
     update_perms = HasProjectPerm('modify_us')
+    partial_update_perms = HasProjectPerm('modify_us')
 
 
 class TaskCustomAttributesValuesPermission(TaigaResourcePermission):
@@ -74,6 +78,7 @@ class TaskCustomAttributesValuesPermission(TaigaResourcePermission):
     global_perms = None
     retrieve_perms = HasProjectPerm('view_tasks')
     update_perms = HasProjectPerm('modify_task')
+    partial_update_perms = HasProjectPerm('modify_task')
 
 
 class IssueCustomAttributesValuesPermission(TaigaResourcePermission):
@@ -81,3 +86,4 @@ class IssueCustomAttributesValuesPermission(TaigaResourcePermission):
     global_perms = None
     retrieve_perms = HasProjectPerm('view_issues')
     update_perms = HasProjectPerm('modify_issue')
+    partial_update_perms = HasProjectPerm('modify_issue')

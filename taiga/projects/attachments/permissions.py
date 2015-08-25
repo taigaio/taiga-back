@@ -30,6 +30,7 @@ class UserStoryAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_us') | IsAttachmentOwnerPerm()
     create_perms = HasProjectPerm('modify_us')
     update_perms = HasProjectPerm('modify_us') | IsAttachmentOwnerPerm()
+    partial_update_perms = HasProjectPerm('modify_us') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_us') | IsAttachmentOwnerPerm()
     list_perms = AllowAny()
 
@@ -38,6 +39,7 @@ class TaskAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_tasks') | IsAttachmentOwnerPerm()
     create_perms = HasProjectPerm('modify_task')
     update_perms = HasProjectPerm('modify_task') | IsAttachmentOwnerPerm()
+    partial_update_perms = HasProjectPerm('modify_task') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_task') | IsAttachmentOwnerPerm()
     list_perms = AllowAny()
 
@@ -46,6 +48,7 @@ class IssueAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_issues') | IsAttachmentOwnerPerm()
     create_perms = HasProjectPerm('modify_issue')
     update_perms = HasProjectPerm('modify_issue') | IsAttachmentOwnerPerm()
+    partial_update_perms = HasProjectPerm('modify_issue') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_issue') | IsAttachmentOwnerPerm()
     list_perms = AllowAny()
 
@@ -54,6 +57,7 @@ class WikiAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_wiki_pages') | IsAttachmentOwnerPerm()
     create_perms = HasProjectPerm('modify_wiki_page')
     update_perms = HasProjectPerm('modify_wiki_page') | IsAttachmentOwnerPerm()
+    partial_update_perms = HasProjectPerm('modify_wiki_page') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_wiki_page') | IsAttachmentOwnerPerm()
     list_perms = AllowAny()
 

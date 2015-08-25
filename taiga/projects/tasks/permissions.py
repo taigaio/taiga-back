@@ -24,6 +24,7 @@ class TaskPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_tasks')
     create_perms = HasProjectPerm('add_task')
     update_perms = HasProjectPerm('modify_task')
+    partial_update_perms = HasProjectPerm('modify_task')
     destroy_perms = HasProjectPerm('delete_task')
     list_perms = AllowAny()
     csv_perms = AllowAny()
