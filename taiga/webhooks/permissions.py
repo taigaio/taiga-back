@@ -29,6 +29,7 @@ class WebhookPermission(TaigaResourcePermission):
     retrieve_perms = IsProjectOwner()
     create_perms = IsProjectOwner()
     update_perms = IsProjectOwner()
+    partial_update_perms = IsProjectOwner()
     destroy_perms = IsProjectOwner()
     list_perms = AllowAny()
     test_perms = IsProjectOwner()

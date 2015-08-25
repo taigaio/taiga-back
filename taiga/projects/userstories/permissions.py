@@ -23,6 +23,7 @@ class UserStoryPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_us')
     create_perms = HasProjectPerm('add_us_to_project') | HasProjectPerm('add_us')
     update_perms = HasProjectPerm('modify_us')
+    partial_update_perms = HasProjectPerm('modify_us')
     destroy_perms = HasProjectPerm('delete_us')
     list_perms = AllowAny()
     csv_perms = AllowAny()

@@ -25,6 +25,7 @@ class MilestonePermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_milestones')
     create_perms = HasProjectPerm('add_milestone')
     update_perms = HasProjectPerm('modify_milestone')
+    partial_update_perms = HasProjectPerm('modify_milestone')
     destroy_perms = HasProjectPerm('delete_milestone')
     list_perms = AllowAny()
     stats_perms = HasProjectPerm('view_milestones')
