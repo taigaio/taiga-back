@@ -128,7 +128,7 @@ LANGUAGES = [
     #("pa", "ਪੰਜਾਬੀ"),  # Punjabi
     ("pl", "Polski"),  # Polish
     #("pt", "Português (Portugal)"),  # Portuguese
-    #("pt-br", "Português (Brasil)"),  # Brazilian Portuguese
+    ("pt-br", "Português (Brasil)"),  # Brazilian Portuguese
     #("ro", "Română"),  # Romanian
     ("ru", "Русский"),  # Russian
     #("sk", "Slovenčina"),  # Slovak

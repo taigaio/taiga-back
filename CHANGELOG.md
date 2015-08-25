@@ -13,6 +13,7 @@
 - Now profile timelines only show content about the objects (US/Tasks/Issues/Wiki pages) you are involved.
 - i18n.
   - Add polish (pl) translation.
+  - Add portuguese (Brazil) (pt_BR) translation.
   - Add russian (ru) translation.
 
 ### Misc
