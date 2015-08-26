@@ -16,7 +16,7 @@
 
 from django.utils.translation import ugettext as _
 from django.db.models import Q
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
@@ -27,22 +27,23 @@ from taiga.base.api.utils import get_object_or_404
 
 from taiga.users.models import User
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 
 from taiga.projects.models import Project, IssueStatus, Severity, Priority, IssueType
 from taiga.projects.milestones.models import Milestone
-from taiga.projects.votes.utils import attach_votescount_to_queryset
-from taiga.projects.votes import services as votes_service
-from taiga.projects.votes import serializers as votes_serializers
+from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
+
 from . import models
 from . import services
 from . import permissions
 from . import serializers
 
 
-class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
+class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
+                   ModelCrudViewSet):
+    queryset = models.Issue.objects.all()
     permission_classes = (permissions.IssuePermission, )
     filter_backends = (filters.CanViewIssuesFilterBackend,
                        filters.OwnersFilter,
@@ -52,6 +53,7 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
                        filters.SeveritiesFilter,
                        filters.PrioritiesFilter,
                        filters.TagsFilter,
+                       filters.WatchersFilter,
                        filters.QFilter,
                        filters.OrderByFilterMixin)
     retrieve_exclude_filters = (filters.OwnersFilter,
@@ -60,11 +62,11 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
                                 filters.IssueTypesFilter,
                                 filters.SeveritiesFilter,
                                 filters.PrioritiesFilter,
-                                filters.TagsFilter,)
+                                filters.TagsFilter,
+                                filters.WatchersFilter,)
 
     filter_fields = ("project",
-                     "status__is_closed",
-                     "watchers")
+                     "status__is_closed")
     order_by_fields = ("type",
                        "status",
                        "severity",
@@ -139,10 +141,10 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
         return super().update(request, *args, **kwargs)
 
     def get_queryset(self):
-        qs = models.Issue.objects.all()
+        qs = super().get_queryset()
         qs = qs.prefetch_related("attachments")
-        qs = attach_votescount_to_queryset(qs, as_field="votes_count")
-        return qs
+        qs = self.attach_votes_attrs_to_queryset(qs)
+        return self.attach_watchers_attrs_to_queryset(qs)
 
     def pre_save(self, obj):
         if not obj.id:
@@ -237,51 +239,12 @@ class IssueViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
 
         return response.BadRequest(serializer.errors)
 
-    @detail_route(methods=['post'])
-    def upvote(self, request, pk=None):
-        issue = get_object_or_404(models.Issue, pk=pk)
 
-        self.check_permissions(request, 'upvote', issue)
-
-        votes_service.add_vote(issue, user=request.user)
-        return response.Ok()
-
-    @detail_route(methods=['post'])
-    def downvote(self, request, pk=None):
-        issue = get_object_or_404(models.Issue, pk=pk)
-
-        self.check_permissions(request, 'downvote', issue)
-
-        votes_service.remove_vote(issue, user=request.user)
-        return response.Ok()
+class IssueVotersViewSet(VotersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.IssueVotersPermission,)
+    resource_model = models.Issue
 
 
-class VotersViewSet(ModelListViewSet):
-    serializer_class = votes_serializers.VoterSerializer
-    list_serializer_class = votes_serializers.VoterSerializer
-    permission_classes = (permissions.IssueVotersPermission, )
-
-    def retrieve(self, request, *args, **kwargs):
-        pk = kwargs.get("pk", None)
-        issue_id = kwargs.get("issue_id", None)
-        issue = get_object_or_404(models.Issue, pk=issue_id)
-
-        self.check_permissions(request, 'retrieve', issue)
-
-        try:
-            self.object = votes_service.get_voters(issue).get(pk=pk)
-        except User.DoesNotExist:
-            raise Http404
-
-        serializer = self.get_serializer(self.object)
-        return response.Ok(serializer.data)
-
-    def list(self, request, *args, **kwargs):
-        issue_id = kwargs.get("issue_id", None)
-        issue = get_object_or_404(models.Issue, pk=issue_id)
-        self.check_permissions(request, 'list', issue)
-        return super().list(request, *args, **kwargs)
-
-    def get_queryset(self):
-        issue = models.Issue.objects.get(pk=self.kwargs.get("issue_id"))
-        return votes_service.get_voters(issue)
+class IssueWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.IssueWatchersPermission,)
+    resource_model = models.Issue

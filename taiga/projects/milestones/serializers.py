@@ -17,14 +17,15 @@
 from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
-
 from taiga.base.utils import json
+from taiga.projects.notifications.mixins import WatchedResourceModelSerializer
+from taiga.projects.notifications.validators import WatchersValidator
 
 from ..userstories.serializers import UserStorySerializer
 from . import models
 
 
-class MilestoneSerializer(serializers.ModelSerializer):
+class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer, serializers.ModelSerializer):
     user_stories = UserStorySerializer(many=True, required=False, read_only=True)
     total_points = serializers.SerializerMethodField("get_total_points")
     closed_points = serializers.SerializerMethodField("get_closed_points")

@@ -31,6 +31,7 @@ from taiga.projects.userstories.apps import (
     disconnect_userstories_signals)
 
 from taiga.events import events
+from taiga.projects.votes import services as votes_services
 
 from . import models
 
@@ -138,7 +139,8 @@ def userstories_to_csv(project,queryset):
                    "created_date", "modified_date", "finish_date",
                    "client_requirement", "team_requirement", "attachments",
                    "generated_from_issue", "external_reference", "tasks",
-                   "tags"]
+                   "tags",
+                   "watchers", "voters"]
 
     for custom_attr in project.userstorycustomattributes.all():
         fieldnames.append(custom_attr.name)
@@ -170,6 +172,8 @@ def userstories_to_csv(project,queryset):
             "external_reference": us.external_reference,
             "tasks": ",".join([str(task.ref) for task in us.tasks.all()]),
             "tags": ",".join(us.tags or []),
+            "watchers": [u.id for u in us.get_watchers()],
+            "voters": votes_services.get_voters(us).count(),
         }
 
         for role in us.project.roles.filter(computable=True).order_by('name'):

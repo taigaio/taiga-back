@@ -287,3 +287,15 @@ def test_user_action_change_email(client, data):
     after_each_request()
     results = helper_test_http_method(client, 'post', url, patch_data, users, after_each_request=after_each_request)
     assert results == [204, 204, 204]
+
+
+def test_user_list_votes(client, data):
+    url = reverse('users-favourites', kwargs={"pk": data.registered_user.pk})
+    users = [
+        None,
+        data.registered_user,
+        data.other_user,
+        data.superuser,
+    ]
+    results = helper_test_http_method(client, 'get', url, None, users)
+    assert results == [200, 200, 200, 200]

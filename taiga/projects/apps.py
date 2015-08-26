@@ -27,12 +27,7 @@ def connect_memberships_signals():
                                    sender=apps.get_model("projects", "Membership"),
                                    dispatch_uid='membership_pre_delete')
 
-        # On membership object is deleted, update watchers of all objects relation.
-        signals.post_delete.connect(handlers.update_watchers_on_membership_post_delete,
-                                    sender=apps.get_model("projects", "Membership"),
-                                    dispatch_uid='update_watchers_on_membership_post_delete')
-
-        # On membership object is deleted, update watchers of all objects relation.
+        # On membership object is deleted, update notify policies of all objects relation.
         signals.post_save.connect(handlers.create_notify_policy,
                                   sender=apps.get_model("projects", "Membership"),
                                   dispatch_uid='create-notify-policy')
@@ -67,7 +62,6 @@ def connect_task_status_signals():
 
 def disconnect_memberships_signals():
         signals.pre_delete.disconnect(sender=apps.get_model("projects", "Membership"), dispatch_uid='membership_pre_delete')
-        signals.post_delete.disconnect(sender=apps.get_model("projects", "Membership"), dispatch_uid='update_watchers_on_membership_post_delete')
         signals.post_save.disconnect(sender=apps.get_model("projects", "Membership"), dispatch_uid='create-notify-policy')
 
 

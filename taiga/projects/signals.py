@@ -45,24 +45,6 @@ def membership_post_delete(sender, instance, using, **kwargs):
     instance.project.update_role_points()
 
 
-def update_watchers_on_membership_post_delete(sender, instance, using, **kwargs):
-    models = [apps.get_model("userstories", "UserStory"),
-              apps.get_model("tasks", "Task"),
-              apps.get_model("issues", "Issue")]
-
-    # `user_id` is used beacuse in some momments
-    # instance.user can contain pointer to now
-    # removed object from a database.
-    for model in models:
-        #filter(project=instance.project)
-        filter = {
-            "user_id": instance.user_id,
-            "%s__project"%(model._meta.model_name): instance.project,
-        }
-
-        model.watchers.through.objects.filter(**filter).delete()
-
-
 def create_notify_policy(sender, instance, using, **kwargs):
     if instance.user:
         create_notify_policy_if_not_exists(instance.project, instance.user)

@@ -265,7 +265,7 @@ def test_leave_project_respect_watching_items(client):
     url = reverse("projects-leave", args=(project.id,))
     response = client.post(url)
     assert response.status_code == 200
-    assert list(issue.watchers.all()) == [user]
+    assert issue.watchers == [user]
 
 
 def test_delete_membership_only_owner(client):

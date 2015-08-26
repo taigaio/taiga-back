@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
+from taiga.projects.notifications.admin import WatchedInline
+from taiga.projects.votes.admin import VoteInline
 
 from . import models
 
@@ -30,6 +32,7 @@ class MilestoneAdmin(admin.ModelAdmin):
     list_display_links = list_display
     list_filter = ["project"]
     readonly_fields = ["owner"]
+    inlines = [WatchedInline, VoteInline]
 
 
 admin.site.register(models.Milestone, MilestoneAdmin)

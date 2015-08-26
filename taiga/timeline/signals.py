@@ -22,13 +22,11 @@ from taiga.projects.history import services as history_services
 from taiga.projects.models import Project
 from taiga.users.models import User
 from taiga.projects.history.choices import HistoryType
+from taiga.projects.notifications import services as notifications_services
 from taiga.timeline.service import (push_to_timeline,
                                     build_user_namespace,
                                     build_project_namespace,
                                     extract_user_info)
-
-# TODO: Add events to followers timeline when followers are implemented.
-# TODO: Add events to project watchers timeline when project watchers are implemented.
 
 
 def _push_to_timeline(*args, **kwargs):
@@ -60,9 +58,9 @@ def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_d
             related_people |= User.objects.filter(id=obj.assigned_to_id)
 
         ## - Watchers
-        watchers = getattr(obj, "watchers", None)
+        watchers = notifications_services.get_watchers(obj)
         if watchers:
-            related_people |= obj.watchers.all()
+            related_people |= watchers
 
         ## - Exclude inactive and system users and remove duplicate
         related_people = related_people.exclude(is_active=False)

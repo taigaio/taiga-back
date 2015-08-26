@@ -15,7 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
-                                        IsProjectOwner, AllowAny, IsSuperUser)
+                                        IsAuthenticated, IsProjectOwner, AllowAny,
+                                        IsSuperUser)
 
 
 class WikiPagePermission(TaigaResourcePermission):
@@ -29,6 +30,16 @@ class WikiPagePermission(TaigaResourcePermission):
     destroy_perms = HasProjectPerm('delete_wiki_page')
     list_perms = AllowAny()
     render_perms = AllowAny()
+    watch_perms = IsAuthenticated() & HasProjectPerm('view_wiki_pages')
+    unwatch_perms = IsAuthenticated() & HasProjectPerm('view_wiki_pages')
+
+
+class WikiPageWatchersPermission(TaigaResourcePermission):
+    enought_perms = IsProjectOwner() | IsSuperUser()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_wiki_pages')
+    list_perms = HasProjectPerm('view_wiki_pages')
+
 
 class WikiLinkPermission(TaigaResourcePermission):
     enought_perms = IsProjectOwner() | IsSuperUser()

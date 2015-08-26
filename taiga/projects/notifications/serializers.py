@@ -17,9 +17,10 @@
 import json
 
 from taiga.base.api import serializers
+from taiga.users.models import User
 
 from . import models
-
+from . import choices
 
 
 class NotifyPolicySerializer(serializers.ModelSerializer):
@@ -31,3 +32,11 @@ class NotifyPolicySerializer(serializers.ModelSerializer):
 
     def get_project_name(self, obj):
         return obj.project.name
+
+
+class WatcherSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source='get_full_name', required=False)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'full_name')

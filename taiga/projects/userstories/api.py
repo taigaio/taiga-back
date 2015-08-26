@@ -28,15 +28,15 @@ from taiga.base import exceptions as exc
 from taiga.base import response
 from taiga.base import status
 from taiga.base.decorators import list_route
-from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.occ import OCCResourceMixin
-
 from taiga.projects.models import Project, UserStoryStatus
 from taiga.projects.history.services import take_snapshot
+from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
 from . import models
 from . import permissions
@@ -44,27 +44,29 @@ from . import serializers
 from . import services
 
 
-class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
-    model = models.UserStory
+class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
+                       ModelCrudViewSet):
+    queryset = models.UserStory.objects.all()
     permission_classes = (permissions.UserStoryPermission,)
     filter_backends = (filters.CanViewUsFilterBackend,
                        filters.OwnersFilter,
                        filters.AssignedToFilter,
                        filters.StatusesFilter,
                        filters.TagsFilter,
+                       filters.WatchersFilter,
                        filters.QFilter,
                        filters.OrderByFilterMixin)
     retrieve_exclude_filters = (filters.OwnersFilter,
                                 filters.AssignedToFilter,
                                 filters.StatusesFilter,
-                                filters.TagsFilter)
+                                filters.TagsFilter,
+                                filters.WatchersFilter)
     filter_fields = ["project",
                      "milestone",
                      "milestone__isnull",
                      "is_closed",
                      "status__is_archived",
-                     "status__is_closed",
-                     "watchers"]
+                     "status__is_closed"]
     order_by_fields = ["backlog_order",
                        "sprint_order",
                        "kanban_order"]
@@ -109,13 +111,13 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
 
 
     def get_queryset(self):
-        qs = self.model.objects.all()
+        qs = super().get_queryset()
         qs = qs.prefetch_related("role_points",
                                  "role_points__points",
-                                 "role_points__role",
-                                 "watchers")
+                                 "role_points__role")
         qs = qs.select_related("milestone", "project")
-        return qs
+        qs = self.attach_votes_attrs_to_queryset(qs)
+        return self.attach_watchers_attrs_to_queryset(qs)
 
     def pre_save(self, obj):
         # This is very ugly hack, but having
@@ -264,3 +266,12 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
             self.send_notifications(self.object.generated_from_issue, history)
 
         return response
+
+class UserStoryVotersViewSet(VotersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.UserStoryVotersPermission,)
+    resource_model = models.UserStory
+
+
+class UserStoryWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.UserStoryWatchersPermission,)
+    resource_model = models.UserStory

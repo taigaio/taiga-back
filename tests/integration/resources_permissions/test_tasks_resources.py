@@ -9,6 +9,8 @@ from taiga.projects.occ import OCCResourceMixin
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
+from taiga.projects.votes.services import add_vote
+from taiga.projects.notifications.services import add_watcher
 
 from unittest import mock
 
@@ -416,6 +418,96 @@ def test_task_action_bulk_create(client, data):
     assert results == [401, 403, 403, 200, 200]
 
 
+def test_task_action_upvote(client, data):
+    public_url = reverse('tasks-upvote', kwargs={"pk": data.public_task.pk})
+    private_url1 = reverse('tasks-upvote', kwargs={"pk": data.private_task1.pk})
+    private_url2 = reverse('tasks-upvote', kwargs={"pk": data.private_task2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]
+
+
+def test_task_action_downvote(client, data):
+    public_url = reverse('tasks-downvote', kwargs={"pk": data.public_task.pk})
+    private_url1 = reverse('tasks-downvote', kwargs={"pk": data.private_task1.pk})
+    private_url2 = reverse('tasks-downvote', kwargs={"pk": data.private_task2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]
+
+
+def test_task_voters_list(client, data):
+    public_url = reverse('task-voters-list', kwargs={"resource_id": data.public_task.pk})
+    private_url1 = reverse('task-voters-list', kwargs={"resource_id": data.private_task1.pk})
+    private_url2 = reverse('task-voters-list', kwargs={"resource_id": data.private_task2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_task_voters_retrieve(client, data):
+    add_vote(data.public_task, data.project_owner)
+    public_url = reverse('task-voters-detail', kwargs={"resource_id": data.public_task.pk,
+                                                        "pk": data.project_owner.pk})
+    add_vote(data.private_task1, data.project_owner)
+    private_url1 = reverse('task-voters-detail', kwargs={"resource_id": data.private_task1.pk,
+                                                          "pk": data.project_owner.pk})
+    add_vote(data.private_task2, data.project_owner)
+    private_url2 = reverse('task-voters-detail', kwargs={"resource_id": data.private_task2.pk,
+                                                          "pk": data.project_owner.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
 def test_tasks_csv(client, data):
     url = reverse('tasks-csv')
     csv_public_uuid = data.public_project.tasks_csv_uuid
@@ -438,3 +530,93 @@ def test_tasks_csv(client, data):
 
     results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private2_uuid), None, users)
     assert results == [200, 200, 200, 200, 200]
+
+
+def test_task_action_watch(client, data):
+    public_url = reverse('tasks-watch', kwargs={"pk": data.public_task.pk})
+    private_url1 = reverse('tasks-watch', kwargs={"pk": data.private_task1.pk})
+    private_url2 = reverse('tasks-watch', kwargs={"pk": data.private_task2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]
+
+
+def test_task_action_unwatch(client, data):
+    public_url = reverse('tasks-unwatch', kwargs={"pk": data.public_task.pk})
+    private_url1 = reverse('tasks-unwatch', kwargs={"pk": data.private_task1.pk})
+    private_url2 = reverse('tasks-unwatch', kwargs={"pk": data.private_task2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]
+
+
+def test_task_watchers_list(client, data):
+    public_url = reverse('task-watchers-list', kwargs={"resource_id": data.public_task.pk})
+    private_url1 = reverse('task-watchers-list', kwargs={"resource_id": data.private_task1.pk})
+    private_url2 = reverse('task-watchers-list', kwargs={"resource_id": data.private_task2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_task_watchers_retrieve(client, data):
+    add_watcher(data.public_task, data.project_owner)
+    public_url = reverse('task-watchers-detail', kwargs={"resource_id": data.public_task.pk,
+                                                            "pk": data.project_owner.pk})
+    add_watcher(data.private_task1, data.project_owner)
+    private_url1 = reverse('task-watchers-detail', kwargs={"resource_id": data.private_task1.pk,
+                                                              "pk": data.project_owner.pk})
+    add_watcher(data.private_task2, data.project_owner)
+    private_url2 = reverse('task-watchers-detail', kwargs={"resource_id": data.private_task2.pk,
+                                                              "pk": data.project_owner.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]

@@ -18,7 +18,7 @@
 from django.apps import apps
 
 
-def attach_votescount_to_queryset(queryset, as_field="votes_count"):
+def attach_votes_count_to_queryset(queryset, as_field="votes_count"):
     """Attach votes count to each object of the queryset.
 
     Because of laziness of vote objects creation, this makes much simpler and more efficient to
@@ -34,8 +34,40 @@ def attach_votescount_to_queryset(queryset, as_field="votes_count"):
     """
     model = queryset.model
     type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(model)
-    sql = ("SELECT coalesce(votes_votes.count, 0) FROM votes_votes "
-           "WHERE votes_votes.content_type_id = {type_id} AND votes_votes.object_id = {tbl}.id")
+    sql = ("""SELECT coalesce(votes_votes.count, 0)
+                FROM votes_votes
+               WHERE votes_votes.content_type_id = {type_id}
+                 AND votes_votes.object_id = {tbl}.id""")
     sql = sql.format(type_id=type.id, tbl=model._meta.db_table)
+    qs = queryset.extra(select={as_field: sql})
+    return qs
+
+
+def attach_is_vote_to_queryset(user, queryset, as_field="is_voted"):
+    """Attach is_vote boolean to each object of the queryset.
+
+    Because of laziness of vote objects creation, this makes much simpler and more efficient to
+    access to votes-object and check if the curren user vote it.
+
+    (The other way was to do it in the serializer with some try/except blocks and additional
+    queries)
+
+    :param user: A users.User object model
+    :param queryset: A Django queryset object.
+    :param as_field: Attach the boolean as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(model)
+    sql = ("""SELECT CASE WHEN (SELECT count(*)
+                                  FROM votes_vote
+                                 WHERE votes_vote.content_type_id = {type_id}
+                                   AND votes_vote.object_id = {tbl}.id
+                                   AND votes_vote.user_id = {user_id}) > 0
+                          THEN TRUE
+                          ELSE FALSE
+                     END""")
+    sql = sql.format(type_id=type.id, tbl=model._meta.db_table, user_id=user.id)
     qs = queryset.extra(select={as_field: sql})
     return qs

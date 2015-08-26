@@ -15,11 +15,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.projects.models import Membership, Project
 from .permissions import OWNERS_PERMISSIONS, MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 
+from django.apps import apps
 
 def _get_user_project_membership(user, project):
+    Membership = apps.get_model("projects", "Membership")
     if user.is_anonymous():
         return None
 
@@ -30,7 +31,7 @@ def _get_user_project_membership(user, project):
 
 def _get_object_project(obj):
     project = None
-
+    Project = apps.get_model("projects", "Project")
     if isinstance(obj, Project):
         project = obj
     elif obj and hasattr(obj, 'project'):

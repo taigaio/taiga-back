@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db.models import signals
-from taiga.base.utils import json
 
 
 def signals_switch():
@@ -69,9 +68,9 @@ def helper_test_http_method(client, method, url, data, users, after_each_request
 
 def helper_test_http_method_and_count(client, method, url, data, users, after_each_request=None):
     responses = _helper_test_http_method_responses(client, method, url, data, users, after_each_request)
-    return list(map(lambda r: (r.status_code, len(json.loads(r.content.decode('utf-8')))), responses))
+    return list(map(lambda r: (r.status_code, len(r.data) if isinstance(r.data, list) and 200 <= r.status_code < 300 else 0), responses))
 
 
 def helper_test_http_method_and_keys(client, method, url, data, users, after_each_request=None):
     responses = _helper_test_http_method_responses(client, method, url, data, users, after_each_request)
-    return list(map(lambda r: (r.status_code, set(json.loads(r.content.decode('utf-8')).keys())), responses))
+    return list(map(lambda r: (r.status_code, set(r.data.keys() if isinstance(r.data, dict) and 200 <= r.status_code < 300 else [])), responses))

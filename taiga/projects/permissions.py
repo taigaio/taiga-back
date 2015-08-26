@@ -54,17 +54,32 @@ class ProjectPermission(TaigaResourcePermission):
     list_perms = AllowAny()
     stats_perms = HasProjectPerm('view_project')
     member_stats_perms = HasProjectPerm('view_project')
+    issues_stats_perms = HasProjectPerm('view_project')
     regenerate_userstories_csv_uuid_perms = IsProjectOwner()
     regenerate_issues_csv_uuid_perms = IsProjectOwner()
     regenerate_tasks_csv_uuid_perms = IsProjectOwner()
-    star_perms = IsAuthenticated()
-    unstar_perms = IsAuthenticated()
-    issues_stats_perms = HasProjectPerm('view_project')
     tags_perms = HasProjectPerm('view_project')
     tags_colors_perms = HasProjectPerm('view_project')
-    fans_perms = HasProjectPerm('view_project')
+    star_perms = IsAuthenticated() & HasProjectPerm('view_project')
+    unstar_perms = IsAuthenticated() & HasProjectPerm('view_project')
+    watch_perms = IsAuthenticated() & HasProjectPerm('view_project')
+    unwatch_perms = IsAuthenticated() & HasProjectPerm('view_project')
     create_template_perms = IsSuperUser()
     leave_perms = CanLeaveProject()
+
+
+class ProjectFansPermission(TaigaResourcePermission):
+    enought_perms = IsProjectOwner() | IsSuperUser()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_project')
+    list_perms = HasProjectPerm('view_project')
+
+
+class ProjectWatchersPermission(TaigaResourcePermission):
+    enought_perms = IsProjectOwner() | IsSuperUser()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_project')
+    list_perms = HasProjectPerm('view_project')
 
 
 class MembershipPermission(TaigaResourcePermission):

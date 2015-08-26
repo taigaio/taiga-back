@@ -114,6 +114,33 @@ class UsersViewSet(ModelCrudViewSet):
         self.check_permissions(request, "stats", user)
         return response.Ok(services.get_stats_for_user(user, request.user))
 
+    @detail_route(methods=["GET"])
+    def favourites(self, request, *args, **kwargs):
+        for_user = get_object_or_404(models.User, **kwargs)
+        from_user = request.user
+        self.check_permissions(request, 'favourites', for_user)
+        filters = {
+            "type": request.GET.get("type", None),
+            "action": request.GET.get("action", None),
+            "q": request.GET.get("q", None),
+        }
+
+        self.object_list = services.get_favourites_list(for_user, from_user, **filters)
+        page = self.paginate_queryset(self.object_list)
+
+        extra_args = {
+            "many": True,
+            "user_votes": services.get_voted_content_for_user(request.user),
+            "user_watching": services.get_watched_content_for_user(request.user),
+        }
+
+        if page is not None:
+            serializer = serializers.FavouriteSerializer(page.object_list, **extra_args)
+        else:
+            serializer = serializers.FavouriteSerializer(self.object_list, **extra_args)
+
+        return response.Ok(serializer.data)
+
     @list_route(methods=["POST"])
     def password_recovery(self, request, pk=None):
         username_or_email = request.DATA.get('username', None)
@@ -223,15 +250,6 @@ class UsersViewSet(ModelCrudViewSet):
         request.user.save(update_fields=["photo"])
         user_data = self.admin_serializer_class(request.user).data
         return response.Ok(user_data)
-
-    @detail_route(methods=["GET"])
-    def starred(self, request, pk=None):
-        user = self.get_object()
-        self.check_permissions(request, 'starred', user)
-
-        stars = votes_service.get_voted(user.pk, model=apps.get_model('projects', 'Project'))
-        stars_data = StarredSerializer(stars, many=True)
-        return response.Ok(stars_data.data)
 
     #TODO: commit_on_success
     def partial_update(self, request, *args, **kwargs):

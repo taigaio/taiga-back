@@ -17,10 +17,11 @@
 from functools import partial
 
 from django.apps import apps
-from django.db import IntegrityError
+from django.db.transaction import atomic
+from django.db import IntegrityError, transaction
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import get_user_model
 from django.utils import timezone
-from django.db import transaction
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
@@ -36,7 +37,7 @@ from taiga.projects.history.services import (make_key_from_model_object,
 from taiga.permissions.service import user_has_perm
 from taiga.users.models import User
 
-from .models import HistoryChangeNotification
+from .models import HistoryChangeNotification, Watched
 
 
 def notify_policy_exists(project, user) -> bool:
@@ -121,11 +122,11 @@ def analize_object_for_watchers(obj:object, history:object):
 
     if data["mentions"]:
         for user in data["mentions"]:
-            obj.watchers.add(user)
+            obj.add_watcher(user)
 
     # Adding the person who edited the object to the watchers
     if history.comment and not history.owner.is_system:
-        obj.watchers.add(history.owner)
+        obj.add_watcher(history.owner)
 
 def _filter_by_permissions(obj, user):
     UserStory = apps.get_model("userstories", "UserStory")
@@ -170,15 +171,19 @@ def get_users_to_notify(obj, *, discard_users=None) -> list:
     candidates = set()
     candidates.update(filter(_can_notify_hard, project.members.all()))
     candidates.update(filter(_can_notify_light, obj.get_watchers()))
+    candidates.update(filter(_can_notify_light, obj.project.get_watchers()))
     candidates.update(filter(_can_notify_light, obj.get_participants()))
+
+    #TODO: coger los watchers del proyecto que quieren ser notificados por correo
+    #Filtrar los watchers según su nivel de watched y su nivel en el proyecto
 
     # Remove the changer from candidates
     if discard_users:
         candidates = candidates - set(discard_users)
 
-    candidates = filter(partial(_filter_by_permissions, obj), candidates)
+    candidates = set(filter(partial(_filter_by_permissions, obj), candidates))
     # Filter disabled and system users
-    candidates = filter(partial(_filter_notificable), candidates)
+    candidates = set(filter(partial(_filter_notificable), candidates))
     return frozenset(candidates)
 
 
@@ -282,3 +287,72 @@ def send_sync_notifications(notification_id):
 def process_sync_notifications():
     for notification in HistoryChangeNotification.objects.all():
         send_sync_notifications(notification.pk)
+
+
+def get_watchers(obj):
+    """Get the watchers of an object.
+
+    :param obj: Any Django model instance.
+
+    :return: User queryset object representing the users that voted the object.
+    """
+    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
+    return get_user_model().objects.filter(watched__content_type=obj_type, watched__object_id=obj.id)
+
+
+def get_watched(user_or_id, model):
+    """Get the objects watched by an user.
+
+    :param user_or_id: :class:`~taiga.users.models.User` instance or id.
+    :param model: Show only objects of this kind. Can be any Django model class.
+
+    :return: Queryset of objects representing the votes of the user.
+    """
+    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(model)
+    conditions = ('notifications_watched.content_type_id = %s',
+                  '%s.id = notifications_watched.object_id' % model._meta.db_table,
+                  'notifications_watched.user_id = %s')
+
+    if isinstance(user_or_id, get_user_model()):
+        user_id = user_or_id.id
+    else:
+        user_id = user_or_id
+
+    return model.objects.extra(where=conditions, tables=('notifications_watched',),
+                               params=(obj_type.id, user_id))
+
+
+def add_watcher(obj, user):
+    """Add a watcher to an object.
+
+    If the user is already watching the object nothing happents (except if there is a level update),
+    so this function can be considered idempotent.
+
+    :param obj: Any Django model instance.
+    :param user: User adding the watch. :class:`~taiga.users.models.User` instance.
+    """
+    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
+    watched, created = Watched.objects.get_or_create(content_type=obj_type,
+        object_id=obj.id, user=user, project=obj.project)
+
+    notify_policy, _ = apps.get_model("notifications", "NotifyPolicy").objects.get_or_create(
+        project=obj.project, user=user, defaults={"notify_level": NotifyLevel.watch})
+
+    return watched
+
+
+def remove_watcher(obj, user):
+    """Remove an watching user from an object.
+
+    If the user has not watched the object nothing happens so this function can be considered
+    idempotent.
+
+    :param obj: Any Django model instance.
+    :param user: User removing the watch. :class:`~taiga.users.models.User` instance.
+    """
+    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
+    qs = Watched.objects.filter(content_type=obj_type, object_id=obj.id, user=user)
+    if not qs.exists():
+        return
+
+    qs.delete()

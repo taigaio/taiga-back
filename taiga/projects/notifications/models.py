@@ -14,13 +14,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
+from django.contrib.contenttypes import generic
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
 from taiga.projects.history.choices import HISTORY_TYPE_CHOICES
 
-from .choices import NOTIFY_LEVEL_CHOICES
+from .choices import NOTIFY_LEVEL_CHOICES, NotifyLevel
 
 
 class NotifyPolicy(models.Model):
@@ -72,3 +74,19 @@ class HistoryChangeNotification(models.Model):
 
     class Meta:
         unique_together = ("key", "owner", "project", "history_type")
+
+
+class Watched(models.Model):
+    content_type = models.ForeignKey("contenttypes.ContentType")
+    object_id = models.PositiveIntegerField()
+    content_object = generic.GenericForeignKey("content_type", "object_id")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, null=False,
+                              related_name="watched", verbose_name=_("user"))
+    created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,
+                                        verbose_name=_("created date"))
+    project = models.ForeignKey("projects.Project", null=False, blank=False,
+                                verbose_name=_("project"),related_name="watched")
+    class Meta:
+        verbose_name = _("Watched")
+        verbose_name_plural = _("Watched")
+        unique_together = ("content_type", "object_id", "user", "project")
