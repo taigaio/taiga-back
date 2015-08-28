@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-24 10:34+0200\n"
-"PO-Revision-Date: 2015-08-08 19:29+0000\n"
+"POT-Creation-Date: 2015-08-28 10:22+0200\n"
+"PO-Revision-Date: 2015-08-28 08:23+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Chinese Traditional (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/zh-Hant/)\n"
@@ -34,11 +34,11 @@ msgstr "無效的註冊類型"
 msgid "invalid login type"
 msgstr "無效的登入類型"
 
-#: taiga/auth/serializers.py:34 taiga/users/serializers.py:58
+#: taiga/auth/serializers.py:34 taiga/users/serializers.py:61
 msgid "invalid username"
 msgstr "無效使用者名稱"
 
-#: taiga/auth/serializers.py:39 taiga/users/serializers.py:64
+#: taiga/auth/serializers.py:39 taiga/users/serializers.py:67
 msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
 msgstr "必填。最多255字元(可為數字，字母，符號....)"
@@ -327,12 +327,12 @@ msgstr "因錯誤或無效參數，一致性出錯"
 msgid "Precondition error"
 msgstr "前提出錯"
 
-#: taiga/base/filters.py:79
+#: taiga/base/filters.py:80
 msgid "Error in filter params types."
 msgstr "過濾參數類型出錯"
 
-#: taiga/base/filters.py:133 taiga/base/filters.py:222
-#: taiga/base/filters.py:271
+#: taiga/base/filters.py:134 taiga/base/filters.py:223
+#: taiga/base/filters.py:272
 msgid "'project' must be an integer value."
 msgstr "專案須為整數值"
 
@@ -551,24 +551,24 @@ msgstr "滙入標籤出錯"
 msgid "error importing timelines"
 msgstr "滙入時間軸出錯"
 
-#: taiga/export_import/serializers.py:161
+#: taiga/export_import/serializers.py:163
 msgid "{}=\"{}\" not found in this project"
 msgstr "{}=\"{}\" 無法在此專案中找到"
 
-#: taiga/export_import/serializers.py:384
+#: taiga/export_import/serializers.py:428
 #: taiga/projects/custom_attributes/serializers.py:103
 msgid "Invalid content. It must be {\"key\": \"value\",...}"
 msgstr "無效內容。必須為 {\"key\": \"value\",...}"
 
-#: taiga/export_import/serializers.py:399
+#: taiga/export_import/serializers.py:443
 #: taiga/projects/custom_attributes/serializers.py:118
 msgid "It contain invalid custom fields."
 msgstr "包括無效慣例欄位"
 
-#: taiga/export_import/serializers.py:468
-#: taiga/projects/milestones/serializers.py:63 taiga/projects/serializers.py:67
-#: taiga/projects/serializers.py:93 taiga/projects/serializers.py:124
-#: taiga/projects/serializers.py:167
+#: taiga/export_import/serializers.py:511
+#: taiga/projects/milestones/serializers.py:64 taiga/projects/serializers.py:70
+#: taiga/projects/serializers.py:96 taiga/projects/serializers.py:127
+#: taiga/projects/serializers.py:170
 msgid "Name duplicated for the project"
 msgstr "專案的名稱被複製了"
 
@@ -827,8 +827,9 @@ msgstr "評論"
 #: taiga/feedback/models.py:29 taiga/projects/attachments/models.py:61
 #: taiga/projects/custom_attributes/models.py:44
 #: taiga/projects/issues/models.py:53 taiga/projects/milestones/models.py:45
-#: taiga/projects/models.py:129 taiga/projects/models.py:561
-#: taiga/projects/tasks/models.py:46 taiga/projects/userstories/models.py:82
+#: taiga/projects/models.py:131 taiga/projects/models.py:563
+#: taiga/projects/notifications/models.py:86 taiga/projects/tasks/models.py:46
+#: taiga/projects/userstories/models.py:82 taiga/projects/votes/models.py:52
 #: taiga/projects/wiki/models.py:38 taiga/userstorage/models.py:27
 msgid "created date"
 msgstr "創建日期"
@@ -895,8 +896,8 @@ msgstr ""
 msgid "The payload is not a valid json"
 msgstr "載荷為無效json"
 
-#: taiga/hooks/api.py:61 taiga/projects/issues/api.py:137
-#: taiga/projects/tasks/api.py:81 taiga/projects/userstories/api.py:106
+#: taiga/hooks/api.py:61 taiga/projects/issues/api.py:139
+#: taiga/projects/tasks/api.py:84 taiga/projects/userstories/api.py:108
 msgid "The project doesn't exist"
 msgstr "專案不存在"
 
@@ -1076,12 +1077,12 @@ msgstr ""
 "{message}"
 
 #: taiga/permissions/permissions.py:21 taiga/permissions/permissions.py:31
-#: taiga/permissions/permissions.py:52
+#: taiga/permissions/permissions.py:55
 msgid "View project"
 msgstr "檢視專案"
 
 #: taiga/permissions/permissions.py:22 taiga/permissions/permissions.py:32
-#: taiga/permissions/permissions.py:54
+#: taiga/permissions/permissions.py:58
 msgid "View milestones"
 msgstr "檢視里程碑"
 
@@ -1089,167 +1090,179 @@ msgstr "檢視里程碑"
 msgid "View user stories"
 msgstr "檢視使用者故事"
 
-#: taiga/permissions/permissions.py:24 taiga/permissions/permissions.py:36
-#: taiga/permissions/permissions.py:64
+#: taiga/permissions/permissions.py:24 taiga/permissions/permissions.py:35
+#: taiga/permissions/permissions.py:69
 msgid "View tasks"
 msgstr "檢視任務　"
 
 #: taiga/permissions/permissions.py:25 taiga/permissions/permissions.py:34
-#: taiga/permissions/permissions.py:69
+#: taiga/permissions/permissions.py:75
 msgid "View issues"
 msgstr "檢視問題　"
 
-#: taiga/permissions/permissions.py:26 taiga/permissions/permissions.py:37
-#: taiga/permissions/permissions.py:75
+#: taiga/permissions/permissions.py:26 taiga/permissions/permissions.py:36
+#: taiga/permissions/permissions.py:81
 msgid "View wiki pages"
 msgstr "檢視維基頁"
 
-#: taiga/permissions/permissions.py:27 taiga/permissions/permissions.py:38
-#: taiga/permissions/permissions.py:80
+#: taiga/permissions/permissions.py:27 taiga/permissions/permissions.py:37
+#: taiga/permissions/permissions.py:86
 msgid "View wiki links"
 msgstr "檢視維基連結"
 
-#: taiga/permissions/permissions.py:35 taiga/permissions/permissions.py:70
-msgid "Vote issues"
-msgstr "票選問題　"
-
-#: taiga/permissions/permissions.py:39
+#: taiga/permissions/permissions.py:38
 msgid "Request membership"
 msgstr "要求加入會員"
 
-#: taiga/permissions/permissions.py:40
+#: taiga/permissions/permissions.py:39
 msgid "Add user story to project"
 msgstr "專案中新增使用者故事"
 
-#: taiga/permissions/permissions.py:41
+#: taiga/permissions/permissions.py:40
 msgid "Add comments to user stories"
 msgstr "使用者故事附加評論"
 
-#: taiga/permissions/permissions.py:42
+#: taiga/permissions/permissions.py:41
 msgid "Add comments to tasks"
 msgstr "任務附加評論"
 
-#: taiga/permissions/permissions.py:43
+#: taiga/permissions/permissions.py:42
 msgid "Add issues"
 msgstr "加入問題　"
 
-#: taiga/permissions/permissions.py:44
+#: taiga/permissions/permissions.py:43
 msgid "Add comments to issues"
 msgstr "問題加入評論"
 
-#: taiga/permissions/permissions.py:45 taiga/permissions/permissions.py:76
+#: taiga/permissions/permissions.py:44 taiga/permissions/permissions.py:82
 msgid "Add wiki page"
 msgstr "新增維基頁"
 
-#: taiga/permissions/permissions.py:46 taiga/permissions/permissions.py:77
+#: taiga/permissions/permissions.py:45 taiga/permissions/permissions.py:83
 msgid "Modify wiki page"
 msgstr "修改維基頁"
 
-#: taiga/permissions/permissions.py:47 taiga/permissions/permissions.py:81
+#: taiga/permissions/permissions.py:46 taiga/permissions/permissions.py:87
 msgid "Add wiki link"
 msgstr "新增維基連結"
 
-#: taiga/permissions/permissions.py:48 taiga/permissions/permissions.py:82
+#: taiga/permissions/permissions.py:47 taiga/permissions/permissions.py:88
 msgid "Modify wiki link"
 msgstr "修改維基連結"
 
-#: taiga/permissions/permissions.py:55
+#: taiga/permissions/permissions.py:48 taiga/permissions/permissions.py:56
+msgid "Star project"
+msgstr ""
+
+#: taiga/permissions/permissions.py:49 taiga/permissions/permissions.py:67
+msgid "Vote user story"
+msgstr ""
+
+#: taiga/permissions/permissions.py:50 taiga/permissions/permissions.py:73
+msgid "Vote task"
+msgstr ""
+
+#: taiga/permissions/permissions.py:51 taiga/permissions/permissions.py:79
+msgid "Vote issue"
+msgstr ""
+
+#: taiga/permissions/permissions.py:59
 msgid "Add milestone"
 msgstr "加入里程碑"
 
-#: taiga/permissions/permissions.py:56
+#: taiga/permissions/permissions.py:60
 msgid "Modify milestone"
 msgstr "修改里程碑"
 
-#: taiga/permissions/permissions.py:57
+#: taiga/permissions/permissions.py:61
 msgid "Delete milestone"
 msgstr "刪除里程碑　"
 
-#: taiga/permissions/permissions.py:59
+#: taiga/permissions/permissions.py:63
 msgid "View user story"
 msgstr "檢視使用者故事"
 
-#: taiga/permissions/permissions.py:60
+#: taiga/permissions/permissions.py:64
 msgid "Add user story"
 msgstr "新增使用者故事"
 
-#: taiga/permissions/permissions.py:61
+#: taiga/permissions/permissions.py:65
 msgid "Modify user story"
 msgstr "修改使用者故事"
 
-#: taiga/permissions/permissions.py:62
+#: taiga/permissions/permissions.py:66
 msgid "Delete user story"
 msgstr "刪除使用者故事"
 
-#: taiga/permissions/permissions.py:65
+#: taiga/permissions/permissions.py:70
 msgid "Add task"
 msgstr "新增任務　"
 
-#: taiga/permissions/permissions.py:66
+#: taiga/permissions/permissions.py:71
 msgid "Modify task"
 msgstr "修改任務　"
 
-#: taiga/permissions/permissions.py:67
+#: taiga/permissions/permissions.py:72
 msgid "Delete task"
 msgstr "刪除任務　"
 
-#: taiga/permissions/permissions.py:71
+#: taiga/permissions/permissions.py:76
 msgid "Add issue"
 msgstr "新增問題　"
 
-#: taiga/permissions/permissions.py:72
+#: taiga/permissions/permissions.py:77
 msgid "Modify issue"
 msgstr "修改問題"
 
-#: taiga/permissions/permissions.py:73
+#: taiga/permissions/permissions.py:78
 msgid "Delete issue"
 msgstr "刪除問題　"
 
-#: taiga/permissions/permissions.py:78
+#: taiga/permissions/permissions.py:84
 msgid "Delete wiki page"
 msgstr "刪除維基頁　"
 
-#: taiga/permissions/permissions.py:83
+#: taiga/permissions/permissions.py:89
 msgid "Delete wiki link"
 msgstr "刪除維基連結"
 
-#: taiga/permissions/permissions.py:87
+#: taiga/permissions/permissions.py:93
 msgid "Modify project"
 msgstr "修改專案"
 
-#: taiga/permissions/permissions.py:88
+#: taiga/permissions/permissions.py:94
 msgid "Add member"
 msgstr "新增成員"
 
-#: taiga/permissions/permissions.py:89
+#: taiga/permissions/permissions.py:95
 msgid "Remove member"
 msgstr "移除成員"
 
-#: taiga/permissions/permissions.py:90
+#: taiga/permissions/permissions.py:96
 msgid "Delete project"
 msgstr "刪除專案"
 
-#: taiga/permissions/permissions.py:91
+#: taiga/permissions/permissions.py:97
 msgid "Admin project values"
 msgstr "管理員專案數值"
 
-#: taiga/permissions/permissions.py:92
+#: taiga/permissions/permissions.py:98
 msgid "Admin roles"
 msgstr "管理員角色"
 
-#: taiga/projects/api.py:198
+#: taiga/projects/api.py:176
 msgid "Not valid template name"
 msgstr "非有效樣板名稱　"
 
-#: taiga/projects/api.py:201
+#: taiga/projects/api.py:179
 msgid "Not valid template description"
 msgstr "無效樣板描述"
 
-#: taiga/projects/api.py:469 taiga/projects/serializers.py:261
+#: taiga/projects/api.py:455 taiga/projects/serializers.py:264
 msgid "At least one of the user must be an active admin"
 msgstr "至少需有一位使用者擔任管理員"
 
-#: taiga/projects/api.py:499
+#: taiga/projects/api.py:485
 msgid "You don't have permisions to see that."
 msgstr "您無觀看權限"
 
@@ -1262,8 +1275,8 @@ msgid "Project ID not matches between object and project"
 msgstr "專案ID不符合物件與專案"
 
 #: taiga/projects/attachments/models.py:52 taiga/projects/issues/models.py:38
-#: taiga/projects/milestones/models.py:39 taiga/projects/models.py:134
-#: taiga/projects/notifications/models.py:57 taiga/projects/tasks/models.py:37
+#: taiga/projects/milestones/models.py:39 taiga/projects/models.py:136
+#: taiga/projects/notifications/models.py:59 taiga/projects/tasks/models.py:37
 #: taiga/projects/userstories/models.py:64 taiga/projects/wiki/models.py:34
 #: taiga/userstorage/models.py:25
 msgid "owner"
@@ -1272,11 +1285,12 @@ msgstr "所有者"
 #: taiga/projects/attachments/models.py:54
 #: taiga/projects/custom_attributes/models.py:41
 #: taiga/projects/issues/models.py:51 taiga/projects/milestones/models.py:41
-#: taiga/projects/models.py:338 taiga/projects/models.py:364
-#: taiga/projects/models.py:395 taiga/projects/models.py:424
-#: taiga/projects/models.py:457 taiga/projects/models.py:480
-#: taiga/projects/models.py:507 taiga/projects/models.py:538
-#: taiga/projects/notifications/models.py:69 taiga/projects/tasks/models.py:41
+#: taiga/projects/models.py:340 taiga/projects/models.py:366
+#: taiga/projects/models.py:397 taiga/projects/models.py:426
+#: taiga/projects/models.py:459 taiga/projects/models.py:482
+#: taiga/projects/models.py:509 taiga/projects/models.py:540
+#: taiga/projects/notifications/models.py:71
+#: taiga/projects/notifications/models.py:88 taiga/projects/tasks/models.py:41
 #: taiga/projects/userstories/models.py:62 taiga/projects/wiki/models.py:28
 #: taiga/projects/wiki/models.py:66 taiga/users/models.py:196
 msgid "project"
@@ -1293,7 +1307,7 @@ msgstr "物件ID"
 #: taiga/projects/attachments/models.py:64
 #: taiga/projects/custom_attributes/models.py:46
 #: taiga/projects/issues/models.py:56 taiga/projects/milestones/models.py:48
-#: taiga/projects/models.py:132 taiga/projects/models.py:564
+#: taiga/projects/models.py:134 taiga/projects/models.py:566
 #: taiga/projects/tasks/models.py:49 taiga/projects/userstories/models.py:85
 #: taiga/projects/wiki/models.py:41 taiga/userstorage/models.py:29
 msgid "modified date"
@@ -1310,18 +1324,18 @@ msgstr "棄用"
 #: taiga/projects/attachments/models.py:73
 #: taiga/projects/custom_attributes/models.py:37
 #: taiga/projects/history/templatetags/functions.py:25
-#: taiga/projects/issues/models.py:61 taiga/projects/models.py:127
-#: taiga/projects/models.py:559 taiga/projects/tasks/models.py:60
+#: taiga/projects/issues/models.py:61 taiga/projects/models.py:129
+#: taiga/projects/models.py:561 taiga/projects/tasks/models.py:60
 #: taiga/projects/userstories/models.py:90
 msgid "description"
 msgstr "描述"
 
 #: taiga/projects/attachments/models.py:74
 #: taiga/projects/custom_attributes/models.py:39
-#: taiga/projects/milestones/models.py:54 taiga/projects/models.py:354
-#: taiga/projects/models.py:391 taiga/projects/models.py:418
-#: taiga/projects/models.py:453 taiga/projects/models.py:476
-#: taiga/projects/models.py:501 taiga/projects/models.py:534
+#: taiga/projects/milestones/models.py:54 taiga/projects/models.py:356
+#: taiga/projects/models.py:393 taiga/projects/models.py:420
+#: taiga/projects/models.py:455 taiga/projects/models.py:478
+#: taiga/projects/models.py:503 taiga/projects/models.py:536
 #: taiga/projects/wiki/models.py:71 taiga/users/models.py:191
 msgid "order"
 msgstr "次序"
@@ -1351,11 +1365,11 @@ msgid "Multi-Line Text"
 msgstr "多行列文字"
 
 #: taiga/projects/custom_attributes/models.py:36
-#: taiga/projects/milestones/models.py:34 taiga/projects/models.py:123
-#: taiga/projects/models.py:350 taiga/projects/models.py:389
-#: taiga/projects/models.py:414 taiga/projects/models.py:451
-#: taiga/projects/models.py:474 taiga/projects/models.py:497
-#: taiga/projects/models.py:532 taiga/projects/models.py:555
+#: taiga/projects/milestones/models.py:34 taiga/projects/models.py:125
+#: taiga/projects/models.py:352 taiga/projects/models.py:391
+#: taiga/projects/models.py:416 taiga/projects/models.py:453
+#: taiga/projects/models.py:476 taiga/projects/models.py:499
+#: taiga/projects/models.py:534 taiga/projects/models.py:557
 #: taiga/users/models.py:183 taiga/webhooks/models.py:27
 msgid "name"
 msgstr "姓名"
@@ -1519,23 +1533,23 @@ msgstr "封鎖筆記"
 msgid "sprint"
 msgstr "衝刺任務"
 
-#: taiga/projects/issues/api.py:157
+#: taiga/projects/issues/api.py:159
 msgid "You don't have permissions to set this sprint to this issue."
 msgstr "您無權限設定此問題的衝刺任務"
 
-#: taiga/projects/issues/api.py:161
+#: taiga/projects/issues/api.py:163
 msgid "You don't have permissions to set this status to this issue."
 msgstr "您無權限設定此問題的狀態"
 
-#: taiga/projects/issues/api.py:165
+#: taiga/projects/issues/api.py:167
 msgid "You don't have permissions to set this severity to this issue."
 msgstr "您無權限設定此問題的嚴重性"
 
-#: taiga/projects/issues/api.py:169
+#: taiga/projects/issues/api.py:171
 msgid "You don't have permissions to set this priority to this issue."
 msgstr "您無權限設定此問題的優先性"
 
-#: taiga/projects/issues/api.py:173
+#: taiga/projects/issues/api.py:175
 msgid "You don't have permissions to set this type to this issue."
 msgstr "您無權限設定此問題的類型"
 
@@ -1581,9 +1595,9 @@ msgstr "指派給"
 msgid "external reference"
 msgstr "外部參考"
 
-#: taiga/projects/milestones/models.py:37 taiga/projects/models.py:125
-#: taiga/projects/models.py:352 taiga/projects/models.py:416
-#: taiga/projects/models.py:499 taiga/projects/models.py:557
+#: taiga/projects/milestones/models.py:37 taiga/projects/models.py:127
+#: taiga/projects/models.py:354 taiga/projects/models.py:418
+#: taiga/projects/models.py:501 taiga/projects/models.py:559
 #: taiga/projects/wiki/models.py:30 taiga/users/models.py:185
 msgid "slug"
 msgstr "代稱"
@@ -1596,8 +1610,8 @@ msgstr "预計開始日期"
 msgid "estimated finish date"
 msgstr "預計完成日期"
 
-#: taiga/projects/milestones/models.py:50 taiga/projects/models.py:356
-#: taiga/projects/models.py:420 taiga/projects/models.py:503
+#: taiga/projects/milestones/models.py:50 taiga/projects/models.py:358
+#: taiga/projects/models.py:422 taiga/projects/models.py:505
 msgid "is closed"
 msgstr "被關閉"
 
@@ -1626,175 +1640,175 @@ msgstr "'{param}' 參數為必要"
 msgid "'project' parameter is mandatory"
 msgstr "'project'參數為必要"
 
-#: taiga/projects/models.py:59
+#: taiga/projects/models.py:61
 msgid "email"
 msgstr "電子郵件"
 
-#: taiga/projects/models.py:61
+#: taiga/projects/models.py:63
 msgid "create at"
 msgstr "創建於"
 
-#: taiga/projects/models.py:63 taiga/users/models.py:128
+#: taiga/projects/models.py:65 taiga/users/models.py:128
 msgid "token"
 msgstr "代號"
 
-#: taiga/projects/models.py:69
+#: taiga/projects/models.py:71
 msgid "invitation extra text"
 msgstr "額外文案邀請"
 
-#: taiga/projects/models.py:72
+#: taiga/projects/models.py:74
 msgid "user order"
 msgstr "使用者次序"
 
-#: taiga/projects/models.py:78
+#: taiga/projects/models.py:80
 msgid "The user is already member of the project"
 msgstr "使用者已是專案成員"
 
-#: taiga/projects/models.py:93
+#: taiga/projects/models.py:95
 msgid "default points"
 msgstr "預設點數"
 
-#: taiga/projects/models.py:97
+#: taiga/projects/models.py:99
 msgid "default US status"
 msgstr "預設使用者故事狀態"
 
-#: taiga/projects/models.py:101
+#: taiga/projects/models.py:103
 msgid "default task status"
 msgstr "預設任務狀態"
 
-#: taiga/projects/models.py:104
+#: taiga/projects/models.py:106
 msgid "default priority"
 msgstr "預設優先性"
 
-#: taiga/projects/models.py:107
+#: taiga/projects/models.py:109
 msgid "default severity"
 msgstr "預設嚴重性"
 
-#: taiga/projects/models.py:111
+#: taiga/projects/models.py:113
 msgid "default issue status"
 msgstr "預設問題狀態"
 
-#: taiga/projects/models.py:115
+#: taiga/projects/models.py:117
 msgid "default issue type"
 msgstr "預設議題類型"
 
-#: taiga/projects/models.py:136
+#: taiga/projects/models.py:138
 msgid "members"
 msgstr "成員"
 
-#: taiga/projects/models.py:139
+#: taiga/projects/models.py:141
 msgid "total of milestones"
 msgstr "全部里程碑"
 
-#: taiga/projects/models.py:140
+#: taiga/projects/models.py:142
 msgid "total story points"
 msgstr "全部故事點數"
 
-#: taiga/projects/models.py:143 taiga/projects/models.py:570
+#: taiga/projects/models.py:145 taiga/projects/models.py:572
 msgid "active backlog panel"
 msgstr "活躍的待辦任務優先表面板"
 
-#: taiga/projects/models.py:145 taiga/projects/models.py:572
+#: taiga/projects/models.py:147 taiga/projects/models.py:574
 msgid "active kanban panel"
 msgstr "活躍的看板式面板"
 
-#: taiga/projects/models.py:147 taiga/projects/models.py:574
+#: taiga/projects/models.py:149 taiga/projects/models.py:576
 msgid "active wiki panel"
 msgstr "活躍的維基面板"
 
-#: taiga/projects/models.py:149 taiga/projects/models.py:576
+#: taiga/projects/models.py:151 taiga/projects/models.py:578
 msgid "active issues panel"
 msgstr "活躍的問題面板"
 
-#: taiga/projects/models.py:152 taiga/projects/models.py:579
+#: taiga/projects/models.py:154 taiga/projects/models.py:581
 msgid "videoconference system"
 msgstr "視訊會議系統"
 
-#: taiga/projects/models.py:154 taiga/projects/models.py:581
+#: taiga/projects/models.py:156 taiga/projects/models.py:583
 msgid "videoconference extra data"
 msgstr "視訊會議額外資料"
 
-#: taiga/projects/models.py:159
+#: taiga/projects/models.py:161
 msgid "creation template"
 msgstr "創建模版"
 
-#: taiga/projects/models.py:162
+#: taiga/projects/models.py:164
 msgid "anonymous permissions"
 msgstr "匿名權限"
 
-#: taiga/projects/models.py:166
+#: taiga/projects/models.py:168
 msgid "user permissions"
 msgstr "使用者權限"
 
-#: taiga/projects/models.py:169
+#: taiga/projects/models.py:171
 msgid "is private"
 msgstr "私密"
 
-#: taiga/projects/models.py:180
+#: taiga/projects/models.py:182
 msgid "tags colors"
 msgstr "標籤顏色"
 
-#: taiga/projects/models.py:339
+#: taiga/projects/models.py:341
 msgid "modules config"
 msgstr "模組設定"
 
-#: taiga/projects/models.py:358
+#: taiga/projects/models.py:360
 msgid "is archived"
 msgstr "已歸檔"
 
-#: taiga/projects/models.py:360 taiga/projects/models.py:422
-#: taiga/projects/models.py:455 taiga/projects/models.py:478
-#: taiga/projects/models.py:505 taiga/projects/models.py:536
+#: taiga/projects/models.py:362 taiga/projects/models.py:424
+#: taiga/projects/models.py:457 taiga/projects/models.py:480
+#: taiga/projects/models.py:507 taiga/projects/models.py:538
 #: taiga/users/models.py:113
 msgid "color"
 msgstr "顏色"
 
-#: taiga/projects/models.py:362
+#: taiga/projects/models.py:364
 msgid "work in progress limit"
 msgstr "工作進度限制"
 
-#: taiga/projects/models.py:393 taiga/userstorage/models.py:31
+#: taiga/projects/models.py:395 taiga/userstorage/models.py:31
 msgid "value"
 msgstr "價值"
 
-#: taiga/projects/models.py:567
+#: taiga/projects/models.py:569
 msgid "default owner's role"
 msgstr "預設所有者角色"
 
-#: taiga/projects/models.py:583
+#: taiga/projects/models.py:585
 msgid "default options"
 msgstr "預設選項"
 
-#: taiga/projects/models.py:584
+#: taiga/projects/models.py:586
 msgid "us statuses"
 msgstr "我們狀況"
 
-#: taiga/projects/models.py:585 taiga/projects/userstories/models.py:40
+#: taiga/projects/models.py:587 taiga/projects/userstories/models.py:40
 #: taiga/projects/userstories/models.py:72
 msgid "points"
 msgstr "點數"
 
-#: taiga/projects/models.py:586
+#: taiga/projects/models.py:588
 msgid "task statuses"
 msgstr "任務狀況"
 
-#: taiga/projects/models.py:587
+#: taiga/projects/models.py:589
 msgid "issue statuses"
 msgstr "問題狀況"
 
-#: taiga/projects/models.py:588
+#: taiga/projects/models.py:590
 msgid "issue types"
 msgstr "問題類型"
 
-#: taiga/projects/models.py:589
+#: taiga/projects/models.py:591
 msgid "priorities"
 msgstr "優先性"
 
-#: taiga/projects/models.py:590
+#: taiga/projects/models.py:592
 msgid "severities"
 msgstr "嚴重性"
 
-#: taiga/projects/models.py:591
+#: taiga/projects/models.py:593
 msgid "roles"
 msgstr "角色"
 
@@ -1810,28 +1824,33 @@ msgstr "觀看中"
 msgid "Ignoring"
 msgstr "忽視"
 
-#: taiga/projects/notifications/mixins.py:87
-msgid "watchers"
-msgstr "觀看者"
-
-#: taiga/projects/notifications/models.py:59
+#: taiga/projects/notifications/models.py:61
 msgid "created date time"
 msgstr "創建日期時間"
 
-#: taiga/projects/notifications/models.py:61
+#: taiga/projects/notifications/models.py:63
 msgid "updated date time"
 msgstr "更新日期時間"
 
-#: taiga/projects/notifications/models.py:63
+#: taiga/projects/notifications/models.py:65
 msgid "history entries"
 msgstr "歷史輸入"
 
-#: taiga/projects/notifications/models.py:66
+#: taiga/projects/notifications/models.py:68
 msgid "notify users"
 msgstr "通知用戶"
 
-#: taiga/projects/notifications/services.py:63
-#: taiga/projects/notifications/services.py:77
+#: taiga/projects/notifications/models.py:84 taiga/projects/votes/models.py:50
+msgid "user"
+msgstr ""
+
+#: taiga/projects/notifications/models.py:90
+#: taiga/projects/notifications/models.py:91
+msgid "Watched"
+msgstr ""
+
+#: taiga/projects/notifications/services.py:64
+#: taiga/projects/notifications/services.py:78
 msgid "Notify exists for specified user and project"
 msgstr "通知特定使用者與專案退出"
 
@@ -2556,7 +2575,7 @@ msgstr ""
 "\n"
 "[%(project)s] 刪除維基頁 \"%(page)s\"\n"
 
-#: taiga/projects/notifications/validators.py:44
+#: taiga/projects/notifications/validators.py:45
 msgid "Watchers contains invalid users"
 msgstr "監督者包含無效使用者"
 
@@ -2580,51 +2599,51 @@ msgstr "版本"
 msgid "You can't leave the project if there are no more owners"
 msgstr "如果專案無所有者，你將無法脫離該專案"
 
-#: taiga/projects/serializers.py:237
+#: taiga/projects/serializers.py:240
 msgid "Email address is already taken"
 msgstr "電子郵件已使用"
 
-#: taiga/projects/serializers.py:249
+#: taiga/projects/serializers.py:252
 msgid "Invalid role for the project"
 msgstr "專案無效的角色"
 
-#: taiga/projects/serializers.py:348
+#: taiga/projects/serializers.py:346
 msgid "Total milestones must be major or equal to zero"
 msgstr "Kanban"
 
-#: taiga/projects/serializers.py:405
+#: taiga/projects/serializers.py:403
 msgid "Default options"
 msgstr "預設選項"
 
-#: taiga/projects/serializers.py:406
+#: taiga/projects/serializers.py:404
 msgid "User story's statuses"
 msgstr "使用者故事狀態"
 
-#: taiga/projects/serializers.py:407
+#: taiga/projects/serializers.py:405
 msgid "Points"
 msgstr "點數"
 
-#: taiga/projects/serializers.py:408
+#: taiga/projects/serializers.py:406
 msgid "Task's statuses"
 msgstr "任務狀態"
 
-#: taiga/projects/serializers.py:409
+#: taiga/projects/serializers.py:407
 msgid "Issue's statuses"
 msgstr "問題狀態"
 
-#: taiga/projects/serializers.py:410
+#: taiga/projects/serializers.py:408
 msgid "Issue's types"
 msgstr "問題類型"
 
-#: taiga/projects/serializers.py:411
+#: taiga/projects/serializers.py:409
 msgid "Priorities"
 msgstr "優先性"
 
-#: taiga/projects/serializers.py:412
+#: taiga/projects/serializers.py:410
 msgid "Severities"
 msgstr "嚴重性"
 
-#: taiga/projects/serializers.py:413
+#: taiga/projects/serializers.py:411
 msgid "Roles"
 msgstr "角色"
 
@@ -2636,15 +2655,15 @@ msgstr "未來之衝刺"
 msgid "Project End"
 msgstr "專案結束"
 
-#: taiga/projects/tasks/api.py:97 taiga/projects/tasks/api.py:106
+#: taiga/projects/tasks/api.py:104 taiga/projects/tasks/api.py:113
 msgid "You don't have permissions to set this sprint to this task."
 msgstr "無權限更動此任務下的衝刺任務"
 
-#: taiga/projects/tasks/api.py:100
+#: taiga/projects/tasks/api.py:107
 msgid "You don't have permissions to set this user story to this task."
 msgstr "無權限更動此務下的使用者故事"
 
-#: taiga/projects/tasks/api.py:103
+#: taiga/projects/tasks/api.py:110
 msgid "You don't have permissions to set this status to this task."
 msgstr "無權限更動此任務下的狀態"
 
@@ -3046,15 +3065,15 @@ msgstr "產品所有人"
 msgid "Stakeholder"
 msgstr "利害關係人"
 
-#: taiga/projects/userstories/api.py:153
+#: taiga/projects/userstories/api.py:155
 msgid "You don't have permissions to set this sprint to this user story."
 msgstr "無權限更動使用者故事的衝刺任務"
 
-#: taiga/projects/userstories/api.py:157
+#: taiga/projects/userstories/api.py:159
 msgid "You don't have permissions to set this status to this user story."
 msgstr "無權限更動此使用者故事的狀態"
 
-#: taiga/projects/userstories/api.py:251
+#: taiga/projects/userstories/api.py:259
 #, python-brace-format
 msgid ""
 "Generating the user story [US #{ref} - {subject}](:us:{ref} \"US #{ref} - "
@@ -3107,24 +3126,24 @@ msgstr "該ID無相關使用者故事狀態"
 msgid "There's no task status with that id"
 msgstr "該ID無相關任務狀況"
 
+#: taiga/projects/votes/models.py:28
+msgid "count"
+msgstr ""
+
 #: taiga/projects/votes/models.py:31 taiga/projects/votes/models.py:32
-#: taiga/projects/votes/models.py:54
+#: taiga/projects/votes/models.py:56
 msgid "Votes"
 msgstr "投票數"
 
-#: taiga/projects/votes/models.py:50
-msgid "votes"
-msgstr "投票數"
-
-#: taiga/projects/votes/models.py:53
+#: taiga/projects/votes/models.py:55
 msgid "Vote"
 msgstr "投票　"
 
-#: taiga/projects/wiki/api.py:60
+#: taiga/projects/wiki/api.py:66
 msgid "'content' parameter is mandatory"
 msgstr "'content'參數為必要"
 
-#: taiga/projects/wiki/api.py:63
+#: taiga/projects/wiki/api.py:69
 msgid "'project_id' parameter is mandatory"
 msgstr "'project_id'參數為必要"
 
@@ -3136,7 +3155,7 @@ msgstr "上次更改"
 msgid "href"
 msgstr "href"
 
-#: taiga/timeline/signals.py:88
+#: taiga/timeline/signals.py:86
 msgid "Check the history API for the exact diff"
 msgstr ""
 
@@ -3152,56 +3171,56 @@ msgstr "許可"
 msgid "Important dates"
 msgstr "重要日期"
 
-#: taiga/users/api.py:124 taiga/users/api.py:131
+#: taiga/users/api.py:151 taiga/users/api.py:158
 msgid "Invalid username or email"
 msgstr "無效使用者或郵件"
 
-#: taiga/users/api.py:140
+#: taiga/users/api.py:167
 msgid "Mail sended successful!"
 msgstr "成功送出郵件"
 
-#: taiga/users/api.py:152 taiga/users/api.py:157
+#: taiga/users/api.py:179 taiga/users/api.py:184
 msgid "Token is invalid"
 msgstr "代號無效"
 
-#: taiga/users/api.py:178
+#: taiga/users/api.py:205
 msgid "Current password parameter needed"
 msgstr "需要目前密碼之參數"
 
-#: taiga/users/api.py:181
+#: taiga/users/api.py:208
 msgid "New password parameter needed"
 msgstr "需要新密碼參數"
 
-#: taiga/users/api.py:184
+#: taiga/users/api.py:211
 msgid "Invalid password length at least 6 charaters needed"
 msgstr "無效密碼長度，至少需６個字元"
 
-#: taiga/users/api.py:187
+#: taiga/users/api.py:214
 msgid "Invalid current password"
 msgstr "無效密碼"
 
-#: taiga/users/api.py:203
+#: taiga/users/api.py:230
 msgid "Incomplete arguments"
 msgstr "不完整參數"
 
-#: taiga/users/api.py:208
+#: taiga/users/api.py:235
 msgid "Invalid image format"
 msgstr "無效的圖片檔案"
 
-#: taiga/users/api.py:261
+#: taiga/users/api.py:279
 msgid "Duplicated email"
 msgstr "複製電子郵件"
 
-#: taiga/users/api.py:263
+#: taiga/users/api.py:281
 msgid "Not valid email"
 msgstr "非有效電子郵性"
 
-#: taiga/users/api.py:283 taiga/users/api.py:289
+#: taiga/users/api.py:301 taiga/users/api.py:307
 msgid ""
 "Invalid, are you sure the token is correct and you didn't use it before?"
 msgstr "無效，請確認代號正確，之前是否曾使用過？"
 
-#: taiga/users/api.py:316 taiga/users/api.py:324 taiga/users/api.py:327
+#: taiga/users/api.py:334 taiga/users/api.py:342 taiga/users/api.py:345
 msgid "Invalid, are you sure the token is correct?"
 msgstr "無效，請確認代號是否正確？"
 
@@ -3278,15 +3297,15 @@ msgstr "新電子郵件地址"
 msgid "permissions"
 msgstr "許可"
 
-#: taiga/users/serializers.py:59
+#: taiga/users/serializers.py:62
 msgid "invalid"
 msgstr "無效"
 
-#: taiga/users/serializers.py:70
+#: taiga/users/serializers.py:73
 msgid "Invalid username. Try with a different one."
 msgstr "無效使用者名稱，請重試其它名稱　"
 
-#: taiga/users/services.py:48 taiga/users/services.py:52
+#: taiga/users/services.py:49 taiga/users/services.py:53
 msgid "Username or password does not matches user."
 msgstr "用戶名稱與密碼不符"
 
