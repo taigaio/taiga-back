@@ -28,13 +28,15 @@ COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated", "x-paginated-by",
                         "x-pagination-current", "x-pagination-next", "x-pagination-prev",
                         "x-site-host", "x-site-register"]
 
+TAIGA_EXPOSE_HEADERS = ["taiga-info-has-closed-milestones"]
+
 
 class CoorsMiddleware(object):
     def _populate_response(self, response):
         response["Access-Control-Allow-Origin"] = COORS_ALLOWED_ORIGINS
         response["Access-Control-Allow-Methods"] = ",".join(COORS_ALLOWED_METHODS)
         response["Access-Control-Allow-Headers"] = ",".join(COORS_ALLOWED_HEADERS)
-        response["Access-Control-Expose-Headers"] = ",".join(COORS_EXPOSE_HEADERS)
+        response["Access-Control-Expose-Headers"] = ",".join(COORS_EXPOSE_HEADERS + TAIGA_EXPOSE_HEADERS)
         response["Access-Control-Max-Age"] = "3600"
 
         if COORS_ALLOWED_CREDENTIALS:
