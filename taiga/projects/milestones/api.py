@@ -14,15 +14,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.apps import apps
+
 from taiga.base import filters
 from taiga.base import response
 from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
+from taiga.base.utils.db import get_object_or_none
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
-
 
 from . import serializers
 from . import models
@@ -37,6 +39,26 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
     filter_backends = (filters.CanViewMilestonesFilterBackend,)
     filter_fields = ("project", "closed")
     queryset = models.Milestone.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        res = super().list(request, *args, **kwargs)
+        self._add_taiga_info_headers()
+        return res
+
+    def _add_taiga_info_headers(self):
+        try:
+            project_id = int(self.request.QUERY_PARAMS.get("project", None))
+            project_model = apps.get_model("projects", "Project")
+            project = get_object_or_none(project_model, id=project_id)
+        except TypeError:
+            project = None
+
+        if project:
+            opened_milestones = project.milestones.filter(closed=False).count()
+            closed_milestones = project.milestones.filter(closed=True).count()
+
+            self.headers["Taiga-Info-Total-Opened-Milestones"] = opened_milestones
+            self.headers["Taiga-Info-Total-Closed-Milestones"] = closed_milestones
 
     def get_queryset(self):
         qs = super().get_queryset()

@@ -403,6 +403,11 @@ REST_FRAMEWORK = {
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S%z"
 }
 
+# Extra expose header related to Taiga APP (see taiga.base.middleware.cors=)
+APP_EXTRA_EXPOSE_HEADERS = [
+    "taiga-info-total-opened-milestones",
+    "taiga-info-total-closed-milestones"
+]
 
 DEFAULT_PROJECT_TEMPLATE = "scrum"
 PUBLIC_REGISTER_ENABLED = False
