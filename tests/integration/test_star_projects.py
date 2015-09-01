@@ -23,11 +23,11 @@ from .. import factories as f
 pytestmark = pytest.mark.django_db
 
 
-def test_star_project(client):
+def test_like_project(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
     f.MembershipFactory.create(project=project, user=user, is_owner=True)
-    url = reverse("projects-star", args=(project.id,))
+    url = reverse("projects-like", args=(project.id,))
 
     client.login(user)
     response = client.post(url)
@@ -35,11 +35,11 @@ def test_star_project(client):
     assert response.status_code == 200
 
 
-def test_unstar_project(client):
+def test_unlike_project(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
     f.MembershipFactory.create(project=project, user=user, is_owner=True)
-    url = reverse("projects-unstar", args=(project.id,))
+    url = reverse("projects-unlike", args=(project.id,))
 
     client.login(user)
     response = client.post(url)
@@ -75,7 +75,7 @@ def test_get_project_fan(client):
     assert response.data['id'] == vote.user.id
 
 
-def test_get_project_stars(client):
+def test_get_project_likes(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
     f.MembershipFactory.create(project=project, user=user, is_owner=True)
@@ -87,37 +87,37 @@ def test_get_project_stars(client):
     response = client.get(url)
 
     assert response.status_code == 200
-    assert response.data['stars'] == 5
+    assert response.data['likes'] == 5
 
 
-def test_get_project_is_starred(client):
+def test_get_project_is_liked(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
     f.MembershipFactory.create(project=project, user=user, is_owner=True)
     f.VotesFactory.create(content_object=project)
     url_detail = reverse("projects-detail", args=(project.id,))
-    url_star = reverse("projects-star", args=(project.id,))
-    url_unstar = reverse("projects-unstar", args=(project.id,))
+    url_like = reverse("projects-like", args=(project.id,))
+    url_unlike = reverse("projects-unlike", args=(project.id,))
 
     client.login(user)
 
     response = client.get(url_detail)
     assert response.status_code == 200
-    assert response.data['stars'] == 0
-    assert response.data['is_starred'] == False
+    assert response.data['likes'] == 0
+    assert response.data['is_liked'] == False
 
-    response = client.post(url_star)
+    response = client.post(url_like)
     assert response.status_code == 200
 
     response = client.get(url_detail)
     assert response.status_code == 200
-    assert response.data['stars'] == 1
-    assert response.data['is_starred'] == True
+    assert response.data['likes'] == 1
+    assert response.data['is_liked'] == True
 
-    response = client.post(url_unstar)
+    response = client.post(url_unlike)
     assert response.status_code == 200
 
     response = client.get(url_detail)
     assert response.status_code == 200
-    assert response.data['stars'] == 0
-    assert response.data['is_starred'] == False
+    assert response.data['likes'] == 0
+    assert response.data['is_liked'] == False

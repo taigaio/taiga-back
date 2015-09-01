@@ -44,7 +44,6 @@ class UserPermission(TaigaResourcePermission):
     change_avatar_perms = IsAuthenticated()
     me_perms = IsAuthenticated()
     remove_avatar_perms = IsAuthenticated()
-    starred_perms = AllowAny()
     change_email_perms = AllowAny()
     contacts_perms = AllowAny()
     favourites_perms = AllowAny()

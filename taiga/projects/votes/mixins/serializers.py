@@ -27,9 +27,9 @@ class BaseVotedResourceSerializer(serializers.ModelSerializer):
         return getattr(obj, "is_voted", False) or False
 
 
-class StarredResourceSerializerMixin(BaseVotedResourceSerializer):
-    stars = serializers.SerializerMethodField("get_votes_counter")
-    is_starred = serializers.SerializerMethodField("get_is_voted")
+class LikedResourceSerializerMixin(BaseVotedResourceSerializer):
+    likes = serializers.SerializerMethodField("get_votes_counter")
+    is_liked = serializers.SerializerMethodField("get_is_voted")
 
 
 class VotedResourceSerializerMixin(BaseVotedResourceSerializer):

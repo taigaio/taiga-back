@@ -43,7 +43,7 @@ from .custom_attributes.serializers import UserStoryCustomAttributeSerializer
 from .custom_attributes.serializers import TaskCustomAttributeSerializer
 from .custom_attributes.serializers import IssueCustomAttributeSerializer
 from .notifications.mixins import WatchedResourceModelSerializer
-from .votes.mixins.serializers import StarredResourceSerializerMixin
+from .votes.mixins.serializers import LikedResourceSerializerMixin
 
 ######################################################
 ## Custom values for selectors
@@ -308,7 +308,7 @@ class ProjectMemberSerializer(serializers.ModelSerializer):
 ## Projects
 ######################################################
 
-class ProjectSerializer(WatchersValidator, StarredResourceSerializerMixin, WatchedResourceModelSerializer, serializers.ModelSerializer):
+class ProjectSerializer(WatchersValidator, LikedResourceSerializerMixin, WatchedResourceModelSerializer, serializers.ModelSerializer):
     tags = TagsField(default=[], required=False)
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
@@ -385,10 +385,10 @@ class ProjectDetailAdminSerializer(ProjectDetailSerializer):
 
 
 ######################################################
-## Starred
+## Liked
 ######################################################
 
-class StarredSerializer(serializers.ModelSerializer):
+class LikedSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Project
         fields = ['id', 'name', 'slug']

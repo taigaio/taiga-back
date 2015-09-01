@@ -34,7 +34,6 @@ from taiga.base.filters import PermissionBasedFilterBackend
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.filters import MembersFilterBackend
 from taiga.projects.votes import services as votes_service
-from taiga.projects.serializers import StarredSerializer
 
 from easy_thumbnails.source_generators import pil_image
 

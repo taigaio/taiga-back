@@ -225,10 +225,10 @@ def test_project_action_issues_stats(client, data):
     assert results == [404, 404, 200, 200]
 
 
-def test_project_action_star(client, data):
-    public_url = reverse('projects-star', kwargs={"pk": data.public_project.pk})
-    private1_url = reverse('projects-star', kwargs={"pk": data.private_project1.pk})
-    private2_url = reverse('projects-star', kwargs={"pk": data.private_project2.pk})
+def test_project_action_like(client, data):
+    public_url = reverse('projects-like', kwargs={"pk": data.public_project.pk})
+    private1_url = reverse('projects-like', kwargs={"pk": data.private_project1.pk})
+    private2_url = reverse('projects-like', kwargs={"pk": data.private_project2.pk})
 
     users = [
         None,
@@ -244,10 +244,10 @@ def test_project_action_star(client, data):
     assert results == [404, 404, 200, 200]
 
 
-def test_project_action_unstar(client, data):
-    public_url = reverse('projects-unstar', kwargs={"pk": data.public_project.pk})
-    private1_url = reverse('projects-unstar', kwargs={"pk": data.private_project1.pk})
-    private2_url = reverse('projects-unstar', kwargs={"pk": data.private_project2.pk})
+def test_project_action_unlike(client, data):
+    public_url = reverse('projects-unlike', kwargs={"pk": data.public_project.pk})
+    private1_url = reverse('projects-unlike', kwargs={"pk": data.private_project1.pk})
+    private2_url = reverse('projects-unlike', kwargs={"pk": data.private_project2.pk})
 
     users = [
         None,
