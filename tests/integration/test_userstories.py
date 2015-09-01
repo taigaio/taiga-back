@@ -156,7 +156,8 @@ def test_api_update_orders_in_bulk_to_test_extra_headers(client):
     response2 = client.json.post(url2, json.dumps(data))
     response3 = client.json.post(url3, json.dumps(data))
     assert response1.status_code == 204
-    assert response1.has_header("Taiga-Info-Has-Closed-Milestones") == False
+    assert response1.has_header("Taiga-Info-Has-Closed-Milestones") == True
+    assert response1["taiga-info-has-closed-milestones"] == "False"
     assert response2.status_code == 204
     assert response2.has_header("Taiga-Info-Has-Closed-Milestones") == False
     assert response3.status_code == 204
@@ -170,7 +171,8 @@ def test_api_update_orders_in_bulk_to_test_extra_headers(client):
     response2 = client.json.post(url2, json.dumps(data))
     response3 = client.json.post(url3, json.dumps(data))
     assert response1.status_code == 204
-    assert response1.has_header("Taiga-Info-Has-Closed-Milestones") == False
+    assert response1.has_header("Taiga-Info-Has-Closed-Milestones") == True
+    assert response3["taiga-info-has-closed-milestones"] == "True"
     assert response2.status_code == 204
     assert response2.has_header("Taiga-Info-Has-Closed-Milestones") == False
     assert response3.status_code == 204
