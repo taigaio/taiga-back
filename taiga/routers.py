@@ -213,6 +213,13 @@ router.register(r"importer", ProjectImporterViewSet, base_name="importer")
 router.register(r"exporter", ProjectExporterViewSet, base_name="exporter")
 
 
+# External apps
+from taiga.external_apps.api import Application, ApplicationToken
+router.register(r"applications", Application, base_name="applications")
+router.register(r"application-tokens", ApplicationToken, base_name="application-tokens")
+
+
+
 # Stats
 #   - see taiga.stats.routers and taiga.stats.apps
 

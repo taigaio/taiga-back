@@ -14,28 +14,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# This code is partially taken from django-rest-framework:
-# Copyright (c) 2011-2014, Tom Christie
+from django.contrib import admin
 
-VERSION = "2.3.13-taiga" # Based on django-resframework 2.3.13
-
-# Header encoding (see RFC5987)
-HTTP_HEADER_ENCODING = 'iso-8859-1'
-
-# Default datetime input and output formats
-ISO_8601 = 'iso-8601'
+from . import models
 
 
-from .viewsets import ModelListViewSet
-from .viewsets import ModelCrudViewSet
-from .viewsets import ModelUpdateRetrieveViewSet
-from .viewsets import GenericViewSet
-from .viewsets import ReadOnlyListViewSet
-from .viewsets import ModelRetrieveViewSet
+class ApplicationAdmin(admin.ModelAdmin):
+    readonly_fields=("id",)
 
-__all__ = ["ModelCrudViewSet",
-           "ModelListViewSet",
-           "ModelUpdateRetrieveViewSet",
-           "GenericViewSet",
-           "ReadOnlyListViewSet",
-           "ModelRetrieveViewSet"]
+admin.site.register(models.Application, ApplicationAdmin)
+
+
+class ApplicationTokenAdmin(admin.ModelAdmin):
+    readonly_fields=("token",)
+    search_fields = ("user__username", "user__full_name", "user__email", "application__name")
+
+admin.site.register(models.ApplicationToken, ApplicationTokenAdmin)

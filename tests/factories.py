@@ -482,6 +482,21 @@ class HistoryEntryFactory(Factory):
     type = 1
 
 
+class ApplicationFactory(Factory):
+    class Meta:
+        model = "external_apps.Application"
+        strategy = factory.CREATE_STRATEGY
+
+    key = "testingkey"
+
+class ApplicationTokenFactory(Factory):
+    class Meta:
+        model = "external_apps.ApplicationToken"
+        strategy = factory.CREATE_STRATEGY
+
+    application = factory.SubFactory("tests.factories.ApplicationFactory")
+    user = factory.SubFactory("tests.factories.UserFactory")
+
 def create_issue(**kwargs):
     "Create an issue and along with its dependencies."
     owner = kwargs.pop("owner", None)

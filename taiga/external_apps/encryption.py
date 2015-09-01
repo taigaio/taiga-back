@@ -14,28 +14,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# This code is partially taken from django-rest-framework:
-# Copyright (c) 2011-2014, Tom Christie
-
-VERSION = "2.3.13-taiga" # Based on django-resframework 2.3.13
-
-# Header encoding (see RFC5987)
-HTTP_HEADER_ENCODING = 'iso-8859-1'
-
-# Default datetime input and output formats
-ISO_8601 = 'iso-8601'
+from Crypto.PublicKey import RSA
+from jwkest.jwk import SYMKey
+from jwkest.jwe import JWE
 
 
-from .viewsets import ModelListViewSet
-from .viewsets import ModelCrudViewSet
-from .viewsets import ModelUpdateRetrieveViewSet
-from .viewsets import GenericViewSet
-from .viewsets import ReadOnlyListViewSet
-from .viewsets import ModelRetrieveViewSet
+def encrypt(content, key):
+    sym_key = SYMKey(key=key, alg="A128KW")
+    jwe = JWE(content, alg="A128KW", enc="A256GCM")
+    return jwe.encrypt([sym_key])
 
-__all__ = ["ModelCrudViewSet",
-           "ModelListViewSet",
-           "ModelUpdateRetrieveViewSet",
-           "GenericViewSet",
-           "ReadOnlyListViewSet",
-           "ModelRetrieveViewSet"]
+
+def decrypt(content, key):
+    sym_key = SYMKey(key=key, alg="A128KW")
+    return JWE().decrypt(content, keys=[sym_key])

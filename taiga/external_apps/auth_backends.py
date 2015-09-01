@@ -14,28 +14,27 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# This code is partially taken from django-rest-framework:
-# Copyright (c) 2011-2014, Tom Christie
+import re
 
-VERSION = "2.3.13-taiga" # Based on django-resframework 2.3.13
+from taiga.base.api.authentication import BaseAuthentication
 
-# Header encoding (see RFC5987)
-HTTP_HEADER_ENCODING = 'iso-8859-1'
+from . import services
 
-# Default datetime input and output formats
-ISO_8601 = 'iso-8601'
+class Token(BaseAuthentication):
+    auth_rx = re.compile(r"^Application (.+)$")
 
+    def authenticate(self, request):
+        if "HTTP_AUTHORIZATION" not in request.META:
+            return None
 
-from .viewsets import ModelListViewSet
-from .viewsets import ModelCrudViewSet
-from .viewsets import ModelUpdateRetrieveViewSet
-from .viewsets import GenericViewSet
-from .viewsets import ReadOnlyListViewSet
-from .viewsets import ModelRetrieveViewSet
+        token_rx_match = self.auth_rx.search(request.META["HTTP_AUTHORIZATION"])
+        if not token_rx_match:
+            return None
 
-__all__ = ["ModelCrudViewSet",
-           "ModelListViewSet",
-           "ModelUpdateRetrieveViewSet",
-           "GenericViewSet",
-           "ReadOnlyListViewSet",
-           "ModelRetrieveViewSet"]
+        token = token_rx_match.group(1)
+        user = services.get_user_for_application_token(token)
+
+        return (user, token)
+
+    def authenticate_header(self, request):
+        return 'Bearer realm="api"'
