@@ -356,3 +356,14 @@ def remove_watcher(obj, user):
         return
 
     qs.delete()
+
+
+def set_notify_policy(notify_policy, notify_level):
+    """
+    Set notification level for specified policy.
+    """
+    if not notify_level in [e.value for e in NotifyLevel]:
+        raise exc.IntegrityError(_("Invalid value for notify level"))
+
+    notify_policy.notify_level = notify_level
+    notify_policy.save()
