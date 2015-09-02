@@ -36,6 +36,9 @@ from taiga.users.validators import RoleExistsValidator
 from taiga.permissions.service import get_user_project_permissions
 from taiga.permissions.service import is_project_owner
 
+from taiga.projects.notifications import models as notify_models
+from taiga.projects.notifications import serializers as notify_serializers
+
 from . import models
 from . import services
 from .validators import ProjectExistsValidator
@@ -367,6 +370,7 @@ class ProjectDetailSerializer(ProjectSerializer):
 
     roles = ProjectRoleSerializer(source="roles", many=True, read_only=True)
     members = serializers.SerializerMethodField(method_name="get_members")
+    notify_policy = serializers.SerializerMethodField(method_name="get_notify_policy")
 
     def get_members(self, obj):
         qs = obj.memberships.filter(user__isnull=False)
@@ -375,6 +379,22 @@ class ProjectDetailSerializer(ProjectSerializer):
         qs = qs.select_related("role", "user")
         serializer = ProjectMemberSerializer(qs, many=True)
         return serializer.data
+
+    def get_notify_policy(self, obj):
+        request= self.context.get("request", None)
+        if request is None:
+            return None
+
+        user = request.user
+        if not user.is_authenticated():
+            return None
+
+        try:
+            notify_policy = obj.notify_policies.get(user=user, project=obj)
+            return notify_serializers.NotifyPolicySerializer(notify_policy).data
+
+        except notify_models.NotifyPolicy.DoesNotExist:
+            return None
 
 
 class ProjectDetailAdminSerializer(ProjectDetailSerializer):

@@ -36,6 +36,37 @@ def test_watch_project(client):
     assert response.status_code == 200
 
 
+def test_watch_project_with_valid_notify_level(client):
+    user = f.UserFactory.create()
+    project = f.create_project(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    url = reverse("projects-watch", args=(project.id,))
+
+    client.login(user)
+    data = {
+        "notify_level": 1
+    }
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 200
+
+
+def test_watch_project_with_invalid_notify_level(client):
+    user = f.UserFactory.create()
+    project = f.create_project(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    url = reverse("projects-watch", args=(project.id,))
+
+    client.login(user)
+    data = {
+        "notify_level": 333
+    }
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert response.data["_error_message"] == "Invalid value for notify level"
+
+
 def test_unwacth_project(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
