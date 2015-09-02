@@ -45,13 +45,13 @@ from . import models
 from . import permissions
 from . import services
 
-from .votes.mixins.viewsets import StarredResourceMixin, VotersViewSetMixin
+from .votes.mixins.viewsets import LikedResourceMixin, VotersViewSetMixin
 
 ######################################################
 ## Project
 ######################################################
 
-class ProjectViewSet(StarredResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
+class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectDetailSerializer
     admin_serializer_class = serializers.ProjectDetailAdminSerializer

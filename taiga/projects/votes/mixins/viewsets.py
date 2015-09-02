@@ -55,16 +55,16 @@ class BaseVotedResource:
         return response.Ok()
 
 
-class StarredResourceMixin(BaseVotedResource):
-    # Note: objects nedd 'star' and 'unstar' permissions.
+class LikedResourceMixin(BaseVotedResource):
+    # Note: objects nedd 'like' and 'unlike' permissions.
 
     @detail_route(methods=["POST"])
-    def star(self, request, pk=None):
-        return self._add_voter("star", request, pk)
+    def like(self, request, pk=None):
+        return self._add_voter("like", request, pk)
 
     @detail_route(methods=["POST"])
-    def unstar(self, request, pk=None):
-        return self._remove_vote("unstar", request, pk)
+    def unlike(self, request, pk=None):
+        return self._remove_vote("unlike", request, pk)
 
 
 class VotedResourceMixin(BaseVotedResource):
