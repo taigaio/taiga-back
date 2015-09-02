@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import http
+from django.conf import settings
 
 
 COORS_ALLOWED_ORIGINS = "*"
@@ -28,7 +29,7 @@ COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated", "x-paginated-by",
                         "x-pagination-current", "x-pagination-next", "x-pagination-prev",
                         "x-site-host", "x-site-register"]
 
-TAIGA_EXPOSE_HEADERS = ["taiga-info-has-closed-milestones"]
+COORS_EXTRA_EXPOSE_HEADERS = getattr(settings, "APP_EXTRA_EXPOSE_HEADERS", [])
 
 
 class CoorsMiddleware(object):
@@ -36,7 +37,7 @@ class CoorsMiddleware(object):
         response["Access-Control-Allow-Origin"] = COORS_ALLOWED_ORIGINS
         response["Access-Control-Allow-Methods"] = ",".join(COORS_ALLOWED_METHODS)
         response["Access-Control-Allow-Headers"] = ",".join(COORS_ALLOWED_HEADERS)
-        response["Access-Control-Expose-Headers"] = ",".join(COORS_EXPOSE_HEADERS + TAIGA_EXPOSE_HEADERS)
+        response["Access-Control-Expose-Headers"] = ",".join(COORS_EXPOSE_HEADERS + COORS_EXTRA_EXPOSE_HEADERS)
         response["Access-Control-Max-Age"] = "3600"
 
         if COORS_ALLOWED_CREDENTIALS:

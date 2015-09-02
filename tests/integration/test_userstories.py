@@ -134,51 +134,6 @@ def test_api_update_orders_in_bulk(client):
     assert response2.status_code == 204, response2.data
     assert response3.status_code == 204, response3.data
 
-def test_api_update_orders_in_bulk_to_test_extra_headers(client):
-    project = f.create_project()
-    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
-    us1 = f.create_userstory(project=project)
-    us2 = f.create_userstory(project=project)
-
-    url1 = reverse("userstories-bulk-update-backlog-order")
-    url2 = reverse("userstories-bulk-update-kanban-order")
-    url3 = reverse("userstories-bulk-update-sprint-order")
-
-    data = {
-        "project_id": project.id,
-        "bulk_stories": [{"us_id": us1.id, "order": 1},
-                         {"us_id": us2.id, "order": 2}]
-    }
-
-    client.login(project.owner)
-
-    response1 = client.json.post(url1, json.dumps(data))
-    response2 = client.json.post(url2, json.dumps(data))
-    response3 = client.json.post(url3, json.dumps(data))
-    assert response1.status_code == 204
-    assert response1.has_header("Taiga-Info-Has-Closed-Milestones") == True
-    assert response1["taiga-info-has-closed-milestones"] == "False"
-    assert response2.status_code == 204
-    assert response2.has_header("Taiga-Info-Has-Closed-Milestones") == False
-    assert response3.status_code == 204
-    assert response3.has_header("Taiga-Info-Has-Closed-Milestones") == True
-    assert response3["taiga-info-has-closed-milestones"] == "False"
-
-    us1.milestone.closed = True
-    us1.milestone.save()
-
-    response1 = client.json.post(url1, json.dumps(data))
-    response2 = client.json.post(url2, json.dumps(data))
-    response3 = client.json.post(url3, json.dumps(data))
-    assert response1.status_code == 204
-    assert response1.has_header("Taiga-Info-Has-Closed-Milestones") == True
-    assert response3["taiga-info-has-closed-milestones"] == "True"
-    assert response2.status_code == 204
-    assert response2.has_header("Taiga-Info-Has-Closed-Milestones") == False
-    assert response3.status_code == 204
-    assert response3.has_header("Taiga-Info-Has-Closed-Milestones") == True
-    assert response3["taiga-info-has-closed-milestones"] == "True"
-
 
 def test_update_userstory_points(client):
     user1 = f.UserFactory.create()

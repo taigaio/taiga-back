@@ -228,13 +228,6 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                                                   field=order_field)
         services.snapshot_userstories_in_bulk(data["bulk_stories"], request.user)
 
-        if order_field in ["sprint_order", "backlog_order"]:
-            # NOTE: This is useful according to issue #2851 to update sprints column in
-            #       the browser client when move USs from the backlog to an sprint, from
-            #       an sprint to the backlog or between sprints.
-            has_closed_milestones = project.milestones.filter(closed=True).exists()
-            self.headers["Taiga-Info-Has-Closed-Milestones"] = has_closed_milestones
-
         return response.NoContent()
 
     @list_route(methods=["POST"])
