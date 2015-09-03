@@ -214,7 +214,7 @@ class WatchedResourceModelSerializer(serializers.ModelSerializer):
 
     def to_native(self, obj):
         #watchers is wasn't attached via the get_queryset of the viewset we need to manually add it
-        if not hasattr(obj, "watchers"):
+        if obj is not None and not hasattr(obj, "watchers"):
             obj.watchers = [user.id for user in services.get_watchers(obj)]
 
         return super(WatchedResourceModelSerializer, self).to_native(obj)

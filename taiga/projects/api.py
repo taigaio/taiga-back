@@ -45,13 +45,13 @@ from . import serializers
 from . import models
 from . import permissions
 from . import services
+from . import utils
 
 from .votes.mixins.viewsets import LikedResourceMixin, VotersViewSetMixin
 
 ######################################################
 ## Project
 ######################################################
-
 class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectDetailSerializer
@@ -65,7 +65,9 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, WatchedResourceMi
     def get_queryset(self):
         qs = super().get_queryset()
         qs = self.attach_votes_attrs_to_queryset(qs)
-        return self.attach_watchers_attrs_to_queryset(qs)
+        qs = self.attach_watchers_attrs_to_queryset(qs)
+        qs = utils.attach_notify_level_to_queryset(qs, self.request.user)
+        return qs
 
     @detail_route(methods=["POST"])
     def watch(self, request, pk=None):
@@ -74,7 +76,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, WatchedResourceMi
         level = request.DATA.get("notify_level", None)
         if level is not None:
             set_notify_policy(notify_policy, level)
-            
+
         return response
 
     @list_route(methods=["POST"])
