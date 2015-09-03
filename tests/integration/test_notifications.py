@@ -17,6 +17,13 @@
 
 import pytest
 import time
+import math
+import base64
+import datetime
+import hashlib
+import binascii
+import struct
+
 from unittest.mock import MagicMock, patch
 
 from django.core.urlresolvers import reverse
@@ -409,6 +416,63 @@ def test_send_notifications_using_services_method(settings, mail):
     services.process_sync_notifications()
     assert len(mail.outbox) == 12
 
+    # test headers
+    events = [issue, us, task, wiki]
+    domain = settings.SITES["api"]["domain"].split(":")[0] or settings.SITES["api"]["domain"]
+    i = 0
+    for msg in mail.outbox:
+        # each event has 3 msgs
+        event = events[math.floor(i / 3)]
+
+        # each set of 3 should have the same headers
+        if i % 3 == 0:
+            if hasattr(event, 'ref'):
+                e_slug = event.ref
+            elif hasattr(event, 'slug'):
+                e_slug = event.slug
+            else:
+                e_slug = 'taiga-system'
+
+            m_id = "{project_slug}/{msg_id}".format(
+                project_slug=project.slug,
+                msg_id=e_slug
+            )
+
+            message_id = "<{m_id}/".format(m_id=m_id)
+            message_id_domain = "@{domain}>".format(domain=domain)
+            in_reply_to = "<{m_id}@{domain}>".format(m_id=m_id, domain=domain)
+            list_id = "Taiga/{p_name} <taiga.{p_slug}@{domain}>" \
+                .format(p_name=project.name, p_slug=project.slug, domain=domain)
+
+        assert msg.extra_headers
+        headers = msg.extra_headers
+
+        # can't test the time part because it's set when sending
+        # check what we can
+        assert 'Message-ID' in headers
+        assert message_id in headers.get('Message-ID')
+        assert message_id_domain in headers.get('Message-ID')
+
+        assert 'In-Reply-To' in headers
+        assert in_reply_to == headers.get('In-Reply-To')
+        assert 'References' in headers
+        assert in_reply_to == headers.get('References')
+
+        assert 'List-ID' in headers
+        assert list_id == headers.get('List-ID')
+
+        assert 'Thread-Index' in headers
+        # always is b64 encoded 22 bytes
+        assert len(base64.b64decode(headers.get('Thread-Index'))) == 22
+
+        # hashes should match for identical ids and times
+        # we check the actual method in test_ms_thread_id()
+        msg_time = headers.get('Message-ID').split('/')[2].split('@')[0]
+        msg_ts = datetime.datetime.fromtimestamp(int(msg_time))
+        assert services.make_ms_thread_index(in_reply_to, msg_ts) == headers.get('Thread-Index')
+
+        i += 1
+
 
 def test_resource_notification_test(client, settings, mail):
     settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL = 1
@@ -613,3 +677,37 @@ def test_retrieve_notify_policies_by_anonymous_user(client):
     response = client.get(url, content_type="application/json")
     assert response.status_code == 404, response.status_code
     assert response.data["_error_message"] == "No NotifyPolicy matches the given query.", str(response.content)
+
+
+def test_ms_thread_id():
+    id = '<test/message@localhost>'
+    now = datetime.datetime.now()
+
+    index = services.make_ms_thread_index(id, now)
+    parsed = parse_ms_thread_index(index)
+
+    assert parsed[0] == hashlib.md5(id.encode('utf-8')).hexdigest()
+    # always only one time
+    assert (now - parsed[1][0]).seconds <= 2
+
+
+# see http://stackoverflow.com/questions/27374077/parsing-thread-index-mail-header-with-python
+def parse_ms_thread_index(index):
+    s = base64.b64decode(index)
+
+    # ours are always md5 digests
+    guid = binascii.hexlify(s[6:22]).decode('utf-8')
+
+    # if we had real guids, we'd do something like
+    # guid = struct.unpack('>IHHQ', s[6:22])
+    # guid = '%08X-%04X-%04X-%04X-%12X' % (guid[0], guid[1], guid[2], (guid[3] >> 48) & 0xFFFF, guid[3] & 0xFFFFFFFFFFFF)
+
+    f = struct.unpack('>Q', s[:6] + b'\0\0')[0]
+    ts = [datetime.datetime(1601, 1, 1) + datetime.timedelta(microseconds=f//10)]
+
+    # for the 5 byte appendixes that we won't use
+    for n in range(22, len(s), 5):
+        f = struct.unpack('>I', s[n:n+4])[0]
+        ts.append(ts[-1] + datetime.timedelta(microseconds=(f << 18)//10))
+
+    return guid, ts
