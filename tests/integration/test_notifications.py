@@ -51,12 +51,12 @@ def mail():
     return mail
 
 
-def test_attach_notify_policy_to_project_queryset():
+def test_attach_notify_level_to_project_queryset():
     project1 = f.ProjectFactory.create()
     f.ProjectFactory.create()
 
     qs = project1.__class__.objects.order_by("id")
-    qs = services.attach_notify_policy_to_project_queryset(project1.owner, qs)
+    qs = services.attach_notify_level_to_project_queryset(qs, project1.owner)
 
     assert len(qs) == 2
     assert qs[0].notify_level == NotifyLevel.notwatch
@@ -64,7 +64,7 @@ def test_attach_notify_policy_to_project_queryset():
 
     services.create_notify_policy(project1, project1.owner, NotifyLevel.watch)
     qs = project1.__class__.objects.order_by("id")
-    qs = services.attach_notify_policy_to_project_queryset(project1.owner, qs)
+    qs = services.attach_notify_level_to_project_queryset(qs, project1.owner)
     assert qs[0].notify_level == NotifyLevel.watch
     assert qs[1].notify_level == NotifyLevel.notwatch
 

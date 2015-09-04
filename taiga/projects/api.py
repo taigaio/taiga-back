@@ -32,7 +32,7 @@ from taiga.base.utils.slug import slugify_uniquely
 
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
-from taiga.projects.notifications.services import set_notify_policy
+from taiga.projects.notifications.services import set_notify_policy, attach_notify_level_to_project_queryset
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 
@@ -45,7 +45,6 @@ from . import serializers
 from . import models
 from . import permissions
 from . import services
-from . import utils
 
 from .votes.mixins.viewsets import LikedResourceMixin, VotersViewSetMixin
 
@@ -66,7 +65,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, WatchedResourceMi
         qs = super().get_queryset()
         qs = self.attach_votes_attrs_to_queryset(qs)
         qs = self.attach_watchers_attrs_to_queryset(qs)
-        qs = utils.attach_notify_level_to_queryset(qs, self.request.user)
+        qs = attach_notify_level_to_project_queryset(qs, self.request.user)
         return qs
 
     @detail_route(methods=["POST"])

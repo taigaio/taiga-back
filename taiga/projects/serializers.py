@@ -318,7 +318,7 @@ class ProjectSerializer(WatchersValidator, LikedResourceSerializerMixin, Watched
     i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
     tags_colors = TagsColorsField(required=False)
     total_closed_milestones = serializers.SerializerMethodField("get_total_closed_milestones")
-    notify_level = serializers.IntegerField(read_only=True)
+    notify_level =  serializers.SerializerMethodField("get_notify_level")
 
     class Meta:
         model = models.Project
@@ -338,6 +338,9 @@ class ProjectSerializer(WatchersValidator, LikedResourceSerializerMixin, Watched
 
     def get_total_closed_milestones(self, obj):
         return obj.milestones.filter(closed=True).count()
+
+    def get_notify_level(self, obj):
+        return getattr(obj, "notify_level", None)
 
     def validate_total_milestones(self, attrs, source):
         """

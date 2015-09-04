@@ -90,22 +90,28 @@ def get_notify_policy(project, user):
     return instance
 
 
-def attach_notify_policy_to_project_queryset(current_user, queryset):
+def attach_notify_level_to_project_queryset(queryset, user):
     """
     Function that attach "notify_level" attribute on each queryset
     result for query notification level of current user for each
     project in the most efficient way.
+
+    :param queryset: A Django queryset object.
+    :param user: A User model object.
+
+    :return: Queryset object with the additional `as_field` field.
     """
+    user_id = getattr(user, "id", None) or "NULL"
+    default_level = NotifyLevel.notwatch
 
     sql = strip_lines("""
     COALESCE((SELECT notifications_notifypolicy.notify_level
-             FROM notifications_notifypolicy
-             WHERE notifications_notifypolicy.project_id = projects_project.id
-               AND notifications_notifypolicy.user_id = {userid}), {default_level})
+                FROM notifications_notifypolicy
+               WHERE notifications_notifypolicy.project_id = projects_project.id
+                 AND notifications_notifypolicy.user_id = {user_id}),
+             {default_level})
     """)
-
-    sql = sql.format(userid=current_user.pk,
-                     default_level=NotifyLevel.notwatch)
+    sql = sql.format(user_id=user_id, default_level=default_level)
     return queryset.extra(select={"notify_level": sql})
 
 
