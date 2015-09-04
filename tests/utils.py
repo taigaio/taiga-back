@@ -49,8 +49,8 @@ def _helper_test_http_method_responses(client, method, url, data, users, after_e
             response = getattr(client, method)(url, data, content_type=content_type)
         else:
             response = getattr(client, method)(url)
-        if response.status_code >= 400:
-            print("Response content:", response.content)
+        #if response.status_code >= 400:
+        #    print("Response content:", response.content)
 
         results.append(response)
 
