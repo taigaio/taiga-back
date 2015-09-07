@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the taiga-back package.
 #
 # Translators:
+# Wiktor Żurawik <wiktor.zurawik@gmail.com>, 2015
 # Wojtek Jurkowlaniec <wojtek.jurkowlaniec@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-08-28 10:22+0200\n"
-"PO-Revision-Date: 2015-08-28 08:23+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"PO-Revision-Date: 2015-09-04 20:54+0000\n"
+"Last-Translator: Wiktor Żurawik <wiktor.zurawik@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -47,7 +48,7 @@ msgstr "Nazwa użytkownika jest już używana."
 
 #: taiga/auth/services.py:78
 msgid "Email is already in use."
-msgstr "Ten adres email jest już w użyciu"
+msgstr "Ten adres email jest już w użyciu."
 
 #: taiga/auth/services.py:94
 msgid "Token not matches any valid invitation."
@@ -1170,19 +1171,19 @@ msgstr "Modyfikuj link do Wiki"
 
 #: taiga/permissions/permissions.py:48 taiga/permissions/permissions.py:56
 msgid "Star project"
-msgstr ""
+msgstr "Dodaj projekt od ulubionych"
 
 #: taiga/permissions/permissions.py:49 taiga/permissions/permissions.py:67
 msgid "Vote user story"
-msgstr ""
+msgstr "Zagłosuj na historyjkę użytkownika"
 
 #: taiga/permissions/permissions.py:50 taiga/permissions/permissions.py:73
 msgid "Vote task"
-msgstr ""
+msgstr "Zagłosuj na zadanie"
 
 #: taiga/permissions/permissions.py:51 taiga/permissions/permissions.py:79
 msgid "Vote issue"
-msgstr ""
+msgstr "Zagłosuj na zgłoszenie"
 
 #: taiga/permissions/permissions.py:59
 msgid "Add milestone"
@@ -1860,12 +1861,12 @@ msgstr "powiadom użytkowników"
 
 #: taiga/projects/notifications/models.py:84 taiga/projects/votes/models.py:50
 msgid "user"
-msgstr ""
+msgstr "użytkownik"
 
 #: taiga/projects/notifications/models.py:90
 #: taiga/projects/notifications/models.py:91
 msgid "Watched"
-msgstr ""
+msgstr "Obserwowane"
 
 #: taiga/projects/notifications/services.py:64
 #: taiga/projects/notifications/services.py:78
@@ -3170,7 +3171,7 @@ msgstr "Nie ma statusu zadania z takim ID"
 
 #: taiga/projects/votes/models.py:28
 msgid "count"
-msgstr ""
+msgstr "ilość"
 
 #: taiga/projects/votes/models.py:31 taiga/projects/votes/models.py:32
 #: taiga/projects/votes/models.py:56
@@ -3199,7 +3200,7 @@ msgstr "href"
 
 #: taiga/timeline/signals.py:86
 msgid "Check the history API for the exact diff"
-msgstr ""
+msgstr "Dla pełengo diffa sprawdź API historii"
 
 #: taiga/users/admin.py:50
 msgid "Personal info"

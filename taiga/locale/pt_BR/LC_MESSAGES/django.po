@@ -5,6 +5,7 @@
 # Translators:
 # Cléber Zavadniak <cleberman@gmail.com>, 2015
 # Thiago <contato@yusuke.com.br>, 2015
+# Daniel Dias <dassump@gmail.com>, 2015
 # Kemel Zaidan <kemelzaidan@gmail.com>, 2015
 # Marlon Carvalho <m.lopes@qiwi.com>, 2015
 # Renato Prado <prkstaff@gmail.com>, 2015
@@ -14,8 +15,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-08-28 10:22+0200\n"
-"PO-Revision-Date: 2015-08-28 08:23+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"PO-Revision-Date: 2015-09-02 14:50+0000\n"
+"Last-Translator: Daniel Dias <dassump@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
@@ -1862,7 +1863,7 @@ msgstr "notificar usuário"
 
 #: taiga/projects/notifications/models.py:84 taiga/projects/votes/models.py:50
 msgid "user"
-msgstr ""
+msgstr "usuário"
 
 #: taiga/projects/notifications/models.py:90
 #: taiga/projects/notifications/models.py:91
@@ -3151,7 +3152,7 @@ msgstr "Não há status de tarega com aquele id"
 
 #: taiga/projects/votes/models.py:28
 msgid "count"
-msgstr ""
+msgstr "contagem"
 
 #: taiga/projects/votes/models.py:31 taiga/projects/votes/models.py:32
 #: taiga/projects/votes/models.py:56
