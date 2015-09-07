@@ -81,13 +81,6 @@ def data():
     f.VotesFactory(content_type=project_ct, object_id=m.private_project1.pk, count=2)
     f.VotesFactory(content_type=project_ct, object_id=m.private_project2.pk, count=2)
 
-    f.WatchedFactory(content_type=project_ct, object_id=m.public_project.pk, user=m.project_member_with_perms)
-    f.WatchedFactory(content_type=project_ct, object_id=m.public_project.pk, user=m.project_owner)
-    f.WatchedFactory(content_type=project_ct, object_id=m.private_project1.pk, user=m.project_member_with_perms)
-    f.WatchedFactory(content_type=project_ct, object_id=m.private_project1.pk, user=m.project_owner)
-    f.WatchedFactory(content_type=project_ct, object_id=m.private_project2.pk, user=m.project_member_with_perms)
-    f.WatchedFactory(content_type=project_ct, object_id=m.private_project2.pk, user=m.project_owner)
-
     return m
 
 
@@ -322,11 +315,11 @@ def test_project_watchers_list(client, data):
     ]
 
     results = helper_test_http_method_and_count(client, 'get', public_url, None, users)
-    assert results == [(200, 2), (200, 2), (200, 2), (200, 2), (200, 2)]
+    assert results == [(200, 1), (200, 1), (200, 1), (200, 1), (200, 1)]
     results = helper_test_http_method_and_count(client, 'get', private1_url, None, users)
-    assert results == [(200, 2), (200, 2), (200, 2), (200, 2), (200, 2)]
+    assert results == [(200, 3), (200, 3), (200, 3), (200, 3), (200, 3)]
     results = helper_test_http_method_and_count(client, 'get', private2_url, None, users)
-    assert results == [(401, 0), (403, 0), (403, 0), (200, 2), (200, 2)]
+    assert results == [(401, 0), (403, 0), (403, 0), (200, 3), (200, 3)]
 
 
 def test_project_watchers_retrieve(client, data):

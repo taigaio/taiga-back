@@ -68,7 +68,7 @@ def test_valid_project_import_without_extra_data(client):
     ]
     assert all(map(lambda x: len(response_data[x]) == 0, must_empty_children))
     assert response_data["owner"] == user.email
-    assert response_data["watchers"] == [user_watching.email]
+    assert response_data["watchers"] == [user.email, user_watching.email]
 
 
 def test_valid_project_import_with_not_existing_memberships(client):

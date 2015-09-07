@@ -33,12 +33,9 @@ class NotifyPolicyViewSet(ModelCrudViewSet):
     permission_classes = (permissions.NotifyPolicyPermission,)
 
     def _build_needed_notify_policies(self):
-        watched_project_ids = user_services.get_watched_content_for_user(self.request.user).get("project", [])
-
         projects = Project.objects.filter(
             Q(owner=self.request.user) |
-            Q(memberships__user=self.request.user) |
-            Q(id__in=watched_project_ids)
+            Q(memberships__user=self.request.user)
         ).distinct()
 
         for project in projects:
@@ -50,13 +47,6 @@ class NotifyPolicyViewSet(ModelCrudViewSet):
 
         self._build_needed_notify_policies()
 
-        # With really want to include the policies related to any content:
-        # - The user is the owner of the project
-        # - The user is member of the project
-        # - The user is watching the project
-        watched_project_ids = user_services.get_watched_content_for_user(self.request.user).get("project", [])
-
-        return models.NotifyPolicy.objects.filter(user=self.request.user).filter(Q(project__owner=self.request.user) |
-            Q(project__memberships__user=self.request.user) |
-            Q(project__id__in=watched_project_ids)
+        return models.NotifyPolicy.objects.filter(user=self.request.user).filter(
+            Q(project__owner=self.request.user) | Q(project__memberships__user=self.request.user)
         ).distinct()

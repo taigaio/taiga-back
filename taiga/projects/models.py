@@ -20,7 +20,7 @@ import uuid
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import signals
+from django.db.models import signals, Q
 from django.apps import apps
 from django.conf import settings
 from django.dispatch import receiver
@@ -38,9 +38,14 @@ from taiga.base.utils.dicts import dict_sum
 from taiga.base.utils.sequence import arithmetic_progression
 from taiga.base.utils.slug import slugify_uniquely_for_queryset
 
-from . import choices
+from taiga.projects.notifications.choices import NotifyLevel
+from taiga.projects.notifications.services import (
+    get_notify_policy,
+    set_notify_policy_level,
+    set_notify_policy_level_to_ignore,
+    create_notify_policy_if_not_exists)
 
-from . notifications.mixins import WatchedModelMixin
+from . import choices
 
 
 class Membership(models.Model):
@@ -72,6 +77,10 @@ class Membership(models.Model):
 
     user_order = models.IntegerField(default=10000, null=False, blank=False,
                             verbose_name=_("user order"))
+
+    def get_related_people(self):
+        related_people = get_user_model().objects.filter(id=self.user.id)
+        return related_people
 
     def clean(self):
         # TODO: Review and do it more robust
@@ -120,7 +129,7 @@ class ProjectDefaults(models.Model):
         abstract = True
 
 
-class Project(ProjectDefaults, WatchedModelMixin, TaggedMixin, models.Model):
+class Project(ProjectDefaults, TaggedMixin, models.Model):
     name = models.CharField(max_length=250, null=False, blank=False,
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
@@ -333,6 +342,39 @@ class Project(ProjectDefaults, WatchedModelMixin, TaggedMixin, models.Model):
             "closed": self._get_user_stories_points(closed_user_stories),
             "assigned": self._get_user_stories_points(assigned_user_stories),
         }
+
+    def _get_q_watchers(self):
+        return Q(notify_policies__project_id=self.id) & ~Q(notify_policies__notify_level=NotifyLevel.ignore)
+
+    def get_watchers(self):
+        return get_user_model().objects.filter(self._get_q_watchers())
+
+    def get_related_people(self):
+        related_people_q = Q()
+
+        ## - Owner
+        if self.owner_id:
+            related_people_q.add(Q(id=self.owner_id), Q.OR)
+
+        ## - Watchers
+        related_people_q.add(self._get_q_watchers(), Q.OR)
+
+        ## - Apply filters
+        related_people = get_user_model().objects.filter(related_people_q)
+
+        ## - Exclude inactive and system users and remove duplicate
+        related_people = related_people.exclude(is_active=False)
+        related_people = related_people.exclude(is_system=True)
+        related_people = related_people.distinct()
+        return related_people
+
+    def add_watcher(self, user, notify_level=NotifyLevel.watch):
+        notify_policy = create_notify_policy_if_not_exists(self, user)
+        set_notify_policy_level(notify_policy, notify_level)
+
+    def remove_watcher(self, user):
+        notify_policy = get_notify_policy(self, user)
+        set_notify_policy_level_to_ignore(notify_policy)
 
 
 class ProjectModulesConfig(models.Model):

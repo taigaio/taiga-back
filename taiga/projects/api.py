@@ -32,7 +32,12 @@ from taiga.base.utils.slug import slugify_uniquely
 
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
-from taiga.projects.notifications.services import set_notify_policy, attach_notify_level_to_project_queryset
+from taiga.projects.notifications.choices import NotifyLevel
+from taiga.projects.notifications.utils import (
+    attach_project_watchers_attrs_to_queryset,
+    attach_project_is_watched_to_queryset,
+    attach_notify_level_to_project_queryset)
+
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 
@@ -48,10 +53,11 @@ from . import services
 
 from .votes.mixins.viewsets import LikedResourceMixin, VotersViewSetMixin
 
+
 ######################################################
 ## Project
 ######################################################
-class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
+class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet):
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectDetailSerializer
     admin_serializer_class = serializers.ProjectDetailAdminSerializer
@@ -64,19 +70,28 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, WatchedResourceMi
     def get_queryset(self):
         qs = super().get_queryset()
         qs = self.attach_votes_attrs_to_queryset(qs)
-        qs = self.attach_watchers_attrs_to_queryset(qs)
-        qs = attach_notify_level_to_project_queryset(qs, self.request.user)
+        qs = attach_project_watchers_attrs_to_queryset(qs)
+        if self.request.user.is_authenticated():
+            qs = attach_project_is_watched_to_queryset(qs, self.request.user)
+            qs = attach_notify_level_to_project_queryset(qs, self.request.user)
+
         return qs
 
     @detail_route(methods=["POST"])
     def watch(self, request, pk=None):
-        response = super(ProjectViewSet, self).watch(request, pk)
-        notify_policy = self.get_object().notify_policies.get(user=request.user)
-        level = request.DATA.get("notify_level", None)
-        if level is not None:
-            set_notify_policy(notify_policy, level)
+        project = self.get_object()
+        self.check_permissions(request, "watch", project)
+        notify_level = request.DATA.get("notify_level", NotifyLevel.watch)
+        project.add_watcher(self.request.user, notify_level=notify_level)
+        return response.Ok()
 
-        return response
+    @detail_route(methods=["POST"])
+    def unwatch(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "unwatch", project)
+        user = self.request.user
+        project.remove_watcher(user)
+        return response.Ok()
 
     @list_route(methods=["POST"])
     def bulk_update_order(self, request, **kwargs):

@@ -22,6 +22,7 @@ from django.apps import apps
 from django.db.models import Q
 from django.db import connection
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
 
 from easy_thumbnails.files import get_thumbnailer
@@ -29,6 +30,7 @@ from easy_thumbnails.exceptions import InvalidImageFormatError
 
 from taiga.base import exceptions as exc
 from taiga.base.utils.urls import get_absolute_url
+from taiga.projects.notifications.choices import NotifyLevel
 
 from .gravatar import get_gravatar_url
 
@@ -179,6 +181,50 @@ def get_watched_content_for_user(user):
     return user_watches
 
 
+def _build_favourites_sql_for_projects(for_user):
+    sql = """
+	SELECT projects_project.id AS id, null AS ref, 'project' AS type, 'watch' AS action,
+        tags, notifications_notifypolicy.project_id AS object_id, projects_project.id AS project,
+        slug AS slug, projects_project.name AS subject,
+        notifications_notifypolicy.created_at, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_votes, null AS assigned_to
+	    FROM notifications_notifypolicy
+	    INNER JOIN projects_project
+		      ON (projects_project.id = notifications_notifypolicy.project_id)
+	    LEFT JOIN (SELECT project_id, count(*) watchers
+                   FROM notifications_notifypolicy
+                   WHERE notifications_notifypolicy.notify_level != {ignore_notify_level}
+                   GROUP BY project_id
+                ) type_watchers
+		      ON projects_project.id = type_watchers.project_id
+	    LEFT JOIN votes_votes
+		      ON (projects_project.id = votes_votes.object_id AND {project_content_type_id} = votes_votes.content_type_id)
+	    WHERE notifications_notifypolicy.user_id = {for_user_id}
+	UNION
+	SELECT projects_project.id AS id, null AS ref, 'project' AS type, 'vote' AS action,
+        tags, votes_vote.object_id AS object_id, projects_project.id AS project,
+        slug AS slug, projects_project.name AS subject,
+        votes_vote.created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_votes, null AS assigned_to
+	    FROM votes_vote
+	    INNER JOIN projects_project
+		      ON (projects_project.id = votes_vote.object_id)
+	    LEFT JOIN (SELECT project_id, count(*) watchers
+                   FROM notifications_notifypolicy
+                   WHERE notifications_notifypolicy.notify_level != {ignore_notify_level}
+                   GROUP BY project_id
+                ) type_watchers
+		      ON projects_project.id = type_watchers.project_id
+        LEFT JOIN votes_votes
+		      ON (projects_project.id = votes_votes.object_id AND {project_content_type_id} = votes_votes.content_type_id)
+	    WHERE votes_vote.user_id = {for_user_id}
+    """
+    sql = sql.format(
+        for_user_id=for_user.id,
+        ignore_notify_level=NotifyLevel.ignore,
+        project_content_type_id=ContentType.objects.get(app_label="projects", model="project").id)
+    return sql
+
+
+
 def _build_favourites_sql_for_type(for_user, type, table_name, ref_column="ref",
                               project_column="project_id", assigned_to_column="assigned_to_id",
                               slug_column="slug", subject_column="subject"):
@@ -217,6 +263,7 @@ def _build_favourites_sql_for_type(for_user, type, table_name, ref_column="ref",
                       ref_column = ref_column, project_column=project_column,
                       assigned_to_column=assigned_to_column, slug_column=slug_column,
                       subject_column=subject_column)
+
     return sql
 
 
@@ -298,12 +345,7 @@ def get_favourites_list(for_user, from_user, type=None, action=None, q=None):
         userstories_sql=_build_favourites_sql_for_type(for_user, "userstory", "userstories_userstory", slug_column="null"),
         tasks_sql=_build_favourites_sql_for_type(for_user, "task", "tasks_task", slug_column="null"),
         issues_sql=_build_favourites_sql_for_type(for_user, "issue", "issues_issue", slug_column="null"),
-        projects_sql=_build_favourites_sql_for_type(for_user, "project", "projects_project",
-            ref_column="null",
-            project_column="id",
-            assigned_to_column="null",
-            subject_column="projects_project.name")
-        )
+        projects_sql=_build_favourites_sql_for_projects(for_user))
 
     cursor = connection.cursor()
     cursor.execute(sql)

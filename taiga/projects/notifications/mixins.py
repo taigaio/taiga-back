@@ -51,7 +51,7 @@ class WatchedResourceMixin:
     def attach_watchers_attrs_to_queryset(self, queryset):
         qs = attach_watchers_to_queryset(queryset)
         if self.request.user.is_authenticated():
-            qs = attach_is_watched_to_queryset(self.request.user, qs)
+            qs = attach_is_watched_to_queryset(qs, self.request.user)
 
         return qs
 
@@ -126,21 +126,19 @@ class WatchedModelMixin(object):
         """
         return self.project
 
-    def get_watchers(self) -> frozenset:
+    def get_watchers(self) -> object:
         """
         Default implementation method for obtain a list of
         watchers for current instance.
-
-        NOTE: the default implementation returns frozen
-        set of all watchers if "watchers" attribute exists
-        in a model.
-
-        WARNING: it returns a full evaluated set and in
-        future, for project with 1000k watchers it can be
-        very inefficient way for obtain watchers but at
-        this momment is the simplest way.
         """
-        return frozenset(services.get_watchers(self))
+        return services.get_watchers(self)
+
+    def get_related_people(self) -> object:
+        """
+        Default implementation for obtain the related people of
+        current instance.
+        """
+        return services.get_related_people(self)
 
     def get_watched(self, user_or_id):
         return services.get_watched(user_or_id, type(self))
@@ -194,7 +192,7 @@ class WatchedResourceModelSerializer(serializers.ModelSerializer):
         instance = super(WatchedResourceModelSerializer, self).restore_object(attrs, instance)
         if instance is not None and self.validate_watchers(attrs, "watchers"):
             new_watcher_ids = set(attrs.get("watchers", []))
-            old_watcher_ids = set(services.get_watchers(instance).values_list("id", flat=True))
+            old_watcher_ids = set(instance.get_watchers().values_list("id", flat=True))
             adding_watcher_ids = list(new_watcher_ids.difference(old_watcher_ids))
             removing_watcher_ids = list(old_watcher_ids.difference(new_watcher_ids))
 
@@ -207,7 +205,7 @@ class WatchedResourceModelSerializer(serializers.ModelSerializer):
             for user in removing_users:
                 services.remove_watcher(instance, user)
 
-            instance.watchers = services.get_watchers(instance)
+            instance.watchers = instance.get_watchers()
 
         return instance
 
@@ -215,7 +213,7 @@ class WatchedResourceModelSerializer(serializers.ModelSerializer):
     def to_native(self, obj):
         #watchers is wasn't attached via the get_queryset of the viewset we need to manually add it
         if obj is not None and not hasattr(obj, "watchers"):
-            obj.watchers = [user.id for user in services.get_watchers(obj)]
+            obj.watchers = [user.id for user in obj.get_watchers()]
 
         return super(WatchedResourceModelSerializer, self).to_native(obj)
 
@@ -235,7 +233,7 @@ class WatchersViewSetMixin:
         self.check_permissions(request, 'retrieve', resource)
 
         try:
-            self.object = services.get_watchers(resource).get(pk=pk)
+            self.object = resource.get_watchers().get(pk=pk)
         except ObjectDoesNotExist: # or User.DoesNotExist
             return response.NotFound()
 
@@ -252,4 +250,4 @@ class WatchersViewSetMixin:
 
     def get_queryset(self):
         resource = self.resource_model.objects.get(pk=self.kwargs.get("resource_id"))
-        return services.get_watchers(resource)
+        return resource.get_watchers()
