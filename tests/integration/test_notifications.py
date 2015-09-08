@@ -32,6 +32,7 @@ from .. import factories as f
 
 from taiga.base.utils import json
 from taiga.projects.notifications import services
+from taiga.projects.notifications import utils
 from taiga.projects.notifications import models
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.history.choices import HistoryType
@@ -56,7 +57,7 @@ def test_attach_notify_level_to_project_queryset():
     f.ProjectFactory.create()
 
     qs = project1.__class__.objects.order_by("id")
-    qs = services.attach_notify_level_to_project_queryset(qs, project1.owner)
+    qs = utils.attach_notify_level_to_project_queryset(qs, project1.owner)
 
     assert len(qs) == 2
     assert qs[0].notify_level == NotifyLevel.notwatch
@@ -64,7 +65,7 @@ def test_attach_notify_level_to_project_queryset():
 
     services.create_notify_policy(project1, project1.owner, NotifyLevel.watch)
     qs = project1.__class__.objects.order_by("id")
-    qs = services.attach_notify_level_to_project_queryset(qs, project1.owner)
+    qs = utils.attach_notify_level_to_project_queryset(qs, project1.owner)
     assert qs[0].notify_level == NotifyLevel.watch
     assert qs[1].notify_level == NotifyLevel.notwatch
 
@@ -143,10 +144,25 @@ def test_users_to_notify():
     role2 = f.RoleFactory.create(project=project, permissions=[])
 
     member1 = f.MembershipFactory.create(project=project, role=role1)
+    policy_member1 = member1.user.notify_policies.get(project=project)
+    policy_member1.notify_level = NotifyLevel.ignore
+    policy_member1.save()
     member2 = f.MembershipFactory.create(project=project, role=role1)
+    policy_member2 = member2.user.notify_policies.get(project=project)
+    policy_member2.notify_level = NotifyLevel.ignore
+    policy_member2.save()
     member3 = f.MembershipFactory.create(project=project, role=role1)
+    policy_member3 = member3.user.notify_policies.get(project=project)
+    policy_member3.notify_level = NotifyLevel.ignore
+    policy_member3.save()
     member4 = f.MembershipFactory.create(project=project, role=role1)
+    policy_member4 = member4.user.notify_policies.get(project=project)
+    policy_member4.notify_level = NotifyLevel.ignore
+    policy_member4.save()
     member5 = f.MembershipFactory.create(project=project, role=role2)
+    policy_member5 = member5.user.notify_policies.get(project=project)
+    policy_member5.notify_level = NotifyLevel.ignore
+    policy_member5.save()
     inactive_member1 = f.MembershipFactory.create(project=project, role=role1)
     inactive_member1.user.is_active =  False
     inactive_member1.user.save()
@@ -158,14 +174,13 @@ def test_users_to_notify():
 
     policy_model_cls = apps.get_model("notifications", "NotifyPolicy")
 
-    policy1 = policy_model_cls.objects.get(user=member1.user)
-    policy2 = policy_model_cls.objects.get(user=member3.user)
-    policy3 = policy_model_cls.objects.get(user=inactive_member1.user)
-    policy3.notify_level = NotifyLevel.watch
-    policy3.save()
-    policy4 = policy_model_cls.objects.get(user=system_member1.user)
-    policy4.notify_level = NotifyLevel.watch
-    policy4.save()
+    policy_inactive_member1 = policy_model_cls.objects.get(user=inactive_member1.user)
+    policy_inactive_member1.notify_level = NotifyLevel.watch
+    policy_inactive_member1.save()
+
+    policy_system_member1 = policy_model_cls.objects.get(user=system_member1.user)
+    policy_system_member1.notify_level = NotifyLevel.watch
+    policy_system_member1.save()
 
     history = MagicMock()
     history.owner = member2.user
@@ -174,13 +189,15 @@ def test_users_to_notify():
     # Test basic description modifications
     issue.description = "test1"
     issue.save()
+    policy_member4.notify_level = NotifyLevel.watch
+    policy_member4.save()
     users = services.get_users_to_notify(issue)
     assert len(users) == 1
     assert tuple(users)[0] == issue.get_owner()
 
     # Test watch notify level in one member
-    policy1.notify_level = NotifyLevel.watch
-    policy1.save()
+    policy_member1.notify_level = NotifyLevel.watch
+    policy_member1.save()
 
     users = services.get_users_to_notify(issue)
     assert len(users) == 2
@@ -188,13 +205,15 @@ def test_users_to_notify():
 
     # Test with watchers
     issue.add_watcher(member3.user)
+    policy_member3.notify_level = NotifyLevel.watch
+    policy_member3.save()
     users = services.get_users_to_notify(issue)
     assert len(users) == 3
     assert users == {member1.user, member3.user, issue.get_owner()}
 
     # Test with watchers with ignore policy
-    policy2.notify_level = NotifyLevel.ignore
-    policy2.save()
+    policy_member3.notify_level = NotifyLevel.ignore
+    policy_member3.save()
 
     issue.add_watcher(member3.user)
     users = services.get_users_to_notify(issue)

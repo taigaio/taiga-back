@@ -19,6 +19,8 @@ import pytest
 import json
 from django.core.urlresolvers import reverse
 
+from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+
 from .. import factories as f
 
 pytestmark = pytest.mark.django_db
@@ -124,8 +126,10 @@ def test_get_project_watchers(client):
 
 def test_get_project_is_watched(client):
     user = f.UserFactory.create()
-    project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    project = f.ProjectFactory.create(is_private=False,
+            anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
+            public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)))
+
     url_detail = reverse("projects-detail", args=(project.id,))
     url_watch = reverse("projects-watch", args=(project.id,))
     url_unwatch = reverse("projects-unwatch", args=(project.id,))
@@ -133,6 +137,7 @@ def test_get_project_is_watched(client):
     client.login(user)
 
     response = client.get(url_detail)
+
     assert response.status_code == 200
     assert response.data['watchers'] == []
     assert response.data['is_watched'] == False

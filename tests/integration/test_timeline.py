@@ -200,6 +200,7 @@ def test_update_project_timeline():
     project = factories.ProjectFactory.create(name="test project timeline")
     history_services.take_snapshot(project, user=project.owner)
     project.add_watcher(user_watcher)
+    print("PPPP")
     project.name = "test project timeline updated"
     project.save()
     history_services.take_snapshot(project, user=project.owner)
@@ -341,7 +342,7 @@ def test_update_membership_timeline():
 def test_delete_project_timeline():
     project = factories.ProjectFactory.create(name="test project timeline")
     user_watcher= factories.UserFactory()
-    project.add_watcher(user_watcher)    
+    project.add_watcher(user_watcher)
     history_services.take_snapshot(project, user=project.owner, delete=True)
     user_timeline = service.get_project_timeline(project)
     assert user_timeline[0].event_type == "projects.project.delete"
@@ -354,7 +355,7 @@ def test_delete_project_timeline():
 def test_delete_milestone_timeline():
     milestone = factories.MilestoneFactory.create(name="test milestone timeline")
     user_watcher= factories.UserFactory()
-    milestone.add_watcher(user_watcher)    
+    milestone.add_watcher(user_watcher)
     history_services.take_snapshot(milestone, user=milestone.owner, delete=True)
     project_timeline = service.get_project_timeline(milestone.project)
     assert project_timeline[0].event_type == "milestones.milestone.delete"
@@ -367,7 +368,7 @@ def test_delete_milestone_timeline():
 def test_delete_user_story_timeline():
     user_story = factories.UserStoryFactory.create(subject="test us timeline")
     user_watcher= factories.UserFactory()
-    user_story.add_watcher(user_watcher)    
+    user_story.add_watcher(user_watcher)
     history_services.take_snapshot(user_story, user=user_story.owner, delete=True)
     project_timeline = service.get_project_timeline(user_story.project)
     assert project_timeline[0].event_type == "userstories.userstory.delete"
@@ -380,7 +381,7 @@ def test_delete_user_story_timeline():
 def test_delete_issue_timeline():
     issue = factories.IssueFactory.create(subject="test issue timeline")
     user_watcher= factories.UserFactory()
-    issue.add_watcher(user_watcher)    
+    issue.add_watcher(user_watcher)
     history_services.take_snapshot(issue, user=issue.owner, delete=True)
     project_timeline = service.get_project_timeline(issue.project)
     assert project_timeline[0].event_type == "issues.issue.delete"
@@ -393,7 +394,7 @@ def test_delete_issue_timeline():
 def test_delete_task_timeline():
     task = factories.TaskFactory.create(subject="test task timeline")
     user_watcher= factories.UserFactory()
-    task.add_watcher(user_watcher)    
+    task.add_watcher(user_watcher)
     history_services.take_snapshot(task, user=task.owner, delete=True)
     project_timeline = service.get_project_timeline(task.project)
     assert project_timeline[0].event_type == "tasks.task.delete"
@@ -406,7 +407,7 @@ def test_delete_task_timeline():
 def test_delete_wiki_page_timeline():
     page = factories.WikiPageFactory.create(slug="test wiki page timeline")
     user_watcher= factories.UserFactory()
-    page.add_watcher(user_watcher)    
+    page.add_watcher(user_watcher)
     history_services.take_snapshot(page, user=page.owner, delete=True)
     project_timeline = service.get_project_timeline(page.project)
     assert project_timeline[0].event_type == "wiki.wikipage.delete"

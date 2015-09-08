@@ -45,31 +45,12 @@ def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_d
             namespace=build_project_namespace(project),
             extra_data=extra_data)
 
-        ## User profile timelines
-        ## - Me
-        related_people = User.objects.filter(id=user.id)
+        if hasattr(obj, "get_related_people"):
+            related_people = obj.get_related_people()
 
-        ## - Owner
-        if hasattr(obj, "owner_id") and obj.owner_id:
-            related_people |= User.objects.filter(id=obj.owner_id)
-
-        ## - Assigned to
-        if hasattr(obj, "assigned_to_id") and obj.assigned_to_id:
-            related_people |= User.objects.filter(id=obj.assigned_to_id)
-
-        ## - Watchers
-        watchers = notifications_services.get_watchers(obj)
-        if watchers:
-            related_people |= watchers
-
-        ## - Exclude inactive and system users and remove duplicate
-        related_people = related_people.exclude(is_active=False)
-        related_people = related_people.exclude(is_system=True)
-        related_people = related_people.distinct()
-
-        _push_to_timeline(related_people, obj, event_type, created_datetime,
-            namespace=build_user_namespace(user),
-            extra_data=extra_data)
+            _push_to_timeline(related_people, obj, event_type, created_datetime,
+                namespace=build_user_namespace(user),
+                extra_data=extra_data)
     else:
         # Actions not related with a project
         ## - Me

@@ -21,6 +21,7 @@ from functools import partial
 from django.apps import apps
 from django.db.transaction import atomic
 from django.db import IntegrityError, transaction
+from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -30,7 +31,6 @@ from django.utils.translation import ugettext as _
 from djmail import template_mail
 
 from taiga.base import exceptions as exc
-from taiga.base.utils.text import strip_lines
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.history.choices import HistoryType
 from taiga.projects.history.services import (make_key_from_model_object,
@@ -88,31 +88,6 @@ def get_notify_policy(project, user):
     instance, _ = model_cls.objects.get_or_create(project=project, user=user,
                                                   defaults={"notify_level": NotifyLevel.notwatch})
     return instance
-
-
-def attach_notify_level_to_project_queryset(queryset, user):
-    """
-    Function that attach "notify_level" attribute on each queryset
-    result for query notification level of current user for each
-    project in the most efficient way.
-
-    :param queryset: A Django queryset object.
-    :param user: A User model object.
-
-    :return: Queryset object with the additional `as_field` field.
-    """
-    user_id = getattr(user, "id", None) or "NULL"
-    default_level = NotifyLevel.notwatch
-
-    sql = strip_lines("""
-    COALESCE((SELECT notifications_notifypolicy.notify_level
-                FROM notifications_notifypolicy
-               WHERE notifications_notifypolicy.project_id = projects_project.id
-                 AND notifications_notifypolicy.user_id = {user_id}),
-             {default_level})
-    """)
-    sql = sql.format(user_id=user_id, default_level=default_level)
-    return queryset.extra(select={"notify_level": sql})
 
 
 def analize_object_for_watchers(obj:object, history:object):
@@ -181,9 +156,6 @@ def get_users_to_notify(obj, *, discard_users=None) -> list:
     candidates.update(filter(_can_notify_light, obj.get_watchers()))
     candidates.update(filter(_can_notify_light, obj.project.get_watchers()))
     candidates.update(filter(_can_notify_light, obj.get_participants()))
-
-    #TODO: coger los watchers del proyecto que quieren ser notificados por correo
-    #Filtrar los watchers según su nivel de watched y su nivel en el proyecto
 
     # Remove the changer from candidates
     if discard_users:
@@ -320,15 +292,49 @@ def process_sync_notifications():
         send_sync_notifications(notification.pk)
 
 
+def _get_q_watchers(obj):
+    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
+    return Q(watched__content_type=obj_type, watched__object_id=obj.id)
+
+
 def get_watchers(obj):
     """Get the watchers of an object.
 
     :param obj: Any Django model instance.
 
-    :return: User queryset object representing the users that voted the object.
+    :return: User queryset object representing the users that watch the object.
     """
-    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
-    return get_user_model().objects.filter(watched__content_type=obj_type, watched__object_id=obj.id)
+    return get_user_model().objects.filter(_get_q_watchers(obj))
+
+
+def get_related_people(obj):
+    """Get the related people of an object for notifications.
+
+    :param obj: Any Django model instance.
+
+    :return: User queryset object representing the users related to the object.
+    """
+    related_people_q = Q()
+
+    ## - Owner
+    if hasattr(obj, "owner_id") and obj.owner_id:
+        related_people_q.add(Q(id=obj.owner_id), Q.OR)
+
+    ## - Assigned to
+    if hasattr(obj, "assigned_to_id") and obj.assigned_to_id:
+        related_people_q.add(Q(id=obj.assigned_to_id), Q.OR)
+
+    ## - Watchers
+    related_people_q.add(_get_q_watchers(obj), Q.OR)
+
+    ## - Apply filters
+    related_people = get_user_model().objects.filter(related_people_q)
+
+    ## - Exclude inactive and system users and remove duplicate
+    related_people = related_people.exclude(is_active=False)
+    related_people = related_people.exclude(is_system=True)
+    related_people = related_people.distinct()
+    return related_people
 
 
 def get_watched(user_or_id, model):
@@ -389,7 +395,7 @@ def remove_watcher(obj, user):
     qs.delete()
 
 
-def set_notify_policy(notify_policy, notify_level):
+def set_notify_policy_level(notify_policy, notify_level):
     """
     Set notification level for specified policy.
     """
@@ -398,6 +404,13 @@ def set_notify_policy(notify_policy, notify_level):
 
     notify_policy.notify_level = notify_level
     notify_policy.save()
+
+
+def set_notify_policy_level_to_ignore(notify_policy):
+    """
+    Set notification level for specified policy.
+    """
+    set_notify_policy_level(notify_policy, NotifyLevel.ignore)
 
 
 def make_ms_thread_index(msg_id, dt):
