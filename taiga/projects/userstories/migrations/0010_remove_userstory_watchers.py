@@ -7,7 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.management import update_all_contenttypes
 
 def create_notifications(apps, schema_editor):
-    update_all_contenttypes()
+    update_all_contenttypes(verbosity=0)
     sql="""
 INSERT INTO notifications_watched (object_id, created_date, content_type_id, user_id, project_id)
 SELECT userstory_id AS object_id, now() AS created_date, {content_type_id} AS content_type_id, user_id, project_id
