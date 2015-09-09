@@ -191,7 +191,11 @@ class WatchedResourceModelSerializer(serializers.ModelSerializer):
         watcher_field = self.fields.pop("watchers", None)
         instance = super(WatchedResourceModelSerializer, self).restore_object(attrs, instance)
         if instance is not None and self.validate_watchers(attrs, "watchers"):
-            new_watcher_ids = set(attrs.get("watchers", []))
+            #A partial update can exclude the watchers field
+            if not "watchers" in attrs:
+                return instance
+
+            new_watcher_ids = set(attrs.get("watchers", None))
             old_watcher_ids = set(instance.get_watchers().values_list("id", flat=True))
             adding_watcher_ids = list(new_watcher_ids.difference(old_watcher_ids))
             removing_watcher_ids = list(old_watcher_ids.difference(new_watcher_ids))
@@ -209,13 +213,18 @@ class WatchedResourceModelSerializer(serializers.ModelSerializer):
 
         return instance
 
-
     def to_native(self, obj):
         #watchers is wasn't attached via the get_queryset of the viewset we need to manually add it
         if obj is not None and not hasattr(obj, "watchers"):
             obj.watchers = [user.id for user in obj.get_watchers()]
 
         return super(WatchedResourceModelSerializer, self).to_native(obj)
+
+    def save(self, **kwargs):
+        obj = super(WatchedResourceModelSerializer, self).save(**kwargs)
+        self.fields["watchers"] = WatchersField(required=False)
+        obj.watchers = [user.id for user in obj.get_watchers()]
+        return obj
 
 
 class WatchersViewSetMixin:

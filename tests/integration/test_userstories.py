@@ -443,3 +443,21 @@ def test_custom_fields_csv_generation():
     assert row[26] == attr.name
     row = next(reader)
     assert row[26] == "val1"
+
+
+def test_update_userstory_respecting_watchers(client):
+    watching_user = f.create_user()
+    project = f.ProjectFactory.create()
+    us = f.UserStoryFactory.create(project=project, status__project=project, milestone__project=project)
+    us.add_watcher(watching_user)
+    f.MembershipFactory.create(project=us.project, user=us.owner, is_owner=True)
+    f.MembershipFactory.create(project=us.project, user=watching_user)
+
+    client.login(user=us.owner)
+    url = reverse("userstories-detail", kwargs={"pk": us.pk})
+    data = {"subject": "Updating test", "version": 1}
+
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200
+    assert response.data["subject"] == "Updating test"
+    assert response.data["watchers"] == [watching_user.id]
