@@ -31,7 +31,7 @@ from easy_thumbnails.exceptions import InvalidImageFormatError
 from taiga.base import exceptions as exc
 from taiga.base.utils.urls import get_absolute_url
 from taiga.projects.notifications.choices import NotifyLevel
-
+from taiga.projects.notifications.services import get_projects_watched
 from .gravatar import get_gravatar_url
 
 from django.conf import settings
@@ -179,6 +179,11 @@ def get_watched_content_for_user(user):
         list.append(object_id)
         user_watches[ct_model] = list
 
+    #Now for projects,
+    projects_watched = get_projects_watched(user)
+    project_content_type_model=ContentType.objects.get(app_label="projects", model="project").model
+    user_watches[project_content_type_model] = projects_watched.values_list("id", flat=True)
+
     return user_watches
 
 
@@ -186,8 +191,9 @@ def _build_favourites_sql_for_projects(for_user):
     sql = """
 	SELECT projects_project.id AS id, null AS ref, 'project' AS type, 'watch' AS action,
         tags, notifications_notifypolicy.project_id AS object_id, projects_project.id AS project,
-        slug AS slug, projects_project.name AS subject,
-        notifications_notifypolicy.created_at, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_votes, null AS assigned_to
+        slug AS slug, projects_project.name AS name, null AS subject,
+        notifications_notifypolicy.created_at as created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_votes, null AS assigned_to,
+        null as status, null as status_color
 	    FROM notifications_notifypolicy
 	    INNER JOIN projects_project
 		      ON (projects_project.id = notifications_notifypolicy.project_id)
@@ -203,8 +209,9 @@ def _build_favourites_sql_for_projects(for_user):
 	UNION
 	SELECT projects_project.id AS id, null AS ref, 'project' AS type, 'vote' AS action,
         tags, votes_vote.object_id AS object_id, projects_project.id AS project,
-        slug AS slug, projects_project.name AS subject,
-        votes_vote.created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_votes, null AS assigned_to
+        slug AS slug, projects_project.name AS name, null AS subject,
+        votes_vote.created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_votes, null AS assigned_to,
+        null as status, null as status_color
 	    FROM votes_vote
 	    INNER JOIN projects_project
 		      ON (projects_project.id = votes_vote.object_id)
@@ -216,7 +223,7 @@ def _build_favourites_sql_for_projects(for_user):
 		      ON projects_project.id = type_watchers.project_id
         LEFT JOIN votes_votes
 		      ON (projects_project.id = votes_votes.object_id AND {project_content_type_id} = votes_votes.content_type_id)
-	    WHERE votes_vote.user_id = {for_user_id}
+	    WHERE votes_vote.user_id = {for_user_id} AND {project_content_type_id} = votes_vote.content_type_id
     """
     sql = sql.format(
         for_user_id=for_user.id,
@@ -232,13 +239,16 @@ def _build_favourites_sql_for_type(for_user, type, table_name, ref_column="ref",
     sql = """
 	SELECT {table_name}.id AS id, {ref_column} AS ref, '{type}' AS type, 'watch' AS action,
         tags, notifications_watched.object_id AS object_id, {table_name}.{project_column} AS project,
-        {slug_column} AS slug, {subject_column} AS subject,
-        notifications_watched.created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_votes, {assigned_to_column}  AS assigned_to
+        {slug_column} AS slug, null AS name, {subject_column} AS subject,
+        notifications_watched.created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_votes, {assigned_to_column}  AS assigned_to,
+        projects_{type}status.name as status, projects_{type}status.color as status_color
 	    FROM notifications_watched
 	    INNER JOIN django_content_type
 		      ON (notifications_watched.content_type_id = django_content_type.id AND django_content_type.model = '{type}')
 	    INNER JOIN {table_name}
 		      ON ({table_name}.id = notifications_watched.object_id)
+        INNER JOIN projects_{type}status
+		      ON (projects_{type}status.id = {table_name}.status_id)
 	    LEFT JOIN (SELECT object_id, content_type_id, count(*) watchers FROM notifications_watched GROUP BY object_id, content_type_id) type_watchers
 		      ON {table_name}.id = type_watchers.object_id AND django_content_type.id = type_watchers.content_type_id
 	    LEFT JOIN votes_votes
@@ -247,13 +257,16 @@ def _build_favourites_sql_for_type(for_user, type, table_name, ref_column="ref",
 	UNION
 	SELECT {table_name}.id AS id, {ref_column} AS ref, '{type}' AS type, 'vote' AS action,
         tags, votes_vote.object_id AS object_id, {table_name}.{project_column} AS project,
-        {slug_column} AS slug, {subject_column} AS subject,
-        votes_vote.created_date, coalesce(watchers, 0) as total_watchers, votes_votes.count total_votes, {assigned_to_column}  AS assigned_to
+        {slug_column} AS slug, null AS name, {subject_column} AS subject,
+        votes_vote.created_date, coalesce(watchers, 0) as total_watchers, votes_votes.count total_votes, {assigned_to_column}  AS assigned_to,
+        projects_{type}status.name as status, projects_{type}status.color as status_color
 	    FROM votes_vote
 	    INNER JOIN django_content_type
 		      ON (votes_vote.content_type_id = django_content_type.id AND django_content_type.model = '{type}')
 	    INNER JOIN {table_name}
 		      ON ({table_name}.id = votes_vote.object_id)
+        INNER JOIN projects_{type}status
+		      ON (projects_{type}status.id = {table_name}.status_id)
 	    LEFT JOIN (SELECT object_id, content_type_id, count(*) watchers FROM notifications_watched GROUP BY object_id, content_type_id) type_watchers
 		      ON {table_name}.id = type_watchers.object_id AND django_content_type.id = type_watchers.content_type_id
 	    LEFT JOIN votes_votes
@@ -279,12 +292,18 @@ def get_favourites_list(for_user, from_user, type=None, action=None, q=None):
         filters_sql += " AND action = '{action}' ".format(action=action)
 
     if q:
-        filters_sql += " AND to_tsvector(coalesce(subject, '')) @@ plainto_tsquery('{q}') ".format(q=q)
+        # We must transform a q like "proj exam" (should find "project example") to something like proj:* & exam:*
+        qs = ["{}:*".format(e) for e in q.split(" ")]
+        filters_sql += """ AND (
+            to_tsvector(coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('{q}')
+        )
+        """.format(q=" & ".join(qs))
 
     sql = """
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
     SELECT entities.*,
-           projects_project.name as project_name, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
+           projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
+           projects_project.tags_colors,
            users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
         FROM (
             {userstories_sql}
@@ -332,7 +351,7 @@ def get_favourites_list(for_user, from_user, type=None, action=None, q=None):
     -- END Permissions checking
         {filters_sql}
 
-    ORDER BY entities.created_date;
+    ORDER BY entities.created_date DESC;
     """
 
     from_user_id = -1

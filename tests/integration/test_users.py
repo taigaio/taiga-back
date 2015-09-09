@@ -9,6 +9,7 @@ from .. import factories as f
 
 from taiga.base.utils import json
 from taiga.users import models
+from taiga.users.serializers import FavouriteSerializer
 from taiga.auth.tokens import get_token_for_user
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 from taiga.users.services import get_favourites_list
@@ -396,32 +397,43 @@ def test_get_favourites_list_valid_info_for_project():
     viewer_user = f.UserFactory()
     watcher_user = f.UserFactory()
 
-    project = f.ProjectFactory(is_private=False, name="Testing project")
+    project = f.ProjectFactory(is_private=False, name="Testing project", tags=['test', 'tag'])
     project.add_watcher(watcher_user)
     content_type = ContentType.objects.get_for_model(project)
     vote = f.VoteFactory(content_type=content_type, object_id=project.id, user=fav_user)
     f.VotesFactory(content_type=content_type, object_id=project.id, count=1)
 
-    project_vote_info = get_favourites_list(fav_user, viewer_user)[0]
+    raw_project_vote_info = get_favourites_list(fav_user, viewer_user)[0]
+    project_vote_info = FavouriteSerializer(raw_project_vote_info).data
+
     assert project_vote_info["type"] == "project"
     assert project_vote_info["action"] == "vote"
     assert project_vote_info["id"] == project.id
     assert project_vote_info["ref"] == None
     assert project_vote_info["slug"] == project.slug
-    assert project_vote_info["subject"] == project.name
-    assert project_vote_info["tags"] == project.tags
-    assert project_vote_info["project"] == project.id
+    assert project_vote_info["name"] == project.name
+    assert project_vote_info["subject"] == None
+    assert project_vote_info["description"] == project.description
     assert project_vote_info["assigned_to"] == None
+    assert project_vote_info["status"] == None
+    assert project_vote_info["status_color"] == None
+
+    tags_colors = {tc["name"]:tc["color"] for tc in project_vote_info["tags_colors"]}
+    assert "test" in tags_colors
+    assert "tag" in tags_colors
+
+    assert project_vote_info["is_private"] == project.is_private
+    assert project_vote_info["is_voted"] == False
+    assert project_vote_info["is_watched"] == False
     assert project_vote_info["total_watchers"] == 1
-    assert project_vote_info["created_date"] == vote.created_date
-    assert project_vote_info["project_name"] == project.name
-    assert project_vote_info["project_slug"] == project.slug
-    assert project_vote_info["project_is_private"] == project.is_private
+    assert project_vote_info["total_votes"] == 1
+    assert project_vote_info["project"] == None
+    assert project_vote_info["project_name"] == None
+    assert project_vote_info["project_slug"] == None
+    assert project_vote_info["project_is_private"] == None
     assert project_vote_info["assigned_to_username"] == None
     assert project_vote_info["assigned_to_full_name"] == None
     assert project_vote_info["assigned_to_photo"] == None
-    assert project_vote_info["assigned_to_email"] == None
-    assert project_vote_info["total_votes"] == 1
 
 
 def test_get_favourites_list_valid_info_for_not_project_types():
@@ -449,26 +461,37 @@ def test_get_favourites_list_valid_info_for_not_project_types():
         vote = f.VoteFactory(content_type=content_type, object_id=instance.id, user=fav_user)
         f.VotesFactory(content_type=content_type, object_id=instance.id, count=3)
 
-        instance_vote_info = get_favourites_list(fav_user, viewer_user, type=object_type)[0]
+        raw_instance_vote_info = get_favourites_list(fav_user, viewer_user, type=object_type)[0]
+        instance_vote_info = FavouriteSerializer(raw_instance_vote_info).data
+
         assert instance_vote_info["type"] == object_type
         assert instance_vote_info["action"] == "vote"
         assert instance_vote_info["id"] == instance.id
         assert instance_vote_info["ref"] == instance.ref
         assert instance_vote_info["slug"] == None
+        assert instance_vote_info["name"] == None
         assert instance_vote_info["subject"] == instance.subject
-        assert instance_vote_info["tags"] == instance.tags
-        assert instance_vote_info["project"] == instance.project.id
-        assert instance_vote_info["assigned_to"] == assigned_to_user.id
+        assert instance_vote_info["description"] == None
+        assert instance_vote_info["assigned_to"] == instance.assigned_to.id
+        assert instance_vote_info["status"] == instance.status.name
+        assert instance_vote_info["status_color"] == instance.status.color
+
+        tags_colors = {tc["name"]:tc["color"] for tc in instance_vote_info["tags_colors"]}
+        assert "test1" in tags_colors
+        assert "test2" in tags_colors
+
+        assert instance_vote_info["is_private"] == None
+        assert instance_vote_info["is_voted"] == False
+        assert instance_vote_info["is_watched"] == False
         assert instance_vote_info["total_watchers"] == 1
-        assert instance_vote_info["created_date"] == vote.created_date
+        assert instance_vote_info["total_votes"] == 3
+        assert instance_vote_info["project"] == instance.project.id
         assert instance_vote_info["project_name"] == instance.project.name
         assert instance_vote_info["project_slug"] == instance.project.slug
         assert instance_vote_info["project_is_private"] == instance.project.is_private
-        assert instance_vote_info["assigned_to_username"] == assigned_to_user.username
-        assert instance_vote_info["assigned_to_full_name"] == assigned_to_user.full_name
-        assert instance_vote_info["assigned_to_photo"] == ''
-        assert instance_vote_info["assigned_to_email"] == assigned_to_user.email
-        assert instance_vote_info["total_votes"] == 3
+        assert instance_vote_info["assigned_to_username"] == instance.assigned_to.username
+        assert instance_vote_info["assigned_to_full_name"] == instance.assigned_to.full_name
+        assert instance_vote_info["assigned_to_photo"] != ""
 
 
 def test_get_favourites_list_permissions():

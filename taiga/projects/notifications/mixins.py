@@ -189,29 +189,30 @@ class WatchedResourceModelSerializer(serializers.ModelSerializer):
         #watchers is not a field from the model but can be attached in the get_queryset of the viewset.
         #If that's the case we need to remove it before calling the super method
         watcher_field = self.fields.pop("watchers", None)
-        instance = super(WatchedResourceModelSerializer, self).restore_object(attrs, instance)
-        if instance is not None and self.validate_watchers(attrs, "watchers"):
-            #A partial update can exclude the watchers field
-            if not "watchers" in attrs:
-                return instance
+        self.validate_watchers(attrs, "watchers")
+        new_watcher_ids = set(attrs.pop("watchers", []))
+        obj = super(WatchedResourceModelSerializer, self).restore_object(attrs, instance)
 
-            new_watcher_ids = set(attrs.get("watchers", None))
-            old_watcher_ids = set(instance.get_watchers().values_list("id", flat=True))
-            adding_watcher_ids = list(new_watcher_ids.difference(old_watcher_ids))
-            removing_watcher_ids = list(old_watcher_ids.difference(new_watcher_ids))
+        #A partial update can exclude the watchers field or if the new instance can still not be saved
+        if instance is None or len(new_watcher_ids) == 0:
+            return obj
 
-            User = apps.get_model("users", "User")
-            adding_users = User.objects.filter(id__in=adding_watcher_ids)
-            removing_users = User.objects.filter(id__in=removing_watcher_ids)
-            for user in adding_users:
-                services.add_watcher(instance, user)
+        old_watcher_ids = set(obj.get_watchers().values_list("id", flat=True))
+        adding_watcher_ids = list(new_watcher_ids.difference(old_watcher_ids))
+        removing_watcher_ids = list(old_watcher_ids.difference(new_watcher_ids))
 
-            for user in removing_users:
-                services.remove_watcher(instance, user)
+        User = apps.get_model("users", "User")
+        adding_users = User.objects.filter(id__in=adding_watcher_ids)
+        removing_users = User.objects.filter(id__in=removing_watcher_ids)
+        for user in adding_users:
+            services.add_watcher(obj, user)
 
-            instance.watchers = instance.get_watchers()
+        for user in removing_users:
+            services.remove_watcher(obj, user)
 
-        return instance
+        obj.watchers = obj.get_watchers()
+
+        return obj
 
     def to_native(self, obj):
         #watchers is wasn't attached via the get_queryset of the viewset we need to manually add it

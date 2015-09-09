@@ -46,6 +46,22 @@ def test_update_userstories_order_in_bulk():
                                                            model=models.UserStory)
 
 
+def test_create_userstory_with_watchers(client):
+    user = f.UserFactory.create()
+    user_watcher = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user_watcher, is_owner=True)
+    url = reverse("userstories-list")
+
+    data = {"subject": "Test user story", "project": project.id, "watchers": [user_watcher.id]}
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    print(response.data)
+    assert response.status_code == 201
+    assert response.data["watchers"] == []
+
+
 def test_create_userstory_without_status(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)

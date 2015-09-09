@@ -367,6 +367,23 @@ def get_watched(user_or_id, model):
                                params=(obj_type.id, user_id))
 
 
+def get_projects_watched(user_or_id):
+    """Get the objects watched by an user.
+
+    :param user_or_id: :class:`~taiga.users.models.User` instance or id.
+    :param model: Show only objects of this kind. Can be any Django model class.
+
+    :return: Queryset of objects representing the votes of the user.
+    """
+
+    if isinstance(user_or_id, get_user_model()):
+        user_id = user_or_id.id
+    else:
+        user_id = user_or_id
+
+    project_class = apps.get_model("projects", "Project")
+    return project_class.objects.filter(notify_policies__user__id=user_id).exclude(notify_policies__notify_level=NotifyLevel.ignore)
+
 def add_watcher(obj, user):
     """Add a watcher to an object.
 

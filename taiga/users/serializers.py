@@ -165,26 +165,30 @@ class FavouriteSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     ref = serializers.IntegerField()
     slug = serializers.CharField()
+    name = serializers.CharField()
     subject = serializers.CharField()
-    tags = TagsField(default=[])
-    project = serializers.IntegerField()
+    description = serializers.SerializerMethodField("get_description")
     assigned_to = serializers.IntegerField()
-    total_watchers = serializers.IntegerField()
+    status = serializers.CharField()
+    status_color = serializers.CharField()
+    tags_colors = serializers.SerializerMethodField("get_tags_color")
+    created_date = serializers.DateTimeField()
+    is_private = serializers.SerializerMethodField("get_is_private")
 
     is_voted = serializers.SerializerMethodField("get_is_voted")
     is_watched = serializers.SerializerMethodField("get_is_watched")
 
-    created_date = serializers.DateTimeField()
+    total_watchers = serializers.IntegerField()
+    total_votes = serializers.IntegerField()
 
-    project_name = serializers.CharField()
-    project_slug = serializers.CharField()
-    project_is_private = serializers.CharField()
+    project = serializers.SerializerMethodField("get_project")
+    project_name = serializers.SerializerMethodField("get_project_name")
+    project_slug = serializers.SerializerMethodField("get_project_slug")
+    project_is_private = serializers.SerializerMethodField("get_project_is_private")
 
     assigned_to_username = serializers.CharField()
     assigned_to_full_name = serializers.CharField()
     assigned_to_photo = serializers.SerializerMethodField("get_photo")
-
-    total_votes = serializers.IntegerField()
 
     def __init__(self, *args, **kwargs):
         # Don't pass the extra ids args up to the superclass
@@ -194,6 +198,38 @@ class FavouriteSerializer(serializers.Serializer):
         # Instantiate the superclass normally
         super(FavouriteSerializer, self).__init__(*args, **kwargs)
 
+    def _none_if_project(self, obj, property):
+        type = obj.get("type", "")
+        if type == "project":
+            return None
+
+        return obj.get(property)
+
+    def _none_if_not_project(self, obj, property):
+        type = obj.get("type", "")
+        if type != "project":
+            return None
+
+        return obj.get(property)
+
+    def get_project(self, obj):
+        return self._none_if_project(obj, "project")
+
+    def get_is_private(self, obj):
+        return self._none_if_not_project(obj, "project_is_private")
+
+    def get_project_name(self, obj):
+        return self._none_if_project(obj, "project_name")
+
+    def get_description(self, obj):
+        return self._none_if_not_project(obj, "description")
+
+    def get_project_slug(self, obj):
+        return self._none_if_project(obj, "project_slug")
+
+    def get_project_is_private(self, obj):
+        return self._none_if_project(obj, "project_is_private")
+
     def get_is_voted(self, obj):
         return obj["id"] in self.user_votes.get(obj["type"], [])
 
@@ -201,6 +237,14 @@ class FavouriteSerializer(serializers.Serializer):
         return obj["id"] in self.user_watching.get(obj["type"], [])
 
     def get_photo(self, obj):
+        type = obj.get("type", "")
+        if type == "project":
+            return None
+
         UserData = namedtuple("UserData", ["photo", "email"])
         user_data = UserData(photo=obj["assigned_to_photo"], email=obj.get("assigned_to_email") or "")
         return get_photo_or_gravatar_url(user_data)
+
+    def get_tags_color(self, obj):
+        tags = obj.get("tags", [])
+        return [{"name": tc[0], "color": tc[1]} for tc in obj.get("tags_colors", []) if tc[0] in tags]
