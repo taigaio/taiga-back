@@ -266,6 +266,7 @@ INSTALLED_APPS = [
     "taiga.front",
     "taiga.users",
     "taiga.userstorage",
+    "taiga.external_apps",
     "taiga.projects",
     "taiga.projects.references",
     "taiga.projects.custom_attributes",
@@ -384,6 +385,9 @@ REST_FRAMEWORK = {
 
         # Mainly used for api debug.
         "taiga.auth.backends.Session",
+
+        # Application tokens auth
+        "taiga.external_apps.auth_backends.Token",
     ),
     "DEFAULT_THROTTLE_CLASSES": (
         "taiga.base.throttling.AnonRateThrottle",

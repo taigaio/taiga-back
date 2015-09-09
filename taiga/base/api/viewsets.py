@@ -167,3 +167,7 @@ class ModelUpdateRetrieveViewSet(mixins.UpdateModelMixin,
                                  mixins.RetrieveModelMixin,
                                  GenericViewSet):
     pass
+
+class ModelRetrieveViewSet(mixins.RetrieveModelMixin,
+                                 GenericViewSet):
+    pass
