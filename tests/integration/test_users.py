@@ -99,6 +99,35 @@ def test_update_user_with_invalid_email(client):
     assert response.data['_error_message'] == 'Not valid email'
 
 
+def test_update_user_with_unallowed_domain_email(client, settings):
+    settings.USER_EMAIL_ALLOWED_DOMAINS = ['email.com']
+    user = f.UserFactory.create(email="my@email.com")
+    url = reverse('users-detail', kwargs={"pk": user.pk})
+    data = {"email": "my@invalid-email.com"}
+
+    client.login(user)
+    response = client.patch(url, json.dumps(data), content_type="application/json")
+
+    assert response.status_code == 400
+    assert response.data['_error_message'] == 'Not valid email'
+
+
+def test_update_user_with_allowed_domain_email(client, settings):
+    settings.USER_EMAIL_ALLOWED_DOMAINS = ['email.com']
+
+    user = f.UserFactory.create(email="old@email.com")
+    url = reverse('users-detail', kwargs={"pk": user.pk})
+    data = {"email": "new@email.com"}
+
+    client.login(user)
+    response = client.patch(url, json.dumps(data), content_type="application/json")
+
+    assert response.status_code == 200
+    user = models.User.objects.get(pk=user.id)
+    assert user.email_token is not None
+    assert user.new_email == "new@email.com"
+
+
 def test_update_user_with_valid_email(client):
     user = f.UserFactory.create(email="old@email.com")
     url = reverse('users-detail', kwargs={"pk": user.pk})

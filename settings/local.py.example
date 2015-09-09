@@ -105,3 +105,7 @@ DATABASES = {
 # To use celery in memory
 #CELERY_ENABLED = True
 #CELERY_ALWAYS_EAGER = True
+
+# LIMIT ALLOWED DOMAINS FOR REGISTER AND INVITE
+# None or [] values in USER_EMAIL_ALLOWED_DOMAINS means allow any domain
+# USER_EMAIL_ALLOWED_DOMAINS = None
