@@ -39,12 +39,13 @@ class HistoryEntrySerializer(serializers.ModelSerializer):
     def get_user(self, entry):
         user = {"pk": None, "username": None, "name": None, "photo": None, "is_active": False}
         user.update(entry.user)
-
         user["photo"] = get_photo_or_gravatar_url(entry.owner)
-        user["is_active"] = entry.owner.is_active
 
-        if entry.owner.is_active or entry.owner.is_system:
-            user["name"] = entry.owner.get_full_name()
-            user["username"] = entry.owner.username
+        if entry.owner:
+            user["is_active"] = entry.owner.is_active
+
+            if entry.owner.is_active or entry.owner.is_system:
+                user["name"] = entry.owner.get_full_name()
+                user["username"] = entry.owner.username
 
         return user

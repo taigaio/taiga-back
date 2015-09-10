@@ -34,6 +34,7 @@ from taiga.projects.notifications.choices import NotifyLevel
 
 from .gravatar import get_gravatar_url
 
+from django.conf import settings
 
 def get_and_validate_user(*, username:str, password:str) -> bool:
     """
@@ -70,7 +71,7 @@ def get_photo_or_gravatar_url(user):
     """Get the user's photo/gravatar url."""
     if user:
         return get_photo_url(user.photo) if user.photo else get_gravatar_url(user.email)
-    return ""
+    return settings.GRAVATAR_DEFAULT_AVATAR
 
 
 def get_big_photo_url(photo):

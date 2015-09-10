@@ -94,7 +94,10 @@ class HistoryEntry(models.Model):
     def owner(self):
         pk = self.user["pk"]
         model = apps.get_model("users", "User")
-        return model.objects.get(pk=pk)
+        try:
+            return model.objects.get(pk=pk)
+        except model.DoesNotExist:
+            return None
 
     @cached_property
     def values_diff(self):
