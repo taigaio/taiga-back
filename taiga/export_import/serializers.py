@@ -259,7 +259,7 @@ class WatcheableObjectModelSerializer(serializers.ModelSerializer):
         for user in removing_users:
             notifications_services.remove_watcher(self.object, user)
 
-        self.object.watchers = self.object.get_watchers()
+        self.object.watchers = [user.email for user in self.object.get_watchers()]
 
     def to_native(self, obj):
         ret = super(WatcheableObjectModelSerializer, self).to_native(obj)
