@@ -17,10 +17,12 @@
 - Add endpoints to show the watchers list for issues, tasks and user stories.
 - Add headers to allow threading for notification emails about changes to issues, tasks, user stories, and wiki pages. (thanks to [@brett](https://github.com/brettp)).
 - Add externall apps: now Taiga can integrate with hundreds of applications and service.
+- Improving searching system, now full text searchs are supported
 - i18n.
   - Add polish (pl) translation.
   - Add portuguese (Brazil) (pt_BR) translation.
   - Add russian (ru) translation.
+
 
 ### Misc
 - API: Mixin fields 'users', 'members' and 'memberships' in ProjectDetailSerializer.

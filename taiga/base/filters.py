@@ -24,7 +24,7 @@ from django.utils.translation import ugettext as _
 
 from taiga.base import exceptions as exc
 from taiga.base.api.utils import get_object_or_404
-
+from taiga.base.utils.db import to_tsquery
 
 logger = logging.getLogger(__name__)
 
@@ -487,11 +487,11 @@ class QFilter(FilterBackend):
     def filter_queryset(self, request, queryset, view):
         q = request.QUERY_PARAMS.get('q', None)
         if q:
-            if q.isdigit():
-                qs_args = [Q(ref=q)]
-            else:
-                qs_args = [Q(subject__icontains=x) for x in q.split()]
+            table = queryset.model._meta.db_table
+            where_clause = ("to_tsvector('english_nostop', coalesce({table}.subject, '') || ' ' || "
+                            "coalesce({table}.ref) || ' ' || "
+                            "coalesce({table}.description, '')) @@ to_tsquery('english_nostop', %s)".format(table=table))
 
-            queryset = queryset.filter(reduce(operator.and_, qs_args))
+            queryset = queryset.extra(where=[where_clause], params=[to_tsquery(q)])
 
         return queryset
