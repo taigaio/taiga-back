@@ -253,6 +253,45 @@ def test_list_contacts_public_projects(client):
     assert response_content[0]["id"] == user_2.id
 
 
+def test_mail_permissions(client):
+    user_1 = f.UserFactory.create(is_superuser=True)
+    user_2 = f.UserFactory.create()
+
+    url1 = reverse('users-detail', kwargs={"pk": user_1.pk})
+    url2 = reverse('users-detail', kwargs={"pk": user_2.pk})
+
+    # Anonymous user
+    response = client.json.get(url1)
+    assert response.status_code == 200
+    assert "email" not in response.data
+
+    response = client.json.get(url2)
+    assert response.status_code == 200
+    assert "email" not in response.data
+
+    # Superuser
+    client.login(user_1)
+
+    response = client.json.get(url1)
+    assert response.status_code == 200
+    assert "email" in response.data
+
+    response = client.json.get(url2)
+    assert response.status_code == 200
+    assert "email" in response.data
+
+    # Normal user
+    client.login(user_2)
+
+    response = client.json.get(url1)
+    assert response.status_code == 200
+    assert "email" not in response.data
+
+    response = client.json.get(url2)
+    assert response.status_code == 200
+    assert "email" in response.data
+
+
 def test_get_favourites_list():
     fav_user = f.UserFactory()
     viewer_user = f.UserFactory()
@@ -404,13 +443,16 @@ def test_get_favourites_list_permissions():
     f.VoteFactory(content_type=content_type, object_id=issue.id, user=fav_user)
     f.VotesFactory(content_type=content_type, object_id=issue.id, count=1)
 
-    #If the project is private a viewer user without any permission shouldn' see any vote
+    #If the project is private a viewer user without any permission shouldn' see
+    # any vote
     assert len(get_favourites_list(fav_user, viewer_unpriviliged_user)) == 0
 
-    #If the project is private but the viewer user has permissions the votes should be accesible
+    #If the project is private but the viewer user has permissions the votes should
+    # be accesible
     assert len(get_favourites_list(fav_user, viewer_priviliged_user)) == 4
 
-    #If the project is private but has the required anon permissions the votes should be accesible by any user too
+    #If the project is private but has the required anon permissions the votes should
+    # be accesible by any user too
     project.anon_permissions = ["view_project", "view_us", "view_tasks", "view_issues"]
     project.save()
     assert len(get_favourites_list(fav_user, viewer_unpriviliged_user)) == 4
