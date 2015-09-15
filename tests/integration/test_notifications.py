@@ -104,7 +104,7 @@ def test_analize_object_for_watchers():
     history = MagicMock()
     history.comment = ""
 
-    services.analize_object_for_watchers(issue, history)
+    services.analize_object_for_watchers(issue, history.comment, history.owner)
     assert issue.add_watcher.call_count == 2
 
 
@@ -119,7 +119,7 @@ def test_analize_object_for_watchers_adding_owner_non_empty_comment():
     history.comment = "Comment"
     history.owner = user1
 
-    services.analize_object_for_watchers(issue, history)
+    services.analize_object_for_watchers(issue, history.comment, history.owner)
     assert issue.add_watcher.call_count == 1
 
 
@@ -134,7 +134,7 @@ def test_analize_object_for_watchers_no_adding_owner_empty_comment():
     history.comment = ""
     history.owner = user1
 
-    services.analize_object_for_watchers(issue, history)
+    services.analize_object_for_watchers(issue, history.comment, history.owner)
     assert issue.add_watcher.call_count == 0
 
 

@@ -91,7 +91,7 @@ class WatchedResourceMixin:
         # some text fields for extract mentions and add them
         # to watchers before obtain a complete list of
         # notifiable users.
-        services.analize_object_for_watchers(obj, history)
+        services.analize_object_for_watchers(obj, history.comment, history.owner)
 
         # Get a complete list of notifiable users for current
         # object and send the change notification to them.
