@@ -90,16 +90,23 @@ def get_notify_policy(project, user):
     return instance
 
 
-def analize_object_for_watchers(obj:object, history:object):
+def analize_object_for_watchers(obj:object, comment:str, user:object):
     """
     Generic implementation for analize model objects and
     extract mentions from it and add it to watchers.
     """
+
+    if not hasattr(obj, "get_project"):
+        return
+
+    if not hasattr(obj, "add_watcher"):
+        return
+
     from taiga import mdrender as mdr
 
     texts = (getattr(obj, "description", ""),
              getattr(obj, "content", ""),
-             getattr(history, "comment", ""),)
+             comment,)
 
     _, data = mdr.render_and_extract(obj.get_project(), "\n".join(texts))
 
@@ -108,8 +115,9 @@ def analize_object_for_watchers(obj:object, history:object):
             obj.add_watcher(user)
 
     # Adding the person who edited the object to the watchers
-    if history.comment and not history.owner.is_system:
-        obj.add_watcher(history.owner)
+    if comment and not user.is_system:
+        obj.add_watcher(user)
+
 
 def _filter_by_permissions(obj, user):
     UserStory = apps.get_model("userstories", "UserStory")
