@@ -58,7 +58,7 @@ class UsersViewSet(ModelCrudViewSet):
     def get_serializer_class(self):
         if self.action in ["partial_update", "update", "retrieve", "by_username"]:
             user = self.object
-            if self.request.user == user:
+            if self.request.user == user or self.request.user.is_superuser:
                 return self.admin_serializer_class
 
         return self.serializer_class
