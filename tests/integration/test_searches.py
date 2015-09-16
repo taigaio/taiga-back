@@ -124,10 +124,11 @@ def test_search_text_query_in_my_project(client, searches_initial_data):
 
     response = client.get(reverse("search-list"), {"project": data.project1.id, "text": "back"})
     assert response.status_code == 200
-    assert response.data["count"] == 2
+    assert response.data["count"] == 3
     assert len(response.data["userstories"]) == 1
     assert len(response.data["tasks"]) == 1
-    assert len(response.data["issues"]) == 0
+    # Back is a backend substring
+    assert len(response.data["issues"]) == 1
     assert len(response.data["wikipages"]) == 0
 
 

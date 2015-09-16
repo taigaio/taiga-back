@@ -125,3 +125,9 @@ def update_in_bulk_with_ids(ids, list_of_new_values, model):
     """
     for id, new_values in zip(ids, list_of_new_values):
         model.objects.filter(id=id).update(**new_values)
+
+
+def to_tsquery(text):
+    # We want to transform a query like "exam proj" (should find "project example") to something like proj:* & exam:*
+    search_elems = ["{}:*".format(search_elem) for search_elem in text.split(" ")]
+    return " & ".join(search_elems)
