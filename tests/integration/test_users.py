@@ -3,6 +3,7 @@ from tempfile import NamedTemporaryFile
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
+from django.core.files import File
 
 from .. import factories as f
 
@@ -11,6 +12,10 @@ from taiga.users import models
 from taiga.auth.tokens import get_token_for_user
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 from taiga.users.services import get_favourites_list
+
+from easy_thumbnails.files import generate_all_aliases, get_thumbnailer
+
+import os
 
 pytestmark = pytest.mark.django_db
 
@@ -191,6 +196,56 @@ def test_change_avatar(client):
         avatar.seek(0)
         response = client.post(url, post_data)
         assert response.status_code == 200
+
+
+def test_change_avatar_removes_the_old_one(client):
+    url = reverse('users-change-avatar')
+    user = f.UserFactory()
+
+    with NamedTemporaryFile(delete=False) as avatar:
+        avatar.write(DUMMY_BMP_DATA)
+        avatar.seek(0)
+        user.photo = File(avatar)
+        user.save()
+        generate_all_aliases(user.photo, include_global=True)
+
+    with NamedTemporaryFile(delete=False) as avatar:
+        thumbnailer = get_thumbnailer(user.photo)
+        original_photo_paths = [user.photo.path]
+        original_photo_paths += [th.path for th in thumbnailer.get_thumbnails()]
+        assert list(map(os.path.exists, original_photo_paths)) == [True, True, True, True]
+
+        client.login(user)
+        avatar.write(DUMMY_BMP_DATA)
+        avatar.seek(0)
+        post_data = {'avatar': avatar}
+        response = client.post(url, post_data)
+
+        assert response.status_code == 200
+        assert list(map(os.path.exists, original_photo_paths)) == [False, False, False, False]
+
+
+def test_remove_avatar(client):
+    url = reverse('users-remove-avatar')
+    user = f.UserFactory()
+
+    with NamedTemporaryFile(delete=False) as avatar:
+        avatar.write(DUMMY_BMP_DATA)
+        avatar.seek(0)
+        user.photo = File(avatar)
+        user.save()
+        generate_all_aliases(user.photo, include_global=True)
+
+    thumbnailer = get_thumbnailer(user.photo)
+    original_photo_paths = [user.photo.path]
+    original_photo_paths += [th.path for th in thumbnailer.get_thumbnails()]
+    assert list(map(os.path.exists, original_photo_paths)) == [True, True, True, True]
+
+    client.login(user)
+    response = client.post(url)
+
+    assert response.status_code == 200
+    assert list(map(os.path.exists, original_photo_paths)) == [False, False, False, False]
 
 
 def test_list_contacts_private_projects(client):
