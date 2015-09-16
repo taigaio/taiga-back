@@ -75,7 +75,8 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
                        "modified_date",
                        "owner",
                        "assigned_to",
-                       "subject")
+                       "subject",
+                       "votes_count")
 
     def get_serializer_class(self, *args, **kwargs):
         if self.action in ["retrieve", "by_ref"]:

@@ -34,10 +34,13 @@ def attach_votes_count_to_queryset(queryset, as_field="votes_count"):
     """
     model = queryset.model
     type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(model)
-    sql = ("""SELECT coalesce(votes_votes.count, 0)
-                FROM votes_votes
-               WHERE votes_votes.content_type_id = {type_id}
-                 AND votes_votes.object_id = {tbl}.id""")
+    sql = """SELECT coalesce(SUM(votes_count), 0) FROM (
+                SELECT coalesce(votes_votes.count, 0) votes_count
+                  FROM votes_votes
+                 WHERE votes_votes.content_type_id = {type_id}
+                   AND votes_votes.object_id = {tbl}.id
+          ) as e"""
+
     sql = sql.format(type_id=type.id, tbl=model._meta.db_table)
     qs = queryset.extra(select={as_field: sql})
     return qs
