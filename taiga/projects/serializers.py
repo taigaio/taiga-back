@@ -342,16 +342,6 @@ class ProjectSerializer(WatchersValidator, LikedResourceSerializerMixin, Watched
     def get_notify_level(self, obj):
         return getattr(obj, "notify_level", None)
 
-    def validate_total_milestones(self, attrs, source):
-        """
-        Check that total_milestones is not null, it's an optional parameter but
-        not nullable in the model.
-        """
-        value = attrs[source]
-        if value is None:
-            raise serializers.ValidationError(_("Total milestones must be major or equal to zero"))
-        return attrs
-
 
 class ProjectDetailSerializer(ProjectSerializer):
     us_statuses = UserStoryStatusSerializer(many=True, required=False)       # User Stories
