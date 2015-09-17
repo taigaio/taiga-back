@@ -29,6 +29,7 @@ from easy_thumbnails.files import get_thumbnailer
 from easy_thumbnails.exceptions import InvalidImageFormatError
 
 from taiga.base import exceptions as exc
+from taiga.base.utils.db import to_tsquery
 from taiga.base.utils.urls import get_absolute_url
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.services import get_projects_watched
@@ -292,12 +293,10 @@ def get_favourites_list(for_user, from_user, type=None, action=None, q=None):
         filters_sql += " AND action = '{action}' ".format(action=action)
 
     if q:
-        # We must transform a q like "proj exam" (should find "project example") to something like proj:* & exam:*
-        qs = ["{}:*".format(e) for e in q.split(" ")]
         filters_sql += """ AND (
-            to_tsvector(coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('{q}')
+            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', '{q}')
         )
-        """.format(q=" & ".join(qs))
+        """.format(q=to_tsquery(q))
 
     sql = """
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
