@@ -18,7 +18,10 @@ from django.core.management.base import BaseCommand, CommandError
 
 from taiga.projects.models import Project
 from taiga.export_import.renderers import ExportRenderer
-from taiga.export_import.service import project_to_dict
+from taiga.export_import.service import render_project
+
+
+import resource
 
 
 class Command(BaseCommand):
@@ -34,6 +37,5 @@ class Command(BaseCommand):
             except Project.DoesNotExist:
                 raise CommandError('Project "%s" does not exist' % project_slug)
 
-            data = project_to_dict(project)
             with open('%s.json'%(project_slug), 'w') as outfile:
-                self.renderer.render_to_file(data, outfile, renderer_context=self.renderer_context)
+                render_project(project, outfile)

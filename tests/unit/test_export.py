@@ -15,21 +15,29 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-
+import io
 from .. import factories as f
 
-from taiga.export_import.service import project_to_dict
+from taiga.base.utils import json
+from taiga.export_import.service import render_project
 
 pytestmark = pytest.mark.django_db
 
 
 def test_export_issue_finish_date(client):
     issue = f.IssueFactory.create(finished_date="2014-10-22")
-    finish_date = project_to_dict(issue.project)["issues"][0]["finished_date"]
+    output = io.StringIO()
+    render_project(issue.project, output)
+    print(output.getvalue())
+    project_data = json.loads(output.getvalue())
+    finish_date = project_data["issues"][0]["finished_date"]
     assert finish_date == "2014-10-22T00:00:00+0000"
 
 
 def test_export_user_story_finish_date(client):
     user_story = f.UserStoryFactory.create(finish_date="2014-10-22")
-    finish_date = project_to_dict(user_story.project)["user_stories"][0]["finish_date"]
+    output = io.StringIO()
+    render_project(user_story.project, output)
+    project_data = json.loads(output.getvalue())
+    finish_date = project_data["user_stories"][0]["finish_date"]
     assert finish_date == "2014-10-22T00:00:00+0000"

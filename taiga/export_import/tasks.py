@@ -29,25 +29,26 @@ from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
 
 from taiga.celery import app
 
-from .service import project_to_dict
+from .service import render_project
 from .dump_service import dict_to_project
 from .renderers import ExportRenderer
 
 logger = logging.getLogger('taiga.export_import')
+
+import resource
 
 
 @app.task(bind=True)
 def dump_project(self, user, project):
     mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
     path = "exports/{}/{}-{}.json".format(project.pk, project.slug, self.request.id)
+    storage_path = default_storage.path(path)
 
     try:
-        content = ExportRenderer().render(project_to_dict(project), renderer_context={"indent": 4})
-        content = content.decode('utf-8')
-        content = ContentFile(content)
-
-        default_storage.save(path, content)
         url = default_storage.url(path)
+        with default_storage.open(storage_path, mode="w") as outfile:
+            render_project(project, outfile)
+
     except Exception:
         ctx = {
             "user": user,
