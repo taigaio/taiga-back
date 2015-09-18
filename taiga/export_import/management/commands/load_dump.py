@@ -19,8 +19,7 @@ from django.db import transaction
 from django.db.models import signals
 from optparse import make_option
 
-import json
-
+from taiga.base.utils import json
 from taiga.projects.models import Project
 from taiga.export_import.renderers import ExportRenderer
 from taiga.export_import.dump_service import dict_to_project, TaigaImportError

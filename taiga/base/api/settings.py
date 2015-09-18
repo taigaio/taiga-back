@@ -117,7 +117,7 @@ DEFAULTS = {
     "DATE_INPUT_FORMATS": (
         ISO_8601,
     ),
-    "DATE_FORMAT": None,
+    "DATE_FORMAT": ISO_8601,
 
     "DATETIME_INPUT_FORMATS": (
         ISO_8601,

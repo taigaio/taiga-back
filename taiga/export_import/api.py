@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
 import codecs
 import uuid
 
@@ -26,6 +25,7 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
+from taiga.base.utils import json
 from taiga.base.decorators import detail_route, list_route
 from taiga.base import exceptions as exc
 from taiga.base import response
@@ -67,10 +67,10 @@ class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet)
             return response.Accepted({"export_id": task.id})
 
         path = "exports/{}/{}-{}.json".format(project.pk, project.slug, uuid.uuid4().hex)
-        content = ContentFile(ExportRenderer().render(service.project_to_dict(project),
-                                                      renderer_context={"indent": 4}).decode('utf-8'))
+        storage_path = default_storage.path(path)
+        with default_storage.open(storage_path, mode="w") as outfile:
+            service.render_project(project, outfile)
 
-        default_storage.save(path, content)
         response_data = {
             "url": default_storage.url(path)
         }

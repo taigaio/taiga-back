@@ -893,7 +893,6 @@ def test_valid_milestone_import(client):
     json.loads(response.content.decode("utf-8"))
 
 
-
 def test_milestone_import_duplicated_milestone(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
