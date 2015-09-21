@@ -44,7 +44,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCru
     def update(self, *args, **kwargs):
         partial = kwargs.get("partial", False)
         if not partial:
-            raise exc.NotSupported(_("Non partial updates not supported"))
+            raise exc.NotSupported(_("Partial updates are not supported"))
         return super().update(*args, **kwargs)
 
     def get_content_type(self):
