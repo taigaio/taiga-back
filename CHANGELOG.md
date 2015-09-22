@@ -19,10 +19,10 @@
 - Add externall apps: now Taiga can integrate with hundreds of applications and service.
 - Improving searching system, now full text searchs are supported
 - i18n.
+  - Add italian (it) translation.
   - Add polish (pl) translation.
   - Add portuguese (Brazil) (pt_BR) translation.
   - Add russian (ru) translation.
-  - Add italian (it) translation.
 
 
 ### Misc
