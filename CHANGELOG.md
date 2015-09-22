@@ -22,6 +22,7 @@
   - Add polish (pl) translation.
   - Add portuguese (Brazil) (pt_BR) translation.
   - Add russian (ru) translation.
+  - Add italian (it) translation.
 
 
 ### Misc

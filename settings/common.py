@@ -105,7 +105,7 @@ LANGUAGES = [
     #("id", "Bahasa Indonesia"),  # Indonesian
     #("io", "IDO"),  # Ido
     #("is", "Íslenska"),  # Icelandic
-    #("it", "Italiano"),  # Italian
+    ("it", "Italiano"),  # Italian
     #("ja", "日本語"),  # Japanese
     #("ka", "ქართული"),  # Georgian
     #("kk", "Қазақша"),  # Kazakh
