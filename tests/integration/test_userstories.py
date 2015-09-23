@@ -477,3 +477,40 @@ def test_update_userstory_respecting_watchers(client):
     assert response.status_code == 200
     assert response.data["subject"] == "Updating test"
     assert response.data["watchers"] == [watching_user.id]
+
+
+def test_update_userstory_update_watchers(client):
+    watching_user = f.create_user()
+    project = f.ProjectFactory.create()
+    us = f.UserStoryFactory.create(project=project, status__project=project, milestone__project=project)
+    f.MembershipFactory.create(project=us.project, user=us.owner, is_owner=True)
+    f.MembershipFactory.create(project=us.project, user=watching_user)
+
+    client.login(user=us.owner)
+    url = reverse("userstories-detail", kwargs={"pk": us.pk})
+    data = {"watchers": [watching_user.id], "version":1}
+
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200
+    assert response.data["watchers"] == [watching_user.id]
+    watcher_ids = list(us.get_watchers().values_list("id", flat=True))
+    assert watcher_ids == [watching_user.id]
+
+
+def test_update_userstory_remove_watchers(client):
+    watching_user = f.create_user()
+    project = f.ProjectFactory.create()
+    us = f.UserStoryFactory.create(project=project, status__project=project, milestone__project=project)
+    us.add_watcher(watching_user)
+    f.MembershipFactory.create(project=us.project, user=us.owner, is_owner=True)
+    f.MembershipFactory.create(project=us.project, user=watching_user)
+
+    client.login(user=us.owner)
+    url = reverse("userstories-detail", kwargs={"pk": us.pk})
+    data = {"watchers": [], "version":1}
+
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200
+    assert response.data["watchers"] == []
+    watcher_ids = list(us.get_watchers().values_list("id", flat=True))
+    assert watcher_ids == []

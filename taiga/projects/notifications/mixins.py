@@ -190,13 +190,14 @@ class WatchedResourceModelSerializer(serializers.ModelSerializer):
         #If that's the case we need to remove it before calling the super method
         watcher_field = self.fields.pop("watchers", None)
         self.validate_watchers(attrs, "watchers")
-        new_watcher_ids = set(attrs.pop("watchers", []))
+        new_watcher_ids = attrs.pop("watchers", None)
         obj = super(WatchedResourceModelSerializer, self).restore_object(attrs, instance)
 
         #A partial update can exclude the watchers field or if the new instance can still not be saved
-        if instance is None or len(new_watcher_ids) == 0:
+        if instance is None or new_watcher_ids is None:
             return obj
 
+        new_watcher_ids = set(new_watcher_ids)
         old_watcher_ids = set(obj.get_watchers().values_list("id", flat=True))
         adding_watcher_ids = list(new_watcher_ids.difference(old_watcher_ids))
         removing_watcher_ids = list(old_watcher_ids.difference(new_watcher_ids))
