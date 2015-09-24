@@ -910,7 +910,6 @@ def test_valid_milestone_import(client):
     assert response.data["watchers"] == [user_watching.email]
 
 
-
 def test_milestone_import_duplicated_milestone(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
