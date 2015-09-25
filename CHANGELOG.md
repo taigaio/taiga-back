@@ -19,6 +19,7 @@
 - Add externall apps: now Taiga can integrate with hundreds of applications and service.
 - Improve searching system, now full text searchs are supported
 - Improve export system, now is more efficient and  prevents possible crashes with heavy projects.
+- Add sha1 hash to attachments to verify the integrity of files (thanks to [@astagi](https://github.com/astagi)).
 - i18n.
   - Add italian (it) translation.
   - Add polish (pl) translation.
