@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-18 10:52+0200\n"
-"PO-Revision-Date: 2015-09-18 08:52+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2015-09-26 19:35+0200\n"
+"PO-Revision-Date: 2015-09-26 17:36+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Chinese Traditional (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/zh-Hant/)\n"
 "MIME-Version: 1.0\n"
@@ -566,18 +566,18 @@ msgstr "無效內容。必須為 {\"key\": \"value\",...}"
 msgid "It contain invalid custom fields."
 msgstr "包括無效慣例欄位"
 
-#: taiga/export_import/serializers.py:511
+#: taiga/export_import/serializers.py:513
 #: taiga/projects/milestones/serializers.py:64 taiga/projects/serializers.py:72
 #: taiga/projects/serializers.py:98 taiga/projects/serializers.py:129
 #: taiga/projects/serializers.py:172
 msgid "Name duplicated for the project"
 msgstr "專案的名稱被複製了"
 
-#: taiga/export_import/tasks.py:54 taiga/export_import/tasks.py:55
+#: taiga/export_import/tasks.py:55 taiga/export_import/tasks.py:56
 msgid "Error generating project dump"
 msgstr "產生專案傾倒時出錯"
 
-#: taiga/export_import/tasks.py:88 taiga/export_import/tasks.py:89
+#: taiga/export_import/tasks.py:89 taiga/export_import/tasks.py:90
 msgid "Error loading project dump"
 msgstr "載入專案傾倒時出錯"
 
@@ -837,7 +837,7 @@ msgstr ""
 msgid "web"
 msgstr ""
 
-#: taiga/external_apps/models.py:37 taiga/projects/attachments/models.py:73
+#: taiga/external_apps/models.py:37 taiga/projects/attachments/models.py:74
 #: taiga/projects/custom_attributes/models.py:37
 #: taiga/projects/history/templatetags/functions.py:25
 #: taiga/projects/issues/models.py:61 taiga/projects/models.py:138
@@ -851,7 +851,7 @@ msgid "Next url"
 msgstr ""
 
 #: taiga/external_apps/models.py:41
-msgid "secret key for cyphering the application tokens"
+msgid "secret key for ciphering the application tokens"
 msgstr ""
 
 #: taiga/external_apps/models.py:55 taiga/projects/notifications/models.py:84
@@ -1302,8 +1302,8 @@ msgid "You don't have permisions to see that."
 msgstr "您無觀看權限"
 
 #: taiga/projects/attachments/api.py:47
-msgid "Non partial updates not supported"
-msgstr "不支援非部份更新"
+msgid "Partial updates are not supported"
+msgstr ""
 
 #: taiga/projects/attachments/api.py:62
 msgid "Project ID not matches between object and project"
@@ -1352,11 +1352,15 @@ msgstr "修改日期"
 msgid "attached file"
 msgstr "附加檔案"
 
-#: taiga/projects/attachments/models.py:72
+#: taiga/projects/attachments/models.py:71
+msgid "sha1"
+msgstr ""
+
+#: taiga/projects/attachments/models.py:73
 msgid "is deprecated"
 msgstr "棄用"
 
-#: taiga/projects/attachments/models.py:74
+#: taiga/projects/attachments/models.py:75
 #: taiga/projects/custom_attributes/models.py:39
 #: taiga/projects/milestones/models.py:54 taiga/projects/models.py:398
 #: taiga/projects/models.py:435 taiga/projects/models.py:462
@@ -1488,7 +1492,7 @@ msgstr "移除　"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:134
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:145
-#: taiga/projects/services/stats.py:124 taiga/projects/services/stats.py:125
+#: taiga/projects/services/stats.py:137 taiga/projects/services/stats.py:138
 msgid "Unassigned"
 msgstr "無指定"
 
@@ -2623,51 +2627,47 @@ msgstr "電子郵件已使用"
 msgid "Invalid role for the project"
 msgstr "專案無效的角色"
 
-#: taiga/projects/serializers.py:352
-msgid "Total milestones must be major or equal to zero"
-msgstr "Kanban"
-
-#: taiga/projects/serializers.py:409
+#: taiga/projects/serializers.py:399
 msgid "Default options"
 msgstr "預設選項"
 
-#: taiga/projects/serializers.py:410
+#: taiga/projects/serializers.py:400
 msgid "User story's statuses"
 msgstr "使用者故事狀態"
 
-#: taiga/projects/serializers.py:411
+#: taiga/projects/serializers.py:401
 msgid "Points"
 msgstr "點數"
 
-#: taiga/projects/serializers.py:412
+#: taiga/projects/serializers.py:402
 msgid "Task's statuses"
 msgstr "任務狀態"
 
-#: taiga/projects/serializers.py:413
+#: taiga/projects/serializers.py:403
 msgid "Issue's statuses"
 msgstr "問題狀態"
 
-#: taiga/projects/serializers.py:414
+#: taiga/projects/serializers.py:404
 msgid "Issue's types"
 msgstr "問題類型"
 
-#: taiga/projects/serializers.py:415
+#: taiga/projects/serializers.py:405
 msgid "Priorities"
 msgstr "優先性"
 
-#: taiga/projects/serializers.py:416
+#: taiga/projects/serializers.py:406
 msgid "Severities"
 msgstr "嚴重性"
 
-#: taiga/projects/serializers.py:417
+#: taiga/projects/serializers.py:407
 msgid "Roles"
 msgstr "角色"
 
-#: taiga/projects/services/stats.py:72
+#: taiga/projects/services/stats.py:84
 msgid "Future sprint"
 msgstr "未來之衝刺"
 
-#: taiga/projects/services/stats.py:89
+#: taiga/projects/services/stats.py:101
 msgid "Project End"
 msgstr "專案結束"
 
@@ -3321,7 +3321,7 @@ msgstr "無效"
 msgid "Invalid username. Try with a different one."
 msgstr "無效使用者名稱，請重試其它名稱　"
 
-#: taiga/users/services.py:52 taiga/users/services.py:56
+#: taiga/users/services.py:53 taiga/users/services.py:57
 msgid "Username or password does not matches user."
 msgstr "用戶名稱與密碼不符"
 

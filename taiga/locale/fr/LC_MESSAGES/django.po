@@ -17,9 +17,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-18 10:52+0200\n"
-"PO-Revision-Date: 2015-09-18 08:52+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2015-09-26 19:35+0200\n"
+"PO-Revision-Date: 2015-09-26 17:36+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -591,18 +591,18 @@ msgstr "Format non valide. Il doit être de la forme {\"cle\": \"valeur\",...}"
 msgid "It contain invalid custom fields."
 msgstr "Contient des champs personnalisés non valides."
 
-#: taiga/export_import/serializers.py:511
+#: taiga/export_import/serializers.py:513
 #: taiga/projects/milestones/serializers.py:64 taiga/projects/serializers.py:72
 #: taiga/projects/serializers.py:98 taiga/projects/serializers.py:129
 #: taiga/projects/serializers.py:172
 msgid "Name duplicated for the project"
 msgstr "Nom dupliqué pour ce projet"
 
-#: taiga/export_import/tasks.py:54 taiga/export_import/tasks.py:55
+#: taiga/export_import/tasks.py:55 taiga/export_import/tasks.py:56
 msgid "Error generating project dump"
 msgstr "Error dans la génération du dump du projet"
 
-#: taiga/export_import/tasks.py:88 taiga/export_import/tasks.py:89
+#: taiga/export_import/tasks.py:89 taiga/export_import/tasks.py:90
 msgid "Error loading project dump"
 msgstr "Erreur au chargement du dump du projet"
 
@@ -821,7 +821,7 @@ msgstr ""
 msgid "web"
 msgstr ""
 
-#: taiga/external_apps/models.py:37 taiga/projects/attachments/models.py:73
+#: taiga/external_apps/models.py:37 taiga/projects/attachments/models.py:74
 #: taiga/projects/custom_attributes/models.py:37
 #: taiga/projects/history/templatetags/functions.py:25
 #: taiga/projects/issues/models.py:61 taiga/projects/models.py:138
@@ -835,7 +835,7 @@ msgid "Next url"
 msgstr ""
 
 #: taiga/external_apps/models.py:41
-msgid "secret key for cyphering the application tokens"
+msgid "secret key for ciphering the application tokens"
 msgstr ""
 
 #: taiga/external_apps/models.py:55 taiga/projects/notifications/models.py:84
@@ -1252,8 +1252,8 @@ msgid "You don't have permisions to see that."
 msgstr "Vous n'avez pas les permissions pour consulter cet élément"
 
 #: taiga/projects/attachments/api.py:47
-msgid "Non partial updates not supported"
-msgstr "Les mises à jour non partielles ne sont pas supportées"
+msgid "Partial updates are not supported"
+msgstr ""
 
 #: taiga/projects/attachments/api.py:62
 msgid "Project ID not matches between object and project"
@@ -1302,11 +1302,15 @@ msgstr "état modifié"
 msgid "attached file"
 msgstr "pièces jointes"
 
-#: taiga/projects/attachments/models.py:72
+#: taiga/projects/attachments/models.py:71
+msgid "sha1"
+msgstr ""
+
+#: taiga/projects/attachments/models.py:73
 msgid "is deprecated"
 msgstr "est obsolète"
 
-#: taiga/projects/attachments/models.py:74
+#: taiga/projects/attachments/models.py:75
 #: taiga/projects/custom_attributes/models.py:39
 #: taiga/projects/milestones/models.py:54 taiga/projects/models.py:398
 #: taiga/projects/models.py:435 taiga/projects/models.py:462
@@ -1438,7 +1442,7 @@ msgstr "supprimé"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:134
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:145
-#: taiga/projects/services/stats.py:124 taiga/projects/services/stats.py:125
+#: taiga/projects/services/stats.py:137 taiga/projects/services/stats.py:138
 msgid "Unassigned"
 msgstr "Non assigné"
 
@@ -2342,51 +2346,47 @@ msgstr "Adresse email déjà existante"
 msgid "Invalid role for the project"
 msgstr "Rôle non valide pour le projet"
 
-#: taiga/projects/serializers.py:352
-msgid "Total milestones must be major or equal to zero"
-msgstr "Le nombre de jalons doit être supérieur ou égal à zéro"
-
-#: taiga/projects/serializers.py:409
+#: taiga/projects/serializers.py:399
 msgid "Default options"
 msgstr "Options par défaut"
 
-#: taiga/projects/serializers.py:410
+#: taiga/projects/serializers.py:400
 msgid "User story's statuses"
 msgstr "Etats de la User Story"
 
-#: taiga/projects/serializers.py:411
+#: taiga/projects/serializers.py:401
 msgid "Points"
 msgstr "Points"
 
-#: taiga/projects/serializers.py:412
+#: taiga/projects/serializers.py:402
 msgid "Task's statuses"
 msgstr "Etats des tâches"
 
-#: taiga/projects/serializers.py:413
+#: taiga/projects/serializers.py:403
 msgid "Issue's statuses"
 msgstr "Statuts des problèmes"
 
-#: taiga/projects/serializers.py:414
+#: taiga/projects/serializers.py:404
 msgid "Issue's types"
 msgstr "Types de problèmes"
 
-#: taiga/projects/serializers.py:415
+#: taiga/projects/serializers.py:405
 msgid "Priorities"
 msgstr "Priorités"
 
-#: taiga/projects/serializers.py:416
+#: taiga/projects/serializers.py:406
 msgid "Severities"
 msgstr "Sévérités"
 
-#: taiga/projects/serializers.py:417
+#: taiga/projects/serializers.py:407
 msgid "Roles"
 msgstr "Rôles"
 
-#: taiga/projects/services/stats.py:72
+#: taiga/projects/services/stats.py:84
 msgid "Future sprint"
 msgstr "Sprint futurs"
 
-#: taiga/projects/services/stats.py:89
+#: taiga/projects/services/stats.py:101
 msgid "Project End"
 msgstr "Fin du projet"
 
@@ -3043,7 +3043,7 @@ msgstr "invalide"
 msgid "Invalid username. Try with a different one."
 msgstr "Nom d'utilisateur invalide. Essayez avec un autre nom."
 
-#: taiga/users/services.py:52 taiga/users/services.py:56
+#: taiga/users/services.py:53 taiga/users/services.py:57
 msgid "Username or password does not matches user."
 msgstr "Aucun utilisateur avec ce nom ou ce mot de passe."
 

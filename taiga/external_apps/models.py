@@ -38,7 +38,7 @@ class Application(models.Model):
 
     next_url = models.TextField(null=False, blank=False, verbose_name=_("Next url"))
 
-    key = models.TextField(null=False, blank=False, verbose_name=_("secret key for cyphering the application tokens"))
+    key = models.TextField(null=False, blank=False, verbose_name=_("secret key for ciphering the application tokens"))
 
     class Meta:
         verbose_name = "application"

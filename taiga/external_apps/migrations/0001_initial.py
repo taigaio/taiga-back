@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('web', models.CharField(null=True, blank=True, max_length=255, verbose_name='web')),
                 ('description', models.TextField(null=True, blank=True, verbose_name='description')),
                 ('next_url', models.TextField(verbose_name='Next url')),
-                ('key', models.TextField(verbose_name='secret key for cyphering the application tokens')),
+                ('key', models.TextField(verbose_name='secret key for ciphering the application tokens')),
             ],
             options={
                 'verbose_name_plural': 'applications',
