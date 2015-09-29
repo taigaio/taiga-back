@@ -141,8 +141,8 @@ class HistoryEntry(models.Model):
             elif key in users_keys:
                 value = [resolve_value("users", x) for x in self.diff[key]]
             elif key == "watchers":
-                value = [[resolve_value("users", x) for x in self.diff[key][0]],
-                         [resolve_value("users", x) for x in self.diff[key][1]]]
+                # Old instances can have watchers
+                continue
             elif key == "points":
                 points = {}
 
