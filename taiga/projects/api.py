@@ -44,14 +44,13 @@ from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 from taiga.projects.userstories.models import UserStory, RolePoints
 from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
+from taiga.projects.votes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
 from taiga.permissions import service as permissions_service
 
 from . import serializers
 from . import models
 from . import permissions
 from . import services
-
-from .votes.mixins.viewsets import LikedResourceMixin, VotersViewSetMixin
 
 
 ######################################################
@@ -292,7 +291,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
         return response.NoContent()
 
 
-class ProjectFansViewSet(VotersViewSetMixin, ModelListViewSet):
+class ProjectFansViewSet(FansViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.ProjectFansPermission,)
     resource_model = models.Project
 

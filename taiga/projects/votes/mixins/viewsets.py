@@ -79,7 +79,7 @@ class VotedResourceMixin(BaseVotedResource):
         return self._remove_vote("downvote", request, pk)
 
 
-class VotersViewSetMixin:
+class BaseVotersViewSetMixin:
     # Is a ModelListViewSet with two required params: permission_classes and resource_model
     serializer_class = serializers.VoterSerializer
     list_serializer_class = serializers.VoterSerializer
@@ -112,3 +112,11 @@ class VotersViewSetMixin:
     def get_queryset(self):
         resource = self.resource_model.objects.get(pk=self.kwargs.get("resource_id"))
         return services.get_voters(resource)
+
+
+class VotersViewSetMixin(BaseVotersViewSetMixin):
+    pass
+
+
+class FansViewSetMixin(BaseVotersViewSetMixin):
+    pass
