@@ -18,7 +18,7 @@
 from django.apps import apps
 
 
-def attach_votes_count_to_queryset(queryset, as_field="votes_count"):
+def attach_total_voters_to_queryset(queryset, as_field="total_voters"):
     """Attach votes count to each object of the queryset.
 
     Because of laziness of vote objects creation, this makes much simpler and more efficient to
@@ -34,8 +34,8 @@ def attach_votes_count_to_queryset(queryset, as_field="votes_count"):
     """
     model = queryset.model
     type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(model)
-    sql = """SELECT coalesce(SUM(votes_count), 0) FROM (
-                SELECT coalesce(votes_votes.count, 0) votes_count
+    sql = """SELECT coalesce(SUM(total_voters), 0) FROM (
+                SELECT coalesce(votes_votes.count, 0) total_voters
                   FROM votes_votes
                  WHERE votes_votes.content_type_id = {type_id}
                    AND votes_votes.object_id = {tbl}.id
@@ -46,7 +46,7 @@ def attach_votes_count_to_queryset(queryset, as_field="votes_count"):
     return qs
 
 
-def attach_is_vote_to_queryset(user, queryset, as_field="is_voted"):
+def attach_is_voter_to_queryset(user, queryset, as_field="is_voter"):
     """Attach is_vote boolean to each object of the queryset.
 
     Because of laziness of vote objects creation, this makes much simpler and more efficient to

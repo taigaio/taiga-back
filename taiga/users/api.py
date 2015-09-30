@@ -113,32 +113,62 @@ class UsersViewSet(ModelCrudViewSet):
         self.check_permissions(request, "stats", user)
         return response.Ok(services.get_stats_for_user(user, request.user))
 
+
+    def _serialize_liked_content(self, elem, **kwargs):
+        if elem.get("type") == "project":
+            serializer = serializers.FanSerializer
+        else:
+            serializer = serializers.VotedSerializer
+
+        return serializer(elem, **kwargs)
+
+
     @detail_route(methods=["GET"])
-    def favourites(self, request, *args, **kwargs):
+    def watched(self, request, *args, **kwargs):
         for_user = get_object_or_404(models.User, **kwargs)
         from_user = request.user
-        self.check_permissions(request, 'favourites', for_user)
+        self.check_permissions(request, 'watched', for_user)
         filters = {
             "type": request.GET.get("type", None),
-            "action": request.GET.get("action", None),
             "q": request.GET.get("q", None),
         }
 
-        self.object_list = services.get_favourites_list(for_user, from_user, **filters)
+        self.object_list = services.get_watched_list(for_user, from_user, **filters)
         page = self.paginate_queryset(self.object_list)
+        elements = page.object_list if page is not None else self.object_list
 
         extra_args = {
-            "many": True,
             "user_votes": services.get_voted_content_for_user(request.user),
             "user_watching": services.get_watched_content_for_user(request.user),
         }
 
-        if page is not None:
-            serializer = serializers.FavouriteSerializer(page.object_list, **extra_args)
-        else:
-            serializer = serializers.FavouriteSerializer(self.object_list, **extra_args)
+        response_data = [self._serialize_liked_content(elem, **extra_args).data for elem in elements]
+        return response.Ok(response_data)
 
-        return response.Ok(serializer.data)
+
+    @detail_route(methods=["GET"])
+    def liked(self, request, *args, **kwargs):
+        for_user = get_object_or_404(models.User, **kwargs)
+        from_user = request.user
+        self.check_permissions(request, 'liked', for_user)
+        filters = {
+            "type": request.GET.get("type", None),
+            "q": request.GET.get("q", None),
+        }
+
+        self.object_list = services.get_voted_list(for_user, from_user, **filters)
+        page = self.paginate_queryset(self.object_list)
+        elements = page.object_list if page is not None else self.object_list
+
+        extra_args = {
+            "user_votes": services.get_voted_content_for_user(request.user),
+            "user_watching": services.get_watched_content_for_user(request.user),
+        }
+
+        response_data = [self._serialize_liked_content(elem, **extra_args).data for elem in elements]
+
+        return response.Ok(response_data)
+
 
     @list_route(methods=["POST"])
     def password_recovery(self, request, pk=None):

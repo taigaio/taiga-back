@@ -155,13 +155,12 @@ class ProjectRoleSerializer(serializers.ModelSerializer):
 
 
 ######################################################
-## Favourite
+## Like
 ######################################################
 
 
-class FavouriteSerializer(serializers.Serializer):
+class LikeSerializer(serializers.Serializer):
     type = serializers.CharField()
-    action = serializers.CharField()
     id = serializers.IntegerField()
     ref = serializers.IntegerField()
     slug = serializers.CharField()
@@ -175,11 +174,8 @@ class FavouriteSerializer(serializers.Serializer):
     created_date = serializers.DateTimeField()
     is_private = serializers.SerializerMethodField("get_is_private")
 
-    is_voted = serializers.SerializerMethodField("get_is_voted")
-    is_watched = serializers.SerializerMethodField("get_is_watched")
-
+    is_watcher = serializers.SerializerMethodField("get_is_watcher")
     total_watchers = serializers.IntegerField()
-    total_votes = serializers.IntegerField()
 
     project = serializers.SerializerMethodField("get_project")
     project_name = serializers.SerializerMethodField("get_project_name")
@@ -196,7 +192,7 @@ class FavouriteSerializer(serializers.Serializer):
         self.user_watching = kwargs.pop("user_watching", {})
 
         # Instantiate the superclass normally
-        super(FavouriteSerializer, self).__init__(*args, **kwargs)
+        super(LikeSerializer, self).__init__(*args, **kwargs)
 
     def _none_if_project(self, obj, property):
         type = obj.get("type", "")
@@ -230,10 +226,7 @@ class FavouriteSerializer(serializers.Serializer):
     def get_project_is_private(self, obj):
         return self._none_if_project(obj, "project_is_private")
 
-    def get_is_voted(self, obj):
-        return obj["id"] in self.user_votes.get(obj["type"], [])
-
-    def get_is_watched(self, obj):
+    def get_is_watcher(self, obj):
         return obj["id"] in self.user_watching.get(obj["type"], [])
 
     def get_photo(self, obj):
@@ -248,3 +241,19 @@ class FavouriteSerializer(serializers.Serializer):
     def get_tags_color(self, obj):
         tags = obj.get("tags", [])
         return [{"name": tc[0], "color": tc[1]} for tc in obj.get("tags_colors", []) if tc[0] in tags]
+
+
+
+class FanSerializer(LikeSerializer):
+    is_fan = serializers.SerializerMethodField("get_is_fan")
+    total_fans = serializers.IntegerField(source="total_voters")
+
+    def get_is_fan(self, obj):
+        return obj["id"] in self.user_votes.get(obj["type"], [])
+
+class VotedSerializer(LikeSerializer):
+    is_voter = serializers.SerializerMethodField("get_is_voter")
+    total_voters = serializers.IntegerField()
+
+    def get_is_voter(self, obj):
+        return obj["id"] in self.user_votes.get(obj["type"], [])

@@ -121,10 +121,10 @@ def test_get_project_watchers(client):
     response = client.get(url)
 
     assert response.status_code == 200
-    assert response.data['watchers'] == [user.id]
+    assert response.data['total_watchers'] == 1
 
 
-def test_get_project_is_watched(client):
+def test_get_project_is_watcher(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(is_private=False,
             anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
@@ -139,21 +139,22 @@ def test_get_project_is_watched(client):
     response = client.get(url_detail)
 
     assert response.status_code == 200
-    assert response.data['watchers'] == []
-    assert response.data['is_watched'] == False
+    assert response.data['total_watchers'] == 0
+
+    assert response.data['is_watcher'] == False
 
     response = client.post(url_watch)
     assert response.status_code == 200
 
     response = client.get(url_detail)
     assert response.status_code == 200
-    assert response.data['watchers'] == [user.id]
-    assert response.data['is_watched'] == True
+    assert response.data['total_watchers'] == 1
+    assert response.data['is_watcher'] == True
 
     response = client.post(url_unwatch)
     assert response.status_code == 200
 
     response = client.get(url_detail)
     assert response.status_code == 200
-    assert response.data['watchers'] == []
-    assert response.data['is_watched'] == False
+    assert response.data['total_watchers'] == 0
+    assert response.data['is_watcher'] == False

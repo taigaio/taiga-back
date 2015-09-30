@@ -23,15 +23,15 @@ from taiga.mdrender.service import render as mdrender
 from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicIssueStatusSerializer
-from taiga.projects.notifications.mixins import WatchedResourceModelSerializer
-from taiga.projects.votes.mixins.serializers import VotedResourceSerializerMixin
+from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
+from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
 
 from taiga.users.serializers import UserBasicInfoSerializer
 
 from . import models
 
 
-class IssueSerializer(WatchersValidator, VotedResourceSerializerMixin, WatchedResourceModelSerializer, serializers.ModelSerializer):
+class IssueSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer, serializers.ModelSerializer):
     tags = TagsField(required=False)
     external_reference = PgArrayField(required=False)
     is_closed = serializers.Field(source="is_closed")

@@ -29,7 +29,10 @@ from taiga.base.api import serializers
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.fields import WatchersField
 from taiga.projects.notifications import services
-from taiga.projects.notifications.utils import attach_watchers_to_queryset, attach_is_watched_to_queryset
+from taiga.projects.notifications.utils import (attach_watchers_to_queryset,
+    attach_is_watcher_to_queryset,
+    attach_total_watchers_to_queryset)
+
 from taiga.users.models import User
 from . import models
 from . serializers import WatcherSerializer
@@ -50,8 +53,9 @@ class WatchedResourceMixin:
 
     def attach_watchers_attrs_to_queryset(self, queryset):
         qs = attach_watchers_to_queryset(queryset)
+        qs = attach_total_watchers_to_queryset(queryset)
         if self.request.user.is_authenticated():
-            qs = attach_is_watched_to_queryset(qs, self.request.user)
+            qs = attach_is_watcher_to_queryset(qs, self.request.user)
 
         return qs
 
@@ -178,12 +182,20 @@ class WatchedModelMixin(object):
 
 
 class WatchedResourceModelSerializer(serializers.ModelSerializer):
-    is_watched = serializers.SerializerMethodField("get_is_watched")
-    watchers = WatchersField(required=False)
+    is_watcher = serializers.SerializerMethodField("get_is_watcher")
+    total_watchers = serializers.SerializerMethodField("get_total_watchers")
 
-    def get_is_watched(self, obj):
-        # The "is_watched" attribute is attached in the get_queryset of the viewset.
-        return getattr(obj, "is_watched", False) or False
+    def get_is_watcher(self, obj):
+        # The "is_watcher" attribute is attached in the get_queryset of the viewset.
+        return getattr(obj, "is_watcher", False) or False
+
+    def get_total_watchers(self, obj):
+        # The "total_watchers" attribute is attached in the get_queryset of the viewset.
+        return getattr(obj, "total_watchers", 0) or 0
+
+
+class EditableWatchedResourceModelSerializer(WatchedResourceModelSerializer):
+    watchers = WatchersField(required=False)
 
     def restore_object(self, attrs, instance=None):
         #watchers is not a field from the model but can be attached in the get_queryset of the viewset.
@@ -223,7 +235,7 @@ class WatchedResourceModelSerializer(serializers.ModelSerializer):
         return super(WatchedResourceModelSerializer, self).to_native(obj)
 
     def save(self, **kwargs):
-        obj = super(WatchedResourceModelSerializer, self).save(**kwargs)
+        obj = super(EditableWatchedResourceModelSerializer, self).save(**kwargs)
         self.fields["watchers"] = WatchersField(required=False)
         obj.watchers = [user.id for user in obj.get_watchers()]
         return obj

@@ -70,7 +70,7 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
     order_by_fields = ["backlog_order",
                        "sprint_order",
                        "kanban_order",
-                       "votes_count"]
+                       "total_voters"]
 
     # Specific filter used for filtering neighbor user stories
     _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')

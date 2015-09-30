@@ -23,7 +23,7 @@ from taiga.base.decorators import detail_route
 
 from taiga.projects.votes import serializers
 from taiga.projects.votes import services
-from taiga.projects.votes.utils import attach_votes_count_to_queryset, attach_is_vote_to_queryset
+from taiga.projects.votes.utils import attach_total_voters_to_queryset, attach_is_voter_to_queryset
 
 
 class BaseVotedResource:
@@ -33,10 +33,10 @@ class BaseVotedResource:
     #               return self.attach_votes_attrs_to_queryset(qs)
 
     def attach_votes_attrs_to_queryset(self, queryset):
-        qs = attach_votes_count_to_queryset(queryset)
+        qs = attach_total_voters_to_queryset(queryset)
 
         if self.request.user.is_authenticated():
-            qs = attach_is_vote_to_queryset(self.request.user, qs)
+            qs = attach_is_voter_to_queryset(self.request.user, qs)
 
         return qs
 

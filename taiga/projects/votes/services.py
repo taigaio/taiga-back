@@ -35,7 +35,6 @@ def add_vote(obj, user):
     obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
     with atomic():
         vote, created = Vote.objects.get_or_create(content_type=obj_type, object_id=obj.id, user=user)
-
         if not created:
             return
 

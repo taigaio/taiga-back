@@ -331,7 +331,7 @@ def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
             "is_hidden": is_hidden,
             "is_snapshot": need_real_snapshot,
         }
-
+        
         return entry_model.objects.create(**kwargs)
 
 
