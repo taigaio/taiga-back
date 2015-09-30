@@ -29,6 +29,9 @@ from .choices import HISTORY_TYPE_CHOICES
 
 from taiga.base.utils.diff import make_diff as make_diff_from_dicts
 
+# This keys has been removed from freeze_impl so we can have objects where the
+# previous diff has value for the attribute and we want to prevent their propagation
+IGNORE_DIFF_FIELDS = [ "watchers", "description_diff", "content_diff", "blocked_note_diff"]
 
 def _generate_uuid():
     return str(uuid.uuid1())
@@ -127,22 +130,12 @@ class HistoryEntry(models.Model):
 
         for key in self.diff:
             value = None
-
-            # Note: Hack to prevent description_diff propagation
-            #       on old HistoryEntry objects.
-            if key == "description_diff":
-                continue
-            elif key == "content_diff":
-                continue
-            elif key == "blocked_note_diff":
+            if key in IGNORE_DIFF_FIELDS:
                 continue
             elif key in["description", "content", "blocked_note"]:
                 (key, value) = resolve_diff_value(key)
             elif key in users_keys:
                 value = [resolve_value("users", x) for x in self.diff[key]]
-            elif key == "watchers":
-                # Old instances can have watchers
-                continue
             elif key == "points":
                 points = {}
 
