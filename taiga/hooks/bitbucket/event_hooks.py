@@ -38,7 +38,7 @@ class PushEventHook(BaseEventHook):
             return
 
         changes = self.payload.get("push", {}).get('changes', [])
-        for change in changes:
+        for change in filter(None, changes):
             message = change.get("new", {}).get("target", {}).get("message", None)
             self._process_message(message, None)
 
