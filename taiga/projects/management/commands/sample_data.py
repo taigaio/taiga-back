@@ -271,7 +271,7 @@ class Command(BaseCommand):
                                                                                     project=project)),
                                    type=self.sd.db_object_from_queryset(IssueType.objects.filter(
                                                                                  project=project)),
-                                   tags=self.sd.words(1, 10).split(" "))
+                                   tags=self.sd.words(0, 10).split(" "))
 
         bug.save()
 
@@ -436,7 +436,9 @@ class Command(BaseCommand):
                                          anon_permissions=anon_permissions,
                                          public_permissions=public_permissions,
                                          total_story_points=self.sd.int(600, 3000),
-                                         total_milestones=self.sd.int(5,10))
+                                         total_milestones=self.sd.int(5,10),
+                                         tags=self.sd.words(1, 10).split(" ")))
+
         project.is_kanban_activated = True
         project.save()
         take_snapshot(project, user=project.owner)
