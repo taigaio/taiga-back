@@ -34,8 +34,8 @@ from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.utils import (
-    attach_project_watchers_attrs_to_queryset,
-    attach_project_is_watched_to_queryset,
+    attach_project_total_watchers_attrs_to_queryset,
+    attach_project_is_watcher_to_queryset,
     attach_notify_level_to_project_queryset)
 
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
@@ -69,9 +69,9 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
     def get_queryset(self):
         qs = super().get_queryset()
         qs = self.attach_votes_attrs_to_queryset(qs)
-        qs = attach_project_watchers_attrs_to_queryset(qs)
+        qs = attach_project_total_watchers_attrs_to_queryset(qs)
         if self.request.user.is_authenticated():
-            qs = attach_project_is_watched_to_queryset(qs, self.request.user)
+            qs = attach_project_is_watcher_to_queryset(qs, self.request.user)
             qs = attach_notify_level_to_project_queryset(qs, self.request.user)
 
         return qs

@@ -9,10 +9,10 @@ from .. import factories as f
 
 from taiga.base.utils import json
 from taiga.users import models
-from taiga.users.serializers import FavouriteSerializer
+from taiga.users.serializers import FanSerializer, VotedSerializer
 from taiga.auth.tokens import get_token_for_user
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
-from taiga.users.services import get_favourites_list
+from taiga.users.services import get_watched_list, get_voted_list
 
 from easy_thumbnails.files import generate_all_aliases, get_thumbnailer
 
@@ -348,7 +348,7 @@ def test_mail_permissions(client):
     assert "email" in response.data
 
 
-def test_get_favourites_list():
+def test_get_watched_list():
     fav_user = f.UserFactory()
     viewer_user = f.UserFactory()
 
@@ -356,58 +356,117 @@ def test_get_favourites_list():
     role = f.RoleFactory(project=project, permissions=["view_project", "view_us", "view_tasks", "view_issues"])
     membership = f.MembershipFactory(project=project, role=role, user=fav_user)
     project.add_watcher(fav_user)
+
+    user_story = f.UserStoryFactory(project=project, subject="Testing user story")
+    user_story.add_watcher(fav_user)
+
+    task = f.TaskFactory(project=project, subject="Testing task")
+    task.add_watcher(fav_user)
+
+    issue = f.IssueFactory(project=project, subject="Testing issue")
+    issue.add_watcher(fav_user)
+
+    assert len(get_watched_list(fav_user, viewer_user)) == 4
+    assert len(get_watched_list(fav_user, viewer_user, type="project")) == 1
+    assert len(get_watched_list(fav_user, viewer_user, type="userstory")) == 1
+    assert len(get_watched_list(fav_user, viewer_user, type="task")) == 1
+    assert len(get_watched_list(fav_user, viewer_user, type="issue")) == 1
+    assert len(get_watched_list(fav_user, viewer_user, type="unknown")) == 0
+
+    assert len(get_watched_list(fav_user, viewer_user, q="issue")) == 1
+    assert len(get_watched_list(fav_user, viewer_user, q="unexisting text")) == 0
+
+
+def test_get_voted_list():
+    fav_user = f.UserFactory()
+    viewer_user = f.UserFactory()
+
+    project = f.ProjectFactory(is_private=False, name="Testing project")
+    role = f.RoleFactory(project=project, permissions=["view_project", "view_us", "view_tasks", "view_issues"])
+    membership = f.MembershipFactory(project=project, role=role, user=fav_user)
     content_type = ContentType.objects.get_for_model(project)
     f.VoteFactory(content_type=content_type, object_id=project.id, user=fav_user)
     f.VotesFactory(content_type=content_type, object_id=project.id, count=1)
 
     user_story = f.UserStoryFactory(project=project, subject="Testing user story")
-    user_story.add_watcher(fav_user)
     content_type = ContentType.objects.get_for_model(user_story)
     f.VoteFactory(content_type=content_type, object_id=user_story.id, user=fav_user)
     f.VotesFactory(content_type=content_type, object_id=user_story.id, count=1)
 
     task = f.TaskFactory(project=project, subject="Testing task")
-    task.add_watcher(fav_user)
     content_type = ContentType.objects.get_for_model(task)
     f.VoteFactory(content_type=content_type, object_id=task.id, user=fav_user)
     f.VotesFactory(content_type=content_type, object_id=task.id, count=1)
 
     issue = f.IssueFactory(project=project, subject="Testing issue")
-    issue.add_watcher(fav_user)
     content_type = ContentType.objects.get_for_model(issue)
     f.VoteFactory(content_type=content_type, object_id=issue.id, user=fav_user)
     f.VotesFactory(content_type=content_type, object_id=issue.id, count=1)
 
-    assert len(get_favourites_list(fav_user, viewer_user)) == 8
-    assert len(get_favourites_list(fav_user, viewer_user, type="project")) == 2
-    assert len(get_favourites_list(fav_user, viewer_user, type="userstory")) == 2
-    assert len(get_favourites_list(fav_user, viewer_user, type="task")) == 2
-    assert len(get_favourites_list(fav_user, viewer_user, type="issue")) == 2
-    assert len(get_favourites_list(fav_user, viewer_user, type="unknown")) == 0
+    assert len(get_voted_list(fav_user, viewer_user)) == 4
+    assert len(get_voted_list(fav_user, viewer_user, type="project")) == 1
+    assert len(get_voted_list(fav_user, viewer_user, type="userstory")) == 1
+    assert len(get_voted_list(fav_user, viewer_user, type="task")) == 1
+    assert len(get_voted_list(fav_user, viewer_user, type="issue")) == 1
+    assert len(get_voted_list(fav_user, viewer_user, type="unknown")) == 0
 
-    assert len(get_favourites_list(fav_user, viewer_user, action="watch")) == 4
-    assert len(get_favourites_list(fav_user, viewer_user, action="vote")) == 4
-
-    assert len(get_favourites_list(fav_user, viewer_user, q="issue")) == 2
-    assert len(get_favourites_list(fav_user, viewer_user, q="unexisting text")) == 0
+    assert len(get_voted_list(fav_user, viewer_user, q="issue")) == 1
+    assert len(get_voted_list(fav_user, viewer_user, q="unexisting text")) == 0
 
 
-def test_get_favourites_list_valid_info_for_project():
+def test_get_watched_list_valid_info_for_project():
     fav_user = f.UserFactory()
     viewer_user = f.UserFactory()
-    watcher_user = f.UserFactory()
 
     project = f.ProjectFactory(is_private=False, name="Testing project", tags=['test', 'tag'])
-    project.add_watcher(watcher_user)
+    role = f.RoleFactory(project=project, permissions=["view_project", "view_us", "view_tasks", "view_issues"])
+    project.add_watcher(fav_user)
+
+    raw_project_watch_info = get_watched_list(fav_user, viewer_user)[0]
+    project_watch_info = FanSerializer(raw_project_watch_info).data
+
+    assert project_watch_info["type"] == "project"
+    assert project_watch_info["id"] == project.id
+    assert project_watch_info["ref"] == None
+    assert project_watch_info["slug"] == project.slug
+    assert project_watch_info["name"] == project.name
+    assert project_watch_info["subject"] == None
+    assert project_watch_info["description"] == project.description
+    assert project_watch_info["assigned_to"] == None
+    assert project_watch_info["status"] == None
+    assert project_watch_info["status_color"] == None
+
+    tags_colors = {tc["name"]:tc["color"] for tc in project_watch_info["tags_colors"]}
+    assert "test" in tags_colors
+    assert "tag" in tags_colors
+
+    assert project_watch_info["is_private"] == project.is_private
+    assert project_watch_info["is_fan"] == False
+    assert project_watch_info["is_watcher"] == False
+    assert project_watch_info["total_watchers"] == 1
+    assert project_watch_info["total_fans"] == 0
+    assert project_watch_info["project"] == None
+    assert project_watch_info["project_name"] == None
+    assert project_watch_info["project_slug"] == None
+    assert project_watch_info["project_is_private"] == None
+    assert project_watch_info["assigned_to_username"] == None
+    assert project_watch_info["assigned_to_full_name"] == None
+    assert project_watch_info["assigned_to_photo"] == None
+
+
+def test_get_voted_list_valid_info_for_project():
+    fav_user = f.UserFactory()
+    viewer_user = f.UserFactory()
+
+    project = f.ProjectFactory(is_private=False, name="Testing project", tags=['test', 'tag'])
     content_type = ContentType.objects.get_for_model(project)
     vote = f.VoteFactory(content_type=content_type, object_id=project.id, user=fav_user)
     f.VotesFactory(content_type=content_type, object_id=project.id, count=1)
 
-    raw_project_vote_info = get_favourites_list(fav_user, viewer_user)[0]
-    project_vote_info = FavouriteSerializer(raw_project_vote_info).data
+    raw_project_vote_info = get_voted_list(fav_user, viewer_user)[0]
+    project_vote_info = FanSerializer(raw_project_vote_info).data
 
     assert project_vote_info["type"] == "project"
-    assert project_vote_info["action"] == "vote"
     assert project_vote_info["id"] == project.id
     assert project_vote_info["ref"] == None
     assert project_vote_info["slug"] == project.slug
@@ -423,10 +482,14 @@ def test_get_favourites_list_valid_info_for_project():
     assert "tag" in tags_colors
 
     assert project_vote_info["is_private"] == project.is_private
-    assert project_vote_info["is_voted"] == False
-    assert project_vote_info["is_watched"] == False
-    assert project_vote_info["total_watchers"] == 1
-    assert project_vote_info["total_votes"] == 1
+
+    import pprint
+    pprint.pprint(project_vote_info)
+
+    assert project_vote_info["is_fan"] == False
+    assert project_vote_info["is_watcher"] == False
+    assert project_vote_info["total_watchers"] == 0
+    assert project_vote_info["total_fans"] == 1
     assert project_vote_info["project"] == None
     assert project_vote_info["project_name"] == None
     assert project_vote_info["project_slug"] == None
@@ -436,10 +499,9 @@ def test_get_favourites_list_valid_info_for_project():
     assert project_vote_info["assigned_to_photo"] == None
 
 
-def test_get_favourites_list_valid_info_for_not_project_types():
+def test_get_watched_list_valid_info_for_not_project_types():
     fav_user = f.UserFactory()
     viewer_user = f.UserFactory()
-    watcher_user = f.UserFactory()
     assigned_to_user = f.UserFactory()
 
     project = f.ProjectFactory(is_private=False, name="Testing project")
@@ -456,16 +518,66 @@ def test_get_favourites_list_valid_info_for_not_project_types():
             tags=["test1", "test2"],
             assigned_to=assigned_to_user)
 
-        instance.add_watcher(watcher_user)
+        instance.add_watcher(fav_user)
+        raw_instance_watch_info = get_watched_list(fav_user, viewer_user, type=object_type)[0]
+        instance_watch_info = VotedSerializer(raw_instance_watch_info).data
+
+        assert instance_watch_info["type"] == object_type
+        assert instance_watch_info["id"] == instance.id
+        assert instance_watch_info["ref"] == instance.ref
+        assert instance_watch_info["slug"] == None
+        assert instance_watch_info["name"] == None
+        assert instance_watch_info["subject"] == instance.subject
+        assert instance_watch_info["description"] == None
+        assert instance_watch_info["assigned_to"] == instance.assigned_to.id
+        assert instance_watch_info["status"] == instance.status.name
+        assert instance_watch_info["status_color"] == instance.status.color
+
+        tags_colors = {tc["name"]:tc["color"] for tc in instance_watch_info["tags_colors"]}
+        assert "test1" in tags_colors
+        assert "test2" in tags_colors
+
+        assert instance_watch_info["is_private"] == None
+        assert instance_watch_info["is_voter"] == False
+        assert instance_watch_info["is_watcher"] == False
+        assert instance_watch_info["total_watchers"] == 1
+        assert instance_watch_info["total_voters"] == 0
+        assert instance_watch_info["project"] == instance.project.id
+        assert instance_watch_info["project_name"] == instance.project.name
+        assert instance_watch_info["project_slug"] == instance.project.slug
+        assert instance_watch_info["project_is_private"] == instance.project.is_private
+        assert instance_watch_info["assigned_to_username"] == instance.assigned_to.username
+        assert instance_watch_info["assigned_to_full_name"] == instance.assigned_to.full_name
+        assert instance_watch_info["assigned_to_photo"] != ""
+
+
+def test_get_voted_list_valid_info_for_not_project_types():
+    fav_user = f.UserFactory()
+    viewer_user = f.UserFactory()
+    assigned_to_user = f.UserFactory()
+
+    project = f.ProjectFactory(is_private=False, name="Testing project")
+
+    factories = {
+        "userstory": f.UserStoryFactory,
+        "task": f.TaskFactory,
+        "issue": f.IssueFactory
+    }
+
+    for object_type in factories:
+        instance = factories[object_type](project=project,
+            subject="Testing",
+            tags=["test1", "test2"],
+            assigned_to=assigned_to_user)
+
         content_type = ContentType.objects.get_for_model(instance)
         vote = f.VoteFactory(content_type=content_type, object_id=instance.id, user=fav_user)
         f.VotesFactory(content_type=content_type, object_id=instance.id, count=3)
 
-        raw_instance_vote_info = get_favourites_list(fav_user, viewer_user, type=object_type)[0]
-        instance_vote_info = FavouriteSerializer(raw_instance_vote_info).data
+        raw_instance_vote_info = get_voted_list(fav_user, viewer_user, type=object_type)[0]
+        instance_vote_info = VotedSerializer(raw_instance_vote_info).data
 
         assert instance_vote_info["type"] == object_type
-        assert instance_vote_info["action"] == "vote"
         assert instance_vote_info["id"] == instance.id
         assert instance_vote_info["ref"] == instance.ref
         assert instance_vote_info["slug"] == None
@@ -481,10 +593,10 @@ def test_get_favourites_list_valid_info_for_not_project_types():
         assert "test2" in tags_colors
 
         assert instance_vote_info["is_private"] == None
-        assert instance_vote_info["is_voted"] == False
-        assert instance_vote_info["is_watched"] == False
-        assert instance_vote_info["total_watchers"] == 1
-        assert instance_vote_info["total_votes"] == 3
+        assert instance_vote_info["is_voter"] == False
+        assert instance_vote_info["is_watcher"] == False
+        assert instance_vote_info["total_watchers"] == 0
+        assert instance_vote_info["total_voters"] == 3
         assert instance_vote_info["project"] == instance.project.id
         assert instance_vote_info["project_name"] == instance.project.name
         assert instance_vote_info["project_slug"] == instance.project.slug
@@ -494,7 +606,41 @@ def test_get_favourites_list_valid_info_for_not_project_types():
         assert instance_vote_info["assigned_to_photo"] != ""
 
 
-def test_get_favourites_list_permissions():
+def test_get_watched_list_permissions():
+    fav_user = f.UserFactory()
+    viewer_unpriviliged_user = f.UserFactory()
+    viewer_priviliged_user = f.UserFactory()
+
+    project = f.ProjectFactory(is_private=True, name="Testing project")
+    project.add_watcher(fav_user)
+    role = f.RoleFactory(project=project, permissions=["view_project", "view_us", "view_tasks", "view_issues"])
+    membership = f.MembershipFactory(project=project, role=role, user=viewer_priviliged_user)
+
+    user_story = f.UserStoryFactory(project=project, subject="Testing user story")
+    user_story.add_watcher(fav_user)
+
+    task = f.TaskFactory(project=project, subject="Testing task")
+    task.add_watcher(fav_user)
+
+    issue = f.IssueFactory(project=project, subject="Testing issue")
+    issue.add_watcher(fav_user)
+
+    #If the project is private a viewer user without any permission shouldn' see
+    # any vote
+    assert len(get_watched_list(fav_user, viewer_unpriviliged_user)) == 0
+
+    #If the project is private but the viewer user has permissions the votes should
+    # be accesible
+    assert len(get_watched_list(fav_user, viewer_priviliged_user)) == 4
+
+    #If the project is private but has the required anon permissions the votes should
+    # be accesible by any user too
+    project.anon_permissions = ["view_project", "view_us", "view_tasks", "view_issues"]
+    project.save()
+    assert len(get_watched_list(fav_user, viewer_unpriviliged_user)) == 4
+
+
+def test_get_voted_list_permissions():
     fav_user = f.UserFactory()
     viewer_unpriviliged_user = f.UserFactory()
     viewer_priviliged_user = f.UserFactory()
@@ -523,14 +669,14 @@ def test_get_favourites_list_permissions():
 
     #If the project is private a viewer user without any permission shouldn' see
     # any vote
-    assert len(get_favourites_list(fav_user, viewer_unpriviliged_user)) == 0
+    assert len(get_voted_list(fav_user, viewer_unpriviliged_user)) == 0
 
     #If the project is private but the viewer user has permissions the votes should
     # be accesible
-    assert len(get_favourites_list(fav_user, viewer_priviliged_user)) == 4
+    assert len(get_voted_list(fav_user, viewer_priviliged_user)) == 4
 
     #If the project is private but has the required anon permissions the votes should
     # be accesible by any user too
     project.anon_permissions = ["view_project", "view_us", "view_tasks", "view_issues"]
     project.save()
-    assert len(get_favourites_list(fav_user, viewer_unpriviliged_user)) == 4
+    assert len(get_voted_list(fav_user, viewer_unpriviliged_user)) == 4

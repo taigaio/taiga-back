@@ -289,8 +289,20 @@ def test_user_action_change_email(client, data):
     assert results == [204, 204, 204]
 
 
-def test_user_list_votes(client, data):
-    url = reverse('users-favourites', kwargs={"pk": data.registered_user.pk})
+def test_user_list_watched(client, data):
+    url = reverse('users-watched', kwargs={"pk": data.registered_user.pk})
+    users = [
+        None,
+        data.registered_user,
+        data.other_user,
+        data.superuser,
+    ]
+    results = helper_test_http_method(client, 'get', url, None, users)
+    assert results == [200, 200, 200, 200]
+
+
+def test_user_list_liked(client, data):
+    url = reverse('users-liked', kwargs={"pk": data.registered_user.pk})
     users = [
         None,
         data.registered_user,

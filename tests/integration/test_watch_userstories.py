@@ -89,9 +89,10 @@ def test_get_user_story_watchers(client):
 
     assert response.status_code == 200
     assert response.data['watchers'] == [user.id]
+    assert response.data['total_watchers'] == 1
 
 
-def test_get_user_story_is_watched(client):
+def test_get_user_story_is_watcher(client):
     user = f.UserFactory.create()
     user_story = f.UserStoryFactory(owner=user)
     f.MembershipFactory.create(project=user_story.project, user=user, is_owner=True)
@@ -104,7 +105,7 @@ def test_get_user_story_is_watched(client):
     response = client.get(url_detail)
     assert response.status_code == 200
     assert response.data['watchers'] == []
-    assert response.data['is_watched'] == False
+    assert response.data['is_watcher'] == False
 
     response = client.post(url_watch)
     assert response.status_code == 200
@@ -112,7 +113,7 @@ def test_get_user_story_is_watched(client):
     response = client.get(url_detail)
     assert response.status_code == 200
     assert response.data['watchers'] == [user.id]
-    assert response.data['is_watched'] == True
+    assert response.data['is_watcher'] == True
 
     response = client.post(url_unwatch)
     assert response.status_code == 200
@@ -120,4 +121,4 @@ def test_get_user_story_is_watched(client):
     response = client.get(url_detail)
     assert response.status_code == 200
     assert response.data['watchers'] == []
-    assert response.data['is_watched'] == False
+    assert response.data['is_watcher'] == False

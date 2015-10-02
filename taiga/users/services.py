@@ -188,12 +188,12 @@ def get_watched_content_for_user(user):
     return user_watches
 
 
-def _build_favourites_sql_for_projects(for_user):
+def _build_watched_sql_for_projects(for_user):
     sql = """
-	SELECT projects_project.id AS id, null AS ref, 'project' AS type, 'watch' AS action,
+	SELECT projects_project.id AS id, null AS ref, 'project' AS type,
         tags, notifications_notifypolicy.project_id AS object_id, projects_project.id AS project,
         slug AS slug, projects_project.name AS name, null AS subject,
-        notifications_notifypolicy.created_at as created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_votes, null AS assigned_to,
+        notifications_notifypolicy.created_at as created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_voters, null AS assigned_to,
         null as status, null as status_color
 	    FROM notifications_notifypolicy
 	    INNER JOIN projects_project
@@ -207,11 +207,20 @@ def _build_favourites_sql_for_projects(for_user):
 	    LEFT JOIN votes_votes
 		      ON (projects_project.id = votes_votes.object_id AND {project_content_type_id} = votes_votes.content_type_id)
 	    WHERE notifications_notifypolicy.user_id = {for_user_id}
-	UNION
-	SELECT projects_project.id AS id, null AS ref, 'project' AS type, 'vote' AS action,
+    """
+    sql = sql.format(
+        for_user_id=for_user.id,
+        ignore_notify_level=NotifyLevel.ignore,
+        project_content_type_id=ContentType.objects.get(app_label="projects", model="project").id)
+    return sql
+
+
+def _build_voted_sql_for_projects(for_user):
+    sql = """
+	SELECT projects_project.id AS id, null AS ref, 'project' AS type,
         tags, votes_vote.object_id AS object_id, projects_project.id AS project,
         slug AS slug, projects_project.name AS name, null AS subject,
-        votes_vote.created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_votes, null AS assigned_to,
+        votes_vote.created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_voters, null AS assigned_to,
         null as status, null as status_color
 	    FROM votes_vote
 	    INNER JOIN projects_project
@@ -233,64 +242,42 @@ def _build_favourites_sql_for_projects(for_user):
     return sql
 
 
-
-def _build_favourites_sql_for_type(for_user, type, table_name, ref_column="ref",
+def _build_sql_for_type(for_user, type, table_name, action_table, ref_column="ref",
                               project_column="project_id", assigned_to_column="assigned_to_id",
                               slug_column="slug", subject_column="subject"):
     sql = """
-	SELECT {table_name}.id AS id, {ref_column} AS ref, '{type}' AS type, 'watch' AS action,
-        tags, notifications_watched.object_id AS object_id, {table_name}.{project_column} AS project,
+	SELECT {table_name}.id AS id, {ref_column} AS ref, '{type}' AS type,
+        tags, {action_table}.object_id AS object_id, {table_name}.{project_column} AS project,
         {slug_column} AS slug, null AS name, {subject_column} AS subject,
-        notifications_watched.created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_votes, {assigned_to_column}  AS assigned_to,
+        {action_table}.created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_voters, {assigned_to_column}  AS assigned_to,
         projects_{type}status.name as status, projects_{type}status.color as status_color
-	    FROM notifications_watched
+	    FROM {action_table}
 	    INNER JOIN django_content_type
-		      ON (notifications_watched.content_type_id = django_content_type.id AND django_content_type.model = '{type}')
+		      ON ({action_table}.content_type_id = django_content_type.id AND django_content_type.model = '{type}')
 	    INNER JOIN {table_name}
-		      ON ({table_name}.id = notifications_watched.object_id)
+		      ON ({table_name}.id = {action_table}.object_id)
         INNER JOIN projects_{type}status
 		      ON (projects_{type}status.id = {table_name}.status_id)
 	    LEFT JOIN (SELECT object_id, content_type_id, count(*) watchers FROM notifications_watched GROUP BY object_id, content_type_id) type_watchers
 		      ON {table_name}.id = type_watchers.object_id AND django_content_type.id = type_watchers.content_type_id
 	    LEFT JOIN votes_votes
 		      ON ({table_name}.id = votes_votes.object_id AND django_content_type.id = votes_votes.content_type_id)
-	    WHERE notifications_watched.user_id = {for_user_id}
-	UNION
-	SELECT {table_name}.id AS id, {ref_column} AS ref, '{type}' AS type, 'vote' AS action,
-        tags, votes_vote.object_id AS object_id, {table_name}.{project_column} AS project,
-        {slug_column} AS slug, null AS name, {subject_column} AS subject,
-        votes_vote.created_date, coalesce(watchers, 0) as total_watchers, votes_votes.count total_votes, {assigned_to_column}  AS assigned_to,
-        projects_{type}status.name as status, projects_{type}status.color as status_color
-	    FROM votes_vote
-	    INNER JOIN django_content_type
-		      ON (votes_vote.content_type_id = django_content_type.id AND django_content_type.model = '{type}')
-	    INNER JOIN {table_name}
-		      ON ({table_name}.id = votes_vote.object_id)
-        INNER JOIN projects_{type}status
-		      ON (projects_{type}status.id = {table_name}.status_id)
-	    LEFT JOIN (SELECT object_id, content_type_id, count(*) watchers FROM notifications_watched GROUP BY object_id, content_type_id) type_watchers
-		      ON {table_name}.id = type_watchers.object_id AND django_content_type.id = type_watchers.content_type_id
-	    LEFT JOIN votes_votes
-		      ON ({table_name}.id = votes_votes.object_id AND django_content_type.id = votes_votes.content_type_id)
-	    WHERE votes_vote.user_id = {for_user_id}
+	    WHERE {action_table}.user_id = {for_user_id}
     """
     sql = sql.format(for_user_id=for_user.id, type=type, table_name=table_name,
-                      ref_column = ref_column, project_column=project_column,
-                      assigned_to_column=assigned_to_column, slug_column=slug_column,
-                      subject_column=subject_column)
+                      action_table=action_table, ref_column = ref_column,
+                      project_column=project_column, assigned_to_column=assigned_to_column,
+                      slug_column=slug_column, subject_column=subject_column)
 
     return sql
 
 
-def get_favourites_list(for_user, from_user, type=None, action=None, q=None):
+def _get_favourites_list(for_user, from_user, action_table, project_sql_builder, type=None, q=None):
     filters_sql = ""
     and_needed = False
 
     if type:
         filters_sql += " AND type = '{type}' ".format(type=type)
-
-    if action:
-        filters_sql += " AND action = '{action}' ".format(action=action)
 
     if q:
         filters_sql += """ AND (
@@ -361,10 +348,10 @@ def get_favourites_list(for_user, from_user, type=None, action=None, q=None):
         for_user_id=for_user.id,
         from_user_id=from_user_id,
         filters_sql=filters_sql,
-        userstories_sql=_build_favourites_sql_for_type(for_user, "userstory", "userstories_userstory", slug_column="null"),
-        tasks_sql=_build_favourites_sql_for_type(for_user, "task", "tasks_task", slug_column="null"),
-        issues_sql=_build_favourites_sql_for_type(for_user, "issue", "issues_issue", slug_column="null"),
-        projects_sql=_build_favourites_sql_for_projects(for_user))
+        userstories_sql=_build_sql_for_type(for_user, "userstory", "userstories_userstory", action_table, slug_column="null"),
+        tasks_sql=_build_sql_for_type(for_user, "task", "tasks_task", action_table, slug_column="null"),
+        issues_sql=_build_sql_for_type(for_user, "issue", "issues_issue", action_table, slug_column="null"),
+        projects_sql=project_sql_builder(for_user))
 
     cursor = connection.cursor()
     cursor.execute(sql)
@@ -374,3 +361,11 @@ def get_favourites_list(for_user, from_user, type=None, action=None, q=None):
         dict(zip([col[0] for col in desc], row))
         for row in cursor.fetchall()
     ]
+
+
+def get_watched_list(for_user, from_user, type=None, q=None):
+    return _get_favourites_list(for_user, from_user, "notifications_watched", _build_watched_sql_for_projects, type=type, q=q)
+
+
+def get_voted_list(for_user, from_user, type=None, q=None):
+    return _get_favourites_list(for_user, from_user, "votes_vote", _build_voted_sql_for_projects, type=type, q=q)

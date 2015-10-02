@@ -86,7 +86,7 @@ def test_get_user_story_votes(client):
     response = client.get(url)
 
     assert response.status_code == 200
-    assert response.data['votes'] == 5
+    assert response.data['total_voters'] == 5
 
 
 def test_get_user_story_is_voted(client):
@@ -102,21 +102,21 @@ def test_get_user_story_is_voted(client):
 
     response = client.get(url_detail)
     assert response.status_code == 200
-    assert response.data['votes'] == 0
-    assert response.data['is_voted'] == False
+    assert response.data['total_voters'] == 0
+    assert response.data['is_voter'] == False
 
     response = client.post(url_upvote)
     assert response.status_code == 200
 
     response = client.get(url_detail)
     assert response.status_code == 200
-    assert response.data['votes'] == 1
-    assert response.data['is_voted'] == True
+    assert response.data['total_voters'] == 1
+    assert response.data['is_voter'] == True
 
     response = client.post(url_downvote)
     assert response.status_code == 200
 
     response = client.get(url_detail)
     assert response.status_code == 200
-    assert response.data['votes'] == 0
-    assert response.data['is_voted'] == False
+    assert response.data['total_voters'] == 0
+    assert response.data['is_voter'] == False

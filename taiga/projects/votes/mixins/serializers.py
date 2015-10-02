@@ -17,21 +17,27 @@
 from taiga.base.api import serializers
 
 
-class BaseVotedResourceSerializer(serializers.ModelSerializer):
-    def get_votes_counter(self, obj):
-        # The "votes_count" attribute is attached in the get_queryset of the viewset.
-        return getattr(obj, "votes_count", 0) or 0
+class FanResourceSerializerMixin(serializers.ModelSerializer):
+    is_fan = serializers.SerializerMethodField("get_is_fan")
+    total_fans = serializers.SerializerMethodField("get_total_fans")
 
-    def get_is_voted(self, obj):
+    def get_is_fan(self, obj):
         # The "is_voted" attribute is attached in the get_queryset of the viewset.
-        return getattr(obj, "is_voted", False) or False
+        return getattr(obj, "is_voter", False) or False
+
+    def get_total_fans(self, obj):
+        # The "total_likes" attribute is attached in the get_queryset of the viewset.
+        return getattr(obj, "total_voters", 0) or 0
 
 
-class LikedResourceSerializerMixin(BaseVotedResourceSerializer):
-    likes = serializers.SerializerMethodField("get_votes_counter")
-    is_liked = serializers.SerializerMethodField("get_is_voted")
+class VoteResourceSerializerMixin(serializers.ModelSerializer):
+    is_voter = serializers.SerializerMethodField("get_is_voter")
+    total_voters = serializers.SerializerMethodField("get_total_voters")
 
+    def get_is_voter(self, obj):
+        # The "is_voted" attribute is attached in the get_queryset of the viewset.
+        return getattr(obj, "is_voter", False) or False
 
-class VotedResourceSerializerMixin(BaseVotedResourceSerializer):
-    votes = serializers.SerializerMethodField("get_votes_counter")
-    is_voted = serializers.SerializerMethodField("get_is_voted")
+    def get_total_voters(self, obj):
+        # The "total_likes" attribute is attached in the get_queryset of the viewset.
+        return getattr(obj, "total_voters", 0) or 0
