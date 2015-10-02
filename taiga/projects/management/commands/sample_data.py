@@ -437,7 +437,7 @@ class Command(BaseCommand):
                                          public_permissions=public_permissions,
                                          total_story_points=self.sd.int(600, 3000),
                                          total_milestones=self.sd.int(5,10),
-                                         tags=self.sd.words(1, 10).split(" ")))
+                                         tags=self.sd.words(1, 10).split(" "))
 
         project.is_kanban_activated = True
         project.save()
