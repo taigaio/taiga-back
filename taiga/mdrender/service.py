@@ -75,11 +75,11 @@ def _make_extensions_list(project=None):
             MentionsExtension(),
             TaigaReferencesExtension(project),
             TargetBlankLinkExtension(),
-            "extra",
-            "codehilite",
-            "sane_lists",
-            "toc",
-            "nl2br"]
+            "markdown.extensions.extra",
+            "markdown.extensions.codehilite",
+            "markdown.extensions.sane_lists",
+            "markdown.extensions.toc",
+            "markdown.extensions.nl2br"]
 
 
 import diff_match_patch

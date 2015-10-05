@@ -18,10 +18,8 @@ from django_jinja import library
 from jinja2 import Markup
 from taiga.mdrender.service import render
 
-register = library.Library()
 
-
-@register.global_function
+@library.global_function
 def mdrender(project, text) -> str:
     if text:
         return Markup(render(project, text))

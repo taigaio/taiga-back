@@ -28,7 +28,6 @@ def test_export_issue_finish_date(client):
     issue = f.IssueFactory.create(finished_date="2014-10-22")
     output = io.StringIO()
     render_project(issue.project, output)
-    print(output.getvalue())
     project_data = json.loads(output.getvalue())
     finish_date = project_data["issues"][0]["finished_date"]
     assert finish_date == "2014-10-22T00:00:00+0000"

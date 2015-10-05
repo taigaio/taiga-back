@@ -28,6 +28,9 @@
 
 
 ### Misc
+- Made compatible with python 3.5.
+- Migrated to django 1.8.
+- Update the rest of requirements to the last version.
 - API: Mixin fields 'users', 'members' and 'memberships' in ProjectDetailSerializer.
 - API: Add stats/system resource with global server stats (total project, total users....)
 - API: Improve and fix some errors in issues/filters_data and userstories/filters_data.

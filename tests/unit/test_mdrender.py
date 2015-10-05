@@ -165,8 +165,8 @@ def test_render_relative_image():
 
 
 def test_render_triple_quote_code():
-    expected_result = "<div class=\"codehilite\"><pre><span class=\"n\">print</span><span class=\"p\">(</span><span class=\"s\">\"test\"</span><span class=\"p\">)</span>\n</pre></div>"
-    assert render(dummy_project, "```\nprint(\"test\")\n```") == expected_result
+    expected_result = "<div class=\"codehilite\"><pre><span class=\"k\">print</span><span class=\"p\">(</span><span class=\"s\">\"test\"</span><span class=\"p\">)</span>\n</pre></div>"
+    assert render(dummy_project, "```python\nprint(\"test\")\n```") == expected_result
 
 
 def test_render_triple_quote_and_lang_code():

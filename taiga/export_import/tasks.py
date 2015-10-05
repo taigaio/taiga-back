@@ -25,8 +25,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
-
+from taiga.base.mails import mail_builder
 from taiga.celery import app
 
 from .service import render_project
@@ -40,7 +39,6 @@ import resource
 
 @app.task(bind=True)
 def dump_project(self, user, project):
-    mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
     path = "exports/{}/{}-{}.json".format(project.pk, project.slug, self.request.id)
     storage_path = default_storage.path(path)
 
@@ -56,7 +54,7 @@ def dump_project(self, user, project):
             "error_message": _("Error generating project dump"),
             "project": project
         }
-        email = mbuilder.export_error(user, ctx)
+        email = mail_builder.export_error(user, ctx)
         email.send()
         logger.error('Error generating dump %s (by %s)', project.slug, user, exc_info=sys.exc_info())
         return
@@ -68,7 +66,7 @@ def dump_project(self, user, project):
         "user": user,
         "deletion_date": deletion_date
     }
-    email = mbuilder.dump_project(user, ctx)
+    email = mail_builder.dump_project(user, ctx)
     email.send()
 
 
@@ -79,8 +77,6 @@ def delete_project_dump(project_id, project_slug, task_id):
 
 @app.task
 def load_project_dump(user, dump):
-    mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
-
     try:
         project = dict_to_project(dump, user.email)
     except Exception:
@@ -89,11 +85,11 @@ def load_project_dump(user, dump):
             "error_subject": _("Error loading project dump"),
             "error_message": _("Error loading project dump"),
         }
-        email = mbuilder.import_error(user, ctx)
+        email = mail_builder.import_error(user, ctx)
         email.send()
         logger.error('Error loading dump %s (by %s)', project.slug, user, exc_info=sys.exc_info())
         return
 
     ctx = {"user": user, "project": project}
-    email = mbuilder.load_dump(user, ctx)
+    email = mail_builder.load_dump(user, ctx)
     email.send()

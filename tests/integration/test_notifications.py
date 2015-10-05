@@ -355,7 +355,7 @@ def test_watching_users_to_notify_on_issue_modification_6():
     assert users == {watching_user, issue.owner}
 
 
-def test_send_notifications_using_services_method(settings, mail):
+def test_send_notifications_using_services_method_for_user_stories(settings, mail):
     settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL = 1
 
     project = f.ProjectFactory.create()
@@ -363,38 +363,34 @@ def test_send_notifications_using_services_method(settings, mail):
     member1 = f.MembershipFactory.create(project=project, role=role)
     member2 = f.MembershipFactory.create(project=project, role=role)
 
-    history_change = MagicMock()
-    history_change.user = {"pk": member1.user.pk}
-    history_change.comment = ""
-    history_change.type = HistoryType.change
-    history_change.is_hidden = False
-
-    history_create = MagicMock()
-    history_create.user = {"pk": member1.user.pk}
-    history_create.comment = ""
-    history_create.type = HistoryType.create
-    history_create.is_hidden = False
-
-    history_delete = MagicMock()
-    history_delete.user = {"pk": member1.user.pk}
-    history_delete.comment = ""
-    history_delete.type = HistoryType.delete
-    history_delete.is_hidden = False
-
-    # Issues
-    issue = f.IssueFactory.create(project=project, owner=member2.user)
-    take_snapshot(issue, user=issue.owner)
-    services.send_notifications(issue,
-                                history=history_create)
-
-    services.send_notifications(issue,
-                                history=history_change)
-
-    services.send_notifications(issue,
-                                history=history_delete)
-
-    # Userstories
     us = f.UserStoryFactory.create(project=project, owner=member2.user)
+    history_change = f.HistoryEntryFactory.create(
+        user={"pk": member1.user.id},
+        comment="",
+        type=HistoryType.change,
+        key="userstories.userstory:{}".format(us.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    history_create = f.HistoryEntryFactory.create(
+        user={"pk": member1.user.id},
+        comment="",
+        type=HistoryType.create,
+        key="userstories.userstory:{}".format(us.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    history_delete = f.HistoryEntryFactory.create(
+        user={"pk": member1.user.id},
+        comment="test:delete",
+        type=HistoryType.delete,
+        key="userstories.userstory:{}".format(us.id),
+        is_hidden=False,
+        diff=[]
+    )
+
     take_snapshot(us, user=us.owner)
     services.send_notifications(us,
                                 history=history_create)
@@ -405,63 +401,25 @@ def test_send_notifications_using_services_method(settings, mail):
     services.send_notifications(us,
                                 history=history_delete)
 
-    # Tasks
-    task = f.TaskFactory.create(project=project, owner=member2.user)
-    take_snapshot(task, user=task.owner)
-    services.send_notifications(task,
-                                history=history_create)
-
-    services.send_notifications(task,
-                                history=history_change)
-
-    services.send_notifications(task,
-                                history=history_delete)
-
-    # Wiki pages
-    wiki = f.WikiPageFactory.create(project=project, owner=member2.user)
-    take_snapshot(wiki, user=wiki.owner)
-    services.send_notifications(wiki,
-                                history=history_create)
-
-    services.send_notifications(wiki,
-                                history=history_change)
-
-    services.send_notifications(wiki,
-                                history=history_delete)
-
-    assert models.HistoryChangeNotification.objects.count() == 12
+    assert models.HistoryChangeNotification.objects.count() == 3
     assert len(mail.outbox) == 0
     time.sleep(1)
     services.process_sync_notifications()
-    assert len(mail.outbox) == 12
+    assert len(mail.outbox) == 3
 
     # test headers
-    events = [issue, us, task, wiki]
     domain = settings.SITES["api"]["domain"].split(":")[0] or settings.SITES["api"]["domain"]
-    i = 0
     for msg in mail.outbox:
-        # each event has 3 msgs
-        event = events[math.floor(i / 3)]
+        m_id = "{project_slug}/{msg_id}".format(
+            project_slug=project.slug,
+            msg_id=us.ref
+        )
 
-        # each set of 3 should have the same headers
-        if i % 3 == 0:
-            if hasattr(event, 'ref'):
-                e_slug = event.ref
-            elif hasattr(event, 'slug'):
-                e_slug = event.slug
-            else:
-                e_slug = 'taiga-system'
-
-            m_id = "{project_slug}/{msg_id}".format(
-                project_slug=project.slug,
-                msg_id=e_slug
-            )
-
-            message_id = "<{m_id}/".format(m_id=m_id)
-            message_id_domain = "@{domain}>".format(domain=domain)
-            in_reply_to = "<{m_id}@{domain}>".format(m_id=m_id, domain=domain)
-            list_id = "Taiga/{p_name} <taiga.{p_slug}@{domain}>" \
-                .format(p_name=project.name, p_slug=project.slug, domain=domain)
+        message_id = "<{m_id}/".format(m_id=m_id)
+        message_id_domain = "@{domain}>".format(domain=domain)
+        in_reply_to = "<{m_id}@{domain}>".format(m_id=m_id, domain=domain)
+        list_id = "Taiga/{p_name} <taiga.{p_slug}@{domain}>" \
+            .format(p_name=project.name, p_slug=project.slug, domain=domain)
 
         assert msg.extra_headers
         headers = msg.extra_headers
@@ -490,7 +448,286 @@ def test_send_notifications_using_services_method(settings, mail):
         msg_ts = datetime.datetime.fromtimestamp(int(msg_time))
         assert services.make_ms_thread_index(in_reply_to, msg_ts) == headers.get('Thread-Index')
 
-        i += 1
+
+def test_send_notifications_using_services_method_for_tasks(settings, mail):
+    settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL = 1
+
+    project = f.ProjectFactory.create()
+    role = f.RoleFactory.create(project=project, permissions=['view_issues', 'view_us', 'view_tasks', 'view_wiki_pages'])
+    member1 = f.MembershipFactory.create(project=project, role=role)
+    member2 = f.MembershipFactory.create(project=project, role=role)
+
+    task = f.TaskFactory.create(project=project, owner=member2.user)
+    history_change = f.HistoryEntryFactory.create(
+        user={"pk": member1.user.id},
+        comment="",
+        type=HistoryType.change,
+        key="tasks.task:{}".format(task.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    history_create = f.HistoryEntryFactory.create(
+        user={"pk": member1.user.id},
+        comment="",
+        type=HistoryType.create,
+        key="tasks.task:{}".format(task.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    history_delete = f.HistoryEntryFactory.create(
+        user={"pk": member1.user.id},
+        comment="test:delete",
+        type=HistoryType.delete,
+        key="tasks.task:{}".format(task.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    take_snapshot(task, user=task.owner)
+    services.send_notifications(task,
+                                history=history_create)
+
+    services.send_notifications(task,
+                                history=history_change)
+
+    services.send_notifications(task,
+                                history=history_delete)
+
+    assert models.HistoryChangeNotification.objects.count() == 3
+    assert len(mail.outbox) == 0
+    time.sleep(1)
+    services.process_sync_notifications()
+    assert len(mail.outbox) == 3
+
+    # test headers
+    domain = settings.SITES["api"]["domain"].split(":")[0] or settings.SITES["api"]["domain"]
+    for msg in mail.outbox:
+        m_id = "{project_slug}/{msg_id}".format(
+            project_slug=project.slug,
+            msg_id=task.ref
+        )
+
+        message_id = "<{m_id}/".format(m_id=m_id)
+        message_id_domain = "@{domain}>".format(domain=domain)
+        in_reply_to = "<{m_id}@{domain}>".format(m_id=m_id, domain=domain)
+        list_id = "Taiga/{p_name} <taiga.{p_slug}@{domain}>" \
+            .format(p_name=project.name, p_slug=project.slug, domain=domain)
+
+        assert msg.extra_headers
+        headers = msg.extra_headers
+
+        # can't test the time part because it's set when sending
+        # check what we can
+        assert 'Message-ID' in headers
+        assert message_id in headers.get('Message-ID')
+        assert message_id_domain in headers.get('Message-ID')
+
+        assert 'In-Reply-To' in headers
+        assert in_reply_to == headers.get('In-Reply-To')
+        assert 'References' in headers
+        assert in_reply_to == headers.get('References')
+
+        assert 'List-ID' in headers
+        assert list_id == headers.get('List-ID')
+
+        assert 'Thread-Index' in headers
+        # always is b64 encoded 22 bytes
+        assert len(base64.b64decode(headers.get('Thread-Index'))) == 22
+
+        # hashes should match for identical ids and times
+        # we check the actual method in test_ms_thread_id()
+        msg_time = headers.get('Message-ID').split('/')[2].split('@')[0]
+        msg_ts = datetime.datetime.fromtimestamp(int(msg_time))
+        assert services.make_ms_thread_index(in_reply_to, msg_ts) == headers.get('Thread-Index')
+
+
+def test_send_notifications_using_services_method_for_issues(settings, mail):
+    settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL = 1
+
+    project = f.ProjectFactory.create()
+    role = f.RoleFactory.create(project=project, permissions=['view_issues', 'view_us', 'view_tasks', 'view_wiki_pages'])
+    member1 = f.MembershipFactory.create(project=project, role=role)
+    member2 = f.MembershipFactory.create(project=project, role=role)
+
+    issue = f.IssueFactory.create(project=project, owner=member2.user)
+    history_change = f.HistoryEntryFactory.create(
+        user={"pk": member1.user.id},
+        comment="",
+        type=HistoryType.change,
+        key="issues.issue:{}".format(issue.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    history_create = f.HistoryEntryFactory.create(
+        user={"pk": member1.user.id},
+        comment="",
+        type=HistoryType.create,
+        key="issues.issue:{}".format(issue.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    history_delete = f.HistoryEntryFactory.create(
+        user={"pk": member1.user.id},
+        comment="test:delete",
+        type=HistoryType.delete,
+        key="issues.issue:{}".format(issue.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    take_snapshot(issue, user=issue.owner)
+    services.send_notifications(issue,
+                                history=history_create)
+
+    services.send_notifications(issue,
+                                history=history_change)
+
+    services.send_notifications(issue,
+                                history=history_delete)
+
+    assert models.HistoryChangeNotification.objects.count() == 3
+    assert len(mail.outbox) == 0
+    time.sleep(1)
+    services.process_sync_notifications()
+    assert len(mail.outbox) == 3
+
+    # test headers
+    domain = settings.SITES["api"]["domain"].split(":")[0] or settings.SITES["api"]["domain"]
+    for msg in mail.outbox:
+        m_id = "{project_slug}/{msg_id}".format(
+            project_slug=project.slug,
+            msg_id=issue.ref
+        )
+
+        message_id = "<{m_id}/".format(m_id=m_id)
+        message_id_domain = "@{domain}>".format(domain=domain)
+        in_reply_to = "<{m_id}@{domain}>".format(m_id=m_id, domain=domain)
+        list_id = "Taiga/{p_name} <taiga.{p_slug}@{domain}>" \
+            .format(p_name=project.name, p_slug=project.slug, domain=domain)
+
+        assert msg.extra_headers
+        headers = msg.extra_headers
+
+        # can't test the time part because it's set when sending
+        # check what we can
+        assert 'Message-ID' in headers
+        assert message_id in headers.get('Message-ID')
+        assert message_id_domain in headers.get('Message-ID')
+
+        assert 'In-Reply-To' in headers
+        assert in_reply_to == headers.get('In-Reply-To')
+        assert 'References' in headers
+        assert in_reply_to == headers.get('References')
+
+        assert 'List-ID' in headers
+        assert list_id == headers.get('List-ID')
+
+        assert 'Thread-Index' in headers
+        # always is b64 encoded 22 bytes
+        assert len(base64.b64decode(headers.get('Thread-Index'))) == 22
+
+        # hashes should match for identical ids and times
+        # we check the actual method in test_ms_thread_id()
+        msg_time = headers.get('Message-ID').split('/')[2].split('@')[0]
+        msg_ts = datetime.datetime.fromtimestamp(int(msg_time))
+        assert services.make_ms_thread_index(in_reply_to, msg_ts) == headers.get('Thread-Index')
+
+
+def test_send_notifications_using_services_method_for_wiki_pages(settings, mail):
+    settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL = 1
+
+    project = f.ProjectFactory.create()
+    role = f.RoleFactory.create(project=project, permissions=['view_issues', 'view_us', 'view_tasks', 'view_wiki_pages'])
+    member1 = f.MembershipFactory.create(project=project, role=role)
+    member2 = f.MembershipFactory.create(project=project, role=role)
+
+    wiki = f.WikiPageFactory.create(project=project, owner=member2.user)
+    history_change = f.HistoryEntryFactory.create(
+        user={"pk": member1.user.id},
+        comment="",
+        type=HistoryType.change,
+        key="wiki.wikipage:{}".format(wiki.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    history_create = f.HistoryEntryFactory.create(
+        user={"pk": member1.user.id},
+        comment="",
+        type=HistoryType.create,
+        key="wiki.wikipage:{}".format(wiki.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    history_delete = f.HistoryEntryFactory.create(
+        user={"pk": member1.user.id},
+        comment="test:delete",
+        type=HistoryType.delete,
+        key="wiki.wikipage:{}".format(wiki.id),
+        is_hidden=False,
+        diff=[]
+    )
+    take_snapshot(wiki, user=wiki.owner)
+    services.send_notifications(wiki,
+                                history=history_create)
+
+    services.send_notifications(wiki,
+                                history=history_change)
+
+    services.send_notifications(wiki,
+                                history=history_delete)
+
+    assert models.HistoryChangeNotification.objects.count() == 3
+    assert len(mail.outbox) == 0
+    time.sleep(1)
+    services.process_sync_notifications()
+    assert len(mail.outbox) == 3
+
+    # test headers
+    domain = settings.SITES["api"]["domain"].split(":")[0] or settings.SITES["api"]["domain"]
+    for msg in mail.outbox:
+        m_id = "{project_slug}/{msg_id}".format(
+            project_slug=project.slug,
+            msg_id=wiki.slug
+        )
+
+        message_id = "<{m_id}/".format(m_id=m_id)
+        message_id_domain = "@{domain}>".format(domain=domain)
+        in_reply_to = "<{m_id}@{domain}>".format(m_id=m_id, domain=domain)
+        list_id = "Taiga/{p_name} <taiga.{p_slug}@{domain}>" \
+            .format(p_name=project.name, p_slug=project.slug, domain=domain)
+
+        assert msg.extra_headers
+        headers = msg.extra_headers
+
+        # can't test the time part because it's set when sending
+        # check what we can
+        assert 'Message-ID' in headers
+        assert message_id in headers.get('Message-ID')
+        assert message_id_domain in headers.get('Message-ID')
+
+        assert 'In-Reply-To' in headers
+        assert in_reply_to == headers.get('In-Reply-To')
+        assert 'References' in headers
+        assert in_reply_to == headers.get('References')
+
+        assert 'List-ID' in headers
+        assert list_id == headers.get('List-ID')
+
+        assert 'Thread-Index' in headers
+        # always is b64 encoded 22 bytes
+        assert len(base64.b64decode(headers.get('Thread-Index'))) == 22
+
+        # hashes should match for identical ids and times
+        # we check the actual method in test_ms_thread_id()
+        msg_time = headers.get('Message-ID').split('/')[2].split('@')[0]
+        msg_ts = datetime.datetime.fromtimestamp(int(msg_time))
+        assert services.make_ms_thread_index(in_reply_to, msg_ts) == headers.get('Thread-Index')
 
 
 def test_resource_notification_test(client, settings, mail):

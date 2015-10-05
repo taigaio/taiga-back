@@ -43,7 +43,7 @@ def get_neighbors(obj, results_set=None):
 
     query = """
         SELECT * FROM
-            (SELECT "id" as id, ROW_NUMBER() OVER()
+            (SELECT "col1" as id, ROW_NUMBER() OVER()
                 FROM (%s) as ID_AND_ROW)
         AS SELECTED_ID_AND_ROW
         """ % (base_sql)

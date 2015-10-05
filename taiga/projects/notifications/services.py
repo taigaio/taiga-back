@@ -28,9 +28,8 @@ from django.utils import timezone
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from djmail import template_mail
-
 from taiga.base import exceptions as exc
+from taiga.base.mails import InlineCSSTemplateMail
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.history.choices import HistoryType
 from taiga.projects.history.services import (make_key_from_model_object,
@@ -202,7 +201,7 @@ def _make_template_mail(name:str):
     of it.
     """
     cls = type("InlineCSSTemplateMail",
-               (template_mail.InlineCSSTemplateMail,),
+               (InlineCSSTemplateMail,),
                {"name": name})
 
     return cls()

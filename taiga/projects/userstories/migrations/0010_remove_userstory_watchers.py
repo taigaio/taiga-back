@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db import connection
 from django.db import models, migrations
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.management import update_all_contenttypes
+from taiga.base.utils.contenttypes import update_all_contenttypes
 
 def create_notifications(apps, schema_editor):
     update_all_contenttypes(verbosity=0)

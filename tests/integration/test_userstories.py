@@ -57,7 +57,7 @@ def test_create_userstory_with_watchers(client):
     data = {"subject": "Test user story", "project": project.id, "watchers": [user_watcher.id]}
     client.login(user)
     response = client.json.post(url, json.dumps(data))
-    print(response.data)
+
     assert response.status_code == 201
     assert response.data["watchers"] == []
 

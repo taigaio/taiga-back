@@ -200,7 +200,6 @@ def test_update_project_timeline():
     project = factories.ProjectFactory.create(name="test project timeline")
     history_services.take_snapshot(project, user=project.owner)
     project.add_watcher(user_watcher)
-    print("PPPP")
     project.name = "test project timeline updated"
     project.save()
     history_services.take_snapshot(project, user=project.owner)

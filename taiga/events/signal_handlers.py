@@ -27,6 +27,8 @@ from . import events
 
 def on_save_any_model(sender, instance, created, **kwargs):
     # Ignore any object that can not have project_id
+    if not hasattr(instance, "project_id"):
+        return
     content_type = get_typename_for_model_instance(instance)
 
     # Ignore any other events

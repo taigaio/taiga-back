@@ -483,9 +483,6 @@ def test_get_voted_list_valid_info_for_project():
 
     assert project_vote_info["is_private"] == project.is_private
 
-    import pprint
-    pprint.pprint(project_vote_info)
-
     assert project_vote_info["is_fan"] == False
     assert project_vote_info["is_watcher"] == False
     assert project_vote_info["total_watchers"] == 0

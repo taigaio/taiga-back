@@ -1,17 +1,16 @@
 from django.apps import apps
 from django.conf import settings
 
-from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
+from taiga.base.mails import mail_builder
 
 
 def send_invitation(invitation):
     """Send an invitation email"""
-    mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
     if invitation.user:
-        template = mbuilder.membership_notification
+        template = mail_builder.membership_notification
         email = template(invitation.user, {"membership": invitation})
     else:
-        template = mbuilder.membership_invitation
+        template = mail_builder.membership_invitation
         email = template(invitation.email, {"membership": invitation})
 
     email.send()

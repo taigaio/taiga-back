@@ -33,12 +33,10 @@ from taiga.base.api import ModelCrudViewSet
 from taiga.base.filters import PermissionBasedFilterBackend
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.filters import MembersFilterBackend
+from taiga.base.mails import mail_builder
 from taiga.projects.votes import services as votes_service
 
 from easy_thumbnails.source_generators import pil_image
-
-from djmail.template_mail import MagicMailBuilder
-from djmail.template_mail import InlineCSSTemplateMail
 
 from . import models
 from . import serializers
@@ -189,8 +187,7 @@ class UsersViewSet(ModelCrudViewSet):
         user.token = str(uuid.uuid1())
         user.save(update_fields=["token"])
 
-        mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
-        email = mbuilder.password_recovery(user, {"user": user})
+        email = mail_builder.password_recovery(user, {"user": user})
         email.send()
 
         return response.Ok({"detail": _("Mail sended successful!")})
@@ -314,8 +311,7 @@ class UsersViewSet(ModelCrudViewSet):
             request.user.email_token = str(uuid.uuid1())
             request.user.new_email = new_email
             request.user.save(update_fields=["email_token", "new_email"])
-            mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
-            email = mbuilder.change_email(request.user.new_email, {"user": request.user,
+            email = mail_builder.change_email(request.user.new_email, {"user": request.user,
                                                                    "lang": request.user.lang})
             email.send()
 

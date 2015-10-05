@@ -41,4 +41,4 @@ class UserCreationForm(DjangoUserCreationForm):
 class UserChangeForm(DjangoUserChangeForm):
     class Meta:
         model = User
-
+        fields = '__all__'

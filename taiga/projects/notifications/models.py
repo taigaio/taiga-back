@@ -61,10 +61,10 @@ class HistoryChangeNotification(models.Model):
                                             verbose_name=_("created date time"))
     updated_datetime = models.DateTimeField(null=False, blank=False, auto_now_add=True,
                                             verbose_name=_("updated date time"))
-    history_entries = models.ManyToManyField("history.HistoryEntry", null=True, blank=True,
+    history_entries = models.ManyToManyField("history.HistoryEntry",
                                              verbose_name=_("history entries"),
                                              related_name="+")
-    notify_users = models.ManyToManyField("users.User", null=True, blank=True,
+    notify_users = models.ManyToManyField("users.User",
                                              verbose_name=_("notify users"),
                                              related_name="+")
     project = models.ForeignKey("projects.Project", null=False, blank=False,

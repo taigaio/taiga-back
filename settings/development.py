@@ -17,8 +17,5 @@
 from .common import *
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
-TEMPLATE_CONTEXT_PROCESSORS += [
-    "django.core.context_processors.debug",
-]
+TEMPLATES[0]["OPTIONS"]['context_processors'] += "django.template.context_processors.debug"

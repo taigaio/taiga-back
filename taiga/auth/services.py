@@ -28,9 +28,8 @@ from django.db import transaction as tx
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
 
-from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
-
 from taiga.base import exceptions as exc
+from taiga.base.mails import mail_builder
 from taiga.users.serializers import UserAdminSerializer
 from taiga.users.services import get_and_validate_user
 
@@ -57,8 +56,7 @@ def send_register_email(user) -> bool:
     """
     cancel_token = get_token_for_user(user, "cancel_account")
     context = {"user": user, "cancel_token": cancel_token}
-    mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
-    email = mbuilder.registered_user(user, context)
+    email = mail_builder.registered_user(user, context)
     return bool(email.send())
 
 

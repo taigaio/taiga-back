@@ -14,18 +14,29 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 
-from django_jinja import library
-from django_sites import get_by_id as get_site_by_id
+from djmail import template_mail
+import premailer
 
-from taiga.front.urls import urls
+import logging
 
 
-@library.global_function(name="resolve_front_url")
-def resolve(type, *args):
-    site = get_site_by_id("front")
-    url_tmpl = "{scheme}//{domain}{url}"
+# Hide CSS warnings messages if debug mode is disable
+if not getattr(settings, "DEBUG", False):
+    premailer.premailer.cssutils.log.setLevel(logging.CRITICAL)
 
-    scheme = site.scheme and "{0}:".format(site.scheme) or ""
-    url = urls[type].format(*args)
-    return url_tmpl.format(scheme=scheme, domain=site.domain, url=url)
+
+class InlineCSSTemplateMail(template_mail.TemplateMail):
+    def _render_message_body_as_html(self, context):
+        html = super()._render_message_body_as_html(context)
+
+        # Transform CSS into line style attributes
+        return premailer.transform(html)
+
+
+class MagicMailBuilder(template_mail.MagicMailBuilder):
+    pass
+
+
+mail_builder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)

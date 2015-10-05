@@ -447,7 +447,7 @@ class APIView(View):
 
 
 def api_server_error(request, *args, **kwargs):
-    if settings.DEBUG is False and request.META['CONTENT_TYPE'] == "application/json":
+    if settings.DEBUG is False and request.META.get('CONTENT_TYPE', None) == "application/json":
         return HttpResponse(json.dumps({"error": _("Server application error")}),
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return server_error(request, *args, **kwargs)
