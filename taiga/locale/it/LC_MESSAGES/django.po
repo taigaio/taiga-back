@@ -4,6 +4,7 @@
 #
 # Translators:
 # Andrea Raimondi <raimondi.and@gmail.com>, 2015
+# David Barragán <bameda@gmail.com>, 2015
 # luca corsato <luca@opensensorsdata.it>, 2015
 # Marco Somma <marcosomma@mail.com>, 2015
 # Marco Vito Moscaritolo <marco@mavimo.org>, 2015
@@ -13,7 +14,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-09-26 19:35+0200\n"
-"PO-Revision-Date: 2015-09-26 17:36+0000\n"
+"PO-Revision-Date: 2015-09-26 17:40+0000\n"
 "Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Italian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/it/)\n"
@@ -932,7 +933,7 @@ msgstr "Url successivo"
 
 #: taiga/external_apps/models.py:41
 msgid "secret key for ciphering the application tokens"
-msgstr ""
+msgstr "chiave segreta per cifrare i token dell'applicazione"
 
 #: taiga/external_apps/models.py:55 taiga/projects/notifications/models.py:84
 #: taiga/projects/votes/models.py:50
@@ -1413,7 +1414,7 @@ msgstr "Non hai il permesso di vedere questo elemento."
 
 #: taiga/projects/attachments/api.py:47
 msgid "Partial updates are not supported"
-msgstr ""
+msgstr "Aggiornamento non parziale non supportato"
 
 #: taiga/projects/attachments/api.py:62
 msgid "Project ID not matches between object and project"
@@ -1464,7 +1465,7 @@ msgstr "file allegato"
 
 #: taiga/projects/attachments/models.py:71
 msgid "sha1"
-msgstr ""
+msgstr "sha1"
 
 #: taiga/projects/attachments/models.py:73
 msgid "is deprecated"

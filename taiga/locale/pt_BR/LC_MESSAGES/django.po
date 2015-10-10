@@ -6,6 +6,7 @@
 # Cléber Zavadniak <cleberman@gmail.com>, 2015
 # Thiago <contato@yusuke.com.br>, 2015
 # Daniel Dias <dassump@gmail.com>, 2015
+# David Barragán <bameda@gmail.com>, 2015
 # Hevertton Barbosa <kikuchibarbosa@gmail.com>, 2015
 # Kemel Zaidan <kemelzaidan@gmail.com>, 2015
 # Marlon Carvalho <m.lopes@qiwi.com>, 2015
@@ -17,7 +18,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-09-26 19:35+0200\n"
-"PO-Revision-Date: 2015-09-26 17:36+0000\n"
+"PO-Revision-Date: 2015-09-26 17:38+0000\n"
 "Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/pt_BR/)\n"
@@ -869,7 +870,7 @@ msgstr "Próxima url"
 
 #: taiga/external_apps/models.py:41
 msgid "secret key for ciphering the application tokens"
-msgstr ""
+msgstr "clave secreta para cifrar los tokens de aplicación"
 
 #: taiga/external_apps/models.py:55 taiga/projects/notifications/models.py:84
 #: taiga/projects/votes/models.py:50
@@ -1326,7 +1327,7 @@ msgstr "Você não tem permissão para ver isso"
 
 #: taiga/projects/attachments/api.py:47
 msgid "Partial updates are not supported"
-msgstr ""
+msgstr "Las actualizaciones parciales no están soportadas"
 
 #: taiga/projects/attachments/api.py:62
 msgid "Project ID not matches between object and project"
@@ -1377,7 +1378,7 @@ msgstr "Arquivo anexado"
 
 #: taiga/projects/attachments/models.py:71
 msgid "sha1"
-msgstr ""
+msgstr "sha1"
 
 #: taiga/projects/attachments/models.py:73
 msgid "is deprecated"

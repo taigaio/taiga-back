@@ -4,6 +4,7 @@
 #
 # Translators:
 # dmitriy <dvpugats@gmail.com>, 2015
+# Dmitriy Volkov <wldhx+reg+transifex@wldhx.me>, 2015
 # Dmitry Lobanov <cyborgandroid.kun@gmail.com>, 2015
 # Dmitry Vinokurov <gim6626@gmail.com>, 2015
 # Марат <maratrever@gmail.com>, 2015
@@ -12,8 +13,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-09-26 19:35+0200\n"
-"PO-Revision-Date: 2015-09-26 17:36+0000\n"
-"Last-Translator: David Barragán <bameda@gmail.com>\n"
+"PO-Revision-Date: 2015-09-29 13:52+0000\n"
+"Last-Translator: Dmitriy Volkov <wldhx+reg+transifex@wldhx.me>\n"
 "Language-Team: Russian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -505,7 +506,7 @@ msgstr "Нам была нужна хотя бы одна роль"
 
 #: taiga/export_import/api.py:197
 msgid "Needed dump file"
-msgstr "Нужен свалочный файл"
+msgstr "Необходим дамп-файл"
 
 #: taiga/export_import/api.py:204
 msgid "Invalid dump format"
@@ -612,13 +613,12 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    <h1>Создан свалочный файл проекта</h1>\n"
+"    <h1>Создан дамп проекта</h1>\n"
 "    <p>Здравствуйте, %(user)s,</p>\n"
-"    <h3>Ваш свалочный файл для проекта %(project)s успешно сгенерирован.</"
-"h3>\n"
+"    <h3>Дамп проекта %(project)s успешно сгенерирован.</h3>\n"
 "    <p>Вы можете скачать его здесь:</p>\n"
-"    <a class=\"button\" href=\"%(url)s\" title=\"Скачать свалочный файл"
-"\">Скачать свалочный файл</a>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Скачать дамп\">Скачать "
+"дамп</a>\n"
 "    <p>Этот файл будет удалён %(deletion_date)s.</p>\n"
 "    <p><small>Команда Taiga</small></p>\n"
 "    "
@@ -642,8 +642,8 @@ msgstr ""
 "\n"
 "Здравствуйте, %(user)s,\n"
 "\n"
-"Ваш свалочный файл для проекта %(project)s успешно сгенерирован. Вы можете "
-"скачать его здесь:\n"
+"Дамп для проекта %(project)s успешно сгенерирован. Вы можете скачать его "
+"здесь:\n"
 "\n"
 "%(url)s\n"
 "\n"
@@ -655,7 +655,7 @@ msgstr ""
 #: taiga/export_import/templates/emails/dump_project-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your project dump has been generated"
-msgstr "[%(project)s] Свалочный файл вашего проекта успешно сгенерирован"
+msgstr "[%(project)s] Дамп вашего проекта успешно сгенерирован"
 
 #: taiga/export_import/templates/emails/export_error-body-html.jinja:4
 #, python-format
@@ -790,9 +790,9 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    <h1>Свалочный файл проекта импортирован</h1>\n"
+"    <h1>Дамп проекта импортирован</h1>\n"
 "    <p>Здравствуйте, %(user)s,</p>\n"
-"    <h3>Свалочный файл вашего проекта успешно импортирован.</h3>\n"
+"    <h3>Дамп вашего проекта успешно импортирован.</h3>\n"
 "    <a class=\"button\" href=\"%(url)s\" title=\"Перейти к проекту "
 "%(project)s\">Перейти к %(project)s</a>\n"
 "    <p><small>Команда Taiga</small></p>\n"
@@ -816,7 +816,7 @@ msgstr ""
 "\n"
 "Здравствуйте, %(user)s,\n"
 "\n"
-"Свалочный файл вашего проекта успешно импортирован.\n"
+"Дамп вашего проекта успешно импортирован.\n"
 "\n"
 "Вы можете посмотреть %(project)s здесь:\n"
 "\n"
@@ -828,12 +828,12 @@ msgstr ""
 #: taiga/export_import/templates/emails/load_dump-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your project dump has been imported"
-msgstr "[%(project)s] Свалочный файл вашего проекта импортирован"
+msgstr "[%(project)s] Дамп вашего проекта импортирован"
 
 #: taiga/external_apps/api.py:40 taiga/external_apps/api.py:66
 #: taiga/external_apps/api.py:73
 msgid "Authentication required"
-msgstr ""
+msgstr "Необходима аутентификация"
 
 #: taiga/external_apps/models.py:33
 #: taiga/projects/custom_attributes/models.py:36
@@ -848,7 +848,7 @@ msgstr "имя"
 
 #: taiga/external_apps/models.py:35
 msgid "Icon url"
-msgstr ""
+msgstr "url иконки"
 
 #: taiga/external_apps/models.py:36
 msgid "web"
@@ -865,11 +865,11 @@ msgstr "описание"
 
 #: taiga/external_apps/models.py:39
 msgid "Next url"
-msgstr ""
+msgstr "Следующий url"
 
 #: taiga/external_apps/models.py:41
 msgid "secret key for ciphering the application tokens"
-msgstr ""
+msgstr "секретный ключ для шифрования токенов приложения"
 
 #: taiga/external_apps/models.py:55 taiga/projects/notifications/models.py:84
 #: taiga/projects/votes/models.py:50
@@ -878,7 +878,7 @@ msgstr "пользователь"
 
 #: taiga/external_apps/models.py:59
 msgid "application"
-msgstr ""
+msgstr "приложение"
 
 #: taiga/feedback/models.py:23 taiga/users/models.py:113
 msgid "full name"
@@ -1328,7 +1328,7 @@ msgstr "У вас нет разрешения на просмотр."
 
 #: taiga/projects/attachments/api.py:47
 msgid "Partial updates are not supported"
-msgstr ""
+msgstr "Частичные обновления не поддерживаются"
 
 #: taiga/projects/attachments/api.py:62
 msgid "Project ID not matches between object and project"
@@ -1379,7 +1379,7 @@ msgstr "приложенный файл"
 
 #: taiga/projects/attachments/models.py:71
 msgid "sha1"
-msgstr ""
+msgstr "sha1"
 
 #: taiga/projects/attachments/models.py:73
 msgid "is deprecated"
@@ -3379,6 +3379,16 @@ msgid ""
 "    <p><small>The Taiga Team</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Смена email</h1>\n"
+"    <p>Здравствуйте, %(full_name)s,<br />подтвердите, пожалуйста, свой "
+"email</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Подтвердить email"
+"\">Подтвердить email</a>\n"
+"    <p>Если вы не запрашивали смену email, не обращайте внимания на это "
+"письмо.</p>\n"
+"    <p><small>Команда Taiga</small></p>\n"
+"    "
 
 #: taiga/users/templates/emails/change_email-body-text.jinja:1
 #, python-format
@@ -3393,6 +3403,15 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Здравствуйте, %(full_name)s, подтвердите, пожалуйста, свой email\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Вы можете проигнорировать это сообщение, если не указывали этот email.\n"
+"\n"
+"---\n"
+"The Taiga Team\n"
 
 #: taiga/users/templates/emails/change_email-subject.jinja:1
 msgid "[Taiga] Change email"
@@ -3410,6 +3429,16 @@ msgid ""
 "    <p><small>The Taiga Team</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Восстановление пароля</h1>\n"
+"    <p>Здравствуйте, %(full_name)s, <br /> вы запросили восстановление "
+"пароля</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Восстановить пароль"
+"\">Восстановить пароль</a>\n"
+"    <p>Вы можете проигнорировать это сообщение, если не запрашивали "
+"восстановление пароля.</p>\n"
+"    <p><small>Команда Taiga</small></p>\n"
+"    "
 
 #: taiga/users/templates/emails/password_recovery-body-text.jinja:1
 #, python-format
@@ -3424,6 +3453,16 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Здравствуйте, %(full_name)s, вы запросили восстановление пароля\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Вы можете проигнорировать это сообщение, если не запрашивали восстановление "
+"пароля.\n"
+"\n"
+"---\n"
+"Команда Taiga\n"
 
 #: taiga/users/templates/emails/password_recovery-subject.jinja:1
 msgid "[Taiga] Password recovery"
@@ -3444,6 +3483,18 @@ msgid ""
 "        </td>\n"
 "        "
 msgstr ""
+"\n"
+"        <td>\n"
+"            <h2>Благодарим вас за регистрацию в Taiga</h2>\n"
+"            <h3>Мы надеемся, что вам понравится ей пользоваться</h3>\n"
+"            <p>Мы сделали Taiga, потому что нам хотелось, чтобы программа "
+"для управления проектами, которая весь день открыта у нас на компьютерах, "
+"постоянно напоминала нам, почему нам нравиться работать вместе, "
+"проектировать и программировать.</p>\n"
+"            <p>Мы сделали её красивой, элегантной, простой в использовании и "
+"приятной - не жертвуя при этом гибкостью и возможностями.</p>\n"
+"            <small>Команда Taiga</small>\n"
+"        </td>"
 
 #: taiga/users/templates/emails/registered_user-body-html.jinja:23
 #, python-format
@@ -3454,6 +3505,11 @@ msgid ""
 "here</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <strong>Вы можете удалить свой аккаунт посредством</strong> <a href="
+"\"%(url)s\" title=\"Удалить аккаунт\" style=\"color: #9dce0a\">клика сюда</"
+"a>\n"
+"    "
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:1
 msgid ""
@@ -3472,6 +3528,21 @@ msgid ""
 "--\n"
 "The taiga Team\n"
 msgstr ""
+"\n"
+"Благодарим вас за регистрацию в Taiga\n"
+"\n"
+"Мы надеемся, что вам понравится ей пользоваться\n"
+"\n"
+"Мы сделали Taiga, потому что нам хотелось, чтобы программа для управления "
+"проектами, которая весь день открыта у нас на компьютерах, постоянно "
+"напоминала нам, почему нам нравиться работать вместе, проектировать и "
+"программировать.\n"
+"\n"
+"Мы сделали её красивой, элегантной, простой в использовании и приятной - не "
+"жертвуя при этом гибкостью и возможностями.\n"
+"\n"
+"--\n"
+"Команда Taiga\n"
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:13
 #, python-format
