@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the taiga-back package.
 #
 # Translators:
+# David Barragán <bameda@gmail.com>, 2015
 # Wiktor Żurawik <wiktor.zurawik@gmail.com>, 2015
 # Wojtek Jurkowlaniec <wojtek.jurkowlaniec@gmail.com>, 2015
 msgid ""
@@ -10,7 +11,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-09-26 19:35+0200\n"
-"PO-Revision-Date: 2015-09-26 17:36+0000\n"
+"PO-Revision-Date: 2015-10-12 08:24+0000\n"
 "Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/pl/)\n"
@@ -847,7 +848,7 @@ msgstr ""
 
 #: taiga/external_apps/models.py:36
 msgid "web"
-msgstr ""
+msgstr "web"
 
 #: taiga/external_apps/models.py:37 taiga/projects/attachments/models.py:74
 #: taiga/projects/custom_attributes/models.py:37
@@ -860,7 +861,7 @@ msgstr "opis"
 
 #: taiga/external_apps/models.py:39
 msgid "Next url"
-msgstr ""
+msgstr "Następny url"
 
 #: taiga/external_apps/models.py:41
 msgid "secret key for ciphering the application tokens"
@@ -873,7 +874,7 @@ msgstr "użytkownik"
 
 #: taiga/external_apps/models.py:59
 msgid "application"
-msgstr ""
+msgstr "aplikacja"
 
 #: taiga/feedback/models.py:23 taiga/users/models.py:113
 msgid "full name"
