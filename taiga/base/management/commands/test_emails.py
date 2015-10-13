@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -22,7 +22,7 @@ from django.db.models.loading import get_model
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
+from taiga.base.mails import mail_builder
 
 from taiga.projects.models import Project, Membership
 from taiga.projects.history.models import HistoryEntry
@@ -47,11 +47,12 @@ class Command(BaseCommand):
         locale = options.get('locale')
         test_email = args[0]
 
-        mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
-
         # Register email
-        context = {"lang": locale, "user": User.objects.all().order_by("?").first(), "cancel_token": "cancel-token"}
-        email = mbuilder.registered_user(test_email, context)
+        context = {"lang": locale,
+                    "user": User.objects.all().order_by("?").first(),
+                    "cancel_token": "cancel-token"}
+
+        email = mail_builder.registered_user(test_email, context)
         email.send()
 
         # Membership invitation
@@ -60,12 +61,13 @@ class Command(BaseCommand):
         membership.invitation_extra_text = "Text example, Text example,\nText example,\n\nText example"
 
         context = {"lang": locale, "membership": membership}
-        email = mbuilder.membership_invitation(test_email, context)
+        email = mail_builder.membership_invitation(test_email, context)
         email.send()
 
         # Membership notification
-        context = {"lang": locale, "membership": Membership.objects.order_by("?").filter(user__isnull=False).first()}
-        email = mbuilder.membership_notification(test_email, context)
+        context = {"lang": locale,
+                   "membership": Membership.objects.order_by("?").filter(user__isnull=False).first()}
+        email = mail_builder.membership_notification(test_email, context)
         email.send()
 
         # Feedback
@@ -81,17 +83,17 @@ class Command(BaseCommand):
                 "key2": "value2",
             },
         }
-        email = mbuilder.feedback_notification(test_email, context)
+        email = mail_builder.feedback_notification(test_email, context)
         email.send()
 
         # Password recovery
         context = {"lang": locale, "user": User.objects.all().order_by("?").first()}
-        email = mbuilder.password_recovery(test_email, context)
+        email = mail_builder.password_recovery(test_email, context)
         email.send()
 
         # Change email
         context = {"lang": locale, "user": User.objects.all().order_by("?").first()}
-        email = mbuilder.change_email(test_email, context)
+        email = mail_builder.change_email(test_email, context)
         email.send()
 
         # Export/Import emails
@@ -102,7 +104,7 @@ class Command(BaseCommand):
             "error_subject": "Error generating project dump",
             "error_message": "Error generating project dump",
         }
-        email = mbuilder.export_error(test_email, context)
+        email = mail_builder.export_error(test_email, context)
         email.send()
         context = {
             "lang": locale,
@@ -110,7 +112,7 @@ class Command(BaseCommand):
             "error_subject": "Error importing project dump",
             "error_message": "Error importing project dump",
         }
-        email = mbuilder.import_error(test_email, context)
+        email = mail_builder.import_error(test_email, context)
         email.send()
 
         deletion_date = timezone.now() + datetime.timedelta(seconds=60*60*24)
@@ -121,7 +123,7 @@ class Command(BaseCommand):
             "project": Project.objects.all().order_by("?").first(),
             "deletion_date": deletion_date,
         }
-        email = mbuilder.dump_project(test_email, context)
+        email = mail_builder.dump_project(test_email, context)
         email.send()
 
         context = {
@@ -129,7 +131,7 @@ class Command(BaseCommand):
             "user": User.objects.all().order_by("?").first(),
             "project": Project.objects.all().order_by("?").first(),
         }
-        email = mbuilder.load_dump(test_email, context)
+        email = mail_builder.load_dump(test_email, context)
         email.send()
 
         # Notification emails

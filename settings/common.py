@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -24,6 +24,8 @@ ALLOWED_HOSTS = ["*"]
 ADMINS = (
     ("Admin", "example@example.com"),
 )
+
+DEBUG = False
 
 DATABASES = {
     "default": {
@@ -215,10 +217,28 @@ DEFAULT_FILE_STORAGE = "taiga.base.storage.FileSystemStorage"
 
 SECRET_KEY = "aw3+t2r(8(0kkrhg8)gx6i96v5^kv%6cfep9wxfom0%7dy0m9e"
 
-TEMPLATE_LOADERS = [
-    "django_jinja.loaders.AppLoader",
-    "django_jinja.loaders.FileSystemLoader",
+TEMPLATES = [
+    {
+        "BACKEND": "django_jinja.backend.Jinja2",
+        "DIRS": [
+            os.path.join(BASE_DIR, "templates"),
+        ],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            'context_processors': [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.request",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.contrib.messages.context_processors.messages",
+            ],
+            "match_extension": ".jinja",
+        }
+    },
 ]
+
 
 MIDDLEWARE_CLASSES = [
     "taiga.base.middleware.cors.CoorsMiddleware",
@@ -234,21 +254,8 @@ MIDDLEWARE_CLASSES = [
     "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
-TEMPLATE_CONTEXT_PROCESSORS = [
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.request",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages",
-]
 
 ROOT_URLCONF = "taiga.urls"
-
-TEMPLATE_DIRS = [
-    os.path.join(BASE_DIR, "templates"),
-]
 
 INSTALLED_APPS = [
     "django.contrib.auth",

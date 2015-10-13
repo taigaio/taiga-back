@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -28,9 +28,8 @@ from django.utils import timezone
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from djmail import template_mail
-
 from taiga.base import exceptions as exc
+from taiga.base.mails import InlineCSSTemplateMail
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.history.choices import HistoryType
 from taiga.projects.history.services import (make_key_from_model_object,
@@ -202,7 +201,7 @@ def _make_template_mail(name:str):
     of it.
     """
     cls = type("InlineCSSTemplateMail",
-               (template_mail.InlineCSSTemplateMail,),
+               (InlineCSSTemplateMail,),
                {"name": name})
 
     return cls()

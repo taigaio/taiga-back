@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -447,7 +447,7 @@ class APIView(View):
 
 
 def api_server_error(request, *args, **kwargs):
-    if settings.DEBUG is False and request.META['CONTENT_TYPE'] == "application/json":
+    if settings.DEBUG is False and request.META.get('CONTENT_TYPE', None) == "application/json":
         return HttpResponse(json.dumps({"error": _("Server application error")}),
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return server_error(request, *args, **kwargs)

@@ -1,5 +1,5 @@
 # taiga-back.taiga.
-# Copyright (C) 2015 Taiga Dev Team <support@taiga.io>
+# Copyright (C) 2014-2015 Taiga Dev Team <support@taiga.io>
 # This file is distributed under the same license as the taiga-back package.
 #
 # Translators:
