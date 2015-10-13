@@ -4,6 +4,7 @@
 [![Managed with Taiga.io](https://taiga.io/media/support/attachments/article-22/banner-gh.png)](https://taiga.io "Managed with Taiga.io")
 [![Build Status](https://travis-ci.org/taigaio/taiga-back.svg?branch=master)](https://travis-ci.org/taigaio/taiga-back "Build Status")
 [![Coverage Status](https://coveralls.io/repos/taigaio/taiga-back/badge.svg?branch=master)](https://coveralls.io/r/taigaio/taiga-back?branch=master "Coverage Status")
+[![Dependency Status](https://www.versioneye.com/user/projects/561bd091a193340f32001464/badge.svg?style=flat)](https://www.versioneye.com/user/projects/561bd091a193340f32001464)
 
 ## Setup development environment ##
 
