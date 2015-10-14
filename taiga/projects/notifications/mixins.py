@@ -228,9 +228,14 @@ class EditableWatchedResourceModelSerializer(WatchedResourceModelSerializer):
         return obj
 
     def to_native(self, obj):
-        #watchers is wasn't attached via the get_queryset of the viewset we need to manually add it
+        #if watchers wasn't attached via the get_queryset of the viewset we need to manually add it
         if obj is not None and not hasattr(obj, "watchers"):
             obj.watchers = [user.id for user in obj.get_watchers()]
+
+        request = self.context.get("request", None)
+        user = request.user if request else None
+        if user and user.is_authenticated():
+            obj.is_watcher = user.id in obj.watchers
 
         return super(WatchedResourceModelSerializer, self).to_native(obj)
 

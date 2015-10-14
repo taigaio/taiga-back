@@ -122,3 +122,26 @@ def test_get_task_is_watcher(client):
     assert response.status_code == 200
     assert response.data['watchers'] == []
     assert response.data['is_watcher'] == False
+
+
+def test_remove_task_watcher(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create()
+    task = f.TaskFactory(project=project,
+                         user_story=None,
+                         status__project=project,
+                         milestone__project=project)
+
+    task.add_watcher(user)
+    role = f.RoleFactory.create(project=project, permissions=['modify_task', 'view_tasks'])
+    f.MembershipFactory.create(project=project, user=user, role=role)
+
+    url = reverse("tasks-detail", args=(task.id,))
+
+    client.login(user)
+
+    data = {"version": task.version, "watchers": []}
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200
+    assert response.data['watchers'] == []
+    assert response.data['is_watcher'] == False

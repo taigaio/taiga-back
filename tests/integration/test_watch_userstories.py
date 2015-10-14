@@ -122,3 +122,25 @@ def test_get_user_story_is_watcher(client):
     assert response.status_code == 200
     assert response.data['watchers'] == []
     assert response.data['is_watcher'] == False
+
+
+def test_remove_user_story_watcher(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create()
+    us = f.UserStoryFactory(project=project,
+                           status__project=project,
+                           milestone__project=project)
+
+    us.add_watcher(user)
+    role = f.RoleFactory.create(project=project, permissions=['modify_us', 'view_us'])
+    f.MembershipFactory.create(project=project, user=user, role=role)
+
+    url = reverse("userstories-detail", args=(us.id,))
+
+    client.login(user)
+
+    data = {"version": us.version, "watchers": []}
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200
+    assert response.data['watchers'] == []
+    assert response.data['is_watcher'] == False

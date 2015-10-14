@@ -122,3 +122,28 @@ def test_get_issue_is_watcher(client):
     assert response.status_code == 200
     assert response.data['watchers'] == []
     assert response.data['is_watcher'] == False
+
+
+def test_remove_issue_watcher(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create()
+    issue = f.IssueFactory(project=project,
+                           status__project=project,
+                           severity__project=project,
+                           priority__project=project,
+                           type__project=project,
+                           milestone__project=project)
+
+    issue.add_watcher(user)
+    role = f.RoleFactory.create(project=project, permissions=['modify_issue', 'view_issues'])
+    f.MembershipFactory.create(project=project, user=user, role=role)
+
+    url = reverse("issues-detail", args=(issue.id,))
+
+    client.login(user)
+
+    data = {"version": issue.version, "watchers": []}
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200
+    assert response.data['watchers'] == []
+    assert response.data['is_watcher'] == False
