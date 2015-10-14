@@ -22,6 +22,8 @@ from django_pgjson.fields import JsonField
 
 from taiga.projects.occ.mixins import OCCModelMixin
 
+from . import choices
+
 
 ######################################################
 #  Custom Attribute Models
@@ -29,13 +31,11 @@ from taiga.projects.occ.mixins import OCCModelMixin
 
 
 class AbstractCustomAttribute(models.Model):
-    FIELD_TYPES = (
-        ("TEXT", _("Text")),
-        ("MULTI", _("Multi-Line Text"))
-    )
     name = models.CharField(null=False, blank=False, max_length=64, verbose_name=_("name"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
-    field_type = models.CharField(null=False, blank=False, choices=FIELD_TYPES, max_length=5, default="TEXT", verbose_name=_("type"))
+    type = models.CharField(null=False, blank=False, max_length=16,
+                            choices=choices.TYPES_CHOICES, default=choices.TEXT_TYPE,
+                            verbose_name=_("type"))
     order = models.IntegerField(null=False, blank=False, default=10000, verbose_name=_("order"))
     project = models.ForeignKey("projects.Project", null=False, blank=False, related_name="%(class)ss",
                                 verbose_name=_("project"))
