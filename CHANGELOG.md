@@ -4,7 +4,7 @@
 ## 1.9.0 ??? (unreleased)
 
 ### Features
-- Add a "field type" property for custom fields: 'text' and 'multiline text' right now (thanks to [@artlepool](https://github.com/artlepool)).
+- Add a "field type" property for custom fields: 'text', 'multiline text' and 'date' right now (thanks to [@artlepool](https://github.com/artlepool)).
 - Allow multiple actions in the commit messages.
 - Now every user that coments USs, Issues or Tasks will be involved in it (add author to the watchers list).
 - Fix the compatibility with BitBucket webhooks and add issues and issues comments integration.
