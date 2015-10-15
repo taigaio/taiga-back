@@ -41,3 +41,4 @@ class WikiPageSerializer(WatchersValidator, WatchedResourceModelSerializer, seri
 class WikiLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.WikiLink
+        read_only_fields = ('href',)
