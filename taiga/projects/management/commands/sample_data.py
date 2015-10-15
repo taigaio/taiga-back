@@ -35,6 +35,7 @@ from taiga.projects.issues.models import *
 from taiga.projects.wiki.models import *
 from taiga.projects.attachments.models import *
 from taiga.projects.custom_attributes.models import *
+from taiga.projects.custom_attributes.choices import TYPES_CHOICES, TEXT_TYPE, MULTILINE_TYPE, DATE_TYPE
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.votes.services import add_vote
 from taiga.events.apps import disconnect_events_signals
@@ -157,18 +158,21 @@ class Command(BaseCommand):
                 for i in range(1, 4):
                     UserStoryCustomAttribute.objects.create(name=self.sd.words(1, 3),
                                                             description=self.sd.words(3, 12),
+                                                            type=self.sd.choice(TYPES_CHOICES)[0],
                                                             project=project,
                                                             order=i)
             if self.sd.boolean:
                 for i in range(1, 4):
                     TaskCustomAttribute.objects.create(name=self.sd.words(1, 3),
                                                        description=self.sd.words(3, 12),
+                                                       type=self.sd.choice(TYPES_CHOICES)[0],
                                                        project=project,
                                                        order=i)
             if self.sd.boolean:
                 for i in range(1, 4):
                     IssueCustomAttribute.objects.create(name=self.sd.words(1, 3),
                                                         description=self.sd.words(3, 12),
+                                                        type=self.sd.choice(TYPES_CHOICES)[0],
                                                         project=project,
                                                         order=i)
 
@@ -256,6 +260,15 @@ class Command(BaseCommand):
 
         return wiki_page
 
+    def get_custom_attributes_value(self, type):
+        if type == TEXT_TYPE:
+            return self.sd.words(1, 12)
+        if type == MULTILINE_TYPE:
+            return self.sd.paragraphs(2, 4)
+        if type == DATE_TYPE:
+            return self.sd.future_date(min_distance=0, max_distance=365)
+        return None
+
     def create_bug(self, project):
         bug = Issue.objects.create(project=project,
                                    subject=self.sd.choice(SUBJECT_CHOICES),
@@ -274,8 +287,8 @@ class Command(BaseCommand):
 
         bug.save()
 
-        custom_attributes_values = {str(ca.id): self.sd.words(1, 12) for ca in project.issuecustomattributes.all()
-                                                                                             if self.sd.boolean()}
+        custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
+                                      in project.issuecustomattributes.all() if self.sd.boolean()}
         if custom_attributes_values:
             bug.custom_attributes_values.attributes_values = custom_attributes_values
             bug.custom_attributes_values.save()
@@ -327,8 +340,8 @@ class Command(BaseCommand):
 
         task.save()
 
-        custom_attributes_values = {str(ca.id): self.sd.words(1, 12) for ca in project.taskcustomattributes.all()
-                                                                                            if self.sd.boolean()}
+        custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
+                                       in project.taskcustomattributes.all() if self.sd.boolean()}
         if custom_attributes_values:
             task.custom_attributes_values.attributes_values = custom_attributes_values
             task.custom_attributes_values.save()
@@ -376,8 +389,8 @@ class Command(BaseCommand):
 
         us.save()
 
-        custom_attributes_values = {str(ca.id): self.sd.words(1, 12) for ca in project.userstorycustomattributes.all()
-                                                                                                 if self.sd.boolean()}
+        custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
+                                 in project.userstorycustomattributes.all() if self.sd.boolean()}
         if custom_attributes_values:
             us.custom_attributes_values.attributes_values = custom_attributes_values
             us.custom_attributes_values.save()
@@ -387,7 +400,8 @@ class Command(BaseCommand):
             attachment = self.create_attachment(us, i+1)
 
         if self.sd.choice([True, True, False, True, True]):
-            us.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
+            us.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(
+                                                                     user__isnull=False)).user
             us.save()
 
         watching_user = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
