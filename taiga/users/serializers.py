@@ -159,7 +159,7 @@ class ProjectRoleSerializer(serializers.ModelSerializer):
 ######################################################
 
 
-class LikeSerializer(serializers.Serializer):
+class HighLightedContentSerializer(serializers.Serializer):
     type = serializers.CharField()
     id = serializers.IntegerField()
     ref = serializers.IntegerField()
@@ -174,9 +174,6 @@ class LikeSerializer(serializers.Serializer):
     created_date = serializers.DateTimeField()
     is_private = serializers.SerializerMethodField("get_is_private")
 
-    is_watcher = serializers.SerializerMethodField("get_is_watcher")
-    total_watchers = serializers.IntegerField()
-
     project = serializers.SerializerMethodField("get_project")
     project_name = serializers.SerializerMethodField("get_project_name")
     project_slug = serializers.SerializerMethodField("get_project_slug")
@@ -186,13 +183,15 @@ class LikeSerializer(serializers.Serializer):
     assigned_to_full_name = serializers.CharField()
     assigned_to_photo = serializers.SerializerMethodField("get_photo")
 
+    is_watcher = serializers.SerializerMethodField("get_is_watcher")
+    total_watchers = serializers.IntegerField()
+
     def __init__(self, *args, **kwargs):
         # Don't pass the extra ids args up to the superclass
-        self.user_votes  = kwargs.pop("user_votes", {})
         self.user_watching = kwargs.pop("user_watching", {})
 
         # Instantiate the superclass normally
-        super(LikeSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _none_if_project(self, obj, property):
         type = obj.get("type", "")
@@ -226,9 +225,6 @@ class LikeSerializer(serializers.Serializer):
     def get_project_is_private(self, obj):
         return self._none_if_project(obj, "project_is_private")
 
-    def get_is_watcher(self, obj):
-        return obj["id"] in self.user_watching.get(obj["type"], [])
-
     def get_photo(self, obj):
         type = obj.get("type", "")
         if type == "project":
@@ -242,18 +238,35 @@ class LikeSerializer(serializers.Serializer):
         tags = obj.get("tags", [])
         return [{"name": tc[0], "color": tc[1]} for tc in obj.get("tags_colors", []) if tc[0] in tags]
 
+    def get_is_watcher(self, obj):
+        return obj["id"] in self.user_watching.get(obj["type"], [])
 
 
-class FanSerializer(LikeSerializer):
+class LikedObjectSerializer(HighLightedContentSerializer):
     is_fan = serializers.SerializerMethodField("get_is_fan")
-    total_fans = serializers.IntegerField(source="total_voters")
+    total_fans = serializers.IntegerField()
+
+    def __init__(self, *args, **kwargs):
+        # Don't pass the extra ids args up to the superclass
+        self.user_likes  = kwargs.pop("user_likes", {})
+
+        # Instantiate the superclass normally
+        super().__init__(*args, **kwargs)
 
     def get_is_fan(self, obj):
-        return obj["id"] in self.user_votes.get(obj["type"], [])
+        return obj["id"] in self.user_likes.get(obj["type"], [])
 
-class VotedSerializer(LikeSerializer):
+
+class VotedObjectSerializer(HighLightedContentSerializer):
     is_voter = serializers.SerializerMethodField("get_is_voter")
     total_voters = serializers.IntegerField()
+
+    def __init__(self, *args, **kwargs):
+        # Don't pass the extra ids args up to the superclass
+        self.user_votes  = kwargs.pop("user_votes", {})
+
+        # Instantiate the superclass normally
+        super().__init__(*args, **kwargs)
 
     def get_is_voter(self, obj):
         return obj["id"] in self.user_votes.get(obj["type"], [])

@@ -70,16 +70,16 @@ def data():
 
     project_ct = ContentType.objects.get_for_model(Project)
 
-    f.VoteFactory(content_type=project_ct, object_id=m.public_project.pk, user=m.project_member_with_perms)
-    f.VoteFactory(content_type=project_ct, object_id=m.public_project.pk, user=m.project_owner)
-    f.VoteFactory(content_type=project_ct, object_id=m.private_project1.pk, user=m.project_member_with_perms)
-    f.VoteFactory(content_type=project_ct, object_id=m.private_project1.pk, user=m.project_owner)
-    f.VoteFactory(content_type=project_ct, object_id=m.private_project2.pk, user=m.project_member_with_perms)
-    f.VoteFactory(content_type=project_ct, object_id=m.private_project2.pk, user=m.project_owner)
+    f.LikeFactory(content_type=project_ct, object_id=m.public_project.pk, user=m.project_member_with_perms)
+    f.LikeFactory(content_type=project_ct, object_id=m.public_project.pk, user=m.project_owner)
+    f.LikeFactory(content_type=project_ct, object_id=m.private_project1.pk, user=m.project_member_with_perms)
+    f.LikeFactory(content_type=project_ct, object_id=m.private_project1.pk, user=m.project_owner)
+    f.LikeFactory(content_type=project_ct, object_id=m.private_project2.pk, user=m.project_member_with_perms)
+    f.LikeFactory(content_type=project_ct, object_id=m.private_project2.pk, user=m.project_owner)
 
-    f.VotesFactory(content_type=project_ct, object_id=m.public_project.pk, count=2)
-    f.VotesFactory(content_type=project_ct, object_id=m.private_project1.pk, count=2)
-    f.VotesFactory(content_type=project_ct, object_id=m.private_project2.pk, count=2)
+    f.LikesFactory(content_type=project_ct, object_id=m.public_project.pk, count=2)
+    f.LikesFactory(content_type=project_ct, object_id=m.private_project1.pk, count=2)
+    f.LikesFactory(content_type=project_ct, object_id=m.private_project2.pk, count=2)
 
     return m
 

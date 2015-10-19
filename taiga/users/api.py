@@ -77,96 +77,64 @@ class UsersViewSet(ModelCrudViewSet):
 
         return response.Ok(serializer.data)
 
-    @list_route(methods=["GET"])
-    def by_username(self, request, *args, **kwargs):
-        username = request.QUERY_PARAMS.get("username", None)
-        return self.retrieve(request, username=username)
-
     def retrieve(self, request, *args, **kwargs):
         self.object = get_object_or_404(models.User, **kwargs)
         self.check_permissions(request, 'retrieve', self.object)
         serializer = self.get_serializer(self.object)
         return response.Ok(serializer.data)
 
-    @detail_route(methods=["GET"])
-    def contacts(self, request, *args, **kwargs):
-        user = get_object_or_404(models.User, **kwargs)
-        self.check_permissions(request, 'contacts', user)
+    #TODO: commit_on_success
+    def partial_update(self, request, *args, **kwargs):
+        """
+        We must detect if the user is trying to change his email so we can
+        save that value and generate a token that allows him to validate it in
+        the new email account
+        """
+        user = self.get_object()
+        self.check_permissions(request, "update", user)
 
-        self.object_list = user_filters.ContactsFilterBackend().filter_queryset(
-            user, request, self.get_queryset(), self).extra(
-            select={"complete_user_name":"concat(full_name, username)"}).order_by("complete_user_name")
+        ret = super().partial_update(request, *args, **kwargs)
 
-        page = self.paginate_queryset(self.object_list)
-        if page is not None:
-            serializer = self.serializer_class(page.object_list, many=True)
-        else:
-            serializer = self.serializer_class(self.object_list, many=True)
+        new_email = request.DATA.get('email', None)
+        if new_email is not None:
+            valid_new_email = True
+            duplicated_email = models.User.objects.filter(email = new_email).exists()
 
-        return response.Ok(serializer.data)
+            try:
+                validate_email(new_email)
+            except ValidationError:
+                valid_new_email = False
 
-    @detail_route(methods=["GET"])
-    def stats(self, request, *args, **kwargs):
-        user = get_object_or_404(models.User, **kwargs)
-        self.check_permissions(request, "stats", user)
-        return response.Ok(services.get_stats_for_user(user, request.user))
+            valid_new_email = valid_new_email and new_email != request.user.email
 
+            if duplicated_email:
+                raise exc.WrongArguments(_("Duplicated email"))
+            elif not valid_new_email:
+                raise exc.WrongArguments(_("Not valid email"))
 
-    def _serialize_liked_content(self, elem, **kwargs):
-        if elem.get("type") == "project":
-            serializer = serializers.FanSerializer
-        else:
-            serializer = serializers.VotedSerializer
+            #We need to generate a token for the email
+            request.user.email_token = str(uuid.uuid1())
+            request.user.new_email = new_email
+            request.user.save(update_fields=["email_token", "new_email"])
+            email = mail_builder.change_email(request.user.new_email, {"user": request.user,
+                                                                   "lang": request.user.lang})
+            email.send()
 
-        return serializer(elem, **kwargs)
+        return ret
 
+    def destroy(self, request, pk=None):
+        user = self.get_object()
+        self.check_permissions(request, "destroy", user)
+        stream = request.stream
+        request_data = stream is not None and stream.GET or None
+        user_cancel_account_signal.send(sender=user.__class__, user=user, request_data=request_data)
+        user.cancel()
+        return response.NoContent()
 
-    @detail_route(methods=["GET"])
-    def watched(self, request, *args, **kwargs):
-        for_user = get_object_or_404(models.User, **kwargs)
-        from_user = request.user
-        self.check_permissions(request, 'watched', for_user)
-        filters = {
-            "type": request.GET.get("type", None),
-            "q": request.GET.get("q", None),
-        }
-
-        self.object_list = services.get_watched_list(for_user, from_user, **filters)
-        page = self.paginate_queryset(self.object_list)
-        elements = page.object_list if page is not None else self.object_list
-
-        extra_args = {
-            "user_votes": services.get_voted_content_for_user(request.user),
-            "user_watching": services.get_watched_content_for_user(request.user),
-        }
-
-        response_data = [self._serialize_liked_content(elem, **extra_args).data for elem in elements]
-        return response.Ok(response_data)
-
-
-    @detail_route(methods=["GET"])
-    def liked(self, request, *args, **kwargs):
-        for_user = get_object_or_404(models.User, **kwargs)
-        from_user = request.user
-        self.check_permissions(request, 'liked', for_user)
-        filters = {
-            "type": request.GET.get("type", None),
-            "q": request.GET.get("q", None),
-        }
-
-        self.object_list = services.get_voted_list(for_user, from_user, **filters)
-        page = self.paginate_queryset(self.object_list)
-        elements = page.object_list if page is not None else self.object_list
-
-        extra_args = {
-            "user_votes": services.get_voted_content_for_user(request.user),
-            "user_watching": services.get_watched_content_for_user(request.user),
-        }
-
-        response_data = [self._serialize_liked_content(elem, **extra_args).data for elem in elements]
-
-        return response.Ok(response_data)
-
+    @list_route(methods=["GET"])
+    def by_username(self, request, *args, **kwargs):
+        username = request.QUERY_PARAMS.get("username", None)
+        return self.retrieve(request, username=username)
 
     @list_route(methods=["POST"])
     def password_recovery(self, request, pk=None):
@@ -278,45 +246,6 @@ class UsersViewSet(ModelCrudViewSet):
         user_data = self.admin_serializer_class(request.user).data
         return response.Ok(user_data)
 
-    #TODO: commit_on_success
-    def partial_update(self, request, *args, **kwargs):
-        """
-        We must detect if the user is trying to change his email so we can
-        save that value and generate a token that allows him to validate it in
-        the new email account
-        """
-        user = self.get_object()
-        self.check_permissions(request, "update", user)
-
-        ret = super(UsersViewSet, self).partial_update(request, *args, **kwargs)
-
-        new_email = request.DATA.get('email', None)
-        if new_email is not None:
-            valid_new_email = True
-            duplicated_email = models.User.objects.filter(email = new_email).exists()
-
-            try:
-                validate_email(new_email)
-            except ValidationError:
-                valid_new_email = False
-
-            valid_new_email = valid_new_email and new_email != request.user.email
-
-            if duplicated_email:
-                raise exc.WrongArguments(_("Duplicated email"))
-            elif not valid_new_email:
-                raise exc.WrongArguments(_("Not valid email"))
-
-            #We need to generate a token for the email
-            request.user.email_token = str(uuid.uuid1())
-            request.user.new_email = new_email
-            request.user.save(update_fields=["email_token", "new_email"])
-            email = mail_builder.change_email(request.user.new_email, {"user": request.user,
-                                                                   "lang": request.user.lang})
-            email.send()
-
-        return ret
-
     @list_route(methods=["POST"])
     def change_email(self, request, pk=None):
         """
@@ -373,15 +302,108 @@ class UsersViewSet(ModelCrudViewSet):
         user.cancel()
         return response.NoContent()
 
-    def destroy(self, request, pk=None):
-        user = self.get_object()
-        self.check_permissions(request, "destroy", user)
-        stream = request.stream
-        request_data = stream is not None and stream.GET or None
-        user_cancel_account_signal.send(sender=user.__class__, user=user, request_data=request_data)
-        user.cancel()
-        return response.NoContent()
+    @detail_route(methods=["GET"])
+    def contacts(self, request, *args, **kwargs):
+        user = get_object_or_404(models.User, **kwargs)
+        self.check_permissions(request, 'contacts', user)
 
+        self.object_list = user_filters.ContactsFilterBackend().filter_queryset(
+            user, request, self.get_queryset(), self).extra(
+            select={"complete_user_name":"concat(full_name, username)"}).order_by("complete_user_name")
+
+        page = self.paginate_queryset(self.object_list)
+        if page is not None:
+            serializer = self.serializer_class(page.object_list, many=True)
+        else:
+            serializer = self.serializer_class(self.object_list, many=True)
+
+        return response.Ok(serializer.data)
+
+    @detail_route(methods=["GET"])
+    def stats(self, request, *args, **kwargs):
+        user = get_object_or_404(models.User, **kwargs)
+        self.check_permissions(request, "stats", user)
+        return response.Ok(services.get_stats_for_user(user, request.user))
+
+    @detail_route(methods=["GET"])
+    def watched(self, request, *args, **kwargs):
+        for_user = get_object_or_404(models.User, **kwargs)
+        from_user = request.user
+        self.check_permissions(request, 'watched', for_user)
+        filters = {
+            "type": request.GET.get("type", None),
+            "q": request.GET.get("q", None),
+        }
+
+        self.object_list = services.get_watched_list(for_user, from_user, **filters)
+        page = self.paginate_queryset(self.object_list)
+        elements = page.object_list if page is not None else self.object_list
+
+        extra_args_liked = {
+            "user_watching": services.get_watched_content_for_user(request.user),
+            "user_likes": services.get_liked_content_for_user(request.user),
+        }
+
+        extra_args_voted = {
+            "user_watching": services.get_watched_content_for_user(request.user),
+            "user_votes": services.get_voted_content_for_user(request.user),
+        }
+
+        response_data = []
+        for elem in elements:
+            if elem["type"] == "project":
+                # projects are liked objects
+                response_data.append(serializers.LikedObjectSerializer(elem, **extra_args_liked).data )
+            else:
+                # stories, tasks and issues are voted objects
+                response_data.append(serializers.VotedObjectSerializer(elem, **extra_args_voted).data )
+
+        return response.Ok(response_data)
+
+    @detail_route(methods=["GET"])
+    def liked(self, request, *args, **kwargs):
+        for_user = get_object_or_404(models.User, **kwargs)
+        from_user = request.user
+        self.check_permissions(request, 'liked', for_user)
+        filters = {
+            "q": request.GET.get("q", None),
+        }
+
+        self.object_list = services.get_liked_list(for_user, from_user, **filters)
+        page = self.paginate_queryset(self.object_list)
+        elements = page.object_list if page is not None else self.object_list
+
+        extra_args = {
+            "user_watching": services.get_watched_content_for_user(request.user),
+            "user_likes": services.get_liked_content_for_user(request.user),
+        }
+
+        response_data = [serializers.LikedObjectSerializer(elem, **extra_args).data for elem in elements]
+
+        return response.Ok(response_data)
+
+    @detail_route(methods=["GET"])
+    def voted(self, request, *args, **kwargs):
+        for_user = get_object_or_404(models.User, **kwargs)
+        from_user = request.user
+        self.check_permissions(request, 'liked', for_user)
+        filters = {
+            "type": request.GET.get("type", None),
+            "q": request.GET.get("q", None),
+        }
+
+        self.object_list = services.get_voted_list(for_user, from_user, **filters)
+        page = self.paginate_queryset(self.object_list)
+        elements = page.object_list if page is not None else self.object_list
+
+        extra_args = {
+            "user_watching": services.get_watched_content_for_user(request.user),
+            "user_votes": services.get_voted_content_for_user(request.user),
+        }
+
+        response_data = [serializers.VotedObjectSerializer(elem, **extra_args).data for elem in elements]
+
+        return response.Ok(response_data)
 
 ######################################################
 ## Role

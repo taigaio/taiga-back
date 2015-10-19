@@ -149,6 +149,23 @@ def get_stats_for_user(from_user, by_user):
     return project_stats
 
 
+def get_liked_content_for_user(user):
+    """Returns a dict where:
+        - The key is the content_type model
+        - The values are list of id's of the different objects liked by the user
+    """
+    if user.is_anonymous():
+        return {}
+
+    user_likes = {}
+    for (ct_model, object_id) in user.likes.values_list("content_type__model", "object_id"):
+        list = user_likes.get(ct_model, [])
+        list.append(object_id)
+        user_likes[ct_model] = list
+
+    return user_likes
+
+
 def get_voted_content_for_user(user):
     """Returns a dict where:
         - The key is the content_type model
@@ -190,11 +207,12 @@ def get_watched_content_for_user(user):
 
 def _build_watched_sql_for_projects(for_user):
     sql = """
-	SELECT projects_project.id AS id, null AS ref, 'project' AS type,
+	SELECT projects_project.id AS id, null::integer AS ref, 'project'::text AS type,
         tags, notifications_notifypolicy.project_id AS object_id, projects_project.id AS project,
-        slug AS slug, projects_project.name AS name, null AS subject,
-        notifications_notifypolicy.created_at as created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_voters, null AS assigned_to,
-        null as status, null as status_color
+        slug, projects_project.name, null::text AS subject,
+        notifications_notifypolicy.created_at as created_date,
+        coalesce(watchers, 0) AS total_watchers, coalesce(likes_likes.count, 0) AS total_fans, null::integer AS total_voters,
+        null::integer AS assigned_to, null::text as status, null::text as status_color
 	    FROM notifications_notifypolicy
 	    INNER JOIN projects_project
 		      ON (projects_project.id = notifications_notifypolicy.project_id)
@@ -204,8 +222,8 @@ def _build_watched_sql_for_projects(for_user):
                    GROUP BY project_id
                 ) type_watchers
 		      ON projects_project.id = type_watchers.project_id
-	    LEFT JOIN votes_votes
-		      ON (projects_project.id = votes_votes.object_id AND {project_content_type_id} = votes_votes.content_type_id)
+	    LEFT JOIN likes_likes
+		      ON (projects_project.id = likes_likes.object_id AND {project_content_type_id} = likes_likes.content_type_id)
 	    WHERE notifications_notifypolicy.user_id = {for_user_id}
     """
     sql = sql.format(
@@ -215,30 +233,32 @@ def _build_watched_sql_for_projects(for_user):
     return sql
 
 
-def _build_voted_sql_for_projects(for_user):
+def _build_liked_sql_for_projects(for_user):
     sql = """
-	SELECT projects_project.id AS id, null AS ref, 'project' AS type,
-        tags, votes_vote.object_id AS object_id, projects_project.id AS project,
-        slug AS slug, projects_project.name AS name, null AS subject,
-        votes_vote.created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_voters, null AS assigned_to,
-        null as status, null as status_color
-	    FROM votes_vote
+	SELECT projects_project.id AS id, null::integer AS ref, 'project'::text AS type,
+        tags, likes_like.object_id AS object_id, projects_project.id AS project,
+        slug, projects_project.name, null::text AS subject,
+        likes_like.created_date,
+        coalesce(watchers, 0) AS total_watchers, coalesce(likes_likes.count, 0) AS total_fans,
+        null::integer AS assigned_to, null::text as status, null::text as status_color
+	    FROM likes_like
 	    INNER JOIN projects_project
-		      ON (projects_project.id = votes_vote.object_id)
+		      ON (projects_project.id = likes_like.object_id)
 	    LEFT JOIN (SELECT project_id, count(*) watchers
                    FROM notifications_notifypolicy
                    WHERE notifications_notifypolicy.notify_level != {ignore_notify_level}
                    GROUP BY project_id
                 ) type_watchers
 		      ON projects_project.id = type_watchers.project_id
-        LEFT JOIN votes_votes
-		      ON (projects_project.id = votes_votes.object_id AND {project_content_type_id} = votes_votes.content_type_id)
-	    WHERE votes_vote.user_id = {for_user_id} AND {project_content_type_id} = votes_vote.content_type_id
+        LEFT JOIN likes_likes
+		      ON (projects_project.id = likes_likes.object_id AND {project_content_type_id} = likes_likes.content_type_id)
+	    WHERE likes_like.user_id = {for_user_id} AND {project_content_type_id} = likes_like.content_type_id
     """
     sql = sql.format(
         for_user_id=for_user.id,
         ignore_notify_level=NotifyLevel.ignore,
         project_content_type_id=ContentType.objects.get(app_label="projects", model="project").id)
+
     return sql
 
 
@@ -249,8 +269,9 @@ def _build_sql_for_type(for_user, type, table_name, action_table, ref_column="re
 	SELECT {table_name}.id AS id, {ref_column} AS ref, '{type}' AS type,
         tags, {action_table}.object_id AS object_id, {table_name}.{project_column} AS project,
         {slug_column} AS slug, null AS name, {subject_column} AS subject,
-        {action_table}.created_date, coalesce(watchers, 0) as total_watchers, coalesce(votes_votes.count, 0) total_voters, {assigned_to_column}  AS assigned_to,
-        projects_{type}status.name as status, projects_{type}status.color as status_color
+        {action_table}.created_date,
+        coalesce(watchers, 0) AS total_watchers, null::integer AS total_fans, coalesce(votes_votes.count, 0) AS total_voters,
+        {assigned_to_column}  AS assigned_to, projects_{type}status.name as status, projects_{type}status.color as status_color
 	    FROM {action_table}
 	    INNER JOIN django_content_type
 		      ON ({action_table}.content_type_id = django_content_type.id AND django_content_type.model = '{type}')
@@ -272,7 +293,7 @@ def _build_sql_for_type(for_user, type, table_name, action_table, ref_column="re
     return sql
 
 
-def _get_favourites_list(for_user, from_user, action_table, project_sql_builder, type=None, q=None):
+def get_watched_list(for_user, from_user, type=None, q=None):
     filters_sql = ""
     and_needed = False
 
@@ -348,10 +369,10 @@ def _get_favourites_list(for_user, from_user, action_table, project_sql_builder,
         for_user_id=for_user.id,
         from_user_id=from_user_id,
         filters_sql=filters_sql,
-        userstories_sql=_build_sql_for_type(for_user, "userstory", "userstories_userstory", action_table, slug_column="null"),
-        tasks_sql=_build_sql_for_type(for_user, "task", "tasks_task", action_table, slug_column="null"),
-        issues_sql=_build_sql_for_type(for_user, "issue", "issues_issue", action_table, slug_column="null"),
-        projects_sql=project_sql_builder(for_user))
+        userstories_sql=_build_sql_for_type(for_user, "userstory", "userstories_userstory", "notifications_watched", slug_column="null"),
+        tasks_sql=_build_sql_for_type(for_user, "task", "tasks_task", "notifications_watched", slug_column="null"),
+        issues_sql=_build_sql_for_type(for_user, "issue", "issues_issue", "notifications_watched", slug_column="null"),
+        projects_sql=_build_watched_sql_for_projects(for_user))
 
     cursor = connection.cursor()
     cursor.execute(sql)
@@ -363,9 +384,167 @@ def _get_favourites_list(for_user, from_user, action_table, project_sql_builder,
     ]
 
 
-def get_watched_list(for_user, from_user, type=None, q=None):
-    return _get_favourites_list(for_user, from_user, "notifications_watched", _build_watched_sql_for_projects, type=type, q=q)
+def get_liked_list(for_user, from_user, type=None, q=None):
+    filters_sql = ""
+    and_needed = False
+
+    if type:
+        filters_sql += " AND type = '{type}' ".format(type=type)
+
+    if q:
+        filters_sql += """ AND (
+            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', '{q}')
+        )
+        """.format(q=to_tsquery(q))
+
+    sql = """
+    -- BEGIN Basic info: we need to mix info from different tables and denormalize it
+    SELECT entities.*,
+           projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
+           projects_project.tags_colors,
+           users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
+        FROM (
+            {projects_sql}
+        ) as entities
+    -- END Basic info
+
+    -- BEGIN Project info
+    LEFT JOIN projects_project
+        ON (entities.project = projects_project.id)
+    -- END Project info
+
+    -- BEGIN Assigned to user info
+    LEFT JOIN users_user
+        ON (assigned_to = users_user.id)
+    -- END Assigned to user info
+
+    -- BEGIN Permissions checking
+    LEFT JOIN projects_membership
+        -- Here we check the memberbships from the user requesting the info
+        ON (projects_membership.user_id = {from_user_id} AND projects_membership.project_id = entities.project)
+
+    LEFT JOIN users_role
+        ON (entities.project = users_role.project_id AND users_role.id =  projects_membership.role_id)
+
+    WHERE
+        -- public project
+        (
+            projects_project.is_private = false
+            OR(
+                -- private project where the view_ permission is included in the user role for that project or in the anon permissions
+                projects_project.is_private = true
+                AND(
+                    'view_project' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions))
+                )
+        ))
+    -- END Permissions checking
+        {filters_sql}
+
+    ORDER BY entities.created_date DESC;
+    """
+
+    from_user_id = -1
+    if not from_user.is_anonymous():
+        from_user_id = from_user.id
+
+    sql = sql.format(
+        for_user_id=for_user.id,
+        from_user_id=from_user_id,
+        filters_sql=filters_sql,
+        projects_sql=_build_liked_sql_for_projects(for_user))
+
+    cursor = connection.cursor()
+    cursor.execute(sql)
+
+    desc = cursor.description
+    return [
+        dict(zip([col[0] for col in desc], row))
+        for row in cursor.fetchall()
+    ]
 
 
 def get_voted_list(for_user, from_user, type=None, q=None):
-    return _get_favourites_list(for_user, from_user, "votes_vote", _build_voted_sql_for_projects, type=type, q=q)
+    filters_sql = ""
+    and_needed = False
+
+    if type:
+        filters_sql += " AND type = '{type}' ".format(type=type)
+
+    if q:
+        filters_sql += """ AND (
+            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', '{q}')
+        )
+        """.format(q=to_tsquery(q))
+
+    sql = """
+    -- BEGIN Basic info: we need to mix info from different tables and denormalize it
+    SELECT entities.*,
+           projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
+           projects_project.tags_colors,
+           users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
+        FROM (
+            {userstories_sql}
+            UNION
+            {tasks_sql}
+            UNION
+            {issues_sql}
+        ) as entities
+    -- END Basic info
+
+    -- BEGIN Project info
+    LEFT JOIN projects_project
+        ON (entities.project = projects_project.id)
+    -- END Project info
+
+    -- BEGIN Assigned to user info
+    LEFT JOIN users_user
+        ON (assigned_to = users_user.id)
+    -- END Assigned to user info
+
+    -- BEGIN Permissions checking
+    LEFT JOIN projects_membership
+        -- Here we check the memberbships from the user requesting the info
+        ON (projects_membership.user_id = {from_user_id} AND projects_membership.project_id = entities.project)
+
+    LEFT JOIN users_role
+        ON (entities.project = users_role.project_id AND users_role.id =  projects_membership.role_id)
+
+    WHERE
+        -- public project
+        (
+            projects_project.is_private = false
+            OR(
+                -- private project where the view_ permission is included in the user role for that project or in the anon permissions
+                projects_project.is_private = true
+                AND(
+                    (entities.type = 'issue' AND 'view_issues' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
+                    OR (entities.type = 'task' AND 'view_tasks' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
+                    OR (entities.type = 'userstory' AND 'view_us' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
+                )
+        ))
+    -- END Permissions checking
+        {filters_sql}
+
+    ORDER BY entities.created_date DESC;
+    """
+
+    from_user_id = -1
+    if not from_user.is_anonymous():
+        from_user_id = from_user.id
+
+    sql = sql.format(
+        for_user_id=for_user.id,
+        from_user_id=from_user_id,
+        filters_sql=filters_sql,
+        userstories_sql=_build_sql_for_type(for_user, "userstory", "userstories_userstory", "votes_vote", slug_column="null"),
+        tasks_sql=_build_sql_for_type(for_user, "task", "tasks_task", "votes_vote", slug_column="null"),
+        issues_sql=_build_sql_for_type(for_user, "issue", "issues_issue", "votes_vote", slug_column="null"))
+
+    cursor = connection.cursor()
+    cursor.execute(sql)
+
+    desc = cursor.description
+    return [
+        dict(zip([col[0] for col in desc], row))
+        for row in cursor.fetchall()
+    ]

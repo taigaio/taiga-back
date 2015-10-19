@@ -311,3 +311,15 @@ def test_user_list_liked(client, data):
     ]
     results = helper_test_http_method(client, 'get', url, None, users)
     assert results == [200, 200, 200, 200]
+
+
+def test_user_list_voted(client, data):
+    url = reverse('users-voted', kwargs={"pk": data.registered_user.pk})
+    users = [
+        None,
+        data.registered_user,
+        data.other_user,
+        data.superuser,
+    ]
+    results = helper_test_http_method(client, 'get', url, None, users)
+    assert results == [200, 200, 200, 200]

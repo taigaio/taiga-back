@@ -21,46 +21,46 @@ from taiga.base.api import viewsets
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.decorators import detail_route
 
-from taiga.projects.votes import serializers
-from taiga.projects.votes import services
-from taiga.projects.votes.utils import attach_total_voters_to_queryset, attach_is_voter_to_queryset
+from taiga.projects.likes import serializers
+from taiga.projects.likes import services
+from taiga.projects.likes.utils import attach_total_fans_to_queryset, attach_is_fan_to_queryset
 
 
-class VotedResourceMixin:
+class LikedResourceMixin:
     # Note: Update get_queryset method:
     #           def get_queryset(self):
     #               qs = super().get_queryset()
-    #               return self.attach_votes_attrs_to_queryset(qs)
+    #               return self.attach_likes_attrs_to_queryset(qs)
 
-    def attach_votes_attrs_to_queryset(self, queryset):
-        qs = attach_total_voters_to_queryset(queryset)
+    def attach_likes_attrs_to_queryset(self, queryset):
+        qs = attach_total_fans_to_queryset(queryset)
 
         if self.request.user.is_authenticated():
-            qs = attach_is_voter_to_queryset(self.request.user, qs)
+            qs = attach_is_fan_to_queryset(self.request.user, qs)
 
         return qs
 
     @detail_route(methods=["POST"])
-    def upvote(self, request, pk=None):
+    def like(self, request, pk=None):
         obj = self.get_object()
-        self.check_permissions(request, "upvote", obj)
+        self.check_permissions(request, "like", obj)
 
-        services.add_vote(obj, user=request.user)
+        services.add_like(obj, user=request.user)
         return response.Ok()
 
     @detail_route(methods=["POST"])
-    def downvote(self, request, pk=None):
+    def unlike(self, request, pk=None):
         obj = self.get_object()
-        self.check_permissions(request, "downvote", obj)
+        self.check_permissions(request, "unlike", obj)
 
-        services.remove_vote(obj, user=request.user)
+        services.remove_like(obj, user=request.user)
         return response.Ok()
 
 
-class VotersViewSetMixin:
+class FansViewSetMixin:
     # Is a ModelListViewSet with two required params: permission_classes and resource_model
-    serializer_class = serializers.VoterSerializer
-    list_serializer_class = serializers.VoterSerializer
+    serializer_class = serializers.FanSerializer
+    list_serializer_class = serializers.FanSerializer
     permission_classes = None
     resource_model = None
 
@@ -72,7 +72,7 @@ class VotersViewSetMixin:
         self.check_permissions(request, 'retrieve', resource)
 
         try:
-            self.object = services.get_voters(resource).get(pk=pk)
+            self.object = services.get_fans(resource).get(pk=pk)
         except ObjectDoesNotExist: # or User.DoesNotExist
             return response.NotFound()
 
@@ -89,4 +89,4 @@ class VotersViewSetMixin:
 
     def get_queryset(self):
         resource = self.resource_model.objects.get(pk=self.kwargs.get("resource_id"))
-        return services.get_voters(resource)
+        return services.get_fans(resource)

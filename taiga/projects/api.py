@@ -44,7 +44,7 @@ from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 from taiga.projects.userstories.models import UserStory, RolePoints
 from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
-from taiga.projects.votes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
+from taiga.projects.likes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
 from taiga.permissions import service as permissions_service
 
 from . import serializers
@@ -68,7 +68,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = self.attach_votes_attrs_to_queryset(qs)
+        qs = self.attach_likes_attrs_to_queryset(qs)
         qs = attach_project_total_watchers_attrs_to_queryset(qs)
         if self.request.user.is_authenticated():
             qs = attach_project_is_watcher_to_queryset(qs, self.request.user)

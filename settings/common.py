@@ -295,6 +295,7 @@ INSTALLED_APPS = [
     "taiga.projects.history",
     "taiga.projects.notifications",
     "taiga.projects.attachments",
+    "taiga.projects.likes",
     "taiga.projects.votes",
     "taiga.projects.milestones",
     "taiga.projects.userstories",
