@@ -43,7 +43,7 @@ from .validators import ProjectExistsValidator
 from .custom_attributes.serializers import UserStoryCustomAttributeSerializer
 from .custom_attributes.serializers import TaskCustomAttributeSerializer
 from .custom_attributes.serializers import IssueCustomAttributeSerializer
-from .votes.mixins.serializers import FanResourceSerializerMixin
+from .likes.mixins.serializers import FanResourceSerializerMixin
 
 ######################################################
 ## Custom values for selectors

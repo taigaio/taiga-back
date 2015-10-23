@@ -14,17 +14,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api import serializers
+from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericTabularInline
+
+from . import models
 
 
-class VoteResourceSerializerMixin(serializers.ModelSerializer):
-    is_voter = serializers.SerializerMethodField("get_is_voter")
-    total_voters = serializers.SerializerMethodField("get_total_voters")
-
-    def get_is_voter(self, obj):
-        # The "is_voted" attribute is attached in the get_queryset of the viewset.
-        return getattr(obj, "is_voter", False) or False
-
-    def get_total_voters(self, obj):
-        # The "total_voters" attribute is attached in the get_queryset of the viewset.
-        return getattr(obj, "total_voters", 0) or 0
+class LikeInline(GenericTabularInline):
+    model = models.Like
+    extra = 0

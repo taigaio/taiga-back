@@ -24,11 +24,11 @@ from taiga.projects.history.models import HistoryEntry
 
 
 def _get_total_story_points(project):
-    return (project.total_story_points if project.total_story_points is not None else
+    return (project.total_story_points if project.total_story_points not in [None, 0] else
                     sum(project.calculated_points["defined"].values()))
 
 def _get_total_milestones(project):
-    return (project.total_milestones if project.total_milestones is not None else 
+    return (project.total_milestones if project.total_milestones not in [None, 0] else
                     project.milestones.count())
 
 def _get_milestones_stats_for_backlog(project):

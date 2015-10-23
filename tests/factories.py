@@ -412,14 +412,23 @@ class IssueCustomAttributesValuesFactory(Factory):
     issue = factory.SubFactory("tests.factories.IssueFactory")
 
 
-# class FanFactory(Factory):
-#     project = factory.SubFactory("tests.factories.ProjectFactory")
-#     user = factory.SubFactory("tests.factories.UserFactory")
+class LikeFactory(Factory):
+    class Meta:
+        model = "likes.Like"
+        strategy = factory.CREATE_STRATEGY
+
+    content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
+    object_id = factory.Sequence(lambda n: n)
+    user = factory.SubFactory("tests.factories.UserFactory")
 
 
-# class StarsFactory(Factory):
-#     project = factory.SubFactory("tests.factories.ProjectFactory")
-#     count = 0
+class LikesFactory(Factory):
+    class Meta:
+        model = "likes.Likes"
+        strategy = factory.CREATE_STRATEGY
+
+    content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
+    object_id = factory.Sequence(lambda n: n)
 
 
 class VoteFactory(Factory):

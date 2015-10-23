@@ -47,6 +47,7 @@ class UserPermission(TaigaResourcePermission):
     change_email_perms = AllowAny()
     contacts_perms = AllowAny()
     liked_perms = AllowAny()
+    voted_perms = AllowAny()
     watched_perms = AllowAny()
 
 
