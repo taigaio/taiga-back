@@ -123,7 +123,7 @@ class Command(BaseCommand):
 
         # create project
         for x in range(NUM_PROJECTS + NUM_EMPTY_PROJECTS):
-            project = self.create_project(x)
+            project = self.create_project(x, is_private=(x in [2, 4] or self.sd.boolean()))
 
             # added memberships
             computable_project_roles = set()
@@ -437,8 +437,10 @@ class Command(BaseCommand):
 
         return milestone
 
-    def create_project(self, counter):
-        is_private=self.sd.boolean()
+    def create_project(self, counter, is_private=None):
+        if is_private is None:
+            is_private=self.sd.boolean()
+
         anon_permissions = not is_private and list(map(lambda perm: perm[0], ANON_PERMISSIONS)) or []
         public_permissions = not is_private and list(map(lambda perm: perm[0], ANON_PERMISSIONS)) or []
         project = Project.objects.create(slug='project-%s'%(counter),
