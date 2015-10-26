@@ -224,7 +224,11 @@ def get_stats_for_project(project):
         get(id=project.id)
 
     points = project.calculated_points
-    closed_points = sum(points["closed"].values())
+
+    closed_milestone_query = Q(role_points__user_story__milestone__closed=True)
+    null_milestone_query = Q(role_points__user_story__milestone__isnull=True)
+    closed_points = sum(project.points.filter(closed_milestone_query|null_milestone_query)\
+        .exclude(value__isnull=True).values_list("value", flat=True))
     closed_milestones = project.milestones.filter(closed=True).count()
     speed = 0
     if closed_milestones != 0:
