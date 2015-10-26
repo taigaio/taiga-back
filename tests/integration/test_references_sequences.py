@@ -17,6 +17,8 @@
 
 import pytest
 
+from django.core.urlresolvers import reverse
+
 from .. import factories
 
 
@@ -141,3 +143,39 @@ def test_regenerate_issue_reference_on_project_change(seq, refmodels):
     issue.save()
 
     assert issue.ref == 201
+
+
+@pytest.mark.django_db
+def test_params_validation_in_api_request(client, refmodels):
+    user = factories.UserFactory.create()
+    project = factories.ProjectFactory.create(owner=user)
+    seqname1 = refmodels.make_sequence_name(project)
+    role = factories.RoleFactory.create(project=project)
+    factories.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+
+    milestone = factories.MilestoneFactory.create(project=project)
+    us = factories.UserStoryFactory.create(project=project)
+    task = factories.TaskFactory.create(project=project)
+    issue = factories.IssueFactory.create(project=project)
+    wiki_page = factories.WikiPageFactory.create(project=project)
+
+    client.login(user)
+
+    url = reverse("resolver-list")
+    response = client.json.get(url)
+    assert response.status_code == 400
+    response = client.json.get("{}?project={}".format(url, project.slug))
+    assert response.status_code == 200
+    response = client.json.get("{}?project={}&ref={}".format(url, project.slug, us.ref))
+    assert response.status_code == 200
+    response = client.json.get("{}?project={}&ref={}&us={}".format(url, project.slug, us.ref, us.ref))
+    assert response.status_code == 400
+    response = client.json.get("{}?project={}&ref={}&task={}".format(url, project.slug, us.ref, task.ref))
+    assert response.status_code == 400
+    response = client.json.get("{}?project={}&ref={}&issue={}".format(url, project.slug, us.ref, issue.ref))
+    assert response.status_code == 400
+    response = client.json.get("{}?project={}&us={}&task={}".format(url, project.slug, us.ref, task.ref))
+    assert response.status_code == 200
+    response = client.json.get("{}?project={}&ref={}&milestone={}".format(url, project.slug, us.ref,
+                                                                          milestone.slug))
+    assert response.status_code == 200

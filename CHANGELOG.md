@@ -33,6 +33,7 @@
 - API: Mixin fields 'users', 'members' and 'memberships' in ProjectDetailSerializer.
 - API: Add stats/system resource with global server stats (total project, total users....)
 - API: Improve and fix some errors in issues/filters_data and userstories/filters_data.
+- API: resolver suport ref GET param and return a story, task or issue.
 - Webhooks: Add deleted datetime to webhooks responses when isues, tasks or USs are deleted.
 - Add headers to allow threading for notification emails about changes to issues, tasks, user stories, and wiki pages. (thanks to [@brett](https://github.com/brettp)).
 - Lots of small and not so small bugfixes.
