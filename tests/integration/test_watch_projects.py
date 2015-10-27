@@ -69,7 +69,7 @@ def test_watch_project_with_invalid_notify_level(client):
     assert response.data["_error_message"] == "Invalid value for notify level"
 
 
-def test_unwacth_project(client):
+def test_unwatch_project(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
     f.MembershipFactory.create(project=project, user=user, is_owner=True)

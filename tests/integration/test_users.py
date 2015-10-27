@@ -13,6 +13,8 @@ from taiga.users.serializers import LikedObjectSerializer, VotedObjectSerializer
 from taiga.auth.tokens import get_token_for_user
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 from taiga.users.services import get_watched_list, get_voted_list, get_liked_list
+from taiga.projects.notifications.choices import NotifyLevel
+from taiga.projects.notifications.models import NotifyPolicy
 
 from easy_thumbnails.files import generate_all_aliases, get_thumbnailer
 
@@ -468,6 +470,22 @@ def test_get_watched_list_valid_info_for_project():
     assert project_watch_info["assigned_to_username"] == None
     assert project_watch_info["assigned_to_full_name"] == None
     assert project_watch_info["assigned_to_photo"] == None
+
+
+def test_get_watched_list_for_project_with_ignored_notify_level():
+    #If the notify policy level is ignore the project shouldn't be in the watched results
+    fav_user = f.UserFactory()
+    viewer_user = f.UserFactory()
+
+    project = f.ProjectFactory(is_private=False, name="Testing project", tags=['test', 'tag'])
+    role = f.RoleFactory(project=project, permissions=["view_project", "view_us", "view_tasks", "view_issues"])
+    membership = f.MembershipFactory(project=project, role=role, user=fav_user)
+    notify_policy = NotifyPolicy.objects.get(user=fav_user, project=project)
+    notify_policy.notify_level=NotifyLevel.ignore
+    notify_policy.save()
+
+    watched_list = get_watched_list(fav_user, viewer_user)
+    assert len(watched_list) == 0
 
 
 def test_get_liked_list_valid_info():
