@@ -40,7 +40,8 @@ class WatchersValidator:
         # Check if incoming watchers are contained
         # in project members list
         member_ids = project.members.values_list("id", flat=True)
-        result = set(users).difference(member_ids)
+        existing_watcher_ids = project.get_watchers().values_list("id", flat=True)
+        result = set(users).difference(member_ids).difference(existing_watcher_ids)
         if result:
             raise serializers.ValidationError(_("Watchers contains invalid users"))
 
