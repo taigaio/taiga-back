@@ -21,6 +21,7 @@ import datetime
 import copy
 
 from taiga.projects.history.models import HistoryEntry
+from taiga.projects.userstories.models import RolePoints
 
 
 def _get_total_story_points(project):
@@ -225,10 +226,11 @@ def get_stats_for_project(project):
 
     points = project.calculated_points
 
-    closed_milestone_query = Q(role_points__user_story__milestone__closed=True)
-    null_milestone_query = Q(role_points__user_story__milestone__isnull=True)
-    closed_points = sum(project.points.filter(closed_milestone_query|null_milestone_query)\
-        .exclude(value__isnull=True).values_list("value", flat=True))
+    closed_points = sum(RolePoints.objects.filter(user_story__project=project).filter(
+        Q(user_story__milestone__closed=True) |
+        Q(user_story__milestone__isnull=True)
+    ).exclude(points__value__isnull=True).values_list("points__value", flat=True))
+
     closed_milestones = project.milestones.filter(closed=True).count()
     speed = 0
     if closed_milestones != 0:
