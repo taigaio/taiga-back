@@ -251,8 +251,7 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
         if response.status_code == status.HTTP_201_CREATED and self.object.generated_from_issue:
             self.object.generated_from_issue.save()
 
-            comment = _("Generating the user story [US #{ref} - "
-                        "{subject}](:us:{ref} \"US #{ref} - {subject}\")")
+            comment = _("Generating the user story #{ref} - {subject}")
             comment = comment.format(ref=self.object.ref, subject=self.object.subject)
             history = take_snapshot(self.object.generated_from_issue,
                                     comment=comment,

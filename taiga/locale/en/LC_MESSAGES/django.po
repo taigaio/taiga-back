@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-27 09:53+0100\n"
+"POT-Creation-Date: 2015-10-29 19:06+0100\n"
 "PO-Revision-Date: 2015-03-25 20:09+0100\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Taiga Dev Team <support@taiga.io>\n"
@@ -1319,7 +1319,7 @@ msgstr ""
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:134
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:145
-#: taiga/projects/services/stats.py:137 taiga/projects/services/stats.py:138
+#: taiga/projects/services/stats.py:138 taiga/projects/services/stats.py:139
 msgid "Unassigned"
 msgstr ""
 
@@ -2185,7 +2185,7 @@ msgid ""
 "[%(project)s] Deleted the Wiki Page \"%(page)s\"\n"
 msgstr ""
 
-#: taiga/projects/notifications/validators.py:45
+#: taiga/projects/notifications/validators.py:46
 msgid "Watchers contains invalid users"
 msgstr ""
 
@@ -2253,11 +2253,11 @@ msgstr ""
 msgid "Roles"
 msgstr ""
 
-#: taiga/projects/services/stats.py:84
+#: taiga/projects/services/stats.py:85
 msgid "Future sprint"
 msgstr ""
 
-#: taiga/projects/services/stats.py:101
+#: taiga/projects/services/stats.py:102
 msgid "Project End"
 msgstr ""
 
@@ -2639,9 +2639,7 @@ msgstr ""
 
 #: taiga/projects/userstories/api.py:254
 #, python-brace-format
-msgid ""
-"Generating the user story [US #{ref} - {subject}](:us:{ref} \"US #{ref} - "
-"{subject}\")"
+msgid "Generating the user story #{ref} - {subject}"
 msgstr ""
 
 #: taiga/projects/userstories/models.py:37
