@@ -285,7 +285,7 @@ class Command(BaseCommand):
                                                                                     project=project)),
                                    type=self.sd.db_object_from_queryset(IssueType.objects.filter(
                                                                                  project=project)),
-                                   tags=self.sd.words(0, 10).split(" "))
+                                   tags=self.sd.words(1, 10).split(" "))
 
         bug.save()
 
@@ -494,4 +494,3 @@ class Command(BaseCommand):
         for i in range(self.sd.int(*NUM_WATCHERS)):
             user = self.sd.db_object_from_queryset(User.objects.all())
             obj.add_watcher(user)
-
