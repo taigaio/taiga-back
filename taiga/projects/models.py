@@ -344,7 +344,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         }
 
     def _get_q_watchers(self):
-        return Q(notify_policies__project_id=self.id) & ~Q(notify_policies__notify_level=NotifyLevel.ignore)
+        return Q(notify_policies__project_id=self.id) & ~Q(notify_policies__notify_level=NotifyLevel.none)
 
     def get_watchers(self):
         return get_user_model().objects.filter(self._get_q_watchers())
@@ -368,7 +368,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         related_people = related_people.distinct()
         return related_people
 
-    def add_watcher(self, user, notify_level=NotifyLevel.watch):
+    def add_watcher(self, user, notify_level=NotifyLevel.all):
         notify_policy = create_notify_policy_if_not_exists(self, user)
         set_notify_policy_level(notify_policy, notify_level)
 

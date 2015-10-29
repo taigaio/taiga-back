@@ -104,7 +104,7 @@ def attach_project_is_watcher_to_queryset(queryset, user, as_field="is_watcher")
                           THEN TRUE
                           ELSE FALSE
                      END""")
-    sql = sql.format(tbl=model._meta.db_table, user_id=user.id, ignore_notify_level=NotifyLevel.ignore)
+    sql = sql.format(tbl=model._meta.db_table, user_id=user.id, ignore_notify_level=NotifyLevel.none)
     qs = queryset.extra(select={as_field: sql})
     return qs
 
@@ -124,7 +124,7 @@ def attach_project_total_watchers_attrs_to_queryset(queryset, as_field="total_wa
                            FROM notifications_notifypolicy
                           WHERE notifications_notifypolicy.project_id = {tbl}.id
                             AND notifications_notifypolicy.notify_level != {ignore_notify_level}""")
-    sql = sql.format(tbl=model._meta.db_table, ignore_notify_level=NotifyLevel.ignore)
+    sql = sql.format(tbl=model._meta.db_table, ignore_notify_level=NotifyLevel.none)
     qs = queryset.extra(select={as_field: sql})
 
     return qs
@@ -142,7 +142,7 @@ def attach_notify_level_to_project_queryset(queryset, user):
     :return: Queryset object with the additional `as_field` field.
     """
     user_id = getattr(user, "id", None) or "NULL"
-    default_level = NotifyLevel.notwatch
+    default_level = NotifyLevel.involved
 
     sql = strip_lines("""
     COALESCE((SELECT notifications_notifypolicy.notify_level

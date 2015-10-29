@@ -29,6 +29,8 @@ from taiga.users.models import *
 from taiga.permissions.permissions import ANON_PERMISSIONS
 from taiga.projects.models import *
 from taiga.projects.milestones.models import *
+from taiga.projects.notifications.choices import NotifyLevel
+
 from taiga.projects.userstories.models import *
 from taiga.projects.tasks.models import *
 from taiga.projects.issues.models import *
@@ -459,7 +461,7 @@ class Command(BaseCommand):
         take_snapshot(project, user=project.owner)
 
         self.create_likes(project)
-        self.create_watchers(project)
+        self.create_watchers(project, NotifyLevel.involved)
 
         return project
 
@@ -490,7 +492,11 @@ class Command(BaseCommand):
             user=self.sd.db_object_from_queryset(User.objects.all())
             add_like(obj, user)
 
-    def create_watchers(self, obj):
+    def create_watchers(self, obj, notify_level=None):
         for i in range(self.sd.int(*NUM_WATCHERS)):
             user = self.sd.db_object_from_queryset(User.objects.all())
-            obj.add_watcher(user)
+            if not notify_level:
+                obj.add_watcher(user)
+            else:
+                obj.add_watcher(user, notify_level)
+

@@ -218,7 +218,7 @@ def _build_watched_sql_for_projects(for_user):
 		      ON (projects_project.id = notifications_notifypolicy.project_id)
 	    LEFT JOIN (SELECT project_id, count(*) watchers
                    FROM notifications_notifypolicy
-                   WHERE notifications_notifypolicy.notify_level != {ignore_notify_level}
+                   WHERE notifications_notifypolicy.notify_level != {none_notify_level}
                    GROUP BY project_id
                 ) type_watchers
 		      ON projects_project.id = type_watchers.project_id
@@ -226,11 +226,11 @@ def _build_watched_sql_for_projects(for_user):
 		      ON (projects_project.id = likes_likes.object_id AND {project_content_type_id} = likes_likes.content_type_id)
 	    WHERE
               notifications_notifypolicy.user_id = {for_user_id}
-              AND notifications_notifypolicy.notify_level != {ignore_notify_level}
+              AND notifications_notifypolicy.notify_level != {none_notify_level}
     """
     sql = sql.format(
         for_user_id=for_user.id,
-        ignore_notify_level=NotifyLevel.ignore,
+        none_notify_level=NotifyLevel.none,
         project_content_type_id=ContentType.objects.get(app_label="projects", model="project").id)
     return sql
 
@@ -248,7 +248,7 @@ def _build_liked_sql_for_projects(for_user):
 		      ON (projects_project.id = likes_like.object_id)
 	    LEFT JOIN (SELECT project_id, count(*) watchers
                    FROM notifications_notifypolicy
-                   WHERE notifications_notifypolicy.notify_level != {ignore_notify_level}
+                   WHERE notifications_notifypolicy.notify_level != {none_notify_level}
                    GROUP BY project_id
                 ) type_watchers
 		      ON projects_project.id = type_watchers.project_id
@@ -258,7 +258,7 @@ def _build_liked_sql_for_projects(for_user):
     """
     sql = sql.format(
         for_user_id=for_user.id,
-        ignore_notify_level=NotifyLevel.ignore,
+        none_notify_level=NotifyLevel.none,
         project_content_type_id=ContentType.objects.get(app_label="projects", model="project").id)
 
     return sql
