@@ -23,6 +23,7 @@ from taiga.users.models import User
 from taiga.base.utils.urls import get_absolute_url
 
 
+# Set this in settings.PROJECT_MODULES_CONFIGURATORS["bitbucket"]
 def get_or_generate_config(project):
     config = project.modules_config.config
     if config and "bitbucket" in config:
