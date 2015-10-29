@@ -30,7 +30,7 @@ Every code patch accepted in taiga codebase is licensed under [AGPL v3.0](http:/
 Please read carefully [our license](https://github.com/taigaio/taiga-back/blob/master/LICENSE) and ask us if you have any questions.
 
 
-#### Bug reports, enanhcements and support ####
+#### Bug reports, enhancements and support ####
 
 If you **nedd help to setup Taiga**, you want to **talk about some cool enhancemnt** or you have **some questions** please write us to our [mailing list](http://groups.google.com/d/forum/taigaio).
 
