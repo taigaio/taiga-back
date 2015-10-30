@@ -236,7 +236,10 @@ class HighLightedContentSerializer(serializers.Serializer):
 
     def get_tags_color(self, obj):
         tags = obj.get("tags", [])
-        return [{"name": tc[0], "color": tc[1]} for tc in obj.get("tags_colors", []) if tc[0] in tags]
+        tags = tags if tags is not None else []
+        tags_colors = obj.get("tags_colors", [])
+        tags_colors = tags_colors if tags_colors is not None else []
+        return [{"name": tc[0], "color": tc[1]} for tc in tags_colors if tc[0] in tags]
 
     def get_is_watcher(self, obj):
         return obj["id"] in self.user_watching.get(obj["type"], [])
