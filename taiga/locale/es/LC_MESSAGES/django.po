@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-27 09:53+0100\n"
-"PO-Revision-Date: 2015-10-27 08:53+0000\n"
+"POT-Creation-Date: 2015-10-30 18:20+0100\n"
+"PO-Revision-Date: 2015-10-30 17:20+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
@@ -1512,7 +1512,7 @@ msgstr "borrado"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:134
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:145
-#: taiga/projects/services/stats.py:137 taiga/projects/services/stats.py:138
+#: taiga/projects/services/stats.py:138 taiga/projects/services/stats.py:139
 msgid "Unassigned"
 msgstr "No asignado"
 
@@ -1869,15 +1869,15 @@ msgstr "roles"
 
 #: taiga/projects/notifications/choices.py:28
 msgid "Not watching"
-msgstr "No observado"
+msgstr ""
 
 #: taiga/projects/notifications/choices.py:29
 msgid "Watching"
-msgstr "Observado"
+msgstr ""
 
 #: taiga/projects/notifications/choices.py:30
 msgid "Ignoring"
-msgstr "Ignorado"
+msgstr ""
 
 #: taiga/projects/notifications/models.py:61
 msgid "created date time"
@@ -2617,7 +2617,7 @@ msgstr ""
 "\n"
 "[%(project)s] Borrada la página del wiki \"%(page)s\"\n"
 
-#: taiga/projects/notifications/validators.py:45
+#: taiga/projects/notifications/validators.py:46
 msgid "Watchers contains invalid users"
 msgstr "Los observadores tienen usuarios invalidos"
 
@@ -2686,11 +2686,11 @@ msgstr "Gravedades"
 msgid "Roles"
 msgstr "Roles"
 
-#: taiga/projects/services/stats.py:84
+#: taiga/projects/services/stats.py:85
 msgid "Future sprint"
 msgstr "Sprint futuro"
 
-#: taiga/projects/services/stats.py:101
+#: taiga/projects/services/stats.py:102
 msgid "Project End"
 msgstr "Final de proyecto"
 
@@ -3126,12 +3126,8 @@ msgstr ""
 
 #: taiga/projects/userstories/api.py:254
 #, python-brace-format
-msgid ""
-"Generating the user story [US #{ref} - {subject}](:us:{ref} \"US #{ref} - "
-"{subject}\")"
+msgid "Generating the user story #{ref} - {subject}"
 msgstr ""
-"Generada la historia de usuario [US #{ref} - {subject}](:us:{ref} \"US "
-"#{ref} - {subject}\")"
 
 #: taiga/projects/userstories/models.py:37
 msgid "role"
