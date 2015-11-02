@@ -300,13 +300,13 @@ def get_watched_list(for_user, from_user, type=None, q=None):
     and_needed = False
 
     if type:
-        filters_sql += " AND type = '{type}' ".format(type=type)
+        filters_sql += " AND type = %(type)s "
 
     if q:
         filters_sql += """ AND (
-            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', '{q}')
+            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', %(q)s)
         )
-        """.format(q=to_tsquery(q))
+        """
 
     sql = """
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
@@ -377,7 +377,11 @@ def get_watched_list(for_user, from_user, type=None, q=None):
         projects_sql=_build_watched_sql_for_projects(for_user))
 
     cursor = connection.cursor()
-    cursor.execute(sql)
+    params = {
+        "type": type,
+        "q": to_tsquery(q) if q is not None else ""
+    }
+    cursor.execute(sql, params)
 
     desc = cursor.description
     return [
@@ -391,13 +395,13 @@ def get_liked_list(for_user, from_user, type=None, q=None):
     and_needed = False
 
     if type:
-        filters_sql += " AND type = '{type}' ".format(type=type)
+        filters_sql += " AND type = %(type)s "
 
     if q:
         filters_sql += """ AND (
-            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', '{q}')
+            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', %(q)s)
         )
-        """.format(q=to_tsquery(q))
+        """
 
     sql = """
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
@@ -456,7 +460,11 @@ def get_liked_list(for_user, from_user, type=None, q=None):
         projects_sql=_build_liked_sql_for_projects(for_user))
 
     cursor = connection.cursor()
-    cursor.execute(sql)
+    params = {
+        "type": type,
+        "q": to_tsquery(q) if q is not None else ""
+    }
+    cursor.execute(sql, params)
 
     desc = cursor.description
     return [
@@ -470,13 +478,13 @@ def get_voted_list(for_user, from_user, type=None, q=None):
     and_needed = False
 
     if type:
-        filters_sql += " AND type = '{type}' ".format(type=type)
+        filters_sql += " AND type = %(type)s "
 
     if q:
         filters_sql += """ AND (
-            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', '{q}')
+            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', %(q)s)
         )
-        """.format(q=to_tsquery(q))
+        """
 
     sql = """
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
@@ -543,7 +551,11 @@ def get_voted_list(for_user, from_user, type=None, q=None):
         issues_sql=_build_sql_for_type(for_user, "issue", "issues_issue", "votes_vote", slug_column="null"))
 
     cursor = connection.cursor()
-    cursor.execute(sql)
+    params = {
+        "type": type,
+        "q": to_tsquery(q) if q is not None else ""
+    }
+    cursor.execute(sql, params)
 
     desc = cursor.description
     return [
