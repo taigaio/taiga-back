@@ -352,7 +352,7 @@ def test_watching_users_to_notify_on_issue_modification_6():
     watching_user_policy.notify_level = NotifyLevel.involved
     watching_user_policy.save()
     users = services.get_users_to_notify(issue)
-    assert users == {watching_user, issue.owner}
+    assert users == {issue.owner}
 
 
 def test_send_notifications_using_services_method_for_user_stories(settings, mail):

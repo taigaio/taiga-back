@@ -151,7 +151,7 @@ def get_users_to_notify(obj, *, discard_users=None) -> list:
 
     def _check_level(project:object, user:object, levels:tuple) -> bool:
         policy = get_notify_policy(project, user)
-        return policy.notify_level in [int(x) for x in levels]
+        return policy.notify_level in levels
 
     _can_notify_hard = partial(_check_level, project,
                                levels=[NotifyLevel.all])
@@ -160,8 +160,8 @@ def get_users_to_notify(obj, *, discard_users=None) -> list:
 
     candidates = set()
     candidates.update(filter(_can_notify_hard, project.members.all()))
+    candidates.update(filter(_can_notify_hard, obj.project.get_watchers()))
     candidates.update(filter(_can_notify_light, obj.get_watchers()))
-    candidates.update(filter(_can_notify_light, obj.project.get_watchers()))
     candidates.update(filter(_can_notify_light, obj.get_participants()))
 
     # Remove the changer from candidates
