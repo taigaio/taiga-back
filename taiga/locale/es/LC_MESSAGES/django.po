@@ -12,9 +12,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-30 18:20+0100\n"
-"PO-Revision-Date: 2015-10-30 17:20+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2015-11-02 09:09+0100\n"
+"PO-Revision-Date: 2015-10-30 17:28+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -1412,7 +1412,7 @@ msgstr "Texto multilínea"
 
 #: taiga/projects/custom_attributes/choices.py:27
 msgid "Date"
-msgstr ""
+msgstr "Fecha"
 
 #: taiga/projects/custom_attributes/models.py:38
 #: taiga/projects/issues/models.py:46
@@ -1642,11 +1642,11 @@ msgstr "recuento"
 #: taiga/projects/likes/models.py:31 taiga/projects/likes/models.py:32
 #: taiga/projects/likes/models.py:56
 msgid "Likes"
-msgstr ""
+msgstr "Likes"
 
 #: taiga/projects/likes/models.py:55
 msgid "Like"
-msgstr ""
+msgstr "Like"
 
 #: taiga/projects/milestones/models.py:37 taiga/projects/models.py:136
 #: taiga/projects/models.py:396 taiga/projects/models.py:460
@@ -3127,7 +3127,7 @@ msgstr ""
 #: taiga/projects/userstories/api.py:254
 #, python-brace-format
 msgid "Generating the user story #{ref} - {subject}"
-msgstr ""
+msgstr "Generada la historia de usuario #{ref} - {subject}"
 
 #: taiga/projects/userstories/models.py:37
 msgid "role"
