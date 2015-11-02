@@ -60,14 +60,14 @@ def test_attach_notify_level_to_project_queryset():
     qs = utils.attach_notify_level_to_project_queryset(qs, project1.owner)
 
     assert len(qs) == 2
-    assert qs[0].notify_level == NotifyLevel.notwatch
-    assert qs[1].notify_level == NotifyLevel.notwatch
+    assert qs[0].notify_level == NotifyLevel.involved
+    assert qs[1].notify_level == NotifyLevel.involved
 
-    services.create_notify_policy(project1, project1.owner, NotifyLevel.watch)
+    services.create_notify_policy(project1, project1.owner, NotifyLevel.all)
     qs = project1.__class__.objects.order_by("id")
     qs = utils.attach_notify_level_to_project_queryset(qs, project1.owner)
-    assert qs[0].notify_level == NotifyLevel.watch
-    assert qs[1].notify_level == NotifyLevel.notwatch
+    assert qs[0].notify_level == NotifyLevel.all
+    assert qs[1].notify_level == NotifyLevel.involved
 
 
 def test_create_retrieve_notify_policy():
@@ -81,14 +81,14 @@ def test_create_retrieve_notify_policy():
 
     current_number = policy_model_cls.objects.all().count()
     assert current_number == 1
-    assert policy.notify_level == NotifyLevel.notwatch
+    assert policy.notify_level == NotifyLevel.involved
 
 
 def test_notify_policy_existence():
     project = f.ProjectFactory.create()
     assert not services.notify_policy_exists(project, project.owner)
 
-    services.create_notify_policy(project, project.owner, NotifyLevel.watch)
+    services.create_notify_policy(project, project.owner, NotifyLevel.all)
     assert services.notify_policy_exists(project, project.owner)
 
 
@@ -145,23 +145,23 @@ def test_users_to_notify():
 
     member1 = f.MembershipFactory.create(project=project, role=role1)
     policy_member1 = member1.user.notify_policies.get(project=project)
-    policy_member1.notify_level = NotifyLevel.ignore
+    policy_member1.notify_level = NotifyLevel.none
     policy_member1.save()
     member2 = f.MembershipFactory.create(project=project, role=role1)
     policy_member2 = member2.user.notify_policies.get(project=project)
-    policy_member2.notify_level = NotifyLevel.ignore
+    policy_member2.notify_level = NotifyLevel.none
     policy_member2.save()
     member3 = f.MembershipFactory.create(project=project, role=role1)
     policy_member3 = member3.user.notify_policies.get(project=project)
-    policy_member3.notify_level = NotifyLevel.ignore
+    policy_member3.notify_level = NotifyLevel.none
     policy_member3.save()
     member4 = f.MembershipFactory.create(project=project, role=role1)
     policy_member4 = member4.user.notify_policies.get(project=project)
-    policy_member4.notify_level = NotifyLevel.ignore
+    policy_member4.notify_level = NotifyLevel.none
     policy_member4.save()
     member5 = f.MembershipFactory.create(project=project, role=role2)
     policy_member5 = member5.user.notify_policies.get(project=project)
-    policy_member5.notify_level = NotifyLevel.ignore
+    policy_member5.notify_level = NotifyLevel.none
     policy_member5.save()
     inactive_member1 = f.MembershipFactory.create(project=project, role=role1)
     inactive_member1.user.is_active =  False
@@ -175,11 +175,11 @@ def test_users_to_notify():
     policy_model_cls = apps.get_model("notifications", "NotifyPolicy")
 
     policy_inactive_member1 = policy_model_cls.objects.get(user=inactive_member1.user)
-    policy_inactive_member1.notify_level = NotifyLevel.watch
+    policy_inactive_member1.notify_level = NotifyLevel.all
     policy_inactive_member1.save()
 
     policy_system_member1 = policy_model_cls.objects.get(user=system_member1.user)
-    policy_system_member1.notify_level = NotifyLevel.watch
+    policy_system_member1.notify_level = NotifyLevel.all
     policy_system_member1.save()
 
     history = MagicMock()
@@ -189,14 +189,14 @@ def test_users_to_notify():
     # Test basic description modifications
     issue.description = "test1"
     issue.save()
-    policy_member4.notify_level = NotifyLevel.watch
+    policy_member4.notify_level = NotifyLevel.all
     policy_member4.save()
     users = services.get_users_to_notify(issue)
     assert len(users) == 1
     assert tuple(users)[0] == issue.get_owner()
 
     # Test watch notify level in one member
-    policy_member1.notify_level = NotifyLevel.watch
+    policy_member1.notify_level = NotifyLevel.all
     policy_member1.save()
 
     users = services.get_users_to_notify(issue)
@@ -205,14 +205,14 @@ def test_users_to_notify():
 
     # Test with watchers
     issue.add_watcher(member3.user)
-    policy_member3.notify_level = NotifyLevel.watch
+    policy_member3.notify_level = NotifyLevel.all
     policy_member3.save()
     users = services.get_users_to_notify(issue)
     assert len(users) == 3
     assert users == {member1.user, member3.user, issue.get_owner()}
 
     # Test with watchers with ignore policy
-    policy_member3.notify_level = NotifyLevel.ignore
+    policy_member3.notify_level = NotifyLevel.none
     policy_member3.save()
 
     issue.add_watcher(member3.user)
@@ -251,7 +251,7 @@ def test_watching_users_to_notify_on_issue_modification_1():
     watching_user_policy = services.get_notify_policy(project, watching_user)
     issue.description = "test1"
     issue.save()
-    watching_user_policy.notify_level = NotifyLevel.watch
+    watching_user_policy.notify_level = NotifyLevel.all
     users = services.get_users_to_notify(issue)
     assert users == {watching_user, issue.owner}
 
@@ -260,7 +260,7 @@ def test_watching_users_to_notify_on_issue_modification_2():
     # If:
     # - the user is watching the issue
     # - the user is not watching the project
-    # - the notify policy is notwatch
+    # - the notify policy is involved
     # Then:
     # - email is sent
     project = f.ProjectFactory.create(anon_permissions= ["view_issues"])
@@ -270,7 +270,7 @@ def test_watching_users_to_notify_on_issue_modification_2():
     watching_user_policy = services.get_notify_policy(project, watching_user)
     issue.description = "test1"
     issue.save()
-    watching_user_policy.notify_level = NotifyLevel.notwatch
+    watching_user_policy.notify_level = NotifyLevel.involved
     users = services.get_users_to_notify(issue)
     assert users == {watching_user, issue.owner}
 
@@ -289,7 +289,7 @@ def test_watching_users_to_notify_on_issue_modification_3():
     watching_user_policy = services.get_notify_policy(project, watching_user)
     issue.description = "test1"
     issue.save()
-    watching_user_policy.notify_level = NotifyLevel.ignore
+    watching_user_policy.notify_level = NotifyLevel.none
     watching_user_policy.save()
     users = services.get_users_to_notify(issue)
     assert users == {issue.owner}
@@ -309,7 +309,7 @@ def test_watching_users_to_notify_on_issue_modification_4():
     watching_user_policy = services.get_notify_policy(project, watching_user)
     issue.description = "test1"
     issue.save()
-    watching_user_policy.notify_level = NotifyLevel.ignore
+    watching_user_policy.notify_level = NotifyLevel.none
     watching_user_policy.save()
     users = services.get_users_to_notify(issue)
     assert users == {issue.owner}
@@ -329,7 +329,7 @@ def test_watching_users_to_notify_on_issue_modification_5():
     watching_user_policy = services.get_notify_policy(project, watching_user)
     issue.description = "test1"
     issue.save()
-    watching_user_policy.notify_level = NotifyLevel.watch
+    watching_user_policy.notify_level = NotifyLevel.all
     watching_user_policy.save()
     users = services.get_users_to_notify(issue)
     assert users == {watching_user, issue.owner}
@@ -339,7 +339,7 @@ def test_watching_users_to_notify_on_issue_modification_6():
     # If:
     # - the user is not watching the issue
     # - the user is watching the project
-    # - the notify policy is notwatch
+    # - the notify policy is involved
     # Then:
     # - email is sent
     project = f.ProjectFactory.create(anon_permissions= ["view_issues"])
@@ -349,7 +349,7 @@ def test_watching_users_to_notify_on_issue_modification_6():
     watching_user_policy = services.get_notify_policy(project, watching_user)
     issue.description = "test1"
     issue.save()
-    watching_user_policy.notify_level = NotifyLevel.notwatch
+    watching_user_policy.notify_level = NotifyLevel.involved
     watching_user_policy.save()
     users = services.get_users_to_notify(issue)
     assert users == {watching_user, issue.owner}

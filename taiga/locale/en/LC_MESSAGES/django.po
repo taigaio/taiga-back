@@ -1673,15 +1673,15 @@ msgid "roles"
 msgstr ""
 
 #: taiga/projects/notifications/choices.py:28
-msgid "Not watching"
+msgid "Involved"
 msgstr ""
 
 #: taiga/projects/notifications/choices.py:29
-msgid "Watching"
+msgid "All"
 msgstr ""
 
 #: taiga/projects/notifications/choices.py:30
-msgid "Ignoring"
+msgid "None"
 msgstr ""
 
 #: taiga/projects/notifications/models.py:61

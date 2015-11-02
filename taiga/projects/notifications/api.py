@@ -39,7 +39,7 @@ class NotifyPolicyViewSet(ModelCrudViewSet):
         ).distinct()
 
         for project in projects:
-            services.create_notify_policy_if_not_exists(project, self.request.user, NotifyLevel.watch)
+            services.create_notify_policy_if_not_exists(project, self.request.user, NotifyLevel.all)
 
     def get_queryset(self):
         if self.request.user.is_anonymous():

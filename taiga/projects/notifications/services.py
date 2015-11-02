@@ -52,7 +52,7 @@ def notify_policy_exists(project, user) -> bool:
     return qs.exists()
 
 
-def create_notify_policy(project, user, level=NotifyLevel.notwatch):
+def create_notify_policy(project, user, level=NotifyLevel.involved):
     """
     Given a project and user, create notification policy for it.
     """
@@ -65,7 +65,7 @@ def create_notify_policy(project, user, level=NotifyLevel.notwatch):
         raise exc.IntegrityError(_("Notify exists for specified user and project")) from e
 
 
-def create_notify_policy_if_not_exists(project, user, level=NotifyLevel.notwatch):
+def create_notify_policy_if_not_exists(project, user, level=NotifyLevel.involved):
     """
     Given a project and user, create notification policy for it.
     """
@@ -85,7 +85,7 @@ def get_notify_policy(project, user):
     """
     model_cls = apps.get_model("notifications", "NotifyPolicy")
     instance, _ = model_cls.objects.get_or_create(project=project, user=user,
-                                                  defaults={"notify_level": NotifyLevel.notwatch})
+                                                  defaults={"notify_level": NotifyLevel.involved})
     return instance
 
 
@@ -154,9 +154,9 @@ def get_users_to_notify(obj, *, discard_users=None) -> list:
         return policy.notify_level in [int(x) for x in levels]
 
     _can_notify_hard = partial(_check_level, project,
-                               levels=[NotifyLevel.watch])
+                               levels=[NotifyLevel.all])
     _can_notify_light = partial(_check_level, project,
-                                levels=[NotifyLevel.watch, NotifyLevel.notwatch])
+                                levels=[NotifyLevel.all, NotifyLevel.involved])
 
     candidates = set()
     candidates.update(filter(_can_notify_hard, project.members.all()))
@@ -381,7 +381,7 @@ def get_projects_watched(user_or_id):
         user_id = user_or_id
 
     project_class = apps.get_model("projects", "Project")
-    return project_class.objects.filter(notify_policies__user__id=user_id).exclude(notify_policies__notify_level=NotifyLevel.ignore)
+    return project_class.objects.filter(notify_policies__user__id=user_id).exclude(notify_policies__notify_level=NotifyLevel.none)
 
 def add_watcher(obj, user):
     """Add a watcher to an object.
@@ -397,7 +397,7 @@ def add_watcher(obj, user):
         object_id=obj.id, user=user, project=obj.project)
 
     notify_policy, _ = apps.get_model("notifications", "NotifyPolicy").objects.get_or_create(
-        project=obj.project, user=user, defaults={"notify_level": NotifyLevel.watch})
+        project=obj.project, user=user, defaults={"notify_level": NotifyLevel.all})
 
     return watched
 
@@ -434,7 +434,7 @@ def set_notify_policy_level_to_ignore(notify_policy):
     """
     Set notification level for specified policy.
     """
-    set_notify_policy_level(notify_policy, NotifyLevel.ignore)
+    set_notify_policy_level(notify_policy, NotifyLevel.none)
 
 
 def make_ms_thread_index(msg_id, dt):

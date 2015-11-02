@@ -481,7 +481,7 @@ def test_get_watched_list_for_project_with_ignored_notify_level():
     role = f.RoleFactory(project=project, permissions=["view_project", "view_us", "view_tasks", "view_issues"])
     membership = f.MembershipFactory(project=project, role=role, user=fav_user)
     notify_policy = NotifyPolicy.objects.get(user=fav_user, project=project)
-    notify_policy.notify_level=NotifyLevel.ignore
+    notify_policy.notify_level=NotifyLevel.none
     notify_policy.save()
 
     watched_list = get_watched_list(fav_user, viewer_user)

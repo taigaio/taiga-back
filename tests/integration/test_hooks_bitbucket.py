@@ -265,7 +265,7 @@ def test_issues_event_opened_issue(client):
     issue.project.save()
     Membership.objects.create(user=issue.owner, project=issue.project, role=f.RoleFactory.create(project=issue.project), is_owner=True)
     notify_policy = NotifyPolicy.objects.get(user=issue.owner, project=issue.project)
-    notify_policy.notify_level = NotifyLevel.watch
+    notify_policy.notify_level = NotifyLevel.all
     notify_policy.save()
 
     payload = {
