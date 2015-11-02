@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -23,4 +23,16 @@ class ResolverSerializer(serializers.Serializer):
     us = serializers.IntegerField(required=False)
     task = serializers.IntegerField(required=False)
     issue = serializers.IntegerField(required=False)
+    ref = serializers.IntegerField(required=False)
     wikipage = serializers.CharField(max_length=512, required=False)
+
+    def validate(self, attrs):
+        if "ref" in attrs:
+            if "us" in attrs:
+                raise serializers.ValidationError("'us' param is incompatible with 'ref' in the same request")
+            if "task" in attrs:
+                raise serializers.ValidationError("'task' param is incompatible with 'ref' in the same request")
+            if "issue" in attrs:
+                raise serializers.ValidationError("'issue' param is incompatible with 'ref' in the same request")
+
+        return attrs

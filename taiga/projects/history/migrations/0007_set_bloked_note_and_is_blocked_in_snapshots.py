@@ -15,7 +15,6 @@ def set_current_values_of_blocked_note_and_is_blocked_to_the_last_snapshot(apps,
         model = get_model_from_key(history_entry.key)
         pk = get_pk_from_key(history_entry.key)
         try:
-            print("Fixing history_entry: ", history_entry.created_at)
             obj = model.objects.get(pk=pk)
             save = False
             if hasattr(obj, "is_blocked") and "is_blocked" not in history_entry.snapshot:
@@ -30,7 +29,7 @@ def set_current_values_of_blocked_note_and_is_blocked_to_the_last_snapshot(apps,
                 history_entry.save()
 
         except ObjectDoesNotExist as e:
-            print("Ignoring {}".format(history_entry.pk))
+            pass
 
 
 class Migration(migrations.Migration):

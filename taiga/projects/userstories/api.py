@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -28,15 +28,15 @@ from taiga.base import exceptions as exc
 from taiga.base import response
 from taiga.base import status
 from taiga.base.decorators import list_route
-from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.occ import OCCResourceMixin
-
 from taiga.projects.models import Project, UserStoryStatus
 from taiga.projects.history.services import take_snapshot
+from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
 from . import models
 from . import permissions
@@ -44,18 +44,36 @@ from . import serializers
 from . import services
 
 
-class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
-    model = models.UserStory
+class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
+                       ModelCrudViewSet):
+    queryset = models.UserStory.objects.all()
     permission_classes = (permissions.UserStoryPermission,)
+    filter_backends = (filters.CanViewUsFilterBackend,
+                       filters.OwnersFilter,
+                       filters.AssignedToFilter,
+                       filters.StatusesFilter,
+                       filters.TagsFilter,
+                       filters.WatchersFilter,
+                       filters.QFilter,
+                       filters.OrderByFilterMixin)
+    retrieve_exclude_filters = (filters.OwnersFilter,
+                                filters.AssignedToFilter,
+                                filters.StatusesFilter,
+                                filters.TagsFilter,
+                                filters.WatchersFilter)
+    filter_fields = ["project",
+                     "milestone",
+                     "milestone__isnull",
+                     "is_closed",
+                     "status__is_archived",
+                     "status__is_closed"]
+    order_by_fields = ["backlog_order",
+                       "sprint_order",
+                       "kanban_order",
+                       "total_voters"]
 
-    filter_backends = (filters.StatusFilter, filters.CanViewUsFilterBackend, filters.TagsFilter,
-                       filters.QFilter, filters.OrderByFilterMixin)
-
-    retrieve_exclude_filters = (filters.StatusFilter, filters.TagsFilter,)
-    filter_fields = ["project", "milestone", "milestone__isnull",
-        "is_archived", "status__is_archived", "assigned_to",
-        "status__is_closed", "watchers", "is_closed"]
-    order_by_fields = ["backlog_order", "sprint_order", "kanban_order"]
+    # Specific filter used for filtering neighbor user stories
+    _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')
 
     def get_serializer_class(self, *args, **kwargs):
         if self.action in ["retrieve", "by_ref"]:
@@ -66,17 +84,41 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
 
         return serializers.UserStorySerializer
 
-    # Specific filter used for filtering neighbor user stories
-    _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object_or_none()
+        project_id = request.DATA.get('project', None)
+        if project_id and self.object and self.object.project.id != project_id:
+            try:
+                new_project = Project.objects.get(pk=project_id)
+                self.check_permissions(request, "destroy", self.object)
+                self.check_permissions(request, "create", new_project)
+
+                sprint_id = request.DATA.get('milestone', None)
+                if sprint_id is not None and new_project.milestones.filter(pk=sprint_id).count() == 0:
+                    request.DATA['milestone'] = None
+
+                status_id = request.DATA.get('status', None)
+                if status_id is not None:
+                    try:
+                        old_status = self.object.project.us_statuses.get(pk=status_id)
+                        new_status = new_project.us_statuses.get(slug=old_status.slug)
+                        request.DATA['status'] = new_status.id
+                    except UserStoryStatus.DoesNotExist:
+                        request.DATA['status'] = new_project.default_us_status.id
+            except Project.DoesNotExist:
+                return response.BadRequest(_("The project doesn't exist"))
+
+        return super().update(request, *args, **kwargs)
+
 
     def get_queryset(self):
-        qs = self.model.objects.all()
+        qs = super().get_queryset()
         qs = qs.prefetch_related("role_points",
                                  "role_points__points",
-                                 "role_points__role",
-                                 "watchers")
+                                 "role_points__role")
         qs = qs.select_related("milestone", "project")
-        return qs
+        qs = self.attach_votes_attrs_to_queryset(qs)
+        return self.attach_watchers_attrs_to_queryset(qs)
 
     def pre_save(self, obj):
         # This is very ugly hack, but having
@@ -106,6 +148,37 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
                     role_points.save()
 
         super().post_save(obj, created)
+
+    def pre_conditions_on_save(self, obj):
+        super().pre_conditions_on_save(obj)
+
+        if obj.milestone and obj.milestone.project != obj.project:
+            raise exc.PermissionDenied(_("You don't have permissions to set this sprint "
+                                         "to this user story."))
+
+        if obj.status and obj.status.project != obj.project:
+            raise exc.PermissionDenied(_("You don't have permissions to set this status "
+                                         "to this user story."))
+
+    @list_route(methods=["GET"])
+    def filters_data(self, request, *args, **kwargs):
+        project_id = request.QUERY_PARAMS.get("project", None)
+        project = get_object_or_404(Project, id=project_id)
+
+        filter_backends = self.get_filter_backends()
+        statuses_filter_backends = (f for f in filter_backends if f != filters.StatusesFilter)
+        assigned_to_filter_backends = (f for f in filter_backends if f != filters.AssignedToFilter)
+        owners_filter_backends = (f for f in filter_backends if f != filters.OwnersFilter)
+        tags_filter_backends = (f for f in filter_backends if f != filters.TagsFilter)
+
+        queryset = self.get_queryset()
+        querysets = {
+            "statuses": self.filter_queryset(queryset, filter_backends=statuses_filter_backends),
+            "assigned_to": self.filter_queryset(queryset, filter_backends=assigned_to_filter_backends),
+            "owners": self.filter_queryset(queryset, filter_backends=owners_filter_backends),
+            "tags": self.filter_queryset(queryset)
+        }
+        return response.Ok(services.get_userstories_filters_data(project, querysets))
 
     @list_route(methods=["GET"])
     def by_ref(self, request):
@@ -178,8 +251,7 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
         if response.status_code == status.HTTP_201_CREATED and self.object.generated_from_issue:
             self.object.generated_from_issue.save()
 
-            comment = _("Generating the user story [US #{ref} - "
-                        "{subject}](:us:{ref} \"US #{ref} - {subject}\")")
+            comment = _("Generating the user story #{ref} - {subject}")
             comment = comment.format(ref=self.object.ref, subject=self.object.subject)
             history = take_snapshot(self.object.generated_from_issue,
                                     comment=comment,
@@ -188,3 +260,12 @@ class UserStoryViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMi
             self.send_notifications(self.object.generated_from_issue, history)
 
         return response
+
+class UserStoryVotersViewSet(VotersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.UserStoryVotersPermission,)
+    resource_model = models.UserStory
+
+
+class UserStoryWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.UserStoryWatchersPermission,)
+    resource_model = models.UserStory

@@ -1,6 +1,6 @@
-# Copyright (C) 2015 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2015 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -22,14 +22,20 @@ from django_pgjson.fields import JsonField
 
 from taiga.projects.occ.mixins import OCCModelMixin
 
+from . import choices
+
 
 ######################################################
 #  Custom Attribute Models
 #######################################################
 
+
 class AbstractCustomAttribute(models.Model):
     name = models.CharField(null=False, blank=False, max_length=64, verbose_name=_("name"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
+    type = models.CharField(null=False, blank=False, max_length=16,
+                            choices=choices.TYPES_CHOICES, default=choices.TEXT_TYPE,
+                            verbose_name=_("type"))
     order = models.IntegerField(null=False, blank=False, default=10000, verbose_name=_("order"))
     project = models.ForeignKey("projects.Project", null=False, blank=False, related_name="%(class)ss",
                                 verbose_name=_("project"))

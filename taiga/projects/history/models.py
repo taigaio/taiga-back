@@ -1,4 +1,4 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -29,6 +29,9 @@ from .choices import HISTORY_TYPE_CHOICES
 
 from taiga.base.utils.diff import make_diff as make_diff_from_dicts
 
+# This keys has been removed from freeze_impl so we can have objects where the
+# previous diff has value for the attribute and we want to prevent their propagation
+IGNORE_DIFF_FIELDS = [ "watchers", "description_diff", "content_diff", "blocked_note_diff"]
 
 def _generate_uuid():
     return str(uuid.uuid1())
@@ -94,7 +97,10 @@ class HistoryEntry(models.Model):
     def owner(self):
         pk = self.user["pk"]
         model = apps.get_model("users", "User")
-        return model.objects.get(pk=pk)
+        try:
+            return model.objects.get(pk=pk)
+        except model.DoesNotExist:
+            return None
 
     @cached_property
     def values_diff(self):
@@ -124,22 +130,12 @@ class HistoryEntry(models.Model):
 
         for key in self.diff:
             value = None
-
-            # Note: Hack to prevent description_diff propagation
-            #       on old HistoryEntry objects.
-            if key == "description_diff":
-                continue
-            elif key == "content_diff":
-                continue
-            elif key == "blocked_note_diff":
+            if key in IGNORE_DIFF_FIELDS:
                 continue
             elif key in["description", "content", "blocked_note"]:
                 (key, value) = resolve_diff_value(key)
             elif key in users_keys:
                 value = [resolve_value("users", x) for x in self.diff[key]]
-            elif key == "watchers":
-                value = [[resolve_value("users", x) for x in self.diff[key][0]],
-                         [resolve_value("users", x) for x in self.diff[key][1]]]
             elif key == "points":
                 points = {}
 

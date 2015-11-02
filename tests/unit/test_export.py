@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -28,7 +28,6 @@ def test_export_issue_finish_date(client):
     issue = f.IssueFactory.create(finished_date="2014-10-22")
     output = io.StringIO()
     render_project(issue.project, output)
-    print(output.getvalue())
     project_data = json.loads(output.getvalue())
     finish_date = project_data["issues"][0]["finished_date"]
     assert finish_date == "2014-10-22T00:00:00+0000"

@@ -1,7 +1,7 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -25,7 +25,7 @@ from taiga.permissions.permissions import MEMBERS_PERMISSIONS
 from tests.utils import disconnect_signals, reconnect_signals
 
 
-pytestmark = pytest.mark.django_db
+pytestmark = pytest.mark.django_db(transaction=True)
 
 
 def setup_module(module):
@@ -124,10 +124,11 @@ def test_search_text_query_in_my_project(client, searches_initial_data):
 
     response = client.get(reverse("search-list"), {"project": data.project1.id, "text": "back"})
     assert response.status_code == 200
-    assert response.data["count"] == 2
+    assert response.data["count"] == 3
     assert len(response.data["userstories"]) == 1
     assert len(response.data["tasks"]) == 1
-    assert len(response.data["issues"]) == 0
+    # Back is a backend substring
+    assert len(response.data["issues"]) == 1
     assert len(response.data["wikipages"]) == 0
 
 

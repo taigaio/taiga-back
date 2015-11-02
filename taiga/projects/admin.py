@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -17,7 +17,10 @@
 from django.contrib import admin
 
 from taiga.projects.milestones.admin import MilestoneInline
+from taiga.projects.notifications.admin import WatchedInline
+from taiga.projects.votes.admin import VoteInline
 from taiga.users.admin import RoleInline
+
 from . import models
 
 class MembershipAdmin(admin.ModelAdmin):
@@ -35,7 +38,7 @@ class ProjectAdmin(admin.ModelAdmin):
     list_display = ["name", "owner", "created_date", "total_milestones",
                     "total_story_points"]
     list_display_links = list_display
-    inlines = [RoleInline, MembershipInline, MilestoneInline]
+    inlines = [RoleInline, MembershipInline, MilestoneInline, WatchedInline, VoteInline]
 
     def get_object(self, *args, **kwargs):
         self.obj = super().get_object(*args, **kwargs)

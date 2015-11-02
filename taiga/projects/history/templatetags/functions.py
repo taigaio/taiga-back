@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -18,17 +18,16 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_jinja import library
 
-register = library.Library()
-
 
 EXTRA_FIELD_VERBOSE_NAMES = {
     "description_diff": _("description"),
     "content_diff": _("content"),
-    "blocked_note_diff": _("blocked note")
+    "blocked_note_diff": _("blocked note"),
+    "milestone": _("sprint"),
 }
 
 
-@register.global_function
+@library.global_function
 def verbose_name(obj_class, field_name):
     if field_name in EXTRA_FIELD_VERBOSE_NAMES:
         return EXTRA_FIELD_VERBOSE_NAMES[field_name]
@@ -38,6 +37,7 @@ def verbose_name(obj_class, field_name):
     except Exception:
         return field_name
 
-@register.global_function
+
+@library.global_function
 def lists_diff(list1, list2):
     return (list(set(list1) - set(list2)))

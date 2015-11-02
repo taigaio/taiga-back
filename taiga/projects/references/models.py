@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -80,19 +80,31 @@ def delete_sequence(sender, instance, **kwargs):
         seq.delete(seqname)
 
 
-def attach_sequence(sender, instance, created, **kwargs):
-    if created and not instance._importing:
-        # Create a reference object. This operation should be
-        # used in transaction context, otherwise it can
-        # create a lot of phantom reference objects.
-        refval, _ = make_reference(instance, instance.project)
+def store_previous_project(sender, instance, **kwargs):
+    try:
+        prev_instance = sender.objects.get(pk=instance.pk)
+        instance.prev_project = prev_instance.project
+    except sender.DoesNotExist:
+        instance.prev_project = None
 
-        # Additionally, attach sequence number to instance as ref
-        instance.ref = refval
-        instance.save(update_fields=['ref'])
+
+def attach_sequence(sender, instance, created, **kwargs):
+    if not instance._importing:
+        if created or instance.prev_project != instance.project:
+            # Create a reference object. This operation should be
+            # used in transaction context, otherwise it can
+            # create a lot of phantom reference objects.
+            refval, _ = make_reference(instance, instance.project)
+
+            # Additionally, attach sequence number to instance as ref
+            instance.ref = refval
+            instance.save(update_fields=['ref'])
 
 
 models.signals.post_save.connect(create_sequence, sender=Project, dispatch_uid="refproj")
+models.signals.pre_save.connect(store_previous_project, sender=UserStory, dispatch_uid="refus")
+models.signals.pre_save.connect(store_previous_project, sender=Issue, dispatch_uid="refissue")
+models.signals.pre_save.connect(store_previous_project, sender=Task, dispatch_uid="reftask")
 models.signals.post_save.connect(attach_sequence, sender=UserStory, dispatch_uid="refus")
 models.signals.post_save.connect(attach_sequence, sender=Issue, dispatch_uid="refissue")
 models.signals.post_save.connect(attach_sequence, sender=Task, dispatch_uid="reftask")

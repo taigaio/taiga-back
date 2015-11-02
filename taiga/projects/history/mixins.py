@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -17,7 +17,7 @@
 import warnings
 
 from .services import take_snapshot
-
+from taiga.projects.notifications import services as notifications_services
 
 class HistoryResourceMixin(object):
     """
@@ -62,6 +62,8 @@ class HistoryResourceMixin(object):
         sobj = self.get_object_for_snapshot(obj)
         if sobj != obj and delete:
             delete = False
+
+        notifications_services.analize_object_for_watchers(obj, comment, user)
 
         self.__last_history = take_snapshot(sobj, comment=comment, user=user, delete=delete)
         self.__object_saved = True

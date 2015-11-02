@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -21,7 +21,7 @@ from taiga.base.api import serializers
 
 class WatchersValidator:
     def validate_watchers(self, attrs, source):
-        users = attrs[source]
+        users = attrs.get(source, [])
 
         # Try obtain a valid project
         if self.object is None and "project" in attrs:
@@ -39,7 +39,9 @@ class WatchersValidator:
 
         # Check if incoming watchers are contained
         # in project members list
-        result = set(users).difference(set(project.members.all()))
+        member_ids = project.members.values_list("id", flat=True)
+        existing_watcher_ids = project.get_watchers().values_list("id", flat=True)
+        result = set(users).difference(member_ids).difference(existing_watcher_ids)
         if result:
             raise serializers.ValidationError(_("Watchers contains invalid users"))
 

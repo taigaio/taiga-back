@@ -1,7 +1,7 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -90,3 +90,26 @@ def test_new_object_with_two_webhook(settings):
         with patch('taiga.webhooks.tasks.delete_webhook') as delete_webhook_mock:
             services.take_snapshot(obj, user=obj.owner, comment="test", delete=True)
             assert delete_webhook_mock.call_count == 2
+
+
+def test_send_request_one_webhook(settings):
+    settings.WEBHOOKS_ENABLED = True
+    project = f.ProjectFactory()
+    f.WebhookFactory.create(project=project)
+
+    objects = [
+        f.IssueFactory.create(project=project),
+        f.TaskFactory.create(project=project),
+        f.UserStoryFactory.create(project=project),
+        f.WikiPageFactory.create(project=project)
+    ]
+
+    for obj in objects:
+        with patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
+            services.take_snapshot(obj, user=obj.owner, comment="test")
+            assert _send_request_mock.call_count == 1
+
+    for obj in objects:
+        with patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
+            services.take_snapshot(obj, user=obj.owner, comment="test", delete=True)
+            assert _send_request_mock.call_count == 1

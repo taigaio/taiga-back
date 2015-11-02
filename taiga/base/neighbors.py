@@ -1,7 +1,7 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -43,7 +43,7 @@ def get_neighbors(obj, results_set=None):
 
     query = """
         SELECT * FROM
-            (SELECT "id" as id, ROW_NUMBER() OVER()
+            (SELECT "col1" as id, ROW_NUMBER() OVER()
                 FROM (%s) as ID_AND_ROW)
         AS SELECTED_ID_AND_ROW
         """ % (base_sql)

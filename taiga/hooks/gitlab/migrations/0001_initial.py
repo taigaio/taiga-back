@@ -29,7 +29,7 @@ def create_github_system_user(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0006_auto_20141030_1132')
+        ('users', '0011_user_theme')
     ]
 
     operations = [

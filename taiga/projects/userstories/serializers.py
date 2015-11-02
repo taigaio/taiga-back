@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -27,7 +27,10 @@ from taiga.projects.validators import UserStoryStatusExistsValidator
 from taiga.projects.userstories.validators import UserStoryExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicUserStoryStatusSerializer
-from taiga.users.serializers import BasicInfoSerializer as UserBasicInfoSerializer
+from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
+from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
+
+from taiga.users.serializers import UserBasicInfoSerializer
 
 from . import models
 
@@ -42,7 +45,7 @@ class RolePointsField(serializers.WritableField):
         return json.loads(obj)
 
 
-class UserStorySerializer(WatchersValidator, serializers.ModelSerializer):
+class UserStorySerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer, serializers.ModelSerializer):
     tags = TagsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
     points = RolePointsField(source="role_points", required=False)
@@ -55,6 +58,7 @@ class UserStorySerializer(WatchersValidator, serializers.ModelSerializer):
     description_html = serializers.SerializerMethodField("get_description_html")
     status_extra_info = BasicUserStoryStatusSerializer(source="status", required=False, read_only=True)
     assigned_to_extra_info = UserBasicInfoSerializer(source="assigned_to", required=False, read_only=True)
+    owner_extra_info = UserBasicInfoSerializer(source="owner", required=False, read_only=True)
 
     class Meta:
         model = models.UserStory

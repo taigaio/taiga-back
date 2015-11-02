@@ -1,7 +1,7 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -32,7 +32,6 @@ USER_PERMISSIONS = [
     ('view_milestones', _('View milestones')),
     ('view_us', _('View user stories')),
     ('view_issues', _('View issues')),
-    ('vote_issues', _('Vote issues')),
     ('view_tasks', _('View tasks')),
     ('view_wiki_pages', _('View wiki pages')),
     ('view_wiki_links', _('View wiki links')),
@@ -41,7 +40,7 @@ USER_PERMISSIONS = [
     ('add_comments_to_us', _('Add comments to user stories')),
     ('add_comments_to_task', _('Add comments to tasks')),
     ('add_issue', _('Add issues')),
-    ('add_comments_issue', _('Add comments to issues')),
+    ('add_comments_to_issue', _('Add comments to issues')),
     ('add_wiki_page', _('Add wiki page')),
     ('modify_wiki_page', _('Modify wiki page')),
     ('add_wiki_link', _('Add wiki link')),
@@ -67,7 +66,6 @@ MEMBERS_PERMISSIONS = [
     ('delete_task', _('Delete task')),
     # Issue permissions
     ('view_issues', _('View issues')),
-    ('vote_issues', _('Vote issues')),
     ('add_issue', _('Add issue')),
     ('modify_issue', _('Modify issue')),
     ('delete_issue', _('Delete issue')),

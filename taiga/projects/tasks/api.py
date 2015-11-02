@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -20,13 +20,14 @@ from taiga.base.api.utils import get_object_or_404
 from taiga.base import filters, response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
-from taiga.base.api import ModelCrudViewSet
-from taiga.projects.models import Project
+from taiga.base.api import ModelCrudViewSet, ModelListViewSet
+from taiga.projects.models import Project, TaskStatus
 from django.http import HttpResponse
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.occ import OCCResourceMixin
+from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
 
 from . import models
@@ -35,12 +36,14 @@ from . import serializers
 from . import services
 
 
-class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
-    model = models.Task
+class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
+                  ModelCrudViewSet):
+    queryset = models.Task.objects.all()
     permission_classes = (permissions.TaskPermission,)
-    filter_backends = (filters.CanViewTasksFilterBackend,)
+    filter_backends = (filters.CanViewTasksFilterBackend, filters.WatchersFilter)
+    retrieve_exclude_filters = (filters.WatchersFilter,)
     filter_fields = ["user_story", "milestone", "project", "assigned_to",
-        "status__is_closed", "watchers"]
+        "status__is_closed"]
 
     def get_serializer_class(self, *args, **kwargs):
         if self.action in ["retrieve", "by_ref"]:
@@ -50,6 +53,42 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
             return serializers.TaskListSerializer
 
         return serializers.TaskSerializer
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object_or_none()
+        project_id = request.DATA.get('project', None)
+        if project_id and self.object and self.object.project.id != project_id:
+            try:
+                new_project = Project.objects.get(pk=project_id)
+                self.check_permissions(request, "destroy", self.object)
+                self.check_permissions(request, "create", new_project)
+
+                sprint_id = request.DATA.get('milestone', None)
+                if sprint_id is not None and new_project.milestones.filter(pk=sprint_id).count() == 0:
+                    request.DATA['milestone'] = None
+
+                us_id = request.DATA.get('user_story', None)
+                if us_id is not None and new_project.user_stories.filter(pk=us_id).count() == 0:
+                    request.DATA['user_story'] = None
+
+                status_id = request.DATA.get('status', None)
+                if status_id is not None:
+                    try:
+                        old_status = self.object.project.task_statuses.get(pk=status_id)
+                        new_status = new_project.task_statuses.get(slug=old_status.slug)
+                        request.DATA['status'] = new_status.id
+                    except TaskStatus.DoesNotExist:
+                        request.DATA['status'] = new_project.default_task_status.id
+
+            except Project.DoesNotExist:
+                return response.BadRequest(_("The project doesn't exist"))
+
+        return super().update(request, *args, **kwargs)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = self.attach_votes_attrs_to_queryset(qs)
+        return self.attach_watchers_attrs_to_queryset(qs)
 
     def pre_save(self, obj):
         if obj.user_story:
@@ -62,16 +101,16 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
         super().pre_conditions_on_save(obj)
 
         if obj.milestone and obj.milestone.project != obj.project:
-            raise exc.WrongArguments(_("You don't have permissions for add/modify this task."))
+            raise exc.WrongArguments(_("You don't have permissions to set this sprint to this task."))
 
         if obj.user_story and obj.user_story.project != obj.project:
-            raise exc.WrongArguments(_("You don't have permissions for add/modify this task."))
+            raise exc.WrongArguments(_("You don't have permissions to set this user story to this task."))
 
         if obj.status and obj.status.project != obj.project:
-            raise exc.WrongArguments(_("You don't have permissions for add/modify this task."))
+            raise exc.WrongArguments(_("You don't have permissions to set this status to this task."))
 
         if obj.milestone and obj.user_story and obj.milestone != obj.user_story.milestone:
-            raise exc.WrongArguments(_("You don't have permissions for add/modify this task."))
+            raise exc.WrongArguments(_("You don't have permissions to set this sprint to this task."))
 
     @list_route(methods=["GET"])
     def by_ref(self, request):
@@ -133,3 +172,13 @@ class TaskViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
     @list_route(methods=["POST"])
     def bulk_update_us_order(self, request, **kwargs):
         return self._bulk_update_order("us_order", request, **kwargs)
+
+
+class TaskVotersViewSet(VotersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.TaskVotersPermission,)
+    resource_model = models.Task
+
+
+class TaskWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.TaskWatchersPermission,)
+    resource_model = models.Task

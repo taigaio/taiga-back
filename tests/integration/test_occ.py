@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -61,7 +61,7 @@ def test_invalid_concurrent_save_for_issue(client):
         response = client.json.post(url, json.dumps(data))
         assert response.status_code == 201, response.content
 
-        issue_id = json.loads(response.content)["id"]
+        issue_id = response.data["id"]
         url = reverse("issues-detail", args=(issue_id,))
         data = {"version": 1, "subject": "test 1"}
         response = client.patch(url, json.dumps(data), content_type="application/json")
@@ -90,7 +90,7 @@ def test_valid_concurrent_save_for_issue_different_versions(client):
         response = client.json.post(url, json.dumps(data))
         assert response.status_code == 201, response.content
 
-        issue_id = json.loads(response.content)["id"]
+        issue_id = response.data["id"]
         url = reverse("issues-detail", args=(issue_id,))
         data = {"version": 1, "subject": "test 1"}
         response = client.patch(url, json.dumps(data), content_type="application/json")
@@ -119,7 +119,7 @@ def test_valid_concurrent_save_for_issue_different_fields(client):
         response = client.json.post(url, json.dumps(data))
         assert response.status_code == 201, response.content
 
-        issue_id = json.loads(response.content)["id"]
+        issue_id = response.data["id"]
         url = reverse("issues-detail", args=(issue_id,))
         data = {"version": 1, "subject": "test 1"}
         response = client.patch(url, json.dumps(data), content_type="application/json")
@@ -143,7 +143,7 @@ def test_invalid_concurrent_save_for_wiki_page(client):
         response = client.json.post(url, json.dumps(data))
         assert response.status_code == 201, response.content
 
-        wiki_id = json.loads(response.content)["id"]
+        wiki_id = response.data["id"]
         url = reverse("wiki-detail", args=(wiki_id,))
         data = {"version": 1, "content": "test 1"}
         response = client.patch(url, json.dumps(data), content_type="application/json")
@@ -167,7 +167,7 @@ def test_valid_concurrent_save_for_wiki_page_different_versions(client):
         response = client.json.post(url, json.dumps(data))
         assert response.status_code == 201, response.content
 
-        wiki_id = json.loads(response.content)["id"]
+        wiki_id = response.data["id"]
         url = reverse("wiki-detail", args=(wiki_id,))
         data = {"version": 1, "content": "test 1"}
         response = client.patch(url, json.dumps(data), content_type="application/json")
@@ -194,7 +194,7 @@ def test_invalid_concurrent_save_for_us(client):
         response = client.json.post(url, json.dumps(data))
         assert response.status_code == 201
 
-        userstory_id = json.loads(response.content)["id"]
+        userstory_id = response.data["id"]
         url = reverse("userstories-detail", args=(userstory_id,))
         data = {"version": 1, "subject": "test 1"}
         response = client.patch(url, json.dumps(data), content_type="application/json")
@@ -220,7 +220,7 @@ def test_valid_concurrent_save_for_us_different_versions(client):
         response = client.json.post(url, json.dumps(data))
         assert response.status_code == 201
 
-        userstory_id = json.loads(response.content)["id"]
+        userstory_id = response.data["id"]
         url = reverse("userstories-detail", args=(userstory_id,))
         data = {"version": 1, "subject": "test 1"}
         response = client.patch(url, json.dumps(data), content_type="application/json")
@@ -246,7 +246,7 @@ def test_valid_concurrent_save_for_us_different_fields(client):
         response = client.json.post(url, json.dumps(data))
         assert response.status_code == 201
 
-        userstory_id = json.loads(response.content)["id"]
+        userstory_id = response.data["id"]
         url = reverse("userstories-detail", args=(userstory_id,))
         data = {"version": 1, "subject": "test 1"}
         response = client.patch(url, json.dumps(data), content_type="application/json")
@@ -272,7 +272,7 @@ def test_invalid_concurrent_save_for_task(client):
         response = client.json.post(url, json.dumps(data))
         assert response.status_code == 201
 
-        task_id = json.loads(response.content)["id"]
+        task_id = response.data["id"]
         url = reverse("tasks-detail", args=(task_id,))
         data = {"version": 1, "subject": "test 1"}
         response = client.patch(url, json.dumps(data), content_type="application/json")
@@ -298,7 +298,7 @@ def test_valid_concurrent_save_for_task_different_versions(client):
         response = client.json.post(url, json.dumps(data))
         assert response.status_code == 201
 
-        task_id = json.loads(response.content)["id"]
+        task_id = response.data["id"]
         url = reverse("tasks-detail", args=(task_id,))
         data = {"version": 1, "subject": "test 1"}
         response = client.patch(url, json.dumps(data), content_type="application/json")
@@ -324,7 +324,7 @@ def test_valid_concurrent_save_for_task_different_fields(client):
         response = client.json.post(url, json.dumps(data))
         assert response.status_code == 201
 
-        task_id = json.loads(response.content)["id"]
+        task_id = response.data["id"]
         url = reverse("tasks-detail", args=(task_id,))
         data = {"version": 1, "subject": "test 1"}
         response = client.patch(url, json.dumps(data), content_type="application/json")
@@ -351,7 +351,7 @@ def test_invalid_save_without_version_parameter(client):
         response = client.json.post(url, json.dumps(data))
         assert response.status_code == 201
 
-        task_id = json.loads(response.content)["id"]
+        task_id = response.data["id"]
         url = reverse("tasks-detail", args=(task_id,))
         data = {"subject": "test 1"}
         response = client.patch(url, json.dumps(data), content_type="application/json")

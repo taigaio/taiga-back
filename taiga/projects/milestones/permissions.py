@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -15,8 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
-                                        IsProjectOwner, AllowAny,
-                                        PermissionComponent, IsSuperUser)
+                                        IsAuthenticated, IsProjectOwner, AllowAny,
+                                        IsSuperUser)
 
 
 class MilestonePermission(TaigaResourcePermission):
@@ -29,3 +29,11 @@ class MilestonePermission(TaigaResourcePermission):
     destroy_perms = HasProjectPerm('delete_milestone')
     list_perms = AllowAny()
     stats_perms = HasProjectPerm('view_milestones')
+    watch_perms = IsAuthenticated() & HasProjectPerm('view_milestones')
+    unwatch_perms = IsAuthenticated() & HasProjectPerm('view_milestones')
+
+class MilestoneWatchersPermission(TaigaResourcePermission):
+    enought_perms = IsProjectOwner() | IsSuperUser()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_milestones')
+    list_perms = HasProjectPerm('view_milestones')

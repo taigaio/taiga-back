@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -16,8 +16,26 @@
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
+from django.shortcuts import _get_queryset
 
 from . import functions
+
+
+def get_object_or_none(klass, *args, **kwargs):
+    """
+    Uses get() to return an object, or None if the object does not exist.
+
+    klass may be a Model, Manager, or QuerySet object. All other passed
+    arguments and keyword arguments are used in the get() query.
+
+    Note: Like with get(), an MultipleObjectsReturned will be raised if more
+    than one object is found.
+    """
+    queryset = _get_queryset(klass)
+    try:
+        return queryset.get(*args, **kwargs)
+    except queryset.model.DoesNotExist:
+        return None
 
 
 def get_typename_for_model_class(model:object, for_concrete_model=True) -> str:
@@ -107,3 +125,9 @@ def update_in_bulk_with_ids(ids, list_of_new_values, model):
     """
     for id, new_values in zip(ids, list_of_new_values):
         model.objects.filter(id=id).update(**new_values)
+
+
+def to_tsquery(text):
+    # We want to transform a query like "exam proj" (should find "project example") to something like proj:* & exam:*
+    search_elems = ["{}:*".format(search_elem) for search_elem in text.split(" ")]
+    return " & ".join(search_elems)

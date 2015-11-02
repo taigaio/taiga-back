@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -17,14 +17,15 @@
 from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
-
 from taiga.base.utils import json
+from taiga.projects.notifications.mixins import WatchedResourceModelSerializer
+from taiga.projects.notifications.validators import WatchersValidator
 
 from ..userstories.serializers import UserStorySerializer
 from . import models
 
 
-class MilestoneSerializer(serializers.ModelSerializer):
+class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer, serializers.ModelSerializer):
     user_stories = UserStorySerializer(many=True, required=False, read_only=True)
     total_points = serializers.SerializerMethodField("get_total_points")
     closed_points = serializers.SerializerMethodField("get_closed_points")

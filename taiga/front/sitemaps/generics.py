@@ -1,5 +1,5 @@
-# Copyright (C) 2015 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2015 Taiga Agile LLC <support@taiga.io>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Taiga Agile LLC <support@taiga.io>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as

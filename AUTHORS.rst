@@ -7,21 +7,23 @@ The PRIMARY AUTHORS are:
 - Xavi Julian <xavier.julian@kaleidos.net>
 - Anler Hernández <hello@anler.me>
 
-Special thanks to Kaleidos Open Source S.L. for provice time for taiga
+Special thanks to Kaleidos Open Source S.L. for provice time for Taiga
 development.
 
 And here is an inevitably incomplete list of MUCH-APPRECIATED CONTRIBUTORS --
 people who have submitted patches, reported bugs, added translations, helped
 answer newbie questions, and generally made taiga that much better:
 
-- Andrés Moya <andres.moya@kaleidos.net>
-- Yamila Moreno <yamila.moreno@kaleidos.net>
-- Ricky Posner <e@eposner.com>
-- Alonso Torres <alonso.torres@kaleidos.net>
 - Alejandro Gómez <alejandro.gomez@kaleidos.net>
+- Alonso Torres <alonso.torres@kaleidos.net>
 - Andrea Stagi <stagi.andrea@gmail.com>
-- Hector Colina <hcolina@gmail.com>
-- Julien Palard
-- Joe Letts
+- Andrés Moya <andres.moya@kaleidos.net>
+- Andrey Alekseenko <al42and@gmail.com>
 - Chris Wilson <chris.wilson@aridhia.com>
-
+- David Burke <david@burkesoftware.com>
+- Hector Colina <hcolina@gmail.com>
+- Joe Letts
+- Julien Palard
+- Ricky Posner <e@eposner.com>
+- Yamila Moreno <yamila.moreno@kaleidos.net>
+- Brett Profitt <brett.profitt@gmail.com>

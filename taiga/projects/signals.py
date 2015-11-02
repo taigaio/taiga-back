@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -45,24 +45,6 @@ def membership_post_delete(sender, instance, using, **kwargs):
     instance.project.update_role_points()
 
 
-def update_watchers_on_membership_post_delete(sender, instance, using, **kwargs):
-    models = [apps.get_model("userstories", "UserStory"),
-              apps.get_model("tasks", "Task"),
-              apps.get_model("issues", "Issue")]
-
-    # `user_id` is used beacuse in some momments
-    # instance.user can contain pointer to now
-    # removed object from a database.
-    for model in models:
-        #filter(project=instance.project)
-        filter = {
-            "user_id": instance.user_id,
-            "%s__project"%(model._meta.model_name): instance.project,
-        }
-
-        model.watchers.through.objects.filter(**filter).delete()
-
-
 def create_notify_policy(sender, instance, using, **kwargs):
     if instance.user:
         create_notify_policy_if_not_exists(instance.project, instance.user)
@@ -97,3 +79,25 @@ def project_post_save(sender, instance, created, **kwargs):
         Membership = apps.get_model("projects", "Membership")
         Membership.objects.create(user=instance.owner, project=instance, role=owner_role,
                                   is_owner=True, email=instance.owner.email)
+
+
+def try_to_close_or_open_user_stories_when_edit_us_status(sender, instance, created, **kwargs):
+    from taiga.projects.userstories import services
+
+    for user_story in instance.user_stories.all():
+        if services.calculate_userstory_is_closed(user_story):
+            services.close_userstory(user_story)
+        else:
+            services.open_userstory(user_story)
+
+
+def try_to_close_or_open_user_stories_when_edit_task_status(sender, instance, created, **kwargs):
+    from taiga.projects.userstories import services
+
+    UserStory = apps.get_model("userstories", "UserStory")
+
+    for user_story in UserStory.objects.filter(tasks__status=instance).distinct():
+        if services.calculate_userstory_is_closed(user_story):
+            services.close_userstory(user_story)
+        else:
+            services.open_userstory(user_story)

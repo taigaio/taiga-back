@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -21,13 +21,13 @@ from taiga.base.api.permissions import IsAuthenticated
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base import response
-from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.decorators import list_route
 from taiga.projects.models import Project
 from taiga.mdrender.service import render as mdrender
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.occ import OCCResourceMixin
 
@@ -43,6 +43,12 @@ class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
     permission_classes = (permissions.WikiPagePermission,)
     filter_backends = (filters.CanViewWikiPagesFilterBackend,)
     filter_fields = ("project", "slug")
+    queryset = models.WikiPage.objects.all()
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = self.attach_watchers_attrs_to_queryset(qs)
+        return qs
 
     @list_route(methods=["GET"])
     def by_slug(self, request):
@@ -75,6 +81,11 @@ class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin, 
         obj.last_modifier = self.request.user
 
         super().pre_save(obj)
+
+
+class WikiWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.WikiPageWatchersPermission,)
+    resource_model = models.WikiPage
 
 
 class WikiLinkViewSet(ModelCrudViewSet):

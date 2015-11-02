@@ -1,7 +1,7 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -47,3 +47,36 @@ def test_update_milestone_with_userstories_list(client):
     client.login(user)
     response = client.json.patch(url, json.dumps(form_data))
     assert response.status_code == 200
+
+
+def test_list_milestones_taiga_info_headers(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    role = f.RoleFactory.create(project=project)
+    f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+
+    f.MilestoneFactory.create(project=project, owner=user, closed=True)
+    f.MilestoneFactory.create(project=project, owner=user, closed=True)
+    f.MilestoneFactory.create(project=project, owner=user, closed=True)
+    f.MilestoneFactory.create(project=project, owner=user, closed=False)
+    f.MilestoneFactory.create(owner=user, closed=False)
+
+    url = reverse("milestones-list")
+
+    client.login(project.owner)
+    response1 = client.json.get(url)
+    response2 = client.json.get(url, {"project": project.id})
+
+    assert response1.status_code == 200
+    assert "taiga-info-total-closed-milestones" in response1["access-control-expose-headers"]
+    assert "taiga-info-total-opened-milestones" in response1["access-control-expose-headers"]
+    assert response1.has_header("Taiga-Info-Total-Closed-Milestones") == False
+    assert response1.has_header("Taiga-Info-Total-Opened-Milestones") == False
+
+    assert response2.status_code == 200
+    assert "taiga-info-total-closed-milestones" in response2["access-control-expose-headers"]
+    assert "taiga-info-total-opened-milestones" in response2["access-control-expose-headers"]
+    assert response2.has_header("Taiga-Info-Total-Closed-Milestones") == True
+    assert response2.has_header("Taiga-Info-Total-Opened-Milestones") == True
+    assert response2["taiga-info-total-closed-milestones"] == "3"
+    assert response2["taiga-info-total-opened-milestones"] == "1"

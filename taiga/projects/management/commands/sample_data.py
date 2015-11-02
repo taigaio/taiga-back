@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -21,7 +21,6 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.timezone import now
 from django.conf import settings
-from django.contrib.webdesign import lorem_ipsum
 from django.contrib.contenttypes.models import ContentType
 
 from sampledatahelper.helper import SampleDataHelper
@@ -30,13 +29,18 @@ from taiga.users.models import *
 from taiga.permissions.permissions import ANON_PERMISSIONS
 from taiga.projects.models import *
 from taiga.projects.milestones.models import *
+from taiga.projects.notifications.choices import NotifyLevel
+
 from taiga.projects.userstories.models import *
 from taiga.projects.tasks.models import *
 from taiga.projects.issues.models import *
 from taiga.projects.wiki.models import *
 from taiga.projects.attachments.models import *
 from taiga.projects.custom_attributes.models import *
+from taiga.projects.custom_attributes.choices import TYPES_CHOICES, TEXT_TYPE, MULTILINE_TYPE, DATE_TYPE
 from taiga.projects.history.services import take_snapshot
+from taiga.projects.likes.services import add_like
+from taiga.projects.votes.services import add_vote
 from taiga.events.apps import disconnect_events_signals
 
 
@@ -97,7 +101,9 @@ NUM_TASKS = getattr(settings, "SAMPLE_DATA_NUM_TASKS", (0, 4))
 NUM_USS_BACK = getattr(settings, "SAMPLE_DATA_NUM_USS_BACK", (8, 20))
 NUM_ISSUES = getattr(settings, "SAMPLE_DATA_NUM_ISSUES", (12, 25))
 NUM_ATTACHMENTS = getattr(settings, "SAMPLE_DATA_NUM_ATTACHMENTS", (0, 4))
-
+NUM_LIKES = getattr(settings, "SAMPLE_DATA_NUM_LIKES", (0, 10))
+NUM_VOTES = getattr(settings, "SAMPLE_DATA_NUM_VOTES", (0, 10))
+NUM_WATCHERS = getattr(settings, "SAMPLE_DATA_NUM_PROJECT_WATCHERS", (0, 8))
 
 class Command(BaseCommand):
     sd = SampleDataHelper(seed=12345678901)
@@ -119,7 +125,7 @@ class Command(BaseCommand):
 
         # create project
         for x in range(NUM_PROJECTS + NUM_EMPTY_PROJECTS):
-            project = self.create_project(x)
+            project = self.create_project(x, is_private=(x in [2, 4] or self.sd.boolean()))
 
             # added memberships
             computable_project_roles = set()
@@ -156,18 +162,21 @@ class Command(BaseCommand):
                 for i in range(1, 4):
                     UserStoryCustomAttribute.objects.create(name=self.sd.words(1, 3),
                                                             description=self.sd.words(3, 12),
+                                                            type=self.sd.choice(TYPES_CHOICES)[0],
                                                             project=project,
                                                             order=i)
             if self.sd.boolean:
                 for i in range(1, 4):
                     TaskCustomAttribute.objects.create(name=self.sd.words(1, 3),
                                                        description=self.sd.words(3, 12),
+                                                       type=self.sd.choice(TYPES_CHOICES)[0],
                                                        project=project,
                                                        order=i)
             if self.sd.boolean:
                 for i in range(1, 4):
                     IssueCustomAttribute.objects.create(name=self.sd.words(1, 3),
                                                         description=self.sd.words(3, 12),
+                                                        type=self.sd.choice(TYPES_CHOICES)[0],
                                                         project=project,
                                                         order=i)
 
@@ -215,13 +224,14 @@ class Command(BaseCommand):
             project.total_story_points = int(defined_points * self.sd.int(5,12) / 10)
             project.save()
 
+            self.create_likes(project)
 
     def create_attachment(self, obj, order):
         attached_file = self.sd.file_from_directory(*ATTACHMENT_SAMPLE_DATA)
         membership = self.sd.db_object_from_queryset(obj.project.memberships
                                                      .filter(user__isnull=False))
         attachment = Attachment.objects.create(project=obj.project,
-                                               name=path.basename(attached_file.name).lower(),
+                                               name=path.basename(attached_file.name),
                                                size=attached_file.size,
                                                content_object=obj,
                                                order=order,
@@ -254,6 +264,15 @@ class Command(BaseCommand):
 
         return wiki_page
 
+    def get_custom_attributes_value(self, type):
+        if type == TEXT_TYPE:
+            return self.sd.words(1, 12)
+        if type == MULTILINE_TYPE:
+            return self.sd.paragraphs(2, 4)
+        if type == DATE_TYPE:
+            return self.sd.future_date(min_distance=0, max_distance=365)
+        return None
+
     def create_bug(self, project):
         bug = Issue.objects.create(project=project,
                                    subject=self.sd.choice(SUBJECT_CHOICES),
@@ -272,8 +291,8 @@ class Command(BaseCommand):
 
         bug.save()
 
-        custom_attributes_values = {str(ca.id): self.sd.words(1, 12) for ca in project.issuecustomattributes.all()
-                                                                                             if self.sd.boolean()}
+        custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
+                                      in project.issuecustomattributes.all() if self.sd.boolean()}
         if custom_attributes_values:
             bug.custom_attributes_values.attributes_values = custom_attributes_values
             bug.custom_attributes_values.save()
@@ -296,6 +315,9 @@ class Command(BaseCommand):
         take_snapshot(bug,
               comment=self.sd.paragraph(),
               user=bug.owner)
+
+        self.create_votes(bug)
+        self.create_watchers(bug)
 
         return bug
 
@@ -321,8 +343,8 @@ class Command(BaseCommand):
 
         task.save()
 
-        custom_attributes_values = {str(ca.id): self.sd.words(1, 12) for ca in project.taskcustomattributes.all()
-                                                                                            if self.sd.boolean()}
+        custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
+                                       in project.taskcustomattributes.all() if self.sd.boolean()}
         if custom_attributes_values:
             task.custom_attributes_values.attributes_values = custom_attributes_values
             task.custom_attributes_values.save()
@@ -340,6 +362,9 @@ class Command(BaseCommand):
         take_snapshot(task,
               comment=self.sd.paragraph(),
               user=task.owner)
+
+        self.create_votes(task)
+        self.create_watchers(task)
 
         return task
 
@@ -366,8 +391,8 @@ class Command(BaseCommand):
 
         us.save()
 
-        custom_attributes_values = {str(ca.id): self.sd.words(1, 12) for ca in project.userstorycustomattributes.all()
-                                                                                                 if self.sd.boolean()}
+        custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
+                                 in project.userstorycustomattributes.all() if self.sd.boolean()}
         if custom_attributes_values:
             us.custom_attributes_values.attributes_values = custom_attributes_values
             us.custom_attributes_values.save()
@@ -377,8 +402,10 @@ class Command(BaseCommand):
             attachment = self.create_attachment(us, i+1)
 
         if self.sd.choice([True, True, False, True, True]):
-            us.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(user__isnull=False)).user
+            us.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(
+                                                                     user__isnull=False)).user
             us.save()
+
 
         take_snapshot(us,
                       comment=self.sd.paragraph(),
@@ -390,6 +417,9 @@ class Command(BaseCommand):
         take_snapshot(us,
               comment=self.sd.paragraph(),
               user=us.owner)
+
+        self.create_votes(us)
+        self.create_watchers(us)
 
         return us
 
@@ -409,20 +439,30 @@ class Command(BaseCommand):
 
         return milestone
 
-    def create_project(self, counter):
-        is_private=self.sd.boolean()
+    def create_project(self, counter, is_private=None):
+        if is_private is None:
+            is_private=self.sd.boolean()
+
         anon_permissions = not is_private and list(map(lambda perm: perm[0], ANON_PERMISSIONS)) or []
         public_permissions = not is_private and list(map(lambda perm: perm[0], ANON_PERMISSIONS)) or []
-        project = Project.objects.create(name='Project Example {0}'.format(counter),
+        project = Project.objects.create(slug='project-%s'%(counter),
+                                         name='Project Example {0}'.format(counter),
                                          description='Project example {0} description'.format(counter),
                                          owner=random.choice(self.users),
                                          is_private=is_private,
                                          anon_permissions=anon_permissions,
                                          public_permissions=public_permissions,
                                          total_story_points=self.sd.int(600, 3000),
-                                         total_milestones=self.sd.int(5,10))
+                                         total_milestones=self.sd.int(5,10),
+                                         tags=self.sd.words(1, 10).split(" "))
 
+        project.is_kanban_activated = True
+        project.save()
         take_snapshot(project, user=project.owner)
+
+        self.create_likes(project)
+        self.create_watchers(project, NotifyLevel.involved)
+
         return project
 
     def create_user(self, counter=None, username=None, full_name=None, email=None):
@@ -441,3 +481,22 @@ class Command(BaseCommand):
         user.save()
 
         return user
+
+    def create_votes(self, obj):
+        for i in range(self.sd.int(*NUM_VOTES)):
+            user=self.sd.db_object_from_queryset(User.objects.all())
+            add_vote(obj, user)
+
+    def create_likes(self, obj):
+        for i in range(self.sd.int(*NUM_LIKES)):
+            user=self.sd.db_object_from_queryset(User.objects.all())
+            add_like(obj, user)
+
+    def create_watchers(self, obj, notify_level=None):
+        for i in range(self.sd.int(*NUM_WATCHERS)):
+            user = self.sd.db_object_from_queryset(User.objects.all())
+            if not notify_level:
+                obj.add_watcher(user)
+            else:
+                obj.add_watcher(user, notify_level)
+

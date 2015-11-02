@@ -30,7 +30,7 @@ def test_bad_signature(client):
     response = client.post(url, json.dumps(data),
                            HTTP_X_HUB_SIGNATURE="sha1=badbadbad",
                            content_type="application/json")
-    response_content = json.loads(response.content.decode("utf-8"))
+    response_content = response.data
     assert response.status_code == 400
     assert "Bad signature" in response_content["_error_message"]
 
@@ -243,7 +243,7 @@ def test_issues_event_opened_issue(client):
     issue.project.save()
     Membership.objects.create(user=issue.owner, project=issue.project, role=f.RoleFactory.create(project=issue.project), is_owner=True)
     notify_policy = NotifyPolicy.objects.get(user=issue.owner, project=issue.project)
-    notify_policy.notify_level = NotifyLevel.watch
+    notify_policy.notify_level = NotifyLevel.all
     notify_policy.save()
 
     payload = {
@@ -445,7 +445,7 @@ def test_api_get_project_modules(client):
     client.login(project.owner)
     response = client.get(url)
     assert response.status_code == 200
-    content = json.loads(response.content.decode("utf-8"))
+    content = response.data
     assert "github" in content
     assert content["github"]["secret"] != ""
     assert content["github"]["webhooks_url"] != ""

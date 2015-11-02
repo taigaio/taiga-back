@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -27,12 +27,7 @@ def connect_memberships_signals():
                                    sender=apps.get_model("projects", "Membership"),
                                    dispatch_uid='membership_pre_delete')
 
-        # On membership object is deleted, update watchers of all objects relation.
-        signals.post_delete.connect(handlers.update_watchers_on_membership_post_delete,
-                                    sender=apps.get_model("projects", "Membership"),
-                                    dispatch_uid='update_watchers_on_membership_post_delete')
-
-        # On membership object is deleted, update watchers of all objects relation.
+        # On membership object is deleted, update notify policies of all objects relation.
         signals.post_save.connect(handlers.create_notify_policy,
                                   sender=apps.get_model("projects", "Membership"),
                                   dispatch_uid='create-notify-policy')
@@ -53,9 +48,20 @@ def connect_projects_signals():
                                  dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_projects")
 
 
+def connect_us_status_signals():
+        signals.post_save.connect(handlers.try_to_close_or_open_user_stories_when_edit_us_status,
+                                  sender=apps.get_model("projects", "UserStoryStatus"),
+                                  dispatch_uid="try_to_close_or_open_user_stories_when_edit_us_status")
+
+
+def connect_task_status_signals():
+        signals.post_save.connect(handlers.try_to_close_or_open_user_stories_when_edit_task_status,
+                                  sender=apps.get_model("projects", "TaskStatus"),
+                                  dispatch_uid="try_to_close_or_open_user_stories_when_edit_task_status")
+
+
 def disconnect_memberships_signals():
         signals.pre_delete.disconnect(sender=apps.get_model("projects", "Membership"), dispatch_uid='membership_pre_delete')
-        signals.post_delete.disconnect(sender=apps.get_model("projects", "Membership"), dispatch_uid='update_watchers_on_membership_post_delete')
         signals.post_save.disconnect(sender=apps.get_model("projects", "Membership"), dispatch_uid='create-notify-policy')
 
 
@@ -63,6 +69,12 @@ def disconnect_projects_signals():
         signals.post_save.disconnect(sender=apps.get_model("projects", "Project"), dispatch_uid='project_post_save')
         signals.pre_save.disconnect(sender=apps.get_model("projects", "Project"), dispatch_uid="tags_normalization_projects")
         signals.pre_save.disconnect(sender=apps.get_model("projects", "Project"), dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_projects")
+
+def disconnect_us_status_signals():
+        signals.post_save.disconnect(sender=apps.get_model("projects", "UserStoryStatus"), dispatch_uid="try_to_close_or_open_user_stories_when_edit_us_status")
+
+def disconnect_task_status_signals():
+        signals.post_save.disconnect(sender=apps.get_model("projects", "TaskStatus"), dispatch_uid="try_to_close_or_open_user_stories_when_edit_task_status")
 
 
 class ProjectsAppConfig(AppConfig):
@@ -72,3 +84,5 @@ class ProjectsAppConfig(AppConfig):
     def ready(self):
         connect_memberships_signals()
         connect_projects_signals()
+        connect_us_status_signals()
+        connect_task_status_signals()

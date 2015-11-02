@@ -21,7 +21,6 @@ def _fix_tags_model(tags_model):
 
 
 def fix_tags(apps, schema_editor):
-    print("Fixing project tags")
     _fix_tags_model(Project)
 
 

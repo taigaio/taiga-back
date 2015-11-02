@@ -1,6 +1,44 @@
 # Changelog #
 
 
+## 1.9.0 Abies Siberica (2015-11-XX)
+
+### Features
+
+- Project can be starred or unstarred and the fans list can be obtained.
+- US, tasks and Issues can be upvoted or downvoted and the voters list can be obtained.
+- Now users can watch public issues, tasks and user stories.
+- Add endpoints to show the watchers list for issues, tasks and user stories.
+- Add a "field type" property for custom fields: 'text', 'multiline text' and 'date' right now (thanks to [@artlepool](https://github.com/artlepool)).
+- Allow multiple actions in the commit messages.
+- Now every user that coments USs, Issues or Tasks will be involved in it (add author to the watchers list).
+- Now profile timelines only show content about the objects (US/Tasks/Issues/Wiki pages) you are involved.
+- Add custom videoconference system.
+- Fix the compatibility with BitBucket webhooks and add issues and issues comments integration.
+- Add support for comments in the Gitlab webhooks integration.
+- Add externall apps: now Taiga can integrate with hundreds of applications and service.
+- Improve searching system, now full text searchs are supported
+- Add sha1 hash to attachments to verify the integrity of files (thanks to [@astagi](https://github.com/astagi)).
+- i18n.
+  - Add italian (it) translation.
+  - Add polish (pl) translation.
+  - Add portuguese (Brazil) (pt_BR) translation.
+  - Add russian (ru) translation.
+
+### Misc
+- Made compatible with python 3.5.
+- Migrated to django 1.8.
+- Update the rest of requirements to the last version.
+- Improve export system, now is more efficient and  prevents possible crashes with heavy projects.
+- API: Mixin fields 'users', 'members' and 'memberships' in ProjectDetailSerializer.
+- API: Add stats/system resource with global server stats (total project, total users....)
+- API: Improve and fix some errors in issues/filters_data and userstories/filters_data.
+- API: resolver suport ref GET param and return a story, task or issue.
+- Webhooks: Add deleted datetime to webhooks responses when isues, tasks or USs are deleted.
+- Add headers to allow threading for notification emails about changes to issues, tasks, user stories, and wiki pages. (thanks to [@brett](https://github.com/brettp)).
+- Lots of small and not so small bugfixes.
+
+
 ## 1.8.0 Saracenia Purpurea (2015-06-18)
 
 ### Features

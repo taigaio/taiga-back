@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -21,7 +21,16 @@ import datetime
 import copy
 
 from taiga.projects.history.models import HistoryEntry
+from taiga.projects.userstories.models import RolePoints
 
+
+def _get_total_story_points(project):
+    return (project.total_story_points if project.total_story_points not in [None, 0] else
+                    sum(project.calculated_points["defined"].values()))
+
+def _get_total_milestones(project):
+    return (project.total_milestones if project.total_milestones not in [None, 0] else
+                    project.milestones.count())
 
 def _get_milestones_stats_for_backlog(project):
     """
@@ -33,8 +42,12 @@ def _get_milestones_stats_for_backlog(project):
     current_client_increment = 0
 
     optimal_points_per_sprint = 0
-    if project.total_story_points and project.total_milestones:
-        optimal_points_per_sprint = project.total_story_points / project.total_milestones
+
+    total_story_points = _get_total_story_points(project)
+    total_milestones = _get_total_milestones(project)
+
+    if total_story_points and total_milestones:
+        optimal_points_per_sprint = total_story_points / total_milestones
 
     future_team_increment = sum(project.future_team_increment.values())
     future_client_increment = sum(project.future_client_increment.values())
@@ -50,11 +63,11 @@ def _get_milestones_stats_for_backlog(project):
     team_increment = 0
     client_increment = 0
 
-    for current_milestone in range(0, max(milestones_count, project.total_milestones)):
-        optimal_points = (project.total_story_points -
+    for current_milestone in range(0, max(milestones_count, total_milestones)):
+        optimal_points = (total_story_points -
                             (optimal_points_per_sprint * current_milestone))
 
-        evolution = (project.total_story_points - current_evolution
+        evolution = (total_story_points - current_evolution
                         if current_evolution is not None else None)
 
         if current_milestone < milestones_count:
@@ -83,8 +96,8 @@ def _get_milestones_stats_for_backlog(project):
         }
 
     optimal_points -= optimal_points_per_sprint
-    evolution = (project.total_story_points - current_evolution
-                    if current_evolution is not None and project.total_story_points else None)
+    evolution = (total_story_points - current_evolution
+                    if current_evolution is not None and total_story_points else None)
     yield {
         'name': _('Project End'),
         'optimal': optimal_points,
@@ -103,6 +116,7 @@ def _count_status_object(status_obj, counting_storage):
         counting_storage[status_obj.id]['name'] = status_obj.name
         counting_storage[status_obj.id]['id'] = status_obj.id
         counting_storage[status_obj.id]['color'] = status_obj.color
+
 
 def _count_owned_object(user_obj, counting_storage):
     if user_obj:
@@ -125,6 +139,7 @@ def _count_owned_object(user_obj, counting_storage):
             counting_storage[0]['name'] = _('Unassigned')
             counting_storage[0]['id'] = 0
             counting_storage[0]['color'] = 'black'
+
 
 def get_stats_for_project_issues(project):
     project_issues_stats = {
@@ -210,7 +225,12 @@ def get_stats_for_project(project):
         get(id=project.id)
 
     points = project.calculated_points
-    closed_points = sum(points["closed"].values())
+
+    closed_points = sum(RolePoints.objects.filter(user_story__project=project).filter(
+        Q(user_story__milestone__closed=True) |
+        Q(user_story__milestone__isnull=True)
+    ).exclude(points__value__isnull=True).values_list("points__value", flat=True))
+
     closed_milestones = project.milestones.filter(closed=True).count()
     speed = 0
     if closed_milestones != 0:
@@ -282,6 +302,7 @@ def _get_closed_tasks_per_member_stats(project):
         .order_by()
     closed_tasks = {p["assigned_to"]: p["count"] for p in closed_tasks}
     return closed_tasks
+
 
 def get_member_stats_for_project(project):
     base_counters = {id: 0 for id in project.members.values_list("id", flat=True)}

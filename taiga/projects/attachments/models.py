@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -27,16 +27,14 @@ from django.contrib.contenttypes import generic
 from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.translation import ugettext_lazy as _
-from django.template.defaultfilters import slugify
+from django.utils.text import get_valid_filename
 
 from taiga.base.utils.iterators import split_by_n
 
 
 def get_attachment_file_path(instance, filename):
-    basename = path.basename(filename).lower()
-    base, ext = path.splitext(basename)
-    base = slugify(unidecode(base))
-    basename = "".join([base, ext])
+    basename = path.basename(filename)
+    basename = get_valid_filename(basename)
 
     hs = hashlib.sha256()
     hs.update(force_bytes(timezone.now().isoformat()))
@@ -70,6 +68,7 @@ class Attachment(models.Model):
                                      upload_to=get_attachment_file_path,
                                      verbose_name=_("attached file"))
 
+    sha1 = models.CharField(default="", max_length=40, verbose_name=_("sha1"), blank=True)
 
     is_deprecated = models.BooleanField(default=False, verbose_name=_("is deprecated"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
@@ -85,11 +84,30 @@ class Attachment(models.Model):
             ("view_attachment", "Can view attachment"),
         )
 
+    def __init__(self, *args, **kwargs):
+        super(Attachment, self).__init__(*args, **kwargs)
+        self._orig_attached_file = self.attached_file
+
+    def _generate_sha1(self, blocksize=65536):
+        hasher = hashlib.sha1()
+        while True:
+            buff = self.attached_file.file.read(blocksize)
+            if not buff:
+                break
+            hasher.update(buff)
+        self.sha1 = hasher.hexdigest()
+
     def save(self, *args, **kwargs):
         if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
-
-        return super().save(*args, **kwargs)
+        if self.attached_file:
+            if not self.sha1 or self.attached_file != self._orig_attached_file:
+                self._generate_sha1()
+        save = super().save(*args, **kwargs)
+        self._orig_attached_file = self.attached_file
+        if self.attached_file:
+            self.attached_file.file.close()
+        return save
 
     def __str__(self):
         return "Attachment: {}".format(self.id)

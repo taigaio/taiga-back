@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -44,7 +44,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCru
     def update(self, *args, **kwargs):
         partial = kwargs.get("partial", False)
         if not partial:
-            raise exc.NotSupported(_("Non partial updates not supported"))
+            raise exc.NotSupported(_("Partial updates are not supported"))
         return super().update(*args, **kwargs)
 
     def get_content_type(self):
@@ -56,7 +56,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCru
             obj.content_type = self.get_content_type()
             obj.owner = self.request.user
             obj.size = obj.attached_file.size
-            obj.name = path.basename(obj.attached_file.name).lower()
+            obj.name = path.basename(obj.attached_file.name)
 
         if obj.project_id != obj.content_object.project_id:
             raise exc.WrongArguments(_("Project ID not matches between object and project"))

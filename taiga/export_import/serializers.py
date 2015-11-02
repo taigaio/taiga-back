@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -19,6 +19,7 @@ import copy
 import os
 from collections import OrderedDict
 
+from django.apps import apps
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
@@ -43,6 +44,7 @@ from taiga.projects.attachments import models as attachments_models
 from taiga.timeline import models as timeline_models
 from taiga.timeline import service as timeline_service
 from taiga.users import models as users_models
+from taiga.projects.notifications import services as notifications_services
 from taiga.projects.votes import services as votes_service
 from taiga.projects.history import services as history_service
 
@@ -223,6 +225,48 @@ class HistoryDiffField(JsonField):
         return data
 
 
+class WatcheableObjectModelSerializer(serializers.ModelSerializer):
+    watchers = UserRelatedField(many=True, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self._watchers_field = self.base_fields.pop("watchers", None)
+        super(WatcheableObjectModelSerializer, self).__init__(*args, **kwargs)
+
+    """
+    watchers is not a field from the model so we need to do some magic to make it work like a normal field
+    It's supposed to be represented as an email list but internally it's treated like notifications.Watched instances
+    """
+
+    def restore_object(self, attrs, instance=None):
+        watcher_field = self.fields.pop("watchers", None)
+        instance = super(WatcheableObjectModelSerializer, self).restore_object(attrs, instance)
+        self._watchers = self.init_data.get("watchers", [])
+        return instance
+
+    def save_watchers(self):
+        new_watcher_emails = set(self._watchers)
+        old_watcher_emails = set(self.object.get_watchers().values_list("email", flat=True))
+        adding_watcher_emails = list(new_watcher_emails.difference(old_watcher_emails))
+        removing_watcher_emails = list(old_watcher_emails.difference(new_watcher_emails))
+
+        User = apps.get_model("users", "User")
+        adding_users = User.objects.filter(email__in=adding_watcher_emails)
+        removing_users = User.objects.filter(email__in=removing_watcher_emails)
+
+        for user in adding_users:
+            notifications_services.add_watcher(self.object, user)
+
+        for user in removing_users:
+            notifications_services.remove_watcher(self.object, user)
+
+        self.object.watchers = [user.email for user in self.object.get_watchers()]
+
+    def to_native(self, obj):
+        ret = super(WatcheableObjectModelSerializer, self).to_native(obj)
+        ret["watchers"] = [user.email for user in obj.get_watchers()]
+        return ret
+
+
 class HistoryExportSerializer(serializers.ModelSerializer):
     user = HistoryUserField()
     diff = HistoryDiffField(required=False)
@@ -243,7 +287,7 @@ class HistoryExportSerializerMixin(serializers.ModelSerializer):
     def get_history(self, obj):
         history_qs = history_service.get_history_queryset_by_model_instance(obj,
             types=(history_models.HistoryType.change, history_models.HistoryType.create,))
-            
+
         return HistoryExportSerializer(history_qs, many=True).data
 
 
@@ -447,9 +491,8 @@ class RolePointsExportSerializer(serializers.ModelSerializer):
         exclude = ('id', 'user_story')
 
 
-class MilestoneExportSerializer(serializers.ModelSerializer):
+class MilestoneExportSerializer(WatcheableObjectModelSerializer):
     owner = UserRelatedField(required=False)
-    watchers = UserRelatedField(many=True, required=False)
     modified_date = serializers.DateTimeField(required=False)
     estimated_start = serializers.DateField(required=False)
     estimated_finish = serializers.DateField(required=False)
@@ -477,13 +520,12 @@ class MilestoneExportSerializer(serializers.ModelSerializer):
 
 
 class TaskExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
-                           AttachmentExportSerializerMixin, serializers.ModelSerializer):
+                           AttachmentExportSerializerMixin, WatcheableObjectModelSerializer):
     owner = UserRelatedField(required=False)
     status = ProjectRelatedField(slug_field="name")
     user_story = ProjectRelatedField(slug_field="ref", required=False)
     milestone = ProjectRelatedField(slug_field="name", required=False)
     assigned_to = UserRelatedField(required=False)
-    watchers = UserRelatedField(many=True, required=False)
     modified_date = serializers.DateTimeField(required=False)
 
     class Meta:
@@ -495,13 +537,12 @@ class TaskExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryE
 
 
 class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
-                                AttachmentExportSerializerMixin, serializers.ModelSerializer):
+                                AttachmentExportSerializerMixin, WatcheableObjectModelSerializer):
     role_points = RolePointsExportSerializer(many=True, required=False)
     owner = UserRelatedField(required=False)
     assigned_to = UserRelatedField(required=False)
     status = ProjectRelatedField(slug_field="name")
     milestone = ProjectRelatedField(slug_field="name", required=False)
-    watchers = UserRelatedField(many=True, required=False)
     modified_date = serializers.DateTimeField(required=False)
     generated_from_issue = ProjectRelatedField(slug_field="ref", required=False)
 
@@ -514,7 +555,7 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin, His
 
 
 class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
-                            AttachmentExportSerializerMixin, serializers.ModelSerializer):
+                            AttachmentExportSerializerMixin, WatcheableObjectModelSerializer):
     owner = UserRelatedField(required=False)
     status = ProjectRelatedField(slug_field="name")
     assigned_to = UserRelatedField(required=False)
@@ -522,7 +563,6 @@ class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin, History
     severity = ProjectRelatedField(slug_field="name")
     type = ProjectRelatedField(slug_field="name")
     milestone = ProjectRelatedField(slug_field="name", required=False)
-    watchers = UserRelatedField(many=True, required=False)
     votes = serializers.SerializerMethodField("get_votes")
     modified_date = serializers.DateTimeField(required=False)
 
@@ -538,10 +578,9 @@ class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin, History
 
 
 class WikiPageExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin,
-                               serializers.ModelSerializer):
+                               WatcheableObjectModelSerializer):
     owner = UserRelatedField(required=False)
     last_modifier = UserRelatedField(required=False)
-    watchers = UserRelatedField(many=True, required=False)
     modified_date = serializers.DateTimeField(required=False)
 
     class Meta:
@@ -588,7 +627,7 @@ class TimelineExportSerializer(serializers.ModelSerializer):
         exclude = ('id', 'project', 'namespace', 'object_id')
 
 
-class ProjectExportSerializer(serializers.ModelSerializer):
+class ProjectExportSerializer(WatcheableObjectModelSerializer):
     owner = UserRelatedField(required=False)
     default_points = serializers.SlugRelatedField(slug_field="name", required=False)
     default_us_status = serializers.SlugRelatedField(slug_field="name", required=False)

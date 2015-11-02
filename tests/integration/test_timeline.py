@@ -1,7 +1,7 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -196,8 +196,10 @@ def test_create_membership_timeline():
 
 
 def test_update_project_timeline():
+    user_watcher= factories.UserFactory()
     project = factories.ProjectFactory.create(name="test project timeline")
     history_services.take_snapshot(project, user=project.owner)
+    project.add_watcher(user_watcher)
     project.name = "test project timeline updated"
     project.save()
     history_services.take_snapshot(project, user=project.owner)
@@ -206,11 +208,18 @@ def test_update_project_timeline():
     assert project_timeline[0].data["project"]["name"] == "test project timeline updated"
     assert project_timeline[0].data["values_diff"]["name"][0] == "test project timeline"
     assert project_timeline[0].data["values_diff"]["name"][1] == "test project timeline updated"
+    user_watcher_timeline = service.get_profile_timeline(user_watcher)
+    assert user_watcher_timeline[0].event_type == "projects.project.change"
+    assert user_watcher_timeline[0].data["project"]["name"] == "test project timeline updated"
+    assert user_watcher_timeline[0].data["values_diff"]["name"][0] == "test project timeline"
+    assert user_watcher_timeline[0].data["values_diff"]["name"][1] == "test project timeline updated"
 
 
 def test_update_milestone_timeline():
+    user_watcher= factories.UserFactory()
     milestone = factories.MilestoneFactory.create(name="test milestone timeline")
     history_services.take_snapshot(milestone, user=milestone.owner)
+    milestone.add_watcher(user_watcher)
     milestone.name = "test milestone timeline updated"
     milestone.save()
     history_services.take_snapshot(milestone, user=milestone.owner)
@@ -219,11 +228,18 @@ def test_update_milestone_timeline():
     assert project_timeline[0].data["milestone"]["name"] == "test milestone timeline updated"
     assert project_timeline[0].data["values_diff"]["name"][0] == "test milestone timeline"
     assert project_timeline[0].data["values_diff"]["name"][1] == "test milestone timeline updated"
+    user_watcher_timeline = service.get_profile_timeline(user_watcher)
+    assert user_watcher_timeline[0].event_type == "milestones.milestone.change"
+    assert user_watcher_timeline[0].data["milestone"]["name"] == "test milestone timeline updated"
+    assert user_watcher_timeline[0].data["values_diff"]["name"][0] == "test milestone timeline"
+    assert user_watcher_timeline[0].data["values_diff"]["name"][1] == "test milestone timeline updated"
 
 
 def test_update_user_story_timeline():
+    user_watcher= factories.UserFactory()
     user_story = factories.UserStoryFactory.create(subject="test us timeline")
     history_services.take_snapshot(user_story, user=user_story.owner)
+    user_story.add_watcher(user_watcher)
     user_story.subject = "test us timeline updated"
     user_story.save()
     history_services.take_snapshot(user_story, user=user_story.owner)
@@ -232,11 +248,18 @@ def test_update_user_story_timeline():
     assert project_timeline[0].data["userstory"]["subject"] == "test us timeline updated"
     assert project_timeline[0].data["values_diff"]["subject"][0] == "test us timeline"
     assert project_timeline[0].data["values_diff"]["subject"][1] == "test us timeline updated"
+    user_watcher_timeline = service.get_profile_timeline(user_watcher)
+    assert user_watcher_timeline[0].event_type == "userstories.userstory.change"
+    assert user_watcher_timeline[0].data["userstory"]["subject"] == "test us timeline updated"
+    assert user_watcher_timeline[0].data["values_diff"]["subject"][0] == "test us timeline"
+    assert user_watcher_timeline[0].data["values_diff"]["subject"][1] == "test us timeline updated"
 
 
 def test_update_issue_timeline():
+    user_watcher= factories.UserFactory()
     issue = factories.IssueFactory.create(subject="test issue timeline")
     history_services.take_snapshot(issue, user=issue.owner)
+    issue.add_watcher(user_watcher)
     issue.subject = "test issue timeline updated"
     issue.save()
     history_services.take_snapshot(issue, user=issue.owner)
@@ -245,11 +268,18 @@ def test_update_issue_timeline():
     assert project_timeline[0].data["issue"]["subject"] == "test issue timeline updated"
     assert project_timeline[0].data["values_diff"]["subject"][0] == "test issue timeline"
     assert project_timeline[0].data["values_diff"]["subject"][1] == "test issue timeline updated"
+    user_watcher_timeline = service.get_profile_timeline(user_watcher)
+    assert user_watcher_timeline[0].event_type == "issues.issue.change"
+    assert user_watcher_timeline[0].data["issue"]["subject"] == "test issue timeline updated"
+    assert user_watcher_timeline[0].data["values_diff"]["subject"][0] == "test issue timeline"
+    assert user_watcher_timeline[0].data["values_diff"]["subject"][1] == "test issue timeline updated"
 
 
 def test_update_task_timeline():
+    user_watcher= factories.UserFactory()
     task = factories.TaskFactory.create(subject="test task timeline")
     history_services.take_snapshot(task, user=task.owner)
+    task.add_watcher(user_watcher)
     task.subject = "test task timeline updated"
     task.save()
     history_services.take_snapshot(task, user=task.owner)
@@ -258,11 +288,18 @@ def test_update_task_timeline():
     assert project_timeline[0].data["task"]["subject"] == "test task timeline updated"
     assert project_timeline[0].data["values_diff"]["subject"][0] == "test task timeline"
     assert project_timeline[0].data["values_diff"]["subject"][1] == "test task timeline updated"
+    user_watcher_timeline = service.get_profile_timeline(user_watcher)
+    assert user_watcher_timeline[0].event_type == "tasks.task.change"
+    assert user_watcher_timeline[0].data["task"]["subject"] == "test task timeline updated"
+    assert user_watcher_timeline[0].data["values_diff"]["subject"][0] == "test task timeline"
+    assert user_watcher_timeline[0].data["values_diff"]["subject"][1] == "test task timeline updated"
 
 
 def test_update_wiki_page_timeline():
+    user_watcher= factories.UserFactory()
     page = factories.WikiPageFactory.create(slug="test wiki page timeline")
     history_services.take_snapshot(page, user=page.owner)
+    page.add_watcher(user_watcher)
     page.slug = "test wiki page timeline updated"
     page.save()
     history_services.take_snapshot(page, user=page.owner)
@@ -271,6 +308,11 @@ def test_update_wiki_page_timeline():
     assert project_timeline[0].data["wikipage"]["slug"] == "test wiki page timeline updated"
     assert project_timeline[0].data["values_diff"]["slug"][0] == "test wiki page timeline"
     assert project_timeline[0].data["values_diff"]["slug"][1] == "test wiki page timeline updated"
+    user_watcher_timeline = service.get_profile_timeline(user_watcher)
+    assert user_watcher_timeline[0].event_type == "wiki.wikipage.change"
+    assert user_watcher_timeline[0].data["wikipage"]["slug"] == "test wiki page timeline updated"
+    assert user_watcher_timeline[0].data["values_diff"]["slug"][0] == "test wiki page timeline"
+    assert user_watcher_timeline[0].data["values_diff"]["slug"][1] == "test wiki page timeline updated"
 
 
 def test_update_membership_timeline():
@@ -298,50 +340,80 @@ def test_update_membership_timeline():
 
 def test_delete_project_timeline():
     project = factories.ProjectFactory.create(name="test project timeline")
+    user_watcher= factories.UserFactory()
+    project.add_watcher(user_watcher)
     history_services.take_snapshot(project, user=project.owner, delete=True)
     user_timeline = service.get_project_timeline(project)
     assert user_timeline[0].event_type == "projects.project.delete"
     assert user_timeline[0].data["project"]["id"] == project.id
+    user_watcher_timeline = service.get_profile_timeline(user_watcher)
+    assert user_watcher_timeline[0].event_type == "projects.project.delete"
+    assert user_watcher_timeline[0].data["project"]["id"] == project.id
 
 
 def test_delete_milestone_timeline():
     milestone = factories.MilestoneFactory.create(name="test milestone timeline")
+    user_watcher= factories.UserFactory()
+    milestone.add_watcher(user_watcher)
     history_services.take_snapshot(milestone, user=milestone.owner, delete=True)
     project_timeline = service.get_project_timeline(milestone.project)
     assert project_timeline[0].event_type == "milestones.milestone.delete"
     assert project_timeline[0].data["milestone"]["name"] == "test milestone timeline"
+    user_watcher_timeline = service.get_profile_timeline(user_watcher)
+    assert user_watcher_timeline[0].event_type == "milestones.milestone.delete"
+    assert user_watcher_timeline[0].data["milestone"]["name"] == "test milestone timeline"
 
 
 def test_delete_user_story_timeline():
     user_story = factories.UserStoryFactory.create(subject="test us timeline")
+    user_watcher= factories.UserFactory()
+    user_story.add_watcher(user_watcher)
     history_services.take_snapshot(user_story, user=user_story.owner, delete=True)
     project_timeline = service.get_project_timeline(user_story.project)
     assert project_timeline[0].event_type == "userstories.userstory.delete"
     assert project_timeline[0].data["userstory"]["subject"] == "test us timeline"
+    user_watcher_timeline = service.get_profile_timeline(user_watcher)
+    assert user_watcher_timeline[0].event_type == "userstories.userstory.delete"
+    assert user_watcher_timeline[0].data["userstory"]["subject"] == "test us timeline"
 
 
 def test_delete_issue_timeline():
     issue = factories.IssueFactory.create(subject="test issue timeline")
+    user_watcher= factories.UserFactory()
+    issue.add_watcher(user_watcher)
     history_services.take_snapshot(issue, user=issue.owner, delete=True)
     project_timeline = service.get_project_timeline(issue.project)
     assert project_timeline[0].event_type == "issues.issue.delete"
     assert project_timeline[0].data["issue"]["subject"] == "test issue timeline"
+    user_watcher_timeline = service.get_profile_timeline(user_watcher)
+    assert user_watcher_timeline[0].event_type == "issues.issue.delete"
+    assert user_watcher_timeline[0].data["issue"]["subject"] == "test issue timeline"
 
 
 def test_delete_task_timeline():
     task = factories.TaskFactory.create(subject="test task timeline")
+    user_watcher= factories.UserFactory()
+    task.add_watcher(user_watcher)
     history_services.take_snapshot(task, user=task.owner, delete=True)
     project_timeline = service.get_project_timeline(task.project)
     assert project_timeline[0].event_type == "tasks.task.delete"
     assert project_timeline[0].data["task"]["subject"] == "test task timeline"
+    user_watcher_timeline = service.get_profile_timeline(user_watcher)
+    assert user_watcher_timeline[0].event_type == "tasks.task.delete"
+    assert user_watcher_timeline[0].data["task"]["subject"] == "test task timeline"
 
 
 def test_delete_wiki_page_timeline():
     page = factories.WikiPageFactory.create(slug="test wiki page timeline")
+    user_watcher= factories.UserFactory()
+    page.add_watcher(user_watcher)
     history_services.take_snapshot(page, user=page.owner, delete=True)
     project_timeline = service.get_project_timeline(page.project)
     assert project_timeline[0].event_type == "wiki.wikipage.delete"
     assert project_timeline[0].data["wikipage"]["slug"] == "test wiki page timeline"
+    user_watcher_timeline = service.get_profile_timeline(user_watcher)
+    assert user_watcher_timeline[0].event_type == "wiki.wikipage.delete"
+    assert user_watcher_timeline[0].data["wikipage"]["slug"] == "test wiki page timeline"
 
 
 def test_delete_membership_timeline():
@@ -380,16 +452,6 @@ def test_assigned_to_user_story_timeline():
     user_story = factories.UserStoryFactory.create(subject="test us timeline", assigned_to=membership.user, project=membership.project)
     history_services.take_snapshot(user_story, user=user_story.owner)
     user_timeline = service.get_profile_timeline(user_story.assigned_to)
-    assert user_timeline[0].event_type == "userstories.userstory.create"
-    assert user_timeline[0].data["userstory"]["subject"] == "test us timeline"
-
-
-def test_watchers_to_user_story_timeline():
-    membership = factories.MembershipFactory.create()
-    user_story = factories.UserStoryFactory.create(subject="test us timeline", project=membership.project)
-    user_story.watchers.add(membership.user)
-    history_services.take_snapshot(user_story, user=user_story.owner)
-    user_timeline = service.get_profile_timeline(membership.user)
     assert user_timeline[0].event_type == "userstories.userstory.create"
     assert user_timeline[0].data["userstory"]["subject"] == "test us timeline"
 

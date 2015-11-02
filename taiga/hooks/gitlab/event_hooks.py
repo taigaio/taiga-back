@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -89,7 +89,7 @@ class PushEventHook(BaseEventHook):
 
 
 def replace_gitlab_references(project_url, wiki_text):
-    if wiki_text == None:
+    if wiki_text is None:
         wiki_text = ""
 
     template = "\g<1>[GitLab#\g<2>]({}/issues/\g<2>)\g<3>".format(project_url)
@@ -127,3 +127,48 @@ class IssuesEventHook(BaseEventHook):
 
         snapshot = take_snapshot(issue, comment=_("Created from GitLab"), user=get_gitlab_user(None))
         send_notifications(issue, history=snapshot)
+
+
+class IssueCommentEventHook(BaseEventHook):
+    def process_event(self):
+        if self.payload.get('object_attributes', {}).get("noteable_type", None) != "Issue":
+            return
+
+        number = self.payload.get('issue', {}).get('iid', None)
+        subject = self.payload.get('issue', {}).get('title', None)
+
+        project_url = self.payload.get('repository', {}).get('homepage', None)
+
+        gitlab_url = os.path.join(project_url, "issues", str(number))
+        gitlab_user_name = self.payload.get('user', {}).get('username', None)
+        gitlab_user_url = os.path.join(os.path.dirname(os.path.dirname(project_url)), "u", gitlab_user_name)
+
+        comment_message = self.payload.get('object_attributes', {}).get('note', None)
+        comment_message = replace_gitlab_references(project_url, comment_message)
+
+        user = get_gitlab_user(None)
+
+        if not all([comment_message, gitlab_url, project_url]):
+            raise ActionSyntaxException(_("Invalid issue comment information"))
+
+        issues = Issue.objects.filter(external_reference=["gitlab", gitlab_url])
+        tasks = Task.objects.filter(external_reference=["gitlab", gitlab_url])
+        uss = UserStory.objects.filter(external_reference=["gitlab", gitlab_url])
+
+        for item in list(issues) + list(tasks) + list(uss):
+            if number and subject and gitlab_user_name and gitlab_user_url:
+                comment = _("Comment by [@{gitlab_user_name}]({gitlab_user_url} "
+                            "\"See @{gitlab_user_name}'s GitLab profile\") "
+                            "from GitLab.\nOrigin GitLab issue: [gl#{number} - {subject}]({gitlab_url} "
+                            "\"Go to 'gl#{number} - {subject}'\")\n\n"
+                            "{message}").format(gitlab_user_name=gitlab_user_name,
+                                                gitlab_user_url=gitlab_user_url,
+                                                number=number,
+                                                subject=subject,
+                                                gitlab_url=gitlab_url,
+                                                message=comment_message)
+            else:
+                comment = _("Comment From GitLab:\n\n{message}").format(message=comment_message)
+
+            snapshot = take_snapshot(item, comment=comment, user=user)
+            send_notifications(item, history=snapshot)

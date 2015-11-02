@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -17,6 +17,9 @@
 from django.contrib import admin
 
 from taiga.projects.attachments.admin import AttachmentInline
+from taiga.projects.notifications.admin import WatchedInline
+from taiga.projects.votes.admin import VoteInline
+
 from taiga.projects.wiki.models import WikiPage
 
 from . import models
@@ -24,7 +27,7 @@ from . import models
 class WikiPageAdmin(admin.ModelAdmin):
     list_display = ["project", "slug", "owner"]
     list_display_links = list_display
-    # inlines = [AttachmentInline]
+    inlines = [WatchedInline, VoteInline]
 
 admin.site.register(models.WikiPage, WikiPageAdmin)
 

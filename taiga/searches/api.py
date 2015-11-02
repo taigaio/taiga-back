@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -20,14 +20,13 @@ from taiga.base.api import viewsets
 
 from taiga.base import response
 from taiga.base.api.utils import get_object_or_404
-from taiga.projects.userstories.serializers import UserStorySerializer
-from taiga.projects.tasks.serializers import TaskSerializer
-from taiga.projects.issues.serializers import IssueSerializer
-from taiga.projects.wiki.serializers import WikiPageSerializer
 from taiga.permissions.service import user_has_perm
 
 from . import services
+from . import serializers
 
+
+from concurrent import futures
 
 class SearchViewSet(viewsets.ViewSet):
     def list(self, request, **kwargs):
@@ -37,14 +36,33 @@ class SearchViewSet(viewsets.ViewSet):
         project = self._get_project(project_id)
 
         result = {}
-        if user_has_perm(request.user, "view_us", project):
-            result["userstories"] = self._search_user_stories(project, text)
-        if user_has_perm(request.user, "view_tasks", project):
-            result["tasks"] = self._search_tasks(project, text)
-        if user_has_perm(request.user, "view_issues", project):
-            result["issues"] = self._search_issues(project, text)
-        if user_has_perm(request.user, "view_wiki_pages", project):
-            result["wikipages"] = self._search_wiki_pages(project, text)
+        with futures.ThreadPoolExecutor(max_workers=4) as executor:
+            futures_list = []
+            if user_has_perm(request.user, "view_us", project):
+                uss_future = executor.submit(self._search_user_stories, project, text)
+                uss_future.result_key = "userstories"
+                futures_list.append(uss_future)
+            if user_has_perm(request.user, "view_tasks", project):
+                tasks_future = executor.submit(self._search_tasks, project, text)
+                tasks_future.result_key = "tasks"
+                futures_list.append(tasks_future)
+            if user_has_perm(request.user, "view_issues", project):
+                issues_future = executor.submit(self._search_issues, project, text)
+                issues_future.result_key = "issues"
+                futures_list.append(issues_future)
+            if user_has_perm(request.user, "view_wiki_pages", project):
+                wiki_pages_future = executor.submit(self._search_wiki_pages, project, text)
+                wiki_pages_future.result_key = "wikipages"
+                futures_list.append(wiki_pages_future)
+
+            for future in futures.as_completed(futures_list):
+                data = []
+                try:
+                    data = future.result()
+                except Exception as exc:
+                    print('%s generated an exception: %s' % (future.result_key, exc))
+                finally:
+                    result[future.result_key] = data
 
         result["count"] = sum(map(lambda x: len(x), result.values()))
         return response.Ok(result)
@@ -55,20 +73,20 @@ class SearchViewSet(viewsets.ViewSet):
 
     def _search_user_stories(self, project, text):
         queryset = services.search_user_stories(project, text)
-        serializer = UserStorySerializer(queryset, many=True)
+        serializer = serializers.UserStorySearchResultsSerializer(queryset, many=True)
         return serializer.data
 
     def _search_tasks(self, project, text):
         queryset = services.search_tasks(project, text)
-        serializer = TaskSerializer(queryset, many=True)
+        serializer = serializers.TaskSearchResultsSerializer(queryset, many=True)
         return serializer.data
 
     def _search_issues(self, project, text):
         queryset = services.search_issues(project, text)
-        serializer = IssueSerializer(queryset, many=True)
+        serializer = serializers.IssueSearchResultsSerializer(queryset, many=True)
         return serializer.data
 
     def _search_wiki_pages(self, project, text):
         queryset = services.search_wiki_pages(project, text)
-        serializer = WikiPageSerializer(queryset, many=True)
+        serializer = serializers.WikiPageSearchResultsSerializer(queryset, many=True)
         return serializer.data

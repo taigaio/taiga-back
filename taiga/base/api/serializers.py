@@ -1,6 +1,6 @@
-# Copyright (C) 2015 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2015 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -1005,7 +1005,7 @@ class ModelSerializer((six.with_metaclass(SerializerMetaclass, BaseSerializer)))
                 m2m_data[field_name] = attrs.pop(field_name)
 
         # Forward m2m relations
-        for field in meta.many_to_many + meta.virtual_fields:
+        for field in list(meta.many_to_many) + meta.virtual_fields:
             if field.name in attrs:
                 m2m_data[field.name] = attrs.pop(field.name)
 

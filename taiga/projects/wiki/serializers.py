@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -15,15 +15,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
+from taiga.projects.history import services as history_service
+from taiga.projects.notifications.mixins import WatchedResourceModelSerializer
+from taiga.projects.notifications.validators import WatchersValidator
+from taiga.mdrender.service import render as mdrender
 
 from . import models
 
-from taiga.projects.history import services as history_service
 
-from taiga.mdrender.service import render as mdrender
-
-
-class WikiPageSerializer(serializers.ModelSerializer):
+class WikiPageSerializer(WatchersValidator, WatchedResourceModelSerializer, serializers.ModelSerializer):
     html = serializers.SerializerMethodField("get_html")
     editions = serializers.SerializerMethodField("get_editions")
 
@@ -39,7 +39,6 @@ class WikiPageSerializer(serializers.ModelSerializer):
 
 
 class WikiLinkSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = models.WikiLink
         read_only_fields = ('href',)

@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -22,13 +22,11 @@ from taiga.projects.history import services as history_services
 from taiga.projects.models import Project
 from taiga.users.models import User
 from taiga.projects.history.choices import HistoryType
+from taiga.projects.notifications import services as notifications_services
 from taiga.timeline.service import (push_to_timeline,
                                     build_user_namespace,
                                     build_project_namespace,
                                     extract_user_info)
-
-# TODO: Add events to followers timeline when followers are implemented.
-# TODO: Add events to project watchers timeline when project watchers are implemented.
 
 
 def _push_to_timeline(*args, **kwargs):
@@ -47,31 +45,12 @@ def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_d
             namespace=build_project_namespace(project),
             extra_data=extra_data)
 
-        ## User profile timelines
-        ## - Me
-        related_people = User.objects.filter(id=user.id)
+        if hasattr(obj, "get_related_people"):
+            related_people = obj.get_related_people()
 
-        ## - Owner
-        if hasattr(obj, "owner_id") and obj.owner_id:
-            related_people |= User.objects.filter(id=obj.owner_id)
-
-        ## - Assigned to
-        if hasattr(obj, "assigned_to_id") and obj.assigned_to_id:
-            related_people |= User.objects.filter(id=obj.assigned_to_id)
-
-        ## - Watchers
-        watchers = getattr(obj, "watchers", None)
-        if watchers:
-            related_people |= obj.watchers.all()
-
-        ## - Exclude inactive and system users and remove duplicate
-        related_people = related_people.exclude(is_active=False)
-        related_people = related_people.exclude(is_system=True)
-        related_people = related_people.distinct()
-
-        _push_to_timeline(related_people, obj, event_type, created_datetime,
-            namespace=build_user_namespace(user),
-            extra_data=extra_data)
+            _push_to_timeline(related_people, obj, event_type, created_datetime,
+                namespace=build_user_namespace(user),
+                extra_data=extra_data)
     else:
         # Actions not related with a project
         ## - Me

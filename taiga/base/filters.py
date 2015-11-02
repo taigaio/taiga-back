@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -18,15 +18,21 @@ from functools import reduce
 import logging
 
 from django.apps import apps
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 
 from taiga.base import exceptions as exc
 from taiga.base.api.utils import get_object_or_404
-
+from taiga.base.utils.db import to_tsquery
 
 logger = logging.getLogger(__name__)
 
+
+
+#####################################################################
+# Base and Mixins
+#####################################################################
 
 
 class BaseFilterBackend(object):
@@ -95,6 +101,9 @@ class OrderByFilterMixin(QueryParamsFilterMixin):
         if field_name not in order_by_fields:
             return queryset
 
+        if raw_fieldname in ["owner", "-owner", "assigned_to", "-assigned_to"]:
+            raw_fieldname = "{}__full_name".format(raw_fieldname)
+
         return super().filter_queryset(request, queryset.order_by(raw_fieldname), view)
 
 
@@ -104,6 +113,10 @@ class FilterBackend(OrderByFilterMixin):
     """
     pass
 
+
+#####################################################################
+# Permissions filters
+#####################################################################
 
 class PermissionBasedFilterBackend(FilterBackend):
     permission = None
@@ -345,9 +358,84 @@ class IsProjectAdminFromWebhookLogFilterBackend(FilterBackend, BaseIsProjectAdmi
         return super().filter_queryset(request, queryset, view)
 
 
+#####################################################################
+# Generic Attributes filters
+#####################################################################
+
+class BaseRelatedFieldsFilter(FilterBackend):
+    def __init__(self, filter_name=None):
+        if filter_name:
+            self.filter_name = filter_name
+
+    def _prepare_filter_data(self, query_param_value):
+        def _transform_value(value):
+            try:
+                return int(value)
+            except:
+                if value in self._special_values_dict:
+                    return self._special_values_dict[value]
+            raise exc.BadRequest()
+
+        values = set([x.strip() for x in query_param_value.split(",")])
+        values = map(_transform_value, values)
+        return list(values)
+
+    def _get_queryparams(self, params):
+        raw_value = params.get(self.filter_name, None)
+
+        if raw_value:
+            value = self._prepare_filter_data(raw_value)
+
+            if None in value:
+                qs_in_kwargs = {"{}__in".format(self.filter_name): [v for v in value if v is not None]}
+                qs_isnull_kwargs = {"{}__isnull".format(self.filter_name): True}
+                return Q(**qs_in_kwargs) | Q(**qs_isnull_kwargs)
+            else:
+                return {"{}__in".format(self.filter_name): value}
+
+        return None
+
+    def filter_queryset(self, request, queryset, view):
+        query = self._get_queryparams(request.QUERY_PARAMS)
+        if query:
+            if isinstance(query, dict):
+                queryset = queryset.filter(**query)
+            else:
+                queryset = queryset.filter(query)
+
+        return super().filter_queryset(request, queryset, view)
+
+
+class OwnersFilter(BaseRelatedFieldsFilter):
+    filter_name = 'owner'
+
+
+class AssignedToFilter(BaseRelatedFieldsFilter):
+    filter_name = 'assigned_to'
+
+
+class StatusesFilter(BaseRelatedFieldsFilter):
+    filter_name = 'status'
+
+
+class IssueTypesFilter(BaseRelatedFieldsFilter):
+    filter_name = 'type'
+
+
+class PrioritiesFilter(BaseRelatedFieldsFilter):
+    filter_name = 'priority'
+
+
+class SeveritiesFilter(BaseRelatedFieldsFilter):
+    filter_name = 'severity'
+
+
 class TagsFilter(FilterBackend):
-    def __init__(self, filter_name='tags'):
-        self.filter_name = filter_name
+    filter_name = 'tags'
+
+    def __init__(self, filter_name=None):
+        if filter_name:
+            self.filter_name = filter_name
 
     def _get_tags_queryparams(self, params):
         tags = params.get(self.filter_name, None)
@@ -364,35 +452,46 @@ class TagsFilter(FilterBackend):
         return super().filter_queryset(request, queryset, view)
 
 
-class StatusFilter(FilterBackend):
-    def __init__(self, filter_name='status'):
-        self.filter_name = filter_name
 
-    def _get_status_queryparams(self, params):
-        status = params.get(self.filter_name, None)
-        if status is not None:
-            status = set([x.strip() for x in status.split(",")])
-            return list(status)
+class WatchersFilter(FilterBackend):
+    filter_name = 'watchers'
+
+    def __init__(self, filter_name=None):
+        if filter_name:
+            self.filter_name = filter_name
+
+    def _get_watchers_queryparams(self, params):
+        watchers = params.get(self.filter_name, None)
+        if watchers:
+            return watchers.split(",")
 
         return None
 
     def filter_queryset(self, request, queryset, view):
-        query_status = self._get_status_queryparams(request.QUERY_PARAMS)
-        if query_status:
-            queryset = queryset.filter(status__in=query_status)
+        query_watchers = self._get_watchers_queryparams(request.QUERY_PARAMS)
+        model = queryset.model
+        if query_watchers:
+            WatchedModel = apps.get_model("notifications", "Watched")
+            watched_type = ContentType.objects.get_for_model(queryset.model)
+            watched_ids = WatchedModel.objects.filter(content_type=watched_type, user__id__in=query_watchers).values_list("object_id", flat=True)
+            queryset = queryset.filter(id__in=watched_ids)
 
         return super().filter_queryset(request, queryset, view)
 
+
+#####################################################################
+# Text search filters
+#####################################################################
 
 class QFilter(FilterBackend):
     def filter_queryset(self, request, queryset, view):
         q = request.QUERY_PARAMS.get('q', None)
         if q:
-            if q.isdigit():
-                qs_args = [Q(ref=q)]
-            else:
-                qs_args = [Q(subject__icontains=x) for x in q.split()]
+            table = queryset.model._meta.db_table
+            where_clause = ("to_tsvector('english_nostop', coalesce({table}.subject, '') || ' ' || "
+                            "coalesce({table}.ref) || ' ' || "
+                            "coalesce({table}.description, '')) @@ to_tsquery('english_nostop', %s)".format(table=table))
 
-            queryset = queryset.filter(reduce(operator.and_, qs_args))
+            queryset = queryset.extra(where=[where_clause], params=[to_tsquery(q)])
 
         return queryset

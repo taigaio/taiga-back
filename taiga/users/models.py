@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -39,6 +39,8 @@ from taiga.auth.tokens import get_token_for_user
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.iterators import split_by_n
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+
+from easy_thumbnails.files import get_thumbnailer
 
 
 def generate_random_hex_color():
@@ -174,8 +176,21 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.colorize_tags = True
         self.token = None
         self.set_unusable_password()
+        self.delete_photo()
         self.save()
         self.auth_data.all().delete()
+
+    def delete_photo(self):
+        # Removing thumbnails
+        thumbnailer = get_thumbnailer(self.photo)
+        thumbnailer.delete_thumbnails()
+
+        # Removing original photo
+        if self.photo:
+            storage, path = self.photo.storage, self.photo.path
+            storage.delete(path)
+
+        self.photo = None
 
 
 class Role(models.Model):

@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -88,11 +88,6 @@ def _common_users_values(diff):
 
     if "owner" in diff:
         users.update(diff["owner"])
-    if "watchers" in diff:
-        for ids in diff["watchers"]:
-            if not ids:
-                continue
-            users.update(ids)
     if "assigned_to" in diff:
         users.update(diff["assigned_to"])
     if users:
@@ -288,7 +283,6 @@ def userstory_freezer(us) -> dict:
         "milestone": us.milestone_id,
         "client_requirement": us.client_requirement,
         "team_requirement": us.team_requirement,
-        "watchers": [x.id for x in us.watchers.all()],
         "attachments": extract_attachments(us),
         "tags": us.tags,
         "points": points,
@@ -315,7 +309,6 @@ def issue_freezer(issue) -> dict:
         "description": issue.description,
         "description_html": mdrender(issue.project, issue.description),
         "assigned_to": issue.assigned_to_id,
-        "watchers": [x.pk for x in issue.watchers.all()],
         "attachments": extract_attachments(issue),
         "tags": issue.tags,
         "is_blocked": issue.is_blocked,
@@ -337,7 +330,6 @@ def task_freezer(task) -> dict:
         "description": task.description,
         "description_html": mdrender(task.project, task.description),
         "assigned_to": task.assigned_to_id,
-        "watchers": [x.pk for x in task.watchers.all()],
         "attachments": extract_attachments(task),
         "taskboard_order": task.taskboard_order,
         "us_order": task.us_order,
@@ -359,7 +351,6 @@ def wikipage_freezer(wiki) -> dict:
         "owner": wiki.owner_id,
         "content": wiki.content,
         "content_html": mdrender(wiki.project, wiki.content),
-        "watchers": [x.pk for x in wiki.watchers.all()],
         "attachments": extract_attachments(wiki),
     }
 

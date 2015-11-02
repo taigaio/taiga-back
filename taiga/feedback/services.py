@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -16,7 +16,7 @@
 
 from django.conf import settings
 
-from djmail.template_mail import MagicMailBuilder, InlineCSSTemplateMail
+from taiga.base.mails import mail_builder
 
 
 def send_feedback(feedback_entry, extra, reply_to=[]):
@@ -30,7 +30,6 @@ def send_feedback(feedback_entry, extra, reply_to=[]):
             "extra": extra
         }
 
-        mbuilder = MagicMailBuilder(template_mail_cls=InlineCSSTemplateMail)
-        email = mbuilder.feedback_notification(support_email, ctx)
+        email = mail_builder.feedback_notification(support_email, ctx)
         email.extra_headers["Reply-To"] = ", ".join(reply_to)
         email.send()

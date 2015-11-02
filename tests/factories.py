@@ -1,7 +1,7 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -231,6 +231,7 @@ class UserStoryFactory(Factory):
     subject = factory.Sequence(lambda n: "User Story {}".format(n))
     description = factory.Sequence(lambda n: "User Story {} description".format(n))
     status = factory.SubFactory("tests.factories.UserStoryStatusFactory")
+    milestone = factory.SubFactory("tests.factories.MilestoneFactory")
 
 
 class UserStoryStatusFactory(Factory):
@@ -411,14 +412,23 @@ class IssueCustomAttributesValuesFactory(Factory):
     issue = factory.SubFactory("tests.factories.IssueFactory")
 
 
-# class FanFactory(Factory):
-#     project = factory.SubFactory("tests.factories.ProjectFactory")
-#     user = factory.SubFactory("tests.factories.UserFactory")
+class LikeFactory(Factory):
+    class Meta:
+        model = "likes.Like"
+        strategy = factory.CREATE_STRATEGY
+
+    content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
+    object_id = factory.Sequence(lambda n: n)
+    user = factory.SubFactory("tests.factories.UserFactory")
 
 
-# class StarsFactory(Factory):
-#     project = factory.SubFactory("tests.factories.ProjectFactory")
-#     count = 0
+class LikesFactory(Factory):
+    class Meta:
+        model = "likes.Likes"
+        strategy = factory.CREATE_STRATEGY
+
+    content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
+    object_id = factory.Sequence(lambda n: n)
 
 
 class VoteFactory(Factory):
@@ -438,6 +448,17 @@ class VotesFactory(Factory):
 
     content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
     object_id = factory.Sequence(lambda n: n)
+
+
+class WatchedFactory(Factory):
+    class Meta:
+        model = "notifications.Watched"
+        strategy = factory.CREATE_STRATEGY
+
+    content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
+    object_id = factory.Sequence(lambda n: n)
+    user = factory.SubFactory("tests.factories.UserFactory")
+    project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
 class ContentTypeFactory(Factory):
@@ -469,6 +490,21 @@ class HistoryEntryFactory(Factory):
 
     type = 1
 
+
+class ApplicationFactory(Factory):
+    class Meta:
+        model = "external_apps.Application"
+        strategy = factory.CREATE_STRATEGY
+
+    key = "testingkey"
+
+class ApplicationTokenFactory(Factory):
+    class Meta:
+        model = "external_apps.ApplicationToken"
+        strategy = factory.CREATE_STRATEGY
+
+    application = factory.SubFactory("tests.factories.ApplicationFactory")
+    user = factory.SubFactory("tests.factories.UserFactory")
 
 def create_issue(**kwargs):
     "Create an issue and along with its dependencies."

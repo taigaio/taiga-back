@@ -13,6 +13,7 @@ from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.models import Membership
+from taiga.projects.history.services import get_history_queryset_by_model_instance, take_snapshot
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.models import NotifyPolicy
 from taiga.projects import services
@@ -33,7 +34,7 @@ def test_bad_signature(client):
     url = "{}?project={}&key={}".format(url, project.id, "badbadbad")
     data = {}
     response = client.post(url, json.dumps(data), content_type="application/json")
-    response_content = json.loads(response.content.decode("utf-8"))
+    response_content = response.data
     assert response.status_code == 400
     assert "Bad signature" in response_content["_error_message"]
 
@@ -308,7 +309,7 @@ def test_issues_event_opened_issue(client):
     issue.project.save()
     Membership.objects.create(user=issue.owner, project=issue.project, role=f.RoleFactory.create(project=issue.project), is_owner=True)
     notify_policy = NotifyPolicy.objects.get(user=issue.owner, project=issue.project)
-    notify_policy.notify_level = NotifyLevel.watch
+    notify_policy.notify_level = NotifyLevel.all
     notify_policy.save()
 
     payload = {
@@ -384,6 +385,134 @@ def test_issues_event_bad_issue(client):
     assert len(mail.outbox) == 0
 
 
+def test_issue_comment_event_on_existing_issue_task_and_us(client):
+    project = f.ProjectFactory()
+    role = f.RoleFactory(project=project, permissions=["view_tasks", "view_issues", "view_us"])
+    f.MembershipFactory(project=project, role=role, user=project.owner)
+    user = f.UserFactory()
+
+    issue = f.IssueFactory.create(external_reference=["gitlab", "http://gitlab.com/test/project/issues/11"], owner=project.owner, project=project)
+    take_snapshot(issue, user=user)
+    task = f.TaskFactory.create(external_reference=["gitlab", "http://gitlab.com/test/project/issues/11"], owner=project.owner, project=project)
+    take_snapshot(task, user=user)
+    us = f.UserStoryFactory.create(external_reference=["gitlab", "http://gitlab.com/test/project/issues/11"], owner=project.owner, project=project)
+    take_snapshot(us, user=user)
+
+    payload = {
+        "user": {
+            "username": "test"
+        },
+        "issue": {
+            "iid": "11",
+            "title": "test-title",
+        },
+        "object_attributes": {
+            "noteable_type": "Issue",
+            "note": "Test body",
+        },
+        "repository": {
+            "homepage": "http://gitlab.com/test/project",
+        },
+    }
+
+
+    mail.outbox = []
+
+    assert get_history_queryset_by_model_instance(issue).count() == 0
+    assert get_history_queryset_by_model_instance(task).count() == 0
+    assert get_history_queryset_by_model_instance(us).count() == 0
+
+    ev_hook = event_hooks.IssueCommentEventHook(issue.project, payload)
+    ev_hook.process_event()
+
+    issue_history = get_history_queryset_by_model_instance(issue)
+    assert issue_history.count() == 1
+    assert "Test body" in issue_history[0].comment
+
+    task_history = get_history_queryset_by_model_instance(task)
+    assert task_history.count() == 1
+    assert "Test body" in issue_history[0].comment
+
+    us_history = get_history_queryset_by_model_instance(us)
+    assert us_history.count() == 1
+    assert "Test body" in issue_history[0].comment
+
+    assert len(mail.outbox) == 3
+
+
+def test_issue_comment_event_on_not_existing_issue_task_and_us(client):
+    issue = f.IssueFactory.create(external_reference=["gitlab", "10"])
+    take_snapshot(issue, user=issue.owner)
+    task = f.TaskFactory.create(project=issue.project, external_reference=["gitlab", "10"])
+    take_snapshot(task, user=task.owner)
+    us = f.UserStoryFactory.create(project=issue.project, external_reference=["gitlab", "10"])
+    take_snapshot(us, user=us.owner)
+
+    payload = {
+        "user": {
+            "username": "test"
+        },
+        "issue": {
+            "iid": "99999",
+            "title": "test-title",
+        },
+        "object_attributes": {
+            "noteable_type": "Issue",
+            "note": "test comment",
+        },
+        "repository": {
+            "homepage": "test",
+        },
+    }
+
+    mail.outbox = []
+
+    assert get_history_queryset_by_model_instance(issue).count() == 0
+    assert get_history_queryset_by_model_instance(task).count() == 0
+    assert get_history_queryset_by_model_instance(us).count() == 0
+
+    ev_hook = event_hooks.IssueCommentEventHook(issue.project, payload)
+    ev_hook.process_event()
+
+    assert get_history_queryset_by_model_instance(issue).count() == 0
+    assert get_history_queryset_by_model_instance(task).count() == 0
+    assert get_history_queryset_by_model_instance(us).count() == 0
+
+    assert len(mail.outbox) == 0
+
+
+def test_issues_event_bad_comment(client):
+    issue = f.IssueFactory.create(external_reference=["gitlab", "10"])
+    take_snapshot(issue, user=issue.owner)
+
+    payload = {
+        "user": {
+            "username": "test"
+        },
+        "issue": {
+            "iid": "10",
+            "title": "test-title",
+        },
+        "object_attributes": {
+            "noteable_type": "Issue",
+        },
+        "repository": {
+            "homepage": "test",
+        },
+    }
+    ev_hook = event_hooks.IssueCommentEventHook(issue.project, payload)
+
+    mail.outbox = []
+
+    with pytest.raises(ActionSyntaxException) as excinfo:
+        ev_hook.process_event()
+
+    assert str(excinfo.value) == "Invalid issue comment information"
+
+    assert Issue.objects.count() == 1
+    assert len(mail.outbox) == 0
+
+
 def test_api_get_project_modules(client):
     project = f.create_project()
     f.MembershipFactory(project=project, user=project.owner, is_owner=True)
@@ -393,7 +522,7 @@ def test_api_get_project_modules(client):
     client.login(project.owner)
     response = client.get(url)
     assert response.status_code == 200
-    content = json.loads(response.content.decode("utf-8"))
+    content = response.data
     assert "gitlab" in content
     assert content["gitlab"]["secret"] != ""
     assert content["gitlab"]["webhooks_url"] != ""

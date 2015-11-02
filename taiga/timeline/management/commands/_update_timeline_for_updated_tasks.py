@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -18,6 +18,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from django.db.models import Prefetch, F
+from django.test.utils import override_settings
 
 from taiga.timeline.models import Timeline
 from taiga.timeline.timeline_implementations import userstory_timeline
@@ -34,7 +35,7 @@ def update_timeline(initial_date, final_date):
         timelines = timelines.filter(created__lt=final_date)
 
     timelines = timelines.filter(event_type="tasks.task.change")
-    
+
     print("Generating tasks indexed by id dict")
     task_ids = timelines.values_list("object_id", flat=True)
     tasks_per_id = {task.id: task for task in Task.objects.filter(id__in=task_ids).select_related("user_story").iterator()}
@@ -77,10 +78,6 @@ class Command(BaseCommand):
                     help='Final date for timeline update'),
         )
 
+    @override_settings(DEBUG=False)
     def handle(self, *args, **options):
-        debug_enabled = settings.DEBUG
-        if debug_enabled:
-            print("Please, execute this script only with DEBUG mode disabled (DEBUG=False)")
-            return
-
         update_timeline(options["initial_date"], options["final_date"])

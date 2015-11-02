@@ -1,6 +1,6 @@
-# Copyright (C) 2015 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2015 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -21,10 +21,7 @@ from django_sites import get_by_id as get_site_by_id
 from taiga.front.urls import urls
 
 
-register = library.Library()
-
-
-@register.global_function(name="resolve_front_url")
+@library.global_function(name="resolve_front_url")
 def resolve(type, *args):
     site = get_site_by_id("front")
     url_tmpl = "{scheme}//{domain}{url}"

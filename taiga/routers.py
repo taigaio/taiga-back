@@ -1,7 +1,6 @@
-
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -49,6 +48,8 @@ router.register(r"notify-policies", NotifyPolicyViewSet, base_name="notification
 
 # Projects & Selectors
 from taiga.projects.api import ProjectViewSet
+from taiga.projects.api import ProjectFansViewSet
+from taiga.projects.api import ProjectWatchersViewSet
 from taiga.projects.api import MembershipViewSet
 from taiga.projects.api import InvitationViewSet
 from taiga.projects.api import UserStoryStatusViewSet
@@ -61,6 +62,8 @@ from taiga.projects.api import SeverityViewSet
 from taiga.projects.api import ProjectTemplateViewSet
 
 router.register(r"projects", ProjectViewSet, base_name="projects")
+router.register(r"projects/(?P<resource_id>\d+)/fans", ProjectFansViewSet, base_name="project-fans")
+router.register(r"projects/(?P<resource_id>\d+)/watchers", ProjectWatchersViewSet, base_name="project-watchers")
 router.register(r"project-templates", ProjectTemplateViewSet, base_name="project-templates")
 router.register(r"memberships", MembershipViewSet, base_name="memberships")
 router.register(r"invitations", InvitationViewSet, base_name="invitations")
@@ -123,19 +126,36 @@ router.register(r"wiki/attachments", WikiAttachmentViewSet, base_name="wiki-atta
 
 # Project components
 from taiga.projects.milestones.api import MilestoneViewSet
+from taiga.projects.milestones.api import MilestoneWatchersViewSet
 from taiga.projects.userstories.api import UserStoryViewSet
+from taiga.projects.userstories.api import UserStoryVotersViewSet
+from taiga.projects.userstories.api import UserStoryWatchersViewSet
 from taiga.projects.tasks.api import TaskViewSet
+from taiga.projects.tasks.api import TaskVotersViewSet
+from taiga.projects.tasks.api import TaskWatchersViewSet
 from taiga.projects.issues.api import IssueViewSet
-from taiga.projects.issues.api import VotersViewSet
-from taiga.projects.wiki.api import WikiViewSet, WikiLinkViewSet
+from taiga.projects.issues.api import IssueVotersViewSet
+from taiga.projects.issues.api import IssueWatchersViewSet
+from taiga.projects.wiki.api import WikiViewSet
+from taiga.projects.wiki.api import WikiLinkViewSet
+from taiga.projects.wiki.api import WikiWatchersViewSet
 
 router.register(r"milestones", MilestoneViewSet, base_name="milestones")
+router.register(r"milestones/(?P<resource_id>\d+)/watchers", MilestoneWatchersViewSet, base_name="milestone-watchers")
 router.register(r"userstories", UserStoryViewSet, base_name="userstories")
+router.register(r"userstories/(?P<resource_id>\d+)/voters", UserStoryVotersViewSet, base_name="userstory-voters")
+router.register(r"userstories/(?P<resource_id>\d+)/watchers", UserStoryWatchersViewSet, base_name="userstory-watchers")
 router.register(r"tasks", TaskViewSet, base_name="tasks")
+router.register(r"tasks/(?P<resource_id>\d+)/voters", TaskVotersViewSet, base_name="task-voters")
+router.register(r"tasks/(?P<resource_id>\d+)/watchers", TaskWatchersViewSet, base_name="task-watchers")
 router.register(r"issues", IssueViewSet, base_name="issues")
-router.register(r"issues/(?P<issue_id>\d+)/voters", VotersViewSet, base_name="issue-voters")
+router.register(r"issues/(?P<resource_id>\d+)/voters", IssueVotersViewSet, base_name="issue-voters")
+router.register(r"issues/(?P<resource_id>\d+)/watchers", IssueWatchersViewSet, base_name="issue-watchers")
 router.register(r"wiki", WikiViewSet, base_name="wiki")
+router.register(r"wiki/(?P<resource_id>\d+)/watchers", WikiWatchersViewSet, base_name="wiki-watchers")
 router.register(r"wiki-links", WikiLinkViewSet, base_name="wiki-links")
+
+
 
 
 # History & Components
@@ -191,6 +211,13 @@ from taiga.export_import.api import ProjectImporterViewSet, ProjectExporterViewS
 
 router.register(r"importer", ProjectImporterViewSet, base_name="importer")
 router.register(r"exporter", ProjectExporterViewSet, base_name="exporter")
+
+
+# External apps
+from taiga.external_apps.api import Application, ApplicationToken
+router.register(r"applications", Application, base_name="applications")
+router.register(r"application-tokens", ApplicationToken, base_name="application-tokens")
+
 
 
 # Stats

@@ -1,4 +1,4 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -331,7 +331,7 @@ def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
             "is_hidden": is_hidden,
             "is_snapshot": need_real_snapshot,
         }
-
+        
         return entry_model.objects.create(**kwargs)
 
 

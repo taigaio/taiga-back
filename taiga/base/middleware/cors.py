@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import http
+from django.conf import settings
 
 
 COORS_ALLOWED_ORIGINS = "*"
@@ -28,13 +29,15 @@ COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated", "x-paginated-by",
                         "x-pagination-current", "x-pagination-next", "x-pagination-prev",
                         "x-site-host", "x-site-register"]
 
+COORS_EXTRA_EXPOSE_HEADERS = getattr(settings, "APP_EXTRA_EXPOSE_HEADERS", [])
+
 
 class CoorsMiddleware(object):
     def _populate_response(self, response):
         response["Access-Control-Allow-Origin"] = COORS_ALLOWED_ORIGINS
         response["Access-Control-Allow-Methods"] = ",".join(COORS_ALLOWED_METHODS)
         response["Access-Control-Allow-Headers"] = ",".join(COORS_ALLOWED_HEADERS)
-        response["Access-Control-Expose-Headers"] = ",".join(COORS_EXPOSE_HEADERS)
+        response["Access-Control-Expose-Headers"] = ",".join(COORS_EXPOSE_HEADERS + COORS_EXTRA_EXPOSE_HEADERS)
         response["Access-Control-Max-Age"] = "3600"
 
         if COORS_ALLOWED_CREDENTIALS:

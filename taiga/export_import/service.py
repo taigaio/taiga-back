@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -152,6 +152,7 @@ def store_project(data):
     if serialized.is_valid():
         serialized.object._importing = True
         serialized.object.save()
+        serialized.save_watchers()
         return serialized
     add_errors("project", serialized.errors)
     return None
@@ -298,6 +299,7 @@ def store_task(project, data):
         serialized.object._not_notify = True
 
         serialized.save()
+        serialized.save_watchers()
 
         if serialized.object.ref:
             sequence_name = refs.make_sequence_name(project)
@@ -338,6 +340,7 @@ def store_milestone(project, milestone):
         serialized.object.project = project
         serialized.object._importing = True
         serialized.save()
+        serialized.save_watchers()
 
         for task_without_us in milestone.get("tasks_without_us", []):
             task_without_us["user_story"] = None
@@ -358,7 +361,7 @@ def store_attachment(project, obj, attachment):
             serialized.object.owner = serialized.object.project.owner
         serialized.object._importing = True
         serialized.object.size = serialized.object.attached_file.size
-        serialized.object.name = path.basename(serialized.object.attached_file.name).lower()
+        serialized.object.name = path.basename(serialized.object.attached_file.name)
         serialized.save()
         return serialized
     add_errors("attachments", serialized.errors)
@@ -401,6 +404,7 @@ def store_wiki_page(project, wiki_page):
         serialized.object._importing = True
         serialized.object._not_notify = True
         serialized.save()
+        serialized.save_watchers()
 
         for attachment in wiki_page.get("attachments", []):
             store_attachment(project, serialized.object, attachment)
@@ -463,6 +467,7 @@ def store_user_story(project, data):
         serialized.object._not_notify = True
 
         serialized.save()
+        serialized.save_watchers()
 
         if serialized.object.ref:
             sequence_name = refs.make_sequence_name(project)
@@ -523,6 +528,7 @@ def store_issue(project, data):
         serialized.object._not_notify = True
 
         serialized.save()
+        serialized.save_watchers()
 
         if serialized.object.ref:
             sequence_name = refs.make_sequence_name(project)

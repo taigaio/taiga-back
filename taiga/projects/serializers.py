@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -27,19 +27,23 @@ from taiga.base.fields import TagsColorsField
 
 from taiga.users.services import get_photo_or_gravatar_url
 from taiga.users.serializers import UserSerializer
+from taiga.users.serializers import UserBasicInfoSerializer
 from taiga.users.serializers import ProjectRoleSerializer
 from taiga.users.validators import RoleExistsValidator
 
 from taiga.permissions.service import get_user_project_permissions
 from taiga.permissions.service import is_project_owner
 
+from taiga.projects.notifications import models as notify_models
+
 from . import models
 from . import services
+from .notifications.mixins import WatchedResourceModelSerializer
 from .validators import ProjectExistsValidator
 from .custom_attributes.serializers import UserStoryCustomAttributeSerializer
 from .custom_attributes.serializers import TaskCustomAttributeSerializer
 from .custom_attributes.serializers import IssueCustomAttributeSerializer
-
+from .likes.mixins.serializers import FanResourceSerializerMixin
 
 ######################################################
 ## Custom values for selectors
@@ -197,7 +201,7 @@ class MembershipSerializer(serializers.ModelSerializer):
     photo = serializers.SerializerMethodField("get_photo")
     project_name = serializers.SerializerMethodField("get_project_name")
     project_slug = serializers.SerializerMethodField("get_project_slug")
-    invited_by = UserSerializer(read_only=True)
+    invited_by = UserBasicInfoSerializer(read_only=True)
 
     class Meta:
         model = models.Membership
@@ -271,21 +275,6 @@ class MembershipAdminSerializer(MembershipSerializer):
         exclude = ("token",)
 
 
-class ProjectMembershipSerializer(serializers.ModelSerializer):
-    role_name = serializers.CharField(source='role.name', required=False, i18n=True)
-    full_name = serializers.CharField(source='user.get_full_name', required=False)
-    username = serializers.CharField(source='user.username', required=False)
-    color = serializers.CharField(source='user.color', required=False)
-    is_active = serializers.BooleanField(source='user.is_active', required=False)
-    photo = serializers.SerializerMethodField("get_photo")
-
-    class Meta:
-        model = models.Membership
-
-    def get_photo(self, project):
-        return get_photo_or_gravatar_url(project.user)
-
-
 class MemberBulkSerializer(RoleExistsValidator, serializers.Serializer):
     email = serializers.EmailField()
     role_id = serializers.IntegerField()
@@ -297,29 +286,43 @@ class MembersBulkSerializer(ProjectExistsValidator, serializers.Serializer):
     invitation_extra_text = serializers.CharField(required=False, max_length=255)
 
 
+class ProjectMemberSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="user.id", read_only=True)
+    username = serializers.CharField(source='user.username', read_only=True)
+    full_name = serializers.CharField(source='user.full_name', read_only=True)
+    full_name_display = serializers.CharField(source='user.get_full_name', read_only=True)
+    color = serializers.CharField(source='user.color', read_only=True)
+    photo = serializers.SerializerMethodField("get_photo")
+    is_active = serializers.BooleanField(source='user.is_active', read_only=True)
+    role_name = serializers.CharField(source='role.name', read_only=True, i18n=True)
+
+    class Meta:
+        model = models.Membership
+        exclude = ("project", "email", "created_at", "token", "invited_by", "invitation_extra_text", "user_order")
+
+    def get_photo(self, membership):
+        return get_photo_or_gravatar_url(membership.user)
+
+
 ######################################################
 ## Projects
 ######################################################
 
-class ProjectSerializer(serializers.ModelSerializer):
+class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializer, serializers.ModelSerializer):
     tags = TagsField(default=[], required=False)
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
-    stars = serializers.SerializerMethodField("get_stars_number")
     my_permissions = serializers.SerializerMethodField("get_my_permissions")
     i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
     tags_colors = TagsColorsField(required=False)
     total_closed_milestones = serializers.SerializerMethodField("get_total_closed_milestones")
+    notify_level =  serializers.SerializerMethodField("get_notify_level")
 
     class Meta:
         model = models.Project
         read_only_fields = ("created_date", "modified_date", "owner", "slug")
         exclude = ("last_us_ref", "last_task_ref", "last_issue_ref",
                    "issues_csv_uuid", "tasks_csv_uuid", "userstories_csv_uuid")
-
-    def get_stars_number(self, obj):
-        # The "stars_count" attribute is attached in the get_queryset of the viewset.
-        return getattr(obj, "stars_count", 0)
 
     def get_my_permissions(self, obj):
         if "request" in self.context:
@@ -334,23 +337,16 @@ class ProjectSerializer(serializers.ModelSerializer):
     def get_total_closed_milestones(self, obj):
         return obj.milestones.filter(closed=True).count()
 
-    def validate_total_milestones(self, attrs, source):
-        """
-        Check that total_milestones is not null, it's an optional parameter but
-        not nullable in the model.
-        """
-        value = attrs[source]
-        if value is None:
-            raise serializers.ValidationError(_("Total milestones must be major or equal to zero"))
-        return attrs
+    def get_notify_level(self, obj):
+        return getattr(obj, "notify_level", None)
 
 
 class ProjectDetailSerializer(ProjectSerializer):
-    roles = serializers.SerializerMethodField("get_roles")
-    memberships = serializers.SerializerMethodField("get_memberships")
     us_statuses = UserStoryStatusSerializer(many=True, required=False)       # User Stories
     points = PointsSerializer(many=True, required=False)
+
     task_statuses = TaskStatusSerializer(many=True, required=False)          # Tasks
+
     issue_statuses = IssueStatusSerializer(many=True, required=False)
     issue_types = IssueTypeSerializer(many=True, required=False)
     priorities = PrioritySerializer(many=True, required=False)               # Issues
@@ -362,22 +358,17 @@ class ProjectDetailSerializer(ProjectSerializer):
                                                            many=True, required=False)
     issue_custom_attributes = IssueCustomAttributeSerializer(source="issuecustomattributes",
                                                              many=True, required=False)
-    users = serializers.SerializerMethodField("get_users")
 
-    def get_memberships(self, obj):
+    roles = ProjectRoleSerializer(source="roles", many=True, read_only=True)
+    members = serializers.SerializerMethodField(method_name="get_members")
+
+    def get_members(self, obj):
         qs = obj.memberships.filter(user__isnull=False)
         qs = qs.extra(select={"complete_user_name":"concat(full_name, username)"})
         qs = qs.order_by("complete_user_name")
         qs = qs.select_related("role", "user")
-        serializer = ProjectMembershipSerializer(qs, many=True)
+        serializer = ProjectMemberSerializer(qs, many=True)
         return serializer.data
-
-    def get_roles(self, obj):
-        serializer = ProjectRoleSerializer(obj.roles.all(), many=True)
-        return serializer.data
-
-    def get_users(self, obj):
-        return UserSerializer(obj.members.all(), many=True).data
 
 
 class ProjectDetailAdminSerializer(ProjectDetailSerializer):
@@ -388,10 +379,10 @@ class ProjectDetailAdminSerializer(ProjectDetailSerializer):
 
 
 ######################################################
-## Starred
+## Liked
 ######################################################
 
-class StarredSerializer(serializers.ModelSerializer):
+class LikedSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Project
         fields = ['id', 'name', 'slug']

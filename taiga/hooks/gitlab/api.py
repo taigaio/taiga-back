@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -30,6 +30,7 @@ class GitLabViewSet(BaseWebhookApiViewSet):
     event_hook_classes = {
         "push": event_hooks.PushEventHook,
         "issue": event_hooks.IssuesEventHook,
+        "note": event_hooks.IssueCommentEventHook,
     }
 
     def _validate_signature(self, project, request):

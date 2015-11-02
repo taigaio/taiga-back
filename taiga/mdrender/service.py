@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -61,7 +61,7 @@ bleach.ALLOWED_STYLES.append("background")
 
 bleach.ALLOWED_ATTRIBUTES["a"] = ["href", "title", "alt", "target"]
 bleach.ALLOWED_ATTRIBUTES["img"] = ["alt", "src"]
-bleach.ALLOWED_ATTRIBUTES["*"] = ["class", "style"]
+bleach.ALLOWED_ATTRIBUTES["*"] = ["class", "style", "id"]
 
 
 def _make_extensions_list(project=None):
@@ -75,11 +75,11 @@ def _make_extensions_list(project=None):
             MentionsExtension(),
             TaigaReferencesExtension(project),
             TargetBlankLinkExtension(),
-            "extra",
-            "codehilite",
-            "sane_lists",
-            "toc",
-            "nl2br"]
+            "markdown.extensions.extra",
+            "markdown.extensions.codehilite",
+            "markdown.extensions.sane_lists",
+            "markdown.extensions.toc",
+            "markdown.extensions.nl2br"]
 
 
 import diff_match_patch

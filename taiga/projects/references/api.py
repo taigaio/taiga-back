@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -58,5 +58,22 @@ class ResolverViewSet(viewsets.ViewSet):
         if data["wikipage"] and user_has_perm(request.user, "view_wiki_pages", project):
             result["wikipage"] = get_object_or_404(project.wiki_pages.all(),
                                                    slug=data["wikipage"]).pk
+
+        if data["ref"]:
+            ref_found = False  # No need to continue once one ref is found
+            if user_has_perm(request.user, "view_us", project):
+                us = project.user_stories.filter(ref=data["ref"]).first()
+                if us:
+                    result["us"] = us.pk
+                    ref_found = True
+            if ref_found is False and user_has_perm(request.user, "view_tasks", project):
+                task = project.tasks.filter(ref=data["ref"]).first()
+                if task:
+                    result["task"] = task.pk
+                    ref_found = True
+            if ref_found is False and user_has_perm(request.user, "view_issues", project):
+                issue = project.issues.filter(ref=data["ref"]).first()
+                if issue:
+                    result["issue"] = issue.pk
 
         return response.Ok(result)

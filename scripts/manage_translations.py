@@ -84,6 +84,7 @@ def update_catalogs(resources=None, languages=None):
     cmd = makemessages.Command()
     opts = {
         "locale": ["en"],
+	"exclude": [],
         "extensions": ["py", "jinja"],
 
         # Default values
@@ -96,7 +97,7 @@ def update_catalogs(resources=None, languages=None):
         "no_location": False,
         "no_obsolete": False,
         "keep_pot": False,
-        "verbosity": "0",
+        "verbosity": 0,
     }
 
     if resources is not None:

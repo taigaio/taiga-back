@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Taiga Agile LLC <support@taiga.io>
+# Copyright (C) 2014-2015 Taiga Agile LLC <support@taiga.io>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -12,10 +12,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from contextlib import closing
 
 from django.apps import apps
-from django.db import connection
+from django.db.models import Count
 from django.utils import timezone
 from datetime import timedelta
 from collections import OrderedDict
@@ -37,26 +36,27 @@ def get_users_stats():
 
     # Graph: users last year
     a_year_ago = timezone.now() - timedelta(days=365)
-    sql_query = """
-      SELECT date_trunc('week', "filtered_users"."date_joined") AS "week",
-             count(*)
-        FROM (SELECT *
-                FROM "users_user"
-               WHERE "users_user"."is_active" = TRUE
-                 AND "users_user"."is_system" = FALSE
-                 AND "users_user"."date_joined" >= %s) AS "filtered_users"
-    GROUP BY "week"
-    ORDER BY "week";
-    """
-    with closing(connection.cursor()) as cursor:
-        cursor.execute(sql_query, [a_year_ago])
-        rows = cursor.fetchall()
+    # increments ->
+    #   SELECT date_trunc('week', "filtered_users"."date_joined") AS "week",
+    #          count(*)
+    #     FROM (SELECT *
+    #             FROM "users_user"
+    #            WHERE "users_user"."is_active" = TRUE
+    #              AND "users_user"."is_system" = FALSE
+    #              AND "users_user"."date_joined" >= %s) AS "filtered_users"
+    # GROUP BY "week"
+    # ORDER BY "week";
+    increments = (queryset.filter(date_joined__gte=a_year_ago)
+                          .extra({"week": "date_trunc('week', date_joined)"})
+                          .values("week")
+                          .order_by("week")
+                          .annotate(count=Count("id")))
 
     counts_last_year_per_week = OrderedDict()
-    sumatory = queryset.filter(date_joined__lt=rows[0][0]).count()
-    for row in rows:
-        sumatory += row[1]
-        counts_last_year_per_week[str(row[0].date())] = sumatory
+    sumatory = queryset.filter(date_joined__lt=increments[0]["week"]).count()
+    for inc in increments:
+        sumatory += inc["count"]
+        counts_last_year_per_week[str(inc["week"].date())] = sumatory
 
     stats["counts_last_year_per_week"] = counts_last_year_per_week
 

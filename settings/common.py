@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -24,6 +24,8 @@ ALLOWED_HOSTS = ["*"]
 ADMINS = (
     ("Admin", "example@example.com"),
 )
+
+DEBUG = False
 
 DATABASES = {
     "default": {
@@ -105,7 +107,7 @@ LANGUAGES = [
     #("id", "Bahasa Indonesia"),  # Indonesian
     #("io", "IDO"),  # Ido
     #("is", "Íslenska"),  # Icelandic
-    #("it", "Italiano"),  # Italian
+    ("it", "Italiano"),  # Italian
     #("ja", "日本語"),  # Japanese
     #("ka", "ქართული"),  # Georgian
     #("kk", "Қазақша"),  # Kazakh
@@ -126,11 +128,11 @@ LANGUAGES = [
     #("nn", "Norsk (nynorsk)"),  # Norwegian Nynorsk
     #("os", "Ирон æвзаг"),  # Ossetic
     #("pa", "ਪੰਜਾਬੀ"),  # Punjabi
-    #("pl", "Polski"),  # Polish
+    ("pl", "Polski"),  # Polish
     #("pt", "Português (Portugal)"),  # Portuguese
-    #("pt-br", "Português (Brasil)"),  # Brazilian Portuguese
+    ("pt-br", "Português (Brasil)"),  # Brazilian Portuguese
     #("ro", "Română"),  # Romanian
-    #("ru", "Русский"),  # Russian
+    ("ru", "Русский"),  # Russian
     #("sk", "Slovenčina"),  # Slovak
     #("sl", "Slovenščina"),  # Slovenian
     #("sq", "Shqip"),  # Albanian
@@ -191,9 +193,6 @@ MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 # urls depends on it. On production should be set
 # something like https://media.taiga.io/
 MEDIA_URL = "http://localhost:8000/media/"
-
-# Static url is not widelly used by taiga (only
-# if admin is activated).
 STATIC_URL = "http://localhost:8000/static/"
 
 # Static configuration.
@@ -215,10 +214,46 @@ DEFAULT_FILE_STORAGE = "taiga.base.storage.FileSystemStorage"
 
 SECRET_KEY = "aw3+t2r(8(0kkrhg8)gx6i96v5^kv%6cfep9wxfom0%7dy0m9e"
 
-TEMPLATE_LOADERS = [
-    "django_jinja.loaders.AppLoader",
-    "django_jinja.loaders.FileSystemLoader",
+TEMPLATES = [
+    {
+        "BACKEND": "django_jinja.backend.Jinja2",
+        "DIRS": [
+            os.path.join(BASE_DIR, "templates"),
+        ],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            'context_processors': [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.request",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.contrib.messages.context_processors.messages",
+            ],
+            "match_extension": ".jinja",
+        }
+    },
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [
+            os.path.join(BASE_DIR, "templates"),
+        ],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            'context_processors': [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.request",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        }
+    },
 ]
+
 
 MIDDLEWARE_CLASSES = [
     "taiga.base.middleware.cors.CoorsMiddleware",
@@ -234,21 +269,8 @@ MIDDLEWARE_CLASSES = [
     "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
-TEMPLATE_CONTEXT_PROCESSORS = [
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.request",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages",
-]
 
 ROOT_URLCONF = "taiga.urls"
-
-TEMPLATE_DIRS = [
-    os.path.join(BASE_DIR, "templates"),
-]
 
 INSTALLED_APPS = [
     "django.contrib.auth",
@@ -266,12 +288,14 @@ INSTALLED_APPS = [
     "taiga.front",
     "taiga.users",
     "taiga.userstorage",
+    "taiga.external_apps",
     "taiga.projects",
     "taiga.projects.references",
     "taiga.projects.custom_attributes",
     "taiga.projects.history",
     "taiga.projects.notifications",
     "taiga.projects.attachments",
+    "taiga.projects.likes",
     "taiga.projects.votes",
     "taiga.projects.milestones",
     "taiga.projects.userstories",
@@ -384,6 +408,9 @@ REST_FRAMEWORK = {
 
         # Mainly used for api debug.
         "taiga.auth.backends.Session",
+
+        # Application tokens auth
+        "taiga.external_apps.auth_backends.Token",
     ),
     "DEFAULT_THROTTLE_CLASSES": (
         "taiga.base.throttling.AnonRateThrottle",
@@ -403,6 +430,11 @@ REST_FRAMEWORK = {
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S%z"
 }
 
+# Extra expose header related to Taiga APP (see taiga.base.middleware.cors=)
+APP_EXTRA_EXPOSE_HEADERS = [
+    "taiga-info-total-opened-milestones",
+    "taiga-info-total-closed-milestones"
+]
 
 DEFAULT_PROJECT_TEMPLATE = "scrum"
 PUBLIC_REGISTER_ENABLED = False

@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -31,12 +31,20 @@ from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.slug import slugify_uniquely
 
 from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
+from taiga.projects.notifications.choices import NotifyLevel
+from taiga.projects.notifications.utils import (
+    attach_project_total_watchers_attrs_to_queryset,
+    attach_project_is_watcher_to_queryset,
+    attach_notify_level_to_project_queryset)
+
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 
 from taiga.projects.userstories.models import UserStory, RolePoints
 from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
+from taiga.projects.likes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
 from taiga.permissions import service as permissions_service
 
 from . import serializers
@@ -44,15 +52,12 @@ from . import models
 from . import permissions
 from . import services
 
-from .votes import serializers as votes_serializers
-from .votes import services as votes_service
-from .votes.utils import attach_votescount_to_queryset
 
 ######################################################
 ## Project
 ######################################################
-
-class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
+class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet):
+    queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectDetailSerializer
     admin_serializer_class = serializers.ProjectDetailAdminSerializer
     list_serializer_class = serializers.ProjectSerializer
@@ -60,6 +65,32 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
     filter_backends = (filters.CanViewProjectObjFilterBackend,)
     filter_fields = (('member', 'members'),)
     order_by_fields = ("memberships__user_order",)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = self.attach_likes_attrs_to_queryset(qs)
+        qs = attach_project_total_watchers_attrs_to_queryset(qs)
+        if self.request.user.is_authenticated():
+            qs = attach_project_is_watcher_to_queryset(qs, self.request.user)
+            qs = attach_notify_level_to_project_queryset(qs, self.request.user)
+
+        return qs
+
+    @detail_route(methods=["POST"])
+    def watch(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "watch", project)
+        notify_level = request.DATA.get("notify_level", NotifyLevel.all)
+        project.add_watcher(self.request.user, notify_level=notify_level)
+        return response.Ok()
+
+    @detail_route(methods=["POST"])
+    def unwatch(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "unwatch", project)
+        user = self.request.user
+        project.remove_watcher(user)
+        return response.Ok()
 
     @list_route(methods=["POST"])
     def bulk_update_order(self, request, **kwargs):
@@ -73,10 +104,6 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
         data = serializer.data
         services.update_projects_order_in_bulk(data, "user_order", request.user)
         return response.NoContent(data=None)
-
-    def get_queryset(self):
-        qs = models.Project.objects.all()
-        return attach_votescount_to_queryset(qs, as_field="stars_count")
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -161,39 +188,10 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
         return response.Ok(services.get_stats_for_project_issues(project))
 
     @detail_route(methods=["GET"])
-    def issue_filters_data(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "issues_filters_data", project)
-        return response.Ok(services.get_issues_filters_data(project))
-
-    @detail_route(methods=["GET"])
     def tags_colors(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "tags_colors", project)
         return response.Ok(dict(project.tags_colors))
-
-    @detail_route(methods=["POST"])
-    def star(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "star", project)
-        votes_service.add_vote(project, user=request.user)
-        return response.Ok()
-
-    @detail_route(methods=["POST"])
-    def unstar(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "unstar", project)
-        votes_service.remove_vote(project, user=request.user)
-        return response.Ok()
-
-    @detail_route(methods=["GET"])
-    def fans(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "fans", project)
-
-        voters = votes_service.get_voters(project)
-        voters_data = votes_serializers.VoterSerializer(voters, many=True)
-        return response.Ok(voters_data.data)
 
     @detail_route(methods=["POST"])
     def create_template(self, request, **kwargs):
@@ -293,6 +291,14 @@ class ProjectViewSet(HistoryResourceMixin, ModelCrudViewSet):
         return response.NoContent()
 
 
+class ProjectFansViewSet(FansViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.ProjectFansPermission,)
+    resource_model = models.Project
+
+
+class ProjectWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.ProjectWatchersPermission,)
+    resource_model = models.Project
 
 ######################################################
 ## Custom values for selectors

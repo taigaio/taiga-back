@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from taiga.base.utils import json
 from taiga.projects.milestones.serializers import MilestoneSerializer
 from taiga.projects.milestones.models import Milestone
+from taiga.projects.notifications.services import add_watcher
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 
 from tests import factories as f
@@ -272,5 +273,95 @@ def test_milestone_action_stats(client, data):
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
 
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_milestone_action_watch(client, data):
+    public_url = reverse('milestones-watch', kwargs={"pk": data.public_milestone.pk})
+    private_url1 = reverse('milestones-watch', kwargs={"pk": data.private_milestone1.pk})
+    private_url2 = reverse('milestones-watch', kwargs={"pk": data.private_milestone2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]
+
+
+def test_milestone_action_unwatch(client, data):
+    public_url = reverse('milestones-unwatch', kwargs={"pk": data.public_milestone.pk})
+    private_url1 = reverse('milestones-unwatch', kwargs={"pk": data.private_milestone1.pk})
+    private_url2 = reverse('milestones-unwatch', kwargs={"pk": data.private_milestone2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]
+
+
+def test_milestone_watchers_list(client, data):
+    public_url = reverse('milestone-watchers-list', kwargs={"resource_id": data.public_milestone.pk})
+    private_url1 = reverse('milestone-watchers-list', kwargs={"resource_id": data.private_milestone1.pk})
+    private_url2 = reverse('milestone-watchers-list', kwargs={"resource_id": data.private_milestone2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_milestone_watchers_retrieve(client, data):
+    add_watcher(data.public_milestone, data.project_owner)
+    public_url = reverse('milestone-watchers-detail', kwargs={"resource_id": data.public_milestone.pk,
+                                                        "pk": data.project_owner.pk})
+    add_watcher(data.private_milestone1, data.project_owner)
+    private_url1 = reverse('milestone-watchers-detail', kwargs={"resource_id": data.private_milestone1.pk,
+                                                          "pk": data.project_owner.pk})
+    add_watcher(data.private_milestone2, data.project_owner)
+    private_url2 = reverse('milestone-watchers-detail', kwargs={"resource_id": data.private_milestone2.pk,
+                                                          "pk": data.project_owner.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]

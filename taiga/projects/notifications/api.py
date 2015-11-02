@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -19,8 +19,9 @@ from django.db.models import Q
 from taiga.base.api import ModelCrudViewSet
 
 from taiga.projects.notifications.choices import NotifyLevel
+from taiga.projects.notifications.models import Watched
 from taiga.projects.models import Project
-
+from taiga.users import services as user_services
 from . import serializers
 from . import models
 from . import permissions
@@ -38,12 +39,14 @@ class NotifyPolicyViewSet(ModelCrudViewSet):
         ).distinct()
 
         for project in projects:
-            services.create_notify_policy_if_not_exists(project, self.request.user, NotifyLevel.watch)
+            services.create_notify_policy_if_not_exists(project, self.request.user, NotifyLevel.all)
 
     def get_queryset(self):
         if self.request.user.is_anonymous():
             return models.NotifyPolicy.objects.none()
 
         self._build_needed_notify_policies()
-        qs = models.NotifyPolicy.objects.filter(user=self.request.user)
-        return qs.distinct()
+
+        return models.NotifyPolicy.objects.filter(user=self.request.user).filter(
+            Q(project__owner=self.request.user) | Q(project__memberships__user=self.request.user)
+        ).distinct()

@@ -1,10 +1,11 @@
 from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
+from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.projects.notifications.services import add_watcher
+from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.wiki.serializers import WikiPageSerializer, WikiLinkSerializer
 from taiga.projects.wiki.models import WikiPage, WikiLink
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
-from taiga.projects.occ import OCCResourceMixin
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
@@ -436,3 +437,93 @@ def test_wiki_link_patch(client, data):
             patch_data = json.dumps({"title": "test"})
             results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
             assert results == [401, 403, 403, 200, 200]
+
+
+def test_wikipage_action_watch(client, data):
+    public_url = reverse('wiki-watch', kwargs={"pk": data.public_wiki_page.pk})
+    private_url1 = reverse('wiki-watch', kwargs={"pk": data.private_wiki_page1.pk})
+    private_url2 = reverse('wiki-watch', kwargs={"pk": data.private_wiki_page2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]
+
+
+def test_wikipage_action_unwatch(client, data):
+    public_url = reverse('wiki-unwatch', kwargs={"pk": data.public_wiki_page.pk})
+    private_url1 = reverse('wiki-unwatch', kwargs={"pk": data.private_wiki_page1.pk})
+    private_url2 = reverse('wiki-unwatch', kwargs={"pk": data.private_wiki_page2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'post', public_url, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, "", users)
+    assert results == [401, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, "", users)
+    assert results == [404, 404, 404, 200, 200]
+
+
+def test_wikipage_watchers_list(client, data):
+    public_url = reverse('wiki-watchers-list', kwargs={"resource_id": data.public_wiki_page.pk})
+    private_url1 = reverse('wiki-watchers-list', kwargs={"resource_id": data.private_wiki_page1.pk})
+    private_url2 = reverse('wiki-watchers-list', kwargs={"resource_id": data.private_wiki_page2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_wikipage_watchers_retrieve(client, data):
+    add_watcher(data.public_wiki_page, data.project_owner)
+    public_url = reverse('wiki-watchers-detail', kwargs={"resource_id": data.public_wiki_page.pk,
+                                                        "pk": data.project_owner.pk})
+    add_watcher(data.private_wiki_page1, data.project_owner)
+    private_url1 = reverse('wiki-watchers-detail', kwargs={"resource_id": data.private_wiki_page1.pk,
+                                                          "pk": data.project_owner.pk})
+    add_watcher(data.private_wiki_page2, data.project_owner)
+    private_url2 = reverse('wiki-watchers-detail', kwargs={"resource_id": data.private_wiki_page2.pk,
+                                                          "pk": data.project_owner.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]

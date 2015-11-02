@@ -1,13 +1,13 @@
 -r requirements.txt
 
-factory_boy==2.4.1
-py==1.4.26
-pytest==2.6.4
-pytest-django==2.8.0
-pytest-pythonpath==0.6
+factory_boy==2.6.0
+py==1.4.30
+pytest==2.8.2
+pytest-django==2.9.1
+pytest-pythonpath==0.7
 
-coverage==3.7.1
-coveralls==0.4.2
+coverage==4.0.1
+coveralls==1.1
 django-slowdown==0.0.1
 
 transifex-client==0.11.1.beta

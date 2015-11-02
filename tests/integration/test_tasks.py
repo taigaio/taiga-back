@@ -54,8 +54,9 @@ def test_create_task_without_status(client):
 
 
 def test_api_update_task_tags(client):
-    task = f.create_task()
-    f.MembershipFactory.create(project=task.project, user=task.owner, is_owner=True)
+    project = f.ProjectFactory.create()
+    task = f.create_task(project=project, status__project=project, milestone=None, user_story=None)
+    f.MembershipFactory.create(project=project, user=task.owner, is_owner=True)
     url = reverse("tasks-detail", kwargs={"pk": task.pk})
     data = {"tags": ["back", "front"], "version": task.version}
 
@@ -162,6 +163,6 @@ def test_custom_fields_csv_generation():
     data.seek(0)
     reader = csv.reader(data)
     row = next(reader)
-    assert row[17] == attr.name
+    assert row[19] == attr.name
     row = next(reader)
-    assert row[17] == "val1"
+    assert row[19] == "val1"

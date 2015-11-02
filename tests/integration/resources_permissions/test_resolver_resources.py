@@ -128,3 +128,21 @@ def test_resolver_list(client, data):
                              "task": data.task.pk,
                              "issue": data.issue.pk,
                              "milestone": data.milestone.pk}
+
+    response = client.json.get("{}?project={}&ref={}".format(url,
+                                                             data.private_project2.slug,
+                                                             data.us.ref))
+    assert response.data == {"project": data.private_project2.pk,
+                             "us": data.us.pk}
+
+    response = client.json.get("{}?project={}&ref={}".format(url,
+                                                             data.private_project2.slug,
+                                                             data.task.ref))
+    assert response.data == {"project": data.private_project2.pk,
+                             "task": data.task.pk}
+
+    response = client.json.get("{}?project={}&ref={}".format(url,
+                                                             data.private_project2.slug,
+                                                             data.issue.ref))
+    assert response.data == {"project": data.private_project2.pk,
+                             "issue": data.issue.pk}

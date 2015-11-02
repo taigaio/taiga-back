@@ -287,3 +287,39 @@ def test_user_action_change_email(client, data):
     after_each_request()
     results = helper_test_http_method(client, 'post', url, patch_data, users, after_each_request=after_each_request)
     assert results == [204, 204, 204]
+
+
+def test_user_list_watched(client, data):
+    url = reverse('users-watched', kwargs={"pk": data.registered_user.pk})
+    users = [
+        None,
+        data.registered_user,
+        data.other_user,
+        data.superuser,
+    ]
+    results = helper_test_http_method(client, 'get', url, None, users)
+    assert results == [200, 200, 200, 200]
+
+
+def test_user_list_liked(client, data):
+    url = reverse('users-liked', kwargs={"pk": data.registered_user.pk})
+    users = [
+        None,
+        data.registered_user,
+        data.other_user,
+        data.superuser,
+    ]
+    results = helper_test_http_method(client, 'get', url, None, users)
+    assert results == [200, 200, 200, 200]
+
+
+def test_user_list_voted(client, data):
+    url = reverse('users-voted', kwargs={"pk": data.registered_user.pk})
+    users = [
+        None,
+        data.registered_user,
+        data.other_user,
+        data.superuser,
+    ]
+    results = helper_test_http_method(client, 'get', url, None, users)
+    assert results == [200, 200, 200, 200]

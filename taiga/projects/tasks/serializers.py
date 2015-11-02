@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -27,12 +27,15 @@ from taiga.projects.milestones.validators import SprintExistsValidator
 from taiga.projects.tasks.validators import TaskExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicTaskStatusSerializerSerializer
-from taiga.users.serializers import BasicInfoSerializer as UserBasicInfoSerializer
+from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
+from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
+
+from taiga.users.serializers import UserBasicInfoSerializer
 
 from . import models
 
 
-class TaskSerializer(WatchersValidator, serializers.ModelSerializer):
+class TaskSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer, serializers.ModelSerializer):
     tags = TagsField(required=False, default=[])
     external_reference = PgArrayField(required=False)
     comment = serializers.SerializerMethodField("get_comment")
@@ -42,6 +45,7 @@ class TaskSerializer(WatchersValidator, serializers.ModelSerializer):
     is_closed =  serializers.SerializerMethodField("get_is_closed")
     status_extra_info = BasicTaskStatusSerializerSerializer(source="status", required=False, read_only=True)
     assigned_to_extra_info = UserBasicInfoSerializer(source="assigned_to", required=False, read_only=True)
+    owner_extra_info = UserBasicInfoSerializer(source="owner", required=False, read_only=True)
 
     class Meta:
         model = models.Task

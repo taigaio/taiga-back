@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -17,9 +17,10 @@
 import json
 
 from taiga.base.api import serializers
+from taiga.users.models import User
 
 from . import models
-
+from . import choices
 
 
 class NotifyPolicySerializer(serializers.ModelSerializer):
@@ -31,3 +32,11 @@ class NotifyPolicySerializer(serializers.ModelSerializer):
 
     def get_project_name(self, obj):
         return obj.project.name
+
+
+class WatcherSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source='get_full_name', required=False)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'full_name')

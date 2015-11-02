@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -54,18 +54,32 @@ class ProjectPermission(TaigaResourcePermission):
     list_perms = AllowAny()
     stats_perms = HasProjectPerm('view_project')
     member_stats_perms = HasProjectPerm('view_project')
+    issues_stats_perms = HasProjectPerm('view_project')
     regenerate_userstories_csv_uuid_perms = IsProjectOwner()
     regenerate_issues_csv_uuid_perms = IsProjectOwner()
     regenerate_tasks_csv_uuid_perms = IsProjectOwner()
-    star_perms = IsAuthenticated()
-    unstar_perms = IsAuthenticated()
-    issues_stats_perms = HasProjectPerm('view_project')
-    issues_filters_data_perms = HasProjectPerm('view_project')
     tags_perms = HasProjectPerm('view_project')
     tags_colors_perms = HasProjectPerm('view_project')
-    fans_perms = HasProjectPerm('view_project')
+    like_perms = IsAuthenticated() & HasProjectPerm('view_project')
+    unlike_perms = IsAuthenticated() & HasProjectPerm('view_project')
+    watch_perms = IsAuthenticated() & HasProjectPerm('view_project')
+    unwatch_perms = IsAuthenticated() & HasProjectPerm('view_project')
     create_template_perms = IsSuperUser()
     leave_perms = CanLeaveProject()
+
+
+class ProjectFansPermission(TaigaResourcePermission):
+    enought_perms = IsProjectOwner() | IsSuperUser()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_project')
+    list_perms = HasProjectPerm('view_project')
+
+
+class ProjectWatchersPermission(TaigaResourcePermission):
+    enought_perms = IsProjectOwner() | IsSuperUser()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_project')
+    list_perms = HasProjectPerm('view_project')
 
 
 class MembershipPermission(TaigaResourcePermission):

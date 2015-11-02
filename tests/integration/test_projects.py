@@ -45,6 +45,46 @@ def test_partially_update_project(client):
     assert response.status_code == 400
 
 
+def test_us_status_is_closed_changed_recalc_us_is_closed(client):
+    us_status = f.UserStoryStatusFactory(is_closed=False)
+    user_story = f.UserStoryFactory.create(project=us_status.project, status=us_status)
+
+    assert user_story.is_closed is False
+
+    us_status.is_closed = True
+    us_status.save()
+
+    user_story = user_story.__class__.objects.get(pk=user_story.pk)
+    assert user_story.is_closed is True
+
+    us_status.is_closed = False
+    us_status.save()
+
+    user_story = user_story.__class__.objects.get(pk=user_story.pk)
+    assert user_story.is_closed is False
+
+
+def test_task_status_is_closed_changed_recalc_us_is_closed(client):
+    us_status = f.UserStoryStatusFactory()
+    user_story = f.UserStoryFactory.create(project=us_status.project, status=us_status)
+    task_status = f.TaskStatusFactory.create(project=us_status.project, is_closed=False)
+    task = f.TaskFactory.create(project=us_status.project, status=task_status, user_story=user_story)
+
+    assert user_story.is_closed is False
+
+    task_status.is_closed = True
+    task_status.save()
+
+    user_story = user_story.__class__.objects.get(pk=user_story.pk)
+    assert user_story.is_closed is True
+
+    task_status.is_closed = False
+    task_status.save()
+
+    user_story = user_story.__class__.objects.get(pk=user_story.pk)
+    assert user_story.is_closed is False
+
+
 def test_us_status_slug_generation(client):
     us_status = f.UserStoryStatusFactory(name="NEW")
     f.MembershipFactory(user=us_status.project.owner, project=us_status.project, is_owner=True)
@@ -200,7 +240,7 @@ def test_leave_project_valid_membership_only_owner(client):
     url = reverse("projects-leave", args=(project.id,))
     response = client.post(url)
     assert response.status_code == 403
-    assert json.loads(response.content)["_error_message"] == "You can't leave the project if there are no more owners"
+    assert response.data["_error_message"] == "You can't leave the project if there are no more owners"
 
 
 def test_leave_project_invalid_membership(client):
@@ -225,7 +265,7 @@ def test_leave_project_respect_watching_items(client):
     url = reverse("projects-leave", args=(project.id,))
     response = client.post(url)
     assert response.status_code == 200
-    assert list(issue.watchers.all()) == [user]
+    assert issue.watchers == [user]
 
 
 def test_delete_membership_only_owner(client):
@@ -237,7 +277,7 @@ def test_delete_membership_only_owner(client):
     url = reverse("memberships-detail", args=(membership.id,))
     response = client.delete(url)
     assert response.status_code == 400
-    assert json.loads(response.content)["_error_message"] == "At least one of the user must be an active admin"
+    assert response.data["_error_message"] == "At least one of the user must be an active admin"
 
 
 def test_edit_membership_only_owner(client):
@@ -355,7 +395,7 @@ def test_projects_user_order(client):
     url = reverse("projects-list")
     url = "%s?member=%s" % (url, user.id)
     response = client.json.get(url)
-    response_content = json.loads(response.content.decode("utf-8"))
+    response_content = response.data
     assert response.status_code == 200
     assert(response_content[0]["id"] == project_1.id)
 
@@ -363,6 +403,6 @@ def test_projects_user_order(client):
     url = reverse("projects-list")
     url = "%s?member=%s&order_by=memberships__user_order" % (url, user.id)
     response = client.json.get(url)
-    response_content = json.loads(response.content.decode("utf-8"))
+    response_content = response.data
     assert response.status_code == 200
     assert(response_content[0]["id"] == project_2.id)

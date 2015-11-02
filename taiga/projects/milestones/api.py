@@ -1,6 +1,6 @@
-# Copyright (C) 2014 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -14,15 +14,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.apps import apps
+
 from taiga.base import filters
 from taiga.base import response
 from taiga.base.decorators import detail_route
-from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
+from taiga.base.utils.db import get_object_or_none
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
-
 
 from . import serializers
 from . import models
@@ -36,17 +38,37 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
     permission_classes = (permissions.MilestonePermission,)
     filter_backends = (filters.CanViewMilestonesFilterBackend,)
     filter_fields = ("project", "closed")
+    queryset = models.Milestone.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        res = super().list(request, *args, **kwargs)
+        self._add_taiga_info_headers()
+        return res
+
+    def _add_taiga_info_headers(self):
+        try:
+            project_id = int(self.request.QUERY_PARAMS.get("project", None))
+            project_model = apps.get_model("projects", "Project")
+            project = get_object_or_none(project_model, id=project_id)
+        except TypeError:
+            project = None
+
+        if project:
+            opened_milestones = project.milestones.filter(closed=False).count()
+            closed_milestones = project.milestones.filter(closed=True).count()
+
+            self.headers["Taiga-Info-Total-Opened-Milestones"] = opened_milestones
+            self.headers["Taiga-Info-Total-Closed-Milestones"] = closed_milestones
 
     def get_queryset(self):
-        qs = models.Milestone.objects.all()
+        qs = super().get_queryset()
+        qs = self.attach_watchers_attrs_to_queryset(qs)
         qs = qs.prefetch_related("user_stories",
                                  "user_stories__role_points",
                                  "user_stories__role_points__points",
                                  "user_stories__role_points__role",
                                  "user_stories__generated_from_issue",
-                                 "user_stories__project",
-                                 "watchers",
-                                 "user_stories__watchers")
+                                 "user_stories__project")
         qs = qs.select_related("project")
         qs = qs.order_by("-estimated_start")
         return qs
@@ -93,3 +115,8 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
             optimal_points -= optimal_points_per_day
 
         return response.Ok(milestone_stats)
+
+
+class MilestoneWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
+    permission_classes = (permissions.MilestoneWatchersPermission,)
+    resource_model = models.Milestone
