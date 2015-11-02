@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-11-02 09:24+0100\n"
-"PO-Revision-Date: 2015-11-02 08:25+0000\n"
+"PO-Revision-Date: 2015-11-02 13:41+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Dutch (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/nl/)\n"
@@ -1541,11 +1541,11 @@ msgstr ""
 #: taiga/projects/likes/models.py:31 taiga/projects/likes/models.py:32
 #: taiga/projects/likes/models.py:56
 msgid "Likes"
-msgstr ""
+msgstr "Personen die dit leuk vinden"
 
 #: taiga/projects/likes/models.py:55
 msgid "Like"
-msgstr ""
+msgstr "Vind ik leuk"
 
 #: taiga/projects/milestones/models.py:37 taiga/projects/models.py:136
 #: taiga/projects/models.py:396 taiga/projects/models.py:460
