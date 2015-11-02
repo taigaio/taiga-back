@@ -16,9 +16,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-02 09:09+0100\n"
-"PO-Revision-Date: 2015-10-31 01:42+0000\n"
-"Last-Translator: Silsha Fux <hallo@silsha.me>\n"
+"POT-Creation-Date: 2015-11-02 09:24+0100\n"
+"PO-Revision-Date: 2015-11-02 08:25+0000\n"
+"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: German (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -1875,15 +1875,15 @@ msgid "roles"
 msgstr "Rollen"
 
 #: taiga/projects/notifications/choices.py:28
-msgid "Not watching"
-msgstr "Nicht beobachtend"
+msgid "Involved"
+msgstr ""
 
 #: taiga/projects/notifications/choices.py:29
-msgid "Watching"
-msgstr "Beobachtend"
+msgid "All"
+msgstr ""
 
 #: taiga/projects/notifications/choices.py:30
-msgid "Ignoring"
+msgid "None"
 msgstr ""
 
 #: taiga/projects/notifications/models.py:61
