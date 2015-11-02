@@ -228,7 +228,7 @@ def get_stats_for_project(project):
 
     closed_points = sum(RolePoints.objects.filter(user_story__project=project).filter(
         Q(user_story__milestone__closed=True) |
-        Q(user_story__milestone__isnull=True)
+        (Q(user_story__milestone__isnull=True) & Q(user_story__is_closed=True))
     ).exclude(points__value__isnull=True).values_list("points__value", flat=True))
 
     closed_milestones = project.milestones.filter(closed=True).count()
