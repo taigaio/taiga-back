@@ -59,16 +59,19 @@ def data():
                                          user_story__project=m.project,
                                          user_story__status=m.open_status,
                                          user_story__milestone=None)
-    # 5 and 6 are in the same milestone
+    # 5 and 6 are in closed milestones
     m.role_points5 = f.RolePointsFactory(role=m.project.roles.all()[0],
                                          points=m.points5,
                                          user_story__project=m.project,
-                                         user_story__status=m.open_status)
+                                         user_story__status=m.open_status,
+                                         user_story__milestone__closed=True,
+                                         user_story__milestone__project=m.project)
     m.role_points6 = f.RolePointsFactory(role=m.project.roles.all()[0],
                                          points=m.points6,
                                          user_story__project=m.project,
                                          user_story__status=m.open_status,
-                                         user_story__milestone=m.role_points5.user_story.milestone)
+                                         user_story__milestone__closed=True,
+                                         user_story__milestone__project=m.project)
 
     m.user_story1 = m.role_points1.user_story
     m.user_story2 = m.role_points2.user_story
@@ -106,13 +109,17 @@ def test_project_closed_points(client, data):
     data.user_story4.is_closed = True
     data.user_story4.save()
     assert data.project.closed_points == {data.role1.pk: 14, data.role2.pk: 1}
-    #User story5 milestone isn't closed
+
     data.user_story5.is_closed = True
     data.user_story5.save()
     assert data.project.closed_points == {data.role1.pk: 30, data.role2.pk: 1}
+    data.user_story6.is_closed = True
+    data.user_story6.save()
+    assert data.project.closed_points == {data.role1.pk: 62, data.role2.pk: 1}
 
     project_stats = get_stats_for_project(data.project)
-    assert project_stats["closed_points"] == 15
+    assert project_stats["closed_points"] == 63
+    assert project_stats["speed"] == 24
 
 
 def test_project_assigned_points(client, data):
