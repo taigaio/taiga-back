@@ -20,6 +20,7 @@ from django.shortcuts import _get_queryset
 
 from . import functions
 
+import re
 
 def get_object_or_none(klass, *args, **kwargs):
     """
@@ -127,7 +128,100 @@ def update_in_bulk_with_ids(ids, list_of_new_values, model):
         model.objects.filter(id=id).update(**new_values)
 
 
-def to_tsquery(text):
-    # We want to transform a query like "exam proj" (should find "project example") to something like proj:* & exam:*
-    search_elems = ["{}:*".format(search_elem) for search_elem in text.split(" ")]
-    return " & ".join(search_elems)
+def to_tsquery(term):
+    """
+    Based on: https://gist.github.com/wolever/1a5ccf6396f00229b2dc
+    Escape a query string so it's safe to use with Postgres'
+    ``to_tsquery(...)``. Single quotes are ignored, double quoted strings
+    are used as literals, and the logical operators 'and', 'or', 'not',
+    '(', and ')' can be used:
+        >>> tsquery_escape("Hello")
+        "'hello':*"
+        >>> tsquery_escape('"Quoted string"')
+        "'quoted string'"
+        >>> tsquery_escape("multiple terms OR another")
+        "'multiple':* & 'terms':* | 'another':*"
+        >>> tsquery_escape("'\"*|")
+        "'\"*|':*"
+        >>> tsquery_escape('not foo and (bar or "baz")')
+        "! 'foo':* & ( 'bar':* | 'baz' )"
+    """
+
+    magic_terms = {
+        "and": "&",
+        "or": "|",
+        "not": "!",
+        "OR": "|",
+        "AND": "&",
+        "NOT": "!",
+        "(": "(",
+        ")": ")",
+    }
+    magic_values = set(magic_terms.values())
+    paren_count = 0
+    res = []
+    bits = re.split(r'((?:".*?")|[()])', term)
+    for bit in bits:
+        if not bit:
+            continue
+        split_bits = (
+            [bit] if bit.startswith('"') and bit.endswith('"') else
+            bit.strip().split()
+        )
+        for bit in split_bits:
+            if not bit:
+                continue
+            if bit in magic_terms:
+                bit = magic_terms[bit]
+                last = res and res[-1] or ""
+
+                if bit == ")":
+                    if last == "(":
+                        paren_count -= 1
+                        res.pop()
+                        continue
+                    if paren_count == 0:
+                        continue
+                    if last in magic_values and last != "(":
+                        res.pop()
+                elif bit == "|" and last == "&":
+                    res.pop()
+                elif bit == "!":
+                    pass
+                elif bit == "(":
+                    pass
+                elif last in magic_values or not last:
+                    continue
+
+                if bit == ")":
+                    paren_count -= 1
+                elif bit == "(":
+                    paren_count += 1
+
+                res.append(bit)
+                if bit == ")":
+                    res.append("&")
+                continue
+
+            bit = bit.replace("'", "")
+            if not bit:
+                continue
+
+            if bit.startswith('"') and bit.endswith('"'):
+                res.append(bit.replace('"', "'"))
+            else:
+                res.append("'%s':*" %(bit.replace("'", ""), ))
+            res.append("&")
+
+    while res and res[-1] in magic_values:
+        last = res[-1]
+        if last == ")":
+            break
+        if last == "(":
+            paren_count -= 1
+        res.pop()
+    while paren_count > 0:
+        res.append(")")
+        paren_count -= 1
+
+    return " ".join(res)
