@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='notifypolicy',
             name='notify_level',
-            field=models.SmallIntegerField(choices=[(<NotifyLevel.involved: 1>, 'Involved'), (<NotifyLevel.all: 2>, 'All'), (<NotifyLevel.none: 3>, 'None')]),
+            field=models.SmallIntegerField(choices=[(1, 'Involved'), (2, 'All'), (3, 'None')]),
         ),
     ]
