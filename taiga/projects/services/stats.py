@@ -225,16 +225,16 @@ def get_stats_for_project(project):
         get(id=project.id)
 
     points = project.calculated_points
-
-    closed_points = sum(RolePoints.objects.filter(user_story__project=project).filter(
-        Q(user_story__milestone__closed=True) |
-        (Q(user_story__milestone__isnull=True) & Q(user_story__is_closed=True))
+    closed_points = sum(points["closed"].values())
+    closed_points_from_closed_milestones = sum(RolePoints.objects.filter(
+        Q(user_story__project=project) & Q(user_story__milestone__closed=True)
     ).exclude(points__value__isnull=True).values_list("points__value", flat=True))
 
     closed_milestones = project.milestones.filter(closed=True).count()
     speed = 0
+
     if closed_milestones != 0:
-        speed = closed_points / closed_milestones
+        speed = closed_points_from_closed_milestones / closed_milestones
 
     project_stats = {
         'name': project.name,
