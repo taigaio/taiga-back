@@ -85,7 +85,8 @@ def issues_to_csv(project, queryset):
                   "owner_full_name", "assigned_to", "assigned_to_full_name",
                   "status", "severity", "priority", "type", "is_closed",
                   "attachments", "external_reference", "tags",
-                  "watchers", "voters"]
+                  "watchers", "voters",
+                  "created_date", "modified_date", "finished_date"]
     for custom_attr in project.issuecustomattributes.all():
         fieldnames.append(custom_attr.name)
 
@@ -111,6 +112,9 @@ def issues_to_csv(project, queryset):
             "tags": ",".join(issue.tags or []),
             "watchers": [u.id for u in issue.get_watchers()],
             "voters": votes_services.get_voters(issue).count(),
+            "created_date": issue.created_date,
+            "modified_date": issue.modified_date,
+            "finished_date": issue.finished_date,
         }
 
         for custom_attr in project.issuecustomattributes.all():
