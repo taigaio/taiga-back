@@ -1,6 +1,15 @@
 # Changelog #
 
 
+## 1.10.0 ????? (unreleased)
+
+### Features
+- [CSV Reports] Add fields "created_date", "modified_date", "finished_date" to issues CSV report.
+
+### Misc
+- Lots of small and not so small bugfixes.
+
+
 ## 1.9.0 Abies Siberica (2015-11-XX)
 
 ### Features
