@@ -397,7 +397,7 @@ def add_watcher(obj, user):
         object_id=obj.id, user=user, project=obj.project)
 
     notify_policy, _ = apps.get_model("notifications", "NotifyPolicy").objects.get_or_create(
-        project=obj.project, user=user, defaults={"notify_level": NotifyLevel.all})
+        project=obj.project, user=user, defaults={"notify_level": NotifyLevel.involved})
 
     return watched
 
