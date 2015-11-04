@@ -16,6 +16,7 @@
 
 from contextlib import suppress
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 
 ####################################
 # Signals for cached prev task
@@ -92,3 +93,13 @@ def _try_to_close_milestone_when_delete_task(instance):
     with suppress(ObjectDoesNotExist):
         if instance.milestone_id and services.calculate_milestone_is_closed(instance.milestone):
             services.close_milestone(instance.milestone)
+
+####################################
+# Signals for set finished date
+####################################
+
+def set_finished_date_when_edit_task(sender, instance, **kwargs):
+    if instance.status.is_closed and not instance.finished_date:
+        instance.finished_date = timezone.now()
+    elif not instance.status.is_closed and instance.finished_date:
+        instance.finished_date = None
