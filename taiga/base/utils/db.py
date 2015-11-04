@@ -204,6 +204,7 @@ def to_tsquery(term):
                 continue
 
             bit = bit.replace("'", "")
+            bit = bit.replace("\\", "")
             if not bit:
                 continue
 

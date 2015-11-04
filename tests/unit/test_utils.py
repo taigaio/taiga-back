@@ -17,9 +17,10 @@
 from unittest import mock
 
 import django_sites as sites
+import re
 
 from taiga.base.utils.urls import get_absolute_url, is_absolute_url, build_url
-from taiga.base.utils.db import save_in_bulk, update_in_bulk, update_in_bulk_with_ids
+from taiga.base.utils.db import save_in_bulk, update_in_bulk, update_in_bulk_with_ids, to_tsquery
 
 
 def test_is_absolute_url():
@@ -89,3 +90,27 @@ def test_update_in_bulk_with_ids():
     ]
 
     model.objects.filter.assert_has_calls(expected_calls)
+
+
+TS_QUERY_TRANSFORMATIONS = [
+    ("1 OR 2", "1 | 2"),
+    ("(1) 2", "( 1 ) & 2"),
+    ("&", "'&':*"),
+    ('"hello world"', "'hello world'"),
+    ("not 1", "! 1"),
+    ("1 and not (2 or 3)", "1 & ! ( 2 | 3 )"),
+    ("not and and 1) or ( 2 not", "! 1 | ( 2 )"),
+    ("() 1", "1"),
+    ("1 2 3", "1 & 2 & 3"),
+    ("'&' |", "'&':* & '|':*"),
+    (") and 1 (2 or", "1 & ( 2 )"),
+    ("it's '", "'its':*"),
+    ("(1)", "( 1 )"),
+    ("1((", "1"),
+    ("test\\", "'test':*"),
+]
+def test_to_tsquery():
+    for (input, expected) in TS_QUERY_TRANSFORMATIONS:
+        expected = re.sub("([0-9])", r"'\1':*", expected)
+        actual = to_tsquery(input)
+        assert actual == expected
