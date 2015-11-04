@@ -80,7 +80,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
     def watch(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "watch", project)
-        notify_level = request.DATA.get("notify_level", NotifyLevel.all)
+        notify_level = request.DATA.get("notify_level", NotifyLevel.involved)
         project.add_watcher(self.request.user, notify_level=notify_level)
         return response.Ok()
 
