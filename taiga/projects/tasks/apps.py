@@ -23,6 +23,10 @@ from taiga.projects.custom_attributes import signals as custom_attributes_handle
 from . import signals as handlers
 
 def connect_tasks_signals():
+    # Finished date
+    signals.pre_save.connect(handlers.set_finished_date_when_edit_task,
+                             sender=apps.get_model("tasks", "Task"),
+                             dispatch_uid="set_finished_date_when_edit_task")
     # Tags
     signals.pre_save.connect(generic_handlers.tags_normalization,
                              sender=apps.get_model("tasks", "Task"),

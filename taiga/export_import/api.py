@@ -33,6 +33,7 @@ from taiga.base.api.mixins import CreateModelMixin
 from taiga.base.api.viewsets import GenericViewSet
 from taiga.projects.models import Project, Membership
 from taiga.projects.issues.models import Issue
+from taiga.projects.tasks.models import Task
 from taiga.projects.serializers import ProjectSerializer
 
 from . import mixins
@@ -237,6 +238,9 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
     def task(self, request, *args, **kwargs):
         project = self.get_object_or_none()
         self.check_permissions(request, 'import_item', project)
+
+        signals.pre_save.disconnect(sender=Task,
+                                    dispatch_uid="set_finished_date_when_edit_task")
 
         task = service.store_task(project, request.DATA.copy())
 
