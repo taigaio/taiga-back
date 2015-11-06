@@ -110,7 +110,6 @@ class UserStorySerializer(CustomAttributesValuesWebhookSerializerMixin, Editable
     external_reference = PgArrayField(required=False)
     owner = UserSerializer()
     assigned_to = UserSerializer()
-    watchers = UserSerializer(many=True)
     points = PointSerializer(many=True)
 
     class Meta:
@@ -126,7 +125,6 @@ class TaskSerializer(CustomAttributesValuesWebhookSerializerMixin, EditableWatch
     tags = TagsField(default=[], required=False)
     owner = UserSerializer()
     assigned_to = UserSerializer()
-    watchers = UserSerializer(many=True)
 
     class Meta:
         model = task_models.Task
@@ -140,7 +138,6 @@ class IssueSerializer(CustomAttributesValuesWebhookSerializerMixin, EditableWatc
     tags = TagsField(default=[], required=False)
     owner = UserSerializer()
     assigned_to = UserSerializer()
-    watchers = UserSerializer(many=True)
 
     class Meta:
         model = issue_models.Issue
@@ -152,7 +149,6 @@ class IssueSerializer(CustomAttributesValuesWebhookSerializerMixin, EditableWatc
 class WikiPageSerializer(serializers.ModelSerializer):
     owner = UserSerializer()
     last_modifier = UserSerializer()
-    watchers = UserSerializer(many=True)
 
     class Meta:
         model = wiki_models.WikiPage
