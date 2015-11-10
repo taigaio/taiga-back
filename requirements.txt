@@ -15,7 +15,7 @@ django-jinja==1.4.1
 jinja2==2.8
 pygments==2.0.2
 django-sites==0.8
-Markdown==2.6.3
+Markdown==2.6.4
 fn==0.4.3
 diff-match-patch==20121119
 requests==2.8.1
