@@ -56,7 +56,7 @@ def add_errors(section, errors):
         _errors_log[section] = [errors]
 
 
-def render_project(project, outfile, chunk_size = 8192):
+def render_project(project, outfile, chunk_size = 8190):
     serializer = serializers.ProjectExportSerializer(project)
     outfile.write('{\n')
 
