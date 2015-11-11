@@ -7,14 +7,15 @@
 # Esther Moreno <soyesthermoreno@yahoo.es>, 2015
 # gustavodiazjaimes <gustavodiazjaimes@gmail.com>, 2015
 # Hector Colina <hcolina@gmail.com>, 2015
+# Jesus Marin <contacto@jesusmg.org>, 2015
 # Taiga Dev Team <support@taiga.io>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-02 09:24+0100\n"
-"PO-Revision-Date: 2015-11-02 14:26+0000\n"
-"Last-Translator: David Barragán <bameda@gmail.com>\n"
+"POT-Creation-Date: 2015-11-11 16:03+0100\n"
+"PO-Revision-Date: 2015-11-02 21:24+0000\n"
+"Last-Translator: Jesus Marin <contacto@jesusmg.org>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -492,15 +493,15 @@ msgstr ""
 "\n"
 "Comentario: %(comment)s"
 
-#: taiga/export_import/api.py:103
+#: taiga/export_import/api.py:104
 msgid "We needed at least one role"
 msgstr "Necesitamos al menos un rol"
 
-#: taiga/export_import/api.py:197
+#: taiga/export_import/api.py:198
 msgid "Needed dump file"
 msgstr "Se necesita el fichero con los datos exportados"
 
-#: taiga/export_import/api.py:204
+#: taiga/export_import/api.py:205
 msgid "Invalid dump format"
 msgstr "Formato de fichero de exportación inválido"
 
@@ -560,21 +561,21 @@ msgstr "error importando las etiquetas"
 msgid "error importing timelines"
 msgstr "error importando los timelines"
 
-#: taiga/export_import/serializers.py:163
+#: taiga/export_import/serializers.py:177
 msgid "{}=\"{}\" not found in this project"
 msgstr "{}=\"{}\"  no se ha encontrado en este proyecto"
 
-#: taiga/export_import/serializers.py:428
+#: taiga/export_import/serializers.py:442
 #: taiga/projects/custom_attributes/serializers.py:103
 msgid "Invalid content. It must be {\"key\": \"value\",...}"
 msgstr "Contenido inválido. Debe ser {\"clave\": \"valor\",...}"
 
-#: taiga/export_import/serializers.py:443
+#: taiga/export_import/serializers.py:457
 #: taiga/projects/custom_attributes/serializers.py:118
 msgid "It contain invalid custom fields."
 msgstr "Contiene attributos personalizados inválidos."
 
-#: taiga/export_import/serializers.py:513
+#: taiga/export_import/serializers.py:527
 #: taiga/projects/milestones/serializers.py:64 taiga/projects/serializers.py:70
 #: taiga/projects/serializers.py:96 taiga/projects/serializers.py:127
 #: taiga/projects/serializers.py:170
@@ -2983,7 +2984,7 @@ msgstr "Nueva"
 #. Translators: User story status
 #: taiga/projects/translations.py:76
 msgid "Ready"
-msgstr "Lista"
+msgstr "Preparada"
 
 #. Translators: User story status
 #. Translators: Task status

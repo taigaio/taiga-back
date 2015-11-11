@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-02 09:24+0100\n"
+"POT-Creation-Date: 2015-11-11 16:03+0100\n"
 "PO-Revision-Date: 2015-11-02 08:25+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/taiga-agile-llc/"
@@ -500,15 +500,15 @@ msgstr ""
 "    Comentário: %(comment)s\n"
 "        "
 
-#: taiga/export_import/api.py:103
+#: taiga/export_import/api.py:104
 msgid "We needed at least one role"
 msgstr "Nós precisamos de pelo menos uma função"
 
-#: taiga/export_import/api.py:197
+#: taiga/export_import/api.py:198
 msgid "Needed dump file"
 msgstr "Necessário de arquivo de restauração"
 
-#: taiga/export_import/api.py:204
+#: taiga/export_import/api.py:205
 msgid "Invalid dump format"
 msgstr "Formato de aquivo de restauração inválido"
 
@@ -568,21 +568,21 @@ msgstr "erro importando tags"
 msgid "error importing timelines"
 msgstr "erro importando linha do tempo"
 
-#: taiga/export_import/serializers.py:163
+#: taiga/export_import/serializers.py:177
 msgid "{}=\"{}\" not found in this project"
 msgstr "{}=\"{}\" não encontrado nesse projeto"
 
-#: taiga/export_import/serializers.py:428
+#: taiga/export_import/serializers.py:442
 #: taiga/projects/custom_attributes/serializers.py:103
 msgid "Invalid content. It must be {\"key\": \"value\",...}"
 msgstr "conteúdo inválido. Deve ser  {\"key\": \"value\",...}"
 
-#: taiga/export_import/serializers.py:443
+#: taiga/export_import/serializers.py:457
 #: taiga/projects/custom_attributes/serializers.py:118
 msgid "It contain invalid custom fields."
 msgstr "Contém campos personalizados inválidos"
 
-#: taiga/export_import/serializers.py:513
+#: taiga/export_import/serializers.py:527
 #: taiga/projects/milestones/serializers.py:64 taiga/projects/serializers.py:70
 #: taiga/projects/serializers.py:96 taiga/projects/serializers.py:127
 #: taiga/projects/serializers.py:170
