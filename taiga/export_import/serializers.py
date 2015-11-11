@@ -67,17 +67,18 @@ class AttachedFileField(serializers.WritableField):
         if not data:
             return None
 
-        # Each sequence of 3 octets is represented by 4 characters in base64.
-        # The file was encoded in chunks of 8190 (multiple of three) so the proper way of decoding it is:
-        # - split the encoded data in multiple of four chars blocks
-        # - decode each block
         decoded_data = b''
-        pending_data = data['data']
-        chunk_size = 8192
-        while pending_data:
-            decoding_data = pending_data[0:chunk_size]
-            decoded_data += base64.b64decode(decoding_data)
-            pending_data = pending_data[chunk_size:]
+        # The original file was encoded by chunks but we don't really know its
+        # length or if it was multiple of 3 so we must iterate over all those chunks
+        # decoding them one by one
+        for decoding_chunk in data['data'].split("="):
+            # When encoding to base64 3 bytes are transformed into 4 bytes and
+            # the extra space of the block is filled with =
+            # We must ensure that the decoding chunk has a length multiple of 4 so
+            # we restore the stripped '='s adding appending them until the chunk has
+            # a length multiple of 4
+            decoding_chunk += "=" * (-len(decoding_chunk) % 4)
+            decoded_data += base64.b64decode(decoding_chunk+"=")
 
         return ContentFile(decoded_data, name=data['name'])
 
