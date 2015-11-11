@@ -271,31 +271,6 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         rp_query = rp_query.exclude(role__id__in=roles.values_list("id", flat=True))
         rp_query.delete()
 
-    def _get_user_stories_points(self, user_stories):
-        role_points = [us.role_points.all() for us in user_stories]
-        flat_role_points = itertools.chain(*role_points)
-        flat_role_dicts = map(lambda x: {x.role_id: x.points.value if x.points.value else 0},
-                              flat_role_points)
-        return dict_sum(*flat_role_dicts)
-
-    def _get_points_increment(self, client_requirement, team_requirement):
-        last_milestones = self.milestones.order_by('-estimated_finish')
-        last_milestone = last_milestones[0] if last_milestones else None
-        if last_milestone:
-            user_stories = self.user_stories.filter(
-                created_date__gte=last_milestone.estimated_finish,
-                client_requirement=client_requirement,
-                team_requirement=team_requirement
-            )
-        else:
-            user_stories = self.user_stories.filter(
-                client_requirement=client_requirement,
-                team_requirement=team_requirement
-            )
-        user_stories = user_stories.prefetch_related('role_points', 'role_points__points')
-        return self._get_user_stories_points(user_stories)
-
-
     @property
     def project(self):
         return self
@@ -303,45 +278,6 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     @property
     def project(self):
         return self
-
-    @property
-    def future_team_increment(self):
-        team_increment = self._get_points_increment(False, True)
-        shared_increment = {key: value / 2 for key, value in self.future_shared_increment.items()}
-        return dict_sum(team_increment, shared_increment)
-
-    @property
-    def future_client_increment(self):
-        client_increment = self._get_points_increment(True, False)
-        shared_increment = {key: value / 2 for key, value in self.future_shared_increment.items()}
-        return dict_sum(client_increment, shared_increment)
-
-    @property
-    def future_shared_increment(self):
-        return self._get_points_increment(True, True)
-
-    @property
-    def closed_points(self):
-        return self.calculated_points["closed"]
-
-    @property
-    def defined_points(self):
-        return self.calculated_points["defined"]
-
-    @property
-    def assigned_points(self):
-        return self.calculated_points["assigned"]
-
-    @property
-    def calculated_points(self):
-        user_stories = self.user_stories.all().prefetch_related('role_points', 'role_points__points')
-        closed_user_stories = user_stories.filter(is_closed=True)
-        assigned_user_stories = user_stories.filter(milestone__isnull=False)
-        return {
-            "defined": self._get_user_stories_points(user_stories),
-            "closed": self._get_user_stories_points(closed_user_stories),
-            "assigned": self._get_user_stories_points(assigned_user_stories),
-        }
 
     def _get_q_watchers(self):
         return Q(notify_policies__project_id=self.id) & ~Q(notify_policies__notify_level=NotifyLevel.none)
