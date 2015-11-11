@@ -17,8 +17,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-02 09:24+0100\n"
-"PO-Revision-Date: 2015-11-02 08:25+0000\n"
+"POT-Creation-Date: 2015-11-11 16:03+0100\n"
+"PO-Revision-Date: 2015-11-02 16:16+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: French (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/fr/)\n"
@@ -508,15 +508,15 @@ msgstr ""
 "    Commentaire : %(comment)s\n"
 "        "
 
-#: taiga/export_import/api.py:103
+#: taiga/export_import/api.py:104
 msgid "We needed at least one role"
 msgstr "Veuillez sélectionner au moins un rôle."
 
-#: taiga/export_import/api.py:197
+#: taiga/export_import/api.py:198
 msgid "Needed dump file"
 msgstr "Fichier de dump obligatoire"
 
-#: taiga/export_import/api.py:204
+#: taiga/export_import/api.py:205
 msgid "Invalid dump format"
 msgstr "Format de dump invalide"
 
@@ -577,21 +577,21 @@ msgstr "erreur lors de l'importation des mots-clés"
 msgid "error importing timelines"
 msgstr "erreur lors de l'import des timelines"
 
-#: taiga/export_import/serializers.py:163
+#: taiga/export_import/serializers.py:177
 msgid "{}=\"{}\" not found in this project"
 msgstr "{}=\"{}\" non trouvé dans the projet"
 
-#: taiga/export_import/serializers.py:428
+#: taiga/export_import/serializers.py:442
 #: taiga/projects/custom_attributes/serializers.py:103
 msgid "Invalid content. It must be {\"key\": \"value\",...}"
 msgstr "Format non valide. Il doit être de la forme {\"cle\": \"valeur\",...}"
 
-#: taiga/export_import/serializers.py:443
+#: taiga/export_import/serializers.py:457
 #: taiga/projects/custom_attributes/serializers.py:118
 msgid "It contain invalid custom fields."
 msgstr "Contient des champs personnalisés non valides."
 
-#: taiga/export_import/serializers.py:513
+#: taiga/export_import/serializers.py:527
 #: taiga/projects/milestones/serializers.py:64 taiga/projects/serializers.py:70
 #: taiga/projects/serializers.py:96 taiga/projects/serializers.py:127
 #: taiga/projects/serializers.py:170
@@ -1577,11 +1577,11 @@ msgstr ""
 #: taiga/projects/likes/models.py:31 taiga/projects/likes/models.py:32
 #: taiga/projects/likes/models.py:56
 msgid "Likes"
-msgstr ""
+msgstr "Aime"
 
 #: taiga/projects/likes/models.py:55
 msgid "Like"
-msgstr ""
+msgstr "Aimer"
 
 #: taiga/projects/milestones/models.py:37 taiga/projects/models.py:136
 #: taiga/projects/models.py:396 taiga/projects/models.py:460
@@ -1831,7 +1831,7 @@ msgstr "notifier les utilisateurs"
 #: taiga/projects/notifications/models.py:90
 #: taiga/projects/notifications/models.py:91
 msgid "Watched"
-msgstr ""
+msgstr "Suivre"
 
 #: taiga/projects/notifications/services.py:65
 #: taiga/projects/notifications/services.py:79

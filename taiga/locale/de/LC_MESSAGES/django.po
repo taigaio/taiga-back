@@ -4,7 +4,8 @@
 #
 # Translators:
 # Chris <christian.lenz@gmx.net>, 2015
-# Christoph Harrer, 2015
+# M S, 2015
+# Guido Brand, 2015
 # Hans Raaf, 2015
 # Hans Raaf, 2015
 # Henning Matthaei, 2015
@@ -16,9 +17,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-02 09:24+0100\n"
-"PO-Revision-Date: 2015-11-02 08:25+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2015-11-11 16:03+0100\n"
+"PO-Revision-Date: 2015-11-11 09:45+0000\n"
+"Last-Translator: Guido Brand\n"
 "Language-Team: German (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -213,7 +214,7 @@ msgstr ""
 
 #: taiga/base/api/pagination.py:115
 msgid "Page is not 'last', nor can it be converted to an int."
-msgstr ""
+msgstr "Seite ist nicht 'letzte', noch kann diese konvertiert werden."
 
 #: taiga/base/api/pagination.py:119
 #, python-format
@@ -508,15 +509,15 @@ msgstr ""
 "Kommentar: %(comment)s\n"
 " "
 
-#: taiga/export_import/api.py:103
+#: taiga/export_import/api.py:104
 msgid "We needed at least one role"
 msgstr "Es ist mindestens eine Rolle nötig"
 
-#: taiga/export_import/api.py:197
+#: taiga/export_import/api.py:198
 msgid "Needed dump file"
 msgstr "Exportdatei erforderlich"
 
-#: taiga/export_import/api.py:204
+#: taiga/export_import/api.py:205
 msgid "Invalid dump format"
 msgstr "Ungültiges Exportdatei Format"
 
@@ -576,21 +577,21 @@ msgstr "Fehler beim Importieren der Schlagworte"
 msgid "error importing timelines"
 msgstr "Fehler beim Importieren der Chroniken"
 
-#: taiga/export_import/serializers.py:163
+#: taiga/export_import/serializers.py:177
 msgid "{}=\"{}\" not found in this project"
 msgstr "{}=\"{}\" wurde in diesem Projekt nicht gefunden"
 
-#: taiga/export_import/serializers.py:428
+#: taiga/export_import/serializers.py:442
 #: taiga/projects/custom_attributes/serializers.py:103
 msgid "Invalid content. It must be {\"key\": \"value\",...}"
 msgstr "Invalider Inhalt. Er muss wie folgt sein: {\"key\": \"value\",...}"
 
-#: taiga/export_import/serializers.py:443
+#: taiga/export_import/serializers.py:457
 #: taiga/projects/custom_attributes/serializers.py:118
 msgid "It contain invalid custom fields."
 msgstr "Enthält ungültige Benutzerfelder."
 
-#: taiga/export_import/serializers.py:513
+#: taiga/export_import/serializers.py:527
 #: taiga/projects/milestones/serializers.py:64 taiga/projects/serializers.py:70
 #: taiga/projects/serializers.py:96 taiga/projects/serializers.py:127
 #: taiga/projects/serializers.py:170
@@ -848,7 +849,7 @@ msgstr "[%(project)s] Ihre Projekt Export-Datei wurde importiert"
 #: taiga/external_apps/api.py:40 taiga/external_apps/api.py:66
 #: taiga/external_apps/api.py:73
 msgid "Authentication required"
-msgstr ""
+msgstr "Authentifizierung erforderlich"
 
 #: taiga/external_apps/models.py:33
 #: taiga/projects/custom_attributes/models.py:34
@@ -884,7 +885,7 @@ msgstr "Nächste URL"
 
 #: taiga/external_apps/models.py:41
 msgid "secret key for ciphering the application tokens"
-msgstr ""
+msgstr "Geheimer Schlüssel für Verschlüsselung der Anwensungs-Token"
 
 #: taiga/external_apps/models.py:55 taiga/projects/likes/models.py:50
 #: taiga/projects/notifications/models.py:84 taiga/projects/votes/models.py:50
@@ -1021,6 +1022,12 @@ msgid ""
 "\n"
 "{description}"
 msgstr ""
+"Problem-Bericht erstellt von [@{bitbucket_user_name}]({bitbucket_user_url} "
+"\"Schau @{bitbucket_user_name}'s BitBucket profile\") von BitBucket.\n"
+"Original BitBucket Problem-Bericht: [bb#{number} - {subject}]"
+"({bitbucket_url} \"Gehe zu 'bb#{number} - {subject}'\"):\n"
+"\n"
+"{description}"
 
 #: taiga/hooks/bitbucket/event_hooks.py:153
 msgid "Issue created from BitBucket."
@@ -1042,6 +1049,12 @@ msgid ""
 "\n"
 "{message}"
 msgstr ""
+"Kommentar von [@{bitbucket_user_name}]({bitbucket_user_url} \"Schau "
+"@{bitbucket_user_name}'s BitBucket profile\") von BitBucket.\n"
+"Original BitBucket Problem-Bericht: [bb#{number} - {subject}]"
+"({bitbucket_url} \"Gehe zu 'bb#{number} - {subject}'\")\n"
+"\n"
+"{message}"
 
 #: taiga/hooks/bitbucket/event_hooks.py:196
 #, python-brace-format
@@ -1136,6 +1149,12 @@ msgid ""
 "\n"
 "{message}"
 msgstr ""
+"Kommentar von [@{gitlab_user_name}]({gitlab_user_url} \"Schau "
+"@{gitlab_user_name}'s GitLab profile\") von GitLab.\n"
+"Original GitLab Problem-Bericht: [gl#{number} - {subject}]({gitlab_url} "
+"\"Gehe zu 'gl#{number} - {subject}'\")\n"
+"\n"
+"{message}"
 
 #: taiga/hooks/gitlab/event_hooks.py:171
 #, python-brace-format
@@ -1324,7 +1343,7 @@ msgstr "Sie haben keine Berechtigungen für diese Ansicht"
 
 #: taiga/projects/attachments/api.py:47
 msgid "Partial updates are not supported"
-msgstr ""
+msgstr "Teil-Aktualisierungen sind nicht unterstützt"
 
 #: taiga/projects/attachments/api.py:62
 msgid "Project ID not matches between object and project"
@@ -1788,11 +1807,11 @@ msgstr "Videokonferenzsystem"
 
 #: taiga/projects/models.py:165 taiga/projects/models.py:625
 msgid "videoconference extra data"
-msgstr ""
+msgstr "Zusatzdaten Videokonferenz"
 
 #: taiga/projects/models.py:170
 msgid "creation template"
-msgstr ""
+msgstr "Vorlage erstellen"
 
 #: taiga/projects/models.py:173
 msgid "anonymous permissions"
@@ -1876,23 +1895,23 @@ msgstr "Rollen"
 
 #: taiga/projects/notifications/choices.py:28
 msgid "Involved"
-msgstr ""
+msgstr "Beteiligt"
 
 #: taiga/projects/notifications/choices.py:29
 msgid "All"
-msgstr ""
+msgstr "Alle"
 
 #: taiga/projects/notifications/choices.py:30
 msgid "None"
-msgstr ""
+msgstr "Keine"
 
 #: taiga/projects/notifications/models.py:61
 msgid "created date time"
-msgstr ""
+msgstr "Erstelldatum"
 
 #: taiga/projects/notifications/models.py:63
 msgid "updated date time"
-msgstr ""
+msgstr "Aktualisierungsdatum"
 
 #: taiga/projects/notifications/models.py:65
 msgid "history entries"
@@ -1910,11 +1929,11 @@ msgstr "Beobachtet"
 #: taiga/projects/notifications/services.py:65
 #: taiga/projects/notifications/services.py:79
 msgid "Notify exists for specified user and project"
-msgstr ""
+msgstr "Benachrichtigung für bestimmte Benutzer und Projekt aktiviert"
 
 #: taiga/projects/notifications/services.py:427
 msgid "Invalid value for notify level"
-msgstr ""
+msgstr "Ungültiger Wert für Benachrichtigungslevel"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-change-body-html.jinja:4
 #, python-format
@@ -2814,6 +2833,10 @@ msgid ""
 "    <p><strong>%(extra)s</strong></p>\n"
 "        "
 msgstr ""
+"\n"
+"<p><small>Und nun ein paar schöne Worte<br/> an die Person, die Dich "
+"netterweise eingeladen hat</small></p>\n"
+"<p><strong>%(extra)s</strong></p>"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:24
 msgid "Accept your invitation to Taiga"
@@ -2837,6 +2860,12 @@ msgid ""
 "%(project)s  which is being managed on Taiga, a Free, open Source Agile "
 "Project Management Tool.\n"
 msgstr ""
+"\n"
+"Du oder jemand, den Du kennst, hat Dich zu Taiga eingeladen\n"
+"\n"
+"Hi! %(full_name)s hat Dir eine Einladung geschickt, um am Projekt "
+"%(project)s mitzuarbeiten, welches mit Taiga gemanaged wird. Taiga ist ein "
+"freies, agiles Open-Source Projektmanagement Werkzeug.\n"
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:12
 #, python-format
@@ -2848,6 +2877,11 @@ msgid ""
 "%(extra)s\n"
 "    "
 msgstr ""
+"\n"
+"Und nun ein paar schöne Worte an die vernünftige Person, die Dich "
+"netterweise eingeladen hat:\n"
+"\n"
+"%(extra)s"
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:18
 msgid "Accept your invitation to Taiga following this link:"
@@ -2939,6 +2973,12 @@ msgid ""
 "then allowed to grow and change as more is learned about the product and its "
 "customers"
 msgstr ""
+"Das agile Backlog in Scrum ist eine priorisierte Featureliste, die "
+"Kurzbeschreibungen aller gewünschten Funktionalitäten eines Produktes "
+"enthält. Wenn Sie Scrum anwenden, ist es nicht erforderlich eine langwierige "
+"Aufwandsschätzung durchzuführen. Das Produkt Backlog in Scrum darf stetig "
+"wachsen und geändert werden, so dass es den Anforderungen des Produktes und "
+"seiner Kunden gerecht wird."
 
 #. Translators: Name of kanban project template.
 #: taiga/projects/translations.py:33
@@ -2953,6 +2993,11 @@ msgid ""
 "process, from definition of a task to its delivery to the customer, is "
 "displayed for participants to see and team members pull work from a queue."
 msgstr ""
+"Kanban ist eine Methode der Produktionsprozesssteuerung. Das Vorgehen "
+"orientiert sich ausschließlich am tatsächlichen Verbrauch von Materialien am "
+"Bereitstell- und Verbrauchsort. Kanban ermöglicht eine Reduktion der lokalen "
+"Bestände von Vorprodukten in und nahe der Produktion, die dort in Produkten "
+"der nächsten Integrationsstufe verbaut werden."
 
 #. Translators: User story point value (value = undefined)
 #: taiga/projects/translations.py:43
@@ -3171,7 +3216,7 @@ msgstr ""
 #: taiga/projects/userstories/api.py:254
 #, python-brace-format
 msgid "Generating the user story #{ref} - {subject}"
-msgstr ""
+msgstr "Erstelle die User-Story #{ref} - {subject}"
 
 #: taiga/projects/userstories/models.py:37
 msgid "role"
@@ -3245,7 +3290,7 @@ msgstr "href"
 
 #: taiga/timeline/signals.py:67
 msgid "Check the history API for the exact diff"
-msgstr ""
+msgstr "Prüfe die API der Historie auf Übereinstimmung"
 
 #: taiga/users/admin.py:50
 msgid "Personal info"
@@ -3528,6 +3573,19 @@ msgid ""
 "        </td>\n"
 "        "
 msgstr ""
+"\n"
+"<td>\n"
+"<h2>Vielen Dank für die Registrierung bei Taiga</h2>\n"
+"<h3>Wir hoffen, dass Du es magst</h3>\n"
+"<p>Wir haben Taiga entwickelt, weil wir ein Projektmanagement Werkzeug zur "
+"Verfügung stellen wollen, welches Dir den ganzen Tag an Deinem Computer ein "
+"hilfreicher und ständiger Begleiter bei der Zusammenarbeit bei Design und "
+"Code Projekten sein soll.</p>\n"
+"<p>Wir haben es so aufgebaut, dass es schön, elegant, einfach zu nutzen und "
+"damit auch Spaß macht - ohne auf Flexibilität und Energie zu verzichten.</"
+"p>\n"
+"<small>Das taiga Team</small>\n"
+"</td>"
 
 #: taiga/users/templates/emails/registered_user-body-html.jinja:23
 #, python-format
@@ -3538,6 +3596,10 @@ msgid ""
 "here</a>\n"
 "    "
 msgstr ""
+"\n"
+"<strong>Du möchtest Deinen Account entfernen und die Dienste nicht weiter "
+"nutzen</strong> <a href=\"%(url)s\" title=\"Deinen Account entfernen\" style="
+"\"color: #9dce0a\">hier klciken</a>"
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:1
 msgid ""
@@ -3556,6 +3618,21 @@ msgid ""
 "--\n"
 "The taiga Team\n"
 msgstr ""
+"\n"
+"Vielen Dank für die Registrierung bei Taiga\n"
+"\n"
+"Wir hoffen, dass Du es magst\n"
+"\n"
+"Wir haben Taiga entwickelt, weil wir ein Projektmanagement Werkzeug zur "
+"Verfügung stellen wollen, welches Dir den ganzen Tag an Deinem Computer ein "
+"hilfreicher und ständiger Begleiter bei der Zusammenarbeit bei Design und "
+"Code Projekten sein soll.\n"
+"\n"
+"Wir haben es so aufgebaut, dass es schön, elegant, einfach zu nutzen und "
+"damit auch Spaß macht - ohne auf Flexibilität und Energie zu verzichten.\n"
+"\n"
+"--\n"
+"Das taiga Team\n"
 
 #: taiga/users/templates/emails/registered_user-body-text.jinja:13
 #, python-format
@@ -3578,6 +3655,8 @@ msgstr "Es gibt keine Rolle mit dieser id"
 msgid ""
 "Duplicate key value violates unique constraint. Key '{}' already exists."
 msgstr ""
+"Doppelter Schlüsselwert verstößt einzigartige Vorgaben. Schlüssel '{}' "
+"existiert bereits."
 
 #: taiga/userstorage/models.py:30
 msgid "key"

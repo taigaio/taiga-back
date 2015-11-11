@@ -12,9 +12,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-02 09:24+0100\n"
-"PO-Revision-Date: 2015-11-02 08:25+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2015-11-11 16:03+0100\n"
+"PO-Revision-Date: 2015-11-07 12:59+0000\n"
+"Last-Translator: Dmitriy Volkov <wldhx+reg+transifex@wldhx.me>\n"
 "Language-Team: Russian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -500,15 +500,15 @@ msgstr ""
 "    Комментарий: %(comment)s\n"
 "        "
 
-#: taiga/export_import/api.py:103
+#: taiga/export_import/api.py:104
 msgid "We needed at least one role"
 msgstr "Нам была нужна хотя бы одна роль"
 
-#: taiga/export_import/api.py:197
+#: taiga/export_import/api.py:198
 msgid "Needed dump file"
 msgstr "Необходим дамп-файл"
 
-#: taiga/export_import/api.py:204
+#: taiga/export_import/api.py:205
 msgid "Invalid dump format"
 msgstr "Неправильный формат для свалки"
 
@@ -568,21 +568,21 @@ msgstr "ошибка импорта тэгов"
 msgid "error importing timelines"
 msgstr "ошибка импорта хронологии проекта"
 
-#: taiga/export_import/serializers.py:163
+#: taiga/export_import/serializers.py:177
 msgid "{}=\"{}\" not found in this project"
 msgstr "{}=\"{}\" не найдено в этом проекте"
 
-#: taiga/export_import/serializers.py:428
+#: taiga/export_import/serializers.py:442
 #: taiga/projects/custom_attributes/serializers.py:103
 msgid "Invalid content. It must be {\"key\": \"value\",...}"
 msgstr "Неправильные данные. Должны быть в формате {\"key\": \"value\",...}"
 
-#: taiga/export_import/serializers.py:443
+#: taiga/export_import/serializers.py:457
 #: taiga/projects/custom_attributes/serializers.py:118
 msgid "It contain invalid custom fields."
 msgstr "Содержит неверные специальные поля"
 
-#: taiga/export_import/serializers.py:513
+#: taiga/export_import/serializers.py:527
 #: taiga/projects/milestones/serializers.py:64 taiga/projects/serializers.py:70
 #: taiga/projects/serializers.py:96 taiga/projects/serializers.py:127
 #: taiga/projects/serializers.py:170
@@ -1422,7 +1422,7 @@ msgstr "Многострочный текст"
 
 #: taiga/projects/custom_attributes/choices.py:27
 msgid "Date"
-msgstr ""
+msgstr "Дата"
 
 #: taiga/projects/custom_attributes/models.py:38
 #: taiga/projects/issues/models.py:46
@@ -1656,11 +1656,11 @@ msgstr "количество"
 #: taiga/projects/likes/models.py:31 taiga/projects/likes/models.py:32
 #: taiga/projects/likes/models.py:56
 msgid "Likes"
-msgstr ""
+msgstr "Лайки"
 
 #: taiga/projects/likes/models.py:55
 msgid "Like"
-msgstr ""
+msgstr "Лайк"
 
 #: taiga/projects/milestones/models.py:37 taiga/projects/models.py:136
 #: taiga/projects/models.py:396 taiga/projects/models.py:460
@@ -1883,15 +1883,15 @@ msgstr "роли"
 
 #: taiga/projects/notifications/choices.py:28
 msgid "Involved"
-msgstr ""
+msgstr "Вовлеченные"
 
 #: taiga/projects/notifications/choices.py:29
 msgid "All"
-msgstr ""
+msgstr "Все"
 
 #: taiga/projects/notifications/choices.py:30
 msgid "None"
-msgstr ""
+msgstr "Никаких"
 
 #: taiga/projects/notifications/models.py:61
 msgid "created date time"
@@ -3153,7 +3153,7 @@ msgstr ""
 #: taiga/projects/userstories/api.py:254
 #, python-brace-format
 msgid "Generating the user story #{ref} - {subject}"
-msgstr ""
+msgstr "Генерируется пользовательская история #{ref} - {subject}"
 
 #: taiga/projects/userstories/models.py:37
 msgid "role"
