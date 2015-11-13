@@ -23,3 +23,4 @@ from . import models
 class VoteInline(GenericTabularInline):
     model = models.Vote
     extra = 0
+    raw_id_fields = ["user"]
