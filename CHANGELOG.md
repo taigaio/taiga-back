@@ -7,6 +7,7 @@
 - [CSV Reports] Add fields "created_date", "modified_date", "finished_date" to issues CSV report.
 
 ### Misc
+- Improve the django admin panel, now it is more usable and all the selector fields works properly.
 - Lots of small and not so small bugfixes.
 
 
