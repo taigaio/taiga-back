@@ -19,8 +19,8 @@ addons:
 before_script:
   - psql -c 'create database taiga;' -U postgres
 install:
-  - pip install -r requirements-devel.txt
+  - travis_retry pip install -r requirements-devel.txt
 script:
-  - coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' -m py.test -v --tb=native
+  - travis_retry coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' -m py.test -v --tb=native
 after_success:
   - coveralls
