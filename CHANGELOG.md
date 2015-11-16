@@ -8,6 +8,7 @@
 
 ### Misc
 - Improve the django admin panel, now it is more usable and all the selector fields works properly.
+- [API] Performance improvements for project stats.
 - Lots of small and not so small bugfixes.
 
 
