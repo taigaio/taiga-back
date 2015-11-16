@@ -37,6 +37,24 @@ from .gravatar import get_gravatar_url
 
 from django.conf import settings
 
+
+def get_user_by_username_or_email(username_or_email):
+    user_model = apps.get_model("users", "User")
+    qs = user_model.objects.filter(Q(username__iexact=username_or_email) |
+                                   Q(email__iexact=username_or_email))
+
+    if len(qs) > 1:
+        qs = qs.filter(Q(username=username_or_email) |
+                       Q(email=username_or_email))
+
+    if len(qs) == 0:
+        raise exc.WrongArguments(_("Username or password does not matches user."))
+
+    user = qs[0]
+    return user
+
+
+
 def get_and_validate_user(*, username:str, password:str) -> bool:
     """
     Check if user with username/email exists and specified
@@ -46,13 +64,7 @@ def get_and_validate_user(*, username:str, password:str) -> bool:
     exception is raised.
     """
 
-    user_model = apps.get_model("users", "User")
-    qs = user_model.objects.filter(Q(username=username) |
-                                   Q(email=username))
-    if len(qs) == 0:
-        raise exc.WrongArguments(_("Username or password does not matches user."))
-
-    user = qs[0]
+    user = get_user_by_username_or_email(username)
     if not user.check_password(password):
         raise exc.WrongArguments(_("Username or password does not matches user."))
 
