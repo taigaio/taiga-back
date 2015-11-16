@@ -35,7 +35,7 @@ from taiga.base.api.utils import get_object_or_404
 from taiga.base.filters import MembersFilterBackend
 from taiga.base.mails import mail_builder
 from taiga.projects.votes import services as votes_service
-
+from taiga.users.services import get_user_by_username_or_email
 from easy_thumbnails.source_generators import pil_image
 
 from . import models
@@ -145,13 +145,7 @@ class UsersViewSet(ModelCrudViewSet):
         if not username_or_email:
             raise exc.WrongArguments(_("Invalid username or email"))
 
-        try:
-            queryset = models.User.objects.all()
-            user = queryset.get(Q(username=username_or_email) |
-                                    Q(email=username_or_email))
-        except models.User.DoesNotExist:
-            raise exc.WrongArguments(_("Invalid username or email"))
-
+        user = get_user_by_username_or_email(username_or_email)
         user.token = str(uuid.uuid1())
         user.save(update_fields=["token"])
 
