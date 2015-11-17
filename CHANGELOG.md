@@ -7,6 +7,8 @@
 - [CSV Reports] Add fields "created_date", "modified_date", "finished_date" to issues CSV report.
 
 ### Misc
+- Improve login and forgot password: allow username or email case-insensitive if the query only
+  match with one user.
 - Improve the django admin panel, now it is more usable and all the selector fields works properly.
 - [API] Performance improvements for project stats.
 - Lots of small and not so small bugfixes.

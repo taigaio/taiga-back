@@ -106,3 +106,67 @@ def test_respond_400_if_username_or_email_is_duplicate(client, settings, registe
     register_form["email"] = "ff@dd.com"
     response = client.post(reverse("auth-register"), register_form)
     assert response.status_code == 400
+
+
+def test_auth_uppercase_ignore(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = True
+
+    register_form = {"username": "Username",
+                     "password": "password",
+                     "full_name": "fname",
+                     "email": "User@email.com",
+                     "type": "public"}
+    response = client.post(reverse("auth-register"), register_form)
+
+    #Only exists one user with the same lowercase version of username/password
+    login_form = {"type": "normal",
+                  "username": "Username",
+                  "password": "password"}
+
+    response = client.post(reverse("auth-list"), login_form)
+    assert response.status_code == 200
+
+    login_form = {"type": "normal",
+                  "username": "User@email.com",
+                  "password": "password"}
+
+    response = client.post(reverse("auth-list"), login_form)
+    assert response.status_code == 200
+
+    #Now we have two users with the same lowercase version of username/password
+    # 1.- The capitalized version works
+    register_form = {"username": "username",
+                     "password": "password",
+                     "full_name": "fname",
+                     "email": "user@email.com",
+                     "type": "public"}
+    response = client.post(reverse("auth-register"), register_form)
+
+    login_form = {"type": "normal",
+                  "username": "Username",
+                  "password": "password"}
+
+    response = client.post(reverse("auth-list"), login_form)
+    assert response.status_code == 200
+
+    login_form = {"type": "normal",
+                  "username": "User@email.com",
+                  "password": "password"}
+
+    response = client.post(reverse("auth-list"), login_form)
+    assert response.status_code == 200
+
+    # 2.- If we capitalize a new version it doesn't
+    login_form = {"type": "normal",
+                  "username": "uSername",
+                  "password": "password"}
+
+    response = client.post(reverse("auth-list"), login_form)
+    assert response.status_code == 400
+
+    login_form = {"type": "normal",
+                  "username": "uSer@email.com",
+                  "password": "password"}
+
+    response = client.post(reverse("auth-list"), login_form)
+    assert response.status_code == 400
