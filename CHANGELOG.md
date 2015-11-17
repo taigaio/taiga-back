@@ -5,6 +5,7 @@
 
 ### Features
 - [CSV Reports] Add fields "created_date", "modified_date", "finished_date" to issues CSV report.
+- [Attachment] Generate 'card-image' size (300x200) thumbnails for attached image files.
 
 ### Misc
 - Improve the django admin panel, now it is more usable and all the selector fields works properly.
