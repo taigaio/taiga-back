@@ -16,6 +16,8 @@
 
 import abc
 
+from functools import reduce
+
 from taiga.base.utils import sequence as sq
 from taiga.permissions.service import user_has_perm, is_project_owner
 from django.apps import apps
