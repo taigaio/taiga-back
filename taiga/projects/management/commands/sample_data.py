@@ -30,6 +30,7 @@ from taiga.permissions.permissions import ANON_PERMISSIONS
 from taiga.projects.models import *
 from taiga.projects.milestones.models import *
 from taiga.projects.notifications.choices import NotifyLevel
+from taiga.projects.services.stats import get_stats_for_project
 
 from taiga.projects.userstories.models import *
 from taiga.projects.tasks.models import *
@@ -220,8 +221,8 @@ class Command(BaseCommand):
                 wiki_page = self.create_wiki(project, "home")
 
             # Set a value to total_story_points to show the deadline in the backlog
-            defined_points = sum(project.defined_points.values())
-            project.total_story_points = int(defined_points * self.sd.int(5,12) / 10)
+            get_stats_for_project(project)
+            project.total_story_points = int(project._defined_points * self.sd.int(5,12) / 10)
             project.save()
 
             self.create_likes(project)
