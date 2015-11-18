@@ -21,13 +21,12 @@ from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 
-from easy_thumbnails.files import get_thumbnailer
-from easy_thumbnails.exceptions import InvalidImageFormatError
-
 from taiga.base.utils.urls import get_absolute_url
 from taiga.base.utils.iterators import as_tuple
 from taiga.base.utils.iterators import as_dict
 from taiga.mdrender.service import render as mdrender
+
+from taiga.projects.attachments.services import get_timeline_image_thumbnailer_url
 
 import os
 
@@ -178,11 +177,7 @@ def _generic_extract(obj:object, fields:list, default=None) -> dict:
 @as_tuple
 def extract_attachments(obj) -> list:
     for attach in obj.attachments.all():
-        try:
-            thumb_url = get_thumbnailer(attach.attached_file)['timeline-image'].url
-            thumb_url = get_absolute_url(thumb_url)
-        except InvalidImageFormatError as e:
-            thumb_url = None
+        thumb_url = get_timeline_image_thumbnailer_url(attach)
 
         yield {"id": attach.id,
                "filename": os.path.basename(attach.attached_file.name),

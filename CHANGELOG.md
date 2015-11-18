@@ -5,6 +5,7 @@
 
 ### Features
 - [CSV Reports] Add fields "created_date", "modified_date", "finished_date" to issues CSV report.
+- [Attachment] Generate 'card-image' size (300x200) thumbnails for attached image files.
 
 ### Misc
 - Improve login and forgot password: allow username or email case-insensitive if the query only
