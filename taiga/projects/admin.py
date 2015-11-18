@@ -66,9 +66,11 @@ class MembershipInline(admin.TabularInline):
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ["name", "owner", "created_date", "total_milestones",
-                    "total_story_points"]
-    list_display_links = list_display
+    list_display = ["id", "name", "slug", "is_private", "is_featured", "owner", "created_date"]
+    list_display_links = ["id", "name", "slug"]
+    list_filter = ("is_private", "is_featured")
+    list_editable = ["is_featured"]
+    search_fields = ["id", "name", "slug", "owner__username", "owner__email", "owner__full_name"]
     inlines = [RoleInline, MembershipInline, MilestoneInline, NotifyPolicyInline, LikeInline]
 
     def get_object(self, *args, **kwargs):

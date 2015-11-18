@@ -169,6 +169,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                                           related_name="projects", null=True,
                                           blank=True, default=None,
                                           verbose_name=_("creation template"))
+
     anon_permissions = TextArrayField(blank=True, null=True,
                                       default=[],
                                       verbose_name=_("anonymous permissions"),
@@ -180,6 +181,9 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     is_private = models.BooleanField(default=True, null=False, blank=True,
                                      verbose_name=_("is private"))
 
+    is_featured = models.BooleanField(default=False, null=False, blank=True,
+                                     verbose_name=_("is featured"))
+
     userstories_csv_uuid = models.CharField(max_length=32, editable=False,
                                             null=True, blank=True,
                                             default=None, db_index=True)
@@ -189,7 +193,8 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                                        null=True, blank=True, default=None,
                                        db_index=True)
 
-    tags_colors = TextArrayField(dimension=2, null=False, blank=True, verbose_name=_("tags colors"), default=[])
+    tags_colors = TextArrayField(dimension=2, default=[], null=False, blank=True,
+                                 verbose_name=_("tags colors"))
     _importing = None
 
     class Meta:

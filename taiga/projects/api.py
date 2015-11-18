@@ -278,6 +278,7 @@ class ProjectWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.ProjectWatchersPermission,)
     resource_model = models.Project
 
+
 ######################################################
 ## Custom values for selectors
 ######################################################
@@ -294,6 +295,7 @@ class PointsViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
     move_on_destroy_related_class = RolePoints
     move_on_destroy_related_field = "points"
     move_on_destroy_project_default_field = "default_points"
+
 
 class UserStoryStatusViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.UserStoryStatus
