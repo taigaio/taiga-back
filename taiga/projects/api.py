@@ -70,7 +70,8 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
                      'is_backlog_activated',
                      'is_kanban_activated')
 
-    order_by_fields = ("memberships__user_order",)
+    order_by_fields = ("memberships__user_order",
+                       "total_fans")
 
     def get_queryset(self):
         qs = super().get_queryset()
