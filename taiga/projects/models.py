@@ -184,6 +184,9 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     is_featured = models.BooleanField(default=False, null=False, blank=True,
                                      verbose_name=_("is featured"))
 
+    is_looking_for_people = models.BooleanField(default=False, null=False, blank=True,
+                                     verbose_name=_("is looking for people"))
+
     userstories_csv_uuid = models.CharField(max_length=32, editable=False,
                                             null=True, blank=True,
                                             default=None, db_index=True)
