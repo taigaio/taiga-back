@@ -64,7 +64,12 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
     list_serializer_class = serializers.ProjectSerializer
     permission_classes = (permissions.ProjectPermission, )
     filter_backends = (filters.CanViewProjectObjFilterBackend,)
-    filter_fields = (('member', 'members'),)
+    filter_fields = (('member', 'members'),
+                     'is_looking_for_people',
+                     'is_featured',
+                     'is_backlog_activated',
+                     'is_kanban_activated')
+
     order_by_fields = ("memberships__user_order",)
 
     def get_queryset(self):
