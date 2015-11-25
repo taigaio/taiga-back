@@ -275,10 +275,6 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     def project(self):
         return self
 
-    @property
-    def project(self):
-        return self
-
     def _get_q_watchers(self):
         return Q(notify_policies__project_id=self.id) & ~Q(notify_policies__notify_level=NotifyLevel.none)
 
