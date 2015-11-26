@@ -84,6 +84,19 @@ class PgArrayField(serializers.WritableField):
         return data
 
 
+class PickledObjectField(serializers.WritableField):
+    """
+    PickledObjectField objects serializer.
+    """
+    widget = widgets.Textarea
+
+    def to_native(self, obj):
+        return obj
+
+    def from_native(self, data):
+        return data
+
+
 class TagsField(serializers.WritableField):
     """
     Pickle objects serializer.
