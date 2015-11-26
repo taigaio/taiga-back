@@ -11,6 +11,7 @@
 - Improve login and forgot password: allow username or email case-insensitive if the query only
   match with one user.
 - Improve the django admin panel, now it is more usable and all the selector fields works properly.
+- [API] Add tribe_gig field to user stories (improve integration between Taiga and Taiga Tribe).
 - [API] Performance improvements for project stats.
 - Lots of small and not so small bugfixes.
 
