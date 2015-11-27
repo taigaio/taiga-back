@@ -113,7 +113,9 @@ class UserStoryListSerializer(UserStorySerializer):
 
 class UserStoryNeighborsSerializer(NeighborsSerializerMixin, UserStorySerializer):
     def serialize_neighbor(self, neighbor):
-        return NeighborUserStorySerializer(neighbor).data
+        if neighbor:
+            return NeighborUserStorySerializer(neighbor).data
+        return None
 
 
 class NeighborUserStorySerializer(serializers.ModelSerializer):
