@@ -62,14 +62,16 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = self.attach_watchers_attrs_to_queryset(qs)
         qs = qs.prefetch_related("user_stories",
                                  "user_stories__role_points",
                                  "user_stories__role_points__points",
-                                 "user_stories__role_points__role",
-                                 "user_stories__generated_from_issue",
-                                 "user_stories__project")
-        qs = qs.select_related("project")
+                                 "user_stories__role_points__role")
+
+        qs = qs.select_related("project",
+                               "owner")
+
+        qs = self.attach_watchers_attrs_to_queryset(qs)
+
         qs = qs.order_by("-estimated_start")
         return qs
 

@@ -21,16 +21,14 @@ from taiga.base.utils import json
 from taiga.projects.notifications.mixins import WatchedResourceModelSerializer
 from taiga.projects.notifications.validators import WatchersValidator
 
-from ..userstories.serializers import UserStorySerializer
+from ..userstories.serializers import MilestoneUserStorySerializer
 from . import models
 
 
 class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer, serializers.ModelSerializer):
-    user_stories = UserStorySerializer(many=True, required=False, read_only=True)
+    user_stories = MilestoneUserStorySerializer(many=True, required=False, read_only=True)
     total_points = serializers.SerializerMethodField("get_total_points")
     closed_points = serializers.SerializerMethodField("get_closed_points")
-    client_increment_points = serializers.SerializerMethodField("get_client_increment_points")
-    team_increment_points = serializers.SerializerMethodField("get_team_increment_points")
 
     class Meta:
         model = models.Milestone
@@ -41,12 +39,6 @@ class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer, ser
 
     def get_closed_points(self, obj):
         return sum(obj.closed_points.values())
-
-    def get_client_increment_points(self, obj):
-        return sum(obj.client_increment_points.values())
-
-    def get_team_increment_points(self, obj):
-        return sum(obj.team_increment_points.values())
 
     def validate_name(self, attrs, source):
         """

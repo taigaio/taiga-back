@@ -14,7 +14,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.core.paginator import Paginator, InvalidPage
+from django.core.paginator import (
+    EmptyPage,
+    Page,
+    PageNotAnInteger,
+    Paginator,
+    InvalidPage,
+)
 from django.http import Http404
 from django.utils.translation import ugettext as _
 
@@ -34,6 +40,90 @@ def strict_positive_int(integer_string, cutoff=None):
     if cutoff:
         ret = min(ret, cutoff)
     return ret
+
+
+class CustomPage(Page):
+    """Handle different number of items on the first page."""
+
+    def start_index(self):
+        """Return the 1-based index of the first item on this page."""
+        paginator = self.paginator
+        # Special case, return zero if no items.
+        if paginator.count == 0:
+            return 0
+        elif self.number == 1:
+            return 1
+        return (
+            (self.number - 2) * paginator.per_page + paginator.first_page + 1)
+
+    def end_index(self):
+        """Return the 1-based index of the last item on this page."""
+        paginator = self.paginator
+        # Special case for the last page because there can be orphans.
+        if self.number == paginator.num_pages:
+            return paginator.count
+        return (self.number - 1) * paginator.per_page + paginator.first_page
+
+
+class LazyPaginator(Paginator):
+    """Implement lazy pagination."""
+
+    def __init__(self, object_list, per_page, **kwargs):
+        if 'first_page' in kwargs:
+            self.first_page = kwargs.pop('first_page')
+        else:
+            self.first_page = per_page
+        super(LazyPaginator, self).__init__(object_list, per_page, **kwargs)
+
+    def get_current_per_page(self, number):
+        return self.first_page if number == 1 else self.per_page
+
+    def validate_number(self, number):
+        try:
+            number = int(number)
+        except ValueError:
+            raise PageNotAnInteger('That page number is not an integer')
+        if number < 1:
+            raise EmptyPage('That page number is less than 1')
+        return number
+
+    def page(self, number):
+        number = self.validate_number(number)
+        current_per_page = self.get_current_per_page(number)
+        if number == 1:
+            bottom = 0
+        else:
+            bottom = ((number - 2) * self.per_page + self.first_page)
+        top = bottom + current_per_page
+        # Retrieve more objects to check if there is a next page.
+        objects = list(self.object_list[bottom:top + self.orphans + 1])
+        objects_count = len(objects)
+        if objects_count > (current_per_page + self.orphans):
+            # If another page is found, increase the total number of pages.
+            self._num_pages = number + 1
+            # In any case,  return only objects for this page.
+            objects = objects[:current_per_page]
+        elif (number != 1) and (objects_count <= self.orphans):
+            raise EmptyPage('That page contains no results')
+        else:
+            # This is the last page.
+            self._num_pages = number
+        return Page(objects, number, self)
+
+    def _get_count(self):
+        raise NotImplementedError
+
+    count = property(_get_count)
+
+    def _get_num_pages(self):
+        return self._num_pages
+
+    num_pages = property(_get_num_pages)
+
+    def _get_page_range(self):
+        raise NotImplementedError
+
+    page_range = property(_get_page_range)
 
 
 class PaginationMixin(object):
@@ -77,6 +167,12 @@ class PaginationMixin(object):
         Paginate a queryset if required, either returning a page object,
         or `None` if pagination is not configured for this view.
         """
+        if "HTTP_X_DISABLE_PAGINATION" in self.request.META:
+            return None
+
+        if "HTTP_X_LAZY_PAGINATION" in self.request.META:
+            self.paginator_class = LazyPaginator
+
         deprecated_style = False
         if page_size is not None:
             warnings.warn('The `page_size` parameter to `paginate_queryset()` '
@@ -103,6 +199,7 @@ class PaginationMixin(object):
 
         paginator = self.paginator_class(queryset, page_size,
                                          allow_empty_first_page=self.allow_empty)
+
         page_kwarg = self.kwargs.get(self.page_kwarg)
         page_query_param = self.request.QUERY_PARAMS.get(self.page_kwarg)
         page = page_kwarg or page_query_param or 1
@@ -124,7 +221,9 @@ class PaginationMixin(object):
         if page is None:
             return page
 
-        self.headers["x-pagination-count"] = page.paginator.count
+        if not "HTTP_X_LAZY_PAGINATION" in self.request.META:
+            self.headers["x-pagination-count"] = page.paginator.count
+
         self.headers["x-paginated"] = "true"
         self.headers["x-paginated-by"] = page.paginator.per_page
         self.headers["x-pagination-current"] = page.number
