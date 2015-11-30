@@ -52,7 +52,11 @@ class IssueSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWa
         return ""
 
     def get_generated_user_stories(self, obj):
-        return obj.generated_user_stories.values("id", "ref", "subject")
+        return [{
+            "id": us.id,
+            "ref": us.ref,
+            "subject": us.subject,
+        } for us in obj.generated_user_stories.all()]
 
     def get_blocked_note_html(self, obj):
         return mdrender(obj.project, obj.blocked_note)

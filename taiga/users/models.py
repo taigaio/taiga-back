@@ -23,6 +23,8 @@ import uuid
 
 from unidecode import unidecode
 
+from django.apps import apps
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
@@ -39,6 +41,7 @@ from taiga.auth.tokens import get_token_for_user
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.iterators import split_by_n
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+from taiga.projects.notifications.choices import NotifyLevel
 
 from easy_thumbnails.files import get_thumbnailer
 
@@ -135,6 +138,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     new_email = models.EmailField(_('new email address'), null=True, blank=True)
 
     is_system = models.BooleanField(null=False, blank=False, default=False)
+    _cached_memberships = None
+    _cached_liked_ids = None
+    _cached_watched_ids = None
+    _cached_notify_levels = None
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
@@ -151,6 +158,63 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.get_full_name()
+
+    def _fill_cached_memberships(self):
+        self._cached_memberships = {}
+        qs = self.memberships.prefetch_related("user", "project", "role")
+        for membership in qs.all():
+            self._cached_memberships[membership.project.id] = membership
+
+    @property
+    def cached_memberships(self):
+        if self._cached_memberships is None:
+            self._fill_cached_memberships()
+
+        return self._cached_memberships.values()
+
+    def cached_membership_for_project(self, project):
+        if self._cached_memberships is None:
+            self._fill_cached_memberships()
+
+        return self._cached_memberships.get(project.id, None)
+
+    def is_fan(self, obj):
+        if self._cached_liked_ids is None:
+            self._cached_liked_ids = set()
+            for like in self.likes.select_related("content_type").all():
+                like_id = "{}-{}".format(like.content_type.id, like.object_id)
+                self._cached_liked_ids.add(like_id)
+
+        obj_type = ContentType.objects.get_for_model(obj)
+        obj_id = "{}-{}".format(obj_type.id, obj.id)
+        return obj_id in self._cached_liked_ids
+
+    def is_watcher(self, obj):
+        if self._cached_watched_ids is None:
+            self._cached_watched_ids = set()
+            for watched in self.watched.select_related("content_type").all():
+                watched_id = "{}-{}".format(watched.content_type.id, watched.object_id)
+                self._cached_watched_ids.add(watched_id)
+
+            notify_policies = self.notify_policies.select_related("project")\
+                .exclude(notify_level=NotifyLevel.none)
+
+            for notify_policy in notify_policies:
+                obj_type = ContentType.objects.get_for_model(notify_policy.project)
+                watched_id = "{}-{}".format(obj_type.id, notify_policy.project.id)
+                self._cached_watched_ids.add(watched_id)
+
+        obj_type = ContentType.objects.get_for_model(obj)
+        obj_id = "{}-{}".format(obj_type.id, obj.id)
+        return obj_id in self._cached_watched_ids
+
+    def get_notify_level(self, project):
+        if self._cached_notify_levels is None:
+            self._cached_notify_levels = {}
+            for notify_policy in self.notify_policies.select_related("project"):
+                self._cached_notify_levels[notify_policy.project.id] = notify_policy.notify_level
+
+        return self._cached_notify_levels.get(project.id, None)
 
     def get_short_name(self):
         "Returns the short name for the user."

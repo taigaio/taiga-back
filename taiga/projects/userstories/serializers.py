@@ -45,6 +45,18 @@ class RolePointsField(serializers.WritableField):
         return json.loads(obj)
 
 
+class MilestoneUserStorySerializer(serializers.ModelSerializer):
+    total_points = serializers.SerializerMethodField("get_total_points")
+
+    class Meta:
+        model = models.UserStory
+        depth = 0
+        fields = ("id", "ref", "subject", "is_closed", "is_blocked", "total_points")
+
+    def get_total_points(self, obj):
+        return obj.get_total_points()
+
+
 class UserStorySerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer, serializers.ModelSerializer):
     tags = TagsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
