@@ -76,26 +76,10 @@ def test_get_project_fan(client):
     assert response.data['id'] == like.user.id
 
 
-def test_get_project_total_fans(client):
-    user = f.UserFactory.create()
-    project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
-    url = reverse("projects-detail", args=(project.id,))
-
-    f.LikesFactory.create(content_object=project, count=5)
-
-    client.login(user)
-    response = client.get(url)
-
-    assert response.status_code == 200
-    assert response.data['total_fans'] == 5
-
-
 def test_get_project_is_fan(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
     f.MembershipFactory.create(project=project, user=user, is_owner=True)
-    f.LikesFactory.create(content_object=project)
     url_detail = reverse("projects-detail", args=(project.id,))
     url_like = reverse("projects-like", args=(project.id,))
     url_unlike = reverse("projects-unlike", args=(project.id,))

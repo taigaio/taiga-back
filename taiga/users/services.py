@@ -224,7 +224,7 @@ def _build_watched_sql_for_projects(for_user):
         tags, notifications_notifypolicy.project_id AS object_id, projects_project.id AS project,
         slug, projects_project.name, null::text AS subject,
         notifications_notifypolicy.created_at as created_date,
-        coalesce(watchers, 0) AS total_watchers, coalesce(likes_likes.count, 0) AS total_fans, null::integer AS total_voters,
+        coalesce(watchers, 0) AS total_watchers, projects_project.total_fans AS total_fans, null::integer AS total_voters,
         null::integer AS assigned_to, null::text as status, null::text as status_color
 	    FROM notifications_notifypolicy
 	    INNER JOIN projects_project
@@ -235,8 +235,6 @@ def _build_watched_sql_for_projects(for_user):
                    GROUP BY project_id
                 ) type_watchers
 		      ON projects_project.id = type_watchers.project_id
-	    LEFT JOIN likes_likes
-		      ON (projects_project.id = likes_likes.object_id AND {project_content_type_id} = likes_likes.content_type_id)
 	    WHERE
               notifications_notifypolicy.user_id = {for_user_id}
               AND notifications_notifypolicy.notify_level != {none_notify_level}
@@ -254,7 +252,7 @@ def _build_liked_sql_for_projects(for_user):
         tags, likes_like.object_id AS object_id, projects_project.id AS project,
         slug, projects_project.name, null::text AS subject,
         likes_like.created_date,
-        coalesce(watchers, 0) AS total_watchers, coalesce(likes_likes.count, 0) AS total_fans,
+        coalesce(watchers, 0) AS total_watchers, projects_project.total_fans AS total_fans,
         null::integer AS assigned_to, null::text as status, null::text as status_color
 	    FROM likes_like
 	    INNER JOIN projects_project
@@ -265,8 +263,6 @@ def _build_liked_sql_for_projects(for_user):
                    GROUP BY project_id
                 ) type_watchers
 		      ON projects_project.id = type_watchers.project_id
-        LEFT JOIN likes_likes
-		      ON (projects_project.id = likes_likes.object_id AND {project_content_type_id} = likes_likes.content_type_id)
 	    WHERE likes_like.user_id = {for_user_id} AND {project_content_type_id} = likes_like.content_type_id
     """
     sql = sql.format(

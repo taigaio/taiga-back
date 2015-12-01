@@ -26,6 +26,7 @@ from taiga.base.fields import PgArrayField
 from taiga.base.fields import TagsField
 from taiga.base.fields import TagsColorsField
 
+from taiga.projects.notifications.choices import NotifyLevel
 from taiga.users.services import get_photo_or_gravatar_url
 from taiga.users.serializers import UserSerializer
 from taiga.users.serializers import UserBasicInfoSerializer
@@ -318,6 +319,7 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
     tags_colors = TagsColorsField(required=False)
     total_closed_milestones = serializers.SerializerMethodField("get_total_closed_milestones")
     notify_level =  serializers.SerializerMethodField("get_notify_level")
+    total_watchers = serializers.SerializerMethodField("get_total_watchers")
 
     class Meta:
         model = models.Project
@@ -336,10 +338,27 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
         return False
 
     def get_total_closed_milestones(self, obj):
+        # The "closed_milestone" attribute can be attached in the get_queryset method of the viewset.
+        qs_closed_milestones = getattr(obj, "closed_milestones", None)
+        if qs_closed_milestones is not None:
+            return qs_closed_milestones
+
         return obj.milestones.filter(closed=True).count()
 
     def get_notify_level(self, obj):
-        return getattr(obj, "notify_level", None)
+        if "request" in self.context:
+            user = self.context["request"].user
+            return user.is_authenticated() and user.get_notify_level(obj)
+
+        return None
+
+    def get_total_watchers(self, obj):
+        # The "valid_notify_policies" attribute can be attached in the get_queryset method of the viewset.
+        qs_valid_notify_policies = getattr(obj, "valid_notify_policies", None)
+        if qs_valid_notify_policies is not None:
+            return len(qs_valid_notify_policies)
+
+        return obj.notify_policies.exclude(notify_level=NotifyLevel.none).count()
 
 
 class ProjectDetailSerializer(ProjectSerializer):

@@ -388,7 +388,6 @@ def test_get_liked_list():
     membership = f.MembershipFactory(project=project, role=role, user=fan_user)
     content_type = ContentType.objects.get_for_model(project)
     f.LikeFactory(content_type=content_type, object_id=project.id, user=fan_user)
-    f.LikesFactory(content_type=content_type, object_id=project.id, count=1)
 
     assert len(get_liked_list(fan_user, viewer_user)) == 1
     assert len(get_liked_list(fan_user, viewer_user, type="project")) == 1
@@ -495,8 +494,8 @@ def test_get_liked_list_valid_info():
     project = f.ProjectFactory(is_private=False, name="Testing project", tags=['test', 'tag'])
     content_type = ContentType.objects.get_for_model(project)
     like = f.LikeFactory(content_type=content_type, object_id=project.id, user=fan_user)
-    f.LikesFactory(content_type=content_type, object_id=project.id, count=1)
-
+    project.refresh_totals()
+    
     raw_project_like_info = get_liked_list(fan_user, viewer_user)[0]
     project_like_info = LikedObjectSerializer(raw_project_like_info).data
 
@@ -762,7 +761,6 @@ def test_get_liked_list_permissions():
     membership = f.MembershipFactory(project=project, role=role, user=viewer_priviliged_user)
     content_type = ContentType.objects.get_for_model(project)
     f.LikeFactory(content_type=content_type, object_id=project.id, user=fan_user)
-    f.LikesFactory(content_type=content_type, object_id=project.id, count=1)
 
     #If the project is private a viewer user without any permission shouldn' see
     # any vote

@@ -423,15 +423,6 @@ class LikeFactory(Factory):
     user = factory.SubFactory("tests.factories.UserFactory")
 
 
-class LikesFactory(Factory):
-    class Meta:
-        model = "likes.Likes"
-        strategy = factory.CREATE_STRATEGY
-
-    content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
-    object_id = factory.Sequence(lambda n: n)
-
-
 class VoteFactory(Factory):
     class Meta:
         model = "votes.Vote"
