@@ -15,25 +15,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from easy_thumbnails.files import get_thumbnailer
-
 from django.apps import AppConfig
 from django.apps import apps
-from django_transactional_cleanup.signals import cleanup_post_delete
-
-
-def thumbnail_delete(**kwargs):
-    thumbnailer = get_thumbnailer(kwargs["file"])
-    thumbnailer.delete_thumbnails()
-
-
-def connect_attachment_signals():
-    cleanup_post_delete.connect(thumbnail_delete)
 
 
 class AttachmentsAppConfig(AppConfig):
     name = "taiga.projects.attachments"
     verbose_name = "Attachments"
-
-    def ready(self):
-        connect_attachment_signals()

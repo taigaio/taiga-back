@@ -1,7 +1,4 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2015 Taiga Agile LLC <taiga@taiga.io>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -15,14 +12,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.apps import AppConfig
+from django.conf import settings
 
-from .signals.thumbnails import connect_thumbnail_signals
+from taiga.base.utils.thumbnails import get_thumbnail_url
 
 
-class BaseAppConfig(AppConfig):
-    name = "taiga.base"
-    verbose_name = "Base App Config"
+def get_logo_small_thumbnail_url(project):
+    if project.logo:
+        return get_thumbnail_url(project.logo, settings.THN_LOGO_SMALL)
+    return None
 
-    def ready(self):
-        connect_thumbnail_signals()
+
+def get_logo_big_thumbnail_url(project):
+    if project.logo:
+        return get_thumbnail_url(project.logo, settings.THN_LOGO_BIG)
+    return None

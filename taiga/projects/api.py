@@ -17,6 +17,8 @@
 
 import uuid
 
+from easy_thumbnails.source_generators import pil_image
+
 from django.apps import apps
 from django.db.models import signals, Prefetch
 from django.db.models import Value as V
@@ -136,6 +138,42 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
                 serializer_class = self.admin_serializer_class
 
         return serializer_class
+
+    @detail_route(methods=["POST"])
+    def change_logo(self, request, *args, **kwargs):
+        """
+        Change logo to this project.
+        """
+        self.object = get_object_or_404(self.get_queryset(), **kwargs)
+        self.check_permissions(request, "change_logo", self.object)
+
+        logo = request.FILES.get('logo', None)
+        if not logo:
+            raise exc.WrongArguments(_("Incomplete arguments"))
+        try:
+            pil_image(logo)
+        except Exception:
+            raise exc.WrongArguments(_("Invalid image format"))
+
+        self.object.logo = logo
+        self.object.save(update_fields=["logo"])
+
+        serializer = self.get_serializer(self.object)
+        return response.Ok(serializer.data)
+
+    @detail_route(methods=["POST"])
+    def remove_logo(self, request, *args, **kwargs):
+        """
+        Remove the logo of a project.
+        """
+        self.object = get_object_or_404(self.get_queryset(), **kwargs)
+        self.check_permissions(request, "remove_logo", self.object)
+
+        self.object.logo = None
+        self.object.save(update_fields=["logo"])
+
+        serializer = self.get_serializer(self.object)
+        return response.Ok(serializer.data)
 
     @detail_route(methods=["POST"])
     def watch(self, request, pk=None):
@@ -288,9 +326,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
     def pre_save(self, obj):
         if not obj.id:
             obj.owner = self.request.user
-
-        # TODO REFACTOR THIS
-        if not obj.id:
+            # TODO REFACTOR THIS
             obj.template = self.request.QUERY_PARAMS.get('template', None)
 
         self._set_base_permissions(obj)

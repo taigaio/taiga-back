@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.core.files import File
 
 from .. import factories as f
+from ..utils import DUMMY_BMP_DATA
 
 from taiga.base.utils import json
 from taiga.users import models
@@ -172,35 +173,7 @@ def test_cancel_self_user_with_invalid_token(client):
     assert response.status_code == 400
 
 
-DUMMY_BMP_DATA = b'BM:\x00\x00\x00\x00\x00\x00\x006\x00\x00\x00(\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00\x18\x00\x00\x00\x00\x00\x04\x00\x00\x00\x13\x0b\x00\x00\x13\x0b\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-
-
-def test_change_avatar(client):
-    url = reverse('users-change-avatar')
-
-    user = f.UserFactory()
-    client.login(user)
-
-    with NamedTemporaryFile() as avatar:
-        # Test no avatar send
-        post_data = {}
-        response = client.post(url, post_data)
-        assert response.status_code == 400
-
-        # Test invalid file send
-        post_data = {
-            'avatar': avatar
-        }
-        response = client.post(url, post_data)
-        assert response.status_code == 400
-
-        # Test empty valid avatar send
-        avatar.write(DUMMY_BMP_DATA)
-        avatar.seek(0)
-        response = client.post(url, post_data)
-        assert response.status_code == 200
-
-
+@pytest.mark.django_db(transaction=True)
 def test_change_avatar_removes_the_old_one(client):
     url = reverse('users-change-avatar')
     user = f.UserFactory()
@@ -216,7 +189,7 @@ def test_change_avatar_removes_the_old_one(client):
         thumbnailer = get_thumbnailer(user.photo)
         original_photo_paths = [user.photo.path]
         original_photo_paths += [th.path for th in thumbnailer.get_thumbnails()]
-        assert list(map(os.path.exists, original_photo_paths)) == [True, True, True, True, True]
+        assert all(list(map(os.path.exists, original_photo_paths)))
 
         client.login(user)
         avatar.write(DUMMY_BMP_DATA)
@@ -225,9 +198,10 @@ def test_change_avatar_removes_the_old_one(client):
         response = client.post(url, post_data)
 
         assert response.status_code == 200
-        assert list(map(os.path.exists, original_photo_paths)) == [False, False, False, False, False]
+        assert not any(list(map(os.path.exists, original_photo_paths)))
 
 
+@pytest.mark.django_db(transaction=True)
 def test_remove_avatar(client):
     url = reverse('users-remove-avatar')
     user = f.UserFactory()
@@ -242,13 +216,13 @@ def test_remove_avatar(client):
     thumbnailer = get_thumbnailer(user.photo)
     original_photo_paths = [user.photo.path]
     original_photo_paths += [th.path for th in thumbnailer.get_thumbnails()]
-    assert list(map(os.path.exists, original_photo_paths)) == [True, True, True, True, True]
+    assert all(list(map(os.path.exists, original_photo_paths)))
 
     client.login(user)
     response = client.post(url)
 
     assert response.status_code == 200
-    assert list(map(os.path.exists, original_photo_paths)) == [False, False, False, False, False]
+    assert not any(list(map(os.path.exists, original_photo_paths)))
 
 
 def test_list_contacts_private_projects(client):

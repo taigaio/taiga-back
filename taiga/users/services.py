@@ -34,9 +34,9 @@ from taiga.base.utils.db import to_tsquery
 from taiga.base.utils.urls import get_absolute_url
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.services import get_projects_watched
+
 from .gravatar import get_gravatar_url
 
-from django.conf import settings
 
 
 def get_user_by_username_or_email(username_or_email):
@@ -53,7 +53,6 @@ def get_user_by_username_or_email(username_or_email):
 
     user = qs[0]
     return user
-
 
 
 def get_and_validate_user(*, username:str, password:str) -> bool:
@@ -75,7 +74,7 @@ def get_and_validate_user(*, username:str, password:str) -> bool:
 def get_photo_url(photo):
     """Get a photo absolute url and the photo automatically cropped."""
     try:
-        url = get_thumbnailer(photo)['avatar'].url
+        url = get_thumbnailer(photo)[settings.THN_AVATAR_SMALL].url
         return get_absolute_url(url)
     except InvalidImageFormatError as e:
         return None
@@ -91,7 +90,7 @@ def get_photo_or_gravatar_url(user):
 def get_big_photo_url(photo):
     """Get a big photo absolute url and the photo automatically cropped."""
     try:
-        url = get_thumbnailer(photo)['big-avatar'].url
+        url = get_thumbnailer(photo)[settings.THN_AVATAR_BIG].url
         return get_absolute_url(url)
     except InvalidImageFormatError as e:
         return None
@@ -105,13 +104,14 @@ def get_big_photo_or_gravatar_url(user):
     if user.photo:
         return get_big_photo_url(user.photo)
     else:
-        return get_gravatar_url(user.email, size=settings.DEFAULT_BIG_AVATAR_SIZE)
+        return get_gravatar_url(user.email, size=settings.THN_AVATAR_BIG_SIZE)
 
 
 def get_visible_project_ids(from_user, by_user):
     """Calculate the project_ids from one user visible by another"""
     required_permissions = ["view_project"]
-    #Or condition for membership filtering, the basic one is the access to projects allowing anonymous visualization
+    # Or condition for membership filtering, the basic one is the access to projects
+    # allowing anonymous visualization
     member_perm_conditions = Q(project__anon_permissions__contains=required_permissions)
 
     # Authenticated
@@ -138,7 +138,8 @@ def get_stats_for_user(from_user, by_user):
 
     total_num_projects = len(project_ids)
 
-    roles = [_(r) for r in from_user.memberships.filter(project__id__in=project_ids).values_list("role__name", flat=True)]
+    roles = [_(r) for r in from_user.memberships.filter(project__id__in=project_ids).values_list(
+                                                                          "role__name", flat=True)]
     roles = list(set(roles))
 
     User = apps.get_model('users', 'User')

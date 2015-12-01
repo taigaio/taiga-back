@@ -1,7 +1,6 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -15,14 +14,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.apps import AppConfig
+from taiga.base.utils.urls import get_absolute_url
 
-from .signals.thumbnails import connect_thumbnail_signals
+from easy_thumbnails.files import get_thumbnailer
+from easy_thumbnails.exceptions import InvalidImageFormatError
 
 
-class BaseAppConfig(AppConfig):
-    name = "taiga.base"
-    verbose_name = "Base App Config"
+def get_thumbnail_url(file_obj, thumbnailer_size):
+    try:
+        path_url = get_thumbnailer(file_obj)[thumbnailer_size].url
+        thumb_url = get_absolute_url(path_url)
+    except InvalidImageFormatError:
+        thumb_url = None
 
-    def ready(self):
-        connect_thumbnail_signals()
+    return thumb_url

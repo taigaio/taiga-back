@@ -1,4 +1,7 @@
 from django.core.urlresolvers import reverse
+from django.conf import settings
+from django.core.files import File
+
 from taiga.base.utils import json
 from taiga.projects.services import stats as stats_services
 from taiga.projects.history.services import take_snapshot
@@ -6,8 +9,14 @@ from taiga.permissions.permissions import ANON_PERMISSIONS
 from taiga.projects.models import Project
 
 from .. import factories as f
+from ..utils import DUMMY_BMP_DATA
 
+from tempfile import NamedTemporaryFile
+from easy_thumbnails.files import generate_all_aliases, get_thumbnailer
+
+import os.path
 import pytest
+
 pytestmark = pytest.mark.django_db
 
 
@@ -406,3 +415,80 @@ def test_projects_user_order(client):
     response_content = response.data
     assert response.status_code == 200
     assert(response_content[0]["id"] == project_2.id)
+
+
+@pytest.mark.django_db(transaction=True)
+def test_update_project_logo(client):
+    user = f.UserFactory.create(is_superuser=True)
+    project = f.create_project()
+    url = reverse("projects-change-logo", args=(project.id,))
+
+    with NamedTemporaryFile(delete=False) as logo:
+        logo.write(DUMMY_BMP_DATA)
+        logo.seek(0)
+        project.logo = File(logo)
+        project.save()
+        generate_all_aliases(project.logo, include_global=True)
+
+    thumbnailer = get_thumbnailer(project.logo)
+    original_photo_paths = [project.logo.path]
+    original_photo_paths += [th.path for th in thumbnailer.get_thumbnails()]
+
+    assert all(list(map(os.path.exists, original_photo_paths)))
+
+    with NamedTemporaryFile(delete=False) as logo:
+        logo.write(DUMMY_BMP_DATA)
+        logo.seek(0)
+
+        client.login(user)
+        post_data = {'logo': logo}
+        response = client.post(url, post_data)
+        assert response.status_code == 200
+        assert not any(list(map(os.path.exists, original_photo_paths)))
+
+
+@pytest.mark.django_db(transaction=True)
+def test_remove_project_logo(client):
+    user = f.UserFactory.create(is_superuser=True)
+    project = f.create_project()
+    url = reverse("projects-remove-logo", args=(project.id,))
+
+    with NamedTemporaryFile(delete=False) as logo:
+        logo.write(DUMMY_BMP_DATA)
+        logo.seek(0)
+        project.logo = File(logo)
+        project.save()
+        generate_all_aliases(project.logo, include_global=True)
+
+    thumbnailer = get_thumbnailer(project.logo)
+    original_photo_paths = [project.logo.path]
+    original_photo_paths += [th.path for th in thumbnailer.get_thumbnails()]
+
+    assert all(list(map(os.path.exists, original_photo_paths)))
+    client.login(user)
+    response = client.post(url)
+    assert response.status_code == 200
+    assert not any(list(map(os.path.exists, original_photo_paths)))
+
+@pytest.mark.django_db(transaction=True)
+def test_remove_project_with_logo(client):
+    user = f.UserFactory.create(is_superuser=True)
+    project = f.create_project()
+    url = reverse("projects-detail", args=(project.id,))
+
+    with NamedTemporaryFile(delete=False) as logo:
+        logo.write(DUMMY_BMP_DATA)
+        logo.seek(0)
+        project.logo = File(logo)
+        project.save()
+        generate_all_aliases(project.logo, include_global=True)
+
+    thumbnailer = get_thumbnailer(project.logo)
+    original_photo_paths = [project.logo.path]
+    original_photo_paths += [th.path for th in thumbnailer.get_thumbnails()]
+
+    assert all(list(map(os.path.exists, original_photo_paths)))
+    client.login(user)
+    response = client.delete(url)
+    assert response.status_code == 204
+    assert not any(list(map(os.path.exists, original_photo_paths)))

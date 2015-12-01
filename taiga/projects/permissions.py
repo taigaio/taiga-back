@@ -53,6 +53,8 @@ class ProjectPermission(TaigaResourcePermission):
     destroy_perms = IsProjectOwner()
     modules_perms = IsProjectOwner()
     list_perms = AllowAny()
+    change_logo_perms = IsProjectOwner()
+    remove_logo_perms = IsProjectOwner()
     stats_perms = HasProjectPerm('view_project')
     member_stats_perms = HasProjectPerm('view_project')
     issues_stats_perms = HasProjectPerm('view_project')
