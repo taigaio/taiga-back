@@ -16,8 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import uuid
-
 from easy_thumbnails.source_generators import pil_image
+from dateutil.relativedelta import relativedelta
 
 from django.apps import apps
 from django.db.models import signals, Prefetch
@@ -51,12 +51,12 @@ from taiga.projects.issues.models import Issue
 from taiga.projects.likes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
 from taiga.permissions import service as permissions_service
 
-from . import serializers
+from . import filters as project_filters
 from . import models
 from . import permissions
+from . import serializers
 from . import services
 
-from dateutil.relativedelta import relativedelta
 
 ######################################################
 ## Project
@@ -67,7 +67,8 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
     admin_serializer_class = serializers.ProjectDetailAdminSerializer
     list_serializer_class = serializers.ProjectSerializer
     permission_classes = (permissions.ProjectPermission, )
-    filter_backends = (filters.CanViewProjectObjFilterBackend,)
+    filter_backends = (project_filters.QFilter,
+                       project_filters.CanViewProjectObjFilterBackend)
 
     filter_fields = (("member", "members"),
                      "is_looking_for_people",
@@ -87,7 +88,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
                        "total_activity_last_year")
 
     def _get_order_by_field_name(self):
-        order_by_query_param = filters.CanViewProjectObjFilterBackend.order_by_query_param
+        order_by_query_param = project_filters.CanViewProjectObjFilterBackend.order_by_query_param
         order_by = self.request.QUERY_PARAMS.get(order_by_query_param, None)
         if order_by is not None and order_by.startswith("-"):
             return order_by[1:]

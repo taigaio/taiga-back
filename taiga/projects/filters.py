@@ -1,0 +1,101 @@
+# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import logging
+
+from django.apps import apps
+from django.db.models import Q
+from django.utils.translation import ugettext as _
+
+from taiga.base import exceptions as exc
+from taiga.base.filters import FilterBackend
+from taiga.base.utils.db import to_tsquery
+
+logger = logging.getLogger(__name__)
+
+
+class CanViewProjectObjFilterBackend(FilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        project_id = None
+
+        # Filter by filter_fields
+        if (hasattr(view, "filter_fields") and "project" in view.filter_fields and
+                "project" in request.QUERY_PARAMS):
+            try:
+                project_id = int(request.QUERY_PARAMS["project"])
+            except:
+                logger.error("Filtering project diferent value than an integer: {}".format(
+                    request.QUERY_PARAMS["project"]
+                ))
+                raise exc.BadRequest(_("'project' must be an integer value."))
+
+        qs = queryset
+
+        # Filter by user permissions
+        if request.user.is_authenticated() and request.user.is_superuser:
+            # superuser
+            qs = qs
+        elif request.user.is_authenticated():
+            # projet members
+            membership_model = apps.get_model("projects", "Membership")
+            memberships_qs = membership_model.objects.filter(user=request.user)
+            if project_id:
+                memberships_qs = memberships_qs.filter(project_id=project_id)
+            memberships_qs = memberships_qs.filter(Q(role__permissions__contains=['view_project']) |
+                                                   Q(is_owner=True))
+
+            projects_list = [membership.project_id for membership in memberships_qs]
+
+            qs = qs.filter((Q(id__in=projects_list) |
+                            Q(public_permissions__contains=["view_project"])))
+        else:
+            # external users / anonymous
+            qs = qs.filter(anon_permissions__contains=["view_project"])
+
+        return super().filter_queryset(request, qs.distinct(), view)
+
+
+class QFilter(FilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        # NOTE: See migtration 0033_text_search_indexes
+        q = request.QUERY_PARAMS.get('q', None)
+        if q:
+            tsquery = "to_tsquery('english_nostop', %s)"
+            tsquery_params = [to_tsquery(q)]
+            tsvector = """
+                 setweight(to_tsvector('english_nostop',
+                                       coalesce(projects_project.name, '')), 'A') ||
+                 setweight(to_tsvector('english_nostop',
+                                       coalesce(inmutable_array_to_string(projects_project.tags), '')), 'B') ||
+                 setweight(to_tsvector('english_nostop',
+                                       coalesce(projects_project.description, '')), 'C')
+            """
+
+            select = {
+                "rank": "ts_rank({tsvector},{tsquery})".format(tsquery=tsquery,
+                                                               tsvector=tsvector),
+            }
+            select_params = tsquery_params
+            where = ["{tsvector} @@ {tsquery}".format(tsquery=tsquery,
+                                                      tsvector=tsvector),]
+            params = tsquery_params
+            order_by = ["-rank", ]
+
+            queryset = queryset.extra(select=select,
+                                      select_params=select_params,
+                                      where=where,
+                                      params=params,
+                                      order_by=order_by)
+        return queryset

@@ -509,3 +509,23 @@ def test_project_list_without_search_query_order_by_name(client):
     assert response.data[0]["id"] == project1.id
     assert response.data[1]["id"] == project2.id
     assert response.data[2]["id"] == project3.id
+
+
+def test_project_list_with_search_query_order_by_ranking(client):
+    user = f.UserFactory.create(is_superuser=True)
+    project3 = f.create_project(name="test 3 - word", description="description 3", tags=["tag3"])
+    project1 = f.create_project(name="test 1", description="description 1 - word", tags=["tag1"])
+    project2 = f.create_project(name="test 2", description="description 2", tags=["word", "tag2"])
+    project4 = f.create_project(name="test 4", description="description 4", tags=["tag4"])
+    project5 = f.create_project(name="test 5", description="description 5", tags=["tag5"])
+
+    url = reverse("projects-list")
+
+    client.login(user)
+    response = client.json.get(url, {"q": "word"})
+
+    assert response.status_code == 200
+    assert len(response.data) == 3
+    assert response.data[0]["id"] == project3.id
+    assert response.data[1]["id"] == project2.id
+    assert response.data[2]["id"] == project1.id
