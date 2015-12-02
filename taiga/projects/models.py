@@ -266,7 +266,11 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     class Meta:
         verbose_name = "project"
         verbose_name_plural = "projects"
-        ordering = ["name"]
+        ordering = ["name", "id"]
+        index_together = [
+            ["name", "id"],
+        ]
+
         permissions = (
             ("view_project", "Can view project"),
         )

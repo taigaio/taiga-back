@@ -69,12 +69,13 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
     permission_classes = (permissions.ProjectPermission, )
     filter_backends = (filters.CanViewProjectObjFilterBackend,)
 
-    filter_fields = (('member', 'members'),
-                     'is_looking_for_people',
-                     'is_featured',
-                     'is_backlog_activated',
-                     'is_kanban_activated')
+    filter_fields = (("member", "members"),
+                     "is_looking_for_people",
+                     "is_featured",
+                     "is_backlog_activated",
+                     "is_kanban_activated")
 
+    ordering = ("name", "id")
     order_by_fields = ("memberships__user_order",
                        "total_fans",
                        "total_fans_last_week",
@@ -94,7 +95,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
     def get_queryset(self):
         qs = super().get_queryset()
 
-        # Prefetch doesn't work correctly if then if the field is filtered later (it generates more queries)
+        # Prefetch doesn"t work correctly if then if the field is filtered later (it generates more queries)
         # so we add some custom prefetching
         qs = qs.prefetch_related("members")
         qs = qs.prefetch_related(Prefetch("notify_policies",

@@ -492,3 +492,20 @@ def test_remove_project_with_logo(client):
     response = client.delete(url)
     assert response.status_code == 204
     assert not any(list(map(os.path.exists, original_photo_paths)))
+
+
+def test_project_list_without_search_query_order_by_name(client):
+    user = f.UserFactory.create(is_superuser=True)
+    project3 = f.create_project(name="test 3 - word", description="description 3", tags=["tag3"])
+    project1 = f.create_project(name="test 1", description="description 1 - word", tags=["tag1"])
+    project2 = f.create_project(name="test 2", description="description 2", tags=["word", "tag2"])
+
+    url = reverse("projects-list")
+
+    client.login(user)
+    response = client.json.get(url)
+
+    assert response.status_code == 200
+    assert response.data[0]["id"] == project1.id
+    assert response.data[1]["id"] == project2.id
+    assert response.data[2]["id"] == project3.id
