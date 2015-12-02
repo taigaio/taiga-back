@@ -24,39 +24,34 @@ from taiga.users.services import get_photo_or_gravatar_url, get_big_photo_or_gra
 from . import models
 from . import service
 
-class TimelineDataJsonField(serializers.WritableField):
-    """
-    Timeline Json objects serializer.
-    """
-    widget = widgets.Textarea
-
-    def to_native(self, obj):
-        #Updates the data user info saved if the user exists
-        User = apps.get_model("users", "User")
-        userData = obj.get("user", None)
-        if userData:
-            try:
-                user = User.objects.get(id=userData["id"])
-                obj["user"] = {
-                    "id": user.pk,
-                    "name": user.get_full_name(),
-                    "photo": get_photo_or_gravatar_url(user),
-                    "big_photo": get_big_photo_or_gravatar_url(user),
-                    "username": user.username,
-                    "is_profile_visible": user.is_active and not user.is_system,
-                    "date_joined": user.date_joined
-                }
-            except User.DoesNotExist:
-                pass
-
-        return obj
-
-    def from_native(self, data):
-        return data
-
 
 class TimelineSerializer(serializers.ModelSerializer):
-    data = TimelineDataJsonField()
+    data = serializers.SerializerMethodField("get_data")
 
     class Meta:
         model = models.Timeline
+
+    def get_data(self, obj):
+        #Updates the data user info saved if the user exists
+        if hasattr(obj, "_prefetched_user"):
+            user = obj._prefetched_user
+        else:
+            User = apps.get_model("users", "User")
+            userData = obj.data.get("user", None)
+            try:
+                user = User.objects.get(id=userData["id"])
+            except User.DoesNotExist:
+                user = None
+
+        if user is not None:
+            obj.data["user"] = {
+                "id": user.pk,
+                "name": user.get_full_name(),
+                "photo": get_photo_or_gravatar_url(user),
+                "big_photo": get_big_photo_or_gravatar_url(user),
+                "username": user.username,
+                "is_profile_visible": user.is_active and not user.is_system,
+                "date_joined": user.date_joined
+            }
+
+        return obj.data

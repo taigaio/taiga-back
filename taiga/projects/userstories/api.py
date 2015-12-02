@@ -116,7 +116,12 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
         qs = qs.prefetch_related("role_points",
                                  "role_points__points",
                                  "role_points__role")
-        qs = qs.select_related("milestone", "project")
+        qs = qs.select_related("milestone",
+                               "project",
+                               "status",
+                               "owner",
+                               "assigned_to",
+                               "generated_from_issue")
         qs = self.attach_votes_attrs_to_queryset(qs)
         return self.attach_watchers_attrs_to_queryset(qs)
 

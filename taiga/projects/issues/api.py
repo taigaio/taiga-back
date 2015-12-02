@@ -67,6 +67,7 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
 
     filter_fields = ("project",
                      "status__is_closed")
+
     order_by_fields = ("type",
                        "status",
                        "severity",
@@ -143,7 +144,8 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.prefetch_related("attachments")
+        qs = qs.prefetch_related("attachments", "generated_user_stories")
+        qs = qs.select_related("owner", "assigned_to", "status", "project")
         qs = self.attach_votes_attrs_to_queryset(qs)
         return self.attach_watchers_attrs_to_queryset(qs)
 

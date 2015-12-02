@@ -96,6 +96,7 @@ def get_timeline(obj, namespace=None):
     if namespace is not None:
         timeline = timeline.filter(namespace=namespace)
 
+    timeline = timeline.select_related("project")
     timeline = timeline.order_by("-created", "-id")
     return timeline
 
@@ -128,9 +129,7 @@ def filter_timeline_for_user(timeline, user):
 
     # Filtering private projects where user is member
     if not user.is_anonymous():
-        membership_model = apps.get_model('projects', 'Membership')
-        memberships_qs = membership_model.objects.filter(user=user)
-        for membership in memberships_qs:
+        for membership in user.cached_memberships:
             for content_type_key, content_type in content_types.items():
                 if content_type_key in membership.role.permissions or membership.is_owner:
                     tl_filter |= Q(project=membership.project, data_content_type=content_type)
