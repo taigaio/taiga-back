@@ -219,6 +219,8 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
 
     is_looking_for_people = models.BooleanField(default=False, null=False, blank=True,
                                      verbose_name=_("is looking for people"))
+    looking_for_people_note = models.TextField(default="", null=False, blank=True,
+                                               verbose_name=_("loking for people note"))
 
     userstories_csv_uuid = models.CharField(max_length=32, editable=False,
                                             null=True, blank=True,
@@ -297,6 +299,9 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
 
         if not self.videoconferences:
             self.videoconferences_extra_data = None
+
+        if not self.is_looking_for_people:
+            self.looking_for_people_note = ""
 
         super().save(*args, **kwargs)
 

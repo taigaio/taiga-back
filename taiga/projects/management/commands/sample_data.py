@@ -464,6 +464,7 @@ class Command(BaseCommand):
                                          total_milestones=self.sd.int(5,10),
                                          tags=self.sd.words(1, 10).split(" "),
                                          is_looking_for_people=counter in LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS,
+                                         looking_for_people_note=self.sd.short_sentence(),
                                          is_featured=counter in FEATURED_PROJECTS_POSITIONS)
 
         project.is_kanban_activated = True
