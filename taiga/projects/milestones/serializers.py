@@ -21,12 +21,12 @@ from taiga.base.utils import json
 from taiga.projects.notifications.mixins import WatchedResourceModelSerializer
 from taiga.projects.notifications.validators import WatchersValidator
 
-from ..userstories.serializers import MilestoneUserStorySerializer
+from ..userstories.serializers import UserStorySerializer
 from . import models
 
 
 class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer, serializers.ModelSerializer):
-    user_stories = MilestoneUserStorySerializer(many=True, required=False, read_only=True)
+    user_stories = UserStorySerializer(many=True, required=False, read_only=True)
     total_points = serializers.SerializerMethodField("get_total_points")
     closed_points = serializers.SerializerMethodField("get_closed_points")
 
