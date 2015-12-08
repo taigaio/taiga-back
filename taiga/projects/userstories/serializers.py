@@ -51,13 +51,14 @@ class MilestoneUserStorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserStory
         depth = 0
-        fields = ("id", "ref", "subject", "is_closed", "is_blocked", "total_points")
+        fields = ("id", "ref", "subject", "milestone", "is_closed", "is_blocked", "total_points")
 
     def get_total_points(self, obj):
         return obj.get_total_points()
 
 
-class UserStorySerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer, serializers.ModelSerializer):
+class UserStorySerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer,
+                          serializers.ModelSerializer):
     tags = TagsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
     points = RolePointsField(source="role_points", required=False)
