@@ -286,6 +286,7 @@ def userstory_freezer(us) -> dict:
         "blocked_note": us.blocked_note,
         "blocked_note_html": mdrender(us.project, us.blocked_note),
         "custom_attributes": extract_user_story_custom_attributes(us),
+        "tribe_gig": us.tribe_gig,
     }
 
     return snapshot

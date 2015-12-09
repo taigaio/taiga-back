@@ -76,6 +76,23 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
 
         return qs
 
+    def get_serializer_class(self):
+        if self.action == "list":
+            return self.list_serializer_class
+        elif self.action == "create":
+            return self.serializer_class
+
+        if self.action == "by_slug":
+            slug = self.request.QUERY_PARAMS.get("slug", None)
+            project = get_object_or_404(models.Project, slug=slug)
+        else:
+            project = self.get_object()
+
+        if permissions_service.is_project_owner(self.request.user, project):
+            return self.admin_serializer_class
+
+        return self.serializer_class
+
     @detail_route(methods=["POST"])
     def watch(self, request, pk=None):
         project = self.get_object()
@@ -104,23 +121,6 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
         data = serializer.data
         services.update_projects_order_in_bulk(data, "user_order", request.user)
         return response.NoContent(data=None)
-
-    def get_serializer_class(self):
-        if self.action == "list":
-            return self.list_serializer_class
-        elif self.action == "create":
-            return self.serializer_class
-
-        if self.action == "by_slug":
-            slug = self.request.QUERY_PARAMS.get("slug", None)
-            project = get_object_or_404(models.Project, slug=slug)
-        else:
-            project = self.get_object()
-
-        if permissions_service.is_project_owner(self.request.user, project):
-            return self.admin_serializer_class
-
-        return self.serializer_class
 
     @list_route(methods=["GET"])
     def by_slug(self, request):
