@@ -18,7 +18,8 @@
 from collections import namedtuple
 
 from django.db import connection
-
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models.sql.datastructures import EmptyResultSet
 from taiga.base.api import serializers
 
 Neighbor = namedtuple("Neighbor", "left right")
@@ -35,15 +36,27 @@ def get_neighbors(obj, results_set=None):
 
     :return: Tuple `<left neighbor>, <right neighbor>`. Left and right neighbors can be `None`.
     """
-    if results_set is None or results_set.count() == 0:
+    if results_set is None:
         results_set = type(obj).objects.get_queryset()
 
+    # Neighbors calculation is at least at project level
+    results_set = results_set.filter(project_id=obj.project.id)
+
     compiler = results_set.query.get_compiler('default')
-    base_sql, base_params = compiler.as_sql(with_col_aliases=True)
+    try:
+        base_sql, base_params = compiler.as_sql(with_col_aliases=True)
+    except EmptyResultSet:
+        # Generate a not empty queryset
+        results_set = type(obj).objects.get_queryset().filter(project_id=obj.project.id)
+        compiler = results_set.query.get_compiler('default')
+        base_sql, base_params = compiler.as_sql(with_col_aliases=True)
 
     query = """
         SELECT * FROM
-            (SELECT "col1" as id, ROW_NUMBER() OVER()
+            (SELECT "col1" as id,
+                    ROW_NUMBER() OVER(),
+                    LAG("col1", 1) OVER() AS prev,
+                    LEAD("col1", 1) OVER() AS next
                 FROM (%s) as ID_AND_ROW)
         AS SELECTED_ID_AND_ROW
         """ % (base_sql)
@@ -57,15 +70,17 @@ def get_neighbors(obj, results_set=None):
         return Neighbor(None, None)
 
     obj_position = row[1] - 1
+    left_object_id = row[2]
+    right_object_id = row[3]
 
     try:
-        left = obj_position > 0 and results_set[obj_position - 1] or None
-    except IndexError:
+        left = results_set.get(id=left_object_id)
+    except ObjectDoesNotExist:
         left = None
 
     try:
-        right = results_set[obj_position + 1]
-    except IndexError:
+        right = results_set.get(id=right_object_id)
+    except ObjectDoesNotExist:
         right = None
 
     return Neighbor(left, right)
