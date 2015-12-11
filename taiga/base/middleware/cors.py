@@ -22,8 +22,8 @@ COORS_ALLOWED_ORIGINS = "*"
 COORS_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE", "PATCH", "HEAD"]
 COORS_ALLOWED_HEADERS = ["content-type", "x-requested-with",
                          "authorization", "accept-encoding",
-                         "x-disable-pagination", "x-host",
-                         "x-session-id"]
+                         "x-disable-pagination", "x-lazy-pagination",
+                         "x-host", "x-session-id"]
 COORS_ALLOWED_CREDENTIALS = True
 COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated", "x-paginated-by",
                         "x-pagination-current", "x-pagination-next", "x-pagination-prev",
