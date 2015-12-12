@@ -53,7 +53,7 @@ class WatchedResourceMixin:
 
     def attach_watchers_attrs_to_queryset(self, queryset):
         qs = attach_watchers_to_queryset(queryset)
-        qs = attach_total_watchers_to_queryset(queryset)
+        qs = attach_total_watchers_to_queryset(qs)
         if self.request.user.is_authenticated():
             qs = attach_is_watcher_to_queryset(qs, self.request.user)
 
