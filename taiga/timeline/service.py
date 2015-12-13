@@ -130,10 +130,9 @@ def filter_timeline_for_user(timeline, user):
     # Filtering private projects where user is member
     if not user.is_anonymous():
         for membership in user.cached_memberships:
-            for content_type_key, content_type in content_types.items():
-                if content_type_key in membership.role.permissions or membership.is_owner:
-                    tl_filter |= Q(project=membership.project, data_content_type=content_type)
-            tl_filter |= Q(project=membership.project, data_content_type=membership_content_type)
+            data_content_types = list(filter(None, [content_types.get(a, None) for a in membership.role.permissions]))
+            data_content_types.append(membership_content_type)
+            tl_filter |= Q(project=membership.project, data_content_type__in=data_content_types)
 
     timeline = timeline.filter(tl_filter)
     return timeline
