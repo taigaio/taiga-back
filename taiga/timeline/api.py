@@ -76,15 +76,23 @@ class TimelineViewSet(ReadOnlyListViewSet):
         qs = self.get_timeline(obj)
 
         if request.GET.get("only_relevant", None) is not None:
-            qs = qs.exclude(event_type="issues.issue.change", data__at_values_diff="{}")
-            qs = qs.exclude(event_type="tasks.task.change", data__at_values_diff="{}")
-            qs = qs.exclude(event_type="userstories.userstory.change", data__at_values_diff="{}")
-            qs = qs.exclude(event_type="wiki.wikipage.change", data__at_values_diff="{}")
-            qs = qs.exclude(event_type="issues.issue.delete")
-            qs = qs.exclude(event_type="tasks.task.delete")
-            qs = qs.exclude(event_type="userstories.userstory.delete")
-            qs = qs.exclude(event_type="wiki.wikipage.delete")
-            qs = qs.exclude(event_type="projects.project.change")
+            qs = qs.extra(where=[
+                """
+                NOT(
+                    data::text LIKE '%%\"values_diff\": {}%%'
+                    AND
+                    event_type::text = ANY('{issues.issue.change,
+                                             tasks.task.change,
+                                             userstories.userstory.change,
+                                             wiki.wikipage.change}'::text[])
+                )
+                """])
+
+            qs = qs.exclude(event_type__in=["issues.issue.delete",
+                                            "tasks.task.delete",
+                                            "userstories.userstory.delete",
+                                            "wiki.wikipage.delete",
+                                            "projects.project.change"])
 
         return self.response_for_queryset(qs)
 
