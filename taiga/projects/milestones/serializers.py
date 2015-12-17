@@ -20,19 +20,44 @@ from taiga.base.api import serializers
 from taiga.base.utils import json
 from taiga.projects.notifications.mixins import WatchedResourceModelSerializer
 from taiga.projects.notifications.validators import WatchersValidator
+from taiga.projects.votes.utils import attach_total_voters_to_queryset, attach_is_voter_to_queryset
+from taiga.projects.notifications.utils import attach_watchers_to_queryset, attach_is_watcher_to_queryset
 
-from ..userstories.serializers import UserStorySerializer
+from ..userstories.serializers import UserStoryListSerializer
 from . import models
 
 
 class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer, serializers.ModelSerializer):
-    user_stories = UserStorySerializer(many=True, required=False, read_only=True)
+    user_stories = serializers.SerializerMethodField("get_user_stories")
     total_points = serializers.SerializerMethodField("get_total_points")
     closed_points = serializers.SerializerMethodField("get_closed_points")
 
     class Meta:
         model = models.Milestone
         read_only_fields = ("id", "created_date", "modified_date")
+
+    def get_user_stories(self, obj):
+        qs = obj.user_stories.prefetch_related("role_points",
+                                               "role_points__points",
+                                               "role_points__role")
+
+        qs = qs.select_related("milestone",
+                               "project",
+                               "status",
+                               "owner",
+                               "assigned_to",
+                               "generated_from_issue")
+
+        request = self.context.get("request", None)
+        requesting_user = request and request.user or None
+        if requesting_user and requesting_user.is_authenticated():
+            qs = attach_is_voter_to_queryset(requesting_user, qs)
+            qs = attach_is_watcher_to_queryset(requesting_user, qs)
+
+        qs = attach_total_voters_to_queryset(qs)
+        qs = attach_watchers_to_queryset(qs)
+
+        return UserStoryListSerializer(qs, many=True).data
 
     def get_total_points(self, obj):
         return sum(obj.total_points.values())
