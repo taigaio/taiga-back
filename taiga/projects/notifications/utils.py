@@ -40,7 +40,7 @@ def attach_watchers_to_queryset(queryset, as_field="watchers"):
     return qs
 
 
-def attach_is_watcher_to_queryset(queryset, user, as_field="is_watcher"):
+def attach_is_watcher_to_queryset(user, queryset, as_field="is_watcher"):
     """Attach is_watcher boolean to each object of the queryset.
 
     :param user: A users.User object model
