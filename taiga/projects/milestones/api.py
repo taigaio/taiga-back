@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.apps import apps
+from django.db.models import Prefetch
 
 from taiga.base import filters
 from taiga.base import response
@@ -25,6 +26,8 @@ from taiga.base.utils.db import get_object_or_none
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.votes.utils import attach_total_voters_to_queryset, attach_is_voter_to_queryset
+from taiga.projects.notifications.utils import attach_watchers_to_queryset, attach_is_watcher_to_queryset
 
 from . import serializers
 from . import models
@@ -62,14 +65,30 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.prefetch_related("user_stories",
-                                 "user_stories__role_points",
-                                 "user_stories__role_points__points",
-                                 "user_stories__role_points__role")
 
-        qs = qs.select_related("project",
-                               "owner")
+        # Userstories prefetching
+        UserStory = apps.get_model("userstories", "UserStory")
+        us_qs = UserStory.objects.prefetch_related("role_points",
+                                                   "role_points__points",
+                                                   "role_points__role")
 
+        us_qs = us_qs.select_related("milestone",
+                                     "project",
+                                     "status",
+                                     "owner",
+                                     "assigned_to",
+                                     "generated_from_issue")
+
+        us_qs = self.attach_watchers_attrs_to_queryset(us_qs)
+
+        if self.request.user.is_authenticated():
+            us_qs = attach_is_voter_to_queryset(self.request.user, us_qs)
+            us_qs = attach_is_watcher_to_queryset(self.request.user, us_qs)
+
+        qs = qs.prefetch_related(Prefetch("user_stories", queryset=us_qs))
+
+        # Milestones prefetching
+        qs = qs.select_related("project", "owner")
         qs = self.attach_watchers_attrs_to_queryset(qs)
 
         qs = qs.order_by("-estimated_start")
