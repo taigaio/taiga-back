@@ -16,6 +16,8 @@
 
 import pytest
 
+from unittest import mock
+
 from django.core.urlresolvers import reverse
 
 from .. import factories as f
@@ -61,10 +63,16 @@ def test_valid_project_export_with_celery_enabled(client, settings):
 
     url = reverse("exporter-detail", args=[project.pk])
 
-    response = client.get(url, content_type="application/json")
-    assert response.status_code == 202
-    response_data = response.data
-    assert "export_id" in response_data
+    #delete_project_dump task should have been launched
+    with mock.patch('taiga.export_import.tasks.delete_project_dump') as delete_project_dump_mock:
+        response = client.get(url, content_type="application/json")
+        assert response.status_code == 202
+        response_data = response.data
+        assert "export_id" in response_data
+
+        args = (project.id, project.slug, response_data["export_id"],)
+        kwargs = {"countdown": settings.EXPORTS_TTL}
+        delete_project_dump_mock.apply_async.assert_called_once_with(args, **kwargs)
 
 
 def test_valid_project_with_throttling(client, settings):

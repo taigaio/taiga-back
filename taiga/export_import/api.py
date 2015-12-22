@@ -63,7 +63,7 @@ class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet)
 
         if settings.CELERY_ENABLED:
             task = tasks.dump_project.delay(request.user, project)
-            tasks.delete_project_dump.apply_async((project.pk, project.slug),
+            tasks.delete_project_dump.apply_async((project.pk, project.slug, task.id),
                                                   countdown=settings.EXPORTS_TTL)
             return response.Accepted({"export_id": task.id})
 
