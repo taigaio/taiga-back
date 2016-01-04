@@ -208,10 +208,11 @@ def to_tsquery(term):
             if not bit:
                 continue
 
-            if bit.startswith('"') and bit.endswith('"'):
+            if bit.startswith('"') and bit.endswith('"') and len(bit)>2:
                 res.append(bit.replace('"', "'"))
             else:
                 res.append("'%s':*" %(bit.replace("'", ""), ))
+
             res.append("&")
 
     while res and res[-1] in magic_values:
