@@ -16,7 +16,7 @@
 - Lots of small and not so small bugfixes.
 
 
-## 1.9.0 Abies Siberica (2015-11-XX)
+## 1.9.0 Abies Siberica (2015-11-02)
 
 ### Features
 
