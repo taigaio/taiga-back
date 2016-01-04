@@ -108,6 +108,9 @@ TS_QUERY_TRANSFORMATIONS = [
     ("(1)", "( 1 )"),
     ("1((", "1"),
     ("test\\", "'test':*"),
+    ('"', "'\"':*"),
+    ('""', "'\"\"':*"),
+    ('"""', "'\"\"':* & '\"':*"),
 ]
 def test_to_tsquery():
     for (input, expected) in TS_QUERY_TRANSFORMATIONS:
