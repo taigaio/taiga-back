@@ -98,6 +98,9 @@ class ProjectAdmin(admin.ModelAdmin):
                                          memberships__project=self.obj)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
+    def delete_model(self, request, obj):
+        obj.delete_related_content()
+        super().delete_model(request, obj)
 
 # User Stories common admins
 
