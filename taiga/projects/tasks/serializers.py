@@ -79,7 +79,9 @@ class TaskListSerializer(TaskSerializer):
 
 class TaskNeighborsSerializer(NeighborsSerializerMixin, TaskSerializer):
     def serialize_neighbor(self, neighbor):
-        return NeighborTaskSerializer(neighbor).data
+        if neighbor:
+            return NeighborTaskSerializer(neighbor).data
+        return None
 
 
 class NeighborTaskSerializer(serializers.ModelSerializer):

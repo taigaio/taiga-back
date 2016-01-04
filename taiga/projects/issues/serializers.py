@@ -81,7 +81,9 @@ class IssueListSerializer(IssueSerializer):
 
 class IssueNeighborsSerializer(NeighborsSerializerMixin, IssueSerializer):
     def serialize_neighbor(self, neighbor):
-        return NeighborIssueSerializer(neighbor).data
+        if neighbor:
+            return NeighborIssueSerializer(neighbor).data
+        return None
 
 
 class NeighborIssueSerializer(serializers.ModelSerializer):
