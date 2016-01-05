@@ -1,7 +1,7 @@
 # Changelog #
 
 
-## 1.9.1 Taiga Tribe (unreleased)
+## 1.9.1 Taiga Tribe (2016-01-05)
 
 ### Features
 - [CSV Reports] Add fields "created_date", "modified_date", "finished_date" to issues CSV report.
