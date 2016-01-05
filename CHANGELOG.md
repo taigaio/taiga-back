@@ -1,7 +1,23 @@
 # Changelog #
 
 
-## 1.9.0 Abies Siberica (2015-11-XX)
+## 1.9.1 Taiga Tribe (2016-01-05)
+
+### Features
+- [CSV Reports] Add fields "created_date", "modified_date", "finished_date" to issues CSV report.
+- [Attachment] Generate 'card-image' size (300x200) thumbnails for attached image files.
+
+### Misc
+- Improve login and forgot password: allow username or email case-insensitive if the query only
+  match with one user.
+- Improve the django admin panel, now it is more usable and all the selector fields works properly.
+- [API] Add tribe_gig field to user stories (improve integration between Taiga and Taiga Tribe).
+- [API] Performance improvements for project stats.
+- [Events] Add command to send an instant notifications to all the currently online users.
+- Lots of small and not so small bugfixes.
+
+
+## 1.9.0 Abies Siberica (2015-11-02)
 
 ### Features
 
@@ -9,7 +25,8 @@
 - US, tasks and Issues can be upvoted or downvoted and the voters list can be obtained.
 - Now users can watch public issues, tasks and user stories.
 - Add endpoints to show the watchers list for issues, tasks and user stories.
-- Add a "field type" property for custom fields: 'text', 'multiline text' and 'date' right now (thanks to [@artlepool](https://github.com/artlepool)).
+- Add a "field type" property for custom fields: 'text', 'multiline text' and 'date' right nowi
+  (thanks to [@artlepool](https://github.com/artlepool)).
 - Allow multiple actions in the commit messages.
 - Now every user that coments USs, Issues or Tasks will be involved in it (add author to the watchers list).
 - Now profile timelines only show content about the objects (US/Tasks/Issues/Wiki pages) you are involved.
@@ -35,7 +52,8 @@
 - API: Improve and fix some errors in issues/filters_data and userstories/filters_data.
 - API: resolver suport ref GET param and return a story, task or issue.
 - Webhooks: Add deleted datetime to webhooks responses when isues, tasks or USs are deleted.
-- Add headers to allow threading for notification emails about changes to issues, tasks, user stories, and wiki pages. (thanks to [@brett](https://github.com/brettp)).
+- Add headers to allow threading for notification emails about changes to issues, tasks, user stories,
+  and wiki pages. (thanks to [@brett](https://github.com/brettp)).
 - Lots of small and not so small bugfixes.
 
 

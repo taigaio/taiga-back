@@ -216,7 +216,7 @@ def test_change_avatar_removes_the_old_one(client):
         thumbnailer = get_thumbnailer(user.photo)
         original_photo_paths = [user.photo.path]
         original_photo_paths += [th.path for th in thumbnailer.get_thumbnails()]
-        assert list(map(os.path.exists, original_photo_paths)) == [True, True, True, True]
+        assert list(map(os.path.exists, original_photo_paths)) == [True, True, True, True, True]
 
         client.login(user)
         avatar.write(DUMMY_BMP_DATA)
@@ -225,7 +225,7 @@ def test_change_avatar_removes_the_old_one(client):
         response = client.post(url, post_data)
 
         assert response.status_code == 200
-        assert list(map(os.path.exists, original_photo_paths)) == [False, False, False, False]
+        assert list(map(os.path.exists, original_photo_paths)) == [False, False, False, False, False]
 
 
 def test_remove_avatar(client):
@@ -242,13 +242,13 @@ def test_remove_avatar(client):
     thumbnailer = get_thumbnailer(user.photo)
     original_photo_paths = [user.photo.path]
     original_photo_paths += [th.path for th in thumbnailer.get_thumbnails()]
-    assert list(map(os.path.exists, original_photo_paths)) == [True, True, True, True]
+    assert list(map(os.path.exists, original_photo_paths)) == [True, True, True, True, True]
 
     client.login(user)
     response = client.post(url)
 
     assert response.status_code == 200
-    assert list(map(os.path.exists, original_photo_paths)) == [False, False, False, False]
+    assert list(map(os.path.exists, original_photo_paths)) == [False, False, False, False, False]
 
 
 def test_list_contacts_private_projects(client):

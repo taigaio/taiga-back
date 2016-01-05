@@ -1,6 +1,6 @@
-# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -275,10 +275,6 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     def project(self):
         return self
 
-    @property
-    def project(self):
-        return self
-
     def _get_q_watchers(self):
         return Q(notify_policies__project_id=self.id) & ~Q(notify_policies__notify_level=NotifyLevel.none)
 
@@ -312,6 +308,31 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         notify_policy = get_notify_policy(self, user)
         set_notify_policy_level_to_ignore(notify_policy)
 
+    def delete_related_content(self):
+        from taiga.events.apps import connect_events_signals, disconnect_events_signals
+        from taiga.projects.tasks.apps import connect_all_tasks_signals, disconnect_all_tasks_signals
+        from taiga.projects.userstories.apps import connect_all_userstories_signals, disconnect_all_userstories_signals
+        from taiga.projects.issues.apps import connect_all_issues_signals, disconnect_all_issues_signals
+        from taiga.projects.apps import connect_memberships_signals, disconnect_memberships_signals
+        
+        disconnect_events_signals()
+        disconnect_all_issues_signals()
+        disconnect_all_tasks_signals()
+        disconnect_all_userstories_signals()
+        disconnect_memberships_signals()
+
+        try:
+            self.tasks.all().delete()
+            self.user_stories.all().delete()
+            self.issues.all().delete()
+            self.memberships.all().delete()
+            self.roles.all().delete()
+        finally:
+            connect_events_signals()
+            connect_all_issues_signals()
+            connect_all_tasks_signals()
+            connect_all_userstories_signals()
+            connect_memberships_signals()
 
 class ProjectModulesConfig(models.Model):
     project = models.OneToOneField("Project", null=False, blank=False,

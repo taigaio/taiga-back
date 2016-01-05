@@ -1,6 +1,6 @@
-# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -113,7 +113,9 @@ class UserStoryListSerializer(UserStorySerializer):
 
 class UserStoryNeighborsSerializer(NeighborsSerializerMixin, UserStorySerializer):
     def serialize_neighbor(self, neighbor):
-        return NeighborUserStorySerializer(neighbor).data
+        if neighbor:
+            return NeighborUserStorySerializer(neighbor).data
+        return None
 
 
 class NeighborUserStorySerializer(serializers.ModelSerializer):

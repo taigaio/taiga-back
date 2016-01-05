@@ -1,6 +1,6 @@
-# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -153,8 +153,8 @@ def userstories_to_csv(project,queryset):
             "subject": us.subject,
             "description": us.description,
             "milestone": us.milestone.name if us.milestone else None,
-            "owner": us.owner.username,
-            "owner_full_name": us.owner.get_full_name(),
+            "owner": us.owner.username if us.owner else None,
+            "owner_full_name": us.owner.get_full_name() if us.owner else None,
             "assigned_to": us.assigned_to.username if us.assigned_to else None,
             "assigned_to_full_name": us.assigned_to.get_full_name() if us.assigned_to else None,
             "status": us.status.name,

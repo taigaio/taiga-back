@@ -15,6 +15,7 @@ people who have submitted patches, reported bugs, added translations, helped
 answer newbie questions, and generally made taiga that much better:
 
 - Alejandro Gómez <alejandro.gomez@kaleidos.net>
+- Allister Antosik <me@allisterantosik.com>
 - Alonso Torres <alonso.torres@kaleidos.net>
 - Andrea Stagi <stagi.andrea@gmail.com>
 - Andrés Moya <andres.moya@kaleidos.net>

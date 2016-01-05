@@ -1,6 +1,6 @@
-# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -98,8 +98,8 @@ def issues_to_csv(project, queryset):
             "subject": issue.subject,
             "description": issue.description,
             "milestone": issue.milestone.name if issue.milestone else None,
-            "owner": issue.owner.username,
-            "owner_full_name": issue.owner.get_full_name(),
+            "owner": issue.owner.username if issue.owner else None,
+            "owner_full_name": issue.owner.get_full_name() if issue.owner else None,
             "assigned_to": issue.assigned_to.username if issue.assigned_to else None,
             "assigned_to_full_name": issue.assigned_to.get_full_name() if issue.assigned_to else None,
             "status": issue.status.name,

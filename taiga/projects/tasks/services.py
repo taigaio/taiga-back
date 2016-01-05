@@ -1,6 +1,6 @@
-# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -110,8 +110,8 @@ def tasks_to_csv(project, queryset):
             "description": task.description,
             "user_story": task.user_story.ref if task.user_story else None,
             "milestone": task.milestone.name if task.milestone else None,
-            "owner": task.owner.username,
-            "owner_full_name": task.owner.get_full_name(),
+            "owner": task.owner.username if task.owner else None,
+            "owner_full_name": task.owner.get_full_name() if task.owner else None,
             "assigned_to": task.assigned_to.username if task.assigned_to else None,
             "assigned_to_full_name": task.assigned_to.get_full_name() if task.assigned_to else None,
             "status": task.status.name,

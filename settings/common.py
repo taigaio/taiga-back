@@ -1,6 +1,6 @@
-# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -448,12 +448,15 @@ SOUTH_MIGRATION_MODULES = {
 DEFAULT_AVATAR_SIZE = 80                # 80x80 pixels
 DEFAULT_BIG_AVATAR_SIZE = 300           # 300x300 pixels
 DEFAULT_TIMELINE_IMAGE_SIZE = 640       # 640x??? pixels
+DEFAUL_CARD_IMAGE_WIDTH = 300           # 300 pixels
+DEFAUL_CARD_IMAGE_HEIGHT = 200           # 200 pixels
 
 THUMBNAIL_ALIASES = {
     '': {
         'avatar': {'size': (DEFAULT_AVATAR_SIZE, DEFAULT_AVATAR_SIZE), 'crop': True},
         'big-avatar': {'size': (DEFAULT_BIG_AVATAR_SIZE, DEFAULT_BIG_AVATAR_SIZE), 'crop': True},
         'timeline-image': {'size': (DEFAULT_TIMELINE_IMAGE_SIZE, 0), 'crop': True},
+        'card-image': {'size': (DEFAUL_CARD_IMAGE_WIDTH, DEFAUL_CARD_IMAGE_HEIGHT), 'crop': True},
     },
 }
 

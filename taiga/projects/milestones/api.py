@@ -1,6 +1,6 @@
-# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -113,10 +113,10 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
             'estimated_finish': milestone.estimated_finish,
             'total_points': total_points,
             'completed_points': milestone.closed_points.values(),
-            'total_userstories': milestone.user_stories.count(),
-            'completed_userstories': len([us for us in milestone.user_stories.all() if us.is_closed]),
-            'total_tasks': milestone.tasks.all().count(),
-            'completed_tasks': milestone.tasks.all().filter(status__is_closed=True).count(),
+            'total_userstories': milestone.get_cached_user_stories().count(),
+            'completed_userstories': milestone.get_cached_user_stories().filter(is_closed=True).count(),
+            'total_tasks': milestone.tasks.count(),
+            'completed_tasks': milestone.tasks.filter(status__is_closed=True).count(),
             'iocaine_doses': milestone.tasks.filter(is_iocaine=True).count(),
             'days': []
         }
@@ -125,11 +125,12 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
         optimal_points = sumTotalPoints
         milestone_days = (milestone.estimated_finish - milestone.estimated_start).days
         optimal_points_per_day = sumTotalPoints / milestone_days if milestone_days else 0
+
         while current_date <= milestone.estimated_finish:
             milestone_stats['days'].append({
                 'day': current_date,
                 'name': current_date.day,
-                'open_points':  sumTotalPoints - sum(milestone.closed_points_by_date(current_date).values()),
+                'open_points':  sumTotalPoints - milestone.total_closed_points_by_date(current_date),
                 'optimal_points': optimal_points,
             })
             current_date = current_date + datetime.timedelta(days=1)

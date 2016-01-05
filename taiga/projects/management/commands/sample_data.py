@@ -1,6 +1,6 @@
-# Copyright (C) 2014-2015 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014-2015 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2015 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -43,6 +43,7 @@ from taiga.projects.history.services import take_snapshot
 from taiga.projects.likes.services import add_like
 from taiga.projects.votes.services import add_vote
 from taiga.events.apps import disconnect_events_signals
+from taiga.projects.services.stats import get_stats_for_project
 
 
 ATTACHMENT_SAMPLE_DATA = [
@@ -221,8 +222,9 @@ class Command(BaseCommand):
                 wiki_page = self.create_wiki(project, "home")
 
             # Set a value to total_story_points to show the deadline in the backlog
-            get_stats_for_project(project)
-            project.total_story_points = int(project._defined_points * self.sd.int(5,12) / 10)
+            project_stats = get_stats_for_project(project)
+            defined_points = project_stats["defined_points"]
+            project.total_story_points = int(defined_points * self.sd.int(5,12) / 10)
             project.save()
 
             self.create_likes(project)
@@ -500,4 +502,3 @@ class Command(BaseCommand):
                 obj.add_watcher(user)
             else:
                 obj.add_watcher(user, notify_level)
-
