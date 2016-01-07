@@ -1,6 +1,15 @@
 # Changelog #
 
 
+## 1.10.0 ??? (Unreleased)
+
+### Features
+- ...
+
+### Misc
+- Lots of small and not so small bugfixes.
+
+
 ## 1.9.1 Taiga Tribe (2016-01-05)
 
 ### Features
@@ -20,7 +29,6 @@
 ## 1.9.0 Abies Siberica (2015-11-02)
 
 ### Features
-
 - Project can be starred or unstarred and the fans list can be obtained.
 - US, tasks and Issues can be upvoted or downvoted and the voters list can be obtained.
 - Now users can watch public issues, tasks and user stories.
