@@ -141,7 +141,7 @@ def private_register_for_existing_user(token:str, username:str, password:str):
         membership.user = user
         membership.save(update_fields=["user"])
     except IntegrityError:
-        raise exc.IntegrityError(_("Membership with user is already exists."))
+        raise exc.IntegrityError(_("This user is already a member of the project."))
 
     send_register_email(user)
     return user
