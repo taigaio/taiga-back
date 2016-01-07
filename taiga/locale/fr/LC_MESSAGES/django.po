@@ -18,9 +18,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-05 11:11+0100\n"
-"PO-Revision-Date: 2015-11-17 20:48+0000\n"
-"Last-Translator: Regis TEDONE <regis.tedone@gmail.com>\n"
+"POT-Creation-Date: 2016-01-07 11:11+0100\n"
+"PO-Revision-Date: 2016-01-07 10:12+0000\n"
+"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: French (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -68,8 +68,8 @@ msgid "User is already registered."
 msgstr "Cet utilisateur est déjà inscrit."
 
 #: taiga/auth/services.py:144
-msgid "Membership with user is already exists."
-msgstr "Cet utilisateur est déjà membre."
+msgid "This user is already a member of the project."
+msgstr ""
 
 #: taiga/auth/services.py:170
 msgid "Error on creating new user."
