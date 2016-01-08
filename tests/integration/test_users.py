@@ -1,6 +1,7 @@
 import pytest
 from tempfile import NamedTemporaryFile
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.core.files import File
@@ -9,6 +10,7 @@ from .. import factories as f
 from ..utils import DUMMY_BMP_DATA
 
 from taiga.base.utils import json
+from taiga.base.utils.thumbnails import get_thumbnail_url
 from taiga.users import models
 from taiga.users.serializers import LikedObjectSerializer, VotedObjectSerializer
 from taiga.auth.tokens import get_token_for_user
@@ -432,6 +434,7 @@ def test_get_watched_list_valid_info_for_project():
     assert "tag" in tags_colors
 
     assert project_watch_info["is_private"] == project.is_private
+    assert project_watch_info["logo_small_url"] ==  get_thumbnail_url(project.logo, settings.THN_LOGO_SMALL)
     assert project_watch_info["is_fan"] == False
     assert project_watch_info["is_watcher"] == False
     assert project_watch_info["total_watchers"] == 1
@@ -469,7 +472,7 @@ def test_get_liked_list_valid_info():
     content_type = ContentType.objects.get_for_model(project)
     like = f.LikeFactory(content_type=content_type, object_id=project.id, user=fan_user)
     project.refresh_totals()
-    
+
     raw_project_like_info = get_liked_list(fan_user, viewer_user)[0]
     project_like_info = LikedObjectSerializer(raw_project_like_info).data
 
@@ -489,6 +492,7 @@ def test_get_liked_list_valid_info():
     assert "tag" in tags_colors
 
     assert project_like_info["is_private"] == project.is_private
+    assert project_like_info["logo_small_url"] ==  get_thumbnail_url(project.logo, settings.THN_LOGO_SMALL)
 
     assert project_like_info["is_fan"] == False
     assert project_like_info["is_watcher"] == False
@@ -542,6 +546,7 @@ def test_get_watched_list_valid_info_for_not_project_types():
         assert "test2" in tags_colors
 
         assert instance_watch_info["is_private"] == None
+        assert instance_watch_info["logo_small_url"] ==  None
         assert instance_watch_info["is_voter"] == False
         assert instance_watch_info["is_watcher"] == False
         assert instance_watch_info["total_watchers"] == 1
@@ -597,6 +602,7 @@ def test_get_voted_list_valid_info():
         assert "test2" in tags_colors
 
         assert instance_vote_info["is_private"] == None
+        assert instance_vote_info["logo_small_url"] ==  None
         assert instance_vote_info["is_voter"] == False
         assert instance_vote_info["is_watcher"] == False
         assert instance_vote_info["total_watchers"] == 0

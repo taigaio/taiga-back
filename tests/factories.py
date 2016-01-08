@@ -22,6 +22,8 @@ from datetime import date, timedelta
 
 from django.conf import settings
 
+from .utils import DUMMY_BMP_DATA
+
 import factory
 
 
@@ -69,6 +71,8 @@ class ProjectFactory(Factory):
 
     name = factory.Sequence(lambda n: "Project {}".format(n))
     slug = factory.Sequence(lambda n: "project-{}-slug".format(n))
+    logo = factory.django.FileField(data=DUMMY_BMP_DATA)
+
     description = "Project description"
     owner = factory.SubFactory("tests.factories.UserFactory")
     creation_template = factory.SubFactory("tests.factories.ProjectTemplateFactory")

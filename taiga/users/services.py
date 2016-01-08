@@ -322,7 +322,7 @@ def get_watched_list(for_user, from_user, type=None, q=None):
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
     SELECT entities.*,
            projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
-           projects_project.tags_colors,
+           projects_project.tags_colors, projects_project.logo,
            users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
         FROM (
             {userstories_sql}
@@ -417,7 +417,7 @@ def get_liked_list(for_user, from_user, type=None, q=None):
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
     SELECT entities.*,
            projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
-           projects_project.tags_colors,
+           projects_project.tags_colors, projects_project.logo,
            users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
         FROM (
             {projects_sql}
@@ -500,7 +500,7 @@ def get_voted_list(for_user, from_user, type=None, q=None):
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
     SELECT entities.*,
            projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
-           projects_project.tags_colors,
+           projects_project.tags_colors, projects_project.logo,
            users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
         FROM (
             {userstories_sql}
