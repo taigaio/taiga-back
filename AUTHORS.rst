@@ -1,6 +1,6 @@
 The PRIMARY AUTHORS are:
 
-- Andrey Antukh <niwi@niwi.be>
+- Andrey Antukh <niwi@niwi.nz>
 - Jesus Espino Garcia <jespinog@gmail.com>
 - David Barragán Merino <dbarragan@dbarragan.com>
 - Alejandro Alonso <alejandro.alonso@kaleidos.net>
