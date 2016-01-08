@@ -22,7 +22,7 @@ from .. import factories as f
 
 from taiga.projects.history import services
 
-pytestmark = pytest.mark.django_db
+pytestmark = pytest.mark.django_db(transaction=True)
 
 
 def test_new_object_with_one_webhook(settings):

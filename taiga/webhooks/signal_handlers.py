@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.db import connection
 from django.conf import settings
 from django.utils import timezone
 
@@ -61,6 +62,6 @@ def on_new_history_entry(sender, instance, created, **kwargs):
         args = [webhook["id"], webhook["url"], webhook["key"], obj] + extra_args
 
         if settings.CELERY_ENABLED:
-            task.delay(*args)
+            connection.on_commit(lambda: task.delay(*args))
         else:
-            task(*args)
+            connection.on_commit(lambda: task(*args))
