@@ -23,11 +23,16 @@ There are many different ways to contribute to Taiga's development, just find th
 Big features are also welcome but if you want to see your contributions included in Taiga codebase we strongly recommend you start by initiating a chat though our [mailing list](http://groups.google.co.uk/d/forum/taigaio)
 
 
+#### Code of Conduct ####
+
+Help us keep the Taiga Community open and inclusive. Please read and follow our [Code of Conduct](https://github.com/taigaio/code-of-conduct/blob/master/CODE_OF_CONDUCT.md).
+
+
 #### License ####
 
 Every code patch accepted in taiga codebase is licensed under [AGPL v3.0](http://www.gnu.org/licenses/agpl-3.0.html). You must be careful to not include any code that can not be licensed under this license.
 
-Please read carefully [our license](https://github.com/taigaio/taiga-front/blob/master/LICENSE) and ask us if you have any questions.
+Please read carefully [our license](https://github.com/taigaio/taiga-back/blob/master/LICENSE) and ask us if you have any questions.
 
 
 #### Bug reports, enhancements and support ####
@@ -37,8 +42,8 @@ If you **need help to setup Taiga**, want to **talk about some cool enhancemnt**
 If you **find a bug** in Taiga you can always report it:
 
 - in our [mailing list](http://groups.google.com/d/forum/taigaio).
-- in [github issues](https://github.com/taigaio/taiga-front/issues). 
-- send us a mail to support@taiga.io if is a bug related to tree.taiga.io.
+- in [github issues](https://github.com/taigaio/taiga-back/issues).
+- send us a mail to support@taiga.io if is a bug related to [tree.taiga.io](https://tree.taiga.io).
 - send a mail to security@taiga.io if is a **security bug**.
 
 One of our fellow Taiga developers will search, find and hunt it as soon as possible.
@@ -48,7 +53,7 @@ Please, before reporting a bug write down how can we reproduce it, your operatin
 
 #### Documentation improvements ####
 
-We are gathering lots of information from our users to build and enhance our documentation. If you use the documentation to install or develop with Taiga and find any mistakes, omissions or confused sequences, it is enormously helpful to report it. Or better still, if you believe you can author additions, please make a pull-request to taiga project. 
+We are gathering lots of information from our users to build and enhance our documentation. If you use the documentation to install or develop with Taiga and find any mistakes, omissions or confused sequences, it is enormously helpful to report it. Or better still, if you believe you can author additions, please make a pull-request to taiga project.
 
 Currently, we have authored three main documentation hubs:
 
