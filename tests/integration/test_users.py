@@ -175,6 +175,50 @@ def test_cancel_self_user_with_invalid_token(client):
     assert response.status_code == 400
 
 
+def test_change_avatar(client):
+    url = reverse('users-change-avatar')
+
+    user = f.UserFactory()
+    client.login(user)
+
+    with NamedTemporaryFile() as avatar:
+        # Test no avatar send
+        post_data = {}
+        response = client.post(url, post_data)
+        assert response.status_code == 400
+
+        # Test invalid file send
+        post_data = {
+            'avatar': avatar
+        }
+        response = client.post(url, post_data)
+        assert response.status_code == 400
+
+        # Test empty valid avatar send
+        avatar.write(DUMMY_BMP_DATA)
+        avatar.seek(0)
+        response = client.post(url, post_data)
+        assert response.status_code == 200
+
+
+def test_change_avatar_with_long_file_name(client):
+    url = reverse('users-change-avatar')
+    user = f.UserFactory()
+
+    with NamedTemporaryFile(delete=False) as avatar:
+        avatar.name=500*"x"+".bmp"
+        avatar.write(DUMMY_BMP_DATA)
+        avatar.seek(0)
+
+        client.login(user)
+        post_data = {'avatar': avatar}
+        response = client.post(url, post_data)
+
+        print(response.data)
+
+        assert response.status_code == 200
+
+
 @pytest.mark.django_db(transaction=True)
 def test_change_avatar_removes_the_old_one(client):
     url = reverse('users-change-avatar')
