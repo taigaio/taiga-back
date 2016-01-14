@@ -343,7 +343,7 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
         # The "closed_milestone" attribute can be attached in the get_queryset method of the viewset.
         qs_closed_milestones = getattr(obj, "closed_milestones", None)
         if qs_closed_milestones is not None:
-            return qs_closed_milestones
+            return len(qs_closed_milestones)
 
         return obj.milestones.filter(closed=True).count()
 
