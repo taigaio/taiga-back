@@ -36,6 +36,7 @@ from taiga.projects.models import Project, Membership
 from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
 from taiga.projects.serializers import ProjectSerializer
+from taiga.users import services as users_service
 
 from . import mixins
 from . import serializers
@@ -89,6 +90,10 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         data = request.DATA.copy()
         data['owner'] = data.get('owner', request.user.email)
+
+        is_private = data.get('is_private', False)
+        if not users_service.has_available_slot_for_project(self.request.user, is_private=is_private):
+            raise exc.BadRequest(_("The user can't have more projects of this type"))
 
         # Create Project
         project_serialized = service.store_project(data)
@@ -202,17 +207,22 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         try:
             dump = json.load(reader(dump))
+            is_private = dump["is_private"]
         except Exception:
             raise exc.WrongArguments(_("Invalid dump format"))
 
         if Project.objects.filter(slug=dump['slug']).exists():
             del dump['slug']
 
+        user = request.user
+        if not users_service.has_available_slot_for_project(user, is_private=is_private):
+            raise exc.BadRequest(_("The user can't have more projects of this type"))
+
         if settings.CELERY_ENABLED:
-            task = tasks.load_project_dump.delay(request.user, dump)
+            task = tasks.load_project_dump.delay(user, dump)
             return response.Accepted({"import_id": task.id})
 
-        project = dump_service.dict_to_project(dump, request.user.email)
+        project = dump_service.dict_to_project(dump, request.user)
         response_data = ProjectSerializer(project).data
         return response.Created(response_data)
 

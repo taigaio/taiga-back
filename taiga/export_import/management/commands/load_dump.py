@@ -25,7 +25,7 @@ from taiga.projects.models import Project
 from taiga.export_import.renderers import ExportRenderer
 from taiga.export_import.dump_service import dict_to_project, TaigaImportError
 from taiga.export_import.service import get_errors
-
+from taiga.users.models import User
 
 class Command(BaseCommand):
     args = '<dump_file> <owner-email>'
@@ -58,7 +58,9 @@ class Command(BaseCommand):
                     except Project.DoesNotExist:
                         pass
                     signals.post_delete.receivers = receivers_back
-                dict_to_project(data, args[1])
+
+                user = User.objects.get(email=args[1])
+                dict_to_project(data, user)
         except TaigaImportError as e:
             print("ERROR:", end=" ")
             print(e.message)
