@@ -524,6 +524,9 @@ FRONT_SITEMAP_CACHE_TIMEOUT = 24*60*60  # In second
 
 EXTRA_BLOCKING_CODES = []
 
+MAX_PRIVATE_PROJECTS_PER_USER = None # None == no limit
+MAX_PUBLIC_PROJECTS_PER_USER = None # None == no limit
+
 from .sr import *
 
 

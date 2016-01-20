@@ -104,14 +104,27 @@ class UserSerializer(serializers.ModelSerializer):
             return ContactProjectDetailSerializer(projects, many=True).data
 
 class UserAdminSerializer(UserSerializer):
+    total_private_projects = serializers.SerializerMethodField("get_total_private_projects")
+    total_public_projects = serializers.SerializerMethodField("get_total_public_projects")
+
     class Meta:
         model = User
         # IMPORTANT: Maintain the UserSerializer Meta up to date
         # with this info (including here the email)
         fields = ("id", "username", "full_name", "full_name_display", "email",
                   "color", "bio", "lang", "theme", "timezone", "is_active", "photo",
-                  "big_photo")
-        read_only_fields = ("id", "email")
+                  "big_photo",
+                  "max_private_projects", "max_public_projects",
+                  "total_private_projects", "total_public_projects")
+
+        read_only_fields = ("id", "email",
+                            "max_private_projects", "max_public_projects")
+
+    def get_total_private_projects(self, user):
+        return user.owned_projects.filter(is_private=True).count()
+
+    def get_total_public_projects(self, user):
+        return user.owned_projects.filter(is_private=False).count()
 
 
 class UserBasicInfoSerializer(UserSerializer):

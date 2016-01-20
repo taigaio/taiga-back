@@ -51,6 +51,7 @@ from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
 from taiga.projects.likes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
 from taiga.permissions import service as permissions_service
+from taiga.users import services as users_service
 
 from . import filters as project_filters
 from . import models
@@ -342,9 +343,12 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             permissions_service.set_base_permissions_for_project(obj)
 
     def pre_save(self, obj):
+        user = self.request.user
+        if not users_service.has_available_slot_for_project(user, is_private=obj.is_private):
+            raise exc.BadRequest(_("The user can't have more projects of this type"))
+
         if not obj.id:
-            obj.owner = self.request.user
-            # TODO REFACTOR THIS
+            obj.owner = user
             obj.template = self.request.QUERY_PARAMS.get('template', None)
 
         self._set_base_permissions(obj)

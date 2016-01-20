@@ -25,6 +25,7 @@ import uuid
 from unidecode import unidecode
 
 from django.apps import apps
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.dispatch import receiver
@@ -140,6 +141,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     new_email = models.EmailField(_('new email address'), null=True, blank=True)
 
     is_system = models.BooleanField(null=False, blank=False, default=False)
+
+
+    max_private_projects = models.IntegerField(null=True, blank=True, default=settings.MAX_PRIVATE_PROJECTS_PER_USER, verbose_name='max number of private projects owned')
+    max_public_projects = models.IntegerField(null=True, blank=True, default=settings.MAX_PUBLIC_PROJECTS_PER_USER, verbose_name='max number of public projects owned')
+
     _cached_memberships = None
     _cached_liked_ids = None
     _cached_watched_ids = None
