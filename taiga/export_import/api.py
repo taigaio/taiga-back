@@ -219,7 +219,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         try:
             dump = json.load(reader(dump))
-            is_private = dump["is_private"]
+            is_private = dump.get("is_private", False)
         except Exception:
             raise exc.WrongArguments(_("Invalid dump format"))
 

@@ -42,6 +42,15 @@ class CanLeaveProject(PermissionComponent):
         except Membership.DoesNotExist:
             return False
 
+class IsMainOwner(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        if not obj or not request.user.is_authenticated():
+            return False
+
+        if obj.owner is None:
+            return False
+
+        return obj.owner == request.user
 
 class ProjectPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
@@ -68,6 +77,10 @@ class ProjectPermission(TaigaResourcePermission):
     unwatch_perms = IsAuthenticated() & HasProjectPerm('view_project')
     create_template_perms = IsSuperUser()
     leave_perms = CanLeaveProject()
+    transfer_request_perms = IsProjectOwner()
+    transfer_start_perms = IsMainOwner()
+    transfer_reject_perms = IsProjectOwner()
+    transfer_accept_perms = IsProjectOwner()
 
 
 class ProjectFansPermission(TaigaResourcePermission):

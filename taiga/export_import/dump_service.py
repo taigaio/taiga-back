@@ -94,7 +94,7 @@ def dict_to_project(data, owner=None):
         members = len(data.get("memberships", []))
         (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
             owner,
-            project=Project(is_private=data["is_private"], id=None),
+            project=Project(is_private=data.get("is_private", False), id=None),
             members=members
         )
         if not enough_slots:

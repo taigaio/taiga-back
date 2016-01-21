@@ -1,6 +1,8 @@
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.core.files import File
+from django.core import mail
+from django.core import signing
 
 from taiga.base.utils import json
 from taiga.projects.services import stats as stats_services
@@ -18,6 +20,17 @@ import os.path
 import pytest
 
 pytestmark = pytest.mark.django_db
+
+class ExpiredSigner(signing.TimestampSigner):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.salt = "django.core.signing.TimestampSigner"
+
+    def timestamp(self):
+        from django.utils import baseconv
+        import time
+        time_in_the_far_past = int(time.time()) - 24*60*60*1000
+        return baseconv.base62.encode(time_in_the_far_past)
 
 
 def test_get_project_by_slug(client):
@@ -698,3 +711,519 @@ def test_project_list_with_search_query_order_by_ranking(client):
     assert response.data[0]["id"] == project3.id
     assert response.data[1]["id"] == project2.id
     assert response.data[2]["id"] == project1.id
+
+
+def test_transfer_request_from_not_anonimous(client):
+    user = f.UserFactory.create()
+    project = f.create_project(anon_permissions=["view_project"])
+
+    url = reverse("projects-transfer-request", args=(project.id,))
+
+    mail.outbox = []
+
+    response = client.json.post(url)
+    assert response.status_code == 401
+    assert len(mail.outbox) == 0
+
+
+def test_transfer_request_from_not_project_member(client):
+    user = f.UserFactory.create()
+    project = f.create_project(public_permissions=["view_project"])
+
+    url = reverse("projects-transfer-request", args=(project.id,))
+
+    mail.outbox = []
+
+    client.login(user)
+    response = client.json.post(url)
+    assert response.status_code == 403
+    assert len(mail.outbox) == 0
+
+
+def test_transfer_request_from_not_admin_member(client):
+    user = f.UserFactory.create()
+    project = f.create_project()
+    role = f.RoleFactory(project=project, permissions=["view_project"])
+    f.MembershipFactory(user=user, project=project, role=role, is_owner=False)
+
+    url = reverse("projects-transfer-request", args=(project.id,))
+
+    mail.outbox = []
+
+    client.login(user)
+    response = client.json.post(url)
+    assert response.status_code == 403
+    assert len(mail.outbox) == 0
+
+
+def test_transfer_request_from_admin_member(client):
+    user = f.UserFactory.create()
+    project = f.create_project()
+    role = f.RoleFactory(project=project, permissions=["view_project"])
+    f.MembershipFactory(user=user, project=project, role=role, is_owner=True)
+
+    url = reverse("projects-transfer-request", args=(project.id,))
+
+    mail.outbox = []
+
+    client.login(user)
+    response = client.json.post(url)
+    assert response.status_code == 200
+    assert len(mail.outbox) == 1
+
+def test_project_transfer_start_to_not_a_membership(client):
+    user_from = f.UserFactory.create()
+    project = f.create_project(owner=user_from)
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+
+    client.login(user_from)
+    url = reverse("projects-transfer-start", kwargs={"pk": project.pk})
+
+    data = {
+        "user": 666,
+    }
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert "The user doesn't exist" in response.data
+
+
+def test_project_transfer_start_to_not_a_membership_admin(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create()
+    project = f.create_project(owner=user_from)
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project)
+
+    client.login(user_from)
+    url = reverse("projects-transfer-start", kwargs={"pk": project.pk})
+
+    data = {
+        "user": user_to.id,
+    }
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert "The user must be" in response.data
+
+
+def test_project_transfer_start_to_a_valid_user(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create()
+    project = f.create_project(owner=user_from)
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    client.login(user_from)
+    url = reverse("projects-transfer-start", kwargs={"pk": project.pk})
+
+    data = {
+        "user": user_to.id,
+    }
+    mail.outbox = []
+
+    assert project.transfer_token is None
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 200
+    project = Project.objects.get(id=project.id)
+    assert project.transfer_token is not None
+    assert len(mail.outbox) == 1
+
+
+def test_project_transfer_reject_from_admin_member_without_token(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create()
+
+    signer = signing.TimestampSigner()
+    token = signer.sign(user_to.id)
+    project = f.create_project(owner=user_from, transfer_token=token)
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-reject", kwargs={"pk": project.pk})
+
+    data = {}
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert len(mail.outbox) == 0
+
+
+def test_project_transfer_reject_from_not_admin_member(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create()
+
+    signer = signing.TimestampSigner()
+    token = signer.sign(user_to.id)
+    project = f.create_project(owner=user_from, transfer_token=token, public_permissions=["view_project"])
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=False)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-reject", kwargs={"pk": project.pk})
+
+    data = {
+        "token": token,
+    }
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 403
+    assert len(mail.outbox) == 0
+
+
+def test_project_transfer_reject_from_admin_member_with_invalid_token(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create()
+
+    project = f.create_project(owner=user_from, transfer_token="invalid-token")
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-reject", kwargs={"pk": project.pk})
+
+    data = {
+        "token": "invalid-token",
+    }
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "Token is invalid" == response.data["_error_message"]
+    assert len(mail.outbox) == 0
+
+
+def test_project_transfer_reject_from_admin_member_with_other_user_token(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create()
+    other_user = f.UserFactory.create()
+
+    signer = signing.TimestampSigner()
+    token = signer.sign(other_user.id)
+    project = f.create_project(owner=user_from, transfer_token=token)
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-reject", kwargs={"pk": project.pk})
+
+    data = {
+        "token": token,
+    }
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "Token is invalid" == response.data["_error_message"]
+    assert len(mail.outbox) == 0
+
+
+def test_project_transfer_reject_from_admin_member_with_expired_token(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create()
+
+    signer = ExpiredSigner()
+    token = signer.sign(user_to.id)
+    project = f.create_project(owner=user_from, transfer_token=token)
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-reject", kwargs={"pk": project.pk})
+
+    data = {
+        "token": token,
+    }
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "Token has expired" == response.data["_error_message"]
+    assert len(mail.outbox) == 0
+
+
+def test_project_transfer_reject_from_admin_member_with_valid_token(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create()
+
+    signer = signing.TimestampSigner()
+    token = signer.sign(user_to.id)
+    project = f.create_project(owner=user_from, transfer_token=token)
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-reject", kwargs={"pk": project.pk})
+
+    data = {
+        "token": token,
+    }
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 200
+    assert len(mail.outbox) == 1
+    assert mail.outbox[0].to == [user_from.email]
+
+
+def test_project_transfer_accept_from_admin_member_without_token(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create()
+
+    signer = signing.TimestampSigner()
+    token = signer.sign(user_to.id)
+    project = f.create_project(owner=user_from, transfer_token=token)
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
+
+    data = {}
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert len(mail.outbox) == 0
+
+
+def test_project_transfer_accept_from_not_admin_member(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create()
+
+    signer = signing.TimestampSigner()
+    token = signer.sign(user_to.id)
+    project = f.create_project(owner=user_from, transfer_token=token, public_permissions=["view_project"])
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=False)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
+
+    data = {
+        "token": token,
+    }
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 403
+    assert len(mail.outbox) == 0
+
+
+def test_project_transfer_accept_from_admin_member_with_invalid_token(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create()
+
+    project = f.create_project(owner=user_from, transfer_token="invalid-token")
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
+
+    data = {
+        "token": "invalid-token",
+    }
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "Token is invalid" == response.data["_error_message"]
+    assert len(mail.outbox) == 0
+
+
+def test_project_transfer_accept_from_admin_member_with_other_user_token(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create()
+    other_user = f.UserFactory.create()
+
+    signer = signing.TimestampSigner()
+    token = signer.sign(other_user.id)
+    project = f.create_project(owner=user_from, transfer_token=token)
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
+
+    data = {
+        "token": token,
+    }
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "Token is invalid" == response.data["_error_message"]
+    assert len(mail.outbox) == 0
+
+
+def test_project_transfer_accept_from_admin_member_with_expired_token(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create()
+
+    signer = ExpiredSigner()
+    token = signer.sign(user_to.id)
+    project = f.create_project(owner=user_from, transfer_token=token)
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
+
+    data = {
+        "token": token,
+    }
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "Token has expired" == response.data["_error_message"]
+    assert len(mail.outbox) == 0
+
+
+def test_project_transfer_accept_from_admin_member_with_valid_token_without_enough_slots(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create(max_private_projects=0)
+
+    signer = signing.TimestampSigner()
+    token = signer.sign(user_to.id)
+    project = f.create_project(owner=user_from, transfer_token=token, is_private=True)
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
+
+    data = {
+        "token": token,
+    }
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert len(mail.outbox) == 0
+    project = Project.objects.get(pk=project.pk)
+    assert project.owner.id == user_from.id
+    assert project.transfer_token is not None
+
+
+def test_project_transfer_accept_from_admin_member_with_valid_token_without_enough_memberships_public_project_slots(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create(max_members_public_projects=5)
+
+    signer = signing.TimestampSigner()
+    token = signer.sign(user_to.id)
+    project = f.create_project(owner=user_from, transfer_token=token, is_private=False)
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
+
+    data = {
+        "token": token,
+    }
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert len(mail.outbox) == 0
+    project = Project.objects.get(pk=project.pk)
+    assert project.owner.id == user_from.id
+    assert project.transfer_token is not None
+
+
+def test_project_transfer_accept_from_admin_member_with_valid_token_without_enough_memberships_private_project_slots(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create(max_members_private_projects=5)
+
+    signer = signing.TimestampSigner()
+    token = signer.sign(user_to.id)
+    project = f.create_project(owner=user_from, transfer_token=token, is_private=True)
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
+
+    data = {
+        "token": token,
+    }
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert len(mail.outbox) == 0
+    project = Project.objects.get(pk=project.pk)
+    assert project.owner.id == user_from.id
+    assert project.transfer_token is not None
+
+
+def test_project_transfer_accept_from_admin_member_with_valid_token_with_enough_slots(client):
+    user_from = f.UserFactory.create()
+    user_to = f.UserFactory.create(max_private_projects=1)
+
+    signer = signing.TimestampSigner()
+    token = signer.sign(user_to.id)
+    project = f.create_project(owner=user_from, transfer_token=token, is_private=True)
+
+    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+
+    client.login(user_to)
+    url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
+
+    data = {
+        "token": token,
+    }
+    mail.outbox = []
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 200
+    assert len(mail.outbox) == 1
+    assert mail.outbox[0].to == [user_from.email]
+    project = Project.objects.get(pk=project.pk)
+    assert project.owner.id == user_to.id
+    assert project.transfer_token is None
