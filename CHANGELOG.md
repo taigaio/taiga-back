@@ -4,7 +4,20 @@
 ## 1.10.0 ??? (Unreleased)
 
 ### Features
-- ...
+- Add logo field to project model
+- Add is_featured field to project model
+- Add is_looking_for_people and looking_for_people_note fields to project model
+- Filter projects list by
+    - is_looking_for_people
+    - is_featured
+    - is_backlog_activated 
+    - is_kanban_activated
+- Search projects by text query (order by ranking name > tags > description)
+- Order projects list:
+    - alphabetically by default
+    - by fans (last week/moth/year/all time)
+    - by activity (last week/moth/year/all time)
+- Show stats for discover secction
 
 ### Misc
 - Lots of small and not so small bugfixes.
