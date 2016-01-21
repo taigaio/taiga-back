@@ -15,9 +15,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import hashlib
+import os
+import os.path as path
 import itertools
 import uuid
 
+from unidecode import unidecode
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -27,17 +31,21 @@ from django.conf import settings
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
+from django.template.defaultfilters import slugify
+from django.utils.encoding import force_bytes
 from django.utils import timezone
 
 from django_pgjson.fields import JsonField
 from djorm_pgarray.fields import TextArrayField
-from taiga.permissions.permissions import ANON_PERMISSIONS, MEMBERS_PERMISSIONS
 
 from taiga.base.tags import TaggedMixin
-from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
+from taiga.base.utils.iterators import split_by_n
 from taiga.base.utils.sequence import arithmetic_progression
+from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.slug import slugify_uniquely_for_queryset
+
+from taiga.permissions.permissions import ANON_PERMISSIONS, MEMBERS_PERMISSIONS
 
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.services import (
@@ -46,7 +54,27 @@ from taiga.projects.notifications.services import (
     set_notify_policy_level_to_ignore,
     create_notify_policy_if_not_exists)
 
+from taiga.timeline.service import build_project_namespace
+
 from . import choices
+
+from dateutil.relativedelta import relativedelta
+
+
+def get_user_file_path(instance, filename):
+    basename = path.basename(filename).lower()
+    base, ext = path.splitext(basename)
+    base = slugify(unidecode(base))
+    basename = "".join([base, ext])
+
+    hs = hashlib.sha256()
+    hs.update(force_bytes(timezone.now().isoformat()))
+    hs.update(os.urandom(1024))
+
+    p1, p2, p3, p4, *p5 = split_by_n(hs.hexdigest(), 1)
+    hash_part = path.join(p1, p2, p3, p4, "".join(p5))
+
+    return path.join("project", hash_part, basename)
 
 
 class Membership(models.Model):
@@ -137,6 +165,11 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                             verbose_name=_("slug"))
     description = models.TextField(null=False, blank=False,
                                    verbose_name=_("description"))
+
+    logo = models.FileField(upload_to=get_user_file_path,
+                             max_length=500, null=True, blank=True,
+                             verbose_name=_("logo"))
+
     created_date = models.DateTimeField(null=False, blank=False,
                                         verbose_name=_("created date"),
                                         default=timezone.now)
@@ -169,6 +202,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                                           related_name="projects", null=True,
                                           blank=True, default=None,
                                           verbose_name=_("creation template"))
+
     anon_permissions = TextArrayField(blank=True, null=True,
                                       default=[],
                                       verbose_name=_("anonymous permissions"),
@@ -180,6 +214,14 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     is_private = models.BooleanField(default=True, null=False, blank=True,
                                      verbose_name=_("is private"))
 
+    is_featured = models.BooleanField(default=False, null=False, blank=True,
+                                     verbose_name=_("is featured"))
+
+    is_looking_for_people = models.BooleanField(default=False, null=False, blank=True,
+                                     verbose_name=_("is looking for people"))
+    looking_for_people_note = models.TextField(default="", null=False, blank=True,
+                                               verbose_name=_("loking for people note"))
+
     userstories_csv_uuid = models.CharField(max_length=32, editable=False,
                                             null=True, blank=True,
                                             default=None, db_index=True)
@@ -189,13 +231,48 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                                        null=True, blank=True, default=None,
                                        db_index=True)
 
-    tags_colors = TextArrayField(dimension=2, null=False, blank=True, verbose_name=_("tags colors"), default=[])
+    tags_colors = TextArrayField(dimension=2, default=[], null=False, blank=True,
+                                 verbose_name=_("tags colors"))
+
+    #Totals:
+    totals_updated_datetime = models.DateTimeField(null=False, blank=False, auto_now_add=True,
+                                            verbose_name=_("updated date time"), db_index=True)
+
+    total_fans = models.PositiveIntegerField(null=False, blank=False, default=0,
+                                             verbose_name=_("count"), db_index=True)
+
+    total_fans_last_week = models.PositiveIntegerField(null=False, blank=False, default=0,
+                                             verbose_name=_("fans last week"), db_index=True)
+
+    total_fans_last_month = models.PositiveIntegerField(null=False, blank=False, default=0,
+                                              verbose_name=_("fans last month"), db_index=True)
+
+    total_fans_last_year = models.PositiveIntegerField(null=False, blank=False, default=0,
+                                             verbose_name=_("fans last year"), db_index=True)
+
+    total_activity = models.PositiveIntegerField(null=False, blank=False, default=0,
+                                                 verbose_name=_("count"), db_index=True)
+
+    total_activity_last_week = models.PositiveIntegerField(null=False, blank=False, default=0,
+                                             verbose_name=_("activity last week"), db_index=True)
+
+    total_activity_last_month = models.PositiveIntegerField(null=False, blank=False, default=0,
+                                              verbose_name=_("activity last month"), db_index=True)
+
+    total_activity_last_year = models.PositiveIntegerField(null=False, blank=False, default=0,
+                                             verbose_name=_("activity last year"), db_index=True)
+
+    _cached_user_stories = None
     _importing = None
 
     class Meta:
         verbose_name = "project"
         verbose_name_plural = "projects"
-        ordering = ["name"]
+        ordering = ["name", "id"]
+        index_together = [
+            ["name", "id"],
+        ]
+
         permissions = (
             ("view_project", "Can view project"),
         )
@@ -223,7 +300,55 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         if not self.videoconferences:
             self.videoconferences_extra_data = None
 
+        if not self.is_looking_for_people:
+            self.looking_for_people_note = ""
+
         super().save(*args, **kwargs)
+
+    def refresh_totals(self, save=True):
+        now = timezone.now()
+        self.totals_updated_datetime = now
+
+        Like = apps.get_model("likes", "Like")
+        content_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(Project)
+        qs = Like.objects.filter(content_type=content_type, object_id=self.id)
+
+        self.total_fans = qs.count()
+
+        qs_week = qs.filter(created_date__gte=now-relativedelta(weeks=1))
+        self.total_fans_last_week = qs_week.count()
+
+        qs_month = qs.filter(created_date__gte=now-relativedelta(months=1))
+        self.total_fans_last_month = qs_month.count()
+
+        qs_year = qs.filter(created_date__gte=now-relativedelta(years=1))
+        self.total_fans_last_year = qs_year.count()
+
+        tl_model = apps.get_model("timeline", "Timeline")
+        namespace = build_project_namespace(self)
+
+        qs = tl_model.objects.filter(namespace=namespace)
+        self.total_activity = qs.count()
+
+        qs_week = qs.filter(created__gte=now-relativedelta(weeks=1))
+        self.total_activity_last_week = qs_week.count()
+
+        qs_month = qs.filter(created__gte=now-relativedelta(months=1))
+        self.total_activity_last_month = qs_month.count()
+
+        qs_year = qs.filter(created__gte=now-relativedelta(years=1))
+        self.total_activity_last_year = qs_year.count()
+
+        if save:
+            self.save()
+
+    @property
+    def cached_user_stories(self):
+        print(1111111, self._cached_user_stories)
+        if self._cached_user_stories is None:
+            self._cached_user_stories = list(self.user_stories.all())
+
+        return self._cached_user_stories
 
     def get_roles(self):
         return self.roles.all()

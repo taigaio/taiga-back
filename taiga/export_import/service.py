@@ -120,7 +120,8 @@ def render_project(project, outfile, chunk_size = 8190):
                             b64_data = base64.b64encode(bin_data).decode('utf-8')
                             outfile.write(b64_data)
 
-                    outfile.write('", \n            "name":"{}"}}\n}}'.format(os.path.basename(attachment_file.name)))
+                    outfile.write('", \n            "name":"{}"}}\n}}'.format(
+                                        os.path.basename(attachment_file.name)))
 
                 outfile.write(']}')
                 outfile.flush()
@@ -324,8 +325,8 @@ def store_task(project, data):
         custom_attributes_values = data.get("custom_attributes_values", None)
         if custom_attributes_values:
             custom_attributes = serialized.object.project.taskcustomattributes.all().values('id', 'name')
-            custom_attributes_values = _use_id_instead_name_as_key_in_custom_attributes_values(custom_attributes,
-                                                                                               custom_attributes_values)
+            custom_attributes_values = _use_id_instead_name_as_key_in_custom_attributes_values(
+                                                    custom_attributes, custom_attributes_values)
             store_custom_attributes_values(serialized.object, custom_attributes_values,
                                            "task", serializers.TaskCustomAttributesValuesExportSerializer)
 
@@ -457,7 +458,8 @@ def store_user_story(project, data):
     if "status" not in data and project.default_us_status:
         data["status"] = project.default_us_status.name
 
-    us_data = {key: value for key, value in data.items() if key not in ["role_points", "custom_attributes_values"]}
+    us_data = {key: value for key, value in data.items() if key not in
+                                                            ["role_points", "custom_attributes_values"]}
     serialized = serializers.UserStoryExportSerializer(data=us_data, context={"project": project})
 
     if serialized.is_valid():
@@ -495,8 +497,8 @@ def store_user_story(project, data):
         custom_attributes_values = data.get("custom_attributes_values", None)
         if custom_attributes_values:
             custom_attributes = serialized.object.project.userstorycustomattributes.all().values('id', 'name')
-            custom_attributes_values = _use_id_instead_name_as_key_in_custom_attributes_values(custom_attributes,
-                                                                                               custom_attributes_values)
+            custom_attributes_values = _use_id_instead_name_as_key_in_custom_attributes_values(
+                                                    custom_attributes, custom_attributes_values)
             store_custom_attributes_values(serialized.object, custom_attributes_values,
                                       "user_story", serializers.UserStoryCustomAttributesValuesExportSerializer)
 
@@ -553,8 +555,8 @@ def store_issue(project, data):
         custom_attributes_values = data.get("custom_attributes_values", None)
         if custom_attributes_values:
             custom_attributes = serialized.object.project.issuecustomattributes.all().values('id', 'name')
-            custom_attributes_values = _use_id_instead_name_as_key_in_custom_attributes_values(custom_attributes,
-                                                                                               custom_attributes_values)
+            custom_attributes_values = _use_id_instead_name_as_key_in_custom_attributes_values(
+                                                    custom_attributes, custom_attributes_values)
             store_custom_attributes_values(serialized.object, custom_attributes_values,
                                            "issue", serializers.IssueCustomAttributesValuesExportSerializer)
 

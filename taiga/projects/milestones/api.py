@@ -84,7 +84,7 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudView
 
         if self.request.user.is_authenticated():
             us_qs = attach_is_voter_to_queryset(self.request.user, us_qs)
-            us_qs = attach_is_watcher_to_queryset(self.request.user, us_qs)
+            us_qs = attach_is_watcher_to_queryset(us_qs, self.request.user)
 
         qs = qs.prefetch_related(Prefetch("user_stories", queryset=us_qs))
 

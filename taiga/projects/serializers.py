@@ -20,12 +20,12 @@ from django.utils.translation import ugettext as _
 from django.db.models import Q
 
 from taiga.base.api import serializers
-
 from taiga.base.fields import JsonField
 from taiga.base.fields import PgArrayField
 from taiga.base.fields import TagsField
 from taiga.base.fields import TagsColorsField
 
+from taiga.projects.notifications.choices import NotifyLevel
 from taiga.users.services import get_photo_or_gravatar_url
 from taiga.users.serializers import UserSerializer
 from taiga.users.serializers import UserBasicInfoSerializer
@@ -35,8 +35,6 @@ from taiga.users.validators import RoleExistsValidator
 from taiga.permissions.service import get_user_project_permissions
 from taiga.permissions.service import is_project_owner
 
-from taiga.projects.notifications import models as notify_models
-
 from . import models
 from . import services
 from .notifications.mixins import WatchedResourceModelSerializer
@@ -45,6 +43,7 @@ from .custom_attributes.serializers import UserStoryCustomAttributeSerializer
 from .custom_attributes.serializers import TaskCustomAttributeSerializer
 from .custom_attributes.serializers import IssueCustomAttributeSerializer
 from .likes.mixins.serializers import FanResourceSerializerMixin
+
 
 ######################################################
 ## Custom values for selectors
@@ -74,7 +73,6 @@ class PointsSerializer(serializers.ModelSerializer):
 
 
 class UserStoryStatusSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = models.UserStoryStatus
         i18n_fields = ("name",)
@@ -100,7 +98,6 @@ class UserStoryStatusSerializer(serializers.ModelSerializer):
 
 
 class BasicUserStoryStatusSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = models.UserStoryStatus
         i18n_fields = ("name",)
@@ -174,7 +171,6 @@ class IssueStatusSerializer(serializers.ModelSerializer):
 
 
 class BasicIssueStatusSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = models.IssueStatus
         i18n_fields = ("name",)
@@ -299,7 +295,8 @@ class ProjectMemberSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Membership
-        exclude = ("project", "email", "created_at", "token", "invited_by", "invitation_extra_text", "user_order")
+        exclude = ("project", "email", "created_at", "token", "invited_by", "invitation_extra_text",
+                   "user_order")
 
     def get_photo(self, membership):
         return get_photo_or_gravatar_url(membership.user)
@@ -309,20 +306,27 @@ class ProjectMemberSerializer(serializers.ModelSerializer):
 ## Projects
 ######################################################
 
-class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializer, serializers.ModelSerializer):
-    tags = TagsField(default=[], required=False)
+class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializer,
+                        serializers.ModelSerializer):
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
     my_permissions = serializers.SerializerMethodField("get_my_permissions")
     i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
+
+    tags = TagsField(default=[], required=False)
     tags_colors = TagsColorsField(required=False)
+
+    notify_level = serializers.SerializerMethodField("get_notify_level")
     total_closed_milestones = serializers.SerializerMethodField("get_total_closed_milestones")
-    notify_level =  serializers.SerializerMethodField("get_notify_level")
+    total_watchers = serializers.SerializerMethodField("get_total_watchers")
+
+    logo_small_url = serializers.SerializerMethodField("get_logo_small_url")
+    logo_big_url = serializers.SerializerMethodField("get_logo_big_url")
 
     class Meta:
         model = models.Project
         read_only_fields = ("created_date", "modified_date", "owner", "slug")
-        exclude = ("last_us_ref", "last_task_ref", "last_issue_ref",
+        exclude = ("logo", "last_us_ref", "last_task_ref", "last_issue_ref",
                    "issues_csv_uuid", "tasks_csv_uuid", "userstories_csv_uuid")
 
     def get_my_permissions(self, obj):
@@ -336,10 +340,33 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
         return False
 
     def get_total_closed_milestones(self, obj):
+        # The "closed_milestone" attribute can be attached in the get_queryset method of the viewset.
+        qs_closed_milestones = getattr(obj, "closed_milestones", None)
+        if qs_closed_milestones is not None:
+            return len(qs_closed_milestones)
+
         return obj.milestones.filter(closed=True).count()
 
     def get_notify_level(self, obj):
-        return getattr(obj, "notify_level", None)
+        if "request" in self.context:
+            user = self.context["request"].user
+            return user.is_authenticated() and user.get_notify_level(obj)
+
+        return None
+
+    def get_total_watchers(self, obj):
+        # The "valid_notify_policies" attribute can be attached in the get_queryset method of the viewset.
+        qs_valid_notify_policies = getattr(obj, "valid_notify_policies", None)
+        if qs_valid_notify_policies is not None:
+            return len(qs_valid_notify_policies)
+
+        return obj.notify_policies.exclude(notify_level=NotifyLevel.none).count()
+
+    def get_logo_small_url(self, obj):
+        return services.get_logo_small_thumbnail_url(obj)
+
+    def get_logo_big_url(self, obj):
+        return services.get_logo_big_thumbnail_url(obj)
 
 
 class ProjectDetailSerializer(ProjectSerializer):
@@ -376,7 +403,7 @@ class ProjectDetailAdminSerializer(ProjectDetailSerializer):
     class Meta:
         model = models.Project
         read_only_fields = ("created_date", "modified_date", "owner", "slug")
-        exclude = ("last_us_ref", "last_task_ref", "last_issue_ref")
+        exclude = ("logo", "last_us_ref", "last_task_ref", "last_issue_ref")
 
 
 ######################################################

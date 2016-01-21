@@ -16,10 +16,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import uuid
+from easy_thumbnails.source_generators import pil_image
+from dateutil.relativedelta import relativedelta
 
-from django.db.models import signals
+from django.apps import apps
+from django.db.models import signals, Prefetch
+from django.db.models import Value as V
+from django.db.models.functions import Coalesce
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+from django.utils import timezone
 
 from taiga.base import filters
 from taiga.base import response
@@ -32,12 +38,9 @@ from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.slug import slugify_uniquely
 
 from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.notifications.models import NotifyPolicy
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.notifications.choices import NotifyLevel
-from taiga.projects.notifications.utils import (
-    attach_project_total_watchers_attrs_to_queryset,
-    attach_project_is_watcher_to_queryset,
-    attach_notify_level_to_project_queryset)
 
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
@@ -48,9 +51,10 @@ from taiga.projects.issues.models import Issue
 from taiga.projects.likes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
 from taiga.permissions import service as permissions_service
 
-from . import serializers
+from . import filters as project_filters
 from . import models
 from . import permissions
+from . import serializers
 from . import services
 
 
@@ -63,36 +67,115 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
     admin_serializer_class = serializers.ProjectDetailAdminSerializer
     list_serializer_class = serializers.ProjectSerializer
     permission_classes = (permissions.ProjectPermission, )
-    filter_backends = (filters.CanViewProjectObjFilterBackend,)
-    filter_fields = (('member', 'members'),)
-    order_by_fields = ("memberships__user_order",)
+    filter_backends = (project_filters.QFilter,
+                       project_filters.CanViewProjectObjFilterBackend)
+
+    filter_fields = (("member", "members"),
+                     "is_looking_for_people",
+                     "is_featured",
+                     "is_backlog_activated",
+                     "is_kanban_activated")
+
+    ordering = ("name", "id")
+    order_by_fields = ("memberships__user_order",
+                       "total_fans",
+                       "total_fans_last_week",
+                       "total_fans_last_month",
+                       "total_fans_last_year",
+                       "total_activity",
+                       "total_activity_last_week",
+                       "total_activity_last_month",
+                       "total_activity_last_year")
+
+    def _get_order_by_field_name(self):
+        order_by_query_param = project_filters.CanViewProjectObjFilterBackend.order_by_query_param
+        order_by = self.request.QUERY_PARAMS.get(order_by_query_param, None)
+        if order_by is not None and order_by.startswith("-"):
+            return order_by[1:]
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = self.attach_likes_attrs_to_queryset(qs)
-        qs = attach_project_total_watchers_attrs_to_queryset(qs)
-        if self.request.user.is_authenticated():
-            qs = attach_project_is_watcher_to_queryset(qs, self.request.user)
-            qs = attach_notify_level_to_project_queryset(qs, self.request.user)
+
+        # Prefetch doesn"t work correctly if then if the field is filtered later (it generates more queries)
+        # so we add some custom prefetching
+        qs = qs.prefetch_related("members")
+        qs = qs.prefetch_related(Prefetch("notify_policies",
+            NotifyPolicy.objects.exclude(notify_level=NotifyLevel.none), to_attr="valid_notify_policies"))
+
+        Milestone = apps.get_model("milestones", "Milestone")
+        qs = qs.prefetch_related(Prefetch("milestones",
+            Milestone.objects.filter(closed=True), to_attr="closed_milestones"))
+
+        # If filtering an activity period we must exclude the activities not updated recently enough
+        now = timezone.now()
+        order_by_field_name = self._get_order_by_field_name()
+        if order_by_field_name == "total_fans_last_week":
+            qs = qs.filter(totals_updated_datetime__gte=now-relativedelta(weeks=1))
+        elif order_by_field_name == "total_fans_last_month":
+            qs = qs.filter(totals_updated_datetime__gte=now-relativedelta(months=1))
+        elif order_by_field_name == "total_fans_last_year":
+            qs = qs.filter(totals_updated_datetime__gte=now-relativedelta(years=1))
+        elif order_by_field_name == "total_activity_last_week":
+            qs = qs.filter(totals_updated_datetime__gte=now-relativedelta(weeks=1))
+        elif order_by_field_name == "total_activity_last_month":
+            qs = qs.filter(totals_updated_datetime__gte=now-relativedelta(months=1))
+        elif order_by_field_name == "total_activity_last_year":
+            qs = qs.filter(totals_updated_datetime__gte=now-relativedelta(years=1))
 
         return qs
 
     def get_serializer_class(self):
+        serializer_class = self.serializer_class
+
         if self.action == "list":
-            return self.list_serializer_class
-        elif self.action == "create":
-            return self.serializer_class
+            serializer_class = self.list_serializer_class
+        elif self.action != "create":
+            if self.action == "by_slug":
+                slug = self.request.QUERY_PARAMS.get("slug", None)
+                project = get_object_or_404(models.Project, slug=slug)
+            else:
+                project = self.get_object()
 
-        if self.action == "by_slug":
-            slug = self.request.QUERY_PARAMS.get("slug", None)
-            project = get_object_or_404(models.Project, slug=slug)
-        else:
-            project = self.get_object()
+            if permissions_service.is_project_owner(self.request.user, project):
+                serializer_class = self.admin_serializer_class
 
-        if permissions_service.is_project_owner(self.request.user, project):
-            return self.admin_serializer_class
+        return serializer_class
 
-        return self.serializer_class
+    @detail_route(methods=["POST"])
+    def change_logo(self, request, *args, **kwargs):
+        """
+        Change logo to this project.
+        """
+        self.object = get_object_or_404(self.get_queryset(), **kwargs)
+        self.check_permissions(request, "change_logo", self.object)
+
+        logo = request.FILES.get('logo', None)
+        if not logo:
+            raise exc.WrongArguments(_("Incomplete arguments"))
+        try:
+            pil_image(logo)
+        except Exception:
+            raise exc.WrongArguments(_("Invalid image format"))
+
+        self.object.logo = logo
+        self.object.save(update_fields=["logo"])
+
+        serializer = self.get_serializer(self.object)
+        return response.Ok(serializer.data)
+
+    @detail_route(methods=["POST"])
+    def remove_logo(self, request, *args, **kwargs):
+        """
+        Remove the logo of a project.
+        """
+        self.object = get_object_or_404(self.get_queryset(), **kwargs)
+        self.check_permissions(request, "remove_logo", self.object)
+
+        self.object.logo = None
+        self.object.save(update_fields=["logo"])
+
+        serializer = self.get_serializer(self.object)
+        return response.Ok(serializer.data)
 
     @detail_route(methods=["POST"])
     def watch(self, request, pk=None):
@@ -245,9 +328,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
     def pre_save(self, obj):
         if not obj.id:
             obj.owner = self.request.user
-
-        # TODO REFACTOR THIS
-        if not obj.id:
+            # TODO REFACTOR THIS
             obj.template = self.request.QUERY_PARAMS.get('template', None)
 
         self._set_base_permissions(obj)
@@ -278,6 +359,7 @@ class ProjectWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.ProjectWatchersPermission,)
     resource_model = models.Project
 
+
 ######################################################
 ## Custom values for selectors
 ######################################################
@@ -294,6 +376,7 @@ class PointsViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
     move_on_destroy_related_class = RolePoints
     move_on_destroy_related_field = "points"
     move_on_destroy_project_default_field = "default_points"
+
 
 class UserStoryStatusViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.UserStoryStatus

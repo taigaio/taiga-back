@@ -1,7 +1,8 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
 # Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2016 Taiga Agile LLC <taiga@taiga.io>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -15,15 +16,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api import serializers
+from django.conf import settings
+
+from taiga.base.utils.thumbnails import get_thumbnail_url
 
 
-class FanResourceSerializerMixin(serializers.ModelSerializer):
-    is_fan = serializers.SerializerMethodField("get_is_fan")
+def get_logo_small_thumbnail_url(project):
+    if project.logo:
+        return get_thumbnail_url(project.logo, settings.THN_LOGO_SMALL)
+    return None
 
-    def get_is_fan(self, obj):
-        if "request" in self.context:
-            user = self.context["request"].user
-            return user.is_authenticated() and user.is_fan(obj)
 
-        return False
+def get_logo_big_thumbnail_url(project):
+    if project.logo:
+        return get_thumbnail_url(project.logo, settings.THN_LOGO_BIG)
+    return None

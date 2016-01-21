@@ -81,7 +81,7 @@ def _get_validation_exclusions(obj, pk=None, slug_field=None, lookup_field=None)
     return [field.name for field in obj._meta.fields if field.name not in include]
 
 
-class CreateModelMixin(object):
+class CreateModelMixin:
     """
     Create a model instance.
     """
@@ -107,7 +107,7 @@ class CreateModelMixin(object):
             return {}
 
 
-class ListModelMixin(object):
+class ListModelMixin:
     """
     List a queryset.
     """
@@ -137,7 +137,7 @@ class ListModelMixin(object):
         return response.Ok(serializer.data)
 
 
-class RetrieveModelMixin(object):
+class RetrieveModelMixin:
     """
     Retrieve a model instance.
     """
@@ -153,7 +153,7 @@ class RetrieveModelMixin(object):
         return response.Ok(serializer.data)
 
 
-class UpdateModelMixin(object):
+class UpdateModelMixin:
     """
     Update a model instance.
     """
@@ -220,7 +220,7 @@ class UpdateModelMixin(object):
             obj.full_clean(exclude)
 
 
-class DestroyModelMixin(object):
+class DestroyModelMixin:
     """
     Destroy a model instance.
     """

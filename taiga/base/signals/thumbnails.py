@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
 # Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
@@ -15,15 +15,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api import serializers
+from django_transactional_cleanup.signals import cleanup_post_delete
+from easy_thumbnails.files import get_thumbnailer
 
 
-class FanResourceSerializerMixin(serializers.ModelSerializer):
-    is_fan = serializers.SerializerMethodField("get_is_fan")
+def _delete_thumbnail_files(**kwargs):
+    thumbnailer = get_thumbnailer(kwargs["file"])
+    thumbnailer.delete_thumbnails()
 
-    def get_is_fan(self, obj):
-        if "request" in self.context:
-            user = self.context["request"].user
-            return user.is_authenticated() and user.is_fan(obj)
 
-        return False
+def connect_thumbnail_signals():
+    cleanup_post_delete.connect(_delete_thumbnail_files)
+
+
+def disconnect_thumbnail_signals():
+    cleanup_post_delete.disconnect(_delete_thumbnail_files)

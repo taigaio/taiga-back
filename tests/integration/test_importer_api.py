@@ -18,12 +18,9 @@
 import pytest
 import base64
 
+from django.apps import apps
 from django.core.urlresolvers import reverse
 from django.core.files.base import ContentFile
-
-from .. import factories as f
-
-from django.apps import apps
 
 from taiga.base.utils import json
 from taiga.projects.models import Project, Membership
@@ -31,6 +28,9 @@ from taiga.projects.issues.models import Issue
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.tasks.models import Task
 from taiga.projects.wiki.models import WikiPage
+
+from .. import factories as f
+from ..utils import DUMMY_BMP_DATA
 
 pytestmark = pytest.mark.django_db
 
@@ -943,6 +943,36 @@ def test_invalid_dump_import(client):
     assert response.status_code == 400
     response_data = response.data
     assert response_data["_error_message"] == "Invalid dump format"
+
+
+def test_valid_dump_import_with_logo(client, settings):
+    settings.CELERY_ENABLED = False
+
+    user = f.UserFactory.create()
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": "valid-project",
+        "name": "Valid project",
+        "description": "Valid project desc",
+        "logo": {
+            "name": "logo.bmp",
+            "data": base64.b64encode(DUMMY_BMP_DATA).decode("utf-8")
+        }
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 201
+    response_data = response.data
+    assert "id" in response_data
+    assert response_data["name"] == "Valid project"
+    assert "logo_small_url" in response_data
+    assert response_data["logo_small_url"] != None
+    assert "logo_big_url" in response_data
+    assert response_data["logo_big_url"] != None
 
 
 def test_valid_dump_import_with_celery_disabled(client, settings):

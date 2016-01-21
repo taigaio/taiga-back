@@ -46,6 +46,8 @@ def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_d
             namespace=build_project_namespace(project),
             extra_data=extra_data)
 
+        project.refresh_totals()
+
         if hasattr(obj, "get_related_people"):
             related_people = obj.get_related_people()
 

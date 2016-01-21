@@ -107,6 +107,9 @@ NUM_ATTACHMENTS = getattr(settings, "SAMPLE_DATA_NUM_ATTACHMENTS", (0, 4))
 NUM_LIKES = getattr(settings, "SAMPLE_DATA_NUM_LIKES", (0, 10))
 NUM_VOTES = getattr(settings, "SAMPLE_DATA_NUM_VOTES", (0, 10))
 NUM_WATCHERS = getattr(settings, "SAMPLE_DATA_NUM_PROJECT_WATCHERS", (0, 8))
+FEATURED_PROJECTS_POSITIONS = [0, 1, 2]
+LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS = [0, 1, 2]
+
 
 class Command(BaseCommand):
     sd = SampleDataHelper(seed=12345678901)
@@ -229,6 +232,7 @@ class Command(BaseCommand):
             project.save()
 
             self.create_likes(project)
+
 
     def create_attachment(self, obj, order):
         attached_file = self.sd.file_from_directory(*ATTACHMENT_SAMPLE_DATA)
@@ -458,7 +462,10 @@ class Command(BaseCommand):
                                          public_permissions=public_permissions,
                                          total_story_points=self.sd.int(600, 3000),
                                          total_milestones=self.sd.int(5,10),
-                                         tags=self.sd.words(1, 10).split(" "))
+                                         tags=self.sd.words(1, 10).split(" "),
+                                         is_looking_for_people=counter in LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS,
+                                         looking_for_people_note=self.sd.short_sentence(),
+                                         is_featured=counter in FEATURED_PROJECTS_POSITIONS)
 
         project.is_kanban_activated = True
         project.save()

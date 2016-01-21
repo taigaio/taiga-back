@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
 # Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
@@ -15,15 +15,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api import serializers
+from taiga.base.utils.urls import get_absolute_url
+
+from easy_thumbnails.files import get_thumbnailer
+from easy_thumbnails.exceptions import InvalidImageFormatError
 
 
-class FanResourceSerializerMixin(serializers.ModelSerializer):
-    is_fan = serializers.SerializerMethodField("get_is_fan")
+def get_thumbnail_url(file_obj, thumbnailer_size):
+    try:
+        path_url = get_thumbnailer(file_obj)[thumbnailer_size].url
+        thumb_url = get_absolute_url(path_url)
+    except InvalidImageFormatError:
+        thumb_url = None
 
-    def get_is_fan(self, obj):
-        if "request" in self.context:
-            user = self.context["request"].user
-            return user.is_authenticated() and user.is_fan(obj)
-
-        return False
+    return thumb_url

@@ -29,17 +29,20 @@ from .bulk_update_order import bulk_update_userstory_status_order
 
 from .filters import get_all_tags
 
-from .stats import get_stats_for_project_issues
-from .stats import get_stats_for_project
-from .stats import get_member_stats_for_project
+from .invitations import send_invitation
+from .invitations import find_invited_user
+
+from .logo import get_logo_small_thumbnail_url
+from .logo import get_logo_big_thumbnail_url
 
 from .members import create_members_in_bulk
 from .members import get_members_from_bulk
 from .members import remove_user_from_project, project_has_valid_owners, can_user_leave_project
 
-from .invitations import send_invitation
-from .invitations import find_invited_user
+from .modules_config import get_modules_config
+
+from .stats import get_stats_for_project_issues
+from .stats import get_stats_for_project
+from .stats import get_member_stats_for_project
 
 from .tags_colors import update_project_tags_colors_handler
-
-from .modules_config import get_modules_config

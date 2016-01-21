@@ -37,4 +37,4 @@ class AttachmentSerializer(serializers.ModelSerializer):
         return obj.attached_file.url
 
     def get_thumbnail_card_url(self, obj):
-        return services.get_card_image_thumbnailer_url(obj)
+        return services.get_card_image_thumbnail_url(obj)
