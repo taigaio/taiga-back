@@ -54,7 +54,7 @@ def generate_random_hex_color():
 def get_user_file_path(instance, filename):
     basename = path.basename(filename).lower()
     base, ext = path.splitext(basename)
-    base = slugify(unidecode(base))
+    base = slugify(unidecode(base))[0:100]
     basename = "".join([base, ext])
 
     hs = hashlib.sha256()
