@@ -17,6 +17,7 @@
 
 from contextlib import suppress
 from django.core.exceptions import ObjectDoesNotExist
+from taiga.projects.history.services import take_snapshot
 
 ####################################
 # Signals for cached prev US
@@ -47,6 +48,8 @@ def update_role_points_when_create_or_edit_us(sender, instance, **kwargs):
 def update_milestone_of_tasks_when_edit_us(sender, instance, created, **kwargs):
     if not created:
         instance.tasks.update(milestone=instance.milestone)
+        for task in instance.tasks.all():
+            take_snapshot(task)
 
 
 ####################################

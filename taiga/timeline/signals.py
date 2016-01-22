@@ -78,6 +78,9 @@ def on_new_history_entry(sender, instance, created, **kwargs):
     if instance.is_hidden:
         return None
 
+    if instance.user["pk"] is None:
+        return None
+
     model = history_services.get_model_from_key(instance.key)
     pk = history_services.get_pk_from_key(instance.key)
     obj = model.objects.get(pk=pk)
