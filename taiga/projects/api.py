@@ -488,19 +488,24 @@ class MembershipViewSet(ModelCrudViewSet):
     filter_fields = ("project", "role")
 
     def get_serializer_class(self):
+        use_admin_serializer = False
+        
+        if self.action == "create":
+            use_admin_serializer = True
+
+        if self.action == "retrieve":
+            use_admin_serializer = permissions_service.is_project_owner(self.request.user, self.object.project)
+
         project_id = self.request.QUERY_PARAMS.get("project", None)
-        if project_id is None:
-            # Creation
-            if self.request.method == 'POST':
-                return self.admin_serializer_class
+        if self.action == "list" and project_id is not None:
+            project = get_object_or_404(models.Project, pk=project_id)
+            use_admin_serializer = permissions_service.is_project_owner(self.request.user, project)
 
-            return self.serializer_class
-
-        project = get_object_or_404(models.Project, pk=project_id)
-        if permissions_service.is_project_owner(self.request.user, project):
+        if use_admin_serializer:
             return self.admin_serializer_class
 
-        return self.serializer_class
+        else:
+            return self.serializer_class
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
