@@ -8,13 +8,13 @@
 # gustavodiazjaimes <gustavodiazjaimes@gmail.com>, 2015
 # Hector Colina <hcolina@gmail.com>, 2015
 # Jesus Marin <contacto@jesusmg.org>, 2015
-# Taiga Dev Team <support@taiga.io>, 2015
+# Taiga Dev Team <support@taiga.io>, 2015-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-22 13:09+0100\n"
-"PO-Revision-Date: 2016-01-22 12:10+0000\n"
+"PO-Revision-Date: 2016-01-23 19:17+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
@@ -63,7 +63,7 @@ msgstr "Este usuario ya está registrado."
 
 #: taiga/auth/services.py:145
 msgid "This user is already a member of the project."
-msgstr ""
+msgstr "Este usuario ya es miembro del proyecto."
 
 #: taiga/auth/services.py:171
 msgid "Error on creating new user."
@@ -1753,7 +1753,7 @@ msgstr "tipo de petición por defecto"
 
 #: taiga/projects/models.py:171
 msgid "logo"
-msgstr ""
+msgstr "logo"
 
 #: taiga/projects/models.py:181
 msgid "members"
@@ -1809,15 +1809,15 @@ msgstr "privado"
 
 #: taiga/projects/models.py:218
 msgid "is featured"
-msgstr ""
+msgstr "es destacado"
 
 #: taiga/projects/models.py:221
 msgid "is looking for people"
-msgstr ""
+msgstr "está buscando a gente"
 
 #: taiga/projects/models.py:223
 msgid "loking for people note"
-msgstr ""
+msgstr "nota (buscando a gente)"
 
 #: taiga/projects/models.py:235
 msgid "tags colors"
@@ -1834,27 +1834,27 @@ msgstr "recuento"
 
 #: taiga/projects/models.py:245
 msgid "fans last week"
-msgstr ""
+msgstr "fans la última semana"
 
 #: taiga/projects/models.py:248
 msgid "fans last month"
-msgstr ""
+msgstr "fans el último mes"
 
 #: taiga/projects/models.py:251
 msgid "fans last year"
-msgstr ""
+msgstr "fans el último año"
 
 #: taiga/projects/models.py:257
 msgid "activity last week"
-msgstr ""
+msgstr "actividad la última semana"
 
 #: taiga/projects/models.py:260
 msgid "activity last month"
-msgstr ""
+msgstr "actividad el último mes"
 
 #: taiga/projects/models.py:263
 msgid "activity last year"
-msgstr ""
+msgstr "actividad el último áño"
 
 #: taiga/projects/models.py:466
 msgid "modules config"

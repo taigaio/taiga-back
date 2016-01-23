@@ -15,8 +15,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-22 13:09+0100\n"
-"PO-Revision-Date: 2016-01-22 12:10+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"PO-Revision-Date: 2016-01-22 13:03+0000\n"
+"Last-Translator: F B <fabio.baleani@gmail.com>\n"
 "Language-Team: Italian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -1848,7 +1848,7 @@ msgstr "tipologia predefinita del problema"
 
 #: taiga/projects/models.py:171
 msgid "logo"
-msgstr ""
+msgstr "logo"
 
 #: taiga/projects/models.py:181
 msgid "members"
@@ -1904,15 +1904,15 @@ msgstr "è privato"
 
 #: taiga/projects/models.py:218
 msgid "is featured"
-msgstr ""
+msgstr "in vetrina"
 
 #: taiga/projects/models.py:221
 msgid "is looking for people"
-msgstr ""
+msgstr "sta cercando persone"
 
 #: taiga/projects/models.py:223
 msgid "loking for people note"
-msgstr ""
+msgstr "note sulla ricerca delle persone "
 
 #: taiga/projects/models.py:235
 msgid "tags colors"
@@ -1929,27 +1929,27 @@ msgstr "conta"
 
 #: taiga/projects/models.py:245
 msgid "fans last week"
-msgstr ""
+msgstr "fans nella settimana"
 
 #: taiga/projects/models.py:248
 msgid "fans last month"
-msgstr ""
+msgstr "fans nel mese"
 
 #: taiga/projects/models.py:251
 msgid "fans last year"
-msgstr ""
+msgstr "fans nell'anno"
 
 #: taiga/projects/models.py:257
 msgid "activity last week"
-msgstr ""
+msgstr "attività nella settimana"
 
 #: taiga/projects/models.py:260
 msgid "activity last month"
-msgstr ""
+msgstr "attività nel mese"
 
 #: taiga/projects/models.py:263
 msgid "activity last year"
-msgstr ""
+msgstr "attività nell'anno"
 
 #: taiga/projects/models.py:466
 msgid "modules config"
