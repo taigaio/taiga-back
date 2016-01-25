@@ -26,6 +26,7 @@ from taiga.hooks.api import BaseWebhookApiViewSet
 
 from . import event_hooks
 
+from netaddr import all_matching_cidrs
 
 class GitLabViewSet(BaseWebhookApiViewSet):
     event_hook_classes = {
@@ -53,7 +54,8 @@ class GitLabViewSet(BaseWebhookApiViewSet):
         gitlab_config = project.modules_config.config.get("gitlab", {})
         valid_origin_ips = gitlab_config.get("valid_origin_ips", settings.GITLAB_VALID_ORIGIN_IPS)
         origin_ip = get_ip(request)
-        if valid_origin_ips and (not origin_ip or origin_ip not in valid_origin_ips):
+
+        if valid_origin_ips and (len(all_matching_cidrs(origin_ip,valid_origin_ips)) == 0):
             return False
 
         return project_secret == secret_key
