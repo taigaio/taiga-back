@@ -23,6 +23,7 @@ from taiga.hooks.api import BaseWebhookApiViewSet
 
 from . import event_hooks
 
+from netaddr import all_matching_cidrs
 from urllib.parse import parse_qs
 from ipware.ip import get_ip
 
@@ -54,7 +55,7 @@ class BitBucketViewSet(BaseWebhookApiViewSet):
         valid_origin_ips = bitbucket_config.get("valid_origin_ips",
                                                 settings.BITBUCKET_VALID_ORIGIN_IPS)
         origin_ip = get_ip(request)
-        if valid_origin_ips and (not origin_ip or origin_ip not in valid_origin_ips):
+        if valid_origin_ips and (len(all_matching_cidrs(origin_ip,valid_origin_ips)) == 0):
             return False
 
         return project_secret == secret_key

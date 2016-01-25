@@ -493,7 +493,8 @@ PROJECT_MODULES_CONFIGURATORS = {
     "bitbucket": "taiga.hooks.bitbucket.services.get_or_generate_config",
 }
 
-BITBUCKET_VALID_ORIGIN_IPS = ["131.103.20.165", "131.103.20.166"]
+BITBUCKET_VALID_ORIGIN_IPS = ["131.103.20.165", "131.103.20.166", "104.192.143.192/28", "104.192.143.208/28"]
+
 GITLAB_VALID_ORIGIN_IPS = []
 
 EXPORTS_TTL = 60 * 60 * 24  # 24 hours

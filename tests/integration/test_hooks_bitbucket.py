@@ -61,6 +61,25 @@ def test_ok_signature(client):
     assert response.status_code == 204
 
 
+def test_ok_signature_ip_in_network(client):
+    project = f.ProjectFactory()
+    f.ProjectModulesConfigFactory(project=project, config={
+        "bitbucket": {
+            "secret": "tpnIwJDz4e"
+        }
+    })
+
+    url = reverse("bitbucket-hook-list")
+    url = "{}?project={}&key={}".format(url, project.id, "tpnIwJDz4e")
+    data = json.dumps({"push": {"changes": [{"new": {"target": { "message": "test message"}}}]}})
+    response = client.post(url,
+                           data,
+                           content_type="application/json",
+                           HTTP_X_EVENT_KEY="repo:push",
+                           REMOTE_ADDR="104.192.143.193")
+    assert response.status_code == 204
+
+
 def test_invalid_ip(client):
     project = f.ProjectFactory()
     f.ProjectModulesConfigFactory(project=project, config={
