@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+from django.conf import settings
 
 
 class Migration(migrations.Migration):
@@ -14,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='max_private_projects',
-            field=models.IntegerField(null=True, verbose_name='max number of private projects owned', default=None, blank=True),
+            field=models.IntegerField(null=True, verbose_name='max number of private projects owned', default=settings.MAX_PRIVATE_PROJECTS_PER_USER, blank=True),
         ),
         migrations.AddField(
             model_name='user',
             name='max_public_projects',
-            field=models.IntegerField(null=True, verbose_name='max number of public projects owned', default=None, blank=True),
+            field=models.IntegerField(null=True, verbose_name='max number of public projects owned', default=settings.MAX_PUBLIC_PROJECTS_PER_USER, blank=True),
         ),
     ]

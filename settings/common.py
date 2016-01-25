@@ -526,6 +526,8 @@ EXTRA_BLOCKING_CODES = []
 
 MAX_PRIVATE_PROJECTS_PER_USER = None # None == no limit
 MAX_PUBLIC_PROJECTS_PER_USER = None # None == no limit
+MAX_MEMBERS_PRIVATE_PROJECTS = None # None == no limit
+MAX_MEMBERS_PUBLIC_PROJECTS = None # None == no limit
 
 from .sr import *
 

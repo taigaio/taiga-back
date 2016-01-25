@@ -344,8 +344,9 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
 
     def pre_save(self, obj):
         user = self.request.user
-        if not users_service.has_available_slot_for_project(user, is_private=obj.is_private):
-            raise exc.BadRequest(_("The user can't have more projects of this type"))
+        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(user, project=obj)
+        if not enough_slots:
+            raise exc.BadRequest(not_enough_slots_error)
 
         if not obj.id:
             obj.owner = user
@@ -554,6 +555,15 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         # TODO: this should be moved to main exception handler instead
         # of handling explicit exception catchin here.
 
+        if "bulk_memberships" in data and isinstance(data["bulk_memberships"], list):
+            (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+                request.user,
+                project=project,
+                members=len(data["bulk_memberships"])
+            )
+            if not enough_slots:
+                raise exc.BadRequest(not_enough_slots_error)
+
         try:
             members = services.create_members_in_bulk(data["bulk_memberships"],
                                                       project=project,
@@ -581,6 +591,15 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
             raise exc.BadRequest(_("The project must have an owner and at least one of the users must be an active admin"))
 
     def pre_save(self, obj):
+        if not obj.id:
+            (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+                self.request.user,
+                project=obj.project,
+                members=1
+            )
+            if not enough_slots:
+                raise exc.BadRequest(not_enough_slots_error)
+
         if not obj.token:
             obj.token = str(uuid.uuid1())
 

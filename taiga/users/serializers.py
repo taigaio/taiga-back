@@ -115,10 +115,13 @@ class UserAdminSerializer(UserSerializer):
                   "color", "bio", "lang", "theme", "timezone", "is_active", "photo",
                   "big_photo",
                   "max_private_projects", "max_public_projects",
+                  "max_members_private_projects", "max_members_public_projects",
                   "total_private_projects", "total_public_projects")
 
         read_only_fields = ("id", "email",
-                            "max_private_projects", "max_public_projects")
+                            "max_private_projects", "max_public_projects",
+                            "max_members_private_projects",
+                            "max_members_public_projects")
 
     def get_total_private_projects(self, user):
         return user.owned_projects.filter(is_private=True).count()

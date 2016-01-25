@@ -17,7 +17,7 @@
 
 from django.utils.translation import ugettext as _
 
-from taiga.projects.models import Membership
+from taiga.projects.models import Membership, Project
 from taiga.users import services as users_service
 
 from . import serializers
@@ -91,8 +91,14 @@ def store_tags_colors(project, data):
 def dict_to_project(data, owner=None):
     if owner:
         data["owner"] = owner.email
-        if not users_service.has_available_slot_for_project(owner, is_private=data["is_private"]):
-            raise TaigaImportError(_("The user can't have more projects of this type"))
+        members = len(data.get("memberships", []))
+        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+            owner,
+            project=Project(is_private=data["is_private"], id=None),
+            members=members
+        )
+        if not enough_slots:
+            raise TaigaImportError(not_enough_slots_error)
 
     project_serialized = service.store_project(data)
 

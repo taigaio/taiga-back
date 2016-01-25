@@ -27,6 +27,7 @@ from taiga.export_import.dump_service import dict_to_project, TaigaImportError
 from taiga.export_import.service import get_errors
 from taiga.users.models import User
 
+
 class Command(BaseCommand):
     args = '<dump_file> <owner-email>'
     help = 'Export a project to json'

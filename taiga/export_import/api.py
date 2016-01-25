@@ -92,8 +92,12 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         data['owner'] = data.get('owner', request.user.email)
 
         is_private = data.get('is_private', False)
-        if not users_service.has_available_slot_for_project(self.request.user, is_private=is_private):
-            raise exc.BadRequest(_("The user can't have more projects of this type"))
+        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+            self.request.user,
+            project=Project(is_private=is_private, id=None)
+        )
+        if not enough_slots:
+            raise exc.BadRequest(not_enough_slots_error)
 
         # Create Project
         project_serialized = service.store_project(data)
@@ -111,6 +115,14 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         # Create memberships
         if "memberships" in data:
+            members = len(data['memberships'])
+            (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+                self.request.user,
+                project=Project(is_private=is_private, id=None),
+                members=max(members, 1)
+            )
+            if not enough_slots:
+                raise exc.BadRequest(not_enough_slots_error)
             service.store_memberships(project_serialized.object, data)
 
         try:
@@ -211,12 +223,25 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         except Exception:
             raise exc.WrongArguments(_("Invalid dump format"))
 
+        user = request.user
+        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+            user,
+            project=Project(is_private=is_private, id=None)
+        )
+        if not enough_slots:
+            raise exc.BadRequest(not_enough_slots_error)
+
         if Project.objects.filter(slug=dump['slug']).exists():
             del dump['slug']
 
-        user = request.user
-        if not users_service.has_available_slot_for_project(user, is_private=is_private):
-            raise exc.BadRequest(_("The user can't have more projects of this type"))
+        members = len(dump.get("memberships", []))
+        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+            user,
+            project=Project(is_private=is_private, id=None),
+            members=max(members, 1)
+        )
+        if not enough_slots:
+            raise exc.BadRequest(not_enough_slots_error)
 
         if settings.CELERY_ENABLED:
             task = tasks.load_project_dump.delay(user, dump)
