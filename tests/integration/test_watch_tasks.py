@@ -27,7 +27,7 @@ pytestmark = pytest.mark.django_db
 
 def test_watch_task(client):
     user = f.UserFactory.create()
-    task = f.create_task(owner=user)
+    task = f.create_task(owner=user, milestone=None)
     f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
     url = reverse("tasks-watch", args=(task.id,))
 
@@ -39,7 +39,7 @@ def test_watch_task(client):
 
 def test_unwatch_task(client):
     user = f.UserFactory.create()
-    task = f.create_task(owner=user)
+    task = f.create_task(owner=user, milestone=None)
     f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
     url = reverse("tasks-watch", args=(task.id,))
 
@@ -95,7 +95,7 @@ def test_get_task_watchers(client):
 
 def test_get_task_is_watcher(client):
     user = f.UserFactory.create()
-    task = f.TaskFactory(owner=user)
+    task = f.create_task(owner=user, milestone=None)
     f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
     url_detail = reverse("tasks-detail", args=(task.id,))
     url_watch = reverse("tasks-watch", args=(task.id,))
@@ -109,6 +109,7 @@ def test_get_task_is_watcher(client):
     assert response.data['is_watcher'] == False
 
     response = client.post(url_watch)
+    print(response.data)
     assert response.status_code == 200
 
     response = client.get(url_detail)

@@ -79,7 +79,7 @@ def test_get_issue_watcher(client):
 
 def test_get_issue_watchers(client):
     user = f.UserFactory.create()
-    issue = f.IssueFactory(owner=user)
+    issue = f.create_issue(owner=user)
     f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
     url = reverse("issues-detail", args=(issue.id,))
 
@@ -95,7 +95,7 @@ def test_get_issue_watchers(client):
 
 def test_get_issue_is_watcher(client):
     user = f.UserFactory.create()
-    issue = f.IssueFactory(owner=user)
+    issue = f.create_issue(owner=user)
     f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
     url_detail = reverse("issues-detail", args=(issue.id,))
     url_watch = reverse("issues-watch", args=(issue.id,))

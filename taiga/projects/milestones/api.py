@@ -22,6 +22,7 @@ from taiga.base import filters
 from taiga.base import response
 from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
+from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.db import get_object_or_none
 
@@ -37,7 +38,8 @@ from . import permissions
 import datetime
 
 
-class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
+class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
+                       BlockedByProjectMixin, ModelCrudViewSet):
     serializer_class = serializers.MilestoneSerializer
     permission_classes = (permissions.MilestonePermission,)
     filter_backends = (filters.CanViewMilestonesFilterBackend,)

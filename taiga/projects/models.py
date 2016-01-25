@@ -23,6 +23,7 @@ import uuid
 
 from unidecode import unidecode
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals, Q
@@ -261,6 +262,10 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
 
     total_activity_last_year = models.PositiveIntegerField(null=False, blank=False, default=0,
                                              verbose_name=_("activity last year"), db_index=True)
+
+    blocked_code = models.CharField(null=True, blank=True, max_length=255,
+                            choices=choices.BLOCKING_CODES + settings.EXTRA_BLOCKING_CODES, default=None,
+                            verbose_name=_("blocked code"))
 
     _cached_user_stories = None
     _importing = None

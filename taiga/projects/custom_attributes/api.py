@@ -19,6 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelUpdateRetrieveViewSet
+from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base import exceptions as exc
 from taiga.base import filters
 from taiga.base import response
@@ -38,7 +39,7 @@ from . import services
 # Custom Attribute ViewSets
 #######################################################
 
-class UserStoryCustomAttributeViewSet(BulkUpdateOrderMixin, ModelCrudViewSet):
+class UserStoryCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.UserStoryCustomAttribute
     serializer_class = serializers.UserStoryCustomAttributeSerializer
     permission_classes = (permissions.UserStoryCustomAttributePermission,)
@@ -49,7 +50,7 @@ class UserStoryCustomAttributeViewSet(BulkUpdateOrderMixin, ModelCrudViewSet):
     bulk_update_order_action = services.bulk_update_userstory_custom_attribute_order
 
 
-class TaskCustomAttributeViewSet(BulkUpdateOrderMixin, ModelCrudViewSet):
+class TaskCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.TaskCustomAttribute
     serializer_class = serializers.TaskCustomAttributeSerializer
     permission_classes = (permissions.TaskCustomAttributePermission,)
@@ -60,7 +61,7 @@ class TaskCustomAttributeViewSet(BulkUpdateOrderMixin, ModelCrudViewSet):
     bulk_update_order_action = services.bulk_update_task_custom_attribute_order
 
 
-class IssueCustomAttributeViewSet(BulkUpdateOrderMixin, ModelCrudViewSet):
+class IssueCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.IssueCustomAttribute
     serializer_class = serializers.IssueCustomAttributeSerializer
     permission_classes = (permissions.IssueCustomAttributePermission,)
@@ -76,7 +77,7 @@ class IssueCustomAttributeViewSet(BulkUpdateOrderMixin, ModelCrudViewSet):
 #######################################################
 
 class BaseCustomAttributesValuesViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                                        ModelUpdateRetrieveViewSet):
+                                        BlockedByProjectMixin, ModelUpdateRetrieveViewSet):
     def get_object_for_snapshot(self, obj):
         return getattr(obj, self.content_object)
 

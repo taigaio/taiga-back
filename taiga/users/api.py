@@ -31,6 +31,7 @@ from taiga.auth.tokens import get_user_for_token
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet
+from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.filters import PermissionBasedFilterBackend
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.filters import MembersFilterBackend
@@ -403,7 +404,7 @@ class UsersViewSet(ModelCrudViewSet):
 ## Role
 ######################################################
 
-class RolesViewSet(ModelCrudViewSet):
+class RolesViewSet(BlockedByProjectMixin, ModelCrudViewSet):
     model = models.Role
     serializer_class = serializers.RoleSerializer
     permission_classes = (permissions.RolesPermission, )

@@ -33,6 +33,7 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
+from taiga.base.api.mixins import BlockedByProjectMixin, BlockeableSaveMixin, BlockeableDeleteMixin
 from taiga.base.api.permissions import AllowAnyPermission
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.slug import slugify_uniquely
@@ -61,7 +62,9 @@ from . import services
 ######################################################
 ## Project
 ######################################################
-class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet):
+class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
+                     BlockeableSaveMixin, BlockeableDeleteMixin, ModelCrudViewSet):
+
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectDetailSerializer
     admin_serializer_class = serializers.ProjectDetailAdminSerializer
@@ -86,6 +89,9 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
                        "total_activity_last_week",
                        "total_activity_last_month",
                        "total_activity_last_year")
+
+    def is_blocked(self, obj):
+        return obj.blocked_code is not None
 
     def _get_order_by_field_name(self):
         order_by_query_param = project_filters.CanViewProjectObjFilterBackend.order_by_query_param
@@ -157,6 +163,8 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
         except Exception:
             raise exc.WrongArguments(_("Invalid image format"))
 
+        self.pre_conditions_on_save(self.object)
+
         self.object.logo = logo
         self.object.save(update_fields=["logo"])
 
@@ -170,7 +178,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
         """
         self.object = get_object_or_404(self.get_queryset(), **kwargs)
         self.check_permissions(request, "remove_logo", self.object)
-
+        self.pre_conditions_on_save(self.object)
         self.object.logo = None
         self.object.save(update_fields=["logo"])
 
@@ -181,6 +189,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
     def watch(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "watch", project)
+        self.pre_conditions_on_save(project)
         notify_level = request.DATA.get("notify_level", NotifyLevel.involved)
         project.add_watcher(self.request.user, notify_level=notify_level)
         return response.Ok()
@@ -189,6 +198,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
     def unwatch(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "unwatch", project)
+        self.pre_conditions_on_save(project)
         user = self.request.user
         project.remove_watcher(user)
         return response.Ok()
@@ -205,77 +215,6 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
         data = serializer.data
         services.update_projects_order_in_bulk(data, "user_order", request.user)
         return response.NoContent(data=None)
-
-    @list_route(methods=["GET"])
-    def by_slug(self, request):
-        slug = request.QUERY_PARAMS.get("slug", None)
-        project = get_object_or_404(models.Project, slug=slug)
-        return self.retrieve(request, pk=project.pk)
-
-    @detail_route(methods=["GET", "PATCH"])
-    def modules(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, 'modules', project)
-        modules_config = services.get_modules_config(project)
-
-        if request.method == "GET":
-            return response.Ok(modules_config.config)
-
-        else:
-            modules_config.config.update(request.DATA)
-            modules_config.save()
-            return response.NoContent()
-
-    @detail_route(methods=["GET"])
-    def stats(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "stats", project)
-        return response.Ok(services.get_stats_for_project(project))
-
-    def _regenerate_csv_uuid(self, project, field):
-        uuid_value = uuid.uuid4().hex
-        setattr(project, field, uuid_value)
-        project.save()
-        return uuid_value
-
-    @detail_route(methods=["POST"])
-    def regenerate_userstories_csv_uuid(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "regenerate_userstories_csv_uuid", project)
-        data = {"uuid": self._regenerate_csv_uuid(project, "userstories_csv_uuid")}
-        return response.Ok(data)
-
-    @detail_route(methods=["POST"])
-    def regenerate_issues_csv_uuid(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "regenerate_issues_csv_uuid", project)
-        data = {"uuid": self._regenerate_csv_uuid(project, "issues_csv_uuid")}
-        return response.Ok(data)
-
-    @detail_route(methods=["POST"])
-    def regenerate_tasks_csv_uuid(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "regenerate_tasks_csv_uuid", project)
-        data = {"uuid": self._regenerate_csv_uuid(project, "tasks_csv_uuid")}
-        return response.Ok(data)
-
-    @detail_route(methods=["GET"])
-    def member_stats(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "member_stats", project)
-        return response.Ok(services.get_member_stats_for_project(project))
-
-    @detail_route(methods=["GET"])
-    def issues_stats(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "issues_stats", project)
-        return response.Ok(services.get_stats_for_project_issues(project))
-
-    @detail_route(methods=["GET"])
-    def tags_colors(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "tags_colors", project)
-        return response.Ok(dict(project.tags_colors))
 
     @detail_route(methods=["POST"])
     def create_template(self, request, **kwargs):
@@ -304,12 +243,88 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, ModelCrudViewSet)
         template.save()
         return response.Created(serializers.ProjectTemplateSerializer(template).data)
 
-    @detail_route(methods=['post'])
+    @detail_route(methods=['POST'])
     def leave(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, 'leave', project)
+        self.pre_conditions_on_save(project)
         services.remove_user_from_project(request.user, project)
         return response.Ok()
+
+    @detail_route(methods=["POST"])
+    def regenerate_userstories_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "regenerate_userstories_csv_uuid", project)
+        self.pre_conditions_on_save(project)
+        data = {"uuid": self._regenerate_csv_uuid(project, "userstories_csv_uuid")}
+        return response.Ok(data)
+
+    @detail_route(methods=["POST"])
+    def regenerate_issues_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "regenerate_issues_csv_uuid", project)
+        self.pre_conditions_on_save(project)
+        data = {"uuid": self._regenerate_csv_uuid(project, "issues_csv_uuid")}
+        return response.Ok(data)
+
+    @detail_route(methods=["POST"])
+    def regenerate_tasks_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "regenerate_tasks_csv_uuid", project)
+        self.pre_conditions_on_save(project)
+        data = {"uuid": self._regenerate_csv_uuid(project, "tasks_csv_uuid")}
+        return response.Ok(data)
+
+    @list_route(methods=["GET"])
+    def by_slug(self, request):
+        slug = request.QUERY_PARAMS.get("slug", None)
+        project = get_object_or_404(models.Project, slug=slug)
+        return self.retrieve(request, pk=project.pk)
+
+    @detail_route(methods=["GET", "PATCH"])
+    def modules(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, 'modules', project)
+        modules_config = services.get_modules_config(project)
+
+        if request.method == "GET":
+            return response.Ok(modules_config.config)
+
+        else:
+            self.pre_conditions_on_save(project)
+            modules_config.config.update(request.DATA)
+            modules_config.save()
+            return response.NoContent()
+
+    @detail_route(methods=["GET"])
+    def stats(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "stats", project)
+        return response.Ok(services.get_stats_for_project(project))
+
+    def _regenerate_csv_uuid(self, project, field):
+        uuid_value = uuid.uuid4().hex
+        setattr(project, field, uuid_value)
+        project.save()
+        return uuid_value
+
+    @detail_route(methods=["GET"])
+    def member_stats(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "member_stats", project)
+        return response.Ok(services.get_member_stats_for_project(project))
+
+    @detail_route(methods=["GET"])
+    def issues_stats(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "issues_stats", project)
+        return response.Ok(services.get_stats_for_project_issues(project))
+
+    @detail_route(methods=["GET"])
+    def tags_colors(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "tags_colors", project)
+        return response.Ok(dict(project.tags_colors))
 
     def _set_base_permissions(self, obj):
         update_permissions = False
@@ -364,7 +379,9 @@ class ProjectWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
 ## Custom values for selectors
 ######################################################
 
-class PointsViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
+class PointsViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+                    ModelCrudViewSet, BulkUpdateOrderMixin):
+
     model = models.Points
     serializer_class = serializers.PointsSerializer
     permission_classes = (permissions.PointsPermission,)
@@ -378,7 +395,9 @@ class PointsViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
     move_on_destroy_project_default_field = "default_points"
 
 
-class UserStoryStatusViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
+class UserStoryStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+                             ModelCrudViewSet, BulkUpdateOrderMixin):
+
     model = models.UserStoryStatus
     serializer_class = serializers.UserStoryStatusSerializer
     permission_classes = (permissions.UserStoryStatusPermission,)
@@ -392,7 +411,9 @@ class UserStoryStatusViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrd
     move_on_destroy_project_default_field = "default_us_status"
 
 
-class TaskStatusViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
+class TaskStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+                        ModelCrudViewSet, BulkUpdateOrderMixin):
+
     model = models.TaskStatus
     serializer_class = serializers.TaskStatusSerializer
     permission_classes = (permissions.TaskStatusPermission,)
@@ -406,7 +427,9 @@ class TaskStatusViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMix
     move_on_destroy_project_default_field = "default_task_status"
 
 
-class SeverityViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
+class SeverityViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+                      ModelCrudViewSet, BulkUpdateOrderMixin):
+
     model = models.Severity
     serializer_class = serializers.SeveritySerializer
     permission_classes = (permissions.SeverityPermission,)
@@ -420,7 +443,8 @@ class SeverityViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin
     move_on_destroy_project_default_field = "default_severity"
 
 
-class PriorityViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
+class PriorityViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+                      ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.Priority
     serializer_class = serializers.PrioritySerializer
     permission_classes = (permissions.PriorityPermission,)
@@ -434,7 +458,8 @@ class PriorityViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin
     move_on_destroy_project_default_field = "default_priority"
 
 
-class IssueTypeViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
+class IssueTypeViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+                       ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.IssueType
     serializer_class = serializers.IssueTypeSerializer
     permission_classes = (permissions.IssueTypePermission,)
@@ -448,7 +473,8 @@ class IssueTypeViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixi
     move_on_destroy_project_default_field = "default_issue_type"
 
 
-class IssueStatusViewSet(MoveOnDestroyMixin, ModelCrudViewSet, BulkUpdateOrderMixin):
+class IssueStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+                         ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.IssueStatus
     serializer_class = serializers.IssueStatusSerializer
     permission_classes = (permissions.IssueStatusPermission,)
@@ -479,7 +505,7 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
 ## Members & Invitations
 ######################################################
 
-class MembershipViewSet(ModelCrudViewSet):
+class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
     model = models.Membership
     admin_serializer_class = serializers.MembershipAdminSerializer
     serializer_class = serializers.MembershipSerializer
@@ -517,6 +543,8 @@ class MembershipViewSet(ModelCrudViewSet):
         project = models.Project.objects.get(id=data["project_id"])
         invitation_extra_text = data.get("invitation_extra_text", None)
         self.check_permissions(request, 'bulk_create', project)
+        if project.blocked_code is not None:
+            raise exc.Blocked(_("Blocked element"))
 
         # TODO: this should be moved to main exception handler instead
         # of handling explicit exception catchin here.
@@ -538,6 +566,7 @@ class MembershipViewSet(ModelCrudViewSet):
         invitation = self.get_object()
 
         self.check_permissions(request, 'resend_invitation', invitation.project)
+        self.pre_conditions_on_save(invitation)
 
         services.send_invitation(invitation=invitation)
         return response.NoContent()
