@@ -144,7 +144,7 @@ LANGUAGES = [
     #("ta", "தமிழ்"),  # Tamil
     #("te", "తెలుగు"),  # Telugu
     #("th", "ภาษาไทย"),  # Thai
-    #("tr", "Türkçe"),  # Turkish
+    ("tr", "Türkçe"),  # Turkish
     #("tt", "татар теле"),  # Tatar
     #("udm", "удмурт кыл"),  # Udmurt
     #("uk", "Українська"),  # Ukrainian
