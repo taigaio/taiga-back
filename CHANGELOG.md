@@ -18,6 +18,8 @@
     - by fans (last week/moth/year/all time)
     - by activity (last week/moth/year/all time)
 - Show stats for discover secction
+- i18n.
+  - Add swedish (sv) translation.
 
 ### Misc
 - Lots of small and not so small bugfixes.

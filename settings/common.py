@@ -139,7 +139,7 @@ LANGUAGES = [
     #("sq", "Shqip"),  # Albanian
     #("sr", "Српски"),  # Serbian
     #("sr-latn", "srpski"),  # Serbian Latin
-    #("sv", "Svenska"),  # Swedish
+    ("sv", "Svenska"),  # Swedish
     #("sw", "Kiswahili"),  # Swahili
     #("ta", "தமிழ்"),  # Tamil
     #("te", "తెలుగు"),  # Telugu
