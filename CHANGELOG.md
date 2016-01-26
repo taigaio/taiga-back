@@ -1,7 +1,7 @@
 # Changelog #
 
 
-## 1.10.0 Dryas Octopetala (Unreleased)
+## 1.10.0 Dryas Octopetala (2016-01-30)
 
 ### Features
 - Add logo field to project model
