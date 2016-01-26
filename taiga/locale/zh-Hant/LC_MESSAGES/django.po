@@ -4,16 +4,16 @@
 #
 # Translators:
 # Alvis <pwmvx1289@hotmail.com>, 2015
-# Chi-Hsun Tsai <chihsun.tsai@gmail.com>, 2015
+# Chi-Hsun Tsai <chihsun.tsai@gmail.com>, 2015-2016
 # David Barragán <bameda@gmail.com>, 2015
 # Matthew Lien <BlueT@bluet.org>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-22 13:09+0100\n"
-"PO-Revision-Date: 2016-01-22 12:10+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2016-01-26 14:55+0100\n"
+"PO-Revision-Date: 2016-01-26 03:45+0000\n"
+"Last-Translator: Chi-Hsun Tsai <chihsun.tsai@gmail.com>\n"
 "Language-Team: Chinese Traditional (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/zh-Hant/)\n"
 "MIME-Version: 1.0\n"
@@ -61,7 +61,7 @@ msgstr "使用者已被註冊。"
 
 #: taiga/auth/services.py:145
 msgid "This user is already a member of the project."
-msgstr ""
+msgstr "使用者已是專案成員"
 
 #: taiga/auth/services.py:171
 msgid "Error on creating new user."
@@ -816,7 +816,7 @@ msgstr "[%(project)s] 您堆存的專案已滙入"
 #: taiga/external_apps/api.py:41 taiga/external_apps/api.py:67
 #: taiga/external_apps/api.py:74
 msgid "Authentication required"
-msgstr ""
+msgstr "要求取得授權"
 
 #: taiga/external_apps/models.py:34
 #: taiga/projects/custom_attributes/models.py:35
@@ -831,11 +831,11 @@ msgstr "姓名"
 
 #: taiga/external_apps/models.py:36
 msgid "Icon url"
-msgstr ""
+msgstr "網址圖標"
 
 #: taiga/external_apps/models.py:37
 msgid "web"
-msgstr ""
+msgstr "網頁"
 
 #: taiga/external_apps/models.py:38 taiga/projects/attachments/models.py:75
 #: taiga/projects/custom_attributes/models.py:36
@@ -848,20 +848,20 @@ msgstr "描述"
 
 #: taiga/external_apps/models.py:40
 msgid "Next url"
-msgstr ""
+msgstr "下一個網址"
 
 #: taiga/external_apps/models.py:42
 msgid "secret key for ciphering the application tokens"
-msgstr ""
+msgstr "應用程式的密碼字符數列"
 
 #: taiga/external_apps/models.py:56 taiga/projects/likes/models.py:30
 #: taiga/projects/notifications/models.py:85 taiga/projects/votes/models.py:51
 msgid "user"
-msgstr ""
+msgstr "使用者"
 
 #: taiga/external_apps/models.py:60
 msgid "application"
-msgstr ""
+msgstr "應用程式"
 
 #: taiga/feedback/models.py:24 taiga/users/models.py:117
 msgid "full name"
@@ -1312,7 +1312,7 @@ msgstr "您無觀看權限"
 
 #: taiga/projects/attachments/api.py:48
 msgid "Partial updates are not supported"
-msgstr ""
+msgstr "不支援部份更新"
 
 #: taiga/projects/attachments/api.py:63
 msgid "Project ID not matches between object and project"
@@ -1363,7 +1363,7 @@ msgstr "附加檔案"
 
 #: taiga/projects/attachments/models.py:72
 msgid "sha1"
-msgstr ""
+msgstr "sha1"
 
 #: taiga/projects/attachments/models.py:74
 msgid "is deprecated"
@@ -1405,7 +1405,7 @@ msgstr "多行列文字"
 
 #: taiga/projects/custom_attributes/choices.py:28
 msgid "Date"
-msgstr ""
+msgstr "日期"
 
 #: taiga/projects/custom_attributes/models.py:39
 #: taiga/projects/issues/models.py:47
@@ -1630,11 +1630,11 @@ msgstr "外部參考"
 
 #: taiga/projects/likes/models.py:35
 msgid "Like"
-msgstr ""
+msgstr "喜歡"
 
 #: taiga/projects/likes/models.py:36
 msgid "Likes"
-msgstr ""
+msgstr "喜歡"
 
 #: taiga/projects/milestones/models.py:40 taiga/projects/models.py:165
 #: taiga/projects/models.py:479 taiga/projects/models.py:543
@@ -1735,7 +1735,7 @@ msgstr "預設議題類型"
 
 #: taiga/projects/models.py:171
 msgid "logo"
-msgstr ""
+msgstr "圖標"
 
 #: taiga/projects/models.py:181
 msgid "members"
@@ -1791,11 +1791,11 @@ msgstr "私密"
 
 #: taiga/projects/models.py:218
 msgid "is featured"
-msgstr ""
+msgstr " 受矚目的"
 
 #: taiga/projects/models.py:221
 msgid "is looking for people"
-msgstr ""
+msgstr "正在找人"
 
 #: taiga/projects/models.py:223
 msgid "loking for people note"
@@ -1812,31 +1812,31 @@ msgstr "更新日期時間"
 #: taiga/projects/models.py:242 taiga/projects/models.py:254
 #: taiga/projects/votes/models.py:29
 msgid "count"
-msgstr ""
+msgstr "數量"
 
 #: taiga/projects/models.py:245
 msgid "fans last week"
-msgstr ""
+msgstr "上週粉絲"
 
 #: taiga/projects/models.py:248
 msgid "fans last month"
-msgstr ""
+msgstr "上個月粉絲"
 
 #: taiga/projects/models.py:251
 msgid "fans last year"
-msgstr ""
+msgstr "去年粉絲"
 
 #: taiga/projects/models.py:257
 msgid "activity last week"
-msgstr ""
+msgstr "上週活躍成員"
 
 #: taiga/projects/models.py:260
 msgid "activity last month"
-msgstr ""
+msgstr "上月活躍成員"
 
 #: taiga/projects/models.py:263
 msgid "activity last year"
-msgstr ""
+msgstr "去年活躍成員"
 
 #: taiga/projects/models.py:466
 msgid "modules config"
@@ -1904,15 +1904,15 @@ msgstr "角色"
 
 #: taiga/projects/notifications/choices.py:29
 msgid "Involved"
-msgstr ""
+msgstr "相關涉入者"
 
 #: taiga/projects/notifications/choices.py:30
 msgid "All"
-msgstr ""
+msgstr "所有"
 
 #: taiga/projects/notifications/choices.py:31
 msgid "None"
-msgstr ""
+msgstr "無"
 
 #: taiga/projects/notifications/models.py:62
 msgid "created date time"
@@ -1929,7 +1929,7 @@ msgstr "通知用戶"
 #: taiga/projects/notifications/models.py:91
 #: taiga/projects/notifications/models.py:92
 msgid "Watched"
-msgstr ""
+msgstr "已觀注"
 
 #: taiga/projects/notifications/services.py:66
 #: taiga/projects/notifications/services.py:80
@@ -1938,7 +1938,7 @@ msgstr "通知特定使用者與專案退出"
 
 #: taiga/projects/notifications/services.py:429
 msgid "Invalid value for notify level"
-msgstr ""
+msgstr "通知水平的無效值"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-change-body-html.jinja:4
 #, python-format
@@ -3158,7 +3158,7 @@ msgstr "無權限更動此使用者故事的狀態"
 #: taiga/projects/userstories/api.py:260
 #, python-brace-format
 msgid "Generating the user story #{ref} - {subject}"
-msgstr ""
+msgstr "産生使用者故事 #{ref} - {subject}"
 
 #: taiga/projects/userstories/models.py:39
 msgid "role"
@@ -3232,7 +3232,7 @@ msgstr "href"
 
 #: taiga/timeline/signals.py:70
 msgid "Check the history API for the exact diff"
-msgstr ""
+msgstr "檢查API過去資料以找出差異"
 
 #: taiga/users/admin.py:51
 msgid "Personal info"

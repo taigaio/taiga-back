@@ -8,14 +8,15 @@
 # Dmitry Lobanov <cyborgandroid.kun@gmail.com>, 2015
 # Dmitry Vinokurov <gim6626@gmail.com>, 2015
 # Igor Bezukladnikov <corrector@at.pstu.ru>, 2016
+# ilyar, 2016
 # Марат <maratrever@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-22 13:09+0100\n"
-"PO-Revision-Date: 2016-01-22 12:10+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2016-01-26 14:55+0100\n"
+"PO-Revision-Date: 2016-01-25 18:16+0000\n"
+"Last-Translator: ilyar\n"
 "Language-Team: Russian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -1767,7 +1768,7 @@ msgstr "тип запроса по умолчанию"
 
 #: taiga/projects/models.py:171
 msgid "logo"
-msgstr ""
+msgstr "лготип"
 
 #: taiga/projects/models.py:181
 msgid "members"
@@ -1860,15 +1861,15 @@ msgstr ""
 
 #: taiga/projects/models.py:257
 msgid "activity last week"
-msgstr ""
+msgstr "активность за неделю"
 
 #: taiga/projects/models.py:260
 msgid "activity last month"
-msgstr ""
+msgstr "активность за месяц"
 
 #: taiga/projects/models.py:263
 msgid "activity last year"
-msgstr ""
+msgstr "активность за год"
 
 #: taiga/projects/models.py:466
 msgid "modules config"

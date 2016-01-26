@@ -4,14 +4,15 @@
 #
 # Translators:
 # Can Aydin <ca@fluytsoftware.com>, 2015
-# catborise <muhammetalisag@gmail.com>, 2015
+# catborise <muhammetalisag@gmail.com>, 2015-2016
+# Mert Torun <mert@merttorun.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-22 13:09+0100\n"
-"PO-Revision-Date: 2016-01-22 12:10+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2016-01-26 14:55+0100\n"
+"PO-Revision-Date: 2016-01-26 13:54+0000\n"
+"Last-Translator: Mert Torun <mert@merttorun.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/tr/)\n"
 "MIME-Version: 1.0\n"
@@ -60,7 +61,7 @@ msgstr "Kullanıcı zaten kayıtlı."
 
 #: taiga/auth/services.py:145
 msgid "This user is already a member of the project."
-msgstr ""
+msgstr "Bu kullanızı halihazırda zaten projenin bir üyesi."
 
 #: taiga/auth/services.py:171
 msgid "Error on creating new user."
@@ -88,6 +89,8 @@ msgstr "%s' değeri ya Doğru ya da Yanlış olmalıdır."
 msgid ""
 "Enter a valid 'slug' consisting of letters, numbers, underscores or hyphens."
 msgstr ""
+"Harfler, rakamlar, altçizgi ve kesme işaretinden oluşan geçerli bir 'satır' "
+"girin."
 
 #: taiga/base/api/fields.py:556
 #, python-format
@@ -174,6 +177,8 @@ msgstr "İbraz edilen dosya boş"
 msgid ""
 "Ensure this filename has at most %(max)d characters (it has %(length)d)."
 msgstr ""
+"Bu dosya adının en fazla %(max)d karakterden oluştuğundan (uzunluğunun "
+"%(length)d olduğundan) emin olun"
 
 #: taiga/base/api/fields.py:981
 msgid "Please either submit a file or check the clear checkbox, not both."
@@ -191,7 +196,7 @@ msgstr ""
 
 #: taiga/base/api/pagination.py:213
 msgid "Page is not 'last', nor can it be converted to an int."
-msgstr ""
+msgstr "Sayfa 'last'(son) değil, tamsayıya da çevrilemiyor."
 
 #: taiga/base/api/pagination.py:217
 #, python-format
@@ -1336,7 +1341,7 @@ msgstr "sha1"
 
 #: taiga/projects/attachments/models.py:74
 msgid "is deprecated"
-msgstr ""
+msgstr "kaldırıldı"
 
 #: taiga/projects/attachments/models.py:76
 #: taiga/projects/custom_attributes/models.py:40
@@ -1350,7 +1355,7 @@ msgstr "sıra"
 
 #: taiga/projects/choices.py:22
 msgid "AppearIn"
-msgstr ""
+msgstr "AppearIn"
 
 #: taiga/projects/choices.py:23
 msgid "Jitsi"
@@ -1454,11 +1459,11 @@ msgstr "Güncellenmiş ek"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:68
 msgid "deprecated"
-msgstr ""
+msgstr "kaldırıldı"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:70
 msgid "not deprecated"
-msgstr ""
+msgstr "kaldırılmadı"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:86
 msgid "Deleted attachment"
@@ -1610,7 +1615,7 @@ msgstr "Beğeniler"
 #: taiga/projects/models.py:626 taiga/projects/models.py:684
 #: taiga/projects/wiki/models.py:32 taiga/users/models.py:253
 msgid "slug"
-msgstr ""
+msgstr "satır"
 
 #: taiga/projects/milestones/models.py:45
 msgid "estimated start date"
@@ -1627,11 +1632,11 @@ msgstr "kapatılmış"
 
 #: taiga/projects/milestones/models.py:55
 msgid "disponibility"
-msgstr ""
+msgstr "taşınabilirlik"
 
 #: taiga/projects/milestones/models.py:80
 msgid "The estimated start must be previous to the estimated finish."
-msgstr ""
+msgstr "Tahmini başlangıç, tahmini bitişten önce olmalı"
 
 #: taiga/projects/milestones/validators.py:12
 msgid "There's no sprint with that id"
@@ -1704,7 +1709,7 @@ msgstr "varsayılan talep tipi"
 
 #: taiga/projects/models.py:171
 msgid "logo"
-msgstr ""
+msgstr "logo"
 
 #: taiga/projects/models.py:181
 msgid "members"
@@ -1760,11 +1765,11 @@ msgstr "gizli"
 
 #: taiga/projects/models.py:218
 msgid "is featured"
-msgstr ""
+msgstr "vitrinde"
 
 #: taiga/projects/models.py:221
 msgid "is looking for people"
-msgstr ""
+msgstr "insan arıyor"
 
 #: taiga/projects/models.py:223
 msgid "loking for people note"
@@ -1785,27 +1790,27 @@ msgstr "sayı"
 
 #: taiga/projects/models.py:245
 msgid "fans last week"
-msgstr ""
+msgstr "geçen hafta fanları"
 
 #: taiga/projects/models.py:248
 msgid "fans last month"
-msgstr ""
+msgstr "geçen ayın fanları"
 
 #: taiga/projects/models.py:251
 msgid "fans last year"
-msgstr ""
+msgstr "geçen yılın fanları"
 
 #: taiga/projects/models.py:257
 msgid "activity last week"
-msgstr ""
+msgstr "geçen haftanın aktiviteleri"
 
 #: taiga/projects/models.py:260
 msgid "activity last month"
-msgstr ""
+msgstr "geçen ayın aktiviteleri"
 
 #: taiga/projects/models.py:263
 msgid "activity last year"
-msgstr ""
+msgstr "geçen yılın aktiviteleri"
 
 #: taiga/projects/models.py:466
 msgid "modules config"
@@ -1873,7 +1878,7 @@ msgstr "roller"
 
 #: taiga/projects/notifications/choices.py:29
 msgid "Involved"
-msgstr ""
+msgstr "Müdahil"
 
 #: taiga/projects/notifications/choices.py:30
 msgid "All"
@@ -1965,6 +1970,15 @@ msgid ""
 "    <p><small>The Taiga Team</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Yeni sorun oluşturuldu</h1>\n"
+"    <p>Merhaba %(user)s,<br />%(changer)s, %(project)s projesinde yeni bir "
+"sorun oluşturdu</p>\n"
+"    <p>Sorun #%(ref)s %(subject)s</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Soruna git #%(ref)s "
+"%(subject)s\">Soruna git</a>\n"
+"    <p><small>Taiga ekibi</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/issues/issue-create-body-text.jinja:1
 #, python-format
@@ -1977,6 +1991,15 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Yeni sorun oluşturuldu\n"
+"Merhaba %(user)s, %(changer)s, %(project)s projesinde yeni bir sorun "
+"oluşturdu:\n"
+"#%(ref)s %(subject)s \n"
+"%(url)s\n"
+"\n"
+"---\n"
+"Taiga ekibi\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-create-subject.jinja:1
 #, python-format
