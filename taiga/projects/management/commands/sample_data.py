@@ -39,7 +39,7 @@ from taiga.projects.issues.models import *
 from taiga.projects.wiki.models import *
 from taiga.projects.attachments.models import *
 from taiga.projects.custom_attributes.models import *
-from taiga.projects.custom_attributes.choices import TYPES_CHOICES, TEXT_TYPE, MULTILINE_TYPE, DATE_TYPE
+from taiga.projects.custom_attributes.choices import TYPES_CHOICES, TEXT_TYPE, MULTILINE_TYPE, DATE_TYPE, URL_TYPE
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.likes.services import add_like
 from taiga.projects.votes.services import add_vote
@@ -91,6 +91,12 @@ SUBJECT_CHOICES = [
     "Feature/improved image admin",
     "Support for bulk actions",
     "Migrate to Python 3 and milk a beautiful cow"]
+
+URL_CHOICES = [
+    "https://taiga.io",
+    "https://blog.taiga.io",
+    "https://tree.taiga.io",
+    "https://tribe.taiga.io"]
 
 BASE_USERS = getattr(settings, "SAMPLE_DATA_BASE_USERS", {})
 NUM_USERS = getattr(settings, "SAMPLE_DATA_NUM_USERS", 10)
@@ -279,6 +285,8 @@ class Command(BaseCommand):
             return self.sd.paragraphs(2, 4)
         if type == DATE_TYPE:
             return self.sd.future_date(min_distance=0, max_distance=365)
+        if type == DATE_URL:
+            return self.sd.choice(URL_CHOICES)
         return None
 
     def create_bug(self, project):
