@@ -64,6 +64,9 @@ class BaseWebhookApiViewSet(GenericViewSet):
         if not self._validate_signature(project, request):
             raise exc.BadRequest(_("Bad signature"))
 
+        if project.blocked_code is not None:
+            raise exc.Blocked(_("Blocked element"))
+
         event_name = self._get_event_name(request)
 
         payload = self._get_payload(request)
