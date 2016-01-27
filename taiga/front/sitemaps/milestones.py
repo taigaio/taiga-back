@@ -34,6 +34,9 @@ class MilestonesSitemap(Sitemap):
                                                                                          "view_us",
                                                                                          "view_tasks"]))
 
+        # Exclude blocked projects
+        queryset = queryset.filter(project__blocked_code__isnull=True)
+
         # Project data is needed
         queryset = queryset.select_related("project")
 

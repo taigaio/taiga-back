@@ -32,6 +32,9 @@ class WikiPagesSitemap(Sitemap):
                                                   Q(project__is_private=True,
                                                     project__anon_permissions__contains=["view_wiki_pages"]))
 
+        # Exclude blocked projects
+        queryset = queryset.filter(project__blocked_code__isnull=True)
+
         # Exclude wiki pages from projects without wiki section enabled
         queryset = queryset.exclude(project__is_wiki_activated=False)
 

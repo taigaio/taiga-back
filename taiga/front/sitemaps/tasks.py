@@ -32,6 +32,9 @@ class TasksSitemap(Sitemap):
                                              Q(project__is_private=True,
                                                project__anon_permissions__contains=["view_tasks"]))
 
+        # Exclude blocked projects
+        queryset = queryset.filter(project__blocked_code__isnull=True)
+
         # Project data is needed
         queryset = queryset.select_related("project")
 
