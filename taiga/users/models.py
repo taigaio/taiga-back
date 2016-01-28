@@ -42,6 +42,7 @@ from taiga.auth.tokens import get_token_for_user
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.iterators import split_by_n
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+from taiga.projects.choices import BLOCKED_BY_OWNER_LEAVING
 from taiga.projects.notifications.choices import NotifyLevel
 
 from easy_thumbnails.files import get_thumbnailer
@@ -244,6 +245,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.photo = None
         self.save()
         self.auth_data.all().delete()
+
+        #Blocking all owned users
+        self.owned_projects.update(blocked_code=BLOCKED_BY_OWNER_LEAVING)
 
 
 class Role(models.Model):
