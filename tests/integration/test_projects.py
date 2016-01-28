@@ -249,7 +249,22 @@ def test_leave_project_valid_membership_only_owner(client):
     url = reverse("projects-leave", args=(project.id,))
     response = client.post(url)
     assert response.status_code == 403
-    assert response.data["_error_message"] == "You can't leave the project if there are no more owners"
+    assert response.data["_error_message"] == "You can't leave the project if you are the owner or there are no more admins"
+
+
+def test_leave_project_valid_membership_real_owner(client):
+    owner_user = f.UserFactory.create()
+    member_user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=owner_user)
+    role = f.RoleFactory.create(project=project, permissions=["view_project"])
+    f.MembershipFactory.create(project=project, user=owner_user, role=role, is_owner=True)
+    f.MembershipFactory.create(project=project, user=member_user, role=role, is_owner=True)
+
+    client.login(owner_user)
+    url = reverse("projects-leave", args=(project.id,))
+    response = client.post(url)
+    assert response.status_code == 403
+    assert response.data["_error_message"] == "You can't leave the project if you are the owner or there are no more admins"
 
 
 def test_leave_project_invalid_membership(client):
@@ -286,7 +301,22 @@ def test_delete_membership_only_owner(client):
     url = reverse("memberships-detail", args=(membership.id,))
     response = client.delete(url)
     assert response.status_code == 400
-    assert response.data["_error_message"] == "At least one of the user must be an active admin"
+    assert response.data["_error_message"] == "The project must have an owner and at least one of the users must be an active admin"
+
+
+def test_delete_membership_real_owner(client):
+    owner_user = f.UserFactory.create()
+    member_user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=owner_user)
+    role = f.RoleFactory.create(project=project, permissions=["view_project"])
+    owner_membership = f.MembershipFactory.create(project=project, user=owner_user, role=role, is_owner=True)
+    f.MembershipFactory.create(project=project, user=member_user, role=role, is_owner=True)
+
+    client.login(owner_user)
+    url = reverse("memberships-detail", args=(owner_membership.id,))
+    response = client.delete(url)
+    assert response.status_code == 400
+    assert response.data["_error_message"] == "The project must have an owner and at least one of the users must be an active admin"
 
 
 def test_edit_membership_only_owner(client):
@@ -301,7 +331,7 @@ def test_edit_membership_only_owner(client):
     url = reverse("memberships-detail", args=(membership.id,))
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 400
-    assert response.data["is_owner"][0] == "At least one of the user must be an active admin"
+    assert response.data["is_owner"][0] == "The project must have an owner and at least one of the users must be an active admin"
 
 
 def test_anon_permissions_generation_when_making_project_public(client):

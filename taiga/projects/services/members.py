@@ -36,15 +36,15 @@ def remove_user_from_project(user, project):
     models.Membership.objects.get(project=project, user=user).delete()
 
 
-def project_has_valid_owners(project, exclude_user=None):
+def project_has_valid_admins(project, exclude_user=None):
     """
     Checks if the project has any owner membership with a user different than the specified
     """
-    owner_memberships = project.memberships.filter(is_owner=True, user__is_active=True)
+    admin_memberships = project.memberships.filter(is_owner=True, user__is_active=True)
     if exclude_user:
-        owner_memberships = owner_memberships.exclude(user=exclude_user)
+        admin_memberships = admin_memberships.exclude(user=exclude_user)
 
-    return owner_memberships.count() > 0
+    return admin_memberships.count() > 0
 
 
 def can_user_leave_project(user, project):
@@ -52,7 +52,11 @@ def can_user_leave_project(user, project):
     if not membership.is_owner:
          return True
 
-    if not project_has_valid_owners(project, exclude_user=user):
+    #The user can't leave if is the real owner of the project
+    if project.owner == user:
+        return False
+
+    if not project_has_valid_admins(project, exclude_user=user):
         return False
 
     return True

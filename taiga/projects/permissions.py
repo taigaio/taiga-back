@@ -37,8 +37,7 @@ class CanLeaveProject(PermissionComponent):
 
         try:
             if not services.can_user_leave_project(request.user, obj):
-                raise exc.PermissionDenied(_("You can't leave the project if there are no "
-                                             "more owners"))
+                raise exc.PermissionDenied(_("You can't leave the project if you are the owner or there are no more admins"))
             return True
         except Membership.DoesNotExist:
             return False
