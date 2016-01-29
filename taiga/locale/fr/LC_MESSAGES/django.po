@@ -8,6 +8,7 @@
 # Djyp Forest Fortin <contact@h3p.eu>, 2015
 # Florent B. <me@kxrz.me>, 2015
 # Gautier Ferandelle <gautier.ferandelle@gmail.com>, 2016
+# Laurent Cabaret <laurent.cabaret@ecp.fr>, 2016
 # Louis-Michel Couture <louim_1@hotmail.com>, 2015
 # Matthieu Durocher <matthieu@technocyclope.com>, 2015
 # naekos <brice.transifex@coquereau.fr>, 2015
@@ -20,9 +21,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-26 14:55+0100\n"
-"PO-Revision-Date: 2016-01-22 12:10+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2016-01-29 10:21+0100\n"
+"PO-Revision-Date: 2016-01-26 14:34+0000\n"
+"Last-Translator: Laurent Cabaret <laurent.cabaret@ecp.fr>\n"
 "Language-Team: French (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -71,7 +72,7 @@ msgstr "Cet utilisateur est déjà inscrit."
 
 #: taiga/auth/services.py:145
 msgid "This user is already a member of the project."
-msgstr "Cet utilisateur est déjà membre de ce projet."
+msgstr "L'utilisateur est déjà un membre du projet"
 
 #: taiga/auth/services.py:171
 msgid "Error on creating new user."
@@ -603,7 +604,7 @@ msgstr "Nom dupliqué pour ce projet"
 
 #: taiga/export_import/tasks.py:54 taiga/export_import/tasks.py:55
 msgid "Error generating project dump"
-msgstr "Error dans la génération du dump du projet"
+msgstr "Erreur dans la génération du dump du projet"
 
 #: taiga/export_import/tasks.py:86 taiga/export_import/tasks.py:87
 msgid "Error loading project dump"
@@ -1770,11 +1771,11 @@ msgstr "est privé"
 
 #: taiga/projects/models.py:218
 msgid "is featured"
-msgstr ""
+msgstr "est mis en avant"
 
 #: taiga/projects/models.py:221
 msgid "is looking for people"
-msgstr ""
+msgstr "est à la recherche de main d'oeuvre"
 
 #: taiga/projects/models.py:223
 msgid "loking for people note"
@@ -1791,31 +1792,31 @@ msgstr "date de mise à jour"
 #: taiga/projects/models.py:242 taiga/projects/models.py:254
 #: taiga/projects/votes/models.py:29
 msgid "count"
-msgstr ""
+msgstr "total"
 
 #: taiga/projects/models.py:245
 msgid "fans last week"
-msgstr ""
+msgstr "fans la semaine dernière"
 
 #: taiga/projects/models.py:248
 msgid "fans last month"
-msgstr ""
+msgstr "fans le mois dernier"
 
 #: taiga/projects/models.py:251
 msgid "fans last year"
-msgstr ""
+msgstr "fans l'année dernière"
 
 #: taiga/projects/models.py:257
 msgid "activity last week"
-msgstr ""
+msgstr "activité de la semaine écoulée"
 
 #: taiga/projects/models.py:260
 msgid "activity last month"
-msgstr ""
+msgstr "activité du mois écoulé"
 
 #: taiga/projects/models.py:263
 msgid "activity last year"
-msgstr ""
+msgstr "activité de l'année écoulée"
 
 #: taiga/projects/models.py:466
 msgid "modules config"
@@ -1887,7 +1888,7 @@ msgstr "Impliqué"
 
 #: taiga/projects/notifications/choices.py:30
 msgid "All"
-msgstr ""
+msgstr "Toutes"
 
 #: taiga/projects/notifications/choices.py:31
 msgid "None"
