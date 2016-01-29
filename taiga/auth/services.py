@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -141,7 +142,7 @@ def private_register_for_existing_user(token:str, username:str, password:str):
         membership.user = user
         membership.save(update_fields=["user"])
     except IntegrityError:
-        raise exc.IntegrityError(_("Membership with user is already exists."))
+        raise exc.IntegrityError(_("This user is already a member of the project."))
 
     send_register_email(user)
     return user

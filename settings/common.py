@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -138,12 +139,12 @@ LANGUAGES = [
     #("sq", "Shqip"),  # Albanian
     #("sr", "Српски"),  # Serbian
     #("sr-latn", "srpski"),  # Serbian Latin
-    #("sv", "Svenska"),  # Swedish
+    ("sv", "Svenska"),  # Swedish
     #("sw", "Kiswahili"),  # Swahili
     #("ta", "தமிழ்"),  # Tamil
     #("te", "తెలుగు"),  # Telugu
     #("th", "ภาษาไทย"),  # Thai
-    #("tr", "Türkçe"),  # Turkish
+    ("tr", "Türkçe"),  # Turkish
     #("tt", "татар теле"),  # Tatar
     #("udm", "удмурт кыл"),  # Udmurt
     #("uk", "Українська"),  # Ukrainian
@@ -445,24 +446,38 @@ SOUTH_MIGRATION_MODULES = {
     'easy_thumbnails': 'easy_thumbnails.south_migrations',
 }
 
-DEFAULT_AVATAR_SIZE = 80                # 80x80 pixels
-DEFAULT_BIG_AVATAR_SIZE = 300           # 300x300 pixels
-DEFAULT_TIMELINE_IMAGE_SIZE = 640       # 640x??? pixels
-DEFAUL_CARD_IMAGE_WIDTH = 300           # 300 pixels
-DEFAUL_CARD_IMAGE_HEIGHT = 200           # 200 pixels
+
+
+
+THN_AVATAR_SIZE = 80                # 80x80 pixels
+THN_AVATAR_BIG_SIZE = 300           # 300x300 pixels
+THN_LOGO_SMALL_SIZE = 80            # 80x80 pixels
+THN_LOGO_BIG_SIZE = 300             # 300x300 pixels
+THN_TIMELINE_IMAGE_SIZE = 640       # 640x??? pixels
+THN_CARD_IMAGE_WIDTH = 300          # 300 pixels
+THN_CARD_IMAGE_HEIGHT = 200         # 200 pixels
+
+THN_AVATAR_SMALL = "avatar"
+THN_AVATAR_BIG = "big-avatar"
+THN_LOGO_SMALL = "logo-small"
+THN_LOGO_BIG = "logo-big"
+THN_ATTACHMENT_TIMELINE = "timeline-image"
+THN_ATTACHMENT_CARD = "card-image"
 
 THUMBNAIL_ALIASES = {
-    '': {
-        'avatar': {'size': (DEFAULT_AVATAR_SIZE, DEFAULT_AVATAR_SIZE), 'crop': True},
-        'big-avatar': {'size': (DEFAULT_BIG_AVATAR_SIZE, DEFAULT_BIG_AVATAR_SIZE), 'crop': True},
-        'timeline-image': {'size': (DEFAULT_TIMELINE_IMAGE_SIZE, 0), 'crop': True},
-        'card-image': {'size': (DEFAUL_CARD_IMAGE_WIDTH, DEFAUL_CARD_IMAGE_HEIGHT), 'crop': True},
+    "": {
+        THN_AVATAR_SMALL: {"size": (THN_AVATAR_SIZE, THN_AVATAR_SIZE), "crop": True},
+        THN_AVATAR_BIG: {"size": (THN_AVATAR_BIG_SIZE, THN_AVATAR_BIG_SIZE), "crop": True},
+        THN_LOGO_SMALL: {"size": (THN_LOGO_SMALL_SIZE, THN_LOGO_SMALL_SIZE), "crop": True},
+        THN_LOGO_BIG: {"size": (THN_LOGO_BIG_SIZE, THN_LOGO_BIG_SIZE), "crop": True},
+        THN_ATTACHMENT_TIMELINE: {"size": (THN_TIMELINE_IMAGE_SIZE, 0), "crop": True},
+        THN_ATTACHMENT_CARD: {"size": (THN_CARD_IMAGE_WIDTH, THN_CARD_IMAGE_HEIGHT), "crop": True},
     },
 }
 
 # GRAVATAR_DEFAULT_AVATAR = "img/user-noimage.png"
 GRAVATAR_DEFAULT_AVATAR = ""
-GRAVATAR_AVATAR_SIZE = DEFAULT_AVATAR_SIZE
+GRAVATAR_AVATAR_SIZE = THN_AVATAR_SIZE
 
 TAGS_PREDEFINED_COLORS = ["#fce94f", "#edd400", "#c4a000", "#8ae234",
                           "#73d216", "#4e9a06", "#d3d7cf", "#fcaf3e",

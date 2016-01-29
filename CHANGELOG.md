@@ -1,6 +1,31 @@
 # Changelog #
 
 
+## 1.10.0 Dryas Octopetala (2016-01-30)
+
+### Features
+- Add logo field to project model
+- Add is_featured field to project model
+- Add is_looking_for_people and looking_for_people_note fields to project model
+- Filter projects list by
+    - is_looking_for_people
+    - is_featured
+    - is_backlog_activated 
+    - is_kanban_activated
+- Search projects by text query (order by ranking name > tags > description)
+- Order projects list:
+    - alphabetically by default
+    - by fans (last week/moth/year/all time)
+    - by activity (last week/moth/year/all time)
+- Show stats for discover secction
+- i18n.
+  - Add swedish (sv) translation.
+  - Add turkish (tr) translation.
+
+### Misc
+- Lots of small and not so small bugfixes.
+
+
 ## 1.9.1 Taiga Tribe (2016-01-05)
 
 ### Features
@@ -20,7 +45,6 @@
 ## 1.9.0 Abies Siberica (2015-11-02)
 
 ### Features
-
 - Project can be starred or unstarred and the fans list can be obtained.
 - US, tasks and Issues can be upvoted or downvoted and the voters list can be obtained.
 - Now users can watch public issues, tasks and user stories.

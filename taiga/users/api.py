@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -222,7 +223,6 @@ class UsersViewSet(ModelCrudViewSet):
         except Exception:
             raise exc.WrongArguments(_("Invalid image format"))
 
-        request.user.delete_photo()
         request.user.photo = avatar
         request.user.save(update_fields=["photo"])
         user_data = self.admin_serializer_class(request.user).data
@@ -235,7 +235,7 @@ class UsersViewSet(ModelCrudViewSet):
         Remove the avatar of current logged user.
         """
         self.check_permissions(request, "remove_avatar", None)
-        request.user.delete_photo()
+        request.user.photo = None
         request.user.save(update_fields=["photo"])
         user_data = self.admin_serializer_class(request.user).data
         return response.Ok(user_data)

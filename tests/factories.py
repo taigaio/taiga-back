@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -20,6 +21,8 @@ import threading
 from datetime import date, timedelta
 
 from django.conf import settings
+
+from .utils import DUMMY_BMP_DATA
 
 import factory
 
@@ -68,6 +71,8 @@ class ProjectFactory(Factory):
 
     name = factory.Sequence(lambda n: "Project {}".format(n))
     slug = factory.Sequence(lambda n: "project-{}-slug".format(n))
+    logo = factory.django.FileField(data=DUMMY_BMP_DATA)
+
     description = "Project description"
     owner = factory.SubFactory("tests.factories.UserFactory")
     creation_template = factory.SubFactory("tests.factories.ProjectTemplateFactory")
@@ -420,15 +425,6 @@ class LikeFactory(Factory):
     content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
     object_id = factory.Sequence(lambda n: n)
     user = factory.SubFactory("tests.factories.UserFactory")
-
-
-class LikesFactory(Factory):
-    class Meta:
-        model = "likes.Likes"
-        strategy = factory.CREATE_STRATEGY
-
-    content_type = factory.SubFactory("tests.factories.ContentTypeFactory")
-    object_id = factory.Sequence(lambda n: n)
 
 
 class VoteFactory(Factory):

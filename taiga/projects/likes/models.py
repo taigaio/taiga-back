@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -19,27 +20,6 @@ from django.conf import settings
 from django.contrib.contenttypes import generic
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
-
-class Likes(models.Model):
-    content_type = models.ForeignKey("contenttypes.ContentType")
-    object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey("content_type", "object_id")
-    count = models.PositiveIntegerField(null=False, blank=False, default=0, verbose_name=_("count"))
-
-    class Meta:
-        verbose_name = _("Likes")
-        verbose_name_plural = _("Likes")
-        unique_together = ("content_type", "object_id")
-
-    @property
-    def project(self):
-        if hasattr(self.content_object, 'project'):
-            return self.content_object.project
-        return None
-
-    def __str__(self):
-        return self.count
 
 
 class Like(models.Model):

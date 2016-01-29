@@ -14,7 +14,6 @@
 
 from django.apps import AppConfig
 from django.apps import apps
-from django.conf import settings
 from django.conf.urls import include, url
 
 from .routers import router
@@ -25,6 +24,5 @@ class StatsAppConfig(AppConfig):
     verbose_name = "Stats"
 
     def ready(self):
-        if settings.STATS_ENABLED:
-            from taiga.urls import urlpatterns
-            urlpatterns.append(url(r'^api/v1/', include(router.urls)))
+        from taiga.urls import urlpatterns
+        urlpatterns.append(url(r'^api/v1/', include(router.urls)))

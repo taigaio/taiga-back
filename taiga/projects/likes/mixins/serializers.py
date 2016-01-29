@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -19,12 +20,10 @@ from taiga.base.api import serializers
 
 class FanResourceSerializerMixin(serializers.ModelSerializer):
     is_fan = serializers.SerializerMethodField("get_is_fan")
-    total_fans = serializers.SerializerMethodField("get_total_fans")
 
     def get_is_fan(self, obj):
-        # The "is_fan" attribute is attached in the get_queryset of the viewset.
-        return getattr(obj, "is_fan", False) or False
+        if "request" in self.context:
+            user = self.context["request"].user
+            return user.is_authenticated() and user.is_fan(obj)
 
-    def get_total_fans(self, obj):
-        # The "total_fans" attribute is attached in the get_queryset of the viewset.
-        return getattr(obj, "total_fans", 0) or 0
+        return False

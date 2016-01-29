@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -376,12 +377,13 @@ def get_projects_watched(user_or_id):
     """
 
     if isinstance(user_or_id, get_user_model()):
-        user_id = user_or_id.id
+        user = user_or_id
     else:
-        user_id = user_or_id
+        user = get_user_model().objects.get(id=user_or_id)
 
     project_class = apps.get_model("projects", "Project")
-    return project_class.objects.filter(notify_policies__user__id=user_id).exclude(notify_policies__notify_level=NotifyLevel.none)
+    project_ids = user.notify_policies.exclude(notify_level=NotifyLevel.none).values_list("project__id", flat=True)
+    return project_class.objects.filter(id__in=project_ids)
 
 def add_watcher(obj, user):
     """Add a watcher to an object.

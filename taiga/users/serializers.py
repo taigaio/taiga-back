@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -14,12 +15,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.api import serializers
 from taiga.base.fields import PgArrayField, TagsField
+from taiga.base.utils.thumbnails import get_thumbnail_url
 
 from taiga.projects.models import Project
 from .models import User, Role
@@ -173,6 +176,7 @@ class HighLightedContentSerializer(serializers.Serializer):
     tags_colors = serializers.SerializerMethodField("get_tags_color")
     created_date = serializers.DateTimeField()
     is_private = serializers.SerializerMethodField("get_is_private")
+    logo_small_url = serializers.SerializerMethodField("get_logo_small_url")
 
     project = serializers.SerializerMethodField("get_project")
     project_name = serializers.SerializerMethodField("get_project_name")
@@ -224,6 +228,12 @@ class HighLightedContentSerializer(serializers.Serializer):
 
     def get_project_is_private(self, obj):
         return self._none_if_project(obj, "project_is_private")
+
+    def get_logo_small_url(self, obj):
+        logo = self._none_if_not_project(obj, "logo")
+        if logo:
+            return get_thumbnail_url(logo, settings.THN_LOGO_SMALL)
+        return None
 
     def get_photo(self, obj):
         type = obj.get("type", "")

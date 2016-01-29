@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -31,7 +32,6 @@ logger = logging.getLogger(__name__)
 #####################################################################
 # Base and Mixins
 #####################################################################
-
 
 class BaseFilterBackend(object):
     """
@@ -181,6 +181,10 @@ class CanViewMilestonesFilterBackend(PermissionBasedFilterBackend):
     permission = "view_milestones"
 
 
+#####################################################################
+# Attachments filters
+#####################################################################
+
 class PermissionBasedAttachmentFilterBackend(PermissionBasedFilterBackend):
     permission = None
 
@@ -207,52 +211,9 @@ class CanViewWikiAttachmentFilterBackend(PermissionBasedAttachmentFilterBackend)
     permission = "view_wiki_pages"
 
 
-class CanViewProjectObjFilterBackend(FilterBackend):
-    def filter_queryset(self, request, queryset, view):
-        project_id = None
-        if (hasattr(view, "filter_fields") and "project" in view.filter_fields and
-                "project" in request.QUERY_PARAMS):
-            try:
-                project_id = int(request.QUERY_PARAMS["project"])
-            except:
-                logger.error("Filtering project diferent value than an integer: {}".format(
-                    request.QUERY_PARAMS["project"]
-                ))
-                raise exc.BadRequest(_("'project' must be an integer value."))
-
-        qs = queryset
-
-        if request.user.is_authenticated() and request.user.is_superuser:
-            qs = qs
-        elif request.user.is_authenticated():
-            membership_model = apps.get_model("projects", "Membership")
-            memberships_qs = membership_model.objects.filter(user=request.user)
-            if project_id:
-                memberships_qs = memberships_qs.filter(project_id=project_id)
-            memberships_qs = memberships_qs.filter(Q(role__permissions__contains=['view_project']) |
-                                                   Q(is_owner=True))
-
-            projects_list = [membership.project_id for membership in memberships_qs]
-
-            qs = qs.filter((Q(id__in=projects_list) |
-                            Q(public_permissions__contains=["view_project"])))
-        else:
-            qs = qs.filter(anon_permissions__contains=["view_project"])
-
-        return super().filter_queryset(request, qs.distinct(), view)
-
-
-class IsProjectMemberFilterBackend(FilterBackend):
-    def filter_queryset(self, request, queryset, view):
-        if request.user.is_authenticated() and request.user.is_superuser:
-            queryset = queryset
-        elif request.user.is_authenticated():
-            queryset = queryset.filter(project__members=request.user)
-        else:
-            queryset = queryset.none()
-
-        return super().filter_queryset(request, queryset.distinct(), view)
-
+#####################################################################
+# User filters
+#####################################################################
 
 class MembersFilterBackend(PermissionBasedFilterBackend):
     permission = "view_project"
@@ -308,6 +269,10 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
         return qs.distinct()
 
 
+#####################################################################
+# Webhooks  filters
+#####################################################################
+
 class BaseIsProjectAdminFilterBackend(object):
     def get_project_ids(self, request, view):
         project_id = None
@@ -357,7 +322,7 @@ class IsProjectAdminFromWebhookLogFilterBackend(FilterBackend, BaseIsProjectAdmi
 
 
 #####################################################################
-# Generic Attributes filters
+# Generic Attributes filters (for User Stories, Tasks and Issues)
 #####################################################################
 
 class BaseRelatedFieldsFilter(FilterBackend):
@@ -450,7 +415,6 @@ class TagsFilter(FilterBackend):
         return super().filter_queryset(request, queryset, view)
 
 
-
 class WatchersFilter(FilterBackend):
     filter_name = 'watchers'
 
@@ -486,9 +450,12 @@ class QFilter(FilterBackend):
         q = request.QUERY_PARAMS.get('q', None)
         if q:
             table = queryset.model._meta.db_table
-            where_clause = ("to_tsvector('english_nostop', coalesce({table}.subject, '') || ' ' || "
-                            "coalesce({table}.ref) || ' ' || "
-                            "coalesce({table}.description, '')) @@ to_tsquery('english_nostop', %s)".format(table=table))
+            where_clause = ("""
+                to_tsvector('english_nostop',
+                            coalesce({table}.subject, '') || ' ' ||
+                            coalesce({table}.ref) || ' ' ||
+                            coalesce({table}.description, '')) @@ to_tsquery('english_nostop', %s)
+            """.format(table=table))
 
             queryset = queryset.extra(where=[where_clause], params=[to_tsquery(q)])
 

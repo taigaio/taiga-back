@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -65,9 +66,14 @@ class MembershipInline(admin.TabularInline):
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ["name", "owner", "created_date", "total_milestones",
-                    "total_story_points"]
-    list_display_links = list_display
+    list_display = ["id", "name", "slug", "is_private",
+                    "is_featured", "is_looking_for_people",
+                    "owner", "created_date"]
+
+    list_display_links = ["id", "name", "slug"]
+    list_filter = ("is_private", "is_featured", "is_looking_for_people")
+    list_editable = ["is_featured"]
+    search_fields = ["id", "name", "slug", "owner__username", "owner__email", "owner__full_name"]
     inlines = [RoleInline, MembershipInline, MilestoneInline, NotifyPolicyInline, LikeInline]
 
     def get_object(self, *args, **kwargs):

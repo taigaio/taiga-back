@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -33,9 +34,9 @@ from taiga.base.utils.db import to_tsquery
 from taiga.base.utils.urls import get_absolute_url
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.services import get_projects_watched
+
 from .gravatar import get_gravatar_url
 
-from django.conf import settings
 
 
 def get_user_by_username_or_email(username_or_email):
@@ -52,7 +53,6 @@ def get_user_by_username_or_email(username_or_email):
 
     user = qs[0]
     return user
-
 
 
 def get_and_validate_user(*, username:str, password:str) -> bool:
@@ -74,7 +74,7 @@ def get_and_validate_user(*, username:str, password:str) -> bool:
 def get_photo_url(photo):
     """Get a photo absolute url and the photo automatically cropped."""
     try:
-        url = get_thumbnailer(photo)['avatar'].url
+        url = get_thumbnailer(photo)[settings.THN_AVATAR_SMALL].url
         return get_absolute_url(url)
     except InvalidImageFormatError as e:
         return None
@@ -90,7 +90,7 @@ def get_photo_or_gravatar_url(user):
 def get_big_photo_url(photo):
     """Get a big photo absolute url and the photo automatically cropped."""
     try:
-        url = get_thumbnailer(photo)['big-avatar'].url
+        url = get_thumbnailer(photo)[settings.THN_AVATAR_BIG].url
         return get_absolute_url(url)
     except InvalidImageFormatError as e:
         return None
@@ -104,13 +104,14 @@ def get_big_photo_or_gravatar_url(user):
     if user.photo:
         return get_big_photo_url(user.photo)
     else:
-        return get_gravatar_url(user.email, size=settings.DEFAULT_BIG_AVATAR_SIZE)
+        return get_gravatar_url(user.email, size=settings.THN_AVATAR_BIG_SIZE)
 
 
 def get_visible_project_ids(from_user, by_user):
     """Calculate the project_ids from one user visible by another"""
     required_permissions = ["view_project"]
-    #Or condition for membership filtering, the basic one is the access to projects allowing anonymous visualization
+    # Or condition for membership filtering, the basic one is the access to projects
+    # allowing anonymous visualization
     member_perm_conditions = Q(project__anon_permissions__contains=required_permissions)
 
     # Authenticated
@@ -137,7 +138,8 @@ def get_stats_for_user(from_user, by_user):
 
     total_num_projects = len(project_ids)
 
-    roles = [_(r) for r in from_user.memberships.filter(project__id__in=project_ids).values_list("role__name", flat=True)]
+    roles = [_(r) for r in from_user.memberships.filter(project__id__in=project_ids).values_list(
+                                                                          "role__name", flat=True)]
     roles = list(set(roles))
 
     User = apps.get_model('users', 'User')
@@ -223,7 +225,7 @@ def _build_watched_sql_for_projects(for_user):
         tags, notifications_notifypolicy.project_id AS object_id, projects_project.id AS project,
         slug, projects_project.name, null::text AS subject,
         notifications_notifypolicy.created_at as created_date,
-        coalesce(watchers, 0) AS total_watchers, coalesce(likes_likes.count, 0) AS total_fans, null::integer AS total_voters,
+        coalesce(watchers, 0) AS total_watchers, projects_project.total_fans AS total_fans, null::integer AS total_voters,
         null::integer AS assigned_to, null::text as status, null::text as status_color
 	    FROM notifications_notifypolicy
 	    INNER JOIN projects_project
@@ -234,8 +236,6 @@ def _build_watched_sql_for_projects(for_user):
                    GROUP BY project_id
                 ) type_watchers
 		      ON projects_project.id = type_watchers.project_id
-	    LEFT JOIN likes_likes
-		      ON (projects_project.id = likes_likes.object_id AND {project_content_type_id} = likes_likes.content_type_id)
 	    WHERE
               notifications_notifypolicy.user_id = {for_user_id}
               AND notifications_notifypolicy.notify_level != {none_notify_level}
@@ -253,7 +253,7 @@ def _build_liked_sql_for_projects(for_user):
         tags, likes_like.object_id AS object_id, projects_project.id AS project,
         slug, projects_project.name, null::text AS subject,
         likes_like.created_date,
-        coalesce(watchers, 0) AS total_watchers, coalesce(likes_likes.count, 0) AS total_fans,
+        coalesce(watchers, 0) AS total_watchers, projects_project.total_fans AS total_fans,
         null::integer AS assigned_to, null::text as status, null::text as status_color
 	    FROM likes_like
 	    INNER JOIN projects_project
@@ -264,8 +264,6 @@ def _build_liked_sql_for_projects(for_user):
                    GROUP BY project_id
                 ) type_watchers
 		      ON projects_project.id = type_watchers.project_id
-        LEFT JOIN likes_likes
-		      ON (projects_project.id = likes_likes.object_id AND {project_content_type_id} = likes_likes.content_type_id)
 	    WHERE likes_like.user_id = {for_user_id} AND {project_content_type_id} = likes_like.content_type_id
     """
     sql = sql.format(
@@ -324,7 +322,7 @@ def get_watched_list(for_user, from_user, type=None, q=None):
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
     SELECT entities.*,
            projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
-           projects_project.tags_colors,
+           projects_project.tags_colors, projects_project.logo,
            users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
         FROM (
             {userstories_sql}
@@ -419,7 +417,7 @@ def get_liked_list(for_user, from_user, type=None, q=None):
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
     SELECT entities.*,
            projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
-           projects_project.tags_colors,
+           projects_project.tags_colors, projects_project.logo,
            users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
         FROM (
             {projects_sql}
@@ -502,7 +500,7 @@ def get_voted_list(for_user, from_user, type=None, q=None):
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
     SELECT entities.*,
            projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
-           projects_project.tags_colors,
+           projects_project.tags_colors, projects_project.logo,
            users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
         FROM (
             {userstories_sql}

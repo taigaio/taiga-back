@@ -12,25 +12,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.utils.urls import get_absolute_url
+from django.conf import settings
 
-from easy_thumbnails.files import get_thumbnailer
-from easy_thumbnails.exceptions import InvalidImageFormatError
-
-
-def _get_attachment_thumbnailer_url(attachment, thumbnailer_size):
-    try:
-        thumb_url = get_thumbnailer(attachment.attached_file)[thumbnailer_size].url
-        thumb_url = get_absolute_url(thumb_url)
-    except InvalidImageFormatError:
-        thumb_url = None
-
-    return thumb_url
+from taiga.base.utils.thumbnails import get_thumbnail_url
 
 
-def get_timeline_image_thumbnailer_url(attachment):
-    return _get_attachment_thumbnailer_url(attachment, "timeline-image")
+def get_timeline_image_thumbnail_url(attachment):
+    if attachment.attached_file:
+        return get_thumbnail_url(attachment.attached_file, settings.THN_ATTACHMENT_TIMELINE)
+    return None
 
 
-def get_card_image_thumbnailer_url(attachment):
-    return _get_attachment_thumbnailer_url(attachment, "card-image")
+def get_card_image_thumbnail_url(attachment):
+    if attachment.attached_file:
+        return get_thumbnail_url(attachment.attached_file, settings.THN_ATTACHMENT_CARD)
+    return None

@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -20,7 +21,7 @@ from django.db.transaction import atomic
 from django.apps import apps
 from django.contrib.auth import get_user_model
 
-from .models import Likes, Like
+from .models import Like
 
 
 def add_like(obj, user):
@@ -35,12 +36,9 @@ def add_like(obj, user):
     obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
     with atomic():
         like, created = Like.objects.get_or_create(content_type=obj_type, object_id=obj.id, user=user)
-        if not created:
-            return
+        if like.project is not None:
+            like.project.refresh_totals()
 
-        likes, _ = Likes.objects.get_or_create(content_type=obj_type, object_id=obj.id)
-        likes.count = F('count') + 1
-        likes.save()
     return like
 
 
@@ -59,11 +57,12 @@ def remove_like(obj, user):
         if not qs.exists():
             return
 
+        like = qs.first()
+        project = like.project
         qs.delete()
 
-        likes, _ = Likes.objects.get_or_create(content_type=obj_type, object_id=obj.id)
-        likes.count = F('count') - 1
-        likes.save()
+        if project is not None:
+            project.refresh_totals()
 
 
 def get_fans(obj):
@@ -75,21 +74,6 @@ def get_fans(obj):
     """
     obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
     return get_user_model().objects.filter(likes__content_type=obj_type, likes__object_id=obj.id)
-
-
-def get_likes(obj):
-    """Get the number of likes an object has.
-
-    :param obj: Any Django model instance.
-
-    :return: Number of likes or `0` if the object has no likes at all.
-    """
-    obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
-
-    try:
-        return Likes.objects.get(content_type=obj_type, object_id=obj.id).count
-    except Likes.DoesNotExist:
-        return 0
 
 
 def get_liked(user_or_id, model):

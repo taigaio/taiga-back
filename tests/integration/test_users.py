@@ -1,13 +1,16 @@
 import pytest
 from tempfile import NamedTemporaryFile
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.core.files import File
 
 from .. import factories as f
+from ..utils import DUMMY_BMP_DATA
 
 from taiga.base.utils import json
+from taiga.base.utils.thumbnails import get_thumbnail_url
 from taiga.users import models
 from taiga.users.serializers import LikedObjectSerializer, VotedObjectSerializer
 from taiga.auth.tokens import get_token_for_user
@@ -172,9 +175,6 @@ def test_cancel_self_user_with_invalid_token(client):
     assert response.status_code == 400
 
 
-DUMMY_BMP_DATA = b'BM:\x00\x00\x00\x00\x00\x00\x006\x00\x00\x00(\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00\x18\x00\x00\x00\x00\x00\x04\x00\x00\x00\x13\x0b\x00\x00\x13\x0b\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-
-
 def test_change_avatar(client):
     url = reverse('users-change-avatar')
 
@@ -201,6 +201,25 @@ def test_change_avatar(client):
         assert response.status_code == 200
 
 
+def test_change_avatar_with_long_file_name(client):
+    url = reverse('users-change-avatar')
+    user = f.UserFactory()
+
+    with NamedTemporaryFile(delete=False) as avatar:
+        avatar.name=500*"x"+".bmp"
+        avatar.write(DUMMY_BMP_DATA)
+        avatar.seek(0)
+
+        client.login(user)
+        post_data = {'avatar': avatar}
+        response = client.post(url, post_data)
+
+        print(response.data)
+
+        assert response.status_code == 200
+
+
+@pytest.mark.django_db(transaction=True)
 def test_change_avatar_removes_the_old_one(client):
     url = reverse('users-change-avatar')
     user = f.UserFactory()
@@ -216,7 +235,7 @@ def test_change_avatar_removes_the_old_one(client):
         thumbnailer = get_thumbnailer(user.photo)
         original_photo_paths = [user.photo.path]
         original_photo_paths += [th.path for th in thumbnailer.get_thumbnails()]
-        assert list(map(os.path.exists, original_photo_paths)) == [True, True, True, True, True]
+        assert all(list(map(os.path.exists, original_photo_paths)))
 
         client.login(user)
         avatar.write(DUMMY_BMP_DATA)
@@ -225,9 +244,10 @@ def test_change_avatar_removes_the_old_one(client):
         response = client.post(url, post_data)
 
         assert response.status_code == 200
-        assert list(map(os.path.exists, original_photo_paths)) == [False, False, False, False, False]
+        assert not any(list(map(os.path.exists, original_photo_paths)))
 
 
+@pytest.mark.django_db(transaction=True)
 def test_remove_avatar(client):
     url = reverse('users-remove-avatar')
     user = f.UserFactory()
@@ -242,13 +262,13 @@ def test_remove_avatar(client):
     thumbnailer = get_thumbnailer(user.photo)
     original_photo_paths = [user.photo.path]
     original_photo_paths += [th.path for th in thumbnailer.get_thumbnails()]
-    assert list(map(os.path.exists, original_photo_paths)) == [True, True, True, True, True]
+    assert all(list(map(os.path.exists, original_photo_paths)))
 
     client.login(user)
     response = client.post(url)
 
     assert response.status_code == 200
-    assert list(map(os.path.exists, original_photo_paths)) == [False, False, False, False, False]
+    assert not any(list(map(os.path.exists, original_photo_paths)))
 
 
 def test_list_contacts_private_projects(client):
@@ -388,7 +408,6 @@ def test_get_liked_list():
     membership = f.MembershipFactory(project=project, role=role, user=fan_user)
     content_type = ContentType.objects.get_for_model(project)
     f.LikeFactory(content_type=content_type, object_id=project.id, user=fan_user)
-    f.LikesFactory(content_type=content_type, object_id=project.id, count=1)
 
     assert len(get_liked_list(fan_user, viewer_user)) == 1
     assert len(get_liked_list(fan_user, viewer_user, type="project")) == 1
@@ -459,6 +478,7 @@ def test_get_watched_list_valid_info_for_project():
     assert "tag" in tags_colors
 
     assert project_watch_info["is_private"] == project.is_private
+    assert project_watch_info["logo_small_url"] ==  get_thumbnail_url(project.logo, settings.THN_LOGO_SMALL)
     assert project_watch_info["is_fan"] == False
     assert project_watch_info["is_watcher"] == False
     assert project_watch_info["total_watchers"] == 1
@@ -495,7 +515,7 @@ def test_get_liked_list_valid_info():
     project = f.ProjectFactory(is_private=False, name="Testing project", tags=['test', 'tag'])
     content_type = ContentType.objects.get_for_model(project)
     like = f.LikeFactory(content_type=content_type, object_id=project.id, user=fan_user)
-    f.LikesFactory(content_type=content_type, object_id=project.id, count=1)
+    project.refresh_totals()
 
     raw_project_like_info = get_liked_list(fan_user, viewer_user)[0]
     project_like_info = LikedObjectSerializer(raw_project_like_info).data
@@ -516,6 +536,7 @@ def test_get_liked_list_valid_info():
     assert "tag" in tags_colors
 
     assert project_like_info["is_private"] == project.is_private
+    assert project_like_info["logo_small_url"] ==  get_thumbnail_url(project.logo, settings.THN_LOGO_SMALL)
 
     assert project_like_info["is_fan"] == False
     assert project_like_info["is_watcher"] == False
@@ -569,6 +590,7 @@ def test_get_watched_list_valid_info_for_not_project_types():
         assert "test2" in tags_colors
 
         assert instance_watch_info["is_private"] == None
+        assert instance_watch_info["logo_small_url"] ==  None
         assert instance_watch_info["is_voter"] == False
         assert instance_watch_info["is_watcher"] == False
         assert instance_watch_info["total_watchers"] == 1
@@ -624,6 +646,7 @@ def test_get_voted_list_valid_info():
         assert "test2" in tags_colors
 
         assert instance_vote_info["is_private"] == None
+        assert instance_vote_info["logo_small_url"] ==  None
         assert instance_vote_info["is_voter"] == False
         assert instance_vote_info["is_watcher"] == False
         assert instance_vote_info["total_watchers"] == 0
@@ -762,7 +785,6 @@ def test_get_liked_list_permissions():
     membership = f.MembershipFactory(project=project, role=role, user=viewer_priviliged_user)
     content_type = ContentType.objects.get_for_model(project)
     f.LikeFactory(content_type=content_type, object_id=project.id, user=fan_user)
-    f.LikesFactory(content_type=content_type, object_id=project.id, count=1)
 
     #If the project is private a viewer user without any permission shouldn' see
     # any vote

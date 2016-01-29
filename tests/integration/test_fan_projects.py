@@ -1,7 +1,8 @@
-# Copyright (C) 2015 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2015 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2015 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2015 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -75,26 +76,10 @@ def test_get_project_fan(client):
     assert response.data['id'] == like.user.id
 
 
-def test_get_project_total_fans(client):
-    user = f.UserFactory.create()
-    project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
-    url = reverse("projects-detail", args=(project.id,))
-
-    f.LikesFactory.create(content_object=project, count=5)
-
-    client.login(user)
-    response = client.get(url)
-
-    assert response.status_code == 200
-    assert response.data['total_fans'] == 5
-
-
 def test_get_project_is_fan(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
     f.MembershipFactory.create(project=project, user=user, is_owner=True)
-    f.LikesFactory.create(content_object=project)
     url_detail = reverse("projects-detail", args=(project.id,))
     url_like = reverse("projects-like", args=(project.id,))
     url_unlike = reverse("projects-unlike", args=(project.id,))

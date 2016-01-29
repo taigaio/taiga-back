@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -16,7 +17,12 @@
 
 from django.apps import AppConfig
 
+from .signals.thumbnails import connect_thumbnail_signals
+
 
 class BaseAppConfig(AppConfig):
     name = "taiga.base"
     verbose_name = "Base App Config"
+
+    def ready(self):
+        connect_thumbnail_signals()

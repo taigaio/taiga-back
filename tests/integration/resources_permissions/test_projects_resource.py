@@ -77,10 +77,6 @@ def data():
     f.LikeFactory(content_type=project_ct, object_id=m.private_project2.pk, user=m.project_member_with_perms)
     f.LikeFactory(content_type=project_ct, object_id=m.private_project2.pk, user=m.project_owner)
 
-    f.LikesFactory(content_type=project_ct, object_id=m.public_project.pk, count=2)
-    f.LikesFactory(content_type=project_ct, object_id=m.private_project1.pk, count=2)
-    f.LikesFactory(content_type=project_ct, object_id=m.private_project2.pk, count=2)
-
     return m
 
 

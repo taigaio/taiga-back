@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -52,6 +53,8 @@ class ProjectPermission(TaigaResourcePermission):
     destroy_perms = IsProjectOwner()
     modules_perms = IsProjectOwner()
     list_perms = AllowAny()
+    change_logo_perms = IsProjectOwner()
+    remove_logo_perms = IsProjectOwner()
     stats_perms = HasProjectPerm('view_project')
     member_stats_perms = HasProjectPerm('view_project')
     issues_stats_perms = HasProjectPerm('view_project')

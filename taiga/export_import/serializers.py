@@ -1,6 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -49,7 +50,7 @@ from taiga.projects.votes import services as votes_service
 from taiga.projects.history import services as history_service
 
 
-class AttachedFileField(serializers.WritableField):
+class FileField(serializers.WritableField):
     read_only = False
 
     def to_native(self, obj):
@@ -307,7 +308,7 @@ class HistoryExportSerializerMixin(serializers.ModelSerializer):
 
 class AttachmentExportSerializer(serializers.ModelSerializer):
     owner = UserRelatedField(required=False)
-    attached_file = AttachedFileField()
+    attached_file = FileField()
     modified_date = serializers.DateTimeField(required=False)
 
     class Meta:
@@ -642,7 +643,21 @@ class TimelineExportSerializer(serializers.ModelSerializer):
 
 
 class ProjectExportSerializer(WatcheableObjectModelSerializer):
+    logo = FileField(required=False)
+    anon_permissions = PgArrayField(required=False)
+    public_permissions = PgArrayField(required=False)
+    modified_date = serializers.DateTimeField(required=False)
+    roles = RoleExportSerializer(many=True, required=False)
     owner = UserRelatedField(required=False)
+    memberships = MembershipExportSerializer(many=True, required=False)
+    points = PointsExportSerializer(many=True, required=False)
+    us_statuses = UserStoryStatusExportSerializer(many=True, required=False)
+    task_statuses = TaskStatusExportSerializer(many=True, required=False)
+    issue_types = IssueTypeExportSerializer(many=True, required=False)
+    issue_statuses = IssueStatusExportSerializer(many=True, required=False)
+    priorities = PriorityExportSerializer(many=True, required=False)
+    severities = SeverityExportSerializer(many=True, required=False)
+    tags_colors = JsonField(required=False)
     default_points = serializers.SlugRelatedField(slug_field="name", required=False)
     default_us_status = serializers.SlugRelatedField(slug_field="name", required=False)
     default_task_status = serializers.SlugRelatedField(slug_field="name", required=False)
@@ -650,28 +665,15 @@ class ProjectExportSerializer(WatcheableObjectModelSerializer):
     default_severity = serializers.SlugRelatedField(slug_field="name", required=False)
     default_issue_status = serializers.SlugRelatedField(slug_field="name", required=False)
     default_issue_type = serializers.SlugRelatedField(slug_field="name", required=False)
-    memberships = MembershipExportSerializer(many=True, required=False)
-    points = PointsExportSerializer(many=True, required=False)
-    us_statuses = UserStoryStatusExportSerializer(many=True, required=False)
-    task_statuses = TaskStatusExportSerializer(many=True, required=False)
-    issue_statuses = IssueStatusExportSerializer(many=True, required=False)
-    priorities = PriorityExportSerializer(many=True, required=False)
-    severities = SeverityExportSerializer(many=True, required=False)
-    issue_types = IssueTypeExportSerializer(many=True, required=False)
     userstorycustomattributes = UserStoryCustomAttributeExportSerializer(many=True, required=False)
     taskcustomattributes = TaskCustomAttributeExportSerializer(many=True, required=False)
     issuecustomattributes = IssueCustomAttributeExportSerializer(many=True, required=False)
-    roles = RoleExportSerializer(many=True, required=False)
-    milestones = MilestoneExportSerializer(many=True, required=False)
-    wiki_pages = WikiPageExportSerializer(many=True, required=False)
-    wiki_links = WikiLinkExportSerializer(many=True, required=False)
     user_stories = UserStoryExportSerializer(many=True, required=False)
     tasks = TaskExportSerializer(many=True, required=False)
+    milestones = MilestoneExportSerializer(many=True, required=False)
     issues = IssueExportSerializer(many=True, required=False)
-    tags_colors = JsonField(required=False)
-    anon_permissions = PgArrayField(required=False)
-    public_permissions = PgArrayField(required=False)
-    modified_date = serializers.DateTimeField(required=False)
+    wiki_links = WikiLinkExportSerializer(many=True, required=False)
+    wiki_pages = WikiPageExportSerializer(many=True, required=False)
     timeline = serializers.SerializerMethodField("get_timeline")
 
     class Meta:
