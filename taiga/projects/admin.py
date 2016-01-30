@@ -76,6 +76,9 @@ class ProjectAdmin(admin.ModelAdmin):
     search_fields = ["id", "name", "slug", "owner__username", "owner__email", "owner__full_name"]
     inlines = [RoleInline, MembershipInline, MilestoneInline, NotifyPolicyInline, LikeInline]
 
+    # NOTE: TextArrayField with a choices is broken in the admin panel.
+    exclude = ("anon_permissions", "public_permissions")
+
     def get_object(self, *args, **kwargs):
         self.obj = super().get_object(*args, **kwargs)
         return self.obj

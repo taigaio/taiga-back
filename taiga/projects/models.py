@@ -303,6 +303,12 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         if not self.is_looking_for_people:
             self.looking_for_people_note = ""
 
+        if self.anon_permissions == None:
+            self.anon_permissions = []
+
+        if self.public_permissions == None:
+            self.public_permissions = []
+
         super().save(*args, **kwargs)
 
     def refresh_totals(self, save=True):
@@ -440,7 +446,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         from taiga.projects.userstories.apps import connect_all_userstories_signals, disconnect_all_userstories_signals
         from taiga.projects.issues.apps import connect_all_issues_signals, disconnect_all_issues_signals
         from taiga.projects.apps import connect_memberships_signals, disconnect_memberships_signals
-        
+
         disconnect_events_signals()
         disconnect_all_issues_signals()
         disconnect_all_tasks_signals()
