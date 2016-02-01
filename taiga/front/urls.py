@@ -18,6 +18,7 @@
 
 urls = {
     "home": "/",
+    "discover": "/discover",
     "login": "/login",
     "register": "/register",
     "forgot-password": "/forgot-password",
