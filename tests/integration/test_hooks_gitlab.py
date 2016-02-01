@@ -99,6 +99,26 @@ def test_invalid_ip(client):
     assert response.status_code == 400
 
 
+def test_invalid_origin_ip_settings(client):
+    project = f.ProjectFactory()
+    f.ProjectModulesConfigFactory(project=project, config={
+        "gitlab": {
+            "secret": "tpnIwJDz4e",
+            "valid_origin_ips": ["testing"]
+        }
+    })
+
+    url = reverse("gitlab-hook-list")
+    url = "{}?project={}&key={}".format(url, project.id, "tpnIwJDz4e")
+    data = {"test:": "data"}
+    response = client.post(url,
+                           json.dumps(data),
+                           content_type="application/json",
+                           REMOTE_ADDR="111.111.111.112")
+
+    assert response.status_code == 400
+
+
 def test_valid_local_network_ip(client):
     project = f.ProjectFactory()
     f.ProjectModulesConfigFactory(project=project, config={
