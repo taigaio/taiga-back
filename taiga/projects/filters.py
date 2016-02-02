@@ -27,6 +27,21 @@ from taiga.base.utils.db import to_tsquery
 logger = logging.getLogger(__name__)
 
 
+class DiscoverModeFilterBackend(FilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+
+        if "discover_mode" in request.QUERY_PARAMS:
+            field_data = request.QUERY_PARAMS["discover_mode"]
+            discover_mode = self._special_values_dict.get(field_data, field_data)
+
+            if discover_mode:
+                # discover_mode enabled
+                qs = qs.filter(anon_permissions__contains=["view_project"])
+
+        return super().filter_queryset(request, qs.distinct(), view)
+
+
 class CanViewProjectObjFilterBackend(FilterBackend):
     def filter_queryset(self, request, queryset, view):
         project_id = None
@@ -49,7 +64,7 @@ class CanViewProjectObjFilterBackend(FilterBackend):
             # superuser
             qs = qs
         elif request.user.is_authenticated():
-            # projet members
+            # authenticated user & project member
             membership_model = apps.get_model("projects", "Membership")
             memberships_qs = membership_model.objects.filter(user=request.user)
             if project_id:
@@ -68,7 +83,7 @@ class CanViewProjectObjFilterBackend(FilterBackend):
         return super().filter_queryset(request, qs.distinct(), view)
 
 
-class QFilter(FilterBackend):
+class QFilterBackend(FilterBackend):
     def filter_queryset(self, request, queryset, view):
         # NOTE: See migtration 0033_text_search_indexes
         q = request.QUERY_PARAMS.get('q', None)
