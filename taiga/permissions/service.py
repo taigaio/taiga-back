@@ -21,7 +21,6 @@ from .permissions import OWNERS_PERMISSIONS, MEMBERS_PERMISSIONS, ANON_PERMISSIO
 from django.apps import apps
 
 def _get_user_project_membership(user, project):
-    Membership = apps.get_model("projects", "Membership")
     if user.is_anonymous():
         return None
 
