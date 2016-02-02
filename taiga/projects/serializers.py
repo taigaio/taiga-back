@@ -312,6 +312,7 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
     public_permissions = PgArrayField(required=False)
     my_permissions = serializers.SerializerMethodField("get_my_permissions")
     i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
+    i_am_member = serializers.SerializerMethodField("get_i_am_member")
 
     tags = TagsField(default=[], required=False)
     tags_colors = TagsColorsField(required=False)
@@ -337,6 +338,13 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
     def get_i_am_owner(self, obj):
         if "request" in self.context:
             return is_project_owner(self.context["request"].user, obj)
+        return False
+
+    def get_i_am_member(self, obj):
+        if "request" in self.context:
+            user = self.context["request"].user
+            if not user.is_anonymous() and user.cached_membership_for_project(obj):
+                return True
         return False
 
     def get_total_closed_milestones(self, obj):
