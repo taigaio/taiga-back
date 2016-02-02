@@ -70,8 +70,9 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
     admin_serializer_class = serializers.ProjectDetailAdminSerializer
     list_serializer_class = serializers.ProjectSerializer
     permission_classes = (permissions.ProjectPermission, )
-    filter_backends = (project_filters.QFilter,
-                       project_filters.CanViewProjectObjFilterBackend)
+    filter_backends = (project_filters.QFilterBackend,
+                       project_filters.CanViewProjectObjFilterBackend,
+                       project_filters.DiscoverModeFilterBackend)
 
     filter_fields = (("member", "members"),
                      "is_looking_for_people",

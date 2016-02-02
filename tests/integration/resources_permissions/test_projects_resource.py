@@ -575,3 +575,33 @@ def test_project_action_unwatch(client, data):
     assert results == [404, 404, 200, 200]
     results = helper_test_http_method(client, 'post', blocked_url, None, users)
     assert results == [404, 404, 451, 451]
+
+
+def test_project_list_with_discover_mode_enabled(client, data):
+    url = "{}?{}".format(reverse('projects-list'), "discover_mode=true")
+
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 2
+    assert response.status_code == 200
+
+    client.login(data.registered_user)
+
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 2
+    assert response.status_code == 200
+
+    client.login(data.project_member_with_perms)
+
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 2
+    assert response.status_code == 200
+
+    client.login(data.project_owner)
+
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 2
+    assert response.status_code == 200
