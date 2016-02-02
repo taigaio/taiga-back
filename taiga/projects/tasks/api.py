@@ -22,6 +22,7 @@ from taiga.base import filters, response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
+from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.projects.models import Project, TaskStatus
 from django.http import HttpResponse
 
@@ -38,7 +39,7 @@ from . import services
 
 
 class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                  ModelCrudViewSet):
+                  BlockedByProjectMixin, ModelCrudViewSet):
     queryset = models.Task.objects.all()
     permission_classes = (permissions.TaskPermission,)
     filter_backends = (filters.CanViewTasksFilterBackend, filters.WatchersFilter)
@@ -95,7 +96,7 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
             "assigned_to",
             "status",
             "project")
-        
+
         return self.attach_watchers_attrs_to_queryset(qs)
 
     def pre_save(self, obj):
@@ -147,6 +148,9 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
             data = serializer.data
             project = Project.objects.get(id=data["project_id"])
             self.check_permissions(request, 'bulk_create', project)
+            if project.blocked_code is not None:
+                raise exc.Blocked(_("Blocked element"))
+
             tasks = services.create_tasks_in_bulk(
                 data["bulk_tasks"], milestone_id=data["sprint_id"], user_story_id=data["us_id"],
                 status_id=data.get("status_id") or project.default_task_status_id,
@@ -166,6 +170,9 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
         project = get_object_or_404(Project, pk=data["project_id"])
 
         self.check_permissions(request, "bulk_update_order", project)
+        if project.blocked_code is not None:
+            raise exc.Blocked(_("Blocked element"))
+
         services.update_tasks_order_in_bulk(data["bulk_tasks"],
                                             project=project,
                                             field=order_field)

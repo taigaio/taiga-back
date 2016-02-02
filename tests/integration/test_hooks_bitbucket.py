@@ -11,6 +11,7 @@ from taiga.base.utils import json
 from taiga.hooks.bitbucket import event_hooks
 from taiga.hooks.bitbucket.api import BitBucketViewSet
 from taiga.hooks.exceptions import ActionSyntaxException
+from taiga.projects import choices as project_choices
 from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.models import UserStory
@@ -78,6 +79,26 @@ def test_ok_signature_ip_in_network(client):
                            HTTP_X_EVENT_KEY="repo:push",
                            REMOTE_ADDR="104.192.143.193")
     assert response.status_code == 204
+
+
+def test_blocked_project(client):
+    project = f.ProjectFactory(blocked_code=project_choices.BLOCKED_BY_STAFF)
+    f.ProjectModulesConfigFactory(project=project, config={
+        "bitbucket": {
+            "secret": "tpnIwJDz4e"
+        }
+    })
+
+    url = reverse("bitbucket-hook-list")
+    url = "{}?project={}&key={}".format(url, project.id, "tpnIwJDz4e")
+    data = json.dumps({"push": {"changes": [{"new": {"target": { "message": "test message"}}}]}})
+    response = client.post(url,
+                           data,
+                           content_type="application/json",
+                           HTTP_X_EVENT_KEY="repo:push",
+                           REMOTE_ADDR=settings.BITBUCKET_VALID_ORIGIN_IPS[0])
+
+    assert response.status_code == 451
 
 
 def test_invalid_ip(client):

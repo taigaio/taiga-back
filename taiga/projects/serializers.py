@@ -325,7 +325,7 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
 
     class Meta:
         model = models.Project
-        read_only_fields = ("created_date", "modified_date", "owner", "slug")
+        read_only_fields = ("created_date", "modified_date", "owner", "slug", "blocked_code")
         exclude = ("logo", "last_us_ref", "last_task_ref", "last_issue_ref",
                    "issues_csv_uuid", "tasks_csv_uuid", "userstories_csv_uuid")
 
@@ -402,7 +402,7 @@ class ProjectDetailSerializer(ProjectSerializer):
 class ProjectDetailAdminSerializer(ProjectDetailSerializer):
     class Meta:
         model = models.Project
-        read_only_fields = ("created_date", "modified_date", "owner", "slug")
+        read_only_fields = ("created_date", "modified_date", "owner", "slug", "blocked_code")
         exclude = ("logo", "last_us_ref", "last_task_ref", "last_issue_ref")
 
 

@@ -26,7 +26,7 @@ pytestmark = pytest.mark.django_db
 
 def test_upvote_user_story(client):
     user = f.UserFactory.create()
-    user_story = f.create_userstory(owner=user)
+    user_story = f.create_userstory(owner=user, status=None)
     f.MembershipFactory.create(project=user_story.project, user=user, is_owner=True)
     url = reverse("userstories-upvote", args=(user_story.id,))
 
@@ -38,7 +38,7 @@ def test_upvote_user_story(client):
 
 def test_downvote_user_story(client):
     user = f.UserFactory.create()
-    user_story = f.create_userstory(owner=user)
+    user_story = f.create_userstory(owner=user, status=None)
     f.MembershipFactory.create(project=user_story.project, user=user, is_owner=True)
     url = reverse("userstories-downvote", args=(user_story.id,))
 
@@ -92,7 +92,7 @@ def test_get_user_story_votes(client):
 
 def test_get_user_story_is_voted(client):
     user = f.UserFactory.create()
-    user_story = f.create_userstory(owner=user)
+    user_story = f.create_userstory(owner=user, status=None)
     f.MembershipFactory.create(project=user_story.project, user=user, is_owner=True)
     f.VotesFactory.create(content_object=user_story)
     url_detail = reverse("userstories-detail", args=(user_story.id,))

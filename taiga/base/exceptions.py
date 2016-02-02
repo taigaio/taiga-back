@@ -201,6 +201,11 @@ class NotAuthenticated(NotAuthenticated):
     pass
 
 
+class Blocked(APIException):
+    status_code = status.HTTP_451_BLOCKED
+    default_detail = _("Blocked element")
+
+
 def format_exception(exc):
     if isinstance(exc.detail, (dict, list, tuple,)):
         detail = exc.detail

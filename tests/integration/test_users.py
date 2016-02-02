@@ -15,6 +15,7 @@ from taiga.users import models
 from taiga.users.serializers import LikedObjectSerializer, VotedObjectSerializer
 from taiga.auth.tokens import get_token_for_user
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.projects import choices as project_choices
 from taiga.users.services import get_watched_list, get_voted_list, get_liked_list
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.models import NotifyPolicy
@@ -150,6 +151,18 @@ def test_delete_self_user(client):
     assert response.status_code == 204
     user = models.User.objects.get(pk=user.id)
     assert user.full_name == "Deleted user"
+
+
+def test_delete_self_user_blocking_projects(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    url = reverse('users-detail', kwargs={"pk": user.pk})
+
+    assert project.blocked_code == None
+    client.login(user)
+    response = client.delete(url)
+    project = user.owned_projects.first()
+    assert project.blocked_code == project_choices.BLOCKED_BY_OWNER_LEAVING
 
 
 def test_cancel_self_user_with_valid_token(client):

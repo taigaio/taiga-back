@@ -54,6 +54,8 @@ class BulkUpdateOrderMixin:
         project = get_object_or_404(Project, id=project_id)
 
         self.check_permissions(request, 'bulk_update_order', project)
-
+        if project.blocked_code is not None:
+            raise exc.Blocked(_("Blocked element"))
+            
         self.__class__.bulk_update_order_action(project, request.user, bulk_data)
         return response.NoContent(data=None)
