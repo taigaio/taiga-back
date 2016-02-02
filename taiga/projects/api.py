@@ -489,7 +489,7 @@ class MembershipViewSet(ModelCrudViewSet):
 
     def get_serializer_class(self):
         use_admin_serializer = False
-        
+
         if self.action == "create":
             use_admin_serializer = True
 
@@ -544,7 +544,7 @@ class MembershipViewSet(ModelCrudViewSet):
 
     def pre_delete(self, obj):
         if obj.user is not None and not services.can_user_leave_project(obj.user, obj.project):
-            raise exc.BadRequest(_("At least one of the user must be an active admin"))
+            raise exc.BadRequest(_("The project must have an owner and at least one of the users must be an active admin"))
 
     def pre_save(self, obj):
         if not obj.token:

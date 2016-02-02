@@ -257,8 +257,8 @@ class MembershipSerializer(serializers.ModelSerializer):
             project = self.object.project
 
         if (self.object and
-                not services.project_has_valid_owners(project, exclude_user=self.object.user)):
-            raise serializers.ValidationError(_("At least one of the user must be an active admin"))
+                not services.project_has_valid_admins(project, exclude_user=self.object.user)):
+            raise serializers.ValidationError(_("The project must have an owner and at least one of the users must be an active admin"))
 
         return attrs
 

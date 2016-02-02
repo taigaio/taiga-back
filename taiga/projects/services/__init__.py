@@ -37,7 +37,7 @@ from .logo import get_logo_big_thumbnail_url
 
 from .members import create_members_in_bulk
 from .members import get_members_from_bulk
-from .members import remove_user_from_project, project_has_valid_owners, can_user_leave_project
+from .members import remove_user_from_project, project_has_valid_admins, can_user_leave_project
 
 from .modules_config import get_modules_config
 
