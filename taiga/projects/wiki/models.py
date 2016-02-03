@@ -20,7 +20,7 @@ from django.contrib.contenttypes import generic
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
-from taiga.base.utils.slug import slugify
+from taiga.base.utils.slug import slugify_uniquely_for_queryset
 from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
 
@@ -83,6 +83,7 @@ class WikiLink(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.href:
-            self.href = slugify(self.title)
+            wl_qs = self.project.wiki_links.all()
+            self.href = slugify_uniquely_for_queryset(self.title, wl_qs, slugfield="href")
 
         super().save(*args, **kwargs)
