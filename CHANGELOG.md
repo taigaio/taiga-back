@@ -1,6 +1,15 @@
 # Changelog #
 
 
+## 2.0.0 ??? (unreleased)
+
+### Features
+- ...
+
+### Misc
+- Lots of small and not so small bugfixes.
+
+
 ## 1.10.0 Dryas Octopetala (2016-01-30)
 
 ### Features
