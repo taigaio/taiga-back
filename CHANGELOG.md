@@ -4,7 +4,7 @@
 ## 2.0.0 ??? (unreleased)
 
 ### Features
-- ...
+- Blocked projects support
 
 ### Misc
 - Lots of small and not so small bugfixes.
@@ -19,7 +19,7 @@
 - Filter projects list by
     - is_looking_for_people
     - is_featured
-    - is_backlog_activated 
+    - is_backlog_activated
     - is_kanban_activated
 - Search projects by text query (order by ranking name > tags > description)
 - Order projects list:
