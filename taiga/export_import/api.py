@@ -36,6 +36,7 @@ from taiga.projects.models import Project, Membership
 from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
 from taiga.projects.serializers import ProjectSerializer
+from taiga.users import services as users_service
 
 from . import mixins
 from . import serializers
@@ -90,6 +91,14 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         data = request.DATA.copy()
         data['owner'] = data.get('owner', request.user.email)
 
+        is_private = data.get('is_private', False)
+        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+            self.request.user,
+            project=Project(is_private=is_private, id=None)
+        )
+        if not enough_slots:
+            raise exc.BadRequest(not_enough_slots_error)
+
         # Create Project
         project_serialized = service.store_project(data)
 
@@ -106,6 +115,14 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         # Create memberships
         if "memberships" in data:
+            members = len(data['memberships'])
+            (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+                self.request.user,
+                project=Project(is_private=is_private, id=None),
+                members=max(members, 1)
+            )
+            if not enough_slots:
+                raise exc.BadRequest(not_enough_slots_error)
             service.store_memberships(project_serialized.object, data)
 
         try:
@@ -202,17 +219,35 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         try:
             dump = json.load(reader(dump))
+            is_private = dump["is_private"]
         except Exception:
             raise exc.WrongArguments(_("Invalid dump format"))
+
+        user = request.user
+        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+            user,
+            project=Project(is_private=is_private, id=None)
+        )
+        if not enough_slots:
+            raise exc.BadRequest(not_enough_slots_error)
 
         if Project.objects.filter(slug=dump['slug']).exists():
             del dump['slug']
 
+        members = len(dump.get("memberships", []))
+        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+            user,
+            project=Project(is_private=is_private, id=None),
+            members=max(members, 1)
+        )
+        if not enough_slots:
+            raise exc.BadRequest(not_enough_slots_error)
+
         if settings.CELERY_ENABLED:
-            task = tasks.load_project_dump.delay(request.user, dump)
+            task = tasks.load_project_dump.delay(user, dump)
             return response.Accepted({"import_id": task.id})
 
-        project = dump_service.dict_to_project(dump, request.user.email)
+        project = dump_service.dict_to_project(dump, request.user)
         response_data = ProjectSerializer(project).data
         return response.Created(response_data)
 

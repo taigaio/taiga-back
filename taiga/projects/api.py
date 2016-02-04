@@ -51,6 +51,7 @@ from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
 from taiga.projects.likes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
 from taiga.permissions import service as permissions_service
+from taiga.users import services as users_service
 
 from . import filters as project_filters
 from . import models
@@ -342,9 +343,13 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             permissions_service.set_base_permissions_for_project(obj)
 
     def pre_save(self, obj):
+        user = self.request.user
+        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(user, project=obj)
+        if not enough_slots:
+            raise exc.BadRequest(not_enough_slots_error)
+
         if not obj.id:
-            obj.owner = self.request.user
-            # TODO REFACTOR THIS
+            obj.owner = user
             obj.template = self.request.QUERY_PARAMS.get('template', None)
 
         self._set_base_permissions(obj)
@@ -550,6 +555,15 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         # TODO: this should be moved to main exception handler instead
         # of handling explicit exception catchin here.
 
+        if "bulk_memberships" in data and isinstance(data["bulk_memberships"], list):
+            (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+                request.user,
+                project=project,
+                members=len(data["bulk_memberships"])
+            )
+            if not enough_slots:
+                raise exc.BadRequest(not_enough_slots_error)
+
         try:
             members = services.create_members_in_bulk(data["bulk_memberships"],
                                                       project=project,
@@ -577,6 +591,15 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
             raise exc.BadRequest(_("The project must have an owner and at least one of the users must be an active admin"))
 
     def pre_save(self, obj):
+        if not obj.id:
+            (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+                self.request.user,
+                project=obj.project,
+                members=1
+            )
+            if not enough_slots:
+                raise exc.BadRequest(not_enough_slots_error)
+
         if not obj.token:
             obj.token = str(uuid.uuid1())
 

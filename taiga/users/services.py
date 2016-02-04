@@ -572,3 +572,43 @@ def get_voted_list(for_user, from_user, type=None, q=None):
         dict(zip([col[0] for col in desc], row))
         for row in cursor.fetchall()
     ]
+
+
+def has_available_slot_for_project(user, project, members=1):
+    (enough, error) = _has_available_slot_for_project_type(user, project)
+    if not enough:
+        return (enough, error)
+    return _has_available_slot_for_project_members(user, project, members)
+
+
+def _has_available_slot_for_project_type(user, project):
+    if project.is_private:
+        if user.max_private_projects is None:
+            return (True, None)
+        elif user.owned_projects.filter(is_private=True).exclude(id=project.id).count() < user.max_private_projects:
+            return (True, None)
+        return (False, _("You can't have more private projects"))
+    else:
+        if user.max_public_projects is None:
+            return (True, None)
+        elif user.owned_projects.filter(is_private=False).exclude(id=project.id).count() < user.max_public_projects:
+            return (True, None)
+        return (False, _("You can't have more public projects"))
+
+
+
+def _has_available_slot_for_project_members(user, project, members):
+    current_memberships = project.memberships.count()
+
+    if project.is_private:
+        if user.max_members_private_projects is None:
+            return (True, None)
+        elif current_memberships + members <= user.max_members_private_projects:
+            return (True, None)
+        return (False, _("You have reached the limit of memberships for private projects"))
+    else:
+        if user.max_members_public_projects is None:
+            return (True, None)
+        elif current_memberships + members <= user.max_members_public_projects:
+            return (True, None)
+        return (False, _("You have reached the limit of memberships for public projects"))

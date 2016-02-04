@@ -43,6 +43,145 @@ def test_create_project(client):
     assert response.status_code == 201
 
 
+def test_create_private_project_without_enough_private_projects_slots(client):
+    user = f.create_user(max_private_projects=0)
+    url = reverse("projects-list")
+    data = {
+        "name": "project name",
+        "description": "project description",
+        "is_private": True
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "can't have more private projects" in response.data["_error_message"]
+
+
+def test_create_public_project_without_enough_public_projects_slots(client):
+    user = f.create_user(max_public_projects=0)
+    url = reverse("projects-list")
+    data = {
+        "name": "project name",
+        "description": "project description",
+        "is_private": False
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "can't have more public projects" in response.data["_error_message"]
+
+
+def test_change_project_from_private_to_public_without_enough_public_projects_slots(client):
+    project = f.create_project(is_private=True, owner__max_public_projects=0)
+    f.MembershipFactory(user=project.owner, project=project, is_owner=True)
+    url = reverse("projects-detail", kwargs={"pk": project.pk})
+
+    data = {
+        "is_private": False
+    }
+
+    client.login(project.owner)
+    response = client.json.patch(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "can't have more public projects" in response.data["_error_message"]
+
+
+def test_change_project_from_public_to_private_without_enough_private_projects_slots(client):
+    project = f.create_project(is_private=False, owner__max_private_projects=0)
+    f.MembershipFactory(user=project.owner, project=project, is_owner=True)
+    url = reverse("projects-detail", kwargs={"pk": project.pk})
+
+    data = {
+        "is_private": True
+    }
+
+    client.login(project.owner)
+    response = client.json.patch(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "can't have more private projects" in response.data["_error_message"]
+
+
+def test_create_private_project_with_enough_private_projects_slots(client):
+    user = f.create_user(max_private_projects=1)
+    url = reverse("projects-list")
+    data = {
+        "name": "project name",
+        "description": "project description",
+        "is_private": True
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 201
+
+
+def test_create_public_project_with_enough_public_projects_slots(client):
+    user = f.create_user(max_public_projects=1)
+    url = reverse("projects-list")
+    data = {
+        "name": "project name",
+        "description": "project description",
+        "is_private": False
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 201
+
+
+def test_change_project_from_private_to_public_with_enough_public_projects_slots(client):
+    project = f.create_project(is_private=True, owner__max_public_projects=1)
+    f.MembershipFactory(user=project.owner, project=project, is_owner=True)
+    url = reverse("projects-detail", kwargs={"pk": project.pk})
+
+    data = {
+        "is_private": False
+    }
+
+    client.login(project.owner)
+    response = client.json.patch(url, json.dumps(data))
+
+    assert response.status_code == 200
+
+
+def test_change_project_from_public_to_private_with_enough_private_projects_slots(client):
+    project = f.create_project(is_private=False, owner__max_private_projects=1)
+    f.MembershipFactory(user=project.owner, project=project, is_owner=True)
+    url = reverse("projects-detail", kwargs={"pk": project.pk})
+
+    data = {
+        "is_private": True
+    }
+
+    client.login(project.owner)
+    response = client.json.patch(url, json.dumps(data))
+
+    assert response.status_code == 200
+
+
+def test_change_project_other_data_with_enough_private_projects_slots(client):
+    project = f.create_project(is_private=True, owner__max_private_projects=1)
+    f.MembershipFactory(user=project.owner, project=project, is_owner=True)
+    url = reverse("projects-detail", kwargs={"pk": project.pk})
+
+    data = {
+        "name": "test-project-change"
+    }
+
+    client.login(project.owner)
+    response = client.json.patch(url, json.dumps(data))
+
+    assert response.status_code == 200
+
+
 def test_partially_update_project(client):
     project = f.create_project()
     f.MembershipFactory(user=project.owner, project=project, is_owner=True)
