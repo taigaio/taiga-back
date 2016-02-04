@@ -34,6 +34,7 @@ from taiga.users.validators import RoleExistsValidator
 
 from taiga.permissions.service import get_user_project_permissions
 from taiga.permissions.service import is_project_owner
+from taiga.projects.mixins.serializers import ValidateDuplicatedNameInProjectMixin
 
 from . import models
 from . import services
@@ -49,52 +50,16 @@ from .likes.mixins.serializers import FanResourceSerializerMixin
 ## Custom values for selectors
 ######################################################
 
-class PointsSerializer(serializers.ModelSerializer):
+class PointsSerializer(ValidateDuplicatedNameInProjectMixin):
     class Meta:
         model = models.Points
         i18n_fields = ("name",)
 
-    def validate_name(self, attrs, source):
-        """
-        Check the points name is not duplicated in the project on creation
-        """
-        qs = None
-        # If the user story status exists:
-        if self.object and attrs.get("name", None):
-            qs = models.Points.objects.filter(project=self.object.project, name=attrs[source])
 
-        if not self.object and attrs.get("project", None)  and attrs.get("name", None):
-            qs = models.Points.objects.filter(project=attrs["project"], name=attrs[source])
-
-        if qs and qs.exists():
-              raise serializers.ValidationError(_("Name duplicated for the project"))
-
-        return attrs
-
-
-class UserStoryStatusSerializer(serializers.ModelSerializer):
+class UserStoryStatusSerializer(ValidateDuplicatedNameInProjectMixin):
     class Meta:
         model = models.UserStoryStatus
         i18n_fields = ("name",)
-
-    def validate_name(self, attrs, source):
-        """
-        Check the status name is not duplicated in the project on creation
-        """
-        qs = None
-        # If the user story status exists:
-        if self.object and attrs.get("name", None):
-            qs = models.UserStoryStatus.objects.filter(project=self.object.project,
-                                                       name=attrs[source])
-
-        if not self.object and attrs.get("project", None)  and attrs.get("name", None):
-            qs = models.UserStoryStatus.objects.filter(project=attrs["project"],
-                                                       name=attrs[source])
-
-        if qs and qs.exists():
-              raise serializers.ValidationError(_("Name duplicated for the project"))
-
-        return attrs
 
 
 class BasicUserStoryStatusSerializer(serializers.ModelSerializer):
@@ -104,27 +69,10 @@ class BasicUserStoryStatusSerializer(serializers.ModelSerializer):
         fields = ("name", "color")
 
 
-class TaskStatusSerializer(serializers.ModelSerializer):
+class TaskStatusSerializer(ValidateDuplicatedNameInProjectMixin):
     class Meta:
         model = models.TaskStatus
         i18n_fields = ("name",)
-
-    def validate_name(self, attrs, source):
-        """
-        Check the task name is not duplicated in the project on creation
-        """
-        qs = None
-        # If the user story status exists:
-        if self.object and attrs.get("name", None):
-            qs = models.TaskStatus.objects.filter(project=self.object.project, name=attrs[source])
-
-        if not self.object and attrs.get("project", None)  and attrs.get("name", None):
-            qs = models.TaskStatus.objects.filter(project=attrs["project"], name=attrs[source])
-
-        if qs and qs.exists():
-              raise serializers.ValidationError(_("Name duplicated for the project"))
-
-        return attrs
 
 
 class BasicTaskStatusSerializerSerializer(serializers.ModelSerializer):
@@ -135,39 +83,22 @@ class BasicTaskStatusSerializerSerializer(serializers.ModelSerializer):
         fields = ("name", "color")
 
 
-class SeveritySerializer(serializers.ModelSerializer):
+class SeveritySerializer(ValidateDuplicatedNameInProjectMixin):
     class Meta:
         model = models.Severity
         i18n_fields = ("name",)
 
 
-class PrioritySerializer(serializers.ModelSerializer):
+class PrioritySerializer(ValidateDuplicatedNameInProjectMixin):
     class Meta:
         model = models.Priority
         i18n_fields = ("name",)
 
 
-class IssueStatusSerializer(serializers.ModelSerializer):
+class IssueStatusSerializer(ValidateDuplicatedNameInProjectMixin):
     class Meta:
         model = models.IssueStatus
         i18n_fields = ("name",)
-
-    def validate_name(self, attrs, source):
-        """
-        Check the issue name is not duplicated in the project on creation
-        """
-        qs = None
-        # If the user story status exists:
-        if self.object and attrs.get("name", None):
-            qs = models.IssueStatus.objects.filter(project=self.object.project, name=attrs[source])
-
-        if not self.object and attrs.get("project", None)  and attrs.get("name", None):
-            qs = models.IssueStatus.objects.filter(project=attrs["project"], name=attrs[source])
-
-        if qs and qs.exists():
-              raise serializers.ValidationError(_("Name duplicated for the project"))
-
-        return attrs
 
 
 class BasicIssueStatusSerializer(serializers.ModelSerializer):
@@ -177,7 +108,7 @@ class BasicIssueStatusSerializer(serializers.ModelSerializer):
         fields = ("name", "color")
 
 
-class IssueTypeSerializer(serializers.ModelSerializer):
+class IssueTypeSerializer(ValidateDuplicatedNameInProjectMixin):
     class Meta:
         model = models.IssueType
         i18n_fields = ("name",)
