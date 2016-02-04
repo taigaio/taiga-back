@@ -55,5 +55,5 @@ def on_delete_any_model(sender, instance, **kwargs):
         return
 
     sesionid = mw.get_current_session_id()
-    emit_event = lambda: events.emit_event_for_model(instance, sessionid=sesionid, type="delete")
-    connection.on_commit(emit_event)
+    events.emit_event_for_model(instance, sessionid=sesionid, type="delete")
+    
