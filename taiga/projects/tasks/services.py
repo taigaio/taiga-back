@@ -24,7 +24,8 @@ from taiga.projects.tasks.apps import (
     connect_tasks_signals,
     disconnect_tasks_signals)
 from taiga.events import events
-from taiga.projects.votes import services as votes_services
+from taiga.projects.votes.utils import attach_total_voters_to_queryset
+from taiga.projects.notifications.utils import attach_watchers_to_queryset
 
 from . import models
 
@@ -99,8 +100,21 @@ def tasks_to_csv(project, queryset):
                   "status", "is_iocaine", "is_closed", "us_order",
                   "taskboard_order", "attachments", "external_reference", "tags",
                   "watchers", "voters"]
-    for custom_attr in project.taskcustomattributes.all():
+
+    custom_attrs = project.taskcustomattributes.all()
+    for custom_attr in custom_attrs:
         fieldnames.append(custom_attr.name)
+
+    queryset = queryset.prefetch_related("attachments",
+                                         "custom_attributes_values")
+    queryset = queryset.select_related("milestone",
+                                       "owner",
+                                       "assigned_to",
+                                       "status",
+                                       "project")
+
+    queryset = attach_total_voters_to_queryset(queryset)
+    queryset = attach_watchers_to_queryset(queryset)
 
     writer = csv.DictWriter(csv_data, fieldnames=fieldnames)
     writer.writeheader()
@@ -123,10 +137,10 @@ def tasks_to_csv(project, queryset):
             "attachments": task.attachments.count(),
             "external_reference": task.external_reference,
             "tags": ",".join(task.tags or []),
-            "watchers": [u.id for u in task.get_watchers()],
-            "voters": votes_services.get_voters(task).count(),
+            "watchers": task.watchers,
+            "voters": task.total_voters,
         }
-        for custom_attr in project.taskcustomattributes.all():
+        for custom_attr in custom_attrs:
             value = task.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
             task_data[custom_attr.name] = value
 

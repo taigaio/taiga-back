@@ -32,7 +32,8 @@ from taiga.projects.userstories.apps import (
     disconnect_userstories_signals)
 
 from taiga.events import events
-from taiga.projects.votes import services as votes_services
+from taiga.projects.votes.utils import attach_total_voters_to_queryset
+from taiga.projects.notifications.utils import attach_watchers_to_queryset
 
 from . import models
 
@@ -132,8 +133,11 @@ def userstories_to_csv(project,queryset):
     fieldnames = ["ref", "subject", "description", "milestone", "owner",
                   "owner_full_name", "assigned_to", "assigned_to_full_name",
                   "status", "is_closed"]
-    for role in project.roles.filter(computable=True).order_by('name'):
+
+    roles = project.roles.filter(computable=True).order_by('slug')
+    for role in roles:
         fieldnames.append("{}-points".format(role.slug))
+
     fieldnames.append("total-points")
 
     fieldnames += ["backlog_order", "sprint_order", "kanban_order",
@@ -143,8 +147,25 @@ def userstories_to_csv(project,queryset):
                    "tags",
                    "watchers", "voters"]
 
-    for custom_attr in project.userstorycustomattributes.all():
+    custom_attrs = project.userstorycustomattributes.all()
+    for custom_attr in custom_attrs:
         fieldnames.append(custom_attr.name)
+
+    queryset = queryset.prefetch_related("role_points",
+                                         "role_points__points",
+                                         "role_points__role",
+                                         "tasks",
+                                         "attachments",
+                                         "custom_attributes_values")
+    queryset = queryset.select_related("milestone",
+                                       "project",
+                                       "status",
+                                       "owner",
+                                       "assigned_to",
+                                       "generated_from_issue")
+
+    queryset = attach_total_voters_to_queryset(queryset)
+    queryset = attach_watchers_to_queryset(queryset)
 
     writer = csv.DictWriter(csv_data, fieldnames=fieldnames)
     writer.writeheader()
@@ -173,18 +194,17 @@ def userstories_to_csv(project,queryset):
             "external_reference": us.external_reference,
             "tasks": ",".join([str(task.ref) for task in us.tasks.all()]),
             "tags": ",".join(us.tags or []),
-            "watchers": [u.id for u in us.get_watchers()],
-            "voters": votes_services.get_voters(us).count(),
+            "watchers": us.watchers,
+            "voters": us.total_voters,
         }
 
-        for role in us.project.roles.filter(computable=True).order_by('name'):
-            if us.role_points.filter(role_id=role.id).count() == 1:
-                row["{}-points".format(role.slug)] = us.role_points.get(role_id=role.id).points.value
-            else:
-                row["{}-points".format(role.slug)] = 0
+        us_role_points_by_role_id = {us_rp.role.id: us_rp.points.value for us_rp in us.role_points.all()}
+        for role in roles:
+            row["{}-points".format(role.slug)] = us_role_points_by_role_id.get(role.id, 0)
+
         row['total-points'] = us.get_total_points()
 
-        for custom_attr in project.userstorycustomattributes.all():
+        for custom_attr in custom_attrs:
             value = us.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
             row[custom_attr.name] = value
 
@@ -274,7 +294,7 @@ def _get_userstories_assigned_to(project, queryset):
             "full_name": full_name or "",
             "count": count,
         })
-        
+
         if id is None:
             none_valued_added = True
 
