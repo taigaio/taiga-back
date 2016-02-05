@@ -21,12 +21,12 @@ from taiga.base.api import serializers
 from taiga.base.utils import json
 from taiga.projects.notifications.mixins import WatchedResourceModelSerializer
 from taiga.projects.notifications.validators import WatchersValidator
-
+from taiga.projects.mixins.serializers import ValidateDuplicatedNameInProjectMixin
 from ..userstories.serializers import UserStoryListSerializer
 from . import models
 
 
-class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer, serializers.ModelSerializer):
+class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer, ValidateDuplicatedNameInProjectMixin):
     user_stories = UserStoryListSerializer(many=True, required=False, read_only=True)
     total_points = serializers.SerializerMethodField("get_total_points")
     closed_points = serializers.SerializerMethodField("get_closed_points")
@@ -40,20 +40,3 @@ class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer, ser
 
     def get_closed_points(self, obj):
         return sum(obj.closed_points.values())
-
-    def validate_name(self, attrs, source):
-        """
-        Check the milestone name is not duplicated in the project on creation
-        """
-        qs = None
-        # If the milestone exists:
-        if self.object and attrs.get("name", None):
-            qs = models.Milestone.objects.filter(project=self.object.project, name=attrs[source]).exclude(pk=self.object.pk)
-
-        if not self.object and attrs.get("project", None) and attrs.get("name", None):
-            qs = models.Milestone.objects.filter(project=attrs["project"], name=attrs[source])
-
-        if qs and qs.exists():
-              raise serializers.ValidationError(_("Name duplicated for the project"))
-
-        return attrs
