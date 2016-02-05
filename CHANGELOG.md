@@ -5,6 +5,7 @@
 
 ### Features
 - Blocked projects support
+- Transfer projects ownership support
 
 ### Misc
 - Lots of small and not so small bugfixes.
