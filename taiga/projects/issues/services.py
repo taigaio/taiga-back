@@ -28,7 +28,9 @@ from taiga.base.utils import db, text
 from taiga.projects.issues.apps import (
     connect_issues_signals,
     disconnect_issues_signals)
-from taiga.projects.votes import services as votes_services
+from taiga.projects.votes.utils import attach_total_voters_to_queryset
+from taiga.projects.notifications.utils import attach_watchers_to_queryset
+
 from . import models
 
 
@@ -88,8 +90,20 @@ def issues_to_csv(project, queryset):
                   "attachments", "external_reference", "tags",
                   "watchers", "voters",
                   "created_date", "modified_date", "finished_date"]
-    for custom_attr in project.issuecustomattributes.all():
+
+    custom_attrs = project.issuecustomattributes.all()
+    for custom_attr in custom_attrs:
         fieldnames.append(custom_attr.name)
+
+    queryset = queryset.prefetch_related("attachments",
+                                         "generated_user_stories",
+                                         "custom_attributes_values")
+    queryset = queryset.select_related("owner",
+                                       "assigned_to",
+                                       "status",
+                                       "project")
+    queryset = attach_total_voters_to_queryset(queryset)
+    queryset = attach_watchers_to_queryset(queryset)
 
     writer = csv.DictWriter(csv_data, fieldnames=fieldnames)
     writer.writeheader()
@@ -111,14 +125,14 @@ def issues_to_csv(project, queryset):
             "attachments": issue.attachments.count(),
             "external_reference": issue.external_reference,
             "tags": ",".join(issue.tags or []),
-            "watchers": [u.id for u in issue.get_watchers()],
-            "voters": votes_services.get_voters(issue).count(),
+            "watchers": issue.watchers,
+            "voters": issue.total_voters,
             "created_date": issue.created_date,
             "modified_date": issue.modified_date,
             "finished_date": issue.finished_date,
         }
 
-        for custom_attr in project.issuecustomattributes.all():
+        for custom_attr in custom_attrs:
             value = issue.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
             issue_data[custom_attr.name] = value
 
