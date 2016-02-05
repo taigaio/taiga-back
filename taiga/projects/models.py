@@ -235,6 +235,9 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     tags_colors = TextArrayField(dimension=2, default=[], null=False, blank=True,
                                  verbose_name=_("tags colors"))
 
+    transfer_token = models.CharField(max_length=255, null=True, blank=True, default=None,
+                                      verbose_name=_("project transfer token"))
+
     #Totals:
     totals_updated_datetime = models.DateTimeField(null=False, blank=False, auto_now_add=True,
                                             verbose_name=_("updated date time"), db_index=True)

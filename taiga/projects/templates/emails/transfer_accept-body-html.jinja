@@ -1,0 +1,19 @@
+{% extends "emails/hero-body-html.jinja" %}
+
+{% block body %}
+    {% trans old_owner_name=old_owner.get_full_name(), new_owner_name=new_owner.get_full_name(), project_name=project.name %}
+      <p>Hi {{old_owner_name}},</p>
+      <p>{{ new_owner_name}} has accepted your offer and will become the new project owner for "{{project_name}}".</p>
+    {% endtrans %}
+
+    {% if reason %}
+        {% trans %}<p>This is the reason/comment:</p>{% endtrans %}
+        <p>{{reason}}</p>
+    {% endif %}
+
+    {% trans %}
+    <p>From now on, your new status for this project will be "admin".</p>
+    {% endtrans %}
+
+    <p><small>{% trans %}The Taiga Team{% endtrans %}</small></p>
+{% endblock %}

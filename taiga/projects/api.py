@@ -328,6 +328,74 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         self.check_permissions(request, "tags_colors", project)
         return response.Ok(dict(project.tags_colors))
 
+    @detail_route(methods=["POST"])
+    def transfer_request(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "transfer_request", project)
+        services.request_project_transfer(project, request.user)
+        return response.Ok()
+
+    @detail_route(methods=['post'])
+    def transfer_start(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "transfer_start", project)
+
+        user_id = request.DATA.get('user', None)
+        if user_id is None:
+            raise exc.WrongArguments(_("Invalid user id"))
+
+        user_model = apps.get_model("users", "User")
+        try:
+            user = user_model.objects.get(id=user_id)
+
+        except user_model.DoesNotExist:
+            return response.BadRequest(_("The user doesn't exist"))
+
+        # Check the user is an admin membership from the project
+        try:
+            project.memberships.get(is_owner=True, user=user)
+        except apps.get_model("projects", "Membership").DoesNotExist:
+            return response.BadRequest(_("The user must be an admin member of the project"))
+
+        reason = request.DATA.get('reason', None)
+        transfer_token = services.start_project_transfer(project, user, reason)
+        return response.Ok()
+
+    @detail_route(methods=["POST"])
+    def transfer_accept(self, request, pk=None):
+        token = request.DATA.get('token', None)
+        if token is None:
+            raise exc.WrongArguments(_("Invalid token"))
+
+        project = self.get_object()
+        self.check_permissions(request, "transfer_accept", project)
+
+        members = project.memberships.count()
+        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
+            request.user,
+            project=project,
+            members=members
+        )
+        if not enough_slots:
+            raise exc.BadRequest(not_enough_slots_error)
+
+        reason = request.DATA.get('reason', None)
+        services.accept_project_transfer(project, request.user, token, reason)
+        return response.Ok()
+
+    @detail_route(methods=["POST"])
+    def transfer_reject(self, request, pk=None):
+        token = request.DATA.get('token', None)
+        if token is None:
+            raise exc.WrongArguments(_("Invalid token"))
+
+        project = self.get_object()
+        self.check_permissions(request, "transfer_reject", project)
+
+        reason = request.DATA.get('reason', None)
+        services.reject_project_transfer(project, request.user, token, reason)
+        return response.Ok()
+
     def _set_base_permissions(self, obj):
         update_permissions = False
         if not obj.id:

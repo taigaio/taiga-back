@@ -38,10 +38,6 @@ def _get_object_project(obj):
 
 
 def is_project_owner(user, obj):
-    """
-    The owner attribute of a project is just an historical reference
-    """
-
     if user.is_superuser:
         return True
 

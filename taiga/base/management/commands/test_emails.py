@@ -187,3 +187,38 @@ class Command(BaseCommand):
             cls = type("InlineCSSTemplateMail", (InlineCSSTemplateMail,), {"name": notification_email[1]})
             email = cls()
             email.send(test_email, context)
+
+
+        # Transfer Emails
+        context = {
+            "project": Project.objects.all().order_by("?").first(),
+            "requester": User.objects.all().order_by("?").first(),
+        }
+        email = mail_builder.transfer_request(test_email, context)
+        email.send()
+
+        context = {
+            "project": Project.objects.all().order_by("?").first(),
+            "receiver": User.objects.all().order_by("?").first(),
+            "token": "test-token",
+            "reason": "Test reason"
+        }
+        email = mail_builder.transfer_start(test_email, context)
+        email.send()
+
+        context = {
+            "project": Project.objects.all().order_by("?").first(),
+            "old_owner": User.objects.all().order_by("?").first(),
+            "new_owner": User.objects.all().order_by("?").first(),
+            "reason": "Test reason"
+        }
+        email = mail_builder.transfer_accept(test_email, context)
+        email.send()
+
+        context = {
+            "project": Project.objects.all().order_by("?").first(),
+            "rejecter": User.objects.all().order_by("?").first(),
+            "reason": "Test reason"
+        }
+        email = mail_builder.transfer_reject(test_email, context)
+        email.send()

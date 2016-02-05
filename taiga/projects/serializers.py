@@ -328,7 +328,8 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
         model = models.Project
         read_only_fields = ("created_date", "modified_date", "owner", "slug", "blocked_code")
         exclude = ("logo", "last_us_ref", "last_task_ref", "last_issue_ref",
-                   "issues_csv_uuid", "tasks_csv_uuid", "userstories_csv_uuid")
+                   "issues_csv_uuid", "tasks_csv_uuid", "userstories_csv_uuid",
+                   "transfer_token")
 
     def get_my_permissions(self, obj):
         if "request" in self.context:
