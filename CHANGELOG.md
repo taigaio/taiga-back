@@ -6,6 +6,8 @@
 ### Features
 - Blocked projects support
 - Transfer projects ownership support
+- Customizable max private and public projects per user
+- Customizable max of memberships per owned private and public projects
 
 ### Misc
 - Lots of small and not so small bugfixes.
