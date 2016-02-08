@@ -1,4 +1,4 @@
-{% extends "emails/hero-body-html.jinja" %}
+{% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
     {% trans owner_name=project.owner.get_full_name(), requester_name=requester.get_full_name(), project_name=project.name %}
@@ -12,6 +12,4 @@
 
     <a class="button" href="{{ resolve_front_url("project-admin", project.slug) }}"
        title="{% trans %}Continue{% endtrans %}">{% trans %}Continue{% endtrans %}</a>
-
-    <p><small>{% trans %}The Taiga Team{% endtrans %}</small></p>
 {% endblock %}
