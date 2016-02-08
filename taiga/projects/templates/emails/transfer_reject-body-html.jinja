@@ -1,4 +1,4 @@
-{% extends "emails/hero-body-html.jinja" %}
+{% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
     {% trans owner_name=project.owner.get_full_name(), rejecter_name=rejecter.get_full_name(), project_name=project.name %}
@@ -22,6 +22,4 @@
        title="{% trans %}Request transfer to a different person{% endtrans %}">
        {% trans %}Request transfer to a different person{% endtrans %}
     </a>
-
-    <p><small>{% trans %}The Taiga Team{% endtrans %}</small></p>
 {% endblock %}

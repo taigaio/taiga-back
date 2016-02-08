@@ -1,4 +1,4 @@
-{% extends "emails/hero-body-html.jinja" %}
+{% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
     {% trans old_owner_name=old_owner.get_full_name(), new_owner_name=new_owner.get_full_name(), project_name=project.name %}
@@ -14,6 +14,4 @@
     {% trans %}
     <p>From now on, your new status for this project will be "admin".</p>
     {% endtrans %}
-
-    <p><small>{% trans %}The Taiga Team{% endtrans %}</small></p>
 {% endblock %}
