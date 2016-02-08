@@ -4,6 +4,7 @@
 ## 2.0.0 ??? (unreleased)
 
 ### Features
+- Ability to create url custom fields. (thanks to [@astagi](https://github.com/astagi)).
 - Blocked projects support
 - Transfer projects ownership support
 - Customizable max private and public projects per user
