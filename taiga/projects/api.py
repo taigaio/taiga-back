@@ -430,10 +430,9 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         if obj is None:
             raise Http404
 
-        obj.delete_related_content()
-
         self.pre_delete(obj)
         self.pre_conditions_on_delete(obj)
+        obj.delete_related_content()        
         obj.delete()
         self.post_delete(obj)
         return response.NoContent()
