@@ -28,6 +28,7 @@ def search_user_stories(project, text):
     model_cls = apps.get_model("userstories", "UserStory")
     where_clause = ("to_tsvector('english_nostop', coalesce(userstories_userstory.subject) || ' ' || "
                                 "coalesce(userstories_userstory.ref) || ' ' || "
+                                "coalesce(array_to_string(userstories_userstory.tags, ' '), '') || ' ' || "
                                 "coalesce(userstories_userstory.description, '')) "
                     "@@ to_tsquery('english_nostop', %s)")
 
@@ -44,6 +45,7 @@ def search_tasks(project, text):
     model_cls = apps.get_model("tasks", "Task")
     where_clause = ("to_tsvector('english_nostop', coalesce(tasks_task.subject, '') || ' ' || "
                     "coalesce(tasks_task.ref) || ' ' || "
+                    "coalesce(array_to_string(tasks_task.tags, ' '), '') || ' ' || "
                     "coalesce(tasks_task.description, '')) @@ to_tsquery('english_nostop', %s)")
 
     if text:
@@ -57,6 +59,7 @@ def search_issues(project, text):
     model_cls = apps.get_model("issues", "Issue")
     where_clause = ("to_tsvector('english_nostop', coalesce(issues_issue.subject) || ' ' || "
                     "coalesce(issues_issue.ref) || ' ' || "
+                    "coalesce(array_to_string(issues_issue.tags, ' '), '') || ' ' || "
                     "coalesce(issues_issue.description, '')) @@ to_tsquery('english_nostop', %s)")
 
     if text:
