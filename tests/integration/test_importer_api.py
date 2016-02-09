@@ -1059,3 +1059,21 @@ def test_dump_import_throttling(client, settings):
     assert response.status_code == 201
     response = client.post(url, {'dump': data})
     assert response.status_code == 429
+
+
+def test_valid_dump_import_without_slug(client):
+    project = f.ProjectFactory.create(slug="existing-slug")
+    user = f.UserFactory.create()
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "name": "Project name",
+        "description": "Valid project desc",
+        "is_private": True
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 201

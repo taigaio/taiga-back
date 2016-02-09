@@ -205,7 +205,8 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         except Exception:
             raise exc.WrongArguments(_("Invalid dump format"))
 
-        if Project.objects.filter(slug=dump['slug']).exists():
+        slug = dump.get('slug', None)
+        if slug is not None and Project.objects.filter(slug=slug).exists():
             del dump['slug']
 
         if settings.CELERY_ENABLED:
