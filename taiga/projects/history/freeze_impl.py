@@ -266,7 +266,7 @@ def userstory_freezer(us) -> dict:
     snapshot = {
         "ref": us.ref,
         "owner": us.owner_id,
-        "status": us.status_id,
+        "status": us.status.id if us.status else None,
         "is_closed": us.is_closed,
         "finish_date": str(us.finish_date),
         "backlog_order": us.backlog_order,
@@ -297,7 +297,7 @@ def issue_freezer(issue) -> dict:
     snapshot = {
         "ref": issue.ref,
         "owner": issue.owner_id,
-        "status": issue.status_id,
+        "status": issue.status.id if issue.status else None,
         "priority": issue.priority_id,
         "severity": issue.severity_id,
         "type": issue.type_id,
@@ -321,7 +321,7 @@ def task_freezer(task) -> dict:
     snapshot = {
         "ref": task.ref,
         "owner": task.owner_id,
-        "status": task.status_id,
+        "status": task.status.id if task.status else None,
         "milestone": task.milestone_id,
         "subject": task.subject,
         "description": task.description,

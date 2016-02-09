@@ -106,9 +106,9 @@ def calculate_userstory_is_closed(user_story):
         return False
 
     if user_story.tasks.count() == 0:
-        return user_story.status.is_closed
+        return user_story.status is not None and user_story.status.is_closed
 
-    if all([task.status.is_closed for task in user_story.tasks.all()]):
+    if all([task.status is not None and task.status.is_closed for task in user_story.tasks.all()]):
         return True
 
     return False
@@ -179,7 +179,7 @@ def userstories_to_csv(project,queryset):
             "owner_full_name": us.owner.get_full_name() if us.owner else None,
             "assigned_to": us.assigned_to.username if us.assigned_to else None,
             "assigned_to_full_name": us.assigned_to.get_full_name() if us.assigned_to else None,
-            "status": us.status.name,
+            "status": us.status.name if us.status else None,
             "is_closed": us.is_closed,
             "backlog_order": us.backlog_order,
             "sprint_order": us.sprint_order,
