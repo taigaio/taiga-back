@@ -79,6 +79,19 @@ def test_create_userstory_without_status(client):
     assert response.data['status'] == project.default_us_status.id
 
 
+def test_create_userstory_without_default_values(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user, default_us_status=None)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    url = reverse("userstories-list")
+
+    data = {"subject": "Test user story", "project": project.id}
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    assert response.data['status'] == None
+
+
 def test_api_delete_userstory(client):
     us = f.UserStoryFactory.create()
     f.MembershipFactory.create(project=us.project, user=us.owner, is_owner=True)

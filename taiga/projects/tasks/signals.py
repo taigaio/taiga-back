@@ -100,6 +100,8 @@ def _try_to_close_milestone_when_delete_task(instance):
 ####################################
 
 def set_finished_date_when_edit_task(sender, instance, **kwargs):
+    if instance.status is None:
+        return
     if instance.status.is_closed and not instance.finished_date:
         instance.finished_date = timezone.now()
     elif not instance.status.is_closed and instance.finished_date:

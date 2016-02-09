@@ -53,6 +53,19 @@ def test_create_task_without_status(client):
     assert response.data['status'] == project.default_task_status.id
 
 
+def test_create_task_without_default_values(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user, default_task_status=None)
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    url = reverse("tasks-list")
+
+    data = {"subject": "Test user story", "project": project.id}
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    assert response.data['status'] == None
+    
+
 def test_api_update_task_tags(client):
     project = f.ProjectFactory.create()
     task = f.create_task(project=project, status__project=project, milestone=None, user_story=None)

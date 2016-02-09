@@ -117,7 +117,7 @@ def issues_to_csv(project, queryset):
             "owner_full_name": issue.owner.get_full_name() if issue.owner else None,
             "assigned_to": issue.assigned_to.username if issue.assigned_to else None,
             "assigned_to_full_name": issue.assigned_to.get_full_name() if issue.assigned_to else None,
-            "status": issue.status.name,
+            "status": issue.status.name if issue.status else None,
             "severity": issue.severity.name,
             "priority": issue.priority.name,
             "type": issue.type.name,

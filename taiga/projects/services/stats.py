@@ -84,7 +84,7 @@ def get_stats_for_project_issues(project):
     )
     for issue in issues:
         project_issues_stats['total_issues'] += 1
-        if issue.status.is_closed:
+        if issue.status is not None and issue.status.is_closed:
             project_issues_stats['closed_issues'] += 1
         else:
             project_issues_stats['opened_issues'] += 1
