@@ -146,7 +146,6 @@ def test_project_totals_updated_on_like(client):
     client.login(project.owner)
     url_like = reverse("projects-like", args=(project.id,))
     response = client.post(url_like)
-    print(response.data)
 
     project = Project.objects.get(id=project.id)
     assert project.total_fans == 4

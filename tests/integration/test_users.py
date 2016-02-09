@@ -227,8 +227,6 @@ def test_change_avatar_with_long_file_name(client):
         post_data = {'avatar': avatar}
         response = client.post(url, post_data)
 
-        print(response.data)
-
         assert response.status_code == 200
 
 
