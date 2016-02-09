@@ -231,7 +231,8 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         if not enough_slots:
             raise exc.BadRequest(not_enough_slots_error)
 
-        if Project.objects.filter(slug=dump['slug']).exists():
+        slug = dump.get('slug', None)
+        if slug is not None and Project.objects.filter(slug=slug).exists():
             del dump['slug']
 
         members = len(dump.get("memberships", []))
