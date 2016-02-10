@@ -15,9 +15,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db import transaction
-from django.db import connection
+from django.db import transaction, connection
+from django.core.exceptions import ObjectDoesNotExist
+
 from taiga.projects import models
+
+from contextlib import suppress
+
 
 def update_projects_order_in_bulk(bulk_data:list, field:str, user):
     """
@@ -30,9 +34,10 @@ def update_projects_order_in_bulk(bulk_data:list, field:str, user):
     new_order_values = []
     for membership_data in bulk_data:
         project_id = membership_data["project_id"]
-        membership = user.memberships.get(project_id=project_id)
-        membership_ids.append(membership.id)
-        new_order_values.append({field: membership_data["order"]})
+        with suppress(ObjectDoesNotExist):
+            membership = user.memberships.get(project_id=project_id)
+            membership_ids.append(membership.id)
+            new_order_values.append({field: membership_data["order"]})
 
     from taiga.base.utils import db
 
