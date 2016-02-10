@@ -63,7 +63,7 @@ class BitBucketViewSet(BaseWebhookApiViewSet):
             try:
                 mathching_origin_ip = len(all_matching_cidrs(origin_ip,valid_origin_ips)) > 0
 
-            except AddrFormatError:
+            except(AddrFormatError, ValueError):
                 mathching_origin_ip = False
 
         if not mathching_origin_ip:
