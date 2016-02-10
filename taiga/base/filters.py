@@ -435,8 +435,12 @@ class WatchersFilter(FilterBackend):
         if query_watchers:
             WatchedModel = apps.get_model("notifications", "Watched")
             watched_type = ContentType.objects.get_for_model(queryset.model)
-            watched_ids = WatchedModel.objects.filter(content_type=watched_type, user__id__in=query_watchers).values_list("object_id", flat=True)
-            queryset = queryset.filter(id__in=watched_ids)
+
+            try:
+                watched_ids = WatchedModel.objects.filter(content_type=watched_type, user__id__in=query_watchers).values_list("object_id", flat=True)
+                queryset = queryset.filter(id__in=watched_ids)
+            except ValueError:
+                raise exc.BadRequest(_("Error in filter params types."))
 
         return super().filter_queryset(request, queryset, view)
 
