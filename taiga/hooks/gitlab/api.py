@@ -79,4 +79,4 @@ class GitLabViewSet(BaseWebhookApiViewSet):
 
     def _get_event_name(self, request):
         payload = json.loads(request.body.decode("utf-8"))
-        return payload.get('object_kind', 'push')
+        return payload.get('object_kind', 'push') if payload is not None else 'empty'
