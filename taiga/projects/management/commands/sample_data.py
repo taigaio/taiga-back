@@ -285,7 +285,7 @@ class Command(BaseCommand):
             return self.sd.paragraphs(2, 4)
         if type == DATE_TYPE:
             return self.sd.future_date(min_distance=0, max_distance=365)
-        if type == DATE_URL:
+        if type == URL_TYPE:
             return self.sd.choice(URL_CHOICES)
         return None
 
