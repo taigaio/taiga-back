@@ -16,7 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
@@ -80,7 +81,7 @@ class HistoryChangeNotification(models.Model):
 class Watched(models.Model):
     content_type = models.ForeignKey("contenttypes.ContentType")
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey("content_type", "object_id")
+    content_object = GenericForeignKey("content_type", "object_id")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, null=False,
                               related_name="watched", verbose_name=_("user"))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,

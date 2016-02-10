@@ -19,7 +19,7 @@ import datetime
 
 from optparse import make_option
 
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -163,7 +163,7 @@ class Command(BaseCommand):
         }
 
         for notification_email in notification_emails:
-            model = get_model(*notification_email[0].split("."))
+            model = apps.get_model(*notification_email[0].split("."))
             snapshot = {
                 "subject": "Tests subject",
                 "ref": 123123,

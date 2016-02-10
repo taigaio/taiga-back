@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django_transactional_cleanup.signals import cleanup_post_delete
+from .cleanup_files import cleanup_post_delete
 from easy_thumbnails.files import get_thumbnailer
 
 

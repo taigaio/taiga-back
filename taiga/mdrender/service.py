@@ -144,4 +144,5 @@ def get_diff_of_htmls(html1, html2):
     diffutil.diff_cleanupSemantic(diffs)
     return diffutil.diff_pretty_html(diffs)
 
+
 __all__ = ["render", "get_diff_of_htmls", "render_and_extract"]

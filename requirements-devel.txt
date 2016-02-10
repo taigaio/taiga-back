@@ -1,8 +1,8 @@
 -r requirements.txt
 
-factory_boy==2.6.0
+factory_boy==2.6.1
 py==1.4.31
-pytest==2.8.5
+pytest==2.8.7
 pytest-django==2.9.1
 pytest-pythonpath==0.7
 

@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.admin import GenericTabularInline
 
 from . import models
 
@@ -38,7 +38,7 @@ class AttachmentAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-class AttachmentInline(generic.GenericTabularInline):
+class AttachmentInline(GenericTabularInline):
      model = models.Attachment
      fields = ("attached_file", "owner")
      extra = 0
