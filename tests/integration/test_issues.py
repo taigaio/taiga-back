@@ -71,6 +71,27 @@ def test_create_issue_without_status(client):
     assert response.data['type'] == project.default_issue_type.id
 
 
+def test_create_issue_without_status_in_project_without_default_values(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user,
+                                      default_issue_status=None,
+                                      default_priority=None,
+                                      default_severity=None,
+                                      default_issue_type = None)
+
+    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    url = reverse("issues-list")
+
+    data = {"subject": "Test user story", "project": project.id}
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    assert response.data['status'] == None
+    assert response.data['severity'] == None
+    assert response.data['priority'] == None
+    assert response.data['type'] == None
+
+
 def test_api_create_issues_in_bulk(client):
     project = f.create_project()
     f.MembershipFactory(project=project, user=project.owner, is_owner=True)

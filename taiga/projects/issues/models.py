@@ -98,4 +98,4 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.
 
     @property
     def is_closed(self):
-        return self.status.is_closed
+        return self.status is not None and self.status.is_closed
