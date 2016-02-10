@@ -118,27 +118,6 @@ def test_ok_signature_invalid_network(client):
     assert "Bad signature" in response.data["_error_message"]
 
 
-
-def test_blocked_project(client):
-    project = f.ProjectFactory(blocked_code=project_choices.BLOCKED_BY_STAFF)
-    f.ProjectModulesConfigFactory(project=project, config={
-        "gitlab": {
-            "secret": "tpnIwJDz4e",
-            "valid_origin_ips": ["111.111.111.111"],
-        }
-    })
-
-    url = reverse("gitlab-hook-list")
-    url = "{}?project={}&key={}".format(url, project.id, "tpnIwJDz4e")
-    data = {"test:": "data"}
-    response = client.post(url,
-                           json.dumps(data),
-                           content_type="application/json",
-                           REMOTE_ADDR="111.111.111.111")
-
-    assert response.status_code == 451
-
-
 def test_invalid_ip(client):
     project = f.ProjectFactory()
     f.ProjectModulesConfigFactory(project=project, config={

@@ -102,26 +102,6 @@ def test_ok_signature_invalid_network(client):
     assert "Bad signature" in response.data["_error_message"]
 
 
-def test_blocked_project(client):
-    project = f.ProjectFactory(blocked_code=project_choices.BLOCKED_BY_STAFF)
-    f.ProjectModulesConfigFactory(project=project, config={
-        "bitbucket": {
-            "secret": "tpnIwJDz4e"
-        }
-    })
-
-    url = reverse("bitbucket-hook-list")
-    url = "{}?project={}&key={}".format(url, project.id, "tpnIwJDz4e")
-    data = json.dumps({"push": {"changes": [{"new": {"target": { "message": "test message"}}}]}})
-    response = client.post(url,
-                           data,
-                           content_type="application/json",
-                           HTTP_X_EVENT_KEY="repo:push",
-                           REMOTE_ADDR=settings.BITBUCKET_VALID_ORIGIN_IPS[0])
-
-    assert response.status_code == 451
-
-
 def test_invalid_ip(client):
     project = f.ProjectFactory()
     f.ProjectModulesConfigFactory(project=project, config={
