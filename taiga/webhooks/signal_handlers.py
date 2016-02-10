@@ -45,7 +45,11 @@ def on_new_history_entry(sender, instance, created, **kwargs):
 
     model = history_service.get_model_from_key(instance.key)
     pk = history_service.get_pk_from_key(instance.key)
-    obj = model.objects.get(pk=pk)
+    try:
+        obj = model.objects.get(pk=pk)
+    except model.DoesNotExist:
+        # Catch simultaneous DELETE request
+        return None
 
     webhooks = _get_project_webhooks(obj.project)
 
