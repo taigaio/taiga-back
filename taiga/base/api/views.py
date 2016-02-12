@@ -43,6 +43,8 @@
 
 import json
 
+from collections import OrderedDict
+
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponse
@@ -50,7 +52,6 @@ from django.http.response import HttpResponseBase
 from django.views.decorators.csrf import csrf_exempt
 from django.views.defaults import server_error
 from django.views.generic import View
-from django.utils.datastructures import SortedDict
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext as _
 
@@ -462,7 +463,7 @@ class APIView(View):
         # By default we can't provide any form-like information, however the
         # generic views override this implementation and add additional
         # information for POST and PUT methods, based on the serializer.
-        ret = SortedDict()
+        ret = OrderedDict()
         ret['name'] = self.get_view_name()
         ret['description'] = self.get_view_description()
         ret['renders'] = [renderer.media_type for renderer in self.renderer_classes]

@@ -30,7 +30,7 @@ DEBUG = False
 
 DATABASES = {
     "default": {
-        "ENGINE": "transaction_hooks.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": "taiga",
     }
 }
@@ -320,7 +320,6 @@ INSTALLED_APPS = [
     "sr",
     "easy_thumbnails",
     "raven.contrib.django.raven_compat",
-    "django_transactional_cleanup",
 ]
 
 WSGI_APPLICATION = "taiga.wsgi.application"
@@ -347,7 +346,7 @@ LOGGING = {
     "handlers": {
         "null": {
             "level":"DEBUG",
-            "class":"django.utils.log.NullHandler",
+            "class":"logging.NullHandler",
         },
         "console":{
             "level":"DEBUG",

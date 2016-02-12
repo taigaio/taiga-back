@@ -43,9 +43,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """The various HTTP responses for use in returning proper HTTP codes."""
+from http.client import responses
+
 from django import http
 
-from django.core.handlers.wsgi import STATUS_CODE_TEXT
 from django.template.response import SimpleTemplateResponse
 from django.utils import six
 
@@ -114,7 +115,7 @@ class Response(SimpleTemplateResponse):
         """
         # TODO: Deprecate and use a template tag instead
         # TODO: Status code text for RFC 6585 status codes
-        return STATUS_CODE_TEXT.get(self.status_code, '')
+        return responses.get(self.status_code, '')
 
     def __getstate__(self):
         """

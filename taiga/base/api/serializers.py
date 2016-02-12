@@ -59,11 +59,11 @@ from django.core.paginator import Page
 from django.db import models
 from django.forms import widgets
 from django.utils import six
-from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _
 
 from .settings import api_settings
 
+from collections import OrderedDict
 import copy
 import datetime
 import inspect
@@ -148,7 +148,7 @@ class DictWithMetadata(dict):
         return dict(self)
 
 
-class SortedDictWithMetadata(SortedDict):
+class OrderedDictWithMetadata(OrderedDict):
     """
     A sorted dict-like object, that can have additional properties attached.
     """
@@ -158,7 +158,7 @@ class SortedDictWithMetadata(SortedDict):
         Overriden to remove the metadata from the dict, since it shouldn't be
         pickle and may in some instances be unpickleable.
         """
-        return SortedDict(self).__dict__
+        return OrderedDict(self).__dict__
 
 
 def _is_protected_type(obj):
@@ -194,7 +194,7 @@ def _get_declared_fields(bases, attrs):
         if hasattr(base, "base_fields"):
             fields = list(base.base_fields.items()) + fields
 
-    return SortedDict(fields)
+    return OrderedDict(fields)
 
 
 class SerializerMetaclass(type):
@@ -222,7 +222,7 @@ class BaseSerializer(WritableField):
         pass
 
     _options_class = SerializerOptions
-    _dict_class = SortedDictWithMetadata
+    _dict_class = OrderedDictWithMetadata
 
     def __init__(self, instance=None, data=None, files=None,
                  context=None, partial=False, many=None,
@@ -268,7 +268,7 @@ class BaseSerializer(WritableField):
         This will be the set of any explicitly declared fields,
         plus the set of fields returned by get_default_fields().
         """
-        ret = SortedDict()
+        ret = OrderedDict()
 
         # Get the explicitly declared fields
         base_fields = copy.deepcopy(self.base_fields)
@@ -284,7 +284,7 @@ class BaseSerializer(WritableField):
         # If "fields" is specified, use those fields, in that order.
         if self.opts.fields:
             assert isinstance(self.opts.fields, (list, tuple)), "`fields` must be a list or tuple"
-            new = SortedDict()
+            new = OrderedDict()
             for key in self.opts.fields:
                 new[key] = ret[key]
             ret = new
@@ -458,7 +458,10 @@ class BaseSerializer(WritableField):
             many = hasattr(value, "__iter__") and not isinstance(value, (Page, dict, six.text_type))
 
         if many:
-            return [self.to_native(item) for item in value]
+            try:
+                return [self.to_native(item) for item in value]
+            except TypeError:
+                pass # LazyObject is iterable so we need to catch this
         return self.to_native(value)
 
     def field_from_native(self, data, files, field_name, into):
@@ -610,7 +613,10 @@ class BaseSerializer(WritableField):
                                   DeprecationWarning, stacklevel=2)
 
             if many:
-                self._data = [self.to_native(item) for item in obj]
+                try:
+                    self._data = [self.to_native(item) for item in obj]
+                except TypeError:
+                    self._data = self.to_native(obj) # LazyObject is iterable so we need to catch this
             else:
                 self._data = self.to_native(obj)
 
@@ -645,7 +651,7 @@ class BaseSerializer(WritableField):
         Useful for things like responding to OPTIONS requests, or generating
         API schemas for auto-documentation.
         """
-        return SortedDict(
+        return OrderedDict(
             [(field_name, field.metadata())
             for field_name, field in six.iteritems(self.fields)]
         )
@@ -740,7 +746,7 @@ class ModelSerializer((six.with_metaclass(SerializerMetaclass, BaseSerializer)))
         assert cls is not None, \
                 "Serializer class '%s' is missing `model` Meta option" % self.__class__.__name__
         opts = cls._meta.concrete_model._meta
-        ret = SortedDict()
+        ret = OrderedDict()
         nested = bool(self.opts.depth)
 
         # Deal with adding the primary key field

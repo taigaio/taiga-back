@@ -19,12 +19,11 @@ from django.apps import AppConfig
 from django.apps import apps
 from django.db.models import signals
 
-from . import signals as handlers
-
 
 ## Project Signals
 
 def connect_projects_signals():
+    from . import signals as handlers
     # On project object is created apply template.
     signals.post_save.connect(handlers.project_post_save,
                               sender=apps.get_model("projects", "Project"),
@@ -51,6 +50,7 @@ def disconnect_projects_signals():
 ## Memberships Signals
 
 def connect_memberships_signals():
+    from . import signals as handlers
     # On membership object is deleted, update role-points relation.
     signals.pre_delete.connect(handlers.membership_post_delete,
                                sender=apps.get_model("projects", "Membership"),
@@ -71,6 +71,7 @@ def disconnect_memberships_signals():
 ## US Statuses Signals
 
 def connect_us_status_signals():
+    from . import signals as handlers
     signals.post_save.connect(handlers.try_to_close_or_open_user_stories_when_edit_us_status,
                               sender=apps.get_model("projects", "UserStoryStatus"),
                               dispatch_uid="try_to_close_or_open_user_stories_when_edit_us_status")
@@ -85,6 +86,7 @@ def disconnect_us_status_signals():
 ## Tasks Statuses Signals
 
 def connect_task_status_signals():
+    from . import signals as handlers
     signals.post_save.connect(handlers.try_to_close_or_open_user_stories_when_edit_task_status,
                               sender=apps.get_model("projects", "TaskStatus"),
                               dispatch_uid="try_to_close_or_open_user_stories_when_edit_task_status")

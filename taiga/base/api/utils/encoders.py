@@ -45,12 +45,9 @@
 Helper classes for parsers.
 """
 from django.db.models.query import QuerySet
-from django.utils.datastructures import SortedDict
 from django.utils.functional import Promise
 from django.utils import timezone
 from django.utils.encoding import force_text
-
-from taiga.base.api.serializers import DictWithMetadata, SortedDictWithMetadata
 
 import datetime
 import decimal
