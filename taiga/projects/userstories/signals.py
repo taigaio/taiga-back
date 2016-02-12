@@ -18,6 +18,17 @@
 from contextlib import suppress
 from django.core.exceptions import ObjectDoesNotExist
 from taiga.projects.history.services import take_snapshot
+from taiga.projects.tasks.apps import connect_all_tasks_signals, disconnect_all_tasks_signals
+
+
+# Enable tasks signals
+def enable_tasks_signals(sender, instance, **kwargs):
+    connect_all_tasks_signals()
+
+
+# Disable tasks signals
+def disable_task_signals(sender, instance, **kwargs):
+    disconnect_all_tasks_signals()
 
 ####################################
 # Signals for cached prev US

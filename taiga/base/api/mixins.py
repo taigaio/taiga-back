@@ -53,6 +53,8 @@ from taiga.base import response
 from .settings import api_settings
 from .utils import get_object_or_404
 
+from ..decorators import model_pk_lock
+
 
 def _get_validation_exclusions(obj, pk=None, slug_field=None, lookup_field=None):
     """
@@ -159,11 +161,14 @@ class UpdateModelMixin:
     """
 
     @tx.atomic
+    @model_pk_lock
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         self.object = self.get_object_or_none()
-
         self.check_permissions(request, 'update', self.object)
+
+        if self.object is None:
+            raise Http404
 
         serializer = self.get_serializer(self.object, data=request.DATA,
                                          files=request.FILES, partial=partial)
@@ -225,6 +230,7 @@ class DestroyModelMixin:
     Destroy a model instance.
     """
     @tx.atomic
+    @model_pk_lock
     def destroy(self, request, *args, **kwargs):
         obj = self.get_object_or_none()
         self.check_permissions(request, 'destroy', obj)

@@ -144,10 +144,7 @@ def test_update_entries(client):
     assert response.status_code == 404
     response = client.json.put(reverse("user-storage-detail", args=[form["key"]]),
                                json.dumps(form))
-    assert response.status_code == 201
-    response = client.json.get(reverse("user-storage-detail", args=[form["key"]]))
-    assert response.status_code == 200
-    assert response.data["value"] == form["value"]
+    assert response.status_code == 404
 
 
 def test_delete_storage_entry(client):

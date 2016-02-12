@@ -15,10 +15,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import warnings
+from django_pglocks import advisory_lock
 
-
-# Rest Framework 2.4 backport some decorators.
 
 def detail_route(methods=['get'], **kwargs):
     """
@@ -46,35 +44,19 @@ def list_route(methods=['get'], **kwargs):
     return decorator
 
 
-def link(**kwargs):
+def model_pk_lock(func):
     """
-    Used to mark a method on a ViewSet that should be routed for detail GET requests.
+    This decorator is designed to be used in ModelViewsets methods to lock them based
+    on the model and the id of the selected object.
     """
-    msg = 'link is pending deprecation. Use detail_route instead.'
-    warnings.warn(msg, PendingDeprecationWarning, stacklevel=2)
+    def decorator(self, *args, **kwargs):
+        from taiga.base.utils.db import get_typename_for_model_class
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        pk = self.kwargs.get(self.pk_url_kwarg, None)
+        tn = get_typename_for_model_class(self.get_queryset().model)
+        key = "{0}:{1}".format(tn, pk)
 
-    def decorator(func):
-        func.bind_to_methods = ['get']
-        func.detail = True
-        func.permission_classes = kwargs.get('permission_classes', [])
-        func.kwargs = kwargs
-        return func
-
-    return decorator
-
-
-def action(methods=['post'], **kwargs):
-    """
-    Used to mark a method on a ViewSet that should be routed for detail POST requests.
-    """
-    msg = 'action is pending deprecation. Use detail_route instead.'
-    warnings.warn(msg, PendingDeprecationWarning, stacklevel=2)
-
-    def decorator(func):
-        func.bind_to_methods = methods
-        func.detail = True
-        func.permission_classes = kwargs.get('permission_classes', [])
-        func.kwargs = kwargs
-        return func
+        with advisory_lock(key) as acquired_key_lock:
+            return func(self, *args, **kwargs)
 
     return decorator

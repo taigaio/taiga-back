@@ -61,7 +61,7 @@ def test_storage_update(client, data):
     storage_data["key"] = "test"
     storage_data = json.dumps(storage_data)
     results = helper_test_http_method(client, 'put', url, storage_data, users)
-    assert results == [401, 200, 201]
+    assert results == [401, 200, 404]
 
 
 def test_storage_delete(client, data):
@@ -118,4 +118,4 @@ def test_storage_patch(client, data):
 
     patch_data = json.dumps({"value": {"test": "test-value"}})
     results = helper_test_http_method(client, 'patch', url, patch_data, users)
-    assert results == [401, 200, 201]
+    assert results == [401, 200, 404]
