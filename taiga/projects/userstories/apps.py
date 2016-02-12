@@ -23,6 +23,17 @@ from django.db.models import signals
 def connect_userstories_signals():
     from taiga.projects import signals as generic_handlers
     from . import signals as handlers
+
+    # When deleting user stories we must disable task signals while delating and
+    # enabling them in the end
+    signals.pre_delete.connect(handlers.disable_task_signals,
+                               sender=apps.get_model("userstories", "UserStory"),
+                               dispatch_uid='disable_task_signals')
+
+    signals.post_delete.connect(handlers.enable_tasks_signals,
+                           sender=apps.get_model("userstories", "UserStory"),
+                           dispatch_uid='enable_tasks_signals')
+
     # Cached prev object version
     signals.pre_save.connect(handlers.cached_prev_us,
                              sender=apps.get_model("userstories", "UserStory"),

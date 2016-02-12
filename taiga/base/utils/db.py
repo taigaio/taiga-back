@@ -19,6 +19,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.shortcuts import _get_queryset
 
+from django_pglocks import advisory_lock
+
 from . import functions
 
 import re
@@ -116,7 +118,6 @@ def update_in_bulk(instances, list_of_new_values, callback=None, precall=None):
         callback(instance)
 
 
-@transaction.atomic
 def update_in_bulk_with_ids(ids, list_of_new_values, model):
     """Update a table using a list of ids.
 
@@ -125,8 +126,11 @@ def update_in_bulk_with_ids(ids, list_of_new_values, model):
     to the instance in the same index position as the dict.
     :param model: Model of the ids.
     """
+    tn = get_typename_for_model_class(model)
     for id, new_values in zip(ids, list_of_new_values):
-        model.objects.filter(id=id).update(**new_values)
+        key = "{0}:{1}".format(tn, id)
+        with advisory_lock(key) as acquired_key_lock:
+            model.objects.filter(id=id).update(**new_values)
 
 
 def to_tsquery(term):
