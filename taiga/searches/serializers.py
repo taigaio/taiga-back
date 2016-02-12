@@ -41,7 +41,8 @@ class TaskSearchResultsSerializer(TaskSerializer):
 class UserStorySearchResultsSerializer(UserStorySerializer):
     class Meta:
         model = UserStory
-        fields = ('id', 'ref', 'subject', 'status', 'total_points')
+        fields = ('id', 'ref', 'subject', 'status', 'total_points',
+                  'milestone_name', 'milestone_slug')
 
 
 class WikiPageSearchResultsSerializer(WikiPageSerializer):
