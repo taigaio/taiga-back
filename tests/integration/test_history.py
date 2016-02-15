@@ -144,7 +144,7 @@ def test_issue_resource_history_test(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     role = f.RoleFactory.create(project=project)
-    f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
     issue = f.IssueFactory.create(owner=user, project=project)
 
     mock_path = "taiga.projects.issues.api.IssueViewSet.pre_conditions_on_save"
@@ -201,7 +201,7 @@ def test_take_hidden_snapshot():
 def test_history_with_only_comment_shouldnot_be_hidden(client):
     project = f.create_project()
     us = f.create_userstory(project=project, status__project=project)
-    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
 
     qs_all = HistoryEntry.objects.all()
     qs_hidden = qs_all.filter(is_hidden=True)
@@ -222,7 +222,7 @@ def test_history_with_only_comment_shouldnot_be_hidden(client):
 def test_delete_comment_by_project_owner(client):
     project = f.create_project()
     us = f.create_userstory(project=project)
-    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     key = make_key_from_model_object(us)
     history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
                                                  comment="testing",

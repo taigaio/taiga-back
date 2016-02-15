@@ -127,7 +127,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         try:
             owner_membership = project_serialized.object.memberships.get(user=project_serialized.object.owner)
-            owner_membership.is_owner = True
+            owner_membership.is_admin = True
             owner_membership.save()
         except Membership.DoesNotExist:
             Membership.objects.create(
@@ -135,7 +135,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
                 email=project_serialized.object.owner.email,
                 user=project_serialized.object.owner,
                 role=project_serialized.object.roles.all().first(),
-                is_owner=True
+                is_admin=True
             )
 
         # Create project values choicess

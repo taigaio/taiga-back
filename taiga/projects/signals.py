@@ -85,7 +85,7 @@ def project_post_save(sender, instance, created, **kwargs):
     if owner_role:
         Membership = apps.get_model("projects", "Membership")
         Membership.objects.create(user=instance.owner, project=instance, role=owner_role,
-                                  is_owner=True, email=instance.owner.email)
+                                  is_admin=True, email=instance.owner.email)
 
 
 ## US statuses

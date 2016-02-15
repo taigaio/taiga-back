@@ -100,19 +100,19 @@ def data():
 
     f.MembershipFactory(project=m.public_project,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.blocked_project,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     m.public_task_ca = f.TaskCustomAttributeFactory(project=m.public_project)
     m.private_task_ca1 = f.TaskCustomAttributeFactory(project=m.private_project1)

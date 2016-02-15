@@ -70,7 +70,7 @@ class CanViewProjectObjFilterBackend(FilterBackend):
             if project_id:
                 memberships_qs = memberships_qs.filter(project_id=project_id)
             memberships_qs = memberships_qs.filter(Q(role__permissions__contains=['view_project']) |
-                                                   Q(is_owner=True))
+                                                   Q(is_admin=True))
 
             projects_list = [membership.project_id for membership in memberships_qs]
 

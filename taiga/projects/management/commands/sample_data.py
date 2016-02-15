@@ -150,7 +150,7 @@ class Command(BaseCommand):
                 Membership.objects.create(email=user.email,
                                           project=project,
                                           role=role,
-                                          is_owner=self.sd.boolean(),
+                                          is_admin=self.sd.boolean(),
                                           user=user)
 
                 if role.computable:
@@ -163,7 +163,7 @@ class Command(BaseCommand):
                 Membership.objects.create(email=self.sd.email(),
                                           project=project,
                                           role=role,
-                                          is_owner=self.sd.boolean(),
+                                          is_admin=self.sd.boolean(),
                                           token=''.join(random.sample('abcdef0123456789', 10)))
 
                 if role.computable:

@@ -40,7 +40,7 @@ def project_has_valid_admins(project, exclude_user=None):
     """
     Checks if the project has any owner membership with a user different than the specified
     """
-    admin_memberships = project.memberships.filter(is_owner=True, user__is_active=True)
+    admin_memberships = project.memberships.filter(is_admin=True, user__is_active=True)
     if exclude_user:
         admin_memberships = admin_memberships.exclude(user=exclude_user)
 
@@ -49,7 +49,7 @@ def project_has_valid_admins(project, exclude_user=None):
 
 def can_user_leave_project(user, project):
     membership = project.memberships.get(user=user)
-    if not membership.is_owner:
+    if not membership.is_admin:
          return True
 
     #The user can't leave if is the real owner of the project

@@ -353,7 +353,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
 
         # Check the user is an admin membership from the project
         try:
-            project.memberships.get(is_owner=True, user=user)
+            project.memberships.get(is_admin=True, user=user)
         except apps.get_model("projects", "Membership").DoesNotExist:
             return response.BadRequest(_("The user must be an admin member of the project"))
 
@@ -432,7 +432,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
 
         self.pre_delete(obj)
         self.pre_conditions_on_delete(obj)
-        obj.delete_related_content()        
+        obj.delete_related_content()
         obj.delete()
         self.post_delete(obj)
         return response.NoContent()

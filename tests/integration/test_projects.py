@@ -90,7 +90,7 @@ def test_create_public_project_without_enough_public_projects_slots(client):
 
 def test_change_project_from_private_to_public_without_enough_public_projects_slots(client):
     project = f.create_project(is_private=True, owner__max_public_projects=0)
-    f.MembershipFactory(user=project.owner, project=project, is_owner=True)
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
     url = reverse("projects-detail", kwargs={"pk": project.pk})
 
     data = {
@@ -106,7 +106,7 @@ def test_change_project_from_private_to_public_without_enough_public_projects_sl
 
 def test_change_project_from_public_to_private_without_enough_private_projects_slots(client):
     project = f.create_project(is_private=False, owner__max_private_projects=0)
-    f.MembershipFactory(user=project.owner, project=project, is_owner=True)
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
     url = reverse("projects-detail", kwargs={"pk": project.pk})
 
     data = {
@@ -152,7 +152,7 @@ def test_create_public_project_with_enough_public_projects_slots(client):
 
 def test_change_project_from_private_to_public_with_enough_public_projects_slots(client):
     project = f.create_project(is_private=True, owner__max_public_projects=1)
-    f.MembershipFactory(user=project.owner, project=project, is_owner=True)
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
     url = reverse("projects-detail", kwargs={"pk": project.pk})
 
     data = {
@@ -167,7 +167,7 @@ def test_change_project_from_private_to_public_with_enough_public_projects_slots
 
 def test_change_project_from_public_to_private_with_enough_private_projects_slots(client):
     project = f.create_project(is_private=False, owner__max_private_projects=1)
-    f.MembershipFactory(user=project.owner, project=project, is_owner=True)
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
     url = reverse("projects-detail", kwargs={"pk": project.pk})
 
     data = {
@@ -182,7 +182,7 @@ def test_change_project_from_public_to_private_with_enough_private_projects_slot
 
 def test_change_project_other_data_with_enough_private_projects_slots(client):
     project = f.create_project(is_private=True, owner__max_private_projects=1)
-    f.MembershipFactory(user=project.owner, project=project, is_owner=True)
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
     url = reverse("projects-detail", kwargs={"pk": project.pk})
 
     data = {
@@ -197,7 +197,7 @@ def test_change_project_other_data_with_enough_private_projects_slots(client):
 
 def test_partially_update_project(client):
     project = f.create_project()
-    f.MembershipFactory(user=project.owner, project=project, is_owner=True)
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
     url = reverse("projects-detail", kwargs={"pk": project.pk})
     data = {"name": ""}
 
@@ -248,7 +248,7 @@ def test_task_status_is_closed_changed_recalc_us_is_closed(client):
 
 def test_us_status_slug_generation(client):
     us_status = f.UserStoryStatusFactory(name="NEW")
-    f.MembershipFactory(user=us_status.project.owner, project=us_status.project, is_owner=True)
+    f.MembershipFactory(user=us_status.project.owner, project=us_status.project, is_admin=True)
     assert us_status.slug == "new"
 
     client.login(us_status.project.owner)
@@ -268,7 +268,7 @@ def test_us_status_slug_generation(client):
 
 def test_task_status_slug_generation(client):
     task_status = f.TaskStatusFactory(name="NEW")
-    f.MembershipFactory(user=task_status.project.owner, project=task_status.project, is_owner=True)
+    f.MembershipFactory(user=task_status.project.owner, project=task_status.project, is_admin=True)
     assert task_status.slug == "new"
 
     client.login(task_status.project.owner)
@@ -288,7 +288,7 @@ def test_task_status_slug_generation(client):
 
 def test_issue_status_slug_generation(client):
     issue_status = f.IssueStatusFactory(name="NEW")
-    f.MembershipFactory(user=issue_status.project.owner, project=issue_status.project, is_owner=True)
+    f.MembershipFactory(user=issue_status.project.owner, project=issue_status.project, is_admin=True)
     assert issue_status.slug == "new"
 
     client.login(issue_status.project.owner)
@@ -309,7 +309,7 @@ def test_issue_status_slug_generation(client):
 def test_points_name_duplicated(client):
     point_1 = f.PointsFactory()
     point_2 = f.PointsFactory(project=point_1.project)
-    f.MembershipFactory(user=point_1.project.owner, project=point_1.project, is_owner=True)
+    f.MembershipFactory(user=point_1.project.owner, project=point_1.project, is_admin=True)
     client.login(point_1.project.owner)
 
     url = reverse("points-detail", kwargs={"pk": point_2.pk})
@@ -396,7 +396,7 @@ def test_leave_project_valid_membership_only_owner(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create()
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
-    f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
     client.login(user)
     url = reverse("projects-leave", args=(project.id,))
     response = client.post(url)
@@ -409,8 +409,8 @@ def test_leave_project_valid_membership_real_owner(client):
     member_user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=owner_user)
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
-    f.MembershipFactory.create(project=project, user=owner_user, role=role, is_owner=True)
-    f.MembershipFactory.create(project=project, user=member_user, role=role, is_owner=True)
+    f.MembershipFactory.create(project=project, user=owner_user, role=role, is_admin=True)
+    f.MembershipFactory.create(project=project, user=member_user, role=role, is_admin=True)
 
     client.login(owner_user)
     url = reverse("projects-leave", args=(project.id,))
@@ -448,7 +448,7 @@ def test_delete_membership_only_owner(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create()
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
-    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
     client.login(user)
     url = reverse("memberships-detail", args=(membership.id,))
     response = client.delete(url)
@@ -461,8 +461,8 @@ def test_delete_membership_real_owner(client):
     member_user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=owner_user)
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
-    owner_membership = f.MembershipFactory.create(project=project, user=owner_user, role=role, is_owner=True)
-    f.MembershipFactory.create(project=project, user=member_user, role=role, is_owner=True)
+    owner_membership = f.MembershipFactory.create(project=project, user=owner_user, role=role, is_admin=True)
+    f.MembershipFactory.create(project=project, user=member_user, role=role, is_admin=True)
 
     client.login(owner_user)
     url = reverse("memberships-detail", args=(owner_membership.id,))
@@ -475,22 +475,22 @@ def test_edit_membership_only_owner(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create()
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
-    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
     data = {
-        "is_owner": False
+        "is_admin": False
     }
     client.login(user)
     url = reverse("memberships-detail", args=(membership.id,))
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 400
-    assert response.data["is_owner"][0] == "The project must have an owner and at least one of the users must be an active admin"
+    assert response.data["is_admin"][0] == "In this project at least one of the users must be an active admin."
 
 
 def test_anon_permissions_generation_when_making_project_public(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(is_private=True)
     role = f.RoleFactory.create(project=project, permissions=["view_project", "modify_project"])
-    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
     assert project.anon_permissions == []
     client.login(user)
     url = reverse("projects-detail", kwargs={"pk": project.pk})
@@ -504,7 +504,7 @@ def test_anon_permissions_generation_when_making_project_public(client):
 
 def test_destroy_point_and_reassign(client):
     project = f.ProjectFactory.create()
-    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     p1 = f.PointsFactory(project=project)
     project.default_points = p1
     project.save()
@@ -549,7 +549,7 @@ def test_create_and_use_template(client):
     user = f.UserFactory.create(is_superuser=True)
     project = f.create_project()
     role = f.RoleFactory(project=project)
-    f.MembershipFactory(user=user, project=project, is_owner=True, role=role)
+    f.MembershipFactory(user=user, project=project, is_admin=True, role=role)
     client.login(user)
 
     url = reverse("projects-create-template", kwargs={"pk": project.pk})
@@ -575,11 +575,11 @@ def test_projects_user_order(client):
     user = f.UserFactory.create(is_superuser=True)
     project_1 = f.create_project()
     role_1 = f.RoleFactory(project=project_1)
-    f.MembershipFactory(user=user, project=project_1, is_owner=True, role=role_1, user_order=2)
+    f.MembershipFactory(user=user, project=project_1, is_admin=True, role=role_1, user_order=2)
 
     project_2 = f.create_project()
     role_2 = f.RoleFactory(project=project_2)
-    f.MembershipFactory(user=user, project=project_2, is_owner=True, role=role_2, user_order=1)
+    f.MembershipFactory(user=user, project=project_2, is_admin=True, role=role_2, user_order=1)
 
     client.login(user)
     #Testing default id order
@@ -762,7 +762,7 @@ def test_transfer_request_from_not_admin_member(client):
     user = f.UserFactory.create()
     project = f.create_project()
     role = f.RoleFactory(project=project, permissions=["view_project"])
-    f.MembershipFactory(user=user, project=project, role=role, is_owner=False)
+    f.MembershipFactory(user=user, project=project, role=role, is_admin=False)
 
     url = reverse("projects-transfer-request", args=(project.id,))
 
@@ -778,7 +778,7 @@ def test_transfer_request_from_admin_member(client):
     user = f.UserFactory.create()
     project = f.create_project()
     role = f.RoleFactory(project=project, permissions=["view_project"])
-    f.MembershipFactory(user=user, project=project, role=role, is_owner=True)
+    f.MembershipFactory(user=user, project=project, role=role, is_admin=True)
 
     url = reverse("projects-transfer-request", args=(project.id,))
 
@@ -792,7 +792,7 @@ def test_transfer_request_from_admin_member(client):
 def test_project_transfer_start_to_not_a_membership(client):
     user_from = f.UserFactory.create()
     project = f.create_project(owner=user_from)
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
 
     client.login(user_from)
     url = reverse("projects-transfer-start", kwargs={"pk": project.pk})
@@ -809,7 +809,7 @@ def test_project_transfer_start_to_not_a_membership_admin(client):
     user_from = f.UserFactory.create()
     user_to = f.UserFactory.create()
     project = f.create_project(owner=user_from)
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
     f.MembershipFactory(user=user_to, project=project)
 
     client.login(user_from)
@@ -827,8 +827,8 @@ def test_project_transfer_start_to_a_valid_user(client):
     user_from = f.UserFactory.create()
     user_to = f.UserFactory.create()
     project = f.create_project(owner=user_from)
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     client.login(user_from)
     url = reverse("projects-transfer-start", kwargs={"pk": project.pk})
@@ -854,8 +854,8 @@ def test_project_transfer_reject_from_admin_member_without_token(client):
     token = signer.sign(user_to.id)
     project = f.create_project(owner=user_from, transfer_token=token)
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     client.login(user_to)
     url = reverse("projects-transfer-reject", kwargs={"pk": project.pk})
@@ -877,8 +877,8 @@ def test_project_transfer_reject_from_not_admin_member(client):
     token = signer.sign(user_to.id)
     project = f.create_project(owner=user_from, transfer_token=token, public_permissions=["view_project"])
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=False)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=False)
 
     client.login(user_to)
     url = reverse("projects-transfer-reject", kwargs={"pk": project.pk})
@@ -900,8 +900,8 @@ def test_project_transfer_reject_from_admin_member_with_invalid_token(client):
 
     project = f.create_project(owner=user_from, transfer_token="invalid-token")
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     client.login(user_to)
     url = reverse("projects-transfer-reject", kwargs={"pk": project.pk})
@@ -927,8 +927,8 @@ def test_project_transfer_reject_from_admin_member_with_other_user_token(client)
     token = signer.sign(other_user.id)
     project = f.create_project(owner=user_from, transfer_token=token)
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     client.login(user_to)
     url = reverse("projects-transfer-reject", kwargs={"pk": project.pk})
@@ -953,8 +953,8 @@ def test_project_transfer_reject_from_admin_member_with_expired_token(client):
     token = signer.sign(user_to.id)
     project = f.create_project(owner=user_from, transfer_token=token)
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     client.login(user_to)
     url = reverse("projects-transfer-reject", kwargs={"pk": project.pk})
@@ -979,8 +979,8 @@ def test_project_transfer_reject_from_admin_member_with_valid_token(client):
     token = signer.sign(user_to.id)
     project = f.create_project(owner=user_from, transfer_token=token)
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     client.login(user_to)
     url = reverse("projects-transfer-reject", kwargs={"pk": project.pk})
@@ -1005,8 +1005,8 @@ def test_project_transfer_accept_from_admin_member_without_token(client):
     token = signer.sign(user_to.id)
     project = f.create_project(owner=user_from, transfer_token=token)
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     client.login(user_to)
     url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
@@ -1028,8 +1028,8 @@ def test_project_transfer_accept_from_not_admin_member(client):
     token = signer.sign(user_to.id)
     project = f.create_project(owner=user_from, transfer_token=token, public_permissions=["view_project"])
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=False)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=False)
 
     client.login(user_to)
     url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
@@ -1051,8 +1051,8 @@ def test_project_transfer_accept_from_admin_member_with_invalid_token(client):
 
     project = f.create_project(owner=user_from, transfer_token="invalid-token")
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     client.login(user_to)
     url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
@@ -1078,8 +1078,8 @@ def test_project_transfer_accept_from_admin_member_with_other_user_token(client)
     token = signer.sign(other_user.id)
     project = f.create_project(owner=user_from, transfer_token=token)
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     client.login(user_to)
     url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
@@ -1104,8 +1104,8 @@ def test_project_transfer_accept_from_admin_member_with_expired_token(client):
     token = signer.sign(user_to.id)
     project = f.create_project(owner=user_from, transfer_token=token)
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     client.login(user_to)
     url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
@@ -1130,8 +1130,8 @@ def test_project_transfer_accept_from_admin_member_with_valid_token_without_enou
     token = signer.sign(user_to.id)
     project = f.create_project(owner=user_from, transfer_token=token, is_private=True)
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     client.login(user_to)
     url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})
@@ -1158,8 +1158,8 @@ def test_project_transfer_accept_from_admin_member_with_valid_token_without_enou
     token = signer.sign(user_to.id)
     project = f.create_project(owner=user_from, transfer_token=token, is_private=False)
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     f.MembershipFactory(project=project)
     f.MembershipFactory(project=project)
@@ -1192,8 +1192,8 @@ def test_project_transfer_accept_from_admin_member_with_valid_token_without_enou
     token = signer.sign(user_to.id)
     project = f.create_project(owner=user_from, transfer_token=token, is_private=True)
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     f.MembershipFactory(project=project)
     f.MembershipFactory(project=project)
@@ -1226,8 +1226,8 @@ def test_project_transfer_accept_from_admin_member_with_valid_token_with_enough_
     token = signer.sign(user_to.id)
     project = f.create_project(owner=user_from, transfer_token=token, is_private=True)
 
-    f.MembershipFactory(user=user_from, project=project, is_owner=True)
-    f.MembershipFactory(user=user_to, project=project, is_owner=True)
+    f.MembershipFactory(user=user_from, project=project, is_admin=True)
+    f.MembershipFactory(user=user_to, project=project, is_admin=True)
 
     client.login(user_to)
     url = reverse("projects-transfer-accept", kwargs={"pk": project.pk})

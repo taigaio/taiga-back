@@ -43,7 +43,7 @@ def test_create_task_without_status(client):
     project.default_task_status = status
     project.save()
 
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     url = reverse("tasks-list")
 
     data = {"subject": "Test user story", "project": project.id}
@@ -56,7 +56,7 @@ def test_create_task_without_status(client):
 def test_create_task_without_default_values(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user, default_task_status=None)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     url = reverse("tasks-list")
 
     data = {"subject": "Test user story", "project": project.id}
@@ -69,7 +69,7 @@ def test_create_task_without_default_values(client):
 def test_api_update_task_tags(client):
     project = f.ProjectFactory.create()
     task = f.create_task(project=project, status__project=project, milestone=None, user_story=None)
-    f.MembershipFactory.create(project=project, user=task.owner, is_owner=True)
+    f.MembershipFactory.create(project=project, user=task.owner, is_admin=True)
     url = reverse("tasks-detail", kwargs={"pk": task.pk})
     data = {"tags": ["back", "front"], "version": task.version}
 
@@ -81,7 +81,7 @@ def test_api_update_task_tags(client):
 
 def test_api_create_in_bulk_with_status(client):
     us = f.create_userstory()
-    f.MembershipFactory.create(project=us.project, user=us.owner, is_owner=True)
+    f.MembershipFactory.create(project=us.project, user=us.owner, is_admin=True)
     us.project.default_task_status = f.TaskStatusFactory.create(project=us.project)
     url = reverse("tasks-bulk-create")
     data = {
@@ -104,7 +104,7 @@ def test_api_create_invalid_task(client):
     # But the User Story is not associated with the milestone
     us_milestone = f.MilestoneFactory.create()
     us = f.create_userstory(milestone=us_milestone)
-    f.MembershipFactory.create(project=us.project, user=us.owner, is_owner=True)
+    f.MembershipFactory.create(project=us.project, user=us.owner, is_admin=True)
     us.project.default_task_status = f.TaskStatusFactory.create(project=us.project)
     task_milestone = f.MilestoneFactory.create(project=us.project, owner=us.owner)
 
@@ -124,7 +124,7 @@ def test_api_create_invalid_task(client):
 
 def test_api_update_order_in_bulk(client):
     project = f.create_project()
-    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     task1 = f.create_task(project=project)
     task2 = f.create_task(project=project)
 
