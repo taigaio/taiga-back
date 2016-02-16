@@ -1476,3 +1476,21 @@ def test_valid_dump_import_with_enough_membership_public_project_slots_multiple_
     response_data = response.data
     assert "id" in response_data
     assert response_data["name"] == "Valid project"
+
+
+def test_valid_dump_import_without_slug(client):
+    project = f.ProjectFactory.create(slug="existing-slug")
+    user = f.UserFactory.create()
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "name": "Project name",
+        "description": "Valid project desc",
+        "is_private": True
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 201
