@@ -448,6 +448,24 @@ def test_update_project_logo(client):
 
 
 @pytest.mark.django_db(transaction=True)
+def test_update_project_logo_with_long_file_name(client):
+    user = f.UserFactory.create(is_superuser=True)
+    project = f.create_project()
+    url = reverse("projects-change-logo", args=(project.id,))
+
+    with NamedTemporaryFile(delete=False) as logo:
+        logo.name=500*"x"+".bmp"
+        logo.write(DUMMY_BMP_DATA)
+        logo.seek(0)
+
+        client.login(user)
+        post_data = {'logo': logo}
+        response = client.post(url, post_data)
+
+        assert response.status_code == 200
+
+
+@pytest.mark.django_db(transaction=True)
 def test_remove_project_logo(client):
     user = f.UserFactory.create(is_superuser=True)
     project = f.create_project()

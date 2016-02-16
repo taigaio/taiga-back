@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='logo',
-            field=models.FileField(null=True, blank=True, upload_to=taiga.projects.models.get_user_file_path, verbose_name='logo', max_length=500),
+            field=models.FileField(null=True, blank=True, upload_to=taiga.projects.models.get_project_logo_file_path, verbose_name='logo', max_length=500),
         ),
     ]
