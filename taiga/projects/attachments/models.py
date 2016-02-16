@@ -16,35 +16,20 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import hashlib
-import os
-import os.path as path
-
-from unidecode import unidecode
 
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.utils import timezone
-from django.utils.encoding import force_bytes
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import get_valid_filename
 
-from taiga.base.utils.iterators import split_by_n
+from taiga.base.utils.files import get_file_path
 
 
 def get_attachment_file_path(instance, filename):
-    basename = path.basename(filename)
-    basename = get_valid_filename(basename)
-
-    hs = hashlib.sha256()
-    hs.update(force_bytes(timezone.now().isoformat()))
-    hs.update(os.urandom(1024))
-
-    p1, p2, p3, p4, *p5 = split_by_n(hs.hexdigest(), 1)
-    hash_part = path.join(p1, p2, p3, p4, "".join(p5))
-
-    return path.join("attachments", hash_part, basename)
+    return get_file_path(instance, filename, "attachments")
 
 
 class Attachment(models.Model):
