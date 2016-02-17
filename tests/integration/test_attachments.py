@@ -45,3 +45,19 @@ def test_create_attachment_on_wrong_project(client):
     client.login(issue1.owner)
     response = client.post(url, data)
     assert response.status_code == 400
+
+
+def test_create_attachment_with_long_file_name(client):
+    issue1 = f.create_issue()
+    f.MembershipFactory(project=issue1.project, user=issue1.owner, is_owner=True)
+
+    url = reverse("issue-attachments-list")
+
+    data = {"description": "test",
+            "object_id": issue1.pk,
+            "project": issue1.project.id,
+            "attached_file": SimpleUploadedFile(500*"x"+".txt", b"test")}
+
+    client.login(issue1.owner)
+    response = client.post(url, data)
+    assert response.data["attached_file"].endswith("/"+100*"x"+".txt")
