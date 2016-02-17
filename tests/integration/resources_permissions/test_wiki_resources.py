@@ -84,19 +84,19 @@ def data():
 
     f.MembershipFactory(project=m.public_project,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.blocked_project,
                     user=m.project_owner,
-                    is_owner=True)
+                    is_admin=True)
 
     m.public_wiki_page = f.WikiPageFactory(project=m.public_project)
     m.private_wiki_page1 = f.WikiPageFactory(project=m.private_project1)

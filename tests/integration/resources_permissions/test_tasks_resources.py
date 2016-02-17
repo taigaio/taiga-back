@@ -90,19 +90,19 @@ def data():
 
     f.MembershipFactory(project=m.public_project,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.blocked_project,
                     user=m.project_owner,
-                    is_owner=True)
+                    is_admin=True)
 
     milestone_public_task = f.MilestoneFactory(project=m.public_project)
     milestone_private_task1 = f.MilestoneFactory(project=m.private_project1)

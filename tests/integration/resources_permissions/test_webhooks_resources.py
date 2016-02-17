@@ -45,10 +45,10 @@ def data():
 
     f.MembershipFactory(project=m.project1,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
     f.MembershipFactory(project=m.blocked_project,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     m.webhook1 = f.WebhookFactory(project=m.project1)
     m.webhooklog1 = f.WebhookLogFactory(webhook=m.webhook1)

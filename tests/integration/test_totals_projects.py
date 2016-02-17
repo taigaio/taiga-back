@@ -112,7 +112,7 @@ def test_project_totals_updated_on_activity(client):
 
 def test_project_totals_updated_on_like(client):
     project = f.create_project()
-    f.MembershipFactory.create(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
 
     totals_updated_datetime = project.totals_updated_datetime
     now = datetime.datetime.now()

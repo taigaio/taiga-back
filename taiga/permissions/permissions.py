@@ -82,7 +82,7 @@ MEMBERS_PERMISSIONS = [
     ('delete_wiki_link', _('Delete wiki link')),
 ]
 
-OWNERS_PERMISSIONS = [
+ADMINS_PERMISSIONS = [
     ('modify_project', _('Modify project')),
     ('add_member', _('Add member')),
     ('remove_member', _('Remove member')),

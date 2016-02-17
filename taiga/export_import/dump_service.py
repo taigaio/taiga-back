@@ -147,7 +147,7 @@ def dict_to_project(data, owner=None):
                 email=proj.owner.email,
                 user=proj.owner,
                 role=proj.roles.all().first(),
-                is_owner=True
+                is_admin=True
             )
 
     if service.get_errors(clear=False):

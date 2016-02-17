@@ -43,7 +43,7 @@ def test_valid_project_export_with_celery_disabled(client, settings):
 
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_owner=True)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
     client.login(user)
 
     url = reverse("exporter-detail", args=[project.pk])
@@ -59,7 +59,7 @@ def test_valid_project_export_with_celery_enabled(client, settings):
 
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_owner=True)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
     client.login(user)
 
     url = reverse("exporter-detail", args=[project.pk])
@@ -82,7 +82,7 @@ def test_valid_project_with_throttling(client, settings):
 
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_owner=True)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
     client.login(user)
 
     url = reverse("exporter-detail", args=[project.pk])

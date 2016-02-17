@@ -13,7 +13,7 @@ def test_create_user_story_attachment_without_file(client):
     Bug test "Don't create attachments without attached_file"
     """
     us = f.UserStoryFactory.create()
-    f.MembershipFactory(project=us.project, user=us.owner, is_owner=True)
+    f.MembershipFactory(project=us.project, user=us.owner, is_admin=True)
     attachment_data = {
         "description": "test",
         "attached_file": None,
@@ -30,7 +30,7 @@ def test_create_user_story_attachment_without_file(client):
 def test_create_attachment_on_wrong_project(client):
     issue1 = f.create_issue()
     issue2 = f.create_issue(owner=issue1.owner)
-    f.MembershipFactory(project=issue1.project, user=issue1.owner, is_owner=True)
+    f.MembershipFactory(project=issue1.project, user=issue1.owner, is_admin=True)
 
     assert issue1.owner == issue2.owner
     assert issue1.project.owner == issue2.project.owner
@@ -49,7 +49,7 @@ def test_create_attachment_on_wrong_project(client):
 
 def test_create_attachment_with_long_file_name(client):
     issue1 = f.create_issue()
-    f.MembershipFactory(project=issue1.project, user=issue1.owner, is_owner=True)
+    f.MembershipFactory(project=issue1.project, user=issue1.owner, is_admin=True)
 
     url = reverse("issue-attachments-list")
 

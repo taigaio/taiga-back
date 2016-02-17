@@ -33,7 +33,7 @@ def test_task_custom_attribute_duplicate_name_error_on_create(client):
     custom_attr_1 = f.TaskCustomAttributeFactory()
     member = f.MembershipFactory(user=custom_attr_1.project.owner,
                                  project=custom_attr_1.project,
-                                 is_owner=True)
+                                 is_admin=True)
 
 
     url = reverse("task-custom-attributes-list")
@@ -50,7 +50,7 @@ def test_task_custom_attribute_duplicate_name_error_on_update(client):
     custom_attr_2 = f.TaskCustomAttributeFactory(project=custom_attr_1.project)
     member = f.MembershipFactory(user=custom_attr_1.project.owner,
                                  project=custom_attr_1.project,
-                                 is_owner=True)
+                                 is_admin=True)
 
 
     url = reverse("task-custom-attributes-detail", kwargs={"pk": custom_attr_2.pk})
@@ -66,10 +66,10 @@ def test_task_custom_attribute_duplicate_name_error_on_move_between_projects(cli
     custom_attr_2 = f.TaskCustomAttributeFactory(name=custom_attr_1.name)
     member = f.MembershipFactory(user=custom_attr_1.project.owner,
                                  project=custom_attr_1.project,
-                                 is_owner=True)
+                                 is_admin=True)
     f.MembershipFactory(user=custom_attr_1.project.owner,
                         project=custom_attr_2.project,
-                        is_owner=True)
+                        is_admin=True)
 
 
     url = reverse("task-custom-attributes-detail", kwargs={"pk": custom_attr_2.pk})
@@ -93,7 +93,7 @@ def test_task_custom_attributes_values_update(client):
     task = f.TaskFactory()
     member = f.MembershipFactory(user=task.project.owner,
                                  project=task.project,
-                                 is_owner=True)
+                                 is_admin=True)
 
     custom_attr_1 = f.TaskCustomAttributeFactory(project=task.project)
     ct1_id = "{}".format(custom_attr_1.id)
@@ -124,7 +124,7 @@ def test_task_custom_attributes_values_update_with_error_invalid_key(client):
     task = f.TaskFactory()
     member = f.MembershipFactory(user=task.project.owner,
                                  project=task.project,
-                                 is_owner=True)
+                                 is_admin=True)
 
     custom_attr_1 = f.TaskCustomAttributeFactory(project=task.project)
     ct1_id = "{}".format(custom_attr_1.id)
@@ -151,7 +151,7 @@ def test_task_custom_attributes_values_delete_task(client):
     task = f.TaskFactory()
     member = f.MembershipFactory(user=task.project.owner,
                                  project=task.project,
-                                 is_owner=True)
+                                 is_admin=True)
 
     custom_attr_1 = f.TaskCustomAttributeFactory(project=task.project)
     ct1_id = "{}".format(custom_attr_1.id)
@@ -177,7 +177,7 @@ def test_trigger_update_taskcustomvalues_afeter_remove_taskcustomattribute(clien
     task = f.TaskFactory()
     member = f.MembershipFactory(user=task.project.owner,
                                  project=task.project,
-                                 is_owner=True)
+                                 is_admin=True)
 
     custom_attr_1 = f.TaskCustomAttributeFactory(project=task.project)
     ct1_id = "{}".format(custom_attr_1.id)

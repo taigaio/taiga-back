@@ -123,7 +123,7 @@ def get_visible_project_ids(from_user, by_user):
         #- The to user is the owner
         member_perm_conditions |= \
             Q(project__id__in=by_user_project_ids, role__permissions__contains=required_permissions) |\
-            Q(project__id__in=by_user_project_ids, is_owner=True)
+            Q(project__id__in=by_user_project_ids, is_admin=True)
 
     Membership = apps.get_model('projects', 'Membership')
     #Calculating the user memberships adding the permission filter for the by user

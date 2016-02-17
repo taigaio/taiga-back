@@ -408,7 +408,7 @@ def test_issues_event_opened_issue(client):
     issue.project.default_severity = issue.severity
     issue.project.default_priority = issue.priority
     issue.project.save()
-    Membership.objects.create(user=issue.owner, project=issue.project, role=f.RoleFactory.create(project=issue.project), is_owner=True)
+    Membership.objects.create(user=issue.owner, project=issue.project, role=f.RoleFactory.create(project=issue.project), is_admin=True)
     notify_policy = NotifyPolicy.objects.get(user=issue.owner, project=issue.project)
     notify_policy.notify_level = NotifyLevel.all
     notify_policy.save()
@@ -616,7 +616,7 @@ def test_issues_event_bad_comment(client):
 
 def test_api_get_project_modules(client):
     project = f.create_project()
-    f.MembershipFactory(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory(project=project, user=project.owner, is_admin=True)
 
     url = reverse("projects-modules", args=(project.id,))
 
@@ -631,7 +631,7 @@ def test_api_get_project_modules(client):
 
 def test_api_patch_project_modules(client):
     project = f.create_project()
-    f.MembershipFactory(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory(project=project, user=project.owner, is_admin=True)
 
     url = reverse("projects-modules", args=(project.id,))
 
