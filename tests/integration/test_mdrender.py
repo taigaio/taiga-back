@@ -38,6 +38,13 @@ def test_proccessor_valid_user_mention():
     assert result == expected_result
 
 
+def test_proccessor_valid_user_mention_with_dashes():
+    factories.UserFactory(username="user1_text_after_dash", full_name="test name")
+    result = render(dummy_project, "**@user1_text_after_dash**")
+    expected_result = "<p><strong><a class=\"mention\" href=\"http://localhost:9001/profile/user1_text_after_dash\" title=\"test name\">@user1_text_after_dash</a></strong></p>"
+    assert result == expected_result
+
+
 def test_proccessor_invalid_user_mention():
     result = render(dummy_project, "**@notvaliduser**")
     assert result == '<p><strong>@notvaliduser</strong></p>'
