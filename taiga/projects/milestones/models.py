@@ -22,6 +22,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.utils.functional import cached_property
 
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
@@ -57,7 +58,6 @@ class Milestone(WatchedModelMixin, models.Model):
                                              verbose_name=_("order"))
     _importing = None
     _total_closed_points_by_date = None
-    _cached_user_stories = None
 
     class Meta:
         verbose_name = "milestone"
@@ -87,13 +87,9 @@ class Milestone(WatchedModelMixin, models.Model):
 
         super().save(*args, **kwargs)
 
-    def get_cached_user_stories(self):
-        if self._cached_user_stories is None:
-            self._cached_user_stories = self.user_stories.\
-                    prefetch_related("role_points", "role_points__points").\
-                    annotate(num_tasks=Count("tasks"))
-
-        return self._cached_user_stories
+    @cached_property
+    def cached_user_stories(self):
+        return self.user_stories.prefetch_related("role_points", "role_points__points").annotate(num_tasks=Count("tasks"))
 
     def _get_user_stories_points(self, user_stories):
         role_points = [us.role_points.all() for us in user_stories]
@@ -104,13 +100,13 @@ class Milestone(WatchedModelMixin, models.Model):
     @property
     def total_points(self):
         return self._get_user_stories_points(
-            [us for us in self.get_cached_user_stories()]
+            [us for us in self.cached_user_stories]
         )
 
     @property
     def closed_points(self):
         return self._get_user_stories_points(
-            [us for us in self.get_cached_user_stories() if us.is_closed]
+            [us for us in self.cached_user_stories if us.is_closed]
         )
 
     def _get_increment_points(self):
@@ -168,7 +164,7 @@ class Milestone(WatchedModelMixin, models.Model):
 
             # We need to keep the milestone user stories indexed by id in a dict
             user_stories = {}
-            for us in self.get_cached_user_stories():
+            for us in self.cached_user_stories:
                 us._total_us_points = sum(self._get_user_stories_points([us]).values())
                 user_stories[us.id] = us
 
