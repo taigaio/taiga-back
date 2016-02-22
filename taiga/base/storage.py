@@ -41,7 +41,7 @@ class FileSystemStorage(storage.FileSystemStorage):
         # Note that there is a race between os.path.exists and os.makedirs:
         # if os.makedirs fails with EEXIST, the directory was created
         # concurrently, and we can continue normally. Refs #16082.
-        directory = os.path.dirname(name)
+        directory = os.path.join(settings.MEDIA_ROOT, os.path.dirname(name))
         if not os.path.exists(directory):
             try:
                 if self.directory_permissions_mode is not None:
