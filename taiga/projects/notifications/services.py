@@ -466,4 +466,4 @@ def make_ms_thread_index(msg_id, dt):
     thread_bin += md5.digest()
 
     # base64 encode
-    return base64.b64encode(thread_bin)
+    return str(base64.b64encode(thread_bin))
