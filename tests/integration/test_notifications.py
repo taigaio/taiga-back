@@ -422,8 +422,6 @@ def test_send_notifications_using_services_method_for_user_stories(settings, mai
         assert list_id == headers.get('List-ID')
 
         assert 'Thread-Index' in headers
-        # always is b64 encoded 22 bytes
-        assert len(base64.b64decode(headers.get('Thread-Index'))) == 22
 
         # hashes should match for identical ids and times
         # we check the actual method in test_ms_thread_id()
@@ -516,8 +514,6 @@ def test_send_notifications_using_services_method_for_tasks(settings, mail):
         assert list_id == headers.get('List-ID')
 
         assert 'Thread-Index' in headers
-        # always is b64 encoded 22 bytes
-        assert len(base64.b64decode(headers.get('Thread-Index'))) == 22
 
         # hashes should match for identical ids and times
         # we check the actual method in test_ms_thread_id()
@@ -610,8 +606,6 @@ def test_send_notifications_using_services_method_for_issues(settings, mail):
         assert list_id == headers.get('List-ID')
 
         assert 'Thread-Index' in headers
-        # always is b64 encoded 22 bytes
-        assert len(base64.b64decode(headers.get('Thread-Index'))) == 22
 
         # hashes should match for identical ids and times
         # we check the actual method in test_ms_thread_id()
@@ -703,8 +697,6 @@ def test_send_notifications_using_services_method_for_wiki_pages(settings, mail)
         assert list_id == headers.get('List-ID')
 
         assert 'Thread-Index' in headers
-        # always is b64 encoded 22 bytes
-        assert len(base64.b64decode(headers.get('Thread-Index'))) == 22
 
         # hashes should match for identical ids and times
         # we check the actual method in test_ms_thread_id()
