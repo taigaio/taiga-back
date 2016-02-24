@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
-                                        IsProjectOwner, AllowAny)
+                                        IsProjectAdmin, AllowAny)
 
 
 class ResolverPermission(TaigaResourcePermission):

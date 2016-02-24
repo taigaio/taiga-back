@@ -16,12 +16,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
-                                        IsAuthenticated, IsProjectOwner, AllowAny,
+                                        IsAuthenticated, IsProjectAdmin, AllowAny,
                                         IsSuperUser)
 
 
 class MilestonePermission(TaigaResourcePermission):
-    enought_perms = IsProjectOwner() | IsSuperUser()
+    enought_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_milestones')
     create_perms = HasProjectPerm('add_milestone')
@@ -34,7 +34,7 @@ class MilestonePermission(TaigaResourcePermission):
     unwatch_perms = IsAuthenticated() & HasProjectPerm('view_milestones')
 
 class MilestoneWatchersPermission(TaigaResourcePermission):
-    enought_perms = IsProjectOwner() | IsSuperUser()
+    enought_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_milestones')
     list_perms = HasProjectPerm('view_milestones')

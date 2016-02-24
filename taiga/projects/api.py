@@ -144,7 +144,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             else:
                 project = self.get_object()
 
-            if permissions_service.is_project_owner(self.request.user, project):
+            if permissions_service.is_project_admin(self.request.user, project):
                 serializer_class = self.admin_serializer_class
 
         return serializer_class
@@ -593,12 +593,12 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
             use_admin_serializer = True
 
         if self.action == "retrieve":
-            use_admin_serializer = permissions_service.is_project_owner(self.request.user, self.object.project)
+            use_admin_serializer = permissions_service.is_project_admin(self.request.user, self.object.project)
 
         project_id = self.request.QUERY_PARAMS.get("project", None)
         if self.action == "list" and project_id is not None:
             project = get_object_or_404(models.Project, pk=project_id)
-            use_admin_serializer = permissions_service.is_project_owner(self.request.user, project)
+            use_admin_serializer = permissions_service.is_project_admin(self.request.user, project)
 
         if use_admin_serializer:
             return self.admin_serializer_class

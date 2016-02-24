@@ -37,7 +37,7 @@ def _get_object_project(obj):
     return project
 
 
-def is_project_owner(user, obj):
+def is_project_admin(user, obj):
     if user.is_superuser:
         return True
 
