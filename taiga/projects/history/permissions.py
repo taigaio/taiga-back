@@ -16,10 +16,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
-                                        IsProjectOwner, AllowAny,
+                                        IsProjectAdmin, AllowAny,
                                         IsObjectOwner, PermissionComponent)
 
-from taiga.permissions.service import is_project_owner
+from taiga.permissions.service import is_project_admin
 from taiga.projects.history.services import get_model_from_key, get_pk_from_key
 
 
@@ -38,7 +38,7 @@ class IsCommentProjectOwner(PermissionComponent):
         model = get_model_from_key(obj.key)
         pk = get_pk_from_key(obj.key)
         project = model.objects.get(pk=pk)
-        return is_project_owner(request.user, project)
+        return is_project_admin(request.user, project)
 
 class UserStoryHistoryPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')

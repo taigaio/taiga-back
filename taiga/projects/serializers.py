@@ -33,7 +33,7 @@ from taiga.users.serializers import ProjectRoleSerializer
 from taiga.users.validators import RoleExistsValidator
 
 from taiga.permissions.service import get_user_project_permissions
-from taiga.permissions.service import is_project_owner
+from taiga.permissions.service import is_project_admin
 from taiga.projects.mixins.serializers import ValidateDuplicatedNameInProjectMixin
 
 from . import models
@@ -241,7 +241,7 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
     my_permissions = serializers.SerializerMethodField("get_my_permissions")
-    i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
+    i_am_admin = serializers.SerializerMethodField("get_i_am_admin")
     i_am_member = serializers.SerializerMethodField("get_i_am_member")
 
     tags = TagsField(default=[], required=False)
@@ -266,9 +266,9 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
             return get_user_project_permissions(self.context["request"].user, obj)
         return []
 
-    def get_i_am_owner(self, obj):
+    def get_i_am_admin(self, obj):
         if "request" in self.context:
-            return is_project_owner(self.context["request"].user, obj)
+            return is_project_admin(self.context["request"].user, obj)
         return False
 
     def get_i_am_member(self, obj):

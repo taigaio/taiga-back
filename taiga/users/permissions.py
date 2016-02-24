@@ -20,7 +20,7 @@ from taiga.base.api.permissions import IsSuperUser
 from taiga.base.api.permissions import AllowAny
 from taiga.base.api.permissions import IsAuthenticated
 from taiga.base.api.permissions import HasProjectPerm
-from taiga.base.api.permissions import IsProjectOwner
+from taiga.base.api.permissions import IsProjectAdmin
 from taiga.base.api.permissions import PermissionComponent
 
 
@@ -54,8 +54,8 @@ class UserPermission(TaigaResourcePermission):
 
 class RolesPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
-    create_perms = IsProjectOwner()
-    update_perms = IsProjectOwner()
-    partial_update_perms = IsProjectOwner()
-    destroy_perms = IsProjectOwner()
+    create_perms = IsProjectAdmin()
+    update_perms = IsProjectAdmin()
+    partial_update_perms = IsProjectAdmin()
+    destroy_perms = IsProjectAdmin()
     list_perms = AllowAny()
