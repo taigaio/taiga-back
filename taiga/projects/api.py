@@ -104,6 +104,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
     def get_queryset(self):
         qs = super().get_queryset()
 
+        qs = qs.select_related("owner")
         # Prefetch doesn"t work correctly if then if the field is filtered later (it generates more queries)
         # so we add some custom prefetching
         qs = qs.prefetch_related("members")
