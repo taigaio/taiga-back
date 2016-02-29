@@ -7,15 +7,11 @@ services:
 cache:
   - apt
   - pip
-addons:
-  postgresql: "9.4"
-  apt:
-    sources:
-      - deadsnakes
-      - ubuntu-toolchain-r-test
-    packages:
-      - postgresql-plpython-9.4
-before_script:
+before_install:
+  - sudo apt-get -qq update
+  - sudo /etc/init.d/postgresql stop
+  - sudo apt-get install -y postgresql-9.4
+  - sudo apt-get install -y postgresql-plpython-9.4
   - psql -c 'create database taiga;' -U postgres
 install:
   - travis_retry pip install -r requirements-devel.txt
