@@ -33,7 +33,7 @@ from taiga.users.serializers import ProjectRoleSerializer
 from taiga.users.validators import RoleExistsValidator
 
 from taiga.permissions.service import get_user_project_permissions
-from taiga.permissions.service import is_project_admin
+from taiga.permissions.service import is_project_admin, is_project_owner
 from taiga.projects.mixins.serializers import ValidateDuplicatedNameInProjectMixin
 
 from . import models
@@ -130,6 +130,7 @@ class MembershipSerializer(serializers.ModelSerializer):
     project_name = serializers.SerializerMethodField("get_project_name")
     project_slug = serializers.SerializerMethodField("get_project_slug")
     invited_by = UserBasicInfoSerializer(read_only=True)
+    is_owner = serializers.SerializerMethodField("get_is_owner")
 
     class Meta:
         model = models.Membership
@@ -146,6 +147,10 @@ class MembershipSerializer(serializers.ModelSerializer):
 
     def get_project_slug(self, obj):
         return obj.project.slug if obj and obj.project else ""
+
+    def get_is_owner(self, obj):
+        return (obj and obj.user_id and obj.project_id and obj.project.owner_id and
+                obj.user_id == obj.project.owner_id)
 
     def validate_email(self, attrs, source):
         project = attrs.get("project", None)
@@ -241,6 +246,9 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
     my_permissions = serializers.SerializerMethodField("get_my_permissions")
+
+    owner = UserBasicInfoSerializer(read_only=True)
+    i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
     i_am_admin = serializers.SerializerMethodField("get_i_am_admin")
     i_am_member = serializers.SerializerMethodField("get_i_am_member")
 
@@ -256,7 +264,7 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
 
     class Meta:
         model = models.Project
-        read_only_fields = ("created_date", "modified_date", "owner", "slug", "blocked_code")
+        read_only_fields = ("created_date", "modified_date", "slug", "blocked_code")
         exclude = ("logo", "last_us_ref", "last_task_ref", "last_issue_ref",
                    "issues_csv_uuid", "tasks_csv_uuid", "userstories_csv_uuid",
                    "transfer_token")
@@ -265,6 +273,11 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
         if "request" in self.context:
             return get_user_project_permissions(self.context["request"].user, obj)
         return []
+
+    def get_i_am_owner(self, obj):
+        if "request" in self.context:
+            return is_project_owner(self.context["request"].user, obj)
+        return False
 
     def get_i_am_admin(self, obj):
         if "request" in self.context:
@@ -341,7 +354,7 @@ class ProjectDetailSerializer(ProjectSerializer):
 class ProjectDetailAdminSerializer(ProjectDetailSerializer):
     class Meta:
         model = models.Project
-        read_only_fields = ("created_date", "modified_date", "owner", "slug", "blocked_code")
+        read_only_fields = ("created_date", "modified_date", "slug", "blocked_code")
         exclude = ("logo", "last_us_ref", "last_task_ref", "last_issue_ref")
 
 

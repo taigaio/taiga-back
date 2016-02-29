@@ -133,7 +133,7 @@ class UserAdminSerializer(UserSerializer):
 class UserBasicInfoSerializer(UserSerializer):
     class Meta:
         model = User
-        fields = ("username", "full_name_display","photo", "big_photo", "is_active")
+        fields = ("username", "full_name_display","photo", "big_photo", "is_active", "id")
 
 
 class RecoverySerializer(serializers.Serializer):
