@@ -91,6 +91,8 @@ def test_valid_project_without_enough_public_projects_slots(client):
     assert response.status_code == 400
     assert "can't have more public projects" in response.data["_error_message"]
     assert Project.objects.filter(slug="public-project-without-slots").count() == 0
+    assert response["Taiga-Info-Project-Memberships"] == "1"
+    assert response["Taiga-Info-Project-Is-Private"] == "False"
 
 
 def test_valid_project_without_enough_private_projects_slots(client):
@@ -110,6 +112,8 @@ def test_valid_project_without_enough_private_projects_slots(client):
 
     assert response.status_code == 400
     assert "can't have more private projects" in response.data["_error_message"]
+    assert response["Taiga-Info-Project-Memberships"] == "1"
+    assert response["Taiga-Info-Project-Is-Private"] == "True"
     assert Project.objects.filter(slug="private-project-without-slots").count() == 0
 
 
@@ -1249,6 +1253,8 @@ def test_valid_dump_import_without_enough_public_projects_slots(client):
     response = client.post(url, {'dump': data})
     assert response.status_code == 400
     assert "can't have more public projects" in response.data["_error_message"]
+    assert response["Taiga-Info-Project-Memberships"] == "1"
+    assert response["Taiga-Info-Project-Is-Private"] == "False"
     assert Project.objects.filter(slug="public-project-without-slots").count() == 0
 
 
@@ -1269,6 +1275,8 @@ def test_valid_dump_import_without_enough_private_projects_slots(client):
     response = client.post(url, {'dump': data})
     assert response.status_code == 400
     assert "can't have more private projects" in response.data["_error_message"]
+    assert response["Taiga-Info-Project-Memberships"] == "1"
+    assert response["Taiga-Info-Project-Is-Private"] == "True"
     assert Project.objects.filter(slug="private-project-without-slots").count() == 0
 
 

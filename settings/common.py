@@ -433,7 +433,9 @@ REST_FRAMEWORK = {
 # Extra expose header related to Taiga APP (see taiga.base.middleware.cors=)
 APP_EXTRA_EXPOSE_HEADERS = [
     "taiga-info-total-opened-milestones",
-    "taiga-info-total-closed-milestones"
+    "taiga-info-total-closed-milestones",
+    "taiga-info-project-memberships",
+    "taiga-info-project-is-private"
 ]
 
 DEFAULT_PROJECT_TEMPLATE = "scrum"

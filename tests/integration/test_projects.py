@@ -70,6 +70,8 @@ def test_create_private_project_without_enough_private_projects_slots(client):
 
     assert response.status_code == 400
     assert "can't have more private projects" in response.data["_error_message"]
+    assert response["Taiga-Info-Project-Memberships"] == "1"
+    assert response["Taiga-Info-Project-Is-Private"] == "True"
 
 
 def test_create_public_project_without_enough_public_projects_slots(client):
@@ -86,6 +88,8 @@ def test_create_public_project_without_enough_public_projects_slots(client):
 
     assert response.status_code == 400
     assert "can't have more public projects" in response.data["_error_message"]
+    assert response["Taiga-Info-Project-Memberships"] == "1"
+    assert response["Taiga-Info-Project-Is-Private"] == "False"
 
 
 def test_change_project_from_private_to_public_without_enough_public_projects_slots(client):
@@ -102,6 +106,8 @@ def test_change_project_from_private_to_public_without_enough_public_projects_sl
 
     assert response.status_code == 400
     assert "can't have more public projects" in response.data["_error_message"]
+    assert response["Taiga-Info-Project-Memberships"] == "1"
+    assert response["Taiga-Info-Project-Is-Private"] == "False"
 
 
 def test_change_project_from_public_to_private_without_enough_private_projects_slots(client):
@@ -118,6 +124,8 @@ def test_change_project_from_public_to_private_without_enough_private_projects_s
 
     assert response.status_code == 400
     assert "can't have more private projects" in response.data["_error_message"]
+    assert response["Taiga-Info-Project-Memberships"] == "1"
+    assert response["Taiga-Info-Project-Is-Private"] == "True"
 
 
 def test_create_private_project_with_enough_private_projects_slots(client):

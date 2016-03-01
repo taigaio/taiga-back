@@ -97,7 +97,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             project=Project(is_private=is_private, id=None)
         )
         if not enough_slots:
-            raise exc.BadRequest(not_enough_slots_error)
+            raise exc.NotEnoughSlotsForProject(is_private, 1, not_enough_slots_error)
 
         # Create Project
         project_serialized = service.store_project(data)
@@ -122,7 +122,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
                 members=max(members, 1)
             )
             if not enough_slots:
-                raise exc.BadRequest(not_enough_slots_error)
+                raise exc.NotEnoughSlotsForProject(is_private, max(members, 1), not_enough_slots_error)
             service.store_memberships(project_serialized.object, data)
 
         try:
@@ -224,13 +224,6 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             raise exc.WrongArguments(_("Invalid dump format"))
 
         user = request.user
-        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
-            user,
-            project=Project(is_private=is_private, id=None)
-        )
-        if not enough_slots:
-            raise exc.BadRequest(not_enough_slots_error)
-
         slug = dump.get('slug', None)
         if slug is not None and Project.objects.filter(slug=slug).exists():
             del dump['slug']
@@ -242,7 +235,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             members=max(members, 1)
         )
         if not enough_slots:
-            raise exc.BadRequest(not_enough_slots_error)
+            raise exc.NotEnoughSlotsForProject(is_private, max(members, 1), not_enough_slots_error)
 
         if settings.CELERY_ENABLED:
             task = tasks.load_project_dump.delay(user, dump)
