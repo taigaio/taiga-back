@@ -286,6 +286,10 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                 slug = "{}-{}".format(base_slug, i)
             self.slug = slug
 
+        if not self.is_backlog_activated:
+            self.total_milestones = None
+            self.total_story_points = None
+
         if not self.videoconferences:
             self.videoconferences_extra_data = None
 
