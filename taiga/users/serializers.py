@@ -198,6 +198,7 @@ class HighLightedContentSerializer(serializers.Serializer):
     project_name = serializers.SerializerMethodField("get_project_name")
     project_slug = serializers.SerializerMethodField("get_project_slug")
     project_is_private = serializers.SerializerMethodField("get_project_is_private")
+    project_blocked_code = serializers.SerializerMethodField("get_project_blocked_code")
 
     assigned_to_username = serializers.CharField()
     assigned_to_full_name = serializers.CharField()
@@ -244,6 +245,9 @@ class HighLightedContentSerializer(serializers.Serializer):
 
     def get_project_is_private(self, obj):
         return self._none_if_project(obj, "project_is_private")
+
+    def get_project_blocked_code(self, obj):
+        return self._none_if_not_project(obj, "project_blocked_code")
 
     def get_logo_small_url(self, obj):
         logo = self._none_if_not_project(obj, "logo")
