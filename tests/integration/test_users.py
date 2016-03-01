@@ -498,6 +498,7 @@ def test_get_watched_list_valid_info_for_project():
     assert project_watch_info["project_name"] == None
     assert project_watch_info["project_slug"] == None
     assert project_watch_info["project_is_private"] == None
+    assert project_watch_info["project_blocked_code"] == None
     assert project_watch_info["assigned_to_username"] == None
     assert project_watch_info["assigned_to_full_name"] == None
     assert project_watch_info["assigned_to_photo"] == None
@@ -557,6 +558,7 @@ def test_get_liked_list_valid_info():
     assert project_like_info["project_name"] == None
     assert project_like_info["project_slug"] == None
     assert project_like_info["project_is_private"] == None
+    assert project_like_info["project_blocked_code"] == None
     assert project_like_info["assigned_to_username"] == None
     assert project_like_info["assigned_to_full_name"] == None
     assert project_like_info["assigned_to_photo"] == None
@@ -610,6 +612,7 @@ def test_get_watched_list_valid_info_for_not_project_types():
         assert instance_watch_info["project_name"] == instance.project.name
         assert instance_watch_info["project_slug"] == instance.project.slug
         assert instance_watch_info["project_is_private"] == instance.project.is_private
+        assert instance_watch_info["project_blocked_code"] == instance.project.blocked_code
         assert instance_watch_info["assigned_to_username"] == instance.assigned_to.username
         assert instance_watch_info["assigned_to_full_name"] == instance.assigned_to.full_name
         assert instance_watch_info["assigned_to_photo"] != ""
@@ -666,6 +669,7 @@ def test_get_voted_list_valid_info():
         assert instance_vote_info["project_name"] == instance.project.name
         assert instance_vote_info["project_slug"] == instance.project.slug
         assert instance_vote_info["project_is_private"] == instance.project.is_private
+        assert instance_vote_info["project_blocked_code"] == instance.project.blocked_code
         assert instance_vote_info["assigned_to_username"] == instance.assigned_to.username
         assert instance_vote_info["assigned_to_full_name"] == instance.assigned_to.full_name
         assert instance_vote_info["assigned_to_photo"] != ""
