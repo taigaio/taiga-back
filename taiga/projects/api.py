@@ -378,7 +378,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             members=members
         )
         if not enough_slots:
-            raise exc.BadRequest(not_enough_slots_error)
+            raise exc.NotEnoughSlotsForProject(project.is_private, members, not_enough_slots_error)
 
         reason = request.DATA.get('reason', None)
         services.accept_project_transfer(project, request.user, token, reason)
@@ -414,8 +414,9 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
     def pre_save(self, obj):
         user = self.request.user
         (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(user, project=obj)
+        members = max(obj.memberships.count(), 1)
         if not enough_slots:
-            raise exc.BadRequest(not_enough_slots_error)
+            raise exc.NotEnoughSlotsForProject(obj.is_private, members, not_enough_slots_error)
 
         if not obj.id:
             obj.owner = user
@@ -624,13 +625,14 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         # of handling explicit exception catchin here.
 
         if "bulk_memberships" in data and isinstance(data["bulk_memberships"], list):
+            members = len(data["bulk_memberships"])
             (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
                 request.user,
                 project=project,
-                members=len(data["bulk_memberships"])
+                members=members
             )
             if not enough_slots:
-                raise exc.BadRequest(not_enough_slots_error)
+                raise exc.NotEnoughSlotsForProject(project.is_private, members, not_enough_slots_error)
 
         try:
             members = services.create_members_in_bulk(data["bulk_memberships"],
@@ -660,13 +662,14 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
 
     def pre_save(self, obj):
         if not obj.id:
+            members = 1
             (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
                 self.request.user,
                 project=obj.project,
-                members=1
+                members=members
             )
             if not enough_slots:
-                raise exc.BadRequest(not_enough_slots_error)
+                raise exc.NotEnoughSlotsForProject(obj.project.is_private, members, not_enough_slots_error)
 
         if not obj.token:
             obj.token = str(uuid.uuid1())
