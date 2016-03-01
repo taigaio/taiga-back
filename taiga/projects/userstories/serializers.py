@@ -67,7 +67,7 @@ class UserStorySerializer(WatchersValidator, VoteResourceSerializerMixin, Editab
     class Meta:
         model = models.UserStory
         depth = 0
-        read_only_fields = ('created_date', 'modified_date')
+        read_only_fields = ('created_date', 'modified_date', 'owner')
 
     def get_total_points(self, obj):
         return obj.get_total_points()

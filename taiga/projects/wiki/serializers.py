@@ -30,7 +30,7 @@ class WikiPageSerializer(WatchersValidator, WatchedResourceModelSerializer, seri
 
     class Meta:
         model = models.WikiPage
-        read_only_fields = ('modified_date', 'created_date')
+        read_only_fields = ('modified_date', 'created_date', 'owner')
 
     def get_html(self, obj):
         return mdrender(obj.project, obj.content)
