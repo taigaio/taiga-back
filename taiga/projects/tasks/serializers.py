@@ -50,7 +50,7 @@ class TaskSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWat
 
     class Meta:
         model = models.Task
-        read_only_fields = ('id', 'ref', 'created_date', 'modified_date')
+        read_only_fields = ('id', 'ref', 'created_date', 'modified_date', 'owner')
 
     def get_comment(self, obj):
         return ""
