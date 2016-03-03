@@ -26,6 +26,7 @@ from django.db.models.functions import Coalesce
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from django.utils import timezone
+from django.http import Http404
 
 from taiga.base import filters
 from taiga.base import response
