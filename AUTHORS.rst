@@ -27,6 +27,7 @@ answer newbie questions, and generally made taiga that much better:
 - Hector Colina <hcolina@gmail.com>
 - Joe Letts
 - Julien Palard
+- luyikei <luyikei.qmltu@gmail.com>
 - Ricky Posner <e@eposner.com>
 - Yamila Moreno <yamila.moreno@kaleidos.net>
 - Yaser Alraddadi <yaser@yr.sa>
