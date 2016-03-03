@@ -20,6 +20,7 @@ answer newbie questions, and generally made taiga that much better:
 - Andrea Stagi <stagi.andrea@gmail.com>
 - Andrés Moya <andres.moya@kaleidos.net>
 - Andrey Alekseenko <al42and@gmail.com>
+- Brett Profitt <brett.profitt@gmail.com>
 - Bruno Clermont <bruno@robotinfra.com>
 - Chris Wilson <chris.wilson@aridhia.com>
 - David Burke <david@burkesoftware.com>
@@ -28,4 +29,4 @@ answer newbie questions, and generally made taiga that much better:
 - Julien Palard
 - Ricky Posner <e@eposner.com>
 - Yamila Moreno <yamila.moreno@kaleidos.net>
-- Brett Profitt <brett.profitt@gmail.com>
+- Yaser Alraddadi <yaser@yr.sa>
