@@ -29,10 +29,10 @@ from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
 
-from taiga import mdrender
 from taiga.base.api import serializers
 from taiga.base.fields import JsonField, PgArrayField
 
+from taiga.mdrender.service import render as mdrender
 from taiga.projects import models as projects_models
 from taiga.projects.custom_attributes import models as custom_attributes_models
 from taiga.projects.userstories import models as userstories_models
@@ -155,7 +155,7 @@ class CommentField(serializers.WritableField):
 
     def field_from_native(self, data, files, field_name, into):
         super().field_from_native(data, files, field_name, into)
-        into["comment_html"] = mdrender.render(self.context['project'], data.get("comment", ""))
+        into["comment_html"] = mdrender(self.context['project'], data.get("comment", ""))
 
 
 class ProjectRelatedField(serializers.RelatedField):
