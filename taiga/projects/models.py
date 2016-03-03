@@ -28,6 +28,7 @@ from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.utils.functional import cached_property
 
 from django_pgjson.fields import JsonField
 from djorm_pgarray.fields import TextArrayField
@@ -251,7 +252,6 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                             choices=choices.BLOCKING_CODES + settings.EXTRA_BLOCKING_CODES, default=None,
                             verbose_name=_("blocked code"))
 
-    _cached_user_stories = None
     _importing = None
 
     class Meta:
@@ -341,13 +341,9 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         if save:
             self.save()
 
-    @property
+    @cached_property
     def cached_user_stories(self):
-        print(1111111, self._cached_user_stories)
-        if self._cached_user_stories is None:
-            self._cached_user_stories = list(self.user_stories.all())
-
-        return self._cached_user_stories
+        return list(self.user_stories.all())
 
     def get_roles(self):
         return self.roles.all()
