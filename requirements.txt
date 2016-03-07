@@ -11,6 +11,7 @@ amqp==1.4.9
 djmail==0.12.0.post1
 django-pgjson==0.3.1
 djorm-pgarray==1.2
+django-redis==4.3.0
 django-jinja==2.1.2
 jinja2==2.8
 pygments==2.0.2

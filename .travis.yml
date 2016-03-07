@@ -4,6 +4,7 @@ python:
   - "3.5"
 services:
   - rabbitmq # will start rabbitmq-server
+  - redis-server
 cache:
   - apt
   - pip
