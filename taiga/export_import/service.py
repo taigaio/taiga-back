@@ -144,8 +144,6 @@ def render_project(project, outfile, chunk_size = 8190):
 
         dumped_value = json.dumps(serializers.TimelineExportSerializer(timeline_item).data)
         outfile.write(dumped_value)
-        outfile.flush()
-        gc.collect()
 
     outfile.write(']}\n')
 
