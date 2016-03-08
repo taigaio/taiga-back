@@ -35,14 +35,12 @@ DATABASES = {
     }
 }
 
-# Default cache (you can use redis cache, see settings/locale.py.example)
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "LOCATION": "unique-snowflake"
     }
 }
-
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
