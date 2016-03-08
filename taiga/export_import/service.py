@@ -31,7 +31,7 @@ from django.core.files.storage import default_storage
 
 from taiga.base.utils import json
 from taiga.projects.history.services import make_key_from_model_object, take_snapshot
-from taiga.timeline.service import build_project_namespace
+from taiga.timeline.service import build_project_namespace, get_project_timeline
 from taiga.projects.references import sequences as seq
 from taiga.projects.references import models as refs
 from taiga.projects.userstories.models import RolePoints
@@ -132,7 +132,22 @@ def render_project(project, outfile, chunk_size = 8190):
             value = field.field_to_native(project, field_name)
             outfile.write('"{}": {}'.format(field_name, json.dumps(value)))
 
-    outfile.write('}\n')
+    # Generate the timeline
+    outfile.write(',\n"timeline": [\n')
+    first_timeline = True
+    for timeline_item in get_project_timeline(project).iterator():
+        # Avoid writing "," in the last element
+        if not first_timeline:
+            outfile.write(",\n")
+        else:
+            first_timeline = False
+
+        dumped_value = json.dumps(serializers.TimelineExportSerializer(timeline_item).data)
+        outfile.write(dumped_value)
+        outfile.flush()
+        gc.collect()
+
+    outfile.write(']}\n')
 
 
 def store_project(data):
