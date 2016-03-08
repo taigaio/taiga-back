@@ -43,7 +43,6 @@ from taiga.projects.wiki import models as wiki_models
 from taiga.projects.history import models as history_models
 from taiga.projects.attachments import models as attachments_models
 from taiga.timeline import models as timeline_models
-from taiga.timeline import service as timeline_service
 from taiga.users import models as users_models
 from taiga.projects.notifications import services as notifications_services
 from taiga.projects.votes import services as votes_service
@@ -674,12 +673,7 @@ class ProjectExportSerializer(WatcheableObjectModelSerializer):
     issues = IssueExportSerializer(many=True, required=False)
     wiki_links = WikiLinkExportSerializer(many=True, required=False)
     wiki_pages = WikiPageExportSerializer(many=True, required=False)
-    timeline = serializers.SerializerMethodField("get_timeline")
 
     class Meta:
         model = projects_models.Project
         exclude = ('id', 'creation_template', 'members')
-
-    def get_timeline(self, obj):
-        timeline_qs = timeline_service.get_project_timeline(obj)
-        return TimelineExportSerializer(timeline_qs, many=True).data
