@@ -17,16 +17,6 @@
 
 from .development import *
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "'redis://localhost:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
-    }
-}
-
 SKIP_SOUTH_TESTS = True
 SOUTH_TESTS_MIGRATE = False
 CELERY_ALWAYS_EAGER = True
