@@ -89,7 +89,8 @@ class Milestone(WatchedModelMixin, models.Model):
 
     @cached_property
     def cached_user_stories(self):
-        return self.user_stories.prefetch_related("role_points", "role_points__points").annotate(num_tasks=Count("tasks"))
+        return (self.user_stories.prefetch_related("role_points", "role_points__points")
+                                 .annotate(num_tasks=Count("tasks")))
 
     def _get_user_stories_points(self, user_stories):
         role_points = [us.role_points.all() for us in user_stories]
@@ -108,54 +109,6 @@ class Milestone(WatchedModelMixin, models.Model):
         return self._get_user_stories_points(
             [us for us in self.cached_user_stories if us.is_closed]
         )
-
-    def _get_increment_points(self):
-        if hasattr(self, "_increments"):
-            return self._increments
-
-        self._increments = {
-            "client_increment": {},
-            "team_increment": {},
-            "shared_increment": {},
-        }
-        user_stories = UserStory.objects.none()
-        if self.estimated_start and self.estimated_finish:
-            user_stories = filter(
-                lambda x: x.created_date.date() >= self.estimated_start and x.created_date.date() < self.estimated_finish,
-                self.project.user_stories.all()
-            )
-            self._increments['client_increment'] = self._get_user_stories_points(
-                [us for us in user_stories if us.client_requirement is True and us.team_requirement is False]
-            )
-            self._increments['team_increment'] = self._get_user_stories_points(
-                [us for us in user_stories if us.client_requirement is False and us.team_requirement is True]
-            )
-            self._increments['shared_increment'] = self._get_user_stories_points(
-                [us for us in user_stories if us.client_requirement is True and us.team_requirement is True]
-            )
-        return self._increments
-
-
-    @property
-    def client_increment_points(self):
-        self._get_increment_points()
-        client_increment = self._get_increment_points()["client_increment"]
-        shared_increment = {
-            key: value/2 for key, value in self._get_increment_points()["shared_increment"].items()
-        }
-        return dict_sum(client_increment, shared_increment)
-
-    @property
-    def team_increment_points(self):
-        team_increment = self._get_increment_points()["team_increment"]
-        shared_increment = {
-            key: value/2 for key, value in self._get_increment_points()["shared_increment"].items()
-        }
-        return dict_sum(team_increment, shared_increment)
-
-    @property
-    def shared_increment_points(self):
-        return self._get_increment_points()["shared_increment"]
 
     def total_closed_points_by_date(self, date):
         # Milestone instance will keep a cache of the total closed points by date
