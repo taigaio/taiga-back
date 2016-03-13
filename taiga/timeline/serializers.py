@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.forms import widgets
 
 from taiga.base.api import serializers
@@ -37,7 +38,7 @@ class TimelineSerializer(serializers.ModelSerializer):
         if hasattr(obj, "_prefetched_user"):
             user = obj._prefetched_user
         else:
-            User = apps.get_model("users", "User")
+            User = get_user_model()
             userData = obj.data.get("user", None)
             try:
                 user = User.objects.get(id=userData["id"])

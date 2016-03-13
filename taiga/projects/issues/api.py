@@ -16,25 +16,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext as _
-from django.db.models import Q
 from django.http import HttpResponse
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base import response
-from taiga.base.decorators import detail_route, list_route
+from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_404
-
-from taiga.users.models import User
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 
 from taiga.projects.models import Project, IssueStatus, Severity, Priority, IssueType
-from taiga.projects.milestones.models import Milestone
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
 from . import models

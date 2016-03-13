@@ -165,7 +165,7 @@ class WikiAttachmentFactory(Factory):
 
 class UserFactory(Factory):
     class Meta:
-        model = "users.User"
+        model = settings.AUTH_USER_MODEL
         strategy = factory.CREATE_STRATEGY
 
     username = factory.Sequence(lambda n: "user{}".format(n))

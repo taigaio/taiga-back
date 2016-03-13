@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.apps import apps
+from django.contrib.auth import get_user_model
 
 from taiga.front.templatetags.functions import resolve
 
@@ -24,7 +25,7 @@ from .base import Sitemap
 
 class UsersSitemap(Sitemap):
     def items(self):
-        user_model = apps.get_model("users", "User")
+        user_model = get_user_model()
 
         # Only active users and not system users
         queryset = user_model.objects.filter(is_active=True,

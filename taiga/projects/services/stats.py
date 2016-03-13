@@ -22,8 +22,6 @@ import datetime
 import copy
 import collections
 
-from taiga.projects.history.models import HistoryEntry
-from taiga.projects.userstories.models import RolePoints
 
 def _count_status_object(status_obj, counting_storage):
     if status_obj.id in counting_storage:
@@ -228,6 +226,7 @@ def _get_milestones_stats_for_backlog(project, milestones):
 def get_stats_for_project(project):
     # Let's fetch all the estimations related to a project with all the necesary
     # related data
+    RolePoints = apps.get_model('userstories', 'RolePoints')
     role_points = RolePoints.objects.filter(
         user_story__project = project,
     ).prefetch_related(
@@ -378,6 +377,7 @@ def _get_wiki_changes_per_member_stats(project):
     # Wiki changes
     wiki_changes = {}
     wiki_page_keys = ["wiki.wikipage:%s"%id for id in project.wiki_pages.values_list("id", flat=True)]
+    HistoryEntry = apps.get_model('history', 'HistoryEntry')
     history_entries = HistoryEntry.objects.filter(key__in=wiki_page_keys).values('user')
     for entry in history_entries:
         editions = wiki_changes.get(entry["user"]["pk"], 0)

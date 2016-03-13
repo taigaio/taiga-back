@@ -18,19 +18,18 @@
 
 from unittest.mock import patch, call
 
-from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
 
 from taiga.timeline import service
 from taiga.timeline.models import Timeline
 from taiga.projects.models import Project
-from taiga.users.models import User
 
 import pytest
 
 
 def test_push_to_timeline_many_objects():
     with patch("taiga.timeline.service._add_to_object_timeline") as mock:
-        users = [User(), User(), User()]
+        users = [get_user_model(), get_user_model(), get_user_model()]
         project = Project()
         service.push_to_timeline(users, project, "test", project.created_date)
         assert mock.call_count == 3
@@ -45,7 +44,7 @@ def test_push_to_timeline_many_objects():
 
 def test_add_to_objects_timeline():
     with patch("taiga.timeline.service._add_to_object_timeline") as mock:
-        users = [User(), User(), User()]
+        users = [get_user_model(), get_user_model(), get_user_model()]
         project = Project()
         service._add_to_objects_timeline(users, project, "test", project.created_date)
         assert mock.call_count == 3

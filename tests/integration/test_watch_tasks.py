@@ -109,7 +109,6 @@ def test_get_task_is_watcher(client):
     assert response.data['is_watcher'] == False
 
     response = client.post(url_watch)
-    print(response.data)
     assert response.status_code == 200
 
     response = client.get(url_detail)

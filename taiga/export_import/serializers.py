@@ -21,6 +21,7 @@ import os
 from collections import OrderedDict
 
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
@@ -263,7 +264,7 @@ class WatcheableObjectModelSerializer(serializers.ModelSerializer):
         adding_watcher_emails = list(new_watcher_emails.difference(old_watcher_emails))
         removing_watcher_emails = list(old_watcher_emails.difference(new_watcher_emails))
 
-        User = apps.get_model("users", "User")
+        User = get_user_model()
         adding_users = User.objects.filter(email__in=adding_watcher_emails)
         removing_users = User.objects.filter(email__in=removing_watcher_emails)
 

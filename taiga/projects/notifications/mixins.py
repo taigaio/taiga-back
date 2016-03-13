@@ -14,15 +14,11 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 from functools import partial
 from operator import is_not
 
-from django.apps import apps
-from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from taiga.base import response
 from taiga.base.decorators import detail_route
@@ -34,8 +30,6 @@ from taiga.projects.notifications.utils import (attach_watchers_to_queryset,
     attach_is_watcher_to_queryset,
     attach_total_watchers_to_queryset)
 
-from taiga.users.models import User
-from . import models
 from . serializers import WatcherSerializer
 
 
@@ -224,9 +218,9 @@ class EditableWatchedResourceModelSerializer(WatchedResourceModelSerializer):
         adding_watcher_ids = list(new_watcher_ids.difference(old_watcher_ids))
         removing_watcher_ids = list(old_watcher_ids.difference(new_watcher_ids))
 
-        User = apps.get_model("users", "User")
-        adding_users = User.objects.filter(id__in=adding_watcher_ids)
-        removing_users = User.objects.filter(id__in=removing_watcher_ids)
+        User = get_user_model()
+        adding_users = get_user_model().objects.filter(id__in=adding_watcher_ids)
+        removing_users = get_user_model().objects.filter(id__in=removing_watcher_ids)
         for user in adding_users:
             services.add_watcher(obj, user)
 
@@ -273,7 +267,7 @@ class WatchersViewSetMixin:
 
         try:
             self.object = resource.get_watchers().get(pk=pk)
-        except ObjectDoesNotExist: # or User.DoesNotExist
+        except ObjectDoesNotExist:  # or User.DoesNotExist
             return response.NotFound()
 
         serializer = self.get_serializer(self.object)

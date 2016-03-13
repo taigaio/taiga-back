@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.projects.models import Project
-from taiga.users.models import User
+from django.contrib.auth import get_user_model
 
+from taiga.projects.models import Project
 from taiga.base.utils.slug import slugify
 
 import pytest
@@ -38,7 +38,7 @@ def test_slugify_3():
 
 
 def test_project_slug_with_special_chars():
-    user = User.objects.create(username="test")
+    user = get_user_model().objects.create(username="test")
     project = Project.objects.create(name="漢字", description="漢字", owner=user)
     project.save()
 
@@ -46,7 +46,7 @@ def test_project_slug_with_special_chars():
 
 
 def test_project_with_existing_name_slug_with_special_chars():
-    user = User.objects.create(username="test")
+    user = get_user_model().objects.create(username="test")
     Project.objects.create(name="漢字", description="漢字", owner=user)
     project = Project.objects.create(name="漢字", description="漢字", owner=user)
 

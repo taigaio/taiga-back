@@ -16,14 +16,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from taiga.projects.history import services as history_services
-from taiga.projects.models import Project
-from taiga.users.models import User
 from taiga.projects.history.choices import HistoryType
-from taiga.projects.notifications import services as notifications_services
 from taiga.timeline.service import (push_to_timeline,
                                     build_user_namespace,
                                     build_project_namespace,
@@ -93,7 +91,7 @@ def on_new_history_entry(sender, instance, created, **kwargs):
     elif instance.type == HistoryType.delete:
         event_type = "delete"
 
-    user = User.objects.get(id=instance.user["pk"])
+    user = get_user_model().objects.get(id=instance.user["pk"])
     values_diff = instance.values_diff
     _clean_description_fields(values_diff)
 
