@@ -14,12 +14,12 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='user',
-            name='max_members_private_projects',
-            field=models.IntegerField(default=settings.MAX_MEMBERS_PRIVATE_PROJECTS, blank=True, verbose_name='max number of memberships for each owned private project', null=True),
+            name='max_memberships_private_projects',
+            field=models.IntegerField(default=settings.MAX_MEMBERSHIPS_PRIVATE_PROJECTS, blank=True, verbose_name='max number of memberships for each owned private project', null=True),
         ),
         migrations.AddField(
             model_name='user',
-            name='max_members_public_projects',
-            field=models.IntegerField(default=settings.MAX_MEMBERS_PUBLIC_PROJECTS, blank=True, verbose_name='max number of memberships for each owned public project', null=True),
+            name='max_memberships_public_projects',
+            field=models.IntegerField(default=settings.MAX_MEMBERSHIPS_PUBLIC_PROJECTS, blank=True, verbose_name='max number of memberships for each owned public project', null=True),
         ),
     ]

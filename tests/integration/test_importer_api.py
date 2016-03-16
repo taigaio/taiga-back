@@ -1031,7 +1031,7 @@ def test_dict_to_project_with_no_projects_slots_available(client):
 
 
 def test_dict_to_project_with_no_members_private_project_slots_available(client):
-    user = f.UserFactory.create(max_members_private_projects=2)
+    user = f.UserFactory.create(max_memberships_private_projects=2)
 
     data = {
         "slug": "valid-project",
@@ -1066,7 +1066,7 @@ def test_dict_to_project_with_no_members_private_project_slots_available(client)
 
 
 def test_dict_to_project_with_no_members_public_project_slots_available(client):
-    user = f.UserFactory.create(max_members_public_projects=2)
+    user = f.UserFactory.create(max_memberships_public_projects=2)
 
     data = {
         "slug": "valid-project",
@@ -1281,7 +1281,7 @@ def test_valid_dump_import_without_enough_private_projects_slots(client):
 
 
 def test_valid_dump_import_without_enough_membership_private_project_slots_one_project(client):
-    user = f.UserFactory.create(max_members_private_projects=5)
+    user = f.UserFactory.create(max_memberships_private_projects=5)
     client.login(user)
 
     url = reverse("importer-load-dump")
@@ -1328,7 +1328,7 @@ def test_valid_dump_import_without_enough_membership_private_project_slots_one_p
 
 
 def test_valid_dump_import_without_enough_membership_public_project_slots_one_project(client):
-    user = f.UserFactory.create(max_members_public_projects=5)
+    user = f.UserFactory.create(max_memberships_public_projects=5)
     client.login(user)
 
     url = reverse("importer-load-dump")
@@ -1377,7 +1377,7 @@ def test_valid_dump_import_without_enough_membership_public_project_slots_one_pr
 def test_valid_dump_import_with_enough_membership_private_project_slots_multiple_projects(client, settings):
     settings.CELERY_ENABLED = False
 
-    user = f.UserFactory.create(max_members_private_projects=10)
+    user = f.UserFactory.create(max_memberships_private_projects=10)
     project = f.ProjectFactory.create(owner=user)
     f.MembershipFactory.create(project=project)
     f.MembershipFactory.create(project=project)
@@ -1433,7 +1433,7 @@ def test_valid_dump_import_with_enough_membership_private_project_slots_multiple
 def test_valid_dump_import_with_enough_membership_public_project_slots_multiple_projects(client, settings):
     settings.CELERY_ENABLED = False
 
-    user = f.UserFactory.create(max_members_public_projects=10)
+    user = f.UserFactory.create(max_memberships_public_projects=10)
     project = f.ProjectFactory.create(owner=user)
     f.MembershipFactory.create(project=project)
     f.MembershipFactory.create(project=project)

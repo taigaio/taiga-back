@@ -601,14 +601,14 @@ def _has_available_slot_for_project_members(user, project, members):
     current_memberships = project.memberships.count()
 
     if project.is_private:
-        if user.max_members_private_projects is None:
+        if user.max_memberships_private_projects is None:
             return (True, None)
-        elif current_memberships + members <= user.max_members_private_projects:
+        elif current_memberships + members <= user.max_memberships_private_projects:
             return (True, None)
         return (False, _("You have reached the limit of memberships for private projects"))
     else:
-        if user.max_members_public_projects is None:
+        if user.max_memberships_public_projects is None:
             return (True, None)
-        elif current_memberships + members <= user.max_members_public_projects:
+        elif current_memberships + members <= user.max_memberships_public_projects:
             return (True, None)
         return (False, _("You have reached the limit of memberships for public projects"))

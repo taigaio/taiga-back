@@ -52,8 +52,8 @@ class UserAdmin(DjangoUserAdmin):
         (_("Extra info"), {"fields": ("color", "lang", "timezone", "token", "colorize_tags",
                                       "email_token", "new_email")}),
         (_("Permissions"), {"fields": ("is_active", "is_superuser")}),
-        (_("Restrictions"), {"fields": (("max_private_projects", "max_members_private_projects"),
-                                        ("max_public_projects", "max_members_public_projects"))}),
+        (_("Restrictions"), {"fields": (("max_private_projects", "max_memberships_private_projects"),
+                                        ("max_public_projects", "max_memberships_public_projects"))}),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
     form = UserChangeForm

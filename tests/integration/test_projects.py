@@ -1161,7 +1161,7 @@ def test_project_transfer_accept_from_admin_member_with_valid_token_without_enou
 
 def test_project_transfer_accept_from_admin_member_with_valid_token_without_enough_memberships_public_project_slots(client):
     user_from = f.UserFactory.create()
-    user_to = f.UserFactory.create(max_members_public_projects=5)
+    user_to = f.UserFactory.create(max_memberships_public_projects=5)
 
     signer = signing.TimestampSigner()
     token = signer.sign(user_to.id)
@@ -1195,7 +1195,7 @@ def test_project_transfer_accept_from_admin_member_with_valid_token_without_enou
 
 def test_project_transfer_accept_from_admin_member_with_valid_token_without_enough_memberships_private_project_slots(client):
     user_from = f.UserFactory.create()
-    user_to = f.UserFactory.create(max_members_private_projects=5)
+    user_to = f.UserFactory.create(max_memberships_private_projects=5)
 
     signer = signing.TimestampSigner()
     token = signer.sign(user_to.id)

@@ -54,7 +54,7 @@ def test_api_create_bulk_members(client):
 
 
 def test_api_create_bulk_members_without_enough_memberships_private_project_slots_one_project(client):
-    user = f.UserFactory.create(max_members_private_projects=3)
+    user = f.UserFactory.create(max_memberships_private_projects=3)
     project = f.ProjectFactory(owner=user, is_private=True)
     role = f.RoleFactory(project=project, name="Test")
     f.MembershipFactory(project=project, user=user, is_admin=True)
@@ -78,7 +78,7 @@ def test_api_create_bulk_members_without_enough_memberships_private_project_slot
 
 
 def test_api_create_bulk_members_with_enough_memberships_private_project_slots_multiple_projects(client):
-    user = f.UserFactory.create(max_members_private_projects=6)
+    user = f.UserFactory.create(max_memberships_private_projects=6)
     project = f.ProjectFactory(owner=user, is_private=True)
     role = f.RoleFactory(project=project, name="Test")
     f.MembershipFactory(project=project, user=user, is_admin=True)
@@ -107,7 +107,7 @@ def test_api_create_bulk_members_with_enough_memberships_private_project_slots_m
 
 
 def test_api_create_bulk_members_without_enough_memberships_public_project_slots_one_project(client):
-    user = f.UserFactory.create(max_members_public_projects=3)
+    user = f.UserFactory.create(max_memberships_public_projects=3)
     project = f.ProjectFactory(owner=user, is_private=False)
     role = f.RoleFactory(project=project, name="Test")
     f.MembershipFactory(project=project, user=user, is_admin=True)
@@ -131,7 +131,7 @@ def test_api_create_bulk_members_without_enough_memberships_public_project_slots
 
 
 def test_api_create_bulk_members_with_enough_memberships_public_project_slots_multiple_projects(client):
-    user = f.UserFactory.create(max_members_public_projects=6)
+    user = f.UserFactory.create(max_memberships_public_projects=6)
     project = f.ProjectFactory(owner=user, is_private=False)
     role = f.RoleFactory(project=project, name="Test")
     f.MembershipFactory(project=project, user=user, is_admin=True)
@@ -269,7 +269,7 @@ def test_api_create_membership(client):
 
 
 def test_api_create_membership_without_enough_memberships_private_project_slots_one_projects(client):
-    user = f.UserFactory.create(max_members_private_projects=1)
+    user = f.UserFactory.create(max_memberships_private_projects=1)
     project = f.ProjectFactory(owner=user, is_private=True)
     role = f.RoleFactory(project=project, name="Test")
     f.MembershipFactory(project=project, user=user, is_admin=True)
@@ -284,7 +284,7 @@ def test_api_create_membership_without_enough_memberships_private_project_slots_
 
 
 def test_api_create_membership_with_enough_memberships_private_project_slots_multiple_projects(client):
-    user = f.UserFactory.create(max_members_private_projects=5)
+    user = f.UserFactory.create(max_memberships_private_projects=5)
     project = f.ProjectFactory(owner=user, is_private=True)
     role = f.RoleFactory(project=project, name="Test")
     f.MembershipFactory(project=project, user=user, is_admin=True)
@@ -304,7 +304,7 @@ def test_api_create_membership_with_enough_memberships_private_project_slots_mul
 
 
 def test_api_create_membership_without_enough_memberships_public_project_slots_one_projects(client):
-    user = f.UserFactory.create(max_members_public_projects=1)
+    user = f.UserFactory.create(max_memberships_public_projects=1)
     project = f.ProjectFactory(owner=user, is_private=False)
     role = f.RoleFactory(project=project, name="Test")
     f.MembershipFactory(project=project, user=user, is_admin=True)
@@ -319,7 +319,7 @@ def test_api_create_membership_without_enough_memberships_public_project_slots_o
 
 
 def test_api_create_membership_with_enough_memberships_public_project_slots_multiple_projects(client):
-    user = f.UserFactory.create(max_members_public_projects=5)
+    user = f.UserFactory.create(max_memberships_public_projects=5)
     project = f.ProjectFactory(owner=user, is_private=False)
     role = f.RoleFactory(project=project, name="Test")
     f.MembershipFactory(project=project, user=user, is_admin=True)
