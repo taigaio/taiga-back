@@ -54,10 +54,10 @@ def start_project_transfer(project, user, reason):
     email.send()
 
 
-def _validate_token(token, project_token, user_id):
+def validate_project_transfer_token(token, project, user):
     signer = signing.TimestampSigner()
 
-    if project_token != token:
+    if project.transfer_token != token:
         raise exc.WrongArguments(_("Token is invalid"))
 
     try:
@@ -67,12 +67,12 @@ def _validate_token(token, project_token, user_id):
     except signing.BadSignature:
         raise exc.WrongArguments(_("Token is invalid"))
 
-    if str(value) != str(user_id):
+    if str(value) != str(user.id):
         raise exc.WrongArguments(_("Token is invalid"))
 
 
 def reject_project_transfer(project, user, token, reason):
-    _validate_token(token, project.transfer_token, user.id)
+    validate_project_transfer_token(token, project, user)
 
     project.transfer_token = None
     project.save()
@@ -88,7 +88,7 @@ def reject_project_transfer(project, user, token, reason):
 
 
 def accept_project_transfer(project, user, token, reason):
-    _validate_token(token, project.transfer_token, user.id)
+    validate_project_transfer_token(token, project, user)
 
     old_owner = project.owner
 

@@ -331,6 +331,14 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         return response.Ok(dict(project.tags_colors))
 
     @detail_route(methods=["POST"])
+    def transfer_validate_token(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "transfer_validate_token", project)
+        token = request.DATA.get('token', None)
+        services.transfer.validate_project_transfer_token(token, project, request.user)
+        return response.Ok()
+
+    @detail_route(methods=["POST"])
     def transfer_request(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "transfer_request", project)
