@@ -1393,3 +1393,195 @@ def test_project_transfer_validate_token_from_admin_member_with_valid_token(clie
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 200
+
+
+####################################################################################
+# Test taiga.projects.services.members.check_if_project_privacity_can_be_changed
+####################################################################################
+
+from taiga.projects.services import check_if_project_privacity_can_be_changed
+
+# private to public
+
+def test_private_project_cant_be_public_because_owner_doesnt_have_enought_slot_and_too_much_members(client):
+    project = f.create_project(is_private=True)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_public_projects = 0
+    project.owner.max_memberships_public_projects = 3
+
+    assert check_if_project_privacity_can_be_changed(project) == False
+
+
+def test_private_project_cant_be_public_because_owner_doesnt_have_enought_slot(client):
+    project = f.create_project(is_private=True)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_public_projects = 0
+    project.owner.max_memberships_public_projects = 6
+
+    assert check_if_project_privacity_can_be_changed(project) == False
+
+
+def test_private_project_cant_be_public_because_too_much_members(client):
+    project = f.create_project(is_private=True)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_public_projects = 2
+    project.owner.max_memberships_public_projects = 3
+
+    assert check_if_project_privacity_can_be_changed(project) == False
+
+
+def test_private_project_can_be_public_because_owner_has_enought_slot_and_project_has_enought_members(client):
+    project = f.create_project(is_private=True)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_public_projects = 2
+    project.owner.max_memberships_public_projects = 6
+
+    assert check_if_project_privacity_can_be_changed(project) == True
+
+
+def test_private_project_can_be_public_because_owner_has_unlimited_slot_and_project_has_unlimited_members(client):
+    project = f.create_project(is_private=True)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_public_projects = None
+    project.owner.max_memberships_public_projects = None
+
+    assert check_if_project_privacity_can_be_changed(project) == True
+
+
+def test_private_project_can_be_public_because_owner_has_unlimited_slot(client):
+    project = f.create_project(is_private=True)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_public_projects = None
+    project.owner.max_memberships_public_projects = 6
+
+    assert check_if_project_privacity_can_be_changed(project) == True
+
+
+def test_private_project_can_be_public_because_project_has_unlimited_members(client):
+    project = f.create_project(is_private=True)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_public_projects = 2
+    project.owner.max_memberships_public_projects = None
+
+    assert check_if_project_privacity_can_be_changed(project) == True
+
+
+# public to private
+
+def test_public_project_cant_be_private_because_owner_doesnt_have_enought_slot_and_too_much_members(client):
+    project = f.create_project(is_private=False)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_private_projects = 0
+    project.owner.max_memberships_private_projects = 3
+
+    assert check_if_project_privacity_can_be_changed(project) == False
+
+
+def test_public_project_cant_be_private_because_owner_doesnt_have_enought_slot(client):
+    project = f.create_project(is_private=False)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_private_projects = 0
+    project.owner.max_memberships_private_projects = 6
+
+    assert check_if_project_privacity_can_be_changed(project) == False
+
+
+def test_public_project_cant_be_private_because_too_much_members(client):
+    project = f.create_project(is_private=False)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_private_projects = 2
+    project.owner.max_memberships_private_projects = 3
+
+    assert check_if_project_privacity_can_be_changed(project) == False
+
+
+def test_public_project_can_be_private_because_owner_has_enought_slot_and_project_has_enought_members(client):
+    project = f.create_project(is_private=False)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_private_projects = 2
+    project.owner.max_memberships_private_projects = 6
+
+    assert check_if_project_privacity_can_be_changed(project) == True
+
+
+def test_public_project_can_be_private_because_owner_has_unlimited_slot_and_project_has_unlimited_members(client):
+    project = f.create_project(is_private=False)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_private_projects = None
+    project.owner.max_memberships_private_projects = None
+
+    assert check_if_project_privacity_can_be_changed(project) == True
+
+
+def test_public_project_can_be_private_because_owner_has_unlimited_slot(client):
+    project = f.create_project(is_private=False)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_private_projects = None
+    project.owner.max_memberships_private_projects = 6
+
+    assert check_if_project_privacity_can_be_changed(project) == True
+
+
+def test_public_project_can_be_private_because_project_has_unlimited_members(client):
+    project = f.create_project(is_private=False)
+    f.MembershipFactory(project=project, user=project.owner)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+    f.MembershipFactory(project=project)
+
+    project.owner.max_private_projects = 2
+    project.owner.max_memberships_private_projects = None
+
+    assert check_if_project_privacity_can_be_changed(project) == True
