@@ -77,11 +77,11 @@ class ProjectPermission(TaigaResourcePermission):
     unwatch_perms = IsAuthenticated() & HasProjectPerm('view_project')
     create_template_perms = IsSuperUser()
     leave_perms = CanLeaveProject()
-    transfer_validate_token_perms = IsProjectAdmin()
+    transfer_validate_token_perms = IsAuthenticated() & HasProjectPerm('view_project')
     transfer_request_perms = IsProjectAdmin()
     transfer_start_perms = IsMainOwner()
-    transfer_reject_perms = IsProjectAdmin()
-    transfer_accept_perms = IsProjectAdmin()
+    transfer_reject_perms = IsAuthenticated() & HasProjectPerm('view_project')
+    transfer_accept_perms = IsAuthenticated() & HasProjectPerm('view_project')
 
 
 class ProjectFansPermission(TaigaResourcePermission):

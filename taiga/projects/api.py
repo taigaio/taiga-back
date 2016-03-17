@@ -358,15 +358,12 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         user_model = apps.get_model("users", "User")
         try:
             user = user_model.objects.get(id=user_id)
-
         except user_model.DoesNotExist:
             return response.BadRequest(_("The user doesn't exist"))
 
-        # Check the user is an admin membership from the project
-        try:
-            project.memberships.get(is_admin=True, user=user)
-        except apps.get_model("projects", "Membership").DoesNotExist:
-            return response.BadRequest(_("The user must be an admin member of the project"))
+        # Check the user is a membership from the project
+        if not project.memberships.filter(user=user).exists():
+            return response.BadRequest(_("The user must be a member of the project"))
 
         reason = request.DATA.get('reason', None)
         transfer_token = services.start_project_transfer(project, user, reason)
