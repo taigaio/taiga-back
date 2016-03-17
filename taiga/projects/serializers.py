@@ -352,10 +352,23 @@ class ProjectDetailSerializer(ProjectSerializer):
 
 
 class ProjectDetailAdminSerializer(ProjectDetailSerializer):
+    max_memberships = serializers.SerializerMethodField(method_name="get_max_memberships")
+    total_memberships = serializers.SerializerMethodField(method_name="get_total_memberships")
+    can_is_private_be_updated = serializers.SerializerMethodField(method_name="get_can_is_private_be_updated")
+
     class Meta:
         model = models.Project
         read_only_fields = ("created_date", "modified_date", "slug", "blocked_code")
         exclude = ("logo", "last_us_ref", "last_task_ref", "last_issue_ref")
+
+    def get_max_memberships(self, obj):
+        return services.get_max_memberships_for_project(obj)
+
+    def get_total_memberships(self, obj):
+        return services.get_total_project_memberships(obj)
+
+    def get_can_is_private_be_updated(self, obj):
+        return services.check_if_project_privacity_can_be_changed(obj)
 
 
 ######################################################

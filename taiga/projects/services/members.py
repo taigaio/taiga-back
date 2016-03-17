@@ -60,3 +60,52 @@ def can_user_leave_project(user, project):
         return False
 
     return True
+
+
+def get_max_memberships_for_project(project):
+    """Return tha maximun of membersh for a concrete project.
+
+    :param project: A project object.
+
+    :return: a number or null.
+    """
+    if project.is_private:
+        return project.owner.max_memberships_private_projects
+    return project.owner.max_memberships_public_projects
+
+
+def get_total_project_memberships(project):
+    """Return tha total of memberships of a project (members and unaccepted invitations).
+
+    :param project: A project object.
+
+    :return: a number.
+    """
+    return project.memberships.count()
+
+
+def check_if_project_privacity_can_be_changed(project):
+    """Return if the project privacity can be changed from private to public or viceversa.
+
+    :param project: A project object.
+
+    :return: True if it can be changed or False if can't.
+    """
+    if project.is_private:
+        current_projects = project.owner.owned_projects.filter(is_private=False).count()
+        max_projects = project.owner.max_public_projects
+        max_memberships = project.owner.max_memberships_public_projects
+    else:
+        current_projects = project.owner.owned_projects.filter(is_private=True).count()
+        max_projects = project.owner.max_private_projects
+        max_memberships = project.owner.max_memberships_private_projects
+
+    if max_projects is not None and current_projects >= max_projects:
+        return False
+
+    current_memberships = project.memberships.count()
+
+    if max_memberships is not None and current_memberships > max_memberships:
+        return False
+
+    return True

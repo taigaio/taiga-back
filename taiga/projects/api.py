@@ -109,6 +109,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         # Prefetch doesn"t work correctly if then if the field is filtered later (it generates more queries)
         # so we add some custom prefetching
         qs = qs.prefetch_related("members")
+        qs = qs.prefetch_related("memberships")
         qs = qs.prefetch_related(Prefetch("notify_policies",
             NotifyPolicy.objects.exclude(notify_level=NotifyLevel.none), to_attr="valid_notify_policies"))
 
