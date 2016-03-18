@@ -26,6 +26,9 @@ from .utils import DUMMY_BMP_DATA
 
 import factory
 
+from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+
+
 
 class Factory(factory.DjangoModelFactory):
     class Meta:
@@ -555,8 +558,9 @@ def create_membership(**kwargs):
 
     defaults = {
         "project": project,
-        "user": project.owner,
-        "role": RoleFactory.create(project=project)
+        "user": UserFactory.create(),
+        "role": RoleFactory.create(project=project,
+                                   permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     }
     defaults.update(kwargs)
 

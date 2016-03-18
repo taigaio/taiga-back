@@ -90,12 +90,19 @@ def reject_project_transfer(project, user, token, reason):
 def accept_project_transfer(project, user, token, reason):
     validate_project_transfer_token(token, project, user)
 
-    old_owner = project.owner
+    # Set new owner as project admin
+    membership = project.memberships.get(user=user)
+    if not membership.is_admin:
+        membership.is_admin = True
+        membership.save()
 
+    # Change the owner of the project
+    old_owner = project.owner
     project.transfer_token = None
     project.owner = user
     project.save()
 
+    # Send mail
     template = mail_builder.transfer_accept
     context = {
         "project": project,
