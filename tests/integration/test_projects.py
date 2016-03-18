@@ -1399,7 +1399,13 @@ def test_project_transfer_validate_token_from_admin_member_with_valid_token(clie
 # Test taiga.projects.services.members.check_if_project_privacity_can_be_changed
 ####################################################################################
 
-from taiga.projects.services import check_if_project_privacity_can_be_changed
+from taiga.projects.services.members import (
+    check_if_project_privacity_can_be_changed,
+    ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS,
+    ERROR_MAX_PUBLIC_PROJECTS,
+    ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS,
+    ERROR_MAX_PRIVATE_PROJECTS
+)
 
 # private to public
 
@@ -1413,7 +1419,8 @@ def test_private_project_cant_be_public_because_owner_doesnt_have_enought_slot_a
     project.owner.max_public_projects = 0
     project.owner.max_memberships_public_projects = 3
 
-    assert check_if_project_privacity_can_be_changed(project) == False
+    assert (check_if_project_privacity_can_be_changed(project) ==
+            {'can_be_updated': False, 'reason': ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS})
 
 
 def test_private_project_cant_be_public_because_owner_doesnt_have_enought_slot(client):
@@ -1426,7 +1433,8 @@ def test_private_project_cant_be_public_because_owner_doesnt_have_enought_slot(c
     project.owner.max_public_projects = 0
     project.owner.max_memberships_public_projects = 6
 
-    assert check_if_project_privacity_can_be_changed(project) == False
+    assert (check_if_project_privacity_can_be_changed(project) ==
+            {'can_be_updated': False, 'reason': ERROR_MAX_PRIVATE_PROJECTS})
 
 
 def test_private_project_cant_be_public_because_too_much_members(client):
@@ -1439,7 +1447,8 @@ def test_private_project_cant_be_public_because_too_much_members(client):
     project.owner.max_public_projects = 2
     project.owner.max_memberships_public_projects = 3
 
-    assert check_if_project_privacity_can_be_changed(project) == False
+    assert (check_if_project_privacity_can_be_changed(project) ==
+            {'can_be_updated': False, 'reason': ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS})
 
 
 def test_private_project_can_be_public_because_owner_has_enought_slot_and_project_has_enought_members(client):
@@ -1452,7 +1461,7 @@ def test_private_project_can_be_public_because_owner_has_enought_slot_and_projec
     project.owner.max_public_projects = 2
     project.owner.max_memberships_public_projects = 6
 
-    assert check_if_project_privacity_can_be_changed(project) == True
+    assert (check_if_project_privacity_can_be_changed(project) == {'can_be_updated': True, 'reason': None})
 
 
 def test_private_project_can_be_public_because_owner_has_unlimited_slot_and_project_has_unlimited_members(client):
@@ -1465,7 +1474,7 @@ def test_private_project_can_be_public_because_owner_has_unlimited_slot_and_proj
     project.owner.max_public_projects = None
     project.owner.max_memberships_public_projects = None
 
-    assert check_if_project_privacity_can_be_changed(project) == True
+    assert (check_if_project_privacity_can_be_changed(project) == {'can_be_updated': True, 'reason': None})
 
 
 def test_private_project_can_be_public_because_owner_has_unlimited_slot(client):
@@ -1478,7 +1487,7 @@ def test_private_project_can_be_public_because_owner_has_unlimited_slot(client):
     project.owner.max_public_projects = None
     project.owner.max_memberships_public_projects = 6
 
-    assert check_if_project_privacity_can_be_changed(project) == True
+    assert (check_if_project_privacity_can_be_changed(project) == {'can_be_updated': True, 'reason': None})
 
 
 def test_private_project_can_be_public_because_project_has_unlimited_members(client):
@@ -1491,7 +1500,7 @@ def test_private_project_can_be_public_because_project_has_unlimited_members(cli
     project.owner.max_public_projects = 2
     project.owner.max_memberships_public_projects = None
 
-    assert check_if_project_privacity_can_be_changed(project) == True
+    assert (check_if_project_privacity_can_be_changed(project) == {'can_be_updated': True, 'reason': None})
 
 
 # public to private
@@ -1506,7 +1515,8 @@ def test_public_project_cant_be_private_because_owner_doesnt_have_enought_slot_a
     project.owner.max_private_projects = 0
     project.owner.max_memberships_private_projects = 3
 
-    assert check_if_project_privacity_can_be_changed(project) == False
+    assert (check_if_project_privacity_can_be_changed(project) ==
+            {'can_be_updated': False, 'reason': ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS})
 
 
 def test_public_project_cant_be_private_because_owner_doesnt_have_enought_slot(client):
@@ -1519,7 +1529,8 @@ def test_public_project_cant_be_private_because_owner_doesnt_have_enought_slot(c
     project.owner.max_private_projects = 0
     project.owner.max_memberships_private_projects = 6
 
-    assert check_if_project_privacity_can_be_changed(project) == False
+    assert (check_if_project_privacity_can_be_changed(project) ==
+            {'can_be_updated': False, 'reason': ERROR_MAX_PUBLIC_PROJECTS})
 
 
 def test_public_project_cant_be_private_because_too_much_members(client):
@@ -1532,7 +1543,8 @@ def test_public_project_cant_be_private_because_too_much_members(client):
     project.owner.max_private_projects = 2
     project.owner.max_memberships_private_projects = 3
 
-    assert check_if_project_privacity_can_be_changed(project) == False
+    assert (check_if_project_privacity_can_be_changed(project) ==
+            {'can_be_updated': False, 'reason': ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS})
 
 
 def test_public_project_can_be_private_because_owner_has_enought_slot_and_project_has_enought_members(client):
@@ -1545,7 +1557,7 @@ def test_public_project_can_be_private_because_owner_has_enought_slot_and_projec
     project.owner.max_private_projects = 2
     project.owner.max_memberships_private_projects = 6
 
-    assert check_if_project_privacity_can_be_changed(project) == True
+    assert (check_if_project_privacity_can_be_changed(project) == {'can_be_updated': True, 'reason': None})
 
 
 def test_public_project_can_be_private_because_owner_has_unlimited_slot_and_project_has_unlimited_members(client):
@@ -1558,7 +1570,7 @@ def test_public_project_can_be_private_because_owner_has_unlimited_slot_and_proj
     project.owner.max_private_projects = None
     project.owner.max_memberships_private_projects = None
 
-    assert check_if_project_privacity_can_be_changed(project) == True
+    assert (check_if_project_privacity_can_be_changed(project) == {'can_be_updated': True, 'reason': None})
 
 
 def test_public_project_can_be_private_because_owner_has_unlimited_slot(client):
@@ -1571,7 +1583,7 @@ def test_public_project_can_be_private_because_owner_has_unlimited_slot(client):
     project.owner.max_private_projects = None
     project.owner.max_memberships_private_projects = 6
 
-    assert check_if_project_privacity_can_be_changed(project) == True
+    assert (check_if_project_privacity_can_be_changed(project) == {'can_be_updated': True, 'reason': None})
 
 
 def test_public_project_can_be_private_because_project_has_unlimited_members(client):
@@ -1584,4 +1596,4 @@ def test_public_project_can_be_private_because_project_has_unlimited_members(cli
     project.owner.max_private_projects = 2
     project.owner.max_memberships_private_projects = None
 
-    assert check_if_project_privacity_can_be_changed(project) == True
+    assert (check_if_project_privacity_can_be_changed(project) == {'can_be_updated': True, 'reason': None})
