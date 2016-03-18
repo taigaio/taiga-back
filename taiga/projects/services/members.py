@@ -99,19 +99,19 @@ def check_if_project_privacity_can_be_changed(project):
     if project.is_private:
         current_memberships = project.memberships.count()
         max_memberships = project.owner.max_memberships_public_projects
-        error_members_exceeded = ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS
+        error_members_exceeded = ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS
 
         current_projects = project.owner.owned_projects.filter(is_private=False).count()
         max_projects = project.owner.max_public_projects
-        error_project_exceeded = ERROR_MAX_PRIVATE_PROJECTS
+        error_project_exceeded = ERROR_MAX_PUBLIC_PROJECTS
     else:
         current_memberships = project.memberships.count()
         max_memberships = project.owner.max_memberships_private_projects
-        error_members_exceeded = ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS
+        error_members_exceeded = ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS
 
         current_projects = project.owner.owned_projects.filter(is_private=True).count()
         max_projects = project.owner.max_private_projects
-        error_project_exceeded = ERROR_MAX_PUBLIC_PROJECTS
+        error_project_exceeded = ERROR_MAX_PRIVATE_PROJECTS
 
     if max_memberships is not None and current_memberships > max_memberships:
         return {'can_be_updated': False, 'reason': error_members_exceeded}
