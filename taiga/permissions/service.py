@@ -38,9 +38,6 @@ def _get_object_project(obj):
 
 
 def is_project_owner(user, obj):
-    if user.is_superuser:
-        return True
-
     project = _get_object_project(obj)
     if project is None:
         return False
