@@ -190,7 +190,7 @@ class MembershipSerializer(serializers.ModelSerializer):
         if project is None:
             project = self.object.project
 
-        if (self.object):
+        if (self.object and self.object.user):
             if self.object.user.id == project.owner_id and attrs[source] != True:
                 raise serializers.ValidationError(_("Project owner must be admin."))
 
