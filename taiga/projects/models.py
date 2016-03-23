@@ -220,6 +220,10 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     transfer_token = models.CharField(max_length=255, null=True, blank=True, default=None,
                                       verbose_name=_("project transfer token"))
 
+    blocked_code = models.CharField(null=True, blank=True, max_length=255,
+                            choices=choices.BLOCKING_CODES + settings.EXTRA_BLOCKING_CODES, default=None,
+                            verbose_name=_("blocked code"))
+
     #Totals:
     totals_updated_datetime = models.DateTimeField(null=False, blank=False, auto_now_add=True,
                                             verbose_name=_("updated date time"), db_index=True)
@@ -247,10 +251,6 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
 
     total_activity_last_year = models.PositiveIntegerField(null=False, blank=False, default=0,
                                              verbose_name=_("activity last year"), db_index=True)
-
-    blocked_code = models.CharField(null=True, blank=True, max_length=255,
-                            choices=choices.BLOCKING_CODES + settings.EXTRA_BLOCKING_CODES, default=None,
-                            verbose_name=_("blocked code"))
 
     _importing = None
 

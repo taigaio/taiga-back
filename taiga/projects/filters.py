@@ -37,7 +37,8 @@ class DiscoverModeFilterBackend(FilterBackend):
 
             if discover_mode:
                 # discover_mode enabled
-                qs = qs.filter(anon_permissions__contains=["view_project"])
+                qs = qs.filter(anon_permissions__contains=["view_project"],
+                               blocked_code__isnull=True)
 
         return super().filter_queryset(request, qs.distinct(), view)
 
