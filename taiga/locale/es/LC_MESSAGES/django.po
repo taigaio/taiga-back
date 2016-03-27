@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the taiga-back package.
 #
 # Translators:
-# David Barragán <bameda@gmail.com>, 2015
+# David Barragán <bameda@gmail.com>, 2015-2016
 # Esther Moreno <soyesthermoreno@yahoo.es>, 2015
 # gustavodiazjaimes <gustavodiazjaimes@gmail.com>, 2015
 # Hector Colina <hcolina@gmail.com>, 2015
@@ -16,8 +16,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-03-25 12:01+0100\n"
-"PO-Revision-Date: 2016-03-25 11:01+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"PO-Revision-Date: 2016-03-27 11:05+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -1342,7 +1342,7 @@ msgstr "El usuario no existe"
 
 #: taiga/projects/api.py:366
 msgid "The user must be a member of the project"
-msgstr ""
+msgstr "El usuario debe ser miembro del proyecto"
 
 #: taiga/projects/api.py:668
 msgid ""
@@ -2757,7 +2757,7 @@ msgstr "Rol inválido para el proyecto"
 
 #: taiga/projects/serializers.py:195
 msgid "Project owner must be admin."
-msgstr ""
+msgstr "El propietario del proyecto debe ser administrador."
 
 #: taiga/projects/serializers.py:198
 msgid "In this project at least one of the users must be an active admin."
@@ -3169,7 +3169,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:14
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:22
 msgid "Continue"
-msgstr ""
+msgstr "Continuar"
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:1
 #, python-format
@@ -3718,19 +3718,19 @@ msgstr "nueva dirección de email"
 
 #: taiga/users/models.py:129
 msgid "max number of private projects owned"
-msgstr ""
+msgstr "máximo de proyectos privados poseídos"
 
 #: taiga/users/models.py:132
 msgid "max number of public projects owned"
-msgstr ""
+msgstr "máximo de proyectos públicos poseídos"
 
 #: taiga/users/models.py:135
 msgid "max number of memberships for each owned private project"
-msgstr ""
+msgstr "máximo de membresías para cada proyecto privado poseído"
 
 #: taiga/users/models.py:139
 msgid "max number of memberships for each owned public project"
-msgstr ""
+msgstr "máximo de membresías para cada proyecto público poseído"
 
 #: taiga/users/models.py:256
 msgid "permissions"
@@ -3750,19 +3750,19 @@ msgstr "Nombre de usuario o contraseña inválidos."
 
 #: taiga/users/services.py:590
 msgid "You can't have more private projects"
-msgstr ""
+msgstr "No puedes tener más proyectos privados"
 
 #: taiga/users/services.py:596
 msgid "You can't have more public projects"
-msgstr ""
+msgstr "No puedes tener más proyectos públicos"
 
 #: taiga/users/services.py:608
 msgid "You have reached the limit of memberships for private projects"
-msgstr ""
+msgstr "Has alcanzado el límite de membresías para proyectos privados"
 
 #: taiga/users/services.py:614
 msgid "You have reached the limit of memberships for public projects"
-msgstr ""
+msgstr "As alcanzado el límite de membresías para proyectos públicos"
 
 #: taiga/users/templates/emails/change_email-body-html.jinja:4
 #, python-format
