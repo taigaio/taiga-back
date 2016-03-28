@@ -2,12 +2,12 @@
 
 {% block body %}
     {% trans owner_name=project.owner.get_full_name(), requester_name=requester.get_full_name(), project_name=project.name %}
-      <p>Hi {{owner_name}},</p>
-      <p>{{ requester_name }} has requested to become the project owner for "{{project_name}}".</p>
+        <p>Hi {{owner_name}},</p>
+        <p>{{ requester_name }} has requested to become the project owner for "{{project_name}}".</p>
     {% endtrans %}
 
     {% trans %}
-      <p>Please, click on "Continue" if you would like to start the project transfer from the administration panel.</p>
+        <p>Please, click on "Continue" if you would like to start the project transfer from the administration panel.</p>
     {% endtrans %}
 
     <a class="button" href="{{ resolve_front_url("project-admin", project.slug) }}"

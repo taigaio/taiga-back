@@ -3,7 +3,8 @@ Hi {{receiver_name}},
 {{ owner_name }}, the current project owner at "{{project_name}}" would like you to become the new project owner.
 {% endtrans %}
 
-{% if reason %}{% trans  %}This is the reason/comment:{% endtrans %}
+{% if reason %}{% trans  owner_name=project.owner.get_full_name() %}{{ owner_name }} says:{% endtrans %}
+
 {{ reason }}
 {% endif %}
 

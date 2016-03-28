@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-25 12:01+0100\n"
-"PO-Revision-Date: 2016-03-25 11:01+0000\n"
+"POT-Creation-Date: 2016-03-28 12:50+0200\n"
+"PO-Revision-Date: 2016-03-28 10:50+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Catalan (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ca/)\n"
@@ -2570,20 +2570,22 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"      <p>Hi %(old_owner_name)s,</p>\n"
-"      <p>%(new_owner_name)s has accepted your offer and will become the new "
-"project owner for \"%(project_name)s\".</p>\n"
+"        <p>Hi %(old_owner_name)s,</p>\n"
+"        <p>%(new_owner_name)s has accepted your offer and will become the "
+"new project owner for \"%(project_name)s\".</p>\n"
 "    "
 msgstr ""
 
 #: taiga/projects/templates/emails/transfer_accept-body-html.jinja:10
-msgid "<p>This is the reason/comment:</p>"
+#, python-format
+msgid "<p>%(new_owner_name)s says:</p>"
 msgstr ""
 
 #: taiga/projects/templates/emails/transfer_accept-body-html.jinja:14
 msgid ""
 "\n"
-"    <p>From now on, your new status for this project will be \"admin\".</p>\n"
+"        <p>From now on, your new status for this project will be \"admin\".</"
+"p>\n"
 "    "
 msgstr ""
 
@@ -2597,9 +2599,8 @@ msgid ""
 msgstr ""
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:6
-#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:6
-#: taiga/projects/templates/emails/transfer_start-body-text.jinja:6
-msgid "This is the reason/comment:"
+#, python-format
+msgid "%(new_owner_name)s says:"
 msgstr ""
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:10
@@ -2609,9 +2610,9 @@ msgid ""
 msgstr ""
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:15
-#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:18
+#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:21
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:13
-#: taiga/projects/templates/emails/transfer_start-body-text.jinja:17
+#: taiga/projects/templates/emails/transfer_start-body-text.jinja:18
 msgid ""
 "\n"
 "The Taiga Team\n"
@@ -2628,24 +2629,25 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"      <p>Hi %(owner_name)s,</p>\n"
-"      <p>%(rejecter_name)s has declined your offer and will not become the "
+"        <p>Hi %(owner_name)s,</p>\n"
+"        <p>%(rejecter_name)s has declined your offer and will not become the "
 "new project owner for \"%(project_name)s\".</p>\n"
 "    "
 msgstr ""
 
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:10
+#, python-format
 msgid ""
 "\n"
-"      <p>This is the reason/comment:</p>\n"
+"    <p>%(rejecter_name)s says:</p>\n"
 "    "
 msgstr ""
 
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:17
 msgid ""
 "\n"
-"      <p>If you want, you can still try to transfer the project ownership to "
-"a different person.</p>\n"
+"    <p>If you want, you can still try to transfer the project ownership to a "
+"different person.</p>\n"
 "    "
 msgstr ""
 
@@ -2663,14 +2665,21 @@ msgid ""
 "project owner for \"%(project_name)s\".\n"
 msgstr ""
 
-#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:10
+#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:7
+#, python-format
+msgid ""
+"\n"
+"<p>%(rejecter_name)s says:</p>\n"
+msgstr ""
+
+#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:13
 msgid ""
 "\n"
 "If you want, you can still try to transfer the project ownership to a "
 "different person.\n"
 msgstr ""
 
-#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:14
+#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:17
 msgid "Request transfer to a different person:"
 msgstr ""
 
@@ -2685,8 +2694,8 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"      <p>Hi %(owner_name)s,</p>\n"
-"      <p>%(requester_name)s has requested to become the project owner for "
+"        <p>Hi %(owner_name)s,</p>\n"
+"        <p>%(requester_name)s has requested to become the project owner for "
 "\"%(project_name)s\".</p>\n"
 "    "
 msgstr ""
@@ -2694,7 +2703,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:9
 msgid ""
 "\n"
-"      <p>Please, click on \"Continue\" if you would like to start the "
+"        <p>Please, click on \"Continue\" if you would like to start the "
 "project transfer from the administration panel.</p>\n"
 "    "
 msgstr ""
@@ -2735,23 +2744,24 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"      <p>Hi %(receiver_name)s,</p>\n"
-"      <p>%(owner_name)s, the current project owner at \"%(project_name)s\" "
+"        <p>Hi %(receiver_name)s,</p>\n"
+"        <p>%(owner_name)s, the current project owner at \"%(project_name)s\" "
 "would like you to become the new project owner.</p>\n"
 "    "
 msgstr ""
 
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:10
+#, python-format
 msgid ""
 "\n"
-"            <p>This is the reason/comment:</p>\n"
+"        <p>%(owner_name)s says:</p>\n"
 "        "
 msgstr ""
 
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:17
 msgid ""
 "\n"
-"      <p>Please, click on \"Continue\" to either accept or reject this "
+"        <p>Please, click on \"Continue\" to either accept or reject this "
 "proposal.</p>\n"
 "    "
 msgstr ""
@@ -2765,14 +2775,19 @@ msgid ""
 "you to become the new project owner.\n"
 msgstr ""
 
-#: taiga/projects/templates/emails/transfer_start-body-text.jinja:10
+#: taiga/projects/templates/emails/transfer_start-body-text.jinja:6
+#, python-format
+msgid "%(owner_name)s says:"
+msgstr ""
+
+#: taiga/projects/templates/emails/transfer_start-body-text.jinja:11
 msgid ""
 "\n"
 "Please, go to the following link to either accept or reject this proposal.</"
 "p>\n"
 msgstr ""
 
-#: taiga/projects/templates/emails/transfer_start-body-text.jinja:14
+#: taiga/projects/templates/emails/transfer_start-body-text.jinja:15
 msgid "Accept or reject the project transfer:"
 msgstr ""
 
