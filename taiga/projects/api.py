@@ -634,7 +634,7 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         if "bulk_memberships" in data and isinstance(data["bulk_memberships"], list):
             members = len(data["bulk_memberships"])
             (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
-                request.user,
+                project.owner,
                 project=project,
                 members=members
             )
