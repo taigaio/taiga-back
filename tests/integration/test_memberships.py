@@ -77,6 +77,33 @@ def test_api_create_bulk_members_without_enough_memberships_private_project_slot
     assert "reached the limit of memberships for private" in response.data["_error_message"]
 
 
+
+def test_api_create_bulk_members_for_admin_without_enough_memberships_private_project_slots_one_project(client):
+    owner = f.UserFactory.create(max_memberships_private_projects=3)
+    user = f.UserFactory.create()
+    project = f.ProjectFactory(owner=owner, is_private=True)
+    role = f.RoleFactory(project=project, name="Test")
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+
+    url = reverse("memberships-bulk-create")
+
+    data = {
+        "project_id": project.id,
+        "bulk_memberships": [
+            {"role_id": role.pk, "email": "test1@test.com"},
+            {"role_id": role.pk, "email": "test2@test.com"},
+            {"role_id": role.pk, "email": "test3@test.com"},
+            {"role_id": role.pk, "email": "test4@test.com"},
+        ]
+    }
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "reached the limit of memberships for private" in response.data["_error_message"]
+
+
+
 def test_api_create_bulk_members_with_enough_memberships_private_project_slots_multiple_projects(client):
     user = f.UserFactory.create(max_memberships_private_projects=6)
     project = f.ProjectFactory(owner=user, is_private=True)
