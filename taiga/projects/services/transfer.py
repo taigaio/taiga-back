@@ -50,7 +50,7 @@ def start_project_transfer(project, user, reason):
         "token": token,
         "reason": reason
     }
-    email = template(project.owner, context)
+    email = template(user, context)
     email.send()
 
 
