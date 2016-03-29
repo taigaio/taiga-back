@@ -378,13 +378,13 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         project = self.get_object()
         self.check_permissions(request, "transfer_accept", project)
 
-        members = project.memberships.count()
         (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
             request.user,
             project=project,
-            members=members
+            members=0
         )
         if not enough_slots:
+            members = project.memberships.count()
             raise exc.NotEnoughSlotsForProject(project.is_private, members, not_enough_slots_error)
 
         reason = request.DATA.get('reason', None)
