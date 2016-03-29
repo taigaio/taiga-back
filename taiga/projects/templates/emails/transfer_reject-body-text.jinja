@@ -4,9 +4,7 @@ Hi {{owner_name}},
 {% endtrans %}
 
 {% if reason %}
-{% trans rejecter_name=rejecter.get_full_name()%}
-<p>{{ rejecter_name }} says:</p>
-{% endtrans %}
+{% trans rejecter_name=rejecter.get_full_name()%}{{ rejecter_name }} says:{% endtrans %}
 {{ reason }}
 {% endif %}
 
