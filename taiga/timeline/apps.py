@@ -17,6 +17,7 @@
 
 from django.apps import AppConfig
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.db.models import signals
 
 
@@ -35,4 +36,4 @@ class TimelineAppConfig(AppConfig):
         signals.post_delete.connect(handlers.delete_membership_push_to_timeline,
                                                 sender=apps.get_model("projects", "Membership"))
         signals.post_save.connect(handlers.create_user_push_to_timeline,
-                                                 sender=apps.get_model("users", "User"))
+                                                 sender=get_user_model())

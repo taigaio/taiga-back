@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+from django.contrib.auth import get_user_model
 from taiga.base import exceptions as exc
 
 from django.apps import apps
@@ -47,7 +47,7 @@ def get_user_for_token(token, scope, max_age=None):
     except signing.BadSignature:
         raise exc.NotAuthenticated(_("Invalid token"))
 
-    model_cls = apps.get_model("users", "User")
+    model_cls = get_user_model()
 
     try:
         user = model_cls.objects.get(pk=data["user_%s_id" % (scope)])

@@ -17,10 +17,10 @@
 
 import uuid
 
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
-from taiga.users.models import User
 from taiga.base.utils.urls import get_absolute_url
 
 
@@ -47,11 +47,11 @@ def get_gitlab_user(user_email):
 
     if user_email:
         try:
-            user = User.objects.get(email=user_email)
-        except User.DoesNotExist:
+            user = get_user_model().objects.get(email=user_email)
+        except get_user_model().DoesNotExist:
             pass
 
     if user is None:
-        user = User.objects.get(is_system=True, username__startswith="gitlab")
+        user = get_user_model().objects.get(is_system=True, username__startswith="gitlab")
 
     return user

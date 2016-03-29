@@ -14,7 +14,8 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.apps import apps
 
@@ -49,7 +50,7 @@ class TimelineViewSet(ReadOnlyListViewSet):
         page = self.paginate_queryset(queryset)
         if page is not None:
             user_ids = list(set([obj.data.get("user", {}).get("id", None) for obj in page.object_list]))
-            User = apps.get_model("users", "User")
+            User = get_user_model()
             users = {u.id: u for u in User.objects.filter(id__in=user_ids)}
 
             for obj in page.object_list:
@@ -99,7 +100,7 @@ class TimelineViewSet(ReadOnlyListViewSet):
 
 
 class ProfileTimeline(TimelineViewSet):
-    content_type = "users.user"
+    content_type = settings.AUTH_USER_MODEL.lower()
     permission_classes = (permissions.UserTimelinePermission,)
 
     def get_timeline(self, user):
@@ -107,7 +108,7 @@ class ProfileTimeline(TimelineViewSet):
 
 
 class UserTimeline(TimelineViewSet):
-    content_type = "users.user"
+    content_type = settings.AUTH_USER_MODEL.lower()
     permission_classes = (permissions.UserTimelinePermission,)
 
     def get_timeline(self, user):

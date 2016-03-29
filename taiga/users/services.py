@@ -20,6 +20,7 @@ This model contains a domain logic for users application.
 """
 
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.db import connection
 from django.conf import settings
@@ -40,7 +41,7 @@ from .gravatar import get_gravatar_url
 
 
 def get_user_by_username_or_email(username_or_email):
-    user_model = apps.get_model("users", "User")
+    user_model = get_user_model()
     qs = user_model.objects.filter(Q(username__iexact=username_or_email) |
                                    Q(email__iexact=username_or_email))
 

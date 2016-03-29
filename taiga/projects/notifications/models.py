@@ -33,7 +33,7 @@ class NotifyPolicy(models.Model):
     project user notifications preference.
     """
     project = models.ForeignKey("projects.Project", related_name="notify_policies")
-    user = models.ForeignKey("users.User", related_name="notify_policies")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notify_policies")
     notify_level = models.SmallIntegerField(choices=NOTIFY_LEVEL_CHOICES)
 
     created_at = models.DateTimeField(default=timezone.now)
@@ -57,7 +57,7 @@ class HistoryChangeNotification(models.Model):
     or updated when an object requires notifications.
     """
     key = models.CharField(max_length=255, unique=False, editable=False)
-    owner = models.ForeignKey("users.User", null=False, blank=False,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
                               verbose_name=_("owner"), related_name="+")
     created_datetime = models.DateTimeField(null=False, blank=False, auto_now_add=True,
                                             verbose_name=_("created date time"))
@@ -66,7 +66,7 @@ class HistoryChangeNotification(models.Model):
     history_entries = models.ManyToManyField("history.HistoryEntry",
                                              verbose_name=_("history entries"),
                                              related_name="+")
-    notify_users = models.ManyToManyField("users.User",
+    notify_users = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                              verbose_name=_("notify users"),
                                              related_name="+")
     project = models.ForeignKey("projects.Project", null=False, blank=False,

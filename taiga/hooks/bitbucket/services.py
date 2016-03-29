@@ -17,10 +17,10 @@
 
 import uuid
 
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
-from taiga.users.models import User
 from taiga.base.utils.urls import get_absolute_url
 
 
@@ -43,4 +43,4 @@ def get_or_generate_config(project):
 
 
 def get_bitbucket_user(user_id):
-    return User.objects.get(is_system=True, username__startswith="bitbucket")
+    return get_user_model().objects.get(is_system=True, username__startswith="bitbucket")

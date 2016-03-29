@@ -132,7 +132,6 @@ def test_valid_project_with_enough_public_projects_slots(client):
     client.login(user)
     response = client.json.post(url, json.dumps(data))
 
-    print(response.content)
     assert response.status_code == 201
     assert Project.objects.filter(slug="public-project-with-slots").count() == 1
 

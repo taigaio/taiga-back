@@ -20,24 +20,17 @@
 # python manage.py rebuild_timeline --settings=settings.local_timeline --purge
 # python manage.py rebuild_timeline --settings=settings.local_timeline --initial_date 2014-10-02
 
-from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from django.db.models import Model
-from django.db import reset_queries
 from django.test.utils import override_settings
 
-
 from taiga.projects.models import Project
-from taiga.projects.history import services as history_services
-from taiga.projects.history.choices import HistoryType
 from taiga.projects.history.models import HistoryEntry
 from taiga.timeline.models import Timeline
-from taiga.timeline.service import (_add_to_object_timeline, _get_impl_key_from_model,
-    _timeline_impl_map, extract_user_info)
+from taiga.timeline.service import _get_impl_key_from_model,_timeline_impl_map, extract_user_info
 from taiga.timeline.signals import on_new_history_entry, _push_to_timelines
-from taiga.users.models import User
 
 from unittest.mock import patch
 from optparse import make_option

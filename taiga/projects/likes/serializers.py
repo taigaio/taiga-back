@@ -16,16 +16,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api import serializers
-from taiga.base.fields import TagsField
+from django.contrib.auth import get_user_model
 
-from taiga.users.models import User
-from taiga.users.services import get_photo_or_gravatar_url
+from taiga.base.api import serializers
 
 
 class FanSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source='get_full_name', required=False)
 
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ('id', 'username', 'full_name')

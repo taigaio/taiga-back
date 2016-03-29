@@ -14,6 +14,7 @@
 
 
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.db.models import Count
 from django.db.models import Q
 from django.utils import timezone
@@ -27,7 +28,7 @@ from collections import OrderedDict
 ###########################################################################
 
 def get_users_public_stats():
-    model = apps.get_model("users", "User")
+    model = get_user_model()
     queryset = model.objects.filter(is_active=True, is_system=False)
     stats = OrderedDict()
 

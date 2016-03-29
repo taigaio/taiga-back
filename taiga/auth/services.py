@@ -25,6 +25,7 @@ not uses clasess and uses simple functions.
 """
 
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.db import transaction as tx
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
@@ -69,7 +70,7 @@ def is_user_already_registered(*, username:str, email:str) -> (bool, str):
     and in case he does whats the duplicated attribute
     """
 
-    user_model = apps.get_model("users", "User")
+    user_model = get_user_model()
     if user_model.objects.filter(username=username):
         return (True, _("Username is already in use."))
 
@@ -110,7 +111,7 @@ def public_register(username:str, password:str, email:str, full_name:str):
     if is_registered:
         raise exc.WrongArguments(reason)
 
-    user_model = apps.get_model("users", "User")
+    user_model = get_user_model()
     user = user_model(username=username,
                       email=email,
                       full_name=full_name)
@@ -159,7 +160,7 @@ def private_register_for_new_user(token:str, username:str, email:str,
     if is_registered:
         raise exc.WrongArguments(reason)
 
-    user_model = apps.get_model("users", "User")
+    user_model = get_user_model()
     user = user_model(username=username,
                       email=email,
                       full_name=full_name)

@@ -28,6 +28,7 @@ answer newbie questions, and generally made taiga that much better:
 - Joe Letts
 - Julien Palard
 - luyikei <luyikei.qmltu@gmail.com>
+- Motius GmbH <mail@motius.de>
 - Ricky Posner <e@eposner.com>
 - Yamila Moreno <yamila.moreno@kaleidos.net>
 - Yaser Alraddadi <yaser@yr.sa>
