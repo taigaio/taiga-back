@@ -1,4 +1,4 @@
-{% trans user=user.get_full_name()|safe, changer=changer.get_full_name()|safe, project=project.name|safe, page=snapshot.slug %}
+{% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, page=snapshot.slug %}
 Wiki page deleted
 
 Hello {{ user }}, {{ changer }} has deleted a wiki page on {{ project }}

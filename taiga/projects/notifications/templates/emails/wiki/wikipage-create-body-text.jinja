@@ -1,4 +1,4 @@
-{% trans user=user.get_full_name()|safe, changer=changer.get_full_name()|safe, project=project.name|safe, page=snapshot.slug, url=resolve_front_url("wiki", project.slug, snapshot.slug) %}
+{% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, page=snapshot.slug, url=resolve_front_url("wiki", project.slug, snapshot.slug) %}
 New wiki page created
 
 Hello {{ user }}, {{ changer }} has created a new wiki page on {{ project }}

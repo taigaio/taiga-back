@@ -1,7 +1,7 @@
 {% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-    {% trans user=user.get_full_name()|safe, error_message=error_message, support_email=sr("support.email") %}
+    {% trans user=user.get_full_name(), error_message=error_message, support_email=sr("support.email") %}
     <h1>{{ error_message }}</h1>
     <p>Hello {{ user }},</p>
     <p>Your project has not been importer correctly.</p>

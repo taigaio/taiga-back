@@ -1,7 +1,7 @@
 {% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-    {% trans user=user.get_full_name()|safe, url=resolve_front_url("project", project.slug), project=project.name|safe %}
+    {% trans user=user.get_full_name(), url=resolve_front_url("project", project.slug), project=project.name %}
     <h1>Project dump imported</h1>
     <p>Hello {{ user }},</p>
     <h3>Your project dump has been correctly imported.</h3>

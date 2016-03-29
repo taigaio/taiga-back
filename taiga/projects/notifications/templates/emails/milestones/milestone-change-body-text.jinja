@@ -1,6 +1,6 @@
 {% extends "emails/updates-body-text.jinja" %}
 {% block head %}
-{% trans user=user.get_full_name()|safe, changer=changer.get_full_name()|safe, project=project.name|safe, name=snapshot.name|safe, url=resolve_front_url("task", project.slug, snapshot.slug) %}
+{% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, name=snapshot.name, url=resolve_front_url("task", project.slug, snapshot.slug) %}
 Sprint updated
 Hello {{ user }}, {{ changer }} has updated a sprint on {{ project }}
 See sprint {{ name }} at {{ url }}

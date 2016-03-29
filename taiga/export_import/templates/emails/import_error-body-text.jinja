@@ -1,4 +1,4 @@
-{% trans user=user.get_full_name()|safe, error_message=error_message, support_email=sr("support.email") %}
+{% trans user=user.get_full_name(), error_message=error_message, support_email=sr("support.email") %}
 Hello {{ user }},
 
 {{ error_message }}

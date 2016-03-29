@@ -1,7 +1,7 @@
 {% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-    {% trans user=user.get_full_name()|safe, changer=changer.get_full_name()|safe, project=project.name|safe, ref=snapshot.ref, name=snapshot.name|safe %}
+    {% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, name=snapshot.name %}
     <h1>Sprint deleted</h1>
     <p>Hello {{ user }},<br />{{ changer }} has deleted an sprint on {{ project }}</p>
     <p>Sprint {{ name }}</p>
