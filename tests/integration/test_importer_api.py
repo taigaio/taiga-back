@@ -1501,3 +1501,87 @@ def test_valid_dump_import_without_slug(client):
 
     response = client.post(url, {'dump': data})
     assert response.status_code == 201
+
+
+def test_valid_dump_import_with_the_limit_of_membership_whit_you_for_private_project(client):
+    user = f.UserFactory.create(max_memberships_private_projects=5)
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": "private-project-with-memberships-limit-with-you",
+        "name": "Valid project",
+        "description": "Valid project desc",
+        "is_private": True,
+        "memberships": [
+            {
+                "email": user.email,
+                "role": "Role",
+            },
+            {
+                "email": "test2@test.com",
+                "role": "Role",
+            },
+            {
+                "email": "test3@test.com",
+                "role": "Role",
+            },
+            {
+                "email": "test4@test.com",
+                "role": "Role",
+            },
+            {
+                "email": "test5@test.com",
+                "role": "Role",
+            },
+        ],
+        "roles": [{"name": "Role"}]
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 201
+    assert Project.objects.filter(slug="private-project-with-memberships-limit-with-you").count() == 1
+
+
+def test_valid_dump_import_with_the_limit_of_membership_whit_you_for_public_project(client):
+    user = f.UserFactory.create(max_memberships_public_projects=5)
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": "public-project-with-memberships-limit-with-you",
+        "name": "Valid project",
+        "description": "Valid project desc",
+        "is_private": False,
+        "memberships": [
+            {
+                "email": user.email,
+                "role": "Role",
+            },
+            {
+                "email": "test2@test.com",
+                "role": "Role",
+            },
+            {
+                "email": "test3@test.com",
+                "role": "Role",
+            },
+            {
+                "email": "test4@test.com",
+                "role": "Role",
+            },
+            {
+                "email": "test5@test.com",
+                "role": "Role",
+            },
+        ],
+        "roles": [{"name": "Role"}]
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 201
+    assert Project.objects.filter(slug="public-project-with-memberships-limit-with-you").count() == 1

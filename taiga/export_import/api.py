@@ -94,7 +94,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         is_private = data.get('is_private', False)
         (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
             self.request.user,
-            project=Project(is_private=is_private, id=None)
+            Project(is_private=is_private, id=None)
         )
         if not enough_slots:
             raise exc.NotEnoughSlotsForProject(is_private, 1, not_enough_slots_error)
@@ -115,11 +115,11 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         # Create memberships
         if "memberships" in data:
-            members = len(data['memberships'])
+            members = len([m for m in data.get("memberships", []) if m.get("email", None) != data["owner"]])
             (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
                 self.request.user,
-                project=Project(is_private=is_private, id=None),
-                members=max(members, 1)
+                Project(is_private=is_private, id=None),
+                members
             )
             if not enough_slots:
                 raise exc.NotEnoughSlotsForProject(is_private, max(members, 1), not_enough_slots_error)
@@ -223,16 +223,18 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         except Exception:
             raise exc.WrongArguments(_("Invalid dump format"))
 
-        user = request.user
         slug = dump.get('slug', None)
         if slug is not None and Project.objects.filter(slug=slug).exists():
             del dump['slug']
 
-        members = len(dump.get("memberships", []))
+        user = request.user
+        dump['owner'] = user.email
+
+        members = len([m for m in dump.get("memberships", []) if m.get("email", None) != dump["owner"]])
         (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
             user,
-            project=Project(is_private=is_private, id=None),
-            members=max(members, 1)
+            Project(is_private=is_private, id=None),
+            members
         )
         if not enough_slots:
             raise exc.NotEnoughSlotsForProject(is_private, max(members, 1), not_enough_slots_error)

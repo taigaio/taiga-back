@@ -91,11 +91,11 @@ def store_tags_colors(project, data):
 def dict_to_project(data, owner=None):
     if owner:
         data["owner"] = owner.email
-        members = len(data.get("memberships", []))
+        members = len([m for m in data.get("memberships", []) if m.get("email", None) != data["owner"]])
         (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
             owner,
-            project=Project(is_private=data.get("is_private", False), id=None),
-            members=members
+            Project(is_private=data.get("is_private", False), id=None),
+            members
         )
         if not enough_slots:
             raise TaigaImportError(not_enough_slots_error)

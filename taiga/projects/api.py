@@ -380,8 +380,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
 
         (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
             request.user,
-            project=project,
-            members=0
+            project,
         )
         if not enough_slots:
             members = project.memberships.count()
@@ -419,15 +418,16 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             permissions_service.set_base_permissions_for_project(obj)
 
     def pre_save(self, obj):
-        user = self.request.user
-        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(user, project=obj)
-        members = max(obj.memberships.count(), 1)
-        if not enough_slots:
-            raise exc.NotEnoughSlotsForProject(obj.is_private, members, not_enough_slots_error)
-
         if not obj.id:
-            obj.owner = user
+            obj.owner = self.request.user
             obj.template = self.request.QUERY_PARAMS.get('template', None)
+
+        # Validate if the owner have enought slots to create or update the project
+        # TODO: Move to the ProjectAdminSerializer
+        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(obj.owner, obj)
+        if not enough_slots:
+            members = max(obj.memberships.count(), 1)
+            raise exc.NotEnoughSlotsForProject(obj.is_private, members, not_enough_slots_error)
 
         self._set_base_permissions(obj)
         super().pre_save(obj)
@@ -635,8 +635,8 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
             members = len(data["bulk_memberships"])
             (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
                 project.owner,
-                project=project,
-                members=members
+                project,
+                members
             )
             if not enough_slots:
                 raise exc.NotEnoughSlotsForProject(project.is_private, members, not_enough_slots_error)
@@ -672,8 +672,8 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
             members = 1
             (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
                 self.request.user,
-                project=obj.project,
-                members=members
+                obj.project,
+                members
             )
             if not enough_slots:
                 raise exc.NotEnoughSlotsForProject(obj.project.is_private, members, not_enough_slots_error)
