@@ -1,4 +1,4 @@
-{% trans user=user.get_full_name()|safe, url=resolve_front_url("project", project.slug), project=project.name|safe %}
+{% trans user=user.get_full_name(), url=resolve_front_url("project", project.slug), project=project.name %}
 Hello {{ user }},
 
 Your project dump has been correctly imported.

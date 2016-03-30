@@ -1,7 +1,7 @@
 {% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-    {% trans user=user.get_full_name()|safe, changer=changer.get_full_name()|safe, project=project.name|safe, ref=snapshot.ref, subject=snapshot.subject|safe %}
+    {% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject %}
     <h1>User Story deleted</h1>
     <p>Hello {{ user }},<br />{{ changer }} has deleted a user story on {{ project }}</p>
     <p>User Story #{{ ref }} {{ subject }}</p>

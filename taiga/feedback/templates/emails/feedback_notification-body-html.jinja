@@ -1,7 +1,7 @@
 {% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-    {% trans full_name=feedback_entry.full_name|safe, email=feedback_entry.email %}
+    {% trans full_name=feedback_entry.full_name, email=feedback_entry.email %}
     <h1>Feedback</h1>
     <p>Taiga has received feedback from {{ full_name }} <{{ email }}></p>
     {% endtrans %}
