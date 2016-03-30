@@ -344,6 +344,7 @@ class ProjectDetailSerializer(ProjectSerializer):
 
     roles = ProjectRoleSerializer(source="roles", many=True, read_only=True)
     members = serializers.SerializerMethodField(method_name="get_members")
+    total_memberships = serializers.SerializerMethodField(method_name="get_total_memberships")
 
     def get_members(self, obj):
         qs = obj.memberships.filter(user__isnull=False)
@@ -353,11 +354,13 @@ class ProjectDetailSerializer(ProjectSerializer):
         serializer = ProjectMemberSerializer(qs, many=True)
         return serializer.data
 
+    def get_total_memberships(self, obj):
+        return services.get_total_project_memberships(obj)
+        
 
 class ProjectDetailAdminSerializer(ProjectDetailSerializer):
     is_private_extra_info = serializers.SerializerMethodField(method_name="get_is_private_extra_info")
     max_memberships = serializers.SerializerMethodField(method_name="get_max_memberships")
-    total_memberships = serializers.SerializerMethodField(method_name="get_total_memberships")
 
     class Meta:
         model = models.Project
@@ -370,8 +373,6 @@ class ProjectDetailAdminSerializer(ProjectDetailSerializer):
     def get_max_memberships(self, obj):
         return services.get_max_memberships_for_project(obj)
 
-    def get_total_memberships(self, obj):
-        return services.get_total_project_memberships(obj)
 
 
 
