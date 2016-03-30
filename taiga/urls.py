@@ -20,7 +20,6 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
 from .routers import router
-from .contrib_routers import router as contrib_router
 
 
 ##############################################
@@ -29,7 +28,6 @@ from .contrib_routers import router as contrib_router
 
 urlpatterns = [
     url(r'^api/v1/', include(router.urls)),
-    url(r'^api/v1/', include(contrib_router.urls)),
     url(r'^api/v1/api-auth/', include('taiga.base.api.urls', namespace='api')),
     url(r'^admin/', include(admin.site.urls)),
 ]
