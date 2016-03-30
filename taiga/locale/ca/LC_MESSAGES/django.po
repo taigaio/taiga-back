@@ -3,15 +3,16 @@
 # This file is distributed under the same license as the taiga-back package.
 #
 # Translators:
-# Javier Julián Olmos <xaviju@gmail.com>, 2015
+# Xaviju <xaviju@gmail.com>, 2015
 # Taiga Dev Team <support@taiga.io>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-29 11:08+0200\n"
-"PO-Revision-Date: 2016-03-28 10:50+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2016-03-30 12:58+0200\n"
+"PO-Revision-Date: 2016-03-30 10:59+0000\n"
+"Last-Translator: Alejandro Alonso Fernández <alejandroalonsofernandez@gmail."
+"com>\n"
 "Language-Team: Catalan (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ca/)\n"
 "MIME-Version: 1.0\n"
@@ -41,27 +42,27 @@ msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
 msgstr "Requerit. 255 caràcters o menys. Lletres, nombres i caràcters /./-/_"
 
-#: taiga/auth/services.py:74
+#: taiga/auth/services.py:75
 msgid "Username is already in use."
 msgstr "El mot d'usuari ja està en ús."
 
-#: taiga/auth/services.py:77
+#: taiga/auth/services.py:78
 msgid "Email is already in use."
 msgstr "Aquest e-mail ja està en ús."
 
-#: taiga/auth/services.py:93
+#: taiga/auth/services.py:94
 msgid "Token not matches any valid invitation."
 msgstr "El token no s'ajusta a cap invitació vàlida"
 
-#: taiga/auth/services.py:121
+#: taiga/auth/services.py:122
 msgid "User is already registered."
 msgstr "Aquest usuari ja està registrat"
 
-#: taiga/auth/services.py:145
+#: taiga/auth/services.py:146
 msgid "This user is already a member of the project."
 msgstr ""
 
-#: taiga/auth/services.py:171
+#: taiga/auth/services.py:172
 msgid "Error on creating new user."
 msgstr "Error creant un nou usuari."
 
@@ -185,7 +186,7 @@ msgstr ""
 
 #: taiga/base/api/mixins.py:255 taiga/base/exceptions.py:209
 #: taiga/hooks/api.py:68 taiga/projects/api.py:629
-#: taiga/projects/issues/api.py:237 taiga/projects/mixins/ordering.py:58
+#: taiga/projects/issues/api.py:233 taiga/projects/mixins/ordering.py:58
 #: taiga/projects/tasks/api.py:152 taiga/projects/tasks/api.py:174
 #: taiga/projects/userstories/api.py:218 taiga/projects/userstories/api.py:238
 #: taiga/webhooks/api.py:67
@@ -341,7 +342,7 @@ msgid "Precondition error"
 msgstr "Precondició errònia."
 
 #: taiga/base/exceptions.py:217
-msgid "Not enough slots for project."
+msgid "No room left for more projects."
 msgstr ""
 
 #: taiga/base/filters.py:79 taiga/base/filters.py:444
@@ -536,21 +537,21 @@ msgstr ""
 msgid "error importing timelines"
 msgstr ""
 
-#: taiga/export_import/serializers.py:177
+#: taiga/export_import/serializers.py:178
 msgid "{}=\"{}\" not found in this project"
 msgstr ""
 
-#: taiga/export_import/serializers.py:442
+#: taiga/export_import/serializers.py:443
 #: taiga/projects/custom_attributes/serializers.py:104
 msgid "Invalid content. It must be {\"key\": \"value\",...}"
 msgstr "Contingut invàlid. Deu ser {\"key\": \"value\",...}"
 
-#: taiga/export_import/serializers.py:457
+#: taiga/export_import/serializers.py:458
 #: taiga/projects/custom_attributes/serializers.py:119
 msgid "It contain invalid custom fields."
 msgstr "Conté camps personalitzats invàlids."
 
-#: taiga/export_import/serializers.py:527
+#: taiga/export_import/serializers.py:528
 #: taiga/projects/mixins/serializers.py:38
 msgid "Name duplicated for the project"
 msgstr ""
@@ -722,7 +723,7 @@ msgstr ""
 #: taiga/projects/models.py:536 taiga/projects/models.py:573
 #: taiga/projects/models.py:596 taiga/projects/models.py:619
 #: taiga/projects/models.py:654 taiga/projects/models.py:677
-#: taiga/users/models.py:251 taiga/webhooks/models.py:28
+#: taiga/users/models.py:289 taiga/webhooks/models.py:28
 msgid "name"
 msgstr "Nom"
 
@@ -760,11 +761,11 @@ msgstr ""
 msgid "application"
 msgstr ""
 
-#: taiga/feedback/models.py:24 taiga/users/models.py:100
+#: taiga/feedback/models.py:24 taiga/users/models.py:138
 msgid "full name"
 msgstr "Nom complet"
 
-#: taiga/feedback/models.py:26 taiga/users/models.py:95
+#: taiga/feedback/models.py:26 taiga/users/models.py:133
 msgid "email address"
 msgstr "Adreça d'email"
 
@@ -848,7 +849,7 @@ msgstr ""
 msgid "The payload is not a valid json"
 msgstr "El payload no és un arxiu json vàlid"
 
-#: taiga/hooks/api.py:62 taiga/projects/issues/api.py:143
+#: taiga/hooks/api.py:62 taiga/projects/issues/api.py:139
 #: taiga/projects/tasks/api.py:86 taiga/projects/userstories/api.py:111
 msgid "The project doesn't exist"
 msgstr "El projecte no existeix"
@@ -1172,7 +1173,7 @@ msgid "The user doesn't exist"
 msgstr ""
 
 #: taiga/projects/api.py:366
-msgid "The user must be a member of the project"
+msgid "The user must be already a project member"
 msgstr ""
 
 #: taiga/projects/api.py:668
@@ -1211,7 +1212,7 @@ msgstr "Amo"
 #: taiga/projects/notifications/models.py:73
 #: taiga/projects/notifications/models.py:90 taiga/projects/tasks/models.py:42
 #: taiga/projects/userstories/models.py:64 taiga/projects/wiki/models.py:30
-#: taiga/projects/wiki/models.py:68 taiga/users/models.py:264
+#: taiga/projects/wiki/models.py:68 taiga/users/models.py:302
 msgid "project"
 msgstr "Projecte"
 
@@ -1250,7 +1251,7 @@ msgstr "està obsolet "
 #: taiga/projects/models.py:513 taiga/projects/models.py:540
 #: taiga/projects/models.py:575 taiga/projects/models.py:598
 #: taiga/projects/models.py:623 taiga/projects/models.py:656
-#: taiga/projects/wiki/models.py:73 taiga/users/models.py:259
+#: taiga/projects/wiki/models.py:73 taiga/users/models.py:297
 msgid "order"
 msgstr "Ordre"
 
@@ -1271,15 +1272,15 @@ msgid "Talky"
 msgstr ""
 
 #: taiga/projects/choices.py:32
-msgid "This project was blocked by nonpayment"
+msgid "This project is blocked due to payment failure"
 msgstr ""
 
 #: taiga/projects/choices.py:33
-msgid "This project was blocked by staff"
+msgid "This project is blocked by admin staff"
 msgstr ""
 
 #: taiga/projects/choices.py:34
-msgid "This project was blocked because the owner left"
+msgid "This project is blocked because the owner left"
 msgstr ""
 
 #: taiga/projects/custom_attributes/choices.py:27
@@ -1396,7 +1397,7 @@ msgstr "Borrat"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:135
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:146
-#: taiga/projects/services/stats.py:56 taiga/projects/services/stats.py:57
+#: taiga/projects/services/stats.py:54 taiga/projects/services/stats.py:55
 msgid "Unassigned"
 msgstr "Sense assignar"
 
@@ -1457,23 +1458,23 @@ msgstr "nota de bloqueig"
 msgid "sprint"
 msgstr ""
 
-#: taiga/projects/issues/api.py:162
+#: taiga/projects/issues/api.py:158
 msgid "You don't have permissions to set this sprint to this issue."
 msgstr "No tens permissos per a ficar aquest sprint a aquesta incidència"
 
-#: taiga/projects/issues/api.py:166
+#: taiga/projects/issues/api.py:162
 msgid "You don't have permissions to set this status to this issue."
 msgstr "No tens permissos per a ficar aquest status a aquesta tasca"
 
-#: taiga/projects/issues/api.py:170
+#: taiga/projects/issues/api.py:166
 msgid "You don't have permissions to set this severity to this issue."
 msgstr "No tens permissos per a ficar aquesta severitat a aquesta tasca"
 
-#: taiga/projects/issues/api.py:174
+#: taiga/projects/issues/api.py:170
 msgid "You don't have permissions to set this priority to this issue."
 msgstr "No tens permissos per a ficar aquesta prioritat a aquesta incidència"
 
-#: taiga/projects/issues/api.py:178
+#: taiga/projects/issues/api.py:174
 msgid "You don't have permissions to set this type to this issue."
 msgstr "No tens permissos per a ficar aquest tipus a aquesta incidència"
 
@@ -1530,7 +1531,7 @@ msgstr "Fans"
 #: taiga/projects/milestones/models.py:41 taiga/projects/models.py:148
 #: taiga/projects/models.py:474 taiga/projects/models.py:538
 #: taiga/projects/models.py:621 taiga/projects/models.py:679
-#: taiga/projects/wiki/models.py:32 taiga/users/models.py:253
+#: taiga/projects/wiki/models.py:32 taiga/users/models.py:291
 msgid "slug"
 msgstr "slug"
 
@@ -1580,7 +1581,7 @@ msgstr "email"
 msgid "create at"
 msgstr ""
 
-#: taiga/projects/models.py:82 taiga/users/models.py:117
+#: taiga/projects/models.py:82 taiga/users/models.py:155
 msgid "token"
 msgstr "token"
 
@@ -1748,7 +1749,7 @@ msgstr "està arxivat"
 #: taiga/projects/models.py:482 taiga/projects/models.py:544
 #: taiga/projects/models.py:577 taiga/projects/models.py:600
 #: taiga/projects/models.py:627 taiga/projects/models.py:658
-#: taiga/users/models.py:102
+#: taiga/users/models.py:140
 msgid "color"
 msgstr "color"
 
@@ -1830,12 +1831,12 @@ msgstr ""
 msgid "Watched"
 msgstr ""
 
-#: taiga/projects/notifications/services.py:66
-#: taiga/projects/notifications/services.py:80
+#: taiga/projects/notifications/services.py:64
+#: taiga/projects/notifications/services.py:78
 msgid "Notify exists for specified user and project"
 msgstr ""
 
-#: taiga/projects/notifications/services.py:429
+#: taiga/projects/notifications/services.py:427
 msgid "Invalid value for notify level"
 msgstr ""
 
@@ -2350,11 +2351,11 @@ msgid "Invalid role for the project"
 msgstr "Rol invàlid per al projecte"
 
 #: taiga/projects/serializers.py:195
-msgid "Project owner must be admin."
+msgid "The project owner must be admin."
 msgstr ""
 
 #: taiga/projects/serializers.py:198
-msgid "In this project at least one of the users must be an active admin."
+msgid "At least one user must be an active admin for this project."
 msgstr ""
 
 #: taiga/projects/serializers.py:394
@@ -2393,11 +2394,11 @@ msgstr "Severitats"
 msgid "Roles"
 msgstr "Rols"
 
-#: taiga/projects/services/stats.py:198
+#: taiga/projects/services/stats.py:196
 msgid "Future sprint"
 msgstr ""
 
-#: taiga/projects/services/stats.py:218
+#: taiga/projects/services/stats.py:216
 msgid "Project End"
 msgstr ""
 
@@ -2598,19 +2599,19 @@ msgid ""
 "owner for \"%(project_name)s\".\n"
 msgstr ""
 
-#: taiga/projects/templates/emails/transfer_accept-body-text.jinja:6
+#: taiga/projects/templates/emails/transfer_accept-body-text.jinja:7
 #, python-format
 msgid "%(new_owner_name)s says:"
 msgstr ""
 
-#: taiga/projects/templates/emails/transfer_accept-body-text.jinja:10
+#: taiga/projects/templates/emails/transfer_accept-body-text.jinja:11
 msgid ""
 "\n"
 "From now on, your new status for this project will be \"admin\".\n"
 msgstr ""
 
-#: taiga/projects/templates/emails/transfer_accept-body-text.jinja:15
-#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:21
+#: taiga/projects/templates/emails/transfer_accept-body-text.jinja:16
+#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:19
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:13
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:18
 msgid ""
@@ -2643,7 +2644,7 @@ msgid ""
 "    "
 msgstr ""
 
-#: taiga/projects/templates/emails/transfer_reject-body-html.jinja:17
+#: taiga/projects/templates/emails/transfer_reject-body-html.jinja:16
 msgid ""
 "\n"
 "    <p>If you want, you can still try to transfer the project ownership to a "
@@ -2651,8 +2652,8 @@ msgid ""
 "    "
 msgstr ""
 
+#: taiga/projects/templates/emails/transfer_reject-body-html.jinja:21
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:22
-#: taiga/projects/templates/emails/transfer_reject-body-html.jinja:23
 msgid "Request transfer to a different person"
 msgstr ""
 
@@ -2667,19 +2668,17 @@ msgstr ""
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:7
 #, python-format
-msgid ""
-"\n"
-"<p>%(rejecter_name)s says:</p>\n"
+msgid "%(rejecter_name)s says:"
 msgstr ""
 
-#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:13
+#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:11
 msgid ""
 "\n"
 "If you want, you can still try to transfer the project ownership to a "
 "different person.\n"
 msgstr ""
 
-#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:17
+#: taiga/projects/templates/emails/transfer_reject-body-text.jinja:15
 msgid "Request transfer to a different person:"
 msgstr ""
 
@@ -2788,7 +2787,7 @@ msgid ""
 msgstr ""
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:15
-msgid "Accept or reject the project transfer:"
+msgid "Accept or reject the project ownership transfer:"
 msgstr ""
 
 #: taiga/projects/templates/emails/transfer_start-subject.jinja:1
@@ -3113,7 +3112,7 @@ msgstr "últim a modificar"
 msgid "href"
 msgstr "href"
 
-#: taiga/timeline/signals.py:70
+#: taiga/timeline/signals.py:68
 msgid "Check the history API for the exact diff"
 msgstr ""
 
@@ -3175,11 +3174,11 @@ msgstr ""
 msgid "Invalid, are you sure the token is correct?"
 msgstr "Invàlid. Estás segur que el token es correcte?"
 
-#: taiga/users/models.py:58
+#: taiga/users/models.py:96
 msgid "superuser status"
 msgstr "estatus de superusuari"
 
-#: taiga/users/models.py:59
+#: taiga/users/models.py:97
 msgid ""
 "Designates that this user has all permissions without explicitly assigning "
 "them."
@@ -3187,24 +3186,24 @@ msgstr ""
 "Designa que aquest usuari te tots els permisos sense asignarli-los "
 "explícitament."
 
-#: taiga/users/models.py:89
+#: taiga/users/models.py:127
 msgid "username"
 msgstr "mot d'usuari"
 
-#: taiga/users/models.py:90
+#: taiga/users/models.py:128
 msgid ""
 "Required. 30 characters or fewer. Letters, numbers and /./-/_ characters"
 msgstr "Requerit. 30 caràcters o menys. Lletres, nombres i caràcters /./-/_"
 
-#: taiga/users/models.py:93
+#: taiga/users/models.py:131
 msgid "Enter a valid username."
 msgstr "Introdueix un nom d'usuari vàlid"
 
-#: taiga/users/models.py:96
+#: taiga/users/models.py:134
 msgid "active"
 msgstr "actiu"
 
-#: taiga/users/models.py:97
+#: taiga/users/models.py:135
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
@@ -3212,59 +3211,59 @@ msgstr ""
 "Designa si aquest usuari ha de se tractac com actiu. Deselecciona açó en "
 "lloc de borrar el compte."
 
-#: taiga/users/models.py:103
+#: taiga/users/models.py:141
 msgid "biography"
 msgstr "biografia"
 
-#: taiga/users/models.py:106
+#: taiga/users/models.py:144
 msgid "photo"
 msgstr "foto"
 
-#: taiga/users/models.py:107
+#: taiga/users/models.py:145
 msgid "date joined"
 msgstr "data d'unió"
 
-#: taiga/users/models.py:109
+#: taiga/users/models.py:147
 msgid "default language"
 msgstr "llenguatge per defecte"
 
-#: taiga/users/models.py:111
+#: taiga/users/models.py:149
 msgid "default theme"
 msgstr ""
 
-#: taiga/users/models.py:113
+#: taiga/users/models.py:151
 msgid "default timezone"
 msgstr "zona horaria per defecte"
 
-#: taiga/users/models.py:115
+#: taiga/users/models.py:153
 msgid "colorize tags"
 msgstr "coloritza tags"
 
-#: taiga/users/models.py:120
+#: taiga/users/models.py:158
 msgid "email token"
 msgstr "token de correu"
 
-#: taiga/users/models.py:122
+#: taiga/users/models.py:160
 msgid "new email address"
 msgstr "nova adreça de correu"
 
-#: taiga/users/models.py:129
-msgid "max number of private projects owned"
+#: taiga/users/models.py:167
+msgid "max number of owned private projects"
 msgstr ""
 
-#: taiga/users/models.py:132
-msgid "max number of public projects owned"
+#: taiga/users/models.py:170
+msgid "max number of owned public projects"
 msgstr ""
 
-#: taiga/users/models.py:135
+#: taiga/users/models.py:173
 msgid "max number of memberships for each owned private project"
 msgstr ""
 
-#: taiga/users/models.py:139
+#: taiga/users/models.py:177
 msgid "max number of memberships for each owned public project"
 msgstr ""
 
-#: taiga/users/models.py:256
+#: taiga/users/models.py:294
 msgid "permissions"
 msgstr "permissos"
 
@@ -3276,24 +3275,24 @@ msgstr "invàlid"
 msgid "Invalid username. Try with a different one."
 msgstr "Nom d'usuari invàlid"
 
-#: taiga/users/services.py:52 taiga/users/services.py:69
+#: taiga/users/services.py:53 taiga/users/services.py:70
 msgid "Username or password does not matches user."
 msgstr ""
 
-#: taiga/users/services.py:590
+#: taiga/users/services.py:591
 msgid "You can't have more private projects"
 msgstr ""
 
-#: taiga/users/services.py:596
+#: taiga/users/services.py:597
 msgid "You can't have more public projects"
 msgstr ""
 
-#: taiga/users/services.py:608
-msgid "You have reached the limit of memberships for private projects"
+#: taiga/users/services.py:609
+msgid "You have reached your current limit of memberships for private projects"
 msgstr ""
 
-#: taiga/users/services.py:614
-msgid "You have reached the limit of memberships for public projects"
+#: taiga/users/services.py:615
+msgid "You have reached your current limit of memberships for public projects"
 msgstr ""
 
 #: taiga/users/templates/emails/change_email-body-html.jinja:4

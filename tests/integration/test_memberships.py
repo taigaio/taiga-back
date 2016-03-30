@@ -74,7 +74,7 @@ def test_api_create_bulk_members_without_enough_memberships_private_project_slot
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 400
-    assert "reached the limit of memberships for private" in response.data["_error_message"]
+    assert "reached your current limit of memberships for private" in response.data["_error_message"]
 
 
 
@@ -100,7 +100,7 @@ def test_api_create_bulk_members_for_admin_without_enough_memberships_private_pr
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 400
-    assert "reached the limit of memberships for private" in response.data["_error_message"]
+    assert "reached your current limit of memberships for private" in response.data["_error_message"]
 
 
 
@@ -154,7 +154,7 @@ def test_api_create_bulk_members_without_enough_memberships_public_project_slots
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 400
-    assert "reached the limit of memberships for public" in response.data["_error_message"]
+    assert "reached your current limit of memberships for public" in response.data["_error_message"]
 
 
 def test_api_create_bulk_members_with_enough_memberships_public_project_slots_multiple_projects(client):
@@ -307,7 +307,7 @@ def test_api_create_membership_without_enough_memberships_private_project_slots_
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 400
-    assert "reached the limit of memberships for private" in response.data["_error_message"]
+    assert "reached your current limit of memberships for private" in response.data["_error_message"]
 
 
 def test_api_create_membership_with_enough_memberships_private_project_slots_multiple_projects(client):
@@ -342,7 +342,7 @@ def test_api_create_membership_without_enough_memberships_public_project_slots_o
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 400
-    assert "reached the limit of memberships for public" in response.data["_error_message"]
+    assert "reached your current limit of memberships for public" in response.data["_error_message"]
 
 
 def test_api_create_membership_with_enough_memberships_public_project_slots_multiple_projects(client):

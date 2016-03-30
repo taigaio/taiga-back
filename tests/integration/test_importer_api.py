@@ -1061,7 +1061,7 @@ def test_dict_to_project_with_no_members_private_project_slots_available(client)
     with pytest.raises(TaigaImportError) as excinfo:
         project = dict_to_project(data, owner=user)
 
-    assert "reached the limit of memberships for private" in str(excinfo.value)
+    assert "reached your current limit of memberships for private" in str(excinfo.value)
 
 
 def test_dict_to_project_with_no_members_public_project_slots_available(client):
@@ -1096,7 +1096,7 @@ def test_dict_to_project_with_no_members_public_project_slots_available(client):
     with pytest.raises(TaigaImportError) as excinfo:
         project = dict_to_project(data, owner=user)
 
-    assert "reached the limit of memberships for public" in str(excinfo.value)
+    assert "reached your current limit of memberships for public" in str(excinfo.value)
 
 
 def test_invalid_dump_import(client):
@@ -1322,7 +1322,7 @@ def test_valid_dump_import_without_enough_membership_private_project_slots_one_p
 
     response = client.post(url, {'dump': data})
     assert response.status_code == 400
-    assert "reached the limit of memberships for private" in response.data["_error_message"]
+    assert "reached your current limit of memberships for private" in response.data["_error_message"]
     assert Project.objects.filter(slug="project-without-memberships-slots").count() == 0
 
 
@@ -1369,7 +1369,7 @@ def test_valid_dump_import_without_enough_membership_public_project_slots_one_pr
 
     response = client.post(url, {'dump': data})
     assert response.status_code == 400
-    assert "reached the limit of memberships for public" in response.data["_error_message"]
+    assert "reached your current limit of memberships for public" in response.data["_error_message"]
     assert Project.objects.filter(slug="project-without-memberships-slots").count() == 0
 
 

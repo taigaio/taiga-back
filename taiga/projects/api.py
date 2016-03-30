@@ -363,7 +363,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
 
         # Check the user is a membership from the project
         if not project.memberships.filter(user=user).exists():
-            return response.BadRequest(_("The user must be a member of the project"))
+            return response.BadRequest(_("The user must be already a project member"))
 
         reason = request.DATA.get('reason', None)
         transfer_token = services.start_project_transfer(project, user, reason)

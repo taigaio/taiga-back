@@ -214,7 +214,7 @@ class NotEnoughSlotsForProject(BaseException):
     Exception used on import/edition/creation project errors where the user
     hasn't slots enough
     """
-    default_detail = _("Not enough slots for project.")
+    default_detail = _("No room left for more projects.")
 
     def __init__(self, is_private, total_memberships, detail=None):
         self.detail = detail or self.default_detail

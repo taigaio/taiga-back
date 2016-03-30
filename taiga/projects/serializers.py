@@ -192,11 +192,10 @@ class MembershipSerializer(serializers.ModelSerializer):
 
         if (self.object and self.object.user):
             if self.object.user.id == project.owner_id and attrs[source] != True:
-                raise serializers.ValidationError(_("Project owner must be admin."))
+                raise serializers.ValidationError(_("The project owner must be admin."))
 
             if not services.project_has_valid_admins(project, exclude_user=self.object.user):
-                raise serializers.ValidationError(_("In this project at least one of the users "
-                                                    "must be an active admin."))
+                raise serializers.ValidationError(_("At least one user must be an active admin for this project."))
 
         return attrs
 
@@ -356,7 +355,7 @@ class ProjectDetailSerializer(ProjectSerializer):
 
     def get_total_memberships(self, obj):
         return services.get_total_project_memberships(obj)
-        
+
 
 class ProjectDetailAdminSerializer(ProjectDetailSerializer):
     is_private_extra_info = serializers.SerializerMethodField(method_name="get_is_private_extra_info")

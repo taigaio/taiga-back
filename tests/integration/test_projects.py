@@ -491,7 +491,7 @@ def test_edit_membership_only_owner(client):
     url = reverse("memberships-detail", args=(membership.id,))
     response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 400
-    assert response.data["is_admin"][0] == "In this project at least one of the users must be an active admin."
+    assert response.data["is_admin"][0] == "At least one user must be an active admin for this project."
 
 
 def test_anon_permissions_generation_when_making_project_public(client):
