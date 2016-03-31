@@ -575,41 +575,60 @@ def get_voted_list(for_user, from_user, type=None, q=None):
     ]
 
 
-def has_available_slot_for_project(user, project, members=1):
+def has_available_slot_for_project(user, project, new_members=0):
+    # TODO: Refactor: Create one service for every type of action and move to project services
+    #
+    #  - has_available_slot_to_create_new_project()
+    #  - has_available_slot_to_update_this_project()
+    #  - has_available_slot_to_transfer_this_project()
+    #  - has_available_slot_to_import_this_project()
+    #  - has_available_slot_to_add_members_to_this_project()
+
     (enough, error) = _has_available_slot_for_project_type(user, project)
     if not enough:
         return (enough, error)
-    return _has_available_slot_for_project_members(user, project, members)
+    return _has_available_slot_for_project_members(user, project, new_members)
 
 
 def _has_available_slot_for_project_type(user, project):
     if project.is_private:
         if user.max_private_projects is None:
             return (True, None)
-        elif user.owned_projects.filter(is_private=True).exclude(id=project.id).count() < user.max_private_projects:
+
+        current_private_projects = user.owned_projects.filter(is_private=True).exclude(id=project.id).count()
+        if current_private_projects < user.max_private_projects:
             return (True, None)
+
         return (False, _("You can't have more private projects"))
+
     else:
         if user.max_public_projects is None:
             return (True, None)
-        elif user.owned_projects.filter(is_private=False).exclude(id=project.id).count() < user.max_public_projects:
+
+        current_public_project = user.owned_projects.filter(is_private=False).exclude(id=project.id).count()
+        if current_public_project  < user.max_public_projects:
             return (True, None)
+
         return (False, _("You can't have more public projects"))
 
 
-
-def _has_available_slot_for_project_members(user, project, members):
-    current_memberships = project.memberships.count()
+def _has_available_slot_for_project_members(user, project, new_members):
+    current_memberships = max(project.memberships.count(), 1)
 
     if project.is_private:
         if user.max_memberships_private_projects is None:
             return (True, None)
-        elif current_memberships + members <= user.max_memberships_private_projects:
+
+        if current_memberships + new_members <= user.max_memberships_private_projects:
             return (True, None)
+
         return (False, _("You have reached your current limit of memberships for private projects"))
+
     else:
         if user.max_memberships_public_projects is None:
             return (True, None)
-        elif current_memberships + members <= user.max_memberships_public_projects:
+
+        if current_memberships + new_members <= user.max_memberships_public_projects:
             return (True, None)
+
         return (False, _("You have reached your current limit of memberships for public projects"))
