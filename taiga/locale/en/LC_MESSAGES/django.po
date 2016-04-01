@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-30 12:58+0200\n"
+"POT-Creation-Date: 2016-04-01 11:09+0200\n"
 "PO-Revision-Date: 2015-03-25 20:09+0100\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Taiga Dev Team <support@taiga.io>\n"
@@ -63,7 +63,7 @@ msgstr ""
 
 #: taiga/auth/tokens.py:48 taiga/auth/tokens.py:55
 #: taiga/external_apps/services.py:35 taiga/projects/api.py:376
-#: taiga/projects/api.py:398
+#: taiga/projects/api.py:397
 msgid "Invalid token"
 msgstr ""
 
@@ -830,26 +830,26 @@ msgstr ""
 msgid "Bad signature"
 msgstr ""
 
-#: taiga/hooks/bitbucket/event_hooks.py:85 taiga/hooks/github/event_hooks.py:76
+#: taiga/hooks/bitbucket/event_hooks.py:82 taiga/hooks/github/event_hooks.py:76
 #: taiga/hooks/gitlab/event_hooks.py:74
 msgid "The referenced element doesn't exist"
 msgstr ""
 
-#: taiga/hooks/bitbucket/event_hooks.py:92 taiga/hooks/github/event_hooks.py:83
+#: taiga/hooks/bitbucket/event_hooks.py:89 taiga/hooks/github/event_hooks.py:83
 #: taiga/hooks/gitlab/event_hooks.py:81
 msgid "The status doesn't exist"
 msgstr ""
 
-#: taiga/hooks/bitbucket/event_hooks.py:98
+#: taiga/hooks/bitbucket/event_hooks.py:95
 msgid "Status changed from BitBucket commit"
 msgstr ""
 
-#: taiga/hooks/bitbucket/event_hooks.py:127
+#: taiga/hooks/bitbucket/event_hooks.py:124
 #: taiga/hooks/github/event_hooks.py:142 taiga/hooks/gitlab/event_hooks.py:114
 msgid "Invalid issue information"
 msgstr ""
 
-#: taiga/hooks/bitbucket/event_hooks.py:143
+#: taiga/hooks/bitbucket/event_hooks.py:140
 #, python-brace-format
 msgid ""
 "Issue created by [@{bitbucket_user_name}]({bitbucket_user_url} \"See "
@@ -860,17 +860,17 @@ msgid ""
 "{description}"
 msgstr ""
 
-#: taiga/hooks/bitbucket/event_hooks.py:154
+#: taiga/hooks/bitbucket/event_hooks.py:151
 msgid "Issue created from BitBucket."
 msgstr ""
 
-#: taiga/hooks/bitbucket/event_hooks.py:178
+#: taiga/hooks/bitbucket/event_hooks.py:175
 #: taiga/hooks/github/event_hooks.py:178 taiga/hooks/github/event_hooks.py:193
 #: taiga/hooks/gitlab/event_hooks.py:153
 msgid "Invalid issue comment information"
 msgstr ""
 
-#: taiga/hooks/bitbucket/event_hooks.py:186
+#: taiga/hooks/bitbucket/event_hooks.py:183
 #, python-brace-format
 msgid ""
 "Comment by [@{bitbucket_user_name}]({bitbucket_user_url} \"See "
@@ -881,7 +881,7 @@ msgid ""
 "{message}"
 msgstr ""
 
-#: taiga/hooks/bitbucket/event_hooks.py:197
+#: taiga/hooks/bitbucket/event_hooks.py:194
 #, python-brace-format
 msgid ""
 "Comment From BitBucket:\n"
@@ -3222,19 +3222,19 @@ msgstr ""
 msgid "Username or password does not matches user."
 msgstr ""
 
-#: taiga/users/services.py:591
+#: taiga/users/services.py:602
 msgid "You can't have more private projects"
 msgstr ""
 
-#: taiga/users/services.py:597
+#: taiga/users/services.py:612
 msgid "You can't have more public projects"
 msgstr ""
 
-#: taiga/users/services.py:609
+#: taiga/users/services.py:625
 msgid "You have reached your current limit of memberships for private projects"
 msgstr ""
 
-#: taiga/users/services.py:615
+#: taiga/users/services.py:634
 msgid "You have reached your current limit of memberships for public projects"
 msgstr ""
 
