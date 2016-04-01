@@ -19,12 +19,11 @@ from django.apps import AppConfig
 from django.apps import apps
 from django.db.models import signals
 
-from taiga.projects import signals as generic_handlers
-from taiga.projects.custom_attributes import signals as custom_attributes_handlers
-from . import signals as handlers
-
 
 def connect_issues_signals():
+    from taiga.projects import signals as generic_handlers
+    from . import signals as handlers
+
     # Finished date
     signals.pre_save.connect(handlers.set_finished_date_when_edit_issue,
                              sender=apps.get_model("issues", "Issue"),
@@ -43,6 +42,8 @@ def connect_issues_signals():
 
 
 def connect_issues_custom_attributes_signals():
+    from taiga.projects.custom_attributes import signals as custom_attributes_handlers
+
     signals.post_save.connect(custom_attributes_handlers.create_custom_attribute_value_when_create_issue,
                               sender=apps.get_model("issues", "Issue"),
                               dispatch_uid="create_custom_attribute_value_when_create_issue")

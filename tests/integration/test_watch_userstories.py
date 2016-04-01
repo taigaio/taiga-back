@@ -27,8 +27,8 @@ pytestmark = pytest.mark.django_db
 
 def test_watch_user_story(client):
     user = f.UserFactory.create()
-    user_story = f.create_userstory(owner=user)
-    f.MembershipFactory.create(project=user_story.project, user=user, is_owner=True)
+    user_story = f.create_userstory(owner=user, status=None)
+    f.MembershipFactory.create(project=user_story.project, user=user, is_admin=True)
     url = reverse("userstories-watch", args=(user_story.id,))
 
     client.login(user)
@@ -39,8 +39,8 @@ def test_watch_user_story(client):
 
 def test_unwatch_user_story(client):
     user = f.UserFactory.create()
-    user_story = f.create_userstory(owner=user)
-    f.MembershipFactory.create(project=user_story.project, user=user, is_owner=True)
+    user_story = f.create_userstory(owner=user, status=None)
+    f.MembershipFactory.create(project=user_story.project, user=user, is_admin=True)
     url = reverse("userstories-unwatch", args=(user_story.id,))
 
     client.login(user)
@@ -52,7 +52,7 @@ def test_unwatch_user_story(client):
 def test_list_user_story_watchers(client):
     user = f.UserFactory.create()
     user_story = f.UserStoryFactory(owner=user)
-    f.MembershipFactory.create(project=user_story.project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=user_story.project, user=user, is_admin=True)
     f.WatchedFactory.create(content_object=user_story, user=user)
     url = reverse("userstory-watchers-list", args=(user_story.id,))
 
@@ -65,8 +65,8 @@ def test_list_user_story_watchers(client):
 
 def test_get_user_story_watcher(client):
     user = f.UserFactory.create()
-    user_story = f.UserStoryFactory(owner=user)
-    f.MembershipFactory.create(project=user_story.project, user=user, is_owner=True)
+    user_story = f.create_userstory(owner=user, status=None)
+    f.MembershipFactory.create(project=user_story.project, user=user, is_admin=True)
     watch = f.WatchedFactory.create(content_object=user_story, user=user)
     url = reverse("userstory-watchers-detail", args=(user_story.id, watch.user.id))
 
@@ -79,8 +79,8 @@ def test_get_user_story_watcher(client):
 
 def test_get_user_story_watchers(client):
     user = f.UserFactory.create()
-    user_story = f.UserStoryFactory(owner=user)
-    f.MembershipFactory.create(project=user_story.project, user=user, is_owner=True)
+    user_story = f.create_userstory(owner=user, status=None)
+    f.MembershipFactory.create(project=user_story.project, user=user, is_admin=True)
     url = reverse("userstories-detail", args=(user_story.id,))
 
     f.WatchedFactory.create(content_object=user_story, user=user)
@@ -95,8 +95,8 @@ def test_get_user_story_watchers(client):
 
 def test_get_user_story_is_watcher(client):
     user = f.UserFactory.create()
-    user_story = f.UserStoryFactory(owner=user)
-    f.MembershipFactory.create(project=user_story.project, user=user, is_owner=True)
+    user_story = f.create_userstory(owner=user, status=None)
+    f.MembershipFactory.create(project=user_story.project, user=user, is_admin=True)
     url_detail = reverse("userstories-detail", args=(user_story.id,))
     url_watch = reverse("userstories-watch", args=(user_story.id,))
     url_unwatch = reverse("userstories-unwatch", args=(user_story.id,))

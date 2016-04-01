@@ -16,7 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
@@ -32,7 +33,7 @@ class NotifyPolicy(models.Model):
     project user notifications preference.
     """
     project = models.ForeignKey("projects.Project", related_name="notify_policies")
-    user = models.ForeignKey("users.User", related_name="notify_policies")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notify_policies")
     notify_level = models.SmallIntegerField(choices=NOTIFY_LEVEL_CHOICES)
 
     created_at = models.DateTimeField(default=timezone.now)
@@ -56,7 +57,7 @@ class HistoryChangeNotification(models.Model):
     or updated when an object requires notifications.
     """
     key = models.CharField(max_length=255, unique=False, editable=False)
-    owner = models.ForeignKey("users.User", null=False, blank=False,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
                               verbose_name=_("owner"), related_name="+")
     created_datetime = models.DateTimeField(null=False, blank=False, auto_now_add=True,
                                             verbose_name=_("created date time"))
@@ -65,7 +66,7 @@ class HistoryChangeNotification(models.Model):
     history_entries = models.ManyToManyField("history.HistoryEntry",
                                              verbose_name=_("history entries"),
                                              related_name="+")
-    notify_users = models.ManyToManyField("users.User",
+    notify_users = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                              verbose_name=_("notify users"),
                                              related_name="+")
     project = models.ForeignKey("projects.Project", null=False, blank=False,
@@ -80,7 +81,7 @@ class HistoryChangeNotification(models.Model):
 class Watched(models.Model):
     content_type = models.ForeignKey("contenttypes.ContentType")
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey("content_type", "object_id")
+    content_object = GenericForeignKey("content_type", "object_id")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, null=False,
                               related_name="watched", verbose_name=_("user"))
     created_date = models.DateTimeField(auto_now_add=True, null=False, blank=False,

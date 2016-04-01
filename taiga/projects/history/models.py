@@ -14,12 +14,10 @@
 
 import uuid
 
-from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.db import models
-from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.utils.functional import cached_property
-from django.conf import settings
 from django_pgjson.fields import JsonField
 
 from taiga.mdrender.service import get_diff_of_htmls
@@ -96,7 +94,7 @@ class HistoryEntry(models.Model):
     @cached_property
     def owner(self):
         pk = self.user["pk"]
-        model = apps.get_model("users", "User")
+        model = get_user_model()
         try:
             return model.objects.get(pk=pk)
         except model.DoesNotExist:

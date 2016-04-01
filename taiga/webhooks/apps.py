@@ -15,19 +15,22 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.apps import apps
 from django.apps import AppConfig
 from django.db.models import signals
 
-from . import signal_handlers as handlers
-from taiga.projects.history.models import HistoryEntry
-
 
 def connect_webhooks_signals():
-    signals.post_save.connect(handlers.on_new_history_entry, sender=HistoryEntry, dispatch_uid="webhooks")
+    from . import signal_handlers as handlers
+    signals.post_save.connect(handlers.on_new_history_entry,
+                              sender=apps.get_model("history", "HistoryEntry"),
+                              dispatch_uid="webhooks")
+
+
 
 
 def disconnect_webhooks_signals():
-    signals.post_save.disconnect(sender=HistoryEntry, dispatch_uid="webhooks")
+    signals.post_save.disconnect(sender=apps.get_model("history", "HistoryEntry"), dispatch_uid="webhooks")
 
 
 class WebhooksAppConfig(AppConfig):

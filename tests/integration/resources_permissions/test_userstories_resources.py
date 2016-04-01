@@ -3,6 +3,7 @@ import uuid
 from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
+from taiga.projects import choices as project_choices
 from taiga.projects.userstories.serializers import UserStorySerializer
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 from taiga.projects.occ import OCCResourceMixin
@@ -51,6 +52,12 @@ def data():
                                           public_permissions=[],
                                           owner=m.project_owner,
                                           userstories_csv_uuid=uuid.uuid4().hex)
+    m.blocked_project = f.ProjectFactory(is_private=True,
+                                          anon_permissions=[],
+                                          public_permissions=[],
+                                          owner=m.project_owner,
+                                          userstories_csv_uuid=uuid.uuid4().hex,
+                                          blocked_code=project_choices.BLOCKED_BY_STAFF)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
                                               user=m.project_member_with_perms,
@@ -72,22 +79,35 @@ def data():
                         user=m.project_member_without_perms,
                         role__project=m.private_project2,
                         role__permissions=[])
+    m.blocked_membership = f.MembershipFactory(project=m.blocked_project,
+                                                user=m.project_member_with_perms,
+                                                role__project=m.blocked_project,
+                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    f.MembershipFactory(project=m.blocked_project,
+                        user=m.project_member_without_perms,
+                        role__project=m.blocked_project,
+                        role__permissions=[])
 
     f.MembershipFactory(project=m.public_project,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
+
+    f.MembershipFactory(project=m.blocked_project,
+                    user=m.project_owner,
+                    is_admin=True)
 
     m.public_points = f.PointsFactory(project=m.public_project)
     m.private_points1 = f.PointsFactory(project=m.private_project1)
     m.private_points2 = f.PointsFactory(project=m.private_project2)
+    m.blocked_points = f.PointsFactory(project=m.blocked_project)
 
     m.public_role_points = f.RolePointsFactory(role=m.public_project.roles.all()[0],
                                                points=m.public_points,
@@ -104,10 +124,16 @@ def data():
                                                  user_story__project=m.private_project2,
                                                  user_story__milestone__project=m.private_project2,
                                                  user_story__status__project=m.private_project2)
+    m.blocked_role_points = f.RolePointsFactory(role=m.blocked_project.roles.all()[0],
+                                                 points=m.blocked_points,
+                                                 user_story__project=m.blocked_project,
+                                                 user_story__milestone__project=m.blocked_project,
+                                                 user_story__status__project=m.blocked_project)
 
     m.public_user_story = m.public_role_points.user_story
     m.private_user_story1 = m.private_role_points1.user_story
     m.private_user_story2 = m.private_role_points2.user_story
+    m.blocked_user_story = m.blocked_role_points.user_story
 
     return m
 
@@ -116,6 +142,7 @@ def test_user_story_retrieve(client, data):
     public_url = reverse('userstories-detail', kwargs={"pk": data.public_user_story.pk})
     private_url1 = reverse('userstories-detail', kwargs={"pk": data.private_user_story1.pk})
     private_url2 = reverse('userstories-detail', kwargs={"pk": data.private_user_story2.pk})
+    blocked_url = reverse('userstories-detail', kwargs={"pk": data.blocked_user_story.pk})
 
     users = [
         None,
@@ -131,12 +158,15 @@ def test_user_story_retrieve(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_user_story_update(client, data):
     public_url = reverse('userstories-detail', kwargs={"pk": data.public_user_story.pk})
     private_url1 = reverse('userstories-detail', kwargs={"pk": data.private_user_story1.pk})
     private_url2 = reverse('userstories-detail', kwargs={"pk": data.private_user_story2.pk})
+    blocked_url = reverse('userstories-detail', kwargs={"pk": data.blocked_user_story.pk})
 
     users = [
         None,
@@ -165,6 +195,11 @@ def test_user_story_update(client, data):
             results = helper_test_http_method(client, 'put', private_url2, user_story_data, users)
             assert results == [401, 403, 403, 200, 200]
 
+            user_story_data = UserStorySerializer(data.blocked_user_story).data
+            user_story_data["subject"] = "test"
+            user_story_data = json.dumps(user_story_data)
+            results = helper_test_http_method(client, 'put', blocked_url, user_story_data, users)
+            assert results == [401, 403, 403, 451, 451]
 
 def test_user_story_update_with_project_change(client):
     user1 = f.UserFactory.create()
@@ -265,6 +300,7 @@ def test_user_story_delete(client, data):
     public_url = reverse('userstories-detail', kwargs={"pk": data.public_user_story.pk})
     private_url1 = reverse('userstories-detail', kwargs={"pk": data.private_user_story1.pk})
     private_url2 = reverse('userstories-detail', kwargs={"pk": data.private_user_story2.pk})
+    blocked_url = reverse('userstories-detail', kwargs={"pk": data.blocked_user_story.pk})
 
     users = [
         None,
@@ -278,6 +314,8 @@ def test_user_story_delete(client, data):
     assert results == [401, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 451]
 
 
 def test_user_story_list(client, data):
@@ -299,14 +337,14 @@ def test_user_story_list(client, data):
 
     response = client.get(url)
     userstories_data = json.loads(response.content.decode('utf-8'))
-    assert len(userstories_data) == 3
+    assert len(userstories_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_owner)
 
     response = client.get(url)
     userstories_data = json.loads(response.content.decode('utf-8'))
-    assert len(userstories_data) == 3
+    assert len(userstories_data) == 4
     assert response.status_code == 200
 
 
@@ -333,11 +371,16 @@ def test_user_story_create(client, data):
     results = helper_test_http_method(client, 'post', url, create_data, users)
     assert results == [401, 403, 403, 201, 201]
 
+    create_data = json.dumps({"subject": "test", "ref": 4, "project": data.blocked_project.pk})
+    results = helper_test_http_method(client, 'post', url, create_data, users)
+    assert results == [401, 403, 403, 451, 451]
+
 
 def test_user_story_patch(client, data):
     public_url = reverse('userstories-detail', kwargs={"pk": data.public_user_story.pk})
     private_url1 = reverse('userstories-detail', kwargs={"pk": data.private_user_story1.pk})
     private_url2 = reverse('userstories-detail', kwargs={"pk": data.private_user_story2.pk})
+    blocked_url = reverse('userstories-detail', kwargs={"pk": data.blocked_user_story.pk})
 
     users = [
         None,
@@ -359,6 +402,10 @@ def test_user_story_patch(client, data):
             patch_data = json.dumps({"subject": "test", "version": data.private_user_story2.version})
             results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
             assert results == [401, 403, 403, 200, 200]
+
+            patch_data = json.dumps({"subject": "test", "version": data.blocked_user_story.version})
+            results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+            assert results == [401, 403, 403, 451, 451]
 
 
 def test_user_story_action_bulk_create(client, data):
@@ -383,6 +430,10 @@ def test_user_story_action_bulk_create(client, data):
     bulk_data = json.dumps({"bulk_stories": "test1\ntest2", "project_id": data.private_user_story2.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 403, 403, 200, 200]
+
+    bulk_data = json.dumps({"bulk_stories": "test1\ntest2", "project_id": data.blocked_user_story.project.pk})
+    results = helper_test_http_method(client, 'post', url, bulk_data, users)
+    assert results == [401, 403, 403, 451, 451]
 
 
 def test_user_story_action_bulk_update_order(client, data):
@@ -417,10 +468,19 @@ def test_user_story_action_bulk_update_order(client, data):
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 204, 204]
 
+    post_data = json.dumps({
+        "bulk_stories": [{"us_id": data.blocked_user_story.id, "order": 2}],
+        "project_id": data.blocked_project.pk
+    })
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 451, 451]
+
+
 def test_user_story_action_upvote(client, data):
     public_url = reverse('userstories-upvote', kwargs={"pk": data.public_user_story.pk})
     private_url1 = reverse('userstories-upvote', kwargs={"pk": data.private_user_story1.pk})
     private_url2 = reverse('userstories-upvote', kwargs={"pk": data.private_user_story2.pk})
+    blocked_url = reverse('userstories-upvote', kwargs={"pk": data.blocked_user_story.pk})
 
     users = [
         None,
@@ -436,12 +496,15 @@ def test_user_story_action_upvote(client, data):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
     assert results == [404, 404, 404, 200, 200]
+    results = helper_test_http_method(client, 'post', blocked_url, "", users)
+    assert results == [404, 404, 404, 451, 451]
 
 
 def test_user_story_action_downvote(client, data):
     public_url = reverse('userstories-downvote', kwargs={"pk": data.public_user_story.pk})
     private_url1 = reverse('userstories-downvote', kwargs={"pk": data.private_user_story1.pk})
     private_url2 = reverse('userstories-downvote', kwargs={"pk": data.private_user_story2.pk})
+    blocked_url = reverse('userstories-downvote', kwargs={"pk": data.blocked_user_story.pk})
 
     users = [
         None,
@@ -457,12 +520,15 @@ def test_user_story_action_downvote(client, data):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
     assert results == [404, 404, 404, 200, 200]
+    results = helper_test_http_method(client, 'post', blocked_url, "", users)
+    assert results == [404, 404, 404, 451, 451]
 
 
 def test_user_story_voters_list(client, data):
     public_url = reverse('userstory-voters-list', kwargs={"resource_id": data.public_user_story.pk})
     private_url1 = reverse('userstory-voters-list', kwargs={"resource_id": data.private_user_story1.pk})
     private_url2 = reverse('userstory-voters-list', kwargs={"resource_id": data.private_user_story2.pk})
+    blocked_url = reverse('userstory-voters-list', kwargs={"resource_id": data.blocked_user_story.pk})
 
     users = [
         None,
@@ -478,6 +544,8 @@ def test_user_story_voters_list(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_user_story_voters_retrieve(client, data):
@@ -491,6 +559,9 @@ def test_user_story_voters_retrieve(client, data):
     private_url2 = reverse('userstory-voters-detail', kwargs={"resource_id": data.private_user_story2.pk,
                                                               "pk": data.project_owner.pk})
 
+    add_vote(data.blocked_user_story, data.project_owner)
+    blocked_url = reverse('userstory-voters-detail', kwargs={"resource_id": data.blocked_user_story.pk,
+                                                              "pk": data.project_owner.pk})
     users = [
         None,
         data.registered_user,
@@ -504,6 +575,8 @@ def test_user_story_voters_retrieve(client, data):
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
     assert results == [401, 403, 403, 200, 200]
 
 
@@ -535,6 +608,7 @@ def test_user_story_action_watch(client, data):
     public_url = reverse('userstories-watch', kwargs={"pk": data.public_user_story.pk})
     private_url1 = reverse('userstories-watch', kwargs={"pk": data.private_user_story1.pk})
     private_url2 = reverse('userstories-watch', kwargs={"pk": data.private_user_story2.pk})
+    blocked_url = reverse('userstories-watch', kwargs={"pk": data.blocked_user_story.pk})
 
     users = [
         None,
@@ -550,12 +624,15 @@ def test_user_story_action_watch(client, data):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
     assert results == [404, 404, 404, 200, 200]
+    results = helper_test_http_method(client, 'post', blocked_url, "", users)
+    assert results == [404, 404, 404, 451, 451]
 
 
 def test_user_story_action_unwatch(client, data):
     public_url = reverse('userstories-unwatch', kwargs={"pk": data.public_user_story.pk})
     private_url1 = reverse('userstories-unwatch', kwargs={"pk": data.private_user_story1.pk})
     private_url2 = reverse('userstories-unwatch', kwargs={"pk": data.private_user_story2.pk})
+    blocked_url = reverse('userstories-unwatch', kwargs={"pk": data.blocked_user_story.pk})
 
     users = [
         None,
@@ -571,12 +648,15 @@ def test_user_story_action_unwatch(client, data):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
     assert results == [404, 404, 404, 200, 200]
+    results = helper_test_http_method(client, 'post', blocked_url, "", users)
+    assert results == [404, 404, 404, 451, 451]
 
 
 def test_userstory_watchers_list(client, data):
     public_url = reverse('userstory-watchers-list', kwargs={"resource_id": data.public_user_story.pk})
     private_url1 = reverse('userstory-watchers-list', kwargs={"resource_id": data.private_user_story1.pk})
     private_url2 = reverse('userstory-watchers-list', kwargs={"resource_id": data.private_user_story2.pk})
+    blocked_url = reverse('userstory-watchers-list', kwargs={"resource_id": data.blocked_user_story.pk})
 
     users = [
         None,
@@ -592,6 +672,8 @@ def test_userstory_watchers_list(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_userstory_watchers_retrieve(client, data):
@@ -603,6 +685,9 @@ def test_userstory_watchers_retrieve(client, data):
                                                               "pk": data.project_owner.pk})
     add_watcher(data.private_user_story2, data.project_owner)
     private_url2 = reverse('userstory-watchers-detail', kwargs={"resource_id": data.private_user_story2.pk,
+                                                              "pk": data.project_owner.pk})
+    add_watcher(data.blocked_user_story, data.project_owner)
+    blocked_url = reverse('userstory-watchers-detail', kwargs={"resource_id": data.blocked_user_story.pk,
                                                               "pk": data.project_owner.pk})
 
     users = [
@@ -618,4 +703,6 @@ def test_userstory_watchers_retrieve(client, data):
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
     assert results == [401, 403, 403, 200, 200]

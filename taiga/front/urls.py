@@ -46,6 +46,7 @@ urls = {
 
     "team": "/project/{0}/team/", # project.slug
 
-    "project-admin": "/project/{0}/admin/project-profile/details", # project.slug
-}
+    "project-transfer": "/project/{0}/transfer/{1}", # project.slug, project.transfer_token
 
+    "project-admin": "/login?next=/project/{0}/admin/project-profile/details", # project.slug
+}

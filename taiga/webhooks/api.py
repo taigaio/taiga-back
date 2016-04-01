@@ -15,10 +15,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils.translation import ugettext as _
+
 from taiga.base import filters
 from taiga.base import response
+from taiga.base import exceptions as exc
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelListViewSet
+from taiga.base.api.mixins import BlockedByProjectMixin
 
 from taiga.base.decorators import detail_route
 
@@ -28,7 +32,7 @@ from . import permissions
 from . import tasks
 
 
-class WebhookViewSet(ModelCrudViewSet):
+class WebhookViewSet(BlockedByProjectMixin, ModelCrudViewSet):
     model = models.Webhook
     serializer_class = serializers.WebhookSerializer
     permission_classes = (permissions.WebhookPermission,)
@@ -39,6 +43,7 @@ class WebhookViewSet(ModelCrudViewSet):
     def test(self, request, pk=None):
         webhook = self.get_object()
         self.check_permissions(request, 'test', webhook)
+        self.pre_conditions_blocked(webhook)
 
         webhooklog = tasks.test_webhook(webhook.id, webhook.url, webhook.key)
         log = serializers.WebhookLogSerializer(webhooklog)
@@ -57,8 +62,9 @@ class WebhookLogViewSet(ModelListViewSet):
     def resend(self, request, pk=None):
         webhooklog = self.get_object()
         self.check_permissions(request, 'resend', webhooklog)
-
         webhook = webhooklog.webhook
+        if webhook.project.blocked_code is not None:
+            raise exc.Blocked(_("Blocked element"))
 
         webhooklog = tasks.resend_webhook(webhook.id, webhook.url, webhook.key,
                                           webhooklog.request_data)

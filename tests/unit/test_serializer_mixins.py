@@ -10,35 +10,36 @@ pytestmark = pytest.mark.django_db(transaction=True)
 import factory
 
 
-class TestingProjectModel(models.Model):
+class AuxProjectModel(models.Model):
     pass
 
-class TestingModelWithNameAttribute(models.Model):
+class AuxModelWithNameAttribute(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
-    project = models.ForeignKey(TestingProjectModel, null=False, blank=False)
+    project = models.ForeignKey(AuxProjectModel, null=False, blank=False)
 
 
-class TestingSerializer(ValidateDuplicatedNameInProjectMixin):
+class AuxSerializer(ValidateDuplicatedNameInProjectMixin):
     class Meta:
-        model = TestingModelWithNameAttribute
+        model = AuxModelWithNameAttribute
+
 
 
 def test_duplicated_name_validation():
-    project = TestingProjectModel.objects.create()
-    instance_1 = TestingModelWithNameAttribute.objects.create(name="1", project=project)
-    instance_2 = TestingModelWithNameAttribute.objects.create(name="2", project=project)
+    project = AuxProjectModel.objects.create()
+    instance_1 = AuxModelWithNameAttribute.objects.create(name="1", project=project)
+    instance_2 = AuxModelWithNameAttribute.objects.create(name="2", project=project)
 
     # No duplicated_name
-    serializer = TestingSerializer(data={"name": "3", "project": project.id})
+    serializer = AuxSerializer(data={"name": "3", "project": project.id})
 
     assert serializer.is_valid()
 
     # Create duplicated_name
-    serializer = TestingSerializer(data={"name": "1", "project": project.id})
+    serializer = AuxSerializer(data={"name": "1", "project": project.id})
 
     assert not serializer.is_valid()
 
     # Update name to existing one
-    serializer = TestingSerializer(data={"id": instance_2.id, "name": "1","project": project.id})
+    serializer = AuxSerializer(data={"id": instance_2.id, "name": "1","project": project.id})
 
     assert not serializer.is_valid()

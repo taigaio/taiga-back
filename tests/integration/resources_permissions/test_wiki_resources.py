@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.projects import choices as project_choices
 from taiga.projects.notifications.services import add_watcher
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.wiki.serializers import WikiPageSerializer, WikiLinkSerializer
@@ -46,6 +47,11 @@ def data():
                                           anon_permissions=[],
                                           public_permissions=[],
                                           owner=m.project_owner)
+    m.blocked_project = f.ProjectFactory(is_private=True,
+                                         anon_permissions=[],
+                                         public_permissions=[],
+                                         owner=m.project_owner,
+                                         blocked_code=project_choices.BLOCKED_BY_STAFF)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
                                               user=m.project_member_with_perms,
@@ -67,26 +73,40 @@ def data():
                         user=m.project_member_without_perms,
                         role__project=m.private_project2,
                         role__permissions=[])
+    m.blocked_membership = f.MembershipFactory(project=m.blocked_project,
+                                                user=m.project_member_with_perms,
+                                                role__project=m.blocked_project,
+                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    f.MembershipFactory(project=m.blocked_project,
+                        user=m.project_member_without_perms,
+                        role__project=m.blocked_project,
+                        role__permissions=[])
 
     f.MembershipFactory(project=m.public_project,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
+
+    f.MembershipFactory(project=m.blocked_project,
+                    user=m.project_owner,
+                    is_admin=True)
 
     m.public_wiki_page = f.WikiPageFactory(project=m.public_project)
     m.private_wiki_page1 = f.WikiPageFactory(project=m.private_project1)
     m.private_wiki_page2 = f.WikiPageFactory(project=m.private_project2)
+    m.blocked_wiki_page = f.WikiPageFactory(project=m.blocked_project)
 
     m.public_wiki_link = f.WikiLinkFactory(project=m.public_project)
     m.private_wiki_link1 = f.WikiLinkFactory(project=m.private_project1)
     m.private_wiki_link2 = f.WikiLinkFactory(project=m.private_project2)
+    m.blocked_wiki_link = f.WikiLinkFactory(project=m.blocked_project)
 
     return m
 
@@ -95,6 +115,7 @@ def test_wiki_page_retrieve(client, data):
     public_url = reverse('wiki-detail', kwargs={"pk": data.public_wiki_page.pk})
     private_url1 = reverse('wiki-detail', kwargs={"pk": data.private_wiki_page1.pk})
     private_url2 = reverse('wiki-detail', kwargs={"pk": data.private_wiki_page2.pk})
+    blocked_url = reverse('wiki-detail', kwargs={"pk": data.blocked_wiki_page.pk})
 
     users = [
         None,
@@ -110,12 +131,15 @@ def test_wiki_page_retrieve(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_wiki_page_update(client, data):
     public_url = reverse('wiki-detail', kwargs={"pk": data.public_wiki_page.pk})
     private_url1 = reverse('wiki-detail', kwargs={"pk": data.private_wiki_page1.pk})
     private_url2 = reverse('wiki-detail', kwargs={"pk": data.private_wiki_page2.pk})
+    blocked_url = reverse('wiki-detail', kwargs={"pk": data.blocked_wiki_page.pk})
 
     users = [
         None,
@@ -144,11 +168,18 @@ def test_wiki_page_update(client, data):
             results = helper_test_http_method(client, 'put', private_url2, wiki_page_data, users)
             assert results == [401, 403, 403, 200, 200]
 
+            wiki_page_data = WikiPageSerializer(data.blocked_wiki_page).data
+            wiki_page_data["content"] = "test"
+            wiki_page_data = json.dumps(wiki_page_data)
+            results = helper_test_http_method(client, 'put', blocked_url, wiki_page_data, users)
+            assert results == [401, 403, 403, 451, 451]
+
 
 def test_wiki_page_delete(client, data):
     public_url = reverse('wiki-detail', kwargs={"pk": data.public_wiki_page.pk})
     private_url1 = reverse('wiki-detail', kwargs={"pk": data.private_wiki_page1.pk})
     private_url2 = reverse('wiki-detail', kwargs={"pk": data.private_wiki_page2.pk})
+    blocked_url = reverse('wiki-detail', kwargs={"pk": data.blocked_wiki_page.pk})
 
     users = [
         None,
@@ -162,6 +193,8 @@ def test_wiki_page_delete(client, data):
     assert results == [401, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 451]
 
 
 def test_wiki_page_list(client, data):
@@ -183,14 +216,14 @@ def test_wiki_page_list(client, data):
 
     response = client.get(url)
     wiki_pages_data = json.loads(response.content.decode('utf-8'))
-    assert len(wiki_pages_data) == 3
+    assert len(wiki_pages_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_owner)
 
     response = client.get(url)
     wiki_pages_data = json.loads(response.content.decode('utf-8'))
-    assert len(wiki_pages_data) == 3
+    assert len(wiki_pages_data) == 4
     assert response.status_code == 200
 
 
@@ -229,11 +262,19 @@ def test_wiki_page_create(client, data):
     results = helper_test_http_method(client, 'post', url, create_data, users, lambda: WikiPage.objects.all().delete())
     assert results == [401, 403, 403, 201, 201]
 
+    create_data = json.dumps({
+        "content": "test",
+        "slug": "test",
+        "project": data.blocked_project.pk,
+    })
+    results = helper_test_http_method(client, 'post', url, create_data, users, lambda: WikiPage.objects.all().delete())
+    assert results == [401, 403, 403, 451, 451]
 
 def test_wiki_page_patch(client, data):
     public_url = reverse('wiki-detail', kwargs={"pk": data.public_wiki_page.pk})
     private_url1 = reverse('wiki-detail', kwargs={"pk": data.private_wiki_page1.pk})
     private_url2 = reverse('wiki-detail', kwargs={"pk": data.private_wiki_page2.pk})
+    blocked_url = reverse('wiki-detail', kwargs={"pk": data.blocked_wiki_page.pk})
 
     users = [
         None,
@@ -256,6 +297,10 @@ def test_wiki_page_patch(client, data):
             results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
             assert results == [401, 403, 403, 200, 200]
 
+            patch_data = json.dumps({"content": "test", "version": data.blocked_wiki_page.version})
+            results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+            assert results == [401, 403, 403, 451, 451]
+
 
 def test_wiki_page_action_render(client, data):
     url = reverse('wiki-render')
@@ -277,6 +322,7 @@ def test_wiki_link_retrieve(client, data):
     public_url = reverse('wiki-links-detail', kwargs={"pk": data.public_wiki_link.pk})
     private_url1 = reverse('wiki-links-detail', kwargs={"pk": data.private_wiki_link1.pk})
     private_url2 = reverse('wiki-links-detail', kwargs={"pk": data.private_wiki_link2.pk})
+    blocked_url = reverse('wiki-links-detail', kwargs={"pk": data.blocked_wiki_link.pk})
 
     users = [
         None,
@@ -292,12 +338,15 @@ def test_wiki_link_retrieve(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_wiki_link_update(client, data):
     public_url = reverse('wiki-links-detail', kwargs={"pk": data.public_wiki_link.pk})
     private_url1 = reverse('wiki-links-detail', kwargs={"pk": data.private_wiki_link1.pk})
     private_url2 = reverse('wiki-links-detail', kwargs={"pk": data.private_wiki_link2.pk})
+    blocked_url = reverse('wiki-links-detail', kwargs={"pk": data.blocked_wiki_link.pk})
 
     users = [
         None,
@@ -326,11 +375,17 @@ def test_wiki_link_update(client, data):
             results = helper_test_http_method(client, 'put', private_url2, wiki_link_data, users)
             assert results == [401, 403, 403, 200, 200]
 
+            wiki_link_data = WikiLinkSerializer(data.blocked_wiki_link).data
+            wiki_link_data["title"] = "test"
+            wiki_link_data = json.dumps(wiki_link_data)
+            results = helper_test_http_method(client, 'put', blocked_url, wiki_link_data, users)
+            assert results == [401, 403, 403, 451, 451]
 
 def test_wiki_link_delete(client, data):
     public_url = reverse('wiki-links-detail', kwargs={"pk": data.public_wiki_link.pk})
     private_url1 = reverse('wiki-links-detail', kwargs={"pk": data.private_wiki_link1.pk})
     private_url2 = reverse('wiki-links-detail', kwargs={"pk": data.private_wiki_link2.pk})
+    blocked_url = reverse('wiki-links-detail', kwargs={"pk": data.blocked_wiki_link.pk})
 
     users = [
         None,
@@ -344,6 +399,8 @@ def test_wiki_link_delete(client, data):
     assert results == [401, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 451]
 
 
 def test_wiki_link_list(client, data):
@@ -365,14 +422,14 @@ def test_wiki_link_list(client, data):
 
     response = client.get(url)
     wiki_links_data = json.loads(response.content.decode('utf-8'))
-    assert len(wiki_links_data) == 3
+    assert len(wiki_links_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_owner)
 
     response = client.get(url)
     wiki_links_data = json.loads(response.content.decode('utf-8'))
-    assert len(wiki_links_data) == 3
+    assert len(wiki_links_data) == 4
     assert response.status_code == 200
 
 
@@ -411,11 +468,20 @@ def test_wiki_link_create(client, data):
     results = helper_test_http_method(client, 'post', url, create_data, users, lambda: WikiLink.objects.all().delete())
     assert results == [401, 403, 403, 201, 201]
 
+    create_data = json.dumps({
+        "title": "test",
+        "href": "test",
+        "project": data.blocked_project.pk,
+    })
+    results = helper_test_http_method(client, 'post', url, create_data, users, lambda: WikiLink.objects.all().delete())
+    assert results == [401, 403, 403, 451, 451]
+
 
 def test_wiki_link_patch(client, data):
     public_url = reverse('wiki-links-detail', kwargs={"pk": data.public_wiki_link.pk})
     private_url1 = reverse('wiki-links-detail', kwargs={"pk": data.private_wiki_link1.pk})
     private_url2 = reverse('wiki-links-detail', kwargs={"pk": data.private_wiki_link2.pk})
+    blocked_url = reverse('wiki-links-detail', kwargs={"pk": data.blocked_wiki_link.pk})
 
     users = [
         None,
@@ -438,11 +504,16 @@ def test_wiki_link_patch(client, data):
             results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
             assert results == [401, 403, 403, 200, 200]
 
+            patch_data = json.dumps({"title": "test"})
+            results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+            assert results == [401, 403, 403, 451, 451]
+
 
 def test_wikipage_action_watch(client, data):
     public_url = reverse('wiki-watch', kwargs={"pk": data.public_wiki_page.pk})
     private_url1 = reverse('wiki-watch', kwargs={"pk": data.private_wiki_page1.pk})
     private_url2 = reverse('wiki-watch', kwargs={"pk": data.private_wiki_page2.pk})
+    blocked_url = reverse('wiki-watch', kwargs={"pk": data.blocked_wiki_page.pk})
 
     users = [
         None,
@@ -458,12 +529,15 @@ def test_wikipage_action_watch(client, data):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
     assert results == [404, 404, 404, 200, 200]
+    results = helper_test_http_method(client, 'post', blocked_url, "", users)
+    assert results == [404, 404, 404, 451, 451]
 
 
 def test_wikipage_action_unwatch(client, data):
     public_url = reverse('wiki-unwatch', kwargs={"pk": data.public_wiki_page.pk})
     private_url1 = reverse('wiki-unwatch', kwargs={"pk": data.private_wiki_page1.pk})
     private_url2 = reverse('wiki-unwatch', kwargs={"pk": data.private_wiki_page2.pk})
+    blocked_url = reverse('wiki-unwatch', kwargs={"pk": data.blocked_wiki_page.pk})
 
     users = [
         None,
@@ -479,12 +553,15 @@ def test_wikipage_action_unwatch(client, data):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
     assert results == [404, 404, 404, 200, 200]
+    results = helper_test_http_method(client, 'post', blocked_url, "", users)
+    assert results == [404, 404, 404, 451, 451]
 
 
 def test_wikipage_watchers_list(client, data):
     public_url = reverse('wiki-watchers-list', kwargs={"resource_id": data.public_wiki_page.pk})
     private_url1 = reverse('wiki-watchers-list', kwargs={"resource_id": data.private_wiki_page1.pk})
     private_url2 = reverse('wiki-watchers-list', kwargs={"resource_id": data.private_wiki_page2.pk})
+    blocked_url = reverse('wiki-watchers-list', kwargs={"resource_id": data.blocked_wiki_page.pk})
 
     users = [
         None,
@@ -500,6 +577,8 @@ def test_wikipage_watchers_list(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_wikipage_watchers_retrieve(client, data):
@@ -512,7 +591,9 @@ def test_wikipage_watchers_retrieve(client, data):
     add_watcher(data.private_wiki_page2, data.project_owner)
     private_url2 = reverse('wiki-watchers-detail', kwargs={"resource_id": data.private_wiki_page2.pk,
                                                           "pk": data.project_owner.pk})
-
+    add_watcher(data.blocked_wiki_page, data.project_owner)
+    blocked_url = reverse('wiki-watchers-detail', kwargs={"resource_id": data.blocked_wiki_page.pk,
+                                                          "pk": data.project_owner.pk})
     users = [
         None,
         data.registered_user,
@@ -526,4 +607,6 @@ def test_wikipage_watchers_retrieve(client, data):
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
     assert results == [401, 403, 403, 200, 200]

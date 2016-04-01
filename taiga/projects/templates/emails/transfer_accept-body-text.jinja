@@ -1,0 +1,18 @@
+{% trans old_owner_name=old_owner.get_full_name(), new_owner_name=new_owner.get_full_name(), project_name=project.name %}
+Hi {{old_owner_name}},
+{{ new_owner_name}} has accepted your offer and will become the new project owner for "{{project_name}}".
+{% endtrans %}
+
+{% if reason %}
+{% trans new_owner_name=new_owner.get_full_name()%}{{ new_owner_name }} says:{% endtrans %}
+{{reason}}
+{% endif %}
+
+{% trans %}
+From now on, your new status for this project will be "admin".
+{% endtrans %}
+
+---
+{% trans %}
+The Taiga Team
+{% endtrans %}

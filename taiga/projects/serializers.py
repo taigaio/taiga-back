@@ -33,7 +33,7 @@ from taiga.users.serializers import ProjectRoleSerializer
 from taiga.users.validators import RoleExistsValidator
 
 from taiga.permissions.service import get_user_project_permissions
-from taiga.permissions.service import is_project_owner
+from taiga.permissions.service import is_project_admin, is_project_owner
 from taiga.projects.mixins.serializers import ValidateDuplicatedNameInProjectMixin
 
 from . import models
@@ -76,7 +76,6 @@ class TaskStatusSerializer(ValidateDuplicatedNameInProjectMixin):
 
 
 class BasicTaskStatusSerializerSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = models.TaskStatus
         i18n_fields = ("name",)
@@ -130,6 +129,7 @@ class MembershipSerializer(serializers.ModelSerializer):
     project_name = serializers.SerializerMethodField("get_project_name")
     project_slug = serializers.SerializerMethodField("get_project_slug")
     invited_by = UserBasicInfoSerializer(read_only=True)
+    is_owner = serializers.SerializerMethodField("get_is_owner")
 
     class Meta:
         model = models.Membership
@@ -146,6 +146,10 @@ class MembershipSerializer(serializers.ModelSerializer):
 
     def get_project_slug(self, obj):
         return obj.project.slug if obj and obj.project else ""
+
+    def get_is_owner(self, obj):
+        return (obj and obj.user_id and obj.project_id and obj.project.owner_id and
+                obj.user_id == obj.project.owner_id)
 
     def validate_email(self, attrs, source):
         project = attrs.get("project", None)
@@ -181,15 +185,17 @@ class MembershipSerializer(serializers.ModelSerializer):
 
         return attrs
 
-    def validate_is_owner(self, attrs, source):
-        is_owner = attrs[source]
+    def validate_is_admin(self, attrs, source):
         project = attrs.get("project", None)
         if project is None:
             project = self.object.project
 
-        if (self.object and
-                not services.project_has_valid_owners(project, exclude_user=self.object.user)):
-            raise serializers.ValidationError(_("At least one of the user must be an active admin"))
+        if (self.object and self.object.user):
+            if self.object.user.id == project.owner_id and attrs[source] != True:
+                raise serializers.ValidationError(_("The project owner must be admin."))
+
+            if not services.project_has_valid_admins(project, exclude_user=self.object.user):
+                raise serializers.ValidationError(_("At least one user must be an active admin for this project."))
 
         return attrs
 
@@ -242,7 +248,10 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
     my_permissions = serializers.SerializerMethodField("get_my_permissions")
+
+    owner = UserBasicInfoSerializer(read_only=True)
     i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
+    i_am_admin = serializers.SerializerMethodField("get_i_am_admin")
     i_am_member = serializers.SerializerMethodField("get_i_am_member")
 
     tags = TagsField(default=[], required=False)
@@ -257,9 +266,10 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
 
     class Meta:
         model = models.Project
-        read_only_fields = ("created_date", "modified_date", "owner", "slug")
+        read_only_fields = ("created_date", "modified_date", "slug", "blocked_code")
         exclude = ("logo", "last_us_ref", "last_task_ref", "last_issue_ref",
-                   "issues_csv_uuid", "tasks_csv_uuid", "userstories_csv_uuid")
+                   "issues_csv_uuid", "tasks_csv_uuid", "userstories_csv_uuid",
+                   "transfer_token")
 
     def get_my_permissions(self, obj):
         if "request" in self.context:
@@ -269,6 +279,11 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
     def get_i_am_owner(self, obj):
         if "request" in self.context:
             return is_project_owner(self.context["request"].user, obj)
+        return False
+
+    def get_i_am_admin(self, obj):
+        if "request" in self.context:
+            return is_project_admin(self.context["request"].user, obj)
         return False
 
     def get_i_am_member(self, obj):
@@ -328,6 +343,7 @@ class ProjectDetailSerializer(ProjectSerializer):
 
     roles = ProjectRoleSerializer(source="roles", many=True, read_only=True)
     members = serializers.SerializerMethodField(method_name="get_members")
+    total_memberships = serializers.SerializerMethodField(method_name="get_total_memberships")
 
     def get_members(self, obj):
         qs = obj.memberships.filter(user__isnull=False)
@@ -337,12 +353,26 @@ class ProjectDetailSerializer(ProjectSerializer):
         serializer = ProjectMemberSerializer(qs, many=True)
         return serializer.data
 
+    def get_total_memberships(self, obj):
+        return services.get_total_project_memberships(obj)
+
 
 class ProjectDetailAdminSerializer(ProjectDetailSerializer):
+    is_private_extra_info = serializers.SerializerMethodField(method_name="get_is_private_extra_info")
+    max_memberships = serializers.SerializerMethodField(method_name="get_max_memberships")
+
     class Meta:
         model = models.Project
-        read_only_fields = ("created_date", "modified_date", "owner", "slug")
+        read_only_fields = ("created_date", "modified_date", "slug", "blocked_code")
         exclude = ("logo", "last_us_ref", "last_task_ref", "last_issue_ref")
+
+    def get_is_private_extra_info(self, obj):
+        return services.check_if_project_privacity_can_be_changed(obj)
+
+    def get_max_memberships(self, obj):
+        return services.get_max_memberships_for_project(obj)
+
+
 
 
 ######################################################

@@ -20,7 +20,6 @@ import datetime
 from functools import partial
 
 from django.apps import apps
-from django.db.transaction import atomic
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
@@ -37,7 +36,6 @@ from taiga.projects.history.services import (make_key_from_model_object,
                                              get_last_snapshot_for_key,
                                              get_model_from_key)
 from taiga.permissions.service import user_has_perm
-from taiga.users.models import User
 
 from .models import HistoryChangeNotification, Watched
 
@@ -102,13 +100,13 @@ def analize_object_for_watchers(obj:object, comment:str, user:object):
     if not hasattr(obj, "add_watcher"):
         return
 
-    from taiga import mdrender as mdr
 
     texts = (getattr(obj, "description", ""),
              getattr(obj, "content", ""),
              comment,)
 
-    _, data = mdr.render_and_extract(obj.get_project(), "\n".join(texts))
+    from taiga.mdrender.service import render_and_extract
+    _, data = render_and_extract(obj.get_project(), "\n".join(texts))
 
     if data["mentions"]:
         for user in data["mentions"]:
@@ -214,7 +212,7 @@ def send_notifications(obj, *, history):
         return None
 
     key = make_key_from_model_object(obj)
-    owner = User.objects.get(pk=history.user["pk"])
+    owner = get_user_model().objects.get(pk=history.user["pk"])
     notification, created = (HistoryChangeNotification.objects.select_for_update()
                              .get_or_create(key=key,
                                             owner=owner,

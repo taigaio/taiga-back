@@ -27,10 +27,15 @@ from taiga.projects.likes import services
 
 
 class LikedResourceMixin:
+    """
+    NOTE:the classes using this mixing must have a method:
+    def pre_conditions_on_save(self, obj)
+    """
     @detail_route(methods=["POST"])
     def like(self, request, pk=None):
         obj = self.get_object()
         self.check_permissions(request, "like", obj)
+        self.pre_conditions_on_save(obj)
 
         services.add_like(obj, user=request.user)
         return response.Ok()
@@ -39,6 +44,7 @@ class LikedResourceMixin:
     def unlike(self, request, pk=None):
         obj = self.get_object()
         self.check_permissions(request, "unlike", obj)
+        self.pre_conditions_on_save(obj)
 
         services.remove_like(obj, user=request.user)
         return response.Ok()

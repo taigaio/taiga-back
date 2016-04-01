@@ -28,7 +28,7 @@ pytestmark = pytest.mark.django_db
 def test_watch_issue(client):
     user = f.UserFactory.create()
     issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=issue.project, user=user, is_admin=True)
     url = reverse("issues-watch", args=(issue.id,))
 
     client.login(user)
@@ -40,7 +40,7 @@ def test_watch_issue(client):
 def test_unwatch_issue(client):
     user = f.UserFactory.create()
     issue = f.create_issue(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=issue.project, user=user, is_admin=True)
     url = reverse("issues-watch", args=(issue.id,))
 
     client.login(user)
@@ -52,7 +52,7 @@ def test_unwatch_issue(client):
 def test_list_issue_watchers(client):
     user = f.UserFactory.create()
     issue = f.IssueFactory(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=issue.project, user=user, is_admin=True)
     f.WatchedFactory.create(content_object=issue, user=user)
     url = reverse("issue-watchers-list", args=(issue.id,))
 
@@ -66,7 +66,7 @@ def test_list_issue_watchers(client):
 def test_get_issue_watcher(client):
     user = f.UserFactory.create()
     issue = f.IssueFactory(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=issue.project, user=user, is_admin=True)
     watch = f.WatchedFactory.create(content_object=issue, user=user)
     url = reverse("issue-watchers-detail", args=(issue.id, watch.user.id))
 
@@ -79,8 +79,8 @@ def test_get_issue_watcher(client):
 
 def test_get_issue_watchers(client):
     user = f.UserFactory.create()
-    issue = f.IssueFactory(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
+    issue = f.create_issue(owner=user)
+    f.MembershipFactory.create(project=issue.project, user=user, is_admin=True)
     url = reverse("issues-detail", args=(issue.id,))
 
     f.WatchedFactory.create(content_object=issue, user=user)
@@ -95,8 +95,8 @@ def test_get_issue_watchers(client):
 
 def test_get_issue_is_watcher(client):
     user = f.UserFactory.create()
-    issue = f.IssueFactory(owner=user)
-    f.MembershipFactory.create(project=issue.project, user=user, is_owner=True)
+    issue = f.create_issue(owner=user)
+    f.MembershipFactory.create(project=issue.project, user=user, is_admin=True)
     url_detail = reverse("issues-detail", args=(issue.id,))
     url_watch = reverse("issues-watch", args=(issue.id,))
     url_unwatch = reverse("issues-unwatch", args=(issue.id,))

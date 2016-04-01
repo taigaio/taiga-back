@@ -16,24 +16,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext as _
-from django.db.models import Q
 from django.http import HttpResponse
 
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base import response
-from taiga.base.decorators import detail_route, list_route
+from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
+from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_404
-
-from taiga.users.models import User
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 
 from taiga.projects.models import Project, IssueStatus, Severity, Priority, IssueType
-from taiga.projects.milestones.models import Milestone
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
 from . import models
@@ -43,7 +40,7 @@ from . import serializers
 
 
 class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                   ModelCrudViewSet):
+                   BlockedByProjectMixin, ModelCrudViewSet):
     queryset = models.Issue.objects.all()
     permission_classes = (permissions.IssuePermission, )
     filter_backends = (filters.CanViewIssuesFilterBackend,
@@ -157,8 +154,6 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
         super().pre_save(obj)
 
     def pre_conditions_on_save(self, obj):
-        super().pre_conditions_on_save(obj)
-
         if obj.milestone and obj.milestone.project != obj.project:
             raise exc.PermissionDenied(_("You don't have permissions to set this sprint "
                                          "to this issue."))
@@ -178,6 +173,8 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
         if obj.type and obj.type.project != obj.project:
             raise exc.PermissionDenied(_("You don't have permissions to set this type "
                                          "to this issue."))
+
+        super().pre_conditions_on_save(obj)
 
     @list_route(methods=["GET"])
     def by_ref(self, request):
@@ -232,6 +229,9 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
             data = serializer.data
             project = Project.objects.get(pk=data["project_id"])
             self.check_permissions(request, 'bulk_create', project)
+            if project.blocked_code is not None:
+                raise exc.Blocked(_("Blocked element"))
+
             issues = services.create_issues_in_bulk(
                 data["bulk_issues"], project=project, owner=request.user,
                 status=project.default_issue_status, severity=project.default_severity,

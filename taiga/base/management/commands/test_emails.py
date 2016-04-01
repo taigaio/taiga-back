@@ -19,7 +19,8 @@ import datetime
 
 from optparse import make_option
 
-from django.db.models.loading import get_model
+from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -28,7 +29,6 @@ from taiga.base.mails import mail_builder
 from taiga.projects.models import Project, Membership
 from taiga.projects.history.models import HistoryEntry
 from taiga.projects.history.services import get_history_queryset_by_model_instance
-from taiga.users.models import User
 
 
 class Command(BaseCommand):
@@ -50,7 +50,7 @@ class Command(BaseCommand):
 
         # Register email
         context = {"lang": locale,
-                    "user": User.objects.all().order_by("?").first(),
+                    "user": get_user_model().objects.all().order_by("?").first(),
                     "cancel_token": "cancel-token"}
 
         email = mail_builder.registered_user(test_email, context)
@@ -58,7 +58,7 @@ class Command(BaseCommand):
 
         # Membership invitation
         membership = Membership.objects.order_by("?").filter(user__isnull=True).first()
-        membership.invited_by = User.objects.all().order_by("?").first()
+        membership.invited_by = get_user_model().objects.all().order_by("?").first()
         membership.invitation_extra_text = "Text example, Text example,\nText example,\n\nText example"
 
         context = {"lang": locale, "membership": membership}
@@ -88,19 +88,19 @@ class Command(BaseCommand):
         email.send()
 
         # Password recovery
-        context = {"lang": locale, "user": User.objects.all().order_by("?").first()}
+        context = {"lang": locale, "user": get_user_model().objects.all().order_by("?").first()}
         email = mail_builder.password_recovery(test_email, context)
         email.send()
 
         # Change email
-        context = {"lang": locale, "user": User.objects.all().order_by("?").first()}
+        context = {"lang": locale, "user": get_user_model().objects.all().order_by("?").first()}
         email = mail_builder.change_email(test_email, context)
         email.send()
 
         # Export/Import emails
         context = {
             "lang": locale,
-            "user": User.objects.all().order_by("?").first(),
+            "user": get_user_model().objects.all().order_by("?").first(),
             "project": Project.objects.all().order_by("?").first(),
             "error_subject": "Error generating project dump",
             "error_message": "Error generating project dump",
@@ -109,7 +109,7 @@ class Command(BaseCommand):
         email.send()
         context = {
             "lang": locale,
-            "user": User.objects.all().order_by("?").first(),
+            "user": get_user_model().objects.all().order_by("?").first(),
             "error_subject": "Error importing project dump",
             "error_message": "Error importing project dump",
         }
@@ -120,7 +120,7 @@ class Command(BaseCommand):
         context = {
             "lang": locale,
             "url": "http://dummyurl.com",
-            "user": User.objects.all().order_by("?").first(),
+            "user": get_user_model().objects.all().order_by("?").first(),
             "project": Project.objects.all().order_by("?").first(),
             "deletion_date": deletion_date,
         }
@@ -129,7 +129,7 @@ class Command(BaseCommand):
 
         context = {
             "lang": locale,
-            "user": User.objects.all().order_by("?").first(),
+            "user": get_user_model().objects.all().order_by("?").first(),
             "project": Project.objects.all().order_by("?").first(),
         }
         email = mail_builder.load_dump(test_email, context)
@@ -157,13 +157,13 @@ class Command(BaseCommand):
         context = {
             "lang": locale,
             "project": Project.objects.all().order_by("?").first(),
-            "changer": User.objects.all().order_by("?").first(),
+            "changer": get_user_model().objects.all().order_by("?").first(),
             "history_entries": HistoryEntry.objects.all().order_by("?")[0:5],
-            "user": User.objects.all().order_by("?").first(),
+            "user": get_user_model().objects.all().order_by("?").first(),
         }
 
         for notification_email in notification_emails:
-            model = get_model(*notification_email[0].split("."))
+            model = apps.get_model(*notification_email[0].split("."))
             snapshot = {
                 "subject": "Tests subject",
                 "ref": 123123,
@@ -187,3 +187,38 @@ class Command(BaseCommand):
             cls = type("InlineCSSTemplateMail", (InlineCSSTemplateMail,), {"name": notification_email[1]})
             email = cls()
             email.send(test_email, context)
+
+
+        # Transfer Emails
+        context = {
+            "project": Project.objects.all().order_by("?").first(),
+            "requester": User.objects.all().order_by("?").first(),
+        }
+        email = mail_builder.transfer_request(test_email, context)
+        email.send()
+
+        context = {
+            "project": Project.objects.all().order_by("?").first(),
+            "receiver": User.objects.all().order_by("?").first(),
+            "token": "test-token",
+            "reason": "Test reason"
+        }
+        email = mail_builder.transfer_start(test_email, context)
+        email.send()
+
+        context = {
+            "project": Project.objects.all().order_by("?").first(),
+            "old_owner": User.objects.all().order_by("?").first(),
+            "new_owner": User.objects.all().order_by("?").first(),
+            "reason": "Test reason"
+        }
+        email = mail_builder.transfer_accept(test_email, context)
+        email.send()
+
+        context = {
+            "project": Project.objects.all().order_by("?").first(),
+            "rejecter": User.objects.all().order_by("?").first(),
+            "reason": "Test reason"
+        }
+        email = mail_builder.transfer_reject(test_email, context)
+        email.send()

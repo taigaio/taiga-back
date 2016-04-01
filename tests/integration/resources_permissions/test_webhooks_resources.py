@@ -1,6 +1,7 @@
 from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
+from taiga.projects import choices as project_choices
 from taiga.webhooks.serializers import WebhookSerializer
 from taiga.webhooks.models import Webhook
 
@@ -36,15 +37,25 @@ def data():
                                   anon_permissions=[],
                                   public_permissions=[],
                                   owner=m.project_owner)
+    m.blocked_project = f.ProjectFactory(is_private=True,
+                                         anon_permissions=[],
+                                         public_permissions=[],
+                                         owner=m.project_owner,
+                                         blocked_code=project_choices.BLOCKED_BY_STAFF)
 
     f.MembershipFactory(project=m.project1,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
+    f.MembershipFactory(project=m.blocked_project,
+                        user=m.project_owner,
+                        is_admin=True)
 
     m.webhook1 = f.WebhookFactory(project=m.project1)
     m.webhooklog1 = f.WebhookLogFactory(webhook=m.webhook1)
     m.webhook2 = f.WebhookFactory(project=m.project2)
     m.webhooklog2 = f.WebhookLogFactory(webhook=m.webhook2)
+    m.blocked_webhook = f.WebhookFactory(project=m.blocked_project)
+    m.blocked_webhooklog = f.WebhookLogFactory(webhook=m.blocked_webhook)
 
     return m
 
@@ -52,6 +63,7 @@ def data():
 def test_webhook_retrieve(client, data):
     url1 = reverse('webhooks-detail', kwargs={"pk": data.webhook1.pk})
     url2 = reverse('webhooks-detail', kwargs={"pk": data.webhook2.pk})
+    blocked_url = reverse('webhooks-detail', kwargs={"pk": data.blocked_webhook.pk})
 
     users = [
         None,
@@ -63,11 +75,14 @@ def test_webhook_retrieve(client, data):
     assert results == [401, 403, 200]
     results = helper_test_http_method(client, 'get', url2, None, users)
     assert results == [401, 403, 403]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 200]
 
 
 def test_webhook_update(client, data):
     url1 = reverse('webhooks-detail', kwargs={"pk": data.webhook1.pk})
     url2 = reverse('webhooks-detail', kwargs={"pk": data.webhook2.pk})
+    blocked_url = reverse('webhooks-detail', kwargs={"pk": data.blocked_webhook.pk})
 
     users = [
         None,
@@ -87,10 +102,17 @@ def test_webhook_update(client, data):
     results = helper_test_http_method(client, 'put', url2, webhook_data, users)
     assert results == [401, 403, 403]
 
+    webhook_data = WebhookSerializer(data.blocked_webhook).data
+    webhook_data["key"] = "test"
+    webhook_data = json.dumps(webhook_data)
+    results = helper_test_http_method(client, 'put', blocked_url, webhook_data, users)
+    assert results == [401, 403, 451]
+
 
 def test_webhook_delete(client, data):
     url1 = reverse('webhooks-detail', kwargs={"pk": data.webhook1.pk})
     url2 = reverse('webhooks-detail', kwargs={"pk": data.webhook2.pk})
+    blocked_url = reverse('webhooks-detail', kwargs={"pk": data.blocked_webhook.pk})
 
     users = [
         None,
@@ -101,6 +123,8 @@ def test_webhook_delete(client, data):
     assert results == [401, 403, 204]
     results = helper_test_http_method(client, 'delete', url2, None, users)
     assert results == [401, 403, 403]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 451]
 
 
 def test_webhook_list(client, data):
@@ -122,7 +146,7 @@ def test_webhook_list(client, data):
 
     response = client.get(url)
     webhooks_data = json.loads(response.content.decode('utf-8'))
-    assert len(webhooks_data) == 1
+    assert len(webhooks_data) == 2
     assert response.status_code == 200
 
 
@@ -153,10 +177,20 @@ def test_webhook_create(client, data):
     results = helper_test_http_method(client, 'post', url, create_data, users, lambda: Webhook.objects.all().delete())
     assert results == [401, 403, 403]
 
+    create_data = json.dumps({
+        "name": "Test",
+        "url": "http://test.com",
+        "key": "test",
+        "project": data.blocked_project.pk,
+    })
+    results = helper_test_http_method(client, 'post', url, create_data, users, lambda: Webhook.objects.all().delete())
+    assert results == [401, 403, 451]
+
 
 def test_webhook_patch(client, data):
     url1 = reverse('webhooks-detail', kwargs={"pk": data.webhook1.pk})
     url2 = reverse('webhooks-detail', kwargs={"pk": data.webhook2.pk})
+    blocked_url = reverse('webhooks-detail', kwargs={"pk": data.blocked_webhook.pk})
 
     users = [
         None,
@@ -172,10 +206,15 @@ def test_webhook_patch(client, data):
     results = helper_test_http_method(client, 'patch', url2, patch_data, users)
     assert results == [401, 403, 403]
 
+    patch_data = json.dumps({"key": "test"})
+    results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+    assert results == [401, 403, 451]
+
 
 def test_webhook_action_test(client, data):
     url1 = reverse('webhooks-test', kwargs={"pk": data.webhook1.pk})
     url2 = reverse('webhooks-test', kwargs={"pk": data.webhook2.pk})
+    blocked_url = reverse('webhooks-test', kwargs={"pk": data.blocked_webhook.pk})
 
     users = [
         None,
@@ -191,6 +230,11 @@ def test_webhook_action_test(client, data):
     with mock.patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
         results = helper_test_http_method(client, 'post', url2, None, users)
         assert results == [404, 404, 404]
+        assert _send_request_mock.called is False
+
+    with mock.patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
+        results = helper_test_http_method(client, 'post', blocked_url, None, users)
+        assert results == [404, 404, 451]
         assert _send_request_mock.called is False
 
 
@@ -213,13 +257,14 @@ def test_webhooklogs_list(client, data):
 
     response = client.get(url)
     webhooklogs_data = json.loads(response.content.decode('utf-8'))
-    assert len(webhooklogs_data) == 1
+    assert len(webhooklogs_data) == 2
     assert response.status_code == 200
 
 
 def test_webhooklogs_retrieve(client, data):
     url1 = reverse('webhooklogs-detail', kwargs={"pk": data.webhooklog1.pk})
     url2 = reverse('webhooklogs-detail', kwargs={"pk": data.webhooklog2.pk})
+    blocked_url = reverse('webhooks-detail', kwargs={"pk": data.blocked_webhook.pk})
 
     users = [
         None,
@@ -233,10 +278,14 @@ def test_webhooklogs_retrieve(client, data):
     results = helper_test_http_method(client, 'get', url2, None, users)
     assert results == [401, 403, 403]
 
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 200]
+
 
 def test_webhooklogs_create(client, data):
     url1 = reverse('webhooklogs-list')
     url2 = reverse('webhooklogs-list')
+    blocked_url = reverse('webhooklogs-list')
 
     users = [
         None,
@@ -250,10 +299,14 @@ def test_webhooklogs_create(client, data):
     results = helper_test_http_method(client, 'post', url2, None, users)
     assert results == [405, 405, 405]
 
+    results = helper_test_http_method(client, 'post', blocked_url, None, users)
+    assert results == [405, 405, 405]
+
 
 def test_webhooklogs_delete(client, data):
     url1 = reverse('webhooklogs-detail', kwargs={"pk": data.webhooklog1.pk})
     url2 = reverse('webhooklogs-detail', kwargs={"pk": data.webhooklog2.pk})
+    blocked_url = reverse('webhooklogs-detail', kwargs={"pk": data.blocked_webhooklog.pk})
 
     users = [
         None,
@@ -267,10 +320,14 @@ def test_webhooklogs_delete(client, data):
     results = helper_test_http_method(client, 'delete', url2, None, users)
     assert results == [405, 405, 405]
 
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [405, 405, 405]
+
 
 def test_webhooklogs_update(client, data):
     url1 = reverse('webhooklogs-detail', kwargs={"pk": data.webhooklog1.pk})
     url2 = reverse('webhooklogs-detail', kwargs={"pk": data.webhooklog2.pk})
+    blocked_url = reverse('webhooklogs-detail', kwargs={"pk": data.blocked_webhooklog.pk})
 
     users = [
         None,
@@ -284,16 +341,23 @@ def test_webhooklogs_update(client, data):
     results = helper_test_http_method(client, 'put', url2, None, users)
     assert results == [405, 405, 405]
 
+    results = helper_test_http_method(client, 'put', blocked_url, None, users)
+    assert results == [405, 405, 405]
+
     results = helper_test_http_method(client, 'patch', url1, None, users)
     assert results == [405, 405, 405]
 
     results = helper_test_http_method(client, 'patch', url2, None, users)
     assert results == [405, 405, 405]
 
+    results = helper_test_http_method(client, 'patch', blocked_url, None, users)
+    assert results == [405, 405, 405]
+
 
 def test_webhooklogs_action_resend(client, data):
     url1 = reverse('webhooklogs-resend', kwargs={"pk": data.webhooklog1.pk})
     url2 = reverse('webhooklogs-resend', kwargs={"pk": data.webhooklog2.pk})
+    blocked_url = reverse('webhooklogs-resend', kwargs={"pk": data.blocked_webhooklog.pk})
 
     users = [
         None,
@@ -306,3 +370,6 @@ def test_webhooklogs_action_resend(client, data):
 
     results = helper_test_http_method(client, 'post', url2, None, users)
     assert results == [404, 404, 404]
+
+    results = helper_test_http_method(client, 'post', blocked_url, None, users)
+    assert results == [404, 404, 451]

@@ -201,6 +201,28 @@ class NotAuthenticated(NotAuthenticated):
     pass
 
 
+class Blocked(APIException):
+    """
+    Exception used on blocked projects
+    """
+    status_code = status.HTTP_451_BLOCKED
+    default_detail = _("Blocked element")
+
+
+class NotEnoughSlotsForProject(BaseException):
+    """
+    Exception used on import/edition/creation project errors where the user
+    hasn't slots enough
+    """
+    default_detail = _("No room left for more projects.")
+
+    def __init__(self, is_private, total_memberships, detail=None):
+        self.detail = detail or self.default_detail
+        self.project_data = {
+            "is_private": is_private,
+            "total_memberships": total_memberships
+        }
+
 def format_exception(exc):
     if isinstance(exc.detail, (dict, list, tuple,)):
         detail = exc.detail
@@ -232,6 +254,9 @@ def exception_handler(exc):
             headers["WWW-Authenticate"] = exc.auth_header
         if getattr(exc, "wait", None):
             headers["X-Throttle-Wait-Seconds"] = "%d" % exc.wait
+        if getattr(exc, "project_data", None):
+            headers["Taiga-Info-Project-Memberships"] = exc.project_data["total_memberships"]
+            headers["Taiga-Info-Project-Is-Private"] = exc.project_data["is_private"]
 
         detail = format_exception(exc)
         return response.Response(detail, status=exc.status_code, headers=headers)

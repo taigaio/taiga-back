@@ -25,6 +25,7 @@ from django.contrib.contenttypes.models import ContentType
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base.api import ModelCrudViewSet
+from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_404
 
 from taiga.projects.notifications.mixins import WatchedResourceMixin
@@ -35,7 +36,9 @@ from . import serializers
 from . import models
 
 
-class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin, ModelCrudViewSet):
+class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
+                            BlockedByProjectMixin, ModelCrudViewSet):
+
     model = models.Attachment
     serializer_class = serializers.AttachmentSerializer
     filter_fields = ["project", "object_id"]

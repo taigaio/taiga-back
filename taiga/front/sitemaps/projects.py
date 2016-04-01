@@ -32,6 +32,9 @@ class ProjectsSitemap(Sitemap):
                                                 Q(is_private=True,
                                                   anon_permissions__contains=["view_project"]))
 
+        # Exclude blocked projects
+        queryset = queryset.filter(blocked_code__isnull=True)
+
         return queryset
 
     def location(self, obj):

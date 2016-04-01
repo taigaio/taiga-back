@@ -30,7 +30,7 @@ DEBUG = False
 
 DATABASES = {
     "default": {
-        "ENGINE": "transaction_hooks.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": "taiga",
     }
 }
@@ -320,7 +320,6 @@ INSTALLED_APPS = [
     "sr",
     "easy_thumbnails",
     "raven.contrib.django.raven_compat",
-    "django_transactional_cleanup",
 ]
 
 WSGI_APPLICATION = "taiga.wsgi.application"
@@ -347,7 +346,7 @@ LOGGING = {
     "handlers": {
         "null": {
             "level":"DEBUG",
-            "class":"django.utils.log.NullHandler",
+            "class":"logging.NullHandler",
         },
         "console":{
             "level":"DEBUG",
@@ -434,7 +433,9 @@ REST_FRAMEWORK = {
 # Extra expose header related to Taiga APP (see taiga.base.middleware.cors=)
 APP_EXTRA_EXPOSE_HEADERS = [
     "taiga-info-total-opened-milestones",
-    "taiga-info-total-closed-milestones"
+    "taiga-info-total-closed-milestones",
+    "taiga-info-project-memberships",
+    "taiga-info-project-is-private"
 ]
 
 DEFAULT_PROJECT_TEMPLATE = "scrum"
@@ -522,6 +523,12 @@ WEBHOOKS_ENABLED = False
 FRONT_SITEMAP_ENABLED = False
 FRONT_SITEMAP_CACHE_TIMEOUT = 24*60*60  # In second
 
+EXTRA_BLOCKING_CODES = []
+
+MAX_PRIVATE_PROJECTS_PER_USER = None # None == no limit
+MAX_PUBLIC_PROJECTS_PER_USER = None # None == no limit
+MAX_MEMBERSHIPS_PRIVATE_PROJECTS = None # None == no limit
+MAX_MEMBERSHIPS_PUBLIC_PROJECTS = None # None == no limit
 
 from .sr import *
 

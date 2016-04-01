@@ -79,7 +79,7 @@ def delete_project_dump(project_id, project_slug, task_id):
 @app.task
 def load_project_dump(user, dump):
     try:
-        project = dict_to_project(dump, user.email)
+        project = dict_to_project(dump, user)
     except Exception:
         ctx = {
             "user": user,

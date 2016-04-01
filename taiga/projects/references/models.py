@@ -18,7 +18,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.generic import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.tasks.models import Task

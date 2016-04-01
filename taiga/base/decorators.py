@@ -17,7 +17,6 @@
 
 from django_pglocks import advisory_lock
 
-
 def detail_route(methods=['get'], **kwargs):
     """
     Used to mark a method on a ViewSet that should be routed for detail requests.

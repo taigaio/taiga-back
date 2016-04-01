@@ -21,6 +21,7 @@ import os
 from collections import OrderedDict
 
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
@@ -29,10 +30,10 @@ from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
 
-from taiga import mdrender
 from taiga.base.api import serializers
 from taiga.base.fields import JsonField, PgArrayField
 
+from taiga.mdrender.service import render as mdrender
 from taiga.projects import models as projects_models
 from taiga.projects.custom_attributes import models as custom_attributes_models
 from taiga.projects.userstories import models as userstories_models
@@ -154,7 +155,7 @@ class CommentField(serializers.WritableField):
 
     def field_from_native(self, data, files, field_name, into):
         super().field_from_native(data, files, field_name, into)
-        into["comment_html"] = mdrender.render(self.context['project'], data.get("comment", ""))
+        into["comment_html"] = mdrender(self.context['project'], data.get("comment", ""))
 
 
 class ProjectRelatedField(serializers.RelatedField):
@@ -263,7 +264,7 @@ class WatcheableObjectModelSerializer(serializers.ModelSerializer):
         adding_watcher_emails = list(new_watcher_emails.difference(old_watcher_emails))
         removing_watcher_emails = list(old_watcher_emails.difference(new_watcher_emails))
 
-        User = apps.get_model("users", "User")
+        User = get_user_model()
         adding_users = User.objects.filter(email__in=adding_watcher_emails)
         removing_users = User.objects.filter(email__in=removing_watcher_emails)
 

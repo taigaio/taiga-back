@@ -1,0 +1,21 @@
+{% trans owner_name=project.owner.get_full_name(), rejecter_name=rejecter.get_full_name(), project_name=project.name %}
+Hi {{owner_name}},
+{{ rejecter_name}} has declined your offer and will not become the new project owner for "{{project_name}}".
+{% endtrans %}
+
+{% if reason %}
+{% trans rejecter_name=rejecter.get_full_name()%}{{ rejecter_name }} says:{% endtrans %}
+{{ reason }}
+{% endif %}
+
+{% trans %}
+If you want, you can still try to transfer the project ownership to a different person.
+{% endtrans %}
+
+{% trans %}Request transfer to a different person:{% endtrans %}
+{{ resolve_front_url("project-admin", project.slug) }}
+
+---
+{% trans %}
+The Taiga Team
+{% endtrans %}

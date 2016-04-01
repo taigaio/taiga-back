@@ -27,8 +27,8 @@ pytestmark = pytest.mark.django_db
 
 def test_watch_task(client):
     user = f.UserFactory.create()
-    task = f.create_task(owner=user)
-    f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
+    task = f.create_task(owner=user, milestone=None)
+    f.MembershipFactory.create(project=task.project, user=user, is_admin=True)
     url = reverse("tasks-watch", args=(task.id,))
 
     client.login(user)
@@ -39,8 +39,8 @@ def test_watch_task(client):
 
 def test_unwatch_task(client):
     user = f.UserFactory.create()
-    task = f.create_task(owner=user)
-    f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
+    task = f.create_task(owner=user, milestone=None)
+    f.MembershipFactory.create(project=task.project, user=user, is_admin=True)
     url = reverse("tasks-watch", args=(task.id,))
 
     client.login(user)
@@ -52,7 +52,7 @@ def test_unwatch_task(client):
 def test_list_task_watchers(client):
     user = f.UserFactory.create()
     task = f.TaskFactory(owner=user)
-    f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=task.project, user=user, is_admin=True)
     f.WatchedFactory.create(content_object=task, user=user)
     url = reverse("task-watchers-list", args=(task.id,))
 
@@ -66,7 +66,7 @@ def test_list_task_watchers(client):
 def test_get_task_watcher(client):
     user = f.UserFactory.create()
     task = f.TaskFactory(owner=user)
-    f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=task.project, user=user, is_admin=True)
     watch = f.WatchedFactory.create(content_object=task, user=user)
     url = reverse("task-watchers-detail", args=(task.id, watch.user.id))
 
@@ -80,7 +80,7 @@ def test_get_task_watcher(client):
 def test_get_task_watchers(client):
     user = f.UserFactory.create()
     task = f.TaskFactory(owner=user)
-    f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=task.project, user=user, is_admin=True)
     url = reverse("tasks-detail", args=(task.id,))
 
     f.WatchedFactory.create(content_object=task, user=user)
@@ -95,8 +95,8 @@ def test_get_task_watchers(client):
 
 def test_get_task_is_watcher(client):
     user = f.UserFactory.create()
-    task = f.TaskFactory(owner=user)
-    f.MembershipFactory.create(project=task.project, user=user, is_owner=True)
+    task = f.create_task(owner=user, milestone=None)
+    f.MembershipFactory.create(project=task.project, user=user, is_admin=True)
     url_detail = reverse("tasks-detail", args=(task.id,))
     url_watch = reverse("tasks-watch", args=(task.id,))
     url_unwatch = reverse("tasks-unwatch", args=(task.id,))

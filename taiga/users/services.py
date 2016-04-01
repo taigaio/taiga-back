@@ -20,6 +20,7 @@ This model contains a domain logic for users application.
 """
 
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.db import connection
 from django.conf import settings
@@ -40,7 +41,7 @@ from .gravatar import get_gravatar_url
 
 
 def get_user_by_username_or_email(username_or_email):
-    user_model = apps.get_model("users", "User")
+    user_model = get_user_model()
     qs = user_model.objects.filter(Q(username__iexact=username_or_email) |
                                    Q(email__iexact=username_or_email))
 
@@ -123,7 +124,7 @@ def get_visible_project_ids(from_user, by_user):
         #- The to user is the owner
         member_perm_conditions |= \
             Q(project__id__in=by_user_project_ids, role__permissions__contains=required_permissions) |\
-            Q(project__id__in=by_user_project_ids, is_owner=True)
+            Q(project__id__in=by_user_project_ids, is_admin=True)
 
     Membership = apps.get_model('projects', 'Membership')
     #Calculating the user memberships adding the permission filter for the by user
@@ -322,7 +323,7 @@ def get_watched_list(for_user, from_user, type=None, q=None):
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
     SELECT entities.*,
            projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
-           projects_project.tags_colors, projects_project.logo,
+           projects_project.blocked_code as project_blocked_code, projects_project.tags_colors, projects_project.logo,
            users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
         FROM (
             {userstories_sql}
@@ -417,7 +418,7 @@ def get_liked_list(for_user, from_user, type=None, q=None):
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
     SELECT entities.*,
            projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
-           projects_project.tags_colors, projects_project.logo,
+           projects_project.blocked_code as project_blocked_code, projects_project.tags_colors, projects_project.logo,
            users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
         FROM (
             {projects_sql}
@@ -500,7 +501,7 @@ def get_voted_list(for_user, from_user, type=None, q=None):
     -- BEGIN Basic info: we need to mix info from different tables and denormalize it
     SELECT entities.*,
            projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
-           projects_project.tags_colors, projects_project.logo,
+           projects_project.blocked_code as project_blocked_code, projects_project.tags_colors, projects_project.logo,
            users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
         FROM (
             {userstories_sql}
@@ -572,3 +573,62 @@ def get_voted_list(for_user, from_user, type=None, q=None):
         dict(zip([col[0] for col in desc], row))
         for row in cursor.fetchall()
     ]
+
+
+def has_available_slot_for_project(user, project, new_members=0):
+    # TODO: Refactor: Create one service for every type of action and move to project services
+    #
+    #  - has_available_slot_to_create_new_project()
+    #  - has_available_slot_to_update_this_project()
+    #  - has_available_slot_to_transfer_this_project()
+    #  - has_available_slot_to_import_this_project()
+    #  - has_available_slot_to_add_members_to_this_project()
+
+    (enough, error) = _has_available_slot_for_project_type(user, project)
+    if not enough:
+        return (enough, error)
+    return _has_available_slot_for_project_members(user, project, new_members)
+
+
+def _has_available_slot_for_project_type(user, project):
+    if project.is_private:
+        if user.max_private_projects is None:
+            return (True, None)
+
+        current_private_projects = user.owned_projects.filter(is_private=True).exclude(id=project.id).count()
+        if current_private_projects < user.max_private_projects:
+            return (True, None)
+
+        return (False, _("You can't have more private projects"))
+
+    else:
+        if user.max_public_projects is None:
+            return (True, None)
+
+        current_public_project = user.owned_projects.filter(is_private=False).exclude(id=project.id).count()
+        if current_public_project  < user.max_public_projects:
+            return (True, None)
+
+        return (False, _("You can't have more public projects"))
+
+
+def _has_available_slot_for_project_members(user, project, new_members):
+    current_memberships = max(project.memberships.count(), 1)
+
+    if project.is_private:
+        if user.max_memberships_private_projects is None:
+            return (True, None)
+
+        if current_memberships + new_members <= user.max_memberships_private_projects:
+            return (True, None)
+
+        return (False, _("You have reached your current limit of memberships for private projects"))
+
+    else:
+        if user.max_memberships_public_projects is None:
+            return (True, None)
+
+        if current_memberships + new_members <= user.max_memberships_public_projects:
+            return (True, None)
+
+        return (False, _("You have reached your current limit of memberships for public projects"))

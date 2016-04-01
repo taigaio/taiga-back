@@ -1,6 +1,8 @@
 from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
+
+from taiga.projects import choices as project_choices
 from taiga.projects.milestones.serializers import MilestoneSerializer
 from taiga.projects.milestones.models import Milestone
 from taiga.projects.notifications.services import add_watcher
@@ -43,6 +45,11 @@ def data():
                                           anon_permissions=[],
                                           public_permissions=[],
                                           owner=m.project_owner)
+    m.blocked_project = f.ProjectFactory(is_private=True,
+                                         anon_permissions=[],
+                                         public_permissions=[],
+                                         owner=m.project_owner,
+                                         blocked_code=project_choices.BLOCKED_BY_STAFF)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
                                               user=m.project_member_with_perms,
@@ -64,22 +71,35 @@ def data():
                         user=m.project_member_without_perms,
                         role__project=m.private_project2,
                         role__permissions=[])
+    m.blocked_membership = f.MembershipFactory(project=m.blocked_project,
+                                                user=m.project_member_with_perms,
+                                                role__project=m.blocked_project,
+                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    f.MembershipFactory(project=m.blocked_project,
+                        user=m.project_member_without_perms,
+                        role__project=m.blocked_project,
+                        role__permissions=[])
 
     f.MembershipFactory(project=m.public_project,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
+
+    f.MembershipFactory(project=m.blocked_project,
+                    user=m.project_owner,
+                    is_admin=True)
 
     m.public_milestone = f.MilestoneFactory(project=m.public_project)
     m.private_milestone1 = f.MilestoneFactory(project=m.private_project1)
     m.private_milestone2 = f.MilestoneFactory(project=m.private_project2)
+    m.blocked_milestone = f.MilestoneFactory(project=m.blocked_project)
 
     return m
 
@@ -88,6 +108,7 @@ def test_milestone_retrieve(client, data):
     public_url = reverse('milestones-detail', kwargs={"pk": data.public_milestone.pk})
     private_url1 = reverse('milestones-detail', kwargs={"pk": data.private_milestone1.pk})
     private_url2 = reverse('milestones-detail', kwargs={"pk": data.private_milestone2.pk})
+    blocked_url = reverse('milestones-detail', kwargs={"pk": data.blocked_milestone.pk})
 
     users = [
         None,
@@ -103,12 +124,15 @@ def test_milestone_retrieve(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_milestone_update(client, data):
     public_url = reverse('milestones-detail', kwargs={"pk": data.public_milestone.pk})
     private_url1 = reverse('milestones-detail', kwargs={"pk": data.private_milestone1.pk})
     private_url2 = reverse('milestones-detail', kwargs={"pk": data.private_milestone2.pk})
+    blocked_url = reverse('milestones-detail', kwargs={"pk": data.blocked_milestone.pk})
 
     users = [
         None,
@@ -136,11 +160,18 @@ def test_milestone_update(client, data):
     results = helper_test_http_method(client, 'put', private_url2, milestone_data, users)
     assert results == [401, 403, 403, 200, 200]
 
+    milestone_data = MilestoneSerializer(data.blocked_milestone).data
+    milestone_data["name"] = "test"
+    milestone_data = json.dumps(milestone_data)
+    results = helper_test_http_method(client, 'put', blocked_url, milestone_data, users)
+    assert results == [401, 403, 403, 451, 451]
+
 
 def test_milestone_delete(client, data):
     public_url = reverse('milestones-detail', kwargs={"pk": data.public_milestone.pk})
     private_url1 = reverse('milestones-detail', kwargs={"pk": data.private_milestone1.pk})
     private_url2 = reverse('milestones-detail', kwargs={"pk": data.private_milestone2.pk})
+    blocked_url = reverse('milestones-detail', kwargs={"pk": data.blocked_milestone.pk})
 
     users = [
         None,
@@ -154,6 +185,8 @@ def test_milestone_delete(client, data):
     assert results == [401, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 451]
 
 
 def test_milestone_list(client, data):
@@ -175,14 +208,14 @@ def test_milestone_list(client, data):
 
     response = client.get(url)
     milestones_data = json.loads(response.content.decode('utf-8'))
-    assert len(milestones_data) == 3
+    assert len(milestones_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_owner)
 
     response = client.get(url)
     milestones_data = json.loads(response.content.decode('utf-8'))
-    assert len(milestones_data) == 3
+    assert len(milestones_data) == 4
     assert response.status_code == 200
 
 
@@ -227,11 +260,21 @@ def test_milestone_create(client, data):
     results = helper_test_http_method(client, 'post', url, create_data, users, lambda: Milestone.objects.all().delete())
     assert results == [401, 403, 403, 201, 201]
 
+    create_data = json.dumps({
+        "name": "test",
+        "estimated_start": "2014-12-10",
+        "estimated_finish": "2014-12-24",
+        "project": data.blocked_project.pk,
+    })
+    results = helper_test_http_method(client, 'post', url, create_data, users, lambda: Milestone.objects.all().delete())
+    assert results == [401, 403, 403, 451, 451]
+
 
 def test_milestone_patch(client, data):
     public_url = reverse('milestones-detail', kwargs={"pk": data.public_milestone.pk})
     private_url1 = reverse('milestones-detail', kwargs={"pk": data.private_milestone1.pk})
     private_url2 = reverse('milestones-detail', kwargs={"pk": data.private_milestone2.pk})
+    blocked_url = reverse('milestones-detail', kwargs={"pk": data.blocked_milestone.pk})
 
     users = [
         None,
@@ -253,11 +296,16 @@ def test_milestone_patch(client, data):
     results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
     assert results == [401, 403, 403, 200, 200]
 
+    patch_data = json.dumps({"name": "test"})
+    results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+    assert results == [401, 403, 403, 451, 451]
+
 
 def test_milestone_action_stats(client, data):
     public_url = reverse('milestones-stats', kwargs={"pk": data.public_milestone.pk})
     private_url1 = reverse('milestones-stats', kwargs={"pk": data.private_milestone1.pk})
     private_url2 = reverse('milestones-stats', kwargs={"pk": data.private_milestone2.pk})
+    blocked_url = reverse('milestones-stats', kwargs={"pk": data.blocked_milestone.pk})
 
     users = [
         None,
@@ -276,11 +324,15 @@ def test_milestone_action_stats(client, data):
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
 
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
 
 def test_milestone_action_watch(client, data):
     public_url = reverse('milestones-watch', kwargs={"pk": data.public_milestone.pk})
     private_url1 = reverse('milestones-watch', kwargs={"pk": data.private_milestone1.pk})
     private_url2 = reverse('milestones-watch', kwargs={"pk": data.private_milestone2.pk})
+    blocked_url = reverse('milestones-watch', kwargs={"pk": data.blocked_milestone.pk})
 
     users = [
         None,
@@ -296,12 +348,15 @@ def test_milestone_action_watch(client, data):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
     assert results == [404, 404, 404, 200, 200]
+    results = helper_test_http_method(client, 'post', blocked_url, "", users)
+    assert results == [404, 404, 404, 451, 451]
 
 
 def test_milestone_action_unwatch(client, data):
     public_url = reverse('milestones-unwatch', kwargs={"pk": data.public_milestone.pk})
     private_url1 = reverse('milestones-unwatch', kwargs={"pk": data.private_milestone1.pk})
     private_url2 = reverse('milestones-unwatch', kwargs={"pk": data.private_milestone2.pk})
+    blocked_url = reverse('milestones-unwatch', kwargs={"pk": data.blocked_milestone.pk})
 
     users = [
         None,
@@ -317,12 +372,15 @@ def test_milestone_action_unwatch(client, data):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
     assert results == [404, 404, 404, 200, 200]
+    results = helper_test_http_method(client, 'post', blocked_url, "", users)
+    assert results == [404, 404, 404, 451, 451]
 
 
 def test_milestone_watchers_list(client, data):
     public_url = reverse('milestone-watchers-list', kwargs={"resource_id": data.public_milestone.pk})
     private_url1 = reverse('milestone-watchers-list', kwargs={"resource_id": data.private_milestone1.pk})
     private_url2 = reverse('milestone-watchers-list', kwargs={"resource_id": data.private_milestone2.pk})
+    blocked_url = reverse('milestone-watchers-list', kwargs={"resource_id": data.blocked_milestone.pk})
 
     users = [
         None,
@@ -337,6 +395,8 @@ def test_milestone_watchers_list(client, data):
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
     assert results == [401, 403, 403, 200, 200]
 
 
@@ -350,6 +410,9 @@ def test_milestone_watchers_retrieve(client, data):
     add_watcher(data.private_milestone2, data.project_owner)
     private_url2 = reverse('milestone-watchers-detail', kwargs={"resource_id": data.private_milestone2.pk,
                                                           "pk": data.project_owner.pk})
+    add_watcher(data.blocked_milestone, data.project_owner)
+    blocked_url = reverse('milestone-watchers-detail', kwargs={"resource_id": data.blocked_milestone.pk,
+                                                          "pk": data.project_owner.pk})
 
     users = [
         None,
@@ -364,4 +427,6 @@ def test_milestone_watchers_retrieve(client, data):
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
     assert results == [401, 403, 403, 200, 200]

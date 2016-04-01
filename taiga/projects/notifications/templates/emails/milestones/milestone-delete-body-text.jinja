@@ -1,4 +1,4 @@
-{% trans user=user.get_full_name()|safe, changer=changer.get_full_name()|safe, project=project.name|safe, name=snapshot.name|safe %}
+{% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, name=snapshot.name %}
 Sprint deleted
 Hello {{ user }}, {{ changer }} has deleted an sprint on {{ project }}
 Sprint {{ name }}

@@ -2,6 +2,7 @@ import uuid
 
 from django.core.urlresolvers import reverse
 
+from taiga.projects import choices as project_choices
 from taiga.projects.issues.serializers import IssueSerializer
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 from taiga.base.utils import json
@@ -51,6 +52,12 @@ def data():
                                           public_permissions=[],
                                           owner=m.project_owner,
                                           issues_csv_uuid=uuid.uuid4().hex)
+    m.blocked_project = f.ProjectFactory(is_private=True,
+                                         anon_permissions=[],
+                                         public_permissions=[],
+                                         owner=m.project_owner,
+                                         issues_csv_uuid=uuid.uuid4().hex,
+                                         blocked_code=project_choices.BLOCKED_BY_STAFF)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
                                               user=m.project_member_with_perms,
@@ -72,18 +79,30 @@ def data():
                         user=m.project_member_without_perms,
                         role__project=m.private_project2,
                         role__permissions=[])
+    m.blocked_membership = f.MembershipFactory(project=m.blocked_project,
+                                                user=m.project_member_with_perms,
+                                                role__project=m.blocked_project,
+                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    f.MembershipFactory(project=m.blocked_project,
+                        user=m.project_member_without_perms,
+                        role__project=m.blocked_project,
+                        role__permissions=[])
 
     f.MembershipFactory(project=m.public_project,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
+
+    f.MembershipFactory(project=m.blocked_project,
+                    user=m.project_owner,
+                    is_admin=True)
 
     m.public_issue = f.IssueFactory(project=m.public_project,
                                     status__project=m.public_project,
@@ -103,6 +122,12 @@ def data():
                                       priority__project=m.private_project2,
                                       type__project=m.private_project2,
                                       milestone__project=m.private_project2)
+    m.blocked_issue = f.IssueFactory(project=m.blocked_project,
+                                     status__project=m.blocked_project,
+                                     severity__project=m.blocked_project,
+                                     priority__project=m.blocked_project,
+                                     type__project=m.blocked_project,
+                                     milestone__project=m.blocked_project)
 
     return m
 
@@ -111,6 +136,7 @@ def test_issue_retrieve(client, data):
     public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
     private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})
     private_url2 = reverse('issues-detail', kwargs={"pk": data.private_issue2.pk})
+    blocked_url = reverse('issues-detail', kwargs={"pk": data.blocked_issue.pk})
 
     users = [
         None,
@@ -126,12 +152,15 @@ def test_issue_retrieve(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_issue_update(client, data):
     public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
     private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})
     private_url2 = reverse('issues-detail', kwargs={"pk": data.private_issue2.pk})
+    blocked_url = reverse('issues-detail', kwargs={"pk": data.blocked_issue.pk})
 
     users = [
         None,
@@ -159,6 +188,12 @@ def test_issue_update(client, data):
             issue_data = json.dumps(issue_data)
             results = helper_test_http_method(client, 'put', private_url2, issue_data, users)
             assert results == [401, 403, 403, 200, 200]
+
+            issue_data = IssueSerializer(data.blocked_issue).data
+            issue_data["subject"] = "test"
+            issue_data = json.dumps(issue_data)
+            results = helper_test_http_method(client, 'put', blocked_url, issue_data, users)
+            assert results == [401, 403, 403, 451, 451]
 
 
 def test_issue_update_with_project_change(client):
@@ -278,6 +313,7 @@ def test_issue_delete(client, data):
     public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
     private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})
     private_url2 = reverse('issues-detail', kwargs={"pk": data.private_issue2.pk})
+    blocked_url = reverse('issues-detail', kwargs={"pk": data.blocked_issue.pk})
 
     users = [
         None,
@@ -292,6 +328,8 @@ def test_issue_delete(client, data):
     assert results == [401, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 451]
 
 
 def test_issue_list(client, data):
@@ -313,14 +351,14 @@ def test_issue_list(client, data):
 
     response = client.get(url)
     issues_data = json.loads(response.content.decode('utf-8'))
-    assert len(issues_data) == 3
+    assert len(issues_data) == 4
     assert response.status_code == 200
 
     client.login(data.project_owner)
 
     response = client.get(url)
     issues_data = json.loads(response.content.decode('utf-8'))
-    assert len(issues_data) == 3
+    assert len(issues_data) == 4
     assert response.status_code == 200
 
 
@@ -390,11 +428,24 @@ def test_issue_create(client, data):
     results = helper_test_http_method(client, 'post', url, create_data, users)
     assert results == [401, 403, 403, 201, 201]
 
+    create_data = json.dumps({
+        "subject": "test",
+        "ref": 3,
+        "project": data.blocked_project.pk,
+        "severity": data.blocked_project.severities.all()[0].pk,
+        "priority": data.blocked_project.priorities.all()[0].pk,
+        "status": data.blocked_project.issue_statuses.all()[0].pk,
+        "type": data.blocked_project.issue_types.all()[0].pk,
+    })
+    results = helper_test_http_method(client, 'post', url, create_data, users)
+    assert results == [401, 403, 403, 451, 451]
+
 
 def test_issue_patch(client, data):
     public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
     private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})
     private_url2 = reverse('issues-detail', kwargs={"pk": data.private_issue2.pk})
+    blocked_url = reverse('issues-detail', kwargs={"pk": data.blocked_issue.pk})
 
     users = [
         None,
@@ -417,6 +468,10 @@ def test_issue_patch(client, data):
             results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
             assert results == [401, 403, 403, 200, 200]
 
+            patch_data = json.dumps({"subject": "test", "version": data.blocked_issue.version})
+            results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+            assert results == [401, 403, 403, 451, 451]
+
 
 def test_issue_bulk_create(client, data):
     data.public_issue.project.default_issue_status = f.IssueStatusFactory()
@@ -436,6 +491,12 @@ def test_issue_bulk_create(client, data):
     data.private_issue2.project.default_priority = f.PriorityFactory()
     data.private_issue2.project.default_severity = f.SeverityFactory()
     data.private_issue2.project.save()
+
+    data.blocked_issue.project.default_issue_status = f.IssueStatusFactory()
+    data.blocked_issue.project.default_issue_type = f.IssueTypeFactory()
+    data.blocked_issue.project.default_priority = f.PriorityFactory()
+    data.blocked_issue.project.default_severity = f.SeverityFactory()
+    data.blocked_issue.project.save()
 
     url = reverse('issues-bulk-create')
 
@@ -462,11 +523,17 @@ def test_issue_bulk_create(client, data):
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 403, 403, 200, 200]
 
+    bulk_data = json.dumps({"bulk_issues": "test1\ntest2",
+                            "project_id": data.blocked_issue.project.pk})
+    results = helper_test_http_method(client, 'post', url, bulk_data, users)
+    assert results == [401, 403, 403, 451, 451]
+
 
 def test_issue_action_upvote(client, data):
     public_url = reverse('issues-upvote', kwargs={"pk": data.public_issue.pk})
     private_url1 = reverse('issues-upvote', kwargs={"pk": data.private_issue1.pk})
     private_url2 = reverse('issues-upvote', kwargs={"pk": data.private_issue2.pk})
+    blocked_url = reverse('issues-upvote', kwargs={"pk": data.blocked_issue.pk})
 
     users = [
         None,
@@ -482,12 +549,15 @@ def test_issue_action_upvote(client, data):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
     assert results == [404, 404, 404, 200, 200]
+    results = helper_test_http_method(client, 'post', blocked_url, "", users)
+    assert results == [404, 404, 404, 451, 451]
 
 
 def test_issue_action_downvote(client, data):
     public_url = reverse('issues-downvote', kwargs={"pk": data.public_issue.pk})
     private_url1 = reverse('issues-downvote', kwargs={"pk": data.private_issue1.pk})
     private_url2 = reverse('issues-downvote', kwargs={"pk": data.private_issue2.pk})
+    blocked_url = reverse('issues-downvote', kwargs={"pk": data.blocked_issue.pk})
 
     users = [
         None,
@@ -503,12 +573,15 @@ def test_issue_action_downvote(client, data):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
     assert results == [404, 404, 404, 200, 200]
+    results = helper_test_http_method(client, 'post', blocked_url, "", users)
+    assert results == [404, 404, 404, 451, 451]
 
 
 def test_issue_voters_list(client, data):
     public_url = reverse('issue-voters-list', kwargs={"resource_id": data.public_issue.pk})
     private_url1 = reverse('issue-voters-list', kwargs={"resource_id": data.private_issue1.pk})
     private_url2 = reverse('issue-voters-list', kwargs={"resource_id": data.private_issue2.pk})
+    blocked_url = reverse('issue-voters-list', kwargs={"resource_id": data.blocked_issue.pk})
 
     users = [
         None,
@@ -523,6 +596,8 @@ def test_issue_voters_list(client, data):
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
     assert results == [401, 403, 403, 200, 200]
 
 
@@ -536,6 +611,9 @@ def test_issue_voters_retrieve(client, data):
     add_vote(data.private_issue2, data.project_owner)
     private_url2 = reverse('issue-voters-detail', kwargs={"resource_id": data.private_issue2.pk,
                                                           "pk": data.project_owner.pk})
+    add_vote(data.blocked_issue, data.project_owner)
+    blocked_url = reverse('issue-voters-detail', kwargs={"resource_id": data.blocked_issue.pk,
+                                                          "pk": data.project_owner.pk})
 
     users = [
         None,
@@ -551,13 +629,16 @@ def test_issue_voters_retrieve(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_issues_csv(client, data):
     url = reverse('issues-csv')
     csv_public_uuid = data.public_project.issues_csv_uuid
     csv_private1_uuid = data.private_project1.issues_csv_uuid
-    csv_private2_uuid = data.private_project1.issues_csv_uuid
+    csv_private2_uuid = data.private_project2.issues_csv_uuid
+    csv_blocked_uuid = data.blocked_project.issues_csv_uuid
 
     users = [
         None,
@@ -576,11 +657,15 @@ def test_issues_csv(client, data):
     results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private2_uuid), None, users)
     assert results == [200, 200, 200, 200, 200]
 
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_blocked_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
 
 def test_issue_action_watch(client, data):
     public_url = reverse('issues-watch', kwargs={"pk": data.public_issue.pk})
     private_url1 = reverse('issues-watch', kwargs={"pk": data.private_issue1.pk})
     private_url2 = reverse('issues-watch', kwargs={"pk": data.private_issue2.pk})
+    blocked_url = reverse('issues-watch', kwargs={"pk": data.blocked_issue.pk})
 
     users = [
         None,
@@ -596,12 +681,15 @@ def test_issue_action_watch(client, data):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
     assert results == [404, 404, 404, 200, 200]
+    results = helper_test_http_method(client, 'post', blocked_url, "", users)
+    assert results == [404, 404, 404, 451, 451]
 
 
 def test_issue_action_unwatch(client, data):
     public_url = reverse('issues-unwatch', kwargs={"pk": data.public_issue.pk})
     private_url1 = reverse('issues-unwatch', kwargs={"pk": data.private_issue1.pk})
     private_url2 = reverse('issues-unwatch', kwargs={"pk": data.private_issue2.pk})
+    blocked_url = reverse('issues-unwatch', kwargs={"pk": data.blocked_issue.pk})
 
     users = [
         None,
@@ -617,12 +705,15 @@ def test_issue_action_unwatch(client, data):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, "", users)
     assert results == [404, 404, 404, 200, 200]
+    results = helper_test_http_method(client, 'post', blocked_url, "", users)
+    assert results == [404, 404, 404, 451, 451]
 
 
 def test_issue_watchers_list(client, data):
     public_url = reverse('issue-watchers-list', kwargs={"resource_id": data.public_issue.pk})
     private_url1 = reverse('issue-watchers-list', kwargs={"resource_id": data.private_issue1.pk})
     private_url2 = reverse('issue-watchers-list', kwargs={"resource_id": data.private_issue2.pk})
+    blocked_url = reverse('issue-watchers-list', kwargs={"resource_id": data.blocked_issue.pk})
 
     users = [
         None,
@@ -638,6 +729,8 @@ def test_issue_watchers_list(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_issue_watchers_retrieve(client, data):
@@ -650,7 +743,9 @@ def test_issue_watchers_retrieve(client, data):
     add_watcher(data.private_issue2, data.project_owner)
     private_url2 = reverse('issue-watchers-detail', kwargs={"resource_id": data.private_issue2.pk,
                                                           "pk": data.project_owner.pk})
-
+    add_watcher(data.blocked_issue, data.project_owner)
+    blocked_url = reverse('issue-watchers-detail', kwargs={"resource_id": data.blocked_issue.pk,
+                                                          "pk": data.project_owner.pk})
     users = [
         None,
         data.registered_user,
@@ -664,4 +759,6 @@ def test_issue_watchers_retrieve(client, data):
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
     assert results == [401, 403, 403, 200, 200]

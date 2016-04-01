@@ -15,28 +15,28 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api.permissions import (TaigaResourcePermission, IsProjectOwner,
+from taiga.base.api.permissions import (TaigaResourcePermission, IsProjectAdmin,
                                         AllowAny, PermissionComponent)
 
-from taiga.permissions.service import is_project_owner
+from taiga.permissions.service import is_project_admin
 
 
-class IsWebhookProjectOwner(PermissionComponent):
+class IsWebhookProjectAdmin(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
-        return is_project_owner(request.user, obj.webhook.project)
+        return is_project_admin(request.user, obj.webhook.project)
 
 
 class WebhookPermission(TaigaResourcePermission):
-    retrieve_perms = IsProjectOwner()
-    create_perms = IsProjectOwner()
-    update_perms = IsProjectOwner()
-    partial_update_perms = IsProjectOwner()
-    destroy_perms = IsProjectOwner()
+    retrieve_perms = IsProjectAdmin()
+    create_perms = IsProjectAdmin()
+    update_perms = IsProjectAdmin()
+    partial_update_perms = IsProjectAdmin()
+    destroy_perms = IsProjectAdmin()
     list_perms = AllowAny()
-    test_perms = IsProjectOwner()
+    test_perms = IsProjectAdmin()
 
 
 class WebhookLogPermission(TaigaResourcePermission):
-    retrieve_perms = IsWebhookProjectOwner()
+    retrieve_perms = IsWebhookProjectAdmin()
     list_perms = AllowAny()
-    resend_perms = IsWebhookProjectOwner()
+    resend_perms = IsWebhookProjectAdmin()

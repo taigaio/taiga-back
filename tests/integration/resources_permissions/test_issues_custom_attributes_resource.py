@@ -19,6 +19,7 @@
 from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
+from taiga.projects import choices as project_choices
 from taiga.projects.custom_attributes import serializers
 from taiga.permissions.permissions import (MEMBERS_PERMISSIONS,
                                            ANON_PERMISSIONS, USER_PERMISSIONS)
@@ -52,6 +53,11 @@ def data():
                                           anon_permissions=[],
                                           public_permissions=[],
                                           owner=m.project_owner)
+    m.blocked_project = f.ProjectFactory(is_private=True,
+                                         anon_permissions=[],
+                                         public_permissions=[],
+                                         owner=m.project_owner,
+                                         blocked_code=project_choices.BLOCKED_BY_STAFF)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
                                           user=m.project_member_with_perms,
@@ -81,21 +87,37 @@ def data():
                         role__project=m.private_project2,
                         role__permissions=[])
 
+    m.blocked_membership = f.MembershipFactory(project=m.blocked_project,
+                                                user=m.project_member_with_perms,
+                                                email=m.project_member_with_perms.email,
+                                                role__project=m.blocked_project,
+                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    f.MembershipFactory(project=m.blocked_project,
+                        user=m.project_member_without_perms,
+                        email=m.project_member_without_perms.email,
+                        role__project=m.blocked_project,
+                        role__permissions=[])
+
     f.MembershipFactory(project=m.public_project,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
+
+    f.MembershipFactory(project=m.blocked_project,
+                        user=m.project_owner,
+                        is_admin=True)
 
     m.public_issue_ca = f.IssueCustomAttributeFactory(project=m.public_project)
     m.private_issue_ca1 = f.IssueCustomAttributeFactory(project=m.private_project1)
     m.private_issue_ca2 = f.IssueCustomAttributeFactory(project=m.private_project2)
+    m.blocked_issue_ca = f.IssueCustomAttributeFactory(project=m.blocked_project)
 
     m.public_issue = f.IssueFactory(project=m.public_project,
                                     status__project=m.public_project,
@@ -115,10 +137,17 @@ def data():
                                       priority__project=m.private_project2,
                                       type__project=m.private_project2,
                                       milestone__project=m.private_project2)
+    m.blocked_issue = f.IssueFactory(project=m.blocked_project,
+                                      status__project=m.blocked_project,
+                                      severity__project=m.blocked_project,
+                                      priority__project=m.blocked_project,
+                                      type__project=m.blocked_project,
+                                      milestone__project=m.blocked_project)
 
     m.public_issue_cav = m.public_issue.custom_attributes_values
     m.private_issue_cav1 = m.private_issue1.custom_attributes_values
     m.private_issue_cav2 = m.private_issue2.custom_attributes_values
+    m.blocked_issue_cav = m.blocked_issue.custom_attributes_values
 
     return m
 
@@ -131,6 +160,7 @@ def test_issue_custom_attribute_retrieve(client, data):
     public_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.public_issue_ca.pk})
     private1_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.private_issue_ca1.pk})
     private2_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.private_issue_ca2.pk})
+    blocked_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.blocked_issue_ca.pk})
 
     users = [
         None,
@@ -146,12 +176,15 @@ def test_issue_custom_attribute_retrieve(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private2_url, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_issue_custom_attribute_create(client, data):
     public_url = reverse('issue-custom-attributes-list')
     private1_url = reverse('issue-custom-attributes-list')
     private2_url = reverse('issue-custom-attributes-list')
+    blocked_url = reverse('issue-custom-attributes-list')
 
     users = [
         None,
@@ -176,11 +209,17 @@ def test_issue_custom_attribute_create(client, data):
     results = helper_test_http_method(client, 'post', private2_url, issue_ca_data, users)
     assert results == [401, 403, 403, 403, 201]
 
+    issue_ca_data = {"name": "test-new", "project": data.blocked_project.id}
+    issue_ca_data = json.dumps(issue_ca_data)
+    results = helper_test_http_method(client, 'post', private2_url, issue_ca_data, users)
+    assert results == [401, 403, 403, 403, 451]
+
 
 def test_issue_custom_attribute_update(client, data):
     public_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.public_issue_ca.pk})
     private1_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.private_issue_ca1.pk})
     private2_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.private_issue_ca2.pk})
+    blocked_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.blocked_issue_ca.pk})
 
     users = [
         None,
@@ -208,11 +247,18 @@ def test_issue_custom_attribute_update(client, data):
     results = helper_test_http_method(client, 'put', private2_url, issue_ca_data, users)
     assert results == [401, 403, 403, 403, 200]
 
+    issue_ca_data = serializers.IssueCustomAttributeSerializer(data.blocked_issue_ca).data
+    issue_ca_data["name"] = "test"
+    issue_ca_data = json.dumps(issue_ca_data)
+    results = helper_test_http_method(client, 'put', blocked_url, issue_ca_data, users)
+    assert results == [401, 403, 403, 403, 451]
+
 
 def test_issue_custom_attribute_delete(client, data):
     public_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.public_issue_ca.pk})
     private1_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.private_issue_ca1.pk})
     private2_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.private_issue_ca2.pk})
+    blocked_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.blocked_issue_ca.pk})
 
     users = [
         None,
@@ -228,6 +274,8 @@ def test_issue_custom_attribute_delete(client, data):
     assert results == [401, 403, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', private2_url, None, users)
     assert results == [401, 403, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 403, 451]
 
 
 def test_issue_custom_attribute_list(client, data):
@@ -249,12 +297,12 @@ def test_issue_custom_attribute_list(client, data):
 
     client.login(data.project_member_with_perms)
     response = client.json.get(url)
-    assert len(response.data) == 3
+    assert len(response.data) == 4
     assert response.status_code == 200
 
     client.login(data.project_owner)
     response = client.json.get(url)
-    assert len(response.data) == 3
+    assert len(response.data) == 4
     assert response.status_code == 200
 
 
@@ -262,6 +310,7 @@ def test_issue_custom_attribute_patch(client, data):
     public_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.public_issue_ca.pk})
     private1_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.private_issue_ca1.pk})
     private2_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.private_issue_ca2.pk})
+    blocked_url = reverse('issue-custom-attributes-detail', kwargs={"pk": data.blocked_issue_ca.pk})
 
     users = [
         None,
@@ -277,6 +326,8 @@ def test_issue_custom_attribute_patch(client, data):
     assert results == [401, 403, 403, 403, 200]
     results = helper_test_http_method(client, 'patch', private2_url, '{"name": "Test"}', users)
     assert results == [401, 403, 403, 403, 200]
+    results = helper_test_http_method(client, 'patch', blocked_url, '{"name": "Test"}', users)
+    assert results == [401, 403, 403, 403, 451]
 
 
 def test_issue_custom_attribute_action_bulk_update_order(client, data):
@@ -311,6 +362,12 @@ def test_issue_custom_attribute_action_bulk_update_order(client, data):
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 403, 204]
 
+    post_data = json.dumps({
+        "bulk_issue_custom_attributes": [(1,2)],
+        "project": data.blocked_project.pk
+    })
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 451]
 
 #########################################################
 # Issue Custom Attribute
@@ -321,6 +378,7 @@ def test_issue_custom_attributes_values_retrieve(client, data):
     public_url = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.public_issue.pk})
     private_url1 = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.private_issue1.pk})
     private_url2 = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.private_issue2.pk})
+    blocked_url = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.blocked_issue.pk})
 
     users = [
         None,
@@ -336,12 +394,15 @@ def test_issue_custom_attributes_values_retrieve(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_issue_custom_attributes_values_update(client, data):
     public_url = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.public_issue.pk})
     private_url1 = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.private_issue1.pk})
     private_url2 = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.private_issue2.pk})
+    blocked_url = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.blocked_issue.pk})
 
     users = [
         None,
@@ -369,11 +430,18 @@ def test_issue_custom_attributes_values_update(client, data):
     results = helper_test_http_method(client, 'put', private_url2, issue_data, users)
     assert results == [401, 403, 403, 200, 200]
 
+    issue_data = serializers.IssueCustomAttributesValuesSerializer(data.blocked_issue_cav).data
+    issue_data["attributes_values"] = {str(data.blocked_issue_ca.pk): "test"}
+    issue_data = json.dumps(issue_data)
+    results = helper_test_http_method(client, 'put', blocked_url, issue_data, users)
+    assert results == [401, 403, 403, 451, 451]
+
 
 def test_issue_custom_attributes_values_patch(client, data):
     public_url = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.public_issue.pk})
     private_url1 = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.private_issue1.pk})
     private_url2 = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.private_issue2.pk})
+    blocked_url = reverse('issue-custom-attributes-values-detail', kwargs={"issue_id": data.blocked_issue.pk})
 
     users = [
         None,
@@ -397,3 +465,8 @@ def test_issue_custom_attributes_values_patch(client, data):
                              "version": data.private_issue2.version})
     results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
     assert results == [401, 403, 403, 200, 200]
+
+    patch_data = json.dumps({"attributes_values": {str(data.blocked_issue_ca.pk): "test"},
+                             "version": data.blocked_issue.version})
+    results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+    assert results == [401, 403, 403, 451, 451]

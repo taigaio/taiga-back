@@ -104,20 +104,36 @@ class UserSerializer(serializers.ModelSerializer):
             return ContactProjectDetailSerializer(projects, many=True).data
 
 class UserAdminSerializer(UserSerializer):
+    total_private_projects = serializers.SerializerMethodField("get_total_private_projects")
+    total_public_projects = serializers.SerializerMethodField("get_total_public_projects")
+
     class Meta:
         model = User
         # IMPORTANT: Maintain the UserSerializer Meta up to date
         # with this info (including here the email)
         fields = ("id", "username", "full_name", "full_name_display", "email",
                   "color", "bio", "lang", "theme", "timezone", "is_active", "photo",
-                  "big_photo")
-        read_only_fields = ("id", "email")
+                  "big_photo",
+                  "max_private_projects", "max_public_projects",
+                  "max_memberships_private_projects", "max_memberships_public_projects",
+                  "total_private_projects", "total_public_projects")
+
+        read_only_fields = ("id", "email",
+                            "max_private_projects", "max_public_projects",
+                            "max_memberships_private_projects",
+                            "max_memberships_public_projects")
+
+    def get_total_private_projects(self, user):
+        return user.owned_projects.filter(is_private=True).count()
+
+    def get_total_public_projects(self, user):
+        return user.owned_projects.filter(is_private=False).count()
 
 
 class UserBasicInfoSerializer(UserSerializer):
     class Meta:
         model = User
-        fields = ("username", "full_name_display","photo", "big_photo", "is_active")
+        fields = ("username", "full_name_display","photo", "big_photo", "is_active", "id")
 
 
 class RecoverySerializer(serializers.Serializer):
@@ -182,6 +198,7 @@ class HighLightedContentSerializer(serializers.Serializer):
     project_name = serializers.SerializerMethodField("get_project_name")
     project_slug = serializers.SerializerMethodField("get_project_slug")
     project_is_private = serializers.SerializerMethodField("get_project_is_private")
+    project_blocked_code = serializers.CharField()
 
     assigned_to_username = serializers.CharField()
     assigned_to_full_name = serializers.CharField()

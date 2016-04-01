@@ -1,0 +1,20 @@
+{% trans owner_name=project.owner.get_full_name(), receiver_name=receiver.get_full_name(), project_name=project.name %}
+Hi {{receiver_name}},
+{{ owner_name }}, the current project owner at "{{project_name}}" would like you to become the new project owner.
+{% endtrans %}
+
+{% if reason %}{% trans  owner_name=project.owner.get_full_name() %}{{ owner_name }} says:{% endtrans %}
+
+{{ reason }}
+{% endif %}
+
+{% trans %}
+Please, go to the following link to either accept or reject this proposal.</p>
+{% endtrans %}
+
+{{ _("Accept or reject the project ownership transfer:") }} {{ resolve_front_url("project-transfer", project.slug, project.transfer_token) }}
+
+---
+{% trans %}
+The Taiga Team
+{% endtrans %}

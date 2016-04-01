@@ -58,7 +58,7 @@ def test_create_issue_without_status(client):
     project.default_severity = severity
     project.default_issue_type = type
     project.save()
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     url = reverse("issues-list")
 
     data = {"subject": "Test user story", "project": project.id}
@@ -79,7 +79,7 @@ def test_create_issue_without_status_in_project_without_default_values(client):
                                       default_severity=None,
                                       default_issue_type = None)
 
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     url = reverse("issues-list")
 
     data = {"subject": "Test user story", "project": project.id}
@@ -94,7 +94,7 @@ def test_create_issue_without_status_in_project_without_default_values(client):
 
 def test_api_create_issues_in_bulk(client):
     project = f.create_project()
-    f.MembershipFactory(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory(project=project, user=project.owner, is_admin=True)
 
     url = reverse("issues-bulk-create")
 

@@ -1,4 +1,4 @@
-{% trans user=user.get_full_name()|safe, changer=changer.get_full_name()|safe, project=project.name|safe, ref=snapshot.ref, subject=snapshot.subject|safe, url=resolve_front_url("issue", project.slug, snapshot.ref) %}
+{% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject, url=resolve_front_url("issue", project.slug, snapshot.ref) %}
 New issue created
 Hello {{ user }}, {{ changer }} has created a new issue on {{ project }}
 See issue #{{ ref }} {{ subject }} at {{ url }}

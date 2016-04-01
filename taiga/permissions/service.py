@@ -16,12 +16,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .permissions import OWNERS_PERMISSIONS, MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from .permissions import ADMINS_PERMISSIONS, MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
 
 from django.apps import apps
 
 def _get_user_project_membership(user, project):
-    Membership = apps.get_model("projects", "Membership")
     if user.is_anonymous():
         return None
 
@@ -39,10 +38,17 @@ def _get_object_project(obj):
 
 
 def is_project_owner(user, obj):
-    """
-    The owner attribute of a project is just an historical reference
-    """
+    project = _get_object_project(obj)
+    if project is None:
+        return False
 
+    if user.id == project.owner.id:
+        return True
+
+    return False
+
+
+def is_project_admin(user, obj):
     if user.is_superuser:
         return True
 
@@ -51,7 +57,7 @@ def is_project_owner(user, obj):
         return False
 
     membership = _get_user_project_membership(user, project)
-    if membership and membership.is_owner:
+    if membership and membership.is_admin:
         return True
 
     return False
@@ -79,43 +85,41 @@ def _get_membership_permissions(membership):
 def get_user_project_permissions(user, project):
     membership = _get_user_project_membership(user, project)
     if user.is_superuser:
-        owner_permissions = list(map(lambda perm: perm[0], OWNERS_PERMISSIONS))
+        admins_permissions = list(map(lambda perm: perm[0], ADMINS_PERMISSIONS))
         members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
         public_permissions = list(map(lambda perm: perm[0], USER_PERMISSIONS))
         anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
     elif membership:
-        if membership.is_owner:
-            owner_permissions = list(map(lambda perm: perm[0], OWNERS_PERMISSIONS))
+        if membership.is_admin:
+            admins_permissions = list(map(lambda perm: perm[0], ADMINS_PERMISSIONS))
             members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
         else:
-            owner_permissions = []
+            admins_permissions = []
             members_permissions = []
         members_permissions = members_permissions + _get_membership_permissions(membership)
         public_permissions = project.public_permissions if project.public_permissions is not None else []
         anon_permissions = project.anon_permissions if project.anon_permissions is not None else []
     elif user.is_authenticated():
-        owner_permissions = []
+        admins_permissions = []
         members_permissions = []
         public_permissions = project.public_permissions if project.public_permissions is not None else []
         anon_permissions = project.anon_permissions if project.anon_permissions is not None else []
     else:
-        owner_permissions = []
+        admins_permissions = []
         members_permissions = []
         public_permissions = []
         anon_permissions = project.anon_permissions if project.anon_permissions is not None else []
 
-    return set(owner_permissions + members_permissions + public_permissions + anon_permissions)
+    return set(admins_permissions + members_permissions + public_permissions + anon_permissions)
 
 
 def set_base_permissions_for_project(project):
     if project.is_private:
         project.anon_permissions = []
         project.public_permissions = []
-
     else:
-        """
-        If a project is public anonymous and registered users should have at least visualization permissions
-        """
+        # If a project is public anonymous and registered users should have at
+        # least visualization permissions.
         anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
         project.anon_permissions = list(set((project.anon_permissions or []) + anon_permissions))
         project.public_permissions = list(set((project.public_permissions or []) + anon_permissions))

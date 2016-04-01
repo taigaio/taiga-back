@@ -1,4 +1,4 @@
-{% trans user=user.get_full_name()|safe, changer=changer.get_full_name()|safe, project=project.name|safe, ref=snapshot.ref, subject=snapshot.subject|safe %}
+{% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject %}
 User Story deleted
 Hello {{ user }}, {{ changer }} has deleted a user story on {{ project }}
 User Story #{{ ref }} {{ subject }}

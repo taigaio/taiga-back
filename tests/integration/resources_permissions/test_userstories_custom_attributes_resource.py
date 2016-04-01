@@ -19,6 +19,7 @@
 from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
+from taiga.projects import choices as project_choices
 from taiga.projects.custom_attributes import serializers
 from taiga.permissions.permissions import (MEMBERS_PERMISSIONS,
                                            ANON_PERMISSIONS, USER_PERMISSIONS)
@@ -53,18 +54,23 @@ def data():
                                           anon_permissions=[],
                                           public_permissions=[],
                                           owner=m.project_owner)
+    m.blocked_project = f.ProjectFactory(is_private=True,
+                                         anon_permissions=[],
+                                         public_permissions=[],
+                                         owner=m.project_owner,
+                                         blocked_code=project_choices.BLOCKED_BY_STAFF)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
                                           user=m.project_member_with_perms,
                                           email=m.project_member_with_perms.email,
                                           role__project=m.public_project,
                                           role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+
     m.private_membership1 = f.MembershipFactory(project=m.private_project1,
                                                 user=m.project_member_with_perms,
                                                 email=m.project_member_with_perms.email,
                                                 role__project=m.private_project1,
                                                 role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
-
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_member_without_perms,
                         email=m.project_member_without_perms.email,
@@ -82,22 +88,37 @@ def data():
                         role__project=m.private_project2,
                         role__permissions=[])
 
+    m.blocked_membership = f.MembershipFactory(project=m.blocked_project,
+                                                user=m.project_member_with_perms,
+                                                email=m.project_member_with_perms.email,
+                                                role__project=m.blocked_project,
+                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    f.MembershipFactory(project=m.blocked_project,
+                        user=m.project_member_without_perms,
+                        email=m.project_member_without_perms.email,
+                        role__project=m.blocked_project,
+                        role__permissions=[])
+
     f.MembershipFactory(project=m.public_project,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
+
+    f.MembershipFactory(project=m.blocked_project,
+                        user=m.project_owner,
+                        is_admin=True)
 
     m.public_userstory_ca = f.UserStoryCustomAttributeFactory(project=m.public_project)
     m.private_userstory_ca1 = f.UserStoryCustomAttributeFactory(project=m.private_project1)
     m.private_userstory_ca2 = f.UserStoryCustomAttributeFactory(project=m.private_project2)
-
+    m.blocked_userstory_ca = f.UserStoryCustomAttributeFactory(project=m.blocked_project)
 
     m.public_user_story = f.UserStoryFactory(project=m.public_project,
                                              status__project=m.public_project)
@@ -105,10 +126,13 @@ def data():
                                                status__project=m.private_project1)
     m.private_user_story2 = f.UserStoryFactory(project=m.private_project2,
                                                status__project=m.private_project2)
+    m.blocked_user_story = f.UserStoryFactory(project=m.blocked_project,
+                                           status__project=m.blocked_project)
 
     m.public_user_story_cav = m.public_user_story.custom_attributes_values
     m.private_user_story_cav1 = m.private_user_story1.custom_attributes_values
     m.private_user_story_cav2 = m.private_user_story2.custom_attributes_values
+    m.blocked_user_story_cav = m.blocked_user_story.custom_attributes_values
 
     return m
 
@@ -121,6 +145,7 @@ def test_userstory_custom_attribute_retrieve(client, data):
     public_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.public_userstory_ca.pk})
     private1_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.private_userstory_ca1.pk})
     private2_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.private_userstory_ca2.pk})
+    blocked_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.blocked_userstory_ca.pk})
 
     users = [
         None,
@@ -136,12 +161,15 @@ def test_userstory_custom_attribute_retrieve(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private2_url, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_userstory_custom_attribute_create(client, data):
     public_url = reverse('userstory-custom-attributes-list')
     private1_url = reverse('userstory-custom-attributes-list')
     private2_url = reverse('userstory-custom-attributes-list')
+    blocked_url = reverse('userstory-custom-attributes-list')
 
     users = [
         None,
@@ -166,11 +194,17 @@ def test_userstory_custom_attribute_create(client, data):
     results = helper_test_http_method(client, 'post', private2_url, userstory_ca_data, users)
     assert results == [401, 403, 403, 403, 201]
 
+    userstory_ca_data = {"name": "test-new", "project": data.blocked_project.id}
+    userstory_ca_data = json.dumps(userstory_ca_data)
+    results = helper_test_http_method(client, 'post', blocked_url, userstory_ca_data, users)
+    assert results == [401, 403, 403, 403, 451]
+
 
 def test_userstory_custom_attribute_update(client, data):
     public_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.public_userstory_ca.pk})
     private1_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.private_userstory_ca1.pk})
     private2_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.private_userstory_ca2.pk})
+    blocked_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.blocked_userstory_ca.pk})
 
     users = [
         None,
@@ -198,11 +232,18 @@ def test_userstory_custom_attribute_update(client, data):
     results = helper_test_http_method(client, 'put', private2_url, userstory_ca_data, users)
     assert results == [401, 403, 403, 403, 200]
 
+    userstory_ca_data = serializers.UserStoryCustomAttributeSerializer(data.blocked_userstory_ca).data
+    userstory_ca_data["name"] = "test"
+    userstory_ca_data = json.dumps(userstory_ca_data)
+    results = helper_test_http_method(client, 'put', blocked_url, userstory_ca_data, users)
+    assert results == [401, 403, 403, 403, 451]
+
 
 def test_userstory_custom_attribute_delete(client, data):
     public_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.public_userstory_ca.pk})
     private1_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.private_userstory_ca1.pk})
     private2_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.private_userstory_ca2.pk})
+    blocked_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.blocked_userstory_ca.pk})
 
     users = [
         None,
@@ -218,6 +259,8 @@ def test_userstory_custom_attribute_delete(client, data):
     assert results == [401, 403, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', private2_url, None, users)
     assert results == [401, 403, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 403, 451]
 
 
 def test_userstory_custom_attribute_list(client, data):
@@ -239,12 +282,12 @@ def test_userstory_custom_attribute_list(client, data):
 
     client.login(data.project_member_with_perms)
     response = client.json.get(url)
-    assert len(response.data) == 3
+    assert len(response.data) == 4
     assert response.status_code == 200
 
     client.login(data.project_owner)
     response = client.json.get(url)
-    assert len(response.data) == 3
+    assert len(response.data) == 4
     assert response.status_code == 200
 
 
@@ -252,6 +295,7 @@ def test_userstory_custom_attribute_patch(client, data):
     public_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.public_userstory_ca.pk})
     private1_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.private_userstory_ca1.pk})
     private2_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.private_userstory_ca2.pk})
+    blocked_url = reverse('userstory-custom-attributes-detail', kwargs={"pk": data.blocked_userstory_ca.pk})
 
     users = [
         None,
@@ -267,6 +311,8 @@ def test_userstory_custom_attribute_patch(client, data):
     assert results == [401, 403, 403, 403, 200]
     results = helper_test_http_method(client, 'patch', private2_url, '{"name": "Test"}', users)
     assert results == [401, 403, 403, 403, 200]
+    results = helper_test_http_method(client, 'patch', blocked_url, '{"name": "Test"}', users)
+    assert results == [401, 403, 403, 403, 451]
 
 
 def test_userstory_custom_attribute_action_bulk_update_order(client, data):
@@ -301,6 +347,12 @@ def test_userstory_custom_attribute_action_bulk_update_order(client, data):
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 403, 204]
 
+    post_data = json.dumps({
+        "bulk_userstory_custom_attributes": [(1,2)],
+        "project": data.blocked_project.pk
+    })
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 451]
 
 
 #########################################################
@@ -315,6 +367,8 @@ def test_userstory_custom_attributes_values_retrieve(client, data):
                                     "user_story_id": data.private_user_story1.pk})
     private_url2 = reverse('userstory-custom-attributes-values-detail', kwargs={
                                     "user_story_id": data.private_user_story2.pk})
+    blocked_url = reverse('userstory-custom-attributes-values-detail', kwargs={
+                                    "user_story_id": data.blocked_user_story.pk})
 
     users = [
         None,
@@ -330,6 +384,8 @@ def test_userstory_custom_attributes_values_retrieve(client, data):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_userstory_custom_attributes_values_update(client, data):
@@ -339,7 +395,8 @@ def test_userstory_custom_attributes_values_update(client, data):
                                     "user_story_id": data.private_user_story1.pk})
     private_url2 = reverse('userstory-custom-attributes-values-detail', kwargs={
                                     "user_story_id": data.private_user_story2.pk})
-
+    blocked_url = reverse('userstory-custom-attributes-values-detail', kwargs={
+                                    "user_story_id": data.blocked_user_story.pk})
     users = [
         None,
         data.registered_user,
@@ -366,6 +423,12 @@ def test_userstory_custom_attributes_values_update(client, data):
     results = helper_test_http_method(client, 'put', private_url2, user_story_data, users)
     assert results == [401, 403, 403, 200, 200]
 
+    user_story_data = serializers.UserStoryCustomAttributesValuesSerializer(data.blocked_user_story_cav).data
+    user_story_data["attributes_values"] = {str(data.blocked_userstory_ca.pk): "test"}
+    user_story_data = json.dumps(user_story_data)
+    results = helper_test_http_method(client, 'put', blocked_url, user_story_data, users)
+    assert results == [401, 403, 403, 451, 451]
+
 
 def test_userstory_custom_attributes_values_patch(client, data):
     public_url = reverse('userstory-custom-attributes-values-detail', kwargs={
@@ -374,7 +437,8 @@ def test_userstory_custom_attributes_values_patch(client, data):
                                     "user_story_id": data.private_user_story1.pk})
     private_url2 = reverse('userstory-custom-attributes-values-detail', kwargs={
                                     "user_story_id": data.private_user_story2.pk})
-
+    blocked_url = reverse('userstory-custom-attributes-values-detail', kwargs={
+                                    "user_story_id": data.blocked_user_story.pk})
     users = [
         None,
         data.registered_user,
@@ -397,3 +461,8 @@ def test_userstory_custom_attributes_values_patch(client, data):
                              "version": data.private_user_story2.version})
     results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
     assert results == [401, 403, 403, 200, 200]
+
+    patch_data = json.dumps({"attributes_values": {str(data.blocked_userstory_ca.pk): "test"},
+                             "version": data.blocked_user_story.version})
+    results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+    assert results == [401, 403, 403, 451, 451]

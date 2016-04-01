@@ -15,6 +15,7 @@ from taiga.users import models
 from taiga.users.serializers import LikedObjectSerializer, VotedObjectSerializer
 from taiga.auth.tokens import get_token_for_user
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.projects import choices as project_choices
 from taiga.users.services import get_watched_list, get_voted_list, get_liked_list
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.models import NotifyPolicy
@@ -152,6 +153,18 @@ def test_delete_self_user(client):
     assert user.full_name == "Deleted user"
 
 
+def test_delete_self_user_blocking_projects(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    url = reverse('users-detail', kwargs={"pk": user.pk})
+
+    assert project.blocked_code == None
+    client.login(user)
+    response = client.delete(url)
+    project = user.owned_projects.first()
+    assert project.blocked_code == project_choices.BLOCKED_BY_OWNER_LEAVING
+
+
 def test_cancel_self_user_with_valid_token(client):
     user = f.UserFactory.create()
     url = reverse('users-cancel')
@@ -213,8 +226,6 @@ def test_change_avatar_with_long_file_name(client):
         client.login(user)
         post_data = {'avatar': avatar}
         response = client.post(url, post_data)
-
-        print(response.data)
 
         assert response.status_code == 200
 
@@ -487,6 +498,7 @@ def test_get_watched_list_valid_info_for_project():
     assert project_watch_info["project_name"] == None
     assert project_watch_info["project_slug"] == None
     assert project_watch_info["project_is_private"] == None
+    assert project_watch_info["project_blocked_code"] == None
     assert project_watch_info["assigned_to_username"] == None
     assert project_watch_info["assigned_to_full_name"] == None
     assert project_watch_info["assigned_to_photo"] == None
@@ -546,6 +558,7 @@ def test_get_liked_list_valid_info():
     assert project_like_info["project_name"] == None
     assert project_like_info["project_slug"] == None
     assert project_like_info["project_is_private"] == None
+    assert project_like_info["project_blocked_code"] == None
     assert project_like_info["assigned_to_username"] == None
     assert project_like_info["assigned_to_full_name"] == None
     assert project_like_info["assigned_to_photo"] == None
@@ -599,6 +612,7 @@ def test_get_watched_list_valid_info_for_not_project_types():
         assert instance_watch_info["project_name"] == instance.project.name
         assert instance_watch_info["project_slug"] == instance.project.slug
         assert instance_watch_info["project_is_private"] == instance.project.is_private
+        assert instance_watch_info["project_blocked_code"] == instance.project.blocked_code
         assert instance_watch_info["assigned_to_username"] == instance.assigned_to.username
         assert instance_watch_info["assigned_to_full_name"] == instance.assigned_to.full_name
         assert instance_watch_info["assigned_to_photo"] != ""
@@ -655,6 +669,7 @@ def test_get_voted_list_valid_info():
         assert instance_vote_info["project_name"] == instance.project.name
         assert instance_vote_info["project_slug"] == instance.project.slug
         assert instance_vote_info["project_is_private"] == instance.project.is_private
+        assert instance_vote_info["project_blocked_code"] == instance.project.blocked_code
         assert instance_vote_info["assigned_to_username"] == instance.assigned_to.username
         assert instance_vote_info["assigned_to_full_name"] == instance.assigned_to.full_name
         assert instance_vote_info["assigned_to_photo"] != ""

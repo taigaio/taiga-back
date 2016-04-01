@@ -20,7 +20,7 @@ import hashlib
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import get_valid_filename
@@ -42,7 +42,7 @@ class Attachment(models.Model):
                                      verbose_name=_("content type"))
     object_id = models.PositiveIntegerField(null=False, blank=False,
                                             verbose_name=_("object id"))
-    content_object = generic.GenericForeignKey("content_type", "object_id")
+    content_object = GenericForeignKey("content_type", "object_id")
     created_date = models.DateTimeField(null=False, blank=False,
                                         verbose_name=_("created date"),
                                         default=timezone.now)

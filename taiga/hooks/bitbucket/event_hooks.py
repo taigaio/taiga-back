@@ -40,19 +40,16 @@ class PushEventHook(BaseEventHook):
 
         changes = self.payload.get("push", {}).get('changes', [])
         for change in filter(None, changes):
-            new = change.get("new", None)
-            if not new:
+            commits = change.get("commits", [])
+            if not commits:
                 continue
 
-            target = new.get("target", None)
-            if not target:
-                continue
+            for commit in commits:
+                message = commit.get("message", None)
+                if not message:
+                    continue
 
-            message = target.get("message", None)
-            if not message:
-                continue
-
-            self._process_message(message, None)
+                self._process_message(message, None)
 
     def _process_message(self, message, bitbucket_user):
         """

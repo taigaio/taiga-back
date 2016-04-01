@@ -1,6 +1,19 @@
 # Changelog #
 
 
+## 2.0.0 Pulsatilla Patens (2016-04-04)
+
+### Features
+- Ability to create url custom fields. (thanks to [@astagi](https://github.com/astagi)).
+- Blocked projects support
+- Transfer projects ownership support
+- Customizable max private and public projects per user
+- Customizable max of memberships per owned private and public projects
+
+### Misc
+- Lots of small and not so small bugfixes.
+
+
 ## 1.10.0 Dryas Octopetala (2016-01-30)
 
 ### Features
@@ -10,7 +23,7 @@
 - Filter projects list by
     - is_looking_for_people
     - is_featured
-    - is_backlog_activated 
+    - is_backlog_activated
     - is_kanban_activated
 - Search projects by text query (order by ranking name > tags > description)
 - Order projects list:

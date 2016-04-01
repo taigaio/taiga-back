@@ -37,7 +37,9 @@ from .logo import get_logo_big_thumbnail_url
 
 from .members import create_members_in_bulk
 from .members import get_members_from_bulk
-from .members import remove_user_from_project, project_has_valid_owners, can_user_leave_project
+from .members import remove_user_from_project, project_has_valid_admins, can_user_leave_project
+from .members import get_max_memberships_for_project, get_total_project_memberships
+from .members import check_if_project_privacity_can_be_changed
 
 from .modules_config import get_modules_config
 
@@ -46,3 +48,7 @@ from .stats import get_stats_for_project
 from .stats import get_member_stats_for_project
 
 from .tags_colors import update_project_tags_colors_handler
+from .modules_config import get_modules_config
+
+from .transfer import request_project_transfer, start_project_transfer
+from .transfer import accept_project_transfer, reject_project_transfer

@@ -17,7 +17,7 @@
 
 from taiga.base.api.permissions import TaigaResourcePermission
 from taiga.base.api.permissions import HasProjectPerm
-from taiga.base.api.permissions import IsProjectOwner
+from taiga.base.api.permissions import IsProjectAdmin
 from taiga.base.api.permissions import AllowAny
 from taiga.base.api.permissions import IsSuperUser
 
@@ -27,39 +27,39 @@ from taiga.base.api.permissions import IsSuperUser
 #######################################################
 
 class UserStoryCustomAttributePermission(TaigaResourcePermission):
-    enought_perms = IsProjectOwner() | IsSuperUser()
+    enought_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_project')
-    create_perms = IsProjectOwner()
-    update_perms = IsProjectOwner()
-    partial_update_perms = IsProjectOwner()
-    destroy_perms = IsProjectOwner()
+    create_perms = IsProjectAdmin()
+    update_perms = IsProjectAdmin()
+    partial_update_perms = IsProjectAdmin()
+    destroy_perms = IsProjectAdmin()
     list_perms = AllowAny()
-    bulk_update_order_perms = IsProjectOwner()
+    bulk_update_order_perms = IsProjectAdmin()
 
 
 class TaskCustomAttributePermission(TaigaResourcePermission):
-    enought_perms = IsProjectOwner() | IsSuperUser()
+    enought_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_project')
-    create_perms = IsProjectOwner()
-    update_perms = IsProjectOwner()
-    partial_update_perms = IsProjectOwner()
-    destroy_perms = IsProjectOwner()
+    create_perms = IsProjectAdmin()
+    update_perms = IsProjectAdmin()
+    partial_update_perms = IsProjectAdmin()
+    destroy_perms = IsProjectAdmin()
     list_perms = AllowAny()
-    bulk_update_order_perms = IsProjectOwner()
+    bulk_update_order_perms = IsProjectAdmin()
 
 
 class IssueCustomAttributePermission(TaigaResourcePermission):
-    enought_perms = IsProjectOwner() | IsSuperUser()
+    enought_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_project')
-    create_perms = IsProjectOwner()
-    update_perms = IsProjectOwner()
-    partial_update_perms = IsProjectOwner()
-    destroy_perms = IsProjectOwner()
+    create_perms = IsProjectAdmin()
+    update_perms = IsProjectAdmin()
+    partial_update_perms = IsProjectAdmin()
+    destroy_perms = IsProjectAdmin()
     list_perms = AllowAny()
-    bulk_update_order_perms = IsProjectOwner()
+    bulk_update_order_perms = IsProjectAdmin()
 
 
 ######################################################
@@ -67,7 +67,7 @@ class IssueCustomAttributePermission(TaigaResourcePermission):
 #######################################################
 
 class UserStoryCustomAttributesValuesPermission(TaigaResourcePermission):
-    enought_perms = IsProjectOwner() | IsSuperUser()
+    enought_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_us')
     update_perms = HasProjectPerm('modify_us')
@@ -75,7 +75,7 @@ class UserStoryCustomAttributesValuesPermission(TaigaResourcePermission):
 
 
 class TaskCustomAttributesValuesPermission(TaigaResourcePermission):
-    enought_perms = IsProjectOwner() | IsSuperUser()
+    enought_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_tasks')
     update_perms = HasProjectPerm('modify_task')
@@ -83,7 +83,7 @@ class TaskCustomAttributesValuesPermission(TaigaResourcePermission):
 
 
 class IssueCustomAttributesValuesPermission(TaigaResourcePermission):
-    enought_perms = IsProjectOwner() | IsSuperUser()
+    enought_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_issues')
     update_perms = HasProjectPerm('modify_issue')

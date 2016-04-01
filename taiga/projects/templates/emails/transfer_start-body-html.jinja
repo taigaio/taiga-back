@@ -1,0 +1,23 @@
+{% extends "emails/base-body-html.jinja" %}
+
+{% block body %}
+    {% trans owner_name=project.owner.get_full_name(), receiver_name=receiver.get_full_name(), project_name=project.name %}
+        <p>Hi {{receiver_name}},</p>
+        <p>{{ owner_name }}, the current project owner at "{{project_name}}" would like you to become the new project owner.</p>
+    {% endtrans %}
+
+    {% if reason %}
+        {% trans owner_name=project.owner.get_full_name() %}
+        <p>{{ owner_name }} says:</p>
+        {% endtrans %}
+
+        <p>{{ reason }}</p>
+    {% endif %}
+
+    {% trans %}
+        <p>Please, click on "Continue" to either accept or reject this proposal.</p>
+    {% endtrans %}
+
+    <a class="button" href="{{ resolve_front_url("project-transfer", project.slug, project.transfer_token) }}"
+       title="{{ _("Continue") }}">{{ _("Continue") }}</a>
+{% endblock %}

@@ -64,11 +64,11 @@ def test_owner_member_get_user_project_permissions():
     project.anon_permissions = ["test1"]
     project.public_permissions = ["test2"]
     role = factories.RoleFactory(permissions=["test3"])
-    factories.MembershipFactory(user=user1, project=project, role=role, is_owner=True)
+    factories.MembershipFactory(user=user1, project=project, role=role, is_admin=True)
 
     expected_perms = set(
         ["test1", "test2", "test3"] +
-        [x[0] for x in permissions.OWNERS_PERMISSIONS] +
+        [x[0] for x in permissions.ADMINS_PERMISSIONS] +
         [x[0] for x in permissions.MEMBERS_PERMISSIONS]
     )
     assert service.get_user_project_permissions(user1, project) == expected_perms

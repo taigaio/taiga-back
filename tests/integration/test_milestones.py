@@ -33,7 +33,7 @@ def test_update_milestone_with_userstories_list(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     role = f.RoleFactory.create(project=project)
-    f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
     sprint = f.MilestoneFactory.create(project=project, owner=user)
     f.PointsFactory.create(project=project, value=None)
     us = f.UserStoryFactory.create(project=project, owner=user)
@@ -54,7 +54,7 @@ def test_list_milestones_taiga_info_headers(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     role = f.RoleFactory.create(project=project)
-    f.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
 
     f.MilestoneFactory.create(project=project, owner=user, closed=True)
     f.MilestoneFactory.create(project=project, owner=user, closed=True)

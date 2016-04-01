@@ -30,14 +30,14 @@ admin.site.unregister(Group)
 
 class RoleAdmin(admin.ModelAdmin):
     list_display = ["name"]
-    filter_horizontal = ('permissions',)
+    filter_horizontal = ("permissions",)
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        if db_field.name == 'permissions':
-            qs = kwargs.get('queryset', db_field.rel.to.objects)
+        if db_field.name == "permissions":
+            qs = kwargs.get("queryset", db_field.rel.to.objects)
             # Avoid a major performance hit resolving permission names which
             # triggers a content_type load:
-            kwargs['queryset'] = qs.select_related('content_type')
+            kwargs["queryset"] = qs.select_related("content_type")
         return super().formfield_for_manytomany(
             db_field, request=request, **kwargs)
 
@@ -47,18 +47,21 @@ class RoleAdmin(admin.ModelAdmin):
 
 class UserAdmin(DjangoUserAdmin):
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        (_('Personal info'), {'fields': ('full_name', 'email', 'bio', 'photo')}),
-        (_('Extra info'), {'fields': ('color', 'lang', 'timezone', 'token', 'colorize_tags', 'email_token', 'new_email')}),
-        (_('Permissions'), {'fields': ('is_active', 'is_superuser',)}),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        (None, {"fields": ("username", "password")}),
+        (_("Personal info"), {"fields": ("full_name", "email", "bio", "photo")}),
+        (_("Extra info"), {"fields": ("color", "lang", "timezone", "token", "colorize_tags",
+                                      "email_token", "new_email")}),
+        (_("Permissions"), {"fields": ("is_active", "is_superuser")}),
+        (_("Restrictions"), {"fields": (("max_private_projects", "max_memberships_private_projects"),
+                                        ("max_public_projects", "max_memberships_public_projects"))}),
+        (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
     form = UserChangeForm
     add_form = UserCreationForm
-    list_display = ('username', 'email', 'full_name')
-    list_filter = ('is_superuser', 'is_active')
-    search_fields = ('username', 'full_name', 'email')
-    ordering = ('username',)
+    list_display = ("username", "email", "full_name")
+    list_filter = ("is_superuser", "is_active")
+    search_fields = ("username", "full_name", "email")
+    ordering = ("username",)
     filter_horizontal = ()
 
 class RoleInline(admin.TabularInline):

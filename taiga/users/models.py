@@ -15,18 +15,22 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from importlib import import_module
+
 import random
 import re
-import uuid
 
 from django.apps import apps
+from django.apps.config import MODELS_MODULE_NAME
+from django.conf import settings
+from django.contrib.auth.models import UserManager, AbstractBaseUser
 from django.contrib.contenttypes.models import ContentType
+from django.core import validators
+from django.core.exceptions import AppRegistryNotReady
 from django.db import models
 from django.dispatch import receiver
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import UserManager, AbstractBaseUser
-from django.core import validators
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 
 from django_pgjson.fields import JsonField
 from djorm_pgarray.fields import TextArrayField
@@ -35,9 +39,45 @@ from taiga.auth.tokens import get_token_for_user
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.files import get_file_path
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+from taiga.projects.choices import BLOCKED_BY_OWNER_LEAVING
 from taiga.projects.notifications.choices import NotifyLevel
 
-from easy_thumbnails.files import get_thumbnailer
+
+def get_user_model_safe():
+    """
+    Fetches the user model using the app registry.
+    This doesn't require that an app with the given app label exists,
+    which makes it safe to call when the registry is being populated.
+    All other methods to access models might raise an exception about the
+    registry not being ready yet.
+    Raises LookupError if model isn't found.
+
+    Based on:               https://github.com/django-oscar/django-oscar/blob/1.0/oscar/core/loading.py#L310-L340
+    Ongoing Django issue:   https://code.djangoproject.com/ticket/22872
+    """
+    user_app, user_model = settings.AUTH_USER_MODEL.split('.')
+
+    try:
+        return apps.get_model(user_app, user_model)
+    except AppRegistryNotReady:
+        if apps.apps_ready and not apps.models_ready:
+            # If this function is called while `apps.populate()` is
+            # loading models, ensure that the module that defines the
+            # target model has been imported and try looking the model up
+            # in the app registry. This effectively emulates
+            # `from path.to.app.models import Model` where we use
+            # `Model = get_model('app', 'Model')` instead.
+            app_config = apps.get_app_config(user_app)
+            # `app_config.import_models()` cannot be used here because it
+            # would interfere with `apps.populate()`.
+            import_module('%s.%s' % (app_config.name, MODELS_MODULE_NAME))
+            # In order to account for case-insensitivity of model_name,
+            # look up the model through a private API of the app registry.
+            return apps.get_registered_model(user_app, user_model)
+        else:
+            # This must be a different case (e.g. the model really doesn't
+            # exist). We just re-raise the exception.
+            raise
 
 
 def generate_random_hex_color():
@@ -51,11 +91,11 @@ def get_user_file_path(instance, filename):
 class PermissionsMixin(models.Model):
     """
     A mixin class that adds the fields and methods necessary to support
-    Django's Permission model using the ModelBackend.
+    Django"s Permission model using the ModelBackend.
     """
-    is_superuser = models.BooleanField(_('superuser status'), default=False,
-        help_text=_('Designates that this user has all permissions without '
-                    'explicitly assigning them.'))
+    is_superuser = models.BooleanField(_("superuser status"), default=False,
+        help_text=_("Designates that this user has all permissions without "
+                    "explicitly assigning them."))
 
     class Meta:
         abstract = True
@@ -84,25 +124,25 @@ class PermissionsMixin(models.Model):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(_('username'), max_length=255, unique=True,
-        help_text=_('Required. 30 characters or fewer. Letters, numbers and '
-                    '/./-/_ characters'),
+    username = models.CharField(_("username"), max_length=255, unique=True,
+        help_text=_("Required. 30 characters or fewer. Letters, numbers and "
+                    "/./-/_ characters"),
         validators=[
-            validators.RegexValidator(re.compile('^[\w.-]+$'), _('Enter a valid username.'), 'invalid')
+            validators.RegexValidator(re.compile("^[\w.-]+$"), _("Enter a valid username."), "invalid")
         ])
-    email = models.EmailField(_('email address'), max_length=255, blank=True, unique=True)
-    is_active = models.BooleanField(_('active'), default=True,
-        help_text=_('Designates whether this user should be treated as '
-                    'active. Unselect this instead of deleting accounts.'))
+    email = models.EmailField(_("email address"), max_length=255, blank=True, unique=True)
+    is_active = models.BooleanField(_("active"), default=True,
+        help_text=_("Designates whether this user should be treated as "
+                    "active. Unselect this instead of deleting accounts."))
 
-    full_name = models.CharField(_('full name'), max_length=256, blank=True)
+    full_name = models.CharField(_("full name"), max_length=256, blank=True)
     color = models.CharField(max_length=9, null=False, blank=True, default=generate_random_hex_color,
                              verbose_name=_("color"))
     bio = models.TextField(null=False, blank=True, default="", verbose_name=_("biography"))
     photo = models.FileField(upload_to=get_user_file_path,
                              max_length=500, null=True, blank=True,
                              verbose_name=_("photo"))
-    date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
+    date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
     lang = models.CharField(max_length=20, null=True, blank=True, default="",
                             verbose_name=_("default language"))
     theme = models.CharField(max_length=100, null=True, blank=True, default="",
@@ -117,16 +157,33 @@ class User(AbstractBaseUser, PermissionsMixin):
     email_token = models.CharField(max_length=200, null=True, blank=True, default=None,
                          verbose_name=_("email token"))
 
-    new_email = models.EmailField(_('new email address'), null=True, blank=True)
+    new_email = models.EmailField(_("new email address"), null=True, blank=True)
 
     is_system = models.BooleanField(null=False, blank=False, default=False)
+
+
+    max_private_projects = models.IntegerField(null=True, blank=True,
+                                               default=settings.MAX_PRIVATE_PROJECTS_PER_USER,
+                                               verbose_name=_("max number of owned private projects"))
+    max_public_projects = models.IntegerField(null=True, blank=True,
+                                              default=settings.MAX_PUBLIC_PROJECTS_PER_USER,
+                                              verbose_name=_("max number of owned public projects"))
+    max_memberships_private_projects = models.IntegerField(null=True, blank=True,
+                                                           default=settings.MAX_MEMBERSHIPS_PRIVATE_PROJECTS,
+                                                           verbose_name=_("max number of memberships for "
+                                                                          "each owned private project"))
+    max_memberships_public_projects = models.IntegerField(null=True, blank=True,
+                                                          default=settings.MAX_MEMBERSHIPS_PUBLIC_PROJECTS,
+                                                          verbose_name=_("max number of memberships for "
+                                                                         "each owned public project"))
+
     _cached_memberships = None
     _cached_liked_ids = None
     _cached_watched_ids = None
     _cached_notify_levels = None
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ["email"]
 
     objects = UserManager()
 
@@ -134,9 +191,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = "user"
         verbose_name_plural = "users"
         ordering = ["username"]
-        permissions = (
-            ("view_user", "Can view user"),
-        )
 
     def __str__(self):
         return self.get_full_name()
@@ -226,6 +280,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.save()
         self.auth_data.all().delete()
 
+        #Blocking all owned users
+        self.owned_projects.update(blocked_code=BLOCKED_BY_OWNER_LEAVING)
+
 
 class Role(models.Model):
     name = models.CharField(max_length=200, null=False, blank=False,
@@ -256,16 +313,13 @@ class Role(models.Model):
         verbose_name_plural = "roles"
         ordering = ["order", "slug"]
         unique_together = (("slug", "project"),)
-        permissions = (
-            ("view_role", "Can view role"),
-        )
 
     def __str__(self):
         return self.name
 
 
 class AuthData(models.Model):
-    user = models.ForeignKey('users.User', related_name="auth_data")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="auth_data")
     key = models.SlugField(max_length=50)
     value = models.CharField(max_length=300)
     extra = JsonField()

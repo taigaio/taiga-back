@@ -9,6 +9,7 @@ from taiga.base.utils import json
 from taiga.hooks.github import event_hooks
 from taiga.hooks.github.api import GitHubViewSet
 from taiga.hooks.exceptions import ActionSyntaxException
+from taiga.projects import choices as project_choices
 from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.models import UserStory
@@ -51,6 +52,24 @@ def test_ok_signature(client):
                            content_type="application/json")
 
     assert response.status_code == 204
+
+
+def test_blocked_project(client):
+    project = f.ProjectFactory(blocked_code=project_choices.BLOCKED_BY_STAFF)
+    f.ProjectModulesConfigFactory(project=project, config={
+        "github": {
+            "secret": "tpnIwJDz4e"
+        }
+    })
+
+    url = reverse("github-hook-list")
+    url = "%s?project=%s" % (url, project.id)
+    data = {"test:": "data"}
+    response = client.post(url, json.dumps(data),
+                           HTTP_X_HUB_SIGNATURE="sha1=3c8e83fdaa266f81c036ea0b71e98eb5e054581a",
+                           content_type="application/json")
+
+    assert response.status_code == 451
 
 
 def test_push_event_detected(client):
@@ -241,7 +260,7 @@ def test_issues_event_opened_issue(client):
     issue.project.default_severity = issue.severity
     issue.project.default_priority = issue.priority
     issue.project.save()
-    Membership.objects.create(user=issue.owner, project=issue.project, role=f.RoleFactory.create(project=issue.project), is_owner=True)
+    Membership.objects.create(user=issue.owner, project=issue.project, role=f.RoleFactory.create(project=issue.project), is_admin=True)
     notify_policy = NotifyPolicy.objects.get(user=issue.owner, project=issue.project)
     notify_policy.notify_level = NotifyLevel.all
     notify_policy.save()
@@ -438,7 +457,7 @@ def test_issues_event_bad_comment(client):
 
 def test_api_get_project_modules(client):
     project = f.create_project()
-    f.MembershipFactory(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory(project=project, user=project.owner, is_admin=True)
 
     url = reverse("projects-modules", args=(project.id,))
 
@@ -453,7 +472,7 @@ def test_api_get_project_modules(client):
 
 def test_api_patch_project_modules(client):
     project = f.create_project()
-    f.MembershipFactory(project=project, user=project.owner, is_owner=True)
+    f.MembershipFactory(project=project, user=project.owner, is_admin=True)
 
     url = reverse("projects-modules", args=(project.id,))
 

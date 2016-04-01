@@ -152,7 +152,7 @@ def test_params_validation_in_api_request(client, refmodels):
     project = factories.ProjectFactory.create(owner=user)
     seqname1 = refmodels.make_sequence_name(project)
     role = factories.RoleFactory.create(project=project)
-    factories.MembershipFactory.create(project=project, user=user, role=role, is_owner=True)
+    factories.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
 
     milestone = factories.MilestoneFactory.create(project=project)
     us = factories.UserStoryFactory.create(project=project)

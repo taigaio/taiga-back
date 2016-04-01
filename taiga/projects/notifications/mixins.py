@@ -14,15 +14,11 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 from functools import partial
 from operator import is_not
 
-from django.apps import apps
-from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from taiga.base import response
 from taiga.base.decorators import detail_route
@@ -34,8 +30,6 @@ from taiga.projects.notifications.utils import (attach_watchers_to_queryset,
     attach_is_watcher_to_queryset,
     attach_total_watchers_to_queryset)
 
-from taiga.users.models import User
-from . import models
 from . serializers import WatcherSerializer
 
 
@@ -45,9 +39,13 @@ class WatchedResourceMixin:
     Rest Framework resource mixin for resources susceptible
     to be notifiable about their changes.
 
-    NOTE: this mixin has hard dependency on HistoryMixin
+    NOTE:
+    - this mixin has hard dependency on HistoryMixin
     defined on history app and should be located always
     after it on inheritance definition.
+
+    - the classes using this mixing must have a method:
+    def pre_conditions_on_save(self, obj)
     """
 
     _not_notify = False
@@ -64,6 +62,7 @@ class WatchedResourceMixin:
     def watch(self, request, pk=None):
         obj = self.get_object()
         self.check_permissions(request, "watch", obj)
+        self.pre_conditions_on_save(obj)
         services.add_watcher(obj, request.user)
         return response.Ok()
 
@@ -71,6 +70,7 @@ class WatchedResourceMixin:
     def unwatch(self, request, pk=None):
         obj = self.get_object()
         self.check_permissions(request, "unwatch", obj)
+        self.pre_conditions_on_save(obj)
         services.remove_watcher(obj, request.user)
         return response.Ok()
 
@@ -218,9 +218,9 @@ class EditableWatchedResourceModelSerializer(WatchedResourceModelSerializer):
         adding_watcher_ids = list(new_watcher_ids.difference(old_watcher_ids))
         removing_watcher_ids = list(old_watcher_ids.difference(new_watcher_ids))
 
-        User = apps.get_model("users", "User")
-        adding_users = User.objects.filter(id__in=adding_watcher_ids)
-        removing_users = User.objects.filter(id__in=removing_watcher_ids)
+        User = get_user_model()
+        adding_users = get_user_model().objects.filter(id__in=adding_watcher_ids)
+        removing_users = get_user_model().objects.filter(id__in=removing_watcher_ids)
         for user in adding_users:
             services.add_watcher(obj, user)
 
@@ -233,13 +233,14 @@ class EditableWatchedResourceModelSerializer(WatchedResourceModelSerializer):
 
     def to_native(self, obj):
         #if watchers wasn't attached via the get_queryset of the viewset we need to manually add it
-        if obj is not None and not hasattr(obj, "watchers"):
-            obj.watchers = [user.id for user in obj.get_watchers()]
+        if obj is not None:
+            if not hasattr(obj, "watchers"):
+                obj.watchers = [user.id for user in obj.get_watchers()]
 
-        request = self.context.get("request", None)
-        user = request.user if request else None
-        if user and user.is_authenticated():
-            obj.is_watcher = user.id in obj.watchers
+            request = self.context.get("request", None)
+            user = request.user if request else None
+            if user and user.is_authenticated():
+                obj.is_watcher = user.id in obj.watchers
 
         return super(WatchedResourceModelSerializer, self).to_native(obj)
 
@@ -266,7 +267,7 @@ class WatchersViewSetMixin:
 
         try:
             self.object = resource.get_watchers().get(pk=pk)
-        except ObjectDoesNotExist: # or User.DoesNotExist
+        except ObjectDoesNotExist:  # or User.DoesNotExist
             return response.NotFound()
 
         serializer = self.get_serializer(self.object)

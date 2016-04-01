@@ -18,6 +18,7 @@
 import itertools
 import uuid
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals, Q
@@ -27,6 +28,7 @@ from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.utils.functional import cached_property
 
 from django_pgjson.fields import JsonField
 from djorm_pgarray.fields import TextArrayField
@@ -69,7 +71,7 @@ class Membership(models.Model):
                                 related_name="memberships")
     role = models.ForeignKey("users.Role", null=False, blank=False,
                              related_name="memberships")
-    is_owner = models.BooleanField(default=False, null=False, blank=False)
+    is_admin = models.BooleanField(default=False, null=False, blank=False)
 
     # Invitation metadata
     email = models.EmailField(max_length=255, default=None, null=True, blank=True,
@@ -215,6 +217,13 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     tags_colors = TextArrayField(dimension=2, default=[], null=False, blank=True,
                                  verbose_name=_("tags colors"))
 
+    transfer_token = models.CharField(max_length=255, null=True, blank=True, default=None,
+                                      verbose_name=_("project transfer token"))
+
+    blocked_code = models.CharField(null=True, blank=True, max_length=255,
+                            choices=choices.BLOCKING_CODES + settings.EXTRA_BLOCKING_CODES, default=None,
+                            verbose_name=_("blocked code"))
+
     #Totals:
     totals_updated_datetime = models.DateTimeField(null=False, blank=False, auto_now_add=True,
                                             verbose_name=_("updated date time"), db_index=True)
@@ -243,7 +252,6 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     total_activity_last_year = models.PositiveIntegerField(null=False, blank=False, default=0,
                                              verbose_name=_("activity last year"), db_index=True)
 
-    _cached_user_stories = None
     _importing = None
 
     class Meta:
@@ -277,6 +285,10 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                     break
                 slug = "{}-{}".format(base_slug, i)
             self.slug = slug
+
+        if not self.is_backlog_activated:
+            self.total_milestones = None
+            self.total_story_points = None
 
         if not self.videoconferences:
             self.videoconferences_extra_data = None
@@ -329,13 +341,9 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         if save:
             self.save()
 
-    @property
+    @cached_property
     def cached_user_stories(self):
-        print(1111111, self._cached_user_stories)
-        if self._cached_user_stories is None:
-            self._cached_user_stories = list(self.user_stories.all())
-
-        return self._cached_user_stories
+        return list(self.user_stories.all())
 
     def get_roles(self):
         return self.roles.all()

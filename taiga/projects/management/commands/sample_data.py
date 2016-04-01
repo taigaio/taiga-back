@@ -30,18 +30,18 @@ from sampledatahelper.helper import SampleDataHelper
 
 from taiga.users.models import *
 from taiga.permissions.permissions import ANON_PERMISSIONS
+from taiga.projects.choices import BLOCKED_BY_STAFF
 from taiga.projects.models import *
 from taiga.projects.milestones.models import *
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.services.stats import get_stats_for_project
-
 from taiga.projects.userstories.models import *
 from taiga.projects.tasks.models import *
 from taiga.projects.issues.models import *
 from taiga.projects.wiki.models import *
 from taiga.projects.attachments.models import *
 from taiga.projects.custom_attributes.models import *
-from taiga.projects.custom_attributes.choices import TYPES_CHOICES, TEXT_TYPE, MULTILINE_TYPE, DATE_TYPE
+from taiga.projects.custom_attributes.choices import TYPES_CHOICES, TEXT_TYPE, MULTILINE_TYPE, DATE_TYPE, URL_TYPE
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.likes.services import add_like
 from taiga.projects.votes.services import add_vote
@@ -94,11 +94,18 @@ SUBJECT_CHOICES = [
     "Support for bulk actions",
     "Migrate to Python 3 and milk a beautiful cow"]
 
+URL_CHOICES = [
+    "https://taiga.io",
+    "https://blog.taiga.io",
+    "https://tree.taiga.io",
+    "https://tribe.taiga.io"]
+
 BASE_USERS = getattr(settings, "SAMPLE_DATA_BASE_USERS", {})
 NUM_USERS = getattr(settings, "SAMPLE_DATA_NUM_USERS", 10)
 NUM_INVITATIONS =getattr(settings, "SAMPLE_DATA_NUM_INVITATIONS",  2)
 NUM_PROJECTS =getattr(settings, "SAMPLE_DATA_NUM_PROJECTS",  4)
 NUM_EMPTY_PROJECTS = getattr(settings, "SAMPLE_DATA_NUM_EMPTY_PROJECTS", 2)
+NUM_BLOCKED_PROJECTS = getattr(settings, "SAMPLE_DATA_NUM_BLOCKED_PROJECTS", 1)
 NUM_MILESTONES = getattr(settings, "SAMPLE_DATA_NUM_MILESTONES", (1, 5))
 NUM_USS = getattr(settings, "SAMPLE_DATA_NUM_USS", (3, 7))
 NUM_TASKS_FINISHED = getattr(settings, "SAMPLE_DATA_NUM_TASKS_FINISHED", (1, 5))
@@ -132,8 +139,19 @@ class Command(BaseCommand):
                 self.users.append(self.create_user(counter=x))
 
         # create project
-        for x in range(NUM_PROJECTS + NUM_EMPTY_PROJECTS):
-            project = self.create_project(x, is_private=(x in [2, 4] or self.sd.boolean()))
+        projects_range = range(NUM_PROJECTS + NUM_EMPTY_PROJECTS + NUM_BLOCKED_PROJECTS)
+        empty_projects_range = range(NUM_PROJECTS, NUM_PROJECTS + NUM_EMPTY_PROJECTS )
+        blocked_projects_range = range(
+            NUM_PROJECTS + NUM_EMPTY_PROJECTS,
+            NUM_PROJECTS + NUM_EMPTY_PROJECTS + NUM_BLOCKED_PROJECTS
+        )
+
+        for x in projects_range:
+            project = self.create_project(
+                x,
+                is_private=(x in [2, 4] or self.sd.boolean()),
+                blocked_code = BLOCKED_BY_STAFF if x in(blocked_projects_range) else None
+            )
 
             # added memberships
             computable_project_roles = set()
@@ -146,7 +164,7 @@ class Command(BaseCommand):
                 Membership.objects.create(email=user.email,
                                           project=project,
                                           role=role,
-                                          is_owner=self.sd.boolean(),
+                                          is_admin=self.sd.boolean(),
                                           user=user)
 
                 if role.computable:
@@ -159,7 +177,7 @@ class Command(BaseCommand):
                 Membership.objects.create(email=self.sd.email(),
                                           project=project,
                                           role=role,
-                                          is_owner=self.sd.boolean(),
+                                          is_admin=self.sd.boolean(),
                                           token=''.join(random.sample('abcdef0123456789', 10)))
 
                 if role.computable:
@@ -188,8 +206,8 @@ class Command(BaseCommand):
                                                         project=project,
                                                         order=i)
 
-
-            if x < NUM_PROJECTS:
+            # If the project isn't empty
+            if x not in empty_projects_range:
                 start_date = now() - datetime.timedelta(55)
 
                 # create milestones
@@ -281,6 +299,8 @@ class Command(BaseCommand):
             return self.sd.paragraphs(2, 4)
         if type == DATE_TYPE:
             return self.sd.future_date(min_distance=0, max_distance=365)
+        if type == URL_TYPE:
+            return self.sd.choice(URL_CHOICES)
         return None
 
     def create_bug(self, project):
@@ -449,7 +469,7 @@ class Command(BaseCommand):
 
         return milestone
 
-    def create_project(self, counter, is_private=None):
+    def create_project(self, counter, is_private=None, blocked_code=None):
         if is_private is None:
             is_private=self.sd.boolean()
 
@@ -467,7 +487,8 @@ class Command(BaseCommand):
                                          tags=self.sd.words(1, 10).split(" "),
                                          is_looking_for_people=counter in LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS,
                                          looking_for_people_note=self.sd.short_sentence(),
-                                         is_featured=counter in FEATURED_PROJECTS_POSITIONS)
+                                         is_featured=counter in FEATURED_PROJECTS_POSITIONS,
+                                         blocked_code=blocked_code)
 
         project.is_kanban_activated = True
         project.save()

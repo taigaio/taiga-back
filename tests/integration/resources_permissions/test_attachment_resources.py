@@ -5,6 +5,7 @@ from django.test.client import MULTIPART_CONTENT
 from taiga.base.utils import json
 
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.projects import choices as project_choices
 from taiga.projects.attachments.serializers import AttachmentSerializer
 
 from tests import factories as f
@@ -47,6 +48,11 @@ def data():
                                           anon_permissions=[],
                                           public_permissions=[],
                                           owner=m.project_owner)
+    m.blocked_project = f.ProjectFactory(is_private=True,
+                                         anon_permissions=[],
+                                         public_permissions=[],
+                                         owner=m.project_owner,
+                                         blocked_code=project_choices.BLOCKED_BY_STAFF)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
                                               user=m.project_member_with_perms,
@@ -68,19 +74,30 @@ def data():
                         user=m.project_member_without_perms,
                         role__project=m.private_project2,
                         role__permissions=[])
+    m.blocked_membership = f.MembershipFactory(project=m.blocked_project,
+                                                user=m.project_member_with_perms,
+                                                role__project=m.blocked_project,
+                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    f.MembershipFactory(project=m.blocked_project,
+                        user=m.project_member_without_perms,
+                        role__project=m.blocked_project,
+                        role__permissions=[])
 
     f.MembershipFactory(project=m.public_project,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_owner,
-                        is_owner=True)
+                        is_admin=True)
 
+    f.MembershipFactory(project=m.blocked_project,
+                    user=m.project_owner,
+                    is_admin=True)
     return m
 
 
@@ -96,6 +113,9 @@ def data_us(data):
     m.private_user_story2 = f.UserStoryFactory(project=data.private_project2, ref=9)
     m.private_user_story2_attachment = f.UserStoryAttachmentFactory(project=data.private_project2,
                                                                     content_object=m.private_user_story2)
+    m.blocked_user_story = f.UserStoryFactory(project=data.blocked_project, ref=13)
+    m.blocked_user_story_attachment = f.UserStoryAttachmentFactory(project=data.blocked_project,
+                                                                   content_object=m.blocked_user_story)
     return m
 
 
@@ -108,6 +128,8 @@ def data_task(data):
     m.private_task1_attachment = f.TaskAttachmentFactory(project=data.private_project1, content_object=m.private_task1)
     m.private_task2 = f.TaskFactory(project=data.private_project2, ref=10)
     m.private_task2_attachment = f.TaskAttachmentFactory(project=data.private_project2, content_object=m.private_task2)
+    m.blocked_task = f.TaskFactory(project=data.blocked_project, ref=14)
+    m.blocked_task_attachment = f.TaskAttachmentFactory(project=data.blocked_project, content_object=m.blocked_task)
     return m
 
 
@@ -120,6 +142,8 @@ def data_issue(data):
     m.private_issue1_attachment = f.IssueAttachmentFactory(project=data.private_project1, content_object=m.private_issue1)
     m.private_issue2 = f.IssueFactory(project=data.private_project2, ref=11)
     m.private_issue2_attachment = f.IssueAttachmentFactory(project=data.private_project2, content_object=m.private_issue2)
+    m.blocked_issue = f.IssueFactory(project=data.blocked_project, ref=11)
+    m.blocked_issue_attachment = f.IssueAttachmentFactory(project=data.blocked_project, content_object=m.blocked_issue)
     return m
 
 
@@ -132,6 +156,8 @@ def data_wiki(data):
     m.private_wiki1_attachment = f.WikiAttachmentFactory(project=data.private_project1, content_object=m.private_wiki1)
     m.private_wiki2 = f.WikiPageFactory(project=data.private_project2, slug=12)
     m.private_wiki2_attachment = f.WikiAttachmentFactory(project=data.private_project2, content_object=m.private_wiki2)
+    m.blocked_wiki = f.WikiPageFactory(project=data.blocked_project, slug=1)
+    m.blocked_wiki_attachment = f.WikiAttachmentFactory(project=data.blocked_project, content_object=m.blocked_wiki)
     return m
 
 
@@ -139,6 +165,7 @@ def test_user_story_attachment_retrieve(client, data, data_us):
     public_url = reverse('userstory-attachments-detail', kwargs={"pk": data_us.public_user_story_attachment.pk})
     private_url1 = reverse('userstory-attachments-detail', kwargs={"pk": data_us.private_user_story1_attachment.pk})
     private_url2 = reverse('userstory-attachments-detail', kwargs={"pk": data_us.private_user_story2_attachment.pk})
+    blocked_url = reverse('userstory-attachments-detail', kwargs={"pk": data_us.blocked_user_story_attachment.pk})
 
     users = [
         None,
@@ -153,6 +180,8 @@ def test_user_story_attachment_retrieve(client, data, data_us):
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
     assert results == [401, 403, 403, 200, 200]
 
 
@@ -160,6 +189,7 @@ def test_task_attachment_retrieve(client, data, data_task):
     public_url = reverse('task-attachments-detail', kwargs={"pk": data_task.public_task_attachment.pk})
     private_url1 = reverse('task-attachments-detail', kwargs={"pk": data_task.private_task1_attachment.pk})
     private_url2 = reverse('task-attachments-detail', kwargs={"pk": data_task.private_task2_attachment.pk})
+    blocked_url = reverse('task-attachments-detail', kwargs={"pk": data_task.blocked_task_attachment.pk})
 
     users = [
         None,
@@ -174,6 +204,8 @@ def test_task_attachment_retrieve(client, data, data_task):
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
     assert results == [401, 403, 403, 200, 200]
 
 
@@ -181,6 +213,7 @@ def test_issue_attachment_retrieve(client, data, data_issue):
     public_url = reverse('issue-attachments-detail', kwargs={"pk": data_issue.public_issue_attachment.pk})
     private_url1 = reverse('issue-attachments-detail', kwargs={"pk": data_issue.private_issue1_attachment.pk})
     private_url2 = reverse('issue-attachments-detail', kwargs={"pk": data_issue.private_issue2_attachment.pk})
+    blocked_url = reverse('issue-attachments-detail', kwargs={"pk": data_issue.blocked_issue_attachment.pk})
 
     users = [
         None,
@@ -196,12 +229,15 @@ def test_issue_attachment_retrieve(client, data, data_issue):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_wiki_attachment_retrieve(client, data, data_wiki):
     public_url = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.public_wiki_attachment.pk})
     private_url1 = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.private_wiki1_attachment.pk})
     private_url2 = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.private_wiki2_attachment.pk})
+    blocked_url = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.blocked_wiki_attachment.pk})
 
     users = [
         None,
@@ -216,6 +252,8 @@ def test_wiki_attachment_retrieve(client, data, data_wiki):
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
     assert results == [401, 403, 403, 200, 200]
 
 
@@ -226,7 +264,8 @@ def test_user_story_attachment_update(client, data, data_us):
                            args=[data_us.private_user_story1_attachment.pk])
     private_url2 = reverse("userstory-attachments-detail",
                            args=[data_us.private_user_story2_attachment.pk])
-
+    blocked_url = reverse("userstory-attachments-detail",
+                          args=[data_us.blocked_user_story_attachment.pk])
     users = [
         None,
         data.registered_user,
@@ -252,11 +291,16 @@ def test_user_story_attachment_update(client, data, data_us):
     # assert results == [401, 403, 403, 400, 400]
     assert results == [405, 405, 405, 405, 405]
 
+    results = helper_test_http_method(client, "put", blocked_url, attachment_data, users)
+    # assert results == [401, 403, 403, 400, 400]
+    assert results == [405, 405, 405, 405, 405]
+
 
 def test_task_attachment_update(client, data, data_task):
     public_url = reverse('task-attachments-detail', kwargs={"pk": data_task.public_task_attachment.pk})
     private_url1 = reverse('task-attachments-detail', kwargs={"pk": data_task.private_task1_attachment.pk})
     private_url2 = reverse('task-attachments-detail', kwargs={"pk": data_task.private_task2_attachment.pk})
+    blocked_url = reverse('task-attachments-detail', kwargs={"pk": data_task.blocked_task_attachment.pk})
 
     users = [
         None,
@@ -279,12 +323,16 @@ def test_task_attachment_update(client, data, data_task):
     results = helper_test_http_method(client, 'put', private_url2, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'put', blocked_url, attachment_data, users)
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
 
 
 def test_issue_attachment_update(client, data, data_issue):
     public_url = reverse('issue-attachments-detail', kwargs={"pk": data_issue.public_issue_attachment.pk})
     private_url1 = reverse('issue-attachments-detail', kwargs={"pk": data_issue.private_issue1_attachment.pk})
     private_url2 = reverse('issue-attachments-detail', kwargs={"pk": data_issue.private_issue2_attachment.pk})
+    blocked_url = reverse('issue-attachments-detail', kwargs={"pk": data_issue.blocked_issue_attachment.pk})
 
     users = [
         None,
@@ -307,12 +355,16 @@ def test_issue_attachment_update(client, data, data_issue):
     results = helper_test_http_method(client, 'put', private_url2, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'put', blocked_url, attachment_data, users)
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
 
 
 def test_wiki_attachment_update(client, data, data_wiki):
     public_url = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.public_wiki_attachment.pk})
     private_url1 = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.private_wiki1_attachment.pk})
     private_url2 = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.private_wiki2_attachment.pk})
+    blocked_url = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.blocked_wiki_attachment.pk})
 
     users = [
         None,
@@ -335,12 +387,16 @@ def test_wiki_attachment_update(client, data, data_wiki):
     results = helper_test_http_method(client, 'put', private_url2, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'put', blocked_url, attachment_data, users)
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
 
 
 def test_user_story_attachment_patch(client, data, data_us):
     public_url = reverse('userstory-attachments-detail', kwargs={"pk": data_us.public_user_story_attachment.pk})
     private_url1 = reverse('userstory-attachments-detail', kwargs={"pk": data_us.private_user_story1_attachment.pk})
     private_url2 = reverse('userstory-attachments-detail', kwargs={"pk": data_us.private_user_story2_attachment.pk})
+    blocked_url = reverse('userstory-attachments-detail', kwargs={"pk": data_us.blocked_user_story_attachment.pk})
 
     users = [
         None,
@@ -359,12 +415,15 @@ def test_user_story_attachment_patch(client, data, data_us):
     assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'patch', private_url2, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'patch', blocked_url, attachment_data, users)
+    assert results == [401, 403, 403, 451, 451]
 
 
 def test_task_attachment_patch(client, data, data_task):
     public_url = reverse('task-attachments-detail', kwargs={"pk": data_task.public_task_attachment.pk})
     private_url1 = reverse('task-attachments-detail', kwargs={"pk": data_task.private_task1_attachment.pk})
     private_url2 = reverse('task-attachments-detail', kwargs={"pk": data_task.private_task2_attachment.pk})
+    blocked_url = reverse('task-attachments-detail', kwargs={"pk": data_task.blocked_task_attachment.pk})
 
     users = [
         None,
@@ -383,12 +442,15 @@ def test_task_attachment_patch(client, data, data_task):
     assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'patch', private_url2, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'patch', blocked_url, attachment_data, users)
+    assert results == [401, 403, 403, 451, 451]
 
 
 def test_issue_attachment_patch(client, data, data_issue):
     public_url = reverse('issue-attachments-detail', kwargs={"pk": data_issue.public_issue_attachment.pk})
     private_url1 = reverse('issue-attachments-detail', kwargs={"pk": data_issue.private_issue1_attachment.pk})
     private_url2 = reverse('issue-attachments-detail', kwargs={"pk": data_issue.private_issue2_attachment.pk})
+    blocked_url = reverse('issue-attachments-detail', kwargs={"pk": data_issue.blocked_issue_attachment.pk})
 
     users = [
         None,
@@ -407,12 +469,15 @@ def test_issue_attachment_patch(client, data, data_issue):
     assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'patch', private_url2, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'patch', blocked_url, attachment_data, users)
+    assert results == [401, 403, 403, 451, 451]
 
 
 def test_wiki_attachment_patch(client, data, data_wiki):
     public_url = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.public_wiki_attachment.pk})
     private_url1 = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.private_wiki1_attachment.pk})
     private_url2 = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.private_wiki2_attachment.pk})
+    blocked_url = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.blocked_wiki_attachment.pk})
 
     users = [
         None,
@@ -431,12 +496,15 @@ def test_wiki_attachment_patch(client, data, data_wiki):
     assert results == [401, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'patch', private_url2, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'patch', blocked_url, attachment_data, users)
+    assert results == [401, 403, 403, 451, 451]
 
 
 def test_user_story_attachment_delete(client, data, data_us):
     public_url = reverse('userstory-attachments-detail', kwargs={"pk": data_us.public_user_story_attachment.pk})
     private_url1 = reverse('userstory-attachments-detail', kwargs={"pk": data_us.private_user_story1_attachment.pk})
     private_url2 = reverse('userstory-attachments-detail', kwargs={"pk": data_us.private_user_story2_attachment.pk})
+    blocked_url = reverse('userstory-attachments-detail', kwargs={"pk": data_us.blocked_user_story_attachment.pk})
 
     users = [
         None,
@@ -451,12 +519,15 @@ def test_user_story_attachment_delete(client, data, data_us):
     assert results == [401, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 451]
 
 
 def test_task_attachment_delete(client, data, data_task):
     public_url = reverse('task-attachments-detail', kwargs={"pk": data_task.public_task_attachment.pk})
     private_url1 = reverse('task-attachments-detail', kwargs={"pk": data_task.private_task1_attachment.pk})
     private_url2 = reverse('task-attachments-detail', kwargs={"pk": data_task.private_task2_attachment.pk})
+    blocked_url = reverse('task-attachments-detail', kwargs={"pk": data_task.blocked_task_attachment.pk})
 
     users = [
         None,
@@ -471,12 +542,15 @@ def test_task_attachment_delete(client, data, data_task):
     assert results == [401, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 451]
 
 
 def test_issue_attachment_delete(client, data, data_issue):
     public_url = reverse('issue-attachments-detail', kwargs={"pk": data_issue.public_issue_attachment.pk})
     private_url1 = reverse('issue-attachments-detail', kwargs={"pk": data_issue.private_issue1_attachment.pk})
     private_url2 = reverse('issue-attachments-detail', kwargs={"pk": data_issue.private_issue2_attachment.pk})
+    blocked_url = reverse('issue-attachments-detail', kwargs={"pk": data_issue.blocked_issue_attachment.pk})
 
     users = [
         None,
@@ -491,12 +565,15 @@ def test_issue_attachment_delete(client, data, data_issue):
     assert results == [401, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 451]
 
 
 def test_wiki_attachment_delete(client, data, data_wiki):
     public_url = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.public_wiki_attachment.pk})
     private_url1 = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.private_wiki1_attachment.pk})
     private_url2 = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.private_wiki2_attachment.pk})
+    blocked_url = reverse('wiki-attachments-detail', kwargs={"pk": data_wiki.blocked_wiki_attachment.pk})
 
     users = [
         None,
@@ -511,6 +588,8 @@ def test_wiki_attachment_delete(client, data, data_wiki):
     assert results == [401, 204]
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 451]
 
 
 def test_user_story_attachment_create(client, data, data_us):
@@ -536,6 +615,15 @@ def test_user_story_attachment_create(client, data, data_us):
                                       after_each_request=_after_each_request_hook)
     assert results == [401, 403, 403, 201, 201]
 
+    attachment_data = {"description": "test",
+                       "object_id": data_us.blocked_user_story_attachment.object_id,
+                       "project": data_us.blocked_user_story_attachment.project_id,
+                       "attached_file": SimpleUploadedFile("test.txt", b"test")}
+    results = helper_test_http_method(client, 'post', url, attachment_data, users,
+                                      content_type=MULTIPART_CONTENT,
+                                      after_each_request=_after_each_request_hook)
+    assert results == [401, 403, 403, 451, 451]
+
 
 def test_task_attachment_create(client, data, data_task):
     url = reverse('task-attachments-list')
@@ -559,6 +647,18 @@ def test_task_attachment_create(client, data, data_task):
                                       content_type=MULTIPART_CONTENT,
                                       after_each_request=_after_each_request_hook)
     assert results == [401, 403, 403, 201, 201]
+
+    attachment_data = {"description": "test",
+                       "object_id": data_task.blocked_task_attachment.object_id,
+                       "project": data_task.blocked_task_attachment.project_id,
+                       "attached_file": SimpleUploadedFile("test.txt", b"test")}
+
+    _after_each_request_hook = lambda: attachment_data["attached_file"].seek(0)
+
+    results = helper_test_http_method(client, 'post', url, attachment_data, users,
+                                      content_type=MULTIPART_CONTENT,
+                                      after_each_request=_after_each_request_hook)
+    assert results == [401, 403, 403, 451, 451]
 
 
 def test_issue_attachment_create(client, data, data_issue):
@@ -585,6 +685,19 @@ def test_issue_attachment_create(client, data, data_issue):
 
     assert results == [401, 403, 403, 201, 201]
 
+    attachment_data = {"description": "test",
+                       "object_id": data_issue.blocked_issue_attachment.object_id,
+                       "project": data_issue.blocked_issue_attachment.project_id,
+                       "attached_file": SimpleUploadedFile("test.txt", b"test")}
+
+    _after_each_request_hook = lambda: attachment_data["attached_file"].seek(0)
+
+    results = helper_test_http_method(client, 'post', url, attachment_data, users,
+                                      content_type=MULTIPART_CONTENT,
+                                      after_each_request=_after_each_request_hook)
+
+    assert results == [401, 403, 403, 451, 451]
+
 
 def test_wiki_attachment_create(client, data, data_wiki):
     url = reverse('wiki-attachments-list')
@@ -610,6 +723,19 @@ def test_wiki_attachment_create(client, data, data_wiki):
 
     assert results == [401, 201, 201, 201, 201]
 
+    attachment_data = {"description": "test",
+                       "object_id": data_wiki.blocked_wiki_attachment.object_id,
+                       "project": data_wiki.blocked_wiki_attachment.project_id,
+                       "attached_file": SimpleUploadedFile("test.txt", b"test")}
+
+    _after_each_request_hook = lambda: attachment_data["attached_file"].seek(0)
+
+    results = helper_test_http_method(client, 'post', url, attachment_data, users,
+                                      content_type=MULTIPART_CONTENT,
+                                      after_each_request=_after_each_request_hook)
+
+    assert results == [401, 403, 403, 451, 451]
+
 
 def test_user_story_attachment_list(client, data, data_us):
     url = reverse('userstory-attachments-list')
@@ -623,7 +749,7 @@ def test_user_story_attachment_list(client, data, data_us):
     ]
 
     results = helper_test_http_method_and_count(client, 'get', url, None, users)
-    assert results == [(200, 2), (200, 2), (200, 2), (200, 3), (200, 3)]
+    assert results == [(200, 2), (200, 2), (200, 2), (200, 4), (200, 4)]
 
 
 def test_task_attachment_list(client, data, data_task):
@@ -638,7 +764,7 @@ def test_task_attachment_list(client, data, data_task):
     ]
 
     results = helper_test_http_method_and_count(client, 'get', url, None, users)
-    assert results == [(200, 2), (200, 2), (200, 2), (200, 3), (200, 3)]
+    assert results == [(200, 2), (200, 2), (200, 2), (200, 4), (200, 4)]
 
 
 def test_issue_attachment_list(client, data, data_issue):
@@ -653,7 +779,7 @@ def test_issue_attachment_list(client, data, data_issue):
     ]
 
     results = helper_test_http_method_and_count(client, 'get', url, None, users)
-    assert results == [(200, 2), (200, 2), (200, 2), (200, 3), (200, 3)]
+    assert results == [(200, 2), (200, 2), (200, 2), (200, 4), (200, 4)]
 
 
 def test_wiki_attachment_list(client, data, data_wiki):
@@ -668,4 +794,4 @@ def test_wiki_attachment_list(client, data, data_wiki):
     ]
 
     results = helper_test_http_method_and_count(client, 'get', url, None, users)
-    assert results == [(200, 2), (200, 2), (200, 2), (200, 3), (200, 3)]
+    assert results == [(200, 2), (200, 2), (200, 2), (200, 4), (200, 4)]

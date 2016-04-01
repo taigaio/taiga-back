@@ -30,7 +30,7 @@ pytestmark = pytest.mark.django_db
 def test_watch_project(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     url = reverse("projects-watch", args=(project.id,))
 
     client.login(user)
@@ -42,7 +42,7 @@ def test_watch_project(client):
 def test_watch_project_with_valid_notify_level(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     url = reverse("projects-watch", args=(project.id,))
 
     client.login(user)
@@ -57,7 +57,7 @@ def test_watch_project_with_valid_notify_level(client):
 def test_watch_project_with_invalid_notify_level(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     url = reverse("projects-watch", args=(project.id,))
 
     client.login(user)
@@ -73,7 +73,7 @@ def test_watch_project_with_invalid_notify_level(client):
 def test_unwatch_project(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     url = reverse("projects-unwatch", args=(project.id,))
 
     client.login(user)
@@ -85,7 +85,7 @@ def test_unwatch_project(client):
 def test_list_project_watchers(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     f.WatchedFactory.create(content_object=project, user=user)
     url = reverse("project-watchers-list", args=(project.id,))
 
@@ -99,7 +99,7 @@ def test_list_project_watchers(client):
 def test_get_project_watcher(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     watch = f.WatchedFactory.create(content_object=project, user=user)
     url = reverse("project-watchers-detail", args=(project.id, watch.user.id))
 
@@ -113,7 +113,7 @@ def test_get_project_watcher(client):
 def test_get_project_watchers(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     url = reverse("projects-detail", args=(project.id,))
 
     f.WatchedFactory.create(content_object=project, user=user)

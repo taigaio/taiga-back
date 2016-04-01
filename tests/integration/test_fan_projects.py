@@ -27,7 +27,7 @@ pytestmark = pytest.mark.django_db
 def test_like_project(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     url = reverse("projects-like", args=(project.id,))
 
     client.login(user)
@@ -39,7 +39,7 @@ def test_like_project(client):
 def test_unlike_project(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     url = reverse("projects-unlike", args=(project.id,))
 
     client.login(user)
@@ -51,7 +51,7 @@ def test_unlike_project(client):
 def test_list_project_fans(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     f.LikeFactory.create(content_object=project, user=user)
     url = reverse("project-fans-list", args=(project.id,))
 
@@ -65,7 +65,7 @@ def test_list_project_fans(client):
 def test_get_project_fan(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     like = f.LikeFactory.create(content_object=project, user=user)
     url = reverse("project-fans-detail", args=(project.id, like.user.id))
 
@@ -79,7 +79,7 @@ def test_get_project_fan(client):
 def test_get_project_is_fan(client):
     user = f.UserFactory.create()
     project = f.create_project(owner=user)
-    f.MembershipFactory.create(project=project, user=user, is_owner=True)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
     url_detail = reverse("projects-detail", args=(project.id,))
     url_like = reverse("projects-like", args=(project.id,))
     url_unlike = reverse("projects-unlike", args=(project.id,))
