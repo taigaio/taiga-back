@@ -1,7 +1,7 @@
 # Changelog #
 
 
-## 2.0.0 ??? (unreleased)
+## 2.0.0 Pulsatilla Patens (2016-04-04)
 
 ### Features
 - Ability to create url custom fields. (thanks to [@astagi](https://github.com/astagi)).
