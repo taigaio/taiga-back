@@ -1585,3 +1585,25 @@ def test_valid_dump_import_with_the_limit_of_membership_whit_you_for_public_proj
     response = client.post(url, {'dump': data})
     assert response.status_code == 201
     assert Project.objects.filter(slug="public-project-with-memberships-limit-with-you").count() == 1
+
+
+def test_valid_project_import_and_disabled_is_featured(client):
+    user = f.UserFactory.create()
+    client.login(user)
+
+    url = reverse("importer-list")
+    data = {
+        "name": "Imported project",
+        "description": "Imported project",
+        "roles": [{
+            "permissions": [],
+            "name": "Test"
+        }],
+        "is_featured": True
+    }
+
+    response = client.post(url, json.dumps(data), content_type="application/json")
+    assert response.status_code == 201
+    response_data = response.data
+    assert response_data["owner"] == user.email
+    assert response_data["is_featured"] == False

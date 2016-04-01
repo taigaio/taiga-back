@@ -159,6 +159,7 @@ def store_project(data):
             "issue_types", "userstorycustomattributes", "taskcustomattributes",
             "issuecustomattributes", "roles", "milestones", "wiki_pages",
             "wiki_links", "notify_policies", "user_stories", "issues", "tasks",
+            "is_featured"
         ]
         if key not in excluded_fields:
             project_data[key] = value
