@@ -40,7 +40,7 @@ class PushEventHook(BaseEventHook):
 
         changes = self.payload.get("push", {}).get('changes', [])
         for change in filter(None, changes):
-            commits = target.get("commits", [])
+            commits = change.get("commits", [])
             if not commits:
                 continue
 
