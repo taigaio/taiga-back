@@ -10,10 +10,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-01 11:09+0200\n"
-"PO-Revision-Date: 2016-03-30 10:59+0000\n"
-"Last-Translator: Alejandro Alonso Fernández <alejandroalonsofernandez@gmail."
-"com>\n"
+"POT-Creation-Date: 2016-04-05 19:23+0200\n"
+"PO-Revision-Date: 2016-04-04 13:40+0000\n"
+"Last-Translator: catborise <muhammetalisag@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/tr/)\n"
 "MIME-Version: 1.0\n"
@@ -197,13 +196,13 @@ msgstr ""
 "resim dosyası değil."
 
 #: taiga/base/api/mixins.py:255 taiga/base/exceptions.py:209
-#: taiga/hooks/api.py:68 taiga/projects/api.py:629
+#: taiga/hooks/api.py:68 taiga/projects/api.py:641
 #: taiga/projects/issues/api.py:233 taiga/projects/mixins/ordering.py:58
 #: taiga/projects/tasks/api.py:152 taiga/projects/tasks/api.py:174
 #: taiga/projects/userstories/api.py:218 taiga/projects/userstories/api.py:238
 #: taiga/webhooks/api.py:67
 msgid "Blocked element"
-msgstr ""
+msgstr "Engellenmiş nesne"
 
 #: taiga/base/api/pagination.py:213
 msgid "Page is not 'last', nor can it be converted to an int."
@@ -355,7 +354,7 @@ msgstr "Ön şart hatası"
 
 #: taiga/base/exceptions.py:217
 msgid "No room left for more projects."
-msgstr ""
+msgstr "Daha fazla proje için yer kalmadı."
 
 #: taiga/base/filters.py:79 taiga/base/filters.py:444
 msgid "Error in filter params types."
@@ -1291,23 +1290,23 @@ msgstr "Geçersiz şablon tanımı"
 
 #: taiga/projects/api.py:356
 msgid "Invalid user id"
-msgstr ""
+msgstr "Geçersiz kullanıcı id"
 
 #: taiga/projects/api.py:362
 msgid "The user doesn't exist"
-msgstr ""
+msgstr "Kullanıcı mevcut değil"
 
 #: taiga/projects/api.py:366
 msgid "The user must be already a project member"
-msgstr ""
+msgstr "Kullanıcı zaten proje üyesi durumunda"
 
-#: taiga/projects/api.py:668
+#: taiga/projects/api.py:671
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
 msgstr ""
 
-#: taiga/projects/api.py:708
+#: taiga/projects/api.py:705
 msgid "You don't have permisions to see that."
 msgstr "Görebilmek için yetkiniz yok."
 
@@ -1406,7 +1405,7 @@ msgstr ""
 
 #: taiga/projects/choices.py:34
 msgid "This project is blocked because the owner left"
-msgstr ""
+msgstr "Yetkili kalmadığı için proje bloklandı"
 
 #: taiga/projects/custom_attributes/choices.py:27
 msgid "Text"
@@ -1422,7 +1421,7 @@ msgstr "Tarih"
 
 #: taiga/projects/custom_attributes/choices.py:30
 msgid "Url"
-msgstr ""
+msgstr "Url"
 
 #: taiga/projects/custom_attributes/models.py:39
 #: taiga/projects/issues/models.py:47
@@ -1828,7 +1827,7 @@ msgstr ""
 
 #: taiga/projects/models.py:225
 msgid "blocked code"
-msgstr ""
+msgstr "engellenmiş kod"
 
 #: taiga/projects/models.py:229 taiga/projects/notifications/models.py:65
 msgid "updated date time"
@@ -2578,6 +2577,14 @@ msgstr "Önem dereceleri"
 #: taiga/projects/serializers.py:402
 msgid "Roles"
 msgstr "Roller"
+
+#: taiga/projects/services/members.py:147 taiga/users/services.py:625
+msgid "You have reached your current limit of memberships for private projects"
+msgstr ""
+
+#: taiga/projects/services/members.py:151 taiga/users/services.py:634
+msgid "You have reached your current limit of memberships for public projects"
+msgstr ""
 
 #: taiga/projects/services/stats.py:196
 msgid "Future sprint"
@@ -3462,14 +3469,6 @@ msgstr ""
 
 #: taiga/users/services.py:612
 msgid "You can't have more public projects"
-msgstr ""
-
-#: taiga/users/services.py:625
-msgid "You have reached your current limit of memberships for private projects"
-msgstr ""
-
-#: taiga/users/services.py:634
-msgid "You have reached your current limit of memberships for public projects"
 msgstr ""
 
 #: taiga/users/templates/emails/change_email-body-html.jinja:4
