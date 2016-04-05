@@ -615,6 +615,18 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         else:
             return self.serializer_class
 
+    def _check_if_project_can_have_more_memberships(self, project, total_new_memberships):
+        (can_add_memberships, error_type) = services.check_if_project_can_have_more_memberships(
+            project,
+            total_new_memberships
+        )
+        if not can_add_memberships:
+            raise exc.NotEnoughSlotsForProject(
+                project.is_private,
+                total_new_memberships,
+                error_type
+            )
+
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
         serializer = serializers.MembersBulkSerializer(data=request.DATA)
@@ -628,18 +640,9 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 
-        # TODO: this should be moved to main exception handler instead
-        # of handling explicit exception catchin here.
-
         if "bulk_memberships" in data and isinstance(data["bulk_memberships"], list):
-            members = len(data["bulk_memberships"])
-            (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
-                project.owner,
-                project,
-                members
-            )
-            if not enough_slots:
-                raise exc.NotEnoughSlotsForProject(project.is_private, members, not_enough_slots_error)
+            total_new_memberships = len(data["bulk_memberships"])
+            self._check_if_project_can_have_more_memberships(project, total_new_memberships)
 
         try:
             members = services.create_members_in_bulk(data["bulk_memberships"],
@@ -665,18 +668,12 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
 
     def pre_delete(self, obj):
         if obj.user is not None and not services.can_user_leave_project(obj.user, obj.project):
-            raise exc.BadRequest(_("The project must have an owner and at least one of the users must be an active admin"))
+            raise exc.BadRequest(_("The project must have an owner and at least one of the users "
+                                   "must be an active admin"))
 
     def pre_save(self, obj):
         if not obj.id:
-            members = 1
-            (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
-                self.request.user,
-                obj.project,
-                members
-            )
-            if not enough_slots:
-                raise exc.NotEnoughSlotsForProject(obj.project.is_private, members, not_enough_slots_error)
+            self._check_if_project_can_have_more_memberships(obj.project, 1)
 
         if not obj.token:
             obj.token = str(uuid.uuid1())

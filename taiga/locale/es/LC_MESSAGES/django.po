@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-01 11:09+0200\n"
+"POT-Creation-Date: 2016-04-05 19:23+0200\n"
 "PO-Revision-Date: 2016-03-30 10:59+0000\n"
 "Last-Translator: Alejandro Alonso Fernández <alejandroalonsofernandez@gmail."
 "com>\n"
@@ -202,7 +202,7 @@ msgid ""
 msgstr "Adjunta una imagen válida. El fichero no es una imagen o está dañada."
 
 #: taiga/base/api/mixins.py:255 taiga/base/exceptions.py:209
-#: taiga/hooks/api.py:68 taiga/projects/api.py:629
+#: taiga/hooks/api.py:68 taiga/projects/api.py:641
 #: taiga/projects/issues/api.py:233 taiga/projects/mixins/ordering.py:58
 #: taiga/projects/tasks/api.py:152 taiga/projects/tasks/api.py:174
 #: taiga/projects/userstories/api.py:218 taiga/projects/userstories/api.py:238
@@ -1346,7 +1346,7 @@ msgstr "El usuario no existe"
 msgid "The user must be already a project member"
 msgstr ""
 
-#: taiga/projects/api.py:668
+#: taiga/projects/api.py:671
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
@@ -1354,7 +1354,7 @@ msgstr ""
 "El proyecto debe tener un dueño y al menos uno de los usuarios debe ser un "
 "administrador activo"
 
-#: taiga/projects/api.py:708
+#: taiga/projects/api.py:705
 msgid "You don't have permisions to see that."
 msgstr "No tienes suficientes permisos para ver esto."
 
@@ -2801,6 +2801,14 @@ msgstr "Gravedades"
 msgid "Roles"
 msgstr "Roles"
 
+#: taiga/projects/services/members.py:147 taiga/users/services.py:625
+msgid "You have reached your current limit of memberships for private projects"
+msgstr ""
+
+#: taiga/projects/services/members.py:151 taiga/users/services.py:634
+msgid "You have reached your current limit of memberships for public projects"
+msgstr ""
+
 #: taiga/projects/services/stats.py:196
 msgid "Future sprint"
 msgstr "Sprint futuro"
@@ -3749,14 +3757,6 @@ msgstr "No puedes tener más proyectos privados"
 #: taiga/users/services.py:612
 msgid "You can't have more public projects"
 msgstr "No puedes tener más proyectos públicos"
-
-#: taiga/users/services.py:625
-msgid "You have reached your current limit of memberships for private projects"
-msgstr ""
-
-#: taiga/users/services.py:634
-msgid "You have reached your current limit of memberships for public projects"
-msgstr ""
 
 #: taiga/users/templates/emails/change_email-body-html.jinja:4
 #, python-format
