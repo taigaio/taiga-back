@@ -280,8 +280,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.save()
         self.auth_data.all().delete()
 
-        #Blocking all owned users
+        # Blocking all owned projects
         self.owned_projects.update(blocked_code=BLOCKED_BY_OWNER_LEAVING)
+
+        # Remove all memberships
+        self.memberships.all().delete()
 
 
 class Role(models.Model):
