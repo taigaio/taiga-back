@@ -165,6 +165,21 @@ def test_delete_self_user_blocking_projects(client):
     assert project.blocked_code == project_choices.BLOCKED_BY_OWNER_LEAVING
 
 
+def test_delete_self_user_remove_membership_projects(client):
+    project = f.ProjectFactory.create()
+    user = f.UserFactory.create()
+    f.create_membership(project=project, user=user)
+
+    url = reverse('users-detail', kwargs={"pk": user.pk})
+
+    assert project.memberships.all().count() == 1
+
+    client.login(user)
+    response = client.delete(url)
+
+    assert project.memberships.all().count() == 0
+
+
 def test_cancel_self_user_with_valid_token(client):
     user = f.UserFactory.create()
     url = reverse('users-cancel')
