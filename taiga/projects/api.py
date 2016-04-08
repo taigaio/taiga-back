@@ -378,13 +378,13 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         project = self.get_object()
         self.check_permissions(request, "transfer_accept", project)
 
-        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(
-            request.user,
+        (can_transfer, error_message) = services.check_if_project_can_be_transfered(
             project,
+            request.user,
         )
-        if not enough_slots:
+        if not can_transfer:
             members = project.memberships.count()
-            raise exc.NotEnoughSlotsForProject(project.is_private, members, not_enough_slots_error)
+            raise exc.NotEnoughSlotsForProject(project.is_private, members, error_message)
 
         reason = request.DATA.get('reason', None)
         services.accept_project_transfer(project, request.user, token, reason)
@@ -422,12 +422,13 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             obj.owner = self.request.user
             obj.template = self.request.QUERY_PARAMS.get('template', None)
 
-        # Validate if the owner have enought slots to create or update the project
-        # TODO: Move to the ProjectAdminSerializer
-        (enough_slots, not_enough_slots_error) = users_service.has_available_slot_for_project(obj.owner, obj)
-        if not enough_slots:
-            members = max(obj.memberships.count(), 1)
-            raise exc.NotEnoughSlotsForProject(obj.is_private, members, not_enough_slots_error)
+        if not obj.id or self.get_object().is_private != obj.is_private:
+            # Validate if the owner have enought slots to create the project
+            # or if you are changing the privacity
+            (can_create_or_update, error_message) = services.check_if_project_can_be_created_or_updated(obj)
+            if not can_create_or_update:
+                members = max(obj.memberships.count(), 1)
+                raise exc.NotEnoughSlotsForProject(obj.is_private, members, error_message)
 
         self._set_base_permissions(obj)
         super().pre_save(obj)

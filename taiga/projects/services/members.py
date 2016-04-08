@@ -102,45 +102,14 @@ def get_total_project_memberships(project):
     return project.memberships.count()
 
 
-ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS = 'max_public_projects_memberships'
-ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS = 'max_private_projects_memberships'
-ERROR_MAX_PUBLIC_PROJECTS = 'max_public_projects'
-ERROR_MAX_PRIVATE_PROJECTS = 'max_private_projects'
-
-def check_if_project_privacity_can_be_changed(project):
-    """Return if the project privacity can be changed from private to public or viceversa.
+def check_if_project_can_have_more_memberships(project, total_new_memberships):
+    """Return if a project can have more n new memberships.
 
     :param project: A project object.
+    :param total_new_memberships: the total of new memberships to add (int).
 
-    :return: True if it can be changed or False if can't.
+    :return: {bool, error_mesage} return a tuple (can add new members?, error message).
     """
-    if project.is_private:
-        current_memberships = project.memberships.count()
-        max_memberships = project.owner.max_memberships_public_projects
-        error_members_exceeded = ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS
-
-        current_projects = project.owner.owned_projects.filter(is_private=False).count()
-        max_projects = project.owner.max_public_projects
-        error_project_exceeded = ERROR_MAX_PUBLIC_PROJECTS
-    else:
-        current_memberships = project.memberships.count()
-        max_memberships = project.owner.max_memberships_private_projects
-        error_members_exceeded = ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS
-
-        current_projects = project.owner.owned_projects.filter(is_private=True).count()
-        max_projects = project.owner.max_private_projects
-        error_project_exceeded = ERROR_MAX_PRIVATE_PROJECTS
-
-    if max_memberships is not None and current_memberships > max_memberships:
-        return {'can_be_updated': False, 'reason': error_members_exceeded}
-
-    if max_projects is not None and current_projects >= max_projects:
-        return {'can_be_updated': False, 'reason': error_project_exceeded}
-
-    return {'can_be_updated': True, 'reason': None}
-
-
-def check_if_project_can_have_more_memberships(project, total_new_memberships):
     if project.is_private:
         total_memberships = project.memberships.count() + total_new_memberships
         max_memberships = project.owner.max_memberships_private_projects

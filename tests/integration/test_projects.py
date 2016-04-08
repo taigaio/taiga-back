@@ -1423,10 +1423,10 @@ def test_project_transfer_validate_token_from_no_admin_member_with_valid_token(c
 
 
 ####################################################################################
-# Test taiga.projects.services.members.check_if_project_privacity_can_be_changed
+# Test taiga.projects.services.projects.check_if_project_privacity_can_be_changed
 ####################################################################################
 
-from taiga.projects.services.members import (
+from taiga.projects.services.projects import (
     check_if_project_privacity_can_be_changed,
     ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS,
     ERROR_MAX_PUBLIC_PROJECTS,

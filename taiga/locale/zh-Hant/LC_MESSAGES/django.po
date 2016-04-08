@@ -11,10 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-05 19:23+0200\n"
-"PO-Revision-Date: 2016-03-30 10:59+0000\n"
-"Last-Translator: Alejandro Alonso Fernández <alejandroalonsofernandez@gmail."
-"com>\n"
+"POT-Creation-Date: 2016-04-08 13:23+0200\n"
+"PO-Revision-Date: 2016-04-08 11:23+0000\n"
+"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Chinese Traditional (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/zh-Hant/)\n"
 "MIME-Version: 1.0\n"
@@ -183,7 +182,7 @@ msgid ""
 msgstr "上傳有效圖片，你所上傳的檔案非圖檔或已損壞"
 
 #: taiga/base/api/mixins.py:255 taiga/base/exceptions.py:209
-#: taiga/hooks/api.py:68 taiga/projects/api.py:641
+#: taiga/hooks/api.py:68 taiga/projects/api.py:642
 #: taiga/projects/issues/api.py:233 taiga/projects/mixins/ordering.py:58
 #: taiga/projects/tasks/api.py:152 taiga/projects/tasks/api.py:174
 #: taiga/projects/userstories/api.py:218 taiga/projects/userstories/api.py:238
@@ -499,71 +498,71 @@ msgstr ""
 "\n"
 "評論: %(comment)s"
 
-#: taiga/export_import/api.py:114
+#: taiga/export_import/api.py:119
 msgid "We needed at least one role"
 msgstr "我們至少需要一個角色"
 
-#: taiga/export_import/api.py:216
+#: taiga/export_import/api.py:309
 msgid "Needed dump file"
 msgstr "需要的堆存檔案"
 
-#: taiga/export_import/api.py:224
+#: taiga/export_import/api.py:316
 msgid "Invalid dump format"
 msgstr "無效堆存格式"
 
-#: taiga/export_import/dump_service.py:106
+#: taiga/export_import/dump_service.py:115
 msgid "error importing project data"
 msgstr "滙入重要專案資料出錯"
 
-#: taiga/export_import/dump_service.py:119
+#: taiga/export_import/dump_service.py:128
 msgid "error importing lists of project attributes"
 msgstr "滙入標籤出錯"
 
-#: taiga/export_import/dump_service.py:124
+#: taiga/export_import/dump_service.py:133
 msgid "error importing default project attributes values"
 msgstr "滙入預設專案屬性數值出錯"
 
-#: taiga/export_import/dump_service.py:134
+#: taiga/export_import/dump_service.py:143
 msgid "error importing custom attributes"
 msgstr "滙入客制性屬出錯"
 
-#: taiga/export_import/dump_service.py:139
+#: taiga/export_import/dump_service.py:148
 msgid "error importing roles"
 msgstr "滙入角色出錯"
 
-#: taiga/export_import/dump_service.py:154
+#: taiga/export_import/dump_service.py:163
 msgid "error importing memberships"
 msgstr "滙入成員資格出錯"
 
-#: taiga/export_import/dump_service.py:159
+#: taiga/export_import/dump_service.py:168
 msgid "error importing sprints"
 msgstr "滙入衝刺任務出錯"
 
-#: taiga/export_import/dump_service.py:164
+#: taiga/export_import/dump_service.py:173
 msgid "error importing wiki pages"
 msgstr "滙入維基頁出錯"
 
-#: taiga/export_import/dump_service.py:169
+#: taiga/export_import/dump_service.py:178
 msgid "error importing wiki links"
 msgstr "滙入維基連結出錯"
 
-#: taiga/export_import/dump_service.py:174
+#: taiga/export_import/dump_service.py:183
 msgid "error importing issues"
 msgstr "滙入問題出錯"
 
-#: taiga/export_import/dump_service.py:179
+#: taiga/export_import/dump_service.py:188
 msgid "error importing user stories"
 msgstr "滙入使用者故事出錯"
 
-#: taiga/export_import/dump_service.py:184
+#: taiga/export_import/dump_service.py:193
 msgid "error importing tasks"
 msgstr "滙入任務出錯"
 
-#: taiga/export_import/dump_service.py:189
+#: taiga/export_import/dump_service.py:198
 msgid "error importing tags"
 msgstr "滙入標籤出錯"
 
-#: taiga/export_import/dump_service.py:193
+#: taiga/export_import/dump_service.py:202
 msgid "error importing timelines"
 msgstr "滙入時間軸出錯"
 
@@ -838,7 +837,7 @@ msgstr "要求取得授權"
 #: taiga/projects/models.py:536 taiga/projects/models.py:573
 #: taiga/projects/models.py:596 taiga/projects/models.py:619
 #: taiga/projects/models.py:654 taiga/projects/models.py:677
-#: taiga/users/models.py:289 taiga/webhooks/models.py:28
+#: taiga/users/models.py:292 taiga/webhooks/models.py:28
 msgid "name"
 msgstr "姓名"
 
@@ -1327,13 +1326,13 @@ msgstr ""
 msgid "The user must be already a project member"
 msgstr ""
 
-#: taiga/projects/api.py:671
+#: taiga/projects/api.py:672
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
 msgstr ""
 
-#: taiga/projects/api.py:705
+#: taiga/projects/api.py:706
 msgid "You don't have permisions to see that."
 msgstr "您無觀看權限"
 
@@ -1363,7 +1362,7 @@ msgstr "所有者"
 #: taiga/projects/notifications/models.py:73
 #: taiga/projects/notifications/models.py:90 taiga/projects/tasks/models.py:42
 #: taiga/projects/userstories/models.py:64 taiga/projects/wiki/models.py:30
-#: taiga/projects/wiki/models.py:68 taiga/users/models.py:302
+#: taiga/projects/wiki/models.py:68 taiga/users/models.py:305
 msgid "project"
 msgstr "專案"
 
@@ -1402,7 +1401,7 @@ msgstr "棄用"
 #: taiga/projects/models.py:513 taiga/projects/models.py:540
 #: taiga/projects/models.py:575 taiga/projects/models.py:598
 #: taiga/projects/models.py:623 taiga/projects/models.py:656
-#: taiga/projects/wiki/models.py:73 taiga/users/models.py:297
+#: taiga/projects/wiki/models.py:73 taiga/users/models.py:300
 msgid "order"
 msgstr "次序"
 
@@ -1682,7 +1681,7 @@ msgstr "喜歡"
 #: taiga/projects/milestones/models.py:41 taiga/projects/models.py:148
 #: taiga/projects/models.py:474 taiga/projects/models.py:538
 #: taiga/projects/models.py:621 taiga/projects/models.py:679
-#: taiga/projects/wiki/models.py:32 taiga/users/models.py:291
+#: taiga/projects/wiki/models.py:32 taiga/users/models.py:294
 msgid "slug"
 msgstr "代稱"
 
@@ -2753,48 +2752,70 @@ msgstr ""
 msgid "At least one user must be an active admin for this project."
 msgstr ""
 
-#: taiga/projects/serializers.py:394
+#: taiga/projects/serializers.py:392
 msgid "Default options"
 msgstr "預設選項"
 
-#: taiga/projects/serializers.py:395
+#: taiga/projects/serializers.py:393
 msgid "User story's statuses"
 msgstr "使用者故事狀態"
 
-#: taiga/projects/serializers.py:396
+#: taiga/projects/serializers.py:394
 msgid "Points"
 msgstr "點數"
 
-#: taiga/projects/serializers.py:397
+#: taiga/projects/serializers.py:395
 msgid "Task's statuses"
 msgstr "任務狀態"
 
-#: taiga/projects/serializers.py:398
+#: taiga/projects/serializers.py:396
 msgid "Issue's statuses"
 msgstr "問題狀態"
 
-#: taiga/projects/serializers.py:399
+#: taiga/projects/serializers.py:397
 msgid "Issue's types"
 msgstr "問題類型"
 
-#: taiga/projects/serializers.py:400
+#: taiga/projects/serializers.py:398
 msgid "Priorities"
 msgstr "優先性"
 
-#: taiga/projects/serializers.py:401
+#: taiga/projects/serializers.py:399
 msgid "Severities"
 msgstr "嚴重性"
 
-#: taiga/projects/serializers.py:402
+#: taiga/projects/serializers.py:400
 msgid "Roles"
 msgstr "角色"
 
-#: taiga/projects/services/members.py:147 taiga/users/services.py:625
+#: taiga/projects/services/members.py:116
 msgid "You have reached your current limit of memberships for private projects"
 msgstr ""
 
-#: taiga/projects/services/members.py:151 taiga/users/services.py:634
+#: taiga/projects/services/members.py:120
 msgid "You have reached your current limit of memberships for public projects"
+msgstr ""
+
+#: taiga/projects/services/projects.py:69
+#: taiga/projects/services/projects.py:106 taiga/users/services.py:582
+msgid "You can't have more private projects"
+msgstr ""
+
+#: taiga/projects/services/projects.py:73
+#: taiga/projects/services/projects.py:110 taiga/users/services.py:585
+msgid ""
+"This project reaches your current limit of memberships for private projects"
+msgstr ""
+
+#: taiga/projects/services/projects.py:77
+#: taiga/projects/services/projects.py:114 taiga/users/services.py:589
+msgid "You can't have more public projects"
+msgstr ""
+
+#: taiga/projects/services/projects.py:81
+#: taiga/projects/services/projects.py:118 taiga/users/services.py:592
+msgid ""
+"This project reaches your current limit of memberships for public projects"
 msgstr ""
 
 #: taiga/projects/services/stats.py:196
@@ -3685,7 +3706,7 @@ msgstr ""
 msgid "max number of memberships for each owned public project"
 msgstr ""
 
-#: taiga/users/models.py:294
+#: taiga/users/models.py:297
 msgid "permissions"
 msgstr "許可"
 
@@ -3700,14 +3721,6 @@ msgstr "無效使用者名稱，請重試其它名稱　"
 #: taiga/users/services.py:53 taiga/users/services.py:70
 msgid "Username or password does not matches user."
 msgstr "用戶名稱與密碼不符"
-
-#: taiga/users/services.py:602
-msgid "You can't have more private projects"
-msgstr ""
-
-#: taiga/users/services.py:612
-msgid "You can't have more public projects"
-msgstr ""
 
 #: taiga/users/templates/emails/change_email-body-html.jinja:4
 #, python-format
