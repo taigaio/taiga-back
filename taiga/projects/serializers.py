@@ -373,8 +373,6 @@ class ProjectDetailAdminSerializer(ProjectDetailSerializer):
         return services.get_max_memberships_for_project(obj)
 
 
-
-
 ######################################################
 ## Liked
 ######################################################
