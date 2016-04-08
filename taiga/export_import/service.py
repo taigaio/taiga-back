@@ -111,14 +111,15 @@ def render_project(project, outfile, chunk_size = 8190):
 
                     # We write the attached_files by chunks so the memory used is not increased
                     attachment_file = attachment.attached_file
-                    with default_storage.open(attachment_file.name) as f:
-                        while True:
-                            bin_data = f.read(chunk_size)
-                            if not bin_data:
-                                break
+                    if default_storage.exists(attachment_file.name):
+                        with default_storage.open(attachment_file.name) as f:
+                            while True:
+                                bin_data = f.read(chunk_size)
+                                if not bin_data:
+                                    break
 
-                            b64_data = base64.b64encode(bin_data).decode('utf-8')
-                            outfile.write(b64_data)
+                                b64_data = base64.b64encode(bin_data).decode('utf-8')
+                                outfile.write(b64_data)
 
                     outfile.write('", \n            "name":"{}"}}\n}}'.format(
                                         os.path.basename(attachment_file.name)))
