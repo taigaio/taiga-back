@@ -1,6 +1,15 @@
 # Changelog #
 
 
+## 2.1.0 ??? (unreleased)
+
+### Features
+- ...
+
+### Misc
+- Lots of small and not so small bugfixes.
+
+
 ## 2.0.0 Pulsatilla Patens (2016-04-04)
 
 ### Features
