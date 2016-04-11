@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from taiga.base import filters
@@ -45,7 +46,7 @@ class WebhookViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         self.check_permissions(request, 'test', webhook)
         self.pre_conditions_blocked(webhook)
 
-        webhooklog = tasks.test_webhook(webhook.id, webhook.url, webhook.key)
+        webhooklog = tasks.test_webhook(webhook.id, webhook.url, webhook.key, request.user, timezone.now())
         log = serializers.WebhookLogSerializer(webhooklog)
 
         return response.Ok(log.data)
