@@ -130,9 +130,9 @@ def open_userstory(us):
 
 def userstories_to_csv(project,queryset):
     csv_data = io.StringIO()
-    fieldnames = ["ref", "subject", "description", "milestone", "owner",
-                  "owner_full_name", "assigned_to", "assigned_to_full_name",
-                  "status", "is_closed"]
+    fieldnames = ["ref", "subject", "description", "sprint", "sprint_estimated_start",
+                  "sprint_estimated_finish", "owner", "owner_full_name", "assigned_to",
+                  "assigned_to_full_name", "status", "is_closed"]
 
     roles = project.roles.filter(computable=True).order_by('slug')
     for role in roles:
@@ -144,8 +144,7 @@ def userstories_to_csv(project,queryset):
                    "created_date", "modified_date", "finish_date",
                    "client_requirement", "team_requirement", "attachments",
                    "generated_from_issue", "external_reference", "tasks",
-                   "tags",
-                   "watchers", "voters"]
+                   "tags","watchers", "voters"]
 
     custom_attrs = project.userstorycustomattributes.all()
     for custom_attr in custom_attrs:
@@ -174,7 +173,9 @@ def userstories_to_csv(project,queryset):
             "ref": us.ref,
             "subject": us.subject,
             "description": us.description,
-            "milestone": us.milestone.name if us.milestone else None,
+            "sprint": us.milestone.name if us.milestone else None,
+            "sprint_estimated_start": us.milestone.estimated_start if us.milestone else None,
+            "sprint_estimated_finish": us.milestone.estimated_finish if us.milestone else None,
             "owner": us.owner.username if us.owner else None,
             "owner_full_name": us.owner.get_full_name() if us.owner else None,
             "assigned_to": us.assigned_to.username if us.assigned_to else None,

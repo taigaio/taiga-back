@@ -12,6 +12,9 @@
     - add the date of the notification ('date' field)
     - show human diffs in 'changes'
     - remove unnecessary data
+- CSV Reports:
+    - Change field name: 'milestone' to 'sprint'
+    - Add new fields: 'sprint_estimated_start' and 'sprint_estimated_end'
 
 ### Misc
 - Add sprint name and slug on search results for user stories ((thanks to [@everblut](https://github.com/everblut)))
