@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.transaction import atomic
-
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 
@@ -91,7 +89,6 @@ def store_tags_colors(project, data):
     return None
 
 
-@method_decorator(atomic)
 def dict_to_project(data, owner=None):
     if owner:
         data["owner"] = owner.email

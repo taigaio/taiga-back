@@ -430,11 +430,16 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         set_notify_policy_level_to_ignore(notify_policy)
 
     def delete_related_content(self):
-        from taiga.events.apps import connect_events_signals, disconnect_events_signals
-        from taiga.projects.tasks.apps import connect_all_tasks_signals, disconnect_all_tasks_signals
-        from taiga.projects.userstories.apps import connect_all_userstories_signals, disconnect_all_userstories_signals
-        from taiga.projects.issues.apps import connect_all_issues_signals, disconnect_all_issues_signals
-        from taiga.projects.apps import connect_memberships_signals, disconnect_memberships_signals
+        from taiga.events.apps import (connect_events_signals,
+                                       disconnect_events_signals)
+        from taiga.projects.tasks.apps import (connect_all_tasks_signals,
+                                               disconnect_all_tasks_signals)
+        from taiga.projects.userstories.apps import (connect_all_userstories_signals,
+                                                     disconnect_all_userstories_signals)
+        from taiga.projects.issues.apps import (connect_all_issues_signals,
+                                                disconnect_all_issues_signals)
+        from taiga.projects.apps import (connect_memberships_signals,
+                                         disconnect_memberships_signals)
 
         disconnect_events_signals()
         disconnect_all_issues_signals()
@@ -454,6 +459,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
             connect_all_tasks_signals()
             connect_all_userstories_signals()
             connect_memberships_signals()
+
 
 class ProjectModulesConfig(models.Model):
     project = models.OneToOneField("Project", null=False, blank=False,
