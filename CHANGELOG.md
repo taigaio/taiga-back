@@ -15,11 +15,9 @@
 - CSV Reports:
     - Change field name: 'milestone' to 'sprint'
     - Add new fields: 'sprint_estimated_start' and 'sprint_estimated_end'
-
-### Misc
 - Add sprint name and slug on search results for user stories ((thanks to [@everblut](https://github.com/everblut)))
+- [API] projects resource: Random order if `discover_mode=true` and `is_featured=true`.
 - Lots of small and not so small bugfixes.
-
 
 ## 2.0.0 Pulsatilla Patens (2016-04-04)
 
