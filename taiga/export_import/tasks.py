@@ -90,10 +90,13 @@ def load_project_dump(user, dump):
         }
         email = mail_builder.import_error(user, ctx)
         email.send()
-        logger.error('Error loading dump %s (by %s)',
-                     dump.get("slug", "-unknow-") if dump else "-unknow-",
+        logger.error('Error loading dump by %s <%s>',
                      user,
+                     user.email,
                      exc_info=sys.exc_info())
+
+        # TODO: [Rollback] Remove project because it can be corrupted
+
     else:
         # Success
         ctx = {"user": user, "project": project}
