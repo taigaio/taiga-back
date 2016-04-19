@@ -27,6 +27,7 @@ answer newbie questions, and generally made taiga that much better:
 - Bruno Clermont <bruno@robotinfra.com>
 - Chris Wilson <chris.wilson@aridhia.com>
 - David Burke <david@burkesoftware.com>
+- Everardo Medina <everblut@gmail.com>
 - Hector Colina <hcolina@gmail.com>
 - Joe Letts
 - Julien Palard

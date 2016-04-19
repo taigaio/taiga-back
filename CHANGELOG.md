@@ -7,6 +7,7 @@
 - ...
 
 ### Misc
+- Add sprint name and slug on search results for user stories ((thanks to [@everblut](https://github.com/everblut)))
 - Lots of small and not so small bugfixes.
 
 
