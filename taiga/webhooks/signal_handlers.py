@@ -61,10 +61,13 @@ def on_new_history_entry(sender, instance, created, **kwargs):
         extra_args = [instance]
     elif instance.type == HistoryType.delete:
         task = tasks.delete_webhook
-        extra_args = [timezone.now()]
+        extra_args = []
+
+    by = instance.owner
+    date = timezone.now()
 
     for webhook in webhooks:
-        args = [webhook["id"], webhook["url"], webhook["key"], obj] + extra_args
+        args = [webhook["id"], webhook["url"], webhook["key"], by, date, obj] + extra_args
 
         if settings.CELERY_ENABLED:
             connection.on_commit(lambda: task.delay(*args))
