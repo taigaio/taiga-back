@@ -124,3 +124,30 @@ def check_if_project_can_be_transfered(project, new_owner):
         return (False, error_memberships_exceeded)
 
     return (True, None)
+
+
+def check_if_project_is_out_of_owner_limits(project):
+    """Return if the project fits on its owner limits.
+
+    :param project: A project object.
+
+    :return: bool
+    """
+    if project.is_private:
+        current_memberships = project.memberships.count()
+        max_memberships = project.owner.max_memberships_private_projects
+        current_projects = project.owner.owned_projects.filter(is_private=True).count()
+        max_projects = project.owner.max_private_projects
+    else:
+        current_memberships = project.memberships.count()
+        max_memberships = project.owner.max_memberships_public_projects
+        current_projects = project.owner.owned_projects.filter(is_private=False).count()
+        max_projects = project.owner.max_public_projects
+
+    if max_memberships is not None and current_memberships > max_memberships:
+        return True
+
+    if max_projects is not None and current_projects > max_projects:
+        return True
+
+    return False
