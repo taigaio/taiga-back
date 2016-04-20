@@ -344,6 +344,7 @@ class ProjectDetailSerializer(ProjectSerializer):
     roles = ProjectRoleSerializer(source="roles", many=True, read_only=True)
     members = serializers.SerializerMethodField(method_name="get_members")
     total_memberships = serializers.SerializerMethodField(method_name="get_total_memberships")
+    is_out_of_owner_limits = serializers.SerializerMethodField(method_name="get_is_out_of_owner_limits")
 
     def get_members(self, obj):
         qs = obj.memberships.filter(user__isnull=False)
@@ -355,6 +356,9 @@ class ProjectDetailSerializer(ProjectSerializer):
 
     def get_total_memberships(self, obj):
         return services.get_total_project_memberships(obj)
+
+    def get_is_out_of_owner_limits(self, obj):
+        return services.check_if_project_is_out_of_owner_limits(obj)
 
 
 class ProjectDetailAdminSerializer(ProjectDetailSerializer):
