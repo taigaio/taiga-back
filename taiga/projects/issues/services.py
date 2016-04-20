@@ -84,12 +84,11 @@ def update_issues_order_in_bulk(bulk_data):
 
 def issues_to_csv(project, queryset):
     csv_data = io.StringIO()
-    fieldnames = ["ref", "subject", "description", "milestone", "owner",
-                  "owner_full_name", "assigned_to", "assigned_to_full_name",
-                  "status", "severity", "priority", "type", "is_closed",
-                  "attachments", "external_reference", "tags",
-                  "watchers", "voters",
-                  "created_date", "modified_date", "finished_date"]
+    fieldnames = ["ref", "subject", "description", "sprint", "sprint_estimated_start",
+                  "sprint_estimated_finish", "owner", "owner_full_name", "assigned_to",
+                  "assigned_to_full_name", "status", "severity", "priority", "type",
+                  "is_closed", "attachments", "external_reference", "tags", "watchers",
+                  "voters", "created_date", "modified_date", "finished_date"]
 
     custom_attrs = project.issuecustomattributes.all()
     for custom_attr in custom_attrs:
@@ -112,7 +111,9 @@ def issues_to_csv(project, queryset):
             "ref": issue.ref,
             "subject": issue.subject,
             "description": issue.description,
-            "milestone": issue.milestone.name if issue.milestone else None,
+            "sprint": issue.milestone.name if issue.milestone else None,
+            "sprint_estimated_start": issue.milestone.estimated_start if issue.milestone else None,
+            "sprint_estimated_finish": issue.milestone.estimated_finish if issue.milestone else None,
             "owner": issue.owner.username if issue.owner else None,
             "owner_full_name": issue.owner.get_full_name() if issue.owner else None,
             "assigned_to": issue.assigned_to.username if issue.assigned_to else None,
