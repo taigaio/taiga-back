@@ -21,10 +21,10 @@ from django.db.models import signals
 from optparse import make_option
 
 from taiga.base.utils import json
-from taiga.projects.models import Project
+from taiga.export_import.import services
+from taiga.export_import.exceptions as err
 from taiga.export_import.renderers import ExportRenderer
-from taiga.export_import.dump_service import dict_to_project, TaigaImportError
-from taiga.export_import.service import get_errors
+from taiga.projects.models import Project
 from taiga.users.models import User
 
 
@@ -61,8 +61,12 @@ class Command(BaseCommand):
                     signals.post_delete.receivers = receivers_back
 
                 user = User.objects.get(email=args[1])
-                dict_to_project(data, user)
-        except TaigaImportError as e:
+                services.store_project_from_dict(data, user)
+        except err.TaigaImportError as e:
+            if e.project:
+                e.project.delete_related_content()
+                e.project.delete()
+
             print("ERROR:", end=" ")
             print(e.message)
-            print(get_errors())
+            print(services.store.get_errors())

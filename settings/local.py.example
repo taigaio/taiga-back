@@ -96,3 +96,11 @@ DATABASES = {
 # If is True /front/sitemap.xml show a valid sitemap of taiga-front client
 #FRONT_SITEMAP_ENABLED = False
 #FRONT_SITEMAP_CACHE_TIMEOUT = 24*60*60  # In second
+
+# CELERY
+#from .celery import *
+#CELERY_ENABLED = True
+#
+# To use celery in memory
+#CELERY_ENABLED = True
+#CELERY_ALWAYS_EAGER = True

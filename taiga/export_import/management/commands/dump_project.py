@@ -19,7 +19,7 @@ from django.core.management.base import BaseCommand, CommandError
 
 from taiga.projects.models import Project
 from taiga.export_import.renderers import ExportRenderer
-from taiga.export_import.service import render_project
+from taiga.export_import.services import render_project
 
 
 import resource
