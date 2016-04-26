@@ -15,21 +15,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .development import *
 
-CELERY_ENABLED = False
-CELERY_ALWAYS_EAGER = True
-
-MEDIA_ROOT = "/tmp"
-
-EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
-INSTALLED_APPS = INSTALLED_APPS + [
-    "tests",
-]
-
-REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
-    "anon": None,
-    "user": None,
-    "import-mode": None,
-    "import-dump-mode": None,
-}
+class TaigaImportError(Exception):
+    def __init__(self, message, project, errors=[]):
+        self.message = message
+        self.project = project
+        self.errors = errors
