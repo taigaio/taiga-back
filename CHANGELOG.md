@@ -1,7 +1,7 @@
 # Changelog #
 
 
-## 2.1.0 ??? (unreleased)
+## 2.1.0 Ursus Americanus (2016-05-03)
 
 ### Features
 - Add sprint name and slug on search results for user stories ((thanks to [@everblut](https://github.com/everblut)))
