@@ -40,6 +40,10 @@ class DiscoverModeFilterBackend(FilterBackend):
                 qs = qs.filter(anon_permissions__contains=["view_project"],
                                blocked_code__isnull=True)
 
+                # random order for featured projects
+                if request.QUERY_PARAMS.get("is_featured", None) == 'true':
+                    qs = qs.order_by("?")
+
         return super().filter_queryset(request, qs.distinct(), view)
 
 

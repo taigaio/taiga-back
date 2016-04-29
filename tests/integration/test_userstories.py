@@ -469,9 +469,9 @@ def test_custom_fields_csv_generation():
     data.seek(0)
     reader = csv.reader(data)
     row = next(reader)
-    assert row[26] == attr.name
+    assert row[28] == attr.name
     row = next(reader)
-    assert row[26] == "val1"
+    assert row[28] == "val1"
 
 
 def test_update_userstory_respecting_watchers(client):

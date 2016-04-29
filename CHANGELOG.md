@@ -1,6 +1,30 @@
 # Changelog #
 
 
+## 2.1.0 Ursus Americanus (2016-05-03)
+
+### Features
+- Add sprint name and slug on search results for user stories ((thanks to [@everblut](https://github.com/everblut)))
+- [API] projects resource: Random order if `discover_mode=true` and `is_featured=true`.
+- Webhooks: Improve webhook data:
+    - add permalinks
+    - owner, assigned_to, status, type, priority, severity, user_story, milestone, project are objects
+    - add role to 'points' object
+    - add the owner to every notification ('by' field)
+    - add the date of the notification ('date' field)
+    - show human diffs in 'changes'
+    - remove unnecessary data
+- CSV Reports:
+    - Change field name: 'milestone' to 'sprint'
+    - Add new fields: 'sprint_estimated_start' and 'sprint_estimated_end'
+- Importer:
+    - Remove project after load a dump file fails
+    - Add more info the the logger if load a dump file fails
+
+### Misc
+- Lots of small and not so small bugfixes.
+
+
 ## 2.0.0 Pulsatilla Patens (2016-04-04)
 
 ### Features

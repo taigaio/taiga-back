@@ -23,7 +23,8 @@ from django.core.urlresolvers import reverse
 from django.core.files.base import ContentFile
 
 from taiga.base.utils import json
-from taiga.export_import.dump_service import dict_to_project, TaigaImportError
+from taiga.export_import import services
+from taiga.export_import.exceptions import  TaigaImportError
 from taiga.projects.models import Project, Membership
 from taiga.projects.issues.models import Issue
 from taiga.projects.userstories.models import UserStory
@@ -36,6 +37,11 @@ from ..utils import DUMMY_BMP_DATA
 pytestmark = pytest.mark.django_db
 
 
+
+#######################################################
+## test api/v1/importer
+#######################################################
+
 def test_invalid_project_import(client):
     user = f.UserFactory.create()
     client.login(user)
@@ -43,7 +49,7 @@ def test_invalid_project_import(client):
     url = reverse("importer-list")
     data = {}
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
 
 
@@ -60,17 +66,16 @@ def test_valid_project_import_without_extra_data(client):
         "watchers": ["testing@taiga.io"]
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
-    response_data = response.data
     must_empty_children = [
         "issues", "user_stories", "us_statuses", "wiki_pages", "priorities",
         "severities", "milestones", "points", "issue_types", "task_statuses",
         "issue_statuses", "wiki_links",
     ]
-    assert all(map(lambda x: len(response_data[x]) == 0, must_empty_children))
-    assert response_data["owner"] == user.email
-    assert response_data["watchers"] == [user.email, user_watching.email]
+    assert all(map(lambda x: len(response.data[x]) == 0, must_empty_children))
+    assert response.data["owner"] == user.email
+    assert response.data["watchers"] == [user.email, user_watching.email]
 
 
 def test_valid_project_without_enough_public_projects_slots(client):
@@ -170,11 +175,10 @@ def test_valid_project_import_with_not_existing_memberships(client):
         "roles": [{"name": "Role"}]
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
-    response_data = response.data
     # The new membership and the owner membership
-    assert len(response_data["memberships"]) == 2
+    assert len(response.data["memberships"]) == 2
 
 
 def test_valid_project_import_with_membership_uuid_rewrite(client):
@@ -193,9 +197,8 @@ def test_valid_project_import_with_membership_uuid_rewrite(client):
         "roles": [{"name": "Role"}]
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
-    response_data = response.data
     assert Membership.objects.filter(email="with-uuid@email.com", token="123").count() == 0
 
 
@@ -234,9 +237,8 @@ def test_valid_project_import_with_extra_data(client):
         }],
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
-    response_data = response.data
     must_empty_children = [
         "issues", "user_stories", "wiki_pages", "milestones",
         "wiki_links",
@@ -247,10 +249,10 @@ def test_valid_project_import_with_extra_data(client):
         "issue_types", "task_statuses", "issue_statuses", "memberships",
     ]
 
-    assert all(map(lambda x: len(response_data[x]) == 0, must_empty_children))
+    assert all(map(lambda x: len(response.data[x]) == 0, must_empty_children))
     # Allwais is created at least the owner membership
-    assert all(map(lambda x: len(response_data[x]) == 1, must_one_instance_children))
-    assert response_data["owner"] == user.email
+    assert all(map(lambda x: len(response.data[x]) == 1, must_one_instance_children))
+    assert response.data["owner"] == user.email
 
 
 def test_invalid_project_import_without_roles(client):
@@ -263,10 +265,9 @@ def test_invalid_project_import_without_roles(client):
         "description": "Imported project",
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
-    response_data = response.data
-    assert len(response_data) == 2
+    assert len(response.data) == 2
     assert Project.objects.filter(slug="imported-project").count() == 0
 
 def test_invalid_project_import_with_extra_data(client):
@@ -290,10 +291,9 @@ def test_invalid_project_import_with_extra_data(client):
         "issue_statuses": [{}],
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
-    response_data = response.data
-    assert len(response_data) == 7
+    assert len(response.data) == 7
     assert Project.objects.filter(slug="imported-project").count() == 0
 
 
@@ -360,6 +360,327 @@ def test_invalid_project_import_with_custom_attributes(client):
     assert Project.objects.filter(slug="imported-project").count() == 0
 
 
+#######################################################
+## tes api/v1/importer/milestone
+#######################################################
+
+def test_invalid_milestone_import(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    client.login(user)
+
+    url = reverse("importer-milestone", args=[project.pk])
+    data = {}
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+
+
+def test_valid_milestone_import(client):
+    user = f.UserFactory.create()
+    user_watching = f.UserFactory.create(email="testing@taiga.io")
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    client.login(user)
+
+    url = reverse("importer-milestone", args=[project.pk])
+    data = {
+        "name": "Imported milestone",
+        "estimated_start": "2014-10-10",
+        "estimated_finish": "2014-10-20",
+        "watchers": ["testing@taiga.io"]
+    }
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    assert response.data["watchers"] == [user_watching.email]
+
+def test_milestone_import_duplicated_milestone(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    client.login(user)
+
+    url = reverse("importer-milestone", args=[project.pk])
+    data = {
+        "name": "Imported milestone",
+        "estimated_start": "2014-10-10",
+        "estimated_finish": "2014-10-20",
+    }
+    # We create twice the same milestone
+    response = client.json.post(url, json.dumps(data))
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert response.data["milestones"][0]["name"][0] == "Name duplicated for the project"
+
+
+
+#######################################################
+## tes api/v1/importer/us
+#######################################################
+
+def test_invalid_us_import(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    client.login(user)
+
+    url = reverse("importer-us", args=[project.pk])
+    data = {}
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+
+
+def test_valid_us_import_without_extra_data(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    project.default_us_status = f.UserStoryStatusFactory.create(project=project)
+    project.save()
+    client.login(user)
+
+    url = reverse("importer-us", args=[project.pk])
+    data = {
+        "subject": "Test"
+    }
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    assert response.data["owner"] == user.email
+    assert response.data["ref"] is not None
+
+
+def test_valid_us_import_with_extra_data(client):
+    user = f.UserFactory.create()
+    user_watching = f.UserFactory.create(email="testing@taiga.io")
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    project.default_us_status = f.UserStoryStatusFactory.create(project=project)
+    project.save()
+    client.login(user)
+
+    url = reverse("importer-us", args=[project.pk])
+    data = {
+        "subject": "Imported us",
+        "description": "Imported us",
+        "attachments": [{
+            "owner": user.email,
+            "attached_file": {
+                "name": "imported attachment",
+                "data": base64.b64encode(b"TEST").decode("utf-8")
+            }
+        }],
+        "watchers": ["testing@taiga.io"]
+    }
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    assert len(response.data["attachments"]) == 1
+    assert response.data["owner"] == user.email
+    assert response.data["ref"] is not None
+    assert response.data["watchers"] == [user_watching.email]
+
+
+def test_invalid_us_import_with_extra_data(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    project.default_us_status = f.UserStoryStatusFactory.create(project=project)
+    project.save()
+    client.login(user)
+
+    url = reverse("importer-us", args=[project.pk])
+    data = {
+        "subject": "Imported us",
+        "description": "Imported us",
+        "attachments": [{}],
+    }
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert len(response.data) == 1
+    assert UserStory.objects.filter(subject="Imported us").count() == 0
+
+
+def test_invalid_us_import_with_bad_choices(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    project.default_us_status = f.UserStoryStatusFactory.create(project=project)
+    project.save()
+    client.login(user)
+
+    url = reverse("importer-us", args=[project.pk])
+    data = {
+        "subject": "Imported us",
+        "description": "Imported us",
+        "status": "Not valid"
+    }
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert len(response.data) == 1
+
+
+#######################################################
+## tes api/v1/importer/task
+#######################################################
+
+def test_invalid_task_import(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    client.login(user)
+
+    url = reverse("importer-task", args=[project.pk])
+    data = {}
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+
+
+def test_valid_task_import_without_extra_data(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    project.default_task_status = f.TaskStatusFactory.create(project=project)
+    project.save()
+    client.login(user)
+
+    url = reverse("importer-task", args=[project.pk])
+    data = {
+        "subject": "Test"
+    }
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    assert response.data["owner"] == user.email
+    assert response.data["ref"] is not None
+
+
+def test_valid_task_import_with_custom_attributes_values(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory(project=project, user=user, is_admin=True)
+    project.default_task_status = f.TaskStatusFactory.create(project=project)
+    project.save()
+    custom_attr = f.TaskCustomAttributeFactory(project=project)
+
+    url = reverse("importer-task", args=[project.pk])
+    data = {
+        "subject": "Test Custom Attrs Values Tasks",
+        "custom_attributes_values": {
+            custom_attr.name: "test_value"
+        }
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    custom_attributes_values = apps.get_model("custom_attributes.TaskCustomAttributesValues").objects.get(
+                                                        task__subject=response.data["subject"])
+    assert custom_attributes_values.attributes_values == {str(custom_attr.id): "test_value"}
+
+
+def test_valid_task_import_with_extra_data(client):
+    user = f.UserFactory.create()
+    user_watching = f.UserFactory.create(email="testing@taiga.io")
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    project.default_task_status = f.TaskStatusFactory.create(project=project)
+    project.save()
+    client.login(user)
+
+    url = reverse("importer-task", args=[project.pk])
+    data = {
+        "subject": "Imported task",
+        "description": "Imported task",
+        "attachments": [{
+            "owner": user.email,
+            "attached_file": {
+                "name": "imported attachment",
+                "data": base64.b64encode(b"TEST").decode("utf-8")
+            }
+        }],
+        "watchers": ["testing@taiga.io"]
+    }
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    assert len(response.data["attachments"]) == 1
+    assert response.data["owner"] == user.email
+    assert response.data["ref"] is not None
+    assert response.data["watchers"] == [user_watching.email]
+
+
+def test_invalid_task_import_with_extra_data(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    project.default_task_status = f.TaskStatusFactory.create(project=project)
+    project.save()
+    client.login(user)
+
+    url = reverse("importer-task", args=[project.pk])
+    data = {
+        "subject": "Imported task",
+        "description": "Imported task",
+        "attachments": [{}],
+    }
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert len(response.data) == 1
+    assert Task.objects.filter(subject="Imported task").count() == 0
+
+
+def test_invalid_task_import_with_bad_choices(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    project.default_task_status = f.TaskStatusFactory.create(project=project)
+    project.save()
+    client.login(user)
+
+    url = reverse("importer-task", args=[project.pk])
+    data = {
+        "subject": "Imported task",
+        "description": "Imported task",
+        "status": "Not valid"
+    }
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert len(response.data) == 1
+
+
+def test_valid_task_with_user_story(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    project.default_task_status = f.TaskStatusFactory.create(project=project)
+    us = f.UserStoryFactory.create(project=project)
+    project.save()
+    client.login(user)
+
+    url = reverse("importer-task", args=[project.pk])
+    data = {
+        "subject": "Imported task",
+        "description": "Imported task",
+        "user_story": us.ref
+    }
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201
+    assert us.tasks.all().count() == 1
+
+
+#######################################################
+## tes api/v1/importer/issue
+#######################################################
+
 def test_invalid_issue_import(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
@@ -369,7 +690,7 @@ def test_invalid_issue_import(client):
     url = reverse("importer-issue", args=[project.pk])
     data = {}
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
 
 
@@ -387,11 +708,10 @@ def test_valid_user_story_import(client):
         "finish_date": "2014-10-24T00:00:00+0000"
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
-    response_data = response.data
-    assert response_data["subject"] == "Imported issue"
-    assert response_data["finish_date"] == "2014-10-24T00:00:00+0000"
+    assert response.data["subject"] == "Imported issue"
+    assert response.data["finish_date"] == "2014-10-24T00:00:00+0000"
 
 
 def test_valid_user_story_import_with_custom_attributes_values(client):
@@ -434,11 +754,10 @@ def test_valid_issue_import_without_extra_data(client):
         "subject": "Test"
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
-    response_data = response.data
-    assert response_data["owner"] == user.email
-    assert response_data["ref"] is not None
+    assert response.data["owner"] == user.email
+    assert response.data["ref"] is not None
 
 
 def test_valid_issue_import_with_custom_attributes_values(client):
@@ -495,14 +814,13 @@ def test_valid_issue_import_with_extra_data(client):
         "watchers": ["testing@taiga.io"]
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
-    response_data = response.data
-    assert len(response_data["attachments"]) == 1
-    assert response_data["owner"] == user.email
-    assert response_data["ref"] is not None
-    assert response_data["finished_date"] == "2014-10-24T00:00:00+0000"
-    assert response_data["watchers"] == [user_watching.email]
+    assert len(response.data["attachments"]) == 1
+    assert response.data["owner"] == user.email
+    assert response.data["ref"] is not None
+    assert response.data["finished_date"] == "2014-10-24T00:00:00+0000"
+    assert response.data["watchers"] == [user_watching.email]
 
 
 def test_invalid_issue_import_with_extra_data(client):
@@ -523,10 +841,9 @@ def test_invalid_issue_import_with_extra_data(client):
         "attachments": [{}],
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
-    response_data = response.data
-    assert len(response_data) == 1
+    assert len(response.data) == 1
     assert Issue.objects.filter(subject="Imported issue").count() == 0
 
 
@@ -548,10 +865,9 @@ def test_invalid_issue_import_with_bad_choices(client):
         "status": "Not valid"
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
-    response_data = response.data
-    assert len(response_data) == 1
+    assert len(response.data) == 1
 
     url = reverse("importer-issue", args=[project.pk])
     data = {
@@ -560,10 +876,9 @@ def test_invalid_issue_import_with_bad_choices(client):
         "priority": "Not valid"
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
-    response_data = response.data
-    assert len(response_data) == 1
+    assert len(response.data) == 1
 
     url = reverse("importer-issue", args=[project.pk])
     data = {
@@ -572,10 +887,9 @@ def test_invalid_issue_import_with_bad_choices(client):
         "severity": "Not valid"
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
-    response_data = response.data
-    assert len(response_data) == 1
+    assert len(response.data) == 1
 
     url = reverse("importer-issue", args=[project.pk])
     data = {
@@ -584,272 +898,14 @@ def test_invalid_issue_import_with_bad_choices(client):
         "type": "Not valid"
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 400
-    response_data = response.data
-    assert len(response_data) == 1
-
-
-def test_invalid_us_import(client):
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    client.login(user)
-
-    url = reverse("importer-us", args=[project.pk])
-    data = {}
-
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 400
-
-
-def test_valid_us_import_without_extra_data(client):
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    project.default_us_status = f.UserStoryStatusFactory.create(project=project)
-    project.save()
-    client.login(user)
-
-    url = reverse("importer-us", args=[project.pk])
-    data = {
-        "subject": "Test"
-    }
-
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 201
-    response_data = response.data
-    assert response_data["owner"] == user.email
-    assert response_data["ref"] is not None
-
-
-def test_valid_us_import_with_extra_data(client):
-    user = f.UserFactory.create()
-    user_watching = f.UserFactory.create(email="testing@taiga.io")
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    project.default_us_status = f.UserStoryStatusFactory.create(project=project)
-    project.save()
-    client.login(user)
-
-    url = reverse("importer-us", args=[project.pk])
-    data = {
-        "subject": "Imported us",
-        "description": "Imported us",
-        "attachments": [{
-            "owner": user.email,
-            "attached_file": {
-                "name": "imported attachment",
-                "data": base64.b64encode(b"TEST").decode("utf-8")
-            }
-        }],
-        "watchers": ["testing@taiga.io"]
-    }
-
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 201
-    response_data = response.data
-    assert len(response_data["attachments"]) == 1
-    assert response_data["owner"] == user.email
-    assert response_data["ref"] is not None
-    assert response_data["watchers"] == [user_watching.email]
-
-
-def test_invalid_us_import_with_extra_data(client):
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    project.default_us_status = f.UserStoryStatusFactory.create(project=project)
-    project.save()
-    client.login(user)
-
-    url = reverse("importer-us", args=[project.pk])
-    data = {
-        "subject": "Imported us",
-        "description": "Imported us",
-        "attachments": [{}],
-    }
-
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 400
-    response_data = response.data
-    assert len(response_data) == 1
-    assert UserStory.objects.filter(subject="Imported us").count() == 0
-
-
-def test_invalid_us_import_with_bad_choices(client):
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    project.default_us_status = f.UserStoryStatusFactory.create(project=project)
-    project.save()
-    client.login(user)
-
-    url = reverse("importer-us", args=[project.pk])
-    data = {
-        "subject": "Imported us",
-        "description": "Imported us",
-        "status": "Not valid"
-    }
-
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 400
-    response_data = response.data
-    assert len(response_data) == 1
-
-
-def test_invalid_task_import(client):
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    client.login(user)
-
-    url = reverse("importer-task", args=[project.pk])
-    data = {}
-
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 400
-
-
-def test_valid_task_import_without_extra_data(client):
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    project.default_task_status = f.TaskStatusFactory.create(project=project)
-    project.save()
-    client.login(user)
-
-    url = reverse("importer-task", args=[project.pk])
-    data = {
-        "subject": "Test"
-    }
-
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 201
-    response_data = response.data
-    assert response_data["owner"] == user.email
-    assert response_data["ref"] is not None
-
-
-def test_valid_task_import_with_custom_attributes_values(client):
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    membership = f.MembershipFactory(project=project, user=user, is_admin=True)
-    project.default_task_status = f.TaskStatusFactory.create(project=project)
-    project.save()
-    custom_attr = f.TaskCustomAttributeFactory(project=project)
-
-    url = reverse("importer-task", args=[project.pk])
-    data = {
-        "subject": "Test Custom Attrs Values Tasks",
-        "custom_attributes_values": {
-            custom_attr.name: "test_value"
-        }
-    }
-
-    client.login(user)
     response = client.json.post(url, json.dumps(data))
-    assert response.status_code == 201
-    custom_attributes_values = apps.get_model("custom_attributes.TaskCustomAttributesValues").objects.get(
-                                                        task__subject=response.data["subject"])
-    assert custom_attributes_values.attributes_values == {str(custom_attr.id): "test_value"}
-
-
-def test_valid_task_import_with_extra_data(client):
-    user = f.UserFactory.create()
-    user_watching = f.UserFactory.create(email="testing@taiga.io")
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    project.default_task_status = f.TaskStatusFactory.create(project=project)
-    project.save()
-    client.login(user)
-
-    url = reverse("importer-task", args=[project.pk])
-    data = {
-        "subject": "Imported task",
-        "description": "Imported task",
-        "attachments": [{
-            "owner": user.email,
-            "attached_file": {
-                "name": "imported attachment",
-                "data": base64.b64encode(b"TEST").decode("utf-8")
-            }
-        }],
-        "watchers": ["testing@taiga.io"]
-    }
-
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 201
-    response_data = response.data
-    assert len(response_data["attachments"]) == 1
-    assert response_data["owner"] == user.email
-    assert response_data["ref"] is not None
-    assert response_data["watchers"] == [user_watching.email]
-
-
-def test_invalid_task_import_with_extra_data(client):
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    project.default_task_status = f.TaskStatusFactory.create(project=project)
-    project.save()
-    client.login(user)
-
-    url = reverse("importer-task", args=[project.pk])
-    data = {
-        "subject": "Imported task",
-        "description": "Imported task",
-        "attachments": [{}],
-    }
-
-    response = client.post(url, json.dumps(data), content_type="application/json")
     assert response.status_code == 400
-    response_data = response.data
-    assert len(response_data) == 1
-    assert Task.objects.filter(subject="Imported task").count() == 0
+    assert len(response.data) == 1
 
 
-def test_invalid_task_import_with_bad_choices(client):
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    project.default_task_status = f.TaskStatusFactory.create(project=project)
-    project.save()
-    client.login(user)
-
-    url = reverse("importer-task", args=[project.pk])
-    data = {
-        "subject": "Imported task",
-        "description": "Imported task",
-        "status": "Not valid"
-    }
-
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 400
-    response_data = response.data
-    assert len(response_data) == 1
-
-
-def test_valid_task_with_user_story(client):
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    project.default_task_status = f.TaskStatusFactory.create(project=project)
-    us = f.UserStoryFactory.create(project=project)
-    project.save()
-    client.login(user)
-
-    url = reverse("importer-task", args=[project.pk])
-    data = {
-        "subject": "Imported task",
-        "description": "Imported task",
-        "user_story": us.ref
-    }
-
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 201
-    assert us.tasks.all().count() == 1
-
+#######################################################
+## tes api/v1/importer/wiki-page
+#######################################################
 
 def test_invalid_wiki_page_import(client):
     user = f.UserFactory.create()
@@ -860,7 +916,7 @@ def test_invalid_wiki_page_import(client):
     url = reverse("importer-wiki-page", args=[project.pk])
     data = {}
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
 
 
@@ -875,10 +931,9 @@ def test_valid_wiki_page_import_without_extra_data(client):
         "slug": "imported-wiki-page",
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
-    response_data = response.data
-    assert response_data["owner"] == user.email
+    assert response.data["owner"] == user.email
 
 
 def test_valid_wiki_page_import_with_extra_data(client):
@@ -902,12 +957,11 @@ def test_valid_wiki_page_import_with_extra_data(client):
         "watchers": ["testing@taiga.io"]
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
-    response_data = response.data
-    assert len(response_data["attachments"]) == 1
-    assert response_data["owner"] == user.email
-    assert response_data["watchers"] == [user_watching.email]
+    assert len(response.data["attachments"]) == 1
+    assert response.data["owner"] == user.email
+    assert response.data["watchers"] == [user_watching.email]
 
 
 def test_invalid_wiki_page_import_with_extra_data(client):
@@ -923,12 +977,15 @@ def test_invalid_wiki_page_import_with_extra_data(client):
         "attachments": [{}],
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
-    response_data = response.data
-    assert len(response_data) == 1
+    assert len(response.data) == 1
     assert WikiPage.objects.filter(slug="imported-wiki-page").count() == 0
 
+
+#######################################################
+## tes api/v1/importer/wiki-link
+#######################################################
 
 def test_invalid_wiki_link_import(client):
     user = f.UserFactory.create()
@@ -939,7 +996,7 @@ def test_invalid_wiki_link_import(client):
     url = reverse("importer-wiki-link", args=[project.pk])
     data = {}
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
 
 
@@ -955,65 +1012,16 @@ def test_valid_wiki_link_import(client):
         "href": "imported-wiki-link",
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
     response.data
 
 
+##################################################################
+## tes taiga.export_import.services.store_project_from_dict
+##################################################################
 
-def test_invalid_milestone_import(client):
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    client.login(user)
-
-    url = reverse("importer-milestone", args=[project.pk])
-    data = {}
-
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 400
-
-
-def test_valid_milestone_import(client):
-    user = f.UserFactory.create()
-    user_watching = f.UserFactory.create(email="testing@taiga.io")
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    client.login(user)
-
-    url = reverse("importer-milestone", args=[project.pk])
-    data = {
-        "name": "Imported milestone",
-        "estimated_start": "2014-10-10",
-        "estimated_finish": "2014-10-20",
-        "watchers": ["testing@taiga.io"]
-    }
-
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 201
-    assert response.data["watchers"] == [user_watching.email]
-
-def test_milestone_import_duplicated_milestone(client):
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    f.MembershipFactory(project=project, user=user, is_admin=True)
-    client.login(user)
-
-    url = reverse("importer-milestone", args=[project.pk])
-    data = {
-        "name": "Imported milestone",
-        "estimated_start": "2014-10-10",
-        "estimated_finish": "2014-10-20",
-    }
-    # We create twice the same milestone
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    response = client.post(url, json.dumps(data), content_type="application/json")
-    assert response.status_code == 400
-    response_data = response.data
-    assert response_data["milestones"][0]["name"][0] == "Name duplicated for the project"
-
-
-def test_dict_to_project_with_no_projects_slots_available(client):
+def test_services_store_project_from_dict_with_no_projects_slots_available(client):
     user = f.UserFactory.create(max_private_projects=0)
 
     data = {
@@ -1024,12 +1032,12 @@ def test_dict_to_project_with_no_projects_slots_available(client):
     }
 
     with pytest.raises(TaigaImportError) as excinfo:
-        project = dict_to_project(data, owner=user)
+        project = services.store_project_from_dict(data, owner=user)
 
     assert "can't have more private projects" in str(excinfo.value)
 
 
-def test_dict_to_project_with_no_members_private_project_slots_available(client):
+def test_services_store_project_from_dict_with_no_members_private_project_slots_available(client):
     user = f.UserFactory.create(max_memberships_private_projects=2)
 
     data = {
@@ -1059,12 +1067,12 @@ def test_dict_to_project_with_no_members_private_project_slots_available(client)
     }
 
     with pytest.raises(TaigaImportError) as excinfo:
-        project = dict_to_project(data, owner=user)
+        project = services.store_project_from_dict(data, owner=user)
 
     assert "reaches your current limit of memberships for private" in str(excinfo.value)
 
 
-def test_dict_to_project_with_no_members_public_project_slots_available(client):
+def test_services_store_project_from_dict_with_no_members_public_project_slots_available(client):
     user = f.UserFactory.create(max_memberships_public_projects=2)
 
     data = {
@@ -1094,10 +1102,14 @@ def test_dict_to_project_with_no_members_public_project_slots_available(client):
     }
 
     with pytest.raises(TaigaImportError) as excinfo:
-        project = dict_to_project(data, owner=user)
+        project = services.store_project_from_dict(data, owner=user)
 
     assert "reaches your current limit of memberships for public" in str(excinfo.value)
 
+
+##################################################################
+## tes api/v1/importer/load-dummp
+##################################################################
 
 def test_invalid_dump_import(client):
     user = f.UserFactory.create()
@@ -1110,132 +1122,11 @@ def test_invalid_dump_import(client):
 
     response = client.post(url, {'dump': data})
     assert response.status_code == 400
-    response_data = response.data
-    assert response_data["_error_message"] == "Invalid dump format"
+    assert response.data["_error_message"] == "Invalid dump format"
 
 
-def test_valid_dump_import_with_logo(client, settings):
+def test_valid_dump_import_without_enough_public_projects_slots(client, settings):
     settings.CELERY_ENABLED = False
-
-    user = f.UserFactory.create()
-    client.login(user)
-
-    url = reverse("importer-load-dump")
-
-    data = ContentFile(bytes(json.dumps({
-        "slug": "valid-project",
-        "name": "Valid project",
-        "description": "Valid project desc",
-        "is_private": False,
-        "logo": {
-            "name": "logo.bmp",
-            "data": base64.b64encode(DUMMY_BMP_DATA).decode("utf-8")
-        }
-    }), "utf-8"))
-    data.name = "test"
-
-    response = client.post(url, {'dump': data})
-    assert response.status_code == 201
-    response_data = response.data
-    assert "id" in response_data
-    assert response_data["name"] == "Valid project"
-    assert "logo_small_url" in response_data
-    assert response_data["logo_small_url"] != None
-    assert "logo_big_url" in response_data
-    assert response_data["logo_big_url"] != None
-
-
-def test_valid_dump_import_with_celery_disabled(client, settings):
-    settings.CELERY_ENABLED = False
-
-    user = f.UserFactory.create()
-    client.login(user)
-
-    url = reverse("importer-load-dump")
-
-    data = ContentFile(bytes(json.dumps({
-        "slug": "valid-project",
-        "name": "Valid project",
-        "description": "Valid project desc",
-        "is_private": True
-    }), "utf-8"))
-    data.name = "test"
-
-    response = client.post(url, {'dump': data})
-    assert response.status_code == 201
-    response_data = response.data
-    assert "id" in response_data
-    assert response_data["name"] == "Valid project"
-
-
-def test_valid_dump_import_with_celery_enabled(client, settings):
-    settings.CELERY_ENABLED = True
-
-    user = f.UserFactory.create()
-    client.login(user)
-
-    url = reverse("importer-load-dump")
-
-    data = ContentFile(bytes(json.dumps({
-        "slug": "valid-project",
-        "name": "Valid project",
-        "description": "Valid project desc",
-        "is_private": True
-    }), "utf-8"))
-    data.name = "test"
-
-    response = client.post(url, {'dump': data})
-    assert response.status_code == 202
-    response_data = response.data
-    assert "import_id" in response_data
-
-
-def test_dump_import_duplicated_project(client):
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    client.login(user)
-
-    url = reverse("importer-load-dump")
-
-    data = ContentFile(bytes(json.dumps({
-        "slug": project.slug,
-        "name": "Test import",
-        "description": "Valid project desc",
-        "is_private": True
-    }), "utf-8"))
-    data.name = "test"
-
-    response = client.post(url, {'dump': data})
-    assert response.status_code == 201
-    response_data = response.data
-    assert response_data["name"] == "Test import"
-    assert response_data["slug"] == "{}-test-import".format(user.username)
-
-
-def test_dump_import_throttling(client, settings):
-    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["import-dump-mode"] = "1/minute"
-
-    user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user)
-    client.login(user)
-
-    url = reverse("importer-load-dump")
-
-    data = ContentFile(bytes(json.dumps({
-        "slug": project.slug,
-        "name": "Test import",
-        "description": "Valid project desc",
-        "is_private": True
-    }), "utf-8"))
-    data.name = "test"
-
-    response = client.post(url, {'dump': data})
-    assert response.status_code == 201
-    response = client.post(url, {'dump': data})
-    assert response.status_code == 429
-
-
-def test_valid_dump_import_without_enough_public_projects_slots(client):
     user = f.UserFactory.create(max_public_projects=0)
     client.login(user)
 
@@ -1257,7 +1148,8 @@ def test_valid_dump_import_without_enough_public_projects_slots(client):
     assert Project.objects.filter(slug="public-project-without-slots").count() == 0
 
 
-def test_valid_dump_import_without_enough_private_projects_slots(client):
+def test_valid_dump_import_without_enough_private_projects_slots(client, settings):
+    settings.CELERY_ENABLED = False
     user = f.UserFactory.create(max_private_projects=0)
     client.login(user)
 
@@ -1279,7 +1171,8 @@ def test_valid_dump_import_without_enough_private_projects_slots(client):
     assert Project.objects.filter(slug="private-project-without-slots").count() == 0
 
 
-def test_valid_dump_import_without_enough_membership_private_project_slots_one_project(client):
+def test_valid_dump_import_without_enough_membership_private_project_slots_one_project(client, settings):
+    settings.CELERY_ENABLED = False
     user = f.UserFactory.create(max_memberships_private_projects=5)
     client.login(user)
 
@@ -1326,7 +1219,8 @@ def test_valid_dump_import_without_enough_membership_private_project_slots_one_p
     assert Project.objects.filter(slug="project-without-memberships-slots").count() == 0
 
 
-def test_valid_dump_import_without_enough_membership_public_project_slots_one_project(client):
+def test_valid_dump_import_without_enough_membership_public_project_slots_one_project(client, settings):
+    settings.CELERY_ENABLED = False
     user = f.UserFactory.create(max_memberships_public_projects=5)
     client.login(user)
 
@@ -1424,9 +1318,8 @@ def test_valid_dump_import_with_enough_membership_private_project_slots_multiple
 
     response = client.post(url, {'dump': data})
     assert response.status_code == 201
-    response_data = response.data
-    assert "id" in response_data
-    assert response_data["name"] == "Valid project"
+    assert "id" in response.data
+    assert response.data["name"] == "Valid project"
 
 
 def test_valid_dump_import_with_enough_membership_public_project_slots_multiple_projects(client, settings):
@@ -1480,30 +1373,13 @@ def test_valid_dump_import_with_enough_membership_public_project_slots_multiple_
 
     response = client.post(url, {'dump': data})
     assert response.status_code == 201
-    response_data = response.data
-    assert "id" in response_data
-    assert response_data["name"] == "Valid project"
+    assert "id" in response.data
+    assert response.data["name"] == "Valid project"
 
 
-def test_valid_dump_import_without_slug(client):
-    project = f.ProjectFactory.create(slug="existing-slug")
-    user = f.UserFactory.create()
-    client.login(user)
 
-    url = reverse("importer-load-dump")
-
-    data = ContentFile(bytes(json.dumps({
-        "name": "Project name",
-        "description": "Valid project desc",
-        "is_private": True
-    }), "utf-8"))
-    data.name = "test"
-
-    response = client.post(url, {'dump': data})
-    assert response.status_code == 201
-
-
-def test_valid_dump_import_with_the_limit_of_membership_whit_you_for_private_project(client):
+def test_valid_dump_import_with_the_limit_of_membership_whit_you_for_private_project(client, settings):
+    settings.CELERY_ENABLED = False
     user = f.UserFactory.create(max_memberships_private_projects=5)
     client.login(user)
 
@@ -1545,7 +1421,8 @@ def test_valid_dump_import_with_the_limit_of_membership_whit_you_for_private_pro
     assert Project.objects.filter(slug="private-project-with-memberships-limit-with-you").count() == 1
 
 
-def test_valid_dump_import_with_the_limit_of_membership_whit_you_for_public_project(client):
+def test_valid_dump_import_with_the_limit_of_membership_whit_you_for_public_project(client, settings):
+    settings.CELERY_ENABLED = False
     user = f.UserFactory.create(max_memberships_public_projects=5)
     client.login(user)
 
@@ -1587,6 +1464,203 @@ def test_valid_dump_import_with_the_limit_of_membership_whit_you_for_public_proj
     assert Project.objects.filter(slug="public-project-with-memberships-limit-with-you").count() == 1
 
 
+def test_valid_dump_import_with_celery_disabled(client, settings):
+    settings.CELERY_ENABLED = False
+
+    user = f.UserFactory.create()
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": "valid-project",
+        "name": "Valid project",
+        "description": "Valid project desc",
+        "is_private": True
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 201
+    assert "id" in response.data
+    assert response.data["name"] == "Valid project"
+
+
+def test_invalid_dump_import_with_celery_disabled(client, settings):
+    settings.CELERY_ENABLED = False
+    user = f.UserFactory.create(max_memberships_public_projects=5)
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": "invalid-project",
+        "name": "Invalid project",
+        "description": "Valid project desc",
+        "is_private": False,
+        "memberships": [
+            {
+                "email": user.email,
+                "role": "Role",
+            },
+            {
+                "email": "test2@test.com",
+                "role": "Role",
+            },
+            {
+                "email": "test3@test.com",
+                "role": "Role",
+            },
+            {
+                "email": "test4@test.com",
+                "role": "Role",
+            },
+            {
+                "email": "test5@test.com",
+                "role": "Role",
+            },
+        ],
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 400
+
+
+def test_valid_dump_import_with_celery_enabled(client, settings):
+    settings.CELERY_ENABLED = True
+
+    user = f.UserFactory.create()
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": "valid-project",
+        "name": "Valid project",
+        "description": "Valid project desc",
+        "is_private": True
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 202
+    assert "import_id" in response.data
+    assert Project.objects.filter(slug="valid-project").count() == 1
+
+
+def test_invalid_dump_import_with_celery_enabled(client, settings):
+    settings.CELERY_ENABLED = True
+    user = f.UserFactory.create(max_memberships_public_projects=5)
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": "invalid-project",
+        "name": "Invalid project",
+        "description": "Valid project desc",
+        "is_private": False,
+        "memberships": [
+            {
+                "email": user.email,
+                "role": "Role",
+            },
+            {
+                "email": "test2@test.com",
+                "role": "Role",
+            },
+            {
+                "email": "test3@test.com",
+                "role": "Role",
+            },
+            {
+                "email": "test4@test.com",
+                "role": "Role",
+            },
+            {
+                "email": "test5@test.com",
+                "role": "Role",
+            },
+        ],
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 202
+    assert "import_id" in response.data
+    assert Project.objects.filter(slug="invalid-project").count() == 0
+
+
+def test_dump_import_throttling(client, settings):
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["import-dump-mode"] = "1/minute"
+
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": project.slug,
+        "name": "Test import",
+        "description": "Valid project desc",
+        "is_private": True
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 201
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 429
+
+
+def test_valid_dump_import_without_slug(client):
+    project = f.ProjectFactory.create(slug="existing-slug")
+    user = f.UserFactory.create()
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "name": "Project name",
+        "description": "Valid project desc",
+        "is_private": True
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 201
+
+
+def test_valid_dump_import_with_logo(client, settings):
+    user = f.UserFactory.create()
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": "valid-project",
+        "name": "Valid project",
+        "description": "Valid project desc",
+        "is_private": False,
+        "logo": {
+            "name": "logo.bmp",
+            "data": base64.b64encode(DUMMY_BMP_DATA).decode("utf-8")
+        }
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 201
+    assert "id" in response.data
+    assert response.data["name"] == "Valid project"
+    assert "logo_small_url" in response.data
+    assert response.data["logo_small_url"] != None
+    assert "logo_big_url" in response.data
+    assert response.data["logo_big_url"] != None
+
+
 def test_valid_project_import_and_disabled_is_featured(client):
     user = f.UserFactory.create()
     client.login(user)
@@ -1602,8 +1676,30 @@ def test_valid_project_import_and_disabled_is_featured(client):
         "is_featured": True
     }
 
-    response = client.post(url, json.dumps(data), content_type="application/json")
+    response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
-    response_data = response.data
-    assert response_data["owner"] == user.email
-    assert response_data["is_featured"] == False
+    assert response.data["owner"] == user.email
+    assert response.data["is_featured"] == False
+
+
+def test_dump_import_duplicated_project(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    client.login(user)
+
+    url = reverse("importer-load-dump")
+
+    data = ContentFile(bytes(json.dumps({
+        "slug": project.slug,
+        "name": "Test import",
+        "description": "Valid project desc",
+        "is_private": True
+    }), "utf-8"))
+    data.name = "test"
+
+    response = client.post(url, {'dump': data})
+    assert response.status_code == 201
+    assert response.data["name"] == "Test import"
+    assert response.data["slug"] == "{}-test-import".format(user.username)
+
+

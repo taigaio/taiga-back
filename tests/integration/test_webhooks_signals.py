@@ -18,6 +18,7 @@
 
 import pytest
 from unittest.mock import patch
+from unittest.mock import Mock
 
 from .. import factories as f
 
@@ -26,7 +27,7 @@ from taiga.projects.history import services
 pytestmark = pytest.mark.django_db(transaction=True)
 
 
-def test_new_object_with_one_webhook(settings):
+def test_new_object_with_one_webhook_signal(settings):
     settings.WEBHOOKS_ENABLED = True
     project = f.ProjectFactory()
     f.WebhookFactory.create(project=project)
@@ -38,28 +39,31 @@ def test_new_object_with_one_webhook(settings):
         f.WikiPageFactory.create(project=project)
     ]
 
-    for obj in objects:
-        with patch('taiga.webhooks.tasks.create_webhook') as create_webhook_mock:
-            services.take_snapshot(obj, user=obj.owner, comment="test")
-            assert create_webhook_mock.call_count == 1
+    response = Mock(status_code=200, headers={}, content="ok")
+    response.elapsed.total_seconds.return_value = 100
 
     for obj in objects:
-        with patch('taiga.webhooks.tasks.change_webhook') as change_webhook_mock:
+        with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock:
+            services.take_snapshot(obj, user=obj.owner, comment="test")
+            assert session_send_mock.call_count == 1
+
+    for obj in objects:
+        with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock:
             services.take_snapshot(obj, user=obj.owner)
-            assert change_webhook_mock.call_count == 0
+            assert session_send_mock.call_count == 0
 
     for obj in objects:
-        with patch('taiga.webhooks.tasks.change_webhook') as change_webhook_mock:
+        with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock:
             services.take_snapshot(obj, user=obj.owner, comment="test")
-            assert change_webhook_mock.call_count == 1
+            assert session_send_mock.call_count == 1
 
     for obj in objects:
-        with patch('taiga.webhooks.tasks.delete_webhook') as delete_webhook_mock:
+        with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock:
             services.take_snapshot(obj, user=obj.owner, comment="test", delete=True)
-            assert delete_webhook_mock.call_count == 1
+            assert session_send_mock.call_count == 1
 
 
-def test_new_object_with_two_webhook(settings):
+def test_new_object_with_two_webhook_signals(settings):
     settings.WEBHOOKS_ENABLED = True
     project = f.ProjectFactory()
     f.WebhookFactory.create(project=project)
@@ -72,28 +76,31 @@ def test_new_object_with_two_webhook(settings):
         f.WikiPageFactory.create(project=project)
     ]
 
-    for obj in objects:
-        with patch('taiga.webhooks.tasks.create_webhook') as create_webhook_mock:
-            services.take_snapshot(obj, user=obj.owner, comment="test")
-            assert create_webhook_mock.call_count == 2
+    response = Mock(status_code=200, headers={}, content="ok")
+    response.elapsed.total_seconds.return_value = 100
 
     for obj in objects:
-        with patch('taiga.webhooks.tasks.change_webhook') as change_webhook_mock:
+        with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock:
             services.take_snapshot(obj, user=obj.owner, comment="test")
-            assert change_webhook_mock.call_count == 2
+            assert session_send_mock.call_count == 2
 
     for obj in objects:
-        with patch('taiga.webhooks.tasks.change_webhook') as change_webhook_mock:
+        with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock:
+            services.take_snapshot(obj, user=obj.owner, comment="test")
+            assert session_send_mock.call_count == 2
+
+    for obj in objects:
+        with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock:
             services.take_snapshot(obj, user=obj.owner)
-            assert change_webhook_mock.call_count == 0
+            assert session_send_mock.call_count == 0
 
     for obj in objects:
-        with patch('taiga.webhooks.tasks.delete_webhook') as delete_webhook_mock:
+        with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock:
             services.take_snapshot(obj, user=obj.owner, comment="test", delete=True)
-            assert delete_webhook_mock.call_count == 2
+            assert session_send_mock.call_count == 2
 
 
-def test_send_request_one_webhook(settings):
+def test_send_request_one_webhook_signal(settings):
     settings.WEBHOOKS_ENABLED = True
     project = f.ProjectFactory()
     f.WebhookFactory.create(project=project)
@@ -105,12 +112,15 @@ def test_send_request_one_webhook(settings):
         f.WikiPageFactory.create(project=project)
     ]
 
-    for obj in objects:
-        with patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
-            services.take_snapshot(obj, user=obj.owner, comment="test")
-            assert _send_request_mock.call_count == 1
+    response = Mock(status_code=200, headers={}, content="ok")
+    response.elapsed.total_seconds.return_value = 100
 
     for obj in objects:
-        with patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
+        with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock:
+            services.take_snapshot(obj, user=obj.owner, comment="test")
+            assert session_send_mock.call_count == 1
+
+    for obj in objects:
+        with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock:
             services.take_snapshot(obj, user=obj.owner, comment="test", delete=True)
-            assert _send_request_mock.call_count == 1
+            assert session_send_mock.call_count == 1

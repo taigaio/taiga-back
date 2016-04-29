@@ -64,7 +64,7 @@ def test_create_task_without_default_values(client):
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201
     assert response.data['status'] == None
-    
+
 
 def test_api_update_task_tags(client):
     project = f.ProjectFactory.create()
@@ -176,6 +176,6 @@ def test_custom_fields_csv_generation():
     data.seek(0)
     reader = csv.reader(data)
     row = next(reader)
-    assert row[19] == attr.name
+    assert row[21] == attr.name
     row = next(reader)
-    assert row[19] == "val1"
+    assert row[21] == "val1"
