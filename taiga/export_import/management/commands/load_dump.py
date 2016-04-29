@@ -21,8 +21,8 @@ from django.db.models import signals
 from optparse import make_option
 
 from taiga.base.utils import json
-from taiga.export_import.import services
-from taiga.export_import.exceptions as err
+from taiga.export_import import services
+from taiga.export_import import exceptions as err
 from taiga.export_import.renderers import ExportRenderer
 from taiga.projects.models import Project
 from taiga.users.models import User
