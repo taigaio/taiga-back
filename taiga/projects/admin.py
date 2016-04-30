@@ -16,6 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
+from django.core.urlresolvers import reverse
+from django.utils.html import format_html
+from django.utils.translation import ugettext_lazy as _
 
 from taiga.projects.milestones.admin import MilestoneInline
 from taiga.projects.notifications.admin import NotifyPolicyInline
@@ -67,17 +70,24 @@ class MembershipInline(admin.TabularInline):
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "slug", "is_private",
-                    "is_featured", "is_looking_for_people",
-                    "owner", "created_date"]
-
+                    "owner_url", "blocked_code", "is_featured"]
     list_display_links = ["id", "name", "slug"]
-    list_filter = ("is_private", "is_featured", "is_looking_for_people")
-    list_editable = ["is_featured"]
+    list_filter = ("is_private", "blocked_code", "is_featured")
+    list_editable = ["is_featured", "blocked_code"]
     search_fields = ["id", "name", "slug", "owner__username", "owner__email", "owner__full_name"]
     inlines = [RoleInline, MembershipInline, MilestoneInline, NotifyPolicyInline, LikeInline]
 
     # NOTE: TextArrayField with a choices is broken in the admin panel.
     exclude = ("anon_permissions", "public_permissions")
+
+    def owner_url(self, obj):
+        if obj.owner:
+            url = reverse('admin:{0}_{1}_change'.format(obj.owner._meta.app_label,
+                                                        obj.owner._meta.model_name),
+                          args=(obj.owner.pk,))
+            return format_html("<a href='{url}' title='{user}'>{user}</a>", url=url, user=obj.owner)
+        return ""
+    owner_url.short_description = _('owner')
 
     def get_object(self, *args, **kwargs):
         self.obj = super().get_object(*args, **kwargs)
