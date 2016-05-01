@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-19 16:00+0200\n"
-"PO-Revision-Date: 2016-04-19 14:00+0000\n"
+"POT-Creation-Date: 2016-05-01 19:09+0200\n"
+"PO-Revision-Date: 2016-05-01 17:09+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
@@ -205,7 +205,7 @@ msgstr "Adjunta una imagen válida. El fichero no es una imagen o está dañada.
 #: taiga/projects/issues/api.py:233 taiga/projects/mixins/ordering.py:58
 #: taiga/projects/tasks/api.py:152 taiga/projects/tasks/api.py:174
 #: taiga/projects/userstories/api.py:218 taiga/projects/userstories/api.py:238
-#: taiga/webhooks/api.py:67
+#: taiga/webhooks/api.py:68
 msgid "Blocked element"
 msgstr "Elemento bloqueado"
 
@@ -369,7 +369,7 @@ msgid "Error in filter params types."
 msgstr "Error en los típos de parámetros de filtrado"
 
 #: taiga/base/filters.py:133 taiga/base/filters.py:232
-#: taiga/projects/filters.py:59
+#: taiga/projects/filters.py:63
 msgid "'project' must be an integer value."
 msgstr "'project' debe ser un valor entero."
 
@@ -522,62 +522,6 @@ msgstr "Se necesita el fichero con los datos exportados"
 msgid "Invalid dump format"
 msgstr "Formato de fichero de exportación inválido"
 
-#: taiga/export_import/dump_service.py:112
-msgid "error importing project data"
-msgstr "error importando los datos del proyecto"
-
-#: taiga/export_import/dump_service.py:125
-msgid "error importing lists of project attributes"
-msgstr "error importando la listados de valores de attributos del proyecto"
-
-#: taiga/export_import/dump_service.py:130
-msgid "error importing default project attributes values"
-msgstr "error importando los valores por defecto de los atributos del proyecto"
-
-#: taiga/export_import/dump_service.py:140
-msgid "error importing custom attributes"
-msgstr "error importando los atributos personalizados"
-
-#: taiga/export_import/dump_service.py:145
-msgid "error importing roles"
-msgstr "error importando los roles"
-
-#: taiga/export_import/dump_service.py:160
-msgid "error importing memberships"
-msgstr "error importando los miembros"
-
-#: taiga/export_import/dump_service.py:165
-msgid "error importing sprints"
-msgstr "error importando los sprints"
-
-#: taiga/export_import/dump_service.py:170
-msgid "error importing wiki pages"
-msgstr "error importando las páginas del wiki"
-
-#: taiga/export_import/dump_service.py:175
-msgid "error importing wiki links"
-msgstr "error importando los enlaces del wiki"
-
-#: taiga/export_import/dump_service.py:180
-msgid "error importing issues"
-msgstr "error importando las peticiones"
-
-#: taiga/export_import/dump_service.py:185
-msgid "error importing user stories"
-msgstr "error importando las historias de usuario"
-
-#: taiga/export_import/dump_service.py:190
-msgid "error importing tasks"
-msgstr "error importando las tareas"
-
-#: taiga/export_import/dump_service.py:195
-msgid "error importing tags"
-msgstr "error importando las etiquetas"
-
-#: taiga/export_import/dump_service.py:199
-msgid "error importing timelines"
-msgstr "error importando los timelines"
-
 #: taiga/export_import/serializers.py:178
 msgid "{}=\"{}\" not found in this project"
 msgstr "{}=\"{}\"  no se ha encontrado en este proyecto"
@@ -597,13 +541,102 @@ msgstr "Contiene attributos personalizados inválidos."
 msgid "Name duplicated for the project"
 msgstr "Nombre duplicado para el proyecto"
 
-#: taiga/export_import/tasks.py:55 taiga/export_import/tasks.py:56
+#: taiga/export_import/services/store.py:621
+#: taiga/export_import/services/store.py:639
+msgid "error importing project data"
+msgstr "error importando los datos del proyecto"
+
+#: taiga/export_import/services/store.py:646
+msgid "error importing roles"
+msgstr "error importando los roles"
+
+#: taiga/export_import/services/store.py:651
+msgid "error importing memberships"
+msgstr "error importando los miembros"
+
+#: taiga/export_import/services/store.py:661
+msgid "error importing lists of project attributes"
+msgstr "error importando la listados de valores de attributos del proyecto"
+
+#: taiga/export_import/services/store.py:665
+msgid "error importing default project attributes values"
+msgstr "error importando los valores por defecto de los atributos del proyecto"
+
+#: taiga/export_import/services/store.py:674
+msgid "error importing custom attributes"
+msgstr "error importando los atributos personalizados"
+
+#: taiga/export_import/services/store.py:679
+msgid "error importing sprints"
+msgstr "error importando los sprints"
+
+#: taiga/export_import/services/store.py:683
+msgid "error importing user stories"
+msgstr "error importando las historias de usuario"
+
+#: taiga/export_import/services/store.py:687
+msgid "error importing tasks"
+msgstr "error importando las tareas"
+
+#: taiga/export_import/services/store.py:691
+msgid "error importing issues"
+msgstr "error importando las peticiones"
+
+#: taiga/export_import/services/store.py:695
+msgid "error importing wiki pages"
+msgstr "error importando las páginas del wiki"
+
+#: taiga/export_import/services/store.py:699
+msgid "error importing wiki links"
+msgstr "error importando los enlaces del wiki"
+
+#: taiga/export_import/services/store.py:703
+msgid "error importing tags"
+msgstr "error importando las etiquetas"
+
+#: taiga/export_import/services/store.py:707
+msgid "error importing timelines"
+msgstr "error importando los timelines"
+
+#: taiga/export_import/services/store.py:731
+msgid "unexpected error importing project"
+msgstr ""
+
+#: taiga/export_import/tasks.py:56 taiga/export_import/tasks.py:57
 msgid "Error generating project dump"
 msgstr "Erro generando el volcado de datos del proyecto"
 
-#: taiga/export_import/tasks.py:88 taiga/export_import/tasks.py:89
+#: taiga/export_import/tasks.py:81
+#, python-brace-format
+msgid ""
+"\n"
+"\n"
+"Error loading dump by {user_full_name} <{user_email}>:\"\n"
+"\n"
+"\n"
+"REASON:\n"
+"-------\n"
+"{reason}\n"
+"\n"
+"DETAILS:\n"
+"--------\n"
+"{details}\n"
+"\n"
+"TRACE ERROR:\n"
+"------------"
+msgstr ""
+
+#: taiga/export_import/tasks.py:110
 msgid "Error loading project dump"
 msgstr "Error cargando el volcado de datos del proyecto"
+
+#: taiga/export_import/tasks.py:111
+msgid "Error loading your project dump file"
+msgstr ""
+
+#: taiga/export_import/tasks.py:125
+msgid "  -- no detail info --"
+msgstr ""
 
 #: taiga/export_import/templates/emails/dump_project-body-html.jinja:4
 #, python-format
@@ -1318,6 +1351,15 @@ msgstr "Administrar valores de proyecto"
 msgid "Admin roles"
 msgstr "Administrar roles"
 
+#: taiga/projects/admin.py:90 taiga/projects/attachments/models.py:38
+#: taiga/projects/issues/models.py:39 taiga/projects/milestones/models.py:43
+#: taiga/projects/models.py:162 taiga/projects/notifications/models.py:61
+#: taiga/projects/tasks/models.py:38 taiga/projects/userstories/models.py:66
+#: taiga/projects/wiki/models.py:36 taiga/users/admin.py:69
+#: taiga/userstorage/models.py:26
+msgid "owner"
+msgstr "Dueño"
+
 #: taiga/projects/api.py:165 taiga/users/api.py:220
 msgid "Incomplete arguments"
 msgstr "Argumentos incompletos"
@@ -1365,14 +1407,6 @@ msgstr "La actualización parcial no está soportada."
 #: taiga/projects/attachments/api.py:66
 msgid "Project ID not matches between object and project"
 msgstr "El ID de proyecto no coincide entre el adjunto y un proyecto"
-
-#: taiga/projects/attachments/models.py:38 taiga/projects/issues/models.py:39
-#: taiga/projects/milestones/models.py:43 taiga/projects/models.py:162
-#: taiga/projects/notifications/models.py:61 taiga/projects/tasks/models.py:38
-#: taiga/projects/userstories/models.py:66 taiga/projects/wiki/models.py:36
-#: taiga/users/admin.py:69 taiga/userstorage/models.py:26
-msgid "owner"
-msgstr "Dueño"
 
 #: taiga/projects/attachments/models.py:40
 #: taiga/projects/custom_attributes/models.py:42
@@ -2766,39 +2800,39 @@ msgstr ""
 msgid "At least one user must be an active admin for this project."
 msgstr ""
 
-#: taiga/projects/serializers.py:392
+#: taiga/projects/serializers.py:396
 msgid "Default options"
 msgstr "Opciones por defecto"
 
-#: taiga/projects/serializers.py:393
+#: taiga/projects/serializers.py:397
 msgid "User story's statuses"
 msgstr "Estados de historia de usuario"
 
-#: taiga/projects/serializers.py:394
+#: taiga/projects/serializers.py:398
 msgid "Points"
 msgstr "Puntos"
 
-#: taiga/projects/serializers.py:395
+#: taiga/projects/serializers.py:399
 msgid "Task's statuses"
 msgstr "Estado de tareas"
 
-#: taiga/projects/serializers.py:396
+#: taiga/projects/serializers.py:400
 msgid "Issue's statuses"
 msgstr "Estados de peticion"
 
-#: taiga/projects/serializers.py:397
+#: taiga/projects/serializers.py:401
 msgid "Issue's types"
 msgstr "Tipos de petición"
 
-#: taiga/projects/serializers.py:398
+#: taiga/projects/serializers.py:402
 msgid "Priorities"
 msgstr "Prioridades"
 
-#: taiga/projects/serializers.py:399
+#: taiga/projects/serializers.py:403
 msgid "Severities"
 msgstr "Gravedades"
 
-#: taiga/projects/serializers.py:400
+#: taiga/projects/serializers.py:404
 msgid "Roles"
 msgstr "Roles"
 
