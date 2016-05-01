@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-19 16:00+0200\n"
-"PO-Revision-Date: 2016-04-19 14:00+0000\n"
+"POT-Creation-Date: 2016-05-01 19:09+0200\n"
+"PO-Revision-Date: 2016-05-01 17:09+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Dutch (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/nl/)\n"
@@ -199,7 +199,7 @@ msgstr ""
 #: taiga/projects/issues/api.py:233 taiga/projects/mixins/ordering.py:58
 #: taiga/projects/tasks/api.py:152 taiga/projects/tasks/api.py:174
 #: taiga/projects/userstories/api.py:218 taiga/projects/userstories/api.py:238
-#: taiga/webhooks/api.py:67
+#: taiga/webhooks/api.py:68
 msgid "Blocked element"
 msgstr ""
 
@@ -361,7 +361,7 @@ msgid "Error in filter params types."
 msgstr "Fout in filter params types."
 
 #: taiga/base/filters.py:133 taiga/base/filters.py:232
-#: taiga/projects/filters.py:59
+#: taiga/projects/filters.py:63
 msgid "'project' must be an integer value."
 msgstr "'project' moet een integer waarde zijn."
 
@@ -518,62 +518,6 @@ msgstr "Dump file nodig"
 msgid "Invalid dump format"
 msgstr "Ongeldig dump formaat"
 
-#: taiga/export_import/dump_service.py:112
-msgid "error importing project data"
-msgstr "fout bij het importeren van project data"
-
-#: taiga/export_import/dump_service.py:125
-msgid "error importing lists of project attributes"
-msgstr "fout bij importeren van project attributenlijst"
-
-#: taiga/export_import/dump_service.py:130
-msgid "error importing default project attributes values"
-msgstr "fout bij importeren van standaard projectattributen waarden"
-
-#: taiga/export_import/dump_service.py:140
-msgid "error importing custom attributes"
-msgstr "fout bij importeren eigen attributen"
-
-#: taiga/export_import/dump_service.py:145
-msgid "error importing roles"
-msgstr "fout bij importeren rollen"
-
-#: taiga/export_import/dump_service.py:160
-msgid "error importing memberships"
-msgstr "fout bij importeren lidmaatschappen"
-
-#: taiga/export_import/dump_service.py:165
-msgid "error importing sprints"
-msgstr "fout bij importeren sprints"
-
-#: taiga/export_import/dump_service.py:170
-msgid "error importing wiki pages"
-msgstr "fout bij importeren wiki pagina's"
-
-#: taiga/export_import/dump_service.py:175
-msgid "error importing wiki links"
-msgstr "fout bij importeren wiki links"
-
-#: taiga/export_import/dump_service.py:180
-msgid "error importing issues"
-msgstr "fout bij importeren issues"
-
-#: taiga/export_import/dump_service.py:185
-msgid "error importing user stories"
-msgstr "fout bij importeren user stories"
-
-#: taiga/export_import/dump_service.py:190
-msgid "error importing tasks"
-msgstr "fout bij importeren taken"
-
-#: taiga/export_import/dump_service.py:195
-msgid "error importing tags"
-msgstr "fout bij importeren tags"
-
-#: taiga/export_import/dump_service.py:199
-msgid "error importing timelines"
-msgstr "fout bij importeren tijdlijnen"
-
 #: taiga/export_import/serializers.py:178
 msgid "{}=\"{}\" not found in this project"
 msgstr "{}=\"{}\" niet gevonden in dit project"
@@ -593,13 +537,102 @@ msgstr "Het bevat ongeldige eigen velden:"
 msgid "Name duplicated for the project"
 msgstr "Naam gedupliceerd voor het project"
 
-#: taiga/export_import/tasks.py:55 taiga/export_import/tasks.py:56
+#: taiga/export_import/services/store.py:621
+#: taiga/export_import/services/store.py:639
+msgid "error importing project data"
+msgstr "fout bij het importeren van project data"
+
+#: taiga/export_import/services/store.py:646
+msgid "error importing roles"
+msgstr "fout bij importeren rollen"
+
+#: taiga/export_import/services/store.py:651
+msgid "error importing memberships"
+msgstr "fout bij importeren lidmaatschappen"
+
+#: taiga/export_import/services/store.py:661
+msgid "error importing lists of project attributes"
+msgstr "fout bij importeren van project attributenlijst"
+
+#: taiga/export_import/services/store.py:665
+msgid "error importing default project attributes values"
+msgstr "fout bij importeren van standaard projectattributen waarden"
+
+#: taiga/export_import/services/store.py:674
+msgid "error importing custom attributes"
+msgstr "fout bij importeren eigen attributen"
+
+#: taiga/export_import/services/store.py:679
+msgid "error importing sprints"
+msgstr "fout bij importeren sprints"
+
+#: taiga/export_import/services/store.py:683
+msgid "error importing user stories"
+msgstr "fout bij importeren user stories"
+
+#: taiga/export_import/services/store.py:687
+msgid "error importing tasks"
+msgstr "fout bij importeren taken"
+
+#: taiga/export_import/services/store.py:691
+msgid "error importing issues"
+msgstr "fout bij importeren issues"
+
+#: taiga/export_import/services/store.py:695
+msgid "error importing wiki pages"
+msgstr "fout bij importeren wiki pagina's"
+
+#: taiga/export_import/services/store.py:699
+msgid "error importing wiki links"
+msgstr "fout bij importeren wiki links"
+
+#: taiga/export_import/services/store.py:703
+msgid "error importing tags"
+msgstr "fout bij importeren tags"
+
+#: taiga/export_import/services/store.py:707
+msgid "error importing timelines"
+msgstr "fout bij importeren tijdlijnen"
+
+#: taiga/export_import/services/store.py:731
+msgid "unexpected error importing project"
+msgstr ""
+
+#: taiga/export_import/tasks.py:56 taiga/export_import/tasks.py:57
 msgid "Error generating project dump"
 msgstr "Fout bij genereren project dump"
 
-#: taiga/export_import/tasks.py:88 taiga/export_import/tasks.py:89
+#: taiga/export_import/tasks.py:81
+#, python-brace-format
+msgid ""
+"\n"
+"\n"
+"Error loading dump by {user_full_name} <{user_email}>:\"\n"
+"\n"
+"\n"
+"REASON:\n"
+"-------\n"
+"{reason}\n"
+"\n"
+"DETAILS:\n"
+"--------\n"
+"{details}\n"
+"\n"
+"TRACE ERROR:\n"
+"------------"
+msgstr ""
+
+#: taiga/export_import/tasks.py:110
 msgid "Error loading project dump"
 msgstr "Fout bij laden project dump"
+
+#: taiga/export_import/tasks.py:111
+msgid "Error loading your project dump file"
+msgstr ""
+
+#: taiga/export_import/tasks.py:125
+msgid "  -- no detail info --"
+msgstr ""
 
 #: taiga/export_import/templates/emails/dump_project-body-html.jinja:4
 #, python-format
@@ -1211,6 +1244,15 @@ msgstr "Admin project waarden"
 msgid "Admin roles"
 msgstr "Admin rollen"
 
+#: taiga/projects/admin.py:90 taiga/projects/attachments/models.py:38
+#: taiga/projects/issues/models.py:39 taiga/projects/milestones/models.py:43
+#: taiga/projects/models.py:162 taiga/projects/notifications/models.py:61
+#: taiga/projects/tasks/models.py:38 taiga/projects/userstories/models.py:66
+#: taiga/projects/wiki/models.py:36 taiga/users/admin.py:69
+#: taiga/userstorage/models.py:26
+msgid "owner"
+msgstr "eigenaar"
+
 #: taiga/projects/api.py:165 taiga/users/api.py:220
 msgid "Incomplete arguments"
 msgstr "Onvolledige argumenten"
@@ -1256,14 +1298,6 @@ msgstr ""
 #: taiga/projects/attachments/api.py:66
 msgid "Project ID not matches between object and project"
 msgstr "Project ID van object is niet gelijk aan die van het project"
-
-#: taiga/projects/attachments/models.py:38 taiga/projects/issues/models.py:39
-#: taiga/projects/milestones/models.py:43 taiga/projects/models.py:162
-#: taiga/projects/notifications/models.py:61 taiga/projects/tasks/models.py:38
-#: taiga/projects/userstories/models.py:66 taiga/projects/wiki/models.py:36
-#: taiga/users/admin.py:69 taiga/userstorage/models.py:26
-msgid "owner"
-msgstr "eigenaar"
 
 #: taiga/projects/attachments/models.py:40
 #: taiga/projects/custom_attributes/models.py:42
@@ -2448,39 +2482,39 @@ msgstr ""
 msgid "At least one user must be an active admin for this project."
 msgstr ""
 
-#: taiga/projects/serializers.py:392
+#: taiga/projects/serializers.py:396
 msgid "Default options"
 msgstr "Standaard opties"
 
-#: taiga/projects/serializers.py:393
+#: taiga/projects/serializers.py:397
 msgid "User story's statuses"
 msgstr "Status van User story"
 
-#: taiga/projects/serializers.py:394
+#: taiga/projects/serializers.py:398
 msgid "Points"
 msgstr "Punten"
 
-#: taiga/projects/serializers.py:395
+#: taiga/projects/serializers.py:399
 msgid "Task's statuses"
 msgstr "Statussen van taken"
 
-#: taiga/projects/serializers.py:396
+#: taiga/projects/serializers.py:400
 msgid "Issue's statuses"
 msgstr "Statussen van Issues"
 
-#: taiga/projects/serializers.py:397
+#: taiga/projects/serializers.py:401
 msgid "Issue's types"
 msgstr "Types van issue"
 
-#: taiga/projects/serializers.py:398
+#: taiga/projects/serializers.py:402
 msgid "Priorities"
 msgstr "Prioriteiten"
 
-#: taiga/projects/serializers.py:399
+#: taiga/projects/serializers.py:403
 msgid "Severities"
 msgstr "Ernstniveaus"
 
-#: taiga/projects/serializers.py:400
+#: taiga/projects/serializers.py:404
 msgid "Roles"
 msgstr "Rollen"
 
