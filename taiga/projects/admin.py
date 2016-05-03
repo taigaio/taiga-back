@@ -17,9 +17,11 @@
 
 from django.contrib import admin
 from django.core.urlresolvers import reverse
+from django.db import transaction
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
+from taiga.permissions import permissions
 from taiga.projects.milestones.admin import MilestoneInline
 from taiga.projects.notifications.admin import NotifyPolicyInline
 from taiga.projects.likes.admin import LikeInline
@@ -73,7 +75,7 @@ class ProjectAdmin(admin.ModelAdmin):
                     "owner_url", "blocked_code", "is_featured"]
     list_display_links = ["id", "name", "slug"]
     list_filter = ("is_private", "blocked_code", "is_featured")
-    list_editable = ["is_private", "is_featured", "blocked_code"]
+    list_editable = ["is_featured", "blocked_code"]
     search_fields = ["id", "name", "slug", "owner__username", "owner__email", "owner__full_name"]
     inlines = [RoleInline, MembershipInline, MilestoneInline, NotifyPolicyInline, LikeInline]
 
@@ -121,8 +123,45 @@ class ProjectAdmin(admin.ModelAdmin):
         obj.delete_related_content()
         super().delete_model(request, obj)
 
-# User Stories common admins
+    ## Actions
+    actions = [
+        "make_public",
+        "make_private"
+    ]
+    @transaction.atomic
+    def make_public(self, request, queryset):
+        total_updates = 0
 
+        for project in queryset.exclude(is_private=False):
+            project.is_private = False
+
+            anon_permissions = list(map(lambda perm: perm[0], permissions.ANON_PERMISSIONS))
+            project.anon_permissions = list(set((project.anon_permissions or []) + anon_permissions))
+            project.public_permissions = list(set((project.public_permissions or []) + anon_permissions))
+
+            project.save()
+            total_updates += 1
+
+        self.message_user(request, _("{count} successfully made public.").format(count=total_updates))
+    make_public.short_description = _("Make public")
+
+    @transaction.atomic
+    def make_private(self, request, queryset):
+        total_updates = 0
+
+        for project in queryset.exclude(is_private=True):
+            project.is_private = True
+            project.anon_permissions = []
+            project.public_permissions = []
+
+            project.save()
+            total_updates += 1
+
+        self.message_user(request, _("{count} successfully made private.").format(count=total_updates))
+    make_private.short_description = _("Make private")
+
+
+# User Stories common admins
 class PointsAdmin(admin.ModelAdmin):
     list_display = ["project", "order", "name", "value"]
     list_display_links = ["name"]
