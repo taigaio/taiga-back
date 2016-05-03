@@ -27,6 +27,7 @@ class WatchedInline(GenericTabularInline):
     extra = 0
     raw_id_fields = ["project", "user"]
 
+
 class NotifyPolicyInline(TabularInline):
     model = models.NotifyPolicy
     extra = 0
