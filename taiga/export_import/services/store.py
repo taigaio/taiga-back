@@ -673,10 +673,13 @@ def _populate_project_object(project, data):
                             serializers.IssueCustomAttributeExportSerializer)
     check_if_there_is_some_error(_("error importing custom attributes"), project)
 
-
     # Create milestones
     store_milestones(project, data)
     check_if_there_is_some_error(_("error importing sprints"), project)
+
+    # Create issues
+    store_issues(project, data)
+    check_if_there_is_some_error(_("error importing issues"), project)
 
     # Create user stories
     store_user_stories(project, data)
@@ -685,10 +688,6 @@ def _populate_project_object(project, data):
     # Createer tasks
     store_tasks(project, data)
     check_if_there_is_some_error(_("error importing tasks"), project)
-
-    # Create issues
-    store_issues(project, data)
-    check_if_there_is_some_error(_("error importing issues"), project)
 
     # Create wiki pages
     store_wiki_pages(project, data)
