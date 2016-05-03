@@ -73,7 +73,7 @@ class ProjectAdmin(admin.ModelAdmin):
                     "owner_url", "blocked_code", "is_featured"]
     list_display_links = ["id", "name", "slug"]
     list_filter = ("is_private", "blocked_code", "is_featured")
-    list_editable = ["is_featured", "blocked_code"]
+    list_editable = ["is_private", "is_featured", "blocked_code"]
     search_fields = ["id", "name", "slug", "owner__username", "owner__email", "owner__full_name"]
     inlines = [RoleInline, MembershipInline, MilestoneInline, NotifyPolicyInline, LikeInline]
 
