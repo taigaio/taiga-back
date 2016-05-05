@@ -27,6 +27,8 @@ dummy_project = MagicMock()
 dummy_project.id = 1
 dummy_project.slug = "test"
 
+dummy_uuser = MagicMock()
+dummy_uuser.get_full_name.return_value = "Dummy User"
 
 def test_proccessor_valid_emoji():
     result = emojify.EmojifyPreprocessor().run(["**:smile:**"])
@@ -36,6 +38,45 @@ def test_proccessor_valid_emoji():
 def test_proccessor_invalid_emoji():
     result = emojify.EmojifyPreprocessor().run(["**:notvalidemoji:**"])
     assert result == ["**:notvalidemoji:**"]
+
+
+def test_mentions_valid_username():
+    with patch("taiga.mdrender.extensions.mentions.get_user_model") as get_user_model_mock:
+        dummy_uuser = MagicMock()
+        dummy_uuser.get_full_name.return_value = "Hermione Granger"
+        get_user_model_mock.return_value.objects.get = MagicMock(return_value=dummy_uuser)
+
+        result = render(dummy_project, "text @hermione text")
+
+        get_user_model_mock.return_value.objects.get.assert_called_with(username="hermione")
+        assert result == ('<p>text <a class="mention" href="http://localhost:9001/profile/hermione" '
+                          'title="Hermione Granger">@hermione</a> text</p>')
+
+
+def test_mentions_valid_username_with_points():
+    with patch("taiga.mdrender.extensions.mentions.get_user_model") as get_user_model_mock:
+        dummy_uuser = MagicMock()
+        dummy_uuser.get_full_name.return_value = "Luna Lovegood"
+        get_user_model_mock.return_value.objects.get = MagicMock(return_value=dummy_uuser)
+
+        result = render(dummy_project, "text @luna.lovegood text")
+
+        get_user_model_mock.return_value.objects.get.assert_called_with(username="luna.lovegood")
+        assert result == ('<p>text <a class="mention" href="http://localhost:9001/profile/luna.lovegood" '
+                          'title="Luna Lovegood">@luna.lovegood</a> text</p>')
+
+
+def test_mentions_valid_username_with_dash():
+    with patch("taiga.mdrender.extensions.mentions.get_user_model") as get_user_model_mock:
+        dummy_uuser = MagicMock()
+        dummy_uuser.get_full_name.return_value = "Ginny Weasley"
+        get_user_model_mock.return_value.objects.get = MagicMock(return_value=dummy_uuser)
+
+        result = render(dummy_project, "text @super-ginny text")
+
+        get_user_model_mock.return_value.objects.get.assert_called_with(username="super-ginny")
+        assert result == ('<p>text <a class="mention" href="http://localhost:9001/profile/super-ginny" '
+                          'title="Ginny Weasley">@super-ginny</a> text</p>')
 
 
 def test_proccessor_valid_us_reference():

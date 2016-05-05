@@ -31,10 +31,10 @@ from markdown.util import etree, AtomicString
 
 class MentionsExtension(Extension):
     def extendMarkdown(self, md, md_globals):
-        MENTION_RE = r'(@)([a-zA-Z0-9.-\._]+)'
+        MENTION_RE = r"(@)([\w.-]+)"
         mentionsPattern = MentionsPattern(MENTION_RE)
         mentionsPattern.md = md
-        md.inlinePatterns.add('mentions', mentionsPattern, '_end')
+        md.inlinePatterns.add("mentions", mentionsPattern, "_end")
 
 
 class MentionsPattern(Pattern):
