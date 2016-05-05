@@ -1107,6 +1107,26 @@ def test_services_store_project_from_dict_with_no_members_public_project_slots_a
     assert "reaches your current limit of memberships for public" in str(excinfo.value)
 
 
+def test_services_store_project_from_dict_with_issue_priorities_names_as_None(client):
+    user = f.UserFactory.create()
+    data = {
+        "name": "Imported project",
+        "description": "Imported project",
+        "issue_types": [{"name": "Bug"}],
+        "issue_statuses": [{"name": "New"}],
+        "priorities": [{"name": "None", "order": 5, "color": "#CC0000"}],
+        "severities": [{"name": "Normal", "order": 5, "color": "#CC0000"}],
+        "issues": [{
+            "status": "New",
+            "priority": "None",
+            "severity": "Normal",
+            "type": "Bug",
+            "subject": "Test"}]}
+
+    project = services.store_project_from_dict(data, owner=user)
+    assert project.issues.first().priority.name == "None"
+
+
 ##################################################################
 ## tes api/v1/importer/load-dummp
 ##################################################################
@@ -1701,5 +1721,3 @@ def test_dump_import_duplicated_project(client):
     assert response.status_code == 201
     assert response.data["name"] == "Test import"
     assert response.data["slug"] == "{}-test-import".format(user.username)
-
-
