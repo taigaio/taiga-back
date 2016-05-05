@@ -160,6 +160,7 @@ class CommentField(serializers.WritableField):
 
 class ProjectRelatedField(serializers.RelatedField):
     read_only = False
+    null_values = (None, "")
 
     def __init__(self, slug_field, *args, **kwargs):
         self.slug_field = slug_field
