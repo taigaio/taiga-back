@@ -27,8 +27,6 @@ dummy_project = MagicMock()
 dummy_project.id = 1
 dummy_project.slug = "test"
 
-dummy_uuser = MagicMock()
-dummy_uuser.get_full_name.return_value = "Dummy User"
 
 def test_proccessor_valid_emoji():
     result = emojify.EmojifyPreprocessor().run(["**:smile:**"])
