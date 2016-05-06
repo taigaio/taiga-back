@@ -69,4 +69,4 @@ class Command(BaseCommand):
 
             print("ERROR:", end=" ")
             print(e.message)
-            print(services.store.get_errors())
+            print(json.dumps(e.errors, indent=4))
