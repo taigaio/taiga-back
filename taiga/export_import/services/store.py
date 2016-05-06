@@ -618,7 +618,8 @@ def _create_project_object(data):
     project_serialized = store_project(data)
 
     if not project_serialized:
-        raise err.TaigaImportError(_("error importing project data"), None)
+        errors = get_errors(clear=True)
+        raise err.TaigaImportError(_("error importing project data"), None, errors=errors)
 
     return project_serialized.object if project_serialized else None
 
@@ -637,7 +638,7 @@ def _create_membership_for_project_owner(project):
 
 def _populate_project_object(project, data):
     def check_if_there_is_some_error(message=_("error importing project data"), project=None):
-        errors = get_errors(clear=False)
+        errors = get_errors(clear=True)
         if errors:
             raise err.TaigaImportError(message, project, errors=errors)
 
@@ -710,8 +711,6 @@ def _populate_project_object(project, data):
 
 
 def store_project_from_dict(data, owner=None):
-    reset_errors()
-
     # Validate
     if owner:
         _validate_if_owner_have_enought_space_to_this_project(owner, data)
