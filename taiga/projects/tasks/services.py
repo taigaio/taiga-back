@@ -89,7 +89,7 @@ def snapshot_tasks_in_bulk(bulk_data, user):
         try:
             task = models.Task.objects.get(pk=task_data['task_id'])
             take_snapshot(task, user=user)
-        except models.UserStory.DoesNotExist:
+        except models.Task.DoesNotExist:
             pass
 
 
