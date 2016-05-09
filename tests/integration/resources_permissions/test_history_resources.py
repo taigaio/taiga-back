@@ -1,6 +1,11 @@
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 
+from taiga.base.utils import json
 from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.projects.history.models import HistoryEntry
+from taiga.projects.history.choices import HistoryType
+from taiga.projects.history.services import make_key_from_model_object
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
@@ -21,11 +26,11 @@ def teardown_module(module):
 def data():
     m = type("Models", (object,), {})
 
-    m.registered_user = f.UserFactory.create()
-    m.project_member_with_perms = f.UserFactory.create()
-    m.project_member_without_perms = f.UserFactory.create()
-    m.project_owner = f.UserFactory.create()
-    m.other_user = f.UserFactory.create()
+    m.registered_user = f.UserFactory.create(full_name="registered_user")
+    m.project_member_with_perms = f.UserFactory.create(full_name="project_member_with_perms")
+    m.project_member_without_perms = f.UserFactory.create(full_name="project_member_without_perms")
+    m.project_owner = f.UserFactory.create(full_name="project_owner")
+    m.other_user = f.UserFactory.create(full_name="other_user")
 
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
@@ -76,39 +81,33 @@ def data():
     return m
 
 
+#########################################################
+## User stories
+#########################################################
+
+
 @pytest.fixture
 def data_us(data):
     m = type("Models", (object,), {})
     m.public_user_story = f.UserStoryFactory(project=data.public_project, ref=1)
+    m.public_history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          comment="testing public",
+                                                          key=make_key_from_model_object(m.public_user_story),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
+
     m.private_user_story1 = f.UserStoryFactory(project=data.private_project1, ref=5)
+    m.private_history_entry1 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          comment="testing 1",
+                                                          key=make_key_from_model_object(m.private_user_story1),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
     m.private_user_story2 = f.UserStoryFactory(project=data.private_project2, ref=9)
-    return m
-
-
-@pytest.fixture
-def data_task(data):
-    m = type("Models", (object,), {})
-    m.public_task = f.TaskFactory(project=data.public_project, ref=2)
-    m.private_task1 = f.TaskFactory(project=data.private_project1, ref=6)
-    m.private_task2 = f.TaskFactory(project=data.private_project2, ref=10)
-    return m
-
-
-@pytest.fixture
-def data_issue(data):
-    m = type("Models", (object,), {})
-    m.public_issue = f.IssueFactory(project=data.public_project, ref=3)
-    m.private_issue1 = f.IssueFactory(project=data.private_project1, ref=7)
-    m.private_issue2 = f.IssueFactory(project=data.private_project2, ref=11)
-    return m
-
-
-@pytest.fixture
-def data_wiki(data):
-    m = type("Models", (object,), {})
-    m.public_wiki = f.WikiPageFactory(project=data.public_project, slug=4)
-    m.private_wiki1 = f.WikiPageFactory(project=data.private_project1, slug=8)
-    m.private_wiki2 = f.WikiPageFactory(project=data.private_project2, slug=12)
+    m.private_history_entry2 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          comment="testing 2",
+                                                          key=make_key_from_model_object(m.private_user_story2),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
     return m
 
 
@@ -133,6 +132,222 @@ def test_user_story_history_retrieve(client, data, data_us):
     assert results == [401, 403, 403, 200, 200]
 
 
+def test_user_story_action_edit_comment(client, data, data_us):
+    public_url = "{}?id={}".format(
+        reverse('userstory-history-edit-comment', kwargs={"pk": data_us.public_user_story.pk}),
+        data_us.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('userstory-history-edit-comment', kwargs={"pk": data_us.private_user_story1.pk}),
+        data_us.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('userstory-history-edit-comment', kwargs={"pk": data_us.private_user_story2.pk}),
+        data_us.private_history_entry2.id
+    )
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    data = json.dumps({"comment": "testing update comment"})
+
+    results = helper_test_http_method(client, 'post', public_url, data, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, data, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_user_story_action_delete_comment(client, data, data_us):
+    public_url = "{}?id={}".format(
+        reverse('userstory-history-delete-comment', kwargs={"pk": data_us.public_user_story.pk}),
+        data_us.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('userstory-history-delete-comment', kwargs={"pk": data_us.private_user_story1.pk}),
+        data_us.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('userstory-history-delete-comment', kwargs={"pk": data_us.private_user_story2.pk}),
+        data_us.private_history_entry2.id
+    )
+
+    users_and_statuses = [
+        (None, 401),
+        (data.registered_user, 403),
+        (data.project_member_without_perms, 403),
+        (data.project_member_with_perms, 200),
+        (data.project_owner, 200),
+    ]
+
+    for user, status_code in users_and_statuses:
+        data_us.public_history_entry.delete_comment_date = None
+        data_us.public_history_entry.delete_comment_user = None
+        data_us.public_history_entry.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(public_url)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_us.private_history_entry1.delete_comment_date = None
+        data_us.private_history_entry1.delete_comment_user = None
+        data_us.private_history_entry1.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url1)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_us.private_history_entry2.delete_comment_date = None
+        data_us.private_history_entry2.delete_comment_user = None
+        data_us.private_history_entry2.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url2)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+
+def test_user_story_action_undelete_comment(client, data, data_us):
+    public_url = "{}?id={}".format(
+        reverse('userstory-history-undelete-comment', kwargs={"pk": data_us.public_user_story.pk}),
+        data_us.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('userstory-history-undelete-comment', kwargs={"pk": data_us.private_user_story1.pk}),
+        data_us.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('userstory-history-undelete-comment', kwargs={"pk": data_us.private_user_story2.pk}),
+        data_us.private_history_entry2.id
+    )
+
+    users_and_statuses = [
+        (None, 401),
+        (data.registered_user, 403),
+        (data.project_member_without_perms, 403),
+        (data.project_member_with_perms, 200),
+        (data.project_owner, 200),
+    ]
+
+    for user, status_code in users_and_statuses:
+        data_us.public_history_entry.delete_comment_date = timezone.now()
+        data_us.public_history_entry.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_us.public_history_entry.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(public_url)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_us.private_history_entry1.delete_comment_date = timezone.now()
+        data_us.private_history_entry1.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_us.private_history_entry1.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url1)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_us.private_history_entry2.delete_comment_date = timezone.now()
+        data_us.private_history_entry2.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_us.private_history_entry2.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url2)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+
+def test_user_story_action_comment_versions(client, data, data_us):
+    public_url = "{}?id={}".format(
+        reverse('userstory-history-comment-versions', kwargs={"pk": data_us.public_user_story.pk}),
+        data_us.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('userstory-history-comment-versions', kwargs={"pk": data_us.private_user_story1.pk}),
+        data_us.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('userstory-history-comment-versions', kwargs={"pk": data_us.private_user_story2.pk}),
+        data_us.private_history_entry2.id
+    )
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner,
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+#########################################################
+## Tasks
+#########################################################
+
+
+@pytest.fixture
+def data_task(data):
+    m = type("Models", (object,), {})
+    m.public_task = f.TaskFactory(project=data.public_project, ref=2)
+    m.public_history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          comment="testing public",
+                                                          key=make_key_from_model_object(m.public_task),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
+
+    m.private_task1 = f.TaskFactory(project=data.private_project1, ref=6)
+    m.private_history_entry1 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          comment="testing 1",
+                                                          key=make_key_from_model_object(m.private_task1),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
+    m.private_task2 = f.TaskFactory(project=data.private_project2, ref=10)
+    m.private_history_entry2 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          comment="testing 2",
+                                                          key=make_key_from_model_object(m.private_task2),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
+    return m
+
+
 def test_task_history_retrieve(client, data, data_task):
     public_url = reverse('task-history-detail', kwargs={"pk": data_task.public_task.pk})
     private_url1 = reverse('task-history-detail', kwargs={"pk": data_task.private_task1.pk})
@@ -152,6 +367,222 @@ def test_task_history_retrieve(client, data, data_task):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]
+
+
+def test_task_action_edit_comment(client, data, data_task):
+    public_url = "{}?id={}".format(
+        reverse('task-history-edit-comment', kwargs={"pk": data_task.public_task.pk}),
+        data_task.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('task-history-edit-comment', kwargs={"pk": data_task.private_task1.pk}),
+        data_task.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('task-history-edit-comment', kwargs={"pk": data_task.private_task2.pk}),
+        data_task.private_history_entry2.id
+    )
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    data = json.dumps({"comment": "testing update comment"})
+
+    results = helper_test_http_method(client, 'post', public_url, data, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, data, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_task_action_delete_comment(client, data, data_task):
+    public_url = "{}?id={}".format(
+        reverse('task-history-delete-comment', kwargs={"pk": data_task.public_task.pk}),
+        data_task.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('task-history-delete-comment', kwargs={"pk": data_task.private_task1.pk}),
+        data_task.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('task-history-delete-comment', kwargs={"pk": data_task.private_task2.pk}),
+        data_task.private_history_entry2.id
+    )
+
+    users_and_statuses = [
+        (None, 401),
+        (data.registered_user, 403),
+        (data.project_member_without_perms, 403),
+        (data.project_member_with_perms, 200),
+        (data.project_owner, 200),
+    ]
+
+    for user, status_code in users_and_statuses:
+        data_task.public_history_entry.delete_comment_date = None
+        data_task.public_history_entry.delete_comment_user = None
+        data_task.public_history_entry.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(public_url)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_task.private_history_entry1.delete_comment_date = None
+        data_task.private_history_entry1.delete_comment_user = None
+        data_task.private_history_entry1.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url1)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_task.private_history_entry2.delete_comment_date = None
+        data_task.private_history_entry2.delete_comment_user = None
+        data_task.private_history_entry2.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url2)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+
+def test_task_action_undelete_comment(client, data, data_task):
+    public_url = "{}?id={}".format(
+        reverse('task-history-undelete-comment', kwargs={"pk": data_task.public_task.pk}),
+        data_task.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('task-history-undelete-comment', kwargs={"pk": data_task.private_task1.pk}),
+        data_task.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('task-history-undelete-comment', kwargs={"pk": data_task.private_task2.pk}),
+        data_task.private_history_entry2.id
+    )
+
+    users_and_statuses = [
+        (None, 401),
+        (data.registered_user, 403),
+        (data.project_member_without_perms, 403),
+        (data.project_member_with_perms, 200),
+        (data.project_owner, 200),
+    ]
+
+    for user, status_code in users_and_statuses:
+        data_task.public_history_entry.delete_comment_date = timezone.now()
+        data_task.public_history_entry.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_task.public_history_entry.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(public_url)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_task.private_history_entry1.delete_comment_date = timezone.now()
+        data_task.private_history_entry1.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_task.private_history_entry1.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url1)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_task.private_history_entry2.delete_comment_date = timezone.now()
+        data_task.private_history_entry2.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_task.private_history_entry2.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url2)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+
+def test_task_action_comment_versions(client, data, data_task):
+    public_url = "{}?id={}".format(
+        reverse('task-history-comment-versions', kwargs={"pk": data_task.public_task.pk}),
+        data_task.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('task-history-comment-versions', kwargs={"pk": data_task.private_task1.pk}),
+        data_task.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('task-history-comment-versions', kwargs={"pk": data_task.private_task2.pk}),
+        data_task.private_history_entry2.id
+    )
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner,
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+#########################################################
+## Issues
+#########################################################
+
+
+@pytest.fixture
+def data_issue(data):
+    m = type("Models", (object,), {})
+    m.public_issue = f.IssueFactory(project=data.public_project, ref=3)
+    m.public_history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          comment="testing public",
+                                                          key=make_key_from_model_object(m.public_issue),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
+
+    m.private_issue1 = f.IssueFactory(project=data.private_project1, ref=7)
+    m.private_history_entry1 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          comment="testing 1",
+                                                          key=make_key_from_model_object(m.private_issue1),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
+    m.private_issue2 = f.IssueFactory(project=data.private_project2, ref=11)
+    m.private_history_entry2 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          comment="testing 2",
+                                                          key=make_key_from_model_object(m.private_issue2),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
+    return m
 
 
 def test_issue_history_retrieve(client, data, data_issue):
@@ -175,6 +606,222 @@ def test_issue_history_retrieve(client, data, data_issue):
     assert results == [401, 403, 403, 200, 200]
 
 
+def test_issue_action_edit_comment(client, data, data_issue):
+    public_url = "{}?id={}".format(
+        reverse('issue-history-edit-comment', kwargs={"pk": data_issue.public_issue.pk}),
+        data_issue.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('issue-history-edit-comment', kwargs={"pk": data_issue.private_issue1.pk}),
+        data_issue.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('issue-history-edit-comment', kwargs={"pk": data_issue.private_issue2.pk}),
+        data_issue.private_history_entry2.id
+    )
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    data = json.dumps({"comment": "testing update comment"})
+
+    results = helper_test_http_method(client, 'post', public_url, data, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, data, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_issue_action_delete_comment(client, data, data_issue):
+    public_url = "{}?id={}".format(
+        reverse('issue-history-delete-comment', kwargs={"pk": data_issue.public_issue.pk}),
+        data_issue.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('issue-history-delete-comment', kwargs={"pk": data_issue.private_issue1.pk}),
+        data_issue.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('issue-history-delete-comment', kwargs={"pk": data_issue.private_issue2.pk}),
+        data_issue.private_history_entry2.id
+    )
+
+    users_and_statuses = [
+        (None, 401),
+        (data.registered_user, 403),
+        (data.project_member_without_perms, 403),
+        (data.project_member_with_perms, 200),
+        (data.project_owner, 200),
+    ]
+
+    for user, status_code in users_and_statuses:
+        data_issue.public_history_entry.delete_comment_date = None
+        data_issue.public_history_entry.delete_comment_user = None
+        data_issue.public_history_entry.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(public_url)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_issue.private_history_entry1.delete_comment_date = None
+        data_issue.private_history_entry1.delete_comment_user = None
+        data_issue.private_history_entry1.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url1)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_issue.private_history_entry2.delete_comment_date = None
+        data_issue.private_history_entry2.delete_comment_user = None
+        data_issue.private_history_entry2.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url2)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+
+def test_issue_action_undelete_comment(client, data, data_issue):
+    public_url = "{}?id={}".format(
+        reverse('issue-history-undelete-comment', kwargs={"pk": data_issue.public_issue.pk}),
+        data_issue.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('issue-history-undelete-comment', kwargs={"pk": data_issue.private_issue1.pk}),
+        data_issue.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('issue-history-undelete-comment', kwargs={"pk": data_issue.private_issue2.pk}),
+        data_issue.private_history_entry2.id
+    )
+
+    users_and_statuses = [
+        (None, 401),
+        (data.registered_user, 403),
+        (data.project_member_without_perms, 403),
+        (data.project_member_with_perms, 200),
+        (data.project_owner, 200),
+    ]
+
+    for user, status_code in users_and_statuses:
+        data_issue.public_history_entry.delete_comment_date = timezone.now()
+        data_issue.public_history_entry.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_issue.public_history_entry.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(public_url)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_issue.private_history_entry1.delete_comment_date = timezone.now()
+        data_issue.private_history_entry1.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_issue.private_history_entry1.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url1)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_issue.private_history_entry2.delete_comment_date = timezone.now()
+        data_issue.private_history_entry2.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_issue.private_history_entry2.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url2)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+
+def test_issue_action_comment_versions(client, data, data_issue):
+    public_url = "{}?id={}".format(
+        reverse('issue-history-comment-versions', kwargs={"pk": data_issue.public_issue.pk}),
+        data_issue.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('issue-history-comment-versions', kwargs={"pk": data_issue.private_issue1.pk}),
+        data_issue.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('issue-history-comment-versions', kwargs={"pk": data_issue.private_issue2.pk}),
+        data_issue.private_history_entry2.id
+    )
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner,
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+#########################################################
+## Wiki pages
+#########################################################
+
+
+@pytest.fixture
+def data_wiki(data):
+    m = type("Models", (object,), {})
+    m.public_wiki = f.WikiPageFactory(project=data.public_project, slug=4)
+    m.public_history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          comment="testing public",
+                                                          key=make_key_from_model_object(m.public_wiki),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
+
+    m.private_wiki1 = f.WikiPageFactory(project=data.private_project1, slug=8)
+    m.private_history_entry1 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          comment="testing 1",
+                                                          key=make_key_from_model_object(m.private_wiki1),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
+    m.private_wiki2 = f.WikiPageFactory(project=data.private_project2, slug=12)
+    m.private_history_entry2 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          comment="testing 2",
+                                                          key=make_key_from_model_object(m.private_wiki2),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
+    return m
+
+
 def test_wiki_history_retrieve(client, data, data_wiki):
     public_url = reverse('wiki-history-detail', kwargs={"pk": data_wiki.public_wiki.pk})
     private_url1 = reverse('wiki-history-detail', kwargs={"pk": data_wiki.private_wiki1.pk})
@@ -192,5 +839,191 @@ def test_wiki_history_retrieve(client, data, data_wiki):
     assert results == [200, 200, 200, 200, 200]
     results = helper_test_http_method(client, 'get', private_url1, None, users)
     assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_wiki_action_edit_comment(client, data, data_wiki):
+    public_url = "{}?id={}".format(
+        reverse('wiki-history-edit-comment', kwargs={"pk": data_wiki.public_wiki.pk}),
+        data_wiki.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('wiki-history-edit-comment', kwargs={"pk": data_wiki.private_wiki1.pk}),
+        data_wiki.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('wiki-history-edit-comment', kwargs={"pk": data_wiki.private_wiki2.pk}),
+        data_wiki.private_history_entry2.id
+    )
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    data = json.dumps({"comment": "testing update comment"})
+
+    results = helper_test_http_method(client, 'post', public_url, data, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, data, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_wiki_action_delete_comment(client, data, data_wiki):
+    public_url = "{}?id={}".format(
+        reverse('wiki-history-delete-comment', kwargs={"pk": data_wiki.public_wiki.pk}),
+        data_wiki.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('wiki-history-delete-comment', kwargs={"pk": data_wiki.private_wiki1.pk}),
+        data_wiki.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('wiki-history-delete-comment', kwargs={"pk": data_wiki.private_wiki2.pk}),
+        data_wiki.private_history_entry2.id
+    )
+
+    users_and_statuses = [
+        (None, 401),
+        (data.registered_user, 403),
+        (data.project_member_without_perms, 403),
+        (data.project_member_with_perms, 200),
+        (data.project_owner, 200),
+    ]
+
+    for user, status_code in users_and_statuses:
+        data_wiki.public_history_entry.delete_comment_date = None
+        data_wiki.public_history_entry.delete_comment_user = None
+        data_wiki.public_history_entry.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(public_url)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_wiki.private_history_entry1.delete_comment_date = None
+        data_wiki.private_history_entry1.delete_comment_user = None
+        data_wiki.private_history_entry1.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url1)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_wiki.private_history_entry2.delete_comment_date = None
+        data_wiki.private_history_entry2.delete_comment_user = None
+        data_wiki.private_history_entry2.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url2)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+
+def test_wiki_action_undelete_comment(client, data, data_wiki):
+    public_url = "{}?id={}".format(
+        reverse('wiki-history-undelete-comment', kwargs={"pk": data_wiki.public_wiki.pk}),
+        data_wiki.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('wiki-history-undelete-comment', kwargs={"pk": data_wiki.private_wiki1.pk}),
+        data_wiki.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('wiki-history-undelete-comment', kwargs={"pk": data_wiki.private_wiki2.pk}),
+        data_wiki.private_history_entry2.id
+    )
+
+    users_and_statuses = [
+        (None, 401),
+        (data.registered_user, 403),
+        (data.project_member_without_perms, 403),
+        (data.project_member_with_perms, 200),
+        (data.project_owner, 200),
+    ]
+
+    for user, status_code in users_and_statuses:
+        data_wiki.public_history_entry.delete_comment_date = timezone.now()
+        data_wiki.public_history_entry.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_wiki.public_history_entry.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(public_url)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_wiki.private_history_entry1.delete_comment_date = timezone.now()
+        data_wiki.private_history_entry1.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_wiki.private_history_entry1.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url1)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_wiki.private_history_entry2.delete_comment_date = timezone.now()
+        data_wiki.private_history_entry2.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_wiki.private_history_entry2.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url2)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+
+def test_wiki_action_comment_versions(client, data, data_wiki):
+    public_url = "{}?id={}".format(
+        reverse('wiki-history-comment-versions', kwargs={"pk": data_wiki.public_wiki.pk}),
+        data_wiki.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('wiki-history-comment-versions', kwargs={"pk": data_wiki.private_wiki1.pk}),
+        data_wiki.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('wiki-history-comment-versions', kwargs={"pk": data_wiki.private_wiki2.pk}),
+        data_wiki.private_history_entry2.id
+    )
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner,
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'get', private_url2, None, users)
     assert results == [401, 403, 403, 200, 200]

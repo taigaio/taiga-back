@@ -1,5 +1,9 @@
 # Changelog #
 
+## 2.2.0 ??? (unreleased)
+### Features
+- [API] edit comment endpoint: comment owners and project admins can edit existing comments
+
 
 ## 2.1.0 Ursus Americanus (2016-05-03)
 
