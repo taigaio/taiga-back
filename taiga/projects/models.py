@@ -44,7 +44,6 @@ from taiga.permissions.permissions import ANON_PERMISSIONS, MEMBERS_PERMISSIONS
 
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.services import (
-    get_notify_policy,
     set_notify_policy_level,
     set_notify_policy_level_to_ignore,
     create_notify_policy_if_not_exists)
@@ -345,6 +344,33 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     def cached_user_stories(self):
         return list(self.user_stories.all())
 
+    @cached_property
+    def cached_notify_policies(self):
+        return {np.user.id: np for np in self.notify_policies.select_related("user", "project")}
+
+    def cached_notify_policy_for_user(self, user):
+        """
+        Get notification level for specified project and user.
+        """
+        policy = self.cached_notify_policies.get(user.id, None)
+        if policy is None:
+            model_cls = apps.get_model("notifications", "NotifyPolicy")
+            policy = model_cls.objects.create(
+                project=self,
+                user=user,
+                notify_level= NotifyLevel.involved)
+
+            del self.cached_notify_policies
+
+        return policy
+
+    @cached_property
+    def cached_memberships(self):
+        return {m.user.id: m for m in self.memberships.exclude(user__isnull=True).select_related("user", "project", "role")}
+
+    def cached_memberships_for_user(self, user):
+        return self.cached_memberships.get(user.id, None)
+
     def get_roles(self):
         return self.roles.all()
 
@@ -426,7 +452,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         set_notify_policy_level(notify_policy, notify_level)
 
     def remove_watcher(self, user):
-        notify_policy = get_notify_policy(self, user)
+        notify_policy = self.cached_notify_policy_for_user(user)
         set_notify_policy_level_to_ignore(notify_policy)
 
     def delete_related_content(self):

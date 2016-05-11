@@ -20,11 +20,18 @@ from .permissions import ADMINS_PERMISSIONS, MEMBERS_PERMISSIONS, ANON_PERMISSIO
 
 from django.apps import apps
 
-def _get_user_project_membership(user, project):
+def _get_user_project_membership(user, project, cache="user"):
+    """
+    cache param determines how memberships are calculated trying to reuse the existing data
+    in cache
+    """
     if user.is_anonymous():
         return None
 
-    return user.cached_membership_for_project(project)
+    if cache == "user":
+        return user.cached_membership_for_project(project)
+
+    return project.cached_memberships_for_user(user)
 
 
 def _get_object_project(obj):
@@ -63,13 +70,17 @@ def is_project_admin(user, obj):
     return False
 
 
-def user_has_perm(user, perm, obj=None):
+def user_has_perm(user, perm, obj=None, cache="user"):
+    """
+    cache param determines how memberships are calculated trying to reuse the existing data
+    in cache
+    """
     project = _get_object_project(obj)
 
     if not project:
         return False
 
-    return perm in get_user_project_permissions(user, project)
+    return perm in get_user_project_permissions(user, project, cache=cache)
 
 
 def role_has_perm(role, perm):
@@ -82,8 +93,12 @@ def _get_membership_permissions(membership):
     return []
 
 
-def get_user_project_permissions(user, project):
-    membership = _get_user_project_membership(user, project)
+def get_user_project_permissions(user, project, cache="user"):
+    """
+    cache param determines how memberships are calculated trying to reuse the existing data
+    in cache
+    """    
+    membership = _get_user_project_membership(user, project, cache=cache)
     if user.is_superuser:
         admins_permissions = list(map(lambda perm: perm[0], ADMINS_PERMISSIONS))
         members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))

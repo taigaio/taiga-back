@@ -27,8 +27,6 @@ def connect_webhooks_signals():
                               dispatch_uid="webhooks")
 
 
-
-
 def disconnect_webhooks_signals():
     signals.post_save.disconnect(sender=apps.get_model("history", "HistoryEntry"), dispatch_uid="webhooks")
 

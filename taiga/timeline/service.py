@@ -78,14 +78,39 @@ def _add_to_objects_timeline(objects, instance:object, event_type:str, created_d
         _add_to_object_timeline(obj, instance, event_type, created_datetime, namespace, extra_data)
 
 
-@app.task
-def push_to_timeline(objects, instance:object, event_type:str, created_datetime:object, namespace:str="default", extra_data:dict={}):
+def _push_to_timeline(objects, instance:object, event_type:str, created_datetime:object, namespace:str="default", extra_data:dict={}):
     if isinstance(objects, Model):
         _add_to_object_timeline(objects, instance, event_type, created_datetime, namespace, extra_data)
     elif isinstance(objects, QuerySet) or isinstance(objects, list):
         _add_to_objects_timeline(objects, instance, event_type, created_datetime, namespace, extra_data)
     else:
         raise Exception("Invalid objects parameter")
+
+
+@app.task
+def push_to_timelines(project, user, obj, event_type, created_datetime, extra_data={}):
+    if project is not None:
+        # Actions related with a project
+
+        ## Project timeline
+        _push_to_timeline(project, obj, event_type, created_datetime,
+            namespace=build_project_namespace(project),
+            extra_data=extra_data)
+
+        project.refresh_totals()
+
+        if hasattr(obj, "get_related_people"):
+            related_people = obj.get_related_people()
+
+            _push_to_timeline(related_people, obj, event_type, created_datetime,
+                namespace=build_user_namespace(user),
+                extra_data=extra_data)
+    else:
+        # Actions not related with a project
+        ## - Me
+        _push_to_timeline(user, obj, event_type, created_datetime,
+            namespace=build_user_namespace(user),
+            extra_data=extra_data)
 
 
 def get_timeline(obj, namespace=None):
