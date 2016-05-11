@@ -102,8 +102,8 @@ class HistoryViewSet(ReadOnlyListViewSet):
     def retrieve(self, request, pk):
         obj = self.get_object()
         self.check_permissions(request, "retrieve", obj)
-
         qs = services.get_history_queryset_by_model_instance(obj)
+        qs = services.prefetch_owners_in_history_queryset(qs)
         return self.response_for_queryset(qs)
 
 

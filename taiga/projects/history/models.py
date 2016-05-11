@@ -78,6 +78,8 @@ class HistoryEntry(models.Model):
     is_snapshot = models.BooleanField(default=False)
 
     _importing = None
+    _owner = None
+    _prefetched_owner = False
 
     @cached_property
     def is_change(self):
@@ -91,14 +93,23 @@ class HistoryEntry(models.Model):
     def is_delete(self):
       return self.type == HistoryType.delete
 
-    @cached_property
+    @property
     def owner(self):
-        pk = self.user["pk"]
-        model = get_user_model()
-        try:
-            return model.objects.get(pk=pk)
-        except model.DoesNotExist:
-            return None
+        if not self._prefetched_owner:
+            pk = self.user["pk"]
+            model = get_user_model()
+            try:
+                owner = model.objects.get(pk=pk)
+            except model.DoesNotExist:
+                owner = None
+
+            self.prefetch_owner(owner)
+
+        return self._owner
+
+    def prefetch_owner(self, owner):
+        self._owner = owner
+        self._prefetched_owner = True
 
     @cached_property
     def values_diff(self):
