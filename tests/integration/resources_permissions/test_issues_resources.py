@@ -132,6 +132,55 @@ def data():
     return m
 
 
+def test_issue_list(client, data):
+    url = reverse('issues-list')
+
+    response = client.get(url)
+    issues_data = json.loads(response.content.decode('utf-8'))
+    assert len(issues_data) == 2
+    assert response.status_code == 200
+
+    client.login(data.registered_user)
+
+    response = client.get(url)
+    issues_data = json.loads(response.content.decode('utf-8'))
+    assert len(issues_data) == 2
+    assert response.status_code == 200
+
+    client.login(data.project_member_with_perms)
+
+    response = client.get(url)
+    issues_data = json.loads(response.content.decode('utf-8'))
+    assert len(issues_data) == 4
+    assert response.status_code == 200
+
+    client.login(data.project_owner)
+
+    response = client.get(url)
+    issues_data = json.loads(response.content.decode('utf-8'))
+    assert len(issues_data) == 4
+    assert response.status_code == 200
+
+
+def test_issue_list_filter_by_project_ok(client, data):
+    url = "{}?project={}".format(reverse("issues-list"), data.public_project.pk)
+
+    client.login(data.project_owner)
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert len(response.data) == 1
+
+
+def test_issue_list_filter_by_project_error(client, data):
+    url = "{}?project={}".format(reverse("issues-list"), "-ERROR-")
+
+    client.login(data.project_owner)
+    response = client.get(url)
+
+    assert response.status_code == 400
+
+
 def test_issue_retrieve(client, data):
     public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
     private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})
@@ -156,7 +205,67 @@ def test_issue_retrieve(client, data):
     assert results == [401, 403, 403, 200, 200]
 
 
-def test_issue_update(client, data):
+def test_issue_create(client, data):
+    url = reverse('issues-list')
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    create_data = json.dumps({
+        "subject": "test",
+        "ref": 1,
+        "project": data.public_project.pk,
+        "severity": data.public_project.severities.all()[0].pk,
+        "priority": data.public_project.priorities.all()[0].pk,
+        "status": data.public_project.issue_statuses.all()[0].pk,
+        "type": data.public_project.issue_types.all()[0].pk,
+    })
+    results = helper_test_http_method(client, 'post', url, create_data, users)
+    assert results == [401, 403, 403, 201, 201]
+
+    create_data = json.dumps({
+        "subject": "test",
+        "ref": 2,
+        "project": data.private_project1.pk,
+        "severity": data.private_project1.severities.all()[0].pk,
+        "priority": data.private_project1.priorities.all()[0].pk,
+        "status": data.private_project1.issue_statuses.all()[0].pk,
+        "type": data.private_project1.issue_types.all()[0].pk,
+    })
+    results = helper_test_http_method(client, 'post', url, create_data, users)
+    assert results == [401, 403, 403, 201, 201]
+
+    create_data = json.dumps({
+        "subject": "test",
+        "ref": 3,
+        "project": data.private_project2.pk,
+        "severity": data.private_project2.severities.all()[0].pk,
+        "priority": data.private_project2.priorities.all()[0].pk,
+        "status": data.private_project2.issue_statuses.all()[0].pk,
+        "type": data.private_project2.issue_types.all()[0].pk,
+    })
+    results = helper_test_http_method(client, 'post', url, create_data, users)
+    assert results == [401, 403, 403, 201, 201]
+
+    create_data = json.dumps({
+        "subject": "test",
+        "ref": 3,
+        "project": data.blocked_project.pk,
+        "severity": data.blocked_project.severities.all()[0].pk,
+        "priority": data.blocked_project.priorities.all()[0].pk,
+        "status": data.blocked_project.issue_statuses.all()[0].pk,
+        "type": data.blocked_project.issue_types.all()[0].pk,
+    })
+    results = helper_test_http_method(client, 'post', url, create_data, users)
+    assert results == [401, 403, 403, 451, 451]
+
+
+def test_issue_put_update(client, data):
     public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
     private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})
     private_url2 = reverse('issues-detail', kwargs={"pk": data.private_issue2.pk})
@@ -171,32 +280,116 @@ def test_issue_update(client, data):
     ]
 
     with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
-            issue_data = IssueSerializer(data.public_issue).data
-            issue_data["subject"] = "test"
-            issue_data = json.dumps(issue_data)
-            results = helper_test_http_method(client, 'put', public_url, issue_data, users)
-            assert results == [401, 403, 403, 200, 200]
+        issue_data = IssueSerializer(data.public_issue).data
+        issue_data["subject"] = "test"
+        issue_data = json.dumps(issue_data)
+        results = helper_test_http_method(client, 'put', public_url, issue_data, users)
+        assert results == [401, 403, 403, 200, 200]
 
-            issue_data = IssueSerializer(data.private_issue1).data
-            issue_data["subject"] = "test"
-            issue_data = json.dumps(issue_data)
-            results = helper_test_http_method(client, 'put', private_url1, issue_data, users)
-            assert results == [401, 403, 403, 200, 200]
+        issue_data = IssueSerializer(data.private_issue1).data
+        issue_data["subject"] = "test"
+        issue_data = json.dumps(issue_data)
+        results = helper_test_http_method(client, 'put', private_url1, issue_data, users)
+        assert results == [401, 403, 403, 200, 200]
 
-            issue_data = IssueSerializer(data.private_issue2).data
-            issue_data["subject"] = "test"
-            issue_data = json.dumps(issue_data)
-            results = helper_test_http_method(client, 'put', private_url2, issue_data, users)
-            assert results == [401, 403, 403, 200, 200]
+        issue_data = IssueSerializer(data.private_issue2).data
+        issue_data["subject"] = "test"
+        issue_data = json.dumps(issue_data)
+        results = helper_test_http_method(client, 'put', private_url2, issue_data, users)
+        assert results == [401, 403, 403, 200, 200]
 
-            issue_data = IssueSerializer(data.blocked_issue).data
-            issue_data["subject"] = "test"
-            issue_data = json.dumps(issue_data)
-            results = helper_test_http_method(client, 'put', blocked_url, issue_data, users)
-            assert results == [401, 403, 403, 451, 451]
+        issue_data = IssueSerializer(data.blocked_issue).data
+        issue_data["subject"] = "test"
+        issue_data = json.dumps(issue_data)
+        results = helper_test_http_method(client, 'put', blocked_url, issue_data, users)
+        assert results == [401, 403, 403, 451, 451]
 
 
-def test_issue_update_with_project_change(client):
+def test_issue_put_comment(client, data):
+    public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
+    private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})
+    private_url2 = reverse('issues-detail', kwargs={"pk": data.private_issue2.pk})
+    blocked_url = reverse('issues-detail', kwargs={"pk": data.blocked_issue.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        issue_data = IssueSerializer(data.public_issue).data
+        issue_data["comment"] = "test comment"
+        issue_data = json.dumps(issue_data)
+        results = helper_test_http_method(client, 'put', public_url, issue_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        issue_data = IssueSerializer(data.private_issue1).data
+        issue_data["comment"] = "test comment"
+        issue_data = json.dumps(issue_data)
+        results = helper_test_http_method(client, 'put', private_url1, issue_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        issue_data = IssueSerializer(data.private_issue2).data
+        issue_data["comment"] = "test comment"
+        issue_data = json.dumps(issue_data)
+        results = helper_test_http_method(client, 'put', private_url2, issue_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        issue_data = IssueSerializer(data.blocked_issue).data
+        issue_data["comment"] = "test comment"
+        issue_data = json.dumps(issue_data)
+        results = helper_test_http_method(client, 'put', blocked_url, issue_data, users)
+        assert results == [401, 403, 403, 451, 451]
+
+
+def test_issue_put_update_and_comment(client, data):
+    public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
+    private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})
+    private_url2 = reverse('issues-detail', kwargs={"pk": data.private_issue2.pk})
+    blocked_url = reverse('issues-detail', kwargs={"pk": data.blocked_issue.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        issue_data = IssueSerializer(data.public_issue).data
+        issue_data["subject"] = "test"
+        issue_data["comment"] = "test comment"
+        issue_data = json.dumps(issue_data)
+        results = helper_test_http_method(client, 'put', public_url, issue_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        issue_data = IssueSerializer(data.private_issue1).data
+        issue_data["subject"] = "test"
+        issue_data["comment"] = "test comment"
+        issue_data = json.dumps(issue_data)
+        results = helper_test_http_method(client, 'put', private_url1, issue_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        issue_data = IssueSerializer(data.private_issue2).data
+        issue_data["subject"] = "test"
+        issue_data["comment"] = "test comment"
+        issue_data = json.dumps(issue_data)
+        results = helper_test_http_method(client, 'put', private_url2, issue_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        issue_data = IssueSerializer(data.blocked_issue).data
+        issue_data["subject"] = "test"
+        issue_data["comment"] = "test comment"
+        issue_data = json.dumps(issue_data)
+        results = helper_test_http_method(client, 'put', blocked_url, issue_data, users)
+        assert results == [401, 403, 403, 451, 451]
+
+
+def test_issue_put_update_with_project_change(client):
     user1 = f.UserFactory.create()
     user2 = f.UserFactory.create()
     user3 = f.UserFactory.create()
@@ -309,139 +502,7 @@ def test_issue_update_with_project_change(client):
     issue.save()
 
 
-def test_issue_delete(client, data):
-    public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
-    private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})
-    private_url2 = reverse('issues-detail', kwargs={"pk": data.private_issue2.pk})
-    blocked_url = reverse('issues-detail', kwargs={"pk": data.blocked_issue.pk})
-
-    users = [
-        None,
-        data.registered_user,
-        data.project_member_without_perms,
-        data.project_member_with_perms,
-    ]
-
-    results = helper_test_http_method(client, 'delete', public_url, None, users)
-    assert results == [401, 403, 403, 204]
-    results = helper_test_http_method(client, 'delete', private_url1, None, users)
-    assert results == [401, 403, 403, 204]
-    results = helper_test_http_method(client, 'delete', private_url2, None, users)
-    assert results == [401, 403, 403, 204]
-    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
-    assert results == [401, 403, 403, 451]
-
-
-def test_issue_list(client, data):
-    url = reverse('issues-list')
-
-    response = client.get(url)
-    issues_data = json.loads(response.content.decode('utf-8'))
-    assert len(issues_data) == 2
-    assert response.status_code == 200
-
-    client.login(data.registered_user)
-
-    response = client.get(url)
-    issues_data = json.loads(response.content.decode('utf-8'))
-    assert len(issues_data) == 2
-    assert response.status_code == 200
-
-    client.login(data.project_member_with_perms)
-
-    response = client.get(url)
-    issues_data = json.loads(response.content.decode('utf-8'))
-    assert len(issues_data) == 4
-    assert response.status_code == 200
-
-    client.login(data.project_owner)
-
-    response = client.get(url)
-    issues_data = json.loads(response.content.decode('utf-8'))
-    assert len(issues_data) == 4
-    assert response.status_code == 200
-
-
-def test_issue_list_filter_by_project_ok(client, data):
-    url = "{}?project={}".format(reverse("issues-list"), data.public_project.pk)
-
-    client.login(data.project_owner)
-    response = client.get(url)
-
-    assert response.status_code == 200
-    assert len(response.data) == 1
-
-
-def test_issue_list_filter_by_project_error(client, data):
-    url = "{}?project={}".format(reverse("issues-list"), "-ERROR-")
-
-    client.login(data.project_owner)
-    response = client.get(url)
-
-    assert response.status_code == 400
-
-
-def test_issue_create(client, data):
-    url = reverse('issues-list')
-
-    users = [
-        None,
-        data.registered_user,
-        data.project_member_without_perms,
-        data.project_member_with_perms,
-        data.project_owner
-    ]
-
-    create_data = json.dumps({
-        "subject": "test",
-        "ref": 1,
-        "project": data.public_project.pk,
-        "severity": data.public_project.severities.all()[0].pk,
-        "priority": data.public_project.priorities.all()[0].pk,
-        "status": data.public_project.issue_statuses.all()[0].pk,
-        "type": data.public_project.issue_types.all()[0].pk,
-    })
-    results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 403, 403, 201, 201]
-
-    create_data = json.dumps({
-        "subject": "test",
-        "ref": 2,
-        "project": data.private_project1.pk,
-        "severity": data.private_project1.severities.all()[0].pk,
-        "priority": data.private_project1.priorities.all()[0].pk,
-        "status": data.private_project1.issue_statuses.all()[0].pk,
-        "type": data.private_project1.issue_types.all()[0].pk,
-    })
-    results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 403, 403, 201, 201]
-
-    create_data = json.dumps({
-        "subject": "test",
-        "ref": 3,
-        "project": data.private_project2.pk,
-        "severity": data.private_project2.severities.all()[0].pk,
-        "priority": data.private_project2.priorities.all()[0].pk,
-        "status": data.private_project2.issue_statuses.all()[0].pk,
-        "type": data.private_project2.issue_types.all()[0].pk,
-    })
-    results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 403, 403, 201, 201]
-
-    create_data = json.dumps({
-        "subject": "test",
-        "ref": 3,
-        "project": data.blocked_project.pk,
-        "severity": data.blocked_project.severities.all()[0].pk,
-        "priority": data.blocked_project.priorities.all()[0].pk,
-        "status": data.blocked_project.issue_statuses.all()[0].pk,
-        "type": data.blocked_project.issue_types.all()[0].pk,
-    })
-    results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 403, 403, 451, 451]
-
-
-def test_issue_patch(client, data):
+def test_issue_patch_update(client, data):
     public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
     private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})
     private_url2 = reverse('issues-detail', kwargs={"pk": data.private_issue2.pk})
@@ -473,7 +534,110 @@ def test_issue_patch(client, data):
         assert results == [401, 403, 403, 451, 451]
 
 
-def test_issue_bulk_create(client, data):
+def test_issue_patch_comment(client, data):
+    public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
+    private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})
+    private_url2 = reverse('issues-detail', kwargs={"pk": data.private_issue2.pk})
+    blocked_url = reverse('issues-detail', kwargs={"pk": data.blocked_issue.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        patch_data = json.dumps({"comment": "test comment", "version": data.public_issue.version})
+        results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        patch_data = json.dumps({"comment": "test comment", "version": data.private_issue1.version})
+        results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        patch_data = json.dumps({"comment": "test comment", "version": data.private_issue2.version})
+        results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        patch_data = json.dumps({"comment": "test comment", "version": data.blocked_issue.version})
+        results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+        assert results == [401, 403, 403, 451, 451]
+
+
+def test_issue_patch_update_and_comment(client, data):
+    public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
+    private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})
+    private_url2 = reverse('issues-detail', kwargs={"pk": data.private_issue2.pk})
+    blocked_url = reverse('issues-detail', kwargs={"pk": data.blocked_issue.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        patch_data = json.dumps({
+            "subject": "test",
+            "comment": "test comment",
+            "version": data.public_issue.version
+        })
+        results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        patch_data = json.dumps({
+            "subject": "test",
+            "comment": "test comment",
+            "version": data.private_issue1.version
+        })
+        results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        patch_data = json.dumps({
+            "subject": "test",
+            "comment": "test comment",
+            "version": data.private_issue2.version
+        })
+        results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        patch_data = json.dumps({
+            "subject": "test",
+            "comment": "test comment",
+            "version": data.blocked_issue.version
+        })
+        results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+        assert results == [401, 403, 403, 451, 451]
+
+
+def test_issue_delete(client, data):
+    public_url = reverse('issues-detail', kwargs={"pk": data.public_issue.pk})
+    private_url1 = reverse('issues-detail', kwargs={"pk": data.private_issue1.pk})
+    private_url2 = reverse('issues-detail', kwargs={"pk": data.private_issue2.pk})
+    blocked_url = reverse('issues-detail', kwargs={"pk": data.blocked_issue.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+    ]
+
+    results = helper_test_http_method(client, 'delete', public_url, None, users)
+    assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', private_url1, None, users)
+    assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', private_url2, None, users)
+    assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 451]
+
+
+def test_issue_action_bulk_create(client, data):
     data.public_issue.project.default_issue_status = f.IssueStatusFactory()
     data.public_issue.project.default_issue_type = f.IssueTypeFactory()
     data.public_issue.project.default_priority = f.PriorityFactory()
@@ -633,34 +797,6 @@ def test_issue_voters_retrieve(client, data):
     assert results == [401, 403, 403, 200, 200]
 
 
-def test_issues_csv(client, data):
-    url = reverse('issues-csv')
-    csv_public_uuid = data.public_project.issues_csv_uuid
-    csv_private1_uuid = data.private_project1.issues_csv_uuid
-    csv_private2_uuid = data.private_project2.issues_csv_uuid
-    csv_blocked_uuid = data.blocked_project.issues_csv_uuid
-
-    users = [
-        None,
-        data.registered_user,
-        data.project_member_without_perms,
-        data.project_member_with_perms,
-        data.project_owner
-    ]
-
-    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_public_uuid), None, users)
-    assert results == [200, 200, 200, 200, 200]
-
-    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private1_uuid), None, users)
-    assert results == [200, 200, 200, 200, 200]
-
-    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private2_uuid), None, users)
-    assert results == [200, 200, 200, 200, 200]
-
-    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_blocked_uuid), None, users)
-    assert results == [200, 200, 200, 200, 200]
-
-
 def test_issue_action_watch(client, data):
     public_url = reverse('issues-watch', kwargs={"pk": data.public_issue.pk})
     private_url1 = reverse('issues-watch', kwargs={"pk": data.private_issue1.pk})
@@ -762,3 +898,31 @@ def test_issue_watchers_retrieve(client, data):
     assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'get', blocked_url, None, users)
     assert results == [401, 403, 403, 200, 200]
+
+
+def test_issues_csv(client, data):
+    url = reverse('issues-csv')
+    csv_public_uuid = data.public_project.issues_csv_uuid
+    csv_private1_uuid = data.private_project1.issues_csv_uuid
+    csv_private2_uuid = data.private_project2.issues_csv_uuid
+    csv_blocked_uuid = data.blocked_project.issues_csv_uuid
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_public_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private1_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private2_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_blocked_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]

@@ -18,14 +18,16 @@
 from taiga.base.api.permissions import TaigaResourcePermission, AllowAny, IsAuthenticated, IsSuperUser
 from taiga.permissions.permissions import HasProjectPerm, IsProjectAdmin
 
+from taiga.permissions.permissions import CommentAndOrUpdatePerm
+
 
 class TaskPermission(TaigaResourcePermission):
     enought_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_tasks')
     create_perms = HasProjectPerm('add_task')
-    update_perms = HasProjectPerm('modify_task')
-    partial_update_perms = HasProjectPerm('modify_task')
+    update_perms = CommentAndOrUpdatePerm('modify_task', 'comment_task')
+    partial_update_perms = CommentAndOrUpdatePerm('modify_task', 'comment_task')
     destroy_perms = HasProjectPerm('delete_task')
     list_perms = AllowAny()
     csv_perms = AllowAny()

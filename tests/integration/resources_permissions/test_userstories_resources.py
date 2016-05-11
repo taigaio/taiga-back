@@ -138,6 +138,36 @@ def data():
     return m
 
 
+def test_user_story_list(client, data):
+    url = reverse('userstories-list')
+
+    response = client.get(url)
+    userstories_data = json.loads(response.content.decode('utf-8'))
+    assert len(userstories_data) == 2
+    assert response.status_code == 200
+
+    client.login(data.registered_user)
+
+    response = client.get(url)
+    userstories_data = json.loads(response.content.decode('utf-8'))
+    assert len(userstories_data) == 2
+    assert response.status_code == 200
+
+    client.login(data.project_member_with_perms)
+
+    response = client.get(url)
+    userstories_data = json.loads(response.content.decode('utf-8'))
+    assert len(userstories_data) == 4
+    assert response.status_code == 200
+
+    client.login(data.project_owner)
+
+    response = client.get(url)
+    userstories_data = json.loads(response.content.decode('utf-8'))
+    assert len(userstories_data) == 4
+    assert response.status_code == 200
+
+
 def test_user_story_retrieve(client, data):
     public_url = reverse('userstories-detail', kwargs={"pk": data.public_user_story.pk})
     private_url1 = reverse('userstories-detail', kwargs={"pk": data.private_user_story1.pk})
@@ -162,7 +192,35 @@ def test_user_story_retrieve(client, data):
     assert results == [401, 403, 403, 200, 200]
 
 
-def test_user_story_update(client, data):
+def test_user_story_create(client, data):
+    url = reverse('userstories-list')
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    create_data = json.dumps({"subject": "test", "ref": 1, "project": data.public_project.pk})
+    results = helper_test_http_method(client, 'post', url, create_data, users)
+    assert results == [401, 403, 403, 201, 201]
+
+    create_data = json.dumps({"subject": "test", "ref": 2, "project": data.private_project1.pk})
+    results = helper_test_http_method(client, 'post', url, create_data, users)
+    assert results == [401, 403, 403, 201, 201]
+
+    create_data = json.dumps({"subject": "test", "ref": 3, "project": data.private_project2.pk})
+    results = helper_test_http_method(client, 'post', url, create_data, users)
+    assert results == [401, 403, 403, 201, 201]
+
+    create_data = json.dumps({"subject": "test", "ref": 4, "project": data.blocked_project.pk})
+    results = helper_test_http_method(client, 'post', url, create_data, users)
+    assert results == [401, 403, 403, 451, 451]
+
+
+def test_user_story_put_update(client, data):
     public_url = reverse('userstories-detail', kwargs={"pk": data.public_user_story.pk})
     private_url1 = reverse('userstories-detail', kwargs={"pk": data.private_user_story1.pk})
     private_url2 = reverse('userstories-detail', kwargs={"pk": data.private_user_story2.pk})
@@ -201,7 +259,92 @@ def test_user_story_update(client, data):
         results = helper_test_http_method(client, 'put', blocked_url, user_story_data, users)
         assert results == [401, 403, 403, 451, 451]
 
-def test_user_story_update_with_project_change(client):
+
+def test_user_story_put_comment(client, data):
+    public_url = reverse('userstories-detail', kwargs={"pk": data.public_user_story.pk})
+    private_url1 = reverse('userstories-detail', kwargs={"pk": data.private_user_story1.pk})
+    private_url2 = reverse('userstories-detail', kwargs={"pk": data.private_user_story2.pk})
+    blocked_url = reverse('userstories-detail', kwargs={"pk": data.blocked_user_story.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        user_story_data = UserStorySerializer(data.public_user_story).data
+        user_story_data["comment"] = "test comment"
+        user_story_data = json.dumps(user_story_data)
+        results = helper_test_http_method(client, 'put', public_url, user_story_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        user_story_data = UserStorySerializer(data.private_user_story1).data
+        user_story_data["comment"] = "test comment"
+        user_story_data = json.dumps(user_story_data)
+        results = helper_test_http_method(client, 'put', private_url1, user_story_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        user_story_data = UserStorySerializer(data.private_user_story2).data
+        user_story_data["comment"] = "test comment"
+        user_story_data = json.dumps(user_story_data)
+        results = helper_test_http_method(client, 'put', private_url2, user_story_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        user_story_data = UserStorySerializer(data.blocked_user_story).data
+        user_story_data["comment"] = "test comment"
+        user_story_data = json.dumps(user_story_data)
+        results = helper_test_http_method(client, 'put', blocked_url, user_story_data, users)
+        assert results == [401, 403, 403, 451, 451]
+
+
+def test_user_story_put_update_and_comment(client, data):
+    public_url = reverse('userstories-detail', kwargs={"pk": data.public_user_story.pk})
+    private_url1 = reverse('userstories-detail', kwargs={"pk": data.private_user_story1.pk})
+    private_url2 = reverse('userstories-detail', kwargs={"pk": data.private_user_story2.pk})
+    blocked_url = reverse('userstories-detail', kwargs={"pk": data.blocked_user_story.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        user_story_data = UserStorySerializer(data.public_user_story).data
+        user_story_data["subject"] = "test"
+        user_story_data["comment"] = "test comment"
+        user_story_data = json.dumps(user_story_data)
+        results = helper_test_http_method(client, 'put', public_url, user_story_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        user_story_data = UserStorySerializer(data.private_user_story1).data
+        user_story_data["subject"] = "test"
+        user_story_data["comment"] = "test comment"
+        user_story_data = json.dumps(user_story_data)
+        results = helper_test_http_method(client, 'put', private_url1, user_story_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        user_story_data = UserStorySerializer(data.private_user_story2).data
+        user_story_data["subject"] = "test"
+        user_story_data["comment"] = "test comment"
+        user_story_data = json.dumps(user_story_data)
+        results = helper_test_http_method(client, 'put', private_url2, user_story_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        user_story_data = UserStorySerializer(data.blocked_user_story).data
+        user_story_data["subject"] = "test"
+        user_story_data["comment"] = "test comment"
+        user_story_data = json.dumps(user_story_data)
+        results = helper_test_http_method(client, 'put', blocked_url, user_story_data, users)
+        assert results == [401, 403, 403, 451, 451]
+
+
+def test_user_story_put_update_with_project_change(client):
     user1 = f.UserFactory.create()
     user2 = f.UserFactory.create()
     user3 = f.UserFactory.create()
@@ -296,87 +439,7 @@ def test_user_story_update_with_project_change(client):
     us.save()
 
 
-def test_user_story_delete(client, data):
-    public_url = reverse('userstories-detail', kwargs={"pk": data.public_user_story.pk})
-    private_url1 = reverse('userstories-detail', kwargs={"pk": data.private_user_story1.pk})
-    private_url2 = reverse('userstories-detail', kwargs={"pk": data.private_user_story2.pk})
-    blocked_url = reverse('userstories-detail', kwargs={"pk": data.blocked_user_story.pk})
-
-    users = [
-        None,
-        data.registered_user,
-        data.project_member_without_perms,
-        data.project_member_with_perms,
-    ]
-    results = helper_test_http_method(client, 'delete', public_url, None, users)
-    assert results == [401, 403, 403, 204]
-    results = helper_test_http_method(client, 'delete', private_url1, None, users)
-    assert results == [401, 403, 403, 204]
-    results = helper_test_http_method(client, 'delete', private_url2, None, users)
-    assert results == [401, 403, 403, 204]
-    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
-    assert results == [401, 403, 403, 451]
-
-
-def test_user_story_list(client, data):
-    url = reverse('userstories-list')
-
-    response = client.get(url)
-    userstories_data = json.loads(response.content.decode('utf-8'))
-    assert len(userstories_data) == 2
-    assert response.status_code == 200
-
-    client.login(data.registered_user)
-
-    response = client.get(url)
-    userstories_data = json.loads(response.content.decode('utf-8'))
-    assert len(userstories_data) == 2
-    assert response.status_code == 200
-
-    client.login(data.project_member_with_perms)
-
-    response = client.get(url)
-    userstories_data = json.loads(response.content.decode('utf-8'))
-    assert len(userstories_data) == 4
-    assert response.status_code == 200
-
-    client.login(data.project_owner)
-
-    response = client.get(url)
-    userstories_data = json.loads(response.content.decode('utf-8'))
-    assert len(userstories_data) == 4
-    assert response.status_code == 200
-
-
-def test_user_story_create(client, data):
-    url = reverse('userstories-list')
-
-    users = [
-        None,
-        data.registered_user,
-        data.project_member_without_perms,
-        data.project_member_with_perms,
-        data.project_owner
-    ]
-
-    create_data = json.dumps({"subject": "test", "ref": 1, "project": data.public_project.pk})
-    results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 403, 403, 201, 201]
-
-    create_data = json.dumps({"subject": "test", "ref": 2, "project": data.private_project1.pk})
-    results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 403, 403, 201, 201]
-
-    create_data = json.dumps({"subject": "test", "ref": 3, "project": data.private_project2.pk})
-    results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 403, 403, 201, 201]
-
-    create_data = json.dumps({"subject": "test", "ref": 4, "project": data.blocked_project.pk})
-    results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 403, 403, 451, 451]
-
-
-def test_user_story_patch(client, data):
+def test_user_story_patch_update(client, data):
     public_url = reverse('userstories-detail', kwargs={"pk": data.public_user_story.pk})
     private_url1 = reverse('userstories-detail', kwargs={"pk": data.private_user_story1.pk})
     private_url2 = reverse('userstories-detail', kwargs={"pk": data.private_user_story2.pk})
@@ -406,6 +469,109 @@ def test_user_story_patch(client, data):
         patch_data = json.dumps({"subject": "test", "version": data.blocked_user_story.version})
         results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
         assert results == [401, 403, 403, 451, 451]
+
+
+def test_user_story_patch_comment(client, data):
+    public_url = reverse('userstories-detail', kwargs={"pk": data.public_user_story.pk})
+    private_url1 = reverse('userstories-detail', kwargs={"pk": data.private_user_story1.pk})
+    private_url2 = reverse('userstories-detail', kwargs={"pk": data.private_user_story2.pk})
+    blocked_url = reverse('userstories-detail', kwargs={"pk": data.blocked_user_story.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        patch_data = json.dumps({"comment": "test comment", "version": data.public_user_story.version})
+        results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        patch_data = json.dumps({"comment": "test comment", "version": data.private_user_story1.version})
+        results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        patch_data = json.dumps({"comment": "test comment", "version": data.private_user_story2.version})
+        results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        patch_data = json.dumps({"comment": "test comment", "version": data.blocked_user_story.version})
+        results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+        assert results == [401, 403, 403, 451, 451]
+
+
+def test_user_story_patch_update_and_comment(client, data):
+    public_url = reverse('userstories-detail', kwargs={"pk": data.public_user_story.pk})
+    private_url1 = reverse('userstories-detail', kwargs={"pk": data.private_user_story1.pk})
+    private_url2 = reverse('userstories-detail', kwargs={"pk": data.private_user_story2.pk})
+    blocked_url = reverse('userstories-detail', kwargs={"pk": data.blocked_user_story.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        patch_data = json.dumps({
+            "subject": "test",
+            "comment": "test comment",
+            "version": data.public_user_story.version
+        })
+        results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        patch_data = json.dumps({
+            "subject": "test",
+            "comment": "test comment",
+            "version": data.private_user_story1.version
+        })
+        results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        patch_data = json.dumps({
+            "subject": "test",
+            "comment": "test comment",
+            "version": data.private_user_story2.version
+        })
+        results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
+
+        patch_data = json.dumps({
+            "subject": "test",
+            "comment": "test comment",
+            "version": data.blocked_user_story.version
+        })
+        results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+        assert results == [401, 403, 403, 451, 451]
+
+
+def test_user_story_delete(client, data):
+    public_url = reverse('userstories-detail', kwargs={"pk": data.public_user_story.pk})
+    private_url1 = reverse('userstories-detail', kwargs={"pk": data.private_user_story1.pk})
+    private_url2 = reverse('userstories-detail', kwargs={"pk": data.private_user_story2.pk})
+    blocked_url = reverse('userstories-detail', kwargs={"pk": data.blocked_user_story.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+    ]
+    results = helper_test_http_method(client, 'delete', public_url, None, users)
+    assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', private_url1, None, users)
+    assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', private_url2, None, users)
+    assert results == [401, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 451]
+
 
 
 def test_user_story_action_bulk_create(client, data):
@@ -580,30 +746,6 @@ def test_user_story_voters_retrieve(client, data):
     assert results == [401, 403, 403, 200, 200]
 
 
-def test_user_stories_csv(client, data):
-    url = reverse('userstories-csv')
-    csv_public_uuid = data.public_project.userstories_csv_uuid
-    csv_private1_uuid = data.private_project1.userstories_csv_uuid
-    csv_private2_uuid = data.private_project1.userstories_csv_uuid
-
-    users = [
-        None,
-        data.registered_user,
-        data.project_member_without_perms,
-        data.project_member_with_perms,
-        data.project_owner
-    ]
-
-    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_public_uuid), None, users)
-    assert results == [200, 200, 200, 200, 200]
-
-    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private1_uuid), None, users)
-    assert results == [200, 200, 200, 200, 200]
-
-    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private2_uuid), None, users)
-    assert results == [200, 200, 200, 200, 200]
-
-
 def test_user_story_action_watch(client, data):
     public_url = reverse('userstories-watch', kwargs={"pk": data.public_user_story.pk})
     private_url1 = reverse('userstories-watch', kwargs={"pk": data.private_user_story1.pk})
@@ -706,3 +848,27 @@ def test_userstory_watchers_retrieve(client, data):
     assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'get', blocked_url, None, users)
     assert results == [401, 403, 403, 200, 200]
+
+
+def test_user_stories_action_csv(client, data):
+    url = reverse('userstories-csv')
+    csv_public_uuid = data.public_project.userstories_csv_uuid
+    csv_private1_uuid = data.private_project1.userstories_csv_uuid
+    csv_private2_uuid = data.private_project1.userstories_csv_uuid
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_public_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private1_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private2_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]

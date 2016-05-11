@@ -51,3 +51,40 @@ class IsObjectOwner(PermissionComponent):
 class IsProjectAdmin(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
         return services.is_project_admin(request.user, obj)
+
+
+######################################################################
+# Common perms for stories, tasks and issues
+######################################################################
+
+class CommentAndOrUpdatePerm(PermissionComponent):
+    def __init__(self, update_perm, comment_perm, *components):
+        self.update_perm = update_perm
+        self.comment_perm = comment_perm
+        super().__init__(*components)
+
+    def check_permissions(self, request, view, obj=None):
+        if not obj:
+            return False
+
+        project_id = request.DATA.get('project', None)
+        if project_id and obj.project_id != project_id:
+            project = apps.get_model("projects", "Project").objects.get(pk=project_id)
+        else:
+            project = obj.project
+
+        data_keys = request.DATA.keys()
+
+        if (not services.user_has_perm(request.user, self.comment_perm, project) and
+            "comment" in data_keys):
+                # User can't comment but there is a comment in the request
+                #raise exc.PermissionDenied(_("You don't have permissions to comment this."))
+                return False
+
+        if (not services.user_has_perm(request.user, self.update_perm, project) and
+            len(data_keys - "comment")):
+                # User can't update but there is a change in the request
+                #raise exc.PermissionDenied(_("You don't have permissions to update this."))
+                return False
+
+        return True

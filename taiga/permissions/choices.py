@@ -27,7 +27,6 @@ ANON_PERMISSIONS = [
     ('view_wiki_pages', _('View wiki pages')),
     ('view_wiki_links', _('View wiki links')),
 ]
-
 MEMBERS_PERMISSIONS = [
     ('view_project', _('View project')),
     # Milestone permissions
@@ -39,21 +38,25 @@ MEMBERS_PERMISSIONS = [
     ('view_us', _('View user story')),
     ('add_us', _('Add user story')),
     ('modify_us', _('Modify user story')),
+    ('comment_us', _('Comment user story')),
     ('delete_us', _('Delete user story')),
     # Task permissions
     ('view_tasks', _('View tasks')),
     ('add_task', _('Add task')),
     ('modify_task', _('Modify task')),
+    ('comment_task', _('Comment task')),
     ('delete_task', _('Delete task')),
     # Issue permissions
     ('view_issues', _('View issues')),
     ('add_issue', _('Add issue')),
     ('modify_issue', _('Modify issue')),
+    ('comment_issue', _('Comment issue')),
     ('delete_issue', _('Delete issue')),
     # Wiki page permissions
     ('view_wiki_pages', _('View wiki pages')),
     ('add_wiki_page', _('Add wiki page')),
     ('modify_wiki_page', _('Modify wiki page')),
+    ('comment_wiki_page', _('Comment wiki page')),
     ('delete_wiki_page', _('Delete wiki page')),
     # Wiki link permissions
     ('view_wiki_links', _('View wiki links')),
