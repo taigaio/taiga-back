@@ -22,42 +22,17 @@ from django.utils.translation import ugettext as _
 
 from taiga.projects.history import services as history_services
 from taiga.projects.history.choices import HistoryType
-from taiga.timeline.service import (push_to_timeline,
+from taiga.timeline.service import (push_to_timelines,
                                     build_user_namespace,
                                     build_project_namespace,
                                     extract_user_info)
 
 
-def _push_to_timeline(*args, **kwargs):
+def _push_to_timelines(*args, **kwargs):
     if settings.CELERY_ENABLED:
-        push_to_timeline.delay(*args, **kwargs)
+        push_to_timelines.delay(*args, **kwargs)
     else:
-        push_to_timeline(*args, **kwargs)
-
-
-def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_data={}):
-    if project is not None:
-        # Actions related with a project
-
-        ## Project timeline
-        _push_to_timeline(project, obj, event_type, created_datetime,
-            namespace=build_project_namespace(project),
-            extra_data=extra_data)
-
-        project.refresh_totals()
-
-        if hasattr(obj, "get_related_people"):
-            related_people = obj.get_related_people()
-
-            _push_to_timeline(related_people, obj, event_type, created_datetime,
-                namespace=build_user_namespace(user),
-                extra_data=extra_data)
-    else:
-        # Actions not related with a project
-        ## - Me
-        _push_to_timeline(user, obj, event_type, created_datetime,
-            namespace=build_user_namespace(user),
-            extra_data=extra_data)
+        push_to_timelines(*args, **kwargs)
 
 
 def _clean_description_fields(values_diff):

@@ -60,7 +60,7 @@ def test_create_retrieve_notify_policy():
     current_number = policy_model_cls.objects.all().count()
     assert current_number == 0
 
-    policy = services.get_notify_policy(project, project.owner)
+    policy = project.cached_notify_policy_for_user(project.owner)
 
     current_number = policy_model_cls.objects.all().count()
     assert current_number == 1
@@ -182,6 +182,7 @@ def test_users_to_notify():
     policy_member1.notify_level = NotifyLevel.all
     policy_member1.save()
 
+    del project.cached_notify_policies
     users = services.get_users_to_notify(issue)
     assert len(users) == 2
     assert users == {member1.user, issue.get_owner()}
@@ -190,6 +191,8 @@ def test_users_to_notify():
     issue.add_watcher(member3.user)
     policy_member3.notify_level = NotifyLevel.all
     policy_member3.save()
+
+    del project.cached_notify_policies
     users = services.get_users_to_notify(issue)
     assert len(users) == 3
     assert users == {member1.user, member3.user, issue.get_owner()}
@@ -199,12 +202,14 @@ def test_users_to_notify():
     policy_member3.save()
 
     issue.add_watcher(member3.user)
+    del project.cached_notify_policies
     users = services.get_users_to_notify(issue)
     assert len(users) == 2
     assert users == {member1.user, issue.get_owner()}
 
     # Test with watchers without permissions
     issue.add_watcher(member5.user)
+    del project.cached_notify_policies
     users = services.get_users_to_notify(issue)
     assert len(users) == 2
     assert users == {member1.user, issue.get_owner()}
@@ -231,7 +236,7 @@ def test_watching_users_to_notify_on_issue_modification_1():
     issue = f.IssueFactory.create(project=project)
     watching_user = f.UserFactory()
     issue.add_watcher(watching_user)
-    watching_user_policy = services.get_notify_policy(project, watching_user)
+    watching_user_policy = project.cached_notify_policy_for_user(watching_user)
     issue.description = "test1"
     issue.save()
     watching_user_policy.notify_level = NotifyLevel.all
@@ -250,7 +255,7 @@ def test_watching_users_to_notify_on_issue_modification_2():
     issue = f.IssueFactory.create(project=project)
     watching_user = f.UserFactory()
     issue.add_watcher(watching_user)
-    watching_user_policy = services.get_notify_policy(project, watching_user)
+    watching_user_policy = project.cached_notify_policy_for_user(watching_user)
     issue.description = "test1"
     issue.save()
     watching_user_policy.notify_level = NotifyLevel.involved
@@ -269,7 +274,7 @@ def test_watching_users_to_notify_on_issue_modification_3():
     issue = f.IssueFactory.create(project=project)
     watching_user = f.UserFactory()
     issue.add_watcher(watching_user)
-    watching_user_policy = services.get_notify_policy(project, watching_user)
+    watching_user_policy = project.cached_notify_policy_for_user(watching_user)
     issue.description = "test1"
     issue.save()
     watching_user_policy.notify_level = NotifyLevel.none
@@ -289,7 +294,7 @@ def test_watching_users_to_notify_on_issue_modification_4():
     issue = f.IssueFactory.create(project=project)
     watching_user = f.UserFactory()
     project.add_watcher(watching_user)
-    watching_user_policy = services.get_notify_policy(project, watching_user)
+    watching_user_policy = project.cached_notify_policy_for_user(watching_user)
     issue.description = "test1"
     issue.save()
     watching_user_policy.notify_level = NotifyLevel.none
@@ -309,7 +314,7 @@ def test_watching_users_to_notify_on_issue_modification_5():
     issue = f.IssueFactory.create(project=project)
     watching_user = f.UserFactory()
     project.add_watcher(watching_user)
-    watching_user_policy = services.get_notify_policy(project, watching_user)
+    watching_user_policy = project.cached_notify_policy_for_user(watching_user)
     issue.description = "test1"
     issue.save()
     watching_user_policy.notify_level = NotifyLevel.all
@@ -329,7 +334,7 @@ def test_watching_users_to_notify_on_issue_modification_6():
     issue = f.IssueFactory.create(project=project)
     watching_user = f.UserFactory()
     project.add_watcher(watching_user)
-    watching_user_policy = services.get_notify_policy(project, watching_user)
+    watching_user_policy = project.cached_notify_policy_for_user(watching_user)
     issue.description = "test1"
     issue.save()
     watching_user_policy.notify_level = NotifyLevel.involved
@@ -902,7 +907,7 @@ def test_watchers_assignation_for_us(client):
 def test_retrieve_notify_policies_by_anonymous_user(client):
     project = f.ProjectFactory.create()
 
-    policy = services.get_notify_policy(project, project.owner)
+    policy = project.cached_notify_policy_for_user(project.owner)
 
     url = reverse("notifications-detail", args=[policy.pk])
     response = client.get(url, content_type="application/json")

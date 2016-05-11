@@ -78,16 +78,6 @@ def create_notify_policy_if_not_exists(project, user, level=NotifyLevel.involved
         raise exc.IntegrityError(_("Notify exists for specified user and project")) from e
 
 
-def get_notify_policy(project, user):
-    """
-    Get notification level for specified project and user.
-    """
-    model_cls = apps.get_model("notifications", "NotifyPolicy")
-    instance, _ = model_cls.objects.get_or_create(project=project, user=user,
-                                                  defaults={"notify_level": NotifyLevel.involved})
-    return instance
-
-
 def analize_object_for_watchers(obj:object, comment:str, user:object):
     """
     Generic implementation for analize model objects and
@@ -124,13 +114,13 @@ def _filter_by_permissions(obj, user):
     WikiPage = apps.get_model("wiki", "WikiPage")
 
     if isinstance(obj, UserStory):
-        return user_has_perm(user, "view_us", obj)
+        return user_has_perm(user, "view_us", obj, cache="project")
     elif isinstance(obj, Issue):
-        return user_has_perm(user, "view_issues", obj)
+        return user_has_perm(user, "view_issues", obj, cache="project")
     elif isinstance(obj, Task):
-        return user_has_perm(user, "view_tasks", obj)
+        return user_has_perm(user, "view_tasks", obj, cache="project")
     elif isinstance(obj, WikiPage):
-        return user_has_perm(user, "view_wiki_pages", obj)
+        return user_has_perm(user, "view_wiki_pages", obj, cache="project")
     return False
 
 
@@ -149,7 +139,7 @@ def get_users_to_notify(obj, *, discard_users=None) -> list:
     project = obj.get_project()
 
     def _check_level(project:object, user:object, levels:tuple) -> bool:
-        policy = get_notify_policy(project, user)
+        policy = project.cached_notify_policy_for_user(user)
         return policy.notify_level in levels
 
     _can_notify_hard = partial(_check_level, project,
@@ -226,8 +216,7 @@ def send_notifications(obj, *, history):
     # Get a complete list of notifiable users for current
     # object and send the change notification to them.
     notify_users = get_users_to_notify(obj, discard_users=[notification.owner])
-    for notify_user in notify_users:
-        notification.notify_users.add(notify_user)
+    notification.notify_users.add(*notify_users)
 
     # If we are the min interval is 0 it just work in a synchronous and spamming way
     if settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL == 0:
