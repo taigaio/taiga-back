@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 
 from taiga.projects import choices as project_choices
 from taiga.projects.issues.serializers import IssueSerializer
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 from taiga.base.utils import json
 
 from tests import factories as f
@@ -39,12 +39,12 @@ def data():
 
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                        public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
+                                        public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         owner=m.project_owner,
                                         issues_csv_uuid=uuid.uuid4().hex)
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                          public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
+                                          public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           owner=m.project_owner,
                                           issues_csv_uuid=uuid.uuid4().hex)
     m.private_project2 = f.ProjectFactory(is_private=True,
@@ -402,7 +402,7 @@ def test_issue_create(client, data):
         "type": data.public_project.issue_types.all()[0].pk,
     })
     results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 201, 201, 201, 201]
+    assert results == [401, 403, 403, 201, 201]
 
     create_data = json.dumps({
         "subject": "test",
@@ -414,7 +414,7 @@ def test_issue_create(client, data):
         "type": data.private_project1.issue_types.all()[0].pk,
     })
     results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 201, 201, 201, 201]
+    assert results == [401, 403, 403, 201, 201]
 
     create_data = json.dumps({
         "subject": "test",
@@ -456,21 +456,21 @@ def test_issue_patch(client, data):
     ]
 
     with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
-            patch_data = json.dumps({"subject": "test", "version": data.public_issue.version})
-            results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
-            assert results == [401, 403, 403, 200, 200]
+        patch_data = json.dumps({"subject": "test", "version": data.public_issue.version})
+        results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
 
-            patch_data = json.dumps({"subject": "test", "version": data.private_issue1.version})
-            results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
-            assert results == [401, 403, 403, 200, 200]
+        patch_data = json.dumps({"subject": "test", "version": data.private_issue1.version})
+        results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
 
-            patch_data = json.dumps({"subject": "test", "version": data.private_issue2.version})
-            results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
-            assert results == [401, 403, 403, 200, 200]
+        patch_data = json.dumps({"subject": "test", "version": data.private_issue2.version})
+        results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
 
-            patch_data = json.dumps({"subject": "test", "version": data.blocked_issue.version})
-            results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
-            assert results == [401, 403, 403, 451, 451]
+        patch_data = json.dumps({"subject": "test", "version": data.blocked_issue.version})
+        results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+        assert results == [401, 403, 403, 451, 451]
 
 
 def test_issue_bulk_create(client, data):
@@ -511,12 +511,12 @@ def test_issue_bulk_create(client, data):
     bulk_data = json.dumps({"bulk_issues": "test1\ntest2",
                             "project_id": data.public_issue.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    assert results == [401, 403, 403, 200, 200]
 
     bulk_data = json.dumps({"bulk_issues": "test1\ntest2",
                             "project_id": data.private_issue1.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    assert results == [401, 403, 403, 200, 200]
 
     bulk_data = json.dumps({"bulk_issues": "test1\ntest2",
                             "project_id": data.private_issue2.project.pk})

@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from taiga.base.utils import json
 from taiga.projects import choices as project_choices
 from taiga.projects.userstories.serializers import UserStorySerializer
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 from taiga.projects.occ import OCCResourceMixin
 
 from tests import factories as f
@@ -39,12 +39,12 @@ def data():
 
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                        public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
+                                        public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         owner=m.project_owner,
                                         userstories_csv_uuid=uuid.uuid4().hex)
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                          public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
+                                          public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           owner=m.project_owner,
                                           userstories_csv_uuid=uuid.uuid4().hex)
     m.private_project2 = f.ProjectFactory(is_private=True,
@@ -177,29 +177,29 @@ def test_user_story_update(client, data):
     ]
 
     with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
-            user_story_data = UserStorySerializer(data.public_user_story).data
-            user_story_data["subject"] = "test"
-            user_story_data = json.dumps(user_story_data)
-            results = helper_test_http_method(client, 'put', public_url, user_story_data, users)
-            assert results == [401, 403, 403, 200, 200]
+        user_story_data = UserStorySerializer(data.public_user_story).data
+        user_story_data["subject"] = "test"
+        user_story_data = json.dumps(user_story_data)
+        results = helper_test_http_method(client, 'put', public_url, user_story_data, users)
+        assert results == [401, 403, 403, 200, 200]
 
-            user_story_data = UserStorySerializer(data.private_user_story1).data
-            user_story_data["subject"] = "test"
-            user_story_data = json.dumps(user_story_data)
-            results = helper_test_http_method(client, 'put', private_url1, user_story_data, users)
-            assert results == [401, 403, 403, 200, 200]
+        user_story_data = UserStorySerializer(data.private_user_story1).data
+        user_story_data["subject"] = "test"
+        user_story_data = json.dumps(user_story_data)
+        results = helper_test_http_method(client, 'put', private_url1, user_story_data, users)
+        assert results == [401, 403, 403, 200, 200]
 
-            user_story_data = UserStorySerializer(data.private_user_story2).data
-            user_story_data["subject"] = "test"
-            user_story_data = json.dumps(user_story_data)
-            results = helper_test_http_method(client, 'put', private_url2, user_story_data, users)
-            assert results == [401, 403, 403, 200, 200]
+        user_story_data = UserStorySerializer(data.private_user_story2).data
+        user_story_data["subject"] = "test"
+        user_story_data = json.dumps(user_story_data)
+        results = helper_test_http_method(client, 'put', private_url2, user_story_data, users)
+        assert results == [401, 403, 403, 200, 200]
 
-            user_story_data = UserStorySerializer(data.blocked_user_story).data
-            user_story_data["subject"] = "test"
-            user_story_data = json.dumps(user_story_data)
-            results = helper_test_http_method(client, 'put', blocked_url, user_story_data, users)
-            assert results == [401, 403, 403, 451, 451]
+        user_story_data = UserStorySerializer(data.blocked_user_story).data
+        user_story_data["subject"] = "test"
+        user_story_data = json.dumps(user_story_data)
+        results = helper_test_http_method(client, 'put', blocked_url, user_story_data, users)
+        assert results == [401, 403, 403, 451, 451]
 
 def test_user_story_update_with_project_change(client):
     user1 = f.UserFactory.create()
@@ -361,11 +361,11 @@ def test_user_story_create(client, data):
 
     create_data = json.dumps({"subject": "test", "ref": 1, "project": data.public_project.pk})
     results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 201, 201, 201, 201]
+    assert results == [401, 403, 403, 201, 201]
 
     create_data = json.dumps({"subject": "test", "ref": 2, "project": data.private_project1.pk})
     results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 201, 201, 201, 201]
+    assert results == [401, 403, 403, 201, 201]
 
     create_data = json.dumps({"subject": "test", "ref": 3, "project": data.private_project2.pk})
     results = helper_test_http_method(client, 'post', url, create_data, users)
@@ -391,21 +391,21 @@ def test_user_story_patch(client, data):
     ]
 
     with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
-            patch_data = json.dumps({"subject": "test", "version": data.public_user_story.version})
-            results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
-            assert results == [401, 403, 403, 200, 200]
+        patch_data = json.dumps({"subject": "test", "version": data.public_user_story.version})
+        results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
 
-            patch_data = json.dumps({"subject": "test", "version": data.private_user_story1.version})
-            results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
-            assert results == [401, 403, 403, 200, 200]
+        patch_data = json.dumps({"subject": "test", "version": data.private_user_story1.version})
+        results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
 
-            patch_data = json.dumps({"subject": "test", "version": data.private_user_story2.version})
-            results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
-            assert results == [401, 403, 403, 200, 200]
+        patch_data = json.dumps({"subject": "test", "version": data.private_user_story2.version})
+        results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
+        assert results == [401, 403, 403, 200, 200]
 
-            patch_data = json.dumps({"subject": "test", "version": data.blocked_user_story.version})
-            results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
-            assert results == [401, 403, 403, 451, 451]
+        patch_data = json.dumps({"subject": "test", "version": data.blocked_user_story.version})
+        results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+        assert results == [401, 403, 403, 451, 451]
 
 
 def test_user_story_action_bulk_create(client, data):
@@ -421,11 +421,11 @@ def test_user_story_action_bulk_create(client, data):
 
     bulk_data = json.dumps({"bulk_stories": "test1\ntest2", "project_id": data.public_user_story.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    assert results == [401, 403, 403, 200, 200]
 
     bulk_data = json.dumps({"bulk_stories": "test1\ntest2", "project_id": data.private_user_story1.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    assert results == [401, 403, 403, 200, 200]
 
     bulk_data = json.dumps({"bulk_stories": "test1\ntest2", "project_id": data.private_user_story2.project.pk})
     results = helper_test_http_method(client, 'post', url, bulk_data, users)

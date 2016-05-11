@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .permissions import ADMINS_PERMISSIONS, MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from .permissions import ADMINS_PERMISSIONS, MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 
 from django.apps import apps
 
@@ -102,7 +102,7 @@ def get_user_project_permissions(user, project, cache="user"):
     if user.is_superuser:
         admins_permissions = list(map(lambda perm: perm[0], ADMINS_PERMISSIONS))
         members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
-        public_permissions = list(map(lambda perm: perm[0], USER_PERMISSIONS))
+        public_permissions = []
         anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
     elif membership:
         if membership.is_admin:

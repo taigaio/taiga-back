@@ -6,7 +6,7 @@ from taiga.projects import choices as project_choices
 from taiga.projects.milestones.serializers import MilestoneSerializer
 from taiga.projects.milestones.models import Milestone
 from taiga.projects.notifications.services import add_watcher
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
@@ -35,11 +35,11 @@ def data():
 
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                        public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
+                                        public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         owner=m.project_owner)
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                          public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
+                                          public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           owner=m.project_owner)
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],

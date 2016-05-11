@@ -28,26 +28,6 @@ ANON_PERMISSIONS = [
     ('view_wiki_links', _('View wiki links')),
 ]
 
-USER_PERMISSIONS = [
-    ('view_project', _('View project')),
-    ('view_milestones', _('View milestones')),
-    ('view_us', _('View user stories')),
-    ('view_issues', _('View issues')),
-    ('view_tasks', _('View tasks')),
-    ('view_wiki_pages', _('View wiki pages')),
-    ('view_wiki_links', _('View wiki links')),
-    ('request_membership', _('Request membership')),
-    ('add_us_to_project', _('Add user story to project')),
-    ('add_comments_to_us', _('Add comments to user stories')),
-    ('add_comments_to_task', _('Add comments to tasks')),
-    ('add_issue', _('Add issues')),
-    ('add_comments_to_issue', _('Add comments to issues')),
-    ('add_wiki_page', _('Add wiki page')),
-    ('modify_wiki_page', _('Modify wiki page')),
-    ('add_wiki_link', _('Add wiki link')),
-    ('modify_wiki_link', _('Modify wiki link')),
-]
-
 MEMBERS_PERMISSIONS = [
     ('view_project', _('View project')),
     # Milestone permissions
