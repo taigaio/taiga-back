@@ -26,12 +26,14 @@ from taiga.projects.models import Project
 
 import pytest
 
+pytestmark = pytest.mark.django_db
 
 def test_push_to_timeline_many_objects():
     with patch("taiga.timeline.service._add_to_object_timeline") as mock:
         users = [get_user_model(), get_user_model(), get_user_model()]
+        owner = get_user_model()
         project = Project()
-        service.push_to_timeline(users, project, "test", project.created_date)
+        service._push_to_timeline(users, project, "test", project.created_date)
         assert mock.call_count == 3
         assert mock.mock_calls == [
             call(users[0], project, "test", project.created_date, "default", {}),
@@ -39,7 +41,7 @@ def test_push_to_timeline_many_objects():
             call(users[2], project, "test", project.created_date, "default", {}),
         ]
         with pytest.raises(Exception):
-            service.push_to_timeline(None, project, "test")
+            service._push_to_timeline(None, project, "test")
 
 
 def test_add_to_objects_timeline():
@@ -54,7 +56,7 @@ def test_add_to_objects_timeline():
             call(users[2], project, "test", project.created_date, "default", {}),
         ]
         with pytest.raises(Exception):
-            service.push_to_timeline(None, project, "test")
+            service._push_to_timeline(None, project, "test")
 
 
 def test_get_impl_key_from_model():

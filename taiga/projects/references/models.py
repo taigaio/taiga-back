@@ -110,6 +110,3 @@ models.signals.post_save.connect(attach_sequence, sender=UserStory, dispatch_uid
 models.signals.post_save.connect(attach_sequence, sender=Issue, dispatch_uid="refissue")
 models.signals.post_save.connect(attach_sequence, sender=Task, dispatch_uid="reftask")
 models.signals.post_delete.connect(delete_sequence, sender=Project, dispatch_uid="refprojdel")
-
-
-
