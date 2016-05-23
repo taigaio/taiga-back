@@ -130,6 +130,40 @@ def test_filter_timeline_private_project_member_permissions():
     assert timeline.count() == 3
 
 
+def test_filter_timeline_private_project_member_admin():
+    Timeline.objects.all().delete()
+    user1 = factories.UserFactory()
+    user2 = factories.UserFactory()
+    project = factories.ProjectFactory.create(is_private=True)
+    membership = factories.MembershipFactory.create(user=user2, project=project, is_admin=True)
+    task1= factories.TaskFactory()
+    task2= factories.TaskFactory.create(project=project)
+
+    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: str(id(x)))
+    service._add_to_object_timeline(user1, task1, "test", task1.created_date)
+    service._add_to_object_timeline(user1, task2, "test", task2.created_date)
+    timeline = Timeline.objects.exclude(event_type="users.user.create")
+    timeline = service.filter_timeline_for_user(timeline, user2)
+    assert timeline.count() == 3
+
+
+def test_filter_timeline_private_project_member_superuser():
+    Timeline.objects.all().delete()
+    user1 = factories.UserFactory()
+    user2 = factories.UserFactory(is_superuser=True)
+    project = factories.ProjectFactory.create(is_private=True)
+
+    task1= factories.TaskFactory()
+    task2= factories.TaskFactory.create(project=project)
+
+    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: str(id(x)))
+    service._add_to_object_timeline(user1, task1, "test", task1.created_date)
+    service._add_to_object_timeline(user1, task2, "test", task2.created_date)
+    timeline = Timeline.objects.exclude(event_type="users.user.create")
+    timeline = service.filter_timeline_for_user(timeline, user2)
+    assert timeline.count() == 2
+
+
 def test_create_project_timeline():
     project = factories.ProjectFactory.create(name="test project timeline")
     history_services.take_snapshot(project, user=project.owner)

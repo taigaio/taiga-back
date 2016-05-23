@@ -128,6 +128,10 @@ def get_timeline(obj, namespace=None):
 
 
 def filter_timeline_for_user(timeline, user):
+    # Superusers can see everything
+    if user.is_superuser:
+        return timeline
+
     # Filtering entities from public projects or entities without project
     tl_filter = Q(project__is_private=False) | Q(project=None)
 
@@ -156,9 +160,13 @@ def filter_timeline_for_user(timeline, user):
     # Filtering private projects where user is member
     if not user.is_anonymous():
         for membership in user.cached_memberships:
-            data_content_types = list(filter(None, [content_types.get(a, None) for a in membership.role.permissions]))
-            data_content_types.append(membership_content_type)
-            tl_filter |= Q(project=membership.project, data_content_type__in=data_content_types)
+            # Admin roles can see everything in a project
+            if membership.is_admin:
+                tl_filter |= Q(project=membership.project)
+            else:
+                data_content_types = list(filter(None, [content_types.get(a, None) for a in membership.role.permissions]))
+                data_content_types.append(membership_content_type)
+                tl_filter |= Q(project=membership.project, data_content_type__in=data_content_types)
 
     timeline = timeline.filter(tl_filter)
     return timeline
