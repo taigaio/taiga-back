@@ -16,9 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
-                                        IsProjectAdmin, PermissionComponent,
-                                        AllowAny, IsAuthenticated, IsSuperUser)
+from taiga.base.api.permissions import TaigaResourcePermission, AllowAny, IsAuthenticated, IsSuperUser
+from taiga.permissions.permissions import HasProjectPerm, IsProjectAdmin
+
 
 
 class IssuePermission(TaigaResourcePermission):
@@ -38,14 +38,6 @@ class IssuePermission(TaigaResourcePermission):
     downvote_perms = IsAuthenticated() & HasProjectPerm('view_issues')
     watch_perms = IsAuthenticated() & HasProjectPerm('view_issues')
     unwatch_perms = IsAuthenticated() & HasProjectPerm('view_issues')
-
-
-class HasIssueIdUrlParam(PermissionComponent):
-    def check_permissions(self, request, view, obj=None):
-        param = view.kwargs.get('issue_id', None)
-        if param:
-            return True
-        return False
 
 
 class IssueVotersPermission(TaigaResourcePermission):

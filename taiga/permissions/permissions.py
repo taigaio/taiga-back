@@ -16,57 +16,38 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext_lazy as _
+from django.apps import apps
 
-ANON_PERMISSIONS = [
-    ('view_project', _('View project')),
-    ('view_milestones', _('View milestones')),
-    ('view_us', _('View user stories')),
-    ('view_tasks', _('View tasks')),
-    ('view_issues', _('View issues')),
-    ('view_wiki_pages', _('View wiki pages')),
-    ('view_wiki_links', _('View wiki links')),
-]
+from taiga.base.api.permissions import PermissionComponent
 
-MEMBERS_PERMISSIONS = [
-    ('view_project', _('View project')),
-    # Milestone permissions
-    ('view_milestones', _('View milestones')),
-    ('add_milestone', _('Add milestone')),
-    ('modify_milestone', _('Modify milestone')),
-    ('delete_milestone', _('Delete milestone')),
-    # US permissions
-    ('view_us', _('View user story')),
-    ('add_us', _('Add user story')),
-    ('modify_us', _('Modify user story')),
-    ('delete_us', _('Delete user story')),
-    # Task permissions
-    ('view_tasks', _('View tasks')),
-    ('add_task', _('Add task')),
-    ('modify_task', _('Modify task')),
-    ('delete_task', _('Delete task')),
-    # Issue permissions
-    ('view_issues', _('View issues')),
-    ('add_issue', _('Add issue')),
-    ('modify_issue', _('Modify issue')),
-    ('delete_issue', _('Delete issue')),
-    # Wiki page permissions
-    ('view_wiki_pages', _('View wiki pages')),
-    ('add_wiki_page', _('Add wiki page')),
-    ('modify_wiki_page', _('Modify wiki page')),
-    ('delete_wiki_page', _('Delete wiki page')),
-    # Wiki link permissions
-    ('view_wiki_links', _('View wiki links')),
-    ('add_wiki_link', _('Add wiki link')),
-    ('modify_wiki_link', _('Modify wiki link')),
-    ('delete_wiki_link', _('Delete wiki link')),
-]
+from . import services
 
-ADMINS_PERMISSIONS = [
-    ('modify_project', _('Modify project')),
-    ('add_member', _('Add member')),
-    ('remove_member', _('Remove member')),
-    ('delete_project', _('Delete project')),
-    ('admin_project_values', _('Admin project values')),
-    ('admin_roles', _('Admin roles')),
-]
+
+######################################################################
+# Generic perms
+######################################################################
+
+class HasProjectPerm(PermissionComponent):
+    def __init__(self, perm, *components):
+        self.project_perm = perm
+        super().__init__(*components)
+
+    def check_permissions(self, request, view, obj=None):
+        return services.user_has_perm(request.user, self.project_perm, obj)
+
+
+class IsObjectOwner(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        if obj.owner is None:
+            return False
+
+        return obj.owner == request.user
+
+
+######################################################################
+# Project Perms
+######################################################################
+
+class IsProjectAdmin(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        return services.is_project_admin(request.user, obj)

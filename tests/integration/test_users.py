@@ -14,7 +14,7 @@ from taiga.base.utils.thumbnails import get_thumbnail_url
 from taiga.users import models
 from taiga.users.serializers import LikedObjectSerializer, VotedObjectSerializer
 from taiga.auth.tokens import get_token_for_user
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
+from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 from taiga.projects import choices as project_choices
 from taiga.users.services import get_watched_list, get_voted_list, get_liked_list
 from taiga.projects.notifications.choices import NotifyLevel

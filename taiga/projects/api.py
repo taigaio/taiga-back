@@ -51,8 +51,8 @@ from taiga.projects.userstories.models import UserStory, RolePoints
 from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
 from taiga.projects.likes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
-from taiga.permissions import service as permissions_service
-from taiga.users import services as users_service
+from taiga.permissions import services as permissions_services
+from taiga.users import services as users_services
 
 from . import filters as project_filters
 from . import models
@@ -147,7 +147,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             else:
                 project = self.get_object()
 
-            if permissions_service.is_project_admin(self.request.user, project):
+            if permissions_services.is_project_admin(self.request.user, project):
                 serializer_class = self.admin_serializer_class
 
         return serializer_class
@@ -415,7 +415,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
                 update_permissions = True
 
         if update_permissions:
-            permissions_service.set_base_permissions_for_project(obj)
+            permissions_services.set_base_permissions_for_project(obj)
 
     def pre_save(self, obj):
         if not obj.id:
@@ -603,12 +603,12 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
             use_admin_serializer = True
 
         if self.action == "retrieve":
-            use_admin_serializer = permissions_service.is_project_admin(self.request.user, self.object.project)
+            use_admin_serializer = permissions_services.is_project_admin(self.request.user, self.object.project)
 
         project_id = self.request.QUERY_PARAMS.get("project", None)
         if self.action == "list" and project_id is not None:
             project = get_object_or_404(models.Project, pk=project_id)
-            use_admin_serializer = permissions_service.is_project_admin(self.request.user, project)
+            use_admin_serializer = permissions_services.is_project_admin(self.request.user, project)
 
         if use_admin_serializer:
             return self.admin_serializer_class

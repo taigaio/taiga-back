@@ -2,7 +2,7 @@ import uuid
 
 from django.core.urlresolvers import reverse
 
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
+from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 from taiga.base.utils import json
 
 from tests import factories as f

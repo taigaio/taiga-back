@@ -29,7 +29,7 @@ from django.contrib.contenttypes.models import ContentType
 from sampledatahelper.helper import SampleDataHelper
 
 from taiga.users.models import *
-from taiga.permissions.permissions import ANON_PERMISSIONS
+from taiga.permissions.choices import ANON_PERMISSIONS
 from taiga.projects.choices import BLOCKED_BY_STAFF
 from taiga.projects.models import *
 from taiga.projects.milestones.models import *

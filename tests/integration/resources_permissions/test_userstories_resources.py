@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from taiga.base.utils import json
 from taiga.projects import choices as project_choices
 from taiga.projects.userstories.serializers import UserStorySerializer
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
+from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 from taiga.projects.occ import OCCResourceMixin
 
 from tests import factories as f

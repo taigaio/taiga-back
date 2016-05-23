@@ -112,7 +112,6 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
 
         return super().update(request, *args, **kwargs)
 
-
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.prefetch_related("role_points",

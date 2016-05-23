@@ -21,7 +21,7 @@ from django.core.urlresolvers import reverse
 from taiga.base.utils import json
 from taiga.projects import choices as project_choices
 from taiga.projects.custom_attributes import serializers
-from taiga.permissions.permissions import (MEMBERS_PERMISSIONS,
+from taiga.permissions.choices import (MEMBERS_PERMISSIONS,
                                            ANON_PERMISSIONS)
 
 

@@ -15,12 +15,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
-                                        IsAuthenticated, IsProjectAdmin,
-                                        AllowAny, IsSuperUser)
+from taiga.base.api.permissions import TaigaResourcePermission, AllowAny, IsAuthenticated, IsSuperUser
+from taiga.permissions.permissions import HasProjectPerm, IsProjectAdmin
 
 
 class UserStoryPermission(TaigaResourcePermission):
+    enought_perms = IsProjectAdmin() | IsSuperUser()
+    global_perms = None
     retrieve_perms = HasProjectPerm('view_us')
     create_perms = HasProjectPerm('add_us_to_project') | HasProjectPerm('add_us')
     update_perms = HasProjectPerm('modify_us')

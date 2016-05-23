@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
+from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals

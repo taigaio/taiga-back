@@ -21,7 +21,7 @@ from taiga.base.api import viewsets
 
 from taiga.base import response
 from taiga.base.api.utils import get_object_or_404
-from taiga.permissions.service import user_has_perm
+from taiga.permissions.services import user_has_perm
 
 from . import services
 from . import serializers

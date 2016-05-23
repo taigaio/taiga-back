@@ -7,7 +7,7 @@ from django.core import signing
 from taiga.base.utils import json
 from taiga.projects.services import stats as stats_services
 from taiga.projects.history.services import take_snapshot
-from taiga.permissions.permissions import ANON_PERMISSIONS
+from taiga.permissions.choices import ANON_PERMISSIONS
 from taiga.projects.models import Project
 
 from .. import factories as f

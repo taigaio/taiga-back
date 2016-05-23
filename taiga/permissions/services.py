@@ -16,9 +16,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .permissions import ADMINS_PERMISSIONS, MEMBERS_PERMISSIONS, ANON_PERMISSIONS
+from .choices import ADMINS_PERMISSIONS, MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 
 from django.apps import apps
+
 
 def _get_user_project_membership(user, project, cache="user"):
     """
@@ -83,10 +84,6 @@ def user_has_perm(user, perm, obj=None, cache="user"):
     return perm in get_user_project_permissions(user, project, cache=cache)
 
 
-def role_has_perm(role, perm):
-    return perm in role.permissions
-
-
 def _get_membership_permissions(membership):
     if membership and membership.role and membership.role.permissions:
         return membership.role.permissions
@@ -97,7 +94,7 @@ def get_user_project_permissions(user, project, cache="user"):
     """
     cache param determines how memberships are calculated trying to reuse the existing data
     in cache
-    """    
+    """
     membership = _get_user_project_membership(user, project, cache=cache)
     if user.is_superuser:
         admins_permissions = list(map(lambda perm: perm[0], ADMINS_PERMISSIONS))

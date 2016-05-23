@@ -41,7 +41,7 @@ from taiga.projects.history.services import take_snapshot
 from taiga.projects.issues.serializers import IssueSerializer
 from taiga.projects.userstories.serializers import UserStorySerializer
 from taiga.projects.tasks.serializers import TaskSerializer
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+from taiga.permissions.choices import MEMBERS_PERMISSIONS
 
 pytestmark = pytest.mark.django_db
 

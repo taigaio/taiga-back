@@ -2,7 +2,7 @@ from django.core.urlresolvers import reverse
 from django.utils import timezone
 
 from taiga.base.utils import json
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
+from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 from taiga.projects.history.models import HistoryEntry
 from taiga.projects.history.choices import HistoryType
 from taiga.projects.history.services import make_key_from_model_object

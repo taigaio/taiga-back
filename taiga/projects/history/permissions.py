@@ -19,7 +19,7 @@ from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
                                         IsProjectAdmin, AllowAny,
                                         IsObjectOwner, PermissionComponent)
 
-from taiga.permissions.service import is_project_admin
+from taiga.permissions.services import is_project_admin
 from taiga.projects.history.services import get_model_from_key, get_pk_from_key
 
 

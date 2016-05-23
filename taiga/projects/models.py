@@ -40,7 +40,7 @@ from taiga.base.utils.sequence import arithmetic_progression
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.slug import slugify_uniquely_for_queryset
 
-from taiga.permissions.permissions import ANON_PERMISSIONS, MEMBERS_PERMISSIONS
+from taiga.permissions.choices import ANON_PERMISSIONS, MEMBERS_PERMISSIONS
 
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.services import (
@@ -366,7 +366,8 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
 
     @cached_property
     def cached_memberships(self):
-        return {m.user.id: m for m in self.memberships.exclude(user__isnull=True).select_related("user", "project", "role")}
+        return {m.user.id: m for m in self.memberships.exclude(user__isnull=True)
+                                                      .select_related("user", "project", "role")}
 
     def cached_memberships_for_user(self, user):
         return self.cached_memberships.get(user.id, None)
@@ -966,9 +967,11 @@ class ProjectTemplate(models.Model):
                                                                project=project)
 
         if self.priorities:
-            project.default_priority = Priority.objects.get(name=self.default_options["priority"], project=project)
+            project.default_priority = Priority.objects.get(name=self.default_options["priority"],
+                                                            project=project)
 
         if self.severities:
-            project.default_severity = Severity.objects.get(name=self.default_options["severity"], project=project)
+            project.default_severity = Severity.objects.get(name=self.default_options["severity"],
+                                                            project=project)
 
         return project

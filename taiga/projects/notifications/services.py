@@ -35,7 +35,7 @@ from taiga.projects.history.choices import HistoryType
 from taiga.projects.history.services import (make_key_from_model_object,
                                              get_last_snapshot_for_key,
                                              get_model_from_key)
-from taiga.permissions.service import user_has_perm
+from taiga.permissions.services import user_has_perm
 
 from .models import HistoryChangeNotification, Watched
 

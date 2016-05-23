@@ -67,7 +67,6 @@ def project_post_save(sender, instance, created, **kwargs):
     if instance._importing:
         return
 
-
     template = getattr(instance, "creation_template", None)
     if template is None:
         ProjectTemplate = apps.get_model("projects", "ProjectTemplate")
