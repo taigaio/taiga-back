@@ -23,7 +23,7 @@ SR = {
         "github_url": "https://github.com/taigaio",
     },
     "support": {
-        "url": "https://taiga.io/support",
+        "url": "https://tree.taiga.io/support",
         "email": "support@taiga.io",
         "mailing_list": "https://groups.google.com/forum/#!forum/taigaio",
     }
