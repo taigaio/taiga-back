@@ -15,6 +15,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+
+from django.db.models.fields.files import FieldFile
+
 from taiga.base.utils.urls import get_absolute_url
 
 from easy_thumbnails.files import get_thumbnailer
@@ -22,6 +26,15 @@ from easy_thumbnails.exceptions import InvalidImageFormatError
 
 
 def get_thumbnail_url(file_obj, thumbnailer_size):
+    # Ugly hack to temporary ignore tiff files
+    relative_name = file_obj
+    if isinstance(file_obj, FieldFile):
+        relative_name = file_obj.name
+
+    source_extension = os.path.splitext(relative_name)[1][1:]
+    if source_extension == "tiff":
+        return None
+
     try:
         path_url = get_thumbnailer(file_obj)[thumbnailer_size].url
         thumb_url = get_absolute_url(path_url)
