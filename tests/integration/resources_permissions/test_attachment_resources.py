@@ -4,7 +4,7 @@ from django.test.client import MULTIPART_CONTENT
 
 from taiga.base.utils import json
 
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 from taiga.projects import choices as project_choices
 from taiga.projects.attachments.serializers import AttachmentSerializer
 
@@ -38,11 +38,11 @@ def data():
 
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                        public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
+                                        public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         owner=m.project_owner)
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                          public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
+                                          public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           owner=m.project_owner)
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
@@ -491,9 +491,9 @@ def test_wiki_attachment_patch(client, data, data_wiki):
     attachment_data = json.dumps(attachment_data)
 
     results = helper_test_http_method(client, 'patch', public_url, attachment_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'patch', private_url1, attachment_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'patch', private_url2, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'patch', blocked_url, attachment_data, users)
@@ -583,9 +583,9 @@ def test_wiki_attachment_delete(client, data, data_wiki):
     ]
 
     results = helper_test_http_method(client, 'delete', public_url, None, [None, data.registered_user])
-    assert results == [401, 204]
+    assert results == [401, 403]
     results = helper_test_http_method(client, 'delete', private_url1, None, [None, data.registered_user])
-    assert results == [401, 204]
+    assert results == [401, 403]
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', blocked_url, None, users)
@@ -721,7 +721,7 @@ def test_wiki_attachment_create(client, data, data_wiki):
                                       content_type=MULTIPART_CONTENT,
                                       after_each_request=_after_each_request_hook)
 
-    assert results == [401, 201, 201, 201, 201]
+    assert results == [401, 403, 403, 201, 201]
 
     attachment_data = {"description": "test",
                        "object_id": data_wiki.blocked_wiki_attachment.object_id,

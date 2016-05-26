@@ -22,7 +22,7 @@ from django.core.urlresolvers import reverse
 
 from .. import factories as f
 
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+from taiga.permissions.choices import MEMBERS_PERMISSIONS
 from tests.utils import disconnect_signals, reconnect_signals
 
 

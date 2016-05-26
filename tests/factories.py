@@ -26,7 +26,7 @@ from .utils import DUMMY_BMP_DATA
 
 import factory
 
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+from taiga.permissions.choices import MEMBERS_PERMISSIONS
 
 
 

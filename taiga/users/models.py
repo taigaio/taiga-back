@@ -38,7 +38,7 @@ from djorm_pgarray.fields import TextArrayField
 from taiga.auth.tokens import get_token_for_user
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.files import get_file_path
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+from taiga.permissions.choices import MEMBERS_PERMISSIONS
 from taiga.projects.choices import BLOCKED_BY_OWNER_LEAVING
 from taiga.projects.notifications.choices import NotifyLevel
 

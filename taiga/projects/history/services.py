@@ -91,6 +91,20 @@ def get_pk_from_key(key:str) -> object:
     return pk
 
 
+def get_instance_from_key(key:str) -> object:
+    """
+    Get instance from key
+    """
+    model = get_model_from_key(key)
+    pk = get_pk_from_key(key)
+    try:
+        obj = model.objects.get(pk=pk)
+        return obj
+    except model.DoesNotExist:
+        # Catch simultaneous DELETE request
+        return None
+
+
 def register_values_implementation(typename:str, fn=None):
     """
     Register values implementation for specified typename.

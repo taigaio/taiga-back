@@ -20,10 +20,11 @@ import abc
 from functools import reduce
 
 from taiga.base.utils import sequence as sq
-from taiga.permissions.service import user_has_perm, is_project_admin
+from taiga.permissions.services import user_has_perm, is_project_admin
 from django.apps import apps
 
 from django.utils.translation import ugettext as _
+
 
 ######################################################################
 # Base permissiones definition
@@ -179,33 +180,6 @@ class HasProjectPerm(PermissionComponent):
         return user_has_perm(request.user, self.project_perm, obj)
 
 
-class HasProjectParamAndPerm(PermissionComponent):
-    def __init__(self, perm, *components):
-        self.project_perm = perm
-        super().__init__(*components)
-
-    def check_permissions(self, request, view, obj=None):
-        Project = apps.get_model('projects', 'Project')
-        project_id = request.QUERY_PARAMS.get("project", None)
-        try:
-            project = Project.objects.get(pk=project_id)
-        except Project.DoesNotExist:
-            return False
-        return user_has_perm(request.user, self.project_perm, project)
-
-
-class HasMandatoryParam(PermissionComponent):
-    def __init__(self, param, *components):
-        self.mandatory_param = param
-        super().__init__(*components)
-
-    def check_permissions(self, request, view, obj=None):
-        param = request.GET.get(self.mandatory_param, None)
-        if param:
-            return True
-        return False
-
-
 class IsProjectAdmin(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
         return is_project_admin(request.user, obj)
@@ -213,6 +187,9 @@ class IsProjectAdmin(PermissionComponent):
 
 class IsObjectOwner(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
+        if obj.owner is None:
+            return False
+
         return obj.owner == request.user
 
 

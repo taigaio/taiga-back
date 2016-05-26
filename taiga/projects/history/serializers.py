@@ -33,9 +33,11 @@ class HistoryEntrySerializer(serializers.ModelSerializer):
     values_diff = I18NJsonField(i18n_fields=HISTORY_ENTRY_I18N_FIELDS)
     user = serializers.SerializerMethodField("get_user")
     delete_comment_user = JsonField()
+    comment_versions = JsonField()
 
     class Meta:
         model = models.HistoryEntry
+        exclude = ("comment_versions",)
 
     def get_user(self, entry):
         user = {"pk": None, "username": None, "name": None, "photo": None, "is_active": False}

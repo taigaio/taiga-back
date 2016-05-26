@@ -16,77 +16,75 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext_lazy as _
+from django.apps import apps
 
-ANON_PERMISSIONS = [
-    ('view_project', _('View project')),
-    ('view_milestones', _('View milestones')),
-    ('view_us', _('View user stories')),
-    ('view_tasks', _('View tasks')),
-    ('view_issues', _('View issues')),
-    ('view_wiki_pages', _('View wiki pages')),
-    ('view_wiki_links', _('View wiki links')),
-]
+from taiga.base.api.permissions import PermissionComponent
 
-USER_PERMISSIONS = [
-    ('view_project', _('View project')),
-    ('view_milestones', _('View milestones')),
-    ('view_us', _('View user stories')),
-    ('view_issues', _('View issues')),
-    ('view_tasks', _('View tasks')),
-    ('view_wiki_pages', _('View wiki pages')),
-    ('view_wiki_links', _('View wiki links')),
-    ('request_membership', _('Request membership')),
-    ('add_us_to_project', _('Add user story to project')),
-    ('add_comments_to_us', _('Add comments to user stories')),
-    ('add_comments_to_task', _('Add comments to tasks')),
-    ('add_issue', _('Add issues')),
-    ('add_comments_to_issue', _('Add comments to issues')),
-    ('add_wiki_page', _('Add wiki page')),
-    ('modify_wiki_page', _('Modify wiki page')),
-    ('add_wiki_link', _('Add wiki link')),
-    ('modify_wiki_link', _('Modify wiki link')),
-]
+from . import services
 
-MEMBERS_PERMISSIONS = [
-    ('view_project', _('View project')),
-    # Milestone permissions
-    ('view_milestones', _('View milestones')),
-    ('add_milestone', _('Add milestone')),
-    ('modify_milestone', _('Modify milestone')),
-    ('delete_milestone', _('Delete milestone')),
-    # US permissions
-    ('view_us', _('View user story')),
-    ('add_us', _('Add user story')),
-    ('modify_us', _('Modify user story')),
-    ('delete_us', _('Delete user story')),
-    # Task permissions
-    ('view_tasks', _('View tasks')),
-    ('add_task', _('Add task')),
-    ('modify_task', _('Modify task')),
-    ('delete_task', _('Delete task')),
-    # Issue permissions
-    ('view_issues', _('View issues')),
-    ('add_issue', _('Add issue')),
-    ('modify_issue', _('Modify issue')),
-    ('delete_issue', _('Delete issue')),
-    # Wiki page permissions
-    ('view_wiki_pages', _('View wiki pages')),
-    ('add_wiki_page', _('Add wiki page')),
-    ('modify_wiki_page', _('Modify wiki page')),
-    ('delete_wiki_page', _('Delete wiki page')),
-    # Wiki link permissions
-    ('view_wiki_links', _('View wiki links')),
-    ('add_wiki_link', _('Add wiki link')),
-    ('modify_wiki_link', _('Modify wiki link')),
-    ('delete_wiki_link', _('Delete wiki link')),
-]
 
-ADMINS_PERMISSIONS = [
-    ('modify_project', _('Modify project')),
-    ('add_member', _('Add member')),
-    ('remove_member', _('Remove member')),
-    ('delete_project', _('Delete project')),
-    ('admin_project_values', _('Admin project values')),
-    ('admin_roles', _('Admin roles')),
-]
+######################################################################
+# Generic perms
+######################################################################
+
+class HasProjectPerm(PermissionComponent):
+    def __init__(self, perm, *components):
+        self.project_perm = perm
+        super().__init__(*components)
+
+    def check_permissions(self, request, view, obj=None):
+        return services.user_has_perm(request.user, self.project_perm, obj)
+
+
+class IsObjectOwner(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        if obj.owner is None:
+            return False
+
+        return obj.owner == request.user
+
+
+######################################################################
+# Project Perms
+######################################################################
+
+class IsProjectAdmin(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        return services.is_project_admin(request.user, obj)
+
+
+######################################################################
+# Common perms for stories, tasks and issues
+######################################################################
+
+class CommentAndOrUpdatePerm(PermissionComponent):
+    def __init__(self, update_perm, comment_perm, *components):
+        self.update_perm = update_perm
+        self.comment_perm = comment_perm
+        super().__init__(*components)
+
+    def check_permissions(self, request, view, obj=None):
+        if not obj:
+            return False
+
+        project_id = request.DATA.get('project', None)
+        if project_id and obj.project_id != project_id:
+            project = apps.get_model("projects", "Project").objects.get(pk=project_id)
+        else:
+            project = obj.project
+
+        data_keys = request.DATA.keys()
+
+        if (not services.user_has_perm(request.user, self.comment_perm, project) and
+            "comment" in data_keys):
+                # User can't comment but there is a comment in the request
+                #raise exc.PermissionDenied(_("You don't have permissions to comment this."))
+                return False
+
+        if (not services.user_has_perm(request.user, self.update_perm, project) and
+            len(data_keys - "comment")):
+                # User can't update but there is a change in the request
+                #raise exc.PermissionDenied(_("You don't have permissions to update this."))
+                return False
+
+        return True

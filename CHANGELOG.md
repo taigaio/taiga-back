@@ -1,5 +1,14 @@
 # Changelog #
 
+## 2.2.0 ??? (unreleased)
+
+### Features
+- Now comment owners and project admins can edit existing comments with the history Entry endpoint.
+- Add a new permissions to allow add comments instead of use the existent modify permission for this purpose.
+
+### Misc
+- Lots of small and not so small bugfixes.
+
 
 ## 2.1.0 Ursus Americanus (2016-05-03)
 

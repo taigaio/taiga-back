@@ -67,6 +67,10 @@ class HistoryEntry(models.Model):
     delete_comment_date = models.DateTimeField(null=True, blank=True, default=None)
     delete_comment_user = JsonField(null=True, blank=True, default=None)
 
+    # Historic version of comments
+    comment_versions = JsonField(null=True, blank=True, default=None)
+    edit_comment_date = models.DateTimeField(null=True, blank=True, default=None)
+
     # Flag for mark some history entries as
     # hidden. Hidden history entries are important
     # for save but not important to preview.
@@ -110,6 +114,20 @@ class HistoryEntry(models.Model):
     def prefetch_owner(self, owner):
         self._owner = owner
         self._prefetched_owner = True
+
+    def attach_user_info_to_comment_versions(self):
+        if not self.comment_versions:
+            return
+
+        from taiga.users.serializers import UserSerializer
+
+        user_ids = [v["user"]["id"] for v in self.comment_versions if "user" in v and "id" in v["user"]]
+        users_by_id = {u.id: u for u in get_user_model().objects.filter(id__in=user_ids)}
+
+        for version in self.comment_versions:
+            user = users_by_id.get(version["user"]["id"], None)
+            if user:
+                version["user"] = UserSerializer(user).data
 
     @cached_property
     def values_diff(self):

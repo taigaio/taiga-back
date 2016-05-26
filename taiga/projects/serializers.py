@@ -32,8 +32,8 @@ from taiga.users.serializers import UserBasicInfoSerializer
 from taiga.users.serializers import ProjectRoleSerializer
 from taiga.users.validators import RoleExistsValidator
 
-from taiga.permissions.service import get_user_project_permissions
-from taiga.permissions.service import is_project_admin, is_project_owner
+from taiga.permissions.services import get_user_project_permissions
+from taiga.permissions.services import is_project_admin, is_project_owner
 from taiga.projects.mixins.serializers import ValidateDuplicatedNameInProjectMixin
 
 from . import models
