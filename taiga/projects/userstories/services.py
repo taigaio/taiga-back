@@ -91,6 +91,21 @@ def update_userstories_order_in_bulk(bulk_data:list, field:str, project:object):
     db.update_in_bulk_with_ids(user_story_ids, new_order_values, model=models.UserStory)
 
 
+def update_userstories_milestone_in_bulk(bulk_data:list, milestone:object):
+    """
+    Update the milestone of some user stories.
+    `bulk_data` should be a list of user story ids:
+    """
+    user_story_ids = [us_data["us_id"] for us_data in bulk_data]
+    new_milestone_values = [{"milestone": milestone.id}] * len(user_story_ids)
+
+    events.emit_event_for_ids(ids=user_story_ids,
+                              content_type="userstories.userstory",
+                              projectid=milestone.project.pk)
+
+    db.update_in_bulk_with_ids(user_story_ids, new_milestone_values, model=models.UserStory)
+
+
 def snapshot_userstories_in_bulk(bulk_data, user):
     user_story_ids = []
     for us_data in bulk_data:

@@ -164,6 +164,74 @@ def test_api_update_orders_in_bulk(client):
     assert response3.status_code == 204, response3.data
 
 
+def test_api_update_milestone_in_bulk(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    us1 = f.create_userstory(project=project)
+    us2 = f.create_userstory(project=project)
+    milestone = f.MilestoneFactory.create(project=project)
+
+    url = reverse("userstories-bulk-update-milestone")
+    data = {
+        "project_id": project.id,
+        "milestone_id": milestone.id,
+        "bulk_stories": [{"us_id": us1.id},
+                         {"us_id": us2.id}]
+    }
+
+    client.login(project.owner)
+
+    assert project.milestones.get(id=milestone.id).user_stories.count() == 0
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 204, response.data
+    assert project.milestones.get(id=milestone.id).user_stories.count() == 2
+
+
+def test_api_update_milestone_in_bulk_invalid_milestone(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    us1 = f.create_userstory(project=project)
+    us2 = f.create_userstory(project=project)
+    m1 = f.MilestoneFactory.create(project=project)
+    m2 = f.MilestoneFactory.create()
+
+    url = reverse("userstories-bulk-update-milestone")
+    data = {
+        "project_id": project.id,
+        "milestone_id": m2.id,
+        "bulk_stories": [{"us_id": us1.id},
+                         {"us_id": us2.id}]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert response.data["non_field_errors"][0] == "the milestone isn't valid for the project"
+
+
+def test_api_update_milestone_in_bulk_invalid_userstories(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    us1 = f.create_userstory(project=project)
+    us2 = f.create_userstory()
+    milestone = f.MilestoneFactory.create(project=project)
+
+    url = reverse("userstories-bulk-update-milestone")
+    data = {
+        "project_id": project.id,
+        "milestone_id": milestone.id,
+        "bulk_stories": [{"us_id": us1.id},
+                         {"us_id": us2.id}]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert response.data["non_field_errors"][0] == "all the user stories must be from the same project"
+
+
 def test_update_userstory_points(client):
     user1 = f.UserFactory.create()
     user2 = f.UserFactory.create()

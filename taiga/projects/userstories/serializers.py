@@ -17,6 +17,7 @@
 
 from django.apps import apps
 from taiga.base.api import serializers
+from taiga.base.api.utils import get_object_or_404
 from taiga.base.fields import TagsField
 from taiga.base.fields import PickledObjectField
 from taiga.base.fields import PgArrayField
@@ -24,8 +25,9 @@ from taiga.base.neighbors import NeighborsSerializerMixin
 from taiga.base.utils import json
 
 from taiga.mdrender.service import render as mdrender
-from taiga.projects.validators import ProjectExistsValidator
-from taiga.projects.validators import UserStoryStatusExistsValidator
+from taiga.projects.models import Project
+from taiga.projects.validators import ProjectExistsValidator, UserStoryStatusExistsValidator
+from taiga.projects.milestones.validators import SprintExistsValidator
 from taiga.projects.userstories.validators import UserStoryExistsValidator
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicUserStoryStatusSerializer
@@ -142,3 +144,30 @@ class _UserStoryOrderBulkSerializer(UserStoryExistsValidator, serializers.Serial
 class UpdateUserStoriesOrderBulkSerializer(ProjectExistsValidator, UserStoryStatusExistsValidator, serializers.Serializer):
     project_id = serializers.IntegerField()
     bulk_stories = _UserStoryOrderBulkSerializer(many=True)
+
+
+## Milestone bulk serializers
+
+class _UserStoryMilestoneBulkSerializer(UserStoryExistsValidator, serializers.Serializer):
+    us_id = serializers.IntegerField()
+
+
+class UpdateMilestoneBulkSerializer(ProjectExistsValidator, SprintExistsValidator, serializers.Serializer):
+    project_id = serializers.IntegerField()
+    milestone_id = serializers.IntegerField()
+    bulk_stories = _UserStoryMilestoneBulkSerializer(many=True)
+
+    def validate(self, data):
+        """
+        All the userstories and the milestone are from the same project
+        """
+        user_story_ids = [us["us_id"] for us in data["bulk_stories"]]
+        project = get_object_or_404(Project, pk=data["project_id"])
+
+        if project.user_stories.filter(id__in=user_story_ids).count() != len(user_story_ids):
+            raise serializers.ValidationError("all the user stories must be from the same project")
+
+        if project.milestones.filter(id=data["milestone_id"]).count() != 1:
+            raise serializers.ValidationError("the milestone isn't valid for the project")
+
+        return data
