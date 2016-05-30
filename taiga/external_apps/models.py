@@ -83,4 +83,5 @@ class ApplicationToken(models.Model):
 
     def generate_token(self):
         self.auth_code = None
-        self.token = _generate_uuid()
+        if not self.token:
+            self.token = _generate_uuid()

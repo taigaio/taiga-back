@@ -100,3 +100,28 @@ def test_token_validate(client):
     decyphered_token = encryption.decrypt(response.data["cyphered_token"], token.application.key)[0]
     decyphered_token = json.loads(decyphered_token.decode("utf-8"))
     assert decyphered_token["token"] == token.token
+
+
+def test_token_validate_validated(client):
+    # Validating a validated token should update the token attribute
+    user = f.UserFactory.create()
+    application = f.ApplicationFactory(next_url="http://next.url")
+    token = f.ApplicationTokenFactory(
+        auth_code="test-auth-code",
+        state="test-state",
+        application=application,
+        token="existing-token")
+
+    url = reverse("application-tokens-validate")
+    client.login(user)
+
+    data = {
+        "application": token.application.id,
+        "auth_code": "test-auth-code",
+        "state": "test-state"
+    }
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 200
+
+    token = models.ApplicationToken.objects.get(id=token.id)
+    assert token.token == "existing-token"
