@@ -19,6 +19,8 @@ from easy_thumbnails.files import generate_all_aliases, get_thumbnailer
 import os.path
 import pytest
 
+from unittest import mock
+
 pytestmark = pytest.mark.django_db
 
 class ExpiredSigner(signing.TimestampSigner):
@@ -1814,3 +1816,36 @@ def test_public_project_when_project_has_unlimited_members(client):
     project.owner.max_memberships_public_projects = None
 
     assert check_if_project_is_out_of_owner_limits(project) == False
+
+
+def test_delete_project_with_celery_enabled(client, settings):
+    settings.CELERY_ENABLED = True
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    role = f.RoleFactory.create(project=project, permissions=["view_project"])
+    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
+    url = reverse("projects-detail", args=(project.id,))
+    client.login(user)
+
+    #delete_project task should have been launched
+    with mock.patch('taiga.projects.services.delete_project') as delete_project_mock:
+        response = client.json.delete(url)
+        assert response.status_code == 204
+        project = Project.objects.get(id=project.id)
+        assert project.owner == None
+        assert project.memberships.count() == 0
+        delete_project_mock.delay.assert_called_once_with(project.id)
+
+
+def test_delete_project_with_celery_disabled(client, settings):
+    settings.CELERY_ENABLED = False
+
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    role = f.RoleFactory.create(project=project, permissions=["view_project"])
+    membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
+    url = reverse("projects-detail", args=(project.id,))
+    client.login(user)
+    response = client.json.delete(url)
+    assert response.status_code == 204
+    assert Project.objects.filter(id=project.id).count() == 0

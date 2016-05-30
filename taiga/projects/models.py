@@ -157,7 +157,7 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                                         default=timezone.now)
     modified_date = models.DateTimeField(null=False, blank=False,
                                          verbose_name=_("modified date"))
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                               related_name="owned_projects", verbose_name=_("owner"))
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="projects",
                                      through="Membership", verbose_name=_("members"),
