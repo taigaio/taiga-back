@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.apps import apps
 from django.utils.translation import ugettext as _
-
+from taiga.celery import app
 
 ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS = 'max_public_projects_memberships'
 ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS = 'max_private_projects_memberships'
@@ -151,3 +152,21 @@ def check_if_project_is_out_of_owner_limits(project):
         return True
 
     return False
+
+
+def orphan_project(project):
+    project.memberships.filter(user=project.owner).delete()
+    project.owner = None
+    project.save()
+
+
+@app.task
+def delete_project(project_id):
+    Project = apps.get_model("projects", "Project")
+    try:
+        project = Project.objects.get(id=project_id)
+    except Project.DoesNotExist:
+        return
+
+    project.delete_related_content()
+    project.delete()

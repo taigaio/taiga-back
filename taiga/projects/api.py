@@ -20,6 +20,7 @@ from easy_thumbnails.source_generators import pil_image
 from dateutil.relativedelta import relativedelta
 
 from django.apps import apps
+from django.conf import settings
 from django.db.models import signals, Prefetch
 from django.db.models import Value as V
 from django.db.models.functions import Coalesce
@@ -442,9 +443,13 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
 
         self.pre_delete(obj)
         self.pre_conditions_on_delete(obj)
-        obj.delete_related_content()
-        obj.delete()
-        self.post_delete(obj)
+
+        services.orphan_project(obj)
+        if settings.CELERY_ENABLED:
+            services.delete_project.delay(obj.id)
+        else:
+            services.delete_project(obj.id)
+
         return response.NoContent()
 
 
