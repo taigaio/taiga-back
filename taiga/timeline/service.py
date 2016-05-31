@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Model
 from django.db.models import Q
@@ -89,9 +90,26 @@ def _push_to_timeline(objects, instance:object, event_type:str, created_datetime
 
 
 @app.task
-def push_to_timelines(project, user, obj, event_type, created_datetime, extra_data={}):
-    if project is not None:
+def push_to_timelines(project_id, user_id, obj_app_label, obj_model_name, obj_id, event_type, created_datetime, extra_data={}):
+    ObjModel = apps.get_model(obj_app_label, obj_model_name)
+    try:
+        obj = ObjModel.objects.get(id=obj_id)
+    except ObjModel.DoesNotExist:
+        return
+
+    try:
+        user = get_user_model().objects.get(id=user_id)
+    except get_user_model().DoesNotExist:
+        return
+
+    if project_id is not None:
         # Actions related with a project
+
+        projectModel = apps.get_model("projects", "Project")
+        try:
+            project = projectModel.objects.get(id=project_id)
+        except projectModel.DoesNotExist:
+            return
 
         ## Project timeline
         _push_to_timeline(project, obj, event_type, created_datetime,
