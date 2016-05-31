@@ -18,6 +18,7 @@
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
@@ -29,11 +30,14 @@ from taiga.timeline.service import (push_to_timelines,
                                     extract_user_info)
 
 
-def _push_to_timelines(*args, **kwargs):
+def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_data={}):
+    project_id = None if project is None else project.id
+
+    ct = ContentType.objects.get_for_model(obj)
     if settings.CELERY_ENABLED:
-        push_to_timelines.delay(*args, **kwargs)
+        push_to_timelines.delay(project_id, user.id, ct.app_label, ct.model, obj.id, event_type, created_datetime, extra_data=extra_data)
     else:
-        push_to_timelines(*args, **kwargs)
+        push_to_timelines(project_id, user.id, ct.app_label, ct.model, obj.id, event_type, created_datetime, extra_data=extra_data)
 
 
 def _clean_description_fields(values_diff):
@@ -86,7 +90,7 @@ def on_new_history_entry(sender, instance, created, **kwargs):
     _push_to_timelines(project, user, obj, event_type, created_datetime, extra_data=extra_data)
 
 
-def create_membership_push_to_timeline(sender, instance, **kwargs):
+def create_membership_push_to_timeline(sender, instance, created, **kwargs):
     """
     Creating new membership with associated user. If the user is the project owner we don't
     do anything because that info will be shown in created project timeline entry
@@ -96,28 +100,9 @@ def create_membership_push_to_timeline(sender, instance, **kwargs):
     """
 
     # We shown in created project timeline entry
-    if not instance.pk and instance.user and instance.user != instance.project.owner:
+    if created and instance.user and instance.user != instance.project.owner:
         created_datetime = instance.created_at
         _push_to_timelines(instance.project, instance.user, instance, "create", created_datetime)
-
-    # Updating existing membership
-    elif instance.pk:
-        try:
-            prev_instance = sender.objects.get(pk=instance.pk)
-            if instance.user != prev_instance.user:
-                created_datetime = timezone.now()
-                # The new member
-                _push_to_timelines(instance.project, instance.user, instance, "create", created_datetime)
-                # If we are updating the old user is removed from project
-                if prev_instance.user:
-                    _push_to_timelines(instance.project,
-                                       prev_instance.user,
-                                       prev_instance,
-                                       "delete",
-                                       created_datetime)
-        except sender.DoesNotExist:
-            # This happens with some tests, when a membership is created with a concrete id
-            pass
 
 
 def delete_membership_push_to_timeline(sender, instance, **kwargs):
