@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse
 
 from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS

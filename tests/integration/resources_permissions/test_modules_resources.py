@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import uuid
 
 from django.core.urlresolvers import reverse
