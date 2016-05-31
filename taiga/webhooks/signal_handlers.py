@@ -67,10 +67,18 @@ def on_new_history_entry(sender, instance, created, **kwargs):
     by = instance.owner
     date = timezone.now()
 
+    webhooks_args = []
     for webhook in webhooks:
         args = [webhook["id"], webhook["url"], webhook["key"], by, date, obj] + extra_args
+        webhooks_args.append(args)
+
+    connection.on_commit(lambda: _execute_task(task, webhooks_args))
+
+
+def _execute_task(task, webhooks_args):
+    for webhook_args in webhooks_args:
 
         if settings.CELERY_ENABLED:
-            connection.on_commit(lambda: task.delay(*args))
+            task.delay(*webhook_args)
         else:
-            connection.on_commit(lambda: task(*args))
+            task(*webhook_args)
