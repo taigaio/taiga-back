@@ -10,6 +10,7 @@ from taiga.projects.services import stats as stats_services
 from taiga.projects.history.services import take_snapshot
 from taiga.permissions.choices import ANON_PERMISSIONS
 from taiga.projects.models import Project
+from taiga.projects.choices import BLOCKED_BY_DELETING
 
 from .. import factories as f
 from ..utils import DUMMY_BMP_DATA
@@ -1835,6 +1836,7 @@ def test_delete_project_with_celery_enabled(client, settings):
         project = Project.objects.get(id=project.id)
         assert project.owner == None
         assert project.memberships.count() == 0
+        assert project.blocked_code == BLOCKED_BY_DELETING
         delete_project_mock.delay.assert_called_once_with(project.id)
 
 
