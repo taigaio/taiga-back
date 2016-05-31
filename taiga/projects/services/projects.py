@@ -19,6 +19,7 @@
 from django.apps import apps
 from django.utils.translation import ugettext as _
 from taiga.celery import app
+from .. import choices
 
 ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS = 'max_public_projects_memberships'
 ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS = 'max_private_projects_memberships'
@@ -158,6 +159,7 @@ def check_if_project_is_out_of_owner_limits(project):
 def orphan_project(project):
     project.memberships.filter(user=project.owner).delete()
     project.owner = None
+    project.blocked_code = choices.BLOCKED_BY_DELETING
     project.save()
 
 
