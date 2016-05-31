@@ -51,7 +51,7 @@ def is_project_owner(user, obj):
     if project is None:
         return False
 
-    if user.id == project.owner.id:
+    if user.id == project.owner_id:
         return True
 
     return False
