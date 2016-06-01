@@ -177,6 +177,6 @@ def test_custom_fields_csv_generation():
     data.seek(0)
     reader = csv.reader(data)
     row = next(reader)
-    assert row[21] == attr.name
+    assert row[24] == attr.name
     row = next(reader)
-    assert row[21] == "val1"
+    assert row[24] == "val1"
