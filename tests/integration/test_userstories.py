@@ -644,3 +644,45 @@ def test_update_userstory_update_tribe_gig(client):
 
     assert response.status_code == 200
     assert response.data["tribe_gig"] == data["tribe_gig"]
+
+
+def test_get_user_stories_including_tasks(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    user_story = f.UserStoryFactory.create(project=project)
+    f.TaskFactory.create(user_story=user_story)
+    url = reverse("userstories-list")
+
+    client.login(project.owner)
+
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.data[0].get("tasks") == []
+
+    url = reverse("userstories-list") + "?include_tasks=1"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data[0].get("tasks")) == 1
+
+
+def test_get_user_stories_including_attachments(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    user_story = f.UserStoryFactory.create(project=project)
+    f.UserStoryAttachmentFactory(project=project, content_object=user_story)
+    url = reverse("userstories-list")
+
+    client.login(project.owner)
+
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.data[0].get("attachments") == []
+
+    url = reverse("userstories-list") + "?include_attachments=1"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data[0].get("attachments")) == 1

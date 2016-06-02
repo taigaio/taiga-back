@@ -25,6 +25,8 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
+
+from taiga.projects.attachments.utils import attach_basic_attachments
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.models import Project, TaskStatus
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
@@ -94,13 +96,19 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
     def get_queryset(self):
         qs = super().get_queryset()
         qs = self.attach_votes_attrs_to_queryset(qs)
-        qs = qs.select_related("milestone",
-                               "owner",
-                               "assigned_to",
-                               "status",
-                               "project")
+        qs = qs.select_related(
+            "milestone",
+            "owner",
+            "assigned_to",
+            "status",
+            "project")
 
-        return self.attach_watchers_attrs_to_queryset(qs)
+        qs = self.attach_watchers_attrs_to_queryset(qs)
+        if "include_attachments" in self.request.QUERY_PARAMS:
+            qs = attach_basic_attachments(qs)
+            qs = qs.extra(select={"include_attachments": "True"})
+
+        return qs
 
     def pre_save(self, obj):
         if obj.user_story:

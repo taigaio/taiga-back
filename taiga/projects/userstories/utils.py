@@ -46,10 +46,38 @@ def attach_role_points(queryset, as_field="role_points_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(json_build_object(userstories_rolepoints.role_id,
-                                               userstories_rolepoints.points_id))::text
+    sql = """SELECT json_agg((userstories_rolepoints.role_id, userstories_rolepoints.points_id))
             	    FROM userstories_rolepoints
                     WHERE userstories_rolepoints.user_story_id = {tbl}.id"""
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
+
+
+def attach_tasks(queryset, as_field="tasks_attr"):
+    """Attach tasks as json column to each object of the queryset.
+
+    :param queryset: A Django user stories queryset object.
+    :param as_field: Attach the role points as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+
+    model = queryset.model
+    sql = """SELECT json_agg(row_to_json(t))
+                FROM(
+                    SELECT
+                        tasks_task.id,
+                        tasks_task.ref,
+                        tasks_task.subject,
+                        tasks_task.status_id,
+                        tasks_task.is_blocked,
+                        tasks_task.is_iocaine,
+                        projects_taskstatus.is_closed
+                FROM tasks_task
+                INNER JOIN projects_taskstatus on projects_taskstatus.id = tasks_task.status_id
+                WHERE user_story_id = {tbl}.id) t"""
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})

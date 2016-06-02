@@ -185,3 +185,24 @@ def test_custom_fields_csv_generation():
     assert row[24] == attr.name
     row = next(reader)
     assert row[24] == "val1"
+
+
+def test_get_tasks_including_attachments(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    task = f.TaskFactory.create(project=project)
+    f.TaskAttachmentFactory(project=project, content_object=task)
+    url = reverse("tasks-list")
+
+    client.login(project.owner)
+
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.data[0].get("attachments") == []
+
+    url = reverse("tasks-list") + "?include_attachments=1"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data[0].get("attachments")) == 1
