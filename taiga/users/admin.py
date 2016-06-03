@@ -64,7 +64,6 @@ class MembershipsInline(admin.TabularInline):
 
     def project_owner(self, obj):
         if obj.project and obj.project.owner:
-            #return obj.project.owner.get_full_name()
             return "{} (@{})".format(obj.project.owner.get_full_name(), obj.project.owner.username)
         return None
     project_owner.short_description = _("owner")
