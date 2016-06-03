@@ -14,6 +14,11 @@
     - New API endpoints over projects to create, rename, edit, delete and mix tags.
     - Tag color assignation is not automatic.
     - Select a color (or not) to a tag when add it to stories, issues and tasks.
+- Now comment owners and project admins can edit existing comments with the history Entry endpoint.
+- Add a new permissions to allow add comments instead of use the existent modify permission for this purpose.
+- Include created, modified and finished dates for tasks in CSV reports
+- User stories and tasks listing API call support extra params to include more data (tasks and attachemnts and attachments, respectively)
+
 
 ### Misc
 - [API] Improve performance of some calls over list.
