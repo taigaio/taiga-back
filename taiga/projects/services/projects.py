@@ -25,6 +25,7 @@ ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS = 'max_public_projects_memberships'
 ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS = 'max_private_projects_memberships'
 ERROR_MAX_PUBLIC_PROJECTS = 'max_public_projects'
 ERROR_MAX_PRIVATE_PROJECTS = 'max_private_projects'
+ERROR_PROJECT_WITHOUT_OWNER = 'project_without_owner'
 
 def check_if_project_privacity_can_be_changed(project):
     """Return if the project privacity can be changed from private to public or viceversa.
@@ -33,6 +34,9 @@ def check_if_project_privacity_can_be_changed(project):
 
     :return: A dict like this {'can_be_updated': bool, 'reason': error message}.
     """
+    if project.owner is None:
+        return {'can_be_updated': False, 'reason': ERROR_PROJECT_WITHOUT_OWNER}
+
     if project.is_private:
         current_memberships = project.memberships.count()
         max_memberships = project.owner.max_memberships_public_projects
@@ -66,6 +70,9 @@ def check_if_project_can_be_created_or_updated(project):
 
     :return: {bool, error_mesage} return a tuple (can be created or updated, error message).
     """
+    if project.owner is None:
+        return {'can_be_updated': False, 'reason': ERROR_PROJECT_WITHOUT_OWNER}
+
     if project.is_private:
         current_projects = project.owner.owned_projects.filter(is_private=True).count()
         max_projects = project.owner.max_private_projects
@@ -100,6 +107,9 @@ def check_if_project_can_be_transfered(project, new_owner):
 
     :return: {bool, error_mesage} return a tuple (can be transfered?, error message).
     """
+    if project.owner is None:
+        return {'can_be_updated': False, 'reason': ERROR_PROJECT_WITHOUT_OWNER}
+
     if project.owner == new_owner:
         return (True, None)
 
@@ -136,6 +146,9 @@ def check_if_project_is_out_of_owner_limits(project):
 
     :return: bool
     """
+    if project.owner is None:
+        return {'can_be_updated': False, 'reason': ERROR_PROJECT_WITHOUT_OWNER}
+
     if project.is_private:
         current_memberships = project.memberships.count()
         max_memberships = project.owner.max_memberships_private_projects
