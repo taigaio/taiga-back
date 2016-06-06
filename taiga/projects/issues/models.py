@@ -30,8 +30,6 @@ from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
 from taiga.base.tags import TaggedMixin
 
-from taiga.projects.services.tags_colors import update_project_tags_colors_handler, remove_unused_tags
-
 
 class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,

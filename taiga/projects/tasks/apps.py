@@ -32,12 +32,7 @@ def connect_tasks_signals():
     signals.pre_save.connect(generic_handlers.tags_normalization,
                              sender=apps.get_model("tasks", "Task"),
                              dispatch_uid="tags_normalization_task")
-    signals.post_save.connect(generic_handlers.update_project_tags_when_create_or_edit_taggable_item,
-                              sender=apps.get_model("tasks", "Task"),
-                              dispatch_uid="update_project_tags_when_create_or_edit_tagglabe_item_task")
-    signals.post_delete.connect(generic_handlers.update_project_tags_when_delete_taggable_item,
-                                sender=apps.get_model("tasks", "Task"),
-                                dispatch_uid="update_project_tags_when_delete_tagglabe_item_task")
+
 
 def connect_tasks_close_or_open_us_and_milestone_signals():
     from . import signals as handlers
@@ -67,19 +62,24 @@ def connect_all_tasks_signals():
 
 
 def disconnect_tasks_signals():
-    signals.pre_save.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="tags_normalization")
-    signals.post_save.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="update_project_tags_when_create_or_edit_tagglabe_item")
-    signals.post_delete.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="update_project_tags_when_delete_tagglabe_item")
+    signals.pre_save.disconnect(sender=apps.get_model("tasks", "Task"),
+                                dispatch_uid="set_finished_date_when_edit_task")
+    signals.pre_save.disconnect(sender=apps.get_model("tasks", "Task"),
+                                dispatch_uid="tags_normalization")
 
 
 def disconnect_tasks_close_or_open_us_and_milestone_signals():
-    signals.pre_save.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="cached_prev_task")
-    signals.post_save.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="try_to_close_or_open_us_and_milestone_when_create_or_edit_task")
-    signals.post_delete.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="try_to_close_or_open_us_and_milestone_when_delete_task")
+    signals.pre_save.disconnect(sender=apps.get_model("tasks", "Task"),
+                                dispatch_uid="cached_prev_task")
+    signals.post_save.disconnect(sender=apps.get_model("tasks", "Task"),
+                                 dispatch_uid="try_to_close_or_open_us_and_milestone_when_create_or_edit_task")
+    signals.post_delete.disconnect(sender=apps.get_model("tasks", "Task"),
+                                   dispatch_uid="try_to_close_or_open_us_and_milestone_when_delete_task")
 
 
 def disconnect_tasks_custom_attributes_signals():
-    signals.post_save.disconnect(sender=apps.get_model("tasks", "Task"), dispatch_uid="create_custom_attribute_value_when_create_task")
+    signals.post_save.disconnect(sender=apps.get_model("tasks", "Task"),
+                                 dispatch_uid="create_custom_attribute_value_when_create_task")
 
 
 def disconnect_all_tasks_signals():

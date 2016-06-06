@@ -34,9 +34,6 @@ def connect_projects_signals():
     signals.pre_save.connect(handlers.tags_normalization,
                              sender=apps.get_model("projects", "Project"),
                              dispatch_uid="tags_normalization_projects")
-    signals.pre_save.connect(handlers.update_project_tags_when_create_or_edit_taggable_item,
-                             sender=apps.get_model("projects", "Project"),
-                             dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_projects")
 
 
 def disconnect_projects_signals():
@@ -44,8 +41,6 @@ def disconnect_projects_signals():
                                  dispatch_uid='project_post_save')
     signals.pre_save.disconnect(sender=apps.get_model("projects", "Project"),
                                 dispatch_uid="tags_normalization_projects")
-    signals.pre_save.disconnect(sender=apps.get_model("projects", "Project"),
-                                dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_projects")
 
 
 ## Memberships Signals

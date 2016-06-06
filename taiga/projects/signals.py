@@ -19,7 +19,6 @@
 from django.apps import apps
 from django.conf import settings
 
-from taiga.projects.services.tags_colors import update_project_tags_colors_handler, remove_unused_tags
 from taiga.projects.notifications.services import create_notify_policy_if_not_exists
 from taiga.base.utils.db import get_typename_for_model_class
 
@@ -37,13 +36,7 @@ def tags_normalization(sender, instance, **kwargs):
         instance.tags = list(map(str.lower, instance.tags))
 
 
-def update_project_tags_when_create_or_edit_taggable_item(sender, instance, **kwargs):
-    update_project_tags_colors_handler(instance)
-
-
-def update_project_tags_when_delete_taggable_item(sender, instance, **kwargs):
-    remove_unused_tags(instance.project)
-    instance.project.save()
+## Membership
 
 def membership_post_delete(sender, instance, using, **kwargs):
     instance.project.update_role_points()
