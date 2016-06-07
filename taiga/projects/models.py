@@ -339,7 +339,17 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
         self.total_activity_last_year = qs_year.count()
 
         if save:
-            self.save()
+            self.save(update_fields=[
+                'totals_updated_datetime',
+                'total_fans',
+                'total_fans_last_week',
+                'total_fans_last_month',
+                'total_fans_last_year',
+                'total_activity',
+                'total_activity_last_week',
+                'total_activity_last_month',
+                'total_activity_last_year',
+            ])
 
     @cached_property
     def cached_user_stories(self):
