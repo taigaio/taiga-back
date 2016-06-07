@@ -22,12 +22,13 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.api import serializers
-from taiga.base.fields import PgArrayField, TagsField
+from taiga.base.fields import PgArrayField
 from taiga.base.utils.thumbnails import get_thumbnail_url
 
 from taiga.projects.models import Project
 from .models import User, Role
 from .services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
+from .gravatar import get_gravatar_url
 
 from collections import namedtuple
 
@@ -48,6 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
     full_name_display = serializers.SerializerMethodField("get_full_name_display")
     photo = serializers.SerializerMethodField("get_photo")
     big_photo = serializers.SerializerMethodField("get_big_photo")
+    gravatar_url = serializers.SerializerMethodField("get_gravatar_url")
     roles = serializers.SerializerMethodField("get_roles")
     projects_with_me = serializers.SerializerMethodField("get_projects_with_me")
 
@@ -57,7 +59,8 @@ class UserSerializer(serializers.ModelSerializer):
         # with this info (including there the email)
         fields = ("id", "username", "full_name", "full_name_display",
                   "color", "bio", "lang", "theme", "timezone", "is_active",
-                  "photo", "big_photo", "roles", "projects_with_me")
+                  "photo", "big_photo", "roles", "projects_with_me",
+                  "gravatar_url")
         read_only_fields = ("id",)
 
     def validate_username(self, attrs, source):
@@ -87,6 +90,9 @@ class UserSerializer(serializers.ModelSerializer):
     def get_big_photo(self, user):
         return get_big_photo_or_gravatar_url(user)
 
+    def get_gravatar_url(self, user):
+        return get_gravatar_url(user.email)
+
     def get_roles(self, user):
         return user.memberships. order_by("role__name").values_list("role__name", flat=True).distinct()
 
@@ -104,6 +110,7 @@ class UserSerializer(serializers.ModelSerializer):
             projects = Project.objects.filter(id__in=project_ids)
             return ContactProjectDetailSerializer(projects, many=True).data
 
+
 class UserAdminSerializer(UserSerializer):
     total_private_projects = serializers.SerializerMethodField("get_total_private_projects")
     total_public_projects = serializers.SerializerMethodField("get_total_public_projects")
@@ -114,7 +121,7 @@ class UserAdminSerializer(UserSerializer):
         # with this info (including here the email)
         fields = ("id", "username", "full_name", "full_name_display", "email",
                   "color", "bio", "lang", "theme", "timezone", "is_active", "photo",
-                  "big_photo",
+                  "big_photo", "gravatar_url",
                   "max_private_projects", "max_public_projects",
                   "max_memberships_private_projects", "max_memberships_public_projects",
                   "total_private_projects", "total_public_projects")
@@ -134,7 +141,7 @@ class UserAdminSerializer(UserSerializer):
 class UserBasicInfoSerializer(UserSerializer):
     class Meta:
         model = User
-        fields = ("username", "full_name_display","photo", "big_photo", "is_active", "id")
+        fields = ("username", "full_name_display", "photo", "big_photo", "is_active", "id")
 
 
 class RecoverySerializer(serializers.Serializer):
@@ -177,7 +184,6 @@ class ProjectRoleSerializer(serializers.ModelSerializer):
 ######################################################
 ## Like
 ######################################################
-
 
 class HighLightedContentSerializer(serializers.Serializer):
     type = serializers.CharField()
@@ -279,7 +285,7 @@ class LikedObjectSerializer(HighLightedContentSerializer):
 
     def __init__(self, *args, **kwargs):
         # Don't pass the extra ids args up to the superclass
-        self.user_likes  = kwargs.pop("user_likes", {})
+        self.user_likes = kwargs.pop("user_likes", {})
 
         # Instantiate the superclass normally
         super().__init__(*args, **kwargs)
@@ -294,7 +300,7 @@ class VotedObjectSerializer(HighLightedContentSerializer):
 
     def __init__(self, *args, **kwargs):
         # Don't pass the extra ids args up to the superclass
-        self.user_votes  = kwargs.pop("user_votes", {})
+        self.user_votes = kwargs.pop("user_votes", {})
 
         # Instantiate the superclass normally
         super().__init__(*args, **kwargs)
