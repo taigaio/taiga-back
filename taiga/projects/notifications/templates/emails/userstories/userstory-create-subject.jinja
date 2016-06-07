@@ -1,3 +1,3 @@
-{% trans project=project.name, ref=snapshot.ref, subject=snapshot.subject %}
+{% trans project=project.name|safe, ref=snapshot.ref, subject=snapshot.subject|safe %}
 [{{ project }}] Created the US #{{ ref }} "{{ subject }}"
 {% endtrans %}
