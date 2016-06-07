@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
 
 from django.utils.translation import ugettext as _
 from django.db.models import Q
@@ -256,7 +257,7 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
     i_am_member = serializers.SerializerMethodField("get_i_am_member")
 
     tags = TagsField(default=[], required=False)
-    tags_colors = TagsColorsField(required=False)
+    tags_colors = TagsColorsField(required=False, read_only=True)
 
     notify_level = serializers.SerializerMethodField("get_notify_level")
     total_closed_milestones = serializers.SerializerMethodField("get_total_closed_milestones")
@@ -416,3 +417,94 @@ class ProjectTemplateSerializer(serializers.ModelSerializer):
 class UpdateProjectOrderBulkSerializer(ProjectExistsValidator, serializers.Serializer):
     project_id = serializers.IntegerField()
     order = serializers.IntegerField()
+
+
+######################################################
+## Project tags serializers
+######################################################
+
+
+class ProjectTagSerializer(serializers.Serializer):
+    def __init__(self, *args, **kwargs):
+        # Don't pass the extra project arg
+        self.project = kwargs.pop("project")
+
+        # Instantiate the superclass normally
+        super().__init__(*args, **kwargs)
+
+
+class CreateTagSerializer(ProjectTagSerializer):
+    tag = serializers.CharField()
+    color = serializers.CharField(required=False)
+
+    def validate_tag(self, attrs, source):
+        tag = attrs.get(source, None)
+        if services.tag_exist_for_project_elements(self.project, tag):
+            raise serializers.ValidationError(_("The tag exists."))
+
+        return attrs
+
+    def validate_color(self, attrs, source):
+        color = attrs.get(source, None)
+        if not re.match('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
+            raise serializers.ValidationError(_("The color is not a valid HEX color."))
+
+        return attrs
+
+
+class EditTagTagSerializer(ProjectTagSerializer):
+    from_tag = serializers.CharField()
+    to_tag = serializers.CharField(required=False)
+    color = serializers.CharField(required=False)
+
+    def validate_from_tag(self, attrs, source):
+        tag = attrs.get(source, None)
+        if not services.tag_exist_for_project_elements(self.project, tag):
+            raise serializers.ValidationError(_("The tag doesn't exist."))
+
+        return attrs
+
+    def validate_to_tag(self, attrs, source):
+        tag = attrs.get(source, None)
+        if services.tag_exist_for_project_elements(self.project, tag):
+            raise serializers.ValidationError(_("The tag exists yet"))
+
+        return attrs
+
+    def validate_color(self, attrs, source):
+        color = attrs.get(source, None)
+        if len(color) != 7 or not re.match('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
+            raise serializers.ValidationError(_("The color is not a valid HEX color."))
+
+        return attrs
+
+
+class DeleteTagSerializer(ProjectTagSerializer):
+    tag = serializers.CharField()
+
+    def validate_tag(self, attrs, source):
+        tag = attrs.get(source, None)
+        if not services.tag_exist_for_project_elements(self.project, tag):
+            raise serializers.ValidationError(_("The tag doesn't exist."))
+
+        return attrs
+
+
+class MixTagsSerializer(ProjectTagSerializer):
+    from_tags = TagsField()
+    to_tag = serializers.CharField()
+
+    def validate_from_tags(self, attrs, source):
+        tags = attrs.get(source, None)
+        for tag in tags:
+            if not services.tag_exist_for_project_elements(self.project, tag):
+                raise serializers.ValidationError(_("The tag doesn't exist."))
+
+        return attrs
+
+    def validate_to_tag(self, attrs, source):
+        tag = attrs.get(source, None)
+        if not services.tag_exist_for_project_elements(self.project, tag):
+            raise serializers.ValidationError(_("The tag doesn't exist."))
+
+        return attrs

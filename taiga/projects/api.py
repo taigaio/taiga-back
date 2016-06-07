@@ -405,6 +405,67 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         services.reject_project_transfer(project, request.user, token, reason)
         return response.Ok()
 
+    @detail_route(methods=["POST"])
+    def create_tag(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "create_tag", project)
+        self._raise_if_blocked(project)
+        serializer = serializers.CreateTagSerializer(data=request.DATA, project=project)
+        if not serializer.is_valid():
+            return response.BadRequest(serializer.errors)
+
+        data = serializer.data
+        services.create_tag(project, data.get("tag"), data.get("color"))
+        return response.Ok()
+
+
+    @detail_route(methods=["POST"])
+    def edit_tag(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "edit_tag", project)
+        self._raise_if_blocked(project)
+        serializer = serializers.EditTagTagSerializer(data=request.DATA, project=project)
+        if not serializer.is_valid():
+            return response.BadRequest(serializer.errors)
+
+        data = serializer.data
+        services.edit_tag(project, data.get("from_tag"),
+                                                    to_tag=data.get("to_tag", None),
+                                                    color=data.get("color", None))
+
+        return response.Ok()
+
+
+    @detail_route(methods=["POST"])
+    def delete_tag(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "delete_tag", project)
+        self._raise_if_blocked(project)
+        serializer = serializers.DeleteTagSerializer(data=request.DATA, project=project)
+        if not serializer.is_valid():
+            return response.BadRequest(serializer.errors)
+
+        data = serializer.data
+        services.delete_tag(project, data.get("tag"))
+        return response.Ok()
+
+    @detail_route(methods=["POST"])
+    def mix_tags(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "mix_tags", project)
+        self._raise_if_blocked(project)
+        serializer = serializers.MixTagsSerializer(data=request.DATA, project=project)
+        if not serializer.is_valid():
+            return response.BadRequest(serializer.errors)
+
+        data = serializer.data
+        services.mix_tags(project, data.get("from_tags"), data.get("to_tag"))
+        return response.Ok()
+
+    def _raise_if_blocked(self, project):
+        if self.is_blocked(project):
+            raise exc.Blocked(_("Blocked element"))
+
     def _set_base_permissions(self, obj):
         update_permissions = False
         if not obj.id:
