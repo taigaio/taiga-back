@@ -1852,3 +1852,27 @@ def test_delete_project_with_celery_disabled(client, settings):
     response = client.json.delete(url)
     assert response.status_code == 204
     assert Project.objects.filter(id=project.id).count() == 0
+
+
+def test_color_tags_project_fired_on_element_create():
+    user_story = f.UserStoryFactory.create(tags=["tag"])
+    project = Project.objects.get(id=user_story.project.id)
+    assert project.tags_colors == [["tag", None]]
+
+
+def test_color_tags_project_fired_on_element_update():
+    user_story = f.UserStoryFactory.create()
+    user_story.tags = ["tag"]
+    user_story.save()
+    project = Project.objects.get(id=user_story.project.id)
+    assert project.tags_colors == [["tag", None]]
+
+
+def test_color_tags_project_fired_on_element_update_respecting_color():
+    project = f.ProjectFactory.create(tags_colors=[["tag", "#123123"]])
+    user_story = f.UserStoryFactory.create(project=project)
+    user_story.tags = ["tag"]
+    user_story.save()
+    project = Project.objects.get(id=user_story.project.id)
+    assert project.tags_colors == [["tag", "#123123"]]
+>>>>>>> d64d158... WIP: migrations, removing automatic color generation
