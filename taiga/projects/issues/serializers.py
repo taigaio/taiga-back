@@ -17,15 +17,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
-from taiga.base.fields import TagsField
 from taiga.base.fields import PgArrayField
 from taiga.base.neighbors import NeighborsSerializerMixin
 
-from taiga.mdrender.service import render as mdrender
-from taiga.projects.validators import ProjectExistsValidator
+from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicIssueStatusSerializer
-from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
+from taiga.mdrender.service import render as mdrender
+from taiga.projects.tagging.fields import TagsAndTagsColorsField
+from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
 
 from taiga.users.serializers import UserBasicInfoSerializer
@@ -33,8 +33,9 @@ from taiga.users.serializers import UserBasicInfoSerializer
 from . import models
 
 
-class IssueSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer, serializers.ModelSerializer):
-    tags = TagsField(required=False)
+class IssueSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer,
+                      serializers.ModelSerializer):
+    tags = TagsAndTagsColorsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
     is_closed = serializers.Field(source="is_closed")
     comment = serializers.SerializerMethodField("get_comment")
@@ -71,7 +72,7 @@ class IssueListSerializer(IssueSerializer):
     class Meta:
         model = models.Issue
         read_only_fields = ('id', 'ref', 'created_date', 'modified_date')
-        exclude=("description", "description_html")
+        exclude = ("description", "description_html")
 
 
 class IssueNeighborsSerializer(NeighborsSerializerMixin, IssueSerializer):

@@ -67,19 +67,6 @@ def test_create_task_without_default_values(client):
     assert response.data['status'] == None
 
 
-def test_api_update_task_tags(client):
-    project = f.ProjectFactory.create()
-    task = f.create_task(project=project, status__project=project, milestone=None, user_story=None)
-    f.MembershipFactory.create(project=project, user=task.owner, is_admin=True)
-    url = reverse("tasks-detail", kwargs={"pk": task.pk})
-    data = {"tags": ["back", "front"], "version": task.version}
-
-    client.login(task.owner)
-    response = client.json.patch(url, json.dumps(data))
-
-    assert response.status_code == 200, response.data
-
-
 def test_api_create_in_bulk_with_status(client):
     us = f.create_userstory()
     f.MembershipFactory.create(project=us.project, user=us.owner, is_admin=True)

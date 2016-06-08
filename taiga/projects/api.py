@@ -66,9 +66,9 @@ from . import services
 ######################################################
 ## Project
 ######################################################
+
 class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
                      BlockeableSaveMixin, BlockeableDeleteMixin, ModelCrudViewSet):
-
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectDetailSerializer
     admin_serializer_class = serializers.ProjectDetailAdminSerializer

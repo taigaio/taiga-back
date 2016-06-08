@@ -16,23 +16,22 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.apps import apps
 from taiga.base.api import serializers
 from taiga.base.api.utils import get_object_or_404
-from taiga.base.fields import TagsField
 from taiga.base.fields import PickledObjectField
 from taiga.base.fields import PgArrayField
 from taiga.base.neighbors import NeighborsSerializerMixin
 from taiga.base.utils import json
 
-from taiga.mdrender.service import render as mdrender
-from taiga.projects.models import Project
-from taiga.projects.validators import ProjectExistsValidator, UserStoryStatusExistsValidator
 from taiga.projects.milestones.validators import SprintExistsValidator
-from taiga.projects.userstories.validators import UserStoryExistsValidator
+from taiga.projects.models import Project
 from taiga.projects.notifications.validators import WatchersValidator
-from taiga.projects.serializers import BasicUserStoryStatusSerializer
 from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
+from taiga.projects.serializers import BasicUserStoryStatusSerializer
+from taiga.mdrender.service import render as mdrender
+from taiga.projects.tagging.fields import TagsAndTagsColorsField
+from taiga.projects.userstories.validators import UserStoryExistsValidator
+from taiga.projects.validators import ProjectExistsValidator, UserStoryStatusExistsValidator
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
 
 from taiga.users.serializers import UserBasicInfoSerializer
@@ -50,9 +49,9 @@ class RolePointsField(serializers.WritableField):
         return json.loads(obj)
 
 
-class UserStorySerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer,
-                          serializers.ModelSerializer):
-    tags = TagsField(default=[], required=False)
+class UserStorySerializer(WatchersValidator, VoteResourceSerializerMixin,
+                          EditableWatchedResourceModelSerializer, serializers.ModelSerializer):
+    tags = TagsAndTagsColorsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
     points = RolePointsField(source="role_points", required=False)
     total_points = serializers.SerializerMethodField("get_total_points")
@@ -112,7 +111,7 @@ class UserStoryListSerializer(UserStorySerializer):
         model = models.UserStory
         depth = 0
         read_only_fields = ('created_date', 'modified_date')
-        exclude=("description", "description_html")
+        exclude = ("description", "description_html")
 
 
 class UserStoryNeighborsSerializer(NeighborsSerializerMixin, UserStorySerializer):
@@ -142,7 +141,8 @@ class _UserStoryOrderBulkSerializer(UserStoryExistsValidator, serializers.Serial
     order = serializers.IntegerField()
 
 
-class UpdateUserStoriesOrderBulkSerializer(ProjectExistsValidator, UserStoryStatusExistsValidator, serializers.Serializer):
+class UpdateUserStoriesOrderBulkSerializer(ProjectExistsValidator, UserStoryStatusExistsValidator,
+                                           serializers.Serializer):
     project_id = serializers.IntegerField()
     bulk_stories = _UserStoryOrderBulkSerializer(many=True)
 

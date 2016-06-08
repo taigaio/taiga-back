@@ -24,28 +24,27 @@ from django.db.models import Q
 from taiga.base.api import serializers
 from taiga.base.fields import JsonField
 from taiga.base.fields import PgArrayField
-from taiga.base.fields import TagsField
-from taiga.base.fields import TagsColorsField
 
-from taiga.projects.notifications.choices import NotifyLevel
 from taiga.users.services import get_photo_or_gravatar_url
-from taiga.users.serializers import UserSerializer
 from taiga.users.serializers import UserBasicInfoSerializer
 from taiga.users.serializers import ProjectRoleSerializer
 from taiga.users.validators import RoleExistsValidator
 
 from taiga.permissions.services import get_user_project_permissions
 from taiga.permissions.services import is_project_admin, is_project_owner
-from taiga.projects.mixins.serializers import ValidateDuplicatedNameInProjectMixin
 
 from . import models
 from . import services
-from .notifications.mixins import WatchedResourceModelSerializer
-from .validators import ProjectExistsValidator
 from .custom_attributes.serializers import UserStoryCustomAttributeSerializer
 from .custom_attributes.serializers import TaskCustomAttributeSerializer
 from .custom_attributes.serializers import IssueCustomAttributeSerializer
 from .likes.mixins.serializers import FanResourceSerializerMixin
+from .mixins.serializers import ValidateDuplicatedNameInProjectMixin
+from .notifications.choices import NotifyLevel
+from .notifications.mixins import WatchedResourceModelSerializer
+from .tagging.fields import TagsField
+from .tagging.fields import TagsColorsField
+from .validators import ProjectExistsValidator
 
 
 ######################################################

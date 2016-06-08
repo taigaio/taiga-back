@@ -23,13 +23,15 @@ from django.db.models import signals
 
 def connect_tasks_signals():
     from taiga.projects import signals as generic_handlers
+    from taiga.projects.tagging import signals as tagging_handlers
     from . import signals as handlers
+
     # Finished date
     signals.pre_save.connect(handlers.set_finished_date_when_edit_task,
                              sender=apps.get_model("tasks", "Task"),
                              dispatch_uid="set_finished_date_when_edit_task")
     # Tags
-    signals.pre_save.connect(generic_handlers.tags_normalization,
+    signals.pre_save.connect(tagging_handlers.tags_normalization,
                              sender=apps.get_model("tasks", "Task"),
                              dispatch_uid="tags_normalization_task")
 

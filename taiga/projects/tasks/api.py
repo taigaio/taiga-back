@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 
 from taiga.base.api.utils import get_object_or_404
@@ -24,14 +25,12 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
-from taiga.projects.models import Project, TaskStatus
-from django.http import HttpResponse
-
-from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.models import Project, TaskStatus
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
+from taiga.projects.tagging.mixins import TaggedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
-
 
 from . import models
 from . import permissions
@@ -40,13 +39,18 @@ from . import services
 
 
 class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                  BlockedByProjectMixin, ModelCrudViewSet):
+                  TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
     queryset = models.Task.objects.all()
     permission_classes = (permissions.TaskPermission,)
     filter_backends = (filters.CanViewTasksFilterBackend, filters.WatchersFilter)
     retrieve_exclude_filters = (filters.WatchersFilter,)
-    filter_fields = ["user_story", "milestone", "project", "assigned_to",
-        "status__is_closed"]
+    filter_fields = [
+        "user_story",
+        "milestone",
+        "project",
+        "assigned_to",
+        "status__is_closed"
+    ]
 
     def get_serializer_class(self, *args, **kwargs):
         if self.action in ["retrieve", "by_ref"]:

@@ -18,6 +18,7 @@
 
 from django.db import connection
 
+
 def tag_exist_for_project_elements(project, tag):
     return tag in dict(project.tags_colors).keys()
 

@@ -29,13 +29,6 @@ from easy_thumbnails.files import get_thumbnailer
 # Signals over project items
 ####################################
 
-## TAGS
-
-def tags_normalization(sender, instance, **kwargs):
-    if isinstance(instance.tags, (list, tuple)):
-        instance.tags = list(map(str.lower, instance.tags))
-
-
 ## Membership
 
 def membership_post_delete(sender, instance, using, **kwargs):

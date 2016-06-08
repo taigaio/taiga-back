@@ -23,6 +23,7 @@ from django.db.models import signals
 
 def connect_issues_signals():
     from taiga.projects import signals as generic_handlers
+    from taiga.projects.tagging import signals as tagging_handlers
     from . import signals as handlers
 
     # Finished date
@@ -31,7 +32,7 @@ def connect_issues_signals():
                              dispatch_uid="set_finished_date_when_edit_issue")
 
     # Tags
-    signals.pre_save.connect(generic_handlers.tags_normalization,
+    signals.pre_save.connect(tagging_handlers.tags_normalization,
                              sender=apps.get_model("issues", "Issue"),
                              dispatch_uid="tags_normalization_issue")
 

@@ -27,11 +27,11 @@ from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_404
 
+from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.models import Project, IssueStatus, Severity, Priority, IssueType
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
-from taiga.projects.history.mixins import HistoryResourceMixin
-
-from taiga.projects.models import Project, IssueStatus, Severity, Priority, IssueType
+from taiga.projects.tagging.mixins import TaggedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
 from . import models
@@ -41,7 +41,7 @@ from . import serializers
 
 
 class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                   BlockedByProjectMixin, ModelCrudViewSet):
+                   TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
     queryset = models.Issue.objects.all()
     permission_classes = (permissions.IssuePermission, )
     filter_backends = (filters.CanViewIssuesFilterBackend,
@@ -196,7 +196,6 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
         owners_filter_backends = (f for f in filter_backends if f != filters.OwnersFilter)
         priorities_filter_backends = (f for f in filter_backends if f != filters.PrioritiesFilter)
         severities_filter_backends = (f for f in filter_backends if f != filters.SeveritiesFilter)
-        tags_filter_backends = (f for f in filter_backends if f != filters.TagsFilter)
 
         queryset = self.get_queryset()
         querysets = {

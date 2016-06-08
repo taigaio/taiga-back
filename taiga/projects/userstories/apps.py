@@ -23,6 +23,7 @@ from django.db.models import signals
 
 def connect_userstories_signals():
     from taiga.projects import signals as generic_handlers
+    from taiga.projects.tagging import signals as tagging_handlers
     from . import signals as handlers
 
     # When deleting user stories we must disable task signals while delating and
@@ -59,7 +60,7 @@ def connect_userstories_signals():
                                 dispatch_uid="try_to_close_milestone_when_delete_us")
 
     # Tags
-    signals.pre_save.connect(generic_handlers.tags_normalization,
+    signals.pre_save.connect(tagging_handlers.tags_normalization,
                              sender=apps.get_model("userstories", "UserStory"),
                              dispatch_uid="tags_normalization_user_story")
 

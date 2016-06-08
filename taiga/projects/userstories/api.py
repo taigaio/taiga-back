@@ -19,7 +19,6 @@
 from django.apps import apps
 from django.db import transaction
 from django.utils.translation import ugettext as _
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 
 from taiga.base import filters
@@ -31,12 +30,13 @@ from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
-from taiga.projects.occ import OCCResourceMixin
-from taiga.projects.models import Project, UserStoryStatus
-from taiga.projects.milestones.models import Milestone
 from taiga.projects.history.services import take_snapshot
+from taiga.projects.milestones.models import Milestone
+from taiga.projects.models import Project, UserStoryStatus
+from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
+from taiga.projects.occ import OCCResourceMixin
+from taiga.projects.tagging.mixins import TaggedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
 from . import models
@@ -46,7 +46,7 @@ from . import services
 
 
 class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                       BlockedByProjectMixin, ModelCrudViewSet):
+                       TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
     queryset = models.UserStory.objects.all()
     permission_classes = (permissions.UserStoryPermission,)
     filter_backends = (filters.CanViewUsFilterBackend,
@@ -113,8 +113,9 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
     def pre_save(self, obj):
         # This is very ugly hack, but having
         # restframework is the only way to do it.
+        #
         # NOTE: code moved as is from serializer
-        # to api because is not serializer logic.
+        #       to api because is not serializer logic.
         related_data = getattr(obj, "_related_data", {})
         self._role_points = related_data.pop("role_points", None)
 
@@ -124,7 +125,8 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
         super().pre_save(obj)
 
     def post_save(self, obj, created=False):
-        # Code related to the hack of pre_save method. Rather, this is the continuation of it.
+        # Code related to the hack of pre_save method.
+        # Rather, this is the continuation of it.
         if self._role_points:
             Points = apps.get_model("projects", "Points")
             RolePoints = apps.get_model("userstories", "RolePoints")
@@ -134,14 +136,16 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                     role_points = RolePoints.objects.get(role__id=role_id, user_story_id=obj.pk,
                                                          role__computable=True)
                 except (ValueError, RolePoints.DoesNotExist):
-                    raise exc.BadRequest({"points": _("Invalid role id '{role_id}'").format(
-                                                                            role_id=role_id)})
+                    raise exc.BadRequest({
+                        "points": _("Invalid role id '{role_id}'").format(role_id=role_id)
+                    })
 
                 try:
                     role_points.points = Points.objects.get(id=points_id, project_id=obj.project_id)
                 except (ValueError, Points.DoesNotExist):
-                    raise exc.BadRequest({"points": _("Invalid points id '{points_id}'").format(
-                                                                             points_id=points_id)})
+                    raise exc.BadRequest({
+                        "points": _("Invalid points id '{points_id}'").format(points_id=points_id)
+                    })
 
                 role_points.save()
 
@@ -200,7 +204,6 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
         statuses_filter_backends = (f for f in filter_backends if f != filters.StatusesFilter)
         assigned_to_filter_backends = (f for f in filter_backends if f != filters.AssignedToFilter)
         owners_filter_backends = (f for f in filter_backends if f != filters.OwnersFilter)
-        tags_filter_backends = (f for f in filter_backends if f != filters.TagsFilter)
 
         queryset = self.get_queryset()
         querysets = {
