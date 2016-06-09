@@ -53,8 +53,8 @@ def edit_tag(project, from_tag, to_tag=None, color=None):
     project.save()
 
 
-def rename_tag(project, from_tag, to_tag):
-    color = dict(project.tags_colors)[from_tag]
+def rename_tag(project, from_tag, to_tag, color=None):
+    color = color or dict(project.tags_colors)[from_tag]
     sql = """
         UPDATE userstories_userstory SET tags = array_distinct(array_replace(tags, '{from_tag}', '{to_tag}')) WHERE project_id={project_id};
         UPDATE tasks_task SET tags = array_distinct(array_replace(tags, '{from_tag}', '{to_tag}')) WHERE project_id={project_id};
@@ -65,7 +65,8 @@ def rename_tag(project, from_tag, to_tag):
     cursor.execute(sql)
 
     tags_colors = dict(project.tags_colors)
-    tags_colors[to_tag] = tags_colors.pop(from_tag)
+    tags_colors.pop(from_tag)
+    tags_colors[to_tag] = color
     project.tags_colors = list(tags_colors.items())
     project.save()
 
@@ -87,5 +88,6 @@ def delete_tag(project, tag):
 
 
 def mix_tags(project, from_tags, to_tag):
+    color = dict(project.tags_colors)[to_tag]
     for from_tag in from_tags:
-        rename_tag(project, from_tag, to_tag)
+        rename_tag(project, from_tag, to_tag, color)
