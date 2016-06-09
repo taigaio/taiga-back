@@ -260,6 +260,7 @@ class Command(BaseCommand):
             project_stats = get_stats_for_project(project)
             defined_points = project_stats["defined_points"]
             project.total_story_points = int(defined_points * self.sd.int(5,12) / 10)
+            project.refresh_from_db()
             project.save()
 
             self.create_likes(project)
