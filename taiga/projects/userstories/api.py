@@ -36,7 +36,7 @@ from taiga.projects.milestones.models import Milestone
 from taiga.projects.models import Project, UserStoryStatus
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
-from taiga.projects.tagging.mixins import TaggedResourceMixin
+from taiga.projects.tagging.api import TaggedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
 from . import models

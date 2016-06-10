@@ -16,11 +16,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
-from taiga.base.api import serializers
 
-from django.core.exceptions import ValidationError
+from taiga.base.api import serializers
 
 import re
 

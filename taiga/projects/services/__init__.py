@@ -57,6 +57,3 @@ from .stats import get_member_stats_for_project
 
 from .transfer import request_project_transfer, start_project_transfer
 from .transfer import accept_project_transfer, reject_project_transfer
-
-from .tags import tag_exist_for_project_elements, create_tag
-from .tags import edit_tag, delete_tag, mix_tags

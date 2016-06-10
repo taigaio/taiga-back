@@ -29,7 +29,7 @@ from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.models import Project, TaskStatus
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
-from taiga.projects.tagging.mixins import TaggedResourceMixin
+from taiga.projects.tagging.api import TaggedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
 from . import models
