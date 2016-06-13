@@ -20,21 +20,22 @@ import itertools
 import uuid
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals, Q
 from django.apps import apps
 from django.conf import settings
 from django.dispatch import receiver
-from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.utils.functional import cached_property
 
 from django_pgjson.fields import JsonField
-from djorm_pgarray.fields import TextArrayField
 
-from taiga.base.tags import TaggedMixin
+from taiga.projects.tagging.models import TaggedMixin
+from taiga.projects.tagging.models import TagsColorsdMixin
 from taiga.base.utils.dicts import dict_sum
 from taiga.base.utils.files import get_file_path
 from taiga.base.utils.sequence import arithmetic_progression
@@ -141,7 +142,7 @@ class ProjectDefaults(models.Model):
         abstract = True
 
 
-class Project(ProjectDefaults, TaggedMixin, models.Model):
+class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
     name = models.CharField(max_length=250, null=False, blank=False,
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
@@ -186,16 +187,12 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
                                           blank=True, default=None,
                                           verbose_name=_("creation template"))
 
-    anon_permissions = TextArrayField(blank=True, null=True,
-                                      default=[],
-                                      verbose_name=_("anonymous permissions"),
-                                      choices=ANON_PERMISSIONS)
-    public_permissions = TextArrayField(blank=True, null=True,
-                                        default=[],
-                                        verbose_name=_("user permissions"),
-                                        choices=MEMBERS_PERMISSIONS)
     is_private = models.BooleanField(default=True, null=False, blank=True,
                                      verbose_name=_("is private"))
+    anon_permissions = ArrayField(models.TextField(null=False, blank=False, choices=ANON_PERMISSIONS),
+                                  null=True, blank=True, default=[], verbose_name=_("anonymous permissions"))
+    public_permissions = ArrayField(models.TextField(null=False, blank=False, choices=MEMBERS_PERMISSIONS),
+                                    null=True, blank=True, default=[], verbose_name=_("user permissions"))
 
     is_featured = models.BooleanField(default=False, null=False, blank=True,
                                      verbose_name=_("is featured"))
@@ -213,9 +210,6 @@ class Project(ProjectDefaults, TaggedMixin, models.Model):
     issues_csv_uuid = models.CharField(max_length=32, editable=False,
                                        null=True, blank=True, default=None,
                                        db_index=True)
-
-    tags_colors = TextArrayField(dimension=2, default=[], null=False, blank=True,
-                                 verbose_name=_("tags colors"))
 
     transfer_token = models.CharField(max_length=255, null=True, blank=True, default=None,
                                       verbose_name=_("project transfer token"))

@@ -18,17 +18,16 @@
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
 from django.utils import timezone
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
-from djorm_pgarray.fields import TextArrayField
-
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
-from taiga.base.tags import TaggedMixin
+from taiga.projects.tagging.models import TaggedMixin
 
 
 class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
@@ -63,7 +62,8 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.
                                     default=None, related_name="issues_assigned_to_me",
                                     verbose_name=_("assigned to"))
     attachments = GenericRelation("attachments.Attachment")
-    external_reference = TextArrayField(default=None, verbose_name=_("external reference"))
+    external_reference = ArrayField(ArrayField(models.TextField(null=True, blank=True), size=2),
+                             null=True, blank=True, default=[], verbose_name=_("external reference"))
     _importing = None
 
     class Meta:

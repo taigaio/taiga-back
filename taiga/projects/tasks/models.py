@@ -18,16 +18,15 @@
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from djorm_pgarray.fields import TextArrayField
-
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
-from taiga.base.tags import TaggedMixin
+from taiga.projects.tagging.models import TaggedMixin
 
 
 class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
@@ -66,7 +65,8 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     attachments = GenericRelation("attachments.Attachment")
     is_iocaine = models.BooleanField(default=False, null=False, blank=True,
                                      verbose_name=_("is iocaine"))
-    external_reference = TextArrayField(default=None, verbose_name=_("external reference"))
+    external_reference = ArrayField(ArrayField(models.TextField(null=True, blank=True), size=2),
+                             null=True, blank=True, default=[], verbose_name=_("external reference"))
     _importing = None
 
     class Meta:

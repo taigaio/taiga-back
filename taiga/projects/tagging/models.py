@@ -18,13 +18,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 from django.utils.translation import ugettext_lazy as _
-
-from djorm_pgarray.fields import TextArrayField
 
 
 class TaggedMixin(models.Model):
-    tags = TextArrayField(default=None, verbose_name=_("tags"))
+    tags = ArrayField(models.TextField(),
+                      null=True, blank=True, default=[], verbose_name=_("tags"))
+
+    class Meta:
+        abstract = True
+
+
+class TagsColorsdMixin(models.Model):
+    tags_colors = ArrayField(ArrayField(models.TextField(null=True, blank=True), size=2),
+                             null=True, blank=True, default=[], verbose_name=_("tags colors"))
 
     class Meta:
         abstract = True

@@ -18,7 +18,6 @@
 
 from django.forms import widgets
 from django.utils.translation import ugettext as _
-from django.utils.translation import ugettext_lazy
 from taiga.base.api import serializers
 
 
