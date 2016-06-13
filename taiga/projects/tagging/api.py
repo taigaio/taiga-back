@@ -18,6 +18,7 @@
 
 from taiga.base import response
 from taiga.base.decorators import detail_route
+from taiga.base.utils.collections import OrderedSet
 
 from . import services
 from . import serializers
@@ -101,11 +102,10 @@ class TaggedResourceMixin:
     def pre_save(self, obj):
         if obj.tags:
             self._pre_save_new_tags_in_project_tagss_colors(obj)
-
         super().pre_save(obj)
 
     def _pre_save_new_tags_in_project_tagss_colors(self, obj):
-        new_obj_tags = set()
+        new_obj_tags = OrderedSet()
         new_tags_colors = {}
 
         for tag in obj.tags:
