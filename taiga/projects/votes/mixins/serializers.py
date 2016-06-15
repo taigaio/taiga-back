@@ -16,13 +16,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import serpy
+
 from taiga.base.api import serializers
 
 
-class VoteResourceSerializerMixin(serializers.ModelSerializer):
-    is_voter = serializers.SerializerMethodField("get_is_voter")
-    total_voters = serializers.SerializerMethodField("get_total_voters")
-
+class BaseVoteResourceSerializerMixin(object):
     def get_is_voter(self, obj):
         # The "is_voted" attribute is attached in the get_queryset of the viewset.
         return getattr(obj, "is_voter", False) or False
@@ -30,3 +29,13 @@ class VoteResourceSerializerMixin(serializers.ModelSerializer):
     def get_total_voters(self, obj):
         # The "total_voters" attribute is attached in the get_queryset of the viewset.
         return getattr(obj, "total_voters", 0) or 0
+
+
+class VoteResourceSerializerMixin(BaseVoteResourceSerializerMixin, serializers.ModelSerializer):
+    is_voter = serializers.SerializerMethodField("get_is_voter")
+    total_voters = serializers.SerializerMethodField("get_total_voters")
+
+
+class ListVoteResourceSerializerMixin(BaseVoteResourceSerializerMixin, serpy.Serializer):
+    is_voter = serpy.MethodField("get_is_voter")
+    total_voters = serpy.MethodField("get_total_voters")

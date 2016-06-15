@@ -16,13 +16,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext_lazy as _
+
 from taiga.base.api import serializers
 from taiga.base.fields import PgArrayField
 from taiga.base.neighbors import NeighborsSerializerMixin
 
-
 from taiga.projects.milestones.validators import SprintExistsValidator
+from taiga.projects.mixins.serializers import OwnerExtraInfoMixin
+from taiga.projects.mixins.serializers import AssigedToExtraInfoMixin
+from taiga.projects.mixins.serializers import StatusExtraInfoMixin
 from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
+from taiga.projects.notifications.mixins import ListWatchedResourceModelSerializer
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicTaskStatusSerializerSerializer
 from taiga.mdrender.service import render as mdrender
@@ -30,11 +36,15 @@ from taiga.projects.tagging.fields import TagsAndTagsColorsField
 from taiga.projects.tasks.validators import TaskExistsValidator
 from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
+from taiga.projects.votes.mixins.serializers import ListVoteResourceSerializerMixin
 
 from taiga.users.serializers import UserBasicInfoSerializer
+from taiga.users.services import get_photo_or_gravatar_url
+from taiga.users.services import get_big_photo_or_gravatar_url
 
 from . import models
 
+import serpy
 
 class TaskSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer,
                      serializers.ModelSerializer):
@@ -72,11 +82,35 @@ class TaskSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWat
         return obj.status is not None and obj.status.is_closed
 
 
-class TaskListSerializer(TaskSerializer):
-    class Meta:
-        model = models.Task
-        read_only_fields = ('id', 'ref', 'created_date', 'modified_date')
-        exclude = ("description", "description_html")
+class TaskListSerializer(ListVoteResourceSerializerMixin, ListWatchedResourceModelSerializer,
+                         OwnerExtraInfoMixin, AssigedToExtraInfoMixin, StatusExtraInfoMixin,
+                         serializers.LightSerializer):
+    id = serpy.Field()
+    user_story = serpy.Field(attr="user_story_id")
+    ref = serpy.Field()
+    project = serpy.Field(attr="project_id")
+    milestone = serpy.Field(attr="milestone_id")
+    milestone_slug = serpy.MethodField("get_milestone_slug")
+    created_date = serpy.Field()
+    modified_date = serpy.Field()
+    finished_date = serpy.Field()
+    subject = serpy.Field()
+    us_order = serpy.Field()
+    taskboard_order = serpy.Field()
+    is_iocaine = serpy.Field()
+    external_reference = serpy.Field()
+    version = serpy.Field()
+    watchers = serpy.Field()
+    is_blocked = serpy.Field()
+    blocked_note = serpy.Field()
+    tags = serpy.Field()
+    is_closed = serpy.MethodField()
+
+    def get_milestone_slug(self, obj):
+        return obj.milestone.slug if obj.milestone else None
+
+    def get_is_closed(self, obj):
+        return obj.status is not None and obj.status.is_closed
 
 
 class TaskNeighborsSerializer(NeighborsSerializerMixin, TaskSerializer):

@@ -33,6 +33,7 @@ from .gravatar import get_gravatar_url
 from collections import namedtuple
 
 import re
+import serpy
 
 
 ######################################################
@@ -142,6 +143,24 @@ class UserBasicInfoSerializer(UserSerializer):
     class Meta:
         model = User
         fields = ("username", "full_name_display", "photo", "big_photo", "is_active", "id")
+
+
+class ListUserBasicInfoSerializer(serpy.Serializer):
+    username = serpy.Field()
+    full_name_display = serpy.MethodField()
+    photo = serpy.MethodField()
+    big_photo = serpy.MethodField()
+    is_active = serpy.Field()
+    id = serpy.Field()
+
+    def get_full_name_display(self, obj):
+        return obj.get_full_name()
+
+    def get_photo(self, obj):
+        return get_photo_or_gravatar_url(obj)
+
+    def get_big_photo(self, obj):
+        return get_big_photo_or_gravatar_url(obj)
 
 
 class RecoverySerializer(serializers.Serializer):

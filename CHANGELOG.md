@@ -15,6 +15,7 @@
     - Select a color (or not) to a tag when add it to stories, issues and tasks.
 
 ### Misc
+- [API] Improve performance of some calls over list.
 - Lots of small and not so small bugfixes.
 
 

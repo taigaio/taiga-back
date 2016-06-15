@@ -21,14 +21,18 @@ from django.utils.translation import ugettext as _
 from taiga.base.api import serializers
 from taiga.base.utils import json
 from taiga.projects.notifications.mixins import WatchedResourceModelSerializer
+from taiga.projects.notifications.mixins import ListWatchedResourceModelSerializer
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.mixins.serializers import ValidateDuplicatedNameInProjectMixin
-from ..userstories.serializers import UserStoryListSerializer
+from taiga.projects.userstories.serializers import UserStoryListSerializer
+
 from . import models
 
+import serpy
 
-class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer, ValidateDuplicatedNameInProjectMixin):
-    user_stories = UserStoryListSerializer(many=True, required=False, read_only=True)
+
+class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer,
+                          ValidateDuplicatedNameInProjectMixin):
     total_points = serializers.SerializerMethodField("get_total_points")
     closed_points = serializers.SerializerMethodField("get_closed_points")
 
@@ -41,3 +45,25 @@ class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer, Val
 
     def get_closed_points(self, obj):
         return sum(obj.closed_points.values())
+
+
+class MilestoneListSerializer(ListWatchedResourceModelSerializer, serializers.LightSerializer):
+    id = serpy.Field()
+    name = serpy.Field()
+    slug = serpy.Field()
+    owner = serpy.Field(attr="owner_id")
+    project = serpy.Field(attr="project_id")
+    estimated_start = serpy.Field()
+    estimated_finish = serpy.Field()
+    created_date = serpy.Field()
+    modified_date = serpy.Field()
+    closed = serpy.Field()
+    disponibility = serpy.Field()
+    order = serpy.Field()
+    watchers = serpy.Field()
+    user_stories = serpy.MethodField("get_user_stories")
+    total_points = serializers.Field(source="total_points_attr")
+    closed_points = serializers.Field(source="closed_points_attr")
+
+    def get_user_stories(self, obj):
+        return UserStoryListSerializer(obj.user_stories.all(), many=True).data

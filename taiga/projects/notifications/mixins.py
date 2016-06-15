@@ -15,6 +15,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import serpy
+
 from functools import partial
 from operator import is_not
 
@@ -183,10 +186,7 @@ class WatchedModelMixin(object):
         return frozenset(filter(is_not_none, participants))
 
 
-class WatchedResourceModelSerializer(serializers.ModelSerializer):
-    is_watcher = serializers.SerializerMethodField("get_is_watcher")
-    total_watchers = serializers.SerializerMethodField("get_total_watchers")
-
+class BaseWatchedResourceModelSerializer(object):
     def get_is_watcher(self, obj):
         if "request" in self.context:
             user = self.context["request"].user
@@ -197,6 +197,16 @@ class WatchedResourceModelSerializer(serializers.ModelSerializer):
     def get_total_watchers(self, obj):
         # The "total_watchers" attribute is attached in the get_queryset of the viewset.
         return getattr(obj, "total_watchers", 0) or 0
+
+
+class WatchedResourceModelSerializer(BaseWatchedResourceModelSerializer, serializers.ModelSerializer):
+    is_watcher = serializers.SerializerMethodField("get_is_watcher")
+    total_watchers = serializers.SerializerMethodField("get_total_watchers")
+
+
+class ListWatchedResourceModelSerializer(BaseWatchedResourceModelSerializer, serpy.Serializer):
+    is_watcher = serializers.SerializerMethodField("get_is_watcher")
+    total_watchers = serializers.SerializerMethodField("get_total_watchers")
 
 
 class EditableWatchedResourceModelSerializer(WatchedResourceModelSerializer):

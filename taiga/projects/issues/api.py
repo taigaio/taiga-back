@@ -65,6 +65,7 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
                                 filters.WatchersFilter,)
 
     filter_fields = ("project",
+                     "project__slug",
                      "status__is_closed")
 
     order_by_fields = ("type",
