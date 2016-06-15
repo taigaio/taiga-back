@@ -50,6 +50,28 @@ from taiga.projects.notifications import services as notifications_services
 from taiga.projects.votes import services as votes_service
 from taiga.projects.history import services as history_service
 
+_cache_user_by_pk = {}
+_cache_user_by_email = {}
+_custom_tasks_attributes_cache = {}
+_custom_issues_attributes_cache = {}
+_custom_userstories_attributes_cache = {}
+
+def cached_get_user_by_pk(pk):
+    if pk not in _cache_user_by_pk:
+        try:
+            _cache_user_by_pk[pk] = users_models.User.objects.get(pk=pk)
+        except Exception:
+            _cache_user_by_pk[pk] = users_models.User.objects.get(pk=pk)
+    return _cache_user_by_pk[pk]
+
+def cached_get_user_by_email(email):
+    if email not in _cache_user_by_email:
+        try:
+            _cache_user_by_email[email] = users_models.User.objects.get(email=email)
+        except Exception:
+            _cache_user_by_email[email] = users_models.User.objects.get(email=email)
+    return _cache_user_by_email[email]
+
 
 class FileField(serializers.WritableField):
     read_only = False
@@ -128,7 +150,7 @@ class UserRelatedField(RelatedNoneSafeField):
 
     def from_native(self, data):
         try:
-            return users_models.User.objects.get(email=data)
+            return cached_get_user_by_email(data)
         except users_models.User.DoesNotExist:
             return None
 
@@ -138,14 +160,14 @@ class UserPkField(serializers.RelatedField):
 
     def to_native(self, obj):
         try:
-            user = users_models.User.objects.get(pk=obj)
+            user = cached_get_user_by_pk(obj)
             return user.email
         except users_models.User.DoesNotExist:
             return None
 
     def from_native(self, data):
         try:
-            user = users_models.User.objects.get(email=data)
+            user = cached_get_user_by_email(data)
             return user.pk
         except users_models.User.DoesNotExist:
             return None
@@ -185,7 +207,7 @@ class HistoryUserField(JsonField):
         if obj is None or obj == {}:
             return []
         try:
-            user = users_models.User.objects.get(pk=obj['pk'])
+            user = cached_get_user_by_pk(obj['pk'])
         except users_models.User.DoesNotExist:
             user = None
         return (UserRelatedField().to_native(user), obj['name'])
@@ -420,7 +442,7 @@ class CustomAttributesValuesExportSerializerMixin(serializers.ModelSerializer):
 
         try:
             values =  obj.custom_attributes_values.attributes_values
-            custom_attributes = self.custom_attributes_queryset(obj.project).values('id', 'name')
+            custom_attributes = self.custom_attributes_queryset(obj.project)
 
             return _use_name_instead_id_as_key_in_custom_attributes_values(custom_attributes, values)
         except ObjectDoesNotExist:
@@ -550,7 +572,9 @@ class TaskExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryE
         exclude = ('id', 'project')
 
     def custom_attributes_queryset(self, project):
-        return project.taskcustomattributes.all()
+        if project.id not in _custom_tasks_attributes_cache:
+            _custom_tasks_attributes_cache[project.id] = list(project.taskcustomattributes.all().values('id', 'name'))
+        return _custom_tasks_attributes_cache[project.id]
 
 
 class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
@@ -568,7 +592,9 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin, His
         exclude = ('id', 'project', 'points', 'tasks')
 
     def custom_attributes_queryset(self, project):
-        return project.userstorycustomattributes.all()
+        if project.id not in _custom_userstories_attributes_cache:
+            _custom_userstories_attributes_cache[project.id] = list(project.userstorycustomattributes.all().values('id', 'name'))
+        return _custom_userstories_attributes_cache[project.id]
 
 
 class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
@@ -591,7 +617,9 @@ class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin, History
         return [x.email for x in votes_service.get_voters(obj)]
 
     def custom_attributes_queryset(self, project):
-        return project.issuecustomattributes.all()
+        if project.id not in _custom_issues_attributes_cache:
+            _custom_issues_attributes_cache[project.id] = list(project.issuecustomattributes.all().values('id', 'name'))
+        return _custom_issues_attributes_cache[project.id]
 
 
 class WikiPageExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin,
@@ -618,17 +646,17 @@ class TimelineDataField(serializers.WritableField):
     def to_native(self, data):
         new_data = copy.deepcopy(data)
         try:
-            user = users_models.User.objects.get(pk=new_data["user"]["id"])
+            user = cached_get_user_by_pk(new_data["user"]["id"])
             new_data["user"]["email"] = user.email
             del new_data["user"]["id"]
-        except users_models.User.DoesNotExist:
+        except Exception:
             pass
         return new_data
 
     def from_native(self, data):
         new_data = copy.deepcopy(data)
         try:
-            user = users_models.User.objects.get(email=new_data["user"]["email"])
+            user = cached_get_user_by_email(new_data["user"]["email"])
             new_data["user"]["id"] = user.id
             del new_data["user"]["email"]
         except users_models.User.DoesNotExist:
