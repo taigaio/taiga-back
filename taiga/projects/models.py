@@ -717,6 +717,8 @@ class ProjectTemplate(models.Model):
                             verbose_name=_("slug"), unique=True)
     description = models.TextField(null=False, blank=False,
                                    verbose_name=_("description"))
+    order = models.IntegerField(default=10000, null=False, blank=False,
+                                verbose_name=_("user order"))
     created_date = models.DateTimeField(null=False, blank=False,
                                         verbose_name=_("created date"),
                                         default=timezone.now)
@@ -754,7 +756,7 @@ class ProjectTemplate(models.Model):
     class Meta:
         verbose_name = "project template"
         verbose_name_plural = "project templates"
-        ordering = ["name"]
+        ordering = ["order", "name"]
 
     def __str__(self):
         return self.name

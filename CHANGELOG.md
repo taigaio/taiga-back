@@ -5,6 +5,7 @@
 ### Features
 - Include created, modified and finished dates for tasks in CSV reports.
 - Add gravatar url to Users API endpoint.
+- ProjectTemplates now are sorted by the attribute 'order'.
 - Comments:
     - Now comment owners and project admins can edit existing comments with the history Entry endpoint.
     - Add a new permissions to allow add comments instead of use the existent modify permission for this purpose.
