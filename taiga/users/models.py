@@ -26,6 +26,7 @@ from django.apps.config import MODELS_MODULE_NAME
 from django.conf import settings
 from django.contrib.auth.models import UserManager, AbstractBaseUser
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.postgres.fields import ArrayField
 from django.core import validators
 from django.core.exceptions import AppRegistryNotReady
 from django.db import models
@@ -34,7 +35,6 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from django_pgjson.fields import JsonField
-from djorm_pgarray.fields import TextArrayField
 
 from taiga.auth.tokens import get_token_for_user
 from taiga.base.utils.slug import slugify_uniquely
@@ -53,8 +53,8 @@ def get_user_model_safe():
     registry not being ready yet.
     Raises LookupError if model isn't found.
 
-    Based on:               https://github.com/django-oscar/django-oscar/blob/1.0/oscar/core/loading.py#L310-L340
-    Ongoing Django issue:   https://code.djangoproject.com/ticket/22872
+    Based on: https://github.com/django-oscar/django-oscar/blob/1.0/oscar/core/loading.py#L310-L340
+    Ongoing Django issue: https://code.djangoproject.com/ticket/22872
     """
     user_app, user_model = settings.AUTH_USER_MODEL.split('.')
 
@@ -293,10 +293,8 @@ class Role(models.Model):
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, null=False, blank=True,
                             verbose_name=_("slug"))
-    permissions = TextArrayField(blank=True, null=True,
-                                 default=[],
-                                 verbose_name=_("permissions"),
-                                 choices=MEMBERS_PERMISSIONS)
+    permissions = ArrayField(models.TextField(null=False, blank=False, choices=MEMBERS_PERMISSIONS),
+                             null=True, blank=True, default=[], verbose_name=_("permissions"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
     # null=True is for make work django 1.7 migrations. project

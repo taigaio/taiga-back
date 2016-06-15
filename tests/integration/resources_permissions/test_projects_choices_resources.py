@@ -27,20 +27,24 @@ def data():
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=['view_project'],
                                         public_permissions=['view_project'],
-                                        owner=m.project_owner)
+                                        owner=m.project_owner,
+                                        tags_colors = [("tag1", "#123123"), ("tag2", "#456456"), ("tag3", "#111222")])
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=['view_project'],
                                           public_permissions=['view_project'],
-                                          owner=m.project_owner)
+                                          owner=m.project_owner,
+                                          tags_colors = [("tag1", "#123123"), ("tag2", "#456456"), ("tag3", "#111222")])
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
                                           public_permissions=[],
-                                          owner=m.project_owner)
+                                          owner=m.project_owner,
+                                          tags_colors = [("tag1", "#123123"), ("tag2", "#456456"), ("tag3", "#111222")])
     m.blocked_project = f.ProjectFactory(is_private=True,
                                          anon_permissions=[],
                                          public_permissions=[],
                                          owner=m.project_owner,
-                                         blocked_code=project_choices.BLOCKED_BY_STAFF)
+                                         blocked_code=project_choices.BLOCKED_BY_STAFF,
+                                         tags_colors = [("tag1", "#123123"), ("tag2", "#456456"), ("tag3", "#111222")])
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
                                               user=m.project_member_with_perms,
@@ -1911,3 +1915,127 @@ def test_project_template_patch(client, data):
 
     results = helper_test_http_method(client, 'patch', url, '{"name": "Test"}', users)
     assert results == [401, 403, 200]
+
+
+def test_create_tag(client, data):
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    post_data = json.dumps({
+        "tag": "testtest",
+        "color": "#123123"
+    })
+
+    url = reverse('projects-create-tag', kwargs={"pk": data.public_project.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    url = reverse('projects-create-tag', kwargs={"pk": data.private_project1.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    url = reverse('projects-create-tag', kwargs={"pk": data.private_project2.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [404, 404, 404, 403, 200]
+
+    url = reverse('projects-create-tag', kwargs={"pk": data.blocked_project.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [404, 404, 404, 403, 451]
+
+
+def test_edit_tag(client, data):
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    post_data = json.dumps({
+        "from_tag": "tag1",
+        "to_tag": "renamedtag1",
+        "color": "#123123"
+    })
+
+    url = reverse('projects-edit-tag', kwargs={"pk": data.public_project.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    url = reverse('projects-edit-tag', kwargs={"pk": data.private_project1.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    url = reverse('projects-edit-tag', kwargs={"pk": data.private_project2.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [404, 404, 404, 403, 200]
+
+    url = reverse('projects-edit-tag', kwargs={"pk": data.blocked_project.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [404, 404, 404, 403, 451]
+
+
+def test_delete_tag(client, data):
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    post_data = json.dumps({
+        "tag": "tag2",
+    })
+
+    url = reverse('projects-delete-tag', kwargs={"pk": data.public_project.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    url = reverse('projects-delete-tag', kwargs={"pk": data.private_project1.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    url = reverse('projects-delete-tag', kwargs={"pk": data.private_project2.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [404, 404, 404, 403, 200]
+
+    url = reverse('projects-delete-tag', kwargs={"pk": data.blocked_project.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [404, 404, 404, 403, 451]
+
+
+def test_mix_tags(client, data):
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    post_data = json.dumps({
+        "from_tags": ["tag1"],
+        "to_tag": "tag3"
+    })
+
+    url = reverse('projects-mix-tags', kwargs={"pk": data.public_project.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    url = reverse('projects-mix-tags', kwargs={"pk": data.private_project1.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    url = reverse('projects-mix-tags', kwargs={"pk": data.private_project2.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [404, 404, 404, 403, 200]
+
+    url = reverse('projects-mix-tags', kwargs={"pk": data.blocked_project.pk})
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [404, 404, 404, 403, 451]

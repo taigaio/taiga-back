@@ -18,14 +18,14 @@
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
-from djorm_pgarray.fields import TextArrayField
 from picklefield.fields import PickledObjectField
 
-from taiga.base.tags import TaggedMixin
+from taiga.projects.tagging.models import TaggedMixin
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
@@ -103,7 +103,8 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
                                              on_delete=models.SET_NULL,
                                              related_name="generated_user_stories",
                                              verbose_name=_("generated from issue"))
-    external_reference = TextArrayField(default=None, verbose_name=_("external reference"))
+    external_reference = ArrayField(ArrayField(models.TextField(null=True, blank=True), size=2),
+                             null=True, blank=True, default=[], verbose_name=_("external reference"))
 
     tribe_gig = PickledObjectField(null=True, blank=True, default=None,
                                    verbose_name="taiga tribe gig")

@@ -18,7 +18,6 @@
 
 from django.forms import widgets
 from django.utils.translation import ugettext as _
-
 from taiga.base.api import serializers
 
 
@@ -97,35 +96,6 @@ class PickledObjectField(serializers.WritableField):
 
     def from_native(self, data):
         return data
-
-
-class TagsField(serializers.WritableField):
-    """
-    Pickle objects serializer.
-    """
-    def to_native(self, obj):
-        return obj
-
-    def from_native(self, data):
-        if not data:
-            return data
-
-        ret = sum([tag.split(",") for tag in data], [])
-        return ret
-
-
-class TagsColorsField(serializers.WritableField):
-    """
-    PgArray objects serializer.
-    """
-    widget = widgets.Textarea
-
-    def to_native(self, obj):
-        return dict(obj)
-
-    def from_native(self, data):
-        return list(data.items())
-
 
 
 class WatchersField(serializers.WritableField):

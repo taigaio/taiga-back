@@ -481,7 +481,7 @@ def test_get_watched_list_valid_info_for_project():
     fav_user = f.UserFactory()
     viewer_user = f.UserFactory()
 
-    project = f.ProjectFactory(is_private=False, name="Testing project", tags=['test', 'tag'])
+    project = f.ProjectFactory(is_private=False, name="Testing project")
     role = f.RoleFactory(project=project, permissions=["view_project", "view_us", "view_tasks", "view_issues"])
     project.add_watcher(fav_user)
 
@@ -499,11 +499,6 @@ def test_get_watched_list_valid_info_for_project():
     assert project_watch_info["assigned_to"] == None
     assert project_watch_info["status"] == None
     assert project_watch_info["status_color"] == None
-
-    tags_colors = {tc["name"]:tc["color"] for tc in project_watch_info["tags_colors"]}
-    assert "test" in tags_colors
-    assert "tag" in tags_colors
-
     assert project_watch_info["is_private"] == project.is_private
     assert project_watch_info["logo_small_url"] ==  get_thumbnail_url(project.logo, settings.THN_LOGO_SMALL)
     assert project_watch_info["is_fan"] == False
@@ -540,7 +535,7 @@ def test_get_liked_list_valid_info():
     fan_user = f.UserFactory()
     viewer_user = f.UserFactory()
 
-    project = f.ProjectFactory(is_private=False, name="Testing project", tags=['test', 'tag'])
+    project = f.ProjectFactory(is_private=False, name="Testing project")
     content_type = ContentType.objects.get_for_model(project)
     like = f.LikeFactory(content_type=content_type, object_id=project.id, user=fan_user)
     project.refresh_totals()
@@ -558,11 +553,6 @@ def test_get_liked_list_valid_info():
     assert project_like_info["assigned_to"] == None
     assert project_like_info["status"] == None
     assert project_like_info["status_color"] == None
-
-    tags_colors = {tc["name"]:tc["color"] for tc in project_like_info["tags_colors"]}
-    assert "test" in tags_colors
-    assert "tag" in tags_colors
-
     assert project_like_info["is_private"] == project.is_private
     assert project_like_info["logo_small_url"] ==  get_thumbnail_url(project.logo, settings.THN_LOGO_SMALL)
 

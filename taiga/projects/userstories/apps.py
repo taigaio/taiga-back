@@ -23,6 +23,7 @@ from django.db.models import signals
 
 def connect_userstories_signals():
     from taiga.projects import signals as generic_handlers
+    from taiga.projects.tagging import signals as tagging_handlers
     from . import signals as handlers
 
     # When deleting user stories we must disable task signals while delating and
@@ -59,15 +60,9 @@ def connect_userstories_signals():
                                 dispatch_uid="try_to_close_milestone_when_delete_us")
 
     # Tags
-    signals.pre_save.connect(generic_handlers.tags_normalization,
+    signals.pre_save.connect(tagging_handlers.tags_normalization,
                              sender=apps.get_model("userstories", "UserStory"),
                              dispatch_uid="tags_normalization_user_story")
-    signals.post_save.connect(generic_handlers.update_project_tags_when_create_or_edit_taggable_item,
-                              sender=apps.get_model("userstories", "UserStory"),
-                              dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_user_story")
-    signals.post_delete.connect(generic_handlers.update_project_tags_when_delete_taggable_item,
-                                sender=apps.get_model("userstories", "UserStory"),
-                                dispatch_uid="update_project_tags_when_delete_taggable_item_user_story")
 
 
 def connect_userstories_custom_attributes_signals():
@@ -83,18 +78,27 @@ def connect_all_userstories_signals():
 
 
 def disconnect_userstories_signals():
-    signals.pre_save.disconnect(sender=apps.get_model("userstories", "UserStory"), dispatch_uid="cached_prev_us")
-    signals.post_save.disconnect(sender=apps.get_model("userstories", "UserStory"), dispatch_uid="update_role_points_when_create_or_edit_us")
-    signals.post_save.disconnect(sender=apps.get_model("userstories", "UserStory"), dispatch_uid="update_milestone_of_tasks_when_edit_us")
-    signals.post_save.disconnect(sender=apps.get_model("userstories", "UserStory"), dispatch_uid="try_to_close_or_open_us_and_milestone_when_create_or_edit_us")
-    signals.post_delete.disconnect(sender=apps.get_model("userstories", "UserStory"), dispatch_uid="try_to_close_milestone_when_delete_us")
-    signals.pre_save.disconnect(sender=apps.get_model("userstories", "UserStory"), dispatch_uid="tags_normalization_user_story")
-    signals.post_save.disconnect(sender=apps.get_model("userstories", "UserStory"), dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_user_story")
-    signals.post_delete.disconnect(sender=apps.get_model("userstories", "UserStory"), dispatch_uid="update_project_tags_when_delete_taggable_item_user_story")
+    signals.pre_save.disconnect(sender=apps.get_model("userstories", "UserStory"),
+                                dispatch_uid="cached_prev_us")
+
+    signals.post_save.disconnect(sender=apps.get_model("userstories", "UserStory"),
+                                 dispatch_uid="update_role_points_when_create_or_edit_us")
+
+    signals.post_save.disconnect(sender=apps.get_model("userstories", "UserStory"),
+                                 dispatch_uid="update_milestone_of_tasks_when_edit_us")
+
+    signals.post_save.disconnect(sender=apps.get_model("userstories", "UserStory"),
+                                 dispatch_uid="try_to_close_or_open_us_and_milestone_when_create_or_edit_us")
+    signals.post_delete.disconnect(sender=apps.get_model("userstories", "UserStory"),
+                                   dispatch_uid="try_to_close_milestone_when_delete_us")
+
+    signals.pre_save.disconnect(sender=apps.get_model("userstories", "UserStory"),
+                                dispatch_uid="tags_normalization_user_story")
 
 
 def disconnect_userstories_custom_attributes_signals():
-    signals.post_save.disconnect(sender=apps.get_model("userstories", "UserStory"), dispatch_uid="create_custom_attribute_value_when_create_user_story")
+    signals.post_save.disconnect(sender=apps.get_model("userstories", "UserStory"),
+                                 dispatch_uid="create_custom_attribute_value_when_create_user_story")
 
 
 def disconnect_all_userstories_signals():

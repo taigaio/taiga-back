@@ -17,19 +17,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
-
-from taiga.base.fields import TagsField
 from taiga.base.fields import PgArrayField
-
 from taiga.base.neighbors import NeighborsSerializerMixin
 
-from taiga.mdrender.service import render as mdrender
-from taiga.projects.validators import ProjectExistsValidator
+
 from taiga.projects.milestones.validators import SprintExistsValidator
-from taiga.projects.tasks.validators import TaskExistsValidator
+from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicTaskStatusSerializerSerializer
-from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
+from taiga.mdrender.service import render as mdrender
+from taiga.projects.tagging.fields import TagsAndTagsColorsField
+from taiga.projects.tasks.validators import TaskExistsValidator
+from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
 
 from taiga.users.serializers import UserBasicInfoSerializer
@@ -37,14 +36,15 @@ from taiga.users.serializers import UserBasicInfoSerializer
 from . import models
 
 
-class TaskSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer, serializers.ModelSerializer):
-    tags = TagsField(required=False, default=[])
+class TaskSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer,
+                     serializers.ModelSerializer):
+    tags = TagsAndTagsColorsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
     comment = serializers.SerializerMethodField("get_comment")
     milestone_slug = serializers.SerializerMethodField("get_milestone_slug")
     blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
     description_html = serializers.SerializerMethodField("get_description_html")
-    is_closed =  serializers.SerializerMethodField("get_is_closed")
+    is_closed = serializers.SerializerMethodField("get_is_closed")
     status_extra_info = BasicTaskStatusSerializerSerializer(source="status", required=False, read_only=True)
     assigned_to_extra_info = UserBasicInfoSerializer(source="assigned_to", required=False, read_only=True)
     owner_extra_info = UserBasicInfoSerializer(source="owner", required=False, read_only=True)
@@ -76,7 +76,7 @@ class TaskListSerializer(TaskSerializer):
     class Meta:
         model = models.Task
         read_only_fields = ('id', 'ref', 'created_date', 'modified_date')
-        exclude=("description", "description_html")
+        exclude = ("description", "description_html")
 
 
 class TaskNeighborsSerializer(NeighborsSerializerMixin, TaskSerializer):
@@ -100,6 +100,7 @@ class TasksBulkSerializer(ProjectExistsValidator, SprintExistsValidator,
     status_id = serializers.IntegerField(required=False)
     us_id = serializers.IntegerField(required=False)
     bulk_tasks = serializers.CharField()
+
 
 ## Order bulk serializers
 

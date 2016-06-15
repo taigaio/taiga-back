@@ -19,7 +19,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 
 from taiga.base.api import serializers
-from taiga.base.fields import TagsField, PgArrayField, JsonField
+from taiga.base.fields import PgArrayField, JsonField
 
 from taiga.front.templatetags.functions import resolve as resolve_front_url
 
@@ -29,6 +29,7 @@ from taiga.projects.milestones import models as milestone_models
 from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
 from taiga.projects.services import get_logo_big_thumbnail_url
 from taiga.projects.tasks import models as task_models
+from taiga.projects.tagging.fields import TagsField
 from taiga.projects.userstories import models as us_models
 from taiga.projects.wiki import models as wiki_models
 

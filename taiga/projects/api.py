@@ -22,38 +22,38 @@ from dateutil.relativedelta import relativedelta
 
 from django.apps import apps
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db.models import signals, Prefetch
 from django.db.models import Value as V
 from django.db.models.functions import Coalesce
-from django.core.exceptions import ValidationError
+from django.http import Http404
 from django.utils.translation import ugettext as _
 from django.utils import timezone
-from django.http import Http404
 
 from taiga.base import filters
-from taiga.base import response
 from taiga.base import exceptions as exc
-from taiga.base.decorators import list_route
-from taiga.base.decorators import detail_route
+from taiga.base import response
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin, BlockeableSaveMixin, BlockeableDeleteMixin
 from taiga.base.api.permissions import AllowAnyPermission
 from taiga.base.api.utils import get_object_or_404
+from taiga.base.decorators import list_route
+from taiga.base.decorators import detail_route
 from taiga.base.utils.slug import slugify_uniquely
 
+from taiga.permissions import services as permissions_services
 from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.issues.models import Issue
+from taiga.projects.likes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
 from taiga.projects.notifications.models import NotifyPolicy
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.notifications.choices import NotifyLevel
-
-from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
+from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
+from taiga.projects.tasks.models import Task
+from taiga.projects.tagging.api import TagsColorsResourceMixin
 
 from taiga.projects.userstories.models import UserStory, RolePoints
-from taiga.projects.tasks.models import Task
-from taiga.projects.issues.models import Issue
-from taiga.projects.likes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
-from taiga.permissions import services as permissions_services
 from taiga.users import services as users_services
 
 from . import filters as project_filters
@@ -66,9 +66,9 @@ from . import services
 ######################################################
 ## Project
 ######################################################
-class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
-                     BlockeableSaveMixin, BlockeableDeleteMixin, ModelCrudViewSet):
 
+class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, BlockeableSaveMixin, BlockeableDeleteMixin,
+                     TagsColorsResourceMixin, ModelCrudViewSet):
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectDetailSerializer
     admin_serializer_class = serializers.ProjectDetailAdminSerializer
@@ -327,12 +327,6 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         self.check_permissions(request, "issues_stats", project)
         return response.Ok(services.get_stats_for_project_issues(project))
 
-    @detail_route(methods=["GET"])
-    def tags_colors(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "tags_colors", project)
-        return response.Ok(dict(project.tags_colors))
-
     @detail_route(methods=["POST"])
     def transfer_validate_token(self, request, pk=None):
         project = self.get_object()
@@ -404,6 +398,10 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         reason = request.DATA.get('reason', None)
         services.reject_project_transfer(project, request.user, token, reason)
         return response.Ok()
+
+    def _raise_if_blocked(self, project):
+        if self.is_blocked(project):
+            raise exc.Blocked(_("Blocked element"))
 
     def _set_base_permissions(self, obj):
         update_permissions = False

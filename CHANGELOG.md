@@ -3,10 +3,15 @@
 ## 2.2.0 ??? (unreleased)
 
 ### Features
-- Now comment owners and project admins can edit existing comments with the history Entry endpoint.
-- Add a new permissions to allow add comments instead of use the existent modify permission for this purpose.
-- Include created, modified and finished dates for tasks in CSV reports
+- Include created, modified and finished dates for tasks in CSV reports.
 - Add gravatar url to Users API endpoint.
+- Comments:
+    - Now comment owners and project admins can edit existing comments with the history Entry endpoint.
+    - Add a new permissions to allow add comments instead of use the existent modify permission for this purpose.
+- Tags:
+    - New API endpoints over projects to create, rename, edit, delete and mix tags.
+    - Tag color assignation is not automatic.
+    - Select a color (or not) to a tag when add it to stories, issues and tasks.
 
 ### Misc
 - Lots of small and not so small bugfixes.

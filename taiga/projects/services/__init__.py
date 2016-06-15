@@ -55,7 +55,5 @@ from .stats import get_stats_for_project_issues
 from .stats import get_stats_for_project
 from .stats import get_member_stats_for_project
 
-from .tags_colors import update_project_tags_colors_handler
-
 from .transfer import request_project_transfer, start_project_transfer
 from .transfer import accept_project_transfer, reject_project_transfer
