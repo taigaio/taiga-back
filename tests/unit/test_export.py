@@ -28,7 +28,7 @@ pytestmark = pytest.mark.django_db
 
 def test_export_issue_finish_date(client):
     issue = f.IssueFactory.create(finished_date="2014-10-22")
-    output = io.StringIO()
+    output = io.BytesIO()
     render_project(issue.project, output)
     project_data = json.loads(output.getvalue())
     finish_date = project_data["issues"][0]["finished_date"]
@@ -37,7 +37,7 @@ def test_export_issue_finish_date(client):
 
 def test_export_user_story_finish_date(client):
     user_story = f.UserStoryFactory.create(finish_date="2014-10-22")
-    output = io.StringIO()
+    output = io.BytesIO()
     render_project(user_story.project, output)
     project_data = json.loads(output.getvalue())
     finish_date = project_data["user_stories"][0]["finish_date"]
