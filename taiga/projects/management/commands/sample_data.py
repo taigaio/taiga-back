@@ -113,6 +113,7 @@ NUM_TASKS_FINISHED = getattr(settings, "SAMPLE_DATA_NUM_TASKS_FINISHED", (1, 5))
 NUM_TASKS = getattr(settings, "SAMPLE_DATA_NUM_TASKS", (0, 4))
 NUM_USS_BACK = getattr(settings, "SAMPLE_DATA_NUM_USS_BACK", (8, 20))
 NUM_ISSUES = getattr(settings, "SAMPLE_DATA_NUM_ISSUES", (12, 25))
+NUM_WIKI_LINKS = getattr(settings, "SAMPLE_DATA_NUM_WIKI_LINKS", (0, 15))
 NUM_ATTACHMENTS = getattr(settings, "SAMPLE_DATA_NUM_ATTACHMENTS", (0, 4))
 NUM_LIKES = getattr(settings, "SAMPLE_DATA_NUM_LIKES", (0, 10))
 NUM_VOTES = getattr(settings, "SAMPLE_DATA_NUM_VOTES", (0, 10))
@@ -186,22 +187,25 @@ class Command(BaseCommand):
 
             # added custom attributes
             if self.sd.boolean:
-                for i in range(1, 4):
-                    UserStoryCustomAttribute.objects.create(name=self.sd.words(1, 3),
+                names = set([self.sd.words(1, 3) for i in range(1, 6)])
+                for name in names:
+                    UserStoryCustomAttribute.objects.create(name=name,
                                                             description=self.sd.words(3, 12),
                                                             type=self.sd.choice(TYPES_CHOICES)[0],
                                                             project=project,
                                                             order=i)
             if self.sd.boolean:
-                for i in range(1, 4):
-                    TaskCustomAttribute.objects.create(name=self.sd.words(1, 3),
+                names = set([self.sd.words(1, 3) for i in range(1, 6)])
+                for name in names:
+                    TaskCustomAttribute.objects.create(name=name,
                                                        description=self.sd.words(3, 12),
                                                        type=self.sd.choice(TYPES_CHOICES)[0],
                                                        project=project,
                                                        order=i)
             if self.sd.boolean:
-                for i in range(1, 4):
-                    IssueCustomAttribute.objects.create(name=self.sd.words(1, 3),
+                names = set([self.sd.words(1, 3) for i in range(1, 6)])
+                for name in names:
+                    IssueCustomAttribute.objects.create(name=name,
                                                         description=self.sd.words(3, 12),
                                                         type=self.sd.choice(TYPES_CHOICES)[0],
                                                         project=project,
@@ -243,8 +247,14 @@ class Command(BaseCommand):
                 for y in range(self.sd.int(*NUM_ISSUES)):
                     bug = self.create_bug(project)
 
-                # create a wiki page
-                wiki_page = self.create_wiki(project, "home")
+                # create a wiki pages and wiki links
+                wiki_page = self.create_wiki_page(project, "home")
+
+                for y in range(self.sd.int(*NUM_WIKI_LINKS)):
+                    wiki_link = self.create_wiki_link(project)
+                    if self.sd.boolean():
+                        self.create_wiki_page(project, wiki_link.href)
+
 
             # Set a value to total_story_points to show the deadline in the backlog
             project_stats = get_stats_for_project(project)
@@ -270,7 +280,14 @@ class Command(BaseCommand):
                                                attached_file=attached_file)
         return attachment
 
-    def create_wiki(self, project, slug):
+
+    def create_wiki_link(self, project, title=None):
+        wiki_link = WikiLink.objects.create(project=project,
+                                            title=title or self.sd.words(1, 3))
+        return wiki_link
+
+
+    def create_wiki_page(self, project, slug):
         wiki_page = WikiPage.objects.create(project=project,
                                             slug=slug,
                                             content=self.sd.paragraphs(3,15),
