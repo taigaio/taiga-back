@@ -34,13 +34,13 @@ from .. import serializers
 
 def render_project(project, outfile, chunk_size = 8190):
     serializer = serializers.ProjectExportSerializer(project)
-    outfile.write('{\n')
+    outfile.write(b'{\n')
 
     first_field = True
     for field_name in serializer.fields.keys():
         # Avoid writing "," in the last element
         if not first_field:
-            outfile.write(",\n")
+            outfile.write(b",\n")
         else:
             first_field = False
 
@@ -56,7 +56,7 @@ def render_project(project, outfile, chunk_size = 8190):
                 value = value.select_related('severity', 'priority', 'type')
             value = value.prefetch_related('history_entry', 'attachments')
 
-            outfile.write('"{}": [\n'.format(field_name))
+            outfile.write('"{}": [\n'.format(field_name).encode())
 
             attachments_field = field.fields.pop("attachments", None)
             if attachments_field:
@@ -66,20 +66,20 @@ def render_project(project, outfile, chunk_size = 8190):
             for item in value.iterator():
                 # Avoid writing "," in the last element
                 if not first_item:
-                    outfile.write(",\n")
+                    outfile.write(b",\n")
                 else:
                     first_item = False
 
 
                 dumped_value = json.dumps(field.to_native(item))
                 writing_value = dumped_value[:-1]+ ',\n    "attachments": [\n'
-                outfile.write(writing_value)
+                outfile.write(writing_value.encode())
 
                 first_attachment = True
                 for attachment in item.attachments.iterator():
                     # Avoid writing "," in the last element
                     if not first_attachment:
-                        outfile.write(",\n")
+                        outfile.write(b",\n")
                     else:
                         first_attachment = False
 
@@ -88,7 +88,7 @@ def render_project(project, outfile, chunk_size = 8190):
                     attached_file_serializer = attachment_serializer.fields.pop("attached_file")
                     dumped_value = json.dumps(attachment_serializer.data)
                     dumped_value = dumped_value[:-1] + ',\n        "attached_file":{\n            "data":"'
-                    outfile.write(dumped_value)
+                    outfile.write(dumped_value.encode())
 
                     # We write the attached_files by chunks so the memory used is not increased
                     attachment_file = attachment.attached_file
@@ -99,32 +99,32 @@ def render_project(project, outfile, chunk_size = 8190):
                                 if not bin_data:
                                     break
 
-                                b64_data = base64.b64encode(bin_data).decode('utf-8')
+                                b64_data = base64.b64encode(bin_data)
                                 outfile.write(b64_data)
 
                     outfile.write('", \n            "name":"{}"}}\n}}'.format(
-                                        os.path.basename(attachment_file.name)))
+                                        os.path.basename(attachment_file.name)).encode())
 
-                outfile.write(']}')
+                outfile.write(b']}')
                 outfile.flush()
             gc.collect()
-            outfile.write(']')
+            outfile.write(b']')
         else:
             value = field.field_to_native(project, field_name)
-            outfile.write('"{}": {}'.format(field_name, json.dumps(value)))
+            outfile.write('"{}": {}'.format(field_name, json.dumps(value)).encode())
 
     # Generate the timeline
-    outfile.write(',\n"timeline": [\n')
+    outfile.write(b',\n"timeline": [\n')
     first_timeline = True
     for timeline_item in get_project_timeline(project).iterator():
         # Avoid writing "," in the last element
         if not first_timeline:
-            outfile.write(",\n")
+            outfile.write(b",\n")
         else:
             first_timeline = False
 
         dumped_value = json.dumps(serializers.TimelineExportSerializer(timeline_item).data)
-        outfile.write(dumped_value)
+        outfile.write(dumped_value.encode())
 
-    outfile.write(']}\n')
+    outfile.write(b']}\n')
 
