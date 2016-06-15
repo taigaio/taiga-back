@@ -50,6 +50,12 @@ def render_project(project, outfile, chunk_size = 8190):
         # These four "special" fields hava attachments so we use them in a special way
         if field_name in ["wiki_pages", "user_stories", "tasks", "issues"]:
             value = get_component(project, field_name)
+            if field_name != "wiki_pages":
+                value = value.select_related('owner', 'status', 'milestone', 'project', 'assigned_to', 'custom_attributes_values')
+            if field_name == "issues":
+                value = value.select_related('severity', 'priority', 'type')
+            value = value.prefetch_related('history_entry', 'attachments')
+
             outfile.write('"{}": [\n'.format(field_name))
 
             attachments_field = field.fields.pop("attachments", None)
@@ -101,9 +107,8 @@ def render_project(project, outfile, chunk_size = 8190):
 
                 outfile.write(']}')
                 outfile.flush()
-                gc.collect()
+            gc.collect()
             outfile.write(']')
-
         else:
             value = field.field_to_native(project, field_name)
             outfile.write('"{}": {}'.format(field_name, json.dumps(value)))
