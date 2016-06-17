@@ -25,6 +25,7 @@ from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType
 
 from taiga.base.api import serializers
 from taiga.base.fields import JsonField
@@ -66,6 +67,21 @@ class FileField(serializers.WritableField):
             decoded_data += base64.b64decode(decoding_chunk+"=")
 
         return ContentFile(decoded_data, name=data['name'])
+
+
+class ContentTypeField(serializers.RelatedField):
+    read_only = False
+
+    def to_native(self, obj):
+        if obj:
+            return [obj.app_label, obj.model]
+        return None
+
+    def from_native(self, data):
+        try:
+            return ContentType.objects.get_by_natural_key(*data)
+        except Exception:
+            return None
 
 
 class RelatedNoneSafeField(serializers.RelatedField):

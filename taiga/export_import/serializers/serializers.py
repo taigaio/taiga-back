@@ -40,7 +40,7 @@ from taiga.projects.votes import services as votes_service
 from .fields import (FileField, RelatedNoneSafeField, UserRelatedField,
                      UserPkField, CommentField, ProjectRelatedField,
                      HistoryUserField, HistoryValuesField, HistoryDiffField,
-                     TimelineDataField)
+                     TimelineDataField, ContentTypeField)
 from .mixins import (HistoryExportSerializerMixin,
                      AttachmentExportSerializerMixin,
                      CustomAttributesValuesExportSerializerMixin,
@@ -317,9 +317,10 @@ class WikiLinkExportSerializer(serializers.ModelSerializer):
 
 class TimelineExportSerializer(serializers.ModelSerializer):
     data = TimelineDataField()
+    data_content_type = ContentTypeField()
     class Meta:
         model = timeline_models.Timeline
-        exclude = ('id', 'project', 'namespace', 'object_id')
+        exclude = ('id', 'project', 'namespace', 'object_id', 'content_type')
 
 
 class ProjectExportSerializer(WatcheableObjectModelSerializerMixin):
