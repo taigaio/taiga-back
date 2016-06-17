@@ -55,6 +55,7 @@ class RolePoints(models.Model):
     def project(self):
         return self.user_story.project
 
+
 class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
@@ -103,8 +104,8 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
                                              on_delete=models.SET_NULL,
                                              related_name="generated_user_stories",
                                              verbose_name=_("generated from issue"))
-    external_reference = ArrayField(ArrayField(models.TextField(null=True, blank=True), size=2),
-                             null=True, blank=True, default=[], verbose_name=_("external reference"))
+    external_reference = ArrayField(models.TextField(null=False, blank=False),
+                                    null=True, blank=True, default=None, verbose_name=_("external reference"))
 
     tribe_gig = PickledObjectField(null=True, blank=True, default=None,
                                    verbose_name="taiga tribe gig")

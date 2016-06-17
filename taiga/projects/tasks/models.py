@@ -65,8 +65,8 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     attachments = GenericRelation("attachments.Attachment")
     is_iocaine = models.BooleanField(default=False, null=False, blank=True,
                                      verbose_name=_("is iocaine"))
-    external_reference = ArrayField(ArrayField(models.TextField(null=True, blank=True), size=2),
-                             null=True, blank=True, default=[], verbose_name=_("external reference"))
+    external_reference = ArrayField(models.TextField(null=False, blank=False),
+                                    null=True, blank=True, default=None, verbose_name=_("external reference"))
     _importing = None
 
     class Meta:

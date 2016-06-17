@@ -62,8 +62,8 @@ class Issue(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.
                                     default=None, related_name="issues_assigned_to_me",
                                     verbose_name=_("assigned to"))
     attachments = GenericRelation("attachments.Attachment")
-    external_reference = ArrayField(ArrayField(models.TextField(null=True, blank=True), size=2),
-                             null=True, blank=True, default=[], verbose_name=_("external reference"))
+    external_reference = ArrayField(models.TextField(null=False, blank=False),
+                                    null=True, blank=True, default=None, verbose_name=_("external reference"))
     _importing = None
 
     class Meta:
