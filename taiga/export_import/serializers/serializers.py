@@ -16,25 +16,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import base64
 import copy
-import os
-from collections import OrderedDict
 
-from django.apps import apps
-from django.contrib.auth import get_user_model
-from django.core.files.base import ContentFile
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
-from django.contrib.contenttypes.models import ContentType
-
 
 from taiga.base.api import serializers
 from taiga.base.fields import JsonField, PgArrayField
 
-from taiga.mdrender.service import render as mdrender
 from taiga.projects import models as projects_models
 from taiga.projects.custom_attributes import models as custom_attributes_models
 from taiga.projects.userstories import models as userstories_models
@@ -46,308 +35,19 @@ from taiga.projects.history import models as history_models
 from taiga.projects.attachments import models as attachments_models
 from taiga.timeline import models as timeline_models
 from taiga.users import models as users_models
-from taiga.projects.notifications import services as notifications_services
 from taiga.projects.votes import services as votes_service
-from taiga.projects.history import services as history_service
 
-_cache_user_by_pk = {}
-_cache_user_by_email = {}
-_custom_tasks_attributes_cache = {}
-_custom_issues_attributes_cache = {}
-_custom_userstories_attributes_cache = {}
-
-def cached_get_user_by_pk(pk):
-    if pk not in _cache_user_by_pk:
-        try:
-            _cache_user_by_pk[pk] = users_models.User.objects.get(pk=pk)
-        except Exception:
-            _cache_user_by_pk[pk] = users_models.User.objects.get(pk=pk)
-    return _cache_user_by_pk[pk]
-
-def cached_get_user_by_email(email):
-    if email not in _cache_user_by_email:
-        try:
-            _cache_user_by_email[email] = users_models.User.objects.get(email=email)
-        except Exception:
-            _cache_user_by_email[email] = users_models.User.objects.get(email=email)
-    return _cache_user_by_email[email]
-
-
-class FileField(serializers.WritableField):
-    read_only = False
-
-    def to_native(self, obj):
-        if not obj:
-            return None
-
-        data = base64.b64encode(obj.read()).decode('utf-8')
-
-        return OrderedDict([
-            ("data", data),
-            ("name", os.path.basename(obj.name)),
-        ])
-
-    def from_native(self, data):
-        if not data:
-            return None
-
-        decoded_data = b''
-        # The original file was encoded by chunks but we don't really know its
-        # length or if it was multiple of 3 so we must iterate over all those chunks
-        # decoding them one by one
-        for decoding_chunk in data['data'].split("="):
-            # When encoding to base64 3 bytes are transformed into 4 bytes and
-            # the extra space of the block is filled with =
-            # We must ensure that the decoding chunk has a length multiple of 4 so
-            # we restore the stripped '='s adding appending them until the chunk has
-            # a length multiple of 4
-            decoding_chunk += "=" * (-len(decoding_chunk) % 4)
-            decoded_data += base64.b64decode(decoding_chunk+"=")
-
-        return ContentFile(decoded_data, name=data['name'])
-
-
-class RelatedNoneSafeField(serializers.RelatedField):
-    def field_from_native(self, data, files, field_name, into):
-        if self.read_only:
-            return
-
-        try:
-            if self.many:
-                try:
-                    # Form data
-                    value = data.getlist(field_name)
-                    if value == [''] or value == []:
-                        raise KeyError
-                except AttributeError:
-                    # Non-form data
-                    value = data[field_name]
-            else:
-                value = data[field_name]
-        except KeyError:
-            if self.partial:
-                return
-            value = self.get_default_value()
-
-        key = self.source or field_name
-        if value in self.null_values:
-            if self.required:
-                raise ValidationError(self.error_messages['required'])
-            into[key] = None
-        elif self.many:
-            into[key] = [self.from_native(item) for item in value if self.from_native(item) is not None]
-        else:
-            into[key] = self.from_native(value)
-
-
-class UserRelatedField(RelatedNoneSafeField):
-    read_only = False
-
-    def to_native(self, obj):
-        if obj:
-            return obj.email
-        return None
-
-    def from_native(self, data):
-        try:
-            return cached_get_user_by_email(data)
-        except users_models.User.DoesNotExist:
-            return None
-
-
-class UserPkField(serializers.RelatedField):
-    read_only = False
-
-    def to_native(self, obj):
-        try:
-            user = cached_get_user_by_pk(obj)
-            return user.email
-        except users_models.User.DoesNotExist:
-            return None
-
-    def from_native(self, data):
-        try:
-            user = cached_get_user_by_email(data)
-            return user.pk
-        except users_models.User.DoesNotExist:
-            return None
-
-
-class CommentField(serializers.WritableField):
-    read_only = False
-
-    def field_from_native(self, data, files, field_name, into):
-        super().field_from_native(data, files, field_name, into)
-        into["comment_html"] = mdrender(self.context['project'], data.get("comment", ""))
-
-
-class ProjectRelatedField(serializers.RelatedField):
-    read_only = False
-    null_values = (None, "")
-
-    def __init__(self, slug_field, *args, **kwargs):
-        self.slug_field = slug_field
-        super().__init__(*args, **kwargs)
-
-    def to_native(self, obj):
-        if obj:
-            return getattr(obj, self.slug_field)
-        return None
-
-    def from_native(self, data):
-        try:
-            kwargs = {self.slug_field: data, "project": self.context['project']}
-            return self.queryset.get(**kwargs)
-        except ObjectDoesNotExist:
-            raise ValidationError(_("{}=\"{}\" not found in this project".format(self.slug_field, data)))
-
-
-class HistoryUserField(JsonField):
-    def to_native(self, obj):
-        if obj is None or obj == {}:
-            return []
-        try:
-            user = cached_get_user_by_pk(obj['pk'])
-        except users_models.User.DoesNotExist:
-            user = None
-        return (UserRelatedField().to_native(user), obj['name'])
-
-    def from_native(self, data):
-        if data is None:
-            return {}
-
-        if len(data) < 2:
-            return {}
-
-        user = UserRelatedField().from_native(data[0])
-
-        if user:
-            pk = user.pk
-        else:
-            pk = None
-
-        return {"pk": pk, "name": data[1]}
-
-
-class HistoryValuesField(JsonField):
-    def to_native(self, obj):
-        if obj is None:
-            return []
-        if "users" in obj:
-            obj['users'] = list(map(UserPkField().to_native, obj['users']))
-        return obj
-
-    def from_native(self, data):
-        if data is None:
-            return []
-        if "users" in data:
-            data['users'] = list(map(UserPkField().from_native, data['users']))
-        return data
-
-
-class HistoryDiffField(JsonField):
-    def to_native(self, obj):
-        if obj is None:
-            return []
-
-        if "assigned_to" in obj:
-            obj['assigned_to'] = list(map(UserPkField().to_native, obj['assigned_to']))
-
-        return obj
-
-    def from_native(self, data):
-        if data is None:
-            return []
-
-        if "assigned_to" in data:
-            data['assigned_to'] = list(map(UserPkField().from_native, data['assigned_to']))
-        return data
-
-
-class WatcheableObjectModelSerializer(serializers.ModelSerializer):
-    watchers = UserRelatedField(many=True, required=False)
-
-    def __init__(self, *args, **kwargs):
-        self._watchers_field = self.base_fields.pop("watchers", None)
-        super(WatcheableObjectModelSerializer, self).__init__(*args, **kwargs)
-
-    """
-    watchers is not a field from the model so we need to do some magic to make it work like a normal field
-    It's supposed to be represented as an email list but internally it's treated like notifications.Watched instances
-    """
-
-    def restore_object(self, attrs, instance=None):
-        watcher_field = self.fields.pop("watchers", None)
-        instance = super(WatcheableObjectModelSerializer, self).restore_object(attrs, instance)
-        self._watchers = self.init_data.get("watchers", [])
-        return instance
-
-    def save_watchers(self):
-        new_watcher_emails = set(self._watchers)
-        old_watcher_emails = set(self.object.get_watchers().values_list("email", flat=True))
-        adding_watcher_emails = list(new_watcher_emails.difference(old_watcher_emails))
-        removing_watcher_emails = list(old_watcher_emails.difference(new_watcher_emails))
-
-        User = get_user_model()
-        adding_users = User.objects.filter(email__in=adding_watcher_emails)
-        removing_users = User.objects.filter(email__in=removing_watcher_emails)
-
-        for user in adding_users:
-            notifications_services.add_watcher(self.object, user)
-
-        for user in removing_users:
-            notifications_services.remove_watcher(self.object, user)
-
-        self.object.watchers = [user.email for user in self.object.get_watchers()]
-
-    def to_native(self, obj):
-        ret = super(WatcheableObjectModelSerializer, self).to_native(obj)
-        ret["watchers"] = [user.email for user in obj.get_watchers()]
-        return ret
-
-
-class HistoryExportSerializer(serializers.ModelSerializer):
-    user = HistoryUserField()
-    diff = HistoryDiffField(required=False)
-    snapshot = JsonField(required=False)
-    values = HistoryValuesField(required=False)
-    comment = CommentField(required=False)
-    delete_comment_date = serializers.DateTimeField(required=False)
-    delete_comment_user = HistoryUserField(required=False)
-
-    class Meta:
-        model = history_models.HistoryEntry
-        exclude = ("id", "comment_html", "key")
-
-
-class HistoryExportSerializerMixin(serializers.ModelSerializer):
-    history = serializers.SerializerMethodField("get_history")
-
-    def get_history(self, obj):
-        history_qs = history_service.get_history_queryset_by_model_instance(obj,
-            types=(history_models.HistoryType.change, history_models.HistoryType.create,))
-
-        return HistoryExportSerializer(history_qs, many=True).data
-
-
-class AttachmentExportSerializer(serializers.ModelSerializer):
-    owner = UserRelatedField(required=False)
-    attached_file = FileField()
-    modified_date = serializers.DateTimeField(required=False)
-
-    class Meta:
-        model = attachments_models.Attachment
-        exclude = ('id', 'content_type', 'object_id', 'project')
-
-
-class AttachmentExportSerializerMixin(serializers.ModelSerializer):
-    attachments = serializers.SerializerMethodField("get_attachments")
-
-    def get_attachments(self, obj):
-        content_type = ContentType.objects.get_for_model(obj.__class__)
-        attachments_qs = attachments_models.Attachment.objects.filter(object_id=obj.pk,
-                                                                      content_type=content_type)
-        return AttachmentExportSerializer(attachments_qs, many=True).data
+from .fields import (FileField, RelatedNoneSafeField, UserRelatedField,
+                     UserPkField, CommentField, ProjectRelatedField,
+                     HistoryUserField, HistoryValuesField, HistoryDiffField,
+                     TimelineDataField)
+from .mixins import (HistoryExportSerializerMixin,
+                     AttachmentExportSerializerMixin,
+                     CustomAttributesValuesExportSerializerMixin,
+                     WatcheableObjectModelSerializerMixin)
+from .cache import (_custom_tasks_attributes_cache,
+                    _custom_userstories_attributes_cache,
+                    _custom_issues_attributes_cache)
 
 
 class PointsExportSerializer(serializers.ModelSerializer):
@@ -422,31 +122,6 @@ class IssueCustomAttributeExportSerializer(serializers.ModelSerializer):
     class Meta:
         model = custom_attributes_models.IssueCustomAttribute
         exclude = ('id', 'project')
-
-
-class CustomAttributesValuesExportSerializerMixin(serializers.ModelSerializer):
-    custom_attributes_values = serializers.SerializerMethodField("get_custom_attributes_values")
-
-    def custom_attributes_queryset(self, project):
-        raise NotImplementedError()
-
-    def get_custom_attributes_values(self, obj):
-        def _use_name_instead_id_as_key_in_custom_attributes_values(custom_attributes, values):
-            ret = {}
-            for attr in custom_attributes:
-                value = values.get(str(attr["id"]), None)
-                if value is not  None:
-                    ret[attr["name"]] = value
-
-            return ret
-
-        try:
-            values =  obj.custom_attributes_values.attributes_values
-            custom_attributes = self.custom_attributes_queryset(obj.project)
-
-            return _use_name_instead_id_as_key_in_custom_attributes_values(custom_attributes, values)
-        except ObjectDoesNotExist:
-            return None
 
 
 class BaseCustomAttributesValuesExportSerializer(serializers.ModelSerializer):
@@ -530,7 +205,7 @@ class RolePointsExportSerializer(serializers.ModelSerializer):
         exclude = ('id', 'user_story')
 
 
-class MilestoneExportSerializer(WatcheableObjectModelSerializer):
+class MilestoneExportSerializer(WatcheableObjectModelSerializerMixin):
     owner = UserRelatedField(required=False)
     modified_date = serializers.DateTimeField(required=False)
     estimated_start = serializers.DateField(required=False)
@@ -559,7 +234,7 @@ class MilestoneExportSerializer(WatcheableObjectModelSerializer):
 
 
 class TaskExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
-                           AttachmentExportSerializerMixin, WatcheableObjectModelSerializer):
+                           AttachmentExportSerializerMixin, WatcheableObjectModelSerializerMixin):
     owner = UserRelatedField(required=False)
     status = ProjectRelatedField(slug_field="name")
     user_story = ProjectRelatedField(slug_field="ref", required=False)
@@ -578,7 +253,7 @@ class TaskExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryE
 
 
 class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
-                                AttachmentExportSerializerMixin, WatcheableObjectModelSerializer):
+                                AttachmentExportSerializerMixin, WatcheableObjectModelSerializerMixin):
     role_points = RolePointsExportSerializer(many=True, required=False)
     owner = UserRelatedField(required=False)
     assigned_to = UserRelatedField(required=False)
@@ -598,7 +273,7 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin, His
 
 
 class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
-                            AttachmentExportSerializerMixin, WatcheableObjectModelSerializer):
+                            AttachmentExportSerializerMixin, WatcheableObjectModelSerializerMixin):
     owner = UserRelatedField(required=False)
     status = ProjectRelatedField(slug_field="name")
     assigned_to = UserRelatedField(required=False)
@@ -623,7 +298,7 @@ class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin, History
 
 
 class WikiPageExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin,
-                               WatcheableObjectModelSerializer):
+                               WatcheableObjectModelSerializerMixin):
     owner = UserRelatedField(required=False)
     last_modifier = UserRelatedField(required=False)
     modified_date = serializers.DateTimeField(required=False)
@@ -640,31 +315,6 @@ class WikiLinkExportSerializer(serializers.ModelSerializer):
 
 
 
-class TimelineDataField(serializers.WritableField):
-    read_only = False
-
-    def to_native(self, data):
-        new_data = copy.deepcopy(data)
-        try:
-            user = cached_get_user_by_pk(new_data["user"]["id"])
-            new_data["user"]["email"] = user.email
-            del new_data["user"]["id"]
-        except Exception:
-            pass
-        return new_data
-
-    def from_native(self, data):
-        new_data = copy.deepcopy(data)
-        try:
-            user = cached_get_user_by_email(new_data["user"]["email"])
-            new_data["user"]["id"] = user.id
-            del new_data["user"]["email"]
-        except users_models.User.DoesNotExist:
-            pass
-
-        return new_data
-
-
 class TimelineExportSerializer(serializers.ModelSerializer):
     data = TimelineDataField()
     class Meta:
@@ -672,7 +322,7 @@ class TimelineExportSerializer(serializers.ModelSerializer):
         exclude = ('id', 'project', 'namespace', 'object_id')
 
 
-class ProjectExportSerializer(WatcheableObjectModelSerializer):
+class ProjectExportSerializer(WatcheableObjectModelSerializerMixin):
     logo = FileField(required=False)
     anon_permissions = PgArrayField(required=False)
     public_permissions = PgArrayField(required=False)
