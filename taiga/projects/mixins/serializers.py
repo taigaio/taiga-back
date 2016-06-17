@@ -17,8 +17,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
+from taiga.users.serializers import ListUserBasicInfoSerializer
 
 from django.utils.translation import ugettext as _
+
+import serpy
 
 class ValidateDuplicatedNameInProjectMixin(serializers.ModelSerializer):
 
@@ -39,3 +42,55 @@ class ValidateDuplicatedNameInProjectMixin(serializers.ModelSerializer):
               raise serializers.ValidationError(_("Name duplicated for the project"))
 
         return attrs
+
+
+class CachedSerializedUsersMixin(serpy.Serializer):
+    def to_value(self, instance):
+        self._serialized_users = {}
+        return super().to_value(instance)
+
+    def get_user_extra_info(self, user):
+        if user is None:
+            return None
+
+        serialized_user = self._serialized_users.get(user.id, None)
+        if serialized_user is None:
+            serializer_user = ListUserBasicInfoSerializer(user).data
+            self._serialized_users[user.id] = serializer_user
+
+        return serialized_user
+
+
+class OwnerExtraInfoMixin(CachedSerializedUsersMixin):
+    owner = serpy.Field(attr="owner_id")
+    owner_extra_info = serpy.MethodField()
+
+    def get_owner_extra_info(self, obj):
+        return self.get_user_extra_info(obj.owner)
+
+
+class AssigedToExtraInfoMixin(CachedSerializedUsersMixin):
+    assigned_to = serpy.Field(attr="assigned_to_id")
+    assigned_to_extra_info = serpy.MethodField()
+
+    def get_assigned_to_extra_info(self, obj):
+        return self.get_user_extra_info(obj.assigned_to)
+
+
+class StatusExtraInfoMixin(serpy.Serializer):
+    status = serpy.Field(attr="status_id")
+    status_extra_info = serpy.MethodField()
+    def to_value(self, instance):
+        self._serialized_status = {}
+        return super().to_value(instance)
+
+    def get_status_extra_info(self, obj):
+        serialized_status = self._serialized_status.get(obj.status_id, None)
+        if serialized_status is None:
+            serialized_status = {
+                "name": _(obj.status.name),
+                "color": obj.status.color
+            }
+            self._serialized_status[obj.status_id] = serialized_status
+
+        return serialized_status

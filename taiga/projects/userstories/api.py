@@ -16,8 +16,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from contextlib import closing
+from collections import namedtuple
+
 from django.apps import apps
-from django.db import transaction
+from django.db import transaction, connection
+from django.db.models.sql import datastructures
+
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse
 
@@ -27,17 +32,23 @@ from taiga.base import response
 from taiga.base import status
 from taiga.base.decorators import list_route
 from taiga.base.api.mixins import BlockedByProjectMixin
-from taiga.base.api import ModelCrudViewSet, ModelListViewSet
+from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
 
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.milestones.models import Milestone
 from taiga.projects.models import Project, UserStoryStatus
-from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.tagging.api import TaggedResourceMixin
-from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
+from taiga.projects.userstories.models import RolePoints
+from taiga.projects.votes.mixins.viewsets import VotedResourceMixin
+from taiga.projects.votes.mixins.viewsets import VotersViewSetMixin
+from taiga.projects.userstories.utils import attach_total_points
+from taiga.projects.userstories.utils import attach_role_points
 
 from . import models
 from . import permissions
@@ -63,6 +74,7 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                                 filters.TagsFilter,
                                 filters.WatchersFilter)
     filter_fields = ["project",
+                     "project__slug",
                      "milestone",
                      "milestone__isnull",
                      "is_closed",
@@ -87,9 +99,6 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.prefetch_related("role_points",
-                                 "role_points__points",
-                                 "role_points__role")
         qs = qs.select_related("milestone",
                                "project",
                                "status",
@@ -97,7 +106,10 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                                "assigned_to",
                                "generated_from_issue")
         qs = self.attach_votes_attrs_to_queryset(qs)
-        return self.attach_watchers_attrs_to_queryset(qs)
+        qs = self.attach_watchers_attrs_to_queryset(qs)
+        qs = attach_total_points(qs)
+        qs = attach_role_points(qs)
+        return qs
 
     def pre_conditions_on_save(self, obj):
         super().pre_conditions_on_save(obj)

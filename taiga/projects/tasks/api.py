@@ -44,13 +44,12 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
     permission_classes = (permissions.TaskPermission,)
     filter_backends = (filters.CanViewTasksFilterBackend, filters.WatchersFilter)
     retrieve_exclude_filters = (filters.WatchersFilter,)
-    filter_fields = [
-        "user_story",
-        "milestone",
-        "project",
-        "assigned_to",
-        "status__is_closed"
-    ]
+    filter_fields = ["user_story",
+                     "milestone",
+                     "project",
+                     "project__slug",
+                     "assigned_to",
+                     "status__is_closed"]
 
     def get_serializer_class(self, *args, **kwargs):
         if self.action in ["retrieve", "by_ref"]:
@@ -95,12 +94,11 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
     def get_queryset(self):
         qs = super().get_queryset()
         qs = self.attach_votes_attrs_to_queryset(qs)
-        qs = qs.select_related(
-            "milestone",
-            "owner",
-            "assigned_to",
-            "status",
-            "project")
+        qs = qs.select_related("milestone",
+                               "owner",
+                               "assigned_to",
+                               "status",
+                               "project")
 
         return self.attach_watchers_attrs_to_queryset(qs)
 

@@ -20,18 +20,24 @@ from taiga.base.api import serializers
 from taiga.base.fields import PgArrayField
 from taiga.base.neighbors import NeighborsSerializerMixin
 
-from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
-from taiga.projects.notifications.validators import WatchersValidator
-from taiga.projects.serializers import BasicIssueStatusSerializer
 from taiga.mdrender.service import render as mdrender
+from taiga.projects.mixins.serializers import OwnerExtraInfoMixin
+from taiga.projects.mixins.serializers import AssigedToExtraInfoMixin
+from taiga.projects.mixins.serializers import StatusExtraInfoMixin
+from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
+from taiga.projects.notifications.mixins import ListWatchedResourceModelSerializer
+from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.tagging.fields import TagsAndTagsColorsField
+from taiga.projects.serializers import BasicIssueStatusSerializer
 from taiga.projects.validators import ProjectExistsValidator
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
+from taiga.projects.votes.mixins.serializers import ListVoteResourceSerializerMixin
 
 from taiga.users.serializers import UserBasicInfoSerializer
 
 from . import models
 
+import serpy
 
 class IssueSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer,
                       serializers.ModelSerializer):
@@ -68,11 +74,23 @@ class IssueSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWa
         return mdrender(obj.project, obj.description)
 
 
-class IssueListSerializer(IssueSerializer):
-    class Meta:
-        model = models.Issue
-        read_only_fields = ('id', 'ref', 'created_date', 'modified_date')
-        exclude = ("description", "description_html")
+class IssueListSerializer(ListVoteResourceSerializerMixin, ListWatchedResourceModelSerializer,
+                          OwnerExtraInfoMixin, AssigedToExtraInfoMixin, StatusExtraInfoMixin,
+                          serializers.LightSerializer):
+    id = serpy.Field()
+    ref = serpy.Field()
+    severity = serpy.Field(attr="severity_id")
+    priority = serpy.Field(attr="priority_id")
+    type = serpy.Field(attr="type_id")
+    milestone = serpy.Field(attr="milestone_id")
+    project = serpy.Field(attr="project_id")
+    created_date = serpy.Field()
+    modified_date = serpy.Field()
+    finished_date = serpy.Field()
+    subject = serpy.Field()
+    external_reference = serpy.Field()
+    version = serpy.Field()
+    watchers = serpy.Field()
 
 
 class IssueNeighborsSerializer(NeighborsSerializerMixin, IssueSerializer):
