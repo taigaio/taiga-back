@@ -90,7 +90,7 @@ def test_valid_project_export_with_celery_enabled(client, settings):
         response_data = response.data
         assert "export_id" in response_data
 
-        args = (project.id, project.slug, response_data["export_id"], None)
+        args = (project.id, project.slug, response_data["export_id"], "plain")
         kwargs = {"countdown": settings.EXPORTS_TTL}
         delete_project_dump_mock.apply_async.assert_called_once_with(args, **kwargs)
 
