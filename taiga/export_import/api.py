@@ -318,6 +318,9 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         if not dump:
             raise exc.WrongArguments(_("Needed dump file"))
 
+        if dump.content_type == "application/gzip":
+            dump = gzip.GzipFile(fileobj=dump)
+
         reader = codecs.getreader("utf-8")
 
         try:

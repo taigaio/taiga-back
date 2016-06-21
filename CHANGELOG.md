@@ -1,6 +1,5 @@
 # Changelog #
 
-
 ## 2.1.0 Ursus Americanus (2016-05-03)
 
 ### Features
