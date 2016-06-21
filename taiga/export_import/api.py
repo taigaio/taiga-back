@@ -65,7 +65,7 @@ class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet)
         project = get_object_or_404(self.get_queryset(), pk=pk)
         self.check_permissions(request, 'export_project', project)
 
-        dump_format = request.QUERY_PARAMS.get("dump_format", None)
+        dump_format = request.QUERY_PARAMS.get("dump_format", "plain")
 
         if settings.CELERY_ENABLED:
             task = tasks.dump_project.delay(request.user, project, dump_format)
