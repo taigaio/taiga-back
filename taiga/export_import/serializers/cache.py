@@ -16,29 +16,27 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import pytest
-import io
-from .. import factories as f
+from taiga.users import models as users_models
 
-from taiga.base.utils import json
-from taiga.export_import.services import render_project
-
-pytestmark = pytest.mark.django_db
-
-
-def test_export_issue_finish_date(client):
-    issue = f.IssueFactory.create(finished_date="2014-10-22")
-    output = io.BytesIO()
-    render_project(issue.project, output)
-    project_data = json.loads(output.getvalue())
-    finish_date = project_data["issues"][0]["finished_date"]
-    assert finish_date == "2014-10-22T00:00:00+0000"
+_cache_user_by_pk = {}
+_cache_user_by_email = {}
+_custom_tasks_attributes_cache = {}
+_custom_issues_attributes_cache = {}
+_custom_userstories_attributes_cache = {}
 
 
-def test_export_user_story_finish_date(client):
-    user_story = f.UserStoryFactory.create(finish_date="2014-10-22")
-    output = io.BytesIO()
-    render_project(user_story.project, output)
-    project_data = json.loads(output.getvalue())
-    finish_date = project_data["user_stories"][0]["finish_date"]
-    assert finish_date == "2014-10-22T00:00:00+0000"
+def cached_get_user_by_pk(pk):
+    if pk not in _cache_user_by_pk:
+        try:
+            _cache_user_by_pk[pk] = users_models.User.objects.get(pk=pk)
+        except Exception:
+            _cache_user_by_pk[pk] = users_models.User.objects.get(pk=pk)
+    return _cache_user_by_pk[pk]
+
+def cached_get_user_by_email(email):
+    if email not in _cache_user_by_email:
+        try:
+            _cache_user_by_email[email] = users_models.User.objects.get(email=email)
+        except Exception:
+            _cache_user_by_email[email] = users_models.User.objects.get(email=email)
+    return _cache_user_by_email[email]

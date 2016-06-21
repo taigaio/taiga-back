@@ -18,6 +18,7 @@
 
 import codecs
 import uuid
+import gzip
 
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
@@ -64,16 +65,24 @@ class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet)
         project = get_object_or_404(self.get_queryset(), pk=pk)
         self.check_permissions(request, 'export_project', project)
 
+        dump_format = request.QUERY_PARAMS.get("dump_format", None)
+
         if settings.CELERY_ENABLED:
-            task = tasks.dump_project.delay(request.user, project)
-            tasks.delete_project_dump.apply_async((project.pk, project.slug, task.id),
+            task = tasks.dump_project.delay(request.user, project, dump_format)
+            tasks.delete_project_dump.apply_async((project.pk, project.slug, task.id, dump_format),
                                                   countdown=settings.EXPORTS_TTL)
             return response.Accepted({"export_id": task.id})
 
-        path = "exports/{}/{}-{}.json".format(project.pk, project.slug, uuid.uuid4().hex)
-        storage_path = default_storage.path(path)
-        with default_storage.open(storage_path, mode="w") as outfile:
-            services.render_project(project, outfile)
+        if dump_format == "gzip":
+            path = "exports/{}/{}-{}.json.gz".format(project.pk, project.slug, uuid.uuid4().hex)
+            storage_path = default_storage.path(path)
+            with default_storage.open(storage_path, mode="wb") as outfile:
+                services.render_project(project, gzip.GzipFile(fileobj=outfile))
+        else:
+            path = "exports/{}/{}-{}.json".format(project.pk, project.slug, uuid.uuid4().hex)
+            storage_path = default_storage.path(path)
+            with default_storage.open(storage_path, mode="wb") as outfile:
+                services.render_project(project, outfile)
 
         response_data = {
             "url": default_storage.url(path)

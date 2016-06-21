@@ -53,6 +53,24 @@ def test_valid_project_export_with_celery_disabled(client, settings):
     assert response.status_code == 200
     response_data = response.data
     assert "url" in response_data
+    assert response_data["url"].endswith(".json")
+
+
+def test_valid_project_export_with_celery_disabled_and_gzip(client, settings):
+    settings.CELERY_ENABLED = False
+
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    client.login(user)
+
+    url = reverse("exporter-detail", args=[project.pk])
+
+    response = client.get(url+"?dump_format=gzip", content_type="application/json")
+    assert response.status_code == 200
+    response_data = response.data
+    assert "url" in response_data
+    assert response_data["url"].endswith(".gz")
 
 
 def test_valid_project_export_with_celery_enabled(client, settings):
@@ -72,7 +90,29 @@ def test_valid_project_export_with_celery_enabled(client, settings):
         response_data = response.data
         assert "export_id" in response_data
 
-        args = (project.id, project.slug, response_data["export_id"],)
+        args = (project.id, project.slug, response_data["export_id"], None)
+        kwargs = {"countdown": settings.EXPORTS_TTL}
+        delete_project_dump_mock.apply_async.assert_called_once_with(args, **kwargs)
+
+
+def test_valid_project_export_with_celery_enabled_and_gzip(client, settings):
+    settings.CELERY_ENABLED = True
+
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory(project=project, user=user, is_admin=True)
+    client.login(user)
+
+    url = reverse("exporter-detail", args=[project.pk])
+
+    #delete_project_dump task should have been launched
+    with mock.patch('taiga.export_import.tasks.delete_project_dump') as delete_project_dump_mock:
+        response = client.get(url+"?dump_format=gzip", content_type="application/json")
+        assert response.status_code == 202
+        response_data = response.data
+        assert "export_id" in response_data
+
+        args = (project.id, project.slug, response_data["export_id"], "gzip")
         kwargs = {"countdown": settings.EXPORTS_TTL}
         delete_project_dump_mock.apply_async.assert_called_once_with(args, **kwargs)
 

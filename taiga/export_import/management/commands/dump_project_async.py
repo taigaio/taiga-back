@@ -17,12 +17,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.core.management.base import BaseCommand, CommandError
+from django.db.models import Q
+from django.conf import settings
 
 from taiga.projects.models import Project
-from taiga.export_import.services import render_project
-
-import os
-import gzip
+from taiga.users.models import User
+from taiga.permissions.services import is_project_admin
+from taiga.export_import import tasks
 
 
 class Command(BaseCommand):
@@ -33,12 +34,13 @@ class Command(BaseCommand):
                             nargs="+",
                             help="<project_slug project_slug ...>")
 
-        parser.add_argument("-d", "--dst_dir",
+        parser.add_argument("-u", "--user",
                             action="store",
-                            dest="dst_dir",
+                            dest="user",
                             default="./",
                             metavar="DIR",
-                            help="Directory to save the json files. ('./' by default)")
+                            required=True,
+                            help="Dump as user by email or username.")
 
         parser.add_argument("-f", "--format",
                             action="store",
@@ -48,15 +50,14 @@ class Command(BaseCommand):
                             help="Format to the output file plain json or gzipped json. ('plain' by default)")
 
     def handle(self, *args, **options):
-        dst_dir = options["dst_dir"]
-
-        if not os.path.exists(dst_dir):
-            raise CommandError("Directory {} does not exist.".format(dst_dir))
-
-        if not os.path.isdir(dst_dir):
-            raise CommandError("'{}' must be a directory, not a file.".format(dst_dir))
-
+        username_or_email = options["user"]
+        dump_format = options["format"]
         project_slugs = options["project_slugs"]
+
+        try:
+            user = User.objects.get(Q(username=username_or_email) | Q(email=username_or_email))
+        except Exception:
+            raise CommandError("Error loading user".format(username_or_email))
 
         for project_slug in project_slugs:
             try:
@@ -64,13 +65,18 @@ class Command(BaseCommand):
             except Project.DoesNotExist:
                 raise CommandError("Project '{}' does not exist".format(project_slug))
 
-            if options["format"] == "gzip":
-                dst_file = os.path.join(dst_dir, "{}.json.gz".format(project_slug))
-                with gzip.GzipFile(dst_file, "wb") as f:
-                    render_project(project, f)
-            else:
-                dst_file = os.path.join(dst_dir, "{}.json".format(project_slug))
-                with open(dst_file, "wb") as f:
-                    render_project(project, f)
+            if not is_project_admin(user, project):
+                self.stderr.write(self.style.ERROR(
+                    "ERROR: Not sending task because user '{}' doesn't have permissions to export '{}' project".format(
+                        username_or_email,
+                        project_slug
+                    )
+                ))
+                continue
 
-            print("-> Generate dump of project '{}' in '{}'".format(project.name, dst_file))
+            task = tasks.dump_project.delay(user, project, dump_format)
+            tasks.delete_project_dump.apply_async(
+                (project.pk, project.slug, task.id, dump_format),
+                countdown=settings.EXPORTS_TTL
+            )
+            print("-> Sent task for dump of project '{}' as user {}".format(project.name, username_or_email))

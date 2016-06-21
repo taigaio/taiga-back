@@ -577,6 +577,7 @@ def _store_timeline_entry(project, timeline):
         serialized.object.project = project
         serialized.object.namespace = build_project_namespace(project)
         serialized.object.object_id = project.id
+        serialized.object.content_type = ContentType.objects.get_for_model(project.__class__)
         serialized.object._importing = True
         serialized.save()
         return serialized
@@ -725,7 +726,7 @@ def store_project_from_dict(data, owner=None):
     except err.TaigaImportError:
         # reraise known inport errors
         raise
-    except:
+    except Exception:
         # reise unknown errors as import error
         raise err.TaigaImportError(_("unexpected error importing project"), project)
 
