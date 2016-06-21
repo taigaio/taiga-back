@@ -223,6 +223,7 @@ def send_notifications(obj, *, history):
     if settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL == 0:
         send_sync_notifications(notification.id)
 
+
 @transaction.atomic
 def send_sync_notifications(notification_id):
     """
@@ -261,19 +262,21 @@ def send_sync_notifications(notification_id):
         msg_id = 'taiga-system'
 
     now = datetime.datetime.now()
-    format_args = {"project_slug": notification.project.slug,
-                   "project_name": notification.project.name,
-                   "msg_id": msg_id,
-                   "time": int(now.timestamp()),
-                   "domain": domain}
+    format_args = {
+        "project_slug": notification.project.slug,
+        "project_name": notification.project.name,
+        "msg_id": msg_id,
+        "time": int(now.timestamp()),
+        "domain": domain
+    }
 
-    headers = {"Message-ID": "<{project_slug}/{msg_id}/{time}@{domain}>".format(**format_args),
-               "In-Reply-To": "<{project_slug}/{msg_id}@{domain}>".format(**format_args),
-               "References": "<{project_slug}/{msg_id}@{domain}>".format(**format_args),
-
-               "List-ID": 'Taiga/{project_name} <taiga.{project_slug}@{domain}>'.format(**format_args),
-
-               "Thread-Index": make_ms_thread_index("<{project_slug}/{msg_id}@{domain}>".format(**format_args), now)}
+    headers = {
+        "Message-ID": "<{project_slug}/{msg_id}/{time}@{domain}>".format(**format_args),
+        "In-Reply-To": "<{project_slug}/{msg_id}@{domain}>".format(**format_args),
+        "References": "<{project_slug}/{msg_id}@{domain}>".format(**format_args),
+        "List-ID": 'Taiga/{project_name} <taiga.{project_slug}@{domain}>'.format(**format_args),
+        "Thread-Index": make_ms_thread_index("<{project_slug}/{msg_id}@{domain}>".format(**format_args), now)
+    }
 
     for user in notification.notify_users.distinct():
         context["user"] = user
@@ -370,8 +373,10 @@ def get_projects_watched(user_or_id):
         user = get_user_model().objects.get(id=user_or_id)
 
     project_class = apps.get_model("projects", "Project")
-    project_ids = user.notify_policies.exclude(notify_level=NotifyLevel.none).values_list("project__id", flat=True)
+    project_ids = (user.notify_policies.exclude(notify_level=NotifyLevel.none)
+                                       .values_list("project__id", flat=True))
     return project_class.objects.filter(id__in=project_ids)
+
 
 def add_watcher(obj, user):
     """Add a watcher to an object.

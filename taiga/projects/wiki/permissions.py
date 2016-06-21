@@ -54,3 +54,4 @@ class WikiLinkPermission(TaigaResourcePermission):
     partial_update_perms = HasProjectPerm('modify_wiki_link')
     destroy_perms = HasProjectPerm('delete_wiki_link')
     list_perms = AllowAny()
+    create_wiki_page_perms = HasProjectPerm('add_wiki_page')
