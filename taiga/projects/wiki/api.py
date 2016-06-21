@@ -106,13 +106,14 @@ class WikiLinkViewSet(BlockedByProjectMixin, ModelCrudViewSet):
 
     def post_save(self, obj, created=False):
         if created:
-            self._create_wiki_page_when_create_wiki_link_if_not_exist(obj)
+            self._create_wiki_page_when_create_wiki_link_if_not_exist(self.request, obj)
         super().pre_save(obj)
 
-    def _create_wiki_page_when_create_wiki_link_if_not_exist(self, wiki_link):
+    def _create_wiki_page_when_create_wiki_link_if_not_exist(self, request, wiki_link):
         try:
             self.check_permissions(request, "create_wiki_page", wiki_link)
         except exc.PermissionDenied:
+            # Create only the wiki link because the user doesn't have permission.
             pass
         else:
             # Create the wiki link and the wiki page if not exist.
