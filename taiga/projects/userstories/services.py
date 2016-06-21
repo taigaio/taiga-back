@@ -379,16 +379,47 @@ def _get_userstories_owners(project, queryset):
     return sorted(result, key=itemgetter("full_name"))
 
 
-def _get_userstories_tags(queryset):
-    tags = []
-    for t_list in queryset.values_list("tags", flat=True):
-        if t_list is None:
-            continue
-        tags += list(t_list)
+def _get_userstories_tags(project, queryset):
+    compiler = connection.ops.compiler(queryset.query.compiler)(queryset.query, connection, None)
+    queryset_where_tuple = queryset.query.where.as_sql(compiler, connection)
+    where = queryset_where_tuple[0]
+    where_params = queryset_where_tuple[1]
 
-    tags = [{"name":e, "count":tags.count(e)} for e in set(tags)]
+    extra_sql = """
+        WITH
+        	userstories_tags AS (
+        		SELECT tag, COUNT(tag) counter FROM (
+        			SELECT UNNEST(tags) tag
+        			FROM userstories_userstory
+        			WHERE {where}
+        		) tags
+                GROUP BY tag
+            ),
+            project_tags AS (
+        		SELECT reduce_dim(tags_colors) tag_color
+        		FROM projects_project
+        		WHERE id=%s
+        	)
 
-    return sorted(tags, key=itemgetter("name"))
+        SELECT
+        tag_color[1] tag, userstories_tags.counter counter
+        FROM project_tags
+        LEFT JOIN
+        userstories_tags ON project_tags.tag_color[1] = userstories_tags.tag
+        ORDER BY tag
+    """.format(where=where)
+
+    with closing(connection.cursor()) as cursor:
+        cursor.execute(extra_sql, where_params + [project.id])
+        rows = cursor.fetchall()
+
+    result = []
+    for name, count in rows:
+        result.append({
+            "name": name,
+            "count": 0 if count is None else count,
+        })
+    return result
 
 
 def get_userstories_filters_data(project, querysets):
@@ -400,7 +431,7 @@ def get_userstories_filters_data(project, querysets):
         ("statuses", _get_userstories_statuses(project, querysets["statuses"])),
         ("assigned_to", _get_userstories_assigned_to(project, querysets["assigned_to"])),
         ("owners", _get_userstories_owners(project, querysets["owners"])),
-        ("tags", _get_userstories_tags(querysets["tags"])),
+        ("tags", _get_userstories_tags(project, querysets["tags"])),
     ])
 
     return data
