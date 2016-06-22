@@ -1,6 +1,6 @@
 # Changelog #
 
-## 2.2.0 ??? (unreleased)
+## 3.0.0 ??? (unreleased)
 
 ### Features
 - Include created, modified and finished dates for tasks in CSV reports.
