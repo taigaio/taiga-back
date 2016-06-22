@@ -87,9 +87,6 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                        "kanban_order",
                        "total_voters"]
 
-    # Specific filter used for filtering neighbor user stories
-    _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')
-
     def get_serializer_class(self, *args, **kwargs):
         if self.action in ["retrieve", "by_ref"]:
             return serializers.UserStoryNeighborsSerializer

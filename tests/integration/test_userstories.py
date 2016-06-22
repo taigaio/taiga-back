@@ -504,8 +504,7 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['id'] == status2.id, response.data["statuses"]))["count"] == 1
     assert next(filter(lambda i: i['id'] == status3.id, response.data["statuses"]))["count"] == 4
 
-    with pytest.raises(StopIteration):
-        assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 0
+    assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 0
     assert next(filter(lambda i: i['name'] == tag1, response.data["tags"]))["count"] == 4
     assert next(filter(lambda i: i['name'] == tag2, response.data["tags"]))["count"] == 3
     assert next(filter(lambda i: i['name'] == tag3, response.data["tags"]))["count"] == 3
@@ -528,8 +527,7 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['id'] == status2.id, response.data["statuses"]))["count"] == 0
     assert next(filter(lambda i: i['id'] == status3.id, response.data["statuses"]))["count"] == 1
 
-    with pytest.raises(StopIteration):
-        assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 0
+    assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 0
     assert next(filter(lambda i: i['name'] == tag1, response.data["tags"]))["count"] == 2
     assert next(filter(lambda i: i['name'] == tag2, response.data["tags"]))["count"] == 2
     assert next(filter(lambda i: i['name'] == tag3, response.data["tags"]))["count"] == 1

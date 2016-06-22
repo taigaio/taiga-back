@@ -229,6 +229,7 @@ def test_api_filter_by_text_6(client):
     assert response.status_code == 200
     assert number_of_issues == 1
 
+
 def test_api_filters_data(client):
     project = f.ProjectFactory.create()
     user1 = f.UserFactory.create(is_superuser=True)
@@ -378,8 +379,7 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['id'] == severity2.id, response.data["severities"]))["count"] == 0
     assert next(filter(lambda i: i['id'] == severity3.id, response.data["severities"]))["count"] == 1
 
-    with pytest.raises(StopIteration):
-        assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 0
+    assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 0
     assert next(filter(lambda i: i['name'] == tag1, response.data["tags"]))["count"] == 4
     assert next(filter(lambda i: i['name'] == tag2, response.data["tags"]))["count"] == 2
     assert next(filter(lambda i: i['name'] == tag3, response.data["tags"]))["count"] == 1
@@ -415,8 +415,7 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['id'] == severity2.id, response.data["severities"]))["count"] == 0
     assert next(filter(lambda i: i['id'] == severity3.id, response.data["severities"]))["count"] == 1
 
-    with pytest.raises(StopIteration):
-        assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 0
+    assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 0
     assert next(filter(lambda i: i['name'] == tag1, response.data["tags"]))["count"] == 2
     assert next(filter(lambda i: i['name'] == tag2, response.data["tags"]))["count"] == 2
     assert next(filter(lambda i: i['name'] == tag3, response.data["tags"]))["count"] == 1

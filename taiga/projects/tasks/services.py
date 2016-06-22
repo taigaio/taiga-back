@@ -144,7 +144,7 @@ def tasks_to_csv(project, queryset):
             "voters": task.total_voters,
             "created_date": task.created_date,
             "modified_date": task.modified_date,
-            "finished_date": task.finished_date,            
+            "finished_date": task.finished_date,
         }
         for custom_attr in custom_attrs:
             value = task.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)

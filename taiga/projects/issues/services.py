@@ -35,6 +35,10 @@ from taiga.projects.notifications.utils import attach_watchers_to_queryset
 from . import models
 
 
+#####################################################
+# Bulk actions
+#####################################################
+
 def get_issues_from_bulk(bulk_data, **additional_fields):
     """Convert `bulk_data` into a list of issues.
 
@@ -82,6 +86,10 @@ def update_issues_order_in_bulk(bulk_data):
         new_order_values.append({"order": new_order_value})
     db.update_in_bulk_with_ids(issue_ids, new_order_values, model=models.Issue)
 
+
+#####################################################
+# CSV
+#####################################################
 
 def issues_to_csv(project, queryset):
     csv_data = io.StringIO()
@@ -142,6 +150,10 @@ def issues_to_csv(project, queryset):
 
     return csv_data
 
+
+#####################################################
+# Api filter data
+#####################################################
 
 def _get_issues_statuses(project, queryset):
     compiler = connection.ops.compiler(queryset.query.compiler)(queryset.query, connection, None)
@@ -394,7 +406,7 @@ def _get_issues_owners(project, queryset):
                    FROM projects_membership
         LEFT OUTER JOIN counters ON ("projects_membership"."user_id" = "counters"."owner_id")
              INNER JOIN "users_user" ON ("projects_membership"."user_id" = "users_user"."id")
-                  WHERE ("projects_membership"."project_id" = %s AND "projects_membership"."user_id" IS NOT NULL)
+                  WHERE "projects_membership"."project_id" = %s AND "projects_membership"."user_id" IS NOT NULL
 
         -- System users
         UNION
@@ -430,27 +442,22 @@ def _get_issues_tags(project, queryset):
     where_params = queryset_where_tuple[1]
 
     extra_sql = """
-        WITH
-        	issues_tags AS (
-        		SELECT tag, COUNT(tag) counter FROM (
-        			SELECT UNNEST(tags) tag
-        			FROM issues_issue
-        			WHERE {where}
-        		) tags
-                GROUP BY tag
-            ),
-            project_tags AS (
-        		SELECT reduce_dim(tags_colors) tag_color
-        		FROM projects_project
-        		WHERE id=%s
-        	)
+        WITH issues_tags AS (
+                    SELECT tag,
+                           COUNT(tag) counter FROM (
+                                SELECT UNNEST(tags) tag
+                                  FROM issues_issue
+                                 WHERE {where}) tags
+                  GROUP BY tag),
+             project_tags AS (
+                    SELECT reduce_dim(tags_colors) tag_color
+                      FROM projects_project
+                     WHERE id=%s)
 
-        SELECT
-        tag_color[1] tag, issues_tags.counter counter
+      SELECT tag_color[1] tag, issues_tags.counter counter
         FROM project_tags
-        LEFT JOIN
-        issues_tags ON project_tags.tag_color[1] = issues_tags.tag
-        ORDER BY tag
+   LEFT JOIN issues_tags ON project_tags.tag_color[1] = issues_tags.tag
+    ORDER BY tag
     """.format(where=where)
 
     with closing(connection.cursor()) as cursor:

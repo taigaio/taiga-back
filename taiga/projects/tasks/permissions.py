@@ -31,6 +31,7 @@ class TaskPermission(TaigaResourcePermission):
     partial_update_perms = CommentAndOrUpdatePerm('modify_task', 'comment_task')
     destroy_perms = HasProjectPerm('delete_task')
     list_perms = AllowAny()
+    filters_data_perms = AllowAny()
     csv_perms = AllowAny()
     bulk_create_perms = HasProjectPerm('add_task')
     bulk_update_order_perms = HasProjectPerm('modify_task')
