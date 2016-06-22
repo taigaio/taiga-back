@@ -44,8 +44,18 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
                   TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
     queryset = models.Task.objects.all()
     permission_classes = (permissions.TaskPermission,)
-    filter_backends = (filters.CanViewTasksFilterBackend, filters.WatchersFilter)
-    retrieve_exclude_filters = (filters.WatchersFilter,)
+    filter_backends = (filters.CanViewTasksFilterBackend,
+                       filters.OwnersFilter,
+                       filters.AssignedToFilter,
+                       filters.StatusesFilter,
+                       filters.TagsFilter,
+                       filters.WatchersFilter,
+                       filters.QFilter)
+    retrieve_exclude_filters = (filters.OwnersFilter,
+                                filters.AssignedToFilter,
+                                filters.StatusesFilter,
+                                filters.TagsFilter,
+                                filters.WatchersFilter)
     filter_fields = ["user_story",
                      "milestone",
                      "project",
@@ -61,6 +71,44 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
             return serializers.TaskListSerializer
 
         return serializers.TaskSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = self.attach_votes_attrs_to_queryset(qs)
+        qs = qs.select_related("milestone",
+                               "project",
+                               "status",
+                               "owner",
+                               "assigned_to")
+
+        qs = self.attach_watchers_attrs_to_queryset(qs)
+        if "include_attachments" in self.request.QUERY_PARAMS:
+            qs = attach_basic_attachments(qs)
+            qs = qs.extra(select={"include_attachments": "True"})
+
+        return qs
+
+    def pre_conditions_on_save(self, obj):
+        super().pre_conditions_on_save(obj)
+
+        if obj.milestone and obj.milestone.project != obj.project:
+            raise exc.WrongArguments(_("You don't have permissions to set this sprint to this task."))
+
+        if obj.user_story and obj.user_story.project != obj.project:
+            raise exc.WrongArguments(_("You don't have permissions to set this user story to this task."))
+
+        if obj.status and obj.status.project != obj.project:
+            raise exc.WrongArguments(_("You don't have permissions to set this status to this task."))
+
+        if obj.milestone and obj.user_story and obj.milestone != obj.user_story.milestone:
+            raise exc.WrongArguments(_("You don't have permissions to set this sprint to this task."))
+
+    def pre_save(self, obj):
+        if obj.user_story:
+            obj.milestone = obj.user_story.milestone
+        if not obj.id:
+            obj.owner = self.request.user
+        super().pre_save(obj)
 
     def update(self, request, *args, **kwargs):
         self.object = self.get_object_or_none()
@@ -93,44 +141,24 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
 
         return super().update(request, *args, **kwargs)
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        qs = self.attach_votes_attrs_to_queryset(qs)
-        qs = qs.select_related(
-            "milestone",
-            "owner",
-            "assigned_to",
-            "status",
-            "project")
+    @list_route(methods=["GET"])
+    def filters_data(self, request, *args, **kwargs):
+        project_id = request.QUERY_PARAMS.get("project", None)
+        project = get_object_or_404(Project, id=project_id)
 
-        qs = self.attach_watchers_attrs_to_queryset(qs)
-        if "include_attachments" in self.request.QUERY_PARAMS:
-            qs = attach_basic_attachments(qs)
-            qs = qs.extra(select={"include_attachments": "True"})
+        filter_backends = self.get_filter_backends()
+        statuses_filter_backends = (f for f in filter_backends if f != filters.StatusesFilter)
+        assigned_to_filter_backends = (f for f in filter_backends if f != filters.AssignedToFilter)
+        owners_filter_backends = (f for f in filter_backends if f != filters.OwnersFilter)
 
-        return qs
-
-    def pre_save(self, obj):
-        if obj.user_story:
-            obj.milestone = obj.user_story.milestone
-        if not obj.id:
-            obj.owner = self.request.user
-        super().pre_save(obj)
-
-    def pre_conditions_on_save(self, obj):
-        super().pre_conditions_on_save(obj)
-
-        if obj.milestone and obj.milestone.project != obj.project:
-            raise exc.WrongArguments(_("You don't have permissions to set this sprint to this task."))
-
-        if obj.user_story and obj.user_story.project != obj.project:
-            raise exc.WrongArguments(_("You don't have permissions to set this user story to this task."))
-
-        if obj.status and obj.status.project != obj.project:
-            raise exc.WrongArguments(_("You don't have permissions to set this status to this task."))
-
-        if obj.milestone and obj.user_story and obj.milestone != obj.user_story.milestone:
-            raise exc.WrongArguments(_("You don't have permissions to set this sprint to this task."))
+        queryset = self.get_queryset()
+        querysets = {
+            "statuses": self.filter_queryset(queryset, filter_backends=statuses_filter_backends),
+            "assigned_to": self.filter_queryset(queryset, filter_backends=assigned_to_filter_backends),
+            "owners": self.filter_queryset(queryset, filter_backends=owners_filter_backends),
+            "tags": self.filter_queryset(queryset)
+        }
+        return response.Ok(services.get_tasks_filters_data(project, querysets))
 
     @list_route(methods=["GET"])
     def by_ref(self, request):
