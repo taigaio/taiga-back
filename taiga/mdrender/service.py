@@ -126,16 +126,42 @@ def render_and_extract(project, text):
 
 class DiffMatchPatch(diff_match_patch.diff_match_patch):
     def diff_pretty_html(self, diffs):
+        def _sanitize_text(text):
+            return (text.replace("&", "&amp;").replace("<", "&lt;")
+                        .replace(">", "&gt;").replace("\n", "<br />"))
+
+        def _split_long_text(text, idx, size):
+            splited_text = text.split()
+
+            if len(splited_text) > 25:
+                if idx == 0:
+                    # The first is (...)text
+                    first = ""
+                else:
+                    first = " ".join(splited_text[:10])
+
+                if idx != 0 and idx == size - 1:
+                    # The last is text(...)
+                    last = ""
+                else:
+                    last = " ".join(splited_text[-10:])
+
+                return "{}(...){}".format(first, last)
+            return text
+
+        size = len(diffs)
         html = []
-        for (op, data) in diffs:
-            text = (data.replace("&", "&amp;").replace("<", "&lt;")
-                    .replace(">", "&gt;").replace("\n", "<br />"))
+        for idx, (op, data) in enumerate(diffs):
             if op == self.DIFF_INSERT:
-                html.append("<ins style=\"background:#e6ffe6;\">%s</ins>" % text)
+                text = _sanitize_text(data)
+                html.append("<ins style=\"background:#e6ffe6;\">{}</ins>".format(text))
             elif op == self.DIFF_DELETE:
-                html.append("<del style=\"background:#ffe6e6;\">%s</del>" % text)
+                text = _sanitize_text(data)
+                html.append("<del style=\"background:#ffe6e6;\">{}</del>".format(text))
             elif op == self.DIFF_EQUAL:
-                html.append("<span>%s</span>" % text)
+                text = _split_long_text(_sanitize_text(data), idx, size)
+                html.append("<span>{}</span>".format(text))
+
         return "".join(html)
 
 
