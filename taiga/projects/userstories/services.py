@@ -404,8 +404,10 @@ def _get_userstories_tags(project, queryset):
         WITH userstories_tags AS (
                     SELECT tag,
                            COUNT(tag) counter FROM (
-                                SELECT UNNEST(tags) tag
+                                SELECT UNNEST(userstories_userstory.tags) tag
                                   FROM userstories_userstory
+                            INNER JOIN projects_project
+                                        ON (userstories_userstory.project_id = projects_project.id)
                                  WHERE {where}) tags
                   GROUP BY tag),
              project_tags AS (
@@ -413,7 +415,7 @@ def _get_userstories_tags(project, queryset):
                       FROM projects_project
                      WHERE id=%s)
 
-      SELECT tag_color[1] tag, userstories_tags.counter counter
+      SELECT tag_color[1] tag, COALESCE(userstories_tags.counter, 0) counter
         FROM project_tags
    LEFT JOIN userstories_tags ON project_tags.tag_color[1] = userstories_tags.tag
     ORDER BY tag
@@ -427,9 +429,9 @@ def _get_userstories_tags(project, queryset):
     for name, count in rows:
         result.append({
             "name": name,
-            "count": 0 if count is None else count,
+            "count": count,
         })
-    return result
+    return sorted(result, key=itemgetter("name"))
 
 
 def get_userstories_filters_data(project, querysets):

@@ -445,8 +445,10 @@ def _get_issues_tags(project, queryset):
         WITH issues_tags AS (
                     SELECT tag,
                            COUNT(tag) counter FROM (
-                                SELECT UNNEST(tags) tag
+                                SELECT UNNEST(issues_issue.tags) tag
                                   FROM issues_issue
+                            INNER JOIN projects_project
+                                        ON (issues_issue.project_id = projects_project.id)
                                  WHERE {where}) tags
                   GROUP BY tag),
              project_tags AS (
@@ -454,7 +456,7 @@ def _get_issues_tags(project, queryset):
                       FROM projects_project
                      WHERE id=%s)
 
-      SELECT tag_color[1] tag, issues_tags.counter counter
+      SELECT tag_color[1] tag, COALESCE(issues_tags.counter, 0) counter
         FROM project_tags
    LEFT JOIN issues_tags ON project_tags.tag_color[1] = issues_tags.tag
     ORDER BY tag
@@ -468,9 +470,9 @@ def _get_issues_tags(project, queryset):
     for name, count in rows:
         result.append({
             "name": name,
-            "count": 0 if count is None else count,
+            "count": count,
         })
-    return result
+    return sorted(result, key=itemgetter("name"))
 
 
 def get_issues_filters_data(project, querysets):
