@@ -91,39 +91,55 @@ def _get_membership_permissions(membership):
     return []
 
 
+def calculate_permissions(is_authenticated=False, is_superuser=False, is_member=False,
+                          is_admin=False, role_permissions=[], anon_permissions=[],
+                          public_permissions=[]):
+    if is_superuser:
+        admins_permissions = list(map(lambda perm: perm[0], ADMINS_PERMISSIONS))
+        members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
+        public_permissions = []
+        anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
+    elif is_member:
+        if is_admin:
+            admins_permissions = list(map(lambda perm: perm[0], ADMINS_PERMISSIONS))
+            members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
+        else:
+            admins_permissions = []
+            members_permissions = []
+        members_permissions = members_permissions + role_permissions
+        public_permissions = public_permissions if public_permissions is not None else []
+        anon_permissions = anon_permissions if anon_permissions is not None else []
+    elif is_authenticated:
+        admins_permissions = []
+        members_permissions = []
+        public_permissions = public_permissions if public_permissions is not None else []
+        anon_permissions = anon_permissions if anon_permissions is not None else []
+    else:
+        admins_permissions = []
+        members_permissions = []
+        public_permissions = []
+        anon_permissions = anon_permissions if anon_permissions is not None else []
+
+    return set(admins_permissions + members_permissions + public_permissions + anon_permissions)
+
+
 def get_user_project_permissions(user, project, cache="user"):
     """
     cache param determines how memberships are calculated trying to reuse the existing data
     in cache
     """
     membership = _get_user_project_membership(user, project, cache=cache)
-    if user.is_superuser:
-        admins_permissions = list(map(lambda perm: perm[0], ADMINS_PERMISSIONS))
-        members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
-        public_permissions = []
-        anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
-    elif membership:
-        if membership.is_admin:
-            admins_permissions = list(map(lambda perm: perm[0], ADMINS_PERMISSIONS))
-            members_permissions = list(map(lambda perm: perm[0], MEMBERS_PERMISSIONS))
-        else:
-            admins_permissions = []
-            members_permissions = []
-        members_permissions = members_permissions + _get_membership_permissions(membership)
-        public_permissions = project.public_permissions if project.public_permissions is not None else []
-        anon_permissions = project.anon_permissions if project.anon_permissions is not None else []
-    elif user.is_authenticated():
-        admins_permissions = []
-        members_permissions = []
-        public_permissions = project.public_permissions if project.public_permissions is not None else []
-        anon_permissions = project.anon_permissions if project.anon_permissions is not None else []
-    else:
-        admins_permissions = []
-        members_permissions = []
-        public_permissions = []
-        anon_permissions = project.anon_permissions if project.anon_permissions is not None else []
-
-    return set(admins_permissions + members_permissions + public_permissions + anon_permissions)
+    is_member = membership is not None
+    is_admin = is_member and membership.is_admin
+    return calculate_permissions(
+        is_authenticated = user.is_authenticated(),
+        is_superuser =  user.is_superuser,
+        is_member = is_member,
+        is_admin = is_admin,
+        role_permissions = _get_membership_permissions(membership),
+        anon_permissions = project.anon_permissions,
+        public_permissions = project.public_permissions
+    )
 
 
 def set_base_permissions_for_project(project):

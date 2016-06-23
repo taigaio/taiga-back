@@ -27,30 +27,45 @@ ERROR_MAX_PUBLIC_PROJECTS = 'max_public_projects'
 ERROR_MAX_PRIVATE_PROJECTS = 'max_private_projects'
 ERROR_PROJECT_WITHOUT_OWNER = 'project_without_owner'
 
-def check_if_project_privacity_can_be_changed(project):
+def check_if_project_privacity_can_be_changed(project,
+        current_memberships=None,
+        current_private_projects=None,
+        current_public_projects=None):
     """Return if the project privacity can be changed from private to public or viceversa.
 
     :param project: A project object.
+    :param current_memberships: Project total memberships, If None it will be calculated.
+    :param current_private_projects: total private projects owned by the project owner, If None it will be calculated.
+    :param current_public_projects: total public projects owned by the project owner, If None it will be calculated.
 
     :return: A dict like this {'can_be_updated': bool, 'reason': error message}.
     """
     if project.owner is None:
         return {'can_be_updated': False, 'reason': ERROR_PROJECT_WITHOUT_OWNER}
 
-    if project.is_private:
+    if current_memberships is None:
         current_memberships = project.memberships.count()
+
+    if project.is_private:
         max_memberships = project.owner.max_memberships_public_projects
         error_memberships_exceeded = ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS
 
-        current_projects = project.owner.owned_projects.filter(is_private=False).count()
+        if current_public_projects is None:
+            current_projects = project.owner.owned_projects.filter(is_private=False).count()
+        else:
+            current_projects = current_public_projects
+
         max_projects = project.owner.max_public_projects
         error_project_exceeded = ERROR_MAX_PUBLIC_PROJECTS
     else:
-        current_memberships = project.memberships.count()
         max_memberships = project.owner.max_memberships_private_projects
         error_memberships_exceeded = ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS
 
-        current_projects = project.owner.owned_projects.filter(is_private=True).count()
+        if current_private_projects is None:
+            current_projects = project.owner.owned_projects.filter(is_private=True).count()
+        else:
+            current_projects = current_private_projects
+
         max_projects = project.owner.max_private_projects
         error_project_exceeded = ERROR_MAX_PRIVATE_PROJECTS
 
@@ -139,25 +154,43 @@ def check_if_project_can_be_transfered(project, new_owner):
     return (True, None)
 
 
-def check_if_project_is_out_of_owner_limits(project):
+def check_if_project_is_out_of_owner_limits(project,
+        current_memberships=None,
+        current_private_projects=None,
+        current_public_projects=None):
+
     """Return if the project fits on its owner limits.
 
     :param project: A project object.
+    :param current_memberships: Project total memberships, If None it will be calculated.
+    :param current_private_projects: total private projects owned by the project owner, If None it will be calculated.
+    :param current_public_projects: total public projects owned by the project owner, If None it will be calculated.
 
     :return: bool
     """
     if project.owner is None:
         return {'can_be_updated': False, 'reason': ERROR_PROJECT_WITHOUT_OWNER}
 
-    if project.is_private:
+    if current_memberships is None:
         current_memberships = project.memberships.count()
+
+    if project.is_private:
         max_memberships = project.owner.max_memberships_private_projects
-        current_projects = project.owner.owned_projects.filter(is_private=True).count()
+
+        if current_private_projects is None:
+            current_projects = project.owner.owned_projects.filter(is_private=True).count()
+        else:
+            current_projects = current_private_projects
+
         max_projects = project.owner.max_private_projects
     else:
-        current_memberships = project.memberships.count()
         max_memberships = project.owner.max_memberships_public_projects
-        current_projects = project.owner.owned_projects.filter(is_private=False).count()
+
+        if current_public_projects is None:
+            current_projects = project.owner.owned_projects.filter(is_private=False).count()
+        else:
+            current_projects = current_public_projects
+
         max_projects = project.owner.max_public_projects
 
     if max_memberships is not None and current_memberships > max_memberships:

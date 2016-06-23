@@ -1228,4 +1228,6 @@ class LightSerializer(serpy.Serializer):
         kwargs.pop("read_only", None)
         kwargs.pop("partial", None)
         kwargs.pop("files", None)
+        context = kwargs.pop("context", {})
         super().__init__(*args, **kwargs)
+        self.context = context

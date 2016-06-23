@@ -22,7 +22,7 @@ from django.apps import apps
 
 from taiga.base.utils import json
 from taiga.projects import choices as project_choices
-from taiga.projects.serializers import ProjectDetailSerializer
+from taiga.projects.serializers import ProjectSerializer
 from taiga.permissions.choices import MEMBERS_PERMISSIONS
 
 from tests import factories as f
@@ -153,12 +153,12 @@ def test_project_update(client, data):
         data.project_owner
     ]
 
-    project_data = ProjectDetailSerializer(data.private_project2).data
+    project_data = ProjectSerializer(data.private_project2).data
     project_data["is_private"] = False
     results = helper_test_http_method(client, 'put', url, json.dumps(project_data), users)
     assert results == [401, 403, 403, 200]
 
-    project_data = ProjectDetailSerializer(data.blocked_project).data
+    project_data = ProjectSerializer(data.blocked_project).data
     project_data["is_private"] = False
     results = helper_test_http_method(client, 'put', blocked_url, json.dumps(project_data), users)
     assert results == [401, 403, 403, 451]

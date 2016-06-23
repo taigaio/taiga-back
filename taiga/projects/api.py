@@ -61,7 +61,7 @@ from . import models
 from . import permissions
 from . import serializers
 from . import services
-
+from . import utils as project_utils
 
 ######################################################
 ## Project
@@ -70,11 +70,9 @@ from . import services
 class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, BlockeableSaveMixin, BlockeableDeleteMixin,
                      TagsColorsResourceMixin, ModelCrudViewSet):
     queryset = models.Project.objects.all()
-    serializer_class = serializers.ProjectDetailSerializer
-    admin_serializer_class = serializers.ProjectDetailAdminSerializer
-    list_serializer_class = serializers.ProjectSerializer
     permission_classes = (permissions.ProjectPermission, )
-    filter_backends = (project_filters.QFilterBackend,
+    filter_backends = (project_filters.UserOrderFilterBackend,
+                       project_filters.QFilterBackend,
                        project_filters.CanViewProjectObjFilterBackend,
                        project_filters.DiscoverModeFilterBackend)
 
@@ -85,8 +83,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, BlockeableSaveMix
                      "is_kanban_activated")
 
     ordering = ("name", "id")
-    order_by_fields = ("memberships__user_order",
-                       "total_fans",
+    order_by_fields = ("total_fans",
                        "total_fans_last_week",
                        "total_fans_last_month",
                        "total_fans_last_year",
@@ -106,18 +103,8 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, BlockeableSaveMix
 
     def get_queryset(self):
         qs = super().get_queryset()
-
         qs = qs.select_related("owner")
-        # Prefetch doesn"t work correctly if then if the field is filtered later (it generates more queries)
-        # so we add some custom prefetching
-        qs = qs.prefetch_related("members")
-        qs = qs.prefetch_related("memberships")
-        qs = qs.prefetch_related(Prefetch("notify_policies",
-            NotifyPolicy.objects.exclude(notify_level=NotifyLevel.none), to_attr="valid_notify_policies"))
-
-        Milestone = apps.get_model("milestones", "Milestone")
-        qs = qs.prefetch_related(Prefetch("milestones",
-            Milestone.objects.filter(closed=True), to_attr="closed_milestones"))
+        qs = project_utils.attach_extra_info(qs, user=self.request.user)
 
         # If filtering an activity period we must exclude the activities not updated recently enough
         now = timezone.now()
@@ -137,22 +124,20 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, BlockeableSaveMix
 
         return qs
 
+    def retrieve(self, request, *args, **kwargs):
+        if self.action == "by_slug":
+            self.lookup_field = "slug"
+
+        return super().retrieve(request, *args, **kwargs)
+
     def get_serializer_class(self):
-        serializer_class = self.serializer_class
-
         if self.action == "list":
-            serializer_class = self.list_serializer_class
-        elif self.action != "create":
-            if self.action == "by_slug":
-                slug = self.request.QUERY_PARAMS.get("slug", None)
-                project = get_object_or_404(models.Project, slug=slug)
-            else:
-                project = self.get_object()
+            return serializers.LightProjectSerializer
 
-            if permissions_services.is_project_admin(self.request.user, project):
-                serializer_class = self.admin_serializer_class
+        if self.action in ["retrieve", "by_slug"]:
+            return serializers.LightProjectDetailSerializer
 
-        return serializer_class
+        return serializers.ProjectSerializer
 
     @detail_route(methods=["POST"])
     def change_logo(self, request, *args, **kwargs):
@@ -283,10 +268,9 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, BlockeableSaveMix
         return response.Ok(data)
 
     @list_route(methods=["GET"])
-    def by_slug(self, request):
+    def by_slug(self, request, *args, **kwargs):
         slug = request.QUERY_PARAMS.get("slug", None)
-        project = get_object_or_404(models.Project, slug=slug)
-        return self.retrieve(request, pk=project.pk)
+        return self.retrieve(request, slug=slug)
 
     @detail_route(methods=["GET", "PATCH"])
     def modules(self, request, pk=None):

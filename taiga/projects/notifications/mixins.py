@@ -188,9 +188,10 @@ class WatchedModelMixin(object):
 
 class BaseWatchedResourceModelSerializer(object):
     def get_is_watcher(self, obj):
+        # The "is_watcher" attribute is attached in the get_queryset of the viewset.
         if "request" in self.context:
             user = self.context["request"].user
-            return user.is_authenticated() and user.is_watcher(obj)
+            return user.is_authenticated() and getattr(obj, "is_watcher", False)
 
         return False
 
@@ -205,8 +206,8 @@ class WatchedResourceModelSerializer(BaseWatchedResourceModelSerializer, seriali
 
 
 class ListWatchedResourceModelSerializer(BaseWatchedResourceModelSerializer, serpy.Serializer):
-    is_watcher = serializers.SerializerMethodField("get_is_watcher")
-    total_watchers = serializers.SerializerMethodField("get_total_watchers")
+    is_watcher = serpy.MethodField("get_is_watcher")
+    total_watchers = serpy.MethodField("get_total_watchers")
 
 
 class EditableWatchedResourceModelSerializer(WatchedResourceModelSerializer):

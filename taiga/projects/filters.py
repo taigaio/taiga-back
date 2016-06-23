@@ -45,7 +45,7 @@ class DiscoverModeFilterBackend(FilterBackend):
                 if request.QUERY_PARAMS.get("is_featured", None) == 'true':
                     qs = qs.order_by("?")
 
-        return super().filter_queryset(request, qs.distinct(), view)
+        return super().filter_queryset(request, qs, view)
 
 
 class CanViewProjectObjFilterBackend(FilterBackend):
@@ -86,7 +86,7 @@ class CanViewProjectObjFilterBackend(FilterBackend):
             # external users / anonymous
             qs = qs.filter(anon_permissions__contains=["view_project"])
 
-        return super().filter_queryset(request, qs.distinct(), view)
+        return super().filter_queryset(request, qs, view)
 
 
 class QFilterBackend(FilterBackend):
@@ -120,4 +120,35 @@ class QFilterBackend(FilterBackend):
                                       where=where,
                                       params=params,
                                       order_by=order_by)
+        return queryset
+
+
+class UserOrderFilterBackend(FilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        if request.user.is_anonymous():
+            return queryset
+
+        raw_fieldname = request.QUERY_PARAMS.get(self.order_by_query_param, None)
+        if not raw_fieldname:
+            return queryset
+
+        if raw_fieldname.startswith("-"):
+            field_name = raw_fieldname[1:]
+        else:
+            field_name = raw_fieldname
+
+        if field_name != "user_order":
+            return queryset
+
+        model = queryset.model
+        sql = """SELECT projects_membership.user_order
+            	    FROM projects_membership
+                    WHERE
+                        projects_membership.project_id = {tbl}.id AND
+                        projects_membership.user_id = {user_id}
+                    """
+
+        sql = sql.format(tbl=model._meta.db_table, user_id=request.user.id)
+        queryset = queryset.extra(select={"user_order": sql})
+        queryset = queryset.order_by(raw_fieldname)
         return queryset
