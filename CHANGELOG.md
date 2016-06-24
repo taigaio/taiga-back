@@ -3,6 +3,7 @@
 ## 3.0.0 ??? (unreleased)
 
 ### Features
+- Add Epics.
 - Include created, modified and finished dates for tasks in CSV reports.
 - Add gravatar url to Users API endpoint.
 - ProjectTemplates now are sorted by the attribute 'order'.
