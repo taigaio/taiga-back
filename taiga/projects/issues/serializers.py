@@ -21,9 +21,9 @@ from taiga.base.fields import PgArrayField
 from taiga.base.neighbors import NeighborsSerializerMixin
 
 from taiga.mdrender.service import render as mdrender
-from taiga.projects.mixins.serializers import OwnerExtraInfoMixin
-from taiga.projects.mixins.serializers import AssigedToExtraInfoMixin
-from taiga.projects.mixins.serializers import StatusExtraInfoMixin
+from taiga.projects.mixins.serializers import ListOwnerExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import ListAssignedToExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import ListStatusExtraInfoSerializerMixin
 from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
 from taiga.projects.notifications.mixins import ListWatchedResourceModelSerializer
 from taiga.projects.notifications.validators import WatchersValidator
@@ -38,6 +38,7 @@ from taiga.users.serializers import UserBasicInfoSerializer
 from . import models
 
 import serpy
+
 
 class IssueSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer,
                       serializers.ModelSerializer):
@@ -75,8 +76,8 @@ class IssueSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWa
 
 
 class IssueListSerializer(ListVoteResourceSerializerMixin, ListWatchedResourceModelSerializer,
-                          OwnerExtraInfoMixin, AssigedToExtraInfoMixin, StatusExtraInfoMixin,
-                          serializers.LightSerializer):
+                          ListOwnerExtraInfoSerializerMixin, ListAssignedToExtraInfoSerializerMixin,
+                          ListStatusExtraInfoSerializerMixin, serializers.LightSerializer):
     id = serpy.Field()
     ref = serpy.Field()
     severity = serpy.Field(attr="severity_id")

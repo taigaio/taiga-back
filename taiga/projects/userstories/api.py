@@ -36,6 +36,7 @@ from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
 
+from taiga.projects.attachments.utils import attach_basic_attachments
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.milestones.models import Milestone
@@ -49,6 +50,7 @@ from taiga.projects.votes.mixins.viewsets import VotedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotersViewSetMixin
 from taiga.projects.userstories.utils import attach_total_points
 from taiga.projects.userstories.utils import attach_role_points
+from taiga.projects.userstories.utils import attach_tasks
 
 from . import models
 from . import permissions
@@ -85,9 +87,6 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                        "kanban_order",
                        "total_voters"]
 
-    # Specific filter used for filtering neighbor user stories
-    _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')
-
     def get_serializer_class(self, *args, **kwargs):
         if self.action in ["retrieve", "by_ref"]:
             return serializers.UserStoryNeighborsSerializer
@@ -105,10 +104,20 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                                "owner",
                                "assigned_to",
                                "generated_from_issue")
+
         qs = self.attach_votes_attrs_to_queryset(qs)
         qs = self.attach_watchers_attrs_to_queryset(qs)
         qs = attach_total_points(qs)
         qs = attach_role_points(qs)
+
+        if "include_attachments" in self.request.QUERY_PARAMS:
+            qs = attach_basic_attachments(qs)
+            qs = qs.extra(select={"include_attachments": "True"})
+
+        if "include_tasks" in self.request.QUERY_PARAMS:
+            qs = attach_tasks(qs)
+            qs = qs.extra(select={"include_tasks": "True"})
+
         return qs
 
     def pre_conditions_on_save(self, obj):

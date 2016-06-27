@@ -44,7 +44,7 @@ class ValidateDuplicatedNameInProjectMixin(serializers.ModelSerializer):
         return attrs
 
 
-class CachedSerializedUsersMixin(serpy.Serializer):
+class ListCachedUsersSerializerMixin(serpy.Serializer):
     def to_value(self, instance):
         self._serialized_users = {}
         return super().to_value(instance)
@@ -61,7 +61,7 @@ class CachedSerializedUsersMixin(serpy.Serializer):
         return serialized_user
 
 
-class OwnerExtraInfoMixin(CachedSerializedUsersMixin):
+class ListOwnerExtraInfoSerializerMixin(ListCachedUsersSerializerMixin):
     owner = serpy.Field(attr="owner_id")
     owner_extra_info = serpy.MethodField()
 
@@ -69,7 +69,7 @@ class OwnerExtraInfoMixin(CachedSerializedUsersMixin):
         return self.get_user_extra_info(obj.owner)
 
 
-class AssigedToExtraInfoMixin(CachedSerializedUsersMixin):
+class ListAssignedToExtraInfoSerializerMixin(ListCachedUsersSerializerMixin):
     assigned_to = serpy.Field(attr="assigned_to_id")
     assigned_to_extra_info = serpy.MethodField()
 
@@ -77,9 +77,10 @@ class AssigedToExtraInfoMixin(CachedSerializedUsersMixin):
         return self.get_user_extra_info(obj.assigned_to)
 
 
-class StatusExtraInfoMixin(serpy.Serializer):
+class ListStatusExtraInfoSerializerMixin(serpy.Serializer):
     status = serpy.Field(attr="status_id")
     status_extra_info = serpy.MethodField()
+
     def to_value(self, instance):
         self._serialized_status = {}
         return super().to_value(instance)

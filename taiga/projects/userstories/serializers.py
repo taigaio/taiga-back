@@ -29,20 +29,19 @@ from taiga.base.neighbors import NeighborsSerializerMixin
 from taiga.base.utils import json
 
 from taiga.mdrender.service import render as mdrender
-
+from taiga.projects.attachments.serializers import ListBasicAttachmentsInfoSerializerMixin
 from taiga.projects.milestones.validators import SprintExistsValidator
+from taiga.projects.mixins.serializers import ListOwnerExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import ListAssignedToExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import ListStatusExtraInfoSerializerMixin
 from taiga.projects.models import Project, UserStoryStatus
-from taiga.projects.mixins.serializers import OwnerExtraInfoMixin
-from taiga.projects.mixins.serializers import AssigedToExtraInfoMixin
-from taiga.projects.mixins.serializers import StatusExtraInfoMixin
 from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
 from taiga.projects.notifications.mixins import ListWatchedResourceModelSerializer
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.serializers import BasicUserStoryStatusSerializer
 from taiga.projects.tagging.fields import TagsAndTagsColorsField
 from taiga.projects.userstories.validators import UserStoryExistsValidator
-from taiga.projects.validators import ProjectExistsValidator
-from taiga.projects.validators import UserStoryStatusExistsValidator
+from taiga.projects.validators import ProjectExistsValidator, UserStoryStatusExistsValidator
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
 from taiga.projects.votes.mixins.serializers import ListVoteResourceSerializerMixin
 
@@ -136,7 +135,9 @@ class ListOriginIssueSerializer(serializers.LightSerializer):
 
 
 class UserStoryListSerializer(ListVoteResourceSerializerMixin, ListWatchedResourceModelSerializer,
-        OwnerExtraInfoMixin, AssigedToExtraInfoMixin, StatusExtraInfoMixin, serializers.LightSerializer):
+        ListOwnerExtraInfoSerializerMixin, ListAssignedToExtraInfoSerializerMixin,
+        ListStatusExtraInfoSerializerMixin, ListBasicAttachmentsInfoSerializerMixin,
+        serializers.LightSerializer):
 
     id = serpy.Field()
     ref = serpy.Field()
@@ -163,13 +164,11 @@ class UserStoryListSerializer(ListVoteResourceSerializerMixin, ListWatchedResour
     is_blocked = serpy.Field()
     blocked_note = serpy.Field()
     tags = serpy.Field()
-    total_points = serpy.Field("total_points_attr")
+    total_points = serpy.MethodField()
     comment = serpy.MethodField("get_comment")
     origin_issue = ListOriginIssueSerializer(attr="generated_from_issue")
 
-    def to_value(self, instance):
-        self._serialized_status = {}
-        return super().to_value(instance)
+    tasks = serpy.MethodField()
 
     def get_milestone_slug(self, obj):
         return obj.milestone.slug if obj.milestone else None
@@ -177,14 +176,30 @@ class UserStoryListSerializer(ListVoteResourceSerializerMixin, ListWatchedResour
     def get_milestone_name(self, obj):
         return obj.milestone.name if obj.milestone else None
 
+    def get_total_points(self, obj):
+        assert hasattr(obj, "total_points_attr"), "instance must have a total_points_attr attribute"
+        return obj.total_points_attr
+
     def get_points(self, obj):
+        assert hasattr(obj, "role_points_attr"), "instance must have a role_points_attr attribute"
         if obj.role_points_attr is None:
             return {}
 
-        return dict(ChainMap(*json.loads(obj.role_points_attr)))
+        return dict(ChainMap(*obj.role_points_attr))
 
     def get_comment(self, obj):
         return ""
+
+    def get_tasks(self, obj):
+        include_tasks = getattr(obj, "include_tasks", False)
+
+        if include_tasks:
+            assert hasattr(obj, "tasks_attr"), "instance must have a tasks_attr attribute"
+
+        if not include_tasks or obj.tasks_attr is None:
+            return []
+
+        return obj.tasks_attr
 
 
 class UserStoryNeighborsSerializer(NeighborsSerializerMixin, UserStorySerializer):

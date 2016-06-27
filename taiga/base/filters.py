@@ -152,7 +152,7 @@ class PermissionBasedFilterBackend(FilterBackend):
         else:
             qs = qs.filter(project__anon_permissions__contains=[self.permission])
 
-        return super().filter_queryset(request, qs.distinct(), view)
+        return super().filter_queryset(request, qs, view)
 
 
 class CanViewProjectFilterBackend(PermissionBasedFilterBackend):
@@ -268,7 +268,7 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
 
             qs = qs.filter(memberships__project__anon_permissions__contains=[self.permission])
 
-        return qs.distinct()
+        return qs
 
 
 #####################################################################
@@ -307,7 +307,7 @@ class IsProjectAdminFilterBackend(FilterBackend, BaseIsProjectAdminFilterBackend
         else:
             queryset = queryset.filter(project_id__in=project_ids)
 
-        return super().filter_queryset(request, queryset.distinct(), view)
+        return super().filter_queryset(request, queryset, view)
 
 
 class IsProjectAdminFromWebhookLogFilterBackend(FilterBackend, BaseIsProjectAdminFilterBackend):

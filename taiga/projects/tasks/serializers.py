@@ -23,10 +23,12 @@ from taiga.base.api import serializers
 from taiga.base.fields import PgArrayField
 from taiga.base.neighbors import NeighborsSerializerMixin
 
+from taiga.mdrender.service import render as mdrender
+from taiga.projects.attachments.serializers import ListBasicAttachmentsInfoSerializerMixin
 from taiga.projects.milestones.validators import SprintExistsValidator
-from taiga.projects.mixins.serializers import OwnerExtraInfoMixin
-from taiga.projects.mixins.serializers import AssigedToExtraInfoMixin
-from taiga.projects.mixins.serializers import StatusExtraInfoMixin
+from taiga.projects.mixins.serializers import ListOwnerExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import ListAssignedToExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import ListStatusExtraInfoSerializerMixin
 from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
 from taiga.projects.notifications.mixins import ListWatchedResourceModelSerializer
 from taiga.projects.notifications.validators import WatchersValidator
@@ -46,8 +48,10 @@ from . import models
 
 import serpy
 
+
 class TaskSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer,
                      serializers.ModelSerializer):
+                     
     tags = TagsAndTagsColorsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
     comment = serializers.SerializerMethodField("get_comment")
@@ -83,8 +87,10 @@ class TaskSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWat
 
 
 class TaskListSerializer(ListVoteResourceSerializerMixin, ListWatchedResourceModelSerializer,
-                         OwnerExtraInfoMixin, AssigedToExtraInfoMixin, StatusExtraInfoMixin,
+                         ListOwnerExtraInfoSerializerMixin, ListAssignedToExtraInfoSerializerMixin,
+                         ListStatusExtraInfoSerializerMixin, ListBasicAttachmentsInfoSerializerMixin,
                          serializers.LightSerializer):
+
     id = serpy.Field()
     user_story = serpy.Field(attr="user_story_id")
     ref = serpy.Field()

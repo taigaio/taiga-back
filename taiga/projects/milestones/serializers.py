@@ -35,6 +35,7 @@ class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer,
                           ValidateDuplicatedNameInProjectMixin):
     total_points = serializers.SerializerMethodField("get_total_points")
     closed_points = serializers.SerializerMethodField("get_closed_points")
+    user_stories = serializers.SerializerMethodField("get_user_stories")
 
     class Meta:
         model = models.Milestone
@@ -45,6 +46,9 @@ class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer,
 
     def get_closed_points(self, obj):
         return sum(obj.closed_points.values())
+
+    def get_user_stories(self, obj):
+        return UserStoryListSerializer(obj.user_stories.all(), many=True).data
 
 
 class MilestoneListSerializer(ListWatchedResourceModelSerializer, serializers.LightSerializer):
@@ -62,8 +66,16 @@ class MilestoneListSerializer(ListWatchedResourceModelSerializer, serializers.Li
     order = serpy.Field()
     watchers = serpy.Field()
     user_stories = serpy.MethodField("get_user_stories")
-    total_points = serializers.Field(source="total_points_attr")
-    closed_points = serializers.Field(source="closed_points_attr")
+    total_points = serpy.MethodField()
+    closed_points = serpy.MethodField()
 
     def get_user_stories(self, obj):
         return UserStoryListSerializer(obj.user_stories.all(), many=True).data
+
+    def get_total_points(self, obj):
+        assert hasattr(obj, "total_points_attr"), "instance must have a total_points_attr attribute"
+        return obj.total_points_attr
+
+    def get_closed_points(self, obj):
+        assert hasattr(obj, "closed_points_attr"), "instance must have a closed_points_attr attribute"
+        return obj.closed_points_attr

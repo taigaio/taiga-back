@@ -16,10 +16,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
+
 from taiga.base.api import serializers
+from taiga.base.utils.thumbnails import get_thumbnail_url
 
 from . import services
 from . import models
+
+import json
+import serpy
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
@@ -37,5 +43,31 @@ class AttachmentSerializer(serializers.ModelSerializer):
     def get_url(self, obj):
         return obj.attached_file.url
 
+
     def get_thumbnail_card_url(self, obj):
         return services.get_card_image_thumbnail_url(obj)
+
+
+class ListBasicAttachmentsInfoSerializerMixin(serpy.Serializer):
+    """
+    Assumptions:
+    - The queryset has an attribute called "include_attachments" indicating if the attachments array should contain information
+        about the related elements, otherwise it will be empty
+    - The method attach_basic_attachments has been used to include the necessary
+        json data about the attachments in the "attachments_attr" column
+    """
+    attachments = serpy.MethodField()
+
+    def get_attachments(self, obj):
+        include_attachments = getattr(obj, "include_attachments", False)
+
+        if include_attachments:
+            assert hasattr(obj, "attachments_attr"), "instance must have a attachments_attr attribute"
+
+        if not include_attachments or obj.attachments_attr is None:
+            return []
+
+        for at in obj.attachments_attr:
+            at["thumbnail_card_url"] = get_thumbnail_url(at["attached_file"], settings.THN_ATTACHMENT_CARD)
+
+        return obj.attachments_attr
