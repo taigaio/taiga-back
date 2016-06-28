@@ -18,7 +18,9 @@
 - Add a new permissions to allow add comments instead of use the existent modify permission for this purpose.
 - Include created, modified and finished dates for tasks in CSV reports
 - User stories and tasks listing API call support extra params to include more data (tasks and attachemnts and attachments, respectively)
-
+- Import/Export:
+    - Gzip export/import support.
+    - Export performance improvements.
 
 ### Misc
 - [API] Improve performance of some calls over list.
