@@ -9,6 +9,9 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('projects', '0045_merge'),
+        ('userstories', '0011_userstory_tribe_gig'),
+        ('tasks', '0009_auto_20151104_1131'),
+        ('issues', '0006_remove_issue_watchers'),
     ]
 
     operations = [

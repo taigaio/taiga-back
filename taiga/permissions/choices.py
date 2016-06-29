@@ -22,12 +22,14 @@ from django.utils.translation import ugettext_lazy as _
 ANON_PERMISSIONS = [
     ('view_project', _('View project')),
     ('view_milestones', _('View milestones')),
+    ('view_epic', _('View epic')),
     ('view_us', _('View user stories')),
     ('view_tasks', _('View tasks')),
     ('view_issues', _('View issues')),
     ('view_wiki_pages', _('View wiki pages')),
     ('view_wiki_links', _('View wiki links')),
 ]
+
 MEMBERS_PERMISSIONS = [
     ('view_project', _('View project')),
     # Milestone permissions
@@ -35,6 +37,12 @@ MEMBERS_PERMISSIONS = [
     ('add_milestone', _('Add milestone')),
     ('modify_milestone', _('Modify milestone')),
     ('delete_milestone', _('Delete milestone')),
+    # US permissions
+    ('view_epic', _('View epic')),
+    ('add_epic', _('Add epic')),
+    ('modify_epic', _('Modify epic')),
+    ('comment_epic', _('Comment epic')),
+    ('delete_epic', _('Delete epic')),
     # US permissions
     ('view_us', _('View user story')),
     ('add_us', _('Add user story')),

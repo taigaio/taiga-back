@@ -198,6 +198,10 @@ class PermissionBasedAttachmentFilterBackend(PermissionBasedFilterBackend):
         return qs.filter(content_type=ct)
 
 
+class CanViewEpicAttachmentFilterBackend(PermissionBasedAttachmentFilterBackend):
+    permission = "view_epic"
+
+
 class CanViewUserStoryAttachmentFilterBackend(PermissionBasedAttachmentFilterBackend):
     permission = "view_us"
 

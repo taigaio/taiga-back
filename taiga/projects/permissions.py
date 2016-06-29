@@ -109,6 +109,18 @@ class MembershipPermission(TaigaResourcePermission):
     resend_invitation_perms = IsProjectAdmin()
 
 
+# Epics
+
+class EpicStatusPermission(TaigaResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectAdmin()
+    update_perms = IsProjectAdmin()
+    partial_update_perms = IsProjectAdmin()
+    destroy_perms = IsProjectAdmin()
+    list_perms = AllowAny()
+    bulk_update_order_perms = IsProjectAdmin()
+
+
 # User Stories
 
 class PointsPermission(TaigaResourcePermission):

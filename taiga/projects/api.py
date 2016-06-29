@@ -40,6 +40,8 @@ from taiga.base.decorators import detail_route
 from taiga.base.utils.slug import slugify_uniquely
 
 from taiga.permissions import services as permissions_services
+
+from taiga.projects.epics.models import Epic
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.issues.models import Issue
 from taiga.projects.likes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
@@ -49,7 +51,6 @@ from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.tasks.models import Task
 from taiga.projects.tagging.api import TagsColorsResourceMixin
-
 from taiga.projects.userstories.models import UserStory, RolePoints
 
 from . import filters as project_filters
@@ -110,17 +111,17 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         now = timezone.now()
         order_by_field_name = self._get_order_by_field_name()
         if order_by_field_name == "total_fans_last_week":
-            qs = qs.filter(totals_updated_datetime__gte=now-relativedelta(weeks=1))
+            qs = qs.filter(totals_updated_datetime__gte=now - relativedelta(weeks=1))
         elif order_by_field_name == "total_fans_last_month":
-            qs = qs.filter(totals_updated_datetime__gte=now-relativedelta(months=1))
+            qs = qs.filter(totals_updated_datetime__gte=now - relativedelta(months=1))
         elif order_by_field_name == "total_fans_last_year":
-            qs = qs.filter(totals_updated_datetime__gte=now-relativedelta(years=1))
+            qs = qs.filter(totals_updated_datetime__gte=now - relativedelta(years=1))
         elif order_by_field_name == "total_activity_last_week":
-            qs = qs.filter(totals_updated_datetime__gte=now-relativedelta(weeks=1))
+            qs = qs.filter(totals_updated_datetime__gte=now - relativedelta(weeks=1))
         elif order_by_field_name == "total_activity_last_month":
-            qs = qs.filter(totals_updated_datetime__gte=now-relativedelta(months=1))
+            qs = qs.filter(totals_updated_datetime__gte=now - relativedelta(months=1))
         elif order_by_field_name == "total_activity_last_year":
-            qs = qs.filter(totals_updated_datetime__gte=now-relativedelta(years=1))
+            qs = qs.filter(totals_updated_datetime__gte=now - relativedelta(years=1))
 
         return qs
 
@@ -449,21 +450,21 @@ class ProjectWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
 ## Custom values for selectors
 ######################################################
 
-class PointsViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
-                    ModelCrudViewSet, BulkUpdateOrderMixin):
+class EpicStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+                        ModelCrudViewSet, BulkUpdateOrderMixin):
 
-    model = models.Points
-    serializer_class = serializers.PointsSerializer
-    validator_class = validators.PointsValidator
-    permission_classes = (permissions.PointsPermission,)
+    model = models.EpicStatus
+    serializer_class = serializers.EpicStatusSerializer
+    validator_class = validators.EpicStatusValidator
+    permission_classes = (permissions.EpicStatusPermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ('project',)
-    bulk_update_param = "bulk_points"
-    bulk_update_perm = "change_points"
-    bulk_update_order_action = services.bulk_update_points_order
-    move_on_destroy_related_class = RolePoints
-    move_on_destroy_related_field = "points"
-    move_on_destroy_project_default_field = "default_points"
+    bulk_update_param = "bulk_epic_statuses"
+    bulk_update_perm = "change_epicstatus"
+    bulk_update_order_action = services.bulk_update_epic_status_order
+    move_on_destroy_related_class = Epic
+    move_on_destroy_related_field = "status"
+    move_on_destroy_project_default_field = "default_epic_status"
 
 
 class UserStoryStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
@@ -481,6 +482,23 @@ class UserStoryStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
     move_on_destroy_related_class = UserStory
     move_on_destroy_related_field = "status"
     move_on_destroy_project_default_field = "default_us_status"
+
+
+class PointsViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
+                    ModelCrudViewSet, BulkUpdateOrderMixin):
+
+    model = models.Points
+    serializer_class = serializers.PointsSerializer
+    validator_class = validators.PointsValidator
+    permission_classes = (permissions.PointsPermission,)
+    filter_backends = (filters.CanViewProjectFilterBackend,)
+    filter_fields = ('project',)
+    bulk_update_param = "bulk_points"
+    bulk_update_perm = "change_points"
+    bulk_update_order_action = services.bulk_update_points_order
+    move_on_destroy_related_class = RolePoints
+    move_on_destroy_related_field = "points"
+    move_on_destroy_project_default_field = "default_points"
 
 
 class TaskStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,

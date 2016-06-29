@@ -102,19 +102,20 @@ class Membership(models.Model):
         verbose_name_plural = "memberships"
         unique_together = ("user", "project",)
         ordering = ["project", "user__full_name", "user__username", "user__email", "email"]
-        permissions = (
-            ("view_membership", "Can view membership"),
-        )
 
 
 class ProjectDefaults(models.Model):
-    default_points = models.OneToOneField("projects.Points", on_delete=models.SET_NULL,
-                                          related_name="+", null=True, blank=True,
-                                          verbose_name=_("default points"))
+    default_epic_status = models.OneToOneField("projects.EpicStatus",
+                                             on_delete=models.SET_NULL, related_name="+",
+                                             null=True, blank=True,
+                                             verbose_name=_("default epic status"))
     default_us_status = models.OneToOneField("projects.UserStoryStatus",
                                              on_delete=models.SET_NULL, related_name="+",
                                              null=True, blank=True,
                                              verbose_name=_("default US status"))
+    default_points = models.OneToOneField("projects.Points", on_delete=models.SET_NULL,
+                                          related_name="+", null=True, blank=True,
+                                          verbose_name=_("default points"))
     default_task_status = models.OneToOneField("projects.TaskStatus",
                                                on_delete=models.SET_NULL, related_name="+",
                                                null=True, blank=True,
@@ -164,6 +165,8 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
                                            verbose_name=_("total of milestones"))
     total_story_points = models.FloatField(null=True, blank=True, verbose_name=_("total story points"))
 
+    is_epics_activated = models.BooleanField(default=True, null=False, blank=True,
+                                             verbose_name=_("active epics panel"))
     is_backlog_activated = models.BooleanField(default=True, null=False, blank=True,
                                                verbose_name=_("active backlog panel"))
     is_kanban_activated = models.BooleanField(default=False, null=False, blank=True,
@@ -504,6 +507,39 @@ class ProjectModulesConfig(models.Model):
         ordering = ["project"]
 
 
+# Epic common Models
+class EpicStatus(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False,
+                            verbose_name=_("name"))
+    slug = models.SlugField(max_length=255, null=False, blank=True,
+                            verbose_name=_("slug"))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
+    is_closed = models.BooleanField(default=False, null=False, blank=True,
+                                    verbose_name=_("is closed"))
+    color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
+                             verbose_name=_("color"))
+    project = models.ForeignKey("Project", null=False, blank=False,
+                                related_name="epic_statuses", verbose_name=_("project"))
+
+    class Meta:
+        verbose_name = "epic status"
+        verbose_name_plural = "epic statuses"
+        ordering = ["project", "order", "name"]
+        unique_together = (("project", "name"), ("project", "slug"))
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        qs = self.project.epic_statuses
+        if self.id:
+            qs = qs.exclude(id=self.id)
+
+        self.slug = slugify_uniquely_for_queryset(self.name, qs)
+        return super().save(*args, **kwargs)
+
+
 # User Stories common Models
 class UserStoryStatus(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False,
@@ -528,9 +564,6 @@ class UserStoryStatus(models.Model):
         verbose_name_plural = "user story statuses"
         ordering = ["project", "order", "name"]
         unique_together = (("project", "name"), ("project", "slug"))
-        permissions = (
-            ("view_userstorystatus", "Can view user story status"),
-        )
 
     def __str__(self):
         return self.name
@@ -559,9 +592,6 @@ class Points(models.Model):
         verbose_name_plural = "points"
         ordering = ["project", "order", "name"]
         unique_together = ("project", "name")
-        permissions = (
-            ("view_points", "Can view points"),
-        )
 
     def __str__(self):
         return self.name
@@ -588,9 +618,6 @@ class TaskStatus(models.Model):
         verbose_name_plural = "task statuses"
         ordering = ["project", "order", "name"]
         unique_together = (("project", "name"), ("project", "slug"))
-        permissions = (
-            ("view_taskstatus", "Can view task status"),
-        )
 
     def __str__(self):
         return self.name
@@ -621,9 +648,6 @@ class Priority(models.Model):
         verbose_name_plural = "priorities"
         ordering = ["project", "order", "name"]
         unique_together = ("project", "name")
-        permissions = (
-            ("view_priority", "Can view priority"),
-        )
 
     def __str__(self):
         return self.name
@@ -644,9 +668,6 @@ class Severity(models.Model):
         verbose_name_plural = "severities"
         ordering = ["project", "order", "name"]
         unique_together = ("project", "name")
-        permissions = (
-            ("view_severity", "Can view severity"),
-        )
 
     def __str__(self):
         return self.name
@@ -671,9 +692,6 @@ class IssueStatus(models.Model):
         verbose_name_plural = "issue statuses"
         ordering = ["project", "order", "name"]
         unique_together = (("project", "name"), ("project", "slug"))
-        permissions = (
-            ("view_issuestatus", "Can view issue status"),
-        )
 
     def __str__(self):
         return self.name
@@ -702,9 +720,6 @@ class IssueType(models.Model):
         verbose_name_plural = "issue types"
         ordering = ["project", "order", "name"]
         unique_together = ("project", "name")
-        permissions = (
-            ("view_issuetype", "Can view issue type"),
-        )
 
     def __str__(self):
         return self.name
@@ -728,6 +743,8 @@ class ProjectTemplate(models.Model):
                                           blank=False,
                                           verbose_name=_("default owner's role"))
 
+    is_epics_activated = models.BooleanField(default=True, null=False, blank=True,
+                                             verbose_name=_("active epics panel"))
     is_backlog_activated = models.BooleanField(default=True, null=False, blank=True,
                                                verbose_name=_("active backlog panel"))
     is_kanban_activated = models.BooleanField(default=False, null=False, blank=True,
@@ -743,6 +760,7 @@ class ProjectTemplate(models.Model):
                                              verbose_name=_("videoconference extra data"))
 
     default_options = JsonField(null=True, blank=True, verbose_name=_("default options"))
+    epic_statuses = JsonField(null=True, blank=True, verbose_name=_("epic statuses"))
     us_statuses = JsonField(null=True, blank=True, verbose_name=_("us statuses"))
     points = JsonField(null=True, blank=True, verbose_name=_("points"))
     task_statuses = JsonField(null=True, blank=True, verbose_name=_("task statuses"))
@@ -770,6 +788,7 @@ class ProjectTemplate(models.Model):
         super().save(*args, **kwargs)
 
     def load_data_from_project(self, project):
+        self.is_epics_activated = project.is_epics_activated
         self.is_backlog_activated = project.is_backlog_activated
         self.is_kanban_activated = project.is_kanban_activated
         self.is_wiki_activated = project.is_wiki_activated
@@ -779,6 +798,7 @@ class ProjectTemplate(models.Model):
 
         self.default_options = {
             "points": getattr(project.default_points, "name", None),
+            "epic_status": getattr(project.default_epic_status, "name", None),
             "us_status": getattr(project.default_us_status, "name", None),
             "task_status": getattr(project.default_task_status, "name", None),
             "issue_status": getattr(project.default_issue_status, "name", None),
@@ -786,6 +806,16 @@ class ProjectTemplate(models.Model):
             "priority": getattr(project.default_priority, "name", None),
             "severity": getattr(project.default_severity, "name", None)
         }
+
+        self.epic_statuses = []
+        for epic_status in project.epic_statuses.all():
+            self.epic_statuses.append({
+                "name": epic_status.name,
+                "slug": epic_status.slug,
+                "is_closed": epic_status.is_closed,
+                "color": epic_status.color,
+                "order": epic_status.order,
+            })
 
         self.us_statuses = []
         for us_status in project.us_statuses.all():
@@ -874,12 +904,23 @@ class ProjectTemplate(models.Model):
             raise Exception("Project need an id (must be a saved project)")
 
         project.creation_template = self
+        project.is_epics_activated = self.is_epics_activated
         project.is_backlog_activated = self.is_backlog_activated
         project.is_kanban_activated = self.is_kanban_activated
         project.is_wiki_activated = self.is_wiki_activated
         project.is_issues_activated = self.is_issues_activated
         project.videoconferences = self.videoconferences
         project.videoconferences_extra_data = self.videoconferences_extra_data
+
+        for epic_status in self.epic_statuses:
+            EpicStatus.objects.create(
+                name=epic_status["name"],
+                slug=epic_status["slug"],
+                is_closed=epic_status["is_closed"],
+                color=epic_status["color"],
+                order=epic_status["order"],
+                project=project
+            )
 
         for us_status in self.us_statuses:
             UserStoryStatus.objects.create(
@@ -955,12 +996,16 @@ class ProjectTemplate(models.Model):
                 permissions=role['permissions']
             )
 
-        if self.points:
-            project.default_points = Points.objects.get(name=self.default_options["points"],
-                                                        project=project)
+        if self.epic_statuses:
+            project.default_epic_status = EpicStatus.objects.get(name=self.default_options["epic_status"],
+                                                                 project=project)
+
         if self.us_statuses:
             project.default_us_status = UserStoryStatus.objects.get(name=self.default_options["us_status"],
                                                                     project=project)
+        if self.points:
+            project.default_points = Points.objects.get(name=self.default_options["points"],
+                                                        project=project)
 
         if self.task_statuses:
             project.default_task_status = TaskStatus.objects.get(name=self.default_options["task_status"],

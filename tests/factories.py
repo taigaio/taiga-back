@@ -229,22 +229,17 @@ class StorageEntryFactory(Factory):
     value = factory.Sequence(lambda n: {"value": "value-{}".format(n)})
 
 
-class UserStoryStatusFactory(Factory):
+class EpicFactory(Factory):
     class Meta:
-        model = "projects.UserStoryStatus"
+        model = "epics.Epic"
         strategy = factory.CREATE_STRATEGY
 
-    name = factory.Sequence(lambda n: "User Story status {}".format(n))
+    ref = factory.Sequence(lambda n: n)
     project = factory.SubFactory("tests.factories.ProjectFactory")
-
-
-class TaskStatusFactory(Factory):
-    class Meta:
-        model = "projects.TaskStatus"
-        strategy = factory.CREATE_STRATEGY
-
-    name = factory.Sequence(lambda n: "Task status {}".format(n))
-    project = factory.SubFactory("tests.factories.ProjectFactory")
+    owner = factory.SubFactory("tests.factories.UserFactory")
+    subject = factory.Sequence(lambda n: "User Story {}".format(n))
+    description = factory.Sequence(lambda n: "User Story {} description".format(n))
+    status = factory.SubFactory("tests.factories.EpicStatusFactory")
 
 
 class MilestoneFactory(Factory):
@@ -328,6 +323,33 @@ class WikiLinkFactory(Factory):
     title = factory.Sequence(lambda n: "Wiki Link {} title".format(n))
     href = factory.Sequence(lambda n: "link-{}".format(n))
     order = factory.Sequence(lambda n: n)
+
+
+class EpicStatusFactory(Factory):
+    class Meta:
+        model = "projects.EpicStatus"
+        strategy = factory.CREATE_STRATEGY
+
+    name = factory.Sequence(lambda n: "Epic status {}".format(n))
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
+class UserStoryStatusFactory(Factory):
+    class Meta:
+        model = "projects.UserStoryStatus"
+        strategy = factory.CREATE_STRATEGY
+
+    name = factory.Sequence(lambda n: "User Story status {}".format(n))
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
+class TaskStatusFactory(Factory):
+    class Meta:
+        model = "projects.TaskStatus"
+        strategy = factory.CREATE_STRATEGY
+
+    name = factory.Sequence(lambda n: "Task status {}".format(n))
+    project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
 class IssueStatusFactory(Factory):

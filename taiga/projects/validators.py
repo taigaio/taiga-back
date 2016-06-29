@@ -86,14 +86,19 @@ class TaskStatusExistsValidator:
 # Custom values for selectors
 ######################################################
 
-class PointsValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
+class EpicStatusValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
     class Meta:
-        model = models.Points
+        model = models.EpicStatus
 
 
 class UserStoryStatusValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
     class Meta:
         model = models.UserStoryStatus
+
+
+class PointsValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
+    class Meta:
+        model = models.Points
 
 
 class TaskStatusValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):

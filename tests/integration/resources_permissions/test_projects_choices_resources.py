@@ -115,6 +115,11 @@ def data():
                     user=m.project_owner,
                     is_admin=True)
 
+    m.public_epic_status = f.EpicStatusFactory(project=m.public_project)
+    m.private_epic_status1 = f.EpicStatusFactory(project=m.private_project1)
+    m.private_epic_status2 = f.EpicStatusFactory(project=m.private_project2)
+    m.blocked_epic_status = f.EpicStatusFactory(project=m.blocked_project)
+
     m.public_points = f.PointsFactory(project=m.public_project)
     m.private_points1 = f.PointsFactory(project=m.private_project1)
     m.private_points2 = f.PointsFactory(project=m.private_project2)
@@ -154,6 +159,10 @@ def data():
 
     return m
 
+
+#####################################################
+# Roles
+#####################################################
 
 def test_roles_retrieve(client, data):
     public_url = reverse('roles-detail', kwargs={"pk": data.public_project.roles.all()[0].pk})
@@ -298,6 +307,198 @@ def test_roles_patch(client, data):
     results = helper_test_http_method(client, 'patch', blocked_url, '{"name": "Test"}', users)
     assert results == [401, 403, 403, 403, 451]
 
+
+#####################################################
+# Epic Status
+#####################################################
+
+def test_epic_status_retrieve(client, data):
+    public_url = reverse('epic-statuses-detail', kwargs={"pk": data.public_epic_status.pk})
+    private1_url = reverse('epic-statuses-detail', kwargs={"pk": data.private_epic_status1.pk})
+    private2_url = reverse('epic-statuses-detail', kwargs={"pk": data.private_epic_status2.pk})
+    blocked_url = reverse('epic-statuses-detail', kwargs={"pk": data.blocked_epic_status.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private1_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private2_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_epic_status_update(client, data):
+    public_url = reverse('epic-statuses-detail', kwargs={"pk": data.public_epic_status.pk})
+    private1_url = reverse('epic-statuses-detail', kwargs={"pk": data.private_epic_status1.pk})
+    private2_url = reverse('epic-statuses-detail', kwargs={"pk": data.private_epic_status2.pk})
+    blocked_url = reverse('epic-statuses-detail', kwargs={"pk": data.blocked_epic_status.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    epic_status_data = serializers.EpicStatusSerializer(data.public_epic_status).data
+    epic_status_data["name"] = "test"
+    epic_status_data = json.dumps(epic_status_data)
+    results = helper_test_http_method(client, 'put', public_url, epic_status_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    epic_status_data = serializers.EpicStatusSerializer(data.private_epic_status1).data
+    epic_status_data["name"] = "test"
+    epic_status_data = json.dumps(epic_status_data)
+    results = helper_test_http_method(client, 'put', private1_url, epic_status_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    epic_status_data = serializers.EpicStatusSerializer(data.private_epic_status2).data
+    epic_status_data["name"] = "test"
+    epic_status_data = json.dumps(epic_status_data)
+    results = helper_test_http_method(client, 'put', private2_url, epic_status_data, users)
+    assert results == [401, 403, 403, 403, 200]
+
+    epic_status_data = serializers.EpicStatusSerializer(data.blocked_epic_status).data
+    epic_status_data["name"] = "test"
+    epic_status_data = json.dumps(epic_status_data)
+    results = helper_test_http_method(client, 'put', blocked_url, epic_status_data, users)
+    assert results == [401, 403, 403, 403, 451]
+
+
+def test_epic_status_delete(client, data):
+    public_url = reverse('epic-statuses-detail', kwargs={"pk": data.public_epic_status.pk})
+    private1_url = reverse('epic-statuses-detail', kwargs={"pk": data.private_epic_status1.pk})
+    private2_url = reverse('epic-statuses-detail', kwargs={"pk": data.private_epic_status2.pk})
+    blocked_url = reverse('epic-statuses-detail', kwargs={"pk": data.blocked_epic_status.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'delete', public_url, None, users)
+    assert results == [401, 403, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', private1_url, None, users)
+    assert results == [401, 403, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', private2_url, None, users)
+    assert results == [401, 403, 403, 403, 204]
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 403, 451]
+
+
+def test_epic_status_list(client, data):
+    url = reverse('epic-statuses-list')
+
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 2
+    assert response.status_code == 200
+
+    client.login(data.registered_user)
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 2
+    assert response.status_code == 200
+
+    client.login(data.project_member_without_perms)
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 2
+    assert response.status_code == 200
+
+    client.login(data.project_member_with_perms)
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 4
+    assert response.status_code == 200
+
+    client.login(data.project_owner)
+    response = client.get(url)
+    projects_data = json.loads(response.content.decode('utf-8'))
+    assert len(projects_data) == 4
+    assert response.status_code == 200
+
+
+def test_epic_status_patch(client, data):
+    public_url = reverse('epic-statuses-detail', kwargs={"pk": data.public_epic_status.pk})
+    private1_url = reverse('epic-statuses-detail', kwargs={"pk": data.private_epic_status1.pk})
+    private2_url = reverse('epic-statuses-detail', kwargs={"pk": data.private_epic_status2.pk})
+    blocked_url = reverse('epic-statuses-detail', kwargs={"pk": data.blocked_epic_status.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'patch', public_url, '{"name": "Test"}', users)
+    assert results == [401, 403, 403, 403, 200]
+    results = helper_test_http_method(client, 'patch', private1_url, '{"name": "Test"}', users)
+    assert results == [401, 403, 403, 403, 200]
+    results = helper_test_http_method(client, 'patch', private2_url, '{"name": "Test"}', users)
+    assert results == [401, 403, 403, 403, 200]
+    results = helper_test_http_method(client, 'patch', blocked_url, '{"name": "Test"}', users)
+    assert results == [401, 403, 403, 403, 451]
+
+
+def test_epic_status_action_bulk_update_order(client, data):
+    url = reverse('epic-statuses-bulk-update-order')
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    post_data = json.dumps({
+        "bulk_epic_statuses": [(1, 2)],
+        "project": data.public_project.pk
+    })
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 204]
+
+    post_data = json.dumps({
+        "bulk_epic_statuses": [(1, 2)],
+        "project": data.private_project1.pk
+    })
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 204]
+
+    post_data = json.dumps({
+        "bulk_epic_statuses": [(1, 2)],
+        "project": data.private_project2.pk
+    })
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 204]
+
+    post_data = json.dumps({
+        "bulk_epic_statuses": [(1, 2)],
+        "project": data.blocked_project.pk
+    })
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 403, 451]
+
+
+#####################################################
+# Points
+#####################################################
 
 def test_points_retrieve(client, data):
     public_url = reverse('points-detail', kwargs={"pk": data.public_points.pk})
@@ -483,6 +684,10 @@ def test_points_action_bulk_update_order(client, data):
     assert results == [401, 403, 403, 403, 451]
 
 
+#####################################################
+# User Story Status
+#####################################################
+
 def test_user_story_status_retrieve(client, data):
     public_url = reverse('userstory-statuses-detail', kwargs={"pk": data.public_user_story_status.pk})
     private1_url = reverse('userstory-statuses-detail', kwargs={"pk": data.private_user_story_status1.pk})
@@ -568,7 +773,6 @@ def test_user_story_status_delete(client, data):
     assert results == [401, 403, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', blocked_url, None, users)
     assert results == [401, 403, 403, 403, 451]
-
 
 
 def test_user_story_status_list(client, data):
@@ -668,6 +872,10 @@ def test_user_story_status_action_bulk_update_order(client, data):
     assert results == [401, 403, 403, 403, 451]
 
 
+#####################################################
+# Task Status
+#####################################################
+
 def test_task_status_retrieve(client, data):
     public_url = reverse('task-statuses-detail', kwargs={"pk": data.public_task_status.pk})
     private1_url = reverse('task-statuses-detail', kwargs={"pk": data.private_task_status1.pk})
@@ -753,7 +961,6 @@ def test_task_status_delete(client, data):
     assert results == [401, 403, 403, 403, 204]
     results = helper_test_http_method(client, 'delete', blocked_url, None, users)
     assert results == [401, 403, 403, 403, 451]
-
 
 
 def test_task_status_list(client, data):
@@ -852,6 +1059,10 @@ def test_task_status_action_bulk_update_order(client, data):
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 403, 451]
 
+
+#####################################################
+# Issue Status
+#####################################################
 
 def test_issue_status_retrieve(client, data):
     public_url = reverse('issue-statuses-detail', kwargs={"pk": data.public_issue_status.pk})
@@ -1037,6 +1248,10 @@ def test_issue_status_action_bulk_update_order(client, data):
     assert results == [401, 403, 403, 403, 451]
 
 
+#####################################################
+# Issue Type
+#####################################################
+
 def test_issue_type_retrieve(client, data):
     public_url = reverse('issue-types-detail', kwargs={"pk": data.public_issue_type.pk})
     private1_url = reverse('issue-types-detail', kwargs={"pk": data.private_issue_type1.pk})
@@ -1221,6 +1436,10 @@ def test_issue_type_action_bulk_update_order(client, data):
     assert results == [401, 403, 403, 403, 451]
 
 
+#####################################################
+# Priority
+#####################################################
+
 def test_priority_retrieve(client, data):
     public_url = reverse('priorities-detail', kwargs={"pk": data.public_priority.pk})
     private1_url = reverse('priorities-detail', kwargs={"pk": data.private_priority1.pk})
@@ -1282,6 +1501,7 @@ def test_priority_update(client, data):
     priority_data = json.dumps(priority_data)
     results = helper_test_http_method(client, 'put', blocked_url, priority_data, users)
     assert results == [401, 403, 403, 403, 451]
+
 
 def test_priority_delete(client, data):
     public_url = reverse('priorities-detail', kwargs={"pk": data.public_priority.pk})
@@ -1403,6 +1623,10 @@ def test_priority_action_bulk_update_order(client, data):
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 403, 451]
 
+
+#####################################################
+# Severity
+#####################################################
 
 def test_severity_retrieve(client, data):
     public_url = reverse('severities-detail', kwargs={"pk": data.public_severity.pk})
@@ -1587,6 +1811,10 @@ def test_severity_action_bulk_update_order(client, data):
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 403, 451]
 
+
+#####################################################
+# Memberships
+#####################################################
 
 def test_membership_retrieve(client, data):
     public_url = reverse('memberships-detail', kwargs={"pk": data.public_membership.pk})
@@ -1859,6 +2087,10 @@ def test_membership_action_resend_invitation(client, data):
     assert results == [404, 404, 404, 403, 451]
 
 
+#####################################################
+# Project Templates
+#####################################################
+
 def test_project_template_retrieve(client, data):
     url = reverse('project-templates-detail', kwargs={"pk": data.project_template.pk})
 
@@ -1934,6 +2166,10 @@ def test_project_template_patch(client, data):
     results = helper_test_http_method(client, 'patch', url, '{"name": "Test"}', users)
     assert results == [401, 403, 200]
 
+
+#####################################################
+# Tags
+#####################################################
 
 def test_create_tag(client, data):
     users = [

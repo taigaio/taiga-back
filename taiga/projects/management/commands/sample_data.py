@@ -34,6 +34,7 @@ from taiga.permissions.choices import ANON_PERMISSIONS
 from taiga.projects.choices import BLOCKED_BY_STAFF
 from taiga.external_apps.models import Application, ApplicationToken
 from taiga.projects.models import *
+from taiga.projects.epics.models import *
 from taiga.projects.milestones.models import *
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.services.stats import get_stats_for_project
@@ -109,6 +110,8 @@ NUM_PROJECTS =getattr(settings, "SAMPLE_DATA_NUM_PROJECTS",  4)
 NUM_EMPTY_PROJECTS = getattr(settings, "SAMPLE_DATA_NUM_EMPTY_PROJECTS", 2)
 NUM_BLOCKED_PROJECTS = getattr(settings, "SAMPLE_DATA_NUM_BLOCKED_PROJECTS", 1)
 NUM_MILESTONES = getattr(settings, "SAMPLE_DATA_NUM_MILESTONES", (1, 5))
+NUM_EPICS = getattr(settings, "SAMPLE_DATA_NUM_EPICS", (4, 8))
+NUM_USS_EPICS = getattr(settings, "SAMPLE_DATA_NUM_USS_EPICS", (2, 6))
 NUM_USS = getattr(settings, "SAMPLE_DATA_NUM_USS", (3, 7))
 NUM_TASKS_FINISHED = getattr(settings, "SAMPLE_DATA_NUM_TASKS_FINISHED", (1, 5))
 NUM_TASKS = getattr(settings, "SAMPLE_DATA_NUM_TASKS", (0, 4))
@@ -254,6 +257,11 @@ class Command(BaseCommand):
                     wiki_link = self.create_wiki_link(project)
                     if self.sd.boolean():
                         self.create_wiki_page(project, wiki_link.href)
+
+                # create epics
+                for y in range(self.sd.int(*NUM_EPICS)):
+                    epic = self.create_epic(project)
+
 
 
             project.refresh_from_db()
@@ -493,6 +501,59 @@ class Command(BaseCommand):
         take_snapshot(milestone, user=milestone.owner)
 
         return milestone
+
+    def create_epic(self, project):
+        epic = Epic.objects.create(subject=self.sd.choice(SUBJECT_CHOICES),
+                                 project=project,
+                                 owner=self.sd.db_object_from_queryset(
+                                         project.memberships.filter(user__isnull=False)).user,
+                                 description=self.sd.paragraph(),
+                                 status=self.sd.db_object_from_queryset(project.epic_statuses.filter(
+                                                                        is_closed=False)),
+                                 tags=self.sd.words(1, 3).split(" "))
+
+        # TODO: Epic custom attributes
+        #custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
+        #                         in project.epiccustomattributes.all() if self.sd.boolean()}
+        #if custom_attributes_values:
+        #    epic.custom_attributes_values.attributes_values = custom_attributes_values
+        #    epic.custom_attributes_values.save()
+
+
+        for i in range(self.sd.int(*NUM_ATTACHMENTS)):
+            attachment = self.create_attachment(epic, i+1)
+
+        if self.sd.choice([True, True, False, True, True]):
+            epic.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(
+                                                                     user__isnull=False)).user
+            epic.save()
+
+        # TODO: Epic history
+        #take_snapshot(epic,
+        #              comment=self.sd.paragraph(),
+        #              user=epic.owner)
+        #
+        # Add history entry
+        #epic.status=self.sd.db_object_from_queryset(project.epic_statuses.filter(is_closed=False))
+        #epic.save()
+        #take_snapshot(epic,
+        #              comment=self.sd.paragraph(),
+        #              user=epic.owner)
+
+        # TODO: Epic voters
+        #self.create_votes(epic)
+        # TODO: Epic watchers
+        #self.create_watchers(epic)
+
+        if self.sd.choice([True, True, False, True, True]):
+            filters = {}
+            if self.sd.choice([True, True, False, True, True]):
+                filters = {"project": epic.project}
+            n = self.sd.choice(list(range(self.sd.int(*NUM_USS_EPICS))))
+
+            epic.user_stories.add(*UserStory.objects.filter(**filters).order_by("?")[:n])
+
+        return epic
 
     def create_project(self, counter, is_private=None, blocked_code=None):
         if is_private is None:
