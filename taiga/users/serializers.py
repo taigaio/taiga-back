@@ -22,7 +22,8 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.api import serializers
-from taiga.base.fields import PgArrayField
+from taiga.base.fields import PgArrayField, Field, MethodField
+
 from taiga.base.utils.thumbnails import get_thumbnail_url
 
 from taiga.projects.models import Project
@@ -33,11 +34,10 @@ from .gravatar import get_gravatar_url
 from collections import namedtuple
 
 import re
-import serpy
 
 
 ######################################################
-## User
+# User
 ######################################################
 
 class ContactProjectDetailSerializer(serializers.ModelSerializer):
@@ -139,19 +139,13 @@ class UserAdminSerializer(UserSerializer):
         return user.owned_projects.filter(is_private=False).count()
 
 
-class UserBasicInfoSerializer(UserSerializer):
-    class Meta:
-        model = User
-        fields = ("username", "full_name_display", "photo", "big_photo", "is_active", "id")
-
-
-class ListUserBasicInfoSerializer(serpy.Serializer):
-    username = serpy.Field()
-    full_name_display = serpy.MethodField()
-    photo = serpy.MethodField()
-    big_photo = serpy.MethodField()
-    is_active = serpy.Field()
-    id = serpy.Field()
+class UserBasicInfoSerializer(serializers.LightSerializer):
+    username = Field()
+    full_name_display = MethodField()
+    photo = MethodField()
+    big_photo = MethodField()
+    is_active = Field()
+    id = Field()
 
     def get_full_name_display(self, obj):
         return obj.get_full_name()
@@ -161,6 +155,12 @@ class ListUserBasicInfoSerializer(serpy.Serializer):
 
     def get_big_photo(self, obj):
         return get_big_photo_or_gravatar_url(obj)
+
+    def to_value(self, instance):
+        if instance is None:
+            return None
+
+        return super().to_value(instance)
 
 
 class RecoverySerializer(serializers.Serializer):
@@ -177,7 +177,7 @@ class CancelAccountSerializer(serializers.Serializer):
 
 
 ######################################################
-## Role
+# Role
 ######################################################
 
 class RoleSerializer(serializers.ModelSerializer):
@@ -201,7 +201,7 @@ class ProjectRoleSerializer(serializers.ModelSerializer):
 
 
 ######################################################
-## Like
+# Like
 ######################################################
 
 class HighLightedContentSerializer(serializers.Serializer):

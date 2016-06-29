@@ -27,33 +27,32 @@ from functools import partial, wraps
 
 from taiga.base.utils.db import get_typename_for_model_class
 from taiga.celery import app
-from taiga.users.services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
 
 _timeline_impl_map = {}
 
 
-def _get_impl_key_from_model(model:Model, event_type:str):
+def _get_impl_key_from_model(model: Model, event_type: str):
     if issubclass(model, Model):
         typename = get_typename_for_model_class(model)
         return _get_impl_key_from_typename(typename, event_type)
     raise Exception("Not valid model parameter")
 
 
-def _get_impl_key_from_typename(typename:str, event_type:str):
+def _get_impl_key_from_typename(typename: str, event_type: str):
     if isinstance(typename, str):
         return "{0}.{1}".format(typename, event_type)
     raise Exception("Not valid typename parameter")
 
 
-def build_user_namespace(user:object):
+def build_user_namespace(user: object):
     return "{0}:{1}".format("user", user.id)
 
 
-def build_project_namespace(project:object):
+def build_project_namespace(project: object):
     return "{0}:{1}".format("project", project.id)
 
 
-def _add_to_object_timeline(obj:object, instance:object, event_type:str, created_datetime:object, namespace:str="default", extra_data:dict={}):
+def _add_to_object_timeline(obj: object, instance: object, event_type: str, created_datetime: object, namespace: str="default", extra_data: dict={}):
     assert isinstance(obj, Model), "obj must be a instance of Model"
     assert isinstance(instance, Model), "instance must be a instance of Model"
     from .models import Timeline
@@ -75,12 +74,12 @@ def _add_to_object_timeline(obj:object, instance:object, event_type:str, created
     )
 
 
-def _add_to_objects_timeline(objects, instance:object, event_type:str, created_datetime:object, namespace:str="default", extra_data:dict={}):
+def _add_to_objects_timeline(objects, instance: object, event_type: str, created_datetime: object, namespace: str="default", extra_data: dict={}):
     for obj in objects:
         _add_to_object_timeline(obj, instance, event_type, created_datetime, namespace, extra_data)
 
 
-def _push_to_timeline(objects, instance:object, event_type:str, created_datetime:object, namespace:str="default", extra_data:dict={}):
+def _push_to_timeline(objects, instance: object, event_type: str, created_datetime: object, namespace: str="default", extra_data: dict={}):
     if isinstance(objects, Model):
         _add_to_object_timeline(objects, instance, event_type, created_datetime, namespace, extra_data)
     elif isinstance(objects, QuerySet) or isinstance(objects, list):
@@ -111,10 +110,10 @@ def push_to_timelines(project_id, user_id, obj_app_label, obj_model_name, obj_id
         except projectModel.DoesNotExist:
             return
 
-        ## Project timeline
+        # Project timeline
         _push_to_timeline(project, obj, event_type, created_datetime,
-            namespace=build_project_namespace(project),
-            extra_data=extra_data)
+                          namespace=build_project_namespace(project),
+                          extra_data=extra_data)
 
         project.refresh_totals()
 
@@ -122,14 +121,14 @@ def push_to_timelines(project_id, user_id, obj_app_label, obj_model_name, obj_id
             related_people = obj.get_related_people()
 
             _push_to_timeline(related_people, obj, event_type, created_datetime,
-                namespace=build_user_namespace(user),
-                extra_data=extra_data)
+                              namespace=build_user_namespace(user),
+                              extra_data=extra_data)
     else:
         # Actions not related with a project
-        ## - Me
+        # - Me
         _push_to_timeline(user, obj, event_type, created_datetime,
-            namespace=build_user_namespace(user),
-            extra_data=extra_data)
+                          namespace=build_user_namespace(user),
+                          extra_data=extra_data)
 
 
 def get_timeline(obj, namespace=None):
@@ -141,7 +140,6 @@ def get_timeline(obj, namespace=None):
     if namespace is not None:
         timeline = timeline.filter(namespace=namespace)
 
-    timeline = timeline.select_related("project")
     timeline = timeline.order_by("-created", "-id")
     return timeline
 
@@ -156,22 +154,22 @@ def filter_timeline_for_user(timeline, user):
 
     # Filtering private project with some public parts
     content_types = {
-        "view_project": ContentType.objects.get(app_label="projects", model="project"),
-        "view_milestones": ContentType.objects.get(app_label="milestones", model="milestone"),
-        "view_us": ContentType.objects.get(app_label="userstories", model="userstory"),
-        "view_tasks": ContentType.objects.get(app_label="tasks", model="task"),
-        "view_issues": ContentType.objects.get(app_label="issues", model="issue"),
-        "view_wiki_pages": ContentType.objects.get(app_label="wiki", model="wikipage"),
-        "view_wiki_links": ContentType.objects.get(app_label="wiki", model="wikilink"),
+        "view_project": ContentType.objects.get_by_natural_key("projects", "project"),
+        "view_milestones": ContentType.objects.get_by_natural_key("milestones", "milestone"),
+        "view_us": ContentType.objects.get_by_natural_key("userstories", "userstory"),
+        "view_tasks": ContentType.objects.get_by_natural_key("tasks", "task"),
+        "view_issues": ContentType.objects.get_by_natural_key("issues", "issue"),
+        "view_wiki_pages": ContentType.objects.get_by_natural_key("wiki", "wikipage"),
+        "view_wiki_links": ContentType.objects.get_by_natural_key("wiki", "wikilink"),
     }
 
     for content_type_key, content_type in content_types.items():
         tl_filter |= Q(project__is_private=True,
-                                            project__anon_permissions__contains=[content_type_key],
-                                            data_content_type=content_type)
+                       project__anon_permissions__contains=[content_type_key],
+                       data_content_type=content_type)
 
     # There is no specific permission for seeing new memberships
-    membership_content_type = ContentType.objects.get(app_label="projects", model="membership")
+    membership_content_type = ContentType.objects.get_by_natural_key(app_label="projects", model="membership")
     tl_filter |= Q(project__is_private=True,
                    project__anon_permissions__contains=["view_project"],
                    data_content_type=membership_content_type)
@@ -214,7 +212,7 @@ def get_project_timeline(project, accessing_user=None):
     return timeline
 
 
-def register_timeline_implementation(typename:str, event_type:str, fn=None):
+def register_timeline_implementation(typename: str, event_type: str, fn=None):
     assert isinstance(typename, str), "typename must be a string"
     assert isinstance(event_type, str), "event_type must be a string"
 
@@ -229,7 +227,6 @@ def register_timeline_implementation(typename:str, event_type:str, fn=None):
 
     _timeline_impl_map[key] = _wrapper
     return _wrapper
-
 
 
 def extract_project_info(instance):

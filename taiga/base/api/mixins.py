@@ -57,6 +57,7 @@ from .utils import get_object_or_404
 from .. import exceptions as exc
 from ..decorators import model_pk_lock
 
+
 def _get_validation_exclusions(obj, pk=None, slug_field=None, lookup_field=None):
     """
     Given a model instance, and an optional pk and slug field,
@@ -89,19 +90,21 @@ class CreateModelMixin:
     Create a model instance.
     """
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.DATA, files=request.FILES)
+        validator = self.get_validator(data=request.DATA, files=request.FILES)
 
-        if serializer.is_valid():
-            self.check_permissions(request, 'create', serializer.object)
+        if validator.is_valid():
+            self.check_permissions(request, 'create', validator.object)
 
-            self.pre_save(serializer.object)
-            self.pre_conditions_on_save(serializer.object)
-            self.object = serializer.save(force_insert=True)
+            self.pre_save(validator.object)
+            self.pre_conditions_on_save(validator.object)
+            self.object = validator.save(force_insert=True)
             self.post_save(self.object, created=True)
+            instance = self.get_queryset().get(id=self.object.id)
+            serializer = self.get_serializer(instance)
             headers = self.get_success_headers(serializer.data)
             return response.Created(serializer.data, headers=headers)
 
-        return response.BadRequest(serializer.errors)
+        return response.BadRequest(validator.errors)
 
     def get_success_headers(self, data):
         try:
@@ -171,28 +174,32 @@ class UpdateModelMixin:
         if self.object is None:
             raise Http404
 
-        serializer = self.get_serializer(self.object, data=request.DATA,
-                                         files=request.FILES, partial=partial)
+        validator = self.get_validator(self.object, data=request.DATA,
+                                       files=request.FILES, partial=partial)
 
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
         # Hooks
         try:
-            self.pre_save(serializer.object)
-            self.pre_conditions_on_save(serializer.object)
+            self.pre_save(validator.object)
+            self.pre_conditions_on_save(validator.object)
         except ValidationError as err:
             # full_clean on model instance may be called in pre_save,
             # so we have to handle eventual errors.
             return response.BadRequest(err.message_dict)
 
         if self.object is None:
-            self.object = serializer.save(force_insert=True)
+            self.object = validator.save(force_insert=True)
             self.post_save(self.object, created=True)
+            instance = self.get_queryset().get(id=self.object.id)
+            serializer = self.get_serializer(instance)
             return response.Created(serializer.data)
 
-        self.object = serializer.save(force_update=True)
+        self.object = validator.save(force_update=True)
         self.post_save(self.object, created=False)
+        instance = self.get_queryset().get(id=self.object.id)
+        serializer = self.get_serializer(instance)
         return response.Ok(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
@@ -251,7 +258,7 @@ class BlockeableModelMixin:
         raise NotImplementedError("is_blocked must be overridden")
 
     def pre_conditions_blocked(self, obj):
-        #Raises permission exception
+        # Raises permission exception
         if obj is not None and self.is_blocked(obj):
             raise exc.Blocked(_("Blocked element"))
 

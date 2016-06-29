@@ -16,26 +16,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext as _
-
-from taiga.base.api import serializers
 from taiga.base.api import validators
-from taiga.projects.validators import DuplicatedNameInProjectValidator
-from taiga.projects.notifications.validators import WatchersValidator
 
-from . import models
+from .models import Webhook
 
 
-class MilestoneExistsValidator:
-    def validate_sprint_id(self, attrs, source):
-        value = attrs[source]
-        if not models.Milestone.objects.filter(pk=value).exists():
-            msg = _("There's no milestone with that id")
-            raise serializers.ValidationError(msg)
-        return attrs
-
-
-class MilestoneValidator(WatchersValidator, DuplicatedNameInProjectValidator, validators.ModelValidator):
+class WebhookValidator(validators.ModelValidator):
     class Meta:
-        model = models.Milestone
-        read_only_fields = ("id", "created_date", "modified_date")
+        model = Webhook

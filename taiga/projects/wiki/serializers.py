@@ -17,21 +17,26 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
+from taiga.base.fields import Field, MethodField
 from taiga.projects.history import services as history_service
-from taiga.projects.notifications.mixins import WatchedResourceModelSerializer
-from taiga.projects.notifications.validators import WatchersValidator
+from taiga.projects.notifications.mixins import WatchedResourceSerializer
 from taiga.mdrender.service import render as mdrender
 
-from . import models
 
+class WikiPageSerializer(WatchedResourceSerializer, serializers.LightSerializer):
+    id = Field()
+    project = Field(attr="project_id")
+    slug = Field()
+    content = Field()
+    owner = Field(attr="owner_id")
+    last_modifier = Field(attr="last_modifier_id")
+    created_date = Field()
+    modified_date = Field()
 
-class WikiPageSerializer(WatchersValidator, WatchedResourceModelSerializer, serializers.ModelSerializer):
-    html = serializers.SerializerMethodField("get_html")
-    editions = serializers.SerializerMethodField("get_editions")
+    html = MethodField()
+    editions = MethodField()
 
-    class Meta:
-        model = models.WikiPage
-        read_only_fields = ('modified_date', 'created_date', 'owner')
+    version = Field()
 
     def get_html(self, obj):
         return mdrender(obj.project, obj.content)
@@ -40,7 +45,9 @@ class WikiPageSerializer(WatchersValidator, WatchedResourceModelSerializer, seri
         return history_service.get_history_queryset_by_model_instance(obj).count() + 1  # +1 for creation
 
 
-class WikiLinkSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.WikiLink
-        read_only_fields = ('href',)
+class WikiLinkSerializer(serializers.LightSerializer):
+    id = Field()
+    project = Field(attr="project_id")
+    title = Field()
+    href = Field()
+    order = Field()

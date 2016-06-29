@@ -22,8 +22,10 @@ from django.apps import apps
 
 from taiga.base.utils import json
 from taiga.projects import choices as project_choices
+from taiga.projects import models as project_models
 from taiga.projects.serializers import ProjectSerializer
 from taiga.permissions.choices import MEMBERS_PERMISSIONS
+from taiga.projects.utils import attach_extra_info
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, helper_test_http_method_and_count
@@ -45,19 +47,26 @@ def data():
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=['view_project'],
                                         public_permissions=['view_project'])
+    m.public_project = attach_extra_info(project_models.Project.objects.all()).get(id=m.public_project.id)
+
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=['view_project'],
                                           public_permissions=['view_project'],
                                           owner=m.project_owner)
+    m.private_project1 = attach_extra_info(project_models.Project.objects.all()).get(id=m.private_project1.id)
+
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
                                           public_permissions=[],
                                           owner=m.project_owner)
+    m.private_project2 = attach_extra_info(project_models.Project.objects.all()).get(id=m.private_project2.id)
+
     m.blocked_project = f.ProjectFactory(is_private=True,
                                          anon_permissions=[],
                                          public_permissions=[],
                                          owner=m.project_owner,
                                          blocked_code=project_choices.BLOCKED_BY_STAFF)
+    m.blocked_project = attach_extra_info(project_models.Project.objects.all()).get(id=m.blocked_project.id)
 
     f.RoleFactory(project=m.public_project)
 

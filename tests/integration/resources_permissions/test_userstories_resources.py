@@ -23,7 +23,11 @@ from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
 from taiga.projects import choices as project_choices
+from taiga.projects.models import Project
+from taiga.projects.utils import attach_extra_info as attach_project_extra_info
+from taiga.projects.userstories.models import UserStory
 from taiga.projects.userstories.serializers import UserStorySerializer
+from taiga.projects.userstories.utils import attach_extra_info as attach_userstory_extra_info
 from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 from taiga.projects.occ import OCCResourceMixin
 
@@ -61,47 +65,58 @@ def data():
                                         public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         owner=m.project_owner,
                                         userstories_csv_uuid=uuid.uuid4().hex)
+    m.public_project = attach_project_extra_info(Project.objects.all()).get(id=m.public_project.id)
+
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           owner=m.project_owner,
                                           userstories_csv_uuid=uuid.uuid4().hex)
+    m.private_project1 = attach_project_extra_info(Project.objects.all()).get(id=m.private_project1.id)
+
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
                                           public_permissions=[],
                                           owner=m.project_owner,
                                           userstories_csv_uuid=uuid.uuid4().hex)
-    m.blocked_project = f.ProjectFactory(is_private=True,
-                                          anon_permissions=[],
-                                          public_permissions=[],
-                                          owner=m.project_owner,
-                                          userstories_csv_uuid=uuid.uuid4().hex,
-                                          blocked_code=project_choices.BLOCKED_BY_STAFF)
+    m.private_project2 = attach_project_extra_info(Project.objects.all()).get(id=m.private_project2.id)
 
-    m.public_membership = f.MembershipFactory(project=m.public_project,
-                                              user=m.project_member_with_perms,
-                                              role__project=m.public_project,
-                                              role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
-    m.private_membership1 = f.MembershipFactory(project=m.private_project1,
-                                                user=m.project_member_with_perms,
-                                                role__project=m.private_project1,
-                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    m.blocked_project = f.ProjectFactory(is_private=True,
+                                         anon_permissions=[],
+                                         public_permissions=[],
+                                         owner=m.project_owner,
+                                         userstories_csv_uuid=uuid.uuid4().hex,
+                                         blocked_code=project_choices.BLOCKED_BY_STAFF)
+    m.blocked_project = attach_project_extra_info(Project.objects.all()).get(id=m.blocked_project.id)
+
+    m.public_membership = f.MembershipFactory(
+        project=m.public_project,
+        user=m.project_member_with_perms,
+        role__project=m.public_project,
+        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    m.private_membership1 = f.MembershipFactory(
+        project=m.private_project1,
+        user=m.project_member_with_perms,
+        role__project=m.private_project1,
+        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_member_without_perms,
                         role__project=m.private_project1,
                         role__permissions=[])
-    m.private_membership2 = f.MembershipFactory(project=m.private_project2,
-                                                user=m.project_member_with_perms,
-                                                role__project=m.private_project2,
-                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    m.private_membership2 = f.MembershipFactory(
+        project=m.private_project2,
+        user=m.project_member_with_perms,
+        role__project=m.private_project2,
+        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_member_without_perms,
                         role__project=m.private_project2,
                         role__permissions=[])
-    m.blocked_membership = f.MembershipFactory(project=m.blocked_project,
-                                                user=m.project_member_with_perms,
-                                                role__project=m.blocked_project,
-                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    m.blocked_membership = f.MembershipFactory(
+        project=m.blocked_project,
+        user=m.project_member_with_perms,
+        role__project=m.blocked_project,
+        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     f.MembershipFactory(project=m.blocked_project,
                         user=m.project_member_without_perms,
                         role__project=m.blocked_project,
@@ -120,8 +135,8 @@ def data():
                         is_admin=True)
 
     f.MembershipFactory(project=m.blocked_project,
-                    user=m.project_owner,
-                    is_admin=True)
+                        user=m.project_owner,
+                        is_admin=True)
 
     m.public_points = f.PointsFactory(project=m.public_project)
     m.private_points1 = f.PointsFactory(project=m.private_project1)
@@ -144,15 +159,19 @@ def data():
                                                  user_story__milestone__project=m.private_project2,
                                                  user_story__status__project=m.private_project2)
     m.blocked_role_points = f.RolePointsFactory(role=m.blocked_project.roles.all()[0],
-                                                 points=m.blocked_points,
-                                                 user_story__project=m.blocked_project,
-                                                 user_story__milestone__project=m.blocked_project,
-                                                 user_story__status__project=m.blocked_project)
+                                                points=m.blocked_points,
+                                                user_story__project=m.blocked_project,
+                                                user_story__milestone__project=m.blocked_project,
+                                                user_story__status__project=m.blocked_project)
 
     m.public_user_story = m.public_role_points.user_story
+    m.public_user_story = attach_userstory_extra_info(UserStory.objects.all()).get(id=m.public_user_story.id)
     m.private_user_story1 = m.private_role_points1.user_story
+    m.private_user_story1 = attach_userstory_extra_info(UserStory.objects.all()).get(id=m.private_user_story1.id)
     m.private_user_story2 = m.private_role_points2.user_story
+    m.private_user_story2 = attach_userstory_extra_info(UserStory.objects.all()).get(id=m.private_user_story2.id)
     m.blocked_user_story = m.blocked_role_points.user_story
+    m.blocked_user_story = attach_userstory_extra_info(UserStory.objects.all()).get(id=m.blocked_user_story.id)
 
     return m
 
@@ -380,24 +399,28 @@ def test_user_story_put_update_with_project_change(client):
     project1.save()
     project2.save()
 
-    membership1 = f.MembershipFactory(project=project1,
-                                      user=user1,
-                                      role__project=project1,
-                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
-    membership2 = f.MembershipFactory(project=project2,
-                                      user=user1,
-                                      role__project=project2,
-                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
-    membership3 = f.MembershipFactory(project=project1,
-                                      user=user2,
-                                      role__project=project1,
-                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
-    membership4 = f.MembershipFactory(project=project2,
-                                      user=user3,
-                                      role__project=project2,
-                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    project1 = attach_project_extra_info(Project.objects.all()).get(id=project1.id)
+    project2 = attach_project_extra_info(Project.objects.all()).get(id=project2.id)
+
+    f.MembershipFactory(project=project1,
+                        user=user1,
+                        role__project=project1,
+                        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    f.MembershipFactory(project=project2,
+                        user=user1,
+                        role__project=project2,
+                        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    f.MembershipFactory(project=project1,
+                        user=user2,
+                        role__project=project1,
+                        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    f.MembershipFactory(project=project2,
+                        user=user3,
+                        role__project=project2,
+                        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
 
     us = f.UserStoryFactory.create(project=project1)
+    us = attach_userstory_extra_info(UserStory.objects.all()).get(id=us.id)
 
     url = reverse('userstories-detail', kwargs={"pk": us.pk})
 
@@ -592,7 +615,6 @@ def test_user_story_delete(client, data):
     assert results == [401, 403, 403, 451]
 
 
-
 def test_user_story_action_bulk_create(client, data):
     url = reverse('userstories-bulk-create')
 
@@ -746,7 +768,7 @@ def test_user_story_voters_retrieve(client, data):
 
     add_vote(data.blocked_user_story, data.project_owner)
     blocked_url = reverse('userstory-voters-detail', kwargs={"resource_id": data.blocked_user_story.pk,
-                                                              "pk": data.project_owner.pk})
+                                                             "pk": data.project_owner.pk})
     users = [
         None,
         data.registered_user,
@@ -840,16 +862,16 @@ def test_userstory_watchers_list(client, data):
 def test_userstory_watchers_retrieve(client, data):
     add_watcher(data.public_user_story, data.project_owner)
     public_url = reverse('userstory-watchers-detail', kwargs={"resource_id": data.public_user_story.pk,
-                                                            "pk": data.project_owner.pk})
+                                                              "pk": data.project_owner.pk})
     add_watcher(data.private_user_story1, data.project_owner)
     private_url1 = reverse('userstory-watchers-detail', kwargs={"resource_id": data.private_user_story1.pk,
-                                                              "pk": data.project_owner.pk})
+                                                                "pk": data.project_owner.pk})
     add_watcher(data.private_user_story2, data.project_owner)
     private_url2 = reverse('userstory-watchers-detail', kwargs={"resource_id": data.private_user_story2.pk,
-                                                              "pk": data.project_owner.pk})
+                                                                "pk": data.project_owner.pk})
     add_watcher(data.blocked_user_story, data.project_owner)
     blocked_url = reverse('userstory-watchers-detail', kwargs={"resource_id": data.blocked_user_story.pk,
-                                                              "pk": data.project_owner.pk})
+                                                               "pk": data.project_owner.pk})
 
     users = [
         None,

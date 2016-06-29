@@ -16,15 +16,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api import serializers
+from taiga.base.api import validators
+from taiga.projects.notifications.validators import WatchersValidator
+
+from . import models
 
 
-class FanResourceSerializerMixin(serializers.ModelSerializer):
-    is_fan = serializers.SerializerMethodField("get_is_fan")
+class WikiPageValidator(WatchersValidator, validators.ModelValidator):
+    class Meta:
+        model = models.WikiPage
+        read_only_fields = ('modified_date', 'created_date', 'owner')
 
-    def get_is_fan(self, obj):
-        if "request" in self.context:
-            user = self.context["request"].user
-            return user.is_authenticated() and user.is_fan(obj)
 
-        return False
+class WikiLinkValidator(validators.ModelValidator):
+    class Meta:
+        model = models.WikiLink
+        read_only_fields = ('href',)

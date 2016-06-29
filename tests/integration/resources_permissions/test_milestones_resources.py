@@ -22,8 +22,11 @@ from django.core.urlresolvers import reverse
 from taiga.base.utils import json
 
 from taiga.projects import choices as project_choices
+from taiga.projects.models import Project
+from taiga.projects.utils import attach_extra_info as attach_project_extra_info
 from taiga.projects.milestones.serializers import MilestoneSerializer
 from taiga.projects.milestones.models import Milestone
+from taiga.projects.milestones.utils import attach_extra_info as attach_milestone_extra_info
 from taiga.projects.notifications.services import add_watcher
 from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 
@@ -56,44 +59,55 @@ def data():
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         owner=m.project_owner)
+    m.public_project = attach_project_extra_info(Project.objects.all()).get(id=m.public_project.id)
+
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           owner=m.project_owner)
+    m.private_project1 = attach_project_extra_info(Project.objects.all()).get(id=m.private_project1.id)
+
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
                                           public_permissions=[],
                                           owner=m.project_owner)
+    m.private_project2 = attach_project_extra_info(Project.objects.all()).get(id=m.private_project2.id)
+
     m.blocked_project = f.ProjectFactory(is_private=True,
                                          anon_permissions=[],
                                          public_permissions=[],
                                          owner=m.project_owner,
                                          blocked_code=project_choices.BLOCKED_BY_STAFF)
+    m.blocked_project = attach_project_extra_info(Project.objects.all()).get(id=m.blocked_project.id)
 
-    m.public_membership = f.MembershipFactory(project=m.public_project,
-                                              user=m.project_member_with_perms,
-                                              role__project=m.public_project,
-                                              role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
-    m.private_membership1 = f.MembershipFactory(project=m.private_project1,
-                                                user=m.project_member_with_perms,
-                                                role__project=m.private_project1,
-                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    m.public_membership = f.MembershipFactory(
+        project=m.public_project,
+        user=m.project_member_with_perms,
+        role__project=m.public_project,
+        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    m.private_membership1 = f.MembershipFactory(
+        project=m.private_project1,
+        user=m.project_member_with_perms,
+        role__project=m.private_project1,
+        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_member_without_perms,
                         role__project=m.private_project1,
                         role__permissions=[])
-    m.private_membership2 = f.MembershipFactory(project=m.private_project2,
-                                                user=m.project_member_with_perms,
-                                                role__project=m.private_project2,
-                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    m.private_membership2 = f.MembershipFactory(
+        project=m.private_project2,
+        user=m.project_member_with_perms,
+        role__project=m.private_project2,
+        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_member_without_perms,
                         role__project=m.private_project2,
                         role__permissions=[])
-    m.blocked_membership = f.MembershipFactory(project=m.blocked_project,
-                                                user=m.project_member_with_perms,
-                                                role__project=m.blocked_project,
-                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    m.blocked_membership = f.MembershipFactory(
+        project=m.blocked_project,
+        user=m.project_member_with_perms,
+        role__project=m.blocked_project,
+        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
     f.MembershipFactory(project=m.blocked_project,
                         user=m.project_member_without_perms,
                         role__project=m.blocked_project,
@@ -112,13 +126,17 @@ def data():
                         is_admin=True)
 
     f.MembershipFactory(project=m.blocked_project,
-                    user=m.project_owner,
-                    is_admin=True)
+                        user=m.project_owner,
+                        is_admin=True)
 
     m.public_milestone = f.MilestoneFactory(project=m.public_project)
+    m.public_milestone = attach_milestone_extra_info(Milestone.objects.all()).get(id=m.public_milestone.id)
     m.private_milestone1 = f.MilestoneFactory(project=m.private_project1)
+    m.private_milestone1 = attach_milestone_extra_info(Milestone.objects.all()).get(id=m.private_milestone1.id)
     m.private_milestone2 = f.MilestoneFactory(project=m.private_project2)
+    m.private_milestone2 = attach_milestone_extra_info(Milestone.objects.all()).get(id=m.private_milestone2.id)
     m.blocked_milestone = f.MilestoneFactory(project=m.blocked_project)
+    m.blocked_milestone = attach_milestone_extra_info(Milestone.objects.all()).get(id=m.blocked_milestone.id)
 
     return m
 
@@ -422,16 +440,16 @@ def test_milestone_watchers_list(client, data):
 def test_milestone_watchers_retrieve(client, data):
     add_watcher(data.public_milestone, data.project_owner)
     public_url = reverse('milestone-watchers-detail', kwargs={"resource_id": data.public_milestone.pk,
-                                                        "pk": data.project_owner.pk})
+                                                              "pk": data.project_owner.pk})
     add_watcher(data.private_milestone1, data.project_owner)
     private_url1 = reverse('milestone-watchers-detail', kwargs={"resource_id": data.private_milestone1.pk,
-                                                          "pk": data.project_owner.pk})
+                                                                "pk": data.project_owner.pk})
     add_watcher(data.private_milestone2, data.project_owner)
     private_url2 = reverse('milestone-watchers-detail', kwargs={"resource_id": data.private_milestone2.pk,
-                                                          "pk": data.project_owner.pk})
+                                                                "pk": data.project_owner.pk})
     add_watcher(data.blocked_milestone, data.project_owner)
     blocked_url = reverse('milestone-watchers-detail', kwargs={"resource_id": data.blocked_milestone.pk,
-                                                          "pk": data.project_owner.pk})
+                                                               "pk": data.project_owner.pk})
 
     users = [
         None,

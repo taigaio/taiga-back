@@ -1229,5 +1229,7 @@ class LightSerializer(serpy.Serializer):
         kwargs.pop("partial", None)
         kwargs.pop("files", None)
         context = kwargs.pop("context", {})
+        view = kwargs.pop("view", {})
         super().__init__(*args, **kwargs)
         self.context = context
+        self.view = view

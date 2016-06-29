@@ -33,7 +33,8 @@ from taiga.base.utils.diff import make_diff as make_diff_from_dicts
 
 # This keys has been removed from freeze_impl so we can have objects where the
 # previous diff has value for the attribute and we want to prevent their propagation
-IGNORE_DIFF_FIELDS = [ "watchers", "description_diff", "content_diff", "blocked_note_diff"]
+IGNORE_DIFF_FIELDS = ["watchers", "description_diff", "content_diff", "blocked_note_diff"]
+
 
 def _generate_uuid():
     return str(uuid.uuid1())
@@ -92,15 +93,15 @@ class HistoryEntry(models.Model):
 
     @cached_property
     def is_change(self):
-      return self.type == HistoryType.change
+        return self.type == HistoryType.change
 
     @cached_property
     def is_create(self):
-      return self.type == HistoryType.create
+        return self.type == HistoryType.create
 
     @cached_property
     def is_delete(self):
-      return self.type == HistoryType.delete
+        return self.type == HistoryType.delete
 
     @property
     def owner(self):
@@ -185,7 +186,7 @@ class HistoryEntry(models.Model):
                         role_name = resolve_value("roles", role_id)
                         oldpoint_id = pointsold.get(role_id, None)
                         points[role_name] = [resolve_value("points", oldpoint_id),
-                                           resolve_value("points", point_id)]
+                                             resolve_value("points", point_id)]
 
                 # Process that removes points entries with
                 # duplicate value.
@@ -204,8 +205,8 @@ class HistoryEntry(models.Model):
                     "deleted": [],
                 }
 
-                oldattachs = {x["id"]:x for x in self.diff["attachments"][0]}
-                newattachs = {x["id"]:x for x in self.diff["attachments"][1]}
+                oldattachs = {x["id"]: x for x in self.diff["attachments"][0]}
+                newattachs = {x["id"]: x for x in self.diff["attachments"][1]}
 
                 for aid in set(tuple(oldattachs.keys()) + tuple(newattachs.keys())):
                     if aid in oldattachs and aid in newattachs:
@@ -235,8 +236,8 @@ class HistoryEntry(models.Model):
                     "deleted": [],
                 }
 
-                oldcustattrs = {x["id"]:x for x in self.diff["custom_attributes"][0] or []}
-                newcustattrs = {x["id"]:x for x in self.diff["custom_attributes"][1] or []}
+                oldcustattrs = {x["id"]: x for x in self.diff["custom_attributes"][0] or []}
+                newcustattrs = {x["id"]: x for x in self.diff["custom_attributes"][1] or []}
 
                 for aid in set(tuple(oldcustattrs.keys()) + tuple(newcustattrs.keys())):
                     if aid in oldcustattrs and aid in newcustattrs:

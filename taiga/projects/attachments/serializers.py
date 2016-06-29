@@ -19,13 +19,11 @@
 from django.conf import settings
 
 from taiga.base.api import serializers
+from taiga.base.fields import MethodField
 from taiga.base.utils.thumbnails import get_thumbnail_url
 
 from . import services
 from . import models
-
-import json
-import serpy
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
@@ -43,12 +41,11 @@ class AttachmentSerializer(serializers.ModelSerializer):
     def get_url(self, obj):
         return obj.attached_file.url
 
-
     def get_thumbnail_card_url(self, obj):
         return services.get_card_image_thumbnail_url(obj)
 
 
-class ListBasicAttachmentsInfoSerializerMixin(serpy.Serializer):
+class BasicAttachmentsInfoSerializerMixin(serializers.LightSerializer):
     """
     Assumptions:
     - The queryset has an attribute called "include_attachments" indicating if the attachments array should contain information
@@ -56,7 +53,7 @@ class ListBasicAttachmentsInfoSerializerMixin(serpy.Serializer):
     - The method attach_basic_attachments has been used to include the necessary
         json data about the attachments in the "attachments_attr" column
     """
-    attachments = serpy.MethodField()
+    attachments = MethodField()
 
     def get_attachments(self, obj):
         include_attachments = getattr(obj, "include_attachments", False)

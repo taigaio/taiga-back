@@ -16,26 +16,32 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.apps import apps
 from django.contrib.auth import get_user_model
-from django.forms import widgets
 
 from taiga.base.api import serializers
-from taiga.base.fields import JsonField
+from taiga.base.fields import Field, MethodField
 from taiga.users.services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
 
 from . import models
-from . import service
 
 
-class TimelineSerializer(serializers.ModelSerializer):
+class TimelineSerializer(serializers.LightSerializer):
     data = serializers.SerializerMethodField("get_data")
+    id = Field()
+    content_type = Field(attr="content_type_id")
+    object_id = Field()
+    namespace = Field()
+    event_type = Field()
+    project = Field(attr="project_id")
+    data = MethodField()
+    data_content_type = Field(attr="data_content_type_id")
+    created = Field()
 
     class Meta:
         model = models.Timeline
 
     def get_data(self, obj):
-        #Updates the data user info saved if the user exists
+        # Updates the data user info saved if the user exists
         if hasattr(obj, "_prefetched_user"):
             user = obj._prefetched_user
         else:

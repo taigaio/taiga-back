@@ -26,7 +26,6 @@ from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
 
-from taiga.projects.attachments.utils import attach_basic_attachments
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.models import Project, TaskStatus
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
@@ -38,10 +37,14 @@ from . import models
 from . import permissions
 from . import serializers
 from . import services
+from . import validators
+from . import utils as tasks_utils
 
 
-class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                  TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
+class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
+                  WatchedResourceMixin, TaggedResourceMixin, BlockedByProjectMixin,
+                  ModelCrudViewSet):
+    validator_class = validators.TaskValidator
     queryset = models.Task.objects.all()
     permission_classes = (permissions.TaskPermission,)
     filter_backends = (filters.CanViewTasksFilterBackend,
@@ -74,17 +77,15 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = self.attach_votes_attrs_to_queryset(qs)
         qs = qs.select_related("milestone",
                                "project",
                                "status",
                                "owner",
                                "assigned_to")
 
-        qs = self.attach_watchers_attrs_to_queryset(qs)
-        if "include_attachments" in self.request.QUERY_PARAMS:
-            qs = attach_basic_attachments(qs)
-            qs = qs.extra(select={"include_attachments": "True"})
+        include_attachments = "include_attachments" in self.request.QUERY_PARAMS
+        qs = tasks_utils.attach_extra_info(qs, user=self.request.user,
+                                           include_attachments=include_attachments)
 
         return qs
 
@@ -164,8 +165,7 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
     def by_ref(self, request):
         ref = request.QUERY_PARAMS.get("ref", None)
         project_id = request.QUERY_PARAMS.get("project", None)
-        task = get_object_or_404(models.Task, ref=ref, project_id=project_id)
-        return self.retrieve(request, pk=task.pk)
+        return self.retrieve(request, project_id=project_id, ref=ref)
 
     @list_route(methods=["GET"])
     def csv(self, request):
@@ -182,9 +182,9 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
-        serializer = serializers.TasksBulkSerializer(data=request.DATA)
-        if serializer.is_valid():
-            data = serializer.data
+        validator = validators.TasksBulkValidator(data=request.DATA)
+        if validator.is_valid():
+            data = validator.data
             project = Project.objects.get(id=data["project_id"])
             self.check_permissions(request, 'bulk_create', project)
             if project.blocked_code is not None:
@@ -194,18 +194,20 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
                 data["bulk_tasks"], milestone_id=data["sprint_id"], user_story_id=data["us_id"],
                 status_id=data.get("status_id") or project.default_task_status_id,
                 project=project, owner=request.user, callback=self.post_save, precall=self.pre_save)
+
+            tasks = self.get_queryset().filter(id__in=[i.id for i in tasks])
             tasks_serialized = self.get_serializer_class()(tasks, many=True)
 
             return response.Ok(tasks_serialized.data)
 
-        return response.BadRequest(serializer.errors)
+        return response.BadRequest(validator.errors)
 
     def _bulk_update_order(self, order_field, request, **kwargs):
-        serializer = serializers.UpdateTasksOrderBulkSerializer(data=request.DATA)
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
+        validator = validators.UpdateTasksOrderBulkValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-        data = serializer.data
+        data = validator.data
         project = get_object_or_404(Project, pk=data["project_id"])
 
         self.check_permissions(request, "bulk_update_order", project)

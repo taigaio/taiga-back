@@ -17,56 +17,52 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
-from taiga.base.fields import PgArrayField
+from taiga.base.fields import Field, MethodField
 from taiga.base.neighbors import NeighborsSerializerMixin
 
 from taiga.mdrender.service import render as mdrender
-from taiga.projects.mixins.serializers import ListOwnerExtraInfoSerializerMixin
-from taiga.projects.mixins.serializers import ListAssignedToExtraInfoSerializerMixin
-from taiga.projects.mixins.serializers import ListStatusExtraInfoSerializerMixin
-from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
-from taiga.projects.notifications.mixins import ListWatchedResourceModelSerializer
-from taiga.projects.notifications.validators import WatchersValidator
-from taiga.projects.tagging.fields import TagsAndTagsColorsField
-from taiga.projects.serializers import BasicIssueStatusSerializer
-from taiga.projects.validators import ProjectExistsValidator
+from taiga.projects.mixins.serializers import OwnerExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import AssignedToExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import StatusExtraInfoSerializerMixin
+from taiga.projects.notifications.mixins import WatchedResourceSerializer
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
-from taiga.projects.votes.mixins.serializers import ListVoteResourceSerializerMixin
-
-from taiga.users.serializers import UserBasicInfoSerializer
-
-from . import models
-
-import serpy
 
 
-class IssueSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer,
-                      serializers.ModelSerializer):
-    tags = TagsAndTagsColorsField(default=[], required=False)
-    external_reference = PgArrayField(required=False)
-    is_closed = serializers.Field(source="is_closed")
-    comment = serializers.SerializerMethodField("get_comment")
-    generated_user_stories = serializers.SerializerMethodField("get_generated_user_stories")
-    blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
-    description_html = serializers.SerializerMethodField("get_description_html")
-    status_extra_info = BasicIssueStatusSerializer(source="status", required=False, read_only=True)
-    assigned_to_extra_info = UserBasicInfoSerializer(source="assigned_to", required=False, read_only=True)
-    owner_extra_info = UserBasicInfoSerializer(source="owner", required=False, read_only=True)
+class IssueListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
+                          OwnerExtraInfoSerializerMixin, AssignedToExtraInfoSerializerMixin,
+                          StatusExtraInfoSerializerMixin, serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    severity = Field(attr="severity_id")
+    priority = Field(attr="priority_id")
+    type = Field(attr="type_id")
+    milestone = Field(attr="milestone_id")
+    project = Field(attr="project_id")
+    created_date = Field()
+    modified_date = Field()
+    finished_date = Field()
+    subject = Field()
+    external_reference = Field()
+    version = Field()
+    watchers = Field()
+    tags = Field()
+    is_closed = Field()
 
-    class Meta:
-        model = models.Issue
-        read_only_fields = ('id', 'ref', 'created_date', 'modified_date', 'owner')
+
+class IssueSerializer(IssueListSerializer):
+    comment = MethodField()
+    generated_user_stories = MethodField()
+    blocked_note_html = MethodField()
+    description = Field()
+    description_html = MethodField()
 
     def get_comment(self, obj):
         # NOTE: This method and field is necessary to historical comments work
         return ""
 
     def get_generated_user_stories(self, obj):
-        return [{
-            "id": us.id,
-            "ref": us.ref,
-            "subject": us.subject,
-        } for us in obj.generated_user_stories.all()]
+        assert hasattr(obj, "generated_user_stories_attr"), "instance must have a generated_user_stories_attr attribute"
+        return obj.generated_user_stories_attr
 
     def get_blocked_note_html(self, obj):
         return mdrender(obj.project, obj.blocked_note)
@@ -75,39 +71,5 @@ class IssueSerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWa
         return mdrender(obj.project, obj.description)
 
 
-class IssueListSerializer(ListVoteResourceSerializerMixin, ListWatchedResourceModelSerializer,
-                          ListOwnerExtraInfoSerializerMixin, ListAssignedToExtraInfoSerializerMixin,
-                          ListStatusExtraInfoSerializerMixin, serializers.LightSerializer):
-    id = serpy.Field()
-    ref = serpy.Field()
-    severity = serpy.Field(attr="severity_id")
-    priority = serpy.Field(attr="priority_id")
-    type = serpy.Field(attr="type_id")
-    milestone = serpy.Field(attr="milestone_id")
-    project = serpy.Field(attr="project_id")
-    created_date = serpy.Field()
-    modified_date = serpy.Field()
-    finished_date = serpy.Field()
-    subject = serpy.Field()
-    external_reference = serpy.Field()
-    version = serpy.Field()
-    watchers = serpy.Field()
-
-
 class IssueNeighborsSerializer(NeighborsSerializerMixin, IssueSerializer):
-    def serialize_neighbor(self, neighbor):
-        if neighbor:
-            return NeighborIssueSerializer(neighbor).data
-        return None
-
-
-class NeighborIssueSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Issue
-        fields = ("id", "ref", "subject")
-        depth = 0
-
-
-class IssuesBulkSerializer(ProjectExistsValidator, serializers.Serializer):
-    project_id = serializers.IntegerField()
-    bulk_issues = serializers.CharField()
+    pass

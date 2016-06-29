@@ -17,34 +17,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
-from taiga.users.serializers import ListUserBasicInfoSerializer
+from taiga.base.fields import Field, MethodField
+from taiga.users.serializers import UserBasicInfoSerializer
 
 from django.utils.translation import ugettext as _
 
-import serpy
 
-class ValidateDuplicatedNameInProjectMixin(serializers.ModelSerializer):
-
-    def validate_name(self, attrs, source):
-        """
-        Check the points name is not duplicated in the project on creation
-        """
-        model = self.opts.model
-        qs = None
-        # If the object exists:
-        if self.object and attrs.get(source, None):
-            qs = model.objects.filter(project=self.object.project, name=attrs[source]).exclude(id=self.object.id)
-
-        if not self.object and attrs.get("project", None)  and attrs.get(source, None):
-            qs = model.objects.filter(project=attrs["project"], name=attrs[source])
-
-        if qs and qs.exists():
-              raise serializers.ValidationError(_("Name duplicated for the project"))
-
-        return attrs
-
-
-class ListCachedUsersSerializerMixin(serpy.Serializer):
+class CachedUsersSerializerMixin(serializers.LightSerializer):
     def to_value(self, instance):
         self._serialized_users = {}
         return super().to_value(instance)
@@ -55,37 +34,40 @@ class ListCachedUsersSerializerMixin(serpy.Serializer):
 
         serialized_user = self._serialized_users.get(user.id, None)
         if serialized_user is None:
-            serializer_user = ListUserBasicInfoSerializer(user).data
-            self._serialized_users[user.id] = serializer_user
+            serialized_user = UserBasicInfoSerializer(user).data
+            self._serialized_users[user.id] = serialized_user
 
         return serialized_user
 
 
-class ListOwnerExtraInfoSerializerMixin(ListCachedUsersSerializerMixin):
-    owner = serpy.Field(attr="owner_id")
-    owner_extra_info = serpy.MethodField()
+class OwnerExtraInfoSerializerMixin(CachedUsersSerializerMixin):
+    owner = Field(attr="owner_id")
+    owner_extra_info = MethodField()
 
     def get_owner_extra_info(self, obj):
         return self.get_user_extra_info(obj.owner)
 
 
-class ListAssignedToExtraInfoSerializerMixin(ListCachedUsersSerializerMixin):
-    assigned_to = serpy.Field(attr="assigned_to_id")
-    assigned_to_extra_info = serpy.MethodField()
+class AssignedToExtraInfoSerializerMixin(CachedUsersSerializerMixin):
+    assigned_to = Field(attr="assigned_to_id")
+    assigned_to_extra_info = MethodField()
 
     def get_assigned_to_extra_info(self, obj):
         return self.get_user_extra_info(obj.assigned_to)
 
 
-class ListStatusExtraInfoSerializerMixin(serpy.Serializer):
-    status = serpy.Field(attr="status_id")
-    status_extra_info = serpy.MethodField()
+class StatusExtraInfoSerializerMixin(serializers.LightSerializer):
+    status = Field(attr="status_id")
+    status_extra_info = MethodField()
 
     def to_value(self, instance):
         self._serialized_status = {}
         return super().to_value(instance)
 
     def get_status_extra_info(self, obj):
+        if obj.status_id is None:
+            return None
+
         serialized_status = self._serialized_status.get(obj.status_id, None)
         if serialized_status is None:
             serialized_status = {

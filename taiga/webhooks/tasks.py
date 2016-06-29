@@ -149,5 +149,4 @@ def test_webhook(webhook_id, url, key, by, date):
     data['by'] = UserSerializer(by).data
     data['date'] = date
     data['data'] = {"test": "test"}
-
     return _send_request(webhook_id, url, key, data)

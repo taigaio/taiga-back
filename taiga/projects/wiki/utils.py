@@ -3,6 +3,7 @@
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
 # Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -16,26 +17,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext as _
-
-from taiga.base.api import serializers
-from taiga.base.api import validators
-from taiga.projects.validators import DuplicatedNameInProjectValidator
-from taiga.projects.notifications.validators import WatchersValidator
-
-from . import models
+from taiga.projects.notifications.utils import attach_watchers_to_queryset
+from taiga.projects.notifications.utils import attach_total_watchers_to_queryset
+from taiga.projects.notifications.utils import attach_is_watcher_to_queryset
 
 
-class MilestoneExistsValidator:
-    def validate_sprint_id(self, attrs, source):
-        value = attrs[source]
-        if not models.Milestone.objects.filter(pk=value).exists():
-            msg = _("There's no milestone with that id")
-            raise serializers.ValidationError(msg)
-        return attrs
-
-
-class MilestoneValidator(WatchersValidator, DuplicatedNameInProjectValidator, validators.ModelValidator):
-    class Meta:
-        model = models.Milestone
-        read_only_fields = ("id", "created_date", "modified_date")
+def attach_extra_info(queryset, user=None, include_attachments=False):
+    queryset = attach_watchers_to_queryset(queryset)
+    queryset = attach_total_watchers_to_queryset(queryset)
+    queryset = attach_is_watcher_to_queryset(queryset, user)
+    return queryset

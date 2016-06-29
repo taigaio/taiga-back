@@ -16,58 +16,29 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext as _
-
 from taiga.base.api import serializers
-from taiga.base.utils import json
-from taiga.projects.notifications.mixins import WatchedResourceModelSerializer
-from taiga.projects.notifications.mixins import ListWatchedResourceModelSerializer
-from taiga.projects.notifications.validators import WatchersValidator
-from taiga.projects.mixins.serializers import ValidateDuplicatedNameInProjectMixin
+from taiga.base.fields import Field, MethodField
+from taiga.projects.notifications.mixins import WatchedResourceSerializer
 from taiga.projects.userstories.serializers import UserStoryListSerializer
 
-from . import models
 
-import serpy
-
-
-class MilestoneSerializer(WatchersValidator, WatchedResourceModelSerializer,
-                          ValidateDuplicatedNameInProjectMixin):
-    total_points = serializers.SerializerMethodField("get_total_points")
-    closed_points = serializers.SerializerMethodField("get_closed_points")
-    user_stories = serializers.SerializerMethodField("get_user_stories")
-
-    class Meta:
-        model = models.Milestone
-        read_only_fields = ("id", "created_date", "modified_date")
-
-    def get_total_points(self, obj):
-        return sum(obj.total_points.values())
-
-    def get_closed_points(self, obj):
-        return sum(obj.closed_points.values())
-
-    def get_user_stories(self, obj):
-        return UserStoryListSerializer(obj.user_stories.all(), many=True).data
-
-
-class MilestoneListSerializer(ListWatchedResourceModelSerializer, serializers.LightSerializer):
-    id = serpy.Field()
-    name = serpy.Field()
-    slug = serpy.Field()
-    owner = serpy.Field(attr="owner_id")
-    project = serpy.Field(attr="project_id")
-    estimated_start = serpy.Field()
-    estimated_finish = serpy.Field()
-    created_date = serpy.Field()
-    modified_date = serpy.Field()
-    closed = serpy.Field()
-    disponibility = serpy.Field()
-    order = serpy.Field()
-    watchers = serpy.Field()
-    user_stories = serpy.MethodField("get_user_stories")
-    total_points = serpy.MethodField()
-    closed_points = serpy.MethodField()
+class MilestoneSerializer(WatchedResourceSerializer, serializers.LightSerializer):
+    id = Field()
+    name = Field()
+    slug = Field()
+    owner = Field(attr="owner_id")
+    project = Field(attr="project_id")
+    estimated_start = Field()
+    estimated_finish = Field()
+    created_date = Field()
+    modified_date = Field()
+    closed = Field()
+    disponibility = Field()
+    order = Field()
+    watchers = Field()
+    user_stories = MethodField()
+    total_points = MethodField()
+    closed_points = MethodField()
 
     def get_user_stories(self, obj):
         return UserStoryListSerializer(obj.user_stories.all(), many=True).data

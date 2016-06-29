@@ -16,12 +16,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from contextlib import closing
-from collections import namedtuple
-
 from django.apps import apps
-from django.db import transaction, connection
-from django.db.models.sql import datastructures
+from django.db import transaction
 
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse
@@ -36,7 +32,6 @@ from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
 
-from taiga.projects.attachments.utils import attach_basic_attachments
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.milestones.models import Milestone
@@ -45,21 +40,20 @@ from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.notifications.mixins import WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.tagging.api import TaggedResourceMixin
-from taiga.projects.userstories.models import RolePoints
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotersViewSetMixin
-from taiga.projects.userstories.utils import attach_total_points
-from taiga.projects.userstories.utils import attach_role_points
-from taiga.projects.userstories.utils import attach_tasks
+from taiga.projects.userstories.utils import attach_extra_info
 
 from . import models
 from . import permissions
 from . import serializers
 from . import services
+from . import validators
 
 
 class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
                        TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
+    validator_class = validators.UserStoryValidator
     queryset = models.UserStory.objects.all()
     permission_classes = (permissions.UserStoryPermission,)
     filter_backends = (filters.CanViewUsFilterBackend,
@@ -105,18 +99,11 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                                "assigned_to",
                                "generated_from_issue")
 
-        qs = self.attach_votes_attrs_to_queryset(qs)
-        qs = self.attach_watchers_attrs_to_queryset(qs)
-        qs = attach_total_points(qs)
-        qs = attach_role_points(qs)
-
-        if "include_attachments" in self.request.QUERY_PARAMS:
-            qs = attach_basic_attachments(qs)
-            qs = qs.extra(select={"include_attachments": "True"})
-
-        if "include_tasks" in self.request.QUERY_PARAMS:
-            qs = attach_tasks(qs)
-            qs = qs.extra(select={"include_tasks": "True"})
+        include_attachments = "include_attachments" in self.request.QUERY_PARAMS
+        include_tasks = "include_tasks" in self.request.QUERY_PARAMS
+        qs = attach_extra_info(qs, user=self.request.user,
+                               include_attachments=include_attachments,
+                               include_tasks=include_tasks)
 
         return qs
 
@@ -239,8 +226,7 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
     def by_ref(self, request):
         ref = request.QUERY_PARAMS.get("ref", None)
         project_id = request.QUERY_PARAMS.get("project", None)
-        userstory = get_object_or_404(models.UserStory, ref=ref, project_id=project_id)
-        return self.retrieve(request, pk=userstory.pk)
+        return self.retrieve(request, project_id=project_id, ref=ref)
 
     @list_route(methods=["GET"])
     def csv(self, request):
@@ -257,9 +243,9 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
-        serializer = serializers.UserStoriesBulkSerializer(data=request.DATA)
-        if serializer.is_valid():
-            data = serializer.data
+        validator = validators.UserStoriesBulkValidator(data=request.DATA)
+        if validator.is_valid():
+            data = validator.data
             project = Project.objects.get(id=data["project_id"])
             self.check_permissions(request, 'bulk_create', project)
             if project.blocked_code is not None:
@@ -269,17 +255,20 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                 data["bulk_stories"], project=project, owner=request.user,
                 status_id=data.get("status_id") or project.default_us_status_id,
                 callback=self.post_save, precall=self.pre_save)
+
+            user_stories = self.get_queryset().filter(id__in=[i.id for i in user_stories])
             user_stories_serialized = self.get_serializer_class()(user_stories, many=True)
+
             return response.Ok(user_stories_serialized.data)
-        return response.BadRequest(serializer.errors)
+        return response.BadRequest(validator.errors)
 
     @list_route(methods=["POST"])
     def bulk_update_milestone(self, request, **kwargs):
-        serializer = serializers.UpdateMilestoneBulkSerializer(data=request.DATA)
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
+        validator = validators.UpdateMilestoneBulkValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-        data = serializer.data
+        data = validator.data
         project = get_object_or_404(Project, pk=data["project_id"])
         milestone = get_object_or_404(Milestone, pk=data["milestone_id"])
 
@@ -291,11 +280,11 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
         return response.NoContent()
 
     def _bulk_update_order(self, order_field, request, **kwargs):
-        serializer = serializers.UpdateUserStoriesOrderBulkSerializer(data=request.DATA)
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
+        validator = validators.UpdateUserStoriesOrderBulkValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-        data = serializer.data
+        data = validator.data
         project = get_object_or_404(Project, pk=data["project_id"])
 
         self.check_permissions(request, "bulk_update_order", project)

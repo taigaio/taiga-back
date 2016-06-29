@@ -375,7 +375,7 @@ def attach_private_projects_same_owner(queryset, user, as_field="private_project
     """
     model = queryset.model
     if user is None or user.is_anonymous():
-        sql = """SELECT '0'"""
+        sql = """SELECT 0"""
     else:
         sql = """SELECT COUNT(id)
                         FROM projects_project p_aux
@@ -399,7 +399,7 @@ def attach_public_projects_same_owner(queryset, user, as_field="public_projects_
     """
     model = queryset.model
     if user is None or user.is_anonymous():
-        sql = """SELECT '0'"""
+        sql = """SELECT 0"""
     else:
         sql = """SELECT COUNT(id)
                         FROM projects_project p_aux

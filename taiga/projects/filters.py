@@ -97,12 +97,12 @@ class QFilterBackend(FilterBackend):
             tsquery = "to_tsquery('english_nostop', %s)"
             tsquery_params = [to_tsquery(q)]
             tsvector = """
-                 setweight(to_tsvector('english_nostop',
-                                       coalesce(projects_project.name, '')), 'A') ||
-                 setweight(to_tsvector('english_nostop',
-                                       coalesce(inmutable_array_to_string(projects_project.tags), '')), 'B') ||
-                 setweight(to_tsvector('english_nostop',
-                                       coalesce(projects_project.description, '')), 'C')
+             setweight(to_tsvector('english_nostop',
+                                   coalesce(projects_project.name, '')), 'A') ||
+             setweight(to_tsvector('english_nostop',
+                                   coalesce(inmutable_array_to_string(projects_project.tags), '')), 'B') ||
+             setweight(to_tsvector('english_nostop',
+                                   coalesce(projects_project.description, '')), 'C')
             """
 
             select = {
@@ -111,7 +111,7 @@ class QFilterBackend(FilterBackend):
             }
             select_params = tsquery_params
             where = ["{tsvector} @@ {tsquery}".format(tsquery=tsquery,
-                                                      tsvector=tsvector),]
+                                                      tsvector=tsvector), ]
             params = tsquery_params
             order_by = ["-rank", ]
 
@@ -142,11 +142,11 @@ class UserOrderFilterBackend(FilterBackend):
 
         model = queryset.model
         sql = """SELECT projects_membership.user_order
-            	    FROM projects_membership
-                    WHERE
-                        projects_membership.project_id = {tbl}.id AND
-                        projects_membership.user_id = {user_id}
-                    """
+                 FROM projects_membership
+                 WHERE
+                    projects_membership.project_id = {tbl}.id AND
+                    projects_membership.user_id = {user_id}
+              """
 
         sql = sql.format(tbl=model._meta.db_table, user_id=request.user.id)
         queryset = queryset.extra(select={"user_order": sql})
