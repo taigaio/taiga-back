@@ -7,6 +7,7 @@
 - Add gravatar url to Users API endpoint.
 - ProjectTemplates now are sorted by the attribute 'order'.
 - Create enpty wiki pages (if not exist) when a new link is created.
+- Diff messages in history entries now show only the relevant changes (with some context).
 - Comments:
     - Now comment owners and project admins can edit existing comments with the history Entry endpoint.
     - Add a new permissions to allow add comments instead of use the existent modify permission for this purpose.
