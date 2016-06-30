@@ -22,7 +22,6 @@ from django.db.models import signals
 
 
 def connect_userstories_signals():
-    from taiga.projects import signals as generic_handlers
     from taiga.projects.tagging import signals as tagging_handlers
     from . import signals as handlers
 
@@ -33,8 +32,8 @@ def connect_userstories_signals():
                                dispatch_uid='disable_task_signals')
 
     signals.post_delete.connect(handlers.enable_tasks_signals,
-                           sender=apps.get_model("userstories", "UserStory"),
-                           dispatch_uid='enable_tasks_signals')
+                                sender=apps.get_model("userstories", "UserStory"),
+                                dispatch_uid='enable_tasks_signals')
 
     # Cached prev object version
     signals.pre_save.connect(handlers.cached_prev_us,

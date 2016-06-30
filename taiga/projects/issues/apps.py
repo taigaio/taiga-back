@@ -22,7 +22,6 @@ from django.db.models import signals
 
 
 def connect_issues_signals():
-    from taiga.projects import signals as generic_handlers
     from taiga.projects.tagging import signals as tagging_handlers
     from . import signals as handlers
 

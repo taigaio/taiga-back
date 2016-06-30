@@ -22,7 +22,6 @@ from django.db.models import signals
 
 
 def connect_tasks_signals():
-    from taiga.projects import signals as generic_handlers
     from taiga.projects.tagging import signals as tagging_handlers
     from . import signals as handlers
 
@@ -49,6 +48,7 @@ def connect_tasks_close_or_open_us_and_milestone_signals():
     signals.post_delete.connect(handlers.try_to_close_or_open_us_and_milestone_when_delete_task,
                                 sender=apps.get_model("tasks", "Task"),
                                 dispatch_uid="try_to_close_or_open_us_and_milestone_when_delete_task")
+
 
 def connect_tasks_custom_attributes_signals():
     from taiga.projects.custom_attributes import signals as custom_attributes_handlers
