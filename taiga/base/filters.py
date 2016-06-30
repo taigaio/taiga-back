@@ -268,7 +268,7 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
 
             qs = qs.filter(memberships__project__anon_permissions__contains=[self.permission])
 
-        return qs
+        return qs.distinct()
 
 
 #####################################################################
