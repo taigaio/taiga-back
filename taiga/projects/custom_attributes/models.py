@@ -31,7 +31,6 @@ from . import choices
 #  Custom Attribute Models
 #######################################################
 
-
 class AbstractCustomAttribute(models.Model):
     name = models.CharField(null=False, blank=False, max_length=64, verbose_name=_("name"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
@@ -61,6 +60,12 @@ class AbstractCustomAttribute(models.Model):
             self.modified_date = timezone.now()
 
         return super().save(*args, **kwargs)
+
+
+class EpicCustomAttribute(AbstractCustomAttribute):
+    class Meta(AbstractCustomAttribute.Meta):
+        verbose_name = "epic custom attribute"
+        verbose_name_plural = "epic custom attributes"
 
 
 class UserStoryCustomAttribute(AbstractCustomAttribute):
@@ -93,13 +98,28 @@ class AbstractCustomAttributesValues(OCCModelMixin, models.Model):
         ordering = ["id"]
 
 
+class EpicCustomAttributesValues(AbstractCustomAttributesValues):
+    epic = models.OneToOneField("epics.Epic",
+                                null=False, blank=False, related_name="custom_attributes_values",
+                                verbose_name=_("epic"))
+
+    class Meta(AbstractCustomAttributesValues.Meta):
+        verbose_name = "epic custom attributes values"
+        verbose_name_plural = "epic custom attributes values"
+
+    @property
+    def project(self):
+        # NOTE: This property simplifies checking permissions
+        return self.epic.project
+
+
 class UserStoryCustomAttributesValues(AbstractCustomAttributesValues):
     user_story = models.OneToOneField("userstories.UserStory",
                                       null=False, blank=False, related_name="custom_attributes_values",
                                       verbose_name=_("user story"))
 
     class Meta(AbstractCustomAttributesValues.Meta):
-        verbose_name = "user story ustom attributes values"
+        verbose_name = "user story custom attributes values"
         verbose_name_plural = "user story custom attributes values"
         index_together = [("user_story",)]
 
@@ -115,7 +135,7 @@ class TaskCustomAttributesValues(AbstractCustomAttributesValues):
                                 verbose_name=_("task"))
 
     class Meta(AbstractCustomAttributesValues.Meta):
-        verbose_name = "task ustom attributes values"
+        verbose_name = "task custom attributes values"
         verbose_name_plural = "task custom attributes values"
         index_together = [("task",)]
 
@@ -131,7 +151,7 @@ class IssueCustomAttributesValues(AbstractCustomAttributesValues):
                                  verbose_name=_("issue"))
 
     class Meta(AbstractCustomAttributesValues.Meta):
-        verbose_name = "issue ustom attributes values"
+        verbose_name = "issue custom attributes values"
         verbose_name_plural = "issue custom attributes values"
         index_together = [("issue",)]
 

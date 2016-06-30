@@ -277,6 +277,26 @@ def attach_severities(queryset, as_field="severities_attr"):
     return queryset
 
 
+def attach_epic_custom_attributes(queryset, as_field="epic_custom_attributes_attr"):
+    """Attach a json epic custom attributes representation to each object of the queryset.
+
+    :param queryset: A Django projects queryset object.
+    :param as_field: Attach the epic custom attributes as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    sql = """SELECT json_agg(row_to_json(custom_attributes_epiccustomattribute))
+        	    FROM custom_attributes_epiccustomattribute
+                WHERE
+                    custom_attributes_epiccustomattribute.project_id = {tbl}.id
+                """
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
+
+
 def attach_userstory_custom_attributes(queryset, as_field="userstory_custom_attributes_attr"):
     """Attach a json userstory custom attributes representation to each object of the queryset.
 
@@ -471,6 +491,7 @@ def attach_extra_info(queryset, user=None):
     queryset = attach_issue_types(queryset)
     queryset = attach_priorities(queryset)
     queryset = attach_severities(queryset)
+    queryset = attach_epic_custom_attributes(queryset)
     queryset = attach_userstory_custom_attributes(queryset)
     queryset = attach_task_custom_attributes(queryset)
     queryset = attach_issue_custom_attributes(queryset)

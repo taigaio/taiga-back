@@ -41,6 +41,18 @@ from . import services
 # Custom Attribute ViewSets
 #######################################################
 
+class EpicCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, ModelCrudViewSet):
+    model = models.EpicCustomAttribute
+    serializer_class = serializers.EpicCustomAttributeSerializer
+    validator_class = validators.EpicCustomAttributeValidator
+    permission_classes = (permissions.EpicCustomAttributePermission,)
+    filter_backends = (filters.CanViewProjectFilterBackend,)
+    filter_fields = ("project",)
+    bulk_update_param = "bulk_epic_custom_attributes"
+    bulk_update_perm = "change_epic_custom_attributes"
+    bulk_update_order_action = services.bulk_update_epic_custom_attribute_order
+
+
 class UserStoryCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.UserStoryCustomAttribute
     serializer_class = serializers.UserStoryCustomAttributeSerializer
@@ -85,6 +97,20 @@ class BaseCustomAttributesValuesViewSet(OCCResourceMixin, HistoryResourceMixin, 
                                         BlockedByProjectMixin, ModelUpdateRetrieveViewSet):
     def get_object_for_snapshot(self, obj):
         return getattr(obj, self.content_object)
+
+
+class EpicCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
+    model = models.EpicCustomAttributesValues
+    serializer_class = serializers.EpicCustomAttributesValuesSerializer
+    validator_class = validators.EpicCustomAttributesValuesValidator
+    permission_classes = (permissions.EpicCustomAttributesValuesPermission,)
+    lookup_field = "epic_id"
+    content_object = "epic"
+
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        qs = qs.select_related("epic", "epic__project")
+        return qs
 
 
 class UserStoryCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):

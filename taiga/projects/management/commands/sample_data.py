@@ -131,7 +131,7 @@ LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS = [0, 1, 2]
 class Command(BaseCommand):
     sd = SampleDataHelper(seed=12345678901)
 
-    @transaction.atomic
+    #@transaction.atomic
     def handle(self, *args, **options):
         # Prevent events emission when sample data is running
         disconnect_events_signals()
@@ -192,6 +192,13 @@ class Command(BaseCommand):
                     computable_project_roles.add(role)
 
             # added custom attributes
+            names = set([self.sd.words(1, 3) for i in range(1, 6)])
+            for name in names:
+                EpicCustomAttribute.objects.create(name=name,
+                                                   description=self.sd.words(3, 12),
+                                                   type=self.sd.choice(TYPES_CHOICES)[0],
+                                                   project=project,
+                                                   order=i)
             names = set([self.sd.words(1, 3) for i in range(1, 6)])
             for name in names:
                 UserStoryCustomAttribute.objects.create(name=name,
@@ -511,14 +518,13 @@ class Command(BaseCommand):
                                  status=self.sd.db_object_from_queryset(project.epic_statuses.filter(
                                                                         is_closed=False)),
                                  tags=self.sd.words(1, 3).split(" "))
+        epic.save()
 
-        # TODO: Epic custom attributes
-        #custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
-        #                         in project.epiccustomattributes.all() if self.sd.boolean()}
-        #if custom_attributes_values:
-        #    epic.custom_attributes_values.attributes_values = custom_attributes_values
-        #    epic.custom_attributes_values.save()
-
+        custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
+                                    in project.epiccustomattributes.all() if self.sd.boolean()}
+        if custom_attributes_values:
+            epic.custom_attributes_values.attributes_values = custom_attributes_values
+            epic.custom_attributes_values.save()
 
         for i in range(self.sd.int(*NUM_ATTACHMENTS)):
             attachment = self.create_attachment(epic, i+1)

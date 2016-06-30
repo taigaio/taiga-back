@@ -57,6 +57,7 @@ class ProjectTemplateFactory(Factory):
     slug = settings.DEFAULT_PROJECT_TEMPLATE
     description = factory.Sequence(lambda n: "Description {}".format(n))
 
+    epic_statuses = []
     us_statuses = []
     points = []
     task_statuses = []
