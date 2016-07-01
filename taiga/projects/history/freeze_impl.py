@@ -106,6 +106,17 @@ def milestone_values(diff):
     return values
 
 
+def epic_values(diff):
+    values = _common_users_values(diff)
+
+    if "status" in diff:
+        values["status"] = _get_us_status_values(diff["status"])
+
+    # TODO EPICS: What happen with usr stories?
+
+    return values
+
+
 def userstory_values(diff):
     values = _common_users_values(diff)
 
@@ -191,6 +202,18 @@ def extract_attachments(obj) -> list:
 
 
 @as_tuple
+def extract_epic_custom_attributes(obj) -> list:
+    with suppress(ObjectDoesNotExist):
+        custom_attributes_values =  obj.custom_attributes_values.attributes_values
+        for attr in obj.project.epiccustomattributes.all():
+            with suppress(KeyError):
+                value = custom_attributes_values[str(attr.id)]
+                yield {"id": attr.id,
+                       "name": attr.name,
+                       "value": value}
+
+
+@as_tuple
 def extract_user_story_custom_attributes(obj) -> list:
     with suppress(ObjectDoesNotExist):
         custom_attributes_values =  obj.custom_attributes_values.attributes_values
@@ -235,6 +258,7 @@ def project_freezer(project) -> dict:
               "total_milestones",
               "total_story_points",
               "tags",
+              "is_epics_activated",
               "is_backlog_activated",
               "is_kanban_activated",
               "is_wiki_activated",
@@ -251,6 +275,31 @@ def milestone_freezer(milestone) -> dict:
         "estimated_finish": milestone.estimated_finish,
         "closed": milestone.closed,
         "disponibility": milestone.disponibility
+    }
+
+    return snapshot
+
+
+def epic_freezer(epic) -> dict:
+    snapshot = {
+        "ref": epic.ref,
+        "owner": epic.owner_id,
+        "status": epic.status.id if epic.status else None,
+        "is_closed": epic.is_closed,
+        "finish_date": str(epic.finish_date),
+        "epics_order": epic.epics_order,
+        "subject": epic.subject,
+        "description": epic.description,
+        "description_html": mdrender(epic.project, epic.description),
+        "assigned_to": epic.assigned_to_id,
+        "client_requirement": epic.client_requirement,
+        "team_requirement": epic.team_requirement,
+        "attachments": extract_attachments(epic),
+        "tags": epic.tags,
+        "is_blocked": epic.is_blocked,
+        "blocked_note": epic.blocked_note,
+        "blocked_note_html": mdrender(epic.project, epic.blocked_note),
+        "custom_attributes": extract_epic_custom_attributes(epic),
     }
 
     return snapshot

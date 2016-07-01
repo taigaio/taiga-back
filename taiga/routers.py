@@ -196,11 +196,13 @@ router.register(r"wiki-links", WikiLinkViewSet,
 
 
 # History & Components
+from taiga.projects.history.api import EpicHistory
 from taiga.projects.history.api import UserStoryHistory
 from taiga.projects.history.api import TaskHistory
 from taiga.projects.history.api import IssueHistory
 from taiga.projects.history.api import WikiHistory
 
+router.register(r"history/epic", EpicHistory, base_name="epic-history")
 router.register(r"history/userstory", UserStoryHistory, base_name="userstory-history")
 router.register(r"history/task", TaskHistory, base_name="task-history")
 router.register(r"history/issue", IssueHistory, base_name="issue-history")

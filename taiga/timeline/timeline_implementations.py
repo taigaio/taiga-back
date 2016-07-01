@@ -43,6 +43,18 @@ def milestone_timeline(instance, extra_data={}):
     return result
 
 
+@register_timeline_implementation("epics.epic", "create")
+@register_timeline_implementation("epics.epic", "change")
+@register_timeline_implementation("epics.epic", "delete")
+def epic_timeline(instance, extra_data={}):
+    result ={
+        "epic": service.extract_epic_info(instance),
+        "project": service.extract_project_info(instance.project),
+    }
+    result.update(extra_data)
+    return result
+
+
 @register_timeline_implementation("userstories.userstory", "create")
 @register_timeline_implementation("userstories.userstory", "change")
 @register_timeline_implementation("userstories.userstory", "delete")

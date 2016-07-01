@@ -389,6 +389,16 @@ class IssueTypeFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
+class EpicCustomAttributeFactory(Factory):
+    class Meta:
+        model = "custom_attributes.EpicCustomAttribute"
+        strategy = factory.CREATE_STRATEGY
+
+    name = factory.Sequence(lambda n: "Epic Custom Attribute {}".format(n))
+    description = factory.Sequence(lambda n: "Description for Epic Custom Attribute {}".format(n))
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
 class UserStoryCustomAttributeFactory(Factory):
     class Meta:
         model = "custom_attributes.UserStoryCustomAttribute"
@@ -417,6 +427,15 @@ class IssueCustomAttributeFactory(Factory):
     name = factory.Sequence(lambda n: "Issue Custom Attribute {}".format(n))
     description = factory.Sequence(lambda n: "Description for Issue Custom Attribute {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
+class EpicCustomAttributesValuesFactory(Factory):
+    class Meta:
+        model = "custom_attributes.EpicCustomAttributesValues"
+        strategy = factory.CREATE_STRATEGY
+
+    attributes_values = {}
+    epic = factory.SubFactory("tests.factories.EpicFactory")
 
 
 class UserStoryCustomAttributesValuesFactory(Factory):

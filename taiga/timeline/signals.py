@@ -36,9 +36,23 @@ def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_d
 
     ct = ContentType.objects.get_for_model(obj)
     if settings.CELERY_ENABLED:
-        connection.on_commit(lambda: push_to_timelines.delay(project_id, user.id, ct.app_label, ct.model, obj.id, event_type, created_datetime, extra_data=extra_data))
+        connection.on_commit(lambda: push_to_timelines.delay(project_id,
+                                                             user.id,
+                                                             ct.app_label,
+                                                             ct.model,
+                                                             obj.id,
+                                                             event_type,
+                                                             created_datetime,
+                                                             extra_data=extra_data))
     else:
-        push_to_timelines(project_id, user.id, ct.app_label, ct.model, obj.id, event_type, created_datetime, extra_data=extra_data)
+        push_to_timelines(project_id,
+                          user.id,
+                          ct.app_label,
+                          ct.model,
+                          obj.id,
+                          event_type,
+                          created_datetime,
+                          extra_data=extra_data)
 
 
 def _clean_description_fields(values_diff):

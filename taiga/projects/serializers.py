@@ -30,15 +30,6 @@ from taiga.permissions.services import calculate_permissions
 from taiga.permissions.services import is_project_admin, is_project_owner
 
 from . import services
-<<<<<<< HEAD
-=======
-from .custom_attributes.serializers import EpicCustomAttributeSerializer
-from .custom_attributes.serializers import UserStoryCustomAttributeSerializer
-from .custom_attributes.serializers import TaskCustomAttributeSerializer
-from .custom_attributes.serializers import IssueCustomAttributeSerializer
-from .likes.mixins.serializers import FanResourceSerializerMixin
-from .mixins.serializers import ValidateDuplicatedNameInProjectMixin
->>>>>>> 5f3559d... Epic custom attributes values
 from .notifications.choices import NotifyLevel
 
 
@@ -222,6 +213,7 @@ class ProjectSerializer(serializers.LightSerializer):
     members = MethodField()
     total_milestones = Field()
     total_story_points = Field()
+    is_epics_activated = Field()
     is_backlog_activated = Field()
     is_kanban_activated = Field()
     is_wiki_activated = Field()
@@ -249,6 +241,7 @@ class ProjectSerializer(serializers.LightSerializer):
     tags = Field()
     tags_colors = MethodField()
 
+    default_epic_status = Field(attr="default_epic_status_id")
     default_points = Field(attr="default_points_id")
     default_us_status = Field(attr="default_us_status_id")
     default_task_status = Field(attr="default_task_status_id")
@@ -300,14 +293,13 @@ class ProjectSerializer(serializers.LightSerializer):
     def get_my_permissions(self, obj):
         if "request" in self.context:
             user = self.context["request"].user
-            return calculate_permissions(
-                        is_authenticated=user.is_authenticated(),
-                        is_superuser=user.is_superuser,
-                        is_member=self.get_i_am_member(obj),
-                        is_admin=self.get_i_am_admin(obj),
-                        role_permissions=obj.my_role_permissions_attr,
-                        anon_permissions=obj.anon_permissions,
-                        public_permissions=obj.public_permissions)
+            return calculate_permissions(is_authenticated=user.is_authenticated(),
+                                         is_superuser=user.is_superuser,
+                                         is_member=self.get_i_am_member(obj),
+                                         is_admin=self.get_i_am_admin(obj),
+                                         role_permissions=obj.my_role_permissions_attr,
+                                         anon_permissions=obj.anon_permissions,
+                                         public_permissions=obj.public_permissions)
         return []
 
     def get_owner(self, obj):
@@ -441,10 +433,8 @@ class ProjectDetailSerializer(ProjectSerializer):
         return len(obj.members_attr)
 
     def get_is_out_of_owner_limits(self, obj):
-        assert (hasattr(obj, "private_projects_same_owner_attr"),
-                "instance must have a private_projects_same_owner_attr attribute"
-        assert (hasattr(obj, "public_projects_same_owner_attr"),
-                "instance must have a public_projects_same_owner_attr attribute"
+        assert hasattr(obj, "private_projects_same_owner_attr"), "instance must have a private_projects_same_owner_attr attribute"
+        assert hasattr(obj, "public_projects_same_owner_attr"), "instance must have a public_projects_same_owner_attr attribute"
         return services.check_if_project_is_out_of_owner_limits(
             obj,
             current_memberships=self.get_total_memberships(obj),
@@ -453,10 +443,8 @@ class ProjectDetailSerializer(ProjectSerializer):
         )
 
     def get_is_private_extra_info(self, obj):
-        assert (hasattr(obj, "private_projects_same_owner_attr"),
-                "instance must have a private_projects_same_owner_attr attribute"
-        assert (hasattr(obj, "public_projects_same_owner_attr"),
-                "instance must have a public_projects_same_owner_attr attribute"
+        assert hasattr(obj, "private_projects_same_owner_attr"), "instance must have a private_projects_same_owner_attr attribute"
+        assert hasattr(obj, "public_projects_same_owner_attr"), "instance must have a public_projects_same_owner_attr attribute"
         return services.check_if_project_privacity_can_be_changed(
             obj,
             current_memberships=self.get_total_memberships(obj),

@@ -50,6 +50,7 @@ from .models import HistoryType
 # Freeze implementatitions
 from .freeze_impl import project_freezer
 from .freeze_impl import milestone_freezer
+from .freeze_impl import epic_freezer
 from .freeze_impl import userstory_freezer
 from .freeze_impl import issue_freezer
 from .freeze_impl import task_freezer
@@ -58,6 +59,7 @@ from .freeze_impl import wikipage_freezer
 
 from .freeze_impl import project_values
 from .freeze_impl import milestone_values
+from .freeze_impl import epic_values
 from .freeze_impl import userstory_values
 from .freeze_impl import issue_values
 from .freeze_impl import task_values
@@ -337,10 +339,7 @@ def take_snapshot(obj: object, *, comment: str="", user=None, delete: bool=False
 
         # If diff and comment are empty, do
         # not create empty history entry
-        if (not fdiff.diff and not comment
-                and old_fobj is not None
-                and entry_type != HistoryType.delete):
-
+        if (not fdiff.diff and not comment and old_fobj is not None and entry_type != HistoryType.delete):
             return None
 
         fvals = make_diff_values(typename, fdiff)
@@ -394,8 +393,10 @@ def prefetch_owners_in_history_queryset(qs):
     return qs
 
 
+# Freeze & value register
 register_freeze_implementation("projects.project", project_freezer)
 register_freeze_implementation("milestones.milestone", milestone_freezer,)
+register_freeze_implementation("epics.epic", epic_freezer)
 register_freeze_implementation("userstories.userstory", userstory_freezer)
 register_freeze_implementation("issues.issue", issue_freezer)
 register_freeze_implementation("tasks.task", task_freezer)
@@ -403,6 +404,7 @@ register_freeze_implementation("wiki.wikipage", wikipage_freezer)
 
 register_values_implementation("projects.project", project_values)
 register_values_implementation("milestones.milestone", milestone_values)
+register_values_implementation("epics.epic", epic_values)
 register_values_implementation("userstories.userstory", userstory_values)
 register_values_implementation("issues.issue", issue_values)
 register_values_implementation("tasks.task", task_values)
