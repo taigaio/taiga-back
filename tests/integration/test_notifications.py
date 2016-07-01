@@ -354,6 +354,7 @@ def test_send_notifications_using_services_method_for_user_stories(settings, mai
 
     us = f.UserStoryFactory.create(project=project, owner=member2.user)
     history_change = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.change,
@@ -363,6 +364,7 @@ def test_send_notifications_using_services_method_for_user_stories(settings, mai
     )
 
     history_create = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.create,
@@ -372,6 +374,7 @@ def test_send_notifications_using_services_method_for_user_stories(settings, mai
     )
 
     history_delete = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="test:delete",
         type=HistoryType.delete,
@@ -446,6 +449,7 @@ def test_send_notifications_using_services_method_for_tasks(settings, mail):
 
     task = f.TaskFactory.create(project=project, owner=member2.user)
     history_change = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.change,
@@ -455,6 +459,7 @@ def test_send_notifications_using_services_method_for_tasks(settings, mail):
     )
 
     history_create = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.create,
@@ -464,6 +469,7 @@ def test_send_notifications_using_services_method_for_tasks(settings, mail):
     )
 
     history_delete = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="test:delete",
         type=HistoryType.delete,
@@ -538,6 +544,7 @@ def test_send_notifications_using_services_method_for_issues(settings, mail):
 
     issue = f.IssueFactory.create(project=project, owner=member2.user)
     history_change = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.change,
@@ -547,6 +554,7 @@ def test_send_notifications_using_services_method_for_issues(settings, mail):
     )
 
     history_create = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.create,
@@ -556,6 +564,7 @@ def test_send_notifications_using_services_method_for_issues(settings, mail):
     )
 
     history_delete = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="test:delete",
         type=HistoryType.delete,
@@ -630,6 +639,7 @@ def test_send_notifications_using_services_method_for_wiki_pages(settings, mail)
 
     wiki = f.WikiPageFactory.create(project=project, owner=member2.user)
     history_change = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.change,
@@ -639,6 +649,7 @@ def test_send_notifications_using_services_method_for_wiki_pages(settings, mail)
     )
 
     history_create = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.create,
@@ -648,6 +659,7 @@ def test_send_notifications_using_services_method_for_wiki_pages(settings, mail)
     )
 
     history_delete = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="test:delete",
         type=HistoryType.delete,

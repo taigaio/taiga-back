@@ -228,6 +228,7 @@ def test_delete_comment_by_project_owner(client):
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     key = make_key_from_model_object(us)
     history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                 project=project,
                                                  comment="testing",
                                                  key=key,
                                                  diff={},
@@ -246,6 +247,7 @@ def test_edit_comment(client):
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     key = make_key_from_model_object(us)
     history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                 project=project,
                                                  comment="testing",
                                                  key=key,
                                                  diff={},
@@ -278,6 +280,7 @@ def test_get_comment_versions(client):
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     key = make_key_from_model_object(us)
     history_entry = f.HistoryEntryFactory.create(
+                             project=project,
                              type=HistoryType.change,
                              comment="testing",
                              key=key,
@@ -307,6 +310,7 @@ def test_get_comment_versions_from_history_entry_without_comment(client):
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     key = make_key_from_model_object(us)
     history_entry = f.HistoryEntryFactory.create(
+                             project=project,
                              type=HistoryType.change,
                              key=key,
                              diff={},

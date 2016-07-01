@@ -39,6 +39,7 @@ def test_project_totals_updated_on_activity(client):
     totals_updated_datetime = project.totals_updated_datetime
     us = f.UserStoryFactory.create(project=project, owner=project.owner)
     f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": project.owner.id},
         comment="",
         type=HistoryType.change,
@@ -57,6 +58,7 @@ def test_project_totals_updated_on_activity(client):
 
     totals_updated_datetime = project.totals_updated_datetime
     f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": project.owner.id},
         comment="",
         type=HistoryType.change,
@@ -75,6 +77,7 @@ def test_project_totals_updated_on_activity(client):
 
     totals_updated_datetime = project.totals_updated_datetime
     f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": project.owner.id},
         comment="",
         type=HistoryType.change,
@@ -93,6 +96,7 @@ def test_project_totals_updated_on_activity(client):
 
     totals_updated_datetime = project.totals_updated_datetime
     f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": project.owner.id},
         comment="",
         type=HistoryType.change,

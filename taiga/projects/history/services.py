@@ -314,6 +314,7 @@ def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
         # Determine history type
         if delete:
             entry_type = HistoryType.delete
+            need_real_snapshot = True
         elif new_fobj and not old_fobj:
             entry_type = HistoryType.create
         elif new_fobj and old_fobj:
@@ -340,6 +341,7 @@ def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
 
         kwargs = {
             "user": {"pk": user_id, "name": user_name},
+            "project_id": getattr(obj, 'project_id', getattr(obj, 'id', None)),
             "key": key,
             "type": entry_type,
             "snapshot": fdiff.snapshot if need_real_snapshot else None,

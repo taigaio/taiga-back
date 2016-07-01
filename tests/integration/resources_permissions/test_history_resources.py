@@ -110,6 +110,7 @@ def data_us(data):
     m = type("Models", (object,), {})
     m.public_user_story = f.UserStoryFactory(project=data.public_project, ref=1)
     m.public_history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.public_project,
                                                           comment="testing public",
                                                           key=make_key_from_model_object(m.public_user_story),
                                                           diff={},
@@ -117,12 +118,14 @@ def data_us(data):
 
     m.private_user_story1 = f.UserStoryFactory(project=data.private_project1, ref=5)
     m.private_history_entry1 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.private_project1,
                                                           comment="testing 1",
                                                           key=make_key_from_model_object(m.private_user_story1),
                                                           diff={},
                                                           user={"pk": data.project_member_with_perms.pk})
     m.private_user_story2 = f.UserStoryFactory(project=data.private_project2, ref=9)
     m.private_history_entry2 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.private_project2,
                                                           comment="testing 2",
                                                           key=make_key_from_model_object(m.private_user_story2),
                                                           diff={},
@@ -347,6 +350,7 @@ def data_task(data):
     m = type("Models", (object,), {})
     m.public_task = f.TaskFactory(project=data.public_project, ref=2)
     m.public_history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.public_project,
                                                           comment="testing public",
                                                           key=make_key_from_model_object(m.public_task),
                                                           diff={},
@@ -354,12 +358,14 @@ def data_task(data):
 
     m.private_task1 = f.TaskFactory(project=data.private_project1, ref=6)
     m.private_history_entry1 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.private_project1,
                                                           comment="testing 1",
                                                           key=make_key_from_model_object(m.private_task1),
                                                           diff={},
                                                           user={"pk": data.project_member_with_perms.pk})
     m.private_task2 = f.TaskFactory(project=data.private_project2, ref=10)
     m.private_history_entry2 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.private_project2,
                                                           comment="testing 2",
                                                           key=make_key_from_model_object(m.private_task2),
                                                           diff={},
@@ -584,6 +590,7 @@ def data_issue(data):
     m = type("Models", (object,), {})
     m.public_issue = f.IssueFactory(project=data.public_project, ref=3)
     m.public_history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.public_project,
                                                           comment="testing public",
                                                           key=make_key_from_model_object(m.public_issue),
                                                           diff={},
@@ -591,12 +598,14 @@ def data_issue(data):
 
     m.private_issue1 = f.IssueFactory(project=data.private_project1, ref=7)
     m.private_history_entry1 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.private_project1,
                                                           comment="testing 1",
                                                           key=make_key_from_model_object(m.private_issue1),
                                                           diff={},
                                                           user={"pk": data.project_member_with_perms.pk})
     m.private_issue2 = f.IssueFactory(project=data.private_project2, ref=11)
     m.private_history_entry2 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.private_project2,
                                                           comment="testing 2",
                                                           key=make_key_from_model_object(m.private_issue2),
                                                           diff={},
@@ -821,6 +830,7 @@ def data_wiki(data):
     m = type("Models", (object,), {})
     m.public_wiki = f.WikiPageFactory(project=data.public_project, slug=4)
     m.public_history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.public_project,
                                                           comment="testing public",
                                                           key=make_key_from_model_object(m.public_wiki),
                                                           diff={},
@@ -828,12 +838,14 @@ def data_wiki(data):
 
     m.private_wiki1 = f.WikiPageFactory(project=data.private_project1, slug=8)
     m.private_history_entry1 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.private_project1,
                                                           comment="testing 1",
                                                           key=make_key_from_model_object(m.private_wiki1),
                                                           diff={},
                                                           user={"pk": data.project_member_with_perms.pk})
     m.private_wiki2 = f.WikiPageFactory(project=data.private_project2, slug=12)
     m.private_history_entry2 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.private_project2,
                                                           comment="testing 2",
                                                           key=make_key_from_model_object(m.private_wiki2),
                                                           diff={},
