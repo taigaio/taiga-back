@@ -13,13 +13,16 @@
 # Sebastian Blum <sebastian.alexander.blum@gmail.com>, 2015
 # Silsha Fux <hallo@silsha.me>, 2015
 # Thomas McWork <thomas.mc.work@gmail.com>, 2015
+# Thomas Rößl <thomas@roessl.eu>, 2016
+# Tobias Klepp <tobias.klepp@stimme-der-hoffnung.de>, 2016
+# Torsten Karge <torstenkarge@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-05-01 19:09+0200\n"
-"PO-Revision-Date: 2016-05-01 17:09+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"PO-Revision-Date: 2016-06-24 07:58+0000\n"
+"Last-Translator: Torsten Karge <torstenkarge@gmail.com>\n"
 "Language-Team: German (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -69,7 +72,7 @@ msgstr "Der Benutzer ist schon registriert."
 
 #: taiga/auth/services.py:146
 msgid "This user is already a member of the project."
-msgstr ""
+msgstr "Dieser Benutzer ist schon ein Mitglied des Projektes."
 
 #: taiga/auth/services.py:172
 msgid "Error on creating new user."
@@ -220,7 +223,7 @@ msgstr ""
 #: taiga/projects/userstories/api.py:218 taiga/projects/userstories/api.py:238
 #: taiga/webhooks/api.py:68
 msgid "Blocked element"
-msgstr ""
+msgstr "Blockiertes Element"
 
 #: taiga/base/api/pagination.py:213
 msgid "Page is not 'last', nor can it be converted to an int."
@@ -374,7 +377,7 @@ msgstr "Voraussetzungsfehler"
 
 #: taiga/base/exceptions.py:217
 msgid "No room left for more projects."
-msgstr ""
+msgstr "Kein Raum für weitere Projekte."
 
 #: taiga/base/filters.py:79 taiga/base/filters.py:444
 msgid "Error in filter params types."
@@ -613,7 +616,7 @@ msgstr "Fehler beim Importieren der Chroniken"
 
 #: taiga/export_import/services/store.py:731
 msgid "unexpected error importing project"
-msgstr ""
+msgstr "unerwarteter Fehler beim Projekt-Import"
 
 #: taiga/export_import/tasks.py:56 taiga/export_import/tasks.py:57
 msgid "Error generating project dump"
@@ -638,6 +641,21 @@ msgid ""
 "TRACE ERROR:\n"
 "------------"
 msgstr ""
+"\n"
+"\n"
+"Fehler beim Laden des Dump von {user_full_name} <{user_email}>:\"\n"
+"\n"
+"\n"
+"GRUND:\n"
+"-------\n"
+"{reason}\n"
+"\n"
+"DETAILS:\n"
+"--------\n"
+"{details}\n"
+"\n"
+"FEHLER-PFAD:\n"
+"------------"
 
 #: taiga/export_import/tasks.py:110
 msgid "Error loading project dump"
@@ -645,11 +663,11 @@ msgstr "Fehler beim Laden von Projekt Export-Datei"
 
 #: taiga/export_import/tasks.py:111
 msgid "Error loading your project dump file"
-msgstr ""
+msgstr "Fehler beim Laden Ihrer Projekt-Dump-Datei"
 
 #: taiga/export_import/tasks.py:125
 msgid "  -- no detail info --"
-msgstr ""
+msgstr "-- keine detaillierten Infos --"
 
 #: taiga/export_import/templates/emails/dump_project-body-html.jinja:4
 #, python-format
@@ -1398,21 +1416,23 @@ msgstr "Ungültige Templatebeschreibung"
 
 #: taiga/projects/api.py:356
 msgid "Invalid user id"
-msgstr ""
+msgstr "Ungültige Benutzer-Id"
 
 #: taiga/projects/api.py:362
 msgid "The user doesn't exist"
-msgstr ""
+msgstr "Der Benutzer existiert nicht"
 
 #: taiga/projects/api.py:366
 msgid "The user must be already a project member"
-msgstr ""
+msgstr "Der Benutzer muss bereits Mitglied des Projektes sein"
 
 #: taiga/projects/api.py:672
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
 msgstr ""
+"Das Projekt muss einen Eigentümer haben und mindestens ein Benutzer muss ein "
+"aktiver Administrator sein"
 
 #: taiga/projects/api.py:706
 msgid "You don't have permisions to see that."
@@ -1501,11 +1521,11 @@ msgstr ""
 
 #: taiga/projects/choices.py:33
 msgid "This project is blocked by admin staff"
-msgstr ""
+msgstr "Dieses Projekt ist durch den Administrator blockiert"
 
 #: taiga/projects/choices.py:34
 msgid "This project is blocked because the owner left"
-msgstr ""
+msgstr "Dieses Projekt ist blockiert, weil es der Eigentümer verlassen hat."
 
 #: taiga/projects/custom_attributes/choices.py:27
 msgid "Text"
@@ -1521,7 +1541,7 @@ msgstr "Datum"
 
 #: taiga/projects/custom_attributes/choices.py:30
 msgid "Url"
-msgstr ""
+msgstr "Url"
 
 #: taiga/projects/custom_attributes/models.py:39
 #: taiga/projects/issues/models.py:47
@@ -1856,7 +1876,7 @@ msgstr "voreingestellter Ticket Typ"
 
 #: taiga/projects/models.py:154
 msgid "logo"
-msgstr ""
+msgstr "Logo"
 
 #: taiga/projects/models.py:164
 msgid "members"
@@ -1912,15 +1932,15 @@ msgstr "ist privat"
 
 #: taiga/projects/models.py:201
 msgid "is featured"
-msgstr ""
+msgstr "ist gekennzeichnet"
 
 #: taiga/projects/models.py:204
 msgid "is looking for people"
-msgstr ""
+msgstr "sucht nach Mitarbeitern"
 
 #: taiga/projects/models.py:206
 msgid "loking for people note"
-msgstr ""
+msgstr "Hinweis für Mitarbeitersuche"
 
 #: taiga/projects/models.py:218
 msgid "tags colors"
@@ -1928,11 +1948,11 @@ msgstr "Tag Farben"
 
 #: taiga/projects/models.py:221
 msgid "project transfer token"
-msgstr ""
+msgstr "Projekt-Transfer-Token"
 
 #: taiga/projects/models.py:225
 msgid "blocked code"
-msgstr ""
+msgstr "Blockierter Code"
 
 #: taiga/projects/models.py:229 taiga/projects/notifications/models.py:65
 msgid "updated date time"
@@ -1945,27 +1965,27 @@ msgstr "Count"
 
 #: taiga/projects/models.py:235
 msgid "fans last week"
-msgstr ""
+msgstr "Unterstützer letzte Woche"
 
 #: taiga/projects/models.py:238
 msgid "fans last month"
-msgstr ""
+msgstr "Unterstützer letzten Monat"
 
 #: taiga/projects/models.py:241
 msgid "fans last year"
-msgstr ""
+msgstr "Unterstützer letztes Jahr"
 
 #: taiga/projects/models.py:247
 msgid "activity last week"
-msgstr ""
+msgstr "Aktivitäten letzte Woche"
 
 #: taiga/projects/models.py:250
 msgid "activity last month"
-msgstr ""
+msgstr "Aktivitäten letzten Monat"
 
 #: taiga/projects/models.py:253
 msgid "activity last year"
-msgstr ""
+msgstr "Aktivitäten letztes Jahr"
 
 #: taiga/projects/models.py:467
 msgid "modules config"
@@ -2848,6 +2868,8 @@ msgstr "Version"
 msgid ""
 "You can't leave the project if you are the owner or there are no more admins"
 msgstr ""
+"Sie können das Projekt nicht verlassen, wenn Sie der Eigentümer sind oder "
+"wenn keine weiteren Administratoren vorhanden sind."
 
 #: taiga/projects/serializers.py:172
 msgid "Email address is already taken"
@@ -2859,11 +2881,12 @@ msgstr "Ungültige Rolle für dieses Projekt"
 
 #: taiga/projects/serializers.py:195
 msgid "The project owner must be admin."
-msgstr ""
+msgstr "Der Projekteigentümer muss Administrator sein."
 
 #: taiga/projects/serializers.py:198
 msgid "At least one user must be an active admin for this project."
 msgstr ""
+"Mindestens ein Benutzer muss ein aktiver Administrator des Projektes sein."
 
 #: taiga/projects/serializers.py:396
 msgid "Default options"
@@ -2904,15 +2927,19 @@ msgstr "Rollen"
 #: taiga/projects/services/members.py:116
 msgid "You have reached your current limit of memberships for private projects"
 msgstr ""
+"Sie haben Ihr aktuelles Limit für die Mitgliederanzahl für private Projekte "
+"erreicht"
 
 #: taiga/projects/services/members.py:120
 msgid "You have reached your current limit of memberships for public projects"
 msgstr ""
+"Sie haben Ihr aktuelles Limit für die Mitgliederanzahl für öffentliche "
+"Projekte erreicht"
 
 #: taiga/projects/services/projects.py:69
 #: taiga/projects/services/projects.py:106 taiga/users/services.py:582
 msgid "You can't have more private projects"
-msgstr ""
+msgstr "Sie können nicht mehr private Projekte haben"
 
 #: taiga/projects/services/projects.py:73
 #: taiga/projects/services/projects.py:110 taiga/users/services.py:585
@@ -2923,7 +2950,7 @@ msgstr ""
 #: taiga/projects/services/projects.py:77
 #: taiga/projects/services/projects.py:114 taiga/users/services.py:589
 msgid "You can't have more public projects"
-msgstr ""
+msgstr "Sie können nicht mehr öffentliche Projekte haben."
 
 #: taiga/projects/services/projects.py:81
 #: taiga/projects/services/projects.py:118 taiga/users/services.py:592
@@ -2948,7 +2975,7 @@ msgstr "Token ist ungültig"
 
 #: taiga/projects/services/transfer.py:66
 msgid "Token has expired"
-msgstr ""
+msgstr "Token ist abgelaufen"
 
 #: taiga/projects/tasks/api.py:113 taiga/projects/tasks/api.py:122
 msgid "You don't have permissions to set this sprint to this task."
@@ -3175,7 +3202,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:7
 #, python-format
 msgid "%(new_owner_name)s says:"
-msgstr ""
+msgstr "%(new_owner_name)s sagt:"
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:11
 msgid ""
@@ -3191,6 +3218,8 @@ msgid ""
 "\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Das Taiga-Team\n"
 
 #: taiga/projects/templates/emails/transfer_accept-subject.jinja:1
 #, python-format
@@ -3283,7 +3312,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:14
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:22
 msgid "Continue"
-msgstr ""
+msgstr "Fortsetzen"
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:1
 #, python-format
@@ -3303,7 +3332,7 @@ msgstr ""
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:10
 msgid "Go to your project settings:"
-msgstr ""
+msgstr "Geben Sie zu Ihren Projekt-Einstellungen:"
 
 #: taiga/projects/templates/emails/transfer_request-subject.jinja:1
 #, python-format
@@ -3329,6 +3358,8 @@ msgid ""
 "        <p>%(owner_name)s says:</p>\n"
 "        "
 msgstr ""
+"\n"
+"<p>%(owner_name)s sagt:</p>"
 
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:17
 msgid ""
@@ -3706,23 +3737,23 @@ msgstr "Prüfe die API der Historie auf Übereinstimmung"
 
 #: taiga/users/admin.py:38
 msgid "Project Member"
-msgstr ""
+msgstr "Projektmitglied"
 
 #: taiga/users/admin.py:39
 msgid "Project Members"
-msgstr ""
+msgstr "Projektmitglieder"
 
 #: taiga/users/admin.py:49
 msgid "id"
-msgstr ""
+msgstr "Id"
 
 #: taiga/users/admin.py:81
 msgid "Project Ownership"
-msgstr ""
+msgstr "Projekt-Besitz"
 
 #: taiga/users/admin.py:82
 msgid "Project Ownerships"
-msgstr ""
+msgstr "Projekt-Besitze"
 
 #: taiga/users/admin.py:119
 msgid "Personal info"
@@ -3734,7 +3765,7 @@ msgstr "Berechtigungen"
 
 #: taiga/users/admin.py:123
 msgid "Restrictions"
-msgstr ""
+msgstr "Einschränkungen"
 
 #: taiga/users/admin.py:125
 msgid "Important dates"
