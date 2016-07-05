@@ -17,9 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
+from taiga.base.api import validators
 
 
-class ResolverSerializer(serializers.Serializer):
+class ResolverValidator(validators.Validator):
     project = serializers.CharField(max_length=512, required=True)
     milestone = serializers.CharField(max_length=512, required=False)
     us = serializers.IntegerField(required=False)
