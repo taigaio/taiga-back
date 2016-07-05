@@ -172,6 +172,70 @@ def test_push_event_user_story_processing(client):
     assert len(mail.outbox) == 1
 
 
+def test_push_event_issue_mention(client):
+    creation_status = f.IssueStatusFactory()
+    role = f.RoleFactory(project=creation_status.project, permissions=["view_issues"])
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    issue = f.IssueFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
+    take_snapshot(issue, user=creation_status.project.owner)
+    payload = {"commits": [
+        {"message": """test message
+            test   TG-%s   ok
+            bye!
+        """ % (issue.ref)},
+    ]}
+    mail.outbox = []
+    ev_hook = event_hooks.PushEventHook(issue.project, payload)
+    ev_hook.process_event()
+    issue_history = get_history_queryset_by_model_instance(issue)
+    assert issue_history.count() == 1
+    assert issue_history[0].comment.startswith("This issue has been mentioned by")
+    assert len(mail.outbox) == 1
+
+
+def test_push_event_task_mention(client):
+    creation_status = f.TaskStatusFactory()
+    role = f.RoleFactory(project=creation_status.project, permissions=["view_tasks"])
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    task = f.TaskFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
+    take_snapshot(task, user=creation_status.project.owner)
+    payload = {"commits": [
+        {"message": """test message
+            test   TG-%s   ok
+            bye!
+        """ % (task.ref)},
+    ]}
+    mail.outbox = []
+    ev_hook = event_hooks.PushEventHook(task.project, payload)
+    ev_hook.process_event()
+    task_history = get_history_queryset_by_model_instance(task)
+    assert task_history.count() == 1
+    assert task_history[0].comment.startswith("This task has been mentioned by")
+    assert len(mail.outbox) == 1
+
+
+def test_push_event_user_story_mention(client):
+    creation_status = f.UserStoryStatusFactory()
+    role = f.RoleFactory(project=creation_status.project, permissions=["view_us"])
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    user_story = f.UserStoryFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
+    take_snapshot(user_story, user=creation_status.project.owner)
+    payload = {"commits": [
+        {"message": """test message
+            test   TG-%s   ok
+            bye!
+        """ % (user_story.ref)},
+    ]}
+
+    mail.outbox = []
+    ev_hook = event_hooks.PushEventHook(user_story.project, payload)
+    ev_hook.process_event()
+    us_history = get_history_queryset_by_model_instance(user_story)
+    assert us_history.count() == 1
+    assert us_history[0].comment.startswith("This user story has been mentioned by")
+    assert len(mail.outbox) == 1
+
+
 def test_push_event_multiple_actions(client):
     creation_status = f.IssueStatusFactory()
     role = f.RoleFactory(project=creation_status.project, permissions=["view_issues"])
@@ -454,7 +518,7 @@ def test_issues_event_bad_comment(client):
     take_snapshot(issue, user=issue.owner)
 
     payload = {
-        "action": "other",
+        "action": "created",
         "issue": {},
         "comment": {},
         "repository": {
@@ -512,9 +576,10 @@ def test_api_patch_project_modules(client):
 
 
 def test_replace_github_references():
-    assert event_hooks.replace_github_references("project-url", "#2") == "[GitHub#2](project-url/issues/2)"
-    assert event_hooks.replace_github_references("project-url", "#2 ") == "[GitHub#2](project-url/issues/2) "
-    assert event_hooks.replace_github_references("project-url", " #2 ") == " [GitHub#2](project-url/issues/2) "
-    assert event_hooks.replace_github_references("project-url", " #2") == " [GitHub#2](project-url/issues/2)"
-    assert event_hooks.replace_github_references("project-url", "#test") == "#test"
-    assert event_hooks.replace_github_references("project-url", None) == ""
+    ev_hook = event_hooks.BaseGitHubEventHook
+    assert ev_hook.replace_github_references(None, "project-url", "#2") == "[GitHub#2](project-url/issues/2)"
+    assert ev_hook.replace_github_references(None, "project-url", "#2 ") == "[GitHub#2](project-url/issues/2) "
+    assert ev_hook.replace_github_references(None, "project-url", " #2 ") == " [GitHub#2](project-url/issues/2) "
+    assert ev_hook.replace_github_references(None, "project-url", " #2") == " [GitHub#2](project-url/issues/2)"
+    assert ev_hook.replace_github_references(None, "project-url", "#test") == "#test"
+    assert ev_hook.replace_github_references(None, "project-url", None) == ""

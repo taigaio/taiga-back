@@ -70,14 +70,6 @@ class GitLabViewSet(BaseWebhookApiViewSet):
 
         return project_secret == secret_key
 
-    def _get_project(self, request):
-        project_id = request.GET.get("project", None)
-        try:
-            project = Project.objects.get(id=project_id)
-            return project
-        except Project.DoesNotExist:
-            return None
-
     def _get_event_name(self, request):
         payload = json.loads(request.body.decode("utf-8"))
         return payload.get('object_kind', 'push') if payload is not None else 'empty'
