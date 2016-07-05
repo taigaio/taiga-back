@@ -39,8 +39,6 @@ class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     status = models.ForeignKey("projects.EpicStatus", null=True, blank=True,
                                related_name="epics", verbose_name=_("status"),
                                on_delete=models.SET_NULL)
-    is_closed = models.BooleanField(default=False)
-
     epics_order = models.IntegerField(null=False, blank=False, default=10000,
                                       verbose_name=_("epics order"))
 
@@ -49,8 +47,6 @@ class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
                                         default=timezone.now)
     modified_date = models.DateTimeField(null=False, blank=False,
                                          verbose_name=_("modified date"))
-    finish_date = models.DateTimeField(null=True, blank=True,
-                                       verbose_name=_("finish date"))
 
     subject = models.TextField(null=False, blank=False,
                                verbose_name=_("subject"))
@@ -64,6 +60,7 @@ class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
                                            verbose_name=_("is team requirement"))
 
     user_stories = models.ManyToManyField("userstories.UserStory", related_name="epics",
+                                          through='RelatedUserStory',
                                           verbose_name=_("user stories"))
 
     attachments = GenericRelation("attachments.Attachment")
@@ -73,7 +70,7 @@ class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     class Meta:
         verbose_name = "epic"
         verbose_name_plural = "epics"
-        ordering = ["project", "ref"]
+        ordering = ["project", "epics_order", "ref"]
 
     def save(self, *args, **kwargs):
         if not self._importing or not self.modified_date:
@@ -85,7 +82,24 @@ class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return "({1}) {0}".format(self.ref, self.subject)
+        return "#{0} {1}".format(self.ref, self.subject)
 
     def __repr__(self):
         return "<Epic %s>" % (self.id)
+
+
+
+class RelatedUserStory(models.Model):
+    user_story = models.ForeignKey("userstories.UserStory", on_delete=models.CASCADE)
+    epic = models.ForeignKey("epics.Epic", on_delete=models.CASCADE)
+
+    order = models.IntegerField(null=False, blank=False, default=10000,
+                                verbose_name=_("order"))
+
+    class Meta:
+        verbose_name = "related user story"
+        verbose_name_plural = "related user stories"
+        ordering = ["user_story", "order", "id"]
+
+    def __str__(self):
+        return "{0} - {1}".format(self.epic, self.user_story)
