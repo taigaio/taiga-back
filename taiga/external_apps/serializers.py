@@ -16,9 +16,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
-
 from taiga.base.api import serializers
+from taiga.base.fields import Field
 
 from . import models
 from . import services
@@ -26,33 +25,27 @@ from . import services
 from django.utils.translation import ugettext as _
 
 
-class ApplicationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Application
-        fields = ("id", "name", "web", "description", "icon_url")
+class ApplicationSerializer(serializers.LightSerializer):
+    id = Field()
+    name = Field()
+    web = Field()
+    description = Field()
+    icon_url = Field()
 
 
-class ApplicationTokenSerializer(serializers.ModelSerializer):
-    cyphered_token = serializers.CharField(source="cyphered_token", read_only=True)
-    next_url = serializers.CharField(source="next_url", read_only=True)
-    application = ApplicationSerializer(read_only=True)
-
-    class Meta:
-        model = models.ApplicationToken
-        fields = ("user", "id", "application", "auth_code", "next_url")
+class ApplicationTokenSerializer(serializers.LightSerializer):
+    id = Field()
+    user = Field(attr="user_id")
+    application = ApplicationSerializer()
+    auth_code = Field()
+    next_url = Field()
 
 
-class AuthorizationCodeSerializer(serializers.ModelSerializer):
-    next_url = serializers.CharField(source="next_url", read_only=True)
-    class Meta:
-        model = models.ApplicationToken
-        fields = ("auth_code", "state", "next_url")
+class AuthorizationCodeSerializer(serializers.LightSerializer):
+    state = Field()
+    auth_code = Field()
+    next_url = Field()
 
 
-class AccessTokenSerializer(serializers.ModelSerializer):
-    cyphered_token = serializers.CharField(source="cyphered_token", read_only=True)
-    next_url = serializers.CharField(source="next_url", read_only=True)
-
-    class Meta:
-        model = models.ApplicationToken
-        fields = ("cyphered_token", )
+class AccessTokenSerializer(serializers.LightSerializer):
+    cyphered_token = Field()
