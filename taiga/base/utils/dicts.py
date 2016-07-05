@@ -25,3 +25,7 @@ def dict_sum(*args):
         assert isinstance(arg, dict)
         result += collections.Counter(arg)
     return result
+
+
+def into_namedtuple(dictionary):
+    return collections.namedtuple('GenericDict', dictionary.keys())(**dictionary)

@@ -19,7 +19,6 @@
 import uuid
 
 from django.apps import apps
-from django.db.models import Q, F
 from django.utils.translation import ugettext as _
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -28,21 +27,21 @@ from django.conf import settings
 from taiga.base import exceptions as exc
 from taiga.base import filters
 from taiga.base import response
+from taiga.base.utils.dicts import into_namedtuple
 from taiga.auth.tokens import get_user_for_token
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
-from taiga.base.filters import PermissionBasedFilterBackend
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.filters import MembersFilterBackend
 from taiga.base.mails import mail_builder
-from taiga.projects.votes import services as votes_service
 from taiga.users.services import get_user_by_username_or_email
 from easy_thumbnails.source_generators import pil_image
 
 from . import models
 from . import serializers
+from . import validators
 from . import permissions
 from . import filters as user_filters
 from . import services
@@ -53,6 +52,8 @@ class UsersViewSet(ModelCrudViewSet):
     permission_classes = (permissions.UserPermission,)
     admin_serializer_class = serializers.UserAdminSerializer
     serializer_class = serializers.UserSerializer
+    admin_validator_class = validators.UserAdminValidator
+    validator_class = validators.UserValidator
     queryset = models.User.objects.all().prefetch_related("memberships")
     filter_backends = (MembersFilterBackend,)
 
@@ -63,6 +64,14 @@ class UsersViewSet(ModelCrudViewSet):
                 return self.admin_serializer_class
 
         return self.serializer_class
+
+    def get_validator_class(self):
+        if self.action in ["partial_update", "update", "retrieve", "by_username"]:
+            user = self.object
+            if self.request.user == user or self.request.user.is_superuser:
+                return self.admin_validator_class
+
+        return self.validator_class
 
     def create(self, *args, **kwargs):
         raise exc.NotSupported()
@@ -86,7 +95,7 @@ class UsersViewSet(ModelCrudViewSet):
         serializer = self.get_serializer(self.object)
         return response.Ok(serializer.data)
 
-    #TODO: commit_on_success
+    # TODO: commit_on_success
     def partial_update(self, request, *args, **kwargs):
         """
         We must detect if the user is trying to change his email so we can
@@ -96,12 +105,10 @@ class UsersViewSet(ModelCrudViewSet):
         user = self.get_object()
         self.check_permissions(request, "update", user)
 
-        ret = super().partial_update(request, *args, **kwargs)
-
         new_email = request.DATA.get('email', None)
         if new_email is not None:
             valid_new_email = True
-            duplicated_email = models.User.objects.filter(email = new_email).exists()
+            duplicated_email = models.User.objects.filter(email=new_email).exists()
 
             try:
                 validate_email(new_email)
@@ -115,13 +122,20 @@ class UsersViewSet(ModelCrudViewSet):
             elif not valid_new_email:
                 raise exc.WrongArguments(_("Not valid email"))
 
-            #We need to generate a token for the email
+            # We need to generate a token for the email
             request.user.email_token = str(uuid.uuid1())
             request.user.new_email = new_email
             request.user.save(update_fields=["email_token", "new_email"])
-            email = mail_builder.change_email(request.user.new_email, {"user": request.user,
-                                                                   "lang": request.user.lang})
+            email = mail_builder.change_email(
+                request.user.new_email,
+                {
+                    "user": request.user,
+                    "lang": request.user.lang
+                }
+            )
             email.send()
+
+        ret = super().partial_update(request, *args, **kwargs)
 
         return ret
 
@@ -165,16 +179,16 @@ class UsersViewSet(ModelCrudViewSet):
 
         self.check_permissions(request, "change_password_from_recovery", None)
 
-        serializer = serializers.RecoverySerializer(data=request.DATA, many=False)
-        if not serializer.is_valid():
+        validator = validators.RecoveryValidator(data=request.DATA, many=False)
+        if not validator.is_valid():
             raise exc.WrongArguments(_("Token is invalid"))
 
         try:
-            user = models.User.objects.get(token=serializer.data["token"])
+            user = models.User.objects.get(token=validator.data["token"])
         except models.User.DoesNotExist:
             raise exc.WrongArguments(_("Token is invalid"))
 
-        user.set_password(serializer.data["password"])
+        user.set_password(validator.data["password"])
         user.token = None
         user.save(update_fields=["password", "token"])
 
@@ -247,13 +261,13 @@ class UsersViewSet(ModelCrudViewSet):
         """
         Verify the email change to current logged user.
         """
-        serializer = serializers.ChangeEmailSerializer(data=request.DATA, many=False)
-        if not serializer.is_valid():
+        validator = validators.ChangeEmailValidator(data=request.DATA, many=False)
+        if not validator.is_valid():
             raise exc.WrongArguments(_("Invalid, are you sure the token is correct and you "
                                        "didn't use it before?"))
 
         try:
-            user = models.User.objects.get(email_token=serializer.data["email_token"])
+            user = models.User.objects.get(email_token=validator.data["email_token"])
         except models.User.DoesNotExist:
             raise exc.WrongArguments(_("Invalid, are you sure the token is correct and you "
                                        "didn't use it before?"))
@@ -280,14 +294,14 @@ class UsersViewSet(ModelCrudViewSet):
         """
         Cancel an account via token
         """
-        serializer = serializers.CancelAccountSerializer(data=request.DATA, many=False)
-        if not serializer.is_valid():
+        validator = validators.CancelAccountValidator(data=request.DATA, many=False)
+        if not validator.is_valid():
             raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
 
         try:
             max_age_cancel_account = getattr(settings, "MAX_AGE_CANCEL_ACCOUNT", None)
-            user = get_user_for_token(serializer.data["cancel_token"], "cancel_account",
-                max_age=max_age_cancel_account)
+            user = get_user_for_token(validator.data["cancel_token"], "cancel_account",
+                                      max_age=max_age_cancel_account)
 
         except exc.NotAuthenticated:
             raise exc.WrongArguments(_("Invalid, are you sure the token is correct?"))
@@ -305,7 +319,7 @@ class UsersViewSet(ModelCrudViewSet):
 
         self.object_list = user_filters.ContactsFilterBackend().filter_queryset(
             user, request, self.get_queryset(), self).extra(
-            select={"complete_user_name":"concat(full_name, username)"}).order_by("complete_user_name")
+            select={"complete_user_name": "concat(full_name, username)"}).order_by("complete_user_name")
 
         page = self.paginate_queryset(self.object_list)
         if page is not None:
@@ -349,10 +363,10 @@ class UsersViewSet(ModelCrudViewSet):
         for elem in elements:
             if elem["type"] == "project":
                 # projects are liked objects
-                response_data.append(serializers.LikedObjectSerializer(elem, **extra_args_liked).data )
+                response_data.append(serializers.LikedObjectSerializer(into_namedtuple(elem), **extra_args_liked).data)
             else:
                 # stories, tasks and issues are voted objects
-                response_data.append(serializers.VotedObjectSerializer(elem, **extra_args_voted).data )
+                response_data.append(serializers.VotedObjectSerializer(into_namedtuple(elem), **extra_args_voted).data)
 
         return response.Ok(response_data)
 
@@ -374,7 +388,7 @@ class UsersViewSet(ModelCrudViewSet):
             "user_likes": services.get_liked_content_for_user(request.user),
         }
 
-        response_data = [serializers.LikedObjectSerializer(elem, **extra_args).data for elem in elements]
+        response_data = [serializers.LikedObjectSerializer(into_namedtuple(elem), **extra_args).data for elem in elements]
 
         return response.Ok(response_data)
 
@@ -397,17 +411,18 @@ class UsersViewSet(ModelCrudViewSet):
             "user_votes": services.get_voted_content_for_user(request.user),
         }
 
-        response_data = [serializers.VotedObjectSerializer(elem, **extra_args).data for elem in elements]
+        response_data = [serializers.VotedObjectSerializer(into_namedtuple(elem), **extra_args).data for elem in elements]
 
         return response.Ok(response_data)
 
-######################################################
-## Role
-######################################################
 
+######################################################
+# Role
+######################################################
 class RolesViewSet(BlockedByProjectMixin, ModelCrudViewSet):
     model = models.Role
     serializer_class = serializers.RoleSerializer
+    validator_class = validators.RoleValidator
     permission_classes = (permissions.RolesPermission, )
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ('project',)
