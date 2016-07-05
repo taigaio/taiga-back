@@ -20,7 +20,7 @@ from taiga.base import response
 from taiga.base.api import viewsets
 
 from . import permissions
-from . import serializers
+from . import validators
 from . import services
 
 import copy
@@ -28,7 +28,7 @@ import copy
 
 class FeedbackViewSet(viewsets.ViewSet):
     permission_classes = (permissions.FeedbackPermission,)
-    serializer_class = serializers.FeedbackEntrySerializer
+    validator_class = validators.FeedbackEntryValidator
 
     def create(self, request, **kwargs):
         self.check_permissions(request, "create", None)
@@ -37,11 +37,11 @@ class FeedbackViewSet(viewsets.ViewSet):
         data.update({"full_name": request.user.get_full_name(),
                      "email": request.user.email})
 
-        serializer = self.serializer_class(data=data)
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
+        validator = self.validator_class(data=data)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-        self.object = serializer.save(force_insert=True)
+        self.object = validator.save(force_insert=True)
 
         extra = {
             "HTTP_HOST":  request.META.get("HTTP_HOST", None),
@@ -50,4 +50,4 @@ class FeedbackViewSet(viewsets.ViewSet):
         }
         services.send_feedback(self.object, extra, reply_to=[request.user.email])
 
-        return response.Ok(serializer.data)
+        return response.Ok(validator.data)
