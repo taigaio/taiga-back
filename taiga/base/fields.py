@@ -22,9 +22,11 @@ from taiga.base.api import serializers
 
 import serpy
 
+
 ####################################################################
-# Serializer fields
+# DRF Serializer fields (OLD)
 ####################################################################
+# NOTE: This should be in other place, for example taiga.base.api.serializers
 
 
 class JsonField(serializers.WritableField):
@@ -74,6 +76,10 @@ class WatchersField(serializers.WritableField):
         return data
 
 
+####################################################################
+# Serpy fields (NEW)
+####################################################################
+
 class Field(serpy.Field):
     pass
 
@@ -82,13 +88,13 @@ class MethodField(serpy.MethodField):
     pass
 
 
-class I18NField(serpy.Field):
+class I18NField(Field):
     def to_value(self, value):
         ret = super(I18NField, self).to_value(value)
         return _(ret)
 
 
-class I18NJsonField(serpy.Field):
+class I18NJsonField(Field):
     """
     Json objects serializer.
     """
@@ -118,3 +124,8 @@ class I18NJsonField(serpy.Field):
     def to_native(self, obj):
         i18n_obj = self.translate_values(obj)
         return i18n_obj
+
+
+class FileField(Field):
+    def to_value(self, value):
+        return value.name
