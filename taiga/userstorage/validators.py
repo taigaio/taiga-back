@@ -16,12 +16,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api import serializers
-from taiga.base.fields import Field
+from taiga.base.api import validators
+
+from . import models
 
 
-class StorageEntrySerializer(serializers.LightSerializer):
-    key = Field()
-    value = Field()
-    created_date = Field()
-    modified_date = Field()
+class StorageEntryValidator(validators.ModelValidator):
+    class Meta:
+        model = models.StorageEntry
+        fields = ("key", "value")
