@@ -19,6 +19,7 @@
 from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
+from taiga.base.api import validators
 
 from . import services
 from . import fields
@@ -26,7 +27,7 @@ from . import fields
 import re
 
 
-class ProjectTagSerializer(serializers.Serializer):
+class ProjectTagValidator(validators.Validator):
     def __init__(self, *args, **kwargs):
         # Don't pass the extra project arg
         self.project = kwargs.pop("project")
@@ -35,26 +36,26 @@ class ProjectTagSerializer(serializers.Serializer):
         super().__init__(*args, **kwargs)
 
 
-class CreateTagSerializer(ProjectTagSerializer):
+class CreateTagValidator(ProjectTagValidator):
     tag = serializers.CharField()
     color = serializers.CharField(required=False)
 
     def validate_tag(self, attrs, source):
         tag = attrs.get(source, None)
         if services.tag_exist_for_project_elements(self.project, tag):
-            raise serializers.ValidationError(_("The tag exists."))
+            raise validators.ValidationError(_("The tag exists."))
 
         return attrs
 
     def validate_color(self, attrs, source):
         color = attrs.get(source, None)
         if not re.match('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
-            raise serializers.ValidationError(_("The color is not a valid HEX color."))
+            raise validators.ValidationError(_("The color is not a valid HEX color."))
 
         return attrs
 
 
-class EditTagTagSerializer(ProjectTagSerializer):
+class EditTagTagValidator(ProjectTagValidator):
     from_tag = serializers.CharField()
     to_tag = serializers.CharField(required=False)
     color = serializers.CharField(required=False)
@@ -62,37 +63,37 @@ class EditTagTagSerializer(ProjectTagSerializer):
     def validate_from_tag(self, attrs, source):
         tag = attrs.get(source, None)
         if not services.tag_exist_for_project_elements(self.project, tag):
-            raise serializers.ValidationError(_("The tag doesn't exist."))
+            raise validators.ValidationError(_("The tag doesn't exist."))
 
         return attrs
 
     def validate_to_tag(self, attrs, source):
         tag = attrs.get(source, None)
         if services.tag_exist_for_project_elements(self.project, tag):
-            raise serializers.ValidationError(_("The tag exists yet"))
+            raise validators.ValidationError(_("The tag exists yet"))
 
         return attrs
 
     def validate_color(self, attrs, source):
         color = attrs.get(source, None)
         if not re.match('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
-            raise serializers.ValidationError(_("The color is not a valid HEX color."))
+            raise validators.ValidationError(_("The color is not a valid HEX color."))
 
         return attrs
 
 
-class DeleteTagSerializer(ProjectTagSerializer):
+class DeleteTagValidator(ProjectTagValidator):
     tag = serializers.CharField()
 
     def validate_tag(self, attrs, source):
         tag = attrs.get(source, None)
         if not services.tag_exist_for_project_elements(self.project, tag):
-            raise serializers.ValidationError(_("The tag doesn't exist."))
+            raise validators.ValidationError(_("The tag doesn't exist."))
 
         return attrs
 
 
-class MixTagsSerializer(ProjectTagSerializer):
+class MixTagsValidator(ProjectTagValidator):
     from_tags = fields.TagsField()
     to_tag = serializers.CharField()
 
@@ -100,13 +101,13 @@ class MixTagsSerializer(ProjectTagSerializer):
         tags = attrs.get(source, None)
         for tag in tags:
             if not services.tag_exist_for_project_elements(self.project, tag):
-                raise serializers.ValidationError(_("The tag doesn't exist."))
+                raise validators.ValidationError(_("The tag doesn't exist."))
 
         return attrs
 
     def validate_to_tag(self, attrs, source):
         tag = attrs.get(source, None)
         if not services.tag_exist_for_project_elements(self.project, tag):
-            raise serializers.ValidationError(_("The tag doesn't exist."))
+            raise validators.ValidationError(_("The tag doesn't exist."))
 
         return attrs
