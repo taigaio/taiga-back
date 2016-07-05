@@ -258,6 +258,24 @@ class HistoryEntry(models.Model):
                 if custom_attributes["new"] or custom_attributes["changed"] or custom_attributes["deleted"]:
                     value = custom_attributes
 
+            elif key == "user_stories":
+                user_stories = {
+                    "new": [],
+                    "deleted": [],
+                }
+
+                olduss = {x["id"]:x for x in self.diff["user_stories"][0]}
+                newuss = {x["id"]:x for x in self.diff["user_stories"][1]}
+
+                for usid in set(tuple(olduss.keys()) + tuple(newuss.keys())):
+                    if usid in olduss and usid not in newuss:
+                        user_stories["deleted"].append(olduss[usid])
+                    elif usid not in olduss and usid in newuss:
+                        user_stories["new"].append(newuss[usid])
+
+                if user_stories["new"] or user_stories["changed"] or user_stories["deleted"]:
+                    value = user_stories
+
             elif key in self.values:
                 value = [resolve_value(key, x) for x in self.diff[key]]
             else:
