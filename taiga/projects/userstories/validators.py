@@ -21,6 +21,7 @@ from django.utils.translation import ugettext as _
 from taiga.base.api import serializers
 from taiga.base.api import validators
 from taiga.base.api.utils import get_object_or_404
+from taiga.base.exceptions import ValidationError
 from taiga.base.fields import PgArrayField
 from taiga.base.fields import PickledObjectField
 from taiga.projects.milestones.validators import MilestoneExistsValidator
@@ -40,7 +41,7 @@ class UserStoryExistsValidator:
         value = attrs[source]
         if not models.UserStory.objects.filter(pk=value).exists():
             msg = _("There's no user story with that id")
-            raise serializers.ValidationError(msg)
+            raise ValidationError(msg)
         return attrs
 
 
@@ -105,9 +106,9 @@ class UpdateMilestoneBulkValidator(ProjectExistsValidator, MilestoneExistsValida
         project = get_object_or_404(Project, pk=data["project_id"])
 
         if project.user_stories.filter(id__in=user_story_ids).count() != len(user_story_ids):
-            raise serializers.ValidationError("all the user stories must be from the same project")
+            raise ValidationError("all the user stories must be from the same project")
 
         if project.milestones.filter(id=data["milestone_id"]).count() != 1:
-            raise serializers.ValidationError("the milestone isn't valid for the project")
+            raise ValidationError("the milestone isn't valid for the project")
 
         return data

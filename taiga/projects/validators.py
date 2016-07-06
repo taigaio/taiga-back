@@ -21,6 +21,7 @@ from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
 from taiga.base.api import validators
+from taiga.base.exceptions import ValidationError
 from taiga.base.fields import JsonField
 from taiga.base.fields import PgArrayField
 from taiga.users.validators import RoleExistsValidator
@@ -49,7 +50,7 @@ class DuplicatedNameInProjectValidator:
             qs = model.objects.filter(project=attrs["project"], name=attrs[source])
 
         if qs and qs.exists():
-            raise serializers.ValidationError(_("Name duplicated for the project"))
+            raise ValidationError(_("Name duplicated for the project"))
 
         return attrs
 
@@ -59,7 +60,7 @@ class ProjectExistsValidator:
         value = attrs[source]
         if not models.Project.objects.filter(pk=value).exists():
             msg = _("There's no project with that id")
-            raise serializers.ValidationError(msg)
+            raise ValidationError(msg)
         return attrs
 
 
@@ -68,7 +69,7 @@ class UserStoryStatusExistsValidator:
         value = attrs[source]
         if not models.UserStoryStatus.objects.filter(pk=value).exists():
             msg = _("There's no user story status with that id")
-            raise serializers.ValidationError(msg)
+            raise ValidationError(msg)
         return attrs
 
 
@@ -77,7 +78,7 @@ class TaskStatusExistsValidator:
         value = attrs[source]
         if not models.TaskStatus.objects.filter(pk=value).exists():
             msg = _("There's no task status with that id")
-            raise serializers.ValidationError(msg)
+            raise ValidationError(msg)
         return attrs
 
 
@@ -152,7 +153,7 @@ class MembershipValidator(validators.ModelValidator):
                        Q(project_id=project.id, email=email))
 
         if qs.count() > 0:
-            raise serializers.ValidationError(_("Email address is already taken"))
+            raise ValidationError(_("Email address is already taken"))
 
         return attrs
 
@@ -164,7 +165,7 @@ class MembershipValidator(validators.ModelValidator):
         role = attrs[source]
 
         if project.roles.filter(id=role.id).count() == 0:
-            raise serializers.ValidationError(_("Invalid role for the project"))
+            raise ValidationError(_("Invalid role for the project"))
 
         return attrs
 
@@ -175,10 +176,10 @@ class MembershipValidator(validators.ModelValidator):
 
         if (self.object and self.object.user):
             if self.object.user.id == project.owner_id and not attrs[source]:
-                raise serializers.ValidationError(_("The project owner must be admin."))
+                raise ValidationError(_("The project owner must be admin."))
 
             if not services.project_has_valid_admins(project, exclude_user=self.object.user):
-                raise serializers.ValidationError(
+                raise ValidationError(
                     _("At least one user must be an active admin for this project.")
                 )
 

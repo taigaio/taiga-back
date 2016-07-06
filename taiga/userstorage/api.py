@@ -19,7 +19,6 @@
 from django.utils.translation import ugettext as _
 
 from taiga.base.api import ModelCrudViewSet
-from taiga.base.api.serializers import ValidationError
 from taiga.base import exceptions as exc
 
 from . import models

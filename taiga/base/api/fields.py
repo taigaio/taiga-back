@@ -50,7 +50,6 @@ They are very similar to Django's form fields.
 from django import forms
 from django.conf import settings
 from django.core import validators
-from django.core.exceptions import ValidationError
 from django.db.models.fields import BLANK_CHOICE_DASH
 from django.forms import widgets
 from django.http import QueryDict
@@ -65,6 +64,8 @@ from django.utils.encoding import is_protected_type
 from django.utils.functional import Promise
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
+
+from taiga.base.exceptions import ValidationError
 
 from . import ISO_8601
 from .settings import api_settings

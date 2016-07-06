@@ -18,6 +18,7 @@
 
 from taiga.base.api import serializers
 from taiga.base.api import validators
+from taiga.base.exceptions import ValidationError
 
 
 class ResolverValidator(validators.Validator):
@@ -32,10 +33,10 @@ class ResolverValidator(validators.Validator):
     def validate(self, attrs):
         if "ref" in attrs:
             if "us" in attrs:
-                raise serializers.ValidationError("'us' param is incompatible with 'ref' in the same request")
+                raise ValidationError("'us' param is incompatible with 'ref' in the same request")
             if "task" in attrs:
-                raise serializers.ValidationError("'task' param is incompatible with 'ref' in the same request")
+                raise ValidationError("'task' param is incompatible with 'ref' in the same request")
             if "issue" in attrs:
-                raise serializers.ValidationError("'issue' param is incompatible with 'ref' in the same request")
+                raise ValidationError("'issue' param is incompatible with 'ref' in the same request")
 
         return attrs

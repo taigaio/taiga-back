@@ -44,12 +44,12 @@
 
 import warnings
 
-from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.db import transaction as tx
 from django.utils.translation import ugettext as _
 
 from taiga.base import response
+from taiga.base.exceptions import ValidationError
 
 from .settings import api_settings
 from .utils import get_object_or_404

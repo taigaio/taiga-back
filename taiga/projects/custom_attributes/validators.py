@@ -20,7 +20,7 @@
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.fields import JsonField
-from taiga.base.api.serializers import ValidationError
+from taiga.base.exceptions import ValidationError
 from taiga.base.api.validators import ModelValidator
 
 from . import models

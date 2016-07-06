@@ -16,13 +16,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import copy
-
-from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
 from taiga.base.fields import JsonField, PgArrayField
+from taiga.base.exceptions import ValidationError
 
 from taiga.projects import models as projects_models
 from taiga.projects.custom_attributes import models as custom_attributes_models
@@ -31,15 +29,12 @@ from taiga.projects.tasks import models as tasks_models
 from taiga.projects.issues import models as issues_models
 from taiga.projects.milestones import models as milestones_models
 from taiga.projects.wiki import models as wiki_models
-from taiga.projects.history import models as history_models
-from taiga.projects.attachments import models as attachments_models
 from taiga.timeline import models as timeline_models
 from taiga.users import models as users_models
 from taiga.projects.votes import services as votes_service
 
-from .fields import (FileField, RelatedNoneSafeField, UserRelatedField,
-                     UserPkField, CommentField, ProjectRelatedField,
-                     HistoryUserField, HistoryValuesField, HistoryDiffField,
+from .fields import (FileField, UserRelatedField,
+                     ProjectRelatedField,
                      TimelineDataField, ContentTypeField)
 from .mixins import (HistoryExportSerializerMixin,
                      AttachmentExportSerializerMixin,
@@ -125,7 +120,7 @@ class IssueCustomAttributeExportSerializer(serializers.ModelSerializer):
 
 
 class BaseCustomAttributesValuesExportSerializer(serializers.ModelSerializer):
-    attributes_values = JsonField(source="attributes_values",required=True)
+    attributes_values = JsonField(source="attributes_values", required=True)
     _custom_attribute_model = None
     _container_field = None
 
@@ -157,6 +152,7 @@ class BaseCustomAttributesValuesExportSerializer(serializers.ModelSerializer):
             raise ValidationError(_("It contain invalid custom fields."))
 
         return attrs
+
 
 class UserStoryCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer):
     _custom_attribute_model = custom_attributes_models.UserStoryCustomAttribute
@@ -224,7 +220,7 @@ class MilestoneExportSerializer(WatcheableObjectModelSerializerMixin):
         name = attrs[source]
         qs = self.project.milestones.filter(name=name)
         if qs.exists():
-            raise serializers.ValidationError(_("Name duplicated for the project"))
+            raise ValidationError(_("Name duplicated for the project"))
 
         return attrs
 
@@ -268,7 +264,9 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin, His
 
     def custom_attributes_queryset(self, project):
         if project.id not in _custom_userstories_attributes_cache:
-            _custom_userstories_attributes_cache[project.id] = list(project.userstorycustomattributes.all().values('id', 'name'))
+            _custom_userstories_attributes_cache[project.id] = list(
+                project.userstorycustomattributes.all().values('id', 'name')
+            )
         return _custom_userstories_attributes_cache[project.id]
 
 
@@ -314,10 +312,10 @@ class WikiLinkExportSerializer(serializers.ModelSerializer):
         exclude = ('id', 'project')
 
 
-
 class TimelineExportSerializer(serializers.ModelSerializer):
     data = TimelineDataField()
     data_content_type = ContentTypeField()
+
     class Meta:
         model = timeline_models.Timeline
         exclude = ('id', 'project', 'namespace', 'object_id', 'content_type')

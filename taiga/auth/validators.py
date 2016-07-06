@@ -17,11 +17,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.core import validators as core_validators
-from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
 from taiga.base.api import validators
+from taiga.base.exceptions import ValidationError
 
 import re
 
@@ -39,8 +39,8 @@ class BaseRegisterValidator(validators.Validator):
         try:
             validator(value)
         except ValidationError:
-            raise serializers.ValidationError(_("Required. 255 characters or fewer. Letters, numbers "
-                                                "and /./-/_ characters'"))
+            raise ValidationError(_("Required. 255 characters or fewer. Letters, numbers "
+                                    "and /./-/_ characters'"))
         return attrs
 
 

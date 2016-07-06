@@ -78,6 +78,8 @@ import serpy
 # This helps keep the separation between model fields, form fields, and
 # serializer fields more explicit.
 
+from taiga.base.exceptions import ValidationError
+
 from .relations import *
 from .fields import *
 

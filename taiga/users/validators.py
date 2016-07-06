@@ -17,12 +17,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.core import validators as core_validators
-from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.api import serializers
 from taiga.base.api import validators
-from taiga.base.fields import PgArrayField, Field
+from taiga.base.exceptions import ValidationError
+from taiga.base.fields import PgArrayField
 
 from .models import User, Role
 
@@ -34,7 +34,7 @@ class RoleExistsValidator:
         value = attrs[source]
         if not Role.objects.filter(pk=value).exists():
             msg = _("There's no role with that id")
-            raise serializers.ValidationError(msg)
+            raise ValidationError(msg)
         return attrs
 
 
@@ -55,13 +55,13 @@ class UserValidator(validators.ModelValidator):
         try:
             validator(value)
         except ValidationError:
-            raise validators.ValidationError(_("Required. 255 characters or fewer. Letters, "
-                                                "numbers and /./-/_ characters'"))
+            raise ValidationError(_("Required. 255 characters or fewer. Letters, "
+                                    "numbers and /./-/_ characters'"))
 
         if (self.object and
                 self.object.username != value and
                 User.objects.filter(username=value).exists()):
-            raise validators.ValidationError(_("Invalid username. Try with a different one."))
+            raise ValidationError(_("Invalid username. Try with a different one."))
 
         return attrs
 

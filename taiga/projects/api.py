@@ -22,7 +22,6 @@ from dateutil.relativedelta import relativedelta
 
 from django.apps import apps
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.utils.translation import ugettext as _
 from django.utils import timezone
@@ -651,7 +650,7 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
                                                       invitation_extra_text=invitation_extra_text,
                                                       callback=self.post_save,
                                                       precall=self.pre_save)
-        except ValidationError as err:
+        except exc.ValidationError as err:
             return response.BadRequest(err.message_dict)
 
         members_serialized = self.admin_serializer_class(members, many=True)

@@ -18,7 +18,7 @@
 
 from django.utils.translation import ugettext as _
 
-from taiga.base.api import serializers
+from taiga.base.exceptions import ValidationError
 
 
 class WatchersValidator:
@@ -45,6 +45,6 @@ class WatchersValidator:
         existing_watcher_ids = project.get_watchers().values_list("id", flat=True)
         result = set(users).difference(member_ids).difference(existing_watcher_ids)
         if result:
-            raise serializers.ValidationError(_("Watchers contains invalid users"))
+            raise ValidationError(_("Watchers contains invalid users"))
 
         return attrs

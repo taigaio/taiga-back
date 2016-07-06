@@ -18,7 +18,7 @@
 
 from django.utils.translation import ugettext as _
 
-from taiga.base.api import serializers
+from taiga.base.exceptions import ValidationError
 from taiga.base.api import validators
 from taiga.projects.validators import DuplicatedNameInProjectValidator
 from taiga.projects.notifications.validators import WatchersValidator
@@ -31,7 +31,7 @@ class MilestoneExistsValidator:
         value = attrs[source]
         if not models.Milestone.objects.filter(pk=value).exists():
             msg = _("There's no milestone with that id")
-            raise serializers.ValidationError(msg)
+            raise ValidationError(msg)
         return attrs
 
 

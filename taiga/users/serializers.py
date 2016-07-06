@@ -17,9 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from django.core import validators
-from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.api import serializers
 from taiga.base.fields import PgArrayField, Field, MethodField, I18NField
@@ -27,13 +24,10 @@ from taiga.base.fields import PgArrayField, Field, MethodField, I18NField
 from taiga.base.utils.thumbnails import get_thumbnail_url
 
 from taiga.projects.models import Project
-from .models import User, Role
 from .services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
 from .gravatar import get_gravatar_url
 
 from collections import namedtuple
-
-import re
 
 
 ######################################################

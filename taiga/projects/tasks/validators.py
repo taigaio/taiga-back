@@ -20,6 +20,7 @@ from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
 from taiga.base.api import validators
+from taiga.base.exceptions import ValidationError
 from taiga.base.fields import PgArrayField
 from taiga.projects.milestones.validators import MilestoneExistsValidator
 from taiga.projects.notifications.mixins import EditableWatchedResourceSerializer
@@ -34,7 +35,7 @@ class TaskExistsValidator:
         value = attrs[source]
         if not models.Task.objects.filter(pk=value).exists():
             msg = _("There's no task with that id")
-            raise serializers.ValidationError(msg)
+            raise ValidationError(msg)
         return attrs
 
 
