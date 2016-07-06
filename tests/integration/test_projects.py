@@ -625,7 +625,7 @@ def test_projects_user_order(client):
 
     #Testing user order
     url = reverse("projects-list")
-    url = "%s?member=%s&order_by=memberships__user_order" % (url, user.id)
+    url = "%s?member=%s&order_by=user_order" % (url, user.id)
     response = client.json.get(url)
     response_content = response.data
     assert response.status_code == 200

@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from . import serializers
+from . import validators
 from . import models
 from . import permissions
 from . import services
@@ -27,12 +28,12 @@ from taiga.base.api import ModelCrudViewSet, ModelRetrieveViewSet
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.decorators import list_route, detail_route
 
-from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 
 
 class Application(ModelRetrieveViewSet):
     serializer_class = serializers.ApplicationSerializer
+    validator_class = validators.ApplicationValidator
     permission_classes = (permissions.ApplicationPermission,)
     model = models.Application
 
@@ -61,6 +62,7 @@ class Application(ModelRetrieveViewSet):
 
 class ApplicationToken(ModelCrudViewSet):
     serializer_class = serializers.ApplicationTokenSerializer
+    validator_class = validators.ApplicationTokenValidator
     permission_classes = (permissions.ApplicationTokenPermission,)
 
     def get_queryset(self):
@@ -87,9 +89,9 @@ class ApplicationToken(ModelCrudViewSet):
         auth_code = request.DATA.get("auth_code", None)
         state = request.DATA.get("state", None)
         application_token = get_object_or_404(models.ApplicationToken,
-                                                application__id=application_id,
-                                                auth_code=auth_code,
-                                                state=state)
+                                              application__id=application_id,
+                                              auth_code=auth_code,
+                                              state=state)
 
         application_token.generate_token()
         application_token.save()

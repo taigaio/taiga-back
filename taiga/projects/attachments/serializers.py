@@ -19,36 +19,38 @@
 from django.conf import settings
 
 from taiga.base.api import serializers
+from taiga.base.fields import MethodField, Field, FileField
 from taiga.base.utils.thumbnails import get_thumbnail_url
 
 from . import services
-from . import models
-
-import json
-import serpy
 
 
-class AttachmentSerializer(serializers.ModelSerializer):
-    url = serializers.SerializerMethodField("get_url")
-    thumbnail_card_url = serializers.SerializerMethodField("get_thumbnail_card_url")
-    attached_file = serializers.FileField(required=True)
-
-    class Meta:
-        model = models.Attachment
-        fields = ("id", "project", "owner", "name", "attached_file", "size",
-                  "url", "thumbnail_card_url", "description", "is_deprecated",
-                  "created_date", "modified_date", "object_id", "order", "sha1")
-        read_only_fields = ("owner", "created_date", "modified_date", "sha1")
+class AttachmentSerializer(serializers.LightSerializer):
+    id = Field()
+    project = Field(attr="project_id")
+    owner = Field(attr="owner_id")
+    name = Field()
+    attached_file = FileField()
+    size = Field()
+    url = Field()
+    description = Field()
+    is_deprecated = Field()
+    created_date = Field()
+    modified_date = Field()
+    object_id = Field()
+    order = Field()
+    sha1 = Field()
+    url = MethodField("get_url")
+    thumbnail_card_url = MethodField("get_thumbnail_card_url")
 
     def get_url(self, obj):
         return obj.attached_file.url
-
 
     def get_thumbnail_card_url(self, obj):
         return services.get_card_image_thumbnail_url(obj)
 
 
-class ListBasicAttachmentsInfoSerializerMixin(serpy.Serializer):
+class BasicAttachmentsInfoSerializerMixin(serializers.LightSerializer):
     """
     Assumptions:
     - The queryset has an attribute called "include_attachments" indicating if the attachments array should contain information
@@ -56,7 +58,7 @@ class ListBasicAttachmentsInfoSerializerMixin(serpy.Serializer):
     - The method attach_basic_attachments has been used to include the necessary
         json data about the attachments in the "attachments_attr" column
     """
-    attachments = serpy.MethodField()
+    attachments = MethodField()
 
     def get_attachments(self, obj):
         include_attachments = getattr(obj, "include_attachments", False)

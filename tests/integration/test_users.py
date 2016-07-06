@@ -30,6 +30,7 @@ from ..utils import DUMMY_BMP_DATA
 
 from taiga.base.utils import json
 from taiga.base.utils.thumbnails import get_thumbnail_url
+from taiga.base.utils.dicts import into_namedtuple
 from taiga.users import models
 from taiga.users.serializers import LikedObjectSerializer, VotedObjectSerializer
 from taiga.auth.tokens import get_token_for_user
@@ -505,7 +506,7 @@ def test_get_watched_list_valid_info_for_project():
 
     raw_project_watch_info = get_watched_list(fav_user, viewer_user)[0]
 
-    project_watch_info = LikedObjectSerializer(raw_project_watch_info).data
+    project_watch_info = LikedObjectSerializer(into_namedtuple(raw_project_watch_info)).data
 
     assert project_watch_info["type"] == "project"
     assert project_watch_info["id"] == project.id
@@ -559,7 +560,7 @@ def test_get_liked_list_valid_info():
     project.refresh_totals()
 
     raw_project_like_info = get_liked_list(fan_user, viewer_user)[0]
-    project_like_info = LikedObjectSerializer(raw_project_like_info).data
+    project_like_info = LikedObjectSerializer(into_namedtuple(raw_project_like_info)).data
 
     assert project_like_info["type"] == "project"
     assert project_like_info["id"] == project.id
@@ -609,7 +610,7 @@ def test_get_watched_list_valid_info_for_not_project_types():
 
         instance.add_watcher(fav_user)
         raw_instance_watch_info = get_watched_list(fav_user, viewer_user, type=object_type)[0]
-        instance_watch_info = VotedObjectSerializer(raw_instance_watch_info).data
+        instance_watch_info = VotedObjectSerializer(into_namedtuple(raw_instance_watch_info)).data
 
         assert instance_watch_info["type"] == object_type
         assert instance_watch_info["id"] == instance.id
@@ -666,7 +667,7 @@ def test_get_voted_list_valid_info():
         f.VotesFactory(content_type=content_type, object_id=instance.id, count=3)
 
         raw_instance_vote_info = get_voted_list(fav_user, viewer_user, type=object_type)[0]
-        instance_vote_info = VotedObjectSerializer(raw_instance_vote_info).data
+        instance_vote_info = VotedObjectSerializer(into_namedtuple(raw_instance_vote_info)).data
 
         assert instance_vote_info["type"] == object_type
         assert instance_vote_info["id"] == instance.id

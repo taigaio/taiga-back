@@ -17,28 +17,31 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
-from taiga.base.fields import JsonField, I18NJsonField
+from taiga.base.fields import I18NJsonField, Field, MethodField
 
 from taiga.users.services import get_photo_or_gravatar_url
 
-from . import models
+
+HISTORY_ENTRY_I18N_FIELDS = ("points", "status", "severity", "priority", "type")
 
 
-HISTORY_ENTRY_I18N_FIELDS=("points", "status", "severity", "priority", "type")
-
-
-class HistoryEntrySerializer(serializers.ModelSerializer):
-    diff = JsonField()
-    snapshot = JsonField()
-    values = I18NJsonField(i18n_fields=HISTORY_ENTRY_I18N_FIELDS)
-    values_diff = I18NJsonField(i18n_fields=HISTORY_ENTRY_I18N_FIELDS)
-    user = serializers.SerializerMethodField("get_user")
-    delete_comment_user = JsonField()
-    comment_versions = JsonField()
-
-    class Meta:
-        model = models.HistoryEntry
-        exclude = ("comment_versions",)
+class HistoryEntrySerializer(serializers.LightSerializer):
+    id = Field()
+    user = MethodField()
+    created_at = Field()
+    type = Field()
+    key = Field()
+    diff = Field()
+    snapshot = Field()
+    values = Field()
+    values_diff = I18NJsonField()
+    comment = I18NJsonField()
+    comment_html = Field()
+    delete_comment_date = Field()
+    delete_comment_user = Field()
+    edit_comment_date = Field()
+    is_hidden = Field()
+    is_snapshot = Field()
 
     def get_user(self, entry):
         user = {"pk": None, "username": None, "name": None, "photo": None, "is_active": False}

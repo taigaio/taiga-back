@@ -51,6 +51,7 @@ In addition Django's built in 403 and 404 exceptions are handled.
 """
 
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.http import Http404
@@ -224,6 +225,7 @@ class NotEnoughSlotsForProject(BaseException):
             "total_memberships": total_memberships
         }
 
+
 def format_exception(exc):
     if isinstance(exc.detail, (dict, list, tuple,)):
         detail = exc.detail
@@ -270,3 +272,6 @@ def exception_handler(exc):
 
     # Note: Unhandled exceptions will raise a 500 error.
     return None
+
+
+ValidationError = DjangoValidationError

@@ -22,10 +22,6 @@ from dateutil.relativedelta import relativedelta
 
 from django.apps import apps
 from django.conf import settings
-from django.core.exceptions import ValidationError
-from django.db.models import signals, Prefetch
-from django.db.models import Value as V
-from django.db.models.functions import Coalesce
 from django.http import Http404
 from django.utils.translation import ugettext as _
 from django.utils import timezone
@@ -45,8 +41,7 @@ from taiga.permissions import services as permissions_services
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.issues.models import Issue
 from taiga.projects.likes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
-from taiga.projects.notifications.models import NotifyPolicy
-from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
+from taiga.projects.notifications.mixins import WatchersViewSetMixin
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
@@ -54,27 +49,28 @@ from taiga.projects.tasks.models import Task
 from taiga.projects.tagging.api import TagsColorsResourceMixin
 
 from taiga.projects.userstories.models import UserStory, RolePoints
-from taiga.users import services as users_services
 
 from . import filters as project_filters
 from . import models
 from . import permissions
 from . import serializers
+from . import validators
 from . import services
-
+from . import utils as project_utils
 
 ######################################################
-## Project
+# Project
 ######################################################
 
-class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, BlockeableSaveMixin, BlockeableDeleteMixin,
+
+class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
+                     BlockeableSaveMixin, BlockeableDeleteMixin,
                      TagsColorsResourceMixin, ModelCrudViewSet):
+    validator_class = validators.ProjectValidator
     queryset = models.Project.objects.all()
-    serializer_class = serializers.ProjectDetailSerializer
-    admin_serializer_class = serializers.ProjectDetailAdminSerializer
-    list_serializer_class = serializers.ProjectSerializer
     permission_classes = (permissions.ProjectPermission, )
-    filter_backends = (project_filters.QFilterBackend,
+    filter_backends = (project_filters.UserOrderFilterBackend,
+                       project_filters.QFilterBackend,
                        project_filters.CanViewProjectObjFilterBackend,
                        project_filters.DiscoverModeFilterBackend)
 
@@ -85,8 +81,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, BlockeableSaveMix
                      "is_kanban_activated")
 
     ordering = ("name", "id")
-    order_by_fields = ("memberships__user_order",
-                       "total_fans",
+    order_by_fields = ("total_fans",
                        "total_fans_last_week",
                        "total_fans_last_month",
                        "total_fans_last_year",
@@ -106,18 +101,8 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, BlockeableSaveMix
 
     def get_queryset(self):
         qs = super().get_queryset()
-
         qs = qs.select_related("owner")
-        # Prefetch doesn"t work correctly if then if the field is filtered later (it generates more queries)
-        # so we add some custom prefetching
-        qs = qs.prefetch_related("members")
-        qs = qs.prefetch_related("memberships")
-        qs = qs.prefetch_related(Prefetch("notify_policies",
-            NotifyPolicy.objects.exclude(notify_level=NotifyLevel.none), to_attr="valid_notify_policies"))
-
-        Milestone = apps.get_model("milestones", "Milestone")
-        qs = qs.prefetch_related(Prefetch("milestones",
-            Milestone.objects.filter(closed=True), to_attr="closed_milestones"))
+        qs = project_utils.attach_extra_info(qs, user=self.request.user)
 
         # If filtering an activity period we must exclude the activities not updated recently enough
         now = timezone.now()
@@ -137,22 +122,17 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, BlockeableSaveMix
 
         return qs
 
+    def retrieve(self, request, *args, **kwargs):
+        if self.action == "by_slug":
+            self.lookup_field = "slug"
+
+        return super().retrieve(request, *args, **kwargs)
+
     def get_serializer_class(self):
-        serializer_class = self.serializer_class
-
         if self.action == "list":
-            serializer_class = self.list_serializer_class
-        elif self.action != "create":
-            if self.action == "by_slug":
-                slug = self.request.QUERY_PARAMS.get("slug", None)
-                project = get_object_or_404(models.Project, slug=slug)
-            else:
-                project = self.get_object()
+            return serializers.ProjectSerializer
 
-            if permissions_services.is_project_admin(self.request.user, project):
-                serializer_class = self.admin_serializer_class
-
-        return serializer_class
+        return serializers.ProjectDetailSerializer
 
     @detail_route(methods=["POST"])
     def change_logo(self, request, *args, **kwargs):
@@ -215,11 +195,11 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, BlockeableSaveMix
         if self.request.user.is_anonymous():
             return response.Unauthorized()
 
-        serializer = serializers.UpdateProjectOrderBulkSerializer(data=request.DATA, many=True)
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
+        validator = validators.UpdateProjectOrderBulkValidator(data=request.DATA, many=True)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-        data = serializer.data
+        data = validator.data
         services.update_projects_order_in_bulk(data, "user_order", request.user)
         return response.NoContent(data=None)
 
@@ -283,10 +263,9 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, BlockeableSaveMix
         return response.Ok(data)
 
     @list_route(methods=["GET"])
-    def by_slug(self, request):
+    def by_slug(self, request, *args, **kwargs):
         slug = request.QUERY_PARAMS.get("slug", None)
-        project = get_object_or_404(models.Project, slug=slug)
-        return self.retrieve(request, pk=project.pk)
+        return self.retrieve(request, slug=slug)
 
     @detail_route(methods=["GET", "PATCH"])
     def modules(self, request, pk=None):
@@ -362,7 +341,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin, BlockeableSaveMix
             return response.BadRequest(_("The user must be already a project member"))
 
         reason = request.DATA.get('reason', None)
-        transfer_token = services.start_project_transfer(project, user, reason)
+        services.start_project_transfer(project, user, reason)
         return response.Ok()
 
     @detail_route(methods=["POST"])
@@ -471,6 +450,7 @@ class PointsViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
 
     model = models.Points
     serializer_class = serializers.PointsSerializer
+    validator_class = validators.PointsValidator
     permission_classes = (permissions.PointsPermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ('project',)
@@ -487,6 +467,7 @@ class UserStoryStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
 
     model = models.UserStoryStatus
     serializer_class = serializers.UserStoryStatusSerializer
+    validator_class = validators.UserStoryStatusValidator
     permission_classes = (permissions.UserStoryStatusPermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ('project',)
@@ -503,6 +484,7 @@ class TaskStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
 
     model = models.TaskStatus
     serializer_class = serializers.TaskStatusSerializer
+    validator_class = validators.TaskStatusValidator
     permission_classes = (permissions.TaskStatusPermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ("project",)
@@ -519,6 +501,7 @@ class SeverityViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
 
     model = models.Severity
     serializer_class = serializers.SeveritySerializer
+    validator_class = validators.SeverityValidator
     permission_classes = (permissions.SeverityPermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ("project",)
@@ -534,6 +517,7 @@ class PriorityViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
                       ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.Priority
     serializer_class = serializers.PrioritySerializer
+    validator_class = validators.PriorityValidator
     permission_classes = (permissions.PriorityPermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ("project",)
@@ -549,6 +533,7 @@ class IssueTypeViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
                        ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.IssueType
     serializer_class = serializers.IssueTypeSerializer
+    validator_class = validators.IssueTypeValidator
     permission_classes = (permissions.IssueTypePermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ("project",)
@@ -564,6 +549,7 @@ class IssueStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
                          ModelCrudViewSet, BulkUpdateOrderMixin):
     model = models.IssueStatus
     serializer_class = serializers.IssueStatusSerializer
+    validator_class = validators.IssueStatusValidator
     permission_classes = (permissions.IssueStatusPermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ("project",)
@@ -582,6 +568,7 @@ class IssueStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
 class ProjectTemplateViewSet(ModelCrudViewSet):
     model = models.ProjectTemplate
     serializer_class = serializers.ProjectTemplateSerializer
+    validator_class = validators.ProjectTemplateValidator
     permission_classes = (permissions.ProjectTemplatePermission,)
 
     def get_queryset(self):
@@ -595,7 +582,9 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
 class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
     model = models.Membership
     admin_serializer_class = serializers.MembershipAdminSerializer
+    admin_validator_class = validators.MembershipAdminValidator
     serializer_class = serializers.MembershipSerializer
+    validator_class = validators.MembershipValidator
     permission_classes = (permissions.MembershipPermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ("project", "role")
@@ -620,6 +609,12 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         else:
             return self.serializer_class
 
+    def get_validator_class(self):
+        if self.action == "create":
+            return self.admin_validator_class
+
+        return self.validator_class
+
     def _check_if_project_can_have_more_memberships(self, project, total_new_memberships):
         (can_add_memberships, error_type) = services.check_if_project_can_have_more_memberships(
             project,
@@ -634,11 +629,11 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
-        serializer = serializers.MembersBulkSerializer(data=request.DATA)
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
+        validator = validators.MembersBulkValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-        data = serializer.data
+        data = validator.data
         project = models.Project.objects.get(id=data["project_id"])
         invitation_extra_text = data.get("invitation_extra_text", None)
         self.check_permissions(request, 'bulk_create', project)
@@ -655,7 +650,7 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
                                                       invitation_extra_text=invitation_extra_text,
                                                       callback=self.post_save,
                                                       precall=self.pre_save)
-        except ValidationError as err:
+        except exc.ValidationError as err:
             return response.BadRequest(err.message_dict)
 
         members_serialized = self.admin_serializer_class(members, many=True)

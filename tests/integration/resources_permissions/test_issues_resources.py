@@ -22,7 +22,11 @@ import uuid
 from django.core.urlresolvers import reverse
 
 from taiga.projects import choices as project_choices
+from taiga.projects.models import Project
+from taiga.projects.utils import attach_extra_info as attach_project_extra_info
+from taiga.projects.issues.models import Issue
 from taiga.projects.issues.serializers import IssueSerializer
+from taiga.projects.issues.utils import attach_extra_info as attach_issue_extra_info
 from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 from taiga.base.utils import json
 
@@ -61,22 +65,29 @@ def data():
                                         public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         owner=m.project_owner,
                                         issues_csv_uuid=uuid.uuid4().hex)
+    m.public_project = attach_project_extra_info(Project.objects.all()).get(id=m.public_project.id)
+
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           owner=m.project_owner,
                                           issues_csv_uuid=uuid.uuid4().hex)
+    m.private_project1 = attach_project_extra_info(Project.objects.all()).get(id=m.private_project1.id)
+
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
                                           public_permissions=[],
                                           owner=m.project_owner,
                                           issues_csv_uuid=uuid.uuid4().hex)
+    m.private_project2 = attach_project_extra_info(Project.objects.all()).get(id=m.private_project2.id)
+
     m.blocked_project = f.ProjectFactory(is_private=True,
                                          anon_permissions=[],
                                          public_permissions=[],
                                          owner=m.project_owner,
                                          issues_csv_uuid=uuid.uuid4().hex,
                                          blocked_code=project_choices.BLOCKED_BY_STAFF)
+    m.blocked_project = attach_project_extra_info(Project.objects.all()).get(id=m.blocked_project.id)
 
     m.public_membership = f.MembershipFactory(project=m.public_project,
                                               user=m.project_member_with_perms,
@@ -129,24 +140,31 @@ def data():
                                     priority__project=m.public_project,
                                     type__project=m.public_project,
                                     milestone__project=m.public_project)
+    m.public_issue = attach_issue_extra_info(Issue.objects.all()).get(id=m.public_issue.id)
+
     m.private_issue1 = f.IssueFactory(project=m.private_project1,
                                       status__project=m.private_project1,
                                       severity__project=m.private_project1,
                                       priority__project=m.private_project1,
                                       type__project=m.private_project1,
                                       milestone__project=m.private_project1)
+    m.private_issue1 = attach_issue_extra_info(Issue.objects.all()).get(id=m.private_issue1.id)
+
     m.private_issue2 = f.IssueFactory(project=m.private_project2,
                                       status__project=m.private_project2,
                                       severity__project=m.private_project2,
                                       priority__project=m.private_project2,
                                       type__project=m.private_project2,
                                       milestone__project=m.private_project2)
+    m.private_issue2 = attach_issue_extra_info(Issue.objects.all()).get(id=m.private_issue2.id)
+
     m.blocked_issue = f.IssueFactory(project=m.blocked_project,
                                      status__project=m.blocked_project,
                                      severity__project=m.blocked_project,
                                      priority__project=m.blocked_project,
                                      type__project=m.blocked_project,
                                      milestone__project=m.blocked_project)
+    m.blocked_issue = attach_issue_extra_info(Issue.objects.all()).get(id=m.blocked_issue.id)
 
     return m
 
@@ -443,24 +461,28 @@ def test_issue_put_update_with_project_change(client):
     project1.save()
     project2.save()
 
-    membership1 = f.MembershipFactory(project=project1,
-                                      user=user1,
-                                      role__project=project1,
-                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
-    membership2 = f.MembershipFactory(project=project2,
-                                      user=user1,
-                                      role__project=project2,
-                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
-    membership3 = f.MembershipFactory(project=project1,
-                                      user=user2,
-                                      role__project=project1,
-                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
-    membership4 = f.MembershipFactory(project=project2,
-                                      user=user3,
-                                      role__project=project2,
-                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    project1 = attach_project_extra_info(Project.objects.all()).get(id=project1.id)
+    project2 = attach_project_extra_info(Project.objects.all()).get(id=project2.id)
+
+    f.MembershipFactory(project=project1,
+                        user=user1,
+                        role__project=project1,
+                        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    f.MembershipFactory(project=project2,
+                        user=user1,
+                        role__project=project2,
+                        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    f.MembershipFactory(project=project1,
+                        user=user2,
+                        role__project=project1,
+                        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    f.MembershipFactory(project=project2,
+                        user=user3,
+                        role__project=project2,
+                        role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
 
     issue = f.IssueFactory.create(project=project1)
+    issue = attach_issue_extra_info(Issue.objects.all()).get(id=issue.id)
 
     url = reverse('issues-detail', kwargs={"pk": issue.pk})
 

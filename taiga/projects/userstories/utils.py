@@ -17,6 +17,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from taiga.projects.attachments.utils import attach_basic_attachments
+from taiga.projects.notifications.utils import attach_watchers_to_queryset
+from taiga.projects.notifications.utils import attach_total_watchers_to_queryset
+from taiga.projects.notifications.utils import attach_is_watcher_to_queryset
+from taiga.projects.votes.utils import attach_total_voters_to_queryset
+from taiga.projects.votes.utils import attach_is_voter_to_queryset
+
 
 def attach_total_points(queryset, as_field="total_points_attr"):
     """Attach total of point values to each object of the queryset.
@@ -28,7 +35,7 @@ def attach_total_points(queryset, as_field="total_points_attr"):
     """
     model = queryset.model
     sql = """SELECT SUM(projects_points.value)
-            	    FROM userstories_rolepoints
+                    FROM userstories_rolepoints
                     INNER JOIN projects_points ON userstories_rolepoints.points_id = projects_points.id
                     WHERE userstories_rolepoints.user_story_id = {tbl}.id"""
 
@@ -46,10 +53,15 @@ def attach_role_points(queryset, as_field="role_points_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg((userstories_rolepoints.role_id, userstories_rolepoints.points_id))
-            	    FROM userstories_rolepoints
+    sql = """SELECT FORMAT('{{%%s}}',
+                           STRING_AGG(format(
+                                '"%%s":%%s',
+                                TO_JSON(userstories_rolepoints.role_id),
+                                TO_JSON(userstories_rolepoints.points_id)
+                            ), ',')
+                          )::json
+                    FROM userstories_rolepoints
                     WHERE userstories_rolepoints.user_story_id = {tbl}.id"""
-
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
     return queryset
@@ -81,4 +93,24 @@ def attach_tasks(queryset, as_field="tasks_attr"):
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
+    return queryset
+
+
+def attach_extra_info(queryset, user=None, include_attachments=False, include_tasks=False):
+    queryset = attach_total_points(queryset)
+    queryset = attach_role_points(queryset)
+
+    if include_attachments:
+        queryset = attach_basic_attachments(queryset)
+        queryset = queryset.extra(select={"include_attachments": "True"})
+
+    if include_tasks:
+        queryset = attach_tasks(queryset)
+        queryset = queryset.extra(select={"include_tasks": "True"})
+
+    queryset = attach_total_voters_to_queryset(queryset)
+    queryset = attach_watchers_to_queryset(queryset)
+    queryset = attach_total_watchers_to_queryset(queryset)
+    queryset = attach_is_voter_to_queryset(queryset, user)
+    queryset = attach_is_watcher_to_queryset(queryset, user)
     return queryset

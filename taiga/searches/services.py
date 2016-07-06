@@ -19,6 +19,7 @@
 from django.apps import apps
 from django.conf import settings
 from taiga.base.utils.db import to_tsquery
+from taiga.projects.userstories.utils import attach_total_points
 
 MAX_RESULTS = getattr(settings, "SEARCHES_MAX_RESULTS", 150)
 
@@ -30,11 +31,13 @@ def search_user_stories(project, text):
                                 "coalesce(userstories_userstory.description, '')) "
                     "@@ to_tsquery('english_nostop', %s)")
 
-    if text:
-        return (model_cls.objects.extra(where=[where_clause], params=[to_tsquery(text)])
-                                 .filter(project_id=project.pk)[:MAX_RESULTS])
+    queryset = model_cls.objects.filter(project_id=project.pk)
 
-    return model_cls.objects.filter(project_id=project.pk)[:MAX_RESULTS]
+    if text:
+        queryset = queryset.extra(where=[where_clause], params=[to_tsquery(text)])
+
+    queryset = attach_total_points(queryset)
+    return queryset[:MAX_RESULTS]
 
 
 def search_tasks(project, text):

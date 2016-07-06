@@ -34,6 +34,7 @@ from taiga.base import exceptions as exc
 from taiga.base import response
 from taiga.base.api.mixins import CreateModelMixin
 from taiga.base.api.viewsets import GenericViewSet
+from taiga.projects import utils as project_utils
 from taiga.projects.models import Project, Membership
 from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
@@ -366,5 +367,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             return response.BadRequest({"error": e.message, "details": e.errors})
         else:
             # On Success
-            response_data = ProjectSerializer(project).data
+            project_from_qs = project_utils.attach_extra_info(Project.objects.all()).get(id=project.id)
+            response_data = ProjectSerializer(project_from_qs).data
+
             return response.Created(response_data)

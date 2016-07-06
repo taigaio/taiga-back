@@ -22,15 +22,16 @@ from enum import Enum
 from django.utils.translation import ugettext as _
 from django.conf import settings
 
+from taiga.base.api import validators
 from taiga.base.api import serializers
 from taiga.base.api import viewsets
 from taiga.base.decorators import list_route
 from taiga.base import exceptions as exc
 from taiga.base import response
 
-from .serializers import PublicRegisterSerializer
-from .serializers import PrivateRegisterForExistingUserSerializer
-from .serializers import PrivateRegisterForNewUserSerializer
+from .validators import PublicRegisterValidator
+from .validators import PrivateRegisterForExistingUserValidator
+from .validators import PrivateRegisterForNewUserValidator
 
 from .services import private_register_for_existing_user
 from .services import private_register_for_new_user
@@ -44,7 +45,7 @@ from .permissions import AuthPermission
 def _parse_data(data:dict, *, cls):
     """
     Generic function for parse user data using
-    specified serializer on `cls` keyword parameter.
+    specified validator on `cls` keyword parameter.
 
     Raises: RequestValidationError exception if
     some errors found when data is validated.
@@ -52,21 +53,21 @@ def _parse_data(data:dict, *, cls):
     Returns the parsed data.
     """
 
-    serializer = cls(data=data)
-    if not serializer.is_valid():
-        raise exc.RequestValidationError(serializer.errors)
-    return serializer.data
+    validator = cls(data=data)
+    if not validator.is_valid():
+        raise exc.RequestValidationError(validator.errors)
+    return validator.data
 
 # Parse public register data
-parse_public_register_data = partial(_parse_data, cls=PublicRegisterSerializer)
+parse_public_register_data = partial(_parse_data, cls=PublicRegisterValidator)
 
 # Parse private register data for existing user
 parse_private_register_for_existing_user_data = \
-    partial(_parse_data, cls=PrivateRegisterForExistingUserSerializer)
+    partial(_parse_data, cls=PrivateRegisterForExistingUserValidator)
 
 # Parse private register data for new user
 parse_private_register_for_new_user_data = \
-    partial(_parse_data, cls=PrivateRegisterForNewUserSerializer)
+    partial(_parse_data, cls=PrivateRegisterForNewUserValidator)
 
 
 class RegisterTypeEnum(Enum):
@@ -81,10 +82,10 @@ def parse_register_type(userdata:dict) -> str:
     """
     # Create adhoc inner serializer for avoid parse
     # manually the user data.
-    class _serializer(serializers.Serializer):
+    class _validator(validators.Validator):
         existing = serializers.BooleanField()
 
-    instance = _serializer(data=userdata)
+    instance = _validator(data=userdata)
     if not instance.is_valid():
         raise exc.RequestValidationError(instance.errors)
 

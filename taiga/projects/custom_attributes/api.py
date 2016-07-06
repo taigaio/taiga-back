@@ -32,6 +32,7 @@ from taiga.projects.occ.mixins import OCCResourceMixin
 
 from . import models
 from . import serializers
+from . import validators
 from . import permissions
 from . import services
 
@@ -43,6 +44,7 @@ from . import services
 class UserStoryCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.UserStoryCustomAttribute
     serializer_class = serializers.UserStoryCustomAttributeSerializer
+    validator_class = validators.UserStoryCustomAttributeValidator
     permission_classes = (permissions.UserStoryCustomAttributePermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ("project",)
@@ -54,6 +56,7 @@ class UserStoryCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixi
 class TaskCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.TaskCustomAttribute
     serializer_class = serializers.TaskCustomAttributeSerializer
+    validator_class = validators.TaskCustomAttributeValidator
     permission_classes = (permissions.TaskCustomAttributePermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ("project",)
@@ -65,6 +68,7 @@ class TaskCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, Mo
 class IssueCustomAttributeViewSet(BulkUpdateOrderMixin, BlockedByProjectMixin, ModelCrudViewSet):
     model = models.IssueCustomAttribute
     serializer_class = serializers.IssueCustomAttributeSerializer
+    validator_class = validators.IssueCustomAttributeValidator
     permission_classes = (permissions.IssueCustomAttributePermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ("project",)
@@ -86,6 +90,7 @@ class BaseCustomAttributesValuesViewSet(OCCResourceMixin, HistoryResourceMixin, 
 class UserStoryCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
     model = models.UserStoryCustomAttributesValues
     serializer_class = serializers.UserStoryCustomAttributesValuesSerializer
+    validator_class = validators.UserStoryCustomAttributesValuesValidator
     permission_classes = (permissions.UserStoryCustomAttributesValuesPermission,)
     lookup_field = "user_story_id"
     content_object = "user_story"
@@ -99,6 +104,7 @@ class UserStoryCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
 class TaskCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
     model = models.TaskCustomAttributesValues
     serializer_class = serializers.TaskCustomAttributesValuesSerializer
+    validator_class = validators.TaskCustomAttributesValuesValidator
     permission_classes = (permissions.TaskCustomAttributesValuesPermission,)
     lookup_field = "task_id"
     content_object = "task"
@@ -112,6 +118,7 @@ class TaskCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
 class IssueCustomAttributesValuesViewSet(BaseCustomAttributesValuesViewSet):
     model = models.IssueCustomAttributesValues
     serializer_class = serializers.IssueCustomAttributesValuesSerializer
+    validator_class = validators.IssueCustomAttributesValuesValidator
     permission_classes = (permissions.IssueCustomAttributesValuesPermission,)
     lookup_field = "issue_id"
     content_object = "issue"

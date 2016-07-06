@@ -22,8 +22,10 @@ from django.apps import apps
 
 from taiga.base.utils import json
 from taiga.projects import choices as project_choices
-from taiga.projects.serializers import ProjectDetailSerializer
+from taiga.projects import models as project_models
+from taiga.projects.serializers import ProjectSerializer
 from taiga.permissions.choices import MEMBERS_PERMISSIONS
+from taiga.projects.utils import attach_extra_info
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, helper_test_http_method_and_count
@@ -45,19 +47,26 @@ def data():
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=['view_project'],
                                         public_permissions=['view_project'])
+    m.public_project = attach_extra_info(project_models.Project.objects.all()).get(id=m.public_project.id)
+
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=['view_project'],
                                           public_permissions=['view_project'],
                                           owner=m.project_owner)
+    m.private_project1 = attach_extra_info(project_models.Project.objects.all()).get(id=m.private_project1.id)
+
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
                                           public_permissions=[],
                                           owner=m.project_owner)
+    m.private_project2 = attach_extra_info(project_models.Project.objects.all()).get(id=m.private_project2.id)
+
     m.blocked_project = f.ProjectFactory(is_private=True,
                                          anon_permissions=[],
                                          public_permissions=[],
                                          owner=m.project_owner,
                                          blocked_code=project_choices.BLOCKED_BY_STAFF)
+    m.blocked_project = attach_extra_info(project_models.Project.objects.all()).get(id=m.blocked_project.id)
 
     f.RoleFactory(project=m.public_project)
 
@@ -153,12 +162,12 @@ def test_project_update(client, data):
         data.project_owner
     ]
 
-    project_data = ProjectDetailSerializer(data.private_project2).data
+    project_data = ProjectSerializer(data.private_project2).data
     project_data["is_private"] = False
     results = helper_test_http_method(client, 'put', url, json.dumps(project_data), users)
     assert results == [401, 403, 403, 200]
 
-    project_data = ProjectDetailSerializer(data.blocked_project).data
+    project_data = ProjectSerializer(data.blocked_project).data
     project_data["is_private"] = False
     results = helper_test_http_method(client, 'put', blocked_url, json.dumps(project_data), users)
     assert results == [401, 403, 403, 451]

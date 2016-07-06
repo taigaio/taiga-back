@@ -39,14 +39,6 @@ class VotedResourceMixin:
     def pre_conditions_on_save(self, obj)
     """
 
-    def attach_votes_attrs_to_queryset(self, queryset):
-        qs = attach_total_voters_to_queryset(queryset)
-
-        if self.request.user.is_authenticated():
-            qs = attach_is_voter_to_queryset(self.request.user, qs)
-
-        return qs
-
     @detail_route(methods=["POST"])
     def upvote(self, request, pk=None):
         obj = self.get_object()

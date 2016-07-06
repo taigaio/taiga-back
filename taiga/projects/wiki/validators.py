@@ -16,11 +16,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api import serializers
+from taiga.base.api import validators
+from taiga.projects.notifications.validators import WatchersValidator
 
 from . import models
 
 
-class FeedbackEntrySerializer(serializers.ModelSerializer):
+class WikiPageValidator(WatchersValidator, validators.ModelValidator):
     class Meta:
-        model = models.FeedbackEntry
+        model = models.WikiPage
+        read_only_fields = ('modified_date', 'created_date', 'owner')
+
+
+class WikiLinkValidator(validators.ModelValidator):
+    class Meta:
+        model = models.WikiLink
+        read_only_fields = ('href',)

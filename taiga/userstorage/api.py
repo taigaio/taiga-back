@@ -17,7 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.utils.translation import ugettext as _
-from django.db import IntegrityError
 
 from taiga.base.api import ModelCrudViewSet
 from taiga.base import exceptions as exc
@@ -25,6 +24,7 @@ from taiga.base import exceptions as exc
 from . import models
 from . import filters
 from . import serializers
+from . import validators
 from . import permissions
 
 
@@ -32,6 +32,7 @@ class StorageEntriesViewSet(ModelCrudViewSet):
     model = models.StorageEntry
     filter_backends = (filters.StorageEntriesFilterBackend,)
     serializer_class = serializers.StorageEntrySerializer
+    validator_class = validators.StorageEntryValidator
     permission_classes = [permissions.StorageEntriesPermission]
     lookup_field = "key"
 
@@ -45,9 +46,11 @@ class StorageEntriesViewSet(ModelCrudViewSet):
             obj.owner = self.request.user
 
     def create(self, *args, **kwargs):
-        try:
-            return super().create(*args, **kwargs)
-        except IntegrityError:
-            key = self.request.DATA.get("key", None)
-            raise exc.IntegrityError(_("Duplicate key value violates unique constraint. "
-                                       "Key '{}' already exists.").format(key))
+        key = self.request.DATA.get("key", None)
+        if (key and self.request.user.is_authenticated() and
+                self.request.user.storage_entries.filter(key=key).exists()):
+            raise exc.BadRequest(
+                _("Duplicate key value violates unique constraint. "
+                  "Key '{}' already exists.").format(key)
+            )
+        return super().create(*args, **kwargs)

@@ -16,16 +16,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.core import validators
-from django.core.exceptions import ValidationError
+from django.core import validators as core_validators
 from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
+from taiga.base.api import validators
+from taiga.base.exceptions import ValidationError
 
 import re
 
 
-class BaseRegisterSerializer(serializers.Serializer):
+class BaseRegisterValidator(validators.Validator):
     full_name = serializers.CharField(max_length=256)
     email = serializers.EmailField(max_length=255)
     username = serializers.CharField(max_length=255)
@@ -33,25 +34,25 @@ class BaseRegisterSerializer(serializers.Serializer):
 
     def validate_username(self, attrs, source):
         value = attrs[source]
-        validator = validators.RegexValidator(re.compile('^[\w.-]+$'), _("invalid username"), "invalid")
+        validator = core_validators.RegexValidator(re.compile('^[\w.-]+$'), _("invalid username"), "invalid")
 
         try:
             validator(value)
         except ValidationError:
-            raise serializers.ValidationError(_("Required. 255 characters or fewer. Letters, numbers "
-                                                "and /./-/_ characters'"))
+            raise ValidationError(_("Required. 255 characters or fewer. Letters, numbers "
+                                    "and /./-/_ characters'"))
         return attrs
 
 
-class PublicRegisterSerializer(BaseRegisterSerializer):
+class PublicRegisterValidator(BaseRegisterValidator):
     pass
 
 
-class PrivateRegisterForNewUserSerializer(BaseRegisterSerializer):
+class PrivateRegisterForNewUserValidator(BaseRegisterValidator):
     token = serializers.CharField(max_length=255, required=True)
 
 
-class PrivateRegisterForExistingUserSerializer(serializers.Serializer):
+class PrivateRegisterForExistingUserValidator(validators.Validator):
     username = serializers.CharField(max_length=255)
     password = serializers.CharField(min_length=4)
     token = serializers.CharField(max_length=255, required=True)

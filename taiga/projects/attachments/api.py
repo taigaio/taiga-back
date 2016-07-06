@@ -34,6 +34,7 @@ from taiga.projects.history.mixins import HistoryResourceMixin
 
 from . import permissions
 from . import serializers
+from . import validators
 from . import models
 
 
@@ -42,6 +43,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
 
     model = models.Attachment
     serializer_class = serializers.AttachmentSerializer
+    validator_class = validators.AttachmentValidator
     filter_fields = ["project", "object_id"]
 
     content_type = None

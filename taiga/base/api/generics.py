@@ -62,6 +62,7 @@ class GenericAPIView(pagination.PaginationMixin,
     # or override `get_queryset()`/`get_serializer_class()`.
     queryset = None
     serializer_class = None
+    validator_class = None
 
     # This shortcut may be used instead of setting either or both
     # of the `queryset`/`serializer_class` attributes, although using
@@ -79,6 +80,7 @@ class GenericAPIView(pagination.PaginationMixin,
     # The following attributes may be subject to change,
     # and should be considered private API.
     model_serializer_class = api_settings.DEFAULT_MODEL_SERIALIZER_CLASS
+    model_validator_class = api_settings.DEFAULT_MODEL_VALIDATOR_CLASS
 
     ######################################
     # These are pending deprecation...
@@ -88,7 +90,7 @@ class GenericAPIView(pagination.PaginationMixin,
     slug_field = 'slug'
     allow_empty = True
 
-    def get_serializer_context(self):
+    def get_extra_context(self):
         """
         Extra context provided to the serializer class.
         """
@@ -101,14 +103,24 @@ class GenericAPIView(pagination.PaginationMixin,
     def get_serializer(self, instance=None, data=None,
                        files=None, many=False, partial=False):
         """
-        Return the serializer instance that should be used for validating and
-        deserializing input, and for serializing output.
+        Return the serializer instance that should be used for deserializing
+        input, and for serializing output.
         """
         serializer_class = self.get_serializer_class()
-        context = self.get_serializer_context()
+        context = self.get_extra_context()
         return serializer_class(instance, data=data, files=files,
                                 many=many, partial=partial, context=context)
 
+    def get_validator(self, instance=None, data=None,
+                      files=None, many=False, partial=False):
+        """
+        Return the validator instance that should be used for validating the
+        input, and for serializing output.
+        """
+        validator_class = self.get_validator_class()
+        context = self.get_extra_context()
+        return validator_class(instance, data=data, files=files,
+                               many=many, partial=partial, context=context)
 
     def filter_queryset(self, queryset, filter_backends=None):
         """
@@ -119,7 +131,7 @@ class GenericAPIView(pagination.PaginationMixin,
         method if you want to apply the configured filtering backend to the
         default queryset.
         """
-        #NOTE TAIGA: Added filter_backends to overwrite the default behavior.
+        # NOTE TAIGA: Added filter_backends to overwrite the default behavior.
 
         backends = filter_backends or self.get_filter_backends()
         for backend in backends:
@@ -159,6 +171,22 @@ class GenericAPIView(pagination.PaginationMixin,
             class Meta:
                 model = self.model
         return DefaultSerializer
+
+    def get_validator_class(self):
+        validator_class = self.validator_class
+        serializer_class = self.get_serializer_class()
+
+        # Situations where the validator is the rest framework serializer
+        if validator_class is None and serializer_class is not None:
+            return serializer_class
+
+        if validator_class is not None:
+            return validator_class
+
+        class DefaultValidator(self.model_validator_class):
+            class Meta:
+                model = self.model
+        return DefaultValidator
 
     def get_queryset(self):
         """

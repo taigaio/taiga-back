@@ -30,6 +30,7 @@ from taiga.base.decorators import detail_route
 
 from . import models
 from . import serializers
+from . import validators
 from . import permissions
 from . import tasks
 
@@ -37,6 +38,7 @@ from . import tasks
 class WebhookViewSet(BlockedByProjectMixin, ModelCrudViewSet):
     model = models.Webhook
     serializer_class = serializers.WebhookSerializer
+    validator_class = validators.WebhookValidator
     permission_classes = (permissions.WebhookPermission,)
     filter_backends = (filters.IsProjectAdminFilterBackend,)
     filter_fields = ("project",)

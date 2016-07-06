@@ -198,7 +198,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def _fill_cached_memberships(self):
         self._cached_memberships = {}
-        qs = self.memberships.prefetch_related("user", "project", "role")
+        qs = self.memberships.select_related("user", "project", "role")
         for membership in qs.all():
             self._cached_memberships[membership.project.id] = membership
 

@@ -98,6 +98,8 @@ DEFAULTS = {
     # Genric view behavior
     "DEFAULT_MODEL_SERIALIZER_CLASS":
         "taiga.base.api.serializers.ModelSerializer",
+    "DEFAULT_MODEL_VALIDATOR_CLASS":
+        "taiga.base.api.validators.ModelValidator",
     "DEFAULT_FILTER_BACKENDS": (),
 
     # Throttling

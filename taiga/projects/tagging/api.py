@@ -21,7 +21,7 @@ from taiga.base.decorators import detail_route
 from taiga.base.utils.collections import OrderedSet
 
 from . import services
-from . import serializers
+from . import validators
 
 
 class TagsColorsResourceMixin:
@@ -38,15 +38,14 @@ class TagsColorsResourceMixin:
         self.check_permissions(request, "create_tag", project)
         self._raise_if_blocked(project)
 
-        serializer = serializers.CreateTagSerializer(data=request.DATA, project=project)
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
+        validator = validators.CreateTagValidator(data=request.DATA, project=project)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-        data = serializer.data
+        data = validator.data
         services.create_tag(project, data.get("tag"), data.get("color"))
 
         return response.Ok()
-
 
     @detail_route(methods=["POST"])
     def edit_tag(self, request, pk=None):
@@ -54,11 +53,11 @@ class TagsColorsResourceMixin:
         self.check_permissions(request, "edit_tag", project)
         self._raise_if_blocked(project)
 
-        serializer = serializers.EditTagTagSerializer(data=request.DATA, project=project)
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
+        validator = validators.EditTagTagValidator(data=request.DATA, project=project)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-        data = serializer.data
+        data = validator.data
         services.edit_tag(project,
                           data.get("from_tag"),
                           to_tag=data.get("to_tag", None),
@@ -66,18 +65,17 @@ class TagsColorsResourceMixin:
 
         return response.Ok()
 
-
     @detail_route(methods=["POST"])
     def delete_tag(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "delete_tag", project)
         self._raise_if_blocked(project)
 
-        serializer = serializers.DeleteTagSerializer(data=request.DATA, project=project)
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
+        validator = validators.DeleteTagValidator(data=request.DATA, project=project)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-        data = serializer.data
+        data = validator.data
         services.delete_tag(project, data.get("tag"))
 
         return response.Ok()
@@ -88,11 +86,11 @@ class TagsColorsResourceMixin:
         self.check_permissions(request, "mix_tags", project)
         self._raise_if_blocked(project)
 
-        serializer = serializers.MixTagsSerializer(data=request.DATA, project=project)
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
+        validator = validators.MixTagsValidator(data=request.DATA, project=project)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-        data = serializer.data
+        data = validator.data
         services.mix_tags(project, data.get("from_tags"), data.get("to_tag"))
 
         return response.Ok()

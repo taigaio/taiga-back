@@ -23,11 +23,11 @@ from collections import OrderedDict
 
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
 from taiga.base.api import serializers
+from taiga.base.exceptions import ValidationError
 from taiga.base.fields import JsonField
 from taiga.mdrender.service import render as mdrender
 from taiga.users import models as users_models

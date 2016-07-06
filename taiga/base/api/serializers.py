@@ -78,6 +78,8 @@ import serpy
 # This helps keep the separation between model fields, form fields, and
 # serializer fields more explicit.
 
+from taiga.base.exceptions import ValidationError
+
 from .relations import *
 from .fields import *
 
@@ -1228,4 +1230,8 @@ class LightSerializer(serpy.Serializer):
         kwargs.pop("read_only", None)
         kwargs.pop("partial", None)
         kwargs.pop("files", None)
+        context = kwargs.pop("context", {})
+        view = kwargs.pop("view", {})
         super().__init__(*args, **kwargs)
+        self.context = context
+        self.view = view

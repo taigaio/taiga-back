@@ -24,7 +24,7 @@ from taiga.base.api import viewsets
 from taiga.base.api.utils import get_object_or_404
 from taiga.permissions.services import user_has_perm
 
-from .serializers import ResolverSerializer
+from .validators import ResolverValidator
 from . import permissions
 
 
@@ -32,11 +32,11 @@ class ResolverViewSet(viewsets.ViewSet):
     permission_classes = (permissions.ResolverPermission,)
 
     def list(self, request, **kwargs):
-        serializer = ResolverSerializer(data=request.QUERY_PARAMS)
-        if not serializer.is_valid():
-            raise exc.BadRequest(serializer.errors)
+        validator = ResolverValidator(data=request.QUERY_PARAMS)
+        if not validator.is_valid():
+            raise exc.BadRequest(validator.errors)
 
-        data = serializer.data
+        data = validator.data
 
         project_model = apps.get_model("projects", "Project")
         project = get_object_or_404(project_model, slug=data["project"])

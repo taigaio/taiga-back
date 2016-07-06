@@ -17,24 +17,27 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
+from taiga.base.api import validators
+from taiga.base.fields import PgArrayField
+from taiga.projects.notifications.mixins import EditableWatchedResourceSerializer
+from taiga.projects.notifications.validators import WatchersValidator
+from taiga.projects.tagging.fields import TagsAndTagsColorsField
+from taiga.projects.validators import ProjectExistsValidator
+
+from . import models
 
 
-class ResolverSerializer(serializers.Serializer):
-    project = serializers.CharField(max_length=512, required=True)
-    milestone = serializers.CharField(max_length=512, required=False)
-    us = serializers.IntegerField(required=False)
-    task = serializers.IntegerField(required=False)
-    issue = serializers.IntegerField(required=False)
-    ref = serializers.IntegerField(required=False)
-    wikipage = serializers.CharField(max_length=512, required=False)
+class IssueValidator(WatchersValidator, EditableWatchedResourceSerializer,
+                     validators.ModelValidator):
 
-    def validate(self, attrs):
-        if "ref" in attrs:
-            if "us" in attrs:
-                raise serializers.ValidationError("'us' param is incompatible with 'ref' in the same request")
-            if "task" in attrs:
-                raise serializers.ValidationError("'task' param is incompatible with 'ref' in the same request")
-            if "issue" in attrs:
-                raise serializers.ValidationError("'issue' param is incompatible with 'ref' in the same request")
+    tags = TagsAndTagsColorsField(default=[], required=False)
+    external_reference = PgArrayField(required=False)
 
-        return attrs
+    class Meta:
+        model = models.Issue
+        read_only_fields = ('id', 'ref', 'created_date', 'modified_date', 'owner')
+
+
+class IssuesBulkValidator(ProjectExistsValidator, validators.Validator):
+    project_id = serializers.IntegerField()
+    bulk_issues = serializers.CharField()
