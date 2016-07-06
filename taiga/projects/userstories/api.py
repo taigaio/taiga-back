@@ -224,9 +224,18 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
 
     @list_route(methods=["GET"])
     def by_ref(self, request):
-        ref = request.QUERY_PARAMS.get("ref", None)
+        retrieve_kwargs = {
+            "ref": request.QUERY_PARAMS.get("ref", None)
+        }
         project_id = request.QUERY_PARAMS.get("project", None)
-        return self.retrieve(request, project_id=project_id, ref=ref)
+        if project_id is not None:
+            retrieve_kwargs["project_id"] = project_id
+
+        project_slug = request.QUERY_PARAMS.get("project__slug", None)
+        if project_slug is not None:
+            retrieve_kwargs["project__slug"] = project_slug
+
+        return self.retrieve(request, **retrieve_kwargs)
 
     @list_route(methods=["GET"])
     def csv(self, request):
