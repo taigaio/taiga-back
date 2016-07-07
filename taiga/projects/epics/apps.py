@@ -43,7 +43,7 @@ def connect_all_epics_signals():
 
 
 def disconnect_epics_signals():
-    signals.pre_save.disconnect(sender=apps.get_model("epics", "Task"),
+    signals.pre_save.disconnect(sender=apps.get_model("epics", "Epic"),
                                 dispatch_uid="tags_normalization")
 
 

@@ -178,9 +178,11 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
                 raise exc.Blocked(_("Blocked element"))
 
             epics = services.create_epics_in_bulk(
-                data["bulk_epics"], milestone_id=data["sprint_id"], user_story_id=data["us_id"],
+                data["bulk_epics"],
                 status_id=data.get("status_id") or project.default_epic_status_id,
-                project=project, owner=request.user, callback=self.post_save, precall=self.pre_save)
+                project=project,
+                owner=request.user,
+                callback=self.post_save, precall=self.pre_save)
 
             epics = self.get_queryset().filter(id__in=[i.id for i in epics])
             epics_serialized = self.get_serializer_class()(epics, many=True)
@@ -209,8 +211,8 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
         return response.NoContent()
 
     @list_route(methods=["POST"])
-    def bulk_update_epic_order(self, request, **kwargs):
-        return self._bulk_update_order("epic_order", request, **kwargs)
+    def bulk_update_epics_order(self, request, **kwargs):
+        return self._bulk_update_order("epics_order", request, **kwargs)
 
 
 class EpicVotersViewSet(VotersViewSetMixin, ModelListViewSet):

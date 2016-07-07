@@ -160,7 +160,7 @@ def filter_timeline_for_user(timeline, user):
     content_types = {
         "view_project": ContentType.objects.get_by_natural_key("projects", "project"),
         "view_milestones": ContentType.objects.get_by_natural_key("milestones", "milestone"),
-        "view_epic": ContentType.objects.get_by_natural_key("epics", "epic"),
+        "view_epics": ContentType.objects.get_by_natural_key("epics", "epic"),
         "view_us": ContentType.objects.get_by_natural_key("userstories", "userstory"),
         "view_tasks": ContentType.objects.get_by_natural_key("tasks", "task"),
         "view_issues": ContentType.objects.get_by_natural_key("issues", "issue"),

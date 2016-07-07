@@ -40,7 +40,7 @@ class EpicListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
     created_date = Field()
     modified_date = Field()
     subject = Field()
-    epic_order = Field()
+    epics_order = Field()
     client_requirement = Field()
     team_requirement = Field()
     version = Field()

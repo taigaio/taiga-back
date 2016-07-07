@@ -29,7 +29,7 @@ class IsAttachmentOwnerPerm(PermissionComponent):
 
 
 class EpicAttachmentPermission(TaigaResourcePermission):
-    retrieve_perms = HasProjectPerm('view_epic') | IsAttachmentOwnerPerm()
+    retrieve_perms = HasProjectPerm('view_epics') | IsAttachmentOwnerPerm()
     create_perms = HasProjectPerm('modify_epic')
     update_perms = HasProjectPerm('modify_epic') | IsAttachmentOwnerPerm()
     partial_update_perms = HasProjectPerm('modify_epic') | IsAttachmentOwnerPerm()
