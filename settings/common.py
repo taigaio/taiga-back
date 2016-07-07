@@ -477,10 +477,6 @@ THUMBNAIL_ALIASES = {
     },
 }
 
-# GRAVATAR_DEFAULT_AVATAR = "img/user-noimage.png"
-GRAVATAR_DEFAULT_AVATAR = ""
-GRAVATAR_AVATAR_SIZE = THN_AVATAR_SIZE
-
 TAGS_PREDEFINED_COLORS = ["#fce94f", "#edd400", "#c4a000", "#8ae234",
                           "#73d216", "#4e9a06", "#d3d7cf", "#fcaf3e",
                           "#f57900", "#ce5c00", "#729fcf", "#3465a4",

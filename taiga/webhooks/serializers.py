@@ -24,13 +24,13 @@ from taiga.front.templatetags.functions import resolve as resolve_front_url
 
 from taiga.projects.services import get_logo_big_thumbnail_url
 
-from taiga.users.gravatar import get_gravatar_url
-from taiga.users.services import get_user_photo_or_gravatar_url
-
+from taiga.users.services import get_user_photo_url
+from taiga.users.gravatar import get_user_gravatar_id
 
 ########################################################################
 # WebHooks
 ########################################################################
+
 
 class WebhookSerializer(serializers.LightSerializer):
     id = Field()
@@ -64,16 +64,13 @@ class WebhookLogSerializer(serializers.LightSerializer):
 class UserSerializer(serializers.LightSerializer):
     id = Field(attr="pk")
     permalink = MethodField()
-    gravatar_url = MethodField()
     username = MethodField()
     full_name = MethodField()
     photo = MethodField()
+    gravatar_id = MethodField()
 
     def get_permalink(self, obj):
         return resolve_front_url("user", obj.username)
-
-    def get_gravatar_url(self, obj):
-        return get_gravatar_url(obj.email)
 
     def get_username(self, obj):
         return obj.get_username()
@@ -82,7 +79,10 @@ class UserSerializer(serializers.LightSerializer):
         return obj.get_full_name()
 
     def get_photo(self, obj):
-        return get_user_photo_or_gravatar_url(obj)
+        return get_user_photo_url(obj)
+
+    def get_gravatar_id(self, obj):
+        return get_user_gravatar_id(obj)
 
     def to_value(self, instance):
         if instance is None:

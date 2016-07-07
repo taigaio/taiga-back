@@ -37,9 +37,6 @@ from taiga.base.utils.urls import get_absolute_url
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.services import get_projects_watched
 
-from .gravatar import get_gravatar_url
-
-
 
 def get_user_by_username_or_email(username_or_email):
     user_model = get_user_model()
@@ -75,6 +72,8 @@ def get_and_validate_user(*, username:str, password:str) -> bool:
 
 def get_photo_url(photo):
     """Get a photo absolute url and the photo automatically cropped."""
+    if not photo:
+        return None
     try:
         url = get_thumbnailer(photo)[settings.THN_AVATAR_SMALL].url
         return get_absolute_url(url)
@@ -82,24 +81,17 @@ def get_photo_url(photo):
         return None
 
 
-def get_photo_or_gravatar_url(photo=None, email=None):
-    """Get the user's photo/gravatar url."""
-    if photo:
-        return get_photo_url(photo)
-    if email:
-        return get_gravatar_url(email)
-    return settings.GRAVATAR_DEFAULT_AVATAR
-
-
-def get_user_photo_or_gravatar_url(user):
-    """Get the user's photo/gravatar url."""
-    if user:
-        return get_photo_url(user.photo) if user.photo else get_gravatar_url(user.email)
-    return settings.GRAVATAR_DEFAULT_AVATAR
+def get_user_photo_url(user):
+    """Get the user's photo url."""
+    if not user:
+        return None
+    return get_photo_url(user.photo)
 
 
 def get_big_photo_url(photo):
     """Get a big photo absolute url and the photo automatically cropped."""
+    if not photo:
+        return None
     try:
         url = get_thumbnailer(photo)[settings.THN_AVATAR_BIG].url
         return get_absolute_url(url)
@@ -107,15 +99,11 @@ def get_big_photo_url(photo):
         return None
 
 
-def get_big_photo_or_gravatar_url(user):
-    """Get the user's big photo/gravatar url."""
+def get_user_big_photo_url(user):
+    """Get the user's big photo url."""
     if not user:
-        return ""
-
-    if user.photo:
-        return get_big_photo_url(user.photo)
-    else:
-        return get_gravatar_url(user.email, size=settings.THN_AVATAR_BIG_SIZE)
+        return None
+    return get_big_photo_url(user.photo)
 
 
 def get_visible_project_ids(from_user, by_user):
