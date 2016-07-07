@@ -21,6 +21,9 @@ class Migration(migrations.Migration):
             DECLARE
                 s $1%TYPE;
             BEGIN
+                IF $1 = '{}' THEN
+                	RETURN;
+                END IF;
                 FOREACH s SLICE 1 IN ARRAY $1 LOOP
                     RETURN NEXT s;
                 END LOOP;
