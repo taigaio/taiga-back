@@ -24,7 +24,7 @@ from taiga.base.fields import PgArrayField, Field, MethodField, I18NField
 from taiga.base.utils.thumbnails import get_thumbnail_url
 
 from taiga.projects.models import Project
-from .services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
+from .services import get_user_photo_or_gravatar_url, get_big_photo_or_gravatar_url
 from .gravatar import get_gravatar_url
 
 from collections import namedtuple
@@ -61,7 +61,7 @@ class UserSerializer(serializers.LightSerializer):
         return obj.get_full_name() if obj else ""
 
     def get_photo(self, user):
-        return get_photo_or_gravatar_url(user)
+        return get_user_photo_or_gravatar_url(user)
 
     def get_big_photo(self, user):
         return get_big_photo_or_gravatar_url(user)
@@ -115,7 +115,7 @@ class UserBasicInfoSerializer(serializers.LightSerializer):
         return obj.get_full_name()
 
     def get_photo(self, obj):
-        return get_photo_or_gravatar_url(obj)
+        return get_user_photo_or_gravatar_url(obj)
 
     def get_big_photo(self, obj):
         return get_big_photo_or_gravatar_url(obj)
@@ -237,7 +237,7 @@ class HighLightedContentSerializer(serializers.LightSerializer):
 
         UserData = namedtuple("UserData", ["photo", "email"])
         user_data = UserData(photo=obj.assigned_to_photo, email=obj.assigned_to_email or "")
-        return get_photo_or_gravatar_url(user_data)
+        return get_user_photo_or_gravatar_url(user_data)
 
     def get_tags_colors(self, obj):
         tags = getattr(obj, "tags", [])

@@ -20,7 +20,7 @@ from django.contrib.auth import get_user_model
 
 from taiga.base.api import serializers
 from taiga.base.fields import Field, MethodField
-from taiga.users.services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
+from taiga.users.services import get_user_photo_or_gravatar_url, get_big_photo_or_gravatar_url
 
 from . import models
 
@@ -56,7 +56,7 @@ class TimelineSerializer(serializers.LightSerializer):
             obj.data["user"] = {
                 "id": user.pk,
                 "name": user.get_full_name(),
-                "photo": get_photo_or_gravatar_url(user),
+                "photo": get_user_photo_or_gravatar_url(user),
                 "big_photo": get_big_photo_or_gravatar_url(user),
                 "username": user.username,
                 "is_profile_visible": user.is_active and not user.is_system,

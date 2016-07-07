@@ -25,7 +25,7 @@ from taiga.front.templatetags.functions import resolve as resolve_front_url
 from taiga.projects.services import get_logo_big_thumbnail_url
 
 from taiga.users.gravatar import get_gravatar_url
-from taiga.users.services import get_photo_or_gravatar_url
+from taiga.users.services import get_user_photo_or_gravatar_url
 
 
 ########################################################################
@@ -82,7 +82,7 @@ class UserSerializer(serializers.LightSerializer):
         return obj.get_full_name()
 
     def get_photo(self, obj):
-        return get_photo_or_gravatar_url(obj)
+        return get_user_photo_or_gravatar_url(obj)
 
     def to_value(self, instance):
         if instance is None:

@@ -82,7 +82,16 @@ def get_photo_url(photo):
         return None
 
 
-def get_photo_or_gravatar_url(user):
+def get_photo_or_gravatar_url(photo=None, email=None):
+    """Get the user's photo/gravatar url."""
+    if photo:
+        return get_photo_url(photo)
+    if email:
+        return get_gravatar_url(email)
+    return settings.GRAVATAR_DEFAULT_AVATAR
+
+
+def get_user_photo_or_gravatar_url(user):
     """Get the user's photo/gravatar url."""
     if user:
         return get_photo_url(user.photo) if user.photo else get_gravatar_url(user.email)

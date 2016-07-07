@@ -19,7 +19,7 @@
 from taiga.base.api import serializers
 from taiga.base.fields import I18NJsonField, Field, MethodField
 
-from taiga.users.services import get_photo_or_gravatar_url
+from taiga.users.services import get_user_photo_or_gravatar_url
 
 
 HISTORY_ENTRY_I18N_FIELDS = ("points", "status", "severity", "priority", "type")
@@ -46,7 +46,7 @@ class HistoryEntrySerializer(serializers.LightSerializer):
     def get_user(self, entry):
         user = {"pk": None, "username": None, "name": None, "photo": None, "is_active": False}
         user.update(entry.user)
-        user["photo"] = get_photo_or_gravatar_url(entry.owner)
+        user["photo"] = get_user_photo_or_gravatar_url(entry.owner)
 
         if entry.owner:
             user["is_active"] = entry.owner.is_active
