@@ -22,7 +22,7 @@ from taiga.base.api import serializers
 from taiga.base.fields import Field, MethodField, I18NField
 
 from taiga.permissions import services as permissions_services
-from taiga.users.services import get_photo_or_gravatar_url
+from taiga.users.services import get_user_photo_or_gravatar_url, get_photo_or_gravatar_url
 from taiga.users.serializers import UserBasicInfoSerializer
 
 from taiga.permissions.services import calculate_permissions
@@ -97,6 +97,23 @@ class IssueTypeSerializer(serializers.LightSerializer):
 # Members
 ######################################################
 
+class MembershipDictSerializer(serializers.LightDictSerializer):
+    role_name = Field()
+    full_name = Field()
+    full_name_display = MethodField()
+    is_active = Field()
+    id = Field()
+    color = Field()
+    username = Field()
+    photo = MethodField()
+
+    def get_full_name_display(self, obj):
+        return obj["full_name"] or obj["username"] or obj["email"]
+
+    def get_photo(self, obj):
+        return get_photo_or_gravatar_url(obj['photo'], obj['email'])
+
+
 class MembershipSerializer(serializers.LightSerializer):
     id = Field()
     user = Field(attr="user_id")
@@ -130,7 +147,7 @@ class MembershipSerializer(serializers.LightSerializer):
         return obj.user.color if obj.user else None
 
     def get_photo(self, obj):
-        return get_photo_or_gravatar_url(obj.user)
+        return get_user_photo_or_gravatar_url(obj.user)
 
     def get_project_name(self, obj):
         return obj.project.name if obj and obj.project else ""
@@ -369,15 +386,7 @@ class ProjectDetailSerializer(ProjectSerializer):
         if obj.members_attr is None:
             return []
 
-        ret = []
-        for m in obj.members_attr:
-            m["full_name_display"] = m["full_name"] or m["username"] or m["email"]
-            del(m["email"])
-            del(m["complete_user_name"])
-            if not m["id"] is None:
-                ret.append(m)
-
-        return ret
+        return MembershipDictSerializer([m for m in obj.members_attr if m['id'] is not None], many=True).data
 
     def get_total_memberships(self, obj):
         if obj.members_attr is None:
