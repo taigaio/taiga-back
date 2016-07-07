@@ -145,6 +145,10 @@ router.register(r"wiki/attachments", WikiAttachmentViewSet,
 from taiga.projects.milestones.api import MilestoneViewSet
 from taiga.projects.milestones.api import MilestoneWatchersViewSet
 
+from taiga.projects.epics.api import EpicViewSet
+from taiga.projects.epics.api import EpicVotersViewSet
+from taiga.projects.epics.api import EpicWatchersViewSet
+
 from taiga.projects.userstories.api import UserStoryViewSet
 from taiga.projects.userstories.api import UserStoryVotersViewSet
 from taiga.projects.userstories.api import UserStoryWatchersViewSet
@@ -165,6 +169,13 @@ router.register(r"milestones", MilestoneViewSet,
                 base_name="milestones")
 router.register(r"milestones/(?P<resource_id>\d+)/watchers", MilestoneWatchersViewSet,
                 base_name="milestone-watchers")
+
+router.register(r"epics", EpicViewSet,
+                base_name="epics")
+router.register(r"epics/(?P<resource_id>\d+)/voters", EpicVotersViewSet,
+                base_name="epic-voters")
+router.register(r"epics/(?P<resource_id>\d+)/watchers", EpicWatchersViewSet,
+                base_name="epic-watchers")
 
 router.register(r"userstories", UserStoryViewSet,
                 base_name="userstories")
