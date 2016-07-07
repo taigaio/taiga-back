@@ -16,56 +16,62 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 
 from taiga.base.api import serializers
+from taiga.base.fields import Field, MethodField, DateTimeField
 from taiga.projects.history import models as history_models
 from taiga.projects.attachments import models as attachments_models
-from taiga.projects.notifications import services as notifications_services
 from taiga.projects.history import services as history_service
 
 from .fields import (UserRelatedField, HistoryUserField, HistoryDiffField,
-                     JsonField, HistoryValuesField, CommentField, FileField)
+                     HistoryValuesField, FileField)
 
 
-class HistoryExportSerializer(serializers.ModelSerializer):
+class HistoryExportSerializer(serializers.LightSerializer):
     user = HistoryUserField()
-    diff = HistoryDiffField(required=False)
-    snapshot = JsonField(required=False)
-    values = HistoryValuesField(required=False)
-    comment = CommentField(required=False)
-    delete_comment_date = serializers.DateTimeField(required=False)
-    delete_comment_user = HistoryUserField(required=False)
+    diff = HistoryDiffField()
+    snapshot = Field()
+    values = HistoryValuesField()
+    comment = Field()
+    delete_comment_date = DateTimeField()
+    delete_comment_user = HistoryUserField()
+    comment_versions = Field()
+    created_at = DateTimeField()
+    edit_comment_date = DateTimeField()
+    is_hidden = Field()
+    is_snapshot = Field()
+    type = Field()
 
-    class Meta:
-        model = history_models.HistoryEntry
-        exclude = ("id", "comment_html", "key")
 
-
-class HistoryExportSerializerMixin(serializers.ModelSerializer):
-    history = serializers.SerializerMethodField("get_history")
+class HistoryExportSerializerMixin(serializers.LightSerializer):
+    history = MethodField("get_history")
 
     def get_history(self, obj):
-        history_qs = history_service.get_history_queryset_by_model_instance(obj,
-            types=(history_models.HistoryType.change, history_models.HistoryType.create,))
+        history_qs = history_service.get_history_queryset_by_model_instance(
+            obj,
+            types=(history_models.HistoryType.change, history_models.HistoryType.create,)
+        )
 
         return HistoryExportSerializer(history_qs, many=True).data
 
 
-class AttachmentExportSerializer(serializers.ModelSerializer):
-    owner = UserRelatedField(required=False)
+class AttachmentExportSerializer(serializers.LightSerializer):
+    owner = UserRelatedField()
     attached_file = FileField()
-    modified_date = serializers.DateTimeField(required=False)
+    created_date = DateTimeField()
+    modified_date = DateTimeField()
+    description = Field()
+    is_deprecated = Field()
+    name = Field()
+    order = Field()
+    sha1 = Field()
+    size = Field()
 
-    class Meta:
-        model = attachments_models.Attachment
-        exclude = ('id', 'content_type', 'object_id', 'project')
 
-
-class AttachmentExportSerializerMixin(serializers.ModelSerializer):
-    attachments = serializers.SerializerMethodField("get_attachments")
+class AttachmentExportSerializerMixin(serializers.LightSerializer):
+    attachments = MethodField()
 
     def get_attachments(self, obj):
         content_type = ContentType.objects.get_for_model(obj.__class__)
@@ -74,8 +80,8 @@ class AttachmentExportSerializerMixin(serializers.ModelSerializer):
         return AttachmentExportSerializer(attachments_qs, many=True).data
 
 
-class CustomAttributesValuesExportSerializerMixin(serializers.ModelSerializer):
-    custom_attributes_values = serializers.SerializerMethodField("get_custom_attributes_values")
+class CustomAttributesValuesExportSerializerMixin(serializers.LightSerializer):
+    custom_attributes_values = MethodField("get_custom_attributes_values")
 
     def custom_attributes_queryset(self, project):
         raise NotImplementedError()
@@ -85,13 +91,13 @@ class CustomAttributesValuesExportSerializerMixin(serializers.ModelSerializer):
             ret = {}
             for attr in custom_attributes:
                 value = values.get(str(attr["id"]), None)
-                if value is not  None:
+                if value is not None:
                     ret[attr["name"]] = value
 
             return ret
 
         try:
-            values =  obj.custom_attributes_values.attributes_values
+            values = obj.custom_attributes_values.attributes_values
             custom_attributes = self.custom_attributes_queryset(obj.project)
 
             return _use_name_instead_id_as_key_in_custom_attributes_values(custom_attributes, values)
@@ -99,43 +105,8 @@ class CustomAttributesValuesExportSerializerMixin(serializers.ModelSerializer):
             return None
 
 
-class WatcheableObjectModelSerializerMixin(serializers.ModelSerializer):
-    watchers = UserRelatedField(many=True, required=False)
+class WatcheableObjectLightSerializerMixin(serializers.LightSerializer):
+    watchers = MethodField()
 
-    def __init__(self, *args, **kwargs):
-        self._watchers_field = self.base_fields.pop("watchers", None)
-        super(WatcheableObjectModelSerializerMixin, self).__init__(*args, **kwargs)
-
-    """
-    watchers is not a field from the model so we need to do some magic to make it work like a normal field
-    It's supposed to be represented as an email list but internally it's treated like notifications.Watched instances
-    """
-
-    def restore_object(self, attrs, instance=None):
-        watcher_field = self.fields.pop("watchers", None)
-        instance = super(WatcheableObjectModelSerializerMixin, self).restore_object(attrs, instance)
-        self._watchers = self.init_data.get("watchers", [])
-        return instance
-
-    def save_watchers(self):
-        new_watcher_emails = set(self._watchers)
-        old_watcher_emails = set(self.object.get_watchers().values_list("email", flat=True))
-        adding_watcher_emails = list(new_watcher_emails.difference(old_watcher_emails))
-        removing_watcher_emails = list(old_watcher_emails.difference(new_watcher_emails))
-
-        User = get_user_model()
-        adding_users = User.objects.filter(email__in=adding_watcher_emails)
-        removing_users = User.objects.filter(email__in=removing_watcher_emails)
-
-        for user in adding_users:
-            notifications_services.add_watcher(self.object, user)
-
-        for user in removing_users:
-            notifications_services.remove_watcher(self.object, user)
-
-        self.object.watchers = [user.email for user in self.object.get_watchers()]
-
-    def to_native(self, obj):
-        ret = super(WatcheableObjectModelSerializerMixin, self).to_native(obj)
-        ret["watchers"] = [user.email for user in obj.get_watchers()]
-        return ret
+    def get_watchers(self, obj):
+        return [user.email for user in obj.get_watchers()]

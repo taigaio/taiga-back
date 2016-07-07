@@ -18,7 +18,8 @@
 
 from django.forms import widgets
 from django.utils.translation import ugettext as _
-from taiga.base.api import serializers
+from taiga.base.api import serializers, ISO_8601
+from taiga.base.api.settings import api_settings
 
 import serpy
 
@@ -128,4 +129,21 @@ class I18NJsonField(Field):
 
 class FileField(Field):
     def to_value(self, value):
-        return value.name
+        if value:
+            return value.name
+        return None
+
+
+class DateTimeField(Field):
+    format = api_settings.DATETIME_FORMAT
+
+    def to_value(self, value):
+        if value is None or self.format is None:
+            return value
+
+        if self.format.lower() == ISO_8601:
+            ret = value.isoformat()
+            if ret.endswith("+00:00"):
+                ret = ret[:-6] + "Z"
+            return ret
+        return value.strftime(self.format)
