@@ -12,7 +12,7 @@ done
 
 if $show_answer ; then
 	echo "WARNING!! This script REMOVE your Taiga's database and you LOSE all the data."
-	read -p "Are you sure you want to delete all data? (Pres Y to continue): " -n 1 -r
+	read -p "Are you sure you want to delete all data? (Press Y to continue): " -n 1 -r
 	echo    # (optional) move to a new line
 	if [[ ! $REPLY =~ ^[Yy]$ ]] ; then
 		exit 1
