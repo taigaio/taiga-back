@@ -48,6 +48,20 @@ def test_respond_400_when_public_registration_is_disabled(client, register_form,
     assert response.status_code == 400
 
 
+def test_respond_400_when_the_email_domain_isnt_in_allowed_domains(client, register_form, settings):
+    settings.PUBLIC_REGISTER_ENABLED = True
+    settings.USER_EMAIL_ALLOWED_DOMAINS = ['other-domain.com']
+    response = client.post(reverse("auth-register"), register_form)
+    assert response.status_code == 400
+
+
+def test_respond_201_when_the_email_domain_is_in_allowed_domains(client, settings, register_form):
+    settings.PUBLIC_REGISTER_ENABLED = True
+    settings.USER_EMAIL_ALLOWED_DOMAINS = ['email.com']
+    response = client.post(reverse("auth-register"), register_form)
+    assert response.status_code == 201
+
+
 def test_respond_201_with_invitation_without_public_registration(client, register_form, settings):
     settings.PUBLIC_REGISTER_ENABLED = False
     user = factories.UserFactory()
