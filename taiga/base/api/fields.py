@@ -614,7 +614,6 @@ class ChoiceField(WritableField):
 
 def validate_user_email_allowed_domains(value):
     domain_name = value.split("@")[1]
-    print("EMAIL VALIDATE DOMAIN")
 
     if settings.USER_EMAIL_ALLOWED_DOMAINS and domain_name not in settings.USER_EMAIL_ALLOWED_DOMAINS:
         raise ValidationError(_("You email domain is not allowed"))
