@@ -25,58 +25,65 @@ MAX_RESULTS = getattr(settings, "SEARCHES_MAX_RESULTS", 150)
 
 
 def search_user_stories(project, text):
-    model_cls = apps.get_model("userstories", "UserStory")
-    where_clause = ("to_tsvector('english_nostop', coalesce(userstories_userstory.subject) || ' ' || "
-                                "coalesce(userstories_userstory.ref) || ' ' || "
-                                "coalesce(array_to_string(userstories_userstory.tags, ' '), '') || ' ' || "
-                                "coalesce(userstories_userstory.description, '')) "
-                    "@@ to_tsquery('english_nostop', %s)")
-
-    queryset = model_cls.objects.filter(project_id=project.pk)
-
-    if text:
-        queryset = queryset.extra(where=[where_clause], params=[to_tsquery(text)])
-
-    queryset = attach_total_points(queryset)
-    return queryset[:MAX_RESULTS]
+    model = apps.get_model("userstories", "UserStory")
+    queryset = model.objects.filter(project_id=project.pk)
+    table = "userstories_userstory"
+    return _search_items(queryset, table, text)
 
 
 def search_tasks(project, text):
-    model_cls = apps.get_model("tasks", "Task")
-    where_clause = ("to_tsvector('english_nostop', coalesce(tasks_task.subject, '') || ' ' || "
-                    "coalesce(tasks_task.ref) || ' ' || "
-                    "coalesce(array_to_string(tasks_task.tags, ' '), '') || ' ' || "
-                    "coalesce(tasks_task.description, '')) @@ to_tsquery('english_nostop', %s)")
-
-    if text:
-        return (model_cls.objects.extra(where=[where_clause], params=[to_tsquery(text)])
-                                 .filter(project_id=project.pk)[:MAX_RESULTS])
-
-    return model_cls.objects.filter(project_id=project.pk)[:MAX_RESULTS]
+    model = apps.get_model("userstories", "UserStory")
+    queryset = model.objects.filter(project_id=project.pk)
+    table = "userstories_userstory"
+    return _search_items(queryset, table, text)
 
 
 def search_issues(project, text):
-    model_cls = apps.get_model("issues", "Issue")
-    where_clause = ("to_tsvector('english_nostop', coalesce(issues_issue.subject) || ' ' || "
-                    "coalesce(issues_issue.ref) || ' ' || "
-                    "coalesce(array_to_string(issues_issue.tags, ' '), '') || ' ' || "
-                    "coalesce(issues_issue.description, '')) @@ to_tsquery('english_nostop', %s)")
-
-    if text:
-        return (model_cls.objects.extra(where=[where_clause], params=[to_tsquery(text)])
-                                 .filter(project_id=project.pk)[:MAX_RESULTS])
-
-    return model_cls.objects.filter(project_id=project.pk)[:MAX_RESULTS]
+    model = apps.get_model("userstories", "UserStory")
+    queryset = model.objects.filter(project_id=project.pk)
+    table = "userstories_userstory"
+    return _search_items(queryset, table, text)
 
 
 def search_wiki_pages(project, text):
-    model_cls = apps.get_model("wiki", "WikiPage")
-    where_clause = ("to_tsvector('english_nostop', coalesce(wiki_wikipage.slug) || ' ' || "
-                                "coalesce(wiki_wikipage.content, '')) "
-                    "@@ to_tsquery('english_nostop', %s)")
+    model = apps.get_model("wiki", "WikiPage")
+    queryset = model.objects.filter(project_id=project.pk)
+    tsquery = "to_tsquery('english_nostop', %s)"
+    tsvector = """
+        setweight(to_tsvector('english_nostop', coalesce(wiki_wikipage.slug)), 'A') ||
+        setweight(to_tsvector('english_nostop', coalesce(wiki_wikipage.content)), 'B')
+    """
+
+    return _search_by_query(queryset, tsquery, tsvector, text)
+
+
+def _search_items(queryset, table, text):
+    tsquery = "to_tsquery('english_nostop', %s)"
+    tsvector = """
+        setweight(to_tsvector('english_nostop',
+                              coalesce({table}.subject) || ' ' ||
+                              coalesce({table}.ref)), 'A') ||
+        setweight(to_tsvector('english_nostop', coalesce(inmutable_array_to_string({table}.tags))), 'B') ||
+        setweight(to_tsvector('english_nostop', coalesce({table}.description)), 'C')
+    """.format(table=table)
+    return _search_by_query(queryset, tsquery, tsvector, text)
+
+
+def _search_by_query(queryset, tsquery, tsvector, text):
+    select = {
+        "rank": "ts_rank({tsvector},{tsquery})".format(tsquery=tsquery,
+                                                       tsvector=tsvector),
+    }
+    order_by = ["-rank", ]
+    where = ["{tsvector} @@ {tsquery}".format(tsquery=tsquery,
+                                              tsvector=tsvector), ]
 
     if text:
-        return (model_cls.objects.extra(where=[where_clause], params=[to_tsquery(text)])
-                                 .filter(project_id=project.pk)[:MAX_RESULTS])
+        queryset = queryset.extra(select=select,
+                                  select_params=[to_tsquery(text)],
+                                  where=where,
+                                  params=[to_tsquery(text)],
+                                  order_by=order_by)
 
-    return model_cls.objects.filter(project_id=project.pk)[:MAX_RESULTS]
+    queryset = attach_total_points(queryset)
+    return queryset[:MAX_RESULTS]

@@ -8,6 +8,8 @@
 - ProjectTemplates now are sorted by the attribute 'order'.
 - Create enpty wiki pages (if not exist) when a new link is created.
 - Diff messages in history entries now show only the relevant changes (with some context).
+- Include created, modified and finished dates for tasks in CSV reports
+- User stories and tasks listing API call support extra params to include more data (tasks and attachemnts and attachments, respectively)
 - Comments:
     - Now comment owners and project admins can edit existing comments with the history Entry endpoint.
     - Add a new permissions to allow add comments instead of use the existent modify permission for this purpose.
@@ -15,10 +17,9 @@
     - New API endpoints over projects to create, rename, edit, delete and mix tags.
     - Tag color assignation is not automatic.
     - Select a color (or not) to a tag when add it to stories, issues and tasks.
-- Now comment owners and project admins can edit existing comments with the history Entry endpoint.
-- Add a new permissions to allow add comments instead of use the existent modify permission for this purpose.
-- Include created, modified and finished dates for tasks in CSV reports
-- User stories and tasks listing API call support extra params to include more data (tasks and attachemnts and attachments, respectively)
+- Improve search system over stories, tasks and issues:
+    - Search into tags too. (thanks to [Riccardo Cocciol](https://github.com/volans-))
+    - Weights are applied: (subject = ref > tags > description).
 - Import/Export:
     - Gzip export/import support.
     - Export performance improvements.
@@ -32,7 +33,7 @@
 ## 2.1.0 Ursus Americanus (2016-05-03)
 
 ### Features
-- Add sprint name and slug on search results for user stories ((thanks to [@everblut](https://github.com/everblut)))
+- Add sprint name and slug on search results for user stories (thanks to [@everblut](https://github.com/everblut))
 - [API] projects resource: Random order if `discover_mode=true` and `is_featured=true`.
 - Webhooks: Improve webhook data:
     - add permalinks
