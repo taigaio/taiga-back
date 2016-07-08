@@ -459,6 +459,7 @@ class QFilter(FilterBackend):
             where_clause = ("""
                 to_tsvector('english_nostop',
                             coalesce({table}.subject, '') || ' ' ||
+                            coalesce(array_to_string({table}.tags, ' '), '') || ' ' ||
                             coalesce({table}.ref) || ' ' ||
                             coalesce({table}.description, '')) @@ to_tsquery('english_nostop', %s)
             """.format(table=table))
