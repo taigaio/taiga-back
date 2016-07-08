@@ -46,13 +46,11 @@ def dump_project(self, user, project, dump_format):
     try:
         if dump_format == "gzip":
             path = "exports/{}/{}-{}.json.gz".format(project.pk, project.slug, self.request.id)
-            storage_path = default_storage.path(path)
-            with default_storage.open(storage_path, mode="wb") as outfile:
+            with default_storage.open(path, mode="wb") as outfile:
                 services.render_project(project, gzip.GzipFile(fileobj=outfile))
         else:
             path = "exports/{}/{}-{}.json".format(project.pk, project.slug, self.request.id)
-            storage_path = default_storage.path(path)
-            with default_storage.open(storage_path, mode="wb") as outfile:
+            with default_storage.open(path, mode="wb") as outfile:
                 services.render_project(project, outfile)
 
         url = default_storage.url(path)
