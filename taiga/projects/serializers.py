@@ -22,7 +22,8 @@ from taiga.base.api import serializers
 from taiga.base.fields import Field, MethodField, I18NField
 
 from taiga.permissions import services as permissions_services
-from taiga.users.services import get_user_photo_or_gravatar_url, get_photo_or_gravatar_url
+from taiga.users.services import get_photo_url, get_user_photo_url
+from taiga.users.gravatar import get_gravatar_id, get_user_gravatar_id
 from taiga.users.serializers import UserBasicInfoSerializer
 
 from taiga.permissions.services import calculate_permissions
@@ -106,12 +107,16 @@ class MembershipDictSerializer(serializers.LightDictSerializer):
     color = Field()
     username = Field()
     photo = MethodField()
+    gravatar_id = MethodField()
 
     def get_full_name_display(self, obj):
         return obj["full_name"] or obj["username"] or obj["email"]
 
     def get_photo(self, obj):
-        return get_photo_or_gravatar_url(obj['photo'], obj['email'])
+        return get_photo_url(obj['photo'])
+
+    def get_gravatar_id(self, obj):
+        return get_gravatar_id(obj['email'])
 
 
 class MembershipSerializer(serializers.LightSerializer):
@@ -129,6 +134,7 @@ class MembershipSerializer(serializers.LightSerializer):
     is_user_active = MethodField()
     color = MethodField()
     photo = MethodField()
+    gravatar_id = MethodField()
     project_name = MethodField()
     project_slug = MethodField()
     invited_by = UserBasicInfoSerializer()
@@ -147,7 +153,10 @@ class MembershipSerializer(serializers.LightSerializer):
         return obj.user.color if obj.user else None
 
     def get_photo(self, obj):
-        return get_user_photo_or_gravatar_url(obj.user)
+        return get_user_photo_url(obj.user)
+
+    def get_gravatar_id(self, obj):
+        return get_user_gravatar_id(obj.user)
 
     def get_project_name(self, obj):
         return obj.project.name if obj and obj.project else ""

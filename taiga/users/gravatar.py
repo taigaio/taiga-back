@@ -18,45 +18,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import hashlib
-import copy
-
-from urllib.parse import urlencode
-
-from django.conf import settings
-from django.templatetags.static import static
-
-GRAVATAR_BASE_URL = "//www.gravatar.com/avatar/{}?{}"
 
 
-def get_gravatar_url(email: str, **options) -> str:
-    """Get the gravatar url associated to an email.
+def get_gravatar_id(email: str) -> str:
+    """Get the gravatar id associated to an email.
 
-    :param options: Additional options to gravatar.
-    - `default` defines what image url to show if no gravatar exists
-    - `size` defines the size of the avatar.
-
-    :return: Gravatar url.
+    :return: Gravatar id.
     """
 
-    params = copy.copy(options)
+    return hashlib.md5(email.lower().encode()).hexdigest()
 
-    default_avatar = getattr(settings, "GRAVATAR_DEFAULT_AVATAR", None)
-    default_size = getattr(settings, "GRAVATAR_AVATAR_SIZE", None)
+def get_user_gravatar_id(user: object) -> str:
+    """Get the gravatar id associated to a user.
 
-    avatar = options.get("default", None)
-    size = options.get("size", None)
+    :return: Gravatar id.
+    """
+    if user and user.email:
+        return get_gravatar_id(user.email)
 
-    if avatar:
-        params["default"] = avatar
-    elif default_avatar:
-        params["default"] = static(default_avatar)
-
-    if size:
-        params["size"] = size
-    elif default_size:
-        params["size"] = default_size
-
-    email_hash = hashlib.md5(email.lower().encode()).hexdigest()
-    url = GRAVATAR_BASE_URL.format(email_hash, urlencode(params))
-
-    return url
+    return None
