@@ -229,20 +229,6 @@ class StorageEntryFactory(Factory):
     value = factory.Sequence(lambda n: {"value": "value-{}".format(n)})
 
 
-class UserStoryFactory(Factory):
-    class Meta:
-        model = "userstories.UserStory"
-        strategy = factory.CREATE_STRATEGY
-
-    ref = factory.Sequence(lambda n: n)
-    project = factory.SubFactory("tests.factories.ProjectFactory")
-    owner = factory.SubFactory("tests.factories.UserFactory")
-    subject = factory.Sequence(lambda n: "User Story {}".format(n))
-    description = factory.Sequence(lambda n: "User Story {} description".format(n))
-    status = factory.SubFactory("tests.factories.UserStoryStatusFactory")
-    milestone = factory.SubFactory("tests.factories.MilestoneFactory")
-
-
 class UserStoryStatusFactory(Factory):
     class Meta:
         model = "projects.UserStoryStatus"
@@ -273,21 +259,19 @@ class MilestoneFactory(Factory):
     estimated_finish = factory.LazyAttribute(lambda o: o.estimated_start + timedelta(days=7))
 
 
-class IssueFactory(Factory):
+class UserStoryFactory(Factory):
     class Meta:
-        model = "issues.Issue"
+        model = "userstories.UserStory"
         strategy = factory.CREATE_STRATEGY
 
     ref = factory.Sequence(lambda n: n)
-    subject = factory.Sequence(lambda n: "Issue {}".format(n))
-    description = factory.Sequence(lambda n: "Issue {} description".format(n))
-    owner = factory.SubFactory("tests.factories.UserFactory")
     project = factory.SubFactory("tests.factories.ProjectFactory")
-    status = factory.SubFactory("tests.factories.IssueStatusFactory")
-    severity = factory.SubFactory("tests.factories.SeverityFactory")
-    priority = factory.SubFactory("tests.factories.PriorityFactory")
-    type = factory.SubFactory("tests.factories.IssueTypeFactory")
+    owner = factory.SubFactory("tests.factories.UserFactory")
+    subject = factory.Sequence(lambda n: "User Story {}".format(n))
+    description = factory.Sequence(lambda n: "User Story {} description".format(n))
+    status = factory.SubFactory("tests.factories.UserStoryStatusFactory")
     milestone = factory.SubFactory("tests.factories.MilestoneFactory")
+    tags = factory.Faker("words")
 
 
 class TaskFactory(Factory):
@@ -303,7 +287,25 @@ class TaskFactory(Factory):
     status = factory.SubFactory("tests.factories.TaskStatusFactory")
     milestone = factory.SubFactory("tests.factories.MilestoneFactory")
     user_story = factory.SubFactory("tests.factories.UserStoryFactory")
-    tags = []
+    tags = factory.Faker("words")
+
+
+class IssueFactory(Factory):
+    class Meta:
+        model = "issues.Issue"
+        strategy = factory.CREATE_STRATEGY
+
+    ref = factory.Sequence(lambda n: n)
+    subject = factory.Sequence(lambda n: "Issue {}".format(n))
+    description = factory.Sequence(lambda n: "Issue {} description".format(n))
+    owner = factory.SubFactory("tests.factories.UserFactory")
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    status = factory.SubFactory("tests.factories.IssueStatusFactory")
+    severity = factory.SubFactory("tests.factories.SeverityFactory")
+    priority = factory.SubFactory("tests.factories.PriorityFactory")
+    type = factory.SubFactory("tests.factories.IssueTypeFactory")
+    milestone = factory.SubFactory("tests.factories.MilestoneFactory")
+    tags = factory.Faker("words")
 
 
 class WikiPageFactory(Factory):
