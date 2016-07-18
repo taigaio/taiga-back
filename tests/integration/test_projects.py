@@ -1930,7 +1930,7 @@ def test_edit_tag_only_name(client, settings):
 
     client.login(user)
     response = client.json.post(url, json.dumps(data))
-    print(response.data)
+
     assert response.status_code == 200
     project = Project.objects.get(id=project.pk)
     assert project.tags_colors == [["renamed_tag", "#123123"]]
@@ -2069,7 +2069,7 @@ def test_color_tags_project_fired_on_element_update():
     user_story.tags = ["tag"]
     user_story.save()
     project = Project.objects.get(id=user_story.project.id)
-    assert project.tags_colors == [["tag", None]]
+    assert ["tag", None] in project.tags_colors
 
 
 def test_color_tags_project_fired_on_element_update_respecting_color():
@@ -2078,4 +2078,4 @@ def test_color_tags_project_fired_on_element_update_respecting_color():
     user_story.tags = ["tag"]
     user_story.save()
     project = Project.objects.get(id=user_story.project.id)
-    assert project.tags_colors == [["tag", "#123123"]]
+    assert ["tag", "#123123"] in project.tags_colors
