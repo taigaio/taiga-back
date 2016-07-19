@@ -121,6 +121,17 @@ class RolePointsFactory(Factory):
     points = factory.SubFactory("tests.factories.PointsFactory")
 
 
+class EpicAttachmentFactory(Factory):
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    owner = factory.SubFactory("tests.factories.UserFactory")
+    content_object = factory.SubFactory("tests.factories.EpicFactory")
+    attached_file = factory.django.FileField(data=b"File contents")
+
+    class Meta:
+        model = "attachments.Attachment"
+        strategy = factory.CREATE_STRATEGY
+
+
 class UserStoryAttachmentFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
     owner = factory.SubFactory("tests.factories.UserFactory")
