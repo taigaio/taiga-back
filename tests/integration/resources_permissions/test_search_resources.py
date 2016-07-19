@@ -126,7 +126,7 @@ def test_search_list(client, data):
     ]
 
     results = helper_test_http_method_and_keys(client, 'get', url, {'project': data.public_project.pk}, users)
-    all_keys = set(['count', 'userstories', 'issues', 'tasks', 'wikipages'])
+    all_keys = set(['count', 'userstories', 'issues', 'tasks', 'wikipages', 'epics'])
     assert results == [(200, all_keys), (200, all_keys), (200, all_keys), (200, all_keys), (200, all_keys)]
     results = helper_test_http_method_and_keys(client, 'get', url, {'project': data.private_project1.pk}, users)
     assert results == [(200, all_keys), (200, all_keys), (200, all_keys), (200, all_keys), (200, all_keys)]

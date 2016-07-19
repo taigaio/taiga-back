@@ -211,18 +211,18 @@ def test_modules_patch(client, data):
     ]
 
     with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
-            patch_data = json.dumps({"att": "test"})
-            results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
-            assert results == [401, 403, 403, 403, 204]
+        patch_data = json.dumps({"att": "test"})
+        results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
+        assert results == [401, 403, 403, 403, 204]
 
-            patch_data = json.dumps({"att": "test"})
-            results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
-            assert results == [401, 403, 403, 403, 204]
+        patch_data = json.dumps({"att": "test"})
+        results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
+        assert results == [401, 403, 403, 403, 204]
 
-            patch_data = json.dumps({"att": "test"})
-            results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
-            assert results == [404, 404, 404, 403, 204]
+        patch_data = json.dumps({"att": "test"})
+        results = helper_test_http_method(client, 'patch', private_url2, patch_data, users)
+        assert results == [404, 404, 404, 403, 204]
 
-            patch_data = json.dumps({"att": "test"})
-            results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
-            assert results == [404, 404, 404, 403, 451]
+        patch_data = json.dumps({"att": "test"})
+        results = helper_test_http_method(client, 'patch', blocked_url, patch_data, users)
+        assert results == [404, 404, 404, 403, 451]

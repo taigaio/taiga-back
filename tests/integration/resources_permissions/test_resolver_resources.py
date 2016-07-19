@@ -100,6 +100,7 @@ def data():
                                                  role__project=m.private_project2,
                                                  role__permissions=["view_project"])
 
+    m.epic = f.EpicFactory(project=m.private_project2, ref=4)
     m.us = f.UserStoryFactory(project=m.private_project2, ref=1)
     m.task = f.TaskFactory(project=m.private_project2, ref=2)
     m.issue = f.IssueFactory(project=m.private_project2, ref=3)
@@ -127,8 +128,9 @@ def test_resolver_list(client, data):
     assert results == [401, 403, 403, 200, 200]
 
     client.login(data.other_user)
-    response = client.json.get("{}?project={}&us={}&task={}&issue={}&milestone={}".format(url,
+    response = client.json.get("{}?project={}&epic={}&us={}&task={}&issue={}&milestone={}".format(url,
                                                                                           data.private_project2.slug,
+                                                                                          data.epic.ref,
                                                                                           data.us.ref,
                                                                                           data.task.ref,
                                                                                           data.issue.ref,
@@ -136,17 +138,25 @@ def test_resolver_list(client, data):
     assert response.data == {"project": data.private_project2.pk}
 
     client.login(data.project_owner)
-    response = client.json.get("{}?project={}&us={}&task={}&issue={}&milestone={}".format(url,
+    response = client.json.get("{}?project={}&epic={}&us={}&task={}&issue={}&milestone={}".format(url,
                                                                                           data.private_project2.slug,
+                                                                                          data.epic.ref,
                                                                                           data.us.ref,
                                                                                           data.task.ref,
                                                                                           data.issue.ref,
                                                                                           data.milestone.slug))
     assert response.data == {"project": data.private_project2.pk,
+                             "epic": data.epic.pk,
                              "us": data.us.pk,
                              "task": data.task.pk,
                              "issue": data.issue.pk,
                              "milestone": data.milestone.pk}
+
+    response = client.json.get("{}?project={}&ref={}".format(url,
+                                                             data.private_project2.slug,
+                                                             data.epic.ref))
+    assert response.data == {"project": data.private_project2.pk,
+                             "epic": data.epic.pk}
 
     response = client.json.get("{}?project={}&ref={}".format(url,
                                                              data.private_project2.slug,
