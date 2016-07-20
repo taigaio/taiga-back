@@ -26,7 +26,7 @@ from taiga.base.utils.thumbnails import get_thumbnail_url
 from taiga.projects.models import Project
 from .services import get_user_photo_url, get_big_photo_url, get_user_big_photo_url
 from taiga.users.gravatar import get_user_gravatar_id
-
+from taiga.users.models import User
 from collections import namedtuple
 
 
@@ -182,10 +182,8 @@ class HighLightedContentSerializer(serializers.LightSerializer):
     project_is_private = MethodField()
     project_blocked_code = Field()
 
-    assigned_to_username = Field()
-    assigned_to_full_name = Field()
-    assigned_to_photo = MethodField()
-    assigned_to_gravatar_id = MethodField()
+    assigned_to = Field(attr="assigned_to_id")
+    assigned_to_extra_info = MethodField()
 
     is_watcher = MethodField()
     total_watchers = Field()
@@ -235,23 +233,11 @@ class HighLightedContentSerializer(serializers.LightSerializer):
             return get_thumbnail_url(logo, settings.THN_LOGO_SMALL)
         return None
 
-    def get_assigned_to_photo(self, obj):
-        type = getattr(obj, "type", "")
-        if type == "project":
-            return None
-
-        UserData = namedtuple("UserData", ["photo", "email"])
-        user_data = UserData(photo=obj.assigned_to_photo, email=obj.assigned_to_email or "")
-        return get_user_photo_url(user_data)
-
-    def get_assigned_to_gravatar_id(self, obj):
-        type = getattr(obj, "type", "")
-        if type == "project":
-            return None
-
-        UserData = namedtuple("UserData", ["photo", "email"])
-        user_data = UserData(photo=obj.assigned_to_photo, email=obj.assigned_to_email or "")
-        return get_user_gravatar_id(user_data)
+    def get_assigned_to_extra_info(self, obj):
+        assigned_to = None
+        if obj.assigned_to_extra_info is not None:
+            assigned_to = User(**obj.assigned_to_extra_info)
+        return UserBasicInfoSerializer(assigned_to).data
 
     def get_tags_colors(self, obj):
         tags = getattr(obj, "tags", [])
