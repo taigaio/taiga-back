@@ -1,0 +1,11 @@
+{% extends "emails/base-body-html.jinja" %}
+
+{% block body %}
+    {% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject, url=resolve_front_url("epic", project.slug, snapshot.ref) %}
+    <h1>New epic created</h1>
+    <p>Hello {{ user }},<br />{{ changer }} has created a new epic on {{ project }}</p>
+    <p>Epic #{{ ref }} {{ subject }}</p>
+    <a class="button" href="{{ url }}" title="See Epic #{{ ref }} {{ subject }}">See epic</a>
+    <p><small>The Taiga Team</small></p>
+    {% endtrans %}
+{% endblock %}

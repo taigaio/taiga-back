@@ -112,6 +112,7 @@ def _filter_by_permissions(obj, user):
     UserStory = apps.get_model("userstories", "UserStory")
     Issue = apps.get_model("issues", "Issue")
     Task = apps.get_model("tasks", "Task")
+    Epic = apps.get_model("epics", "Epic")
     WikiPage = apps.get_model("wiki", "WikiPage")
 
     if isinstance(obj, UserStory):
@@ -120,6 +121,8 @@ def _filter_by_permissions(obj, user):
         return user_has_perm(user, "view_issues", obj, cache="project")
     elif isinstance(obj, Task):
         return user_has_perm(user, "view_tasks", obj, cache="project")
+    elif isinstance(obj, Epic):
+        return user_has_perm(user, "view_epics", obj, cache="project")
     elif isinstance(obj, WikiPage):
         return user_has_perm(user, "view_wiki_pages", obj, cache="project")
     return False

@@ -1,0 +1,11 @@
+{% extends "emails/base-body-html.jinja" %}
+
+{% block body %}
+    {% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject %}
+    <h1>Epic deleted</h1>
+    <p>Hello {{ user }},<br />{{ changer }} has deleted a epic on {{ project }}</p>
+    <p>Epic #{{ ref }} {{ subject }}</p>
+    <p><small>The Taiga Team</small></p>
+    {% endtrans %}
+{% endblock %}
+
