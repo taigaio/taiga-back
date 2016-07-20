@@ -546,10 +546,8 @@ class Command(BaseCommand):
         #              comment=self.sd.paragraph(),
         #              user=epic.owner)
 
-        # TODO: Epic voters
-        #self.create_votes(epic)
-        # TODO: Epic watchers
-        #self.create_watchers(epic)
+        self.create_votes(epic)
+        self.create_watchers(epic)
 
         if self.sd.choice([True, True, False, True, True]):
             filters = {}
