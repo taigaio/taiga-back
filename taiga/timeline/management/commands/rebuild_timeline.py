@@ -119,7 +119,7 @@ def generate_timeline(initial_date, final_date, project_id):
                 _push_to_timelines(project, membership.user, membership, "create", membership.created_at)
 
         for project in projects.iterator():
-            print("Project:", bulk_creator.created)
+            print("Project:", project)
             extra_data = {
                 "values_diff": {},
                 "user": extract_user_info(project.owner),
