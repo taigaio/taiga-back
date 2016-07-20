@@ -50,17 +50,16 @@ def test_create_userstories_in_bulk():
 
 
 def test_update_userstories_order_in_bulk():
-    data = [{"us_id": 1, "order": 1}, {"us_id": 2, "order": 2}]
-
-    project = mock.Mock()
-    project.pk = 1
+    project = f.ProjectFactory.create()
+    us1 = f.UserStoryFactory.create(project=project, backlog_order=1)
+    us2 = f.UserStoryFactory.create(project=project, backlog_order=2)
+    data = [{"us_id": us1.id, "order": 1}, {"us_id": us2.id, "order": 2}]
 
     with mock.patch("taiga.projects.userstories.services.db") as db:
         services.update_userstories_order_in_bulk(data, "backlog_order", project)
-        db.update_in_bulk_with_ids.assert_called_once_with([1, 2],
-                                                           [{"backlog_order": 1},
-                                                            {"backlog_order": 2}],
-                                                           model=models.UserStory)
+        db.update_attr_in_bulk_for_ids.assert_called_once_with({us1.id: 1, us2.id: 2},
+                                                                "backlog_order",
+                                                                models.UserStory)
 
 
 def test_create_userstory_with_watchers(client):
@@ -176,9 +175,9 @@ def test_api_update_orders_in_bulk(client):
     response2 = client.json.post(url2, json.dumps(data))
     response3 = client.json.post(url3, json.dumps(data))
 
-    assert response1.status_code == 204, response1.data
-    assert response2.status_code == 204, response2.data
-    assert response3.status_code == 204, response3.data
+    assert response1.status_code == 200, response1.data
+    assert response2.status_code == 200, response2.data
+    assert response3.status_code == 200, response3.data
 
 
 def test_api_update_milestone_in_bulk(client):

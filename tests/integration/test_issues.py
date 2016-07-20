@@ -56,15 +56,6 @@ Issue #2
         db.save_in_bulk.assert_called_once_with(issues, None, None)
 
 
-def test_update_issues_order_in_bulk():
-    data = [(1, 1), (2, 2)]
-
-    with mock.patch("taiga.projects.issues.services.db") as db:
-        services.update_issues_order_in_bulk(data)
-        db.update_in_bulk_with_ids.assert_called_once_with([1, 2], [{"order": 1}, {"order": 2}],
-                                                           model=models.Issue)
-
-
 def test_create_issue_without_status(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)

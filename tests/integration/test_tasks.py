@@ -148,8 +148,8 @@ def test_api_update_order_in_bulk(client):
     response1 = client.json.post(url1, json.dumps(data))
     response2 = client.json.post(url2, json.dumps(data))
 
-    assert response1.status_code == 204, response1.data
-    assert response2.status_code == 204, response2.data
+    assert response1.status_code == 200, response1.data
+    assert response2.status_code == 200, response2.data
 
 
 def test_get_invalid_csv(client):

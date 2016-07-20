@@ -28,9 +28,9 @@ from django.utils.translation import ugettext as _
 
 from taiga.base.utils import db, text
 from taiga.projects.history.services import take_snapshot
+from taiga.projects.services import apply_order_updates
 from taiga.projects.userstories.apps import connect_userstories_signals
 from taiga.projects.userstories.apps import disconnect_userstories_signals
-
 from taiga.events import events
 from taiga.projects.votes.utils import attach_total_voters_to_queryset
 from taiga.projects.notifications.utils import attach_watchers_to_queryset
@@ -75,24 +75,32 @@ def create_userstories_in_bulk(bulk_data, callback=None, precall=None, **additio
     return userstories
 
 
-def update_userstories_order_in_bulk(bulk_data: list, field: str, project: object):
+def update_userstories_order_in_bulk(bulk_data: list, field: str, project: object,
+                                     status: object=None, milestone: object=None):
     """
-    Update the order of some user stories.
-    `bulk_data` should be a list of tuples with the following format:
+    Updates the order of the userstories specified adding the extra updates needed
+    to keep consistency.
+    `bulk_data` should be a list of dicts with the following format:
+    `field` is the order field used
 
-    [(<user story id>, {<field>: <value>, ...}), ...]
+    [{'us_id': <value>, 'order': <value>}, ...]
     """
-    user_story_ids = []
-    new_order_values = []
-    for us_data in bulk_data:
-        user_story_ids.append(us_data["us_id"])
-        new_order_values.append({field: us_data["order"]})
+    user_stories = project.user_stories.all()
+    if status is not None:
+        user_stories = user_stories.filter(status=status)
+    if milestone is not None:
+        user_stories = user_stories.filter(milestone=milestone)
 
+    us_orders = {us.id: getattr(us, field) for us in user_stories}
+    new_us_orders = {e["us_id"]: e["order"] for e in bulk_data}
+    apply_order_updates(us_orders, new_us_orders)
+
+    user_story_ids = us_orders.keys()
     events.emit_event_for_ids(ids=user_story_ids,
                               content_type="userstories.userstory",
                               projectid=project.pk)
-
-    db.update_in_bulk_with_ids(user_story_ids, new_order_values, model=models.UserStory)
+    db.update_attr_in_bulk_for_ids(us_orders, field, models.UserStory)
+    return us_orders
 
 
 def update_userstories_milestone_in_bulk(bulk_data: list, milestone: object):
@@ -100,14 +108,14 @@ def update_userstories_milestone_in_bulk(bulk_data: list, milestone: object):
     Update the milestone of some user stories.
     `bulk_data` should be a list of user story ids:
     """
-    user_story_ids = [us_data["us_id"] for us_data in bulk_data]
-    new_milestone_values = [{"milestone": milestone.id}] * len(user_story_ids)
+    us_milestones = {e["us_id"]: milestone.id for e in bulk_data}
+    user_story_ids = us_milestones.keys()
 
     events.emit_event_for_ids(ids=user_story_ids,
                               content_type="userstories.userstory",
                               projectid=milestone.project.pk)
 
-    db.update_in_bulk_with_ids(user_story_ids, new_milestone_values, model=models.UserStory)
+    db.update_attr_in_bulk_for_ids(us_milestones, "milestone_id", model=models.UserStory)
 
 
 def snapshot_userstories_in_bulk(bulk_data, user):

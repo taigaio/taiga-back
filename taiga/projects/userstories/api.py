@@ -31,6 +31,7 @@ from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
+from taiga.base.utils import json
 
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.history.services import take_snapshot
@@ -118,6 +119,21 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
             raise exc.PermissionDenied(_("You don't have permissions to set this status "
                                          "to this user story."))
 
+    """
+    Updating some attributes of the userstory can affect the ordering in the backlog, kanban or taskboard
+    These three methods generate a key for the user story and can be used to be compared before and after
+    saving
+    If there is any difference it means an extra ordering update must be done
+    """
+    def _backlog_order_key(self, obj):
+        return "{}-{}".format(obj.project_id, obj.backlog_order)
+
+    def _kanban_order_key(self, obj):
+        return "{}-{}-{}".format(obj.project_id, obj.status_id, obj.kanban_order)
+
+    def _sprint_order_key(self, obj):
+        return "{}-{}-{}".format(obj.project_id, obj.milestone_id, obj.sprint_order)
+
     def pre_save(self, obj):
         # This is very ugly hack, but having
         # restframework is the only way to do it.
@@ -129,10 +145,55 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
 
         if not obj.id:
             obj.owner = self.request.user
+        else:
+            self._old_backlog_order_key = self._backlog_order_key(self.get_object())
+            self._old_kanban_order_key = self._kanban_order_key(self.get_object())
+            self._old_sprint_order_key = self._sprint_order_key(self.get_object())
 
         super().pre_save(obj)
 
+    def _reorder_if_needed(self, obj, old_order_key, order_key, order_attr,
+                           project, status=None, milestone=None):
+        # Executes the extra ordering if there is a difference in the  ordering keys
+        if old_order_key != order_key:
+            extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
+            data = [{"us_id": obj.id, "order": getattr(obj, order_attr)}]
+            for id, order in extra_orders.items():
+                data.append({"us_id": int(id), "order": order})
+
+            return services.update_userstories_order_in_bulk(data,
+                                                             order_attr,
+                                                             project,
+                                                             status=status,
+                                                             milestone=milestone)
+        return {}
+
     def post_save(self, obj, created=False):
+        if not created:
+            # Let's reorder the related stuff after edit the element
+            orders_updated = {}
+            updated = self._reorder_if_needed(obj,
+                                              self._old_backlog_order_key,
+                                              self._backlog_order_key(obj),
+                                              "backlog_order",
+                                              obj.project)
+            orders_updated.update(updated)
+            updated = self._reorder_if_needed(obj,
+                                              self._old_kanban_order_key,
+                                              self._kanban_order_key(obj),
+                                              "kanban_order",
+                                              obj.project,
+                                              status=obj.status)
+            orders_updated.update(updated)
+            updated = self._reorder_if_needed(obj,
+                                              self._old_sprint_order_key,
+                                              self._sprint_order_key(obj),
+                                              "sprint_order",
+                                              obj.project,
+                                              milestone=obj.milestone)
+            orders_updated.update(updated)
+            self.headers["Taiga-Info-Order-Updated"] = json.dumps(orders_updated)
+
         # Code related to the hack of pre_save method.
         # Rather, this is the continuation of it.
         if self._role_points:
@@ -180,6 +241,7 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
     def update(self, request, *args, **kwargs):
         self.object = self.get_object_or_none()
         project_id = request.DATA.get('project', None)
+
         if project_id and self.object and self.object.project.id != project_id:
             try:
                 new_project = Project.objects.get(pk=project_id)
@@ -295,17 +357,26 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
 
         data = validator.data
         project = get_object_or_404(Project, pk=data["project_id"])
+        status = None
+        status_id = data.get("status_id", None)
+        if status_id is not None:
+            status = get_object_or_404(UserStoryStatus, pk=status_id)
+
+        milestone = None
+        milestone_id = data.get("milestone_id", None)
+        if milestone_id is not None:
+            milestone = get_object_or_404(Milestone, pk=milestone_id)
 
         self.check_permissions(request, "bulk_update_order", project)
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 
-        services.update_userstories_order_in_bulk(data["bulk_stories"],
-                                                  project=project,
-                                                  field=order_field)
-        services.snapshot_userstories_in_bulk(data["bulk_stories"], request.user)
-
-        return response.NoContent()
+        ret = services.update_userstories_order_in_bulk(data["bulk_stories"],
+                                                        order_field,
+                                                        project,
+                                                        status=status,
+                                                        milestone=milestone)
+        return response.Ok(ret)
 
     @list_route(methods=["POST"])
     def bulk_update_backlog_order(self, request, **kwargs):
