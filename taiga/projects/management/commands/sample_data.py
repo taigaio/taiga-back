@@ -557,7 +557,11 @@ class Command(BaseCommand):
                 filters = {"project": epic.project}
             n = self.sd.choice(list(range(self.sd.int(*NUM_USS_EPICS))))
 
-            epic.user_stories.add(*UserStory.objects.filter(**filters).order_by("?")[:n])
+            user_stories = UserStory.objects.filter(**filters).order_by("?")[:n]
+            for idx, us in enumerate(list(user_stories)):
+                RelatedUserStory.objects.create(epic=epic,
+                                                user_story=us,
+                                                order=idx+1)
 
         return epic
 
