@@ -45,6 +45,9 @@ class ResolverViewSet(viewsets.ViewSet):
 
         result = {"project": project.pk}
 
+        if data["epic"] and user_has_perm(request.user, "view_epics", project):
+            result["epic"] = get_object_or_404(project.epics.all(),
+                                               ref=data["epic"]).pk
         if data["us"] and user_has_perm(request.user, "view_us", project):
             result["us"] = get_object_or_404(project.user_stories.all(),
                                              ref=data["us"]).pk
@@ -63,6 +66,11 @@ class ResolverViewSet(viewsets.ViewSet):
 
         if data["ref"]:
             ref_found = False  # No need to continue once one ref is found
+            if ref_found is False and user_has_perm(request.user, "view_epics", project):
+                epic = project.epics.filter(ref=data["ref"]).first()
+                if epic:
+                    result["epic"] = epic.pk
+                    ref_found = True
             if user_has_perm(request.user, "view_us", project):
                 us = project.user_stories.filter(ref=data["ref"]).first()
                 if us:

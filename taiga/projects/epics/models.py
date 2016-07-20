@@ -88,7 +88,6 @@ class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
         return "<Epic %s>" % (self.id)
 
 
-
 class RelatedUserStory(models.Model):
     user_story = models.ForeignKey("userstories.UserStory", on_delete=models.CASCADE)
     epic = models.ForeignKey("epics.Epic", on_delete=models.CASCADE)
