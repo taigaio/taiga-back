@@ -105,66 +105,57 @@ def snapshot_epics_in_bulk(bulk_data, user):
 #####################################################
 # CSV
 #####################################################
-#
-#def epics_to_csv(project, queryset):
-#    csv_data = io.StringIO()
-#    fieldnames = ["ref", "subject", "description", "user_story", "sprint", "sprint_estimated_start",
-#                  "sprint_estimated_finish", "owner", "owner_full_name", "assigned_to",
-#                  "assigned_to_full_name", "status", "is_iocaine", "is_closed", "us_order",
-#                  "epicboard_order", "attachments", "external_reference", "tags", "watchers", "voters",
-#                  "created_date", "modified_date", "finished_date"]
-#
-#    custom_attrs = project.epiccustomattributes.all()
-#    for custom_attr in custom_attrs:
-#        fieldnames.append(custom_attr.name)
-#
-#    queryset = queryset.prefetch_related("attachments",
-#                                         "custom_attributes_values")
-#    queryset = queryset.select_related("milestone",
-#                                       "owner",
-#                                       "assigned_to",
-#                                       "status",
-#                                       "project")
-#
-#    queryset = attach_total_voters_to_queryset(queryset)
-#    queryset = attach_watchers_to_queryset(queryset)
-#
-#    writer = csv.DictWriter(csv_data, fieldnames=fieldnames)
-#    writer.writeheader()
-#    for epic in queryset:
-#        epic_data = {
-#            "ref": epic.ref,
-#            "subject": epic.subject,
-#            "description": epic.description,
-#            "user_story": epic.user_story.ref if epic.user_story else None,
-#            "sprint": epic.milestone.name if epic.milestone else None,
-#            "sprint_estimated_start": epic.milestone.estimated_start if epic.milestone else None,
-#            "sprint_estimated_finish": epic.milestone.estimated_finish if epic.milestone else None,
-#            "owner": epic.owner.username if epic.owner else None,
-#            "owner_full_name": epic.owner.get_full_name() if epic.owner else None,
-#            "assigned_to": epic.assigned_to.username if epic.assigned_to else None,
-#            "assigned_to_full_name": epic.assigned_to.get_full_name() if epic.assigned_to else None,
-#            "status": epic.status.name if epic.status else None,
-#            "is_iocaine": epic.is_iocaine,
-#            "is_closed": epic.status is not None and epic.status.is_closed,
-#            "us_order": epic.us_order,
-#            "epicboard_order": epic.epicboard_order,
-#            "attachments": epic.attachments.count(),
-#            "external_reference": epic.external_reference,
-#            "tags": ",".join(epic.tags or []),
-#            "watchers": epic.watchers,
-#            "voters": epic.total_voters,
-#            "created_date": epic.created_date,
-#            "modified_date": epic.modified_date,
-#            "finished_date": epic.finished_date,
-#        }
-#        for custom_attr in custom_attrs:
-#            value = epic.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
-#            epic_data[custom_attr.name] = value
-#
-#        writer.writerow(epic_data)
-#
-#    return csv_data
+
+def epics_to_csv(project, queryset):
+    csv_data = io.StringIO()
+    fieldnames = ["ref", "subject", "description", "owner", "owner_full_name", "assigned_to",
+                  "assigned_to_full_name", "status", "epics_order", "client_requirement",
+                  "team_requirement", "attachments", "tags", "watchers", "voters",
+                  "created_date", "modified_date"]
+
+    custom_attrs = project.epiccustomattributes.all()
+    for custom_attr in custom_attrs:
+        fieldnames.append(custom_attr.name)
+
+    queryset = queryset.prefetch_related("attachments",
+                                         "custom_attributes_values")
+    queryset = queryset.select_related("owner",
+                                       "assigned_to",
+                                       "status",
+                                       "project")
+
+    queryset = attach_total_voters_to_queryset(queryset)
+    queryset = attach_watchers_to_queryset(queryset)
+
+    writer = csv.DictWriter(csv_data, fieldnames=fieldnames)
+    writer.writeheader()
+    for epic in queryset:
+        epic_data = {
+            "ref": epic.ref,
+            "subject": epic.subject,
+            "description": epic.description,
+            "owner": epic.owner.username if epic.owner else None,
+            "owner_full_name": epic.owner.get_full_name() if epic.owner else None,
+            "assigned_to": epic.assigned_to.username if epic.assigned_to else None,
+            "assigned_to_full_name": epic.assigned_to.get_full_name() if epic.assigned_to else None,
+            "status": epic.status.name if epic.status else None,
+            "epics_order": epic.epics_order,
+            "client_requirement": epic.client_requirement,
+            "team_requirement": epic.team_requirement,
+            "attachments": epic.attachments.count(),
+            "tags": ",".join(epic.tags or []),
+            "watchers": epic.watchers,
+            "voters": epic.total_voters,
+            "created_date": epic.created_date,
+            "modified_date": epic.modified_date,
+        }
+        for custom_attr in custom_attrs:
+            value = epic.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
+            epic_data[custom_attr.name] = value
+
+        writer.writerow(epic_data)
+
+    return csv_data
 
 
 #####################################################

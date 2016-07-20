@@ -243,6 +243,20 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         services.remove_user_from_project(request.user, project)
         return response.Ok()
 
+    def _regenerate_csv_uuid(self, project, field):
+        uuid_value = uuid.uuid4().hex
+        setattr(project, field, uuid_value)
+        project.save()
+        return uuid_value
+
+    @detail_route(methods=["POST"])
+    def regenerate_epics_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "regenerate_epics_csv_uuid", project)
+        self.pre_conditions_on_save(project)
+        data = {"uuid": self._regenerate_csv_uuid(project, "epics_csv_uuid")}
+        return response.Ok(data)
+
     @detail_route(methods=["POST"])
     def regenerate_userstories_csv_uuid(self, request, pk=None):
         project = self.get_object()
@@ -252,19 +266,19 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         return response.Ok(data)
 
     @detail_route(methods=["POST"])
-    def regenerate_issues_csv_uuid(self, request, pk=None):
-        project = self.get_object()
-        self.check_permissions(request, "regenerate_issues_csv_uuid", project)
-        self.pre_conditions_on_save(project)
-        data = {"uuid": self._regenerate_csv_uuid(project, "issues_csv_uuid")}
-        return response.Ok(data)
-
-    @detail_route(methods=["POST"])
     def regenerate_tasks_csv_uuid(self, request, pk=None):
         project = self.get_object()
         self.check_permissions(request, "regenerate_tasks_csv_uuid", project)
         self.pre_conditions_on_save(project)
         data = {"uuid": self._regenerate_csv_uuid(project, "tasks_csv_uuid")}
+        return response.Ok(data)
+
+    @detail_route(methods=["POST"])
+    def regenerate_issues_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "regenerate_issues_csv_uuid", project)
+        self.pre_conditions_on_save(project)
+        data = {"uuid": self._regenerate_csv_uuid(project, "issues_csv_uuid")}
         return response.Ok(data)
 
     @list_route(methods=["GET"])
@@ -292,12 +306,6 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         project = self.get_object()
         self.check_permissions(request, "stats", project)
         return response.Ok(services.get_stats_for_project(project))
-
-    def _regenerate_csv_uuid(self, project, field):
-        uuid_value = uuid.uuid4().hex
-        setattr(project, field, uuid_value)
-        project.save()
-        return uuid_value
 
     @detail_route(methods=["GET"])
     def member_stats(self, request, pk=None):

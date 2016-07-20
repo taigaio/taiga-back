@@ -59,29 +59,29 @@ def data():
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                        owner=m.project_owner)
-                                        #epics_csv_uuid=uuid.uuid4().hex)
+                                        owner=m.project_owner,
+                                        epics_csv_uuid=uuid.uuid4().hex)
     m.public_project = attach_project_extra_info(Project.objects.all()).get(id=m.public_project.id)
 
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                          owner=m.project_owner)
-                                          #epics_csv_uuid=uuid.uuid4().hex)
+                                          owner=m.project_owner,
+                                          epics_csv_uuid=uuid.uuid4().hex)
     m.private_project1 = attach_project_extra_info(Project.objects.all()).get(id=m.private_project1.id)
 
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
                                           public_permissions=[],
-                                          owner=m.project_owner)
-                                          #epics_csv_uuid=uuid.uuid4().hex)
+                                          owner=m.project_owner,
+                                          epics_csv_uuid=uuid.uuid4().hex)
     m.private_project2 = attach_project_extra_info(Project.objects.all()).get(id=m.private_project2.id)
 
     m.blocked_project = f.ProjectFactory(is_private=True,
                                          anon_permissions=[],
                                          public_permissions=[],
                                          owner=m.project_owner,
-                                         #epics_csv_uuid=uuid.uuid4().hex,
+                                         epics_csv_uuid=uuid.uuid4().hex,
                                          blocked_code=project_choices.BLOCKED_BY_STAFF)
     m.blocked_project = attach_project_extra_info(Project.objects.all()).get(id=m.blocked_project.id)
 
@@ -873,29 +873,29 @@ def test_epic_watchers_retrieve(client, data):
     assert results == [401, 403, 403, 200, 200]
 
 
-#def test_epics_csv(client, data):
-#    url = reverse('epics-csv')
-#    csv_public_uuid = data.public_project.epics_csv_uuid
-#    csv_private1_uuid = data.private_project1.epics_csv_uuid
-#    csv_private2_uuid = data.private_project1.epics_csv_uuid
-#    csv_blocked_uuid = data.blocked_project.epics_csv_uuid
-#
-#    users = [
-#        None,
-#        data.registered_user,
-#        data.project_member_without_perms,
-#        data.project_member_with_perms,
-#        data.project_owner
-#    ]
-#
-#    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_public_uuid), None, users)
-#    assert results == [200, 200, 200, 200, 200]
-#
-#    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private1_uuid), None, users)
-#    assert results == [200, 200, 200, 200, 200]
-#
-#    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private2_uuid), None, users)
-#    assert results == [200, 200, 200, 200, 200]
-#
-#    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_blocked_uuid), None, users)
-#    assert results == [200, 200, 200, 200, 200]
+def test_epics_csv(client, data):
+    url = reverse('epics-csv')
+    csv_public_uuid = data.public_project.epics_csv_uuid
+    csv_private1_uuid = data.private_project1.epics_csv_uuid
+    csv_private2_uuid = data.private_project1.epics_csv_uuid
+    csv_blocked_uuid = data.blocked_project.epics_csv_uuid
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_public_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private1_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_private2_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]
+
+    results = helper_test_http_method(client, 'get', "{}?uuid={}".format(url, csv_blocked_uuid), None, users)
+    assert results == [200, 200, 200, 200, 200]

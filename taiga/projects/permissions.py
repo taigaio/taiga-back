@@ -62,6 +62,7 @@ class ProjectPermission(TaigaResourcePermission):
     stats_perms = HasProjectPerm('view_project')
     member_stats_perms = HasProjectPerm('view_project')
     issues_stats_perms = HasProjectPerm('view_project')
+    regenerate_epics_csv_uuid_perms = IsProjectAdmin()
     regenerate_userstories_csv_uuid_perms = IsProjectAdmin()
     regenerate_issues_csv_uuid_perms = IsProjectAdmin()
     regenerate_tasks_csv_uuid_perms = IsProjectAdmin()

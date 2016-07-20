@@ -373,9 +373,10 @@ class ProjectDetailSerializer(ProjectSerializer):
     # Admin fields
     is_private_extra_info = MethodField()
     max_memberships = MethodField()
-    issues_csv_uuid = Field()
-    tasks_csv_uuid = Field()
+    epics_csv_uuid = Field()
     userstories_csv_uuid = Field()
+    tasks_csv_uuid = Field()
+    issues_csv_uuid = Field()
     transfer_token = Field()
     milestones = MethodField()
 
@@ -404,8 +405,8 @@ class ProjectDetailSerializer(ProjectSerializer):
         ret = super().to_value(instance)
 
         admin_fields = [
-            "is_private_extra_info", "max_memberships", "issues_csv_uuid",
-            "tasks_csv_uuid", "userstories_csv_uuid", "transfer_token"
+            "epics_csv_uuid", "userstories_csv_uuid", "tasks_csv_uuid", "issues_csv_uuid",
+            "is_private_extra_info", "max_memberships", "transfer_token",
         ]
 
         is_admin_user = False

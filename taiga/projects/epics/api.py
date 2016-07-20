@@ -154,18 +154,18 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
 
         return self.retrieve(request, **retrieve_kwargs)
 
-    #@list_route(methods=["GET"])
-    #def csv(self, request):
-    #    uuid = request.QUERY_PARAMS.get("uuid", None)
-    #    if uuid is None:
-    #        return response.NotFound()
+    @list_route(methods=["GET"])
+    def csv(self, request):
+        uuid = request.QUERY_PARAMS.get("uuid", None)
+        if uuid is None:
+            return response.NotFound()
 
-    #    project = get_object_or_404(Project, epics_csv_uuid=uuid)
-    #    queryset = project.epics.all().order_by('ref')
-    #    data = services.epics_to_csv(project, queryset)
-    #    csv_response = HttpResponse(data.getvalue(), content_type='application/csv; charset=utf-8')
-    #    csv_response['Content-Disposition'] = 'attachment; filename="epics.csv"'
-    #    return csv_response
+        project = get_object_or_404(Project, epics_csv_uuid=uuid)
+        queryset = project.epics.all().order_by('ref')
+        data = services.epics_to_csv(project, queryset)
+        csv_response = HttpResponse(data.getvalue(), content_type='application/csv; charset=utf-8')
+        csv_response['Content-Disposition'] = 'attachment; filename="epics.csv"'
+        return csv_response
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):

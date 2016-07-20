@@ -202,6 +202,8 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
     looking_for_people_note = models.TextField(default="", null=False, blank=True,
                                                verbose_name=_("loking for people note"))
 
+    epics_csv_uuid = models.CharField(max_length=32, editable=False, null=True,
+                                      blank=True, default=None, db_index=True)
     userstories_csv_uuid = models.CharField(max_length=32, editable=False,
                                             null=True, blank=True,
                                             default=None, db_index=True)
