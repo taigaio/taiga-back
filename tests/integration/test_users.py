@@ -558,9 +558,8 @@ def test_get_watched_list_valid_info_for_project():
     assert project_watch_info["project_slug"] == None
     assert project_watch_info["project_is_private"] == None
     assert project_watch_info["project_blocked_code"] == None
-    assert project_watch_info["assigned_to_username"] == None
-    assert project_watch_info["assigned_to_full_name"] == None
-    assert project_watch_info["assigned_to_photo"] == None
+    assert project_watch_info["assigned_to"] == None
+    assert project_watch_info["assigned_to_extra_info"] == None
 
 
 def test_get_watched_list_for_project_with_ignored_notify_level():
@@ -613,9 +612,8 @@ def test_get_liked_list_valid_info():
     assert project_like_info["project_slug"] == None
     assert project_like_info["project_is_private"] == None
     assert project_like_info["project_blocked_code"] == None
-    assert project_like_info["assigned_to_username"] == None
-    assert project_like_info["assigned_to_full_name"] == None
-    assert project_like_info["assigned_to_photo"] == None
+    assert project_like_info["assigned_to"] == None
+    assert project_like_info["assigned_to_extra_info"] == None
 
 
 def test_get_watched_list_valid_info_for_not_project_types():
@@ -667,9 +665,11 @@ def test_get_watched_list_valid_info_for_not_project_types():
         assert instance_watch_info["project_slug"] == instance.project.slug
         assert instance_watch_info["project_is_private"] == instance.project.is_private
         assert instance_watch_info["project_blocked_code"] == instance.project.blocked_code
-        assert instance_watch_info["assigned_to_username"] == instance.assigned_to.username
-        assert instance_watch_info["assigned_to_full_name"] == instance.assigned_to.full_name
-        assert instance_watch_info["assigned_to_photo"] != ""
+        assert instance_watch_info["assigned_to"] != None
+        assert instance_watch_info["assigned_to_extra_info"]["username"] == instance.assigned_to.username
+        assert instance_watch_info["assigned_to_extra_info"]["full_name_display"] == instance.assigned_to.get_full_name()
+        assert instance_watch_info["assigned_to_extra_info"]["photo"] == None
+        assert instance_watch_info["assigned_to_extra_info"]["gravatar_id"] != None
 
 
 def test_get_voted_list_valid_info():
@@ -724,9 +724,12 @@ def test_get_voted_list_valid_info():
         assert instance_vote_info["project_slug"] == instance.project.slug
         assert instance_vote_info["project_is_private"] == instance.project.is_private
         assert instance_vote_info["project_blocked_code"] == instance.project.blocked_code
-        assert instance_vote_info["assigned_to_username"] == instance.assigned_to.username
-        assert instance_vote_info["assigned_to_full_name"] == instance.assigned_to.full_name
-        assert instance_vote_info["assigned_to_photo"] != ""
+        assert instance_vote_info["assigned_to"] != None
+        assert instance_vote_info["assigned_to_extra_info"]["username"] == instance.assigned_to.username
+        assert instance_vote_info["assigned_to_extra_info"]["full_name_display"] == instance.assigned_to.get_full_name()
+        assert instance_vote_info["assigned_to_extra_info"]["photo"] == None
+        assert instance_vote_info["assigned_to_extra_info"]["gravatar_id"] != None
+
 
 
 def test_get_watched_list_with_liked_and_voted_objects(client):
