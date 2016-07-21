@@ -19,11 +19,12 @@
 from taiga.timeline.service import register_timeline_implementation
 from . import service
 
+
 @register_timeline_implementation("projects.project", "create")
 @register_timeline_implementation("projects.project", "change")
 @register_timeline_implementation("projects.project", "delete")
 def project_timeline(instance, extra_data={}):
-    result ={
+    result = {
         "project": service.extract_project_info(instance),
     }
     result.update(extra_data)
@@ -33,8 +34,8 @@ def project_timeline(instance, extra_data={}):
 @register_timeline_implementation("milestones.milestone", "create")
 @register_timeline_implementation("milestones.milestone", "change")
 @register_timeline_implementation("milestones.milestone", "delete")
-def project_timeline(instance, extra_data={}):
-    result ={
+def milestone_timeline(instance, extra_data={}):
+    result = {
         "milestone": service.extract_milestone_info(instance),
         "project": service.extract_project_info(instance.project),
     }
@@ -46,7 +47,7 @@ def project_timeline(instance, extra_data={}):
 @register_timeline_implementation("userstories.userstory", "change")
 @register_timeline_implementation("userstories.userstory", "delete")
 def userstory_timeline(instance, extra_data={}):
-    result ={
+    result = {
         "userstory": service.extract_userstory_info(instance),
         "project": service.extract_project_info(instance.project),
     }
@@ -62,7 +63,7 @@ def userstory_timeline(instance, extra_data={}):
 @register_timeline_implementation("issues.issue", "change")
 @register_timeline_implementation("issues.issue", "delete")
 def issue_timeline(instance, extra_data={}):
-    result ={
+    result = {
         "issue": service.extract_issue_info(instance),
         "project": service.extract_project_info(instance.project),
     }
@@ -74,7 +75,7 @@ def issue_timeline(instance, extra_data={}):
 @register_timeline_implementation("tasks.task", "change")
 @register_timeline_implementation("tasks.task", "delete")
 def task_timeline(instance, extra_data={}):
-    result ={
+    result = {
         "task": service.extract_task_info(instance),
         "project": service.extract_project_info(instance.project),
     }
@@ -85,11 +86,12 @@ def task_timeline(instance, extra_data={}):
     result.update(extra_data)
     return result
 
+
 @register_timeline_implementation("wiki.wikipage", "create")
 @register_timeline_implementation("wiki.wikipage", "change")
 @register_timeline_implementation("wiki.wikipage", "delete")
 def wiki_page_timeline(instance, extra_data={}):
-    result ={
+    result = {
         "wikipage": service.extract_wiki_page_info(instance),
         "project": service.extract_project_info(instance.project),
     }
@@ -100,7 +102,7 @@ def wiki_page_timeline(instance, extra_data={}):
 @register_timeline_implementation("projects.membership", "create")
 @register_timeline_implementation("projects.membership", "delete")
 def membership_timeline(instance, extra_data={}):
-    result =  {
+    result = {
         "user": service.extract_user_info(instance.user),
         "project": service.extract_project_info(instance.project),
         "role": service.extract_role_info(instance.role),
@@ -108,9 +110,10 @@ def membership_timeline(instance, extra_data={}):
     result.update(extra_data)
     return result
 
+
 @register_timeline_implementation("users.user", "create")
 def user_timeline(instance, extra_data={}):
-    result =  {
+    result = {
         "user": service.extract_user_info(instance),
     }
     result.update(extra_data)

@@ -112,7 +112,6 @@ class UserStoryListSerializer(
 
 class UserStorySerializer(UserStoryListSerializer):
     comment = MethodField()
-    origin_issue = MethodField()
     blocked_note_html = MethodField()
     description = Field()
     description_html = MethodField()
@@ -120,15 +119,6 @@ class UserStorySerializer(UserStoryListSerializer):
     def get_comment(self, obj):
         # NOTE: This method and field is necessary to historical comments work
         return ""
-
-    def get_origin_issue(self, obj):
-        if obj.generated_from_issue:
-            return {
-                "id": obj.generated_from_issue.id,
-                "ref": obj.generated_from_issue.ref,
-                "subject": obj.generated_from_issue.subject,
-            }
-        return None
 
     def get_blocked_note_html(self, obj):
         return mdrender(obj.project, obj.blocked_note)
