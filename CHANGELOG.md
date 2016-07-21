@@ -24,6 +24,11 @@
     - Gzip export/import support.
     - Export performance improvements.
 - Add filter by email domain registration and invitation by setting.
+- Third party integrations:
+    - Included gogs as builtin integration.
+    - Improve messages generated on webhooks input.
+    - Add mentions support in commit messages.
+    - Cleanup hooks code.
 
 ### Misc
 - [API] Improve performance of some calls over list.
