@@ -26,14 +26,29 @@ from taiga.projects.votes.utils import attach_is_voter_to_queryset
 
 
 def attach_extra_info(queryset, user=None, include_attachments=False):
-
     if include_attachments:
         queryset = attach_basic_attachments(queryset)
         queryset = queryset.extra(select={"include_attachments": "True"})
 
+    queryset = attach_user_stories_counts_to_queryset(queryset)
     queryset = attach_total_voters_to_queryset(queryset)
     queryset = attach_watchers_to_queryset(queryset)
     queryset = attach_total_watchers_to_queryset(queryset)
     queryset = attach_is_voter_to_queryset(queryset, user)
     queryset = attach_is_watcher_to_queryset(queryset, user)
+    return queryset
+
+
+def attach_user_stories_counts_to_queryset(queryset, as_field="user_stories_counts"):
+    model = queryset.model
+    sql = """SELECT json_build_object(
+                        'opened', COALESCE(SUM(CASE WHEN is_closed IS FALSE THEN 1 ELSE 0 END), 0),
+                        'closed', COALESCE(SUM(CASE WHEN is_closed IS TRUE THEN 1 ELSE 0 END), 0)
+                    )
+               FROM epics_relateduserstory
+         INNER JOIN userstories_userstory ON epics_relateduserstory.user_story_id = userstories_userstory.id
+              WHERE epics_relateduserstory.epic_id = {tbl}.id"""
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
     return queryset

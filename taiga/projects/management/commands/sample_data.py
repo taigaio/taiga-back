@@ -111,7 +111,7 @@ NUM_EMPTY_PROJECTS = getattr(settings, "SAMPLE_DATA_NUM_EMPTY_PROJECTS", 2)
 NUM_BLOCKED_PROJECTS = getattr(settings, "SAMPLE_DATA_NUM_BLOCKED_PROJECTS", 1)
 NUM_MILESTONES = getattr(settings, "SAMPLE_DATA_NUM_MILESTONES", (1, 5))
 NUM_EPICS = getattr(settings, "SAMPLE_DATA_NUM_EPICS", (4, 8))
-NUM_USS_EPICS = getattr(settings, "SAMPLE_DATA_NUM_USS_EPICS", (2, 6))
+NUM_USS_EPICS = getattr(settings, "SAMPLE_DATA_NUM_USS_EPICS", (2, 12))
 NUM_USS = getattr(settings, "SAMPLE_DATA_NUM_USS", (3, 7))
 NUM_TASKS_FINISHED = getattr(settings, "SAMPLE_DATA_NUM_TASKS_FINISHED", (1, 5))
 NUM_TASKS = getattr(settings, "SAMPLE_DATA_NUM_TASKS", (0, 4))
@@ -553,7 +553,7 @@ class Command(BaseCommand):
             if self.sd.choice([True, True, False, True, True]):
                 filters = {"project": epic.project}
             n = self.sd.choice(list(range(self.sd.int(*NUM_USS_EPICS))))
-
+            print (n)
             user_stories = UserStory.objects.filter(**filters).order_by("?")[:n]
             for idx, us in enumerate(list(user_stories)):
                 RelatedUserStory.objects.create(epic=epic,
