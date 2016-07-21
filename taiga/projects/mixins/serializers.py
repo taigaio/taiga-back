@@ -16,11 +16,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils.translation import ugettext as _
+
 from taiga.base.api import serializers
 from taiga.base.fields import Field, MethodField
+from taiga.projects import services
 from taiga.users.serializers import UserBasicInfoSerializer
-
-from django.utils.translation import ugettext as _
 
 
 class CachedUsersSerializerMixin(serializers.LightSerializer):
@@ -77,3 +78,27 @@ class StatusExtraInfoSerializerMixin(serializers.LightSerializer):
             self._serialized_status[obj.status_id] = serialized_status
 
         return serialized_status
+
+
+class ProjectExtraInfoSerializerMixin(serializers.LightSerializer):
+    project = Field(attr="project_id")
+    project_extra_info = MethodField()
+
+    def to_value(self, instance):
+        self._serialized_project = {}
+        return super().to_value(instance)
+
+    def get_project_extra_info(self, obj):
+        if obj.project_id is None:
+            return None
+
+        serialized_project = self._serialized_project.get(obj.project_id, None)
+        if serialized_project is None:
+            serialized_project = {
+                "name": obj.project.name,
+                "slug": obj.project.slug,
+                "logo_small_url": services.get_logo_small_thumbnail_url(obj.project)
+            }
+            self._serialized_project[obj.project_id] = serialized_project
+
+        return serialized_project
