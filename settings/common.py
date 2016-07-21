@@ -313,6 +313,7 @@ INSTALLED_APPS = [
     "taiga.hooks.github",
     "taiga.hooks.gitlab",
     "taiga.hooks.bitbucket",
+    "taiga.hooks.gogs",
     "taiga.webhooks",
 
     "djmail",
@@ -506,6 +507,7 @@ PROJECT_MODULES_CONFIGURATORS = {
     "github": "taiga.hooks.github.services.get_or_generate_config",
     "gitlab": "taiga.hooks.gitlab.services.get_or_generate_config",
     "bitbucket": "taiga.hooks.bitbucket.services.get_or_generate_config",
+    "gogs": "taiga.hooks.gogs.services.get_or_generate_config",
 }
 
 BITBUCKET_VALID_ORIGIN_IPS = ["131.103.20.165", "131.103.20.166", "104.192.143.192/28", "104.192.143.208/28"]

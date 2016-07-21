@@ -208,6 +208,12 @@ from taiga.hooks.bitbucket.api import BitBucketViewSet
 router.register(r"bitbucket-hook", BitBucketViewSet, base_name="bitbucket-hook")
 
 
+# Gogs webhooks
+from taiga.hooks.gogs.api import GogsViewSet
+
+router.register(r"gogs-hook", GogsViewSet, base_name="gogs-hook")
+
+
 # Importer
 from taiga.export_import.api import ProjectImporterViewSet, ProjectExporterViewSet
 
