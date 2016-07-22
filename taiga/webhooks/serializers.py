@@ -307,6 +307,12 @@ class MilestoneSerializer(serializers.LightSerializer):
     def get_permalink(self, obj):
         return resolve_front_url("taskboard", obj.project.slug, obj.slug)
 
+    def to_value(self, instance):
+        if instance is None:
+            return None
+
+        return super().to_value(instance)
+
 
 ########################################################################
 # User Story
