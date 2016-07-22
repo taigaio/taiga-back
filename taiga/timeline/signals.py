@@ -21,6 +21,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+from django.db import connection
 
 from taiga.projects.history import services as history_services
 from taiga.projects.history.choices import HistoryType
@@ -35,7 +36,7 @@ def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_d
 
     ct = ContentType.objects.get_for_model(obj)
     if settings.CELERY_ENABLED:
-        push_to_timelines.delay(project_id, user.id, ct.app_label, ct.model, obj.id, event_type, created_datetime, extra_data=extra_data)
+        connection.on_commit(lambda: push_to_timelines.delay(project_id, user.id, ct.app_label, ct.model, obj.id, event_type, created_datetime, extra_data=extra_data))
     else:
         push_to_timelines(project_id, user.id, ct.app_label, ct.model, obj.id, event_type, created_datetime, extra_data=extra_data)
 
