@@ -61,6 +61,7 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
     backlog_order = Field()
     sprint_order = Field()
     kanban_order = Field()
+    epic_order = Field()
     created_date = Field()
     modified_date = Field()
     finish_date = Field()

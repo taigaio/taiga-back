@@ -80,7 +80,9 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
     sprint_order = models.IntegerField(null=False, blank=False, default=10000,
                                        verbose_name=_("sprint order"))
     kanban_order = models.IntegerField(null=False, blank=False, default=10000,
-                                       verbose_name=_("sprint order"))
+                                       verbose_name=_("kanban order"))
+    epic_order = models.IntegerField(null=False, blank=False, default=10000,
+                                     verbose_name=_("epic order"))
 
     created_date = models.DateTimeField(null=False, blank=False,
                                         verbose_name=_("created date"),
