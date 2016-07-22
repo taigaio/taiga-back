@@ -30,7 +30,6 @@ from taiga.base.utils.db import to_tsquery
 logger = logging.getLogger(__name__)
 
 
-
 #####################################################################
 # Base and Mixins
 #####################################################################
@@ -229,7 +228,7 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
                 project_id = int(request.QUERY_PARAMS["project"])
             except:
                 logger.error("Filtering project diferent value than an integer: {}".format(
-                                                              request.QUERY_PARAMS["project"]))
+                             request.QUERY_PARAMS["project"]))
                 raise exc.BadRequest(_("'project' must be an integer value."))
 
         if project_id:
@@ -256,14 +255,14 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
 
             q = Q(memberships__project_id__in=projects_list) | Q(id=request.user.id)
 
-            #If there is no selected project we want access to users from public projects
+            # If there is no selected project we want access to users from public projects
             if not project:
                 q = q | Q(memberships__project__public_permissions__contains=[self.permission])
 
             qs = qs.filter(q)
 
         else:
-            if project and not "view_project" in project.anon_permissions:
+            if project and "view_project" not in project.anon_permissions:
                 qs = qs.none()
 
             qs = qs.filter(memberships__project__anon_permissions__contains=[self.permission])
@@ -433,13 +432,14 @@ class WatchersFilter(FilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         query_watchers = self._get_watchers_queryparams(request.QUERY_PARAMS)
-        model = queryset.model
         if query_watchers:
             WatchedModel = apps.get_model("notifications", "Watched")
             watched_type = ContentType.objects.get_for_model(queryset.model)
 
             try:
-                watched_ids = WatchedModel.objects.filter(content_type=watched_type, user__id__in=query_watchers).values_list("object_id", flat=True)
+                watched_ids = (WatchedModel.objects.filter(content_type=watched_type,
+                                                           user__id__in=query_watchers)
+                                                   .values_list("object_id", flat=True))
                 queryset = queryset.filter(id__in=watched_ids)
             except ValueError:
                 raise exc.BadRequest(_("Error in filter params types."))
