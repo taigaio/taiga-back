@@ -53,12 +53,9 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
                        filters.StatusesFilter,
                        filters.TagsFilter,
                        filters.WatchersFilter,
-                       filters.QFilter)
-    retrieve_exclude_filters = (filters.OwnersFilter,
-                                filters.AssignedToFilter,
-                                filters.StatusesFilter,
-                                filters.TagsFilter,
-                                filters.WatchersFilter)
+                       filters.QFilter,
+                       filters.CreatedDateFilter,
+                       filters.ModifiedDateFilter)
     filter_fields = ["project",
                      "project__slug",
                      "assigned_to",
