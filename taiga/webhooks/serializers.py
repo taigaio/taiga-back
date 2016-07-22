@@ -126,7 +126,7 @@ class HistoryDiffField(serializers.Field):
         ret = {}
 
         for key, val in value.items():
-            if key in ["attachments", "custom_attributes"]:
+            if key in ["attachments", "custom_attributes", "description_diff"]:
                 ret[key] = val
             elif key == "points":
                 ret[key] = {k: {"from": v[0], "to": v[1]} for k, v in val.items()}
