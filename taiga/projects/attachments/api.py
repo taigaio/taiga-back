@@ -74,7 +74,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
         # NOTE: When destroy an attachment, the content_object change
         #       after and not before
         self.persist_history_snapshot(obj, delete=True)
-        super().pre_delete(obj)
+        super().post_delete(obj)
 
     def get_object_for_snapshot(self, obj):
         return obj.content_object

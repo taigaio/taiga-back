@@ -62,7 +62,7 @@ class HistoryResourceMixin(object):
             obj = self.get_object()
 
         sobj = self.get_object_for_snapshot(obj)
-        if sobj != obj and delete:
+        if sobj != obj:
             delete = False
 
         notifications_services.analize_object_for_watchers(obj, comment, user)
