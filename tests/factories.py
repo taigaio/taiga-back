@@ -249,9 +249,18 @@ class EpicFactory(Factory):
     ref = factory.Sequence(lambda n: n)
     project = factory.SubFactory("tests.factories.ProjectFactory")
     owner = factory.SubFactory("tests.factories.UserFactory")
-    subject = factory.Sequence(lambda n: "User Story {}".format(n))
-    description = factory.Sequence(lambda n: "User Story {} description".format(n))
+    subject = factory.Sequence(lambda n: "Epic {}".format(n))
+    description = factory.Sequence(lambda n: "Epic {} description".format(n))
     status = factory.SubFactory("tests.factories.EpicStatusFactory")
+
+
+class RelatedUserStory(Factory):
+    class Meta:
+        model = "epics.RelatedUserStory"
+        strategy = factory.CREATE_STRATEGY
+
+    epic = factory.SubFactory("tests.factories.EpicFactory")
+    user_story = factory.SubFactory("tests.factories.UserStoryFactory")
 
 
 class MilestoneFactory(Factory):

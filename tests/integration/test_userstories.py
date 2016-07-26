@@ -625,45 +625,55 @@ def test_api_filters_data(client):
     status2 = f.UserStoryStatusFactory.create(project=project)
     status3 = f.UserStoryStatusFactory.create(project=project)
 
+    epic0 = f.EpicFactory.create(project=project)
+    epic1 = f.EpicFactory.create(project=project)
+    epic2 = f.EpicFactory.create(project=project)
+
     tag0 = "test1test2test3"
     tag1 = "test1"
     tag2 = "test2"
     tag3 = "test3"
 
-    # ------------------------------------------------------
-    # | US    |  Owner | Assigned To | Tags                |
-    # |-------#--------#-------------#---------------------|
-    # | 0     |  user2 | None        |      tag1           |
-    # | 1     |  user1 | None        |           tag2      |
-    # | 2     |  user3 | None        |      tag1 tag2      |
-    # | 3     |  user2 | None        |                tag3 |
-    # | 4     |  user1 | user1       |      tag1 tag2 tag3 |
-    # | 5     |  user3 | user1       |                tag3 |
-    # | 6     |  user2 | user1       |      tag1 tag2      |
-    # | 7     |  user1 | user2       |                tag3 |
-    # | 8     |  user3 | user2       |      tag1           |
-    # | 9     |  user2 | user3       | tag0                |
-    # ------------------------------------------------------
+    # ------------------------------------------------------------------------------
+    # | US    | Status  |  Owner | Assigned To | Tags                | Epic        |
+    # |-------#---------#--------#-------------#---------------------#--------------
+    # | 0     | status3 |  user2 | None        |      tag1           | epic0       |
+    # | 1     | status3 |  user1 | None        |           tag2      | None        |
+    # | 2     | status1 |  user3 | None        |      tag1 tag2      | epic1       |
+    # | 3     | status0 |  user2 | None        |                tag3 | None        |
+    # | 4     | status0 |  user1 | user1       |      tag1 tag2 tag3 | epic0       |
+    # | 5     | status2 |  user3 | user1       |                tag3 | None        |
+    # | 6     | status3 |  user2 | user1       |      tag1 tag2      | epic0 epic2 |
+    # | 7     | status0 |  user1 | user2       |                tag3 | None        |
+    # | 8     | status3 |  user3 | user2       |      tag1           | epic2       |
+    # | 9     | status1 |  user2 | user3       | tag0                | none        |
+    # ------------------------------------------------------------------------------
 
-    f.UserStoryFactory.create(project=project, owner=user2, assigned_to=None,
+    us0 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=None,
                               status=status3, tags=[tag1])
-    f.UserStoryFactory.create(project=project, owner=user1, assigned_to=None,
+    f.RelatedUserStory.create(user_story=us0, epic=epic0)
+    us1 = f.UserStoryFactory.create(project=project, owner=user1, assigned_to=None,
                               status=status3, tags=[tag2])
-    f.UserStoryFactory.create(project=project, owner=user3, assigned_to=None,
+    us2 = f.UserStoryFactory.create(project=project, owner=user3, assigned_to=None,
                               status=status1, tags=[tag1, tag2])
-    f.UserStoryFactory.create(project=project, owner=user2, assigned_to=None,
+    f.RelatedUserStory.create(user_story=us2, epic=epic1)
+    us3 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=None,
                               status=status0, tags=[tag3])
-    f.UserStoryFactory.create(project=project, owner=user1, assigned_to=user1,
+    us4 = f.UserStoryFactory.create(project=project, owner=user1, assigned_to=user1,
                               status=status0, tags=[tag1, tag2, tag3])
-    f.UserStoryFactory.create(project=project, owner=user3, assigned_to=user1,
+    f.RelatedUserStory.create(user_story=us4, epic=epic0)
+    us5 = f.UserStoryFactory.create(project=project, owner=user3, assigned_to=user1,
                               status=status2, tags=[tag3])
-    f.UserStoryFactory.create(project=project, owner=user2, assigned_to=user1,
+    us6 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=user1,
                               status=status3, tags=[tag1, tag2])
-    f.UserStoryFactory.create(project=project, owner=user1, assigned_to=user2,
+    f.RelatedUserStory.create(user_story=us6, epic=epic0)
+    f.RelatedUserStory.create(user_story=us6, epic=epic2)
+    us7 = f.UserStoryFactory.create(project=project, owner=user1, assigned_to=user2,
                               status=status0, tags=[tag3])
-    f.UserStoryFactory.create(project=project, owner=user3, assigned_to=user2,
+    us8 = f.UserStoryFactory.create(project=project, owner=user3, assigned_to=user2,
                               status=status3, tags=[tag1])
-    f.UserStoryFactory.create(project=project, owner=user2, assigned_to=user3,
+    f.RelatedUserStory.create(user_story=us8, epic=epic2)
+    us9 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=user3,
                               status=status1, tags=[tag0])
 
     url = reverse("userstories-filters-data") + "?project={}".format(project.id)
@@ -693,6 +703,11 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['name'] == tag2, response.data["tags"]))["count"] == 4
     assert next(filter(lambda i: i['name'] == tag3, response.data["tags"]))["count"] == 4
 
+    assert next(filter(lambda i: i['id'] is None, response.data["epics"]))["count"] == 5
+    assert next(filter(lambda i: i['id'] == epic0.id, response.data["epics"]))["count"] == 3
+    assert next(filter(lambda i: i['id'] == epic1.id, response.data["epics"]))["count"] == 1
+    assert next(filter(lambda i: i['id'] == epic2.id, response.data["epics"]))["count"] == 2
+
     # Filter ((status0 or status3)
     response = client.get(url + "&status={},{}".format(status3.id, status0.id))
     assert response.status_code == 200
@@ -716,6 +731,11 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['name'] == tag2, response.data["tags"]))["count"] == 3
     assert next(filter(lambda i: i['name'] == tag3, response.data["tags"]))["count"] == 3
 
+    assert next(filter(lambda i: i['id'] is None, response.data["epics"]))["count"] == 3
+    assert next(filter(lambda i: i['id'] == epic0.id, response.data["epics"]))["count"] == 3
+    assert next(filter(lambda i: i['id'] == epic1.id, response.data["epics"]))["count"] == 0
+    assert next(filter(lambda i: i['id'] == epic2.id, response.data["epics"]))["count"] == 2
+
     # Filter ((tag1 and tag2) and (user1 or user2))
     response = client.get(url + "&tags={},{}&owner={},{}".format(tag1, tag2, user1.id, user2.id))
     assert response.status_code == 200
@@ -738,6 +758,11 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['name'] == tag1, response.data["tags"]))["count"] == 2
     assert next(filter(lambda i: i['name'] == tag2, response.data["tags"]))["count"] == 2
     assert next(filter(lambda i: i['name'] == tag3, response.data["tags"]))["count"] == 1
+
+    assert next(filter(lambda i: i['id'] is None, response.data["epics"]))["count"] == 0
+    assert next(filter(lambda i: i['id'] == epic0.id, response.data["epics"]))["count"] == 2
+    assert next(filter(lambda i: i['id'] == epic1.id, response.data["epics"]))["count"] == 0
+    assert next(filter(lambda i: i['id'] == epic2.id, response.data["epics"]))["count"] == 1
 
 
 def test_get_invalid_csv(client):

@@ -244,7 +244,7 @@ def userstories_to_csv(project, queryset):
             "tasks": ",".join([str(task.ref) for task in us.tasks.all()]),
             "tags": ",".join(us.tags or []),
             "watchers": us.watchers,
-            "voters": us.total_voters,
+            "voters": us.total_voters
         }
 
         us_role_points_by_role_id = {us_rp.role.id: us_rp.points.value for us_rp in us.role_points.all()}
@@ -456,6 +456,74 @@ def _get_userstories_tags(project, queryset):
     return sorted(result, key=itemgetter("name"))
 
 
+def _get_userstories_epics(project, queryset):
+    compiler = connection.ops.compiler(queryset.query.compiler)(queryset.query, connection, None)
+    queryset_where_tuple = queryset.query.where.as_sql(compiler, connection)
+    where = queryset_where_tuple[0]
+    where_params = queryset_where_tuple[1]
+
+    extra_sql = """
+   WITH counters AS (
+           SELECT "epics_relateduserstory"."epic_id" AS "epic_id",
+                  count("epics_relateduserstory"."id") AS "counter"
+             FROM "epics_relateduserstory"
+       INNER JOIN "userstories_userstory"
+               ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
+            WHERE {where}
+         GROUP BY "epics_relateduserstory"."epic_id"
+   )
+               SELECT "epics_epic"."id" AS "id",
+                      "epics_epic"."ref" AS "ref",
+                      "epics_epic"."subject" AS "subject",
+                      "epics_epic"."epics_order" AS "order",
+                      COALESCE("counters"."counter", 0) AS "counter"
+                 FROM "epics_epic"
+      LEFT OUTER JOIN "counters"
+                   ON ("counters"."epic_id" = "epics_epic"."id")
+                WHERE "epics_epic"."project_id" = %s
+
+         -- User stories with no epics (return results only if there are userstories)
+         UNION
+                   SELECT NULL AS "id",
+                          NULL AS "ref",
+                          NULL AS "subject",
+                          0 AS "order",
+                          count(COALESCE("epics_relateduserstory"."epic_id", -1)) AS "counter"
+                     FROM "userstories_userstory"
+          LEFT OUTER JOIN "epics_relateduserstory"
+                       ON ("epics_relateduserstory"."user_story_id" = "userstories_userstory"."id")
+                    WHERE {where} AND "epics_relateduserstory"."epic_id" IS NULL
+                 GROUP BY "epics_relateduserstory"."epic_id"
+        """.format(where=where)
+
+    with closing(connection.cursor()) as cursor:
+        cursor.execute(extra_sql, where_params + [project.id] + where_params)
+        rows = cursor.fetchall()
+
+    result = []
+    for id, ref, subject, order, count in rows:
+        result.append({
+            "id": id,
+            "ref": ref,
+            "subject": subject,
+            "order": order,
+            "count": count,
+        })
+
+    result = sorted(result, key=itemgetter("order"))
+
+    # Add row when there is no user stories with no epics
+    if result[0]["id"] is not None:
+        result.insert(0, {
+            "id": None,
+            "ref": None,
+            "subject": None,
+            "order": 0,
+            "count": 0,
+        })
+    return result
+
+
 def get_userstories_filters_data(project, querysets):
     """
     Given a project and an userstories queryset, return a simple data structure
@@ -466,6 +534,7 @@ def get_userstories_filters_data(project, querysets):
         ("assigned_to", _get_userstories_assigned_to(project, querysets["assigned_to"])),
         ("owners", _get_userstories_owners(project, querysets["owners"])),
         ("tags", _get_userstories_tags(project, querysets["tags"])),
+        ("epics", _get_userstories_epics(project, querysets["epics"])),
     ])
 
     return data
