@@ -77,8 +77,12 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
     total_points = MethodField()
     comment = MethodField()
     origin_issue = OriginIssueSerializer(attr="generated_from_issue")
-
+    epics = MethodField()
     tasks = MethodField()
+
+    def get_epics(self, obj):
+        assert hasattr(obj, "epics_attr"), "instance must have a epics_attr attribute"
+        return obj.epics_attr
 
     def get_milestone_slug(self, obj):
         return obj.milestone.slug if obj.milestone else None

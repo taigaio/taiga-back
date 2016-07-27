@@ -71,7 +71,7 @@ def attach_tasks(queryset, as_field="tasks_attr"):
     """Attach tasks as json column to each object of the queryset.
 
     :param queryset: A Django user stories queryset object.
-    :param as_field: Attach the role points as an attribute with this name.
+    :param as_field: Attach tasks as an attribute with this name.
 
     :return: Queryset object with the additional `as_field` field.
     """
@@ -99,9 +99,38 @@ def attach_tasks(queryset, as_field="tasks_attr"):
     return queryset
 
 
+def attach_epics(queryset, as_field="epics_attr"):
+    """Attach epics as json column to each object of the queryset.
+
+    :param queryset: A Django user stories queryset object.
+    :param as_field: Attach the epics as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+
+    model = queryset.model
+    sql = """SELECT json_agg(row_to_json(t))
+               FROM (SELECT "epics_epic"."id" AS "id",
+                            "epics_epic"."ref" AS "ref",
+                            "epics_epic"."subject" AS "subject",
+                            "epics_epic"."color" AS "color",
+                            json_build_object('id', "projects_project"."id",
+                                              'name', "projects_project"."name",
+                                              'slug', "projects_project"."slug") AS "project"
+                       FROM "epics_relateduserstory"
+                 INNER JOIN "epics_epic" ON "epics_epic"."id" = "epics_relateduserstory"."epic_id"
+                 INNER JOIN "projects_project" ON "projects_project"."id" = "epics_epic"."project_id"
+                      WHERE "epics_relateduserstory"."user_story_id" = {tbl}.id) t"""
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
+
+
 def attach_extra_info(queryset, user=None, include_attachments=False, include_tasks=False):
     queryset = attach_total_points(queryset)
     queryset = attach_role_points(queryset)
+    queryset = attach_epics(queryset)
 
     if include_attachments:
         queryset = attach_basic_attachments(queryset)
