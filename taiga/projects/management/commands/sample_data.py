@@ -553,7 +553,6 @@ class Command(BaseCommand):
             if self.sd.choice([True, True, False, True, True]):
                 filters = {"project": epic.project}
             n = self.sd.choice(list(range(self.sd.int(*NUM_USS_EPICS))))
-            print (n)
             user_stories = UserStory.objects.filter(**filters).order_by("?")[:n]
             for idx, us in enumerate(list(user_stories)):
                 RelatedUserStory.objects.create(epic=epic,

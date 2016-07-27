@@ -22,6 +22,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
+from taiga.base.utils.colors import generate_random_predefined_hex_color
 from taiga.projects.tagging.models import TaggedMixin
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.notifications.mixins import WatchedModelMixin
@@ -51,6 +52,9 @@ class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     subject = models.TextField(null=False, blank=False,
                                verbose_name=_("subject"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
+    color = models.CharField(max_length=32, null=False, blank=True,
+                             default=generate_random_predefined_hex_color,
+                             verbose_name=_("color"))
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                     default=None, related_name="epics_assigned_to_me",
                                     verbose_name=_("assigned to"))
