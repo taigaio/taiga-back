@@ -312,7 +312,7 @@ def take_snapshot(obj: object, *, comment: str="", user=None, delete: bool=False
     """
 
     key = make_key_from_model_object(obj)
-    with advisory_lock(key):
+    with advisory_lock("history-"+key):
         typename = get_typename_for_model_class(obj.__class__)
 
         new_fobj = freeze_model_instance(obj)
