@@ -12,11 +12,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='userstory',
-            name='epic_order',
-            field=models.IntegerField(default=10000, verbose_name='epic order'),
-        ),
         migrations.AlterField(
             model_name='userstory',
             name='kanban_order',

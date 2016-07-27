@@ -80,7 +80,6 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
     order_by_fields = ["backlog_order",
                        "sprint_order",
                        "kanban_order",
-                       "epic_order",
                        "total_voters"]
 
     def get_serializer_class(self, *args, **kwargs):
