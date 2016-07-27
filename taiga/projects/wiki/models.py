@@ -21,6 +21,8 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django_pglocks import advisory_lock
+
 from taiga.base.utils.slug import slugify_uniquely_for_queryset
 from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
@@ -84,7 +86,9 @@ class WikiLink(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.href:
-            wl_qs = self.project.wiki_links.all()
-            self.href = slugify_uniquely_for_queryset(self.title, wl_qs, slugfield="href")
-
-        super().save(*args, **kwargs)
+            with advisory_lock("wiki-page-creation-{}".format(self.project_id)):
+                wl_qs = self.project.wiki_links.all()
+                self.href = slugify_uniquely_for_queryset(self.title, wl_qs, slugfield="href")
+                super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)

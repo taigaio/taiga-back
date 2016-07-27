@@ -26,6 +26,8 @@ from django.http import Http404
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 
+from django_pglocks import advisory_lock
+
 from taiga.base import filters
 from taiga.base import exceptions as exc
 from taiga.base import response
@@ -214,20 +216,22 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         if not template_description:
             raise response.BadRequest(_("Not valid template description"))
 
-        template_slug = slugify_uniquely(template_name, models.ProjectTemplate)
+        with advisory_lock("create-project-template") as acquired_key_lock:
+            template_slug = slugify_uniquely(template_name, models.ProjectTemplate)
 
-        project = self.get_object()
+            project = self.get_object()
 
-        self.check_permissions(request, 'create_template', project)
+            self.check_permissions(request, 'create_template', project)
 
-        template = models.ProjectTemplate(
-            name=template_name,
-            slug=template_slug,
-            description=template_description,
-        )
+            template = models.ProjectTemplate(
+                name=template_name,
+                slug=template_slug,
+                description=template_description,
+            )
 
-        template.load_data_from_project(project)
-        template.save()
+            template.load_data_from_project(project)
+
+            template.save()
         return response.Created(serializers.ProjectTemplateSerializer(template).data)
 
     @detail_route(methods=['POST'])

@@ -35,6 +35,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from django_pgjson.fields import JsonField
+from django_pglocks import advisory_lock
 
 from taiga.auth.tokens import get_token_for_user
 from taiga.base.utils.slug import slugify_uniquely
@@ -265,20 +266,21 @@ class User(AbstractBaseUser, PermissionsMixin):
         super().save(*args, **kwargs)
 
     def cancel(self):
-        self.username = slugify_uniquely("deleted-user", User, slugfield="username")
-        self.email = "{}@taiga.io".format(self.username)
-        self.is_active = False
-        self.full_name = "Deleted user"
-        self.color = ""
-        self.bio = ""
-        self.lang = ""
-        self.theme = ""
-        self.timezone = ""
-        self.colorize_tags = True
-        self.token = None
-        self.set_unusable_password()
-        self.photo = None
-        self.save()
+        with advisory_lock("delete-user"):
+            self.username = slugify_uniquely("deleted-user", User, slugfield="username")
+            self.email = "{}@taiga.io".format(self.username)
+            self.is_active = False
+            self.full_name = "Deleted user"
+            self.color = ""
+            self.bio = ""
+            self.lang = ""
+            self.theme = ""
+            self.timezone = ""
+            self.colorize_tags = True
+            self.token = None
+            self.set_unusable_password()
+            self.photo = None
+            self.save()
         self.auth_data.all().delete()
 
         # Blocking all owned projects

@@ -16,27 +16,23 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import itertools
-import uuid
-
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import signals, Q
+from django.db.models import Q
 from django.apps import apps
-from django.conf import settings
-from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.utils.functional import cached_property
+
+from django_pglocks import advisory_lock
 
 from django_pgjson.fields import JsonField
 
 from taiga.projects.tagging.models import TaggedMixin
 from taiga.projects.tagging.models import TagsColorsdMixin
-from taiga.base.utils.dicts import dict_sum
 from taiga.base.utils.files import get_file_path
 from taiga.base.utils.sequence import arithmetic_progression
 from taiga.base.utils.slug import slugify_uniquely
@@ -270,16 +266,6 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
         if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
 
-        if not self.slug:
-            base_name = "{}-{}".format(self.owner.username, self.name)
-            base_slug = slugify_uniquely(base_name, self.__class__)
-            slug = base_slug
-            for i in arithmetic_progression():
-                if not type(self).objects.filter(slug=slug).exists() or i > 100:
-                    break
-                slug = "{}-{}".format(base_slug, i)
-            self.slug = slug
-
         if not self.is_backlog_activated:
             self.total_milestones = None
             self.total_story_points = None
@@ -290,13 +276,25 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
         if not self.is_looking_for_people:
             self.looking_for_people_note = ""
 
-        if self.anon_permissions == None:
+        if self.anon_permissions is None:
             self.anon_permissions = []
 
-        if self.public_permissions == None:
+        if self.public_permissions is None:
             self.public_permissions = []
 
-        super().save(*args, **kwargs)
+        if not self.slug:
+            with advisory_lock("project-creation"):
+                base_name = "{}-{}".format(self.owner.username, self.name)
+                base_slug = slugify_uniquely(base_name, self.__class__)
+                slug = base_slug
+                for i in arithmetic_progression():
+                    if not type(self).objects.filter(slug=slug).exists() or i > 100:
+                        break
+                    slug = "{}-{}".format(base_slug, i)
+                self.slug = slug
+                super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
 
     def refresh_totals(self, save=True):
         now = timezone.now()
