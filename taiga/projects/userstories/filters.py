@@ -20,5 +20,10 @@
 from taiga.base import filters
 
 
+class EpicFilter(filters.BaseRelatedFieldsFilter):
+    filter_name = "epics"
+    param_name = "epic"
+
+
 class EpicsFilter(filters.BaseRelatedFieldsFilter):
-    filter_name = 'epics'
+    filter_name = "epics"

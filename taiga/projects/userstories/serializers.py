@@ -78,7 +78,19 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
     comment = MethodField()
     origin_issue = OriginIssueSerializer(attr="generated_from_issue")
     epics = MethodField()
+    epic_order = MethodField()
     tasks = MethodField()
+
+    def get_epic_order(self, obj):
+        include_epic_order = getattr(obj, "include_epic_order", False)
+
+        if include_epic_order:
+            assert hasattr(obj, "epic_order"), "instance must have a epic_order attribute"
+
+        if not include_epic_order or obj.epic_order is None:
+            return None
+
+        return obj.epic_order
 
     def get_epics(self, obj):
         assert hasattr(obj, "epics_attr"), "instance must have a epics_attr attribute"

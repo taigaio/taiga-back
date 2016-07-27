@@ -337,9 +337,15 @@ class IsProjectAdminFromWebhookLogFilterBackend(FilterBackend, BaseIsProjectAdmi
 #####################################################################
 
 class BaseRelatedFieldsFilter(FilterBackend):
-    def __init__(self, filter_name=None):
+    filter_name = None
+    param_name = None
+
+    def __init__(self, filter_name=None, param_name=None):
         if filter_name:
             self.filter_name = filter_name
+
+        if param_name:
+            self.param_name = param_name
 
     def _prepare_filter_data(self, query_param_value):
         def _transform_value(value):
@@ -355,7 +361,8 @@ class BaseRelatedFieldsFilter(FilterBackend):
         return list(values)
 
     def _get_queryparams(self, params):
-        raw_value = params.get(self.filter_name, None)
+        param_name = self.param_name or self.filter_name
+        raw_value = params.get(param_name, None)
 
         if raw_value:
             value = self._prepare_filter_data(raw_value)
