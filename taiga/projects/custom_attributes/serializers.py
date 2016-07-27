@@ -26,6 +26,7 @@ from taiga.base.api import serializers
 #######################################################
 
 class BaseCustomAttributeSerializer(serializers.LightSerializer):
+    id = Field()
     name = Field()
     description = Field()
     type = Field()
