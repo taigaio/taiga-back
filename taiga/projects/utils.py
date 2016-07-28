@@ -50,6 +50,31 @@ def attach_members(queryset, as_field="members_attr"):
     return queryset
 
 
+def attach_milestones(queryset, as_field="milestones_attr"):
+    """Attach a json milestons representation to each object of the queryset.
+
+    :param queryset: A Django projects queryset object.
+    :param as_field: Attach the milestones as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    sql = """SELECT json_agg(row_to_json(t))
+                FROM(
+                    SELECT
+                        milestones_milestone.id,
+                        milestones_milestone.slug,
+                        milestones_milestone.name,
+                        milestones_milestone.closed
+                    FROM milestones_milestone
+                    WHERE milestones_milestone.project_id = {tbl}.id
+                    ORDER BY estimated_start) t"""
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
+
+
 def attach_closed_milestones(queryset, as_field="closed_milestones_attr"):
     """Attach a closed milestones counter to each object of the queryset.
 
@@ -432,5 +457,6 @@ def attach_extra_info(queryset, user=None):
     queryset = attach_my_role_permissions(queryset, user)
     queryset = attach_private_projects_same_owner(queryset, user)
     queryset = attach_public_projects_same_owner(queryset, user)
+    queryset = attach_milestones(queryset)
 
     return queryset
