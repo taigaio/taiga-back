@@ -72,13 +72,5 @@ class BitBucketViewSet(BaseWebhookApiViewSet):
 
         return project_secret == secret_key
 
-    def _get_project(self, request):
-        project_id = request.GET.get("project", None)
-        try:
-            project = Project.objects.get(id=project_id)
-            return project
-        except Project.DoesNotExist:
-            return None
-
     def _get_event_name(self, request):
         return request.META.get('HTTP_X_EVENT_KEY', None)

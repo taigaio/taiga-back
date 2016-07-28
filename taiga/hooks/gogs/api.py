@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
 # Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
 # Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
@@ -16,27 +15,30 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import uuid
+from taiga.hooks.api import BaseWebhookApiViewSet
 
-from django.core.urlresolvers import reverse
-from django.conf import settings
-
-from taiga.base.utils.urls import get_absolute_url
+from . import event_hooks
 
 
-# Set this in settings.PROJECT_MODULES_CONFIGURATORS["gitlab"]
-def get_or_generate_config(project):
-    config = project.modules_config.config
-    if config and "gitlab" in config:
-        g_config = project.modules_config.config["gitlab"]
-    else:
-        g_config = {
-            "secret": uuid.uuid4().hex,
-            "valid_origin_ips": settings.GITLAB_VALID_ORIGIN_IPS,
-        }
+class GogsViewSet(BaseWebhookApiViewSet):
+    event_hook_classes = {
+        "push": event_hooks.PushEventHook
+    }
 
-    url = reverse("gitlab-hook-list")
-    url = get_absolute_url(url)
-    url = "{}?project={}&key={}".format(url, project.id, g_config["secret"])
-    g_config["webhooks_url"] = url
-    return g_config
+    def _validate_signature(self, project, request):
+        payload = self._get_payload(request)
+
+        if not hasattr(project, "modules_config"):
+            return False
+
+        if project.modules_config.config is None:
+            return False
+
+        secret = project.modules_config.config.get("gogs", {}).get("secret", None)
+        if secret is None:
+            return False
+
+        return payload.get('secret', None) == secret
+
+    def _get_event_name(self, request):
+        return "push"

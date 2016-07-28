@@ -25,8 +25,8 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 
 from taiga.base.utils import json
-from taiga.hooks.github import event_hooks
-from taiga.hooks.github.api import GitHubViewSet
+from taiga.hooks.gogs import event_hooks
+from taiga.hooks.gogs.api import GogsViewSet
 from taiga.hooks.exceptions import ActionSyntaxException
 from taiga.projects import choices as project_choices
 from taiga.projects.issues.models import Issue
@@ -44,11 +44,12 @@ pytestmark = pytest.mark.django_db
 
 def test_bad_signature(client):
     project = f.ProjectFactory()
-    url = reverse("github-hook-list")
+    url = reverse("gogs-hook-list")
     url = "%s?project=%s" % (url, project.id)
-    data = {}
+    data = {
+        "secret": "badbadbad"
+    }
     response = client.post(url, json.dumps(data),
-                           HTTP_X_HUB_SIGNATURE="sha1=badbadbad",
                            content_type="application/json")
     response_content = response.data
     assert response.status_code == 400
@@ -58,16 +59,15 @@ def test_bad_signature(client):
 def test_ok_signature(client):
     project = f.ProjectFactory()
     f.ProjectModulesConfigFactory(project=project, config={
-        "github": {
+        "gogs": {
             "secret": "tpnIwJDz4e"
         }
     })
 
-    url = reverse("github-hook-list")
+    url = reverse("gogs-hook-list")
     url = "%s?project=%s" % (url, project.id)
-    data = {"test:": "data"}
+    data = {"test:": "data", "secret": "tpnIwJDz4e"}
     response = client.post(url, json.dumps(data),
-                           HTTP_X_HUB_SIGNATURE="sha1=3c8e83fdaa266f81c036ea0b71e98eb5e054581a",
                            content_type="application/json")
 
     assert response.status_code == 204
@@ -76,16 +76,15 @@ def test_ok_signature(client):
 def test_blocked_project(client):
     project = f.ProjectFactory(blocked_code=project_choices.BLOCKED_BY_STAFF)
     f.ProjectModulesConfigFactory(project=project, config={
-        "github": {
+        "gogs": {
             "secret": "tpnIwJDz4e"
         }
     })
 
-    url = reverse("github-hook-list")
+    url = reverse("gogs-hook-list")
     url = "%s?project=%s" % (url, project.id)
-    data = {"test:": "data"}
+    data = {"test:": "data", "secret": "tpnIwJDz4e"}
     response = client.post(url, json.dumps(data),
-                           HTTP_X_HUB_SIGNATURE="sha1=3c8e83fdaa266f81c036ea0b71e98eb5e054581a",
                            content_type="application/json")
 
     assert response.status_code == 451
@@ -93,13 +92,23 @@ def test_blocked_project(client):
 
 def test_push_event_detected(client):
     project = f.ProjectFactory()
-    url = reverse("github-hook-list")
+    url = reverse("gogs-hook-list")
     url = "%s?project=%s" % (url, project.id)
-    data = {"commits": [
-        {"message": "test message"},
-    ]}
+    data = {
+        "commits": [
+            {
+                "message": "test message",
+                "author": {
+                    "username": "test",
+                },
+            }
+        ],
+        "repository": {
+            "url": "http://test-url/test/project"
+        }
+    }
 
-    GitHubViewSet._validate_signature = mock.Mock(return_value=True)
+    GogsViewSet._validate_signature = mock.Mock(return_value=True)
 
     with mock.patch.object(event_hooks.PushEventHook, "process_event") as process_event_mock:
         response = client.post(url, json.dumps(data),
@@ -117,12 +126,22 @@ def test_push_event_issue_processing(client):
     f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.IssueStatusFactory(project=creation_status.project)
     issue = f.IssueFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
-    payload = {"commits": [
-        {"message": """test message
-            test   TG-%s    #%s   ok
-            bye!
-        """ % (issue.ref, new_status.slug)},
-    ]}
+    payload = {
+        "commits": [
+            {
+                "message": """test message
+                    test   TG-%s    #%s   ok
+                    bye!
+                """ % (issue.ref, new_status.slug),
+                "author": {
+                    "username": "test",
+                },
+            }
+        ],
+        "repository": {
+            "url": "http://test-url/test/project"
+        }
+    }
     mail.outbox = []
     ev_hook = event_hooks.PushEventHook(issue.project, payload)
     ev_hook.process_event()
@@ -137,12 +156,22 @@ def test_push_event_task_processing(client):
     f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.TaskStatusFactory(project=creation_status.project)
     task = f.TaskFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
-    payload = {"commits": [
-        {"message": """test message
-            test   TG-%s    #%s   ok
-            bye!
-        """ % (task.ref, new_status.slug)},
-    ]}
+    payload = {
+        "commits": [
+            {
+                "message": """test message
+                    test   TG-%s    #%s   ok
+                    bye!
+                """ % (task.ref, new_status.slug),
+                "author": {
+                    "username": "test",
+                },
+            }
+        ],
+        "repository": {
+            "url": "http://test-url/test/project"
+        }
+    }
     mail.outbox = []
     ev_hook = event_hooks.PushEventHook(task.project, payload)
     ev_hook.process_event()
@@ -157,12 +186,22 @@ def test_push_event_user_story_processing(client):
     f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.UserStoryStatusFactory(project=creation_status.project)
     user_story = f.UserStoryFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
-    payload = {"commits": [
-        {"message": """test message
-            test   TG-%s    #%s   ok
-            bye!
-        """ % (user_story.ref, new_status.slug)},
-    ]}
+    payload = {
+        "commits": [
+            {
+                "message": """test message
+                    test   TG-%s    #%s   ok
+                    bye!
+                """ % (user_story.ref, new_status.slug),
+                "author": {
+                    "username": "test",
+                },
+            }
+        ],
+        "repository": {
+            "url": "http://test-url/test/project"
+        }
+    }
 
     mail.outbox = []
     ev_hook = event_hooks.PushEventHook(user_story.project, payload)
@@ -178,12 +217,22 @@ def test_push_event_issue_mention(client):
     f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     issue = f.IssueFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     take_snapshot(issue, user=creation_status.project.owner)
-    payload = {"commits": [
-        {"message": """test message
-            test   TG-%s   ok
-            bye!
-        """ % (issue.ref)},
-    ]}
+    payload = {
+        "commits": [
+            {
+                "message": """test message
+                    test   TG-%s   ok
+                    bye!
+                """ % (issue.ref),
+                "author": {
+                    "username": "test",
+                },
+            }
+        ],
+        "repository": {
+            "url": "http://test-url/test/project"
+        }
+    }
     mail.outbox = []
     ev_hook = event_hooks.PushEventHook(issue.project, payload)
     ev_hook.process_event()
@@ -199,12 +248,22 @@ def test_push_event_task_mention(client):
     f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     task = f.TaskFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     take_snapshot(task, user=creation_status.project.owner)
-    payload = {"commits": [
-        {"message": """test message
-            test   TG-%s   ok
-            bye!
-        """ % (task.ref)},
-    ]}
+    payload = {
+        "commits": [
+            {
+                "message": """test message
+                    test   TG-%s   ok
+                    bye!
+                """ % (task.ref),
+                "author": {
+                    "username": "test",
+                },
+            }
+        ],
+        "repository": {
+            "url": "http://test-url/test/project"
+        }
+    }
     mail.outbox = []
     ev_hook = event_hooks.PushEventHook(task.project, payload)
     ev_hook.process_event()
@@ -220,12 +279,22 @@ def test_push_event_user_story_mention(client):
     f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     user_story = f.UserStoryFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     take_snapshot(user_story, user=creation_status.project.owner)
-    payload = {"commits": [
-        {"message": """test message
-            test   TG-%s   ok
-            bye!
-        """ % (user_story.ref)},
-    ]}
+    payload = {
+        "commits": [
+            {
+                "message": """test message
+                    test   TG-%s   ok
+                    bye!
+                """ % (user_story.ref),
+                "author": {
+                    "username": "test",
+                },
+            }
+        ],
+        "repository": {
+            "url": "http://test-url/test/project"
+        }
+    }
 
     mail.outbox = []
     ev_hook = event_hooks.PushEventHook(user_story.project, payload)
@@ -243,13 +312,23 @@ def test_push_event_multiple_actions(client):
     new_status = f.IssueStatusFactory(project=creation_status.project)
     issue1 = f.IssueFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
     issue2 = f.IssueFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
-    payload = {"commits": [
-        {"message": """test message
-            test   TG-%s    #%s   ok
-            test   TG-%s    #%s   ok
-            bye!
-        """ % (issue1.ref, new_status.slug, issue2.ref, new_status.slug)},
-    ]}
+    payload = {
+        "commits": [
+            {
+                "message": """test message
+                    test   TG-%s    #%s   ok
+                    test   TG-%s    #%s   ok
+                    bye!
+                """ % (issue1.ref, new_status.slug, issue2.ref, new_status.slug),
+                "author": {
+                    "username": "test",
+                },
+            }
+        ],
+        "repository": {
+            "url": "http://test-url/test/project"
+        }
+    }
     mail.outbox = []
     ev_hook1 = event_hooks.PushEventHook(issue1.project, payload)
     ev_hook1.process_event()
@@ -266,12 +345,22 @@ def test_push_event_processing_case_insensitive(client):
     f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
     new_status = f.TaskStatusFactory(project=creation_status.project)
     task = f.TaskFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
-    payload = {"commits": [
-        {"message": """test message
-            test   tg-%s    #%s   ok
-            bye!
-        """ % (task.ref, new_status.slug.upper())},
-    ]}
+    payload = {
+        "commits": [
+            {
+                "message": """test message
+                    test   tg-%s    #%s   ok
+                    bye!
+                """ % (task.ref, new_status.slug.upper()),
+                "author": {
+                    "username": "test",
+                },
+            }
+        ],
+        "repository": {
+            "url": "http://test-url/test/project"
+        }
+    }
     mail.outbox = []
     ev_hook = event_hooks.PushEventHook(task.project, payload)
     ev_hook.process_event()
@@ -282,12 +371,22 @@ def test_push_event_processing_case_insensitive(client):
 
 def test_push_event_task_bad_processing_non_existing_ref(client):
     issue_status = f.IssueStatusFactory()
-    payload = {"commits": [
-        {"message": """test message
-            test   TG-6666666    #%s   ok
-            bye!
-        """ % (issue_status.slug)},
-    ]}
+    payload = {
+        "commits": [
+            {
+                "message": """test message
+                    test   TG-6666666    #%s   ok
+                    bye!
+                """ % (issue_status.slug),
+                "author": {
+                    "username": "test",
+                },
+            }
+        ],
+        "repository": {
+            "url": "http://test-url/test/project"
+        }
+    }
     mail.outbox = []
 
     ev_hook = event_hooks.PushEventHook(issue_status.project, payload)
@@ -300,12 +399,22 @@ def test_push_event_task_bad_processing_non_existing_ref(client):
 
 def test_push_event_us_bad_processing_non_existing_status(client):
     user_story = f.UserStoryFactory.create()
-    payload = {"commits": [
-        {"message": """test message
-            test   TG-%s    #non-existing-slug   ok
-            bye!
-        """ % (user_story.ref)},
-    ]}
+    payload = {
+        "commits": [
+            {
+                "message": """test message
+                    test   TG-%s    #non-existing-slug   ok
+                    bye!
+                """ % (user_story.ref),
+                "author": {
+                    "username": "test",
+                },
+            }
+        ],
+        "repository": {
+            "url": "http://test-url/test/project"
+        }
+    }
 
     mail.outbox = []
 
@@ -319,12 +428,22 @@ def test_push_event_us_bad_processing_non_existing_status(client):
 
 def test_push_event_bad_processing_non_existing_status(client):
     issue = f.IssueFactory.create()
-    payload = {"commits": [
-        {"message": """test message
-            test   TG-%s    #non-existing-slug   ok
-            bye!
-        """ % (issue.ref)},
-    ]}
+    payload = {
+        "commits": [
+            {
+                "message": """test message
+                    test   TG-%s    #non-existing-slug   ok
+                    bye!
+                """ % (issue.ref),
+                "author": {
+                    "username": "test",
+                },
+            }
+        ],
+        "repository": {
+            "url": "http://test-url/test/project"
+        }
+    }
 
     mail.outbox = []
 
@@ -333,208 +452,6 @@ def test_push_event_bad_processing_non_existing_status(client):
         ev_hook.process_event()
 
     assert str(excinfo.value) == "The status doesn't exist"
-    assert len(mail.outbox) == 0
-
-
-def test_issues_event_opened_issue(client):
-    issue = f.IssueFactory.create()
-    issue.project.default_issue_status = issue.status
-    issue.project.default_issue_type = issue.type
-    issue.project.default_severity = issue.severity
-    issue.project.default_priority = issue.priority
-    issue.project.save()
-    Membership.objects.create(user=issue.owner, project=issue.project, role=f.RoleFactory.create(project=issue.project), is_admin=True)
-    notify_policy = NotifyPolicy.objects.get(user=issue.owner, project=issue.project)
-    notify_policy.notify_level = NotifyLevel.all
-    notify_policy.save()
-
-    payload = {
-        "action": "opened",
-        "issue": {
-            "title": "test-title",
-            "body": "test-body",
-            "html_url": "http://github.com/test/project/issues/11",
-        },
-        "assignee": {},
-        "label": {},
-        "repository": {
-            "html_url": "test",
-        },
-    }
-
-    mail.outbox = []
-
-    ev_hook = event_hooks.IssuesEventHook(issue.project, payload)
-    ev_hook.process_event()
-
-    assert Issue.objects.count() == 2
-    assert len(mail.outbox) == 1
-
-
-def test_issues_event_other_than_opened_issue(client):
-    issue = f.IssueFactory.create()
-    issue.project.default_issue_status = issue.status
-    issue.project.default_issue_type = issue.type
-    issue.project.default_severity = issue.severity
-    issue.project.default_priority = issue.priority
-    issue.project.save()
-
-    payload = {
-        "action": "closed",
-        "issue": {
-            "title": "test-title",
-            "body": "test-body",
-            "html_url": "http://github.com/test/project/issues/11",
-        },
-        "assignee": {},
-        "label": {},
-    }
-
-    mail.outbox = []
-
-    ev_hook = event_hooks.IssuesEventHook(issue.project, payload)
-    ev_hook.process_event()
-
-    assert Issue.objects.count() == 1
-    assert len(mail.outbox) == 0
-
-
-def test_issues_event_bad_issue(client):
-    issue = f.IssueFactory.create()
-    issue.project.default_issue_status = issue.status
-    issue.project.default_issue_type = issue.type
-    issue.project.default_severity = issue.severity
-    issue.project.default_priority = issue.priority
-    issue.project.save()
-
-    payload = {
-        "action": "opened",
-        "issue": {},
-        "assignee": {},
-        "label": {},
-    }
-    mail.outbox = []
-
-    ev_hook = event_hooks.IssuesEventHook(issue.project, payload)
-
-    with pytest.raises(ActionSyntaxException) as excinfo:
-        ev_hook.process_event()
-
-    assert str(excinfo.value) == "Invalid issue information"
-
-    assert Issue.objects.count() == 1
-    assert len(mail.outbox) == 0
-
-
-def test_issue_comment_event_on_existing_issue_task_and_us(client):
-    project = f.ProjectFactory()
-    role = f.RoleFactory(project=project, permissions=["view_tasks", "view_issues", "view_us"])
-    f.MembershipFactory(project=project, role=role, user=project.owner)
-    user = f.UserFactory()
-
-    issue = f.IssueFactory.create(external_reference=["github", "http://github.com/test/project/issues/11"], owner=project.owner, project=project)
-    take_snapshot(issue, user=user)
-    task = f.TaskFactory.create(external_reference=["github", "http://github.com/test/project/issues/11"], owner=project.owner, project=project)
-    take_snapshot(task, user=user)
-    us = f.UserStoryFactory.create(external_reference=["github", "http://github.com/test/project/issues/11"], owner=project.owner, project=project)
-    take_snapshot(us, user=user)
-
-    payload = {
-        "action": "created",
-        "issue": {
-            "html_url": "http://github.com/test/project/issues/11",
-        },
-        "comment": {
-            "body": "Test body",
-        },
-        "repository": {
-            "html_url": "test",
-        },
-    }
-
-    mail.outbox = []
-
-    assert get_history_queryset_by_model_instance(issue).count() == 0
-    assert get_history_queryset_by_model_instance(task).count() == 0
-    assert get_history_queryset_by_model_instance(us).count() == 0
-
-    ev_hook = event_hooks.IssueCommentEventHook(issue.project, payload)
-    ev_hook.process_event()
-
-    issue_history = get_history_queryset_by_model_instance(issue)
-    assert issue_history.count() == 1
-    assert "Test body" in issue_history[0].comment
-
-    task_history = get_history_queryset_by_model_instance(task)
-    assert task_history.count() == 1
-    assert "Test body" in issue_history[0].comment
-
-    us_history = get_history_queryset_by_model_instance(us)
-    assert us_history.count() == 1
-    assert "Test body" in issue_history[0].comment
-
-    assert len(mail.outbox) == 3
-
-
-def test_issue_comment_event_on_not_existing_issue_task_and_us(client):
-    issue = f.IssueFactory.create(external_reference=["github", "10"])
-    take_snapshot(issue, user=issue.owner)
-    task = f.TaskFactory.create(project=issue.project, external_reference=["github", "10"])
-    take_snapshot(task, user=task.owner)
-    us = f.UserStoryFactory.create(project=issue.project, external_reference=["github", "10"])
-    take_snapshot(us, user=us.owner)
-
-    payload = {
-        "action": "created",
-        "issue": {
-            "html_url": "http://github.com/test/project/issues/11",
-        },
-        "comment": {
-            "body": "Test body",
-        },
-        "repository": {
-            "html_url": "test",
-        },
-    }
-
-    mail.outbox = []
-
-    assert get_history_queryset_by_model_instance(issue).count() == 0
-    assert get_history_queryset_by_model_instance(task).count() == 0
-    assert get_history_queryset_by_model_instance(us).count() == 0
-
-    ev_hook = event_hooks.IssueCommentEventHook(issue.project, payload)
-    ev_hook.process_event()
-
-    assert get_history_queryset_by_model_instance(issue).count() == 0
-    assert get_history_queryset_by_model_instance(task).count() == 0
-    assert get_history_queryset_by_model_instance(us).count() == 0
-
-    assert len(mail.outbox) == 0
-
-
-def test_issues_event_bad_comment(client):
-    issue = f.IssueFactory.create(external_reference=["github", "10"])
-    take_snapshot(issue, user=issue.owner)
-
-    payload = {
-        "action": "created",
-        "issue": {},
-        "comment": {},
-        "repository": {
-            "html_url": "test",
-        },
-    }
-    ev_hook = event_hooks.IssueCommentEventHook(issue.project, payload)
-
-    mail.outbox = []
-
-    with pytest.raises(ActionSyntaxException) as excinfo:
-        ev_hook.process_event()
-
-    assert str(excinfo.value) == "Invalid issue comment information"
-
-    assert Issue.objects.count() == 1
     assert len(mail.outbox) == 0
 
 
@@ -548,9 +465,9 @@ def test_api_get_project_modules(client):
     response = client.get(url)
     assert response.status_code == 200
     content = response.data
-    assert "github" in content
-    assert content["github"]["secret"] != ""
-    assert content["github"]["webhooks_url"] != ""
+    assert "gogs" in content
+    assert content["gogs"]["secret"] != ""
+    assert content["gogs"]["webhooks_url"] != ""
 
 
 def test_api_patch_project_modules(client):
@@ -561,7 +478,7 @@ def test_api_patch_project_modules(client):
 
     client.login(project.owner)
     data = {
-        "github": {
+        "gogs": {
             "secret": "test_secret",
             "url": "test_url",
         }
@@ -570,16 +487,16 @@ def test_api_patch_project_modules(client):
     assert response.status_code == 204
 
     config = services.get_modules_config(project).config
-    assert "github" in config
-    assert config["github"]["secret"] == "test_secret"
-    assert config["github"]["webhooks_url"] != "test_url"
+    assert "gogs" in config
+    assert config["gogs"]["secret"] == "test_secret"
+    assert config["gogs"]["webhooks_url"] != "test_url"
 
 
-def test_replace_github_references():
-    ev_hook = event_hooks.BaseGitHubEventHook
-    assert ev_hook.replace_github_references(None, "project-url", "#2") == "[GitHub#2](project-url/issues/2)"
-    assert ev_hook.replace_github_references(None, "project-url", "#2 ") == "[GitHub#2](project-url/issues/2) "
-    assert ev_hook.replace_github_references(None, "project-url", " #2 ") == " [GitHub#2](project-url/issues/2) "
-    assert ev_hook.replace_github_references(None, "project-url", " #2") == " [GitHub#2](project-url/issues/2)"
-    assert ev_hook.replace_github_references(None, "project-url", "#test") == "#test"
-    assert ev_hook.replace_github_references(None, "project-url", None) == ""
+def test_replace_gogs_references():
+    ev_hook = event_hooks.BaseGogsEventHook
+    assert ev_hook.replace_gogs_references(None, "project-url", "#2") == "[Gogs#2](project-url/issues/2)"
+    assert ev_hook.replace_gogs_references(None, "project-url", "#2 ") == "[Gogs#2](project-url/issues/2) "
+    assert ev_hook.replace_gogs_references(None, "project-url", " #2 ") == " [Gogs#2](project-url/issues/2) "
+    assert ev_hook.replace_gogs_references(None, "project-url", " #2") == " [Gogs#2](project-url/issues/2)"
+    assert ev_hook.replace_gogs_references(None, "project-url", "#test") == "#test"
+    assert ev_hook.replace_gogs_references(None, "project-url", None) == ""
