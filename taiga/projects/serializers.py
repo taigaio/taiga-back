@@ -356,6 +356,14 @@ class ProjectDetailSerializer(ProjectSerializer):
     tasks_csv_uuid = Field()
     userstories_csv_uuid = Field()
     transfer_token = Field()
+    milestones = MethodField()
+
+    def get_milestones(self, obj):
+        assert hasattr(obj, "milestones_attr"), "instance must have a milestones_attr attribute"
+        if obj.milestones_attr is None:
+            return []
+
+        return obj.milestones_attr
 
     def to_value(self, instance):
         # Name attributes must be translated
