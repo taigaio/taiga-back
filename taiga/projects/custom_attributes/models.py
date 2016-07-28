@@ -106,6 +106,7 @@ class EpicCustomAttributesValues(AbstractCustomAttributesValues):
     class Meta(AbstractCustomAttributesValues.Meta):
         verbose_name = "epic custom attributes values"
         verbose_name_plural = "epic custom attributes values"
+        index_together = [("epic",)]
 
     @property
     def project(self):
