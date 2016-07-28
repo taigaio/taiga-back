@@ -16,9 +16,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.apps import apps
 from django.db import models
-from django.db.models import Prefetch, Count
+from django.db.models import Count
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
@@ -28,7 +27,7 @@ from django.utils.functional import cached_property
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
 from taiga.projects.notifications.mixins import WatchedModelMixin
-from taiga.projects.userstories.models import UserStory
+from django_pglocks import advisory_lock
 
 import itertools
 import datetime
@@ -84,9 +83,11 @@ class Milestone(WatchedModelMixin, models.Model):
         if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
         if not self.slug:
-            self.slug = slugify_uniquely(self.name, self.__class__)
-
-        super().save(*args, **kwargs)
+            with advisory_lock("milestone-creation-{}".format(self.project_id)):
+                self.slug = slugify_uniquely(self.name, self.__class__)
+                super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
 
     @cached_property
     def cached_user_stories(self):
