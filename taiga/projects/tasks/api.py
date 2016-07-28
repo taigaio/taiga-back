@@ -25,12 +25,15 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
-
+from taiga.base.utils import json
 from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.milestones.models import Milestone
 from taiga.projects.models import Project, TaskStatus
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.tagging.api import TaggedResourceMixin
+from taiga.projects.userstories.models import UserStory
+
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
 from . import models
@@ -104,16 +107,74 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
         if obj.milestone and obj.user_story and obj.milestone != obj.user_story.milestone:
             raise exc.WrongArguments(_("You don't have permissions to set this sprint to this task."))
 
+    """
+    Updating some attributes of the userstory can affect the ordering in the backlog, kanban or taskboard
+    These two methods generate a key for the task and can be used to be compared before and after
+    saving
+    If there is any difference it means an extra ordering update must be done
+    """
+    def _us_order_key(self, obj):
+        return "{}-{}-{}".format(obj.project_id, obj.user_story_id, obj.us_order)
+
+    def _taskboard_order_key(self, obj):
+        return "{}-{}-{}-{}".format(obj.project_id, obj.user_story_id, obj.status_id, obj.taskboard_order)
+
     def pre_save(self, obj):
         if obj.user_story:
             obj.milestone = obj.user_story.milestone
         if not obj.id:
             obj.owner = self.request.user
+        else:
+            self._old_us_order_key = self._us_order_key(self.get_object())
+            self._old_taskboard_order_key = self._taskboard_order_key(self.get_object())
+
         super().pre_save(obj)
+
+    def _reorder_if_needed(self, obj, old_order_key, order_key, order_attr,
+                           project, user_story=None, status=None, milestone=None):
+        # Executes the extra ordering if there is a difference in the  ordering keys
+        if old_order_key != order_key:
+            extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
+            data = [{"task_id": obj.id, "order": getattr(obj, order_attr)}]
+            for id, order in extra_orders.items():
+                data.append({"task_id": int(id), "order": order})
+
+            return services.update_tasks_order_in_bulk(data,
+                                                       order_attr,
+                                                       project,
+                                                       user_story=user_story,
+                                                       status=status,
+                                                       milestone=milestone)
+        return {}
+
+    def post_save(self, obj, created=False):
+        if not created:
+            # Let's reorder the related stuff after edit the element
+            orders_updated = {}
+            updated = self._reorder_if_needed(obj,
+                                              self._old_us_order_key,
+                                              self._us_order_key(obj),
+                                              "us_order",
+                                              obj.project,
+                                              user_story=obj.user_story)
+            orders_updated.update(updated)
+            updated = self._reorder_if_needed(obj,
+                                              self._old_taskboard_order_key,
+                                              self._taskboard_order_key(obj),
+                                              "taskboard_order",
+                                              obj.project,
+                                              user_story=obj.user_story,
+                                              status=obj.status,
+                                              milestone=obj.milestone)
+            orders_updated.update(updated)
+            self.headers["Taiga-Info-Order-Updated"] = json.dumps(orders_updated)
+
+        super().post_save(obj, created)
 
     def update(self, request, *args, **kwargs):
         self.object = self.get_object_or_none()
         project_id = request.DATA.get('project', None)
+
         if project_id and self.object and self.object.project.id != project_id:
             try:
                 new_project = Project.objects.get(pk=project_id)
@@ -223,12 +284,28 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 
-        services.update_tasks_order_in_bulk(data["bulk_tasks"],
-                                            project=project,
-                                            field=order_field)
-        services.snapshot_tasks_in_bulk(data["bulk_tasks"], request.user)
+        user_story = None
+        user_story_id = data.get("user_story_id", None)
+        if user_story_id is not None:
+            user_story = get_object_or_404(UserStory, pk=user_story_id)
 
-        return response.NoContent()
+        status = None
+        status_id = data.get("status_id", None)
+        if status_id is not None:
+            status = get_object_or_404(TaskStatus, pk=status_id)
+
+        milestone = None
+        milestone_id = data.get("milestone_id", None)
+        if milestone_id is not None:
+            milestone = get_object_or_404(Milestone, pk=milestone_id)
+
+        ret = services.update_tasks_order_in_bulk(data["bulk_tasks"],
+                                                  order_field,
+                                                  project,
+                                                  user_story=user_story,
+                                                  status=status,
+                                                  milestone=milestone)
+        return response.Ok(ret)
 
     @list_route(methods=["POST"])
     def bulk_update_taskboard_order(self, request, **kwargs):

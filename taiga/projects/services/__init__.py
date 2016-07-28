@@ -27,6 +27,7 @@ from .bulk_update_order import bulk_update_issue_status_order
 from .bulk_update_order import bulk_update_task_status_order
 from .bulk_update_order import bulk_update_points_order
 from .bulk_update_order import bulk_update_userstory_status_order
+from .bulk_update_order import apply_order_updates
 
 from .filters import get_all_tags
 

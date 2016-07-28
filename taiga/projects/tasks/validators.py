@@ -66,4 +66,7 @@ class _TaskOrderBulkValidator(TaskExistsValidator, validators.Validator):
 
 class UpdateTasksOrderBulkValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
+    milestone_id = serializers.IntegerField(required=False)
+    status_id = serializers.IntegerField(required=False)
+    us_id = serializers.IntegerField(required=False)
     bulk_tasks = _TaskOrderBulkValidator(many=True)

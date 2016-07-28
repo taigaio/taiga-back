@@ -72,21 +72,6 @@ def create_issues_in_bulk(bulk_data, callback=None, precall=None, **additional_f
     return issues
 
 
-def update_issues_order_in_bulk(bulk_data):
-    """Update the order of some issues.
-
-    `bulk_data` should be a list of tuples with the following format:
-
-    [(<issue id>, <new issue order value>), ...]
-    """
-    issue_ids = []
-    new_order_values = []
-    for issue_id, new_order_value in bulk_data:
-        issue_ids.append(issue_id)
-        new_order_values.append({"order": new_order_value})
-    db.update_in_bulk_with_ids(issue_ids, new_order_values, model=models.Issue)
-
-
 #####################################################
 # CSV
 #####################################################

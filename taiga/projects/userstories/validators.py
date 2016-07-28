@@ -64,7 +64,7 @@ class UserStoryValidator(WatchersValidator, EditableWatchedResourceSerializer, v
     class Meta:
         model = models.UserStory
         depth = 0
-        read_only_fields = ('created_date', 'modified_date', 'owner')
+        read_only_fields = ('id', 'ref', 'created_date', 'modified_date', 'owner')
 
 
 class UserStoriesBulkValidator(ProjectExistsValidator, UserStoryStatusExistsValidator,
@@ -84,6 +84,8 @@ class _UserStoryOrderBulkValidator(UserStoryExistsValidator, validators.Validato
 class UpdateUserStoriesOrderBulkValidator(ProjectExistsValidator, UserStoryStatusExistsValidator,
                                           validators.Validator):
     project_id = serializers.IntegerField()
+    status_id = serializers.IntegerField(required=False)
+    milestone_id = serializers.IntegerField(required=False)
     bulk_stories = _UserStoryOrderBulkValidator(many=True)
 
 

@@ -27,6 +27,7 @@ from django.utils.translation import ugettext as _
 
 from taiga.base.utils import db, text
 from taiga.projects.history.services import take_snapshot
+from taiga.projects.services import apply_order_updates
 from taiga.projects.tasks.apps import connect_tasks_signals
 from taiga.projects.tasks.apps import disconnect_tasks_signals
 from taiga.events import events
@@ -73,24 +74,33 @@ def create_tasks_in_bulk(bulk_data, callback=None, precall=None, **additional_fi
     return tasks
 
 
-def update_tasks_order_in_bulk(bulk_data: list, field: str, project: object):
+def update_tasks_order_in_bulk(bulk_data: list, field: str, project: object,
+                               user_story: object=None, status: object=None, milestone: object=None):
     """
-    Update the order of some tasks.
-    `bulk_data` should be a list of tuples with the following format:
+    Updates the order of the tasks specified adding the extra updates needed
+    to keep consistency.
 
-    [(<task id>, {<field>: <value>, ...}), ...]
+    [{'task_id': <value>, 'order': <value>}, ...]
     """
-    task_ids = []
-    new_order_values = []
-    for task_data in bulk_data:
-        task_ids.append(task_data["task_id"])
-        new_order_values.append({field: task_data["order"]})
+    tasks = project.tasks.all()
+    if user_story is not None:
+        tasks = tasks.filter(user_story=user_story)
+    if status is not None:
+        tasks = tasks.filter(status=status)
+    if milestone is not None:
+        tasks = tasks.filter(milestone=milestone)
 
+    task_orders = {task.id: getattr(task, field) for task in tasks}
+    new_task_orders = {e["task_id"]: e["order"] for e in bulk_data}
+    apply_order_updates(task_orders, new_task_orders)
+
+    task_ids = task_orders.keys()
     events.emit_event_for_ids(ids=task_ids,
                               content_type="tasks.task",
                               projectid=project.pk)
 
-    db.update_in_bulk_with_ids(task_ids, new_order_values, model=models.Task)
+    db.update_attr_in_bulk_for_ids(task_orders, field, models.Task)
+    return task_orders
 
 
 def snapshot_tasks_in_bulk(bulk_data, user):

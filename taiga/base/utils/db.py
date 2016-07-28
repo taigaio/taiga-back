@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.contenttypes.models import ContentType
+from django.db import connection
 from django.db import transaction
 from django.shortcuts import _get_queryset
 
@@ -25,6 +26,7 @@ from django_pglocks import advisory_lock
 from . import functions
 
 import re
+
 
 def get_object_or_none(klass, *args, **kwargs):
     """
@@ -119,19 +121,28 @@ def update_in_bulk(instances, list_of_new_values, callback=None, precall=None):
         callback(instance)
 
 
-def update_in_bulk_with_ids(ids, list_of_new_values, model):
+def update_attr_in_bulk_for_ids(values, attr, model):
     """Update a table using a list of ids.
 
-    :params ids: List of ids.
-    :params new_values: List of dicts or duples where each dict/duple is the new data corresponding
-    to the instance in the same index position as the dict.
-    :param model: Model of the ids.
+    :params values: Dict of new values where the key is the pk of the element to update.
+    :params attr: attr to update
+    :params model: Model of the ids.
     """
-    tn = get_typename_for_model_class(model)
-    for id, new_values in zip(ids, list_of_new_values):
-        key = "{0}:{1}".format(tn, id)
-        with advisory_lock(key) as acquired_key_lock:
-            model.objects.filter(id=id).update(**new_values)
+    values = [str((id, order)) for id, order in values.items()]
+    sql = """
+        UPDATE {tbl}
+        SET {attr}=update_values.column2
+        FROM (
+          VALUES
+            {values}
+        ) AS update_values
+        WHERE {tbl}.id=update_values.column1;
+    """.format(tbl=model._meta.db_table,
+               values=', '.join(values),
+               attr=attr)
+
+    cursor = connection.cursor()
+    cursor.execute(sql)
 
 
 def to_tsquery(term):

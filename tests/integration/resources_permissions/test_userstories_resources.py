@@ -659,21 +659,21 @@ def test_user_story_action_bulk_update_order(client, data):
         "project_id": data.public_project.pk
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
-    assert results == [401, 403, 403, 204, 204]
+    assert results == [401, 403, 403, 200, 200]
 
     post_data = json.dumps({
         "bulk_stories": [{"us_id": data.private_user_story1.id, "order": 2}],
         "project_id": data.private_project1.pk
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
-    assert results == [401, 403, 403, 204, 204]
+    assert results == [401, 403, 403, 200, 200]
 
     post_data = json.dumps({
         "bulk_stories": [{"us_id": data.private_user_story2.id, "order": 2}],
         "project_id": data.private_project2.pk
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
-    assert results == [401, 403, 403, 204, 204]
+    assert results == [401, 403, 403, 200, 200]
 
     post_data = json.dumps({
         "bulk_stories": [{"us_id": data.blocked_user_story.id, "order": 2}],
