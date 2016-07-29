@@ -87,6 +87,12 @@ class Membership(models.Model):
     user_order = models.IntegerField(default=10000, null=False, blank=False,
                             verbose_name=_("user order"))
 
+    class Meta:
+        verbose_name = "membership"
+        verbose_name_plural = "memberships"
+        unique_together = ("user", "project",)
+        ordering = ["project", "user__full_name", "user__username", "user__email", "email"]
+
     def get_related_people(self):
         related_people = get_user_model().objects.filter(id=self.user.id)
         return related_people
@@ -96,12 +102,6 @@ class Membership(models.Model):
         memberships = Membership.objects.filter(user=self.user, project=self.project)
         if self.user and memberships.count() > 0 and memberships[0].id != self.id:
             raise ValidationError(_('The user is already member of the project'))
-
-    class Meta:
-        verbose_name = "membership"
-        verbose_name_plural = "memberships"
-        unique_together = ("user", "project",)
-        ordering = ["project", "user__full_name", "user__username", "user__email", "email"]
 
 
 class ProjectDefaults(models.Model):
@@ -257,10 +257,6 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
         index_together = [
             ["name", "id"],
         ]
-
-        permissions = (
-            ("view_project", "Can view project"),
-        )
 
     def __str__(self):
         return self.name
