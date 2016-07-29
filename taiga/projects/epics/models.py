@@ -76,6 +76,12 @@ class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
         verbose_name_plural = "epics"
         ordering = ["project", "epics_order", "ref"]
 
+    def __str__(self):
+        return "#{0} {1}".format(self.ref, self.subject)
+
+    def __repr__(self):
+        return "<Epic %s>" % (self.id)
+
     def save(self, *args, **kwargs):
         if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
@@ -84,12 +90,6 @@ class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
             self.status = self.project.default_epic_status
 
         super().save(*args, **kwargs)
-
-    def __str__(self):
-        return "#{0} {1}".format(self.ref, self.subject)
-
-    def __repr__(self):
-        return "<Epic %s>" % (self.id)
 
 
 class RelatedUserStory(models.Model):

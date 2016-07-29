@@ -469,6 +469,8 @@ def _get_userstories_epics(project, queryset):
              FROM "epics_relateduserstory"
        INNER JOIN "userstories_userstory"
                ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
+       INNER JOIN "projects_project"
+               ON ("userstories_userstory"."project_id" = "projects_project"."id")
             WHERE {where}
          GROUP BY "epics_relateduserstory"."epic_id"
    )
@@ -492,6 +494,8 @@ def _get_userstories_epics(project, queryset):
                      FROM "userstories_userstory"
           LEFT OUTER JOIN "epics_relateduserstory"
                        ON ("epics_relateduserstory"."user_story_id" = "userstories_userstory"."id")
+               INNER JOIN "projects_project"
+                       ON ("userstories_userstory"."project_id" = "projects_project"."id")
                     WHERE {where} AND "epics_relateduserstory"."epic_id" IS NULL
                  GROUP BY "epics_relateduserstory"."epic_id"
         """.format(where=where)
