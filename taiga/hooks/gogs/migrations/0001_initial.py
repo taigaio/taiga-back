@@ -15,18 +15,20 @@ def create_gogs_system_user(apps, schema_editor):
     # if we directly import it, it'll be the wrong version
     User = apps.get_model("users", "User")
     db_alias = schema_editor.connection.alias
-    random_hash = uuid.uuid4().hex
-    user = User.objects.using(db_alias).create(
-        username="gogs-{}".format(random_hash),
-        email="gogs-{}@taiga.io".format(random_hash),
-        full_name="Gogs",
-        is_active=False,
-        is_system=True,
-        bio="",
-    )
-    f = open("{}/logo.png".format(CUR_DIR), "rb")
-    user.photo.save("logo.png", File(f))
-    user.save()
+
+    if not User.objects.using(db_alias).filter(is_system=True, username__startswith="gogs-").exists():
+        random_hash = uuid.uuid4().hex
+        user = User.objects.using(db_alias).create(
+            username="gogs-{}".format(random_hash),
+            email="gogs-{}@taiga.io".format(random_hash),
+            full_name="Gogs",
+            is_active=False,
+            is_system=True,
+            bio="",
+        )
+        f = open("{}/logo.png".format(CUR_DIR), "rb")
+        user.photo.save("logo.png", File(f))
+        user.save()
 
 
 class Migration(migrations.Migration):
