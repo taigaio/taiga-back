@@ -273,24 +273,30 @@ def test_api_update_orders_in_bulk_invalid_milestione(client):
 def test_api_update_milestone_in_bulk(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    milestone = f.MilestoneFactory.create(project=project)
     us1 = f.create_userstory(project=project)
     us2 = f.create_userstory(project=project)
-    milestone = f.MilestoneFactory.create(project=project)
+    us3 = f.create_userstory(project=project, milestone=milestone, sprint_order=1)
+    us4 = f.create_userstory(project=project, milestone=milestone, sprint_order=2)
 
     url = reverse("userstories-bulk-update-milestone")
     data = {
         "project_id": project.id,
         "milestone_id": milestone.id,
-        "bulk_stories": [{"us_id": us1.id},
-                         {"us_id": us2.id}]
+        "bulk_stories": [{"us_id": us1.id, "order": 2},
+                         {"us_id": us2.id, "order": 3}]
     }
 
     client.login(project.owner)
 
-    assert project.milestones.get(id=milestone.id).user_stories.count() == 0
+    assert project.milestones.get(id=milestone.id).user_stories.count() == 2
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 204, response.data
-    assert project.milestones.get(id=milestone.id).user_stories.count() == 2
+    assert project.milestones.get(id=milestone.id).user_stories.count() == 4
+    assert list(project.milestones.get(id=milestone.id).\
+        user_stories.\
+        order_by("sprint_order").\
+        values_list("id", "sprint_order")) == [(us3.id, 1), (us1.id, 2), (us2.id,3), (us4.id,4)]
 
 
 def test_api_update_milestone_in_bulk_invalid_milestone(client):
@@ -304,8 +310,8 @@ def test_api_update_milestone_in_bulk_invalid_milestone(client):
     data = {
         "project_id": project.id,
         "milestone_id": m2.id,
-        "bulk_stories": [{"us_id": us1.id},
-                         {"us_id": us2.id}]
+        "bulk_stories": [{"us_id": us1.id, "order": 1},
+                         {"us_id": us2.id, "order": 2}]
     }
 
     client.login(project.owner)
@@ -326,8 +332,8 @@ def test_api_update_milestone_in_bulk_invalid_userstories(client):
     data = {
         "project_id": project.id,
         "milestone_id": milestone.id,
-        "bulk_stories": [{"us_id": us1.id},
-                         {"us_id": us2.id}]
+        "bulk_stories": [{"us_id": us1.id, "order": 1},
+                         {"us_id": us2.id, "order": 2}]
     }
 
     client.login(project.owner)

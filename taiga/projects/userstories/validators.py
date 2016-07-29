@@ -99,6 +99,7 @@ class UpdateUserStoriesOrderBulkValidator(ProjectExistsValidator, UserStoryStatu
 
 class _UserStoryMilestoneBulkValidator(validators.Validator):
     us_id = serializers.IntegerField()
+    order = serializers.IntegerField()
 
 
 class UpdateMilestoneBulkValidator(ProjectExistsValidator, MilestoneExistsValidator, validators.Validator):

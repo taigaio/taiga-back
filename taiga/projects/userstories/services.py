@@ -105,9 +105,21 @@ def update_userstories_order_in_bulk(bulk_data: list, field: str, project: objec
 
 def update_userstories_milestone_in_bulk(bulk_data: list, milestone: object):
     """
-    Update the milestone of some user stories.
-    `bulk_data` should be a list of user story ids:
+    Update the milestone and the milestone order of some user stories adding the
+    extra orders needed to keep consistency.
+    `bulk_data` should be a list of dicts with the following format:
+    [{'us_id': <value>, 'order': <value>}, ...]
     """
+    user_stories = milestone.user_stories.all()
+    us_orders = {us.id: getattr(us, "sprint_order") for us in user_stories}
+    new_us_orders = {}
+    for e in bulk_data:
+        new_us_orders[e["us_id"]] = e["order"]
+        # The base orders where we apply the new orders must containg all the values
+        us_orders[e["us_id"]] = e["order"]
+
+    apply_order_updates(us_orders, new_us_orders)
+
     us_milestones = {e["us_id"]: milestone.id for e in bulk_data}
     user_story_ids = us_milestones.keys()
 
@@ -116,6 +128,8 @@ def update_userstories_milestone_in_bulk(bulk_data: list, milestone: object):
                               projectid=milestone.project.pk)
 
     db.update_attr_in_bulk_for_ids(us_milestones, "milestone_id", model=models.UserStory)
+    db.update_attr_in_bulk_for_ids(us_orders, "sprint_order", models.UserStory)
+    return us_orders
 
 
 def snapshot_userstories_in_bulk(bulk_data, user):
