@@ -200,12 +200,11 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 
-        services.update_epics_order_in_bulk(data["bulk_epics"],
+        ret = services.update_epics_order_in_bulk(data["bulk_epics"],
                                             project=project,
                                             field=order_field)
-        services.snapshot_epics_in_bulk(data["bulk_epics"], request.user)
 
-        return response.NoContent()
+        return response.Ok(ret)
 
     @list_route(methods=["POST"])
     def bulk_update_epics_order(self, request, **kwargs):

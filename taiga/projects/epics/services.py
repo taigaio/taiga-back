@@ -27,6 +27,7 @@ from django.utils.translation import ugettext as _
 
 from taiga.base.utils import db, text
 from taiga.projects.history.services import take_snapshot
+from taiga.projects.services import apply_order_updates
 from taiga.projects.epics.apps import connect_epics_signals
 from taiga.projects.epics.apps import disconnect_epics_signals
 from taiga.events import events
@@ -78,28 +79,21 @@ def update_epics_order_in_bulk(bulk_data: list, field: str, project: object):
     Update the order of some epics.
     `bulk_data` should be a list of tuples with the following format:
 
-    [(<epic id>, {<field>: <value>, ...}), ...]
+    [{'epic_id': <value>, 'order': <value>}, ...]
     """
-    epic_ids = []
-    new_order_values = []
-    for epic_data in bulk_data:
-        epic_ids.append(epic_data["epic_id"])
-        new_order_values.append({field: epic_data["order"]})
+    epics = project.epics.all()
 
+    epic_orders = {e.id: getattr(e, field) for e in epics}
+    new_epic_orders = {d["epic_id"]: d["order"] for d in bulk_data}
+    apply_order_updates(epic_orders, new_epic_orders)
+
+    epic_ids = epic_orders.keys()
     events.emit_event_for_ids(ids=epic_ids,
                               content_type="epics.epic",
                               projectid=project.pk)
 
-    db.update_in_bulk_with_ids(epic_ids, new_order_values, model=models.Epic)
-
-
-def snapshot_epics_in_bulk(bulk_data, user):
-    for epic_data in bulk_data:
-        try:
-            epic = models.Epic.objects.get(pk=epic_data['epic_id'])
-            take_snapshot(epic, user=user)
-        except models.Epic.DoesNotExist:
-            pass
+    db.update_attr_in_bulk_for_ids(epic_orders, field, models.Epic)
+    return epic_orders
 
 
 #####################################################
