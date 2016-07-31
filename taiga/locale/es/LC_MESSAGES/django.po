@@ -8,6 +8,7 @@
 # gustavodiazjaimes <gustavodiazjaimes@gmail.com>, 2015
 # Hector Colina <hcolina@gmail.com>, 2015
 # Jesus Marin <contacto@jesusmg.org>, 2015
+# Jorge Sanchez <rickydj@gmail.com>, 2016
 # Luis Sebastian Urrutia Fuentes <luis.s.urrutia.f@gmail.com>, 2016
 # Renelis Abreu Ramirez <renelisabreu@hotmail.com>, 2016
 # Taiga Dev Team <support@taiga.io>, 2015-2016
@@ -17,8 +18,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-05-01 19:09+0200\n"
-"PO-Revision-Date: 2016-05-01 17:09+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"PO-Revision-Date: 2016-07-12 19:06+0000\n"
+"Last-Translator: Jorge Sanchez <rickydj@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -362,7 +363,7 @@ msgstr "Error por incumplimiento de precondición"
 
 #: taiga/base/exceptions.py:217
 msgid "No room left for more projects."
-msgstr ""
+msgstr "No hay espacio para mas proyectos"
 
 #: taiga/base/filters.py:79 taiga/base/filters.py:444
 msgid "Error in filter params types."
@@ -600,7 +601,7 @@ msgstr "error importando los timelines"
 
 #: taiga/export_import/services/store.py:731
 msgid "unexpected error importing project"
-msgstr ""
+msgstr "Error inesperado al importar el proyecto"
 
 #: taiga/export_import/tasks.py:56 taiga/export_import/tasks.py:57
 msgid "Error generating project dump"
@@ -625,6 +626,21 @@ msgid ""
 "TRACE ERROR:\n"
 "------------"
 msgstr ""
+"\n"
+"\n"
+"Error cargando importacion {user_full_name} <{user_email}>:\"\n"
+"\n"
+"\n"
+"REASON:\n"
+"-------\n"
+"{reason}\n"
+"\n"
+"DETAILS:\n"
+"--------\n"
+"{details}\n"
+"\n"
+"TRACE ERROR:\n"
+"------------"
 
 #: taiga/export_import/tasks.py:110
 msgid "Error loading project dump"
@@ -632,11 +648,11 @@ msgstr "Error cargando el volcado de datos del proyecto"
 
 #: taiga/export_import/tasks.py:111
 msgid "Error loading your project dump file"
-msgstr ""
+msgstr "Error cargando el archivo del proyecto exportado"
 
 #: taiga/export_import/tasks.py:125
 msgid "  -- no detail info --"
-msgstr ""
+msgstr "-- sin informacion --"
 
 #: taiga/export_import/templates/emails/dump_project-body-html.jinja:4
 #, python-format
@@ -1386,7 +1402,7 @@ msgstr "El usuario no existe"
 
 #: taiga/projects/api.py:366
 msgid "The user must be already a project member"
-msgstr ""
+msgstr "El usuario debe ser un miembro del proyecto"
 
 #: taiga/projects/api.py:672
 msgid ""
@@ -1479,15 +1495,15 @@ msgstr "Talky"
 
 #: taiga/projects/choices.py:32
 msgid "This project is blocked due to payment failure"
-msgstr ""
+msgstr "El proyecto esta bloqueado por un fallo en el pago"
 
 #: taiga/projects/choices.py:33
 msgid "This project is blocked by admin staff"
-msgstr ""
+msgstr "El proyecto esta bloqueado por los administradores"
 
 #: taiga/projects/choices.py:34
 msgid "This project is blocked because the owner left"
-msgstr ""
+msgstr "El proyecto esta bloqueado porque el dueño ha salido"
 
 #: taiga/projects/custom_attributes/choices.py:27
 msgid "Text"
@@ -2794,11 +2810,12 @@ msgstr "Rol inválido para el proyecto"
 
 #: taiga/projects/serializers.py:195
 msgid "The project owner must be admin."
-msgstr ""
+msgstr "El dueño del proyecto debe ser administrador"
 
 #: taiga/projects/serializers.py:198
 msgid "At least one user must be an active admin for this project."
 msgstr ""
+"Por lo menos un usuario debe ser administrador activo para este proyecto"
 
 #: taiga/projects/serializers.py:396
 msgid "Default options"
@@ -2838,11 +2855,11 @@ msgstr "Roles"
 
 #: taiga/projects/services/members.py:116
 msgid "You have reached your current limit of memberships for private projects"
-msgstr ""
+msgstr "Ha alcanzado el limite de miembros para proyectos privados"
 
 #: taiga/projects/services/members.py:120
 msgid "You have reached your current limit of memberships for public projects"
-msgstr ""
+msgstr "Ha alcanzado el limite de miembros para proyectos públicos"
 
 #: taiga/projects/services/projects.py:69
 #: taiga/projects/services/projects.py:106 taiga/users/services.py:582
@@ -2854,6 +2871,7 @@ msgstr "No puedes tener más proyectos privados"
 msgid ""
 "This project reaches your current limit of memberships for private projects"
 msgstr ""
+"Este proyecto alcanzo el limite actual de miembros para proyectos privados"
 
 #: taiga/projects/services/projects.py:77
 #: taiga/projects/services/projects.py:114 taiga/users/services.py:589
@@ -2865,6 +2883,7 @@ msgstr "No puedes tener más proyectos públicos"
 msgid ""
 "This project reaches your current limit of memberships for public projects"
 msgstr ""
+"Este proyecto alcanzo su limite actual de miembros para proyectos publicos"
 
 #: taiga/projects/services/stats.py:196
 msgid "Future sprint"
@@ -3068,11 +3087,16 @@ msgid ""
 "new project owner for \"%(project_name)s\".</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Hola %(old_owner_name)s,</p>\n"
+"        <p>%(new_owner_name)s acepto su oferta y sera el nuevo dueño del "
+"proyecto \"%(project_name)s\".</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_accept-body-html.jinja:10
 #, python-format
 msgid "<p>%(new_owner_name)s says:</p>"
-msgstr ""
+msgstr "<p>%(new_owner_name)s dice:</p>"
 
 #: taiga/projects/templates/emails/transfer_accept-body-html.jinja:14
 msgid ""
@@ -3081,6 +3105,9 @@ msgid ""
 "p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Desde ahora su nuevo estado para este proyecto es \"admin\".</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:1
 #, python-format
@@ -3098,7 +3125,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:7
 #, python-format
 msgid "%(new_owner_name)s says:"
-msgstr ""
+msgstr "%(new_owner_name)s dice:"
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:11
 msgid ""
@@ -3137,6 +3164,11 @@ msgid ""
 "new project owner for \"%(project_name)s\".</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Hola %(owner_name)s,</p>\n"
+"        <p>%(rejecter_name)s declino su oferta y no sera el nuevo dueño del "
+"proyecto \"%(project_name)s\".</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:10
 #, python-format
@@ -3145,6 +3177,9 @@ msgid ""
 "    <p>%(rejecter_name)s says:</p>\n"
 "    "
 msgstr ""
+"\n"
+"    <p>%(rejecter_name)s dice:</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:16
 msgid ""
@@ -3153,6 +3188,10 @@ msgid ""
 "different person.</p>\n"
 "    "
 msgstr ""
+"\n"
+"    <p>Si lo desea, aun puede transferir el dominio del proyecto a otra "
+"persona.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:21
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:22
@@ -3175,7 +3214,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:7
 #, python-format
 msgid "%(rejecter_name)s says:"
-msgstr ""
+msgstr "%(rejecter_name)s dice:"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:11
 msgid ""
@@ -3210,6 +3249,11 @@ msgid ""
 "\"%(project_name)s\".</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Hola %(owner_name)s,</p>\n"
+"        <p>%(requester_name)s ha solicitado convertirse en el dueño del "
+"proyecto \"%(project_name)s\".</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:9
 msgid ""
@@ -3218,6 +3262,10 @@ msgid ""
 "project transfer from the administration panel.</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Por favor, Haga click en \"Continuar\" Si desea iniciar la "
+"transferencia del proyecto desde el panel de administracion.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:14
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:22
@@ -3232,6 +3280,10 @@ msgid ""
 "%(requester_name)s has requested to become the project owner for "
 "\"%(project_name)s\".\n"
 msgstr ""
+"\n"
+"Hola %(owner_name)s,\n"
+"%(requester_name)s ha solicitado ser el dueño del proyecto \"%(project_name)s"
+"\".\n"
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:6
 msgid ""
@@ -3239,10 +3291,13 @@ msgid ""
 "Please, go to your project settings if you would like to start the project "
 "transfer from the administration panel.\n"
 msgstr ""
+"\n"
+"Por favor, vaya a la configuracion del proyecto si desea iniciar la "
+"tranferencia del proyecto desde el panel de administracion.\n"
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:10
 msgid "Go to your project settings:"
-msgstr ""
+msgstr "Ir a la configuracion del proyecto:"
 
 #: taiga/projects/templates/emails/transfer_request-subject.jinja:1
 #, python-format
@@ -3250,6 +3305,8 @@ msgid ""
 "\n"
 "[%(project)s] Project ownership transfer request\n"
 msgstr ""
+"\n"
+"[%(project)s] Solicitud de transferencia de dominio del proyecto\n"
 
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:4
 #, python-format
@@ -3260,6 +3317,11 @@ msgid ""
 "would like you to become the new project owner.</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Hola %(receiver_name)s,</p>\n"
+"        <p>%(owner_name)s, el dueño del proyecto \"%(project_name)s\" desea "
+"que usted sea el nuevo dueño del proyecto.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:10
 #, python-format
@@ -3268,6 +3330,9 @@ msgid ""
 "        <p>%(owner_name)s says:</p>\n"
 "        "
 msgstr ""
+"\n"
+"        <p>%(owner_name)s dice:</p>\n"
+"        "
 
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:17
 msgid ""
@@ -3276,6 +3341,10 @@ msgid ""
 "proposal.</p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Por favor, Haga click en  \"Continuar\" Para aceptar o rechazar "
+"esta propuesta.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:1
 #, python-format
@@ -3285,11 +3354,15 @@ msgid ""
 "%(owner_name)s, the current project owner at \"%(project_name)s\" would like "
 "you to become the new project owner.\n"
 msgstr ""
+"\n"
+"Hola %(receiver_name)s,\n"
+"%(owner_name)s, el dueño del proyecto \"%(project_name)s\" desea que usted "
+"sea el nuevo dueño del proyecto\n"
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:6
 #, python-format
 msgid "%(owner_name)s says:"
-msgstr ""
+msgstr "%(owner_name)s dice:"
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:11
 msgid ""
@@ -3297,10 +3370,13 @@ msgid ""
 "Please, go to the following link to either accept or reject this proposal.</"
 "p>\n"
 msgstr ""
+"\n"
+"Por favor, Vaya al siguiente link para aceptar o rechazar esta propuesta.</"
+"p>\n"
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:15
 msgid "Accept or reject the project ownership transfer:"
-msgstr ""
+msgstr "Aceptar o rechazar la transferencia del dominio del proyecto:"
 
 #: taiga/projects/templates/emails/transfer_start-subject.jinja:1
 #, python-format
@@ -3308,6 +3384,8 @@ msgid ""
 "\n"
 "[%(project)s] Project ownership transfer offer\n"
 msgstr ""
+"\n"
+"[%(project)s] Oferta de transferencia de dominio del proyecto\n"
 
 #. Translators: Name of scrum project template.
 #: taiga/projects/translations.py:29
@@ -3646,23 +3724,23 @@ msgstr "Comprueba la API de histórico para obtener el diff exacto"
 
 #: taiga/users/admin.py:38
 msgid "Project Member"
-msgstr ""
+msgstr "Miembro del proyecto"
 
 #: taiga/users/admin.py:39
 msgid "Project Members"
-msgstr ""
+msgstr "Miembros del proyecto"
 
 #: taiga/users/admin.py:49
 msgid "id"
-msgstr ""
+msgstr "Id"
 
 #: taiga/users/admin.py:81
 msgid "Project Ownership"
-msgstr ""
+msgstr "Dueño del proyecto"
 
 #: taiga/users/admin.py:82
 msgid "Project Ownerships"
-msgstr ""
+msgstr "Dueños del proyecto"
 
 #: taiga/users/admin.py:119
 msgid "Personal info"
@@ -3797,11 +3875,11 @@ msgstr "nueva dirección de email"
 
 #: taiga/users/models.py:167
 msgid "max number of owned private projects"
-msgstr ""
+msgstr "numero maximo de proyectos privados asignados"
 
 #: taiga/users/models.py:170
 msgid "max number of owned public projects"
-msgstr ""
+msgstr "numero maximo de proyectos publicos asignados"
 
 #: taiga/users/models.py:173
 msgid "max number of memberships for each owned private project"
