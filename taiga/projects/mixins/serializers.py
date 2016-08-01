@@ -73,7 +73,8 @@ class StatusExtraInfoSerializerMixin(serializers.LightSerializer):
         if serialized_status is None:
             serialized_status = {
                 "name": _(obj.status.name),
-                "color": obj.status.color
+                "color": obj.status.color,
+                "is_closed": obj.status.is_closed
             }
             self._serialized_status[obj.status_id] = serialized_status
 
