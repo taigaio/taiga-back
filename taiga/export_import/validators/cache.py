@@ -22,6 +22,7 @@ _cache_user_by_pk = {}
 _cache_user_by_email = {}
 _custom_tasks_attributes_cache = {}
 _custom_issues_attributes_cache = {}
+_custom_epics_attributes_cache = {}
 _custom_userstories_attributes_cache = {}
 
 

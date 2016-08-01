@@ -29,6 +29,7 @@ from .mixins import (HistoryExportSerializerMixin,
                      WatcheableObjectLightSerializerMixin)
 from .cache import (_custom_tasks_attributes_cache,
                     _custom_userstories_attributes_cache,
+                    _custom_epics_attributes_cache,
                     _custom_issues_attributes_cache)
 
 
@@ -53,6 +54,14 @@ class UserStoryStatusExportSerializer(RelatedExportSerializer):
     is_archived = Field()
     color = Field()
     wip_limit = Field()
+
+
+class EpicStatusExportSerializer(RelatedExportSerializer):
+    name = Field()
+    slug = Field()
+    order = Field()
+    is_closed = Field()
+    color = Field()
 
 
 class TaskStatusExportSerializer(RelatedExportSerializer):
@@ -95,6 +104,15 @@ class RoleExportSerializer(RelatedExportSerializer):
     order = Field()
     computable = Field()
     permissions = Field()
+
+
+class EpicCustomAttributesExportSerializer(RelatedExportSerializer):
+    name = Field()
+    description = Field()
+    type = Field()
+    order = Field()
+    created_date = DateTimeField()
+    modified_date = DateTimeField()
 
 
 class UserStoryCustomAttributeExportSerializer(RelatedExportSerializer):
@@ -238,6 +256,45 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin,
         return _custom_userstories_attributes_cache[project.id]
 
 
+class EpicRelatedUserStoryExportSerializer(RelatedExportSerializer):
+    user_story = SlugRelatedField(slug_field="ref")
+    order = Field()
+
+
+class EpicExportSerializer(CustomAttributesValuesExportSerializerMixin,
+                           HistoryExportSerializerMixin,
+                           AttachmentExportSerializerMixin,
+                           WatcheableObjectLightSerializerMixin,
+                           RelatedExportSerializer):
+    ref = Field()
+    owner = UserRelatedField()
+    status = SlugRelatedField(slug_field="name")
+    epics_order = Field()
+    created_date = DateTimeField()
+    modified_date = DateTimeField()
+    subject = Field()
+    description = Field()
+    color = Field()
+    assigned_to = UserRelatedField()
+    client_requirement = Field()
+    team_requirement = Field()
+    version = Field()
+    blocked_note = Field()
+    is_blocked = Field()
+    tags = Field()
+    related_user_stories = MethodField()
+
+    def get_related_user_stories(self, obj):
+        return EpicRelatedUserStoryExportSerializer(obj.relateduserstory_set.all(), many=True).data
+
+    def custom_attributes_queryset(self, project):
+        if project.id not in _custom_epics_attributes_cache:
+            _custom_epics_attributes_cache[project.id] = list(
+                project.userstorycustomattributes.all().values('id', 'name')
+            )
+        return _custom_epics_attributes_cache[project.id]
+
+
 class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin,
                             HistoryExportSerializerMixin,
                             AttachmentExportSerializerMixin,
@@ -307,6 +364,7 @@ class ProjectExportSerializer(WatcheableObjectLightSerializerMixin):
     logo = FileField()
     total_milestones = Field()
     total_story_points = Field()
+    is_epics_activated = Field()
     is_backlog_activated = Field()
     is_kanban_activated = Field()
     is_wiki_activated = Field()
@@ -318,6 +376,7 @@ class ProjectExportSerializer(WatcheableObjectLightSerializerMixin):
     is_featured = Field()
     is_looking_for_people = Field()
     looking_for_people_note = Field()
+    epics_csv_uuid = Field()
     userstories_csv_uuid = Field()
     tasks_csv_uuid = Field()
     issues_csv_uuid = Field()
@@ -339,6 +398,7 @@ class ProjectExportSerializer(WatcheableObjectLightSerializerMixin):
     owner = UserRelatedField()
     memberships = MembershipExportSerializer(many=True)
     points = PointsExportSerializer(many=True)
+    epic_statuses = EpicStatusExportSerializer(many=True)
     us_statuses = UserStoryStatusExportSerializer(many=True)
     task_statuses = TaskStatusExportSerializer(many=True)
     issue_types = IssueTypeExportSerializer(many=True)
@@ -347,15 +407,18 @@ class ProjectExportSerializer(WatcheableObjectLightSerializerMixin):
     severities = SeverityExportSerializer(many=True)
     tags_colors = Field()
     default_points = SlugRelatedField(slug_field="name")
+    default_epic_status = SlugRelatedField(slug_field="name")
     default_us_status = SlugRelatedField(slug_field="name")
     default_task_status = SlugRelatedField(slug_field="name")
     default_priority = SlugRelatedField(slug_field="name")
     default_severity = SlugRelatedField(slug_field="name")
     default_issue_status = SlugRelatedField(slug_field="name")
     default_issue_type = SlugRelatedField(slug_field="name")
+    epiccustomattributes = EpicCustomAttributesExportSerializer(many=True)
     userstorycustomattributes = UserStoryCustomAttributeExportSerializer(many=True)
     taskcustomattributes = TaskCustomAttributeExportSerializer(many=True)
     issuecustomattributes = IssueCustomAttributeExportSerializer(many=True)
+    epics = EpicExportSerializer(many=True)
     user_stories = UserStoryExportSerializer(many=True)
     tasks = TaskExportSerializer(many=True)
     milestones = MilestoneExportSerializer(many=True)
