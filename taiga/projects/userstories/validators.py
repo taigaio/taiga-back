@@ -36,6 +36,15 @@ from . import models
 import json
 
 
+class UserStoryExistsValidator:
+    def validate_us_id(self, attrs, source):
+        value = attrs[source]
+        if not models.UserStory.objects.filter(pk=value).exists():
+            msg = _("There's no user story with that id")
+            raise ValidationError(msg)
+        return attrs
+
+
 class RolePointsField(serializers.WritableField):
     def to_native(self, obj):
         return {str(o.role.id): o.points.id for o in obj.all()}

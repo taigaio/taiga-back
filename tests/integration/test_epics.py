@@ -123,7 +123,6 @@ def test_set_related_userstory(client):
     }
     client.login(user)
     response = client.json.post(url, json.dumps(data))
-    print(response.data)
     assert response.status_code == 200
     assert response.data['user_stories_counts'] == {'opened': 1, 'closed': 0}
 
@@ -144,7 +143,6 @@ def test_set_related_userstory_existing(client):
     }
     client.login(user)
     response = client.json.post(url, json.dumps(data))
-    print(response.data)
     assert response.status_code == 200
     assert response.data['user_stories_counts'] == {'opened': 1, 'closed': 0}
 
