@@ -36,15 +36,6 @@ from . import models
 import json
 
 
-class UserStoryExistsValidator:
-    def validate_us_id(self, attrs, source):
-        value = attrs[source]
-        if not models.UserStory.objects.filter(pk=value).exists():
-            msg = _("There's no user story with that id")
-            raise ValidationError(msg)
-        return attrs
-
-
 class RolePointsField(serializers.WritableField):
     def to_native(self, obj):
         return {str(o.role.id): o.points.id for o in obj.all()}
@@ -76,7 +67,7 @@ class UserStoriesBulkValidator(ProjectExistsValidator, UserStoryStatusExistsVali
 
 # Order bulk validators
 
-class _UserStoryOrderBulkValidator(UserStoryExistsValidator, validators.Validator):
+class _UserStoryOrderBulkValidator(validators.Validator):
     us_id = serializers.IntegerField()
     order = serializers.IntegerField()
 
@@ -88,10 +79,25 @@ class UpdateUserStoriesOrderBulkValidator(ProjectExistsValidator, UserStoryStatu
     milestone_id = serializers.IntegerField(required=False)
     bulk_stories = _UserStoryOrderBulkValidator(many=True)
 
+    def validate(self, data):
+        filters = {"project__id": data["project_id"]}
+        if "status_id" in data:
+            filters["status__id"] = data["status_id"]
+        if "milestone_id" in data:
+            filters["milestone__id"] = data["milestone_id"]
+
+        filters["id__in"] = [us["us_id"] for us in data["bulk_stories"]]
+
+        if models.UserStory.objects.filter(**filters).count() != len(filters["id__in"]):
+            raise ValidationError(_("Invalid user story ids. All stories must belong to the same project and, "
+                                    "if it exists, to the same status and milestone."))
+
+        return data
+
 
 # Milestone bulk validators
 
-class _UserStoryMilestoneBulkValidator(UserStoryExistsValidator, validators.Validator):
+class _UserStoryMilestoneBulkValidator(validators.Validator):
     us_id = serializers.IntegerField()
 
 
@@ -108,9 +114,9 @@ class UpdateMilestoneBulkValidator(ProjectExistsValidator, MilestoneExistsValida
         project = get_object_or_404(Project, pk=data["project_id"])
 
         if project.user_stories.filter(id__in=user_story_ids).count() != len(user_story_ids):
-            raise ValidationError("all the user stories must be from the same project")
+            raise ValidationError(_("All the user stories must be from the same project"))
 
         if project.milestones.filter(id=data["milestone_id"]).count() != 1:
-            raise ValidationError("the milestone isn't valid for the project")
+            raise ValidationError(_("The milestone isn't valid for the project"))
 
         return data

@@ -180,6 +180,96 @@ def test_api_update_orders_in_bulk(client):
     assert response3.status_code == 200, response3.data
 
 
+def test_api_update_orders_in_bulk_invalid_userstories(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    us1 = f.create_userstory(project=project)
+    us2 = f.create_userstory(project=project)
+    us3 = f.create_userstory()
+
+    url1 = reverse("userstories-bulk-update-backlog-order")
+    url2 = reverse("userstories-bulk-update-kanban-order")
+    url3 = reverse("userstories-bulk-update-sprint-order")
+
+    data = {
+        "project_id": project.id,
+        "bulk_stories": [{"us_id": us1.id, "order": 1},
+                         {"us_id": us2.id, "order": 2},
+                         {"us_id": us3.id, "order": 3}]
+    }
+
+    client.login(project.owner)
+
+    response1 = client.json.post(url1, json.dumps(data))
+    response2 = client.json.post(url2, json.dumps(data))
+    response3 = client.json.post(url3, json.dumps(data))
+
+    assert response1.status_code == 400, response1.data
+    assert response2.status_code == 400, response2.data
+    assert response3.status_code == 400, response3.data
+
+
+def test_api_update_orders_in_bulk_invalid_status(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    us1 = f.create_userstory(project=project)
+    us2 = f.create_userstory(project=project, status=us1.status)
+    us3 = f.create_userstory(project=project)
+
+    url1 = reverse("userstories-bulk-update-backlog-order")
+    url2 = reverse("userstories-bulk-update-kanban-order")
+    url3 = reverse("userstories-bulk-update-sprint-order")
+
+    data = {
+        "project_id": project.id,
+        "status_id": us1.status.id,
+        "bulk_stories": [{"us_id": us1.id, "order": 1},
+                         {"us_id": us2.id, "order": 2},
+                         {"us_id": us3.id, "order": 3}]
+    }
+
+    client.login(project.owner)
+
+    response1 = client.json.post(url1, json.dumps(data))
+    response2 = client.json.post(url2, json.dumps(data))
+    response3 = client.json.post(url3, json.dumps(data))
+
+    assert response1.status_code == 400, response1.data
+    assert response2.status_code == 400, response2.data
+    assert response3.status_code == 400, response3.data
+
+
+def test_api_update_orders_in_bulk_invalid_milestione(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    mil1 = f.MilestoneFactory.create(project=project)
+    us1 = f.create_userstory(project=project, milestone=mil1)
+    us2 = f.create_userstory(project=project, milestone=mil1)
+    us3 = f.create_userstory(project=project)
+
+    url1 = reverse("userstories-bulk-update-backlog-order")
+    url2 = reverse("userstories-bulk-update-kanban-order")
+    url3 = reverse("userstories-bulk-update-sprint-order")
+
+    data = {
+        "project_id": project.id,
+        "milestone_id": mil1.id,
+        "bulk_stories": [{"us_id": us1.id, "order": 1},
+                         {"us_id": us2.id, "order": 2},
+                         {"us_id": us3.id, "order": 3}]
+    }
+
+    client.login(project.owner)
+
+    response1 = client.json.post(url1, json.dumps(data))
+    response2 = client.json.post(url2, json.dumps(data))
+    response3 = client.json.post(url3, json.dumps(data))
+
+    assert response1.status_code == 400, response1.data
+    assert response2.status_code == 400, response2.data
+    assert response3.status_code == 400, response3.data
+
+
 def test_api_update_milestone_in_bulk(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
@@ -208,7 +298,6 @@ def test_api_update_milestone_in_bulk_invalid_milestone(client):
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     us1 = f.create_userstory(project=project)
     us2 = f.create_userstory(project=project)
-    f.MilestoneFactory.create(project=project)
     m2 = f.MilestoneFactory.create()
 
     url = reverse("userstories-bulk-update-milestone")
