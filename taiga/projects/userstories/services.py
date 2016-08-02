@@ -517,7 +517,7 @@ def _get_userstories_epics(project, queryset):
     result = sorted(result, key=itemgetter("order"))
 
     # Add row when there is no user stories with no epics
-    if result[0]["id"] is not None:
+    if result == [] or result[0]["id"] is not None:
         result.insert(0, {
             "id": None,
             "ref": None,
