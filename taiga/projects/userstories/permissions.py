@@ -26,6 +26,7 @@ class UserStoryPermission(TaigaResourcePermission):
     enought_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_us')
+    by_ref_perms = HasProjectPerm('view_us')
     create_perms = HasProjectPerm('add_us_to_project') | HasProjectPerm('add_us')
     update_perms = CommentAndOrUpdatePerm('modify_us', 'comment_us')
     partial_update_perms = CommentAndOrUpdatePerm('modify_us', 'comment_us')

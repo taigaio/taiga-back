@@ -62,6 +62,8 @@ class HistoryViewSet(ReadOnlyListViewSet):
         obj = self.get_object()
         history_entry_id = request.QUERY_PARAMS.get('id', None)
         history_entry = services.get_history_queryset_by_model_instance(obj).filter(id=history_entry_id).first()
+        if history_entry is None:
+            return response.NotFound()
 
         self.check_permissions(request, 'comment_versions', history_entry)
 
@@ -76,6 +78,9 @@ class HistoryViewSet(ReadOnlyListViewSet):
         obj = self.get_object()
         history_entry_id = request.QUERY_PARAMS.get('id', None)
         history_entry = services.get_history_queryset_by_model_instance(obj).filter(id=history_entry_id).first()
+        if history_entry is None:
+            return response.NotFound()
+
         obj = services.get_instance_from_key(history_entry.key)
         comment = request.DATA.get("comment", None)
 
@@ -113,6 +118,8 @@ class HistoryViewSet(ReadOnlyListViewSet):
         obj = self.get_object()
         history_entry_id = request.QUERY_PARAMS.get('id', None)
         history_entry = services.get_history_queryset_by_model_instance(obj).filter(id=history_entry_id).first()
+        if history_entry is None:
+            return response.NotFound()
 
         self.check_permissions(request, 'delete_comment', history_entry)
 
@@ -132,6 +139,8 @@ class HistoryViewSet(ReadOnlyListViewSet):
         obj = self.get_object()
         history_entry_id = request.QUERY_PARAMS.get('id', None)
         history_entry = services.get_history_queryset_by_model_instance(obj).filter(id=history_entry_id).first()
+        if history_entry is None:
+            return response.NotFound()
 
         self.check_permissions(request, 'undelete_comment', history_entry)
 
