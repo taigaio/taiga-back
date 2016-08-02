@@ -312,7 +312,7 @@ def test_api_update_milestone_in_bulk_invalid_milestone(client):
 
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
-    assert response.data["non_field_errors"][0] == "the milestone isn't valid for the project"
+    assert len(response.data["non_field_errors"]) == 1
 
 
 def test_api_update_milestone_in_bulk_invalid_userstories(client):
@@ -334,7 +334,7 @@ def test_api_update_milestone_in_bulk_invalid_userstories(client):
 
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
-    assert response.data["non_field_errors"][0] == "all the user stories must be from the same project"
+    assert len(response.data["non_field_errors"]) == 1
 
 
 def test_update_userstory_points(client):
