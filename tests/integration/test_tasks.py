@@ -85,10 +85,16 @@ def test_create_task_without_default_values(client):
     assert response.data['status'] == None
 
 
-def test_api_create_in_bulk_with_status(client):
-    us = f.create_userstory()
-    f.MembershipFactory.create(project=us.project, user=us.owner, is_admin=True)
-    us.project.default_task_status = f.TaskStatusFactory.create(project=us.project)
+def test_api_create_in_bulk_with_status_milestone_userstory(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user, default_task_status=None)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    project.default_task_status = f.TaskStatusFactory.create(project=project)
+    project.save()
+    milestone = f.MilestoneFactory(project=project)
+    us = f.create_userstory(project=project, milestone=milestone)
+
     url = reverse("tasks-bulk-create")
     data = {
         "bulk_tasks": "Story #1\nStory #2",
@@ -98,11 +104,139 @@ def test_api_create_in_bulk_with_status(client):
         "status_id": us.project.default_task_status.id
     }
 
-    client.login(us.owner)
+    client.login(user)
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 200
     assert response.data[0]["status"] == us.project.default_task_status.id
+
+
+def test_api_create_in_bulk_with_status_milestone(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user, default_task_status=None)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    project.default_task_status = f.TaskStatusFactory.create(project=project)
+    project.save()
+    milestone = f.MilestoneFactory(project=project)
+    us = f.create_userstory(project=project, milestone=milestone)
+
+    url = reverse("tasks-bulk-create")
+    data = {
+        "bulk_tasks": "Story #1\nStory #2",
+        "project_id": us.project.id,
+        "sprint_id": us.milestone.id,
+        "status_id": us.project.default_task_status.id
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 200
+    assert response.data[0]["status"] == us.project.default_task_status.id
+
+
+def test_api_create_in_bulk_with_invalid_status(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user, default_task_status=None)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    project.default_task_status = f.TaskStatusFactory.create(project=project)
+    project.save()
+    milestone = f.MilestoneFactory(project=project)
+    us = f.create_userstory(project=project, milestone=milestone)
+
+    status = f.TaskStatusFactory.create()
+
+
+    url = reverse("tasks-bulk-create")
+    data = {
+        "bulk_tasks": "Story #1\nStory #2",
+        "us_id": us.id,
+        "project_id": project.id,
+        "sprint_id": milestone.id,
+        "status_id": status.id
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+
+
+def test_api_create_in_bulk_with_invalid_milestone(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user, default_task_status=None)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    project.default_task_status = f.TaskStatusFactory.create(project=project)
+    project.save()
+    milestone = f.MilestoneFactory()
+    us = f.create_userstory(project=project)
+
+    url = reverse("tasks-bulk-create")
+    data = {
+        "bulk_tasks": "Story #1\nStory #2",
+        "us_id": us.id,
+        "project_id": project.id,
+        "sprint_id": milestone.id,
+        "status_id": project.default_task_status.id
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+
+
+def test_api_create_in_bulk_with_invalid_userstory_1(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user, default_task_status=None)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    project.default_task_status = f.TaskStatusFactory.create(project=project)
+    project.save()
+    milestone = f.MilestoneFactory(project=project)
+    us = f.create_userstory()
+
+    url = reverse("tasks-bulk-create")
+    data = {
+        "bulk_tasks": "Story #1\nStory #2",
+        "us_id": us.id,
+        "project_id": project.id,
+        "sprint_id": milestone.id,
+        "status_id": project.default_task_status.id
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+
+
+def test_api_create_in_bulk_with_invalid_userstory_2(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user, default_task_status=None)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    project.default_task_status = f.TaskStatusFactory.create(project=project)
+    project.save()
+    milestone = f.MilestoneFactory(project=project)
+    us = f.create_userstory(project=project)
+
+    url = reverse("tasks-bulk-create")
+    data = {
+        "bulk_tasks": "Story #1\nStory #2",
+        "us_id": us.id,
+        "project_id": us.project.id,
+        "sprint_id": milestone.id,
+        "status_id": us.project.default_task_status.id
+    }
+
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
 
 
 def test_api_create_invalid_task(client):
@@ -150,6 +284,115 @@ def test_api_update_order_in_bulk(client):
 
     assert response1.status_code == 200, response1.data
     assert response2.status_code == 200, response2.data
+
+
+def test_api_update_order_in_bulk_invalid_tasks(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    task1 = f.create_task(project=project)
+    task2 = f.create_task(project=project)
+    task3 = f.create_task()
+
+    url1 = reverse("tasks-bulk-update-taskboard-order")
+    url2 = reverse("tasks-bulk-update-us-order")
+
+    data = {
+        "project_id": project.id,
+        "bulk_tasks": [{"task_id": task1.id, "order": 1},
+                       {"task_id": task2.id, "order": 2},
+                       {"task_id": task3.id, "order": 3}]
+    }
+
+    client.login(project.owner)
+
+    response1 = client.json.post(url1, json.dumps(data))
+    response2 = client.json.post(url2, json.dumps(data))
+
+    assert response1.status_code == 400, response1.data
+    assert response2.status_code == 400, response2.data
+
+
+def test_api_update_order_in_bulk_invalid_status(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    task1 = f.create_task(project=project)
+    task2 = f.create_task(project=project, status=task1.status)
+    task3 = f.create_task(project=project)
+
+    url1 = reverse("tasks-bulk-update-taskboard-order")
+    url2 = reverse("tasks-bulk-update-us-order")
+
+    data = {
+        "project_id": project.id,
+        "status_id": task1.status.id,
+        "bulk_tasks": [{"task_id": task1.id, "order": 1},
+                       {"task_id": task2.id, "order": 2},
+                       {"task_id": task3.id, "order": 3}]
+    }
+
+    client.login(project.owner)
+
+    response1 = client.json.post(url1, json.dumps(data))
+    response2 = client.json.post(url2, json.dumps(data))
+
+    assert response1.status_code == 400, response1.data
+    assert response2.status_code == 400, response2.data
+
+
+def test_api_update_order_in_bulk_invalid_milestone(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    mil1 = f.MilestoneFactory.create(project=project)
+    task1 = f.create_task(project=project, milestone=mil1)
+    task2 = f.create_task(project=project, milestone=mil1)
+    task3 = f.create_task(project=project)
+
+    url1 = reverse("tasks-bulk-update-taskboard-order")
+    url2 = reverse("tasks-bulk-update-us-order")
+
+    data = {
+        "project_id": project.id,
+        "milestone_id": mil1.id,
+        "bulk_tasks": [{"task_id": task1.id, "order": 1},
+                       {"task_id": task2.id, "order": 2},
+                       {"task_id": task3.id, "order": 3}]
+    }
+
+    client.login(project.owner)
+
+    response1 = client.json.post(url1, json.dumps(data))
+    response2 = client.json.post(url2, json.dumps(data))
+
+    assert response1.status_code == 400, response1.data
+    assert response2.status_code == 400, response2.data
+
+
+def test_api_update_order_in_bulk_invalid_user_story(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    us1 = f.create_userstory(project=project)
+    task1 = f.create_task(project=project, user_story=us1)
+    task2 = f.create_task(project=project, user_story=us1)
+    task3 = f.create_task(project=project)
+
+    url1 = reverse("tasks-bulk-update-taskboard-order")
+    url2 = reverse("tasks-bulk-update-us-order")
+
+    data = {
+        "project_id": project.id,
+        "us_id": us1.id,
+        "bulk_tasks": [{"task_id": task1.id, "order": 1},
+                       {"task_id": task2.id, "order": 2},
+                       {"task_id": task3.id, "order": 3}]
+    }
+
+    client.login(project.owner)
+
+    response1 = client.json.post(url1, json.dumps(data))
+    response2 = client.json.post(url2, json.dumps(data))
+
+    assert response1.status_code == 400, response1.data
+    assert response2.status_code == 400, response2.data
 
 
 def test_get_invalid_csv(client):

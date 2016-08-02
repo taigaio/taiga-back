@@ -22,21 +22,16 @@ from taiga.base.api import serializers
 from taiga.base.api import validators
 from taiga.base.exceptions import ValidationError
 from taiga.base.fields import PgArrayField
-from taiga.projects.milestones.validators import MilestoneExistsValidator
+from taiga.projects.milestones.models import Milestone
+from taiga.projects.models import TaskStatus
 from taiga.projects.notifications.mixins import EditableWatchedResourceSerializer
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.tagging.fields import TagsAndTagsColorsField
+from taiga.projects.userstories.models import UserStory
 from taiga.projects.validators import ProjectExistsValidator
+
+
 from . import models
-
-
-class TaskExistsValidator:
-    def validate_task_id(self, attrs, source):
-        value = attrs[source]
-        if not models.Task.objects.filter(pk=value).exists():
-            msg = _("There's no task with that id")
-            raise ValidationError(msg)
-        return attrs
 
 
 class TaskValidator(WatchersValidator, EditableWatchedResourceSerializer, validators.ModelValidator):
@@ -48,25 +43,72 @@ class TaskValidator(WatchersValidator, EditableWatchedResourceSerializer, valida
         read_only_fields = ('id', 'ref', 'created_date', 'modified_date', 'owner')
 
 
-class TasksBulkValidator(ProjectExistsValidator, MilestoneExistsValidator,
-                         TaskExistsValidator, validators.Validator):
+class TasksBulkValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
     sprint_id = serializers.IntegerField()
     status_id = serializers.IntegerField(required=False)
     us_id = serializers.IntegerField(required=False)
     bulk_tasks = serializers.CharField()
 
+    def validate_sprint_id(self, attrs, source):
+        filters = {"project__id": attrs["project_id"]}
+        filters["id"] = attrs["sprint_id"]
+
+        if not Milestone.objects.filter(**filters).exists():
+            raise ValidationError(_("Invalid sprint id."))
+
+        return attrs
+
+    def validate_status_id(self, attrs, source):
+        filters = {"project__id": attrs["project_id"]}
+        filters["id"] = attrs["status_id"]
+
+        if not TaskStatus.objects.filter(**filters).exists():
+            raise ValidationError(_("Invalid task status id."))
+
+        return attrs
+
+    def validate_us_id(self, attrs, source):
+        filters = {"project__id": attrs["project_id"]}
+
+        if "sprint_id" in attrs:
+            filters["milestone__id"] = attrs["sprint_id"]
+
+        filters["id"] = attrs["us_id"]
+
+        if not UserStory.objects.filter(**filters).exists():
+            raise ValidationError(_("Invalid sprint id."))
+
+        return attrs
+
 
 # Order bulk validators
 
-class _TaskOrderBulkValidator(TaskExistsValidator, validators.Validator):
+class _TaskOrderBulkValidator(validators.Validator):
     task_id = serializers.IntegerField()
     order = serializers.IntegerField()
 
 
 class UpdateTasksOrderBulkValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
-    milestone_id = serializers.IntegerField(required=False)
     status_id = serializers.IntegerField(required=False)
     us_id = serializers.IntegerField(required=False)
+    milestone_id = serializers.IntegerField(required=False)
     bulk_tasks = _TaskOrderBulkValidator(many=True)
+
+    def validate(self, data):
+        filters = {"project__id": data["project_id"]}
+        if "status_id" in data:
+            filters["status__id"] = data["status_id"]
+        if "us_id" in data:
+            filters["user_story__id"] = data["us_id"]
+        if "milestone_id" in data:
+            filters["milestone__id"] = data["milestone_id"]
+
+        filters["id__in"] = [t["task_id"] for t in data["bulk_tasks"]]
+
+        if models.Task.objects.filter(**filters).count() != len(filters["id__in"]):
+            raise ValidationError(_("Invalid task ids. All tasks must belong to the same project and, "
+                                    "if it exists, to the same status, user story and/or milestone."))
+
+        return data
