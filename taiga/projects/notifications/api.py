@@ -21,9 +21,7 @@ from django.db.models import Q
 from taiga.base.api import ModelCrudViewSet
 
 from taiga.projects.notifications.choices import NotifyLevel
-from taiga.projects.notifications.models import Watched
 from taiga.projects.models import Project
-from taiga.users import services as user_services
 from . import serializers
 from . import models
 from . import permissions

@@ -613,6 +613,8 @@ class ChoiceField(WritableField):
 
 
 def validate_user_email_allowed_domains(value):
+    validators.validate_email(value)
+
     domain_name = value.split("@")[1]
 
     if settings.USER_EMAIL_ALLOWED_DOMAINS and domain_name not in settings.USER_EMAIL_ALLOWED_DOMAINS:
@@ -627,7 +629,7 @@ class EmailField(CharField):
     default_error_messages = {
         "invalid": _("Enter a valid email address."),
     }
-    default_validators = [validators.validate_email, validate_user_email_allowed_domains]
+    default_validators = [validate_user_email_allowed_domains]
 
     def from_native(self, value):
         ret = super(EmailField, self).from_native(value)
