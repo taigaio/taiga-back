@@ -22,7 +22,7 @@ from django.utils.translation import ugettext as _
 from taiga.base.api.utils import get_object_or_404
 from taiga.base import filters, response
 from taiga.base import exceptions as exc
-from taiga.base.decorators import list_route
+from taiga.base.decorators import list_route, detail_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
 
@@ -201,14 +201,37 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
             raise exc.Blocked(_("Blocked element"))
 
         ret = services.update_epics_order_in_bulk(data["bulk_epics"],
-                                            project=project,
-                                            field=order_field)
+                                                  project=project,
+                                                  field=order_field)
 
         return response.Ok(ret)
 
     @list_route(methods=["POST"])
     def bulk_update_epics_order(self, request, **kwargs):
         return self._bulk_update_order("epics_order", request, **kwargs)
+
+    @detail_route(methods=["POST"])
+    def bulk_create_related_userstories(self, request, **kwargs):
+        validator = validators.CrateRelatedUserStoriesBulkValidator(data=request.DATA)
+        if validator.is_valid():
+            data = validator.data
+            obj = self.get_object()
+            project = obj.project
+            self.check_permissions(request, 'bulk_create_userstories', project)
+            if project.blocked_code is not None:
+                raise exc.Blocked(_("Blocked element"))
+
+            services.create_related_userstories_in_bulk(
+                data["userstories"],
+                obj,
+                project=project,
+                owner=request.user
+            )
+            obj = self.get_queryset().get(id=obj.id)
+            epic_serialized = self.get_serializer_class()(obj)
+            return response.Ok(epic_serialized.data)
+
+        return response.BadRequest(validator.errors)
 
 
 class EpicVotersViewSet(VotersViewSetMixin, ModelListViewSet):

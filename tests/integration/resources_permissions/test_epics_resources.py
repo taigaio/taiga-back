@@ -664,6 +664,34 @@ def test_epic_action_bulk_create(client, data):
     assert results == [401, 403, 403, 451, 451]
 
 
+def test_bulk_create_related_userstories(client, data):
+    public_url = reverse('epics-bulk-create-related-userstories', kwargs={"pk": data.public_epic.pk})
+    private_url1 = reverse('epics-bulk-create-related-userstories', kwargs={"pk": data.private_epic1.pk})
+    private_url2 = reverse('epics-bulk-create-related-userstories', kwargs={"pk": data.private_epic2.pk})
+    blocked_url = reverse('epics-bulk-create-related-userstories', kwargs={"pk": data.blocked_epic.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    bulk_data = json.dumps({
+        "userstories": "test1\ntest2",
+    })
+
+    results = helper_test_http_method(client, 'post', public_url, bulk_data, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, bulk_data, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, bulk_data, users)
+    assert results == [404, 404, 404, 200, 200]
+    results = helper_test_http_method(client, 'post', blocked_url, bulk_data, users)
+    assert results == [404, 404, 404, 451, 451]
+
+
 def test_epic_action_upvote(client, data):
     public_url = reverse('epics-upvote', kwargs={"pk": data.public_epic.pk})
     private_url1 = reverse('epics-upvote', kwargs={"pk": data.private_epic1.pk})

@@ -26,10 +26,12 @@ from django.db import connection
 from django.utils.translation import ugettext as _
 
 from taiga.base.utils import db, text
-from taiga.projects.history.services import take_snapshot
 from taiga.projects.services import apply_order_updates
 from taiga.projects.epics.apps import connect_epics_signals
 from taiga.projects.epics.apps import disconnect_epics_signals
+from taiga.projects.userstories.apps import connect_userstories_signals
+from taiga.projects.userstories.apps import disconnect_userstories_signals
+from taiga.projects.userstories.services import get_userstories_from_bulk
 from taiga.events import events
 from taiga.projects.votes.utils import attach_total_voters_to_queryset
 from taiga.projects.notifications.utils import attach_watchers_to_queryset
@@ -94,6 +96,35 @@ def update_epics_order_in_bulk(bulk_data: list, field: str, project: object):
 
     db.update_attr_in_bulk_for_ids(epic_orders, field, models.Epic)
     return epic_orders
+
+
+def create_related_userstories_in_bulk(bulk_data, epic, **additional_fields):
+    """Create user stories from `bulk_data`.
+
+    :param epic: Element where all the user stories will be contained
+    :param bulk_data: List of user stories in bulk format.
+    :param additional_fields: Additional fields when instantiating each user story.
+
+    :return: List of created `Task` instances.
+    """
+    userstories = get_userstories_from_bulk(bulk_data, **additional_fields)
+    disconnect_userstories_signals()
+
+    try:
+        db.save_in_bulk(userstories)
+        related_userstories = []
+        for userstory in userstories:
+            related_userstories.append(
+                models.RelatedUserStory(
+                    user_story=userstory,
+                    epic=epic
+                )
+            )
+        db.save_in_bulk(related_userstories)
+    finally:
+        connect_userstories_signals()
+
+    return userstories
 
 
 #####################################################

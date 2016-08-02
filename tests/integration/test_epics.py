@@ -66,3 +66,21 @@ def test_custom_fields_csv_generation():
     assert row[17] == attr.name
     row = next(reader)
     assert row[17] == "val1"
+
+
+def test_bulk_create_related_userstories(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    epic = f.EpicFactory.create(project=project)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    url = reverse('epics-bulk-create-related-userstories', kwargs={"pk": epic.pk})
+
+    data = {
+        "userstories": "test1\ntest2"
+    }
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    print(response.data)
+    assert response.status_code == 200
+    assert response.data['user_stories_counts'] == {'opened': 2, 'closed': 0}

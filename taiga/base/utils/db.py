@@ -83,6 +83,7 @@ def save_in_bulk(instances, callback=None, precall=None, **save_options):
     :params callback: Callback to call after each save.
     :params save_options: Additional options to use when saving each instance.
     """
+    ret = []
     if callback is None:
         callback = functions.noop
 
@@ -98,6 +99,7 @@ def save_in_bulk(instances, callback=None, precall=None, **save_options):
         instance.save(**save_options)
         callback(instance, created=created)
 
+    return ret
 
 @transaction.atomic
 def update_in_bulk(instances, list_of_new_values, callback=None, precall=None):

@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api.permissions import TaigaResourcePermission, AllowAny, IsAuthenticated, IsSuperUser
-from taiga.permissions.permissions import HasProjectPerm, IsProjectAdmin
+from taiga.base.api.permissions import TaigaResourcePermission, AllowAny, IsAuthenticated
+from taiga.base.api.permissions import IsSuperUser, HasProjectPerm, IsProjectAdmin
 
 from taiga.permissions.permissions import CommentAndOrUpdatePerm
 
@@ -35,6 +35,7 @@ class EpicPermission(TaigaResourcePermission):
     csv_perms = AllowAny()
     bulk_create_perms = HasProjectPerm('add_epic')
     bulk_update_order_perms = HasProjectPerm('modify_epic')
+    bulk_create_userstories_perms = HasProjectPerm('modify_epic') & (HasProjectPerm('add_us_to_project') | HasProjectPerm('add_us'))
     upvote_perms = IsAuthenticated() & HasProjectPerm('view_epics')
     downvote_perms = IsAuthenticated() & HasProjectPerm('view_epics')
     watch_perms = IsAuthenticated() & HasProjectPerm('view_epics')

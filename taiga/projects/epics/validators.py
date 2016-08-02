@@ -55,6 +55,11 @@ class EpicsBulkValidator(ProjectExistsValidator, EpicExistsValidator,
     bulk_epics = serializers.CharField()
 
 
+class CrateRelatedUserStoriesBulkValidator(ProjectExistsValidator, EpicExistsValidator,
+                                           validators.Validator):
+    userstories = serializers.CharField()
+
+
 # Order bulk validators
 
 class _EpicOrderBulkValidator(EpicExistsValidator, validators.Validator):
