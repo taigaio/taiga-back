@@ -32,6 +32,7 @@ from taiga.projects.models import Project, EpicStatus
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.tagging.api import TaggedResourceMixin
+from taiga.projects.userstories.models import UserStory
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
 from . import models
@@ -208,7 +209,7 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
         if validator.is_valid():
             data = validator.data
             project = Project.objects.get(id=data["project_id"])
-            self.check_permissions(request, 'bulk_create', project)
+            self.check_permissions(request, "bulk_create", project)
             if project.blocked_code is not None:
                 raise exc.Blocked(_("Blocked element"))
 
@@ -245,6 +246,32 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
             )
             obj = self.get_queryset().get(id=obj.id)
             epic_serialized = self.get_serializer_class()(obj)
+            return response.Ok(epic_serialized.data)
+
+        return response.BadRequest(validator.errors)
+
+    @detail_route(methods=["POST"])
+    def set_related_userstory(self, request, **kwargs):
+        validator = validators.SetRelatedUserStoryValidator(data=request.DATA)
+        if validator.is_valid():
+            data = validator.data
+            epic = self.get_object()
+            project = epic.project
+            user_story = UserStory.objects.get(id=data["us_id"])
+            self.check_permissions(request, "update", epic)
+            self.check_permissions(request, "select_related_userstory", user_story.project)
+
+            if project.blocked_code is not None:
+                raise exc.Blocked(_("Blocked element"))
+
+            obj, created = models.RelatedUserStory.objects.update_or_create(
+                epic=epic,
+                user_story=user_story,
+                defaults={
+                    "order": data["order"]
+                })
+            epic = self.get_queryset().get(id=epic.id)
+            epic_serialized = self.get_serializer_class()(epic)
             return response.Ok(epic_serialized.data)
 
         return response.BadRequest(validator.errors)

@@ -26,6 +26,7 @@ from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
 from taiga.projects.epics import services
+from taiga.projects.epics import models
 
 from .. import factories as f
 
@@ -106,3 +107,46 @@ def test_bulk_create_related_userstories(client):
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 200
     assert response.data['user_stories_counts'] == {'opened': 2, 'closed': 0}
+
+
+def test_set_related_userstory(client):
+    user = f.UserFactory.create()
+    epic = f.EpicFactory.create()
+    us = f.UserStoryFactory.create()
+    f.MembershipFactory.create(project=epic.project, user=user, is_admin=True)
+    f.MembershipFactory.create(project=us.project, user=user, is_admin=True)
+
+    url = reverse('epics-set-related-userstory', kwargs={"pk": epic.pk})
+
+    data = {
+        "us_id": us.id
+    }
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    print(response.data)
+    assert response.status_code == 200
+    assert response.data['user_stories_counts'] == {'opened': 1, 'closed': 0}
+
+
+def test_set_related_userstory_existing(client):
+    user = f.UserFactory.create()
+    epic = f.EpicFactory.create()
+    us = f.UserStoryFactory.create()
+    related_us = f.RelatedUserStory.create(epic=epic, user_story=us, order=55)
+    f.MembershipFactory.create(project=epic.project, user=user, is_admin=True)
+    f.MembershipFactory.create(project=us.project, user=user, is_admin=True)
+
+    url = reverse('epics-set-related-userstory', kwargs={"pk": epic.pk})
+
+    data = {
+        "us_id": us.id,
+        "order": 77
+    }
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    print(response.data)
+    assert response.status_code == 200
+    assert response.data['user_stories_counts'] == {'opened': 1, 'closed': 0}
+
+    related_us = models.RelatedUserStory.objects.get(id=related_us.id)
+    assert related_us.order == 77

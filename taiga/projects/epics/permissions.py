@@ -35,6 +35,7 @@ class EpicPermission(TaigaResourcePermission):
     csv_perms = AllowAny()
     bulk_create_perms = HasProjectPerm('add_epic')
     bulk_create_userstories_perms = HasProjectPerm('modify_epic') & (HasProjectPerm('add_us_to_project') | HasProjectPerm('add_us'))
+    select_related_userstory_perms = HasProjectPerm('view_us')
     upvote_perms = IsAuthenticated() & HasProjectPerm('view_epics')
     downvote_perms = IsAuthenticated() & HasProjectPerm('view_epics')
     watch_perms = IsAuthenticated() & HasProjectPerm('view_epics')

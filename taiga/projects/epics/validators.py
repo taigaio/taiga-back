@@ -22,10 +22,10 @@ from taiga.base.api import serializers
 from taiga.base.api import validators
 from taiga.base.exceptions import ValidationError
 from taiga.base.fields import PgArrayField
-from taiga.projects.milestones.validators import MilestoneExistsValidator
 from taiga.projects.notifications.mixins import EditableWatchedResourceSerializer
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.tagging.fields import TagsAndTagsColorsField
+from taiga.projects.userstories.validators import UserStoryExistsValidator
 from taiga.projects.validators import ProjectExistsValidator
 from . import models
 
@@ -58,3 +58,8 @@ class EpicsBulkValidator(ProjectExistsValidator, EpicExistsValidator,
 class CrateRelatedUserStoriesBulkValidator(ProjectExistsValidator, EpicExistsValidator,
                                            validators.Validator):
     userstories = serializers.CharField()
+
+
+class SetRelatedUserStoryValidator(UserStoryExistsValidator, validators.Validator):
+    us_id = serializers.IntegerField()
+    order = serializers.IntegerField(required=False, default=10000)
