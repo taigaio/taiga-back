@@ -68,6 +68,29 @@ def test_custom_fields_csv_generation():
     assert row[17] == "val1"
 
 
+def test_update_epic_order(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    epic_1 = f.EpicFactory.create(project=project, epics_order=1, status=project.default_us_status)
+    epic_2 = f.EpicFactory.create(project=project, epics_order=2, status=project.default_us_status)
+    epic_3 = f.EpicFactory.create(project=project, epics_order=3, status=project.default_us_status)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    url = reverse('epics-detail', kwargs={"pk": epic_1.pk})
+    data = {
+        "epics_order": 2,
+        "version": epic_1.version
+    }
+
+    client.login(user)
+    response = client.json.patch(url, json.dumps(data))
+    assert json.loads(response.get("taiga-info-order-updated")) == {
+        str(epic_1.id): 2,
+        str(epic_2.id): 3,
+        str(epic_3.id): 4
+    }
+
+
 def test_bulk_create_related_userstories(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
@@ -81,6 +104,5 @@ def test_bulk_create_related_userstories(client):
     }
     client.login(user)
     response = client.json.post(url, json.dumps(data))
-    print(response.data)
     assert response.status_code == 200
     assert response.data['user_stories_counts'] == {'opened': 2, 'closed': 0}

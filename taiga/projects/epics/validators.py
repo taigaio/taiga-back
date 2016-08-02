@@ -58,15 +58,3 @@ class EpicsBulkValidator(ProjectExistsValidator, EpicExistsValidator,
 class CrateRelatedUserStoriesBulkValidator(ProjectExistsValidator, EpicExistsValidator,
                                            validators.Validator):
     userstories = serializers.CharField()
-
-
-# Order bulk validators
-
-class _EpicOrderBulkValidator(EpicExistsValidator, validators.Validator):
-    epic_id = serializers.IntegerField()
-    order = serializers.IntegerField()
-
-
-class UpdateEpicsOrderBulkValidator(ProjectExistsValidator, validators.Validator):
-    project_id = serializers.IntegerField()
-    bulk_epics = _EpicOrderBulkValidator(many=True)

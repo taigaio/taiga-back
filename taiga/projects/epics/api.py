@@ -25,6 +25,7 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route, detail_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
+from taiga.base.utils import json
 
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.models import Project, EpicStatus
@@ -89,10 +90,47 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
         if obj.status and obj.status.project != obj.project:
             raise exc.WrongArguments(_("You don't have permissions to set this status to this epic."))
 
+    """
+    Updating the epic order attribute can affect the ordering of another epics
+    This method generate a key for the epic and can be used to be compared before and after
+    saving
+    If there is any difference it means an extra ordering update must be done
+    """
+    def _epics_order_key(self, obj):
+        return "{}-{}".format(obj.project_id, obj.epics_order)
+
     def pre_save(self, obj):
         if not obj.id:
             obj.owner = self.request.user
+        else:
+            self._old_epics_order_key = self._epics_order_key(self.get_object())
+
         super().pre_save(obj)
+
+    def _reorder_if_needed(self, obj, old_order_key, order_key, order_attr, project):
+        # Executes the extra ordering if there is a difference in the  ordering keys
+        if old_order_key != order_key:
+            extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
+            data = [{"epic_id": obj.id, "order": getattr(obj, order_attr)}]
+            for id, order in extra_orders.items():
+                data.append({"epic_id": int(id), "order": order})
+
+            return services.update_epics_order_in_bulk(data,
+                                                       field=order_attr,
+                                                       project=project)
+        return {}
+
+    def post_save(self, obj, created=False):
+        if not created:
+            # Let's reorder the related stuff after edit the element
+            orders_updated = self._reorder_if_needed(obj,
+                                                     self._old_epics_order_key,
+                                                     self._epics_order_key(obj),
+                                                     "epics_order",
+                                                     obj.project)
+            self.headers["Taiga-Info-Order-Updated"] = json.dumps(orders_updated)
+
+        super().post_save(obj, created)
 
     def update(self, request, *args, **kwargs):
         self.object = self.get_object_or_none()
@@ -187,28 +225,6 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
             return response.Ok(epics_serialized.data)
 
         return response.BadRequest(validator.errors)
-
-    def _bulk_update_order(self, order_field, request, **kwargs):
-        validator = validators.UpdateEpicsOrderBulkValidator(data=request.DATA)
-        if not validator.is_valid():
-            return response.BadRequest(validator.errors)
-
-        data = validator.data
-        project = get_object_or_404(Project, pk=data["project_id"])
-
-        self.check_permissions(request, "bulk_update_order", project)
-        if project.blocked_code is not None:
-            raise exc.Blocked(_("Blocked element"))
-
-        ret = services.update_epics_order_in_bulk(data["bulk_epics"],
-                                                  project=project,
-                                                  field=order_field)
-
-        return response.Ok(ret)
-
-    @list_route(methods=["POST"])
-    def bulk_update_epics_order(self, request, **kwargs):
-        return self._bulk_update_order("epics_order", request, **kwargs)
 
     @detail_route(methods=["POST"])
     def bulk_create_related_userstories(self, request, **kwargs):
