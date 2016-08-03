@@ -289,8 +289,8 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
         if "ref" not in request.QUERY_PARAMS:
             return response.BadRequest(_("ref param is needed"))
 
-        if "project_slug" not in request.QUERY_PARAMS and "project_id" not in request.QUERY_PARAMS:
-            return response.BadRequest(_("project_id or project_slug param is needed"))
+        if "project_slug" not in request.QUERY_PARAMS and "project" not in request.QUERY_PARAMS:
+            return response.BadRequest(_("project or project_slug param is needed"))
 
         retrieve_kwargs = {
             "ref": request.QUERY_PARAMS["ref"]
