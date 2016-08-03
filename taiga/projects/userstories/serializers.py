@@ -22,6 +22,7 @@ from taiga.base.neighbors import NeighborsSerializerMixin
 
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.attachments.serializers import BasicAttachmentsInfoSerializerMixin
+from taiga.projects.tagging.serializers import TaggedInProjectResourceSerializer
 from taiga.projects.mixins.serializers import OwnerExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import AssignedToExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import StatusExtraInfoSerializerMixin
@@ -45,6 +46,7 @@ class UserStoryListSerializer(
         VoteResourceSerializerMixin, WatchedResourceSerializer,
         OwnerExtraInfoSerializerMixin, AssignedToExtraInfoSerializerMixin,
         StatusExtraInfoSerializerMixin, BasicAttachmentsInfoSerializerMixin,
+        TaggedInProjectResourceSerializer,
         serializers.LightSerializer):
 
     id = Field()
@@ -71,7 +73,6 @@ class UserStoryListSerializer(
     watchers = Field()
     is_blocked = Field()
     blocked_note = Field()
-    tags = Field()
     total_points = MethodField()
     comment = MethodField()
     origin_issue = OriginIssueSerializer(attr="generated_from_issue")

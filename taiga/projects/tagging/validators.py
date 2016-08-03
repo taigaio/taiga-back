@@ -20,6 +20,7 @@ from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
 from taiga.base.api import validators
+from taiga.base.exceptions import ValidationError
 
 from . import services
 from . import fields
@@ -43,14 +44,14 @@ class CreateTagValidator(ProjectTagValidator):
     def validate_tag(self, attrs, source):
         tag = attrs.get(source, None)
         if services.tag_exist_for_project_elements(self.project, tag):
-            raise validators.ValidationError(_("The tag exists."))
+            raise ValidationError(_("The tag exists."))
 
         return attrs
 
     def validate_color(self, attrs, source):
         color = attrs.get(source, None)
-        if not re.match('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
-            raise validators.ValidationError(_("The color is not a valid HEX color."))
+        if color is not None and not re.match('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
+            raise ValidationError(_("The color is not a valid HEX color."))
 
         return attrs
 
@@ -63,21 +64,21 @@ class EditTagTagValidator(ProjectTagValidator):
     def validate_from_tag(self, attrs, source):
         tag = attrs.get(source, None)
         if not services.tag_exist_for_project_elements(self.project, tag):
-            raise validators.ValidationError(_("The tag doesn't exist."))
+            raise ValidationError(_("The tag doesn't exist."))
 
         return attrs
 
     def validate_to_tag(self, attrs, source):
         tag = attrs.get(source, None)
         if services.tag_exist_for_project_elements(self.project, tag):
-            raise validators.ValidationError(_("The tag exists yet"))
+            raise ValidationError(_("The tag exists yet"))
 
         return attrs
 
     def validate_color(self, attrs, source):
         color = attrs.get(source, None)
         if not re.match('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
-            raise validators.ValidationError(_("The color is not a valid HEX color."))
+            raise ValidationError(_("The color is not a valid HEX color."))
 
         return attrs
 
@@ -88,7 +89,7 @@ class DeleteTagValidator(ProjectTagValidator):
     def validate_tag(self, attrs, source):
         tag = attrs.get(source, None)
         if not services.tag_exist_for_project_elements(self.project, tag):
-            raise validators.ValidationError(_("The tag doesn't exist."))
+            raise ValidationError(_("The tag doesn't exist."))
 
         return attrs
 
@@ -101,13 +102,13 @@ class MixTagsValidator(ProjectTagValidator):
         tags = attrs.get(source, None)
         for tag in tags:
             if not services.tag_exist_for_project_elements(self.project, tag):
-                raise validators.ValidationError(_("The tag doesn't exist."))
+                raise ValidationError(_("The tag doesn't exist."))
 
         return attrs
 
     def validate_to_tag(self, attrs, source):
         tag = attrs.get(source, None)
         if not services.tag_exist_for_project_elements(self.project, tag):
-            raise validators.ValidationError(_("The tag doesn't exist."))
+            raise ValidationError(_("The tag doesn't exist."))
 
         return attrs
