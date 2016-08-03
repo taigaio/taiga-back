@@ -133,6 +133,7 @@ def test_set_related_userstory_existing(client):
     us = f.UserStoryFactory.create()
     related_us = f.RelatedUserStory.create(epic=epic, user_story=us, order=55)
     f.MembershipFactory.create(project=epic.project, user=user, is_admin=True)
+    f.MembershipFactory.create(project=us.project, user=user, is_admin=True)
 
     url = reverse('epics-set-related-userstory', kwargs={"pk": epic.pk})
 
