@@ -157,6 +157,24 @@ def test_api_create_in_bulk_with_status(client):
     assert response.data[0]["status"] == project.default_us_status.id
 
 
+def test_api_create_in_bulk_with_invalid_status(client):
+    project = f.create_project()
+    status = f.UserStoryStatusFactory.create()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    url = reverse("userstories-bulk-create")
+    data = {
+        "bulk_stories": "Story #1\nStory #2",
+        "project_id": project.id,
+        "status_id": status.id
+    }
+
+    client.login(project.owner)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400, response.data
+    assert "status_id" in response.data
+
+
 def test_api_update_orders_in_bulk(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
@@ -175,13 +193,14 @@ def test_api_update_orders_in_bulk(client):
 
     client.login(project.owner)
 
-    response1 = client.json.post(url1, json.dumps(data))
-    response2 = client.json.post(url2, json.dumps(data))
-    response3 = client.json.post(url3, json.dumps(data))
+    response = client.json.post(url1, json.dumps(data))
+    assert response.status_code == 200, response.data
 
-    assert response1.status_code == 200, response1.data
-    assert response2.status_code == 200, response2.data
-    assert response3.status_code == 200, response3.data
+    response = client.json.post(url2, json.dumps(data))
+    assert response.status_code == 200, response.data
+
+    response = client.json.post(url3, json.dumps(data))
+    assert response.status_code == 200, response.data
 
 
 def test_api_update_orders_in_bulk_invalid_userstories(client):
@@ -204,19 +223,24 @@ def test_api_update_orders_in_bulk_invalid_userstories(client):
 
     client.login(project.owner)
 
-    response1 = client.json.post(url1, json.dumps(data))
-    response2 = client.json.post(url2, json.dumps(data))
-    response3 = client.json.post(url3, json.dumps(data))
+    response = client.json.post(url1, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert "bulk_stories" in response.data
 
-    assert response1.status_code == 400, response1.data
-    assert response2.status_code == 400, response2.data
-    assert response3.status_code == 400, response3.data
+    response = client.json.post(url2, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert "bulk_stories" in response.data
+
+    response = client.json.post(url3, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert "bulk_stories" in response.data
 
 
 def test_api_update_orders_in_bulk_invalid_status(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
-    us1 = f.create_userstory(project=project)
+    status = f.UserStoryStatusFactory.create()
+    us1 = f.create_userstory(project=project, status=status)
     us2 = f.create_userstory(project=project, status=us1.status)
     us3 = f.create_userstory(project=project)
 
@@ -226,7 +250,7 @@ def test_api_update_orders_in_bulk_invalid_status(client):
 
     data = {
         "project_id": project.id,
-        "status_id": us1.status.id,
+        "status_id": status.id,
         "bulk_stories": [{"us_id": us1.id, "order": 1},
                          {"us_id": us2.id, "order": 2},
                          {"us_id": us3.id, "order": 3}]
@@ -234,19 +258,26 @@ def test_api_update_orders_in_bulk_invalid_status(client):
 
     client.login(project.owner)
 
-    response1 = client.json.post(url1, json.dumps(data))
-    response2 = client.json.post(url2, json.dumps(data))
-    response3 = client.json.post(url3, json.dumps(data))
+    response = client.json.post(url1, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert "status_id" in response.data
+    assert "bulk_stories" in response.data
 
-    assert response1.status_code == 400, response1.data
-    assert response2.status_code == 400, response2.data
-    assert response3.status_code == 400, response3.data
+    response = client.json.post(url2, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert "status_id" in response.data
+    assert "bulk_stories" in response.data
+
+    response = client.json.post(url3, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert "status_id" in response.data
+    assert "bulk_stories" in response.data
 
 
 def test_api_update_orders_in_bulk_invalid_milestione(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
-    mil1 = f.MilestoneFactory.create(project=project)
+    mil1 = f.MilestoneFactory.create()
     us1 = f.create_userstory(project=project, milestone=mil1)
     us2 = f.create_userstory(project=project, milestone=mil1)
     us3 = f.create_userstory(project=project)
@@ -265,13 +296,20 @@ def test_api_update_orders_in_bulk_invalid_milestione(client):
 
     client.login(project.owner)
 
-    response1 = client.json.post(url1, json.dumps(data))
-    response2 = client.json.post(url2, json.dumps(data))
-    response3 = client.json.post(url3, json.dumps(data))
+    response = client.json.post(url1, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert "milestone_id" in response.data
+    assert "bulk_stories" in response.data
 
-    assert response1.status_code == 400, response1.data
-    assert response2.status_code == 400, response2.data
-    assert response3.status_code == 400, response3.data
+    response = client.json.post(url2, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert "milestone_id" in response.data
+    assert "bulk_stories" in response.data
+
+    response = client.json.post(url3, json.dumps(data))
+    assert response.status_code == 400, response.data
+    assert "milestone_id" in response.data
+    assert "bulk_stories" in response.data
 
 
 def test_api_update_milestone_in_bulk(client):
@@ -322,7 +360,7 @@ def test_api_update_milestone_in_bulk_invalid_milestone(client):
 
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
-    assert len(response.data["non_field_errors"]) == 1
+    assert "milestone_id" in response.data
 
 
 def test_api_update_milestone_in_bulk_invalid_userstories(client):
@@ -344,7 +382,7 @@ def test_api_update_milestone_in_bulk_invalid_userstories(client):
 
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
-    assert len(response.data["non_field_errors"]) == 1
+    assert "bulk_stories" in response.data
 
 
 def test_update_userstory_points(client):

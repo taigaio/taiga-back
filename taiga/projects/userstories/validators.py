@@ -20,16 +20,17 @@ from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
 from taiga.base.api import validators
-from taiga.base.api.utils import get_object_or_404
 from taiga.base.exceptions import ValidationError
 from taiga.base.fields import PgArrayField
 from taiga.base.fields import PickledObjectField
-from taiga.projects.milestones.validators import MilestoneExistsValidator
-from taiga.projects.models import Project
+from taiga.projects.milestones.models import Milestone
+from taiga.projects.models import UserStoryStatus
 from taiga.projects.notifications.mixins import EditableWatchedResourceSerializer
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.tagging.fields import TagsAndTagsColorsField
-from taiga.projects.validators import ProjectExistsValidator, UserStoryStatusExistsValidator
+from taiga.projects.userstories.models import UserStory
+from taiga.projects.validators import ProjectExistsValidator
+from taiga.projects.validators import UserStoryStatusExistsValidator
 
 from . import models
 
@@ -67,11 +68,21 @@ class UserStoryValidator(WatchersValidator, EditableWatchedResourceSerializer, v
         read_only_fields = ('id', 'ref', 'created_date', 'modified_date', 'owner')
 
 
-class UserStoriesBulkValidator(ProjectExistsValidator, UserStoryStatusExistsValidator,
-                               validators.Validator):
+class UserStoriesBulkValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
     status_id = serializers.IntegerField(required=False)
     bulk_stories = serializers.CharField()
+
+    def validate_status_id(self, attrs, source):
+        filters = {"project__id": attrs["project_id"]}
+        if source in attrs:
+            filters["id"] = attrs[source]
+
+            if not UserStoryStatus.objects.filter(**filters).exists():
+                raise ValidationError(_("Invalid user story status id. The status must belong to "
+                                        "the same project."))
+
+        return attrs
 
 
 # Order bulk validators
@@ -88,20 +99,42 @@ class UpdateUserStoriesOrderBulkValidator(ProjectExistsValidator, UserStoryStatu
     milestone_id = serializers.IntegerField(required=False)
     bulk_stories = _UserStoryOrderBulkValidator(many=True)
 
-    def validate(self, data):
-        filters = {"project__id": data["project_id"]}
-        if "status_id" in data:
-            filters["status__id"] = data["status_id"]
-        if "milestone_id" in data:
-            filters["milestone__id"] = data["milestone_id"]
+    def validate_status_id(self, attrs, source):
+        filters = {"project__id": attrs["project_id"]}
+        if source in attrs:
+            filters["id"] = attrs[source]
 
-        filters["id__in"] = [us["us_id"] for us in data["bulk_stories"]]
+            if not UserStoryStatus.objects.filter(**filters).exists():
+                raise ValidationError(_("Invalid user story status id. The status must belong "
+                                        "to the same project."))
+
+        return attrs
+
+    def validate_milestone_id(self, attrs, source):
+        filters = {"project__id": attrs["project_id"]}
+        if source in attrs:
+            filters["id"] = attrs[source]
+
+            if not Milestone.objects.filter(**filters).exists():
+                raise ValidationError(_("Invalid milestone id. The milistone must belong to the "
+                                        "same project."))
+
+        return attrs
+
+    def validate_bulk_stories(self, attrs, source):
+        filters = {"project__id": attrs["project_id"]}
+        if "status_id" in attrs:
+            filters["status__id"] = attrs["status_id"]
+        if "milestone_id" in attrs:
+            filters["milestone__id"] = attrs["milestone_id"]
+
+        filters["id__in"] = [us["us_id"] for us in attrs[source]]
 
         if models.UserStory.objects.filter(**filters).count() != len(filters["id__in"]):
-            raise ValidationError(_("Invalid user story ids. All stories must belong to the same project and, "
-                                    "if it exists, to the same status and milestone."))
+            raise ValidationError(_("Invalid user story ids. All stories must belong to the same project "
+                                    "and, if it exists, to the same status and milestone."))
 
-        return data
+        return attrs
 
 
 # Milestone bulk validators
@@ -111,22 +144,27 @@ class _UserStoryMilestoneBulkValidator(validators.Validator):
     order = serializers.IntegerField()
 
 
-class UpdateMilestoneBulkValidator(ProjectExistsValidator, MilestoneExistsValidator, validators.Validator):
+class UpdateMilestoneBulkValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
     milestone_id = serializers.IntegerField()
     bulk_stories = _UserStoryMilestoneBulkValidator(many=True)
 
-    def validate(self, data):
-        """
-        All the userstories and the milestone are from the same project
-        """
-        user_story_ids = [us["us_id"] for us in data["bulk_stories"]]
-        project = get_object_or_404(Project, pk=data["project_id"])
+    def validate_milestone_id(self, attrs, source):
+        filters = {
+            "project__id": attrs["project_id"],
+            "id": attrs[source]
+        }
+        if not Milestone.objects.filter(**filters).exists():
+            raise ValidationError(_("The milestone isn't valid for the project"))
+        return attrs
 
-        if project.user_stories.filter(id__in=user_story_ids).count() != len(user_story_ids):
+    def validate_bulk_stories(self, attrs, source):
+        filters = {
+            "project__id": attrs["project_id"],
+            "id__in": [us["us_id"] for us in attrs[source]]
+        }
+
+        if UserStory.objects.filter(**filters).count() != len(filters["id__in"]):
             raise ValidationError(_("All the user stories must be from the same project"))
 
-        if project.milestones.filter(id=data["milestone_id"]).count() != 1:
-            raise ValidationError(_("The milestone isn't valid for the project"))
-
-        return data
+        return attrs
