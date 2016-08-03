@@ -276,6 +276,31 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
 
         return response.BadRequest(validator.errors)
 
+    @detail_route(methods=["POST"])
+    def unset_related_userstory(self, request, **kwargs):
+        validator = validators.UnsetRelatedUserStoryValidator(data=request.DATA)
+        if validator.is_valid():
+            data = validator.data
+            epic = self.get_object()
+            project = epic.project
+            user_story = UserStory.objects.get(id=data["us_id"])
+            self.check_permissions(request, "update", epic)
+
+            if project.blocked_code is not None:
+                raise exc.Blocked(_("Blocked element"))
+
+            related_us = get_object_or_404(
+                models.RelatedUserStory,
+                epic=epic,
+                user_story=user_story
+            )
+            related_us.delete()
+            epic = self.get_queryset().get(id=epic.id)
+            epic_serialized = self.get_serializer_class()(epic)
+            return response.Ok(epic_serialized.data)
+
+        return response.BadRequest(validator.errors)
+
 
 class EpicVotersViewSet(VotersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.EpicVotersPermission,)

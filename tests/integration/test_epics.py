@@ -133,7 +133,6 @@ def test_set_related_userstory_existing(client):
     us = f.UserStoryFactory.create()
     related_us = f.RelatedUserStory.create(epic=epic, user_story=us, order=55)
     f.MembershipFactory.create(project=epic.project, user=user, is_admin=True)
-    f.MembershipFactory.create(project=us.project, user=user, is_admin=True)
 
     url = reverse('epics-set-related-userstory', kwargs={"pk": epic.pk})
 
@@ -148,3 +147,24 @@ def test_set_related_userstory_existing(client):
 
     related_us = models.RelatedUserStory.objects.get(id=related_us.id)
     assert related_us.order == 77
+
+
+def test_unset_related_userstory(client):
+    user = f.UserFactory.create()
+    epic = f.EpicFactory.create()
+    us = f.UserStoryFactory.create()
+    related_us = f.RelatedUserStory.create(epic=epic, user_story=us, order=55)
+    f.MembershipFactory.create(project=epic.project, user=user, is_admin=True)
+
+    url = reverse('epics-unset-related-userstory', kwargs={"pk": epic.pk})
+
+    data = {
+        "us_id": us.id
+    }
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+    print(response.data)
+    assert response.status_code == 200
+    assert response.data['user_stories_counts'] == {'opened': 0, 'closed': 0}
+
+    assert not models.RelatedUserStory.objects.filter(id=related_us.id).exists()

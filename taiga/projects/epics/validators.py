@@ -63,3 +63,7 @@ class CrateRelatedUserStoriesBulkValidator(ProjectExistsValidator, EpicExistsVal
 class SetRelatedUserStoryValidator(UserStoryExistsValidator, validators.Validator):
     us_id = serializers.IntegerField()
     order = serializers.IntegerField(required=False, default=10000)
+
+
+class UnsetRelatedUserStoryValidator(UserStoryExistsValidator, validators.Validator):
+    us_id = serializers.IntegerField()

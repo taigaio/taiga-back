@@ -159,6 +159,11 @@ def data():
     m.private_us2 = f.UserStoryFactory(project=m.private_project2)
     m.blocked_us = f.UserStoryFactory(project=m.blocked_project)
 
+    m.public_related_us = f.RelatedUserStory(epic=m.public_epic, user_story=m.public_us)
+    m.private_related_us1 = f.RelatedUserStory(epic=m.private_epic1, user_story=m.private_us1)
+    m.private_related_us2 = f.RelatedUserStory(epic=m.private_epic2, user_story=m.private_us2)
+    m.blocked_related_us = f.RelatedUserStory(epic=m.blocked_epic, user_story=m.blocked_us)
+
     m.public_project.default_epic_status = m.public_epic.status
     m.public_project.save()
     m.private_project1.default_epic_status = m.private_epic1.status
@@ -738,6 +743,43 @@ def test_set_related_user_story(client, data):
     })
     results = helper_test_http_method(client, 'post', url, edit_data, users)
     assert results == [404, 404, 404, 451, 451]
+
+
+def test_unset_related_user_story(client, data):
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms
+    ]
+
+    url = reverse('epics-unset-related-userstory', kwargs={"pk": data.public_epic.pk})
+    edit_data = json.dumps({
+        "us_id": data.public_related_us.user_story.pk,
+    })
+    results = helper_test_http_method(client, 'post', url, edit_data, users)
+    assert results == [401, 403, 403, 200]
+
+    url = reverse('epics-set-related-userstory', kwargs={"pk": data.private_epic1.pk})
+    edit_data = json.dumps({
+        "us_id": data.private_related_us1.user_story.pk,
+    })
+    results = helper_test_http_method(client, 'post', url, edit_data, users)
+    assert results == [401, 403, 403, 200]
+
+    url = reverse('epics-set-related-userstory', kwargs={"pk": data.private_epic2.pk})
+    edit_data = json.dumps({
+        "us_id": data.private_related_us2.user_story.pk,
+    })
+    results = helper_test_http_method(client, 'post', url, edit_data, users)
+    assert results == [404, 404, 404, 200]
+
+    url = reverse('epics-set-related-userstory', kwargs={"pk": data.blocked_epic.pk})
+    edit_data = json.dumps({
+        "us_id": data.blocked_related_us.user_story.pk,
+    })
+    results = helper_test_http_method(client, 'post', url, edit_data, users)
+    assert results == [404, 404, 404, 451]
 
 
 def test_epic_action_upvote(client, data):
