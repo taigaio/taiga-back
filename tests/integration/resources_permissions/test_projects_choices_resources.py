@@ -2055,6 +2055,7 @@ def test_membership_action_bulk_create(client, data):
     results = helper_test_http_method(client, 'post', url, bulk_data, users)
     assert results == [401, 403, 403, 403, 451]
 
+
 def test_membership_action_resend_invitation(client, data):
     public_invitation = f.InvitationFactory(project=data.public_project, role__project=data.public_project)
     private_invitation1 = f.InvitationFactory(project=data.private_project1, role__project=data.private_project1)
