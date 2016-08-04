@@ -179,8 +179,8 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
                 self.check_permissions(request, "destroy", self.object)
                 self.check_permissions(request, "create", new_project)
 
-                sprint_id = request.DATA.get('milestone', None)
-                if sprint_id is not None and new_project.milestones.filter(pk=sprint_id).count() == 0:
+                milestone_id = request.DATA.get('milestone', None)
+                if milestone_id is not None and new_project.milestones.filter(pk=milestone_id).count() == 0:
                     request.DATA['milestone'] = None
 
                 us_id = request.DATA.get('user_story', None)
@@ -259,7 +259,7 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
                 raise exc.Blocked(_("Blocked element"))
 
             tasks = services.create_tasks_in_bulk(
-                data["bulk_tasks"], milestone_id=data["sprint_id"], user_story_id=data["us_id"],
+                data["bulk_tasks"], milestone_id=data["milestone_id"], user_story_id=data["us_id"],
                 status_id=data.get("status_id") or project.default_task_status_id,
                 project=project, owner=request.user, callback=self.post_save, precall=self.pre_save)
 

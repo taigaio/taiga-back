@@ -73,13 +73,14 @@ class UserStoriesBulkValidator(ProjectExistsValidator, validators.Validator):
     bulk_stories = serializers.CharField()
 
     def validate_status_id(self, attrs, source):
-        filters = {"project__id": attrs["project_id"]}
-        if source in attrs:
-            filters["id"] = attrs[source]
+        filters = {
+            "project__id": attrs["project_id"],
+            "id": attrs[source]
+        }
 
-            if not UserStoryStatus.objects.filter(**filters).exists():
-                raise ValidationError(_("Invalid user story status id. The status must belong to "
-                                        "the same project."))
+        if not UserStoryStatus.objects.filter(**filters).exists():
+            raise ValidationError(_("Invalid user story status id. The status must belong to "
+                                    "the same project."))
 
         return attrs
 
@@ -98,24 +99,26 @@ class UpdateUserStoriesOrderBulkValidator(ProjectExistsValidator, validators.Val
     bulk_stories = _UserStoryOrderBulkValidator(many=True)
 
     def validate_status_id(self, attrs, source):
-        filters = {"project__id": attrs["project_id"]}
-        if source in attrs:
-            filters["id"] = attrs[source]
+        filters = {
+            "project__id": attrs["project_id"],
+            "id": attrs[source]
+        }
 
-            if not UserStoryStatus.objects.filter(**filters).exists():
-                raise ValidationError(_("Invalid user story status id. The status must belong "
-                                        "to the same project."))
+        if not UserStoryStatus.objects.filter(**filters).exists():
+            raise ValidationError(_("Invalid user story status id. The status must belong "
+                                    "to the same project."))
 
         return attrs
 
     def validate_milestone_id(self, attrs, source):
-        filters = {"project__id": attrs["project_id"]}
-        if source in attrs:
-            filters["id"] = attrs[source]
+        filters = {
+            "project__id": attrs["project_id"],
+            "id": attrs[source]
+        }
 
-            if not Milestone.objects.filter(**filters).exists():
-                raise ValidationError(_("Invalid milestone id. The milistone must belong to the "
-                                        "same project."))
+        if not Milestone.objects.filter(**filters).exists():
+            raise ValidationError(_("Invalid milestone id. The milistone must belong to the "
+                                    "same project."))
 
         return attrs
 
