@@ -33,7 +33,6 @@ from . import services
 
 
 class DuplicatedNameInProjectValidator:
-
     def validate_name(self, attrs, source):
         """
         Check the points name is not duplicated in the project on creation
@@ -60,24 +59,6 @@ class ProjectExistsValidator:
         value = attrs[source]
         if not models.Project.objects.filter(pk=value).exists():
             msg = _("There's no project with that id")
-            raise ValidationError(msg)
-        return attrs
-
-
-class UserStoryStatusExistsValidator:
-    def validate_status_id(self, attrs, source):
-        value = attrs[source]
-        if not models.UserStoryStatus.objects.filter(pk=value).exists():
-            msg = _("There's no user story status with that id")
-            raise ValidationError(msg)
-        return attrs
-
-
-class TaskStatusExistsValidator:
-    def validate_status_id(self, attrs, source):
-        value = attrs[source]
-        if not models.TaskStatus.objects.filter(pk=value).exists():
-            msg = _("There's no task status with that id")
             raise ValidationError(msg)
         return attrs
 

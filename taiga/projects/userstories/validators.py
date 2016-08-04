@@ -30,7 +30,6 @@ from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.tagging.fields import TagsAndTagsColorsField
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.validators import ProjectExistsValidator
-from taiga.projects.validators import UserStoryStatusExistsValidator
 
 from . import models
 
@@ -92,8 +91,7 @@ class _UserStoryOrderBulkValidator(validators.Validator):
     order = serializers.IntegerField()
 
 
-class UpdateUserStoriesOrderBulkValidator(ProjectExistsValidator, UserStoryStatusExistsValidator,
-                                          validators.Validator):
+class UpdateUserStoriesOrderBulkValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
     status_id = serializers.IntegerField(required=False)
     milestone_id = serializers.IntegerField(required=False)
