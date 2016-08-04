@@ -232,6 +232,7 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, BlockedByProjectMixin, Mod
     validator_class = validators.EpicRelatedUserStoryValidator
     model = models.RelatedUserStory
     permission_classes = (permissions.EpicRelatedUserStoryPermission,)
+    lookup_field = "user_story_id"
 
     """
     Updating the order attribute can affect the ordering of another userstories in the epic

@@ -106,3 +106,7 @@ class RelatedUserStory(models.Model):
 
     def __str__(self):
         return "{0} - {1}".format(self.epic_id, self.user_story_id)
+
+    @property
+    def project(self):
+        return self.epic.project
