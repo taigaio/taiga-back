@@ -105,4 +105,4 @@ class RelatedUserStory(models.Model):
         ordering = ["user_story", "order", "id"]
 
     def __str__(self):
-        return "{0} - {1}".format(self.epic, self.user_story)
+        return "{0} - {1}".format(self.epic_id, self.user_story_id)

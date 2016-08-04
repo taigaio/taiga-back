@@ -98,7 +98,7 @@ def test_bulk_create_related_userstories(client):
     epic = f.EpicFactory.create(project=project)
     f.MembershipFactory.create(project=project, user=user, is_admin=True)
 
-    url = reverse('epics-bulk-create-related-userstories', kwargs={"pk": epic.pk})
+    url = reverse('epics-related-userstories-bulk-create', args=[epic.pk])
 
     data = {
         "userstories": "test1\ntest2"
@@ -106,7 +106,7 @@ def test_bulk_create_related_userstories(client):
     client.login(user)
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 200
-    assert response.data['user_stories_counts'] == {'opened': 2, 'closed': 0}
+    assert len(response.data) == 2
 
 
 def test_set_related_userstory(client):
@@ -116,13 +116,14 @@ def test_set_related_userstory(client):
     f.MembershipFactory.create(project=epic.project, user=user, is_admin=True)
     f.MembershipFactory.create(project=us.project, user=user, is_admin=True)
 
-    url = reverse('epics-set-related-userstory', kwargs={"pk": epic.pk})
+    url = reverse('epics-related-userstories-list', args=[epic.pk])
 
     data = {
-        "us_id": us.id
+        "user_story": us.id
     }
     client.login(user)
     response = client.json.post(url, json.dumps(data))
+    print(response.data)
     assert response.status_code == 200
     assert response.data['user_stories_counts'] == {'opened': 1, 'closed': 0}
 

@@ -60,10 +60,7 @@ class CrateRelatedUserStoriesBulkValidator(ProjectExistsValidator, EpicExistsVal
     userstories = serializers.CharField()
 
 
-class SetRelatedUserStoryValidator(UserStoryExistsValidator, validators.Validator):
-    us_id = serializers.IntegerField()
-    order = serializers.IntegerField(required=False, default=10000)
-
-
-class UnsetRelatedUserStoryValidator(UserStoryExistsValidator, validators.Validator):
-    us_id = serializers.IntegerField()
+class EpicRelatedUserStoryValidator(validators.ModelValidator):
+    class Meta:
+        model = models.RelatedUserStory
+        read_only_fields = ('id', 'epic', 'user_story')

@@ -676,10 +676,10 @@ def test_epic_action_bulk_create(client, data):
 
 
 def test_bulk_create_related_userstories(client, data):
-    public_url = reverse('epics-bulk-create-related-userstories', kwargs={"pk": data.public_epic.pk})
-    private_url1 = reverse('epics-bulk-create-related-userstories', kwargs={"pk": data.private_epic1.pk})
-    private_url2 = reverse('epics-bulk-create-related-userstories', kwargs={"pk": data.private_epic2.pk})
-    blocked_url = reverse('epics-bulk-create-related-userstories', kwargs={"pk": data.blocked_epic.pk})
+    public_url = reverse('epics-related-userstories-bulk-create', args=[data.public_epic.pk])
+    private_url1 = reverse('epics-related-userstories-bulk-create', args=[data.private_epic1.pk])
+    private_url2 = reverse('epics-related-userstories-bulk-create', args=[data.private_epic2.pk])
+    blocked_url = reverse('epics-related-userstories-bulk-create', args=[data.blocked_epic.pk])
 
     users = [
         None,
@@ -698,9 +698,9 @@ def test_bulk_create_related_userstories(client, data):
     results = helper_test_http_method(client, 'post', private_url1, bulk_data, users)
     assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'post', private_url2, bulk_data, users)
-    assert results == [404, 404, 404, 200, 200]
+    assert results == [401, 403, 403, 200, 200]
     results = helper_test_http_method(client, 'post', blocked_url, bulk_data, users)
-    assert results == [404, 404, 404, 451, 451]
+    assert results == [401, 403, 403, 451, 451]
 
 
 def test_set_related_user_story(client, data):

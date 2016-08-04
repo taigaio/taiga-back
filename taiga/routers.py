@@ -146,6 +146,7 @@ from taiga.projects.milestones.api import MilestoneViewSet
 from taiga.projects.milestones.api import MilestoneWatchersViewSet
 
 from taiga.projects.epics.api import EpicViewSet
+from taiga.projects.epics.api import EpicRelatedUserStoryViewSet
 from taiga.projects.epics.api import EpicVotersViewSet
 from taiga.projects.epics.api import EpicWatchersViewSet
 
@@ -170,8 +171,11 @@ router.register(r"milestones", MilestoneViewSet,
 router.register(r"milestones/(?P<resource_id>\d+)/watchers", MilestoneWatchersViewSet,
                 base_name="milestone-watchers")
 
-router.register(r"epics", EpicViewSet,
-                base_name="epics")
+router.register(r"epics", EpicViewSet, base_name="epics")\
+      .register(r"related_userstories", EpicRelatedUserStoryViewSet,
+                base_name="epics-related-userstories",
+                parents_query_lookups=["epic"])
+
 router.register(r"epics/(?P<resource_id>\d+)/voters", EpicVotersViewSet,
                 base_name="epic-voters")
 router.register(r"epics/(?P<resource_id>\d+)/watchers", EpicWatchersViewSet,

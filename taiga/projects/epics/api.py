@@ -25,6 +25,7 @@ from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route, detail_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
+from taiga.base.api.viewsets import NestedViewSetMixin
 from taiga.base.utils import json
 
 from taiga.projects.history.mixins import HistoryResourceMixin
@@ -108,17 +109,16 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
 
         super().pre_save(obj)
 
-    def _reorder_if_needed(self, obj, old_order_key, order_key, order_attr, project):
+    def _reorder_if_needed(self, obj, old_order_key, order_key):
         # Executes the extra ordering if there is a difference in the  ordering keys
         if old_order_key != order_key:
             extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
-            data = [{"epic_id": obj.id, "order": getattr(obj, order_attr)}]
+            data = [{"epic_id": obj.id, "order": getattr(obj, "epics_order")}]
             for id, order in extra_orders.items():
                 data.append({"epic_id": int(id), "order": order})
 
             return services.update_epics_order_in_bulk(data,
-                                                       field=order_attr,
-                                                       project=project)
+                                                       project=obj.project)
         return {}
 
     def post_save(self, obj, created=False):
@@ -126,9 +126,7 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
             # Let's reorder the related stuff after edit the element
             orders_updated = self._reorder_if_needed(obj,
                                                      self._old_epics_order_key,
-                                                     self._epics_order_key(obj),
-                                                     "epics_order",
-                                                     obj.project)
+                                                     self._epics_order_key(obj))
             self.headers["Taiga-Info-Order-Updated"] = json.dumps(orders_updated)
 
         super().post_save(obj, created)
@@ -227,77 +225,78 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
 
         return response.BadRequest(validator.errors)
 
-    @detail_route(methods=["POST"])
-    def bulk_create_related_userstories(self, request, **kwargs):
+
+class EpicRelatedUserStoryViewSet(NestedViewSetMixin, BlockedByProjectMixin, ModelCrudViewSet):
+    queryset = models.RelatedUserStory.objects.all()
+    serializer_class = serializers.EpicRelatedUserStorySerializer
+    validator_class = validators.EpicRelatedUserStoryValidator
+    model = models.RelatedUserStory
+    permission_classes = (permissions.EpicRelatedUserStoryPermission,)
+
+    """
+    Updating the order attribute can affect the ordering of another userstories in the epic
+    This method generate a key for the userstory and can be used to be compared before and after
+    saving
+    If there is any difference it means an extra ordering update must be done
+    """
+    def _order_key(self, obj):
+        return "{}-{}".format(obj.user_story.project_id, obj.order)
+
+    def pre_save(self, obj):
+        if not obj.id:
+            obj.epic_id = self.kwargs["epic"]
+        else:
+            self._old_order_key = self._order_key(self.get_object())
+
+        super().pre_save(obj)
+
+    def _reorder_if_needed(self, obj, old_order_key, order_key):
+        # Executes the extra ordering if there is a difference in the  ordering keys
+        if old_order_key != order_key:
+            extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
+            data = [{"us_id": obj.id, "order": getattr(obj, "order")}]
+            for id, order in extra_orders.items():
+                data.append({"epic_id": int(id), "order": order})
+
+            return services.update_epic_related_userstories_order_in_bulk(
+                data,
+                epic=obj.epic
+            )
+
+        return {}
+
+    def post_save(self, obj, created=False):
+        if not created:
+            # Let's reorder the related stuff after edit the element
+            orders_updated = self._reorder_if_needed(obj,
+                                                     self._old_epics_order_key,
+                                                     self._epics_order_key(obj))
+            self.headers["Taiga-Info-Order-Updated"] = json.dumps(orders_updated)
+
+        super().post_save(obj, created)
+
+    @list_route(methods=["POST"])
+    def bulk_create(self, request, **kwargs):
         validator = validators.CrateRelatedUserStoriesBulkValidator(data=request.DATA)
         if validator.is_valid():
             data = validator.data
-            obj = self.get_object()
-            project = obj.project
-            self.check_permissions(request, 'bulk_create_userstories', project)
+
+            epic = get_object_or_404(models.Epic, id=kwargs["epic"])
+            project = epic.project
+
+            self.check_permissions(request, 'bulk_create', project)
             if project.blocked_code is not None:
                 raise exc.Blocked(_("Blocked element"))
 
             services.create_related_userstories_in_bulk(
                 data["userstories"],
-                obj,
+                epic,
                 project=project,
                 owner=request.user
             )
-            obj = self.get_queryset().get(id=obj.id)
-            epic_serialized = self.get_serializer_class()(obj)
-            return response.Ok(epic_serialized.data)
 
-        return response.BadRequest(validator.errors)
-
-    @detail_route(methods=["POST"])
-    def set_related_userstory(self, request, **kwargs):
-        validator = validators.SetRelatedUserStoryValidator(data=request.DATA)
-        if validator.is_valid():
-            data = validator.data
-            epic = self.get_object()
-            project = epic.project
-            user_story = UserStory.objects.get(id=data["us_id"])
-            self.check_permissions(request, "update", epic)
-            self.check_permissions(request, "select_related_userstory", user_story.project)
-
-            if project.blocked_code is not None:
-                raise exc.Blocked(_("Blocked element"))
-
-            obj, created = models.RelatedUserStory.objects.update_or_create(
-                epic=epic,
-                user_story=user_story,
-                defaults={
-                    "order": data["order"]
-                })
-            epic = self.get_queryset().get(id=epic.id)
-            epic_serialized = self.get_serializer_class()(epic)
-            return response.Ok(epic_serialized.data)
-
-        return response.BadRequest(validator.errors)
-
-    @detail_route(methods=["POST"])
-    def unset_related_userstory(self, request, **kwargs):
-        validator = validators.UnsetRelatedUserStoryValidator(data=request.DATA)
-        if validator.is_valid():
-            data = validator.data
-            epic = self.get_object()
-            project = epic.project
-            user_story = UserStory.objects.get(id=data["us_id"])
-            self.check_permissions(request, "update", epic)
-
-            if project.blocked_code is not None:
-                raise exc.Blocked(_("Blocked element"))
-
-            related_us = get_object_or_404(
-                models.RelatedUserStory,
-                epic=epic,
-                user_story=user_story
-            )
-            related_us.delete()
-            epic = self.get_queryset().get(id=epic.id)
-            epic_serialized = self.get_serializer_class()(epic)
-            return response.Ok(epic_serialized.data)
+            related_uss_serialized = self.get_serializer_class()(epic.relateduserstory_set.all(), many=True)
+            return response.Ok(related_uss_serialized.data)
 
         return response.BadRequest(validator.errors)
 

@@ -24,10 +24,17 @@ from taiga.projects.votes.admin import VoteInline
 from . import models
 
 
+class RelatedUserStoriesInline(admin.TabularInline):
+    model = models.RelatedUserStory
+    sortable_field_name = "order"
+    raw_id_fields = ["user_story", ]
+    extra = 0
+
+
 class EpicAdmin(admin.ModelAdmin):
     list_display = ["project", "ref", "subject"]
     list_display_links = ["ref", "subject"]
-    inlines = [WatchedInline, VoteInline]
+    inlines = [WatchedInline, VoteInline, RelatedUserStoriesInline]
     raw_id_fields = ["project"]
     search_fields = ["subject", "description", "id", "ref"]
 
