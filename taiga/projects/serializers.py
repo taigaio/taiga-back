@@ -38,6 +38,7 @@ from .notifications.choices import NotifyLevel
 ######################################################
 
 class PointsSerializer(serializers.LightSerializer):
+    id = Field()
     name = I18NField()
     order = Field()
     value = Field()
@@ -45,6 +46,7 @@ class PointsSerializer(serializers.LightSerializer):
 
 
 class UserStoryStatusSerializer(serializers.LightSerializer):
+    id = Field()
     name = I18NField()
     slug = Field()
     order = Field()
@@ -56,6 +58,7 @@ class UserStoryStatusSerializer(serializers.LightSerializer):
 
 
 class TaskStatusSerializer(serializers.LightSerializer):
+    id = Field()
     name = I18NField()
     slug = Field()
     order = Field()
@@ -65,6 +68,7 @@ class TaskStatusSerializer(serializers.LightSerializer):
 
 
 class SeveritySerializer(serializers.LightSerializer):
+    id = Field()
     name = I18NField()
     order = Field()
     color = Field()
@@ -72,6 +76,7 @@ class SeveritySerializer(serializers.LightSerializer):
 
 
 class PrioritySerializer(serializers.LightSerializer):
+    id = Field()
     name = I18NField()
     order = Field()
     color = Field()
@@ -79,6 +84,7 @@ class PrioritySerializer(serializers.LightSerializer):
 
 
 class IssueStatusSerializer(serializers.LightSerializer):
+    id = Field()
     name = I18NField()
     slug = Field()
     order = Field()
@@ -88,6 +94,7 @@ class IssueStatusSerializer(serializers.LightSerializer):
 
 
 class IssueTypeSerializer(serializers.LightSerializer):
+    id = Field()
     name = I18NField()
     order = Field()
     color = Field()
