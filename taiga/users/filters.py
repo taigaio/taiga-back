@@ -16,10 +16,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.apps import apps
-
 from taiga.base.filters import PermissionBasedFilterBackend
 from . import services
+
 
 class ContactsFilterBackend(PermissionBasedFilterBackend):
     def filter_queryset(self, user, request, queryset, view):

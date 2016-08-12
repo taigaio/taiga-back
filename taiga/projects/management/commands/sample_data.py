@@ -347,7 +347,7 @@ class Command(BaseCommand):
         bug.save()
 
         custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
-                                      in project.issuecustomattributes.all() if self.sd.boolean()}
+                                      in project.issuecustomattributes.all().order_by('id') if self.sd.boolean()}
         if custom_attributes_values:
             bug.custom_attributes_values.attributes_values = custom_attributes_values
             bug.custom_attributes_values.save()
@@ -399,7 +399,7 @@ class Command(BaseCommand):
         task.save()
 
         custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
-                                       in project.taskcustomattributes.all() if self.sd.boolean()}
+                                       in project.taskcustomattributes.all().order_by('id') if self.sd.boolean()}
         if custom_attributes_values:
             task.custom_attributes_values.attributes_values = custom_attributes_values
             task.custom_attributes_values.save()
@@ -447,7 +447,7 @@ class Command(BaseCommand):
         us.save()
 
         custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
-                                 in project.userstorycustomattributes.all() if self.sd.boolean()}
+                                 in project.userstorycustomattributes.all().order_by('id') if self.sd.boolean()}
         if custom_attributes_values:
             us.custom_attributes_values.attributes_values = custom_attributes_values
             us.custom_attributes_values.save()
