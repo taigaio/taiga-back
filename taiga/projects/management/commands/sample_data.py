@@ -521,7 +521,7 @@ class Command(BaseCommand):
         epic.save()
 
         custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
-                                    in project.epiccustomattributes.all() if self.sd.boolean()}
+                                    in project.epiccustomattributes.all().order_by("id") if self.sd.boolean()}
         if custom_attributes_values:
             epic.custom_attributes_values.attributes_values = custom_attributes_values
             epic.custom_attributes_values.save()
