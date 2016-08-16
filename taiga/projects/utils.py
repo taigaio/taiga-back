@@ -37,6 +37,7 @@ def attach_members(queryset, as_field="members_attr"):
                         users_user.color,
                         users_user.photo,
                         users_user.is_active,
+                        users_role.id "role",
                         users_role.name role_name
 
                     FROM projects_membership

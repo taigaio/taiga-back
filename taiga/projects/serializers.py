@@ -99,6 +99,7 @@ class IssueTypeSerializer(serializers.LightSerializer):
 ######################################################
 
 class MembershipDictSerializer(serializers.LightDictSerializer):
+    role = Field()
     role_name = Field()
     full_name = Field()
     full_name_display = MethodField()
