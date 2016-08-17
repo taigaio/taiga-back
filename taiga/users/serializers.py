@@ -19,7 +19,7 @@
 from django.conf import settings
 
 from taiga.base.api import serializers
-from taiga.base.fields import PgArrayField, Field, MethodField, I18NField
+from taiga.base.fields import Field, MethodField, I18NField
 
 from taiga.base.utils.thumbnails import get_thumbnail_url
 
@@ -138,22 +138,15 @@ class UserBasicInfoSerializer(serializers.LightSerializer):
 class RoleSerializer(serializers.LightSerializer):
     id = Field()
     name = Field()
-    computable = Field()
+    slug = Field()
     project = Field(attr="project_id")
     order = Field()
+    computable = Field()
+    permissions =  Field()
     members_count = MethodField()
-    permissions = PgArrayField(required=False)
 
     def get_members_count(self, obj):
         return obj.memberships.count()
-
-
-class ProjectRoleSerializer(serializers.LightSerializer):
-    id = Field()
-    name = I18NField()
-    slug = Field()
-    order = Field()
-    computable = Field()
 
 
 ######################################################
