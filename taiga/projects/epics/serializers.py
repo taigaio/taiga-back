@@ -26,13 +26,14 @@ from taiga.projects.mixins.serializers import OwnerExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import AssignedToExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import StatusExtraInfoSerializerMixin
 from taiga.projects.notifications.mixins import WatchedResourceSerializer
+from taiga.projects.tagging.serializers import TaggedInProjectResourceSerializer
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
 
 
 class EpicListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
                          OwnerExtraInfoSerializerMixin, AssignedToExtraInfoSerializerMixin,
                          StatusExtraInfoSerializerMixin, BasicAttachmentsInfoSerializerMixin,
-                         serializers.LightSerializer):
+                         TaggedInProjectResourceSerializer, serializers.LightSerializer):
 
     id = Field()
     ref = Field()
@@ -48,7 +49,6 @@ class EpicListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
     watchers = Field()
     is_blocked = Field()
     blocked_note = Field()
-    tags = Field()
     is_closed = MethodField()
     user_stories_counts = MethodField()
 
