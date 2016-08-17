@@ -79,7 +79,6 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.select_related("milestone",
-                               "user_story",
                                "project",
                                "status",
                                "owner",
