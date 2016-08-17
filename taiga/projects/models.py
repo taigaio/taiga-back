@@ -180,6 +180,7 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
 
     creation_template = models.ForeignKey("projects.ProjectTemplate",
                                           related_name="projects", null=True,
+                                          on_delete=models.SET_NULL,
                                           blank=True, default=None,
                                           verbose_name=_("creation template"))
 

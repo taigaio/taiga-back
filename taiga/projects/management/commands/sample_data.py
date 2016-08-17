@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import random
 import datetime
 from os import path
 from hashlib import sha1
@@ -33,6 +32,7 @@ from sampledatahelper.helper import SampleDataHelper
 from taiga.users.models import *
 from taiga.permissions.choices import ANON_PERMISSIONS
 from taiga.projects.choices import BLOCKED_BY_STAFF
+from taiga.external_apps.models import Application, ApplicationToken
 from taiga.projects.models import *
 from taiga.projects.milestones.models import *
 from taiga.projects.notifications.choices import NotifyLevel
@@ -115,10 +115,12 @@ NUM_TASKS = getattr(settings, "SAMPLE_DATA_NUM_TASKS", (0, 4))
 NUM_USS_BACK = getattr(settings, "SAMPLE_DATA_NUM_USS_BACK", (8, 20))
 NUM_ISSUES = getattr(settings, "SAMPLE_DATA_NUM_ISSUES", (12, 25))
 NUM_WIKI_LINKS = getattr(settings, "SAMPLE_DATA_NUM_WIKI_LINKS", (0, 15))
-NUM_ATTACHMENTS = getattr(settings, "SAMPLE_DATA_NUM_ATTACHMENTS", (0, 4))
+NUM_ATTACHMENTS = getattr(settings, "SAMPLE_DATA_NUM_ATTACHMENTS", (1, 4))
 NUM_LIKES = getattr(settings, "SAMPLE_DATA_NUM_LIKES", (0, 10))
 NUM_VOTES = getattr(settings, "SAMPLE_DATA_NUM_VOTES", (0, 10))
 NUM_WATCHERS = getattr(settings, "SAMPLE_DATA_NUM_PROJECT_WATCHERS", (0, 8))
+NUM_APPLICATIONS = getattr(settings, "SAMPLE_DATA_NUM_APPLICATIONS", (1, 3))
+NUM_APPLICATIONS_TOKENS = getattr(settings, "SAMPLE_DATA_NUM_APPLICATIONS_TOKENS", (1, 3))
 FEATURED_PROJECTS_POSITIONS = [0, 1, 2]
 LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS = [0, 1, 2]
 
@@ -181,36 +183,33 @@ class Command(BaseCommand):
                                           project=project,
                                           role=role,
                                           is_admin=self.sd.boolean(),
-                                          token=''.join(random.sample('abcdef0123456789', 10)))
+                                          token=self.sd.hex_chars(10,10))
 
                 if role.computable:
                     computable_project_roles.add(role)
 
             # added custom attributes
-            if self.sd.boolean:
-                names = set([self.sd.words(1, 3) for i in range(1, 6)])
-                for name in names:
-                    UserStoryCustomAttribute.objects.create(name=name,
-                                                            description=self.sd.words(3, 12),
-                                                            type=self.sd.choice(TYPES_CHOICES)[0],
-                                                            project=project,
-                                                            order=i)
-            if self.sd.boolean:
-                names = set([self.sd.words(1, 3) for i in range(1, 6)])
-                for name in names:
-                    TaskCustomAttribute.objects.create(name=name,
-                                                       description=self.sd.words(3, 12),
-                                                       type=self.sd.choice(TYPES_CHOICES)[0],
-                                                       project=project,
-                                                       order=i)
-            if self.sd.boolean:
-                names = set([self.sd.words(1, 3) for i in range(1, 6)])
-                for name in names:
-                    IssueCustomAttribute.objects.create(name=name,
+            names = set([self.sd.words(1, 3) for i in range(1, 6)])
+            for name in names:
+                UserStoryCustomAttribute.objects.create(name=name,
                                                         description=self.sd.words(3, 12),
                                                         type=self.sd.choice(TYPES_CHOICES)[0],
                                                         project=project,
                                                         order=i)
+            names = set([self.sd.words(1, 3) for i in range(1, 6)])
+            for name in names:
+                TaskCustomAttribute.objects.create(name=name,
+                                                   description=self.sd.words(3, 12),
+                                                   type=self.sd.choice(TYPES_CHOICES)[0],
+                                                   project=project,
+                                                   order=i)
+            names = set([self.sd.words(1, 3) for i in range(1, 6)])
+            for name in names:
+                IssueCustomAttribute.objects.create(name=name,
+                                                    description=self.sd.words(3, 12),
+                                                    type=self.sd.choice(TYPES_CHOICES)[0],
+                                                    project=project,
+                                                    order=i)
 
             # If the project isn't empty
             if x not in empty_projects_range:
@@ -271,6 +270,7 @@ class Command(BaseCommand):
             project.save()
 
             self.create_likes(project)
+
 
     def create_attachment(self, obj, order):
         attached_file = self.sd.file_from_directory(*ATTACHMENT_SAMPLE_DATA)
@@ -347,7 +347,7 @@ class Command(BaseCommand):
         bug.save()
 
         custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
-                                      in project.issuecustomattributes.all() if self.sd.boolean()}
+                                      in project.issuecustomattributes.all().order_by('id') if self.sd.boolean()}
         if custom_attributes_values:
             bug.custom_attributes_values.attributes_values = custom_attributes_values
             bug.custom_attributes_values.save()
@@ -399,7 +399,7 @@ class Command(BaseCommand):
         task.save()
 
         custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
-                                       in project.taskcustomattributes.all() if self.sd.boolean()}
+                                       in project.taskcustomattributes.all().order_by('id') if self.sd.boolean()}
         if custom_attributes_values:
             task.custom_attributes_values.attributes_values = custom_attributes_values
             task.custom_attributes_values.save()
@@ -447,7 +447,7 @@ class Command(BaseCommand):
         us.save()
 
         custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
-                                 in project.userstorycustomattributes.all() if self.sd.boolean()}
+                                 in project.userstorycustomattributes.all().order_by('id') if self.sd.boolean()}
         if custom_attributes_values:
             us.custom_attributes_values.attributes_values = custom_attributes_values
             us.custom_attributes_values.save()
@@ -503,7 +503,7 @@ class Command(BaseCommand):
         project = Project.objects.create(slug='project-%s'%(counter),
                                          name='Project Example {0}'.format(counter),
                                          description='Project example {0} description'.format(counter),
-                                         owner=random.choice(self.users),
+                                         owner=self.sd.choice(self.users),
                                          is_private=is_private,
                                          anon_permissions=anon_permissions,
                                          public_permissions=public_permissions,
@@ -533,7 +533,7 @@ class Command(BaseCommand):
         user = User.objects.create(username=username,
                                    full_name=full_name,
                                    email=email,
-                                   token=''.join(random.sample('abcdef0123456789', 10)),
+                                   token=self.sd.hex_chars(10,10),
                                    color=self.sd.choice(COLOR_CHOICES))
 
         user.set_password('123123')
