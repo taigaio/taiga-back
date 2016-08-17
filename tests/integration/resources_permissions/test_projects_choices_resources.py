@@ -2047,8 +2047,8 @@ def test_membership_action_bulk_create(client, data):
     bulk_data = {
         "project_id": data.blocked_project.id,
         "bulk_memberships": [
-            {"role_id": data.private_membership2.role.pk, "email": "test1@test.com"},
-            {"role_id": data.private_membership2.role.pk, "email": "test2@test.com"},
+            {"role_id": data.blocked_membership.role.pk, "email": "test1@test.com"},
+            {"role_id": data.blocked_membership.role.pk, "email": "test2@test.com"},
         ]
     }
     bulk_data = json.dumps(bulk_data)

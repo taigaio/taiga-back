@@ -118,6 +118,7 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
                 data.append({"epic_id": int(id), "order": order})
 
             return services.update_epics_order_in_bulk(data,
+                                                       "epics_order",
                                                        project=obj.project)
         return {}
 
