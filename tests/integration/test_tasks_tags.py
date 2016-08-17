@@ -123,7 +123,7 @@ def test_api_task_add_new_tags_with_colors(client):
 
 
 def test_api_create_new_task_with_tags(client):
-    project = f.ProjectFactory.create()
+    project = f.ProjectFactory.create(tags_colors=[["front", "#aaaaaa"], ["ux", "#fabada"]])
     status = f.TaskStatusFactory.create(project=project)
     project.default_task_status = status
     project.save()
@@ -135,8 +135,8 @@ def test_api_create_new_task_with_tags(client):
         "project": project.id,
         "tags": [
             ["back", "#fff8e7"],
-            ["front", None],
-            ["ux", "#fabada"]
+            ["front", "#bbbbbb"],
+            ["ux", None]
         ]
     }
 
@@ -145,16 +145,17 @@ def test_api_create_new_task_with_tags(client):
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201, response.data
 
-    assert ("back" in response.data["tags"] and
-            "front" in response.data["tags"] and
-            "ux" in response.data["tags"])
+    task_tags_colors = OrderedDict(response.data["tags"])
+
+    assert task_tags_colors["back"] == "#fff8e7"
+    assert task_tags_colors["front"] == "#aaaaaa"
+    assert task_tags_colors["ux"] == "#fabada"
 
     tags_colors = OrderedDict(project.tags_colors)
-    assert not tags_colors.keys()
 
     project.refresh_from_db()
 
     tags_colors = OrderedDict(project.tags_colors)
-    assert "back" in tags_colors and "front" in tags_colors and "ux" in tags_colors
     assert tags_colors["back"] == "#fff8e7"
     assert tags_colors["ux"] == "#fabada"
+    assert tags_colors["front"] == "#aaaaaa"

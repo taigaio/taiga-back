@@ -26,13 +26,14 @@ from taiga.projects.mixins.serializers import OwnerExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import AssignedToExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import StatusExtraInfoSerializerMixin
 from taiga.projects.notifications.mixins import WatchedResourceSerializer
+from taiga.projects.tagging.serializers import TaggedInProjectResourceSerializer
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
 
 
 class TaskListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
                          OwnerExtraInfoSerializerMixin, AssignedToExtraInfoSerializerMixin,
                          StatusExtraInfoSerializerMixin, BasicAttachmentsInfoSerializerMixin,
-                         serializers.LightSerializer):
+                         TaggedInProjectResourceSerializer, serializers.LightSerializer):
 
     id = Field()
     user_story = Field(attr="user_story_id")
@@ -52,7 +53,6 @@ class TaskListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
     watchers = Field()
     is_blocked = Field()
     blocked_note = Field()
-    tags = Field()
     is_closed = MethodField()
 
     def get_milestone_slug(self, obj):
