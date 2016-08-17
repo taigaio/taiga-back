@@ -251,24 +251,25 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
         validator = validators.TasksBulkValidator(data=request.DATA)
-        if validator.is_valid():
-            data = validator.data
-            project = Project.objects.get(id=data["project_id"])
-            self.check_permissions(request, 'bulk_create', project)
-            if project.blocked_code is not None:
-                raise exc.Blocked(_("Blocked element"))
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-            tasks = services.create_tasks_in_bulk(
-                data["bulk_tasks"], milestone_id=data["milestone_id"], user_story_id=data["us_id"],
-                status_id=data.get("status_id") or project.default_task_status_id,
-                project=project, owner=request.user, callback=self.post_save, precall=self.pre_save)
+        data = validator.data
+        project = Project.objects.get(id=data["project_id"])
+        self.check_permissions(request, 'bulk_create', project)
+        if project.blocked_code is not None:
+            raise exc.Blocked(_("Blocked element"))
 
-            tasks = self.get_queryset().filter(id__in=[i.id for i in tasks])
-            tasks_serialized = self.get_serializer_class()(tasks, many=True)
+        tasks = services.create_tasks_in_bulk(
+            data["bulk_tasks"], milestone_id=data["milestone_id"], user_story_id=data["us_id"],
+            status_id=data.get("status_id") or project.default_task_status_id,
+            project=project, owner=request.user, callback=self.post_save, precall=self.pre_save)
 
-            return response.Ok(tasks_serialized.data)
+        tasks = self.get_queryset().filter(id__in=[i.id for i in tasks])
+        tasks_serialized = self.get_serializer_class()(tasks, many=True)
 
-        return response.BadRequest(validator.errors)
+        return response.Ok(tasks_serialized.data)
+
 
     def _bulk_update_order(self, order_field, request, **kwargs):
         validator = validators.UpdateTasksOrderBulkValidator(data=request.DATA)
