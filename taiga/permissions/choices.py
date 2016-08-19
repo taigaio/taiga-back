@@ -37,7 +37,7 @@ MEMBERS_PERMISSIONS = [
     ('add_milestone', _('Add milestone')),
     ('modify_milestone', _('Modify milestone')),
     ('delete_milestone', _('Delete milestone')),
-    # US permissions
+    # Epic permissions
     ('view_epics', _('View epic')),
     ('add_epic', _('Add epic')),
     ('modify_epic', _('Modify epic')),

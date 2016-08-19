@@ -111,16 +111,15 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
 
     def _reorder_if_needed(self, obj, old_order_key, order_key):
         # Executes the extra ordering if there is a difference in the  ordering keys
-        if old_order_key != order_key:
-            extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
-            data = [{"epic_id": obj.id, "order": getattr(obj, "epics_order")}]
-            for id, order in extra_orders.items():
-                data.append({"epic_id": int(id), "order": order})
+        if old_order_key == order_key:
+            return {}
 
-            return services.update_epics_order_in_bulk(data,
-                                                       "epics_order",
-                                                       project=obj.project)
-        return {}
+        extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
+        data = [{"epic_id": obj.id, "order": getattr(obj, "epics_order")}]
+        for id, order in extra_orders.items():
+            data.append({"epic_id": int(id), "order": order})
+
+        return services.update_epics_order_in_bulk(data, "epics_order", project=obj.project)
 
     def post_save(self, obj, created=False):
         if not created:
@@ -205,26 +204,26 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
         validator = validators.EpicsBulkValidator(data=request.DATA)
-        if validator.is_valid():
-            data = validator.data
-            project = Project.objects.get(id=data["project_id"])
-            self.check_permissions(request, "bulk_create", project)
-            if project.blocked_code is not None:
-                raise exc.Blocked(_("Blocked element"))
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-            epics = services.create_epics_in_bulk(
-                data["bulk_epics"],
-                status_id=data.get("status_id") or project.default_epic_status_id,
-                project=project,
-                owner=request.user,
-                callback=self.post_save, precall=self.pre_save)
+        data = validator.data
+        project = Project.objects.get(id=data["project_id"])
+        self.check_permissions(request, "bulk_create", project)
+        if project.blocked_code is not None:
+            raise exc.Blocked(_("Blocked element"))
 
-            epics = self.get_queryset().filter(id__in=[i.id for i in epics])
-            epics_serialized = self.get_serializer_class()(epics, many=True)
+        epics = services.create_epics_in_bulk(
+            data["bulk_epics"],
+            status_id=data.get("status_id") or project.default_epic_status_id,
+            project=project,
+            owner=request.user,
+            callback=self.post_save, precall=self.pre_save)
 
-            return response.Ok(epics_serialized.data)
+        epics = self.get_queryset().filter(id__in=[i.id for i in epics])
+        epics_serialized = self.get_serializer_class()(epics, many=True)
 
-        return response.BadRequest(validator.errors)
+        return response.Ok(epics_serialized.data)
 
 
 class EpicRelatedUserStoryViewSet(NestedViewSetMixin, BlockedByProjectMixin, ModelCrudViewSet):
@@ -254,18 +253,16 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, BlockedByProjectMixin, Mod
 
     def _reorder_if_needed(self, obj, old_order_key, order_key):
         # Executes the extra ordering if there is a difference in the  ordering keys
-        if old_order_key != order_key:
-            extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
-            data = [{"us_id": obj.id, "order": getattr(obj, "order")}]
-            for id, order in extra_orders.items():
-                data.append({"epic_id": int(id), "order": order})
+        if old_order_key == order_key:
+            return {}
 
-            return services.update_epic_related_userstories_order_in_bulk(
-                data,
-                epic=obj.epic
-            )
+        extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
+        data = [{"us_id": obj.id, "order": getattr(obj, "order")}]
+        for id, order in extra_orders.items():
+            data.append({"epic_id": int(id), "order": order})
 
-        return {}
+        return services.update_epic_related_userstories_order_in_bulk(data, epic=obj.epic)
+
 
     def post_save(self, obj, created=False):
         if not created:
@@ -280,27 +277,27 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, BlockedByProjectMixin, Mod
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
         validator = validators.CrateRelatedUserStoriesBulkValidator(data=request.DATA)
-        if validator.is_valid():
-            data = validator.data
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-            epic = get_object_or_404(models.Epic, id=kwargs["epic"])
-            project = epic.project
+        data = validator.data
 
-            self.check_permissions(request, 'bulk_create', project)
-            if project.blocked_code is not None:
-                raise exc.Blocked(_("Blocked element"))
+        epic = get_object_or_404(models.Epic, id=kwargs["epic"])
+        project = epic.project
 
-            services.create_related_userstories_in_bulk(
-                data["userstories"],
-                epic,
-                project=project,
-                owner=request.user
-            )
+        self.check_permissions(request, 'bulk_create', project)
+        if project.blocked_code is not None:
+            raise exc.Blocked(_("Blocked element"))
 
-            related_uss_serialized = self.get_serializer_class()(epic.relateduserstory_set.all(), many=True)
-            return response.Ok(related_uss_serialized.data)
+        services.create_related_userstories_in_bulk(
+            data["userstories"],
+            epic,
+            project=project,
+            owner=request.user
+        )
 
-        return response.BadRequest(validator.errors)
+        related_uss_serialized = self.get_serializer_class()(epic.relateduserstory_set.all(), many=True)
+        return response.Ok(related_uss_serialized.data)
 
 
 class EpicVotersViewSet(VotersViewSetMixin, ModelListViewSet):
