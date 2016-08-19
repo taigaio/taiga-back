@@ -89,7 +89,10 @@ def attach_tasks(queryset, as_field="tasks_attr"):
                         projects_taskstatus.is_closed
                 FROM tasks_task
                 INNER JOIN projects_taskstatus on projects_taskstatus.id = tasks_task.status_id
-                WHERE user_story_id = {tbl}.id) t"""
+                WHERE user_story_id = {tbl}.id
+                ORDER BY tasks_task.us_order, tasks_task.ref
+                ) t
+                """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
