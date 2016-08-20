@@ -12,6 +12,7 @@ before_install:
   - sudo /etc/init.d/postgresql stop
   - sudo apt-get install -y postgresql-9.4
   - sudo apt-get install -y postgresql-plpython-9.4
+  - sudo /etc/init.d/postgresql start 9.4
   - psql -c 'create database taiga;' -U postgres
 install:
   - travis_retry pip install -r requirements-devel.txt
