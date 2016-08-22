@@ -5,13 +5,14 @@
 # Translators:
 # artol <arto.leskinen@tek.fi>, 2015
 # David Barragán <bameda@gmail.com>, 2015
+# Sami Singh <Samuli@alajarvela.net>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-05-01 19:09+0200\n"
-"PO-Revision-Date: 2016-05-01 17:09+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"PO-Revision-Date: 2016-08-14 23:29+0000\n"
+"Last-Translator: Sami Singh <Samuli@alajarvela.net>\n"
 "Language-Team: Finnish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/fi/)\n"
 "MIME-Version: 1.0\n"
@@ -40,7 +41,7 @@ msgstr "tuntematon käyttäjänimi"
 msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
 msgstr ""
-"Vaaditaan. Korkeintaan 255 merkkiä. Kirjaimia, numeroita /./-/_ merkkejä'"
+"Pakollinen. Korkeintaan 255 merkkiä. Kirjaimia, numeroita /./-/_ merkkejä'"
 
 #: taiga/auth/services.py:75
 msgid "Username is already in use."
@@ -60,7 +61,7 @@ msgstr "Käyttäjä on jo rekisteröitynyt."
 
 #: taiga/auth/services.py:146
 msgid "This user is already a member of the project."
-msgstr ""
+msgstr "Tämä käyttäjä on jo projektin jäsen."
 
 #: taiga/auth/services.py:172
 msgid "Error on creating new user."
@@ -192,7 +193,7 @@ msgstr ""
 #: taiga/projects/userstories/api.py:218 taiga/projects/userstories/api.py:238
 #: taiga/webhooks/api.py:68
 msgid "Blocked element"
-msgstr ""
+msgstr "Estetty elementti"
 
 #: taiga/base/api/pagination.py:213
 msgid "Page is not 'last', nor can it be converted to an int."
@@ -344,7 +345,7 @@ msgstr "Precondition error"
 
 #: taiga/base/exceptions.py:217
 msgid "No room left for more projects."
-msgstr ""
+msgstr "Ei enää tilaa uusille projekteille."
 
 #: taiga/base/filters.py:79 taiga/base/filters.py:444
 msgid "Error in filter params types."
@@ -482,6 +483,9 @@ msgid ""
 "%(comment)s</p>\n"
 "                                                                    "
 msgstr ""
+"\n"
+"<h3>kommentti:</h3>\n"
+"<p>%(comment)s</p>"
 
 #: taiga/base/templates/emails/updates-body-text.jinja:6
 #, python-format
@@ -495,7 +499,7 @@ msgstr ""
 
 #: taiga/export_import/api.py:119
 msgid "We needed at least one role"
-msgstr ""
+msgstr "Tarvitsemme ainakin yhden roolin"
 
 #: taiga/export_import/api.py:309
 msgid "Needed dump file"
@@ -583,7 +587,7 @@ msgstr "virhe aikajanojen tuonnissa"
 
 #: taiga/export_import/services/store.py:731
 msgid "unexpected error importing project"
-msgstr ""
+msgstr "odottamaton virhe projektia tuotaessa"
 
 #: taiga/export_import/tasks.py:56 taiga/export_import/tasks.py:57
 msgid "Error generating project dump"

@@ -5,7 +5,7 @@
 # Translators:
 # David Barragán <bameda@gmail.com>, 2015-2016
 # Esther Moreno <soyesthermoreno@yahoo.es>, 2015
-# gustavodiazjaimes <gustavodiazjaimes@gmail.com>, 2015
+# Gustavo Díaz Jaimes <gustavodiazjaimes@gmail.com>, 2015
 # Hector Colina <hcolina@gmail.com>, 2015
 # Jesus Marin <contacto@jesusmg.org>, 2015
 # Jorge Sanchez <rickydj@gmail.com>, 2016
