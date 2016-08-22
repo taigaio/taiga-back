@@ -232,7 +232,7 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, BlockedByProjectMixin, Mod
     validator_class = validators.EpicRelatedUserStoryValidator
     model = models.RelatedUserStory
     permission_classes = (permissions.EpicRelatedUserStoryPermission,)
-    lookup_field = "user_story_id"
+    lookup_field = "user_story"
 
     """
     Updating the order attribute can affect the ordering of another userstories in the epic
@@ -259,7 +259,7 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, BlockedByProjectMixin, Mod
         extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
         data = [{"us_id": obj.id, "order": getattr(obj, "order")}]
         for id, order in extra_orders.items():
-            data.append({"epic_id": int(id), "order": order})
+            data.append({"us_id": int(id), "order": order})
 
         return services.update_epic_related_userstories_order_in_bulk(data, epic=obj.epic)
 
@@ -268,8 +268,8 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, BlockedByProjectMixin, Mod
         if not created:
             # Let's reorder the related stuff after edit the element
             orders_updated = self._reorder_if_needed(obj,
-                                                     self._old_epics_order_key,
-                                                     self._epics_order_key(obj))
+                                                     self._old_order_key,
+                                                     self._order_key(obj))
             self.headers["Taiga-Info-Order-Updated"] = json.dumps(orders_updated)
 
         super().post_save(obj, created)

@@ -132,13 +132,13 @@ def update_attr_in_bulk_for_ids(values, attr, model):
     """
     values = [str((id, order)) for id, order in values.items()]
     sql = """
-        UPDATE {tbl}
-        SET {attr}=update_values.column2
+        UPDATE "{tbl}"
+        SET "{attr}"=update_values.column2
         FROM (
           VALUES
             {values}
         ) AS update_values
-        WHERE {tbl}.id=update_values.column1;
+        WHERE "{tbl}"."id"=update_values.column1;
     """.format(tbl=model._meta.db_table,
                values=', '.join(values),
                attr=attr)

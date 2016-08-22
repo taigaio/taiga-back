@@ -81,5 +81,6 @@ class EpicNeighborsSerializer(NeighborsSerializerMixin, EpicSerializer):
 
 
 class EpicRelatedUserStorySerializer(serializers.LightSerializer):
+    epic = Field(attr="epic_id")
     user_story = Field(attr="user_story_id")
     order = Field()

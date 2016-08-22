@@ -63,4 +63,4 @@ class CrateRelatedUserStoriesBulkValidator(ProjectExistsValidator, EpicExistsVal
 class EpicRelatedUserStoryValidator(validators.ModelValidator):
     class Meta:
         model = models.RelatedUserStory
-        read_only_fields = ('id', 'epic', 'user_story')
+        read_only_fields = ('id',)

@@ -78,7 +78,6 @@ def user_has_perm(user, perm, obj=None, cache="user"):
     in cache
     """
     project = _get_object_project(obj)
-
     if not project:
         return False
 

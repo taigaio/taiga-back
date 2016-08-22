@@ -26,9 +26,9 @@ from django.db import connection
 from django.utils.translation import ugettext as _
 
 from taiga.base.utils import db, text
-from taiga.projects.services import apply_order_updates
 from taiga.projects.epics.apps import connect_epics_signals
 from taiga.projects.epics.apps import disconnect_epics_signals
+from taiga.projects.services import apply_order_updates
 from taiga.projects.userstories.apps import connect_userstories_signals
 from taiga.projects.userstories.apps import disconnect_userstories_signals
 from taiga.projects.userstories.services import get_userstories_from_bulk
@@ -125,6 +125,34 @@ def create_related_userstories_in_bulk(bulk_data, epic, **additional_fields):
         connect_userstories_signals()
 
     return userstories
+
+
+def update_epic_related_userstories_order_in_bulk(bulk_data: list, epic: object):
+    """
+    Updates the order of the related userstories of an specific epic.
+    `bulk_data` should be a list of dicts with the following format:
+    `epic` is the epic with related stories.
+
+    [{'us_id': <value>, 'order': <value>}, ...]
+    """
+    related_user_stories = epic.relateduserstory_set.all()
+    rus_orders = {rus.id: rus.order for rus in related_user_stories}
+
+    rus_conversion = {rus.user_story_id: rus.id for rus in related_user_stories}
+    new_rus_orders = {rus_conversion[e["us_id"]]: e["order"] for e in bulk_data
+                                                        if e["us_id"] in rus_conversion}
+
+    apply_order_updates(rus_orders, new_rus_orders)
+
+    if rus_orders:
+        related_user_story_ids = rus_orders.keys()
+        events.emit_event_for_ids(ids=related_user_story_ids,
+                                  content_type="epics.relateduserstory",
+                                  projectid=epic.project_id)
+
+        db.update_attr_in_bulk_for_ids(rus_orders, "order", models.RelatedUserStory)
+
+    return rus_orders
 
 
 #####################################################

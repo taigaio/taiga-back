@@ -119,13 +119,13 @@ def test_set_related_userstory(client):
     url = reverse('epics-related-userstories-list', args=[epic.pk])
 
     data = {
-        "user_story": us.id
+        "user_story": us.id,
+        "epic": epic.pk
     }
     client.login(user)
     response = client.json.post(url, json.dumps(data))
-    print(response.data)
-    assert response.status_code == 200
-    assert response.data['user_stories_counts'] == {'opened': 1, 'closed': 0}
+
+    assert response.status_code == 201
 
 
 def test_set_related_userstory_existing(client):
@@ -136,18 +136,15 @@ def test_set_related_userstory_existing(client):
     f.MembershipFactory.create(project=epic.project, user=user, is_admin=True)
     f.MembershipFactory.create(project=us.project, user=user, is_admin=True)
 
-    url = reverse('epics-related-userstories-list', args=[epic.pk])
-
+    url = reverse('epics-related-userstories-detail', args=[epic.pk, us.pk])
     data = {
-        "user_story": us.id,
         "order": 77
     }
     client.login(user)
-    response = client.json.post(url, json.dumps(data))
+    response = client.json.patch(url, json.dumps(data))
     assert response.status_code == 200
-    assert response.data['user_stories_counts'] == {'opened': 1, 'closed': 0}
 
-    related_us = models.RelatedUserStory.objects.get(id=related_us.id)
+    related_us.refresh_from_db()
     assert related_us.order == 77
 
 
@@ -158,7 +155,7 @@ def test_unset_related_userstory(client):
     related_us = f.RelatedUserStory.create(epic=epic, user_story=us, order=55)
     f.MembershipFactory.create(project=epic.project, user=user, is_admin=True)
 
-    url = reverse('epics-related-userstories-detail', args=[epic.pk, us.pk])
+    url = reverse('epics-related-userstories-detail', args=[epic.pk, us.id])
 
     client.login(user)
     response = client.delete(url)
