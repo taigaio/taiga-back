@@ -66,7 +66,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='is_epics_activated',
-            field=models.BooleanField(default=True, verbose_name='active epics panel'),
+            field=models.BooleanField(default=False, verbose_name='active epics panel'),
         ),
         migrations.AddField(
             model_name='projecttemplate',
@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='projecttemplate',
             name='is_epics_activated',
-            field=models.BooleanField(default=True, verbose_name='active epics panel'),
+            field=models.BooleanField(default=False, verbose_name='active epics panel'),
         ),
         migrations.AlterField(
             model_name='project',

@@ -165,7 +165,7 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
                                            verbose_name=_("total of milestones"))
     total_story_points = models.FloatField(null=True, blank=True, verbose_name=_("total story points"))
 
-    is_epics_activated = models.BooleanField(default=True, null=False, blank=True,
+    is_epics_activated = models.BooleanField(default=False, null=False, blank=True,
                                              verbose_name=_("active epics panel"))
     is_backlog_activated = models.BooleanField(default=True, null=False, blank=True,
                                                verbose_name=_("active backlog panel"))
@@ -741,7 +741,7 @@ class ProjectTemplate(models.Model):
                                           blank=False,
                                           verbose_name=_("default owner's role"))
 
-    is_epics_activated = models.BooleanField(default=True, null=False, blank=True,
+    is_epics_activated = models.BooleanField(default=False, null=False, blank=True,
                                              verbose_name=_("active epics panel"))
     is_backlog_activated = models.BooleanField(default=True, null=False, blank=True,
                                                verbose_name=_("active backlog panel"))
