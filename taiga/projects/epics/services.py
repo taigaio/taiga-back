@@ -136,11 +136,12 @@ def update_epic_related_userstories_order_in_bulk(bulk_data: list, epic: object)
     [{'us_id': <value>, 'order': <value>}, ...]
     """
     related_user_stories = epic.relateduserstory_set.all()
+    # select_related
     rus_orders = {rus.id: rus.order for rus in related_user_stories}
 
     rus_conversion = {rus.user_story_id: rus.id for rus in related_user_stories}
     new_rus_orders = {rus_conversion[e["us_id"]]: e["order"] for e in bulk_data
-                                                        if e["us_id"] in rus_conversion}
+                      if e["us_id"] in rus_conversion}
 
     apply_order_updates(rus_orders, new_rus_orders)
 
@@ -274,7 +275,8 @@ def _get_epics_assigned_to(project, queryset):
                    FROM projects_membership
         LEFT OUTER JOIN counters ON ("projects_membership"."user_id" = "counters"."assigned_to_id")
              INNER JOIN "users_user" ON ("projects_membership"."user_id" = "users_user"."id")
-                  WHERE "projects_membership"."project_id" = %s AND "projects_membership"."user_id" IS NOT NULL
+                  WHERE "projects_membership"."project_id" = %s
+                    AND "projects_membership"."user_id" IS NOT NULL
 
         -- unassigned epics
         UNION
@@ -336,7 +338,8 @@ def _get_epics_owners(project, queryset):
                    FROM projects_membership
         LEFT OUTER JOIN counters ON ("projects_membership"."user_id" = "counters"."owner_id")
              INNER JOIN "users_user" ON ("projects_membership"."user_id" = "users_user"."id")
-                  WHERE "projects_membership"."project_id" = %s AND "projects_membership"."user_id" IS NOT NULL
+                  WHERE "projects_membership"."project_id" = %s
+                    AND "projects_membership"."user_id" IS NOT NULL
 
         -- System users
         UNION
