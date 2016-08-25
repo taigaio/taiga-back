@@ -40,9 +40,9 @@ class Migration(migrations.Migration):
             comment_permission="comment_issue")
         ),
 
-        # issues
+        # wiki pages
         migrations.RunSQL(UPDATE_ROLES_PERMISSIONS_SQL.format(
-            base_permission="modify_issue",
-            comment_permission="comment_issue")
+            base_permission="modify_wiki_page",
+            comment_permission="comment_wiki_page")
         )
     ]
