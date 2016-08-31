@@ -264,8 +264,8 @@ class HistoryEntry(models.Model):
                     "deleted": [],
                 }
 
-                olduss = {x["id"]:x for x in self.diff["user_stories"][0]}
-                newuss = {x["id"]:x for x in self.diff["user_stories"][1]}
+                olduss = {x["id"]: x for x in self.diff["user_stories"][0]}
+                newuss = {x["id"]: x for x in self.diff["user_stories"][1]}
 
                 for usid in set(tuple(olduss.keys()) + tuple(newuss.keys())):
                     if usid in olduss and usid not in newuss:
@@ -273,7 +273,7 @@ class HistoryEntry(models.Model):
                     elif usid not in olduss and usid in newuss:
                         user_stories["new"].append(newuss[usid])
 
-                if user_stories["new"] or user_stories["changed"] or user_stories["deleted"]:
+                if user_stories["new"] or user_stories["deleted"]:
                     value = user_stories
 
             elif key in self.values:
