@@ -103,6 +103,7 @@ class RelatedUserStory(models.Model):
         verbose_name = "related user story"
         verbose_name_plural = "related user stories"
         ordering = ["user_story", "order", "id"]
+        unique_together = (("user_story", "epic"), )
 
     def __str__(self):
         return "{0} - {1}".format(self.epic_id, self.user_story_id)
