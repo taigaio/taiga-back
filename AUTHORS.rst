@@ -29,6 +29,7 @@ answer newbie questions, and generally made taiga that much better:
 - Joe Letts
 - Julien Palard
 - luyikei <luyikei.qmltu@gmail.com>
+- Michael Jurke <m.jurke@gmx.de>
 - Motius GmbH <mail@motius.de>
 - Riccardo Coccioli <riccardo.coccioli@immobiliare.it>
 - Ricky Posner <e@eposner.com>
