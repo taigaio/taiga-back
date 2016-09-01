@@ -322,6 +322,52 @@ def test_api_filter_by_created_date__lte(client):
     assert number_of_issues == 2
 
 
+def test_api_filter_by_modified_date__gte(client):
+    user = f.UserFactory(is_superuser=True)
+    _day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    older_issue = f.create_issue(owner=user)
+    issue = f.create_issue(owner=user)
+    # we have to refresh as it slightly differs
+    issue.refresh_from_db()
+
+    assert older_issue.modified_date < issue.modified_date
+
+    url = reverse("issues-list") + "?modified_date__gte=%s" % (
+        quote(issue.modified_date.isoformat())
+    )
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 1
+    assert response.data[0]["ref"] == issue.ref
+
+
+def test_api_filter_by_finished_date(client):
+    user = f.UserFactory(is_superuser=True)
+    project = f.ProjectFactory.create()
+    status0 = f.IssueStatusFactory.create(project=project, is_closed=True)
+
+    issue = f.create_issue(owner=user)
+    finished_issue = f.create_issue(owner=user, status=status0)
+
+    assert finished_issue.finished_date
+
+    url = reverse("issues-list") + "?finished_date__gte=%s" % (
+        quote(finished_issue.finished_date.isoformat())
+    )
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 1
+    assert response.data[0]["ref"] == finished_issue.ref
+
+
 def test_api_filters_data(client):
     project = f.ProjectFactory.create()
     user1 = f.UserFactory.create(is_superuser=True)
