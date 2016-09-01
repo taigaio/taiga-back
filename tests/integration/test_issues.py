@@ -19,6 +19,10 @@
 
 import uuid
 import csv
+import pytz
+
+from datetime import datetime, timedelta
+from urllib.parse import quote
 
 from unittest import mock
 
@@ -219,6 +223,103 @@ def test_api_filter_by_text_6(client):
 
     assert response.status_code == 200
     assert number_of_issues == 1
+
+
+def test_api_filter_by_created_date(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_issue = f.create_issue(owner=user, created_date=one_day_ago)
+    issue = f.create_issue(owner=user)
+
+    url = reverse("issues-list") + "?created_date=%s" % (
+        quote(issue.created_date.isoformat())
+    )
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 1
+    assert response.data[0]["ref"] == issue.ref
+
+
+def test_api_filter_by_created_date__gt(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_issue = f.create_issue(owner=user, created_date=one_day_ago)
+    issue = f.create_issue(owner=user)
+
+    url = reverse("issues-list") + "?created_date__gt=%s" % (
+        quote(one_day_ago.isoformat())
+    )
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 1
+    assert response.data[0]["ref"] == issue.ref
+
+
+def test_api_filter_by_created_date__gte(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_issue = f.create_issue(owner=user, created_date=one_day_ago)
+    issue = f.create_issue(owner=user)
+
+    url = reverse("issues-list") + "?created_date__gte=%s" % (
+        quote(one_day_ago.isoformat())
+    )
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 2
+
+
+def test_api_filter_by_created_date__lt(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_issue = f.create_issue(owner=user, created_date=one_day_ago)
+    issue = f.create_issue(owner=user)
+
+    url = reverse("issues-list") + "?created_date__lt=%s" % (
+        quote(issue.created_date.isoformat())
+    )
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert response.data[0]["ref"] == old_issue.ref
+
+
+def test_api_filter_by_created_date__lte(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_issue = f.create_issue(owner=user, created_date=one_day_ago)
+    issue = f.create_issue(owner=user)
+
+    url = reverse("issues-list") + "?created_date__lte=%s" % (
+        quote(issue.created_date.isoformat())
+    )
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 2
 
 
 def test_api_filters_data(client):
