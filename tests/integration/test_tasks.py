@@ -19,6 +19,10 @@
 
 import uuid
 import csv
+import pytz
+
+from datetime import datetime, timedelta
+from urllib.parse import quote
 
 from unittest import mock
 
@@ -449,6 +453,110 @@ def test_get_tasks_including_attachments(client):
     response = client.get(url)
     assert response.status_code == 200
     assert len(response.data[0].get("attachments")) == 1
+
+
+def test_api_filter_by_created_date(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_task = f.create_task(owner=user, created_date=one_day_ago)
+    task = f.create_task(owner=user, subject="test")
+
+    url = reverse("tasks-list") + "?created_date=%s" % (
+        quote(task.created_date.isoformat())
+    )
+
+    client.login(task.owner)
+    response = client.get(url)
+    number_of_tasks = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_tasks == 1
+    assert response.data[0]["subject"] == task.subject
+
+
+def test_api_filter_by_created_date__lt(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_task = f.create_task(owner=user, created_date=one_day_ago)
+    task = f.create_task(owner=user, subject="test")
+
+    url = reverse("tasks-list") + "?created_date__lt=%s" % (
+        quote(task.created_date.isoformat())
+    )
+
+    client.login(task.owner)
+    response = client.get(url)
+    number_of_tasks = len(response.data)
+
+    assert response.status_code == 200
+    assert response.data[0]["subject"] == old_task.subject
+
+
+def test_api_filter_by_created_date__lte(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_task = f.create_task(owner=user, created_date=one_day_ago)
+    task = f.create_task(owner=user)
+
+    url = reverse("tasks-list") + "?created_date__lte=%s" % (
+        quote(task.created_date.isoformat())
+    )
+
+    client.login(task.owner)
+    response = client.get(url)
+    number_of_tasks = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_tasks == 2
+
+
+def test_api_filter_by_modified_date__gte(client):
+    user = f.UserFactory(is_superuser=True)
+    _day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    older_task = f.create_task(owner=user)
+    task = f.create_task(owner=user, subject="test")
+    # we have to refresh as it slightly differs
+    task.refresh_from_db()
+
+    assert older_task.modified_date < task.modified_date
+
+    url = reverse("tasks-list") + "?modified_date__gte=%s" % (
+        quote(task.modified_date.isoformat())
+    )
+
+    client.login(task.owner)
+    response = client.get(url)
+    number_of_tasks = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_tasks == 1
+    assert response.data[0]["subject"] == task.subject
+
+
+def test_api_filter_by_finished_date(client):
+    user = f.UserFactory(is_superuser=True)
+    project = f.ProjectFactory.create()
+    status0 = f.TaskStatusFactory.create(project=project, is_closed=True)
+
+    task = f.create_task(owner=user)
+    finished_task = f.create_task(owner=user, status=status0, subject="test")
+
+    assert finished_task.finished_date
+
+    url = reverse("tasks-list") + "?finished_date__gte=%s" % (
+        quote(finished_task.finished_date.isoformat())
+    )
+    client.login(task.owner)
+    response = client.get(url)
+    number_of_tasks = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_tasks == 1
+    assert response.data[0]["subject"] == finished_task.subject
 
 
 def test_api_filters_data(client):
