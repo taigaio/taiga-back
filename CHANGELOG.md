@@ -29,6 +29,9 @@
     - Improve messages generated on webhooks input.
     - Add mentions support in commit messages.
     - Cleanup hooks code.
+- Add created-, modified-, finished- and finish_date queryset filters
+    - Support exact match, gt, gte, lt, lte
+    - added issues, tasks and userstories accordingly
 
 ### Misc
 - [API] Improve performance of some calls over list.

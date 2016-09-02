@@ -18,6 +18,8 @@
 
 import logging
 
+from dateutil.parser import parse as parse_date
+
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
@@ -445,6 +447,68 @@ class WatchersFilter(FilterBackend):
                 raise exc.BadRequest(_("Error in filter params types."))
 
         return super().filter_queryset(request, queryset, view)
+
+
+class BaseCompareFilter(FilterBackend):
+    operators = ["", "lt", "gt", "lte", "gte"]
+
+    def __init__(self, filter_name_base=None, operators=None):
+        if filter_name_base:
+            self.filter_name_base = filter_name_base
+
+    def _get_filter_names(self):
+        return [
+            self._get_filter_name(operator)
+            for operator in self.operators
+        ]
+
+    def _get_filter_name(self, operator):
+        if operator and len(operator) > 0:
+            return "{base}__{operator}".format(
+                base=self.filter_name_base, operator=operator
+            )
+        else:
+            return self.filter_name_base
+
+    def _get_constraints(self, params):
+        constraints = {}
+        for filter_name in self._get_filter_names():
+            raw_value = params.get(filter_name, None)
+            if raw_value is not None:
+                constraints[filter_name] = self._get_value(raw_value)
+        return constraints
+
+    def _get_value(self, raw_value):
+        return raw_value
+
+    def filter_queryset(self, request, queryset, view):
+        constraints = self._get_constraints(request.QUERY_PARAMS)
+
+        if len(constraints) > 0:
+            queryset = queryset.filter(**constraints)
+
+        return super().filter_queryset(request, queryset, view)
+
+
+class BaseDateFilter(BaseCompareFilter):
+    def _get_value(self, raw_value):
+        return parse_date(raw_value)
+
+
+class CreatedDateFilter(BaseDateFilter):
+    filter_name_base = "created_date"
+
+
+class ModifiedDateFilter(BaseDateFilter):
+    filter_name_base = "modified_date"
+
+
+class FinishedDateFilter(BaseDateFilter):
+    filter_name_base = "finished_date"
+
+
+class FinishDateFilter(BaseDateFilter):
+    filter_name_base = "finish_date"
 
 
 #####################################################################

@@ -58,7 +58,10 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
                        filters.TagsFilter,
                        filters.WatchersFilter,
                        filters.QFilter,
-                       filters.OrderByFilterMixin)
+                       filters.OrderByFilterMixin,
+                       filters.CreatedDateFilter,
+                       filters.ModifiedDateFilter,
+                       filters.FinishedDateFilter)
     retrieve_exclude_filters = (filters.OwnersFilter,
                                 filters.AssignedToFilter,
                                 filters.StatusesFilter,
