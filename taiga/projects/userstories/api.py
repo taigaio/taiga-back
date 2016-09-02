@@ -64,7 +64,10 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                        filters.TagsFilter,
                        filters.WatchersFilter,
                        filters.QFilter,
-                       filters.OrderByFilterMixin)
+                       filters.OrderByFilterMixin,
+                       filters.CreatedDateFilter,
+                       filters.ModifiedDateFilter,
+                       filters.FinishDateFilter)
     retrieve_exclude_filters = (filters.OwnersFilter,
                                 filters.AssignedToFilter,
                                 filters.StatusesFilter,

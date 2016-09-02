@@ -19,6 +19,10 @@
 
 import uuid
 import csv
+import pytz
+
+from datetime import datetime, timedelta
+from urllib.parse import quote
 
 from unittest import mock
 from django.core.urlresolvers import reverse
@@ -499,6 +503,112 @@ def test_get_total_points(client):
     f.RolePointsFactory.create(user_story=us_mixed, role=role2, points=points2)
 
     assert us_mixed.get_total_points() == 1.0
+
+
+def test_api_filter_by_created_date(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_userstory = f.create_userstory(owner=user, created_date=one_day_ago)
+    userstory = f.create_userstory(owner=user, subject="test")
+
+    url = reverse("userstories-list") + "?created_date=%s" % (
+        quote(userstory.created_date.isoformat())
+    )
+
+    client.login(userstory.owner)
+    response = client.get(url)
+    number_of_userstories = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_userstories == 1
+    assert response.data[0]["subject"] == userstory.subject
+
+
+def test_api_filter_by_created_date__lt(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_userstory = f.create_userstory(
+        owner=user, created_date=one_day_ago, subject="old test"
+    )
+    userstory = f.create_userstory(owner=user)
+
+    url = reverse("userstories-list") + "?created_date__lt=%s" % (
+        quote(userstory.created_date.isoformat())
+    )
+
+    client.login(userstory.owner)
+    response = client.get(url)
+    number_of_userstories = len(response.data)
+
+    assert response.status_code == 200
+    assert response.data[0]["subject"] == old_userstory.subject
+
+
+def test_api_filter_by_created_date__lte(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_userstory = f.create_userstory(owner=user, created_date=one_day_ago)
+    userstory = f.create_userstory(owner=user)
+
+    url = reverse("userstories-list") + "?created_date__lte=%s" % (
+        quote(userstory.created_date.isoformat())
+    )
+
+    client.login(userstory.owner)
+    response = client.get(url)
+    number_of_userstories = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_userstories == 2
+
+
+def test_api_filter_by_modified_date__gte(client):
+    user = f.UserFactory(is_superuser=True)
+
+    older_userstory = f.create_userstory(owner=user)
+    userstory = f.create_userstory(owner=user, subject="test")
+    # we have to refresh as it slightly differs
+    userstory.refresh_from_db()
+
+    assert older_userstory.modified_date < userstory.modified_date
+
+    url = reverse("userstories-list") + "?modified_date__gte=%s" % (
+        quote(userstory.modified_date.isoformat())
+    )
+
+    client.login(userstory.owner)
+    response = client.get(url)
+    number_of_userstories = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_userstories == 1
+    assert response.data[0]["subject"] == userstory.subject
+
+
+def test_api_filter_by_finish_date(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_later = datetime.now(pytz.utc) + timedelta(days=1)
+
+    userstory = f.create_userstory(owner=user)
+    userstory_to_finish = f.create_userstory(
+        owner=user, finish_date=one_day_later, subject="test"
+    )
+
+    assert userstory_to_finish.finish_date
+
+    url = reverse("userstories-list") + "?finish_date__gte=%s" % (
+        quote(userstory_to_finish.finish_date.isoformat())
+    )
+    client.login(userstory.owner)
+    response = client.get(url)
+    number_of_userstories = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_userstories == 1
+    assert response.data[0]["subject"] == userstory_to_finish.subject
 
 
 def test_api_filters_data(client):
