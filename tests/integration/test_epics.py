@@ -101,7 +101,8 @@ def test_bulk_create_related_userstories(client):
     url = reverse('epics-related-userstories-bulk-create', args=[epic.pk])
 
     data = {
-        "userstories": "test1\ntest2"
+        "bulk_userstories": "test1\ntest2",
+        "project_id": project.id
     }
     client.login(user)
     response = client.json.post(url, json.dumps(data))

@@ -263,7 +263,6 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, BlockedByProjectMixin, Mod
 
         return services.update_epic_related_userstories_order_in_bulk(data, epic=obj.epic)
 
-
     def post_save(self, obj, created=False):
         if not created:
             # Let's reorder the related stuff after edit the element
@@ -276,21 +275,21 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, BlockedByProjectMixin, Mod
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
-        validator = validators.CrateRelatedUserStoriesBulkValidator(data=request.DATA)
+        validator = validators.CreateRelatedUserStoriesBulkValidator(data=request.DATA)
         if not validator.is_valid():
             return response.BadRequest(validator.errors)
 
         data = validator.data
 
         epic = get_object_or_404(models.Epic, id=kwargs["epic"])
-        project = epic.project
+        project = Project.objects.get(pk=data.get('project_id'))
 
         self.check_permissions(request, 'bulk_create', project)
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 
         services.create_related_userstories_in_bulk(
-            data["userstories"],
+            data["bulk_userstories"],
             epic,
             project=project,
             owner=request.user
