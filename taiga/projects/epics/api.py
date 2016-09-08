@@ -257,7 +257,7 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, BlockedByProjectMixin, Mod
             return {}
 
         extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
-        data = [{"us_id": obj.id, "order": getattr(obj, "order")}]
+        data = [{"us_id": obj.user_story.id, "order": getattr(obj, "order")}]
         for id, order in extra_orders.items():
             data.append({"us_id": int(id), "order": order})
 
