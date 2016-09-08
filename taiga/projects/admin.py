@@ -35,6 +35,9 @@ class MembershipAdmin(admin.ModelAdmin):
     list_display_links = list_display
     raw_id_fields = ["project"]
 
+    def has_add_permission(self, request):
+        return False
+
     def get_object(self, *args, **kwargs):
         self.obj = super().get_object(*args, **kwargs)
         return self.obj
