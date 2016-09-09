@@ -295,6 +295,7 @@ def milestone_freezer(milestone) -> dict:
 def epic_freezer(epic) -> dict:
     snapshot = {
         "ref": epic.ref,
+        "color": epic.color,
         "owner": epic.owner_id,
         "status": epic.status.id if epic.status else None,
         "epics_order": epic.epics_order,
