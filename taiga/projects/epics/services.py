@@ -124,7 +124,7 @@ def create_related_userstories_in_bulk(bulk_data, epic, **additional_fields):
     finally:
         connect_userstories_signals()
 
-    return userstories
+    return related_userstories
 
 
 def update_epic_related_userstories_order_in_bulk(bulk_data: list, epic: object):

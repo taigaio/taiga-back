@@ -94,6 +94,7 @@ def _push_to_timeline(objects, instance: object, event_type: str, created_dateti
 @app.task
 def push_to_timelines(project_id, user_id, obj_app_label, obj_model_name, obj_id, event_type,
                       created_datetime, extra_data={}):
+
     ObjModel = apps.get_model(obj_app_label, obj_model_name)
     try:
         obj = ObjModel.objects.get(id=obj_id)
@@ -266,11 +267,23 @@ def extract_epic_info(instance):
     }
 
 
-def extract_userstory_info(instance):
-    return {
+def extract_userstory_info(instance, include_project=False):
+    userstory_info = {
         "id": instance.pk,
         "ref": instance.ref,
         "subject": instance.subject,
+    }
+
+    if include_project:
+        userstory_info["project"] = extract_project_info(instance.project)
+
+    return userstory_info
+
+
+def extract_related_userstory_info(instance):
+    return {
+        "id": instance.pk,
+        "subject": instance.user_story.subject
     }
 
 

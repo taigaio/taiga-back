@@ -98,7 +98,8 @@ class ProjectExtraInfoSerializerMixin(serializers.LightSerializer):
             serialized_project = {
                 "name": obj.project.name,
                 "slug": obj.project.slug,
-                "logo_small_url": services.get_logo_small_thumbnail_url(obj.project)
+                "logo_small_url": services.get_logo_small_thumbnail_url(obj.project),
+                "id": obj.project_id
             }
             self._serialized_project[obj.project_id] = serialized_project
 

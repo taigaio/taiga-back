@@ -336,6 +336,7 @@ def get_related_people(obj):
     related_people = related_people.exclude(is_active=False)
     related_people = related_people.exclude(is_system=True)
     related_people = related_people.distinct()
+
     return related_people
 
 

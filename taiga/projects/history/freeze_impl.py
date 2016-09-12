@@ -112,8 +112,11 @@ def epic_values(diff):
     if "status" in diff:
         values["status"] = _get_us_status_values(diff["status"])
 
-    # TODO EPICS: What happen with usr stories?
+    return values
 
+
+def epic_related_userstory_values(diff):
+    values = _common_users_values(diff)
     return values
 
 
@@ -314,6 +317,16 @@ def epic_freezer(epic) -> dict:
         "user_stories": extract_user_stories(epic),
     }
 
+    return snapshot
+
+
+def epic_related_userstory_freezer(related_us) -> dict:
+    snapshot = {
+        "user_story": related_us.user_story.id,
+        "epic": related_us.epic.id,
+        "order": related_us.order
+    }
+    
     return snapshot
 
 

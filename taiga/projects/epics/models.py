@@ -92,7 +92,7 @@ class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
         super().save(*args, **kwargs)
 
 
-class RelatedUserStory(models.Model):
+class RelatedUserStory(WatchedModelMixin, models.Model):
     user_story = models.ForeignKey("userstories.UserStory", on_delete=models.CASCADE)
     epic = models.ForeignKey("epics.Epic", on_delete=models.CASCADE)
 
@@ -111,3 +111,11 @@ class RelatedUserStory(models.Model):
     @property
     def project(self):
         return self.epic.project
+
+    @property
+    def owner_id(self):
+        return self.epic.owner_id
+
+    @property
+    def assigned_to_id(self):
+        return self.epic.assigned_to_id

@@ -22,7 +22,7 @@ from django.utils.translation import ugettext as _
 from taiga.base.api.utils import get_object_or_404
 from taiga.base import filters, response
 from taiga.base import exceptions as exc
-from taiga.base.decorators import list_route, detail_route
+from taiga.base.decorators import list_route
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api.viewsets import NestedViewSetMixin
@@ -33,7 +33,6 @@ from taiga.projects.models import Project, EpicStatus
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.tagging.api import TaggedResourceMixin
-from taiga.projects.userstories.models import UserStory
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
 from . import models
@@ -226,7 +225,8 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
         return response.Ok(epics_serialized.data)
 
 
-class EpicRelatedUserStoryViewSet(NestedViewSetMixin, BlockedByProjectMixin, ModelCrudViewSet):
+class EpicRelatedUserStoryViewSet(NestedViewSetMixin, HistoryResourceMixin,
+                                  BlockedByProjectMixin, ModelCrudViewSet):
     queryset = models.RelatedUserStory.objects.all()
     serializer_class = serializers.EpicRelatedUserStorySerializer
     validator_class = validators.EpicRelatedUserStoryValidator
@@ -288,12 +288,15 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, BlockedByProjectMixin, Mod
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 
-        services.create_related_userstories_in_bulk(
+        related_userstories = services.create_related_userstories_in_bulk(
             data["bulk_userstories"],
             epic,
             project=project,
             owner=request.user
         )
+
+        for related_userstory in related_userstories:
+            self.persist_history_snapshot(obj=related_userstory)
 
         related_uss_serialized = self.get_serializer_class()(epic.relateduserstory_set.all(), many=True)
         return response.Ok(related_uss_serialized.data)
