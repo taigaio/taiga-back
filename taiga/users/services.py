@@ -325,6 +325,8 @@ def get_watched_list(for_user, from_user, type=None, q=None):
            row_to_json(users_user) as assigned_to_extra_info
 
         FROM (
+            {epics_sql}
+            UNION
             {userstories_sql}
             UNION
             {tasks_sql}
@@ -365,6 +367,7 @@ def get_watched_list(for_user, from_user, type=None, q=None):
                     OR (entities.type = 'task' AND 'view_tasks' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
                     OR (entities.type = 'userstory' AND 'view_us' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
                     OR (entities.type = 'project' AND 'view_project' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
+                    OR (entities.type = 'epic' AND 'view_epic' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
                 )
         ))
     -- END Permissions checking
@@ -384,6 +387,7 @@ def get_watched_list(for_user, from_user, type=None, q=None):
         userstories_sql=_build_sql_for_type(for_user, "userstory", "userstories_userstory", "notifications_watched", slug_column="null"),
         tasks_sql=_build_sql_for_type(for_user, "task", "tasks_task", "notifications_watched", slug_column="null"),
         issues_sql=_build_sql_for_type(for_user, "issue", "issues_issue", "notifications_watched", slug_column="null"),
+        epics_sql=_build_sql_for_type(for_user, "epic", "epics_epic", "notifications_watched", slug_column="null"),
         projects_sql=_build_watched_sql_for_projects(for_user))
 
     cursor = connection.cursor()
@@ -503,6 +507,8 @@ def get_voted_list(for_user, from_user, type=None, q=None):
            users_user.id as assigned_to_id,
            row_to_json(users_user) as assigned_to_extra_info
         FROM (
+            {epics_sql}
+            UNION
             {userstories_sql}
             UNION
             {tasks_sql}
@@ -540,6 +546,7 @@ def get_voted_list(for_user, from_user, type=None, q=None):
                     (entities.type = 'issue' AND 'view_issues' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
                     OR (entities.type = 'task' AND 'view_tasks' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
                     OR (entities.type = 'userstory' AND 'view_us' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
+                    OR (entities.type = 'epic' AND 'view_epic' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
                 )
         ))
     -- END Permissions checking
@@ -558,7 +565,8 @@ def get_voted_list(for_user, from_user, type=None, q=None):
         filters_sql=filters_sql,
         userstories_sql=_build_sql_for_type(for_user, "userstory", "userstories_userstory", "votes_vote", slug_column="null"),
         tasks_sql=_build_sql_for_type(for_user, "task", "tasks_task", "votes_vote", slug_column="null"),
-        issues_sql=_build_sql_for_type(for_user, "issue", "issues_issue", "votes_vote", slug_column="null"))
+        issues_sql=_build_sql_for_type(for_user, "issue", "issues_issue", "votes_vote", slug_column="null"),
+        epics_sql=_build_sql_for_type(for_user, "epic", "epics_epic", "votes_vote", slug_column="null"))
 
     cursor = connection.cursor()
     params = {
