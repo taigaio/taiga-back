@@ -266,6 +266,9 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
             project=project, owner=request.user, callback=self.post_save, precall=self.pre_save)
 
         tasks = self.get_queryset().filter(id__in=[i.id for i in tasks])
+        for task in tasks:
+            self.persist_history_snapshot(obj=task)
+
         tasks_serialized = self.get_serializer_class()(tasks, many=True)
 
         return response.Ok(tasks_serialized.data)

@@ -220,6 +220,9 @@ class EpicViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin,
             callback=self.post_save, precall=self.pre_save)
 
         epics = self.get_queryset().filter(id__in=[i.id for i in epics])
+        for epic in epics:
+            self.persist_history_snapshot(obj=epic)
+        
         epics_serialized = self.get_serializer_class()(epics, many=True)
 
         return response.Ok(epics_serialized.data)

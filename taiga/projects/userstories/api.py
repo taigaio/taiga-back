@@ -340,6 +340,9 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                 callback=self.post_save, precall=self.pre_save)
 
             user_stories = self.get_queryset().filter(id__in=[i.id for i in user_stories])
+            for user_story in user_stories:
+                self.persist_history_snapshot(obj=user_story)
+
             user_stories_serialized = self.get_serializer_class()(user_stories, many=True)
 
             return response.Ok(user_stories_serialized.data)
