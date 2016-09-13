@@ -80,6 +80,7 @@ _values_impl_map = {}
 # Not important fields for models (history entries with only
 # this fields are marked as hidden).
 _not_important_fields = {
+    "epics.epic": frozenset(["epics_order"]),
     "userstories.userstory": frozenset(["backlog_order", "sprint_order", "kanban_order"]),
     "tasks.task": frozenset(["us_order", "taskboard_order"]),
 }
