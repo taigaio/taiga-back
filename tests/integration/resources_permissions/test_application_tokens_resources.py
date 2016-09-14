@@ -115,7 +115,6 @@ def test_application_tokens_validate(client, data):
 
     data = json.dumps({
         "application": data.token.application.id,
-        "key": data.token.application.key,
         "auth_code": data.token.auth_code,
         "state": data.token.state
     })

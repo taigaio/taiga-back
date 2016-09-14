@@ -19,7 +19,6 @@
 
 from django.core.urlresolvers import reverse
 
-from taiga.external_apps import encryption
 from taiga.external_apps import models
 
 
@@ -116,9 +115,7 @@ def test_token_validate(client):
     assert response.status_code == 200
 
     token = models.ApplicationToken.objects.get(id=token.id)
-    decyphered_token = encryption.decrypt(response.data["cyphered_token"], token.application.key)[0]
-    decyphered_token = json.loads(decyphered_token.decode("utf-8"))
-    assert decyphered_token["token"] == token.token
+    assert response.data["token"] == token.token
 
 
 def test_token_validate_validated(client):

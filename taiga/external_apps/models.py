@@ -40,8 +40,6 @@ class Application(models.Model):
 
     next_url = models.TextField(null=False, blank=False, verbose_name=_("Next url"))
 
-    key = models.TextField(null=False, blank=False, verbose_name=_("secret key for ciphering the application tokens"))
-
     class Meta:
         verbose_name = "application"
         verbose_name_plural = "applications"
@@ -70,10 +68,6 @@ class ApplicationToken(models.Model):
 
     def __str__(self):
         return "{application}: {user} - {token}".format(application=self.application.name, user=self.user.get_full_name(), token=self.token)
-
-    @property
-    def cyphered_token(self):
-        return services.cypher_token(self)
 
     @property
     def next_url(self):

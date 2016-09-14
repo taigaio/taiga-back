@@ -48,4 +48,4 @@ class AuthorizationCodeSerializer(serializers.LightSerializer):
 
 
 class AccessTokenSerializer(serializers.LightSerializer):
-    cyphered_token = Field()
+    token = Field()
