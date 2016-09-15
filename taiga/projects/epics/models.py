@@ -115,7 +115,11 @@ class RelatedUserStory(WatchedModelMixin, models.Model):
     @property
     def project_id(self):
         return self.epic.project_id
-        
+
+    @property
+    def owner(self):
+        return self.epic.owner
+
     @property
     def owner_id(self):
         return self.epic.owner_id

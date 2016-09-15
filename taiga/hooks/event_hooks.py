@@ -20,7 +20,8 @@ import re
 
 from django.utils.translation import ugettext as _
 from django.contrib.auth import get_user_model
-from taiga.projects.models import IssueStatus, TaskStatus, UserStoryStatus
+from taiga.projects.models import IssueStatus, TaskStatus, UserStoryStatus, EpicStatus
+from taiga.projects.epics.models import Epic
 from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.models import UserStory
@@ -189,7 +190,10 @@ class BasePushEventHook(BaseEventHook):
             return _simple_status_change_message.format(platform=self.platform)
 
     def get_item_classes(self, ref):
-        if Issue.objects.filter(project=self.project, ref=ref).exists():
+        if Epic.objects.filter(project=self.project, ref=ref).exists():
+            modelClass = Epic
+            statusClass = EpicStatus
+        elif Issue.objects.filter(project=self.project, ref=ref).exists():
             modelClass = Issue
             statusClass = IssueStatus
         elif Task.objects.filter(project=self.project, ref=ref).exists():

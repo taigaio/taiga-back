@@ -31,6 +31,7 @@ from taiga.hooks.bitbucket import event_hooks
 from taiga.hooks.bitbucket.api import BitBucketViewSet
 from taiga.hooks.exceptions import ActionSyntaxException
 from taiga.projects import choices as project_choices
+from taiga.projects.epics.models import Epic
 from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.models import UserStory
@@ -237,6 +238,38 @@ def test_push_event_detected(client):
         assert process_event_mock.call_count == 1
 
     assert response.status_code == 204
+
+
+def test_push_event_epic_processing(client):
+    creation_status = f.EpicStatusFactory()
+    role = f.RoleFactory(project=creation_status.project, permissions=["view_epics"])
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    new_status = f.EpicStatusFactory(project=creation_status.project)
+    epic = f.EpicFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
+    payload = {
+        "actor": {
+            "user": {
+                "uuid": "{ce1054cd-3f43-49dc-8aea-d3085ee7ec9b}",
+                "username": "test-user",
+                "links": {"html": {"href": "http://bitbucket.com/test-user"}}
+            }
+        },
+        "push": {
+            "changes": [
+                {
+                    "commits": [
+                        { "message": "test message   test   TG-%s    #%s   ok   bye!" % (epic.ref, new_status.slug) }
+                    ]
+                }
+            ]
+        }
+    }
+    mail.outbox = []
+    ev_hook = event_hooks.PushEventHook(epic.project, payload)
+    ev_hook.process_event()
+    epic = Epic.objects.get(id=epic.id)
+    assert epic.status.id == new_status.id
+    assert len(mail.outbox) == 1
 
 
 def test_push_event_issue_processing(client):
@@ -502,6 +535,36 @@ def test_push_event_processing_case_insensitive(client):
     task = Task.objects.get(id=task.id)
     assert task.status.id == new_status.id
     assert len(mail.outbox) == 1
+
+
+def test_push_event_task_bad_processing_non_existing_ref(client):
+    issue_status = f.IssueStatusFactory()
+    payload = {
+        "actor": {
+            "user": {
+                "uuid": "{ce1054cd-3f43-49dc-8aea-d3085ee7ec9b}",
+                "username": "test-user",
+                "links": {"html": {"href": "http://bitbucket.com/test-user"}}
+            }
+        },
+        "push": {
+            "changes": [
+                {
+                    "commits": [
+                        { "message": "test message   test   TG-6666666    #%s   ok   bye!" % (issue_status.slug) }
+                    ]
+                }
+            ]
+        }
+    }
+    mail.outbox = []
+
+    ev_hook = event_hooks.PushEventHook(issue_status.project, payload)
+    with pytest.raises(ActionSyntaxException) as excinfo:
+        ev_hook.process_event()
+
+    assert str(excinfo.value) == "The referenced element doesn't exist"
+    assert len(mail.outbox) == 0
 
 
 def test_push_event_task_bad_processing_non_existing_ref(client):

@@ -242,31 +242,31 @@ def test_epic_related_userstories_create(client, data):
     ]
 
     create_data = json.dumps({
-        "user_story": data.public_us.id,
+        "user_story": f.UserStoryFactory(project=data.public_project).id,
         "epic": data.public_epic.id
     })
     url = reverse('epics-related-userstories-list', args=[data.public_epic.pk])
     results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 403, 403, 201, 201]
+    assert results == [401, 403, 403, 201, 400]
 
     create_data = json.dumps({
-        "user_story": data.private_us1.id,
+        "user_story": f.UserStoryFactory(project=data.private_project1).id,
         "epic": data.private_epic1.id
     })
     url = reverse('epics-related-userstories-list', args=[data.private_epic1.pk])
     results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 403, 403, 201, 201]
+    assert results == [401, 403, 403, 201, 400]
 
     create_data = json.dumps({
-        "user_story": data.private_us2.id,
+        "user_story": f.UserStoryFactory(project=data.private_project2).id,
         "epic": data.private_epic2.id
     })
     url = reverse('epics-related-userstories-list', args=[data.private_epic2.pk])
     results = helper_test_http_method(client, 'post', url, create_data, users)
-    assert results == [401, 403, 403, 201, 201]
+    assert results == [401, 403, 403, 201, 400]
 
     create_data = json.dumps({
-        "user_story": data.blocked_us.id,
+        "user_story": f.UserStoryFactory(project=data.blocked_project).id,
         "epic": data.blocked_epic.id
     })
     url = reverse('epics-related-userstories-list', args=[data.blocked_epic.pk])
@@ -379,14 +379,29 @@ def test_bulk_create_related_userstories(client, data):
     ]
 
     bulk_data = json.dumps({
-        "userstories": "test1\ntest2",
+        "bulk_userstories": "test1\ntest2",
+        "project_id": data.public_project.id
     })
-
     results = helper_test_http_method(client, 'post', public_url, bulk_data, users)
     assert results == [401, 403, 403, 200, 200]
+
+    bulk_data = json.dumps({
+        "bulk_userstories": "test1\ntest2",
+        "project_id": data.private_project1.id
+    })
     results = helper_test_http_method(client, 'post', private_url1, bulk_data, users)
     assert results == [401, 403, 403, 200, 200]
+
+    bulk_data = json.dumps({
+        "bulk_userstories": "test1\ntest2",
+        "project_id": data.private_project2.id
+    })
     results = helper_test_http_method(client, 'post', private_url2, bulk_data, users)
     assert results == [401, 403, 403, 200, 200]
+
+    bulk_data = json.dumps({
+        "bulk_userstories": "test1\ntest2",
+        "project_id": data.blocked_project.id
+    })
     results = helper_test_http_method(client, 'post', blocked_url, bulk_data, users)
     assert results == [401, 403, 403, 451, 451]
