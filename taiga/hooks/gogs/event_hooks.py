@@ -37,7 +37,7 @@ class PushEventHook(BaseGogsEventHook, BasePushEventHook):
     def get_data(self):
         result = []
         commits = self.payload.get("commits", [])
-        project_url = self.payload.get("repository", {}).get("url", None)
+        project_url = self.payload.get("repository", {}).get("html_url", None)
 
         for commit in filter(None, commits):
             user_name = commit.get('author', {}).get('username', None)

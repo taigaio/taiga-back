@@ -105,7 +105,7 @@ def test_push_event_detected(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
 
@@ -140,7 +140,7 @@ def test_push_event_epic_processing(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -170,7 +170,7 @@ def test_push_event_issue_processing(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -200,7 +200,7 @@ def test_push_event_task_processing(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -230,7 +230,7 @@ def test_push_event_user_story_processing(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
 
@@ -261,7 +261,7 @@ def test_push_event_issue_mention(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -292,7 +292,7 @@ def test_push_event_task_mention(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -323,7 +323,7 @@ def test_push_event_user_story_mention(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
 
@@ -357,7 +357,7 @@ def test_push_event_multiple_actions(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -389,7 +389,7 @@ def test_push_event_processing_case_insensitive(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -415,7 +415,7 @@ def test_push_event_task_bad_processing_non_existing_ref(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -443,7 +443,7 @@ def test_push_event_us_bad_processing_non_existing_status(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
 
@@ -472,7 +472,7 @@ def test_push_event_bad_processing_non_existing_status(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
 
@@ -511,7 +511,7 @@ def test_api_patch_project_modules(client):
     data = {
         "gogs": {
             "secret": "test_secret",
-            "url": "test_url",
+            "html_url": "test_url",
         }
     }
     response = client.patch(url, json.dumps(data), content_type="application/json")
