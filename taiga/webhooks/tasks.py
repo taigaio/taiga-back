@@ -25,7 +25,8 @@ from taiga.base.api.renderers import UnicodeJSONRenderer
 from taiga.base.utils.db import get_typename_for_model_instance
 from taiga.celery import app
 
-from .serializers import (UserStorySerializer, IssueSerializer, TaskSerializer,
+from .serializers import (EpicSerializer, EpicRelatedUserStorySerializer,
+                          UserStorySerializer, IssueSerializer, TaskSerializer,
                           WikiPageSerializer, MilestoneSerializer,
                           HistoryEntrySerializer, UserSerializer)
 from .models import WebhookLog
@@ -33,8 +34,11 @@ from .models import WebhookLog
 
 def _serialize(obj):
     content_type = get_typename_for_model_instance(obj)
-
-    if content_type == "userstories.userstory":
+    if content_type == "epics.epic":
+        return EpicSerializer(obj).data
+    elif content_type == "epics.relateduserstory":
+        return EpicRelatedUserStorySerializer(obj).data
+    elif content_type == "userstories.userstory":
         return UserStorySerializer(obj).data
     elif content_type == "issues.issue":
         return IssueSerializer(obj).data

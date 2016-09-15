@@ -185,6 +185,26 @@ class RolePointsSerializer(serializers.LightSerializer):
         return obj.points.value
 
 
+class EpicStatusSerializer(serializers.LightSerializer):
+    id = Field(attr="pk")
+    name = MethodField()
+    slug = MethodField()
+    color = MethodField()
+    is_closed = MethodField()
+
+    def get_name(self, obj):
+        return obj.name
+
+    def get_slug(self, obj):
+        return obj.slug
+
+    def get_color(self, obj):
+        return obj.color
+
+    def get_is_closed(self, obj):
+        return obj.is_closed
+
+
 class UserStoryStatusSerializer(serializers.LightSerializer):
     id = Field(attr="pk")
     name = MethodField()
@@ -445,3 +465,51 @@ class WikiPageSerializer(serializers.LightSerializer):
 
     def get_permalink(self, obj):
         return resolve_front_url("wiki", obj.project.slug, obj.slug)
+
+
+########################################################################
+# Epic
+########################################################################
+
+class EpicSerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    created_date = Field()
+    modified_date = Field()
+    subject = Field()
+    watchers = MethodField()
+    description = Field()
+    tags = Field()
+    permalink = serializers.SerializerMethodField("get_permalink")
+    project = ProjectSerializer()
+    owner = UserSerializer()
+    assigned_to = UserSerializer()
+    status = EpicStatusSerializer()
+    epics_order = Field()
+    color = Field()
+    client_requirement = Field()
+    team_requirement = Field()
+    client_requirement = Field()
+    team_requirement = Field()
+
+    def get_permalink(self, obj):
+        return resolve_front_url("epic", obj.project.slug, obj.ref)
+
+    def custom_attributes_queryset(self, project):
+        return project.epiccustomattributes.all()
+
+    def get_watchers(self, obj):
+        return list(obj.get_watchers().values_list("id", flat=True))
+
+
+class EpicRelatedUserStorySerializer(serializers.LightSerializer):
+    id = Field()
+    user_story = MethodField()
+    epic = MethodField()
+    order = Field()
+
+    def get_user_story(self, obj):
+        return UserStorySerializer(obj.user_story).data
+
+    def get_epic(self, obj):
+        return EpicSerializer(obj.epic).data
