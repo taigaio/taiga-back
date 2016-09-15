@@ -191,18 +191,6 @@ def _generic_extract(obj:object, fields:list, default=None) -> dict:
 
 
 @as_tuple
-def extract_user_stories(obj) -> list:
-    for user_story in obj.user_stories.all():
-
-        yield {"id": user_story.id,
-               "ref": user_story.ref,
-               "subject": user_story.subject,
-               "project": {
-                   "id": user_story.project.id,
-                   "name": user_story.project.name,
-                   "slug": user_story.project.slug}}
-
-@as_tuple
 def extract_attachments(obj) -> list:
     for attach in obj.attachments.all():
         thumb_url = get_timeline_image_thumbnail_url(attach)
@@ -313,8 +301,7 @@ def epic_freezer(epic) -> dict:
         "is_blocked": epic.is_blocked,
         "blocked_note": epic.blocked_note,
         "blocked_note_html": mdrender(epic.project, epic.blocked_note),
-        "custom_attributes": extract_epic_custom_attributes(epic),
-        "user_stories": extract_user_stories(epic),
+        "custom_attributes": extract_epic_custom_attributes(epic)
     }
 
     return snapshot
@@ -326,7 +313,7 @@ def epic_related_userstory_freezer(related_us) -> dict:
         "epic": related_us.epic.id,
         "order": related_us.order
     }
-    
+
     return snapshot
 
 
