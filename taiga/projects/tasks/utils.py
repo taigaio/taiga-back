@@ -44,9 +44,12 @@ def attach_user_story_extra_info(queryset, as_field="user_story_extra_info"):
                                             "epics_epic"."ref" AS "ref",
                                             "epics_epic"."subject" AS "subject",
                                             "epics_epic"."color" AS "color",
-                                            json_build_object('id', "projects_project"."id",
-                                                              'name', "projects_project"."name",
-                                                              'slug', "projects_project"."slug") AS "project"
+                                            (SELECT row_to_json(p)
+                                              FROM (SELECT "projects_project"."id"    AS "id",
+                                                           "projects_project"."name"  AS "name",
+                                                           "projects_project"."slug"  AS "slug"
+                                                   ) p
+                                            ) AS "project"
                                        FROM "epics_relateduserstory"
                                  INNER JOIN "epics_epic"
                                          ON "epics_epic"."id" = "epics_relateduserstory"."epic_id"
