@@ -41,9 +41,10 @@ def attach_extra_info(queryset, user=None, include_attachments=False):
 
 def attach_user_stories_counts_to_queryset(queryset, as_field="user_stories_counts"):
     model = queryset.model
-    sql = """SELECT json_build_object(
-                        'opened', COALESCE(SUM(CASE WHEN is_closed IS FALSE THEN 1 ELSE 0 END), 0),
-                        'closed', COALESCE(SUM(CASE WHEN is_closed IS TRUE THEN 1 ELSE 0 END), 0)
+    sql = """SELECT (SELECT row_to_json(t)
+                       FROM (SELECT COALESCE(SUM(CASE WHEN is_closed IS FALSE THEN 1 ELSE 0 END), 0) AS "opened",
+                                    COALESCE(SUM(CASE WHEN is_closed IS TRUE THEN 1 ELSE 0 END), 0)  AS "closed"
+                            ) t
                     )
                FROM epics_relateduserstory
          INNER JOIN userstories_userstory ON epics_relateduserstory.user_story_id = userstories_userstory.id
