@@ -191,38 +191,38 @@ class Command(BaseCommand):
                 if role.computable:
                     computable_project_roles.add(role)
 
-            # added custom attributes
-            names = set([self.sd.words(1, 3) for i in range(1, 6)])
-            for name in names:
-                EpicCustomAttribute.objects.create(name=name,
-                                                   description=self.sd.words(3, 12),
-                                                   type=self.sd.choice(TYPES_CHOICES)[0],
-                                                   project=project,
-                                                   order=i)
-            names = set([self.sd.words(1, 3) for i in range(1, 6)])
-            for name in names:
-                UserStoryCustomAttribute.objects.create(name=name,
+            # If the project isn't empty
+            if x not in empty_projects_range:
+                # added custom attributes
+                names = set([self.sd.words(1, 3) for i in range(1, 6)])
+                for name in names:
+                    EpicCustomAttribute.objects.create(name=name,
+                                                       description=self.sd.words(3, 12),
+                                                       type=self.sd.choice(TYPES_CHOICES)[0],
+                                                       project=project,
+                                                       order=i)
+                names = set([self.sd.words(1, 3) for i in range(1, 6)])
+                for name in names:
+                    UserStoryCustomAttribute.objects.create(name=name,
+                                                            description=self.sd.words(3, 12),
+                                                            type=self.sd.choice(TYPES_CHOICES)[0],
+                                                            project=project,
+                                                            order=i)
+                names = set([self.sd.words(1, 3) for i in range(1, 6)])
+                for name in names:
+                    TaskCustomAttribute.objects.create(name=name,
+                                                       description=self.sd.words(3, 12),
+                                                       type=self.sd.choice(TYPES_CHOICES)[0],
+                                                       project=project,
+                                                       order=i)
+                names = set([self.sd.words(1, 3) for i in range(1, 6)])
+                for name in names:
+                    IssueCustomAttribute.objects.create(name=name,
                                                         description=self.sd.words(3, 12),
                                                         type=self.sd.choice(TYPES_CHOICES)[0],
                                                         project=project,
                                                         order=i)
-            names = set([self.sd.words(1, 3) for i in range(1, 6)])
-            for name in names:
-                TaskCustomAttribute.objects.create(name=name,
-                                                   description=self.sd.words(3, 12),
-                                                   type=self.sd.choice(TYPES_CHOICES)[0],
-                                                   project=project,
-                                                   order=i)
-            names = set([self.sd.words(1, 3) for i in range(1, 6)])
-            for name in names:
-                IssueCustomAttribute.objects.create(name=name,
-                                                    description=self.sd.words(3, 12),
-                                                    type=self.sd.choice(TYPES_CHOICES)[0],
-                                                    project=project,
-                                                    order=i)
 
-            # If the project isn't empty
-            if x not in empty_projects_range:
                 start_date = now() - datetime.timedelta(55)
 
                 # create milestones
@@ -268,8 +268,6 @@ class Command(BaseCommand):
                 # create epics
                 for y in range(self.sd.int(*NUM_EPICS)):
                     epic = self.create_epic(project)
-
-
 
             project.refresh_from_db()
 
@@ -588,6 +586,7 @@ class Command(BaseCommand):
                                          blocked_code=blocked_code)
 
         project.is_kanban_activated = True
+        project.is_epics_activated = True
         project.save()
         take_snapshot(project, user=project.owner)
 
