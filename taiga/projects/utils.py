@@ -117,6 +117,26 @@ def attach_notify_policies(queryset, as_field="notify_policies_attr"):
     return queryset
 
 
+def attach_epic_statuses(queryset, as_field="epic_statuses_attr"):
+    """Attach a json epic statuses representation to each object of the queryset.
+
+    :param queryset: A Django projects queryset object.
+    :param as_field: Attach the epic statuses as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    sql = """SELECT json_agg(row_to_json(projects_epicstatus))
+        	    FROM projects_epicstatus
+                WHERE
+                    projects_epicstatus.project_id = {tbl}.id
+                """
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
+
+
 def attach_userstory_statuses(queryset, as_field="userstory_statuses_attr"):
     """Attach a json userstory statuses representation to each object of the queryset.
 
@@ -250,6 +270,26 @@ def attach_severities(queryset, as_field="severities_attr"):
         	    FROM projects_severity
                 WHERE
                     projects_severity.project_id = {tbl}.id
+                """
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
+
+
+def attach_epic_custom_attributes(queryset, as_field="epic_custom_attributes_attr"):
+    """Attach a json epic custom attributes representation to each object of the queryset.
+
+    :param queryset: A Django projects queryset object.
+    :param as_field: Attach the epic custom attributes as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    sql = """SELECT json_agg(row_to_json(custom_attributes_epiccustomattribute))
+        	    FROM custom_attributes_epiccustomattribute
+                WHERE
+                    custom_attributes_epiccustomattribute.project_id = {tbl}.id
                 """
 
     sql = sql.format(tbl=model._meta.db_table)
@@ -443,6 +483,7 @@ def attach_extra_info(queryset, user=None):
     queryset = attach_members(queryset)
     queryset = attach_closed_milestones(queryset)
     queryset = attach_notify_policies(queryset)
+    queryset = attach_epic_statuses(queryset)
     queryset = attach_userstory_statuses(queryset)
     queryset = attach_points(queryset)
     queryset = attach_task_statuses(queryset)
@@ -450,6 +491,7 @@ def attach_extra_info(queryset, user=None):
     queryset = attach_issue_types(queryset)
     queryset = attach_priorities(queryset)
     queryset = attach_severities(queryset)
+    queryset = attach_epic_custom_attributes(queryset)
     queryset = attach_userstory_custom_attributes(queryset)
     queryset = attach_task_custom_attributes(queryset)
     queryset = attach_issue_custom_attributes(queryset)

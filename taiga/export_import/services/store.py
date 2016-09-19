@@ -80,11 +80,17 @@ def store_project(data):
         excluded_fields = [
             "default_points", "default_us_status", "default_task_status",
             "default_priority", "default_severity", "default_issue_status",
-            "default_issue_type", "memberships", "points", "us_statuses",
-            "task_statuses", "issue_statuses", "priorities", "severities",
-            "issue_types", "userstorycustomattributes", "taskcustomattributes",
-            "issuecustomattributes", "roles", "milestones", "wiki_pages",
-            "wiki_links", "notify_policies", "user_stories", "issues", "tasks",
+            "default_issue_type", "default_epic_status",
+            "memberships", "points",
+            "epic_statuses", "us_statuses", "task_statuses", "issue_statuses",
+            "priorities", "severities",
+            "issue_types",
+            "epiccustomattributes", "userstorycustomattributes",
+            "taskcustomattributes", "issuecustomattributes",
+            "roles", "milestones",
+            "wiki_pages", "wiki_links",
+            "notify_policies",
+            "epics", "user_stories", "issues", "tasks",
             "is_featured"
         ]
         if key not in excluded_fields:
@@ -195,7 +201,7 @@ def _store_membership(project, membership):
         validator.object._importing = True
         validator.object.token = str(uuid.uuid1())
         validator.object.user = find_invited_user(validator.object.email,
-                                                   default=validator.object.user)
+                                                  default=validator.object.user)
         validator.save()
         return validator
 
@@ -219,6 +225,7 @@ def _store_project_attribute_value(project, data, field, serializer):
         validator.object._importing = True
         validator.save()
         return validator.object
+
     add_errors(field, validator.errors)
     return None
 
@@ -239,10 +246,10 @@ def store_default_project_attributes_values(project, data):
         else:
             value = related.all().first()
         setattr(project, field, value)
-
     helper(project, "default_points", project.points, data)
     helper(project, "default_issue_type", project.issue_types, data)
     helper(project, "default_issue_status", project.issue_statuses, data)
+    helper(project, "default_epic_status", project.epic_statuses, data)
     helper(project, "default_us_status", project.us_statuses, data)
     helper(project, "default_task_status", project.task_statuses, data)
     helper(project, "default_priority", project.priorities, data)
@@ -317,12 +324,14 @@ def _store_role_point(project, us, role_point):
     add_errors("role_points", validator.errors)
     return None
 
+
 def store_user_story(project, data):
     if "status" not in data and project.default_us_status:
         data["status"] = project.default_us_status.name
 
     us_data = {key: value for key, value in data.items() if key not in
-                                                            ["role_points", "custom_attributes_values"]}
+               ["role_points", "custom_attributes_values"]}
+
     validator = validators.UserStoryExportValidator(data=us_data, context={"project": project})
 
     if validator.is_valid():
@@ -360,10 +369,13 @@ def store_user_story(project, data):
         custom_attributes_values = data.get("custom_attributes_values", None)
         if custom_attributes_values:
             custom_attributes = validator.object.project.userstorycustomattributes.all().values('id', 'name')
-            custom_attributes_values = _use_id_instead_name_as_key_in_custom_attributes_values(
-                                                    custom_attributes, custom_attributes_values)
+            custom_attributes_values = \
+                _use_id_instead_name_as_key_in_custom_attributes_values(custom_attributes,
+                                                                        custom_attributes_values)
+
             _store_custom_attributes_values(validator.object, custom_attributes_values,
-                                      "user_story", validators.UserStoryCustomAttributesValuesExportValidator)
+                                            "user_story",
+                                            validators.UserStoryCustomAttributesValuesExportValidator)
 
         return validator
 
@@ -376,6 +388,81 @@ def store_user_stories(project, data):
     for userstory in data.get("user_stories", []):
         us = store_user_story(project, userstory)
         results.append(us)
+    return results
+
+
+## EPICS
+
+def _store_epic_related_user_story(project, epic, related_user_story):
+    validator = validators.EpicRelatedUserStoryExportValidator(data=related_user_story,
+                                                               context={"project": project})
+    if validator.is_valid():
+        validator.object.epic = epic
+        validator.object.save()
+        return validator.object
+
+    add_errors("epic_related_user_stories", validator.errors)
+    return None
+
+
+def store_epic(project, data):
+    if "status" not in data and project.default_epic_status:
+        data["status"] = project.default_epic_status.name
+
+    validator = validators.EpicExportValidator(data=data, context={"project": project})
+    if validator.is_valid():
+        validator.object.project = project
+        if validator.object.owner is None:
+            validator.object.owner = validator.object.project.owner
+        validator.object._importing = True
+        validator.object._not_notify = True
+
+        validator.save()
+        validator.save_watchers()
+
+        if validator.object.ref:
+            sequence_name = refs.make_sequence_name(project)
+            if not seq.exists(sequence_name):
+                seq.create(sequence_name)
+            seq.set_max(sequence_name, validator.object.ref)
+        else:
+            validator.object.ref, _ = refs.make_reference(validator.object, project)
+            validator.object.save()
+
+        for epic_attachment in data.get("attachments", []):
+            _store_attachment(project, validator.object, epic_attachment)
+
+        for related_user_story in data.get("related_user_stories", []):
+            _store_epic_related_user_story(project, validator.object, related_user_story)
+
+        history_entries = data.get("history", [])
+        for history in history_entries:
+            _store_history(project, validator.object, history)
+
+        if not history_entries:
+            take_snapshot(validator.object, user=validator.object.owner)
+
+        custom_attributes_values = data.get("custom_attributes_values", None)
+        if custom_attributes_values:
+            custom_attributes = validator.object.project.epiccustomattributes.all().values('id', 'name')
+            custom_attributes_values = \
+                _use_id_instead_name_as_key_in_custom_attributes_values(custom_attributes,
+                                                                        custom_attributes_values)
+            _store_custom_attributes_values(validator.object, custom_attributes_values,
+                                            "epic",
+                                            validators.EpicCustomAttributesValuesExportValidator)
+
+        return validator
+
+    add_errors("epics", validator.errors)
+    return None
+
+
+def store_epics(project, data):
+    results = []
+    for epic in data.get("epics", []):
+        epic = store_epic(project, epic)
+        results.append(epic)
     return results
 
 
@@ -418,10 +505,13 @@ def store_task(project, data):
         custom_attributes_values = data.get("custom_attributes_values", None)
         if custom_attributes_values:
             custom_attributes = validator.object.project.taskcustomattributes.all().values('id', 'name')
-            custom_attributes_values = _use_id_instead_name_as_key_in_custom_attributes_values(
-                                                    custom_attributes, custom_attributes_values)
+            custom_attributes_values = \
+                _use_id_instead_name_as_key_in_custom_attributes_values(custom_attributes,
+                                                                        custom_attributes_values)
+
             _store_custom_attributes_values(validator.object, custom_attributes_values,
-                                           "task", validators.TaskCustomAttributesValuesExportValidator)
+                                            "task",
+                                            validators.TaskCustomAttributesValuesExportValidator)
 
         return validator
 
@@ -486,10 +576,12 @@ def store_issue(project, data):
         custom_attributes_values = data.get("custom_attributes_values", None)
         if custom_attributes_values:
             custom_attributes = validator.object.project.issuecustomattributes.all().values('id', 'name')
-            custom_attributes_values = _use_id_instead_name_as_key_in_custom_attributes_values(
-                                                    custom_attributes, custom_attributes_values)
+            custom_attributes_values = \
+                _use_id_instead_name_as_key_in_custom_attributes_values(custom_attributes,
+                                                                        custom_attributes_values)
             _store_custom_attributes_values(validator.object, custom_attributes_values,
-                                           "issue", validators.IssueCustomAttributesValuesExportValidator)
+                                            "issue",
+                                            validators.IssueCustomAttributesValuesExportValidator)
 
         return validator
 
@@ -605,8 +697,9 @@ def _validate_if_owner_have_enought_space_to_this_project(owner, data):
 
     is_private = data.get("is_private", False)
     total_memberships = len([m for m in data.get("memberships", [])
-                                        if m.get("email", None) != data["owner"]])
-    total_memberships = total_memberships + 1 # 1 is the owner
+                            if m.get("email", None) != data["owner"]])
+
+    total_memberships = total_memberships + 1  # 1 is the owner
     (enough_slots, error_message) = users_service.has_available_slot_for_import_new_project(
         owner,
         is_private,
@@ -652,9 +745,10 @@ def _populate_project_object(project, data):
     # Create memberships
     store_memberships(project, data)
     _create_membership_for_project_owner(project)
-    check_if_there_is_some_error(_("error importing memberships"),  project)
+    check_if_there_is_some_error(_("error importing memberships"), project)
 
     # Create project attributes values
+    store_project_attributes_values(project, data, "epic_statuses", validators.EpicStatusExportValidator)
     store_project_attributes_values(project, data, "us_statuses", validators.UserStoryStatusExportValidator)
     store_project_attributes_values(project, data, "points", validators.PointsExportValidator)
     store_project_attributes_values(project, data, "task_statuses", validators.TaskStatusExportValidator)
@@ -669,6 +763,8 @@ def _populate_project_object(project, data):
     check_if_there_is_some_error(_("error importing default project attributes values"), project)
 
     # Create custom attributes
+    store_custom_attributes(project, data, "epiccustomattributes",
+                            validators.EpicCustomAttributeExportValidator)
     store_custom_attributes(project, data, "userstorycustomattributes",
                             validators.UserStoryCustomAttributeExportValidator)
     store_custom_attributes(project, data, "taskcustomattributes",
@@ -688,6 +784,10 @@ def _populate_project_object(project, data):
     # Create user stories
     store_user_stories(project, data)
     check_if_there_is_some_error(_("error importing user stories"), project)
+
+    # Creat epics
+    store_epics(project, data)
+    check_if_there_is_some_error(_("error importing epics"), project)
 
     # Createer tasks
     store_tasks(project, data)

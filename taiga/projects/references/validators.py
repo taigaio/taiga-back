@@ -24,6 +24,7 @@ from taiga.base.exceptions import ValidationError
 class ResolverValidator(validators.Validator):
     project = serializers.CharField(max_length=512, required=True)
     milestone = serializers.CharField(max_length=512, required=False)
+    epic = serializers.IntegerField(required=False)
     us = serializers.IntegerField(required=False)
     task = serializers.IntegerField(required=False)
     issue = serializers.IntegerField(required=False)
@@ -32,6 +33,8 @@ class ResolverValidator(validators.Validator):
 
     def validate(self, attrs):
         if "ref" in attrs:
+            if "epic" in attrs:
+                raise ValidationError("'epic' param is incompatible with 'ref' in the same request")
             if "us" in attrs:
                 raise ValidationError("'us' param is incompatible with 'ref' in the same request")
             if "task" in attrs:

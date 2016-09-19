@@ -22,7 +22,7 @@ from django.db import transaction
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse
 
-from taiga.base import filters
+from taiga.base import filters as base_filters
 from taiga.base import exceptions as exc
 from taiga.base import response
 from taiga.base import status
@@ -45,6 +45,7 @@ from taiga.projects.votes.mixins.viewsets import VotedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotersViewSetMixin
 from taiga.projects.userstories.utils import attach_extra_info
 
+from . import filters
 from . import models
 from . import permissions
 from . import serializers
@@ -57,22 +58,19 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
     validator_class = validators.UserStoryValidator
     queryset = models.UserStory.objects.all()
     permission_classes = (permissions.UserStoryPermission,)
-    filter_backends = (filters.CanViewUsFilterBackend,
-                       filters.OwnersFilter,
-                       filters.AssignedToFilter,
-                       filters.StatusesFilter,
-                       filters.TagsFilter,
-                       filters.WatchersFilter,
-                       filters.QFilter,
-                       filters.OrderByFilterMixin,
-                       filters.CreatedDateFilter,
-                       filters.ModifiedDateFilter,
-                       filters.FinishDateFilter)
-    retrieve_exclude_filters = (filters.OwnersFilter,
-                                filters.AssignedToFilter,
-                                filters.StatusesFilter,
-                                filters.TagsFilter,
-                                filters.WatchersFilter)
+    filter_backends = (base_filters.CanViewUsFilterBackend,
+                       filters.EpicsFilter,
+                       filters.EpicFilter,
+                       base_filters.OwnersFilter,
+                       base_filters.AssignedToFilter,
+                       base_filters.StatusesFilter,
+                       base_filters.TagsFilter,
+                       base_filters.WatchersFilter,
+                       base_filters.QFilter,
+                       base_filters.CreatedDateFilter,
+                       base_filters.ModifiedDateFilter,
+                       base_filters.FinishDateFilter,
+                       base_filters.OrderByFilterMixin)
     filter_fields = ["project",
                      "project__slug",
                      "milestone",
@@ -83,6 +81,7 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
     order_by_fields = ["backlog_order",
                        "sprint_order",
                        "kanban_order",
+                       "epic_order",
                        "total_voters"]
 
     def get_serializer_class(self, *args, **kwargs):
@@ -105,9 +104,11 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
 
         include_attachments = "include_attachments" in self.request.QUERY_PARAMS
         include_tasks = "include_tasks" in self.request.QUERY_PARAMS
+        epic_id =  self.request.QUERY_PARAMS.get("epic", None)
         qs = attach_extra_info(qs, user=self.request.user,
                                include_attachments=include_attachments,
-                               include_tasks=include_tasks)
+                               include_tasks=include_tasks,
+                               epic_id=epic_id)
 
         return qs
 
@@ -274,16 +275,18 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
         project = get_object_or_404(Project, id=project_id)
 
         filter_backends = self.get_filter_backends()
-        statuses_filter_backends = (f for f in filter_backends if f != filters.StatusesFilter)
-        assigned_to_filter_backends = (f for f in filter_backends if f != filters.AssignedToFilter)
-        owners_filter_backends = (f for f in filter_backends if f != filters.OwnersFilter)
+        statuses_filter_backends = (f for f in filter_backends if f != base_filters.StatusesFilter)
+        assigned_to_filter_backends = (f for f in filter_backends if f != base_filters.AssignedToFilter)
+        owners_filter_backends = (f for f in filter_backends if f != base_filters.OwnersFilter)
+        epics_filter_backends = (f for f in filter_backends if f != filters.EpicsFilter)
 
         queryset = self.get_queryset()
         querysets = {
             "statuses": self.filter_queryset(queryset, filter_backends=statuses_filter_backends),
             "assigned_to": self.filter_queryset(queryset, filter_backends=assigned_to_filter_backends),
             "owners": self.filter_queryset(queryset, filter_backends=owners_filter_backends),
-            "tags": self.filter_queryset(queryset)
+            "tags": self.filter_queryset(queryset),
+            "epics": self.filter_queryset(queryset, filter_backends=epics_filter_backends)
         }
         return response.Ok(services.get_userstories_filters_data(project, querysets))
 
@@ -337,6 +340,9 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                 callback=self.post_save, precall=self.pre_save)
 
             user_stories = self.get_queryset().filter(id__in=[i.id for i in user_stories])
+            for user_story in user_stories:
+                self.persist_history_snapshot(obj=user_story)
+
             user_stories_serialized = self.get_serializer_class()(user_stories, many=True)
 
             return response.Ok(user_stories_serialized.data)

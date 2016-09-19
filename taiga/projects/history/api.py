@@ -168,6 +168,11 @@ class HistoryViewSet(ReadOnlyListViewSet):
         return self.response_for_queryset(qs)
 
 
+class EpicHistory(HistoryViewSet):
+    content_type = "epics.epic"
+    permission_classes = (permissions.EpicHistoryPermission,)
+
+
 class UserStoryHistory(HistoryViewSet):
     content_type = "userstories.userstory"
     permission_classes = (permissions.UserStoryHistoryPermission,)

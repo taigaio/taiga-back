@@ -83,6 +83,7 @@ def save_in_bulk(instances, callback=None, precall=None, **save_options):
     :params callback: Callback to call after each save.
     :params save_options: Additional options to use when saving each instance.
     """
+    ret = []
     if callback is None:
         callback = functions.noop
 
@@ -98,6 +99,7 @@ def save_in_bulk(instances, callback=None, precall=None, **save_options):
         instance.save(**save_options)
         callback(instance, created=created)
 
+    return ret
 
 @transaction.atomic
 def update_in_bulk(instances, list_of_new_values, callback=None, precall=None):
@@ -130,13 +132,13 @@ def update_attr_in_bulk_for_ids(values, attr, model):
     """
     values = [str((id, order)) for id, order in values.items()]
     sql = """
-        UPDATE {tbl}
-        SET {attr}=update_values.column2
+        UPDATE "{tbl}"
+        SET "{attr}"=update_values.column2
         FROM (
           VALUES
             {values}
         ) AS update_values
-        WHERE {tbl}.id=update_values.column1;
+        WHERE "{tbl}"."id"=update_values.column1;
     """.format(tbl=model._meta.db_table,
                values=', '.join(values),
                attr=attr)

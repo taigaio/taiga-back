@@ -57,6 +57,7 @@ class ProjectTemplateFactory(Factory):
     slug = settings.DEFAULT_PROJECT_TEMPLATE
     description = factory.Sequence(lambda n: "Description {}".format(n))
 
+    epic_statuses = []
     us_statuses = []
     points = []
     task_statuses = []
@@ -118,6 +119,17 @@ class RolePointsFactory(Factory):
     user_story = factory.SubFactory("tests.factories.UserStoryFactory")
     role = factory.SubFactory("tests.factories.RoleFactory")
     points = factory.SubFactory("tests.factories.PointsFactory")
+
+
+class EpicAttachmentFactory(Factory):
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+    owner = factory.SubFactory("tests.factories.UserFactory")
+    content_object = factory.SubFactory("tests.factories.EpicFactory")
+    attached_file = factory.django.FileField(data=b"File contents")
+
+    class Meta:
+        model = "attachments.Attachment"
+        strategy = factory.CREATE_STRATEGY
 
 
 class UserStoryAttachmentFactory(Factory):
@@ -229,22 +241,26 @@ class StorageEntryFactory(Factory):
     value = factory.Sequence(lambda n: {"value": "value-{}".format(n)})
 
 
-class UserStoryStatusFactory(Factory):
+class EpicFactory(Factory):
     class Meta:
-        model = "projects.UserStoryStatus"
+        model = "epics.Epic"
         strategy = factory.CREATE_STRATEGY
 
-    name = factory.Sequence(lambda n: "User Story status {}".format(n))
+    ref = factory.Sequence(lambda n: n)
     project = factory.SubFactory("tests.factories.ProjectFactory")
+    owner = factory.SubFactory("tests.factories.UserFactory")
+    subject = factory.Sequence(lambda n: "Epic {}".format(n))
+    description = factory.Sequence(lambda n: "Epic {} description".format(n))
+    status = factory.SubFactory("tests.factories.EpicStatusFactory")
 
 
-class TaskStatusFactory(Factory):
+class RelatedUserStory(Factory):
     class Meta:
-        model = "projects.TaskStatus"
+        model = "epics.RelatedUserStory"
         strategy = factory.CREATE_STRATEGY
 
-    name = factory.Sequence(lambda n: "Task status {}".format(n))
-    project = factory.SubFactory("tests.factories.ProjectFactory")
+    epic = factory.SubFactory("tests.factories.EpicFactory")
+    user_story = factory.SubFactory("tests.factories.UserStoryFactory")
 
 
 class MilestoneFactory(Factory):
@@ -330,6 +346,33 @@ class WikiLinkFactory(Factory):
     order = factory.Sequence(lambda n: n)
 
 
+class EpicStatusFactory(Factory):
+    class Meta:
+        model = "projects.EpicStatus"
+        strategy = factory.CREATE_STRATEGY
+
+    name = factory.Sequence(lambda n: "Epic status {}".format(n))
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
+class UserStoryStatusFactory(Factory):
+    class Meta:
+        model = "projects.UserStoryStatus"
+        strategy = factory.CREATE_STRATEGY
+
+    name = factory.Sequence(lambda n: "User Story status {}".format(n))
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
+class TaskStatusFactory(Factory):
+    class Meta:
+        model = "projects.TaskStatus"
+        strategy = factory.CREATE_STRATEGY
+
+    name = factory.Sequence(lambda n: "Task status {}".format(n))
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
 class IssueStatusFactory(Factory):
     class Meta:
         model = "projects.IssueStatus"
@@ -366,6 +409,16 @@ class IssueTypeFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
+class EpicCustomAttributeFactory(Factory):
+    class Meta:
+        model = "custom_attributes.EpicCustomAttribute"
+        strategy = factory.CREATE_STRATEGY
+
+    name = factory.Sequence(lambda n: "Epic Custom Attribute {}".format(n))
+    description = factory.Sequence(lambda n: "Description for Epic Custom Attribute {}".format(n))
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
 class UserStoryCustomAttributeFactory(Factory):
     class Meta:
         model = "custom_attributes.UserStoryCustomAttribute"
@@ -394,6 +447,15 @@ class IssueCustomAttributeFactory(Factory):
     name = factory.Sequence(lambda n: "Issue Custom Attribute {}".format(n))
     description = factory.Sequence(lambda n: "Description for Issue Custom Attribute {}".format(n))
     project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
+class EpicCustomAttributesValuesFactory(Factory):
+    class Meta:
+        model = "custom_attributes.EpicCustomAttributesValues"
+        strategy = factory.CREATE_STRATEGY
+
+    attributes_values = {}
+    epic = factory.SubFactory("tests.factories.EpicFactory")
 
 
 class UserStoryCustomAttributesValuesFactory(Factory):

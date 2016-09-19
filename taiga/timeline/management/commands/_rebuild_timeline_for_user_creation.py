@@ -25,8 +25,9 @@ from django.core.management.base import BaseCommand
 from django.db.models import Model
 from django.test.utils import override_settings
 
-from taiga.timeline.service import (_get_impl_key_from_model,
-    _timeline_impl_map, extract_user_info)
+from taiga.timeline.service import _get_impl_key_from_model,
+from taiga.timeline.service import _timeline_impl_map,
+from taiga.timeline.service import extract_user_info)
 from taiga.timeline.models import Timeline
 from taiga.timeline.signals import _push_to_timelines
 
@@ -54,7 +55,8 @@ class BulkCreator(object):
 bulk_creator = BulkCreator()
 
 
-def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, created_datetime:object, namespace:str="default", extra_data:dict={}):
+def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, created_datetime:object,
+                                  namespace:str="default", extra_data:dict={}):
     assert isinstance(obj, Model), "obj must be a instance of Model"
     assert isinstance(instance, Model), "instance must be a instance of Model"
     event_type_key = _get_impl_key_from_model(instance.__class__, event_type)

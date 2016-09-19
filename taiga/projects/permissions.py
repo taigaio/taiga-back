@@ -62,6 +62,7 @@ class ProjectPermission(TaigaResourcePermission):
     stats_perms = HasProjectPerm('view_project')
     member_stats_perms = HasProjectPerm('view_project')
     issues_stats_perms = HasProjectPerm('view_project')
+    regenerate_epics_csv_uuid_perms = IsProjectAdmin()
     regenerate_userstories_csv_uuid_perms = IsProjectAdmin()
     regenerate_issues_csv_uuid_perms = IsProjectAdmin()
     regenerate_tasks_csv_uuid_perms = IsProjectAdmin()
@@ -107,6 +108,18 @@ class MembershipPermission(TaigaResourcePermission):
     list_perms = AllowAny()
     bulk_create_perms = IsProjectAdmin()
     resend_invitation_perms = IsProjectAdmin()
+
+
+# Epics
+
+class EpicStatusPermission(TaigaResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectAdmin()
+    update_perms = IsProjectAdmin()
+    partial_update_perms = IsProjectAdmin()
+    destroy_perms = IsProjectAdmin()
+    list_perms = AllowAny()
+    bulk_update_order_perms = IsProjectAdmin()
 
 
 # User Stories

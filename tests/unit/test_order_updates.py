@@ -131,7 +131,6 @@ def test_apply_order_updates_duplicated_orders():
         "a": 3
     }
     apply_order_updates(orders, new_orders)
-    print(orders)
     assert orders == {
         "a": 3,
         "c": 4,
@@ -155,7 +154,6 @@ def test_apply_order_updates_multiple_elements_duplicated_orders():
         "a": 4
     }
     apply_order_updates(orders, new_orders)
-    print(orders)
     assert orders == {
         "c": 3,
         "d": 3,

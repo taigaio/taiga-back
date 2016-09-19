@@ -101,9 +101,247 @@ def data():
 
 
 #########################################################
-## User stories
+## Epics
 #########################################################
 
+@pytest.fixture
+def data_epic(data):
+    m = type("Models", (object,), {})
+    m.public_epic = f.EpicFactory(project=data.public_project, ref=22)
+    m.public_history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.public_project,
+                                                          comment="testing public",
+                                                          key=make_key_from_model_object(m.public_epic),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
+
+    m.private_epic1 = f.EpicFactory(project=data.private_project1, ref=26)
+    m.private_history_entry1 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.private_project1,
+                                                          comment="testing 1",
+                                                          key=make_key_from_model_object(m.private_epic1),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
+    m.private_epic2 = f.EpicFactory(project=data.private_project2, ref=210)
+    m.private_history_entry2 = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                          project=data.private_project2,
+                                                          comment="testing 2",
+                                                          key=make_key_from_model_object(m.private_epic2),
+                                                          diff={},
+                                                          user={"pk": data.project_member_with_perms.pk})
+    return m
+
+
+def test_epic_history_retrieve(client, data, data_epic):
+    public_url = reverse('epic-history-detail', kwargs={"pk": data_epic.public_epic.pk})
+    private_url1 = reverse('epic-history-detail', kwargs={"pk": data_epic.private_epic1.pk})
+    private_url2 = reverse('epic-history-detail', kwargs={"pk": data_epic.private_epic2.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_epic_action_edit_comment(client, data, data_epic):
+    public_url = "{}?id={}".format(
+        reverse('epic-history-edit-comment', kwargs={"pk": data_epic.public_epic.pk}),
+        data_epic.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('epic-history-edit-comment', kwargs={"pk": data_epic.private_epic1.pk}),
+        data_epic.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('epic-history-edit-comment', kwargs={"pk": data_epic.private_epic2.pk}),
+        data_epic.private_history_entry2.id
+    )
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    data = json.dumps({"comment": "testing update comment"})
+
+    results = helper_test_http_method(client, 'post', public_url, data, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url1, data, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'post', private_url2, data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+def test_epic_action_delete_comment(client, data, data_epic):
+    public_url = "{}?id={}".format(
+        reverse('epic-history-delete-comment', kwargs={"pk": data_epic.public_epic.pk}),
+        data_epic.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('epic-history-delete-comment', kwargs={"pk": data_epic.private_epic1.pk}),
+        data_epic.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('epic-history-delete-comment', kwargs={"pk": data_epic.private_epic2.pk}),
+        data_epic.private_history_entry2.id
+    )
+
+    users_and_statuses = [
+        (None, 401),
+        (data.registered_user, 403),
+        (data.project_member_without_perms, 403),
+        (data.project_member_with_perms, 200),
+        (data.project_owner, 200),
+    ]
+
+    for user, status_code in users_and_statuses:
+        data_epic.public_history_entry.delete_comment_date = None
+        data_epic.public_history_entry.delete_comment_user = None
+        data_epic.public_history_entry.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(public_url)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_epic.private_history_entry1.delete_comment_date = None
+        data_epic.private_history_entry1.delete_comment_user = None
+        data_epic.private_history_entry1.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url1)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_epic.private_history_entry2.delete_comment_date = None
+        data_epic.private_history_entry2.delete_comment_user = None
+        data_epic.private_history_entry2.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url2)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+
+def test_epic_action_undelete_comment(client, data, data_epic):
+    public_url = "{}?id={}".format(
+        reverse('epic-history-undelete-comment', kwargs={"pk": data_epic.public_epic.pk}),
+        data_epic.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('epic-history-undelete-comment', kwargs={"pk": data_epic.private_epic1.pk}),
+        data_epic.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('epic-history-undelete-comment', kwargs={"pk": data_epic.private_epic2.pk}),
+        data_epic.private_history_entry2.id
+    )
+
+    users_and_statuses = [
+        (None, 401),
+        (data.registered_user, 403),
+        (data.project_member_without_perms, 403),
+        (data.project_member_with_perms, 200),
+        (data.project_owner, 200),
+    ]
+
+    for user, status_code in users_and_statuses:
+        data_epic.public_history_entry.delete_comment_date = timezone.now()
+        data_epic.public_history_entry.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_epic.public_history_entry.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(public_url)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_epic.private_history_entry1.delete_comment_date = timezone.now()
+        data_epic.private_history_entry1.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_epic.private_history_entry1.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url1)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+    for user, status_code in users_and_statuses:
+        data_epic.private_history_entry2.delete_comment_date = timezone.now()
+        data_epic.private_history_entry2.delete_comment_user = {"pk": data.project_member_with_perms.pk}
+        data_epic.private_history_entry2.save()
+
+        if user:
+            client.login(user)
+        else:
+            client.logout()
+        response = client.json.post(private_url2)
+        error_mesage = "{} != {} for {}".format(response.status_code, status_code, user)
+        assert response.status_code == status_code, error_mesage
+
+
+def test_epic_action_comment_versions(client, data, data_epic):
+    public_url = "{}?id={}".format(
+        reverse('epic-history-comment-versions', kwargs={"pk": data_epic.public_epic.pk}),
+        data_epic.public_history_entry.id
+    )
+    private_url1 = "{}?id={}".format(
+        reverse('epic-history-comment-versions', kwargs={"pk": data_epic.private_epic1.pk}),
+        data_epic.private_history_entry1.id
+    )
+    private_url2 = "{}?id={}".format(
+        reverse('epic-history-comment-versions', kwargs={"pk": data_epic.private_epic2.pk}),
+        data_epic.private_history_entry2.id
+    )
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner,
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+
+
+#########################################################
+## User stories
+#########################################################
 
 @pytest.fixture
 def data_us(data):
@@ -344,7 +582,6 @@ def test_user_story_action_comment_versions(client, data, data_us):
 ## Tasks
 #########################################################
 
-
 @pytest.fixture
 def data_task(data):
     m = type("Models", (object,), {})
@@ -584,7 +821,6 @@ def test_task_action_comment_versions(client, data, data_task):
 ## Issues
 #########################################################
 
-
 @pytest.fixture
 def data_issue(data):
     m = type("Models", (object,), {})
@@ -823,7 +1059,6 @@ def test_issue_action_comment_versions(client, data, data_issue):
 #########################################################
 ## Wiki pages
 #########################################################
-
 
 @pytest.fixture
 def data_wiki(data):

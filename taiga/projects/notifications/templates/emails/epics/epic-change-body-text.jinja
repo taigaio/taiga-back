@@ -1,0 +1,8 @@
+{% extends "emails/updates-body-text.jinja" %}
+{% block head %}
+{% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject, url=resolve_front_url("epic", project.slug, snapshot.ref) %}
+Epic updated
+Hello {{ user }}, {{ changer }} has updated a epic on {{ project }}
+See epic #{{ ref }} {{ subject }} at {{ url }}
+{% endtrans %}
+{% endblock %}

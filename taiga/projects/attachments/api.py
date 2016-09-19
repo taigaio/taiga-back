@@ -83,6 +83,12 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
         return obj.content_object
 
 
+class EpicAttachmentViewSet(BaseAttachmentViewSet):
+    permission_classes = (permissions.EpicAttachmentPermission,)
+    filter_backends = (filters.CanViewEpicAttachmentFilterBackend,)
+    content_type = "epics.epic"
+
+
 class UserStoryAttachmentViewSet(BaseAttachmentViewSet):
     permission_classes = (permissions.UserStoryAttachmentPermission,)
     filter_backends = (filters.CanViewUserStoryAttachmentFilterBackend,)

@@ -37,11 +37,13 @@ from .notifications.choices import NotifyLevel
 # Custom values for selectors
 ######################################################
 
-class PointsSerializer(serializers.LightSerializer):
+class EpicStatusSerializer(serializers.LightSerializer):
     id = Field()
     name = I18NField()
+    slug = Field()
     order = Field()
-    value = Field()
+    is_closed = Field()
+    color = Field()
     project = Field(attr="project_id")
 
 
@@ -54,6 +56,14 @@ class UserStoryStatusSerializer(serializers.LightSerializer):
     is_archived = Field()
     color = Field()
     wip_limit = Field()
+    project = Field(attr="project_id")
+
+
+class PointsSerializer(serializers.LightSerializer):
+    id = Field()
+    name = I18NField()
+    order = Field()
+    value = Field()
     project = Field(attr="project_id")
 
 
@@ -203,6 +213,7 @@ class ProjectSerializer(serializers.LightSerializer):
     members = MethodField()
     total_milestones = Field()
     total_story_points = Field()
+    is_epics_activated = Field()
     is_backlog_activated = Field()
     is_kanban_activated = Field()
     is_wiki_activated = Field()
@@ -230,6 +241,7 @@ class ProjectSerializer(serializers.LightSerializer):
     tags = Field()
     tags_colors = MethodField()
 
+    default_epic_status = Field(attr="default_epic_status_id")
     default_points = Field(attr="default_points_id")
     default_us_status = Field(attr="default_us_status_id")
     default_task_status = Field(attr="default_task_status_id")
@@ -281,14 +293,13 @@ class ProjectSerializer(serializers.LightSerializer):
     def get_my_permissions(self, obj):
         if "request" in self.context:
             user = self.context["request"].user
-            return calculate_permissions(
-                        is_authenticated=user.is_authenticated(),
-                        is_superuser=user.is_superuser,
-                        is_member=self.get_i_am_member(obj),
-                        is_admin=self.get_i_am_admin(obj),
-                        role_permissions=obj.my_role_permissions_attr,
-                        anon_permissions=obj.anon_permissions,
-                        public_permissions=obj.public_permissions)
+            return calculate_permissions(is_authenticated=user.is_authenticated(),
+                                         is_superuser=user.is_superuser,
+                                         is_member=self.get_i_am_member(obj),
+                                         is_admin=self.get_i_am_admin(obj),
+                                         role_permissions=obj.my_role_permissions_attr,
+                                         anon_permissions=obj.anon_permissions,
+                                         public_permissions=obj.public_permissions)
         return []
 
     def get_owner(self, obj):
@@ -342,6 +353,7 @@ class ProjectSerializer(serializers.LightSerializer):
 
 
 class ProjectDetailSerializer(ProjectSerializer):
+    epic_statuses = Field(attr="epic_statuses_attr")
     us_statuses = Field(attr="userstory_statuses_attr")
     points = Field(attr="points_attr")
     task_statuses = Field(attr="task_statuses_attr")
@@ -349,6 +361,7 @@ class ProjectDetailSerializer(ProjectSerializer):
     issue_types = Field(attr="issue_types_attr")
     priorities = Field(attr="priorities_attr")
     severities = Field(attr="severities_attr")
+    epic_custom_attributes = Field(attr="epic_custom_attributes_attr")
     userstory_custom_attributes = Field(attr="userstory_custom_attributes_attr")
     task_custom_attributes = Field(attr="task_custom_attributes_attr")
     issue_custom_attributes = Field(attr="issue_custom_attributes_attr")
@@ -360,9 +373,10 @@ class ProjectDetailSerializer(ProjectSerializer):
     # Admin fields
     is_private_extra_info = MethodField()
     max_memberships = MethodField()
-    issues_csv_uuid = Field()
-    tasks_csv_uuid = Field()
+    epics_csv_uuid = Field()
     userstories_csv_uuid = Field()
+    tasks_csv_uuid = Field()
+    issues_csv_uuid = Field()
     transfer_token = Field()
     milestones = MethodField()
 
@@ -375,9 +389,9 @@ class ProjectDetailSerializer(ProjectSerializer):
 
     def to_value(self, instance):
         # Name attributes must be translated
-        for attr in ["userstory_statuses_attr", "points_attr", "task_statuses_attr",
-                     "issue_statuses_attr", "issue_types_attr", "priorities_attr",
-                     "severities_attr", "userstory_custom_attributes_attr",
+        for attr in ["epic_statuses_attr", "userstory_statuses_attr", "points_attr", "task_statuses_attr",
+                     "issue_statuses_attr", "issue_types_attr", "priorities_attr", "severities_attr",
+                     "epic_custom_attributes_attr", "userstory_custom_attributes_attr",
                      "task_custom_attributes_attr", "issue_custom_attributes_attr", "roles_attr"]:
 
             assert hasattr(instance, attr), "instance must have a {} attribute".format(attr)
@@ -391,8 +405,8 @@ class ProjectDetailSerializer(ProjectSerializer):
         ret = super().to_value(instance)
 
         admin_fields = [
-            "is_private_extra_info", "max_memberships", "issues_csv_uuid",
-            "tasks_csv_uuid", "userstories_csv_uuid", "transfer_token"
+            "epics_csv_uuid", "userstories_csv_uuid", "tasks_csv_uuid", "issues_csv_uuid",
+            "is_private_extra_info", "max_memberships", "transfer_token",
         ]
 
         is_admin_user = False
@@ -420,8 +434,10 @@ class ProjectDetailSerializer(ProjectSerializer):
         return len(obj.members_attr)
 
     def get_is_out_of_owner_limits(self, obj):
-        assert hasattr(obj, "private_projects_same_owner_attr"), "instance must have a private_projects_same_owner_attr attribute"
-        assert hasattr(obj, "public_projects_same_owner_attr"), "instance must have a public_projects_same_owner_attr attribute"
+        assert hasattr(obj, "private_projects_same_owner_attr"), ("instance must have a private_projects_same"
+                                                                  "_owner_attr attribute")
+        assert hasattr(obj, "public_projects_same_owner_attr"), ("instance must have a public_projects_same_"
+                                                                 "owner_attr attribute")
         return services.check_if_project_is_out_of_owner_limits(
             obj,
             current_memberships=self.get_total_memberships(obj),
@@ -430,8 +446,10 @@ class ProjectDetailSerializer(ProjectSerializer):
         )
 
     def get_is_private_extra_info(self, obj):
-        assert hasattr(obj, "private_projects_same_owner_attr"), "instance must have a private_projects_same_owner_attr attribute"
-        assert hasattr(obj, "public_projects_same_owner_attr"), "instance must have a public_projects_same_owner_attr attribute"
+        assert hasattr(obj, "private_projects_same_owner_attr"), ("instance must have a private_projects_same_"
+                                                                  "owner_attr attribute")
+        assert hasattr(obj, "public_projects_same_owner_attr"), ("instance must have a public_projects_same"
+                                                                 "_owner_attr attribute")
         return services.check_if_project_privacity_can_be_changed(
             obj,
             current_memberships=self.get_total_memberships(obj),
@@ -456,6 +474,7 @@ class ProjectTemplateSerializer(serializers.LightSerializer):
     created_date = Field()
     modified_date = Field()
     default_owner_role = Field()
+    is_epics_activated = Field()
     is_backlog_activated = Field()
     is_kanban_activated = Field()
     is_wiki_activated = Field()
@@ -463,6 +482,7 @@ class ProjectTemplateSerializer(serializers.LightSerializer):
     videoconferences = Field()
     videoconferences_extra_data = Field()
     default_options = Field()
+    epic_statuses = Field()
     us_statuses = Field()
     points = Field()
     task_statuses = Field()

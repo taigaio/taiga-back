@@ -31,7 +31,7 @@ class Command(BaseCommand):
         total = Project.objects.count()
 
         for count,project in enumerate(Project.objects.order_by("id")):
-            print("""***********************************
- %s/%s %s
-***********************************"""%(count+1, total, project.name))
+            print("***********************************\n",
+                  " {}/{} {}\n".format(count+1, total, project.name),
+                  "***********************************")
             call_command("rebuild_timeline", project=project.id)

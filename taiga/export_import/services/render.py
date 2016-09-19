@@ -45,12 +45,16 @@ def render_project(project, outfile, chunk_size=8190):
         # field.initialize(parent=serializer, field_name=field_name)
 
         # These four "special" fields hava attachments so we use them in a special way
-        if field_name in ["wiki_pages", "user_stories", "tasks", "issues"]:
+        if field_name in ["wiki_pages", "user_stories", "tasks", "issues", "epics"]:
             value = get_component(project, field_name)
             if field_name != "wiki_pages":
-                value = value.select_related('owner', 'status', 'milestone',
+                value = value.select_related('owner', 'status',
                                              'project', 'assigned_to',
                                              'custom_attributes_values')
+
+            if field_name in ["user_stories", "tasks", "issues"]:
+                value = value.select_related('milestone')
+
             if field_name == "issues":
                 value = value.select_related('severity', 'priority', 'type')
             value = value.prefetch_related('history_entry', 'attachments')

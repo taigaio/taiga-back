@@ -33,6 +33,9 @@ urls = {
 
     "project": "/project/{0}", # project.slug
 
+    "epics": "/project/{0}/epics/", # project.slug
+    "epic": "/project/{0}/epic/{1}", # project.slug, epic.ref
+
     "backlog": "/project/{0}/backlog/", # project.slug
     "taskboard": "/project/{0}/taskboard/{1}", # project.slug, milestone.slug
     "kanban": "/project/{0}/kanban/", # project.slug

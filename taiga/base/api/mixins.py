@@ -211,14 +211,14 @@ class UpdateModelMixin:
         Set any attributes on the object that are implicit in the request.
         """
         # pk and/or slug attributes are implicit in the URL.
-        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
-        lookup = self.kwargs.get(lookup_url_kwarg, None)
+        ##lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        ##lookup = self.kwargs.get(lookup_url_kwarg, None)
         pk = self.kwargs.get(self.pk_url_kwarg, None)
         slug = self.kwargs.get(self.slug_url_kwarg, None)
         slug_field = slug and self.slug_field or None
 
-        if lookup:
-            setattr(obj, self.lookup_field, lookup)
+        ##if lookup:
+        ##    setattr(obj, self.lookup_field, lookup)
 
         if pk:
             setattr(obj, 'pk', pk)
@@ -252,6 +252,27 @@ class DestroyModelMixin:
         self.post_delete(obj)
         return response.NoContent()
 
+
+class NestedViewSetMixin(object):
+    def get_queryset(self):
+        return self._filter_queryset_by_parents_lookups(super().get_queryset())
+
+    def _filter_queryset_by_parents_lookups(self, queryset):
+        parents_query_dict = self._get_parents_query_dict()
+        if parents_query_dict:
+            return queryset.filter(**parents_query_dict)
+        else:
+            return queryset
+
+    def _get_parents_query_dict(self):
+        result = {}
+        for kwarg_name in self.kwargs:
+            query_value = self.kwargs.get(kwarg_name)
+            result[kwarg_name] = query_value
+        return result
+
+
+## TODO: Move blocked mixind out of the base module because is related to project
 
 class BlockeableModelMixin:
     def is_blocked(self, obj):

@@ -42,6 +42,14 @@ class IsCommentProjectAdmin(PermissionComponent):
         return is_project_admin(request.user, project)
 
 
+class EpicHistoryPermission(TaigaResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    edit_comment_perms =  IsCommentProjectAdmin() | IsCommentOwner()
+    delete_comment_perms = IsCommentProjectAdmin() | IsCommentOwner()
+    undelete_comment_perms = IsCommentProjectAdmin() | IsCommentDeleter()
+    comment_versions_perms = IsCommentProjectAdmin() | IsCommentOwner()
+
+
 class UserStoryHistoryPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
     edit_comment_perms =  IsCommentProjectAdmin() | IsCommentOwner()

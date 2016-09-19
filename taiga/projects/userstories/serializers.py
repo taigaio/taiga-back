@@ -22,11 +22,12 @@ from taiga.base.neighbors import NeighborsSerializerMixin
 
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.attachments.serializers import BasicAttachmentsInfoSerializerMixin
-from taiga.projects.tagging.serializers import TaggedInProjectResourceSerializer
-from taiga.projects.mixins.serializers import OwnerExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import AssignedToExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import OwnerExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import ProjectExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import StatusExtraInfoSerializerMixin
 from taiga.projects.notifications.mixins import WatchedResourceSerializer
+from taiga.projects.tagging.serializers import TaggedInProjectResourceSerializer
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
 
 
@@ -42,7 +43,7 @@ class OriginIssueSerializer(serializers.LightSerializer):
         return super().to_value(instance)
 
 
-class UserStoryListSerializer(
+class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
         VoteResourceSerializerMixin, WatchedResourceSerializer,
         OwnerExtraInfoSerializerMixin, AssignedToExtraInfoSerializerMixin,
         StatusExtraInfoSerializerMixin, BasicAttachmentsInfoSerializerMixin,
@@ -76,8 +77,24 @@ class UserStoryListSerializer(
     total_points = MethodField()
     comment = MethodField()
     origin_issue = OriginIssueSerializer(attr="generated_from_issue")
-
+    epics = MethodField()
+    epic_order = MethodField()
     tasks = MethodField()
+
+    def get_epic_order(self, obj):
+        include_epic_order = getattr(obj, "include_epic_order", False)
+
+        if include_epic_order:
+            assert hasattr(obj, "epic_order"), "instance must have a epic_order attribute"
+
+        if not include_epic_order or obj.epic_order is None:
+            return None
+
+        return obj.epic_order
+
+    def get_epics(self, obj):
+        assert hasattr(obj, "epics_attr"), "instance must have a epics_attr attribute"
+        return obj.epics_attr
 
     def get_milestone_slug(self, obj):
         return obj.milestone.slug if obj.milestone else None

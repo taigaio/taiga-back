@@ -29,18 +29,10 @@ from .models import User, Role
 import re
 
 
-class RoleExistsValidator:
-    def validate_role_id(self, attrs, source):
-        value = attrs[source]
-        if not Role.objects.filter(pk=value).exists():
-            msg = _("There's no role with that id")
-            raise ValidationError(msg)
-        return attrs
-
-
 ######################################################
 # User
 ######################################################
+
 class UserValidator(validators.ModelValidator):
     class Meta:
         model = User

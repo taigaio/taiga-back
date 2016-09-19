@@ -24,6 +24,13 @@ from taiga.projects.userstories.utils import attach_total_points
 MAX_RESULTS = getattr(settings, "SEARCHES_MAX_RESULTS", 150)
 
 
+def search_epics(project, text):
+    model = apps.get_model("epics", "Epic")
+    queryset = model.objects.filter(project_id=project.pk)
+    table = "epics_epic"
+    return _search_items(queryset, table, text)
+
+
 def search_user_stories(project, text):
     model = apps.get_model("userstories", "UserStory")
     queryset = model.objects.filter(project_id=project.pk)
@@ -32,16 +39,16 @@ def search_user_stories(project, text):
 
 
 def search_tasks(project, text):
-    model = apps.get_model("userstories", "UserStory")
+    model = apps.get_model("tasks", "Task")
     queryset = model.objects.filter(project_id=project.pk)
-    table = "userstories_userstory"
+    table = "tasks_task"
     return _search_items(queryset, table, text)
 
 
 def search_issues(project, text):
-    model = apps.get_model("userstories", "UserStory")
+    model = apps.get_model("issues", "Issue")
     queryset = model.objects.filter(project_id=project.pk)
-    table = "userstories_userstory"
+    table = "issues_issue"
     return _search_items(queryset, table, text)
 
 

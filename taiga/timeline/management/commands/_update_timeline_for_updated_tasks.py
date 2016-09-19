@@ -40,7 +40,9 @@ def update_timeline(initial_date, final_date):
 
     print("Generating tasks indexed by id dict")
     task_ids = timelines.values_list("object_id", flat=True)
-    tasks_per_id = {task.id: task for task in Task.objects.filter(id__in=task_ids).select_related("user_story").iterator()}
+
+    tasks_iterator = Task.objects.filter(id__in=task_ids).select_related("user_story").iterator()
+    tasks_per_id = {task.id: task for task in tasks_iterator}
     del task_ids
 
     counter = 1

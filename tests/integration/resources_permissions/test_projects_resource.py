@@ -486,6 +486,31 @@ def test_invitations_retrieve(client, data):
     assert results == [200, 200, 200, 200]
 
 
+def test_regenerate_epics_csv_uuid(client, data):
+    public_url = reverse('projects-regenerate-epics-csv-uuid', kwargs={"pk": data.public_project.pk})
+    private1_url = reverse('projects-regenerate-epics-csv-uuid', kwargs={"pk": data.private_project1.pk})
+    private2_url = reverse('projects-regenerate-epics-csv-uuid', kwargs={"pk": data.private_project2.pk})
+    blocked_url = reverse('projects-regenerate-epics-csv-uuid', kwargs={"pk": data.blocked_project.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+    results = helper_test_http_method(client, 'post', public_url, None, users)
+    assert results == [401, 403, 403, 200]
+
+    results = helper_test_http_method(client, 'post', private1_url, None, users)
+    assert results == [401, 403, 403, 200]
+
+    results = helper_test_http_method(client, 'post', private2_url, None, users)
+    assert results == [404, 404, 403, 200]
+
+    results = helper_test_http_method(client, 'post', blocked_url, None, users)
+    assert results == [404, 404, 403, 451]
+
+
 def test_regenerate_userstories_csv_uuid(client, data):
     public_url = reverse('projects-regenerate-userstories-csv-uuid', kwargs={"pk": data.public_project.pk})
     private1_url = reverse('projects-regenerate-userstories-csv-uuid', kwargs={"pk": data.private_project1.pk})

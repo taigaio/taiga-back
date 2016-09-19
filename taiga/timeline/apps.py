@@ -33,8 +33,8 @@ class TimelineAppConfig(AppConfig):
                                   sender=apps.get_model("history", "HistoryEntry"),
                                   dispatch_uid="timeline")
         signals.post_save.connect(handlers.create_membership_push_to_timeline,
-                                                 sender=apps.get_model("projects", "Membership"))
+                                  sender=apps.get_model("projects", "Membership"))
         signals.pre_delete.connect(handlers.delete_membership_push_to_timeline,
-                                                sender=apps.get_model("projects", "Membership"))
+                                   sender=apps.get_model("projects", "Membership"))
         signals.post_save.connect(handlers.create_user_push_to_timeline,
-                                                 sender=get_user_model())
+                                  sender=get_user_model())

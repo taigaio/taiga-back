@@ -27,6 +27,18 @@ from taiga.base.api.permissions import IsSuperUser
 # Custom Attribute Permissions
 #######################################################
 
+class EpicCustomAttributePermission(TaigaResourcePermission):
+    enought_perms = IsProjectAdmin() | IsSuperUser()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectAdmin()
+    update_perms = IsProjectAdmin()
+    partial_update_perms = IsProjectAdmin()
+    destroy_perms = IsProjectAdmin()
+    list_perms = AllowAny()
+    bulk_update_order_perms = IsProjectAdmin()
+
+
 class UserStoryCustomAttributePermission(TaigaResourcePermission):
     enought_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
@@ -66,6 +78,14 @@ class IssueCustomAttributePermission(TaigaResourcePermission):
 ######################################################
 # Custom Attributes Values Permissions
 #######################################################
+
+class EpicCustomAttributesValuesPermission(TaigaResourcePermission):
+    enought_perms = IsProjectAdmin() | IsSuperUser()
+    global_perms = None
+    retrieve_perms = HasProjectPerm('view_us')
+    update_perms = HasProjectPerm('modify_us')
+    partial_update_perms = HasProjectPerm('modify_us')
+
 
 class UserStoryCustomAttributesValuesPermission(TaigaResourcePermission):
     enought_perms = IsProjectAdmin() | IsSuperUser()

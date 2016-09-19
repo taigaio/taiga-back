@@ -19,7 +19,7 @@
 # This makes all code that import services works and
 # is not the baddest practice ;)
 
-from .bulk_update_order import update_projects_order_in_bulk
+from .bulk_update_order import apply_order_updates
 from .bulk_update_order import bulk_update_severity_order
 from .bulk_update_order import bulk_update_priority_order
 from .bulk_update_order import bulk_update_issue_type_order
@@ -27,7 +27,8 @@ from .bulk_update_order import bulk_update_issue_status_order
 from .bulk_update_order import bulk_update_task_status_order
 from .bulk_update_order import bulk_update_points_order
 from .bulk_update_order import bulk_update_userstory_status_order
-from .bulk_update_order import apply_order_updates
+from .bulk_update_order import bulk_update_epic_status_order
+from .bulk_update_order import update_projects_order_in_bulk
 
 from .filters import get_all_tags
 

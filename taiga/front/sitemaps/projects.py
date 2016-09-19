@@ -51,6 +51,34 @@ class ProjectsSitemap(Sitemap):
         return 0.9
 
 
+class ProjectEpicsSitemap(Sitemap):
+    def items(self):
+        project_model = apps.get_model("projects", "Project")
+
+        # Get public projects OR private projects if anon user can view them and epics
+        queryset = project_model.objects.filter(Q(is_private=False) |
+                                                Q(is_private=True,
+                                                  anon_permissions__contains=["view_project",
+                                                                              "view_epics"]))
+
+        # Exclude projects without epics enabled
+        queryset = queryset.exclude(is_epics_activated=False)
+
+        return queryset
+
+    def location(self, obj):
+        return resolve("epics", obj.slug)
+
+    def lastmod(self, obj):
+        return obj.modified_date
+
+    def changefreq(self, obj):
+        return "daily"
+
+    def priority(self, obj):
+        return 0.6
+
+
 class ProjectBacklogsSitemap(Sitemap):
     def items(self):
         project_model = apps.get_model("projects", "Project")

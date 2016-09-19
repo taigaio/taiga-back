@@ -24,7 +24,7 @@ from taiga.base.api import validators
 from taiga.base.exceptions import ValidationError
 from taiga.base.fields import JsonField
 from taiga.base.fields import PgArrayField
-from taiga.users.validators import RoleExistsValidator
+from taiga.users.models import Role
 
 from .tagging.fields import TagsField
 
@@ -33,7 +33,6 @@ from . import services
 
 
 class DuplicatedNameInProjectValidator:
-
     def validate_name(self, attrs, source):
         """
         Check the points name is not duplicated in the project on creation
@@ -64,36 +63,23 @@ class ProjectExistsValidator:
         return attrs
 
 
-class UserStoryStatusExistsValidator:
-    def validate_status_id(self, attrs, source):
-        value = attrs[source]
-        if not models.UserStoryStatus.objects.filter(pk=value).exists():
-            msg = _("There's no user story status with that id")
-            raise ValidationError(msg)
-        return attrs
-
-
-class TaskStatusExistsValidator:
-    def validate_status_id(self, attrs, source):
-        value = attrs[source]
-        if not models.TaskStatus.objects.filter(pk=value).exists():
-            msg = _("There's no task status with that id")
-            raise ValidationError(msg)
-        return attrs
-
-
 ######################################################
 # Custom values for selectors
 ######################################################
 
-class PointsValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
+class EpicStatusValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
     class Meta:
-        model = models.Points
+        model = models.EpicStatus
 
 
 class UserStoryStatusValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
     class Meta:
         model = models.UserStoryStatus
+
+
+class PointsValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
+    class Meta:
+        model = models.Points
 
 
 class TaskStatusValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
@@ -195,15 +181,26 @@ class MembershipAdminValidator(MembershipValidator):
         exclude = ("token",)
 
 
-class MemberBulkValidator(RoleExistsValidator, validators.Validator):
+class _MemberBulkValidator(validators.Validator):
     email = serializers.EmailField()
     role_id = serializers.IntegerField()
 
 
 class MembersBulkValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
-    bulk_memberships = MemberBulkValidator(many=True)
+    bulk_memberships = _MemberBulkValidator(many=True)
     invitation_extra_text = serializers.CharField(required=False, max_length=255)
+
+    def validate_bulk_memberships(self, attrs, source):
+        filters = {
+            "project__id": attrs["project_id"],
+            "id__in": [r["role_id"] for r in attrs["bulk_memberships"]]
+        }
+
+        if Role.objects.filter(**filters).count() != len(set(filters["id__in"])):
+            raise ValidationError(_("Invalid role ids. All roles must belong to the same project."))
+
+        return attrs
 
 
 ######################################################

@@ -38,6 +38,11 @@ class BaseCustomAttributeAdmin:
     raw_id_fields = ["project"]
 
 
+@admin.register(models.EpicCustomAttribute)
+class EpicCustomAttributeAdmin(BaseCustomAttributeAdmin, admin.ModelAdmin):
+    pass
+
+
 @admin.register(models.UserStoryCustomAttribute)
 class UserStoryCustomAttributeAdmin(BaseCustomAttributeAdmin, admin.ModelAdmin):
     pass

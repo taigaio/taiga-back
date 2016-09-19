@@ -72,6 +72,30 @@ def test_api_create_bulk_members(client):
     assert response.data[1]["email"] == joseph.email
 
 
+def test_api_create_bulk_members_with_invalid_roles(client):
+    project = f.ProjectFactory()
+    john = f.UserFactory.create()
+    joseph = f.UserFactory.create()
+    tester = f.RoleFactory(name="Tester")
+    gamer = f.RoleFactory(name="Gamer")
+    f.MembershipFactory(project=project, user=project.owner, is_admin=True)
+
+    url = reverse("memberships-bulk-create")
+
+    data = {
+        "project_id": project.id,
+        "bulk_memberships": [
+            {"role_id": tester.pk, "email": john.email},
+            {"role_id": gamer.pk, "email": joseph.email},
+        ]
+    }
+    client.login(project.owner)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "bulk_memberships" in response.data
+
+
 def test_api_create_bulk_members_with_allowed_domain(client):
     project = f.ProjectFactory()
     john = f.UserFactory.create()

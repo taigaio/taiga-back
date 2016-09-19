@@ -25,6 +25,7 @@ from taiga.base.exceptions import ValidationError
 
 from taiga.projects import models as projects_models
 from taiga.projects.custom_attributes import models as custom_attributes_models
+from taiga.projects.epics import models as epics_models
 from taiga.projects.userstories import models as userstories_models
 from taiga.projects.tasks import models as tasks_models
 from taiga.projects.issues import models as issues_models
@@ -38,6 +39,7 @@ from .fields import (FileField, UserRelatedField,
                      TimelineDataField, ContentTypeField)
 from .mixins import WatcheableObjectModelValidatorMixin
 from .cache import (_custom_tasks_attributes_cache,
+                    _custom_epics_attributes_cache,
                     _custom_userstories_attributes_cache,
                     _custom_issues_attributes_cache)
 
@@ -45,6 +47,12 @@ from .cache import (_custom_tasks_attributes_cache,
 class PointsExportValidator(validators.ModelValidator):
     class Meta:
         model = projects_models.Points
+        exclude = ('id', 'project')
+
+
+class EpicStatusExportValidator(validators.ModelValidator):
+    class Meta:
+        model = projects_models.EpicStatus
         exclude = ('id', 'project')
 
 
@@ -89,6 +97,14 @@ class RoleExportValidator(validators.ModelValidator):
 
     class Meta:
         model = users_models.Role
+        exclude = ('id', 'project')
+
+
+class EpicCustomAttributeExportValidator(validators.ModelValidator):
+    modified_date = serializers.DateTimeField(required=False)
+
+    class Meta:
+        model = custom_attributes_models.EpicCustomAttribute
         exclude = ('id', 'project')
 
 
@@ -149,6 +165,15 @@ class BaseCustomAttributesValuesExportValidator(validators.ModelValidator):
             raise ValidationError(_("It contain invalid custom fields."))
 
         return attrs
+
+
+class EpicCustomAttributesValuesExportValidator(BaseCustomAttributesValuesExportValidator):
+    _custom_attribute_model = custom_attributes_models.EpicCustomAttribute
+    _container_model = "epics.Epic"
+    _container_field = "epic"
+
+    class Meta(BaseCustomAttributesValuesExportValidator.Meta):
+        model = custom_attributes_models.EpicCustomAttributesValues
 
 
 class UserStoryCustomAttributesValuesExportValidator(BaseCustomAttributesValuesExportValidator):
@@ -242,6 +267,34 @@ class TaskExportValidator(WatcheableObjectModelValidatorMixin):
         if project.id not in _custom_tasks_attributes_cache:
             _custom_tasks_attributes_cache[project.id] = list(project.taskcustomattributes.all().values('id', 'name'))
         return _custom_tasks_attributes_cache[project.id]
+
+
+class EpicRelatedUserStoryExportValidator(validators.ModelValidator):
+    user_story = ProjectRelatedField(slug_field="ref")
+    order = serializers.IntegerField()
+
+    class Meta:
+        model = epics_models.RelatedUserStory
+        exclude = ('id', 'epic')
+
+
+class EpicExportValidator(WatcheableObjectModelValidatorMixin):
+    owner = UserRelatedField(required=False)
+    assigned_to = UserRelatedField(required=False)
+    status = ProjectRelatedField(slug_field="name")
+    modified_date = serializers.DateTimeField(required=False)
+    user_stories = EpicRelatedUserStoryExportValidator(many=True, required=False)
+
+    class Meta:
+        model = epics_models.Epic
+        exclude = ('id', 'project')
+
+    def custom_attributes_queryset(self, project):
+        if project.id not in _custom_epics_attributes_cache:
+            _custom_epics_attributes_cache[project.id] = list(
+                project.epiccustomattributes.all().values('id', 'name')
+            )
+        return _custom_epics_attributes_cache[project.id]
 
 
 class UserStoryExportValidator(WatcheableObjectModelValidatorMixin):

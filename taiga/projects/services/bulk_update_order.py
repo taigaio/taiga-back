@@ -87,6 +87,23 @@ def update_projects_order_in_bulk(bulk_data: list, field: str, user):
 
 
 @transaction.atomic
+def bulk_update_epic_status_order(project, user, data):
+    cursor = connection.cursor()
+
+    sql = """
+    prepare bulk_update_order as update projects_epicstatus set "order" = $1
+        where projects_epicstatus.id = $2 and
+              projects_epicstatus.project_id = $3;
+    """
+    cursor.execute(sql)
+    for id, order in data:
+        cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
+                       (order, id, project.id))
+    cursor.execute("DEALLOCATE bulk_update_order")
+    cursor.close()
+
+
+@transaction.atomic
 def bulk_update_userstory_status_order(project, user, data):
     cursor = connection.cursor()
 

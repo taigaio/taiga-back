@@ -29,6 +29,7 @@ from taiga.hooks.gogs import event_hooks
 from taiga.hooks.gogs.api import GogsViewSet
 from taiga.hooks.exceptions import ActionSyntaxException
 from taiga.projects import choices as project_choices
+from taiga.projects.epics.models import Epic
 from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.models import UserStory
@@ -104,7 +105,7 @@ def test_push_event_detected(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
 
@@ -118,6 +119,36 @@ def test_push_event_detected(client):
         assert process_event_mock.call_count == 1
 
     assert response.status_code == 204
+
+
+def test_push_event_epic_processing(client):
+    creation_status = f.EpicStatusFactory()
+    role = f.RoleFactory(project=creation_status.project, permissions=["view_epics"])
+    f.MembershipFactory(project=creation_status.project, role=role, user=creation_status.project.owner)
+    new_status = f.EpicStatusFactory(project=creation_status.project)
+    epic = f.EpicFactory.create(status=creation_status, project=creation_status.project, owner=creation_status.project.owner)
+    payload = {
+        "commits": [
+            {
+                "message": """test message
+                    test   TG-%s    #%s   ok
+                    bye!
+                """ % (epic.ref, new_status.slug),
+                "author": {
+                    "username": "test",
+                },
+            }
+        ],
+        "repository": {
+            "html_url": "http://test-url/test/project"
+        }
+    }
+    mail.outbox = []
+    ev_hook = event_hooks.PushEventHook(epic.project, payload)
+    ev_hook.process_event()
+    epic = Epic.objects.get(id=epic.id)
+    assert epic.status.id == new_status.id
+    assert len(mail.outbox) == 1
 
 
 def test_push_event_issue_processing(client):
@@ -139,7 +170,7 @@ def test_push_event_issue_processing(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -169,7 +200,7 @@ def test_push_event_task_processing(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -199,7 +230,7 @@ def test_push_event_user_story_processing(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
 
@@ -230,7 +261,7 @@ def test_push_event_issue_mention(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -261,7 +292,7 @@ def test_push_event_task_mention(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -292,7 +323,7 @@ def test_push_event_user_story_mention(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
 
@@ -326,7 +357,7 @@ def test_push_event_multiple_actions(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -358,7 +389,7 @@ def test_push_event_processing_case_insensitive(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -384,7 +415,7 @@ def test_push_event_task_bad_processing_non_existing_ref(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
     mail.outbox = []
@@ -412,7 +443,7 @@ def test_push_event_us_bad_processing_non_existing_status(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
 
@@ -441,7 +472,7 @@ def test_push_event_bad_processing_non_existing_status(client):
             }
         ],
         "repository": {
-            "url": "http://test-url/test/project"
+            "html_url": "http://test-url/test/project"
         }
     }
 
@@ -480,7 +511,7 @@ def test_api_patch_project_modules(client):
     data = {
         "gogs": {
             "secret": "test_secret",
-            "url": "test_url",
+            "html_url": "test_url",
         }
     }
     response = client.patch(url, json.dumps(data), content_type="application/json")

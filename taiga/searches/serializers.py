@@ -20,15 +20,7 @@ from taiga.base.api import serializers
 from taiga.base.fields import Field, MethodField
 
 
-class IssueSearchResultsSerializer(serializers.LightSerializer):
-    id = Field()
-    ref = Field()
-    subject = Field()
-    status = Field(attr="status_id")
-    assigned_to = Field(attr="assigned_to_id")
-
-
-class TaskSearchResultsSerializer(serializers.LightSerializer):
+class EpicSearchResultsSerializer(serializers.LightSerializer):
     id = Field()
     ref = Field()
     subject = Field()
@@ -56,6 +48,22 @@ class UserStorySearchResultsSerializer(serializers.LightSerializer):
             "instance must have a total_points_attr attribute"
 
         return obj.total_points_attr
+
+
+class TaskSearchResultsSerializer(serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    subject = Field()
+    status = Field(attr="status_id")
+    assigned_to = Field(attr="assigned_to_id")
+
+
+class IssueSearchResultsSerializer(serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    subject = Field()
+    status = Field(attr="status_id")
+    assigned_to = Field(attr="assigned_to_id")
 
 
 class WikiPageSearchResultsSerializer(serializers.LightSerializer):
