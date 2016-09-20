@@ -65,6 +65,10 @@ class Command(BaseCommand):
                     except Project.DoesNotExist:
                         pass
                     signals.post_delete.receivers = receivers_back
+                else:
+                    slug = data.get('slug', None)
+                    if slug is not None and Project.objects.filter(slug=slug).exists():
+                        del data['slug']
 
                 user = User.objects.get(email=owner_email)
                 services.store_project_from_dict(data, user)
