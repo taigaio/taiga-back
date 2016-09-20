@@ -124,7 +124,7 @@ LANGUAGES = [
     #("mn", "Монгол"),  # Mongolian
     #("mr", "मराठी"),  # Marathi
     #("my", "မြန်မာ"),  # Burmese
-    #("nb", "Norsk (bokmål)"),  # Norwegian Bokmal
+    ("nb", "Norsk (bokmål)"),  # Norwegian Bokmal
     #("ne", "नेपाली"),  # Nepali
     ("nl", "Nederlands"),  # Dutch
     #("nn", "Norsk (nynorsk)"),  # Norwegian Nynorsk
