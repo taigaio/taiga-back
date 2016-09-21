@@ -57,7 +57,9 @@ class TaigaReferencesPattern(Pattern):
 
         subject = instance.content_object.subject
 
-        if instance.content_type.model == "userstory":
+        if instance.content_type.model == "epic":
+            html_classes = "reference epic"
+        elif instance.content_type.model == "userstory":
             html_classes = "reference user-story"
         elif instance.content_type.model == "task":
             html_classes = "reference task"
