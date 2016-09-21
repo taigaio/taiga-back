@@ -30,6 +30,7 @@
     - Improve messages generated on webhooks input.
     - Add mentions support in commit messages.
     - Cleanup hooks code.
+    - Rework webhook signature header to align with larger implementations and defined [standards](https://superfeedr-misc.s3.amazonaws.com/pubsubhubbub-core-0.4.html\#authednotify). (thanks to [Stefan Auditor](https://github.com/sanduhrs))
 - Add created-, modified-, finished- and finish_date queryset filters
     - Support exact match, gt, gte, lt, lte
     - added issues, tasks and userstories accordingly

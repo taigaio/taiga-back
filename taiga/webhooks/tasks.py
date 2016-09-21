@@ -66,7 +66,8 @@ def _send_request(webhook_id, url, key, data):
     serialized_data = UnicodeJSONRenderer().render(data)
     signature = _generate_signature(serialized_data, key)
     headers = {
-        "X-TAIGA-WEBHOOK-SIGNATURE": signature,
+        "X-TAIGA-WEBHOOK-SIGNATURE": signature,        # For backward compatibility
+        "X-Hub-Signature": "sha1={}".format(signature),
         "Content-Type": "application/json"
     }
     request = requests.Request('POST', url, data=serialized_data, headers=headers)
