@@ -24,7 +24,7 @@ def tag_exist_for_project_elements(project, tag):
 
 
 def create_tags(project, new_tags_colors):
-    project.tags_colors += [[k, v] for k,v in new_tags_colors.items()]
+    project.tags_colors += [[k, v] for k, v in new_tags_colors.items()]
     project.save(update_fields=["tags_colors"])
 
 
@@ -33,41 +33,8 @@ def create_tag(project, tag, color):
     project.save(update_fields=["tags_colors"])
 
 
-def edit_tag(project, from_tag, to_tag=None, color=None):
-    tags_colors = dict(project.tags_colors)
-
-    if color is not None:
-        tags_colors = dict(project.tags_colors)
-        tags_colors[from_tag] = color
-
-    if to_tag is not None:
-        color = dict(project.tags_colors)[from_tag]
-        sql = """
-            UPDATE userstories_userstory
-               SET tags = array_distinct(array_replace(tags, '{from_tag}', '{to_tag}'))
-             WHERE project_id = {project_id};
-
-            UPDATE tasks_task
-               SET tags = array_distinct(array_replace(tags, '{from_tag}', '{to_tag}'))
-             WHERE project_id = {project_id};
-
-            UPDATE issues_issue
-               SET tags = array_distinct(array_replace(tags, '{from_tag}', '{to_tag}'))
-             WHERE project_id = {project_id};
-        """
-        sql = sql.format(project_id=project.id, from_tag=from_tag, to_tag=to_tag)
-        cursor = connection.cursor()
-        cursor.execute(sql)
-
-        tags_colors[to_tag] = tags_colors.pop(from_tag)
-
-
-    project.tags_colors = list(tags_colors.items())
-    project.save(update_fields=["tags_colors"])
-
-
-def rename_tag(project, from_tag, to_tag, color=None):
-    color = color or dict(project.tags_colors)[from_tag]
+def edit_tag(project, from_tag, to_tag, color):
+    print("edit_tag", project, from_tag, to_tag, color)
     sql = """
         UPDATE userstories_userstory
            SET tags = array_distinct(array_replace(tags, '{from_tag}', '{to_tag}'))
@@ -78,6 +45,45 @@ def rename_tag(project, from_tag, to_tag, color=None):
          WHERE project_id = {project_id};
 
         UPDATE issues_issue
+           SET tags = array_distinct(array_replace(tags, '{from_tag}', '{to_tag}'))
+         WHERE project_id = {project_id};
+
+        UPDATE epics_epic
+           SET tags = array_distinct(array_replace(tags, '{from_tag}', '{to_tag}'))
+         WHERE project_id = {project_id};
+    """
+    sql = sql.format(project_id=project.id, from_tag=from_tag, to_tag=to_tag)
+    cursor = connection.cursor()
+    cursor.execute(sql)
+
+    tags_colors = dict(project.tags_colors)
+    tags_colors.pop(from_tag)
+    tags_colors[to_tag] = color
+    project.tags_colors = list(tags_colors.items())
+    project.save(update_fields=["tags_colors"])
+
+
+def rename_tag(project, from_tag, to_tag, **kwargs):
+    # Kwargs can have a color parameter
+    update_color = "color" in kwargs
+    if update_color:
+        color = kwargs.get("color")
+    else:
+        color = dict(project.tags_colors)[from_tag]
+    sql = """
+        UPDATE userstories_userstory
+           SET tags = array_distinct(array_replace(tags, '{from_tag}', '{to_tag}'))
+         WHERE project_id = {project_id};
+
+        UPDATE tasks_task
+           SET tags = array_distinct(array_replace(tags, '{from_tag}', '{to_tag}'))
+         WHERE project_id = {project_id};
+
+        UPDATE issues_issue
+           SET tags = array_distinct(array_replace(tags, '{from_tag}', '{to_tag}'))
+         WHERE project_id = {project_id};
+
+        UPDATE epics_epic
            SET tags = array_distinct(array_replace(tags, '{from_tag}', '{to_tag}'))
          WHERE project_id = {project_id};
     """
@@ -105,6 +111,10 @@ def delete_tag(project, tag):
         UPDATE issues_issue
            SET tags = array_remove(tags, '{tag}')
          WHERE project_id = {project_id};
+
+        UPDATE epics_epic
+           SET tags = array_remove(tags, '{tag}')
+         WHERE project_id = {project_id};
     """
     sql = sql.format(project_id=project.id, tag=tag)
     cursor = connection.cursor()
@@ -119,4 +129,4 @@ def delete_tag(project, tag):
 def mix_tags(project, from_tags, to_tag):
     color = dict(project.tags_colors)[to_tag]
     for from_tag in from_tags:
-        rename_tag(project, from_tag, to_tag, color)
+        rename_tag(project, from_tag, to_tag, color=color)

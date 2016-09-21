@@ -670,6 +670,26 @@ def create_userstory(**kwargs):
     return UserStoryFactory(**defaults)
 
 
+def create_epic(**kwargs):
+    "Create an epic along with its dependencies"
+
+    owner = kwargs.pop("owner", None)
+    if not owner:
+        owner = UserFactory.create()
+
+    project = kwargs.pop("project", None)
+    if project is None:
+        project = ProjectFactory.create(owner=owner)
+
+    defaults = {
+        "project": project,
+        "owner": owner,
+    }
+    defaults.update(kwargs)
+
+    return EpicFactory(**defaults)
+
+
 def create_project(**kwargs):
     "Create a project along with its dependencies"
     defaults = {}

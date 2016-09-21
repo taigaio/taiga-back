@@ -31,6 +31,7 @@ from taiga.projects.models import Project
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
+from taiga.projects.epics.models import Epic
 from taiga.projects.choices import BLOCKED_BY_DELETING
 
 from .. import factories as f
@@ -1918,6 +1919,7 @@ def test_edit_tag_only_name(client, settings):
     user_story = f.UserStoryFactory.create(project=project, tags=["tag"])
     task = f.TaskFactory.create(project=project, tags=["tag"])
     issue = f.IssueFactory.create(project=project, tags=["tag"])
+    epic = f.EpicFactory.create(project=project, tags=["tag"])
 
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
     membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
@@ -1940,6 +1942,8 @@ def test_edit_tag_only_name(client, settings):
     assert task.tags == ["renamed_tag"]
     issue = Issue.objects.get(id=issue.pk)
     assert issue.tags == ["renamed_tag"]
+    epic = Epic.objects.get(id=epic.pk)
+    assert epic.tags == ["renamed_tag"]
 
 
 def test_edit_tag_only_color(client, settings):
@@ -1948,6 +1952,7 @@ def test_edit_tag_only_color(client, settings):
     user_story = f.UserStoryFactory.create(project=project, tags=["tag"])
     task = f.TaskFactory.create(project=project, tags=["tag"])
     issue = f.IssueFactory.create(project=project, tags=["tag"])
+    epic = f.EpicFactory.create(project=project, tags=["tag"])
 
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
     membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
@@ -1969,6 +1974,8 @@ def test_edit_tag_only_color(client, settings):
     assert task.tags == ["tag"]
     issue = Issue.objects.get(id=issue.pk)
     assert issue.tags == ["tag"]
+    epic = Epic.objects.get(id=epic.pk)
+    assert epic.tags == ["tag"]
 
 
 def test_edit_tag(client, settings):
@@ -1977,6 +1984,7 @@ def test_edit_tag(client, settings):
     user_story = f.UserStoryFactory.create(project=project, tags=["tag"])
     task = f.TaskFactory.create(project=project, tags=["tag"])
     issue = f.IssueFactory.create(project=project, tags=["tag"])
+    epic = f.EpicFactory.create(project=project, tags=["tag"])
 
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
     membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
@@ -1999,6 +2007,8 @@ def test_edit_tag(client, settings):
     assert task.tags == ["renamed_tag"]
     issue = Issue.objects.get(id=issue.pk)
     assert issue.tags == ["renamed_tag"]
+    epic = Epic.objects.get(id=epic.pk)
+    assert epic.tags == ["renamed_tag"]
 
 
 def test_delete_tag(client, settings):
@@ -2007,6 +2017,7 @@ def test_delete_tag(client, settings):
     user_story = f.UserStoryFactory.create(project=project, tags=["tag"])
     task = f.TaskFactory.create(project=project, tags=["tag"])
     issue = f.IssueFactory.create(project=project, tags=["tag"])
+    epic = f.EpicFactory.create(project=project, tags=["tag"])
 
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
     membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
@@ -2027,6 +2038,8 @@ def test_delete_tag(client, settings):
     assert task.tags == []
     issue = Issue.objects.get(id=issue.pk)
     assert issue.tags == []
+    epic = Epic.objects.get(id=epic.pk)
+    assert epic.tags == []
 
 
 def test_mix_tags(client, settings):
@@ -2035,6 +2048,7 @@ def test_mix_tags(client, settings):
     user_story = f.UserStoryFactory.create(project=project, tags=["tag1", "tag3"])
     task = f.TaskFactory.create(project=project, tags=["tag2", "tag3"])
     issue = f.IssueFactory.create(project=project, tags=["tag1", "tag2", "tag3"])
+    epic = f.EpicFactory.create(project=project, tags=["tag1", "tag2", "tag3"])
 
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
     membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
@@ -2056,6 +2070,8 @@ def test_mix_tags(client, settings):
     assert set(task.tags) == set(["tag2", "tag3"])
     issue = Issue.objects.get(id=issue.pk)
     assert set(issue.tags) == set(["tag2", "tag3"])
+    epic = Epic.objects.get(id=epic.pk)
+    assert set(epic.tags) == set(["tag2", "tag3"])
 
 
 def test_color_tags_project_fired_on_element_create():

@@ -82,6 +82,15 @@ class EditTagTagValidator(ProjectTagValidator):
 
         return attrs
 
+    def validate(self, data):
+        if "to_tag" not in data:
+            data["to_tag"] = data.get("from_tag")
+
+        if "color" not in data:
+            data["color"] = dict(self.project.tags_colors).get(data.get("from_tag"))
+
+        return data
+
 
 class DeleteTagValidator(ProjectTagValidator):
     tag = serializers.CharField()
