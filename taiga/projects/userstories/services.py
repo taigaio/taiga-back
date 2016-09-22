@@ -273,18 +273,31 @@ def _get_userstories_statuses(project, queryset):
     where_params = queryset_where_tuple[1]
 
     extra_sql = """
-      SELECT "projects_userstorystatus"."id",
-             "projects_userstorystatus"."name",
-             "projects_userstorystatus"."color",
-             "projects_userstorystatus"."order",
-             (SELECT count(*)
-                FROM "userstories_userstory"
-                     INNER JOIN "projects_project" ON
-                                ("userstories_userstory"."project_id" = "projects_project"."id")
-               WHERE {where} AND "userstories_userstory"."status_id" = "projects_userstorystatus"."id")
-        FROM "projects_userstorystatus"
-       WHERE "projects_userstorystatus"."project_id" = %s
-    ORDER BY "projects_userstorystatus"."order";
+     WITH "us_counters" AS (
+         SELECT DISTINCT "userstories_userstory"."status_id" "status_id",
+                         "userstories_userstory"."id" "us_id"
+                    FROM "userstories_userstory"
+               LEFT JOIN "epics_relateduserstory"
+                      ON "userstories_userstory"."id" = "epics_relateduserstory"."user_story_id"
+                   WHERE {where}
+            ),
+             "counters" AS (
+                  SELECT "status_id",
+                         COUNT("status_id") "count"
+                    FROM "us_counters"
+                GROUP BY "status_id"
+            )
+
+                 SELECT "projects_userstorystatus"."id",
+                        "projects_userstorystatus"."name",
+                        "projects_userstorystatus"."color",
+                        "projects_userstorystatus"."order",
+                        COALESCE("counters"."count", 0)
+                   FROM "projects_userstorystatus"
+              LEFT JOIN "counters"
+                     ON "counters"."status_id" = "projects_userstorystatus"."id"
+                  WHERE "projects_userstorystatus"."project_id" = %s
+               ORDER BY "projects_userstorystatus"."order";
     """.format(where=where)
 
     with closing(connection.cursor()) as cursor:
@@ -310,31 +323,47 @@ def _get_userstories_assigned_to(project, queryset):
     where_params = queryset_where_tuple[1]
 
     extra_sql = """
-        WITH counters AS (
-                SELECT assigned_to_id,  count(assigned_to_id) count
-                  FROM "userstories_userstory"
-            INNER JOIN "projects_project" ON ("userstories_userstory"."project_id" = "projects_project"."id")
-                 WHERE {where} AND "userstories_userstory"."assigned_to_id" IS NOT NULL
-              GROUP BY assigned_to_id
-        )
+     WITH "us_counters" AS (
+         SELECT DISTINCT "userstories_userstory"."assigned_to_id" "assigned_to_id",
+                         "userstories_userstory"."id" "us_id"
+                    FROM "userstories_userstory"
+               LEFT JOIN "epics_relateduserstory"
+                      ON "userstories_userstory"."id" = "epics_relateduserstory"."user_story_id"
+                   WHERE {where}
+            ),
 
-                 SELECT "projects_membership"."user_id" user_id,
-                        "users_user"."full_name",
-                        "users_user"."username",
-                        COALESCE("counters".count, 0) count
-                   FROM projects_membership
-        LEFT OUTER JOIN counters ON ("projects_membership"."user_id" = "counters"."assigned_to_id")
-             INNER JOIN "users_user" ON ("projects_membership"."user_id" = "users_user"."id")
+            "counters" AS (
+                 SELECT "assigned_to_id",
+                        COUNT("assigned_to_id")
+                   FROM "us_counters"
+               GROUP BY "assigned_to_id"
+            )
+
+                 SELECT "projects_membership"."user_id" "user_id",
+                        "users_user"."full_name" "full_name",
+                        "users_user"."username" "username",
+                        COALESCE("counters".count, 0) "count"
+                   FROM "projects_membership"
+        LEFT OUTER JOIN "counters"
+                     ON ("projects_membership"."user_id" = "counters"."assigned_to_id")
+             INNER JOIN "users_user"
+                     ON ("projects_membership"."user_id" = "users_user"."id")
                   WHERE "projects_membership"."project_id" = %s AND "projects_membership"."user_id" IS NOT NULL
 
         -- unassigned userstories
         UNION
 
-                 SELECT NULL user_id, NULL, NULL, count(coalesce(assigned_to_id, -1)) count
+                 SELECT NULL "user_id",
+                        NULL "full_name",
+                        NULL "username",
+                        count(coalesce("assigned_to_id", -1)) "count"
                    FROM "userstories_userstory"
-             INNER JOIN "projects_project" ON ("userstories_userstory"."project_id" = "projects_project"."id")
+             INNER JOIN "projects_project"
+                     ON ("userstories_userstory"."project_id" = "projects_project"."id")
+              LEFT JOIN "epics_relateduserstory"
+                     ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
                   WHERE {where} AND "userstories_userstory"."assigned_to_id" IS NULL
-               GROUP BY assigned_to_id
+               GROUP BY "assigned_to_id"
     """.format(where=where)
 
     with closing(connection.cursor()) as cursor:
@@ -371,33 +400,43 @@ def _get_userstories_owners(project, queryset):
     where_params = queryset_where_tuple[1]
 
     extra_sql = """
-        WITH counters AS (
-                SELECT "userstories_userstory"."owner_id" owner_id,
-                       count(coalesce("userstories_userstory"."owner_id", -1)) count
-                  FROM "userstories_userstory"
-            INNER JOIN "projects_project" ON ("userstories_userstory"."project_id" = "projects_project"."id")
-                 WHERE {where}
-              GROUP BY "userstories_userstory"."owner_id"
-        )
+     WITH "us_counters" AS(
+         SELECT DISTINCT "userstories_userstory"."owner_id" "owner_id",
+                         "userstories_userstory"."id" "us_id"
+                    FROM "userstories_userstory"
+         LEFT OUTER JOIN "epics_relateduserstory"
+                      ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
+                   WHERE {where}
+            ),
 
-                 SELECT "projects_membership"."user_id" id,
+            "counters" AS (
+                 SELECT "owner_id",
+                        COUNT("owner_id")
+                   FROM "us_counters"
+               GROUP BY "owner_id"
+            )
+
+                 SELECT "projects_membership"."user_id" "user_id",
                         "users_user"."full_name",
                         "users_user"."username",
-                        COALESCE("counters".count, 0) count
-                   FROM projects_membership
-        LEFT OUTER JOIN counters ON ("projects_membership"."user_id" = "counters"."owner_id")
-             INNER JOIN "users_user" ON ("projects_membership"."user_id" = "users_user"."id")
+                        COALESCE("counters".count, 0) "count"
+                   FROM "projects_membership"
+        LEFT OUTER JOIN "counters"
+                     ON ("projects_membership"."user_id" = "counters"."owner_id")
+             INNER JOIN "users_user"
+                     ON ("projects_membership"."user_id" = "users_user"."id")
                   WHERE "projects_membership"."project_id" = %s AND "projects_membership"."user_id" IS NOT NULL
 
         -- System users
-        UNION
+                  UNION
 
-                 SELECT "users_user"."id" user_id,
-                        "users_user"."full_name" full_name,
-                        "users_user"."username" username,
-                        COALESCE("counters".count, 0) count
-                   FROM users_user
-        LEFT OUTER JOIN counters ON ("users_user"."id" = "counters"."owner_id")
+                 SELECT "users_user"."id" "user_id",
+                        "users_user"."full_name" "full_name",
+                        "users_user"."username" "username",
+                        COALESCE("counters"."count", 0) "count"
+                   FROM "users_user"
+        LEFT OUTER JOIN "counters"
+                     ON ("users_user"."id" = "counters"."owner_id")
                   WHERE ("users_user"."is_system" IS TRUE)
     """.format(where=where)
 
@@ -423,24 +462,31 @@ def _get_userstories_tags(project, queryset):
     where_params = queryset_where_tuple[1]
 
     extra_sql = """
-        WITH userstories_tags AS (
-                    SELECT tag,
-                           COUNT(tag) counter FROM (
-                                SELECT UNNEST(userstories_userstory.tags) tag
-                                  FROM userstories_userstory
-                            INNER JOIN projects_project
-                                        ON (userstories_userstory.project_id = projects_project.id)
-                                 WHERE {where}) tags
-                  GROUP BY tag),
-             project_tags AS (
-                    SELECT reduce_dim(tags_colors) tag_color
-                      FROM projects_project
-                     WHERE id=%s)
+        WITH "userstories_tags" AS (
+                    SELECT "tag",
+                           COUNT("tag") "counter"
+                      FROM (
+                       SELECT DISTINCT "userstories_userstory"."id" "us_id",
+                                        UNNEST("userstories_userstory"."tags") "tag"
+                                  FROM "userstories_userstory"
+                            INNER JOIN "projects_project"
+                                    ON ("userstories_userstory"."project_id" = "projects_project"."id")
+                             LEFT JOIN "epics_relateduserstory"
+                                    ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
+                                 WHERE {where}
+                           ) "tags"
+                  GROUP BY "tag"),
 
-      SELECT tag_color[1] tag, COALESCE(userstories_tags.counter, 0) counter
-        FROM project_tags
-   LEFT JOIN userstories_tags ON project_tags.tag_color[1] = userstories_tags.tag
-    ORDER BY tag
+             "project_tags" AS (
+                    SELECT reduce_dim("tags_colors") "tag_color"
+                      FROM "projects_project"
+                     WHERE "id"=%s)
+
+      SELECT "tag_color"[1] "tag", COALESCE("userstories_tags"."counter", 0) "counter"
+        FROM "project_tags"
+   LEFT JOIN "userstories_tags"
+          ON "project_tags"."tag_color"[1] = "userstories_tags"."tag"
+    ORDER BY "tag"
     """.format(where=where)
 
     with closing(connection.cursor()) as cursor:
@@ -461,33 +507,35 @@ def _get_userstories_epics(project, queryset):
     queryset_where_tuple = queryset.query.where.as_sql(compiler, connection)
     where = queryset_where_tuple[0]
     where_params = queryset_where_tuple[1]
-
     extra_sql = """
-   WITH counters AS (
-           SELECT "epics_relateduserstory"."epic_id" AS "epic_id",
-                  count("epics_relateduserstory"."id") AS "counter"
-             FROM "epics_relateduserstory"
-       INNER JOIN "userstories_userstory"
-               ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
-       INNER JOIN "projects_project"
-               ON ("userstories_userstory"."project_id" = "projects_project"."id")
-            WHERE {where}
-         GROUP BY "epics_relateduserstory"."epic_id"
-   )
+       WITH "counters" AS (
+               SELECT "epics_relateduserstory"."epic_id" AS "epic_id",
+                      count("epics_relateduserstory"."id") AS "counter"
+                 FROM "epics_relateduserstory"
+           INNER JOIN "userstories_userstory"
+                   ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
+           INNER JOIN "projects_project"
+                   ON ("userstories_userstory"."project_id" = "projects_project"."id")
+                WHERE {where}
+             GROUP BY "epics_relateduserstory"."epic_id"
+       )
+
          -- User stories with no epics (return results only if there are userstories)
-                   SELECT NULL AS "id",
-                          NULL AS "ref",
-                          NULL AS "subject",
-                          0 AS "order",
-                          count(COALESCE("epics_relateduserstory"."epic_id", -1)) AS "counter"
-                     FROM "userstories_userstory"
-          LEFT OUTER JOIN "epics_relateduserstory"
-                       ON ("epics_relateduserstory"."user_story_id" = "userstories_userstory"."id")
-               INNER JOIN "projects_project"
-                       ON ("userstories_userstory"."project_id" = "projects_project"."id")
-                    WHERE {where} AND "epics_relateduserstory"."epic_id" IS NULL
-                 GROUP BY "epics_relateduserstory"."epic_id"
-         UNION
+               SELECT NULL AS "id",
+                      NULL AS "ref",
+                      NULL AS "subject",
+                      0 AS "order",
+                      count(COALESCE("epics_relateduserstory"."epic_id", -1)) AS "counter"
+                 FROM "userstories_userstory"
+      LEFT OUTER JOIN "epics_relateduserstory"
+                   ON ("epics_relateduserstory"."user_story_id" = "userstories_userstory"."id")
+           INNER JOIN "projects_project"
+                   ON ("userstories_userstory"."project_id" = "projects_project"."id")
+                WHERE {where} AND "epics_relateduserstory"."epic_id" IS NULL
+             GROUP BY "epics_relateduserstory"."epic_id"
+
+                UNION
+
                SELECT "epics_epic"."id" AS "id",
                       "epics_epic"."ref" AS "ref",
                       "epics_epic"."subject" AS "subject",
@@ -498,9 +546,9 @@ def _get_userstories_epics(project, queryset):
                    ON ("counters"."epic_id" = "epics_epic"."id")
                 WHERE "epics_epic"."project_id" = %s
         """.format(where=where)
-
+    
     with closing(connection.cursor()) as cursor:
-        cursor.execute(extra_sql, where_params + [project.id] + where_params)
+        cursor.execute(extra_sql, where_params + where_params + [project.id])
         rows = cursor.fetchall()
 
     result = []

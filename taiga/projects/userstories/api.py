@@ -59,7 +59,6 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
     queryset = models.UserStory.objects.all()
     permission_classes = (permissions.UserStoryPermission,)
     filter_backends = (base_filters.CanViewUsFilterBackend,
-                       filters.EpicsFilter,
                        filters.EpicFilter,
                        base_filters.OwnersFilter,
                        base_filters.AssignedToFilter,
@@ -104,7 +103,13 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
 
         include_attachments = "include_attachments" in self.request.QUERY_PARAMS
         include_tasks = "include_tasks" in self.request.QUERY_PARAMS
-        epic_id =  self.request.QUERY_PARAMS.get("epic", None)
+        epic_id = self.request.QUERY_PARAMS.get("epic", None)
+        # We can be filtering by more than one epic so epic_id can consist
+        # of different ids separete by comma. In that situation we will use
+        # only the first
+        if epic_id is not None:
+            epic_id = epic_id.split(",")[0]
+
         qs = attach_extra_info(qs, user=self.request.user,
                                include_attachments=include_attachments,
                                include_tasks=include_tasks,
@@ -278,7 +283,7 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
         statuses_filter_backends = (f for f in filter_backends if f != base_filters.StatusesFilter)
         assigned_to_filter_backends = (f for f in filter_backends if f != base_filters.AssignedToFilter)
         owners_filter_backends = (f for f in filter_backends if f != base_filters.OwnersFilter)
-        epics_filter_backends = (f for f in filter_backends if f != filters.EpicsFilter)
+        epics_filter_backends = (f for f in filter_backends if f != filters.EpicFilter)
 
         queryset = self.get_queryset()
         querysets = {
