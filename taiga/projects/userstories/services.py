@@ -474,18 +474,7 @@ def _get_userstories_epics(project, queryset):
             WHERE {where}
          GROUP BY "epics_relateduserstory"."epic_id"
    )
-               SELECT "epics_epic"."id" AS "id",
-                      "epics_epic"."ref" AS "ref",
-                      "epics_epic"."subject" AS "subject",
-                      "epics_epic"."epics_order" AS "order",
-                      COALESCE("counters"."counter", 0) AS "counter"
-                 FROM "epics_epic"
-      LEFT OUTER JOIN "counters"
-                   ON ("counters"."epic_id" = "epics_epic"."id")
-                WHERE "epics_epic"."project_id" = %s
-
          -- User stories with no epics (return results only if there are userstories)
-         UNION
                    SELECT NULL AS "id",
                           NULL AS "ref",
                           NULL AS "subject",
@@ -498,6 +487,16 @@ def _get_userstories_epics(project, queryset):
                        ON ("userstories_userstory"."project_id" = "projects_project"."id")
                     WHERE {where} AND "epics_relateduserstory"."epic_id" IS NULL
                  GROUP BY "epics_relateduserstory"."epic_id"
+         UNION
+               SELECT "epics_epic"."id" AS "id",
+                      "epics_epic"."ref" AS "ref",
+                      "epics_epic"."subject" AS "subject",
+                      "epics_epic"."epics_order" AS "order",
+                      COALESCE("counters"."counter", 0) AS "counter"
+                 FROM "epics_epic"
+      LEFT OUTER JOIN "counters"
+                   ON ("counters"."epic_id" = "epics_epic"."id")
+                WHERE "epics_epic"."project_id" = %s
         """.format(where=where)
 
     with closing(connection.cursor()) as cursor:
@@ -514,7 +513,7 @@ def _get_userstories_epics(project, queryset):
             "count": count,
         })
 
-    result = sorted(result, key=itemgetter("order"))
+    result = sorted(result, key=lambda k: (k["order"], k["id"] or 0))
 
     # Add row when there is no user stories with no epics
     if result == [] or result[0]["id"] is not None:
