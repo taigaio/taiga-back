@@ -165,14 +165,15 @@ def epics_to_csv(project, queryset):
     fieldnames = ["ref", "subject", "description", "owner", "owner_full_name", "assigned_to",
                   "assigned_to_full_name", "status", "epics_order", "client_requirement",
                   "team_requirement", "attachments", "tags", "watchers", "voters",
-                  "created_date", "modified_date"]
+                  "created_date", "modified_date", "related_user_stories"]
 
     custom_attrs = project.epiccustomattributes.all()
     for custom_attr in custom_attrs:
         fieldnames.append(custom_attr.name)
 
     queryset = queryset.prefetch_related("attachments",
-                                         "custom_attributes_values")
+                                         "custom_attributes_values",
+                                         "user_stories__project")
     queryset = queryset.select_related("owner",
                                        "assigned_to",
                                        "status",
@@ -202,7 +203,11 @@ def epics_to_csv(project, queryset):
             "voters": epic.total_voters,
             "created_date": epic.created_date,
             "modified_date": epic.modified_date,
+            "related_user_stories": ",".join([
+                "{}#{}".format(us.project.slug, us.ref) for us in epic.user_stories.all()
+            ]),
         }
+
         for custom_attr in custom_attrs:
             value = epic.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
             epic_data[custom_attr.name] = value
