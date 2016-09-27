@@ -17,6 +17,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('userstories', '0012_auto_20160614_1201'),
         ('projects', '0049_auto_20160629_1443'),
+        ('history', '0012_auto_20160629_1036'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
