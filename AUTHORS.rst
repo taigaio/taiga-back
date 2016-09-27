@@ -33,5 +33,6 @@ answer newbie questions, and generally made taiga that much better:
 - Motius GmbH <mail@motius.de>
 - Riccardo Coccioli <riccardo.coccioli@immobiliare.it>
 - Ricky Posner <e@eposner.com>
+- Stefan Auditor <stefan.auditor@erdfisch.de>
 - Yamila Moreno <yamila.moreno@kaleidos.net>
 - Yaser Alraddadi <yaser@yr.sa>
