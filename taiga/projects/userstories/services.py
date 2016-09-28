@@ -277,7 +277,9 @@ def _get_userstories_statuses(project, queryset):
          SELECT DISTINCT "userstories_userstory"."status_id" "status_id",
                          "userstories_userstory"."id" "us_id"
                     FROM "userstories_userstory"
-               LEFT JOIN "epics_relateduserstory"
+              INNER JOIN "projects_project"
+                      ON ("userstories_userstory"."project_id" = "projects_project"."id")
+         LEFT OUTER JOIN "epics_relateduserstory"
                       ON "userstories_userstory"."id" = "epics_relateduserstory"."user_story_id"
                    WHERE {where}
             ),
@@ -294,7 +296,7 @@ def _get_userstories_statuses(project, queryset):
                         "projects_userstorystatus"."order",
                         COALESCE("counters"."count", 0)
                    FROM "projects_userstorystatus"
-              LEFT JOIN "counters"
+        LEFT OUTER JOIN "counters"
                      ON "counters"."status_id" = "projects_userstorystatus"."id"
                   WHERE "projects_userstorystatus"."project_id" = %s
                ORDER BY "projects_userstorystatus"."order";
@@ -327,7 +329,9 @@ def _get_userstories_assigned_to(project, queryset):
          SELECT DISTINCT "userstories_userstory"."assigned_to_id" "assigned_to_id",
                          "userstories_userstory"."id" "us_id"
                     FROM "userstories_userstory"
-               LEFT JOIN "epics_relateduserstory"
+              INNER JOIN "projects_project"
+                      ON ("userstories_userstory"."project_id" = "projects_project"."id")
+         LEFT OUTER JOIN "epics_relateduserstory"
                       ON "userstories_userstory"."id" = "epics_relateduserstory"."user_story_id"
                    WHERE {where}
             ),
@@ -360,7 +364,7 @@ def _get_userstories_assigned_to(project, queryset):
                    FROM "userstories_userstory"
              INNER JOIN "projects_project"
                      ON ("userstories_userstory"."project_id" = "projects_project"."id")
-              LEFT JOIN "epics_relateduserstory"
+        LEFT OUTER JOIN "epics_relateduserstory"
                      ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
                   WHERE {where} AND "userstories_userstory"."assigned_to_id" IS NULL
                GROUP BY "assigned_to_id"
@@ -404,6 +408,8 @@ def _get_userstories_owners(project, queryset):
          SELECT DISTINCT "userstories_userstory"."owner_id" "owner_id",
                          "userstories_userstory"."id" "us_id"
                     FROM "userstories_userstory"
+              INNER JOIN "projects_project"
+                      ON ("userstories_userstory"."project_id" = "projects_project"."id")
          LEFT OUTER JOIN "epics_relateduserstory"
                       ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
                    WHERE {where}
@@ -462,31 +468,31 @@ def _get_userstories_tags(project, queryset):
     where_params = queryset_where_tuple[1]
 
     extra_sql = """
-        WITH "userstories_tags" AS (
-                    SELECT "tag",
-                           COUNT("tag") "counter"
-                      FROM (
-                       SELECT DISTINCT "userstories_userstory"."id" "us_id",
-                                        UNNEST("userstories_userstory"."tags") "tag"
-                                  FROM "userstories_userstory"
-                            INNER JOIN "projects_project"
-                                    ON ("userstories_userstory"."project_id" = "projects_project"."id")
-                             LEFT JOIN "epics_relateduserstory"
-                                    ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
-                                 WHERE {where}
-                           ) "tags"
-                  GROUP BY "tag"),
+           WITH "userstories_tags" AS (
+                       SELECT "tag",
+                              COUNT("tag") "counter"
+                         FROM (
+                          SELECT DISTINCT "userstories_userstory"."id" "us_id",
+                                           UNNEST("userstories_userstory"."tags") "tag"
+                                     FROM "userstories_userstory"
+                               INNER JOIN "projects_project"
+                                       ON ("userstories_userstory"."project_id" = "projects_project"."id")
+                          LEFT OUTER JOIN "epics_relateduserstory"
+                                       ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
+                                    WHERE {where}
+                              ) "tags"
+                     GROUP BY "tag"),
 
-             "project_tags" AS (
-                    SELECT reduce_dim("tags_colors") "tag_color"
-                      FROM "projects_project"
-                     WHERE "id"=%s)
+                "project_tags" AS (
+                       SELECT reduce_dim("tags_colors") "tag_color"
+                         FROM "projects_project"
+                        WHERE "id"=%s)
 
-      SELECT "tag_color"[1] "tag", COALESCE("userstories_tags"."counter", 0) "counter"
-        FROM "project_tags"
-   LEFT JOIN "userstories_tags"
-          ON "project_tags"."tag_color"[1] = "userstories_tags"."tag"
-    ORDER BY "tag"
+         SELECT "tag_color"[1] "tag", COALESCE("userstories_tags"."counter", 0) "counter"
+           FROM "project_tags"
+LEFT OUTER JOIN "userstories_tags"
+             ON "project_tags"."tag_color"[1] = "userstories_tags"."tag"
+       ORDER BY "tag"
     """.format(where=where)
 
     with closing(connection.cursor()) as cursor:
@@ -546,7 +552,7 @@ def _get_userstories_epics(project, queryset):
                    ON ("counters"."epic_id" = "epics_epic"."id")
                 WHERE "epics_epic"."project_id" = %s
         """.format(where=where)
-    
+
     with closing(connection.cursor()) as cursor:
         cursor.execute(extra_sql, where_params + where_params + [project.id])
         rows = cursor.fetchall()
