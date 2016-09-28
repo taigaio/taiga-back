@@ -106,8 +106,7 @@ class ProjectAdmin(admin.ModelAdmin):
         (_("Extra info"), {
             "classes": ("collapse",),
             "fields": ("creation_template",
-                       ("is_looking_for_people", "looking_for_people_note"),
-                       "tags_colors"),
+                       ("is_looking_for_people", "looking_for_people_note")),
         }),
         (_("Modules"), {
             "classes": ("collapse",),
