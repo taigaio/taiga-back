@@ -31,6 +31,7 @@ from django_pglocks import advisory_lock
 
 from django_pgjson.fields import JsonField
 
+from taiga.base.utils.time import timestamp_ms
 from taiga.projects.tagging.models import TaggedMixin
 from taiga.projects.tagging.models import TagsColorsdMixin
 from taiga.base.utils.files import get_file_path
@@ -84,7 +85,7 @@ class Membership(models.Model):
     invitation_extra_text = models.TextField(null=True, blank=True,
                                    verbose_name=_("invitation extra text"))
 
-    user_order = models.IntegerField(default=10000, null=False, blank=False,
+    user_order = models.BigIntegerField(default=timestamp_ms, null=False, blank=False,
                             verbose_name=_("user order"))
 
     class Meta:
@@ -730,7 +731,7 @@ class ProjectTemplate(models.Model):
                             verbose_name=_("slug"), unique=True)
     description = models.TextField(null=False, blank=False,
                                    verbose_name=_("description"))
-    order = models.IntegerField(default=10000, null=False, blank=False,
+    order = models.BigIntegerField(default=timestamp_ms, null=False, blank=False,
                                 verbose_name=_("user order"))
     created_date = models.DateTimeField(null=False, blank=False,
                                         verbose_name=_("created date"),

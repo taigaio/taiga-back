@@ -25,6 +25,7 @@ from django.utils import timezone
 
 from picklefield.fields import PickledObjectField
 
+from taiga.base.utils.time import timestamp_ms
 from taiga.projects.tagging.models import TaggedMixin
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.notifications.mixins import WatchedModelMixin
@@ -75,11 +76,11 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
                                     related_name="userstories", through="RolePoints",
                                     verbose_name=_("points"))
 
-    backlog_order = models.IntegerField(null=False, blank=False, default=10000,
+    backlog_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
                                         verbose_name=_("backlog order"))
-    sprint_order = models.IntegerField(null=False, blank=False, default=10000,
+    sprint_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
                                        verbose_name=_("sprint order"))
-    kanban_order = models.IntegerField(null=False, blank=False, default=10000,
+    kanban_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
                                        verbose_name=_("kanban order"))
 
     created_date = models.DateTimeField(null=False, blank=False,

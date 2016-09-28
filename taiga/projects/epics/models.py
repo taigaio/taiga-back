@@ -23,6 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
 from taiga.base.utils.colors import generate_random_predefined_hex_color
+from taiga.base.utils.time import timestamp_ms
 from taiga.projects.tagging.models import TaggedMixin
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.notifications.mixins import WatchedModelMixin
@@ -40,7 +41,7 @@ class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     status = models.ForeignKey("projects.EpicStatus", null=True, blank=True,
                                related_name="epics", verbose_name=_("status"),
                                on_delete=models.SET_NULL)
-    epics_order = models.IntegerField(null=False, blank=False, default=10000,
+    epics_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
                                       verbose_name=_("epics order"))
 
     created_date = models.DateTimeField(null=False, blank=False,
@@ -96,7 +97,7 @@ class RelatedUserStory(WatchedModelMixin, models.Model):
     user_story = models.ForeignKey("userstories.UserStory", on_delete=models.CASCADE)
     epic = models.ForeignKey("epics.Epic", on_delete=models.CASCADE)
 
-    order = models.IntegerField(null=False, blank=False, default=10000,
+    order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
                                 verbose_name=_("order"))
 
     class Meta:

@@ -22,6 +22,7 @@ from django.utils import timezone
 
 from django_pgjson.fields import JsonField
 
+from taiga.base.utils.time import timestamp_ms
 from taiga.projects.occ.mixins import OCCModelMixin
 
 from . import choices
@@ -37,7 +38,7 @@ class AbstractCustomAttribute(models.Model):
     type = models.CharField(null=False, blank=False, max_length=16,
                             choices=choices.TYPES_CHOICES, default=choices.TEXT_TYPE,
                             verbose_name=_("type"))
-    order = models.IntegerField(null=False, blank=False, default=10000, verbose_name=_("order"))
+    order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms, verbose_name=_("order"))
     project = models.ForeignKey("projects.Project", null=False, blank=False, related_name="%(class)ss",
                                 verbose_name=_("project"))
 
