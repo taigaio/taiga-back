@@ -23,6 +23,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
+from taiga.base.utils.time import timestamp_ms
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
@@ -53,9 +54,9 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     subject = models.TextField(null=False, blank=False,
                                verbose_name=_("subject"))
 
-    us_order = models.IntegerField(null=False, blank=False, default=1,
+    us_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
                                         verbose_name=_("us order"))
-    taskboard_order = models.IntegerField(null=False, blank=False, default=1,
+    taskboard_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
                                           verbose_name=_("taskboard order"))
 
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))

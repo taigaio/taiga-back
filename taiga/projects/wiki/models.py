@@ -24,6 +24,7 @@ from django.utils import timezone
 from django_pglocks import advisory_lock
 
 from taiga.base.utils.slug import slugify_uniquely_for_queryset
+from taiga.base.utils.time import timestamp_ms
 from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.occ import OCCModelMixin
 
@@ -72,7 +73,7 @@ class WikiLink(models.Model):
     title = models.CharField(max_length=500, null=False, blank=False)
     href = models.SlugField(max_length=500, db_index=True, null=False, blank=False,
                             verbose_name=_("href"))
-    order = models.PositiveSmallIntegerField(null=False, blank=False, default="10000",
+    order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
                                              verbose_name=_("order"))
 
     class Meta:
