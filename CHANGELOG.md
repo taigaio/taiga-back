@@ -10,7 +10,6 @@
 - ProjectTemplates now are sorted by the attribute 'order'.
 - Create enpty wiki pages (if not exist) when a new link is created.
 - Diff messages in history entries now show only the relevant changes (with some context).
-- Include created, modified and finished dates for tasks in CSV reports
 - User stories and tasks listing API call support extra params to include more data (tasks and attachemnts and attachments, respectively)
 - Comments:
     - Now comment owners and project admins can edit existing comments with the history Entry endpoint.
