@@ -427,24 +427,28 @@ def _get_issues_tags(project, queryset):
     where_params = queryset_where_tuple[1]
 
     extra_sql = """
-        WITH issues_tags AS (
-                    SELECT tag,
-                           COUNT(tag) counter FROM (
-                                SELECT UNNEST(issues_issue.tags) tag
-                                  FROM issues_issue
-                            INNER JOIN projects_project
-                                        ON (issues_issue.project_id = projects_project.id)
-                                 WHERE {where}) tags
-                  GROUP BY tag),
-             project_tags AS (
-                    SELECT reduce_dim(tags_colors) tag_color
-                      FROM projects_project
-                     WHERE id=%s)
+        WITH "issues_tags" AS (
+                    SELECT "tag",
+                           COUNT("tag") "counter"
+                      FROM (
+                                SELECT UNNEST("issues_issue"."tags") "tag"
+                                  FROM "issues_issue"
+                            INNER JOIN "projects_project"
+                                    ON ("issues_issue"."project_id" = "projects_project"."id")
+                                 WHERE {where}
+                           ) "tags"
+                  GROUP BY "tag"),
+             "project_tags" AS (
+                    SELECT reduce_dim("tags_colors") "tag_color"
+                      FROM "projects_project"
+                     WHERE "id"=%s)
 
-      SELECT tag_color[1] tag, COALESCE(issues_tags.counter, 0) counter
+      SELECT "tag_color"[1] "tag",
+             "tag_color"[2] "color",
+             COALESCE("issues_tags"."counter", 0) "counter"
         FROM project_tags
-   LEFT JOIN issues_tags ON project_tags.tag_color[1] = issues_tags.tag
-    ORDER BY tag
+   LEFT JOIN "issues_tags" ON "project_tags"."tag_color"[1] = "issues_tags"."tag"
+    ORDER BY "tag"
     """.format(where=where)
 
     with closing(connection.cursor()) as cursor:
@@ -452,9 +456,10 @@ def _get_issues_tags(project, queryset):
         rows = cursor.fetchall()
 
     result = []
-    for name, count in rows:
+    for name, color, count in rows:
         result.append({
             "name": name,
+            "color": color,
             "count": count,
         })
     return sorted(result, key=itemgetter("name"))

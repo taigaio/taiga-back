@@ -352,7 +352,9 @@ def _get_tasks_tags(project, queryset):
                       FROM projects_project
                      WHERE id=%s)
 
-      SELECT tag_color[1] tag, COALESCE(tasks_tags.counter, 0) counter
+      SELECT tag_color[1] tag,
+             tag_color[2] color,
+             COALESCE(tasks_tags.counter, 0) counter
         FROM project_tags
    LEFT JOIN tasks_tags ON project_tags.tag_color[1] = tasks_tags.tag
     ORDER BY tag
@@ -363,9 +365,10 @@ def _get_tasks_tags(project, queryset):
         rows = cursor.fetchall()
 
     result = []
-    for name, count in rows:
+    for name, color, count in rows:
         result.append({
             "name": name,
+            "color": color,
             "count": count,
         })
     return sorted(result, key=itemgetter("name"))

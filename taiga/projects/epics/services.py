@@ -394,7 +394,9 @@ def _get_epics_tags(project, queryset):
                       FROM projects_project
                      WHERE id=%s)
 
-      SELECT tag_color[1] tag, COALESCE(epics_tags.counter, 0) counter
+      SELECT tag_color[1] tag,
+             tag_color[2] color,
+             COALESCE(epics_tags.counter, 0) counter
         FROM project_tags
    LEFT JOIN epics_tags ON project_tags.tag_color[1] = epics_tags.tag
     ORDER BY tag
@@ -405,9 +407,10 @@ def _get_epics_tags(project, queryset):
         rows = cursor.fetchall()
 
     result = []
-    for name, count in rows:
+    for name, color, count in rows:
         result.append({
             "name": name,
+            "color": color,
             "count": count,
         })
     return sorted(result, key=itemgetter("name"))
