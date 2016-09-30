@@ -1,11 +1,29 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from django.core.urlresolvers import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.client import MULTIPART_CONTENT
 
 from taiga.base.utils import json
 
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS, ANON_PERMISSIONS, USER_PERMISSIONS
+from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
 from taiga.projects import choices as project_choices
 from taiga.projects.attachments.serializers import AttachmentSerializer
 
@@ -39,11 +57,11 @@ def data():
 
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                        public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
+                                        public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         owner=m.project_owner)
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                          public_permissions=list(map(lambda x: x[0], USER_PERMISSIONS)),
+                                          public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           owner=m.project_owner)
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
@@ -99,6 +117,20 @@ def data():
     f.MembershipFactory(project=m.blocked_project,
                     user=m.project_owner,
                     is_admin=True)
+    return m
+
+
+@pytest.fixture
+def data_epic(data):
+    m = type("Models", (object,), {})
+    m.public_epic = f.EpicFactory(project=data.public_project, ref=20)
+    m.public_epic_attachment = f.EpicAttachmentFactory(project=data.public_project, content_object=m.public_epic)
+    m.private_epic1 = f.EpicFactory(project=data.private_project1, ref=21)
+    m.private_epic1_attachment = f.EpicAttachmentFactory(project=data.private_project1, content_object=m.private_epic1)
+    m.private_epic2 = f.EpicFactory(project=data.private_project2, ref=22)
+    m.private_epic2_attachment = f.EpicAttachmentFactory(project=data.private_project2, content_object=m.private_epic2)
+    m.blocked_epic = f.EpicFactory(project=data.blocked_project, ref=23)
+    m.blocked_epic_attachment = f.EpicAttachmentFactory(project=data.blocked_project, content_object=m.blocked_epic)
     return m
 
 
@@ -160,6 +192,30 @@ def data_wiki(data):
     m.blocked_wiki = f.WikiPageFactory(project=data.blocked_project, slug=1)
     m.blocked_wiki_attachment = f.WikiAttachmentFactory(project=data.blocked_project, content_object=m.blocked_wiki)
     return m
+
+
+def test_epic_attachment_retrieve(client, data, data_epic):
+    public_url = reverse('epic-attachments-detail', kwargs={"pk": data_epic.public_epic_attachment.pk})
+    private_url1 = reverse('epic-attachments-detail', kwargs={"pk": data_epic.private_epic1_attachment.pk})
+    private_url2 = reverse('epic-attachments-detail', kwargs={"pk": data_epic.private_epic2_attachment.pk})
+    blocked_url = reverse('epic-attachments-detail', kwargs={"pk": data_epic.blocked_epic_attachment.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method(client, 'get', public_url, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url1, None, users)
+    assert results == [200, 200, 200, 200, 200]
+    results = helper_test_http_method(client, 'get', private_url2, None, users)
+    assert results == [401, 403, 403, 200, 200]
+    results = helper_test_http_method(client, 'get', blocked_url, None, users)
+    assert results == [401, 403, 403, 200, 200]
 
 
 def test_user_story_attachment_retrieve(client, data, data_us):
@@ -258,6 +314,41 @@ def test_wiki_attachment_retrieve(client, data, data_wiki):
     assert results == [401, 403, 403, 200, 200]
 
 
+def test_epic_attachment_update(client, data, data_epic):
+    public_url = reverse('epic-attachments-detail', kwargs={"pk": data_epic.public_epic_attachment.pk})
+    private_url1 = reverse('epic-attachments-detail', kwargs={"pk": data_epic.private_epic1_attachment.pk})
+    private_url2 = reverse('epic-attachments-detail', kwargs={"pk": data_epic.private_epic2_attachment.pk})
+    blocked_url = reverse('epic-attachments-detail', kwargs={"pk": data_epic.blocked_epic_attachment.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    attachment_data = AttachmentSerializer(data_epic.public_epic_attachment).data
+    attachment_data["description"] = "test"
+    attachment_data = json.dumps(attachment_data)
+
+    results = helper_test_http_method(client, 'put', public_url, attachment_data, users)
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
+
+    results = helper_test_http_method(client, 'put', private_url1, attachment_data, users)
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
+
+    results = helper_test_http_method(client, 'put', private_url2, attachment_data, users)
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
+
+    results = helper_test_http_method(client, 'put', blocked_url, attachment_data, users)
+    assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 200, 200]
+
+
 def test_user_story_attachment_update(client, data, data_us):
     public_url = reverse("userstory-attachments-detail",
                          args=[data_us.public_user_story_attachment.pk])
@@ -281,20 +372,20 @@ def test_user_story_attachment_update(client, data, data_us):
     attachment_data = json.dumps(attachment_data)
 
     results = helper_test_http_method(client, "put", public_url, attachment_data, users)
-    # assert results == [401, 403, 403, 400, 400]
     assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 400, 400]
 
     results = helper_test_http_method(client, "put", private_url1, attachment_data, users)
-    # assert results == [401, 403, 403, 400, 400]
     assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 400, 400]
 
     results = helper_test_http_method(client, "put", private_url2, attachment_data, users)
-    # assert results == [401, 403, 403, 400, 400]
     assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 400, 400]
 
     results = helper_test_http_method(client, "put", blocked_url, attachment_data, users)
-    # assert results == [401, 403, 403, 400, 400]
     assert results == [405, 405, 405, 405, 405]
+    # assert results == [401, 403, 403, 400, 400]
 
 
 def test_task_attachment_update(client, data, data_task):
@@ -318,12 +409,15 @@ def test_task_attachment_update(client, data, data_task):
     results = helper_test_http_method(client, 'put', public_url, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'put', private_url1, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'put', private_url2, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'put', blocked_url, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 403, 403, 200, 200]
@@ -350,12 +444,15 @@ def test_issue_attachment_update(client, data, data_issue):
     results = helper_test_http_method(client, 'put', public_url, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'put', private_url1, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'put', private_url2, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'put', blocked_url, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 403, 403, 200, 200]
@@ -382,15 +479,48 @@ def test_wiki_attachment_update(client, data, data_wiki):
     results = helper_test_http_method(client, 'put', public_url, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 200, 200, 200, 200]
+
     results = helper_test_http_method(client, 'put', private_url1, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 200, 200, 200, 200]
+
     results = helper_test_http_method(client, 'put', private_url2, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'put', blocked_url, attachment_data, users)
     assert results == [405, 405, 405, 405, 405]
     # assert results == [401, 403, 403, 200, 200]
+
+
+def test_epic_attachment_patch(client, data, data_epic):
+    public_url = reverse('epic-attachments-detail', kwargs={"pk": data_epic.public_epic_attachment.pk})
+    private_url1 = reverse('epic-attachments-detail', kwargs={"pk": data_epic.private_epic1_attachment.pk})
+    private_url2 = reverse('epic-attachments-detail', kwargs={"pk": data_epic.private_epic2_attachment.pk})
+    blocked_url = reverse('epic-attachments-detail', kwargs={"pk": data_epic.blocked_epic_attachment.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    attachment_data = {"description": "test"}
+    attachment_data = json.dumps(attachment_data)
+
+    results = helper_test_http_method(client, 'patch', public_url, attachment_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    results = helper_test_http_method(client, 'patch', private_url1, attachment_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    results = helper_test_http_method(client, 'patch', private_url2, attachment_data, users)
+    assert results == [401, 403, 403, 200, 200]
+
+    results = helper_test_http_method(client, 'patch', blocked_url, attachment_data, users)
+    assert results == [401, 403, 403, 451, 451]
 
 
 def test_user_story_attachment_patch(client, data, data_us):
@@ -412,10 +542,13 @@ def test_user_story_attachment_patch(client, data, data_us):
 
     results = helper_test_http_method(client, 'patch', public_url, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'patch', private_url1, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'patch', private_url2, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'patch', blocked_url, attachment_data, users)
     assert results == [401, 403, 403, 451, 451]
 
@@ -439,10 +572,13 @@ def test_task_attachment_patch(client, data, data_task):
 
     results = helper_test_http_method(client, 'patch', public_url, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'patch', private_url1, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'patch', private_url2, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'patch', blocked_url, attachment_data, users)
     assert results == [401, 403, 403, 451, 451]
 
@@ -466,10 +602,13 @@ def test_issue_attachment_patch(client, data, data_issue):
 
     results = helper_test_http_method(client, 'patch', public_url, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'patch', private_url1, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'patch', private_url2, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'patch', blocked_url, attachment_data, users)
     assert results == [401, 403, 403, 451, 451]
 
@@ -492,13 +631,42 @@ def test_wiki_attachment_patch(client, data, data_wiki):
     attachment_data = json.dumps(attachment_data)
 
     results = helper_test_http_method(client, 'patch', public_url, attachment_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'patch', private_url1, attachment_data, users)
-    assert results == [401, 200, 200, 200, 200]
+    assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'patch', private_url2, attachment_data, users)
     assert results == [401, 403, 403, 200, 200]
+
     results = helper_test_http_method(client, 'patch', blocked_url, attachment_data, users)
     assert results == [401, 403, 403, 451, 451]
+
+
+def test_epic_attachment_delete(client, data, data_epic):
+    public_url = reverse('epic-attachments-detail', kwargs={"pk": data_epic.public_epic_attachment.pk})
+    private_url1 = reverse('epic-attachments-detail', kwargs={"pk": data_epic.private_epic1_attachment.pk})
+    private_url2 = reverse('epic-attachments-detail', kwargs={"pk": data_epic.private_epic2_attachment.pk})
+    blocked_url = reverse('epic-attachments-detail', kwargs={"pk": data_epic.blocked_epic_attachment.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+    ]
+
+    results = helper_test_http_method(client, 'delete', public_url, None, users)
+    assert results == [401, 403, 403, 204]
+
+    results = helper_test_http_method(client, 'delete', private_url1, None, users)
+    assert results == [401, 403, 403, 204]
+
+    results = helper_test_http_method(client, 'delete', private_url2, None, users)
+    assert results == [401, 403, 403, 204]
+
+    results = helper_test_http_method(client, 'delete', blocked_url, None, users)
+    assert results == [401, 403, 403, 451]
 
 
 def test_user_story_attachment_delete(client, data, data_us):
@@ -516,10 +684,13 @@ def test_user_story_attachment_delete(client, data, data_us):
 
     results = helper_test_http_method(client, 'delete', public_url, None, users)
     assert results == [401, 403, 403, 204]
+
     results = helper_test_http_method(client, 'delete', private_url1, None, users)
     assert results == [401, 403, 403, 204]
+
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+
     results = helper_test_http_method(client, 'delete', blocked_url, None, users)
     assert results == [401, 403, 403, 451]
 
@@ -539,10 +710,13 @@ def test_task_attachment_delete(client, data, data_task):
 
     results = helper_test_http_method(client, 'delete', public_url, None, users)
     assert results == [401, 403, 403, 204]
+
     results = helper_test_http_method(client, 'delete', private_url1, None, users)
     assert results == [401, 403, 403, 204]
+
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+
     results = helper_test_http_method(client, 'delete', blocked_url, None, users)
     assert results == [401, 403, 403, 451]
 
@@ -562,10 +736,13 @@ def test_issue_attachment_delete(client, data, data_issue):
 
     results = helper_test_http_method(client, 'delete', public_url, None, users)
     assert results == [401, 403, 403, 204]
+
     results = helper_test_http_method(client, 'delete', private_url1, None, users)
     assert results == [401, 403, 403, 204]
+
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+
     results = helper_test_http_method(client, 'delete', blocked_url, None, users)
     assert results == [401, 403, 403, 451]
 
@@ -584,13 +761,52 @@ def test_wiki_attachment_delete(client, data, data_wiki):
     ]
 
     results = helper_test_http_method(client, 'delete', public_url, None, [None, data.registered_user])
-    assert results == [401, 204]
+    assert results == [401, 403]
+
     results = helper_test_http_method(client, 'delete', private_url1, None, [None, data.registered_user])
-    assert results == [401, 204]
+    assert results == [401, 403]
+
     results = helper_test_http_method(client, 'delete', private_url2, None, users)
     assert results == [401, 403, 403, 204]
+
     results = helper_test_http_method(client, 'delete', blocked_url, None, users)
     assert results == [401, 403, 403, 451]
+
+
+def test_epic_attachment_create(client, data, data_epic):
+    url = reverse('epic-attachments-list')
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    attachment_data = {"description": "test",
+                       "object_id": data_epic.public_epic_attachment.object_id,
+                       "project": data_epic.public_epic_attachment.project_id,
+                       "attached_file": SimpleUploadedFile("test.txt", b"test")}
+
+    _after_each_request_hook = lambda: attachment_data["attached_file"].seek(0)
+
+    results = helper_test_http_method(client, 'post', url, attachment_data, users,
+                                      content_type=MULTIPART_CONTENT,
+                                      after_each_request=_after_each_request_hook)
+    assert results == [401, 403, 403, 201, 201]
+
+    attachment_data = {"description": "test",
+                       "object_id": data_epic.blocked_epic_attachment.object_id,
+                       "project": data_epic.blocked_epic_attachment.project_id,
+                       "attached_file": SimpleUploadedFile("test.txt", b"test")}
+
+    _after_each_request_hook = lambda: attachment_data["attached_file"].seek(0)
+
+    results = helper_test_http_method(client, 'post', url, attachment_data, users,
+                                      content_type=MULTIPART_CONTENT,
+                                      after_each_request=_after_each_request_hook)
+    assert results == [401, 403, 403, 451, 451]
 
 
 def test_user_story_attachment_create(client, data, data_us):
@@ -722,7 +938,7 @@ def test_wiki_attachment_create(client, data, data_wiki):
                                       content_type=MULTIPART_CONTENT,
                                       after_each_request=_after_each_request_hook)
 
-    assert results == [401, 201, 201, 201, 201]
+    assert results == [401, 403, 403, 201, 201]
 
     attachment_data = {"description": "test",
                        "object_id": data_wiki.blocked_wiki_attachment.object_id,
@@ -736,6 +952,21 @@ def test_wiki_attachment_create(client, data, data_wiki):
                                       after_each_request=_after_each_request_hook)
 
     assert results == [401, 403, 403, 451, 451]
+
+
+def test_epic_attachment_list(client, data, data_epic):
+    url = reverse('epic-attachments-list')
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    results = helper_test_http_method_and_count(client, 'get', url, None, users)
+    assert results == [(200, 2), (200, 2), (200, 2), (200, 4), (200, 4)]
 
 
 def test_user_story_attachment_list(client, data, data_us):

@@ -25,7 +25,7 @@ COORS_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE", "PATCH", "HE
 COORS_ALLOWED_HEADERS = ["content-type", "x-requested-with",
                          "authorization", "accept-encoding",
                          "x-disable-pagination", "x-lazy-pagination",
-                         "x-host", "x-session-id"]
+                         "x-host", "x-session-id", "set-orders"]
 COORS_ALLOWED_CREDENTIALS = True
 COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated", "x-paginated-by",
                         "x-pagination-current", "x-pagination-next", "x-pagination-prev",

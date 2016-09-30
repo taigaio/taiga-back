@@ -1,9 +1,51 @@
 # Changelog #
 
+
+## 3.0.0 Stellaria Borealis (2016-10-02)
+
+### Features
+- Add Epics.
+- Include created, modified and finished dates for tasks in CSV reports.
+- Add gravatar url to Users API endpoint.
+- ProjectTemplates now are sorted by the attribute 'order'.
+- Create enpty wiki pages (if not exist) when a new link is created.
+- Diff messages in history entries now show only the relevant changes (with some context).
+- User stories and tasks listing API call support extra params to include more data (tasks and attachemnts and attachments, respectively)
+- Comments:
+    - Now comment owners and project admins can edit existing comments with the history Entry endpoint.
+    - Add a new permissions to allow add comments instead of use the existent modify permission for this purpose.
+- Tags:
+    - New API endpoints over projects to create, rename, edit, delete and mix tags.
+    - Tag color assignation is not automatic.
+    - Select a color (or not) to a tag when add it to stories, issues and tasks.
+- Improve search system over stories, tasks and issues:
+    - Search into tags too. (thanks to [Riccardo Cocciol](https://github.com/volans-))
+    - Weights are applied: (subject = ref > tags > description).
+- Import/Export:
+    - Gzip export/import support.
+    - Export performance improvements.
+- Add filter by email domain registration and invitation by setting.
+- Third party integrations:
+    - Included gogs as builtin integration.
+    - Improve messages generated on webhooks input.
+    - Add mentions support in commit messages.
+    - Cleanup hooks code.
+    - Rework webhook signature header to align with larger implementations and defined [standards](https://superfeedr-misc.s3.amazonaws.com/pubsubhubbub-core-0.4.html\#authednotify). (thanks to [Stefan Auditor](https://github.com/sanduhrs))
+- Add created-, modified-, finished- and finish_date queryset filters
+    - Support exact match, gt, gte, lt, lte
+    - added issues, tasks and userstories accordingly
+- i18n:
+  - Add norwegian Bokmal (nb) translation.
+
+### Misc
+- [API] Improve performance of some calls over list.
+- Lots of small and not so small bugfixes.
+
+
 ## 2.1.0 Ursus Americanus (2016-05-03)
 
 ### Features
-- Add sprint name and slug on search results for user stories ((thanks to [@everblut](https://github.com/everblut)))
+- Add sprint name and slug on search results for user stories (thanks to [@everblut](https://github.com/everblut))
 - [API] projects resource: Random order if `discover_mode=true` and `is_featured=true`.
 - Webhooks: Improve webhook data:
     - add permalinks

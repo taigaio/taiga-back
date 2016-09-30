@@ -34,6 +34,7 @@ from taiga.base import exceptions as exc
 from taiga.base import response
 from taiga.base.api.mixins import CreateModelMixin
 from taiga.base.api.viewsets import GenericViewSet
+from taiga.projects import utils as project_utils
 from taiga.projects.models import Project, Membership
 from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
@@ -43,11 +44,11 @@ from taiga.users import services as users_services
 from . import exceptions as err
 from . import mixins
 from . import permissions
+from . import validators
 from . import serializers
 from . import services
 from . import tasks
 from . import throttling
-from .renderers import ExportRenderer
 
 from taiga.base.api.utils import get_object_or_404
 
@@ -75,13 +76,11 @@ class ProjectExporterViewSet(mixins.ImportThrottlingPolicyMixin, GenericViewSet)
 
         if dump_format == "gzip":
             path = "exports/{}/{}-{}.json.gz".format(project.pk, project.slug, uuid.uuid4().hex)
-            storage_path = default_storage.path(path)
-            with default_storage.open(storage_path, mode="wb") as outfile:
+            with default_storage.open(path, mode="wb") as outfile:
                 services.render_project(project, gzip.GzipFile(fileobj=outfile))
         else:
             path = "exports/{}/{}-{}.json".format(project.pk, project.slug, uuid.uuid4().hex)
-            storage_path = default_storage.path(path)
-            with default_storage.open(storage_path, mode="wb") as outfile:
+            with default_storage.open(path, mode="wb") as outfile:
                 services.render_project(project, outfile)
 
         response_data = {
@@ -103,9 +102,8 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
 
         # Validate if the project can be imported
         is_private = data.get('is_private', False)
-        total_memberships = len([m for m in data.get("memberships", [])
-                                            if m.get("email", None) != data["owner"]])
-        total_memberships = total_memberships + 1 # 1 is the owner
+        total_memberships = len([m for m in data.get("memberships", []) if m.get("email", None) != data["owner"]])
+        total_memberships = total_memberships + 1  # 1 is the owner
         (enough_slots, error_message) = users_services.has_available_slot_for_import_new_project(
             self.request.user,
             is_private,
@@ -148,31 +146,31 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         # Create project values choicess
         if "points" in data:
             services.store.store_project_attributes_values(project_serialized.object, data,
-                                                           "points", serializers.PointsExportSerializer)
+                                                           "points", validators.PointsExportValidator)
         if "issue_types" in data:
             services.store.store_project_attributes_values(project_serialized.object, data,
                                                            "issue_types",
-                                                           serializers.IssueTypeExportSerializer)
+                                                           validators.IssueTypeExportValidator)
         if "issue_statuses" in data:
             services.store.store_project_attributes_values(project_serialized.object, data,
                                                            "issue_statuses",
-                                                           serializers.IssueStatusExportSerializer,)
+                                                           validators.IssueStatusExportValidator,)
         if "us_statuses" in data:
             services.store.store_project_attributes_values(project_serialized.object, data,
                                                            "us_statuses",
-                                                           serializers.UserStoryStatusExportSerializer,)
+                                                           validators.UserStoryStatusExportValidator,)
         if "task_statuses" in data:
             services.store.store_project_attributes_values(project_serialized.object, data,
                                                            "task_statuses",
-                                                           serializers.TaskStatusExportSerializer)
+                                                           validators.TaskStatusExportValidator)
         if "priorities" in data:
             services.store.store_project_attributes_values(project_serialized.object, data,
                                                            "priorities",
-                                                           serializers.PriorityExportSerializer)
+                                                           validators.PriorityExportValidator)
         if "severities" in data:
             services.store.store_project_attributes_values(project_serialized.object, data,
                                                            "severities",
-                                                           serializers.SeverityExportSerializer)
+                                                           validators.SeverityExportValidator)
 
         if ("points" in data or "issues_types" in data or
                 "issues_statuses" in data or "us_statuses" in data or
@@ -184,17 +182,17 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         if "userstorycustomattributes" in data:
             services.store.store_custom_attributes(project_serialized.object, data,
                                                    "userstorycustomattributes",
-                                                   serializers.UserStoryCustomAttributeExportSerializer)
+                                                   validators.UserStoryCustomAttributeExportValidator)
 
         if "taskcustomattributes" in data:
             services.store.store_custom_attributes(project_serialized.object, data,
                                                    "taskcustomattributes",
-                                                   serializers.TaskCustomAttributeExportSerializer)
+                                                   validators.TaskCustomAttributeExportValidator)
 
         if "issuecustomattributes" in data:
             services.store.store_custom_attributes(project_serialized.object, data,
                                                    "issuecustomattributes",
-                                                   serializers.IssueCustomAttributeExportSerializer)
+                                                   validators.IssueCustomAttributeExportValidator)
 
         # Is there any error?
         errors = services.store.get_errors()
@@ -202,7 +200,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             raise exc.BadRequest(errors)
 
         # Importer process is OK
-        response_data = project_serialized.data
+        response_data = serializers.ProjectExportSerializer(project_serialized.object).data
         response_data['id'] = project_serialized.object.id
         headers = self.get_success_headers(response_data)
         return response.Created(response_data, headers=headers)
@@ -219,8 +217,9 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         if errors:
             raise exc.BadRequest(errors)
 
-        headers = self.get_success_headers(milestone.data)
-        return response.Created(milestone.data, headers=headers)
+        data = serializers.MilestoneExportSerializer(milestone.object).data
+        headers = self.get_success_headers(data)
+        return response.Created(data, headers=headers)
 
     @detail_route(methods=['post'])
     @method_decorator(atomic)
@@ -234,8 +233,9 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         if errors:
             raise exc.BadRequest(errors)
 
-        headers = self.get_success_headers(us.data)
-        return response.Created(us.data, headers=headers)
+        data = serializers.UserStoryExportSerializer(us.object).data
+        headers = self.get_success_headers(data)
+        return response.Created(data, headers=headers)
 
     @detail_route(methods=['post'])
     @method_decorator(atomic)
@@ -252,8 +252,9 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         if errors:
             raise exc.BadRequest(errors)
 
-        headers = self.get_success_headers(task.data)
-        return response.Created(task.data, headers=headers)
+        data = serializers.TaskExportSerializer(task.object).data
+        headers = self.get_success_headers(data)
+        return response.Created(data, headers=headers)
 
     @detail_route(methods=['post'])
     @method_decorator(atomic)
@@ -270,8 +271,9 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         if errors:
             raise exc.BadRequest(errors)
 
-        headers = self.get_success_headers(issue.data)
-        return response.Created(issue.data, headers=headers)
+        data = serializers.IssueExportSerializer(issue.object).data
+        headers = self.get_success_headers(data)
+        return response.Created(data, headers=headers)
 
     @detail_route(methods=['post'])
     @method_decorator(atomic)
@@ -285,8 +287,9 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         if errors:
             raise exc.BadRequest(errors)
 
-        headers = self.get_success_headers(wiki_page.data)
-        return response.Created(wiki_page.data, headers=headers)
+        data = serializers.WikiPageExportSerializer(wiki_page.object).data
+        headers = self.get_success_headers(data)
+        return response.Created(data, headers=headers)
 
     @detail_route(methods=['post'])
     @method_decorator(atomic)
@@ -300,8 +303,9 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         if errors:
             raise exc.BadRequest(errors)
 
-        headers = self.get_success_headers(wiki_link.data)
-        return response.Created(wiki_link.data, headers=headers)
+        data = serializers.WikiLinkExportSerializer(wiki_link.object).data
+        headers = self.get_success_headers(data)
+        return response.Created(data, headers=headers)
 
     @list_route(methods=["POST"])
     @method_decorator(atomic)
@@ -366,5 +370,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             return response.BadRequest({"error": e.message, "details": e.errors})
         else:
             # On Success
-            response_data = ProjectSerializer(project).data
+            project_from_qs = project_utils.attach_extra_info(Project.objects.all()).get(id=project.id)
+            response_data = ProjectSerializer(project_from_qs).data
+
             return response.Created(response_data)

@@ -16,87 +16,127 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.apps import apps
 from taiga.base.api import serializers
-from taiga.base.fields import TagsField
-from taiga.base.fields import PickledObjectField
-from taiga.base.fields import PgArrayField
+from taiga.base.fields import Field, MethodField
 from taiga.base.neighbors import NeighborsSerializerMixin
-from taiga.base.utils import json
 
 from taiga.mdrender.service import render as mdrender
-from taiga.projects.validators import ProjectExistsValidator
-from taiga.projects.validators import UserStoryStatusExistsValidator
-from taiga.projects.userstories.validators import UserStoryExistsValidator
-from taiga.projects.notifications.validators import WatchersValidator
-from taiga.projects.serializers import BasicUserStoryStatusSerializer
-from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
+from taiga.projects.attachments.serializers import BasicAttachmentsInfoSerializerMixin
+from taiga.projects.mixins.serializers import AssignedToExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import OwnerExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import ProjectExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import StatusExtraInfoSerializerMixin
+from taiga.projects.notifications.mixins import WatchedResourceSerializer
+from taiga.projects.tagging.serializers import TaggedInProjectResourceSerializer
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
 
-from taiga.users.serializers import UserBasicInfoSerializer
 
-from . import models
+class OriginIssueSerializer(serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    subject = Field()
 
+    def to_value(self, instance):
+        if instance is None:
+            return None
 
-class RolePointsField(serializers.WritableField):
-    def to_native(self, obj):
-        return {str(o.role.id): o.points.id for o in obj.all()}
-
-    def from_native(self, obj):
-        if isinstance(obj, dict):
-            return obj
-        return json.loads(obj)
+        return super().to_value(instance)
 
 
-class UserStorySerializer(WatchersValidator, VoteResourceSerializerMixin, EditableWatchedResourceModelSerializer,
-                          serializers.ModelSerializer):
-    tags = TagsField(default=[], required=False)
-    external_reference = PgArrayField(required=False)
-    points = RolePointsField(source="role_points", required=False)
-    total_points = serializers.SerializerMethodField("get_total_points")
-    comment = serializers.SerializerMethodField("get_comment")
-    milestone_slug = serializers.SerializerMethodField("get_milestone_slug")
-    milestone_name = serializers.SerializerMethodField("get_milestone_name")
-    origin_issue = serializers.SerializerMethodField("get_origin_issue")
-    blocked_note_html = serializers.SerializerMethodField("get_blocked_note_html")
-    description_html = serializers.SerializerMethodField("get_description_html")
-    status_extra_info = BasicUserStoryStatusSerializer(source="status", required=False, read_only=True)
-    assigned_to_extra_info = UserBasicInfoSerializer(source="assigned_to", required=False, read_only=True)
-    owner_extra_info = UserBasicInfoSerializer(source="owner", required=False, read_only=True)
-    tribe_gig = PickledObjectField(required=False)
+class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
+        VoteResourceSerializerMixin, WatchedResourceSerializer,
+        OwnerExtraInfoSerializerMixin, AssignedToExtraInfoSerializerMixin,
+        StatusExtraInfoSerializerMixin, BasicAttachmentsInfoSerializerMixin,
+        TaggedInProjectResourceSerializer,
+        serializers.LightSerializer):
 
-    class Meta:
-        model = models.UserStory
-        depth = 0
-        read_only_fields = ('created_date', 'modified_date', 'owner')
+    id = Field()
+    ref = Field()
+    milestone = Field(attr="milestone_id")
+    milestone_slug = MethodField()
+    milestone_name = MethodField()
+    project = Field(attr="project_id")
+    is_closed = Field()
+    points = MethodField()
+    backlog_order = Field()
+    sprint_order = Field()
+    kanban_order = Field()
+    created_date = Field()
+    modified_date = Field()
+    finish_date = Field()
+    subject = Field()
+    client_requirement = Field()
+    team_requirement = Field()
+    generated_from_issue = Field(attr="generated_from_issue_id")
+    external_reference = Field()
+    tribe_gig = Field()
+    version = Field()
+    watchers = Field()
+    is_blocked = Field()
+    blocked_note = Field()
+    total_points = MethodField()
+    comment = MethodField()
+    origin_issue = OriginIssueSerializer(attr="generated_from_issue")
+    epics = MethodField()
+    epic_order = MethodField()
+    tasks = MethodField()
+
+    def get_epic_order(self, obj):
+        include_epic_order = getattr(obj, "include_epic_order", False)
+
+        if include_epic_order:
+            assert hasattr(obj, "epic_order"), "instance must have a epic_order attribute"
+
+        if not include_epic_order or obj.epic_order is None:
+            return None
+
+        return obj.epic_order
+
+    def get_epics(self, obj):
+        assert hasattr(obj, "epics_attr"), "instance must have a epics_attr attribute"
+        return obj.epics_attr
+
+    def get_milestone_slug(self, obj):
+        return obj.milestone.slug if obj.milestone else None
+
+    def get_milestone_name(self, obj):
+        return obj.milestone.name if obj.milestone else None
 
     def get_total_points(self, obj):
-        return obj.get_total_points()
+        assert hasattr(obj, "total_points_attr"), "instance must have a total_points_attr attribute"
+        return obj.total_points_attr
+
+    def get_points(self, obj):
+        assert hasattr(obj, "role_points_attr"), "instance must have a role_points_attr attribute"
+        if obj.role_points_attr is None:
+            return {}
+
+        return obj.role_points_attr
+
+    def get_comment(self, obj):
+        return ""
+
+    def get_tasks(self, obj):
+        include_tasks = getattr(obj, "include_tasks", False)
+
+        if include_tasks:
+            assert hasattr(obj, "tasks_attr"), "instance must have a tasks_attr attribute"
+
+        if not include_tasks or obj.tasks_attr is None:
+            return []
+
+        return obj.tasks_attr
+
+
+class UserStorySerializer(UserStoryListSerializer):
+    comment = MethodField()
+    blocked_note_html = MethodField()
+    description = Field()
+    description_html = MethodField()
 
     def get_comment(self, obj):
         # NOTE: This method and field is necessary to historical comments work
         return ""
-
-    def get_milestone_slug(self, obj):
-        if obj.milestone:
-            return obj.milestone.slug
-        else:
-            return None
-
-    def get_milestone_name(self, obj):
-        if obj.milestone:
-            return obj.milestone.name
-        else:
-            return None
-
-    def get_origin_issue(self, obj):
-        if obj.generated_from_issue:
-            return {
-                "id": obj.generated_from_issue.id,
-                "ref": obj.generated_from_issue.ref,
-                "subject": obj.generated_from_issue.subject,
-            }
-        return None
 
     def get_blocked_note_html(self, obj):
         return mdrender(obj.project, obj.blocked_note)
@@ -105,41 +145,5 @@ class UserStorySerializer(WatchersValidator, VoteResourceSerializerMixin, Editab
         return mdrender(obj.project, obj.description)
 
 
-class UserStoryListSerializer(UserStorySerializer):
-    class Meta:
-        model = models.UserStory
-        depth = 0
-        read_only_fields = ('created_date', 'modified_date')
-        exclude=("description", "description_html")
-
-
 class UserStoryNeighborsSerializer(NeighborsSerializerMixin, UserStorySerializer):
-    def serialize_neighbor(self, neighbor):
-        if neighbor:
-            return NeighborUserStorySerializer(neighbor).data
-        return None
-
-
-class NeighborUserStorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.UserStory
-        fields = ("id", "ref", "subject")
-        depth = 0
-
-
-class UserStoriesBulkSerializer(ProjectExistsValidator, UserStoryStatusExistsValidator, serializers.Serializer):
-    project_id = serializers.IntegerField()
-    status_id = serializers.IntegerField(required=False)
-    bulk_stories = serializers.CharField()
-
-
-## Order bulk serializers
-
-class _UserStoryOrderBulkSerializer(UserStoryExistsValidator, serializers.Serializer):
-    us_id = serializers.IntegerField()
-    order = serializers.IntegerField()
-
-
-class UpdateUserStoriesOrderBulkSerializer(ProjectExistsValidator, UserStoryStatusExistsValidator, serializers.Serializer):
-    project_id = serializers.IntegerField()
-    bulk_stories = _UserStoryOrderBulkSerializer(many=True)
+    pass

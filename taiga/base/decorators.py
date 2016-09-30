@@ -18,6 +18,7 @@
 
 from django_pglocks import advisory_lock
 
+
 def detail_route(methods=['get'], **kwargs):
     """
     Used to mark a method on a ViewSet that should be routed for detail requests.
@@ -51,12 +52,11 @@ def model_pk_lock(func):
     """
     def decorator(self, *args, **kwargs):
         from taiga.base.utils.db import get_typename_for_model_class
-        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
         pk = self.kwargs.get(self.pk_url_kwarg, None)
         tn = get_typename_for_model_class(self.get_queryset().model)
         key = "{0}:{1}".format(tn, pk)
 
-        with advisory_lock(key) as acquired_key_lock:
+        with advisory_lock(key):
             return func(self, *args, **kwargs)
 
     return decorator

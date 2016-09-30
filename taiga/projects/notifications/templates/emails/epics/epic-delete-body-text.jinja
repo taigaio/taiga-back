@@ -1,0 +1,8 @@
+{% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject %}
+Epic deleted
+Hello {{ user }}, {{ changer }} has deleted a epic on {{ project }}
+Epic #{{ ref }} {{ subject }}
+
+---
+The Taiga Team
+{% endtrans %}

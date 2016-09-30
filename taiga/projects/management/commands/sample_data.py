@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import random
 import datetime
 from os import path
+from hashlib import sha1
 
 
 from django.core.management.base import BaseCommand
@@ -30,9 +30,11 @@ from django.contrib.contenttypes.models import ContentType
 from sampledatahelper.helper import SampleDataHelper
 
 from taiga.users.models import *
-from taiga.permissions.permissions import ANON_PERMISSIONS
+from taiga.permissions.choices import ANON_PERMISSIONS
 from taiga.projects.choices import BLOCKED_BY_STAFF
+from taiga.external_apps.models import Application, ApplicationToken
 from taiga.projects.models import *
+from taiga.projects.epics.models import *
 from taiga.projects.milestones.models import *
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.services.stats import get_stats_for_project
@@ -108,15 +110,20 @@ NUM_PROJECTS =getattr(settings, "SAMPLE_DATA_NUM_PROJECTS",  4)
 NUM_EMPTY_PROJECTS = getattr(settings, "SAMPLE_DATA_NUM_EMPTY_PROJECTS", 2)
 NUM_BLOCKED_PROJECTS = getattr(settings, "SAMPLE_DATA_NUM_BLOCKED_PROJECTS", 1)
 NUM_MILESTONES = getattr(settings, "SAMPLE_DATA_NUM_MILESTONES", (1, 5))
+NUM_EPICS = getattr(settings, "SAMPLE_DATA_NUM_EPICS", (4, 8))
+NUM_USS_EPICS = getattr(settings, "SAMPLE_DATA_NUM_USS_EPICS", (2, 12))
 NUM_USS = getattr(settings, "SAMPLE_DATA_NUM_USS", (3, 7))
 NUM_TASKS_FINISHED = getattr(settings, "SAMPLE_DATA_NUM_TASKS_FINISHED", (1, 5))
 NUM_TASKS = getattr(settings, "SAMPLE_DATA_NUM_TASKS", (0, 4))
 NUM_USS_BACK = getattr(settings, "SAMPLE_DATA_NUM_USS_BACK", (8, 20))
 NUM_ISSUES = getattr(settings, "SAMPLE_DATA_NUM_ISSUES", (12, 25))
-NUM_ATTACHMENTS = getattr(settings, "SAMPLE_DATA_NUM_ATTACHMENTS", (0, 4))
+NUM_WIKI_LINKS = getattr(settings, "SAMPLE_DATA_NUM_WIKI_LINKS", (0, 15))
+NUM_ATTACHMENTS = getattr(settings, "SAMPLE_DATA_NUM_ATTACHMENTS", (1, 4))
 NUM_LIKES = getattr(settings, "SAMPLE_DATA_NUM_LIKES", (0, 10))
 NUM_VOTES = getattr(settings, "SAMPLE_DATA_NUM_VOTES", (0, 10))
 NUM_WATCHERS = getattr(settings, "SAMPLE_DATA_NUM_PROJECT_WATCHERS", (0, 8))
+NUM_APPLICATIONS = getattr(settings, "SAMPLE_DATA_NUM_APPLICATIONS", (1, 3))
+NUM_APPLICATIONS_TOKENS = getattr(settings, "SAMPLE_DATA_NUM_APPLICATIONS_TOKENS", (1, 3))
 FEATURED_PROJECTS_POSITIONS = [0, 1, 2]
 LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS = [0, 1, 2]
 
@@ -124,7 +131,7 @@ LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS = [0, 1, 2]
 class Command(BaseCommand):
     sd = SampleDataHelper(seed=12345678901)
 
-    @transaction.atomic
+    #@transaction.atomic
     def handle(self, *args, **options):
         # Prevent events emission when sample data is running
         disconnect_events_signals()
@@ -179,36 +186,43 @@ class Command(BaseCommand):
                                           project=project,
                                           role=role,
                                           is_admin=self.sd.boolean(),
-                                          token=''.join(random.sample('abcdef0123456789', 10)))
+                                          token=self.sd.hex_chars(10,10))
 
                 if role.computable:
                     computable_project_roles.add(role)
 
-            # added custom attributes
-            if self.sd.boolean:
-                for i in range(1, 4):
-                    UserStoryCustomAttribute.objects.create(name=self.sd.words(1, 3),
-                                                            description=self.sd.words(3, 12),
-                                                            type=self.sd.choice(TYPES_CHOICES)[0],
-                                                            project=project,
-                                                            order=i)
-            if self.sd.boolean:
-                for i in range(1, 4):
-                    TaskCustomAttribute.objects.create(name=self.sd.words(1, 3),
+            # If the project isn't empty
+            if x not in empty_projects_range:
+                # added custom attributes
+                names = set([self.sd.words(1, 3) for i in range(1, 6)])
+                for name in names:
+                    EpicCustomAttribute.objects.create(name=name,
                                                        description=self.sd.words(3, 12),
                                                        type=self.sd.choice(TYPES_CHOICES)[0],
                                                        project=project,
                                                        order=i)
-            if self.sd.boolean:
-                for i in range(1, 4):
-                    IssueCustomAttribute.objects.create(name=self.sd.words(1, 3),
+                names = set([self.sd.words(1, 3) for i in range(1, 6)])
+                for name in names:
+                    UserStoryCustomAttribute.objects.create(name=name,
+                                                            description=self.sd.words(3, 12),
+                                                            type=self.sd.choice(TYPES_CHOICES)[0],
+                                                            project=project,
+                                                            order=i)
+                names = set([self.sd.words(1, 3) for i in range(1, 6)])
+                for name in names:
+                    TaskCustomAttribute.objects.create(name=name,
+                                                       description=self.sd.words(3, 12),
+                                                       type=self.sd.choice(TYPES_CHOICES)[0],
+                                                       project=project,
+                                                       order=i)
+                names = set([self.sd.words(1, 3) for i in range(1, 6)])
+                for name in names:
+                    IssueCustomAttribute.objects.create(name=name,
                                                         description=self.sd.words(3, 12),
                                                         type=self.sd.choice(TYPES_CHOICES)[0],
                                                         project=project,
                                                         order=i)
 
-            # If the project isn't empty
-            if x not in empty_projects_range:
                 start_date = now() - datetime.timedelta(55)
 
                 # create milestones
@@ -243,8 +257,24 @@ class Command(BaseCommand):
                 for y in range(self.sd.int(*NUM_ISSUES)):
                     bug = self.create_bug(project)
 
-                # create a wiki page
-                wiki_page = self.create_wiki(project, "home")
+                # create a wiki pages and wiki links
+                wiki_page = self.create_wiki_page(project, "home")
+
+                for y in range(self.sd.int(*NUM_WIKI_LINKS)):
+                    wiki_link = self.create_wiki_link(project)
+                    if self.sd.boolean():
+                        self.create_wiki_page(project, wiki_link.href)
+
+                # create epics
+                for y in range(self.sd.int(*NUM_EPICS)):
+                    epic = self.create_epic(project)
+
+            project.refresh_from_db()
+
+            # Set color for some tags:
+            for tag in project.tags_colors:
+                if self.sd.boolean():
+                    tag[1] = self.generate_color(tag[0])
 
             # Set a value to total_story_points to show the deadline in the backlog
             project_stats = get_stats_for_project(project)
@@ -270,7 +300,14 @@ class Command(BaseCommand):
                                                attached_file=attached_file)
         return attachment
 
-    def create_wiki(self, project, slug):
+
+    def create_wiki_link(self, project, title=None):
+        wiki_link = WikiLink.objects.create(project=project,
+                                            title=title or self.sd.words(1, 3))
+        return wiki_link
+
+
+    def create_wiki_page(self, project, slug):
         wiki_page = WikiPage.objects.create(project=project,
                                             slug=slug,
                                             content=self.sd.paragraphs(3,15),
@@ -323,7 +360,7 @@ class Command(BaseCommand):
         bug.save()
 
         custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
-                                      in project.issuecustomattributes.all() if self.sd.boolean()}
+                                      in project.issuecustomattributes.all().order_by('id') if self.sd.boolean()}
         if custom_attributes_values:
             bug.custom_attributes_values.attributes_values = custom_attributes_values
             bug.custom_attributes_values.save()
@@ -375,7 +412,7 @@ class Command(BaseCommand):
         task.save()
 
         custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
-                                       in project.taskcustomattributes.all() if self.sd.boolean()}
+                                       in project.taskcustomattributes.all().order_by('id') if self.sd.boolean()}
         if custom_attributes_values:
             task.custom_attributes_values.attributes_values = custom_attributes_values
             task.custom_attributes_values.save()
@@ -423,7 +460,7 @@ class Command(BaseCommand):
         us.save()
 
         custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
-                                 in project.userstorycustomattributes.all() if self.sd.boolean()}
+                                 in project.userstorycustomattributes.all().order_by('id') if self.sd.boolean()}
         if custom_attributes_values:
             us.custom_attributes_values.attributes_values = custom_attributes_values
             us.custom_attributes_values.save()
@@ -470,6 +507,63 @@ class Command(BaseCommand):
 
         return milestone
 
+    def create_epic(self, project):
+        epic = Epic.objects.create(subject=self.sd.choice(SUBJECT_CHOICES),
+                                 project=project,
+                                 owner=self.sd.db_object_from_queryset(
+                                         project.memberships.filter(user__isnull=False)).user,
+                                 description=self.sd.paragraph(),
+                                 status=self.sd.db_object_from_queryset(project.epic_statuses.filter(
+                                                                        is_closed=False)),
+                                 tags=self.sd.words(1, 3).split(" "))
+        epic.save()
+
+        custom_attributes_values = {str(ca.id): self.get_custom_attributes_value(ca.type) for ca
+                                    in project.epiccustomattributes.all().order_by("id") if self.sd.boolean()}
+        if custom_attributes_values:
+            epic.custom_attributes_values.attributes_values = custom_attributes_values
+            epic.custom_attributes_values.save()
+
+        for i in range(self.sd.int(*NUM_ATTACHMENTS)):
+            attachment = self.create_attachment(epic, i+1)
+
+        if self.sd.choice([True, True, False, True, True]):
+            epic.assigned_to = self.sd.db_object_from_queryset(project.memberships.filter(
+                                                                     user__isnull=False)).user
+            epic.save()
+
+        take_snapshot(epic,
+                      comment=self.sd.paragraph(),
+                      user=epic.owner)
+
+        # Add history entry
+        epic.status=self.sd.db_object_from_queryset(project.epic_statuses.filter(is_closed=False))
+        epic.save()
+        take_snapshot(epic,
+                      comment=self.sd.paragraph(),
+                      user=epic.owner)
+
+        self.create_votes(epic)
+        self.create_watchers(epic)
+
+        if self.sd.choice([True, True, False, True, True]):
+            filters = {}
+            if self.sd.choice([True, True, False, True, True]):
+                filters = {"project": epic.project}
+            n = self.sd.choice(list(range(self.sd.int(*NUM_USS_EPICS))))
+            user_stories = UserStory.objects.filter(**filters).order_by("?")[:n]
+            for idx, us in enumerate(list(user_stories)):
+                RelatedUserStory.objects.create(epic=epic,
+                                                user_story=us,
+                                                order=idx+1)
+
+        # Add history entry
+        take_snapshot(epic,
+                      comment=self.sd.paragraph(),
+                      user=epic.owner)
+
+        return epic
+
     def create_project(self, counter, is_private=None, blocked_code=None):
         if is_private is None:
             is_private=self.sd.boolean()
@@ -479,7 +573,7 @@ class Command(BaseCommand):
         project = Project.objects.create(slug='project-%s'%(counter),
                                          name='Project Example {0}'.format(counter),
                                          description='Project example {0} description'.format(counter),
-                                         owner=random.choice(self.users),
+                                         owner=self.sd.choice(self.users),
                                          is_private=is_private,
                                          anon_permissions=anon_permissions,
                                          public_permissions=public_permissions,
@@ -492,6 +586,7 @@ class Command(BaseCommand):
                                          blocked_code=blocked_code)
 
         project.is_kanban_activated = True
+        project.is_epics_activated = True
         project.save()
         take_snapshot(project, user=project.owner)
 
@@ -509,7 +604,7 @@ class Command(BaseCommand):
         user = User.objects.create(username=username,
                                    full_name=full_name,
                                    email=email,
-                                   token=''.join(random.sample('abcdef0123456789', 10)),
+                                   token=self.sd.hex_chars(10,10),
                                    color=self.sd.choice(COLOR_CHOICES))
 
         user.set_password('123123')
@@ -534,3 +629,8 @@ class Command(BaseCommand):
                 obj.add_watcher(user)
             else:
                 obj.add_watcher(user, notify_level)
+
+    def generate_color(self, tag):
+        color = sha1(tag.encode("utf-8")).hexdigest()[0:6]
+        return "#{}".format(color)
+

@@ -16,131 +16,165 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 from django.utils.translation import ugettext as _
-from django.db.models import Q
 
 from taiga.base.api import serializers
-from taiga.base.fields import JsonField
-from taiga.base.fields import PgArrayField
-from taiga.base.fields import TagsField
-from taiga.base.fields import TagsColorsField
+from taiga.base.fields import Field, MethodField, I18NField
 
-from taiga.projects.notifications.choices import NotifyLevel
-from taiga.users.services import get_photo_or_gravatar_url
-from taiga.users.serializers import UserSerializer
+from taiga.permissions import services as permissions_services
+from taiga.users.services import get_photo_url, get_user_photo_url
+from taiga.users.gravatar import get_gravatar_id, get_user_gravatar_id
 from taiga.users.serializers import UserBasicInfoSerializer
-from taiga.users.serializers import ProjectRoleSerializer
-from taiga.users.validators import RoleExistsValidator
 
-from taiga.permissions.service import get_user_project_permissions
-from taiga.permissions.service import is_project_admin, is_project_owner
-from taiga.projects.mixins.serializers import ValidateDuplicatedNameInProjectMixin
+from taiga.permissions.services import calculate_permissions
+from taiga.permissions.services import is_project_admin, is_project_owner
 
-from . import models
 from . import services
-from .notifications.mixins import WatchedResourceModelSerializer
-from .validators import ProjectExistsValidator
-from .custom_attributes.serializers import UserStoryCustomAttributeSerializer
-from .custom_attributes.serializers import TaskCustomAttributeSerializer
-from .custom_attributes.serializers import IssueCustomAttributeSerializer
-from .likes.mixins.serializers import FanResourceSerializerMixin
+from .notifications.choices import NotifyLevel
 
 
 ######################################################
-## Custom values for selectors
+# Custom values for selectors
 ######################################################
 
-class PointsSerializer(ValidateDuplicatedNameInProjectMixin):
-    class Meta:
-        model = models.Points
-        i18n_fields = ("name",)
+class EpicStatusSerializer(serializers.LightSerializer):
+    id = Field()
+    name = I18NField()
+    slug = Field()
+    order = Field()
+    is_closed = Field()
+    color = Field()
+    project = Field(attr="project_id")
 
 
-class UserStoryStatusSerializer(ValidateDuplicatedNameInProjectMixin):
-    class Meta:
-        model = models.UserStoryStatus
-        i18n_fields = ("name",)
+class UserStoryStatusSerializer(serializers.LightSerializer):
+    id = Field()
+    name = I18NField()
+    slug = Field()
+    order = Field()
+    is_closed = Field()
+    is_archived = Field()
+    color = Field()
+    wip_limit = Field()
+    project = Field(attr="project_id")
 
 
-class BasicUserStoryStatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.UserStoryStatus
-        i18n_fields = ("name",)
-        fields = ("name", "color")
+class PointsSerializer(serializers.LightSerializer):
+    id = Field()
+    name = I18NField()
+    order = Field()
+    value = Field()
+    project = Field(attr="project_id")
 
 
-class TaskStatusSerializer(ValidateDuplicatedNameInProjectMixin):
-    class Meta:
-        model = models.TaskStatus
-        i18n_fields = ("name",)
+class TaskStatusSerializer(serializers.LightSerializer):
+    id = Field()
+    name = I18NField()
+    slug = Field()
+    order = Field()
+    is_closed = Field()
+    color = Field()
+    project = Field(attr="project_id")
 
 
-class BasicTaskStatusSerializerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.TaskStatus
-        i18n_fields = ("name",)
-        fields = ("name", "color")
+class SeveritySerializer(serializers.LightSerializer):
+    id = Field()
+    name = I18NField()
+    order = Field()
+    color = Field()
+    project = Field(attr="project_id")
 
 
-class SeveritySerializer(ValidateDuplicatedNameInProjectMixin):
-    class Meta:
-        model = models.Severity
-        i18n_fields = ("name",)
+class PrioritySerializer(serializers.LightSerializer):
+    id = Field()
+    name = I18NField()
+    order = Field()
+    color = Field()
+    project = Field(attr="project_id")
 
 
-class PrioritySerializer(ValidateDuplicatedNameInProjectMixin):
-    class Meta:
-        model = models.Priority
-        i18n_fields = ("name",)
+class IssueStatusSerializer(serializers.LightSerializer):
+    id = Field()
+    name = I18NField()
+    slug = Field()
+    order = Field()
+    is_closed = Field()
+    color = Field()
+    project = Field(attr="project_id")
 
 
-class IssueStatusSerializer(ValidateDuplicatedNameInProjectMixin):
-    class Meta:
-        model = models.IssueStatus
-        i18n_fields = ("name",)
-
-
-class BasicIssueStatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.IssueStatus
-        i18n_fields = ("name",)
-        fields = ("name", "color")
-
-
-class IssueTypeSerializer(ValidateDuplicatedNameInProjectMixin):
-    class Meta:
-        model = models.IssueType
-        i18n_fields = ("name",)
+class IssueTypeSerializer(serializers.LightSerializer):
+    id = Field()
+    name = I18NField()
+    order = Field()
+    color = Field()
+    project = Field(attr="project_id")
 
 
 ######################################################
-## Members
+# Members
 ######################################################
 
-class MembershipSerializer(serializers.ModelSerializer):
-    role_name = serializers.CharField(source='role.name', required=False, read_only=True, i18n=True)
-    full_name = serializers.CharField(source='user.get_full_name', required=False, read_only=True)
-    user_email = serializers.EmailField(source='user.email', required=False, read_only=True)
-    is_user_active = serializers.BooleanField(source='user.is_active', required=False,
-                                              read_only=True)
-    email = serializers.EmailField(required=True)
-    color = serializers.CharField(source='user.color', required=False, read_only=True)
-    photo = serializers.SerializerMethodField("get_photo")
-    project_name = serializers.SerializerMethodField("get_project_name")
-    project_slug = serializers.SerializerMethodField("get_project_slug")
-    invited_by = UserBasicInfoSerializer(read_only=True)
-    is_owner = serializers.SerializerMethodField("get_is_owner")
+class MembershipDictSerializer(serializers.LightDictSerializer):
+    role = Field()
+    role_name = Field()
+    full_name = Field()
+    full_name_display = MethodField()
+    is_active = Field()
+    id = Field()
+    color = Field()
+    username = Field()
+    photo = MethodField()
+    gravatar_id = MethodField()
 
-    class Meta:
-        model = models.Membership
-        # IMPORTANT: Maintain the MembershipAdminSerializer Meta up to date
-        # with this info (excluding here user_email and email)
-        read_only_fields = ("user",)
-        exclude = ("token", "user_email", "email")
+    def get_full_name_display(self, obj):
+        return obj["full_name"] or obj["username"] or obj["email"]
 
-    def get_photo(self, project):
-        return get_photo_or_gravatar_url(project.user)
+    def get_photo(self, obj):
+        return get_photo_url(obj['photo'])
+
+    def get_gravatar_id(self, obj):
+        return get_gravatar_id(obj['email'])
+
+
+class MembershipSerializer(serializers.LightSerializer):
+    id = Field()
+    user = Field(attr="user_id")
+    project = Field(attr="project_id")
+    role = Field(attr="role_id")
+    is_admin = Field()
+    created_at = Field()
+    invited_by = Field(attr="invited_by_id")
+    invitation_extra_text = Field()
+    user_order = Field()
+    role_name = MethodField()
+    full_name = MethodField()
+    is_user_active = MethodField()
+    color = MethodField()
+    photo = MethodField()
+    gravatar_id = MethodField()
+    project_name = MethodField()
+    project_slug = MethodField()
+    invited_by = UserBasicInfoSerializer()
+    is_owner = MethodField()
+
+    def get_role_name(self, obj):
+        return obj.role.name if obj.role else None
+
+    def get_full_name(self, obj):
+        return obj.user.get_full_name() if obj.user else None
+
+    def get_is_user_active(self, obj):
+        return obj.user.is_active if obj.user else False
+
+    def get_color(self, obj):
+        return obj.user.color if obj.user else None
+
+    def get_photo(self, obj):
+        return get_user_photo_url(obj.user)
+
+    def get_gravatar_id(self, obj):
+        return get_user_gravatar_id(obj.user)
 
     def get_project_name(self, obj):
         return obj.project.name if obj and obj.project else ""
@@ -152,130 +186,124 @@ class MembershipSerializer(serializers.ModelSerializer):
         return (obj and obj.user_id and obj.project_id and obj.project.owner_id and
                 obj.user_id == obj.project.owner_id)
 
-    def validate_email(self, attrs, source):
-        project = attrs.get("project", None)
-        if project is None:
-            project = self.object.project
-
-        email = attrs[source]
-
-        qs = models.Membership.objects.all()
-
-        # If self.object is not None, the serializer is in update
-        # mode, and for it, it should exclude self.
-        if self.object:
-            qs = qs.exclude(pk=self.object.pk)
-
-        qs = qs.filter(Q(project_id=project.id, user__email=email) |
-                       Q(project_id=project.id, email=email))
-
-        if qs.count() > 0:
-            raise serializers.ValidationError(_("Email address is already taken"))
-
-        return attrs
-
-    def validate_role(self, attrs, source):
-        project = attrs.get("project", None)
-        if project is None:
-            project = self.object.project
-
-        role = attrs[source]
-
-        if project.roles.filter(id=role.id).count() == 0:
-            raise serializers.ValidationError(_("Invalid role for the project"))
-
-        return attrs
-
-    def validate_is_admin(self, attrs, source):
-        project = attrs.get("project", None)
-        if project is None:
-            project = self.object.project
-
-        if (self.object and self.object.user):
-            if self.object.user.id == project.owner_id and attrs[source] != True:
-                raise serializers.ValidationError(_("The project owner must be admin."))
-
-            if not services.project_has_valid_admins(project, exclude_user=self.object.user):
-                raise serializers.ValidationError(_("At least one user must be an active admin for this project."))
-
-        return attrs
-
 
 class MembershipAdminSerializer(MembershipSerializer):
-    class Meta:
-        model = models.Membership
-        # IMPORTANT: Maintain the MembershipSerializer Meta up to date
-        # with this info (excluding there user_email and email)
-        read_only_fields = ("user",)
-        exclude = ("token",)
+    email = Field()
+    user_email = MethodField()
 
+    def get_user_email(self, obj):
+        return obj.user.email if obj.user else None
 
-class MemberBulkSerializer(RoleExistsValidator, serializers.Serializer):
-    email = serializers.EmailField()
-    role_id = serializers.IntegerField()
-
-
-class MembersBulkSerializer(ProjectExistsValidator, serializers.Serializer):
-    project_id = serializers.IntegerField()
-    bulk_memberships = MemberBulkSerializer(many=True)
-    invitation_extra_text = serializers.CharField(required=False, max_length=255)
-
-
-class ProjectMemberSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(source="user.id", read_only=True)
-    username = serializers.CharField(source='user.username', read_only=True)
-    full_name = serializers.CharField(source='user.full_name', read_only=True)
-    full_name_display = serializers.CharField(source='user.get_full_name', read_only=True)
-    color = serializers.CharField(source='user.color', read_only=True)
-    photo = serializers.SerializerMethodField("get_photo")
-    is_active = serializers.BooleanField(source='user.is_active', read_only=True)
-    role_name = serializers.CharField(source='role.name', read_only=True, i18n=True)
-
-    class Meta:
-        model = models.Membership
-        exclude = ("project", "email", "created_at", "token", "invited_by", "invitation_extra_text",
-                   "user_order")
-
-    def get_photo(self, membership):
-        return get_photo_or_gravatar_url(membership.user)
+    # IMPORTANT: Maintain the MembershipSerializer Meta up to date
+    # with this info (excluding there user_email and email)
 
 
 ######################################################
-## Projects
+# Projects
 ######################################################
 
-class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializer,
-                        serializers.ModelSerializer):
-    anon_permissions = PgArrayField(required=False)
-    public_permissions = PgArrayField(required=False)
-    my_permissions = serializers.SerializerMethodField("get_my_permissions")
+class ProjectSerializer(serializers.LightSerializer):
+    id = Field()
+    name = Field()
+    slug = Field()
+    description = Field()
+    created_date = Field()
+    modified_date = Field()
+    owner = MethodField()
+    members = MethodField()
+    total_milestones = Field()
+    total_story_points = Field()
+    is_epics_activated = Field()
+    is_backlog_activated = Field()
+    is_kanban_activated = Field()
+    is_wiki_activated = Field()
+    is_issues_activated = Field()
+    videoconferences = Field()
+    videoconferences_extra_data = Field()
+    creation_template = Field(attr="creation_template_id")
+    is_private = Field()
+    anon_permissions = Field()
+    public_permissions = Field()
+    is_featured = Field()
+    is_looking_for_people = Field()
+    looking_for_people_note = Field()
+    blocked_code = Field()
+    totals_updated_datetime = Field()
+    total_fans = Field()
+    total_fans_last_week = Field()
+    total_fans_last_month = Field()
+    total_fans_last_year = Field()
+    total_activity = Field()
+    total_activity_last_week = Field()
+    total_activity_last_month = Field()
+    total_activity_last_year = Field()
 
-    owner = UserBasicInfoSerializer(read_only=True)
-    i_am_owner = serializers.SerializerMethodField("get_i_am_owner")
-    i_am_admin = serializers.SerializerMethodField("get_i_am_admin")
-    i_am_member = serializers.SerializerMethodField("get_i_am_member")
+    tags = Field()
+    tags_colors = MethodField()
 
-    tags = TagsField(default=[], required=False)
-    tags_colors = TagsColorsField(required=False)
+    default_epic_status = Field(attr="default_epic_status_id")
+    default_points = Field(attr="default_points_id")
+    default_us_status = Field(attr="default_us_status_id")
+    default_task_status = Field(attr="default_task_status_id")
+    default_priority = Field(attr="default_priority_id")
+    default_severity = Field(attr="default_severity_id")
+    default_issue_status = Field(attr="default_issue_status_id")
+    default_issue_type = Field(attr="default_issue_type_id")
 
-    notify_level = serializers.SerializerMethodField("get_notify_level")
-    total_closed_milestones = serializers.SerializerMethodField("get_total_closed_milestones")
-    total_watchers = serializers.SerializerMethodField("get_total_watchers")
+    my_permissions = MethodField()
 
-    logo_small_url = serializers.SerializerMethodField("get_logo_small_url")
-    logo_big_url = serializers.SerializerMethodField("get_logo_big_url")
+    i_am_owner = MethodField()
+    i_am_admin = MethodField()
+    i_am_member = MethodField()
 
-    class Meta:
-        model = models.Project
-        read_only_fields = ("created_date", "modified_date", "slug", "blocked_code")
-        exclude = ("logo", "last_us_ref", "last_task_ref", "last_issue_ref",
-                   "issues_csv_uuid", "tasks_csv_uuid", "userstories_csv_uuid",
-                   "transfer_token")
+    notify_level = MethodField()
+    total_closed_milestones = MethodField()
+
+    is_watcher = MethodField()
+    total_watchers = MethodField()
+
+    logo_small_url = MethodField()
+    logo_big_url = MethodField()
+
+    is_fan = Field(attr="is_fan_attr")
+
+    def get_members(self, obj):
+        assert hasattr(obj, "members_attr"), "instance must have a members_attr attribute"
+        if obj.members_attr is None:
+            return []
+
+        return [m.get("id") for m in obj.members_attr if m["id"] is not None]
+
+    def get_i_am_member(self, obj):
+        assert hasattr(obj, "members_attr"), "instance must have a members_attr attribute"
+        if obj.members_attr is None:
+            return False
+
+        if "request" in self.context:
+            user = self.context["request"].user
+            user_ids = [m.get("id") for m in obj.members_attr if m["id"] is not None]
+            if not user.is_anonymous() and user.id in user_ids:
+                return True
+
+        return False
+
+    def get_tags_colors(self, obj):
+        return dict(obj.tags_colors)
 
     def get_my_permissions(self, obj):
         if "request" in self.context:
-            return get_user_project_permissions(self.context["request"].user, obj)
+            user = self.context["request"].user
+            return calculate_permissions(is_authenticated=user.is_authenticated(),
+                                         is_superuser=user.is_superuser,
+                                         is_member=self.get_i_am_member(obj),
+                                         is_admin=self.get_i_am_admin(obj),
+                                         role_permissions=obj.my_role_permissions_attr,
+                                         anon_permissions=obj.anon_permissions,
+                                         public_permissions=obj.public_permissions)
         return []
+
+    def get_owner(self, obj):
+        return UserBasicInfoSerializer(obj.owner).data
 
     def get_i_am_owner(self, obj):
         if "request" in self.context:
@@ -287,35 +315,35 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
             return is_project_admin(self.context["request"].user, obj)
         return False
 
-    def get_i_am_member(self, obj):
-        if "request" in self.context:
-            user = self.context["request"].user
-            if not user.is_anonymous() and user.cached_membership_for_project(obj):
-                return True
-        return False
-
     def get_total_closed_milestones(self, obj):
-        # The "closed_milestone" attribute can be attached in the get_queryset method of the viewset.
-        qs_closed_milestones = getattr(obj, "closed_milestones", None)
-        if qs_closed_milestones is not None:
-            return len(qs_closed_milestones)
+        assert hasattr(obj, "closed_milestones_attr"), "instance must have a closed_milestones_attr attribute"
+        return obj.closed_milestones_attr
 
-        return obj.milestones.filter(closed=True).count()
-
-    def get_notify_level(self, obj):
-        if "request" in self.context:
-            user = self.context["request"].user
-            return user.is_authenticated() and user.get_notify_level(obj)
-
-        return None
+    def get_is_watcher(self, obj):
+        assert hasattr(obj, "notify_policies_attr"), "instance must have a notify_policies_attr attribute"
+        np = self.get_notify_level(obj)
+        return np is not None and np != NotifyLevel.none
 
     def get_total_watchers(self, obj):
-        # The "valid_notify_policies" attribute can be attached in the get_queryset method of the viewset.
-        qs_valid_notify_policies = getattr(obj, "valid_notify_policies", None)
-        if qs_valid_notify_policies is not None:
-            return len(qs_valid_notify_policies)
+        assert hasattr(obj, "notify_policies_attr"), "instance must have a notify_policies_attr attribute"
+        if obj.notify_policies_attr is None:
+            return 0
 
-        return obj.notify_policies.exclude(notify_level=NotifyLevel.none).count()
+        valid_notify_policies = [np for np in obj.notify_policies_attr if np["notify_level"] != NotifyLevel.none]
+        return len(valid_notify_policies)
+
+    def get_notify_level(self, obj):
+        assert hasattr(obj, "notify_policies_attr"), "instance must have a notify_policies_attr attribute"
+        if obj.notify_policies_attr is None:
+            return None
+
+        if "request" in self.context:
+            user = self.context["request"].user
+            for np in obj.notify_policies_attr:
+                if np["user_id"] == user.id:
+                    return np["notify_level"]
+
+        return None
 
     def get_logo_small_url(self, obj):
         return services.get_logo_small_thumbnail_url(obj)
@@ -325,94 +353,141 @@ class ProjectSerializer(FanResourceSerializerMixin, WatchedResourceModelSerializ
 
 
 class ProjectDetailSerializer(ProjectSerializer):
-    us_statuses = UserStoryStatusSerializer(many=True, required=False)       # User Stories
-    points = PointsSerializer(many=True, required=False)
+    epic_statuses = Field(attr="epic_statuses_attr")
+    us_statuses = Field(attr="userstory_statuses_attr")
+    points = Field(attr="points_attr")
+    task_statuses = Field(attr="task_statuses_attr")
+    issue_statuses = Field(attr="issue_statuses_attr")
+    issue_types = Field(attr="issue_types_attr")
+    priorities = Field(attr="priorities_attr")
+    severities = Field(attr="severities_attr")
+    epic_custom_attributes = Field(attr="epic_custom_attributes_attr")
+    userstory_custom_attributes = Field(attr="userstory_custom_attributes_attr")
+    task_custom_attributes = Field(attr="task_custom_attributes_attr")
+    issue_custom_attributes = Field(attr="issue_custom_attributes_attr")
+    roles = Field(attr="roles_attr")
+    members = MethodField()
+    total_memberships = MethodField()
+    is_out_of_owner_limits = MethodField()
 
-    task_statuses = TaskStatusSerializer(many=True, required=False)          # Tasks
+    # Admin fields
+    is_private_extra_info = MethodField()
+    max_memberships = MethodField()
+    epics_csv_uuid = Field()
+    userstories_csv_uuid = Field()
+    tasks_csv_uuid = Field()
+    issues_csv_uuid = Field()
+    transfer_token = Field()
+    milestones = MethodField()
 
-    issue_statuses = IssueStatusSerializer(many=True, required=False)
-    issue_types = IssueTypeSerializer(many=True, required=False)
-    priorities = PrioritySerializer(many=True, required=False)               # Issues
-    severities = SeveritySerializer(many=True, required=False)
+    def get_milestones(self, obj):
+        assert hasattr(obj, "milestones_attr"), "instance must have a milestones_attr attribute"
+        if obj.milestones_attr is None:
+            return []
 
-    userstory_custom_attributes = UserStoryCustomAttributeSerializer(source="userstorycustomattributes",
-                                                                     many=True, required=False)
-    task_custom_attributes = TaskCustomAttributeSerializer(source="taskcustomattributes",
-                                                           many=True, required=False)
-    issue_custom_attributes = IssueCustomAttributeSerializer(source="issuecustomattributes",
-                                                             many=True, required=False)
+        return obj.milestones_attr
 
-    roles = ProjectRoleSerializer(source="roles", many=True, read_only=True)
-    members = serializers.SerializerMethodField(method_name="get_members")
-    total_memberships = serializers.SerializerMethodField(method_name="get_total_memberships")
-    is_out_of_owner_limits = serializers.SerializerMethodField(method_name="get_is_out_of_owner_limits")
+    def to_value(self, instance):
+        # Name attributes must be translated
+        for attr in ["epic_statuses_attr", "userstory_statuses_attr", "points_attr", "task_statuses_attr",
+                     "issue_statuses_attr", "issue_types_attr", "priorities_attr", "severities_attr",
+                     "epic_custom_attributes_attr", "userstory_custom_attributes_attr",
+                     "task_custom_attributes_attr", "issue_custom_attributes_attr", "roles_attr"]:
+
+            assert hasattr(instance, attr), "instance must have a {} attribute".format(attr)
+            val = getattr(instance, attr)
+            if val is None:
+                continue
+
+            for elem in val:
+                elem["name"] = _(elem["name"])
+
+        ret = super().to_value(instance)
+
+        admin_fields = [
+            "epics_csv_uuid", "userstories_csv_uuid", "tasks_csv_uuid", "issues_csv_uuid",
+            "is_private_extra_info", "max_memberships", "transfer_token",
+        ]
+
+        is_admin_user = False
+        if "request" in self.context:
+            user = self.context["request"].user
+            is_admin_user = permissions_services.is_project_admin(user, instance)
+
+        if not is_admin_user:
+            for admin_field in admin_fields:
+                del(ret[admin_field])
+
+        return ret
 
     def get_members(self, obj):
-        qs = obj.memberships.filter(user__isnull=False)
-        qs = qs.extra(select={"complete_user_name":"concat(full_name, username)"})
-        qs = qs.order_by("complete_user_name")
-        qs = qs.select_related("role", "user")
-        serializer = ProjectMemberSerializer(qs, many=True)
-        return serializer.data
+        assert hasattr(obj, "members_attr"), "instance must have a members_attr attribute"
+        if obj.members_attr is None:
+            return []
+
+        return MembershipDictSerializer([m for m in obj.members_attr if m['id'] is not None], many=True).data
 
     def get_total_memberships(self, obj):
-        return services.get_total_project_memberships(obj)
+        if obj.members_attr is None:
+            return 0
+
+        return len(obj.members_attr)
 
     def get_is_out_of_owner_limits(self, obj):
-        return services.check_if_project_is_out_of_owner_limits(obj)
-
-
-class ProjectDetailAdminSerializer(ProjectDetailSerializer):
-    is_private_extra_info = serializers.SerializerMethodField(method_name="get_is_private_extra_info")
-    max_memberships = serializers.SerializerMethodField(method_name="get_max_memberships")
-
-    class Meta:
-        model = models.Project
-        read_only_fields = ("created_date", "modified_date", "slug", "blocked_code")
-        exclude = ("logo", "last_us_ref", "last_task_ref", "last_issue_ref")
+        assert hasattr(obj, "private_projects_same_owner_attr"), ("instance must have a private_projects_same"
+                                                                  "_owner_attr attribute")
+        assert hasattr(obj, "public_projects_same_owner_attr"), ("instance must have a public_projects_same_"
+                                                                 "owner_attr attribute")
+        return services.check_if_project_is_out_of_owner_limits(
+            obj,
+            current_memberships=self.get_total_memberships(obj),
+            current_private_projects=obj.private_projects_same_owner_attr,
+            current_public_projects=obj.public_projects_same_owner_attr
+        )
 
     def get_is_private_extra_info(self, obj):
-        return services.check_if_project_privacity_can_be_changed(obj)
+        assert hasattr(obj, "private_projects_same_owner_attr"), ("instance must have a private_projects_same_"
+                                                                  "owner_attr attribute")
+        assert hasattr(obj, "public_projects_same_owner_attr"), ("instance must have a public_projects_same"
+                                                                 "_owner_attr attribute")
+        return services.check_if_project_privacity_can_be_changed(
+            obj,
+            current_memberships=self.get_total_memberships(obj),
+            current_private_projects=obj.private_projects_same_owner_attr,
+            current_public_projects=obj.public_projects_same_owner_attr
+        )
 
     def get_max_memberships(self, obj):
         return services.get_max_memberships_for_project(obj)
 
 
 ######################################################
-## Liked
+# Project Templates
 ######################################################
 
-class LikedSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Project
-        fields = ['id', 'name', 'slug']
-
-
-
-######################################################
-## Project Templates
-######################################################
-
-class ProjectTemplateSerializer(serializers.ModelSerializer):
-    default_options = JsonField(required=False, label=_("Default options"))
-    us_statuses = JsonField(required=False, label=_("User story's statuses"))
-    points = JsonField(required=False, label=_("Points"))
-    task_statuses = JsonField(required=False, label=_("Task's statuses"))
-    issue_statuses = JsonField(required=False, label=_("Issue's statuses"))
-    issue_types = JsonField(required=False, label=_("Issue's types"))
-    priorities = JsonField(required=False, label=_("Priorities"))
-    severities = JsonField(required=False, label=_("Severities"))
-    roles = JsonField(required=False, label=_("Roles"))
-
-    class Meta:
-        model = models.ProjectTemplate
-        read_only_fields = ("created_date", "modified_date")
-        i18n_fields = ("name", "description")
-
-######################################################
-## Project order bulk serializers
-######################################################
-
-class UpdateProjectOrderBulkSerializer(ProjectExistsValidator, serializers.Serializer):
-    project_id = serializers.IntegerField()
-    order = serializers.IntegerField()
+class ProjectTemplateSerializer(serializers.LightSerializer):
+    id = Field()
+    name = I18NField()
+    slug = Field()
+    description = I18NField()
+    order = Field()
+    created_date = Field()
+    modified_date = Field()
+    default_owner_role = Field()
+    is_epics_activated = Field()
+    is_backlog_activated = Field()
+    is_kanban_activated = Field()
+    is_wiki_activated = Field()
+    is_issues_activated = Field()
+    videoconferences = Field()
+    videoconferences_extra_data = Field()
+    default_options = Field()
+    epic_statuses = Field()
+    us_statuses = Field()
+    points = Field()
+    task_statuses = Field()
+    issue_statuses = Field()
+    issue_types = Field()
+    priorities = Field()
+    severities = Field()
+    roles = Field()

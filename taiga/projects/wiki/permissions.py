@@ -20,6 +20,8 @@ from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
                                         IsAuthenticated, IsProjectAdmin, AllowAny,
                                         IsSuperUser)
 
+from taiga.permissions.permissions import CommentAndOrUpdatePerm
+
 
 class WikiPagePermission(TaigaResourcePermission):
     enought_perms = IsProjectAdmin() | IsSuperUser()
@@ -27,8 +29,8 @@ class WikiPagePermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_wiki_pages')
     by_slug_perms = HasProjectPerm('view_wiki_pages')
     create_perms = HasProjectPerm('add_wiki_page')
-    update_perms = HasProjectPerm('modify_wiki_page')
-    partial_update_perms = HasProjectPerm('modify_wiki_page')
+    update_perms = CommentAndOrUpdatePerm('modify_wiki_page', 'comment_wiki_page')
+    partial_update_perms = CommentAndOrUpdatePerm('modify_wiki_page', 'comment_wiki_page')
     destroy_perms = HasProjectPerm('delete_wiki_page')
     list_perms = AllowAny()
     render_perms = AllowAny()
@@ -52,3 +54,4 @@ class WikiLinkPermission(TaigaResourcePermission):
     partial_update_perms = HasProjectPerm('modify_wiki_link')
     destroy_perms = HasProjectPerm('delete_wiki_link')
     list_perms = AllowAny()
+    create_wiki_page_perms = HasProjectPerm('add_wiki_page')

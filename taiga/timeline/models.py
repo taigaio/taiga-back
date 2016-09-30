@@ -20,12 +20,11 @@ from django.db import models
 from django_pgjson.fields import JsonField
 from django.utils import timezone
 
-from django.core.exceptions import ValidationError
-
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
 from taiga.projects.models import Project
+
 
 class Timeline(models.Model):
     content_type = models.ForeignKey(ContentType, related_name="content_type_timelines")
@@ -36,11 +35,10 @@ class Timeline(models.Model):
     project = models.ForeignKey(Project, null=True)
     data = JsonField()
     data_content_type = models.ForeignKey(ContentType, related_name="data_timelines")
-    created = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(default=timezone.now, db_index=True)
 
     class Meta:
         index_together = [('content_type', 'object_id', 'namespace'), ]
-
 
 # Register all implementations
 from .timeline_implementations import *

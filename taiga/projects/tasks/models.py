@@ -18,16 +18,16 @@
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from djorm_pgarray.fields import TextArrayField
-
+from taiga.base.utils.time import timestamp_ms
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
-from taiga.base.tags import TaggedMixin
+from taiga.projects.tagging.models import TaggedMixin
 
 
 class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
@@ -54,9 +54,9 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     subject = models.TextField(null=False, blank=False,
                                verbose_name=_("subject"))
 
-    us_order = models.IntegerField(null=False, blank=False, default=1,
+    us_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
                                         verbose_name=_("us order"))
-    taskboard_order = models.IntegerField(null=False, blank=False, default=1,
+    taskboard_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
                                           verbose_name=_("taskboard order"))
 
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
@@ -66,7 +66,8 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     attachments = GenericRelation("attachments.Attachment")
     is_iocaine = models.BooleanField(default=False, null=False, blank=True,
                                      verbose_name=_("is iocaine"))
-    external_reference = TextArrayField(default=None, verbose_name=_("external reference"))
+    external_reference = ArrayField(models.TextField(null=False, blank=False),
+                                    null=True, blank=True, default=None, verbose_name=_("external reference"))
     _importing = None
 
     class Meta:

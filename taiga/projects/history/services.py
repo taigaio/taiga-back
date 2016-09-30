@@ -34,12 +34,9 @@ from collections import namedtuple
 from copy import deepcopy
 from functools import partial
 from functools import wraps
-from functools import lru_cache
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.models import ContentType
-from django.core.paginator import Paginator, InvalidPage
 from django.apps import apps
 from django.db import transaction as tx
 from django_pglocks import advisory_lock
@@ -50,6 +47,25 @@ from taiga.base.utils.diff import make_diff as make_diff_from_dicts
 
 from .models import HistoryType
 
+# Freeze implementatitions
+from .freeze_impl import project_freezer
+from .freeze_impl import milestone_freezer
+from .freeze_impl import epic_freezer
+from .freeze_impl import epic_related_userstory_freezer
+from .freeze_impl import userstory_freezer
+from .freeze_impl import issue_freezer
+from .freeze_impl import task_freezer
+from .freeze_impl import wikipage_freezer
+
+
+from .freeze_impl import project_values
+from .freeze_impl import milestone_values
+from .freeze_impl import epic_values
+from .freeze_impl import epic_related_userstory_values
+from .freeze_impl import userstory_values
+from .freeze_impl import issue_values
+from .freeze_impl import task_values
+from .freeze_impl import wikipage_values
 
 # Type that represents a freezed object
 FrozenObj = namedtuple("FrozenObj", ["key", "snapshot"])
@@ -64,6 +80,7 @@ _values_impl_map = {}
 # Not important fields for models (history entries with only
 # this fields are marked as hidden).
 _not_important_fields = {
+    "epics.epic": frozenset(["epics_order", "user_stories"]),
     "userstories.userstory": frozenset(["backlog_order", "sprint_order", "kanban_order"]),
     "tasks.task": frozenset(["us_order", "taskboard_order"]),
 }
@@ -71,7 +88,7 @@ _not_important_fields = {
 log = logging.getLogger("taiga.history")
 
 
-def make_key_from_model_object(obj:object) -> str:
+def make_key_from_model_object(obj: object) -> str:
     """
     Create unique key from model instance.
     """
@@ -79,7 +96,7 @@ def make_key_from_model_object(obj:object) -> str:
     return "{0}:{1}".format(tn, obj.pk)
 
 
-def get_model_from_key(key:str) -> object:
+def get_model_from_key(key: str) -> object:
     """
     Get model from key
     """
@@ -87,7 +104,7 @@ def get_model_from_key(key:str) -> object:
     return apps.get_model(class_name)
 
 
-def get_pk_from_key(key:str) -> object:
+def get_pk_from_key(key: str) -> object:
     """
     Get pk from key
     """
@@ -95,7 +112,21 @@ def get_pk_from_key(key:str) -> object:
     return pk
 
 
-def register_values_implementation(typename:str, fn=None):
+def get_instance_from_key(key: str) -> object:
+    """
+    Get instance from key
+    """
+    model = get_model_from_key(key)
+    pk = get_pk_from_key(key)
+    try:
+        obj = model.objects.get(pk=pk)
+        return obj
+    except model.DoesNotExist:
+        # Catch simultaneous DELETE request
+        return None
+
+
+def register_values_implementation(typename: str, fn=None):
     """
     Register values implementation for specified typename.
     This function can be used as decorator.
@@ -114,7 +145,7 @@ def register_values_implementation(typename:str, fn=None):
     return _wrapper
 
 
-def register_freeze_implementation(typename:str, fn=None):
+def register_freeze_implementation(typename: str, fn=None):
     """
     Register freeze implementation for specified typename.
     This function can be used as decorator.
@@ -135,7 +166,7 @@ def register_freeze_implementation(typename:str, fn=None):
 
 # Low level api
 
-def freeze_model_instance(obj:object) -> FrozenObj:
+def freeze_model_instance(obj: object) -> FrozenObj:
     """
     Creates a new frozen object from model instance.
 
@@ -165,7 +196,7 @@ def freeze_model_instance(obj:object) -> FrozenObj:
     return FrozenObj(key, snapshot)
 
 
-def is_hidden_snapshot(obj:FrozenDiff) -> bool:
+def is_hidden_snapshot(obj: FrozenDiff) -> bool:
     """
     Check if frozen object is considered
     hidden or not.
@@ -185,7 +216,7 @@ def is_hidden_snapshot(obj:FrozenDiff) -> bool:
     return False
 
 
-def make_diff(oldobj:FrozenObj, newobj:FrozenObj) -> FrozenDiff:
+def make_diff(oldobj: FrozenObj, newobj: FrozenObj) -> FrozenDiff:
     """
     Compute a diff between two frozen objects.
     """
@@ -203,7 +234,7 @@ def make_diff(oldobj:FrozenObj, newobj:FrozenObj) -> FrozenDiff:
     return FrozenDiff(newobj.key, diff, newobj.snapshot)
 
 
-def make_diff_values(typename:str, fdiff:FrozenDiff) -> dict:
+def make_diff_values(typename: str, fdiff: FrozenDiff) -> dict:
     """
     Given a typename and diff, build a values dict for it.
     If no implementation found for typename, warnig is raised in
@@ -228,7 +259,7 @@ def _rebuild_snapshot_from_diffs(keysnapshot, partials):
     return result
 
 
-def get_last_snapshot_for_key(key:str) -> FrozenObj:
+def get_last_snapshot_for_key(key: str) -> FrozenObj:
     entry_model = apps.get_model("history", "HistoryEntry")
 
     # Search last snapshot
@@ -257,17 +288,16 @@ def get_last_snapshot_for_key(key:str) -> FrozenObj:
 
 # Public api
 
-def get_modified_fields(obj:object, last_modifications):
+def get_modified_fields(obj: object, last_modifications):
     """
     Get the modified fields for an object through his last modifications
     """
     key = make_key_from_model_object(obj)
     entry_model = apps.get_model("history", "HistoryEntry")
     history_entries = (entry_model.objects
-                                    .filter(key=key)
-                                    .order_by("-created_at")
-                                    .values_list("diff", flat=True)
-                                    [0:last_modifications])
+                                  .filter(key=key)
+                                  .order_by("-created_at")
+                                  .values_list("diff", flat=True)[0:last_modifications])
 
     modified_fields = []
     for history_entry in history_entries:
@@ -277,7 +307,7 @@ def get_modified_fields(obj:object, last_modifications):
 
 
 @tx.atomic
-def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
+def take_snapshot(obj: object, *, comment: str="", user=None, delete: bool=False):
     """
     Given any model instance with registred content type,
     create new history entry of "change" type.
@@ -287,7 +317,7 @@ def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
     """
 
     key = make_key_from_model_object(obj)
-    with advisory_lock(key) as acquired_key_lock:
+    with advisory_lock("history-"+key):
         typename = get_typename_for_model_class(obj.__class__)
 
         new_fobj = freeze_model_instance(obj)
@@ -300,6 +330,7 @@ def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
         # Determine history type
         if delete:
             entry_type = HistoryType.delete
+            need_real_snapshot = True
         elif new_fobj and not old_fobj:
             entry_type = HistoryType.create
         elif new_fobj and old_fobj:
@@ -311,10 +342,7 @@ def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
 
         # If diff and comment are empty, do
         # not create empty history entry
-        if (not fdiff.diff and not comment
-            and old_fobj is not None
-            and entry_type != HistoryType.delete):
-
+        if (not fdiff.diff and not comment and old_fobj is not None and entry_type != HistoryType.delete):
             return None
 
         fvals = make_diff_values(typename, fdiff)
@@ -326,6 +354,7 @@ def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
 
         kwargs = {
             "user": {"pk": user_id, "name": user_name},
+            "project_id": getattr(obj, 'project_id', getattr(obj, 'id', None)),
             "key": key,
             "type": entry_type,
             "snapshot": fdiff.snapshot if need_real_snapshot else None,
@@ -342,7 +371,7 @@ def take_snapshot(obj:object, *, comment:str="", user=None, delete:bool=False):
 
 # High level query api
 
-def get_history_queryset_by_model_instance(obj:object, types=(HistoryType.change,),
+def get_history_queryset_by_model_instance(obj: object, types=(HistoryType.change,),
                                            include_hidden=False):
     """
     Get one page of history for specified object.
@@ -361,36 +390,26 @@ def prefetch_owners_in_history_queryset(qs):
     user_ids = [u["pk"] for u in qs.values_list("user", flat=True)]
     users = get_user_model().objects.filter(id__in=user_ids)
     users_by_id = {u.id: u for u in users}
-    for history_entry in  qs:
+    for history_entry in qs:
         history_entry.prefetch_owner(users_by_id.get(history_entry.user["pk"], None))
 
     return qs
 
 
-# Freeze implementatitions
-from .freeze_impl import project_freezer
-from .freeze_impl import milestone_freezer
-from .freeze_impl import userstory_freezer
-from .freeze_impl import issue_freezer
-from .freeze_impl import task_freezer
-from .freeze_impl import wikipage_freezer
-
+# Freeze & value register
 register_freeze_implementation("projects.project", project_freezer)
 register_freeze_implementation("milestones.milestone", milestone_freezer,)
+register_freeze_implementation("epics.epic", epic_freezer)
+register_freeze_implementation("epics.relateduserstory", epic_related_userstory_freezer)
 register_freeze_implementation("userstories.userstory", userstory_freezer)
 register_freeze_implementation("issues.issue", issue_freezer)
 register_freeze_implementation("tasks.task", task_freezer)
 register_freeze_implementation("wiki.wikipage", wikipage_freezer)
 
-from .freeze_impl import project_values
-from .freeze_impl import milestone_values
-from .freeze_impl import userstory_values
-from .freeze_impl import issue_values
-from .freeze_impl import task_values
-from .freeze_impl import wikipage_values
-
 register_values_implementation("projects.project", project_values)
 register_values_implementation("milestones.milestone", milestone_values)
+register_values_implementation("epics.epic", epic_values)
+register_values_implementation("epics.relateduserstory", epic_related_userstory_values)
 register_values_implementation("userstories.userstory", userstory_values)
 register_values_implementation("issues.issue", issue_values)
 register_values_implementation("tasks.task", task_values)

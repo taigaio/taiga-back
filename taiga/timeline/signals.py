@@ -36,9 +36,23 @@ def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_d
 
     ct = ContentType.objects.get_for_model(obj)
     if settings.CELERY_ENABLED:
-        connection.on_commit(lambda: push_to_timelines.delay(project_id, user.id, ct.app_label, ct.model, obj.id, event_type, created_datetime, extra_data=extra_data))
+        connection.on_commit(lambda: push_to_timelines.delay(project_id,
+                                                             user.id,
+                                                             ct.app_label,
+                                                             ct.model,
+                                                             obj.id,
+                                                             event_type,
+                                                             created_datetime,
+                                                             extra_data=extra_data))
     else:
-        push_to_timelines(project_id, user.id, ct.app_label, ct.model, obj.id, event_type, created_datetime, extra_data=extra_data)
+        push_to_timelines(project_id,
+                          user.id,
+                          ct.app_label,
+                          ct.model,
+                          obj.id,
+                          event_type,
+                          created_datetime,
+                          extra_data=extra_data)
 
 
 def _clean_description_fields(values_diff):
@@ -50,7 +64,6 @@ def _clean_description_fields(values_diff):
 
 
 def on_new_history_entry(sender, instance, created, **kwargs):
-
     if instance._importing:
         return
 
@@ -86,6 +99,10 @@ def on_new_history_entry(sender, instance, created, **kwargs):
     # Detect deleted comment
     if instance.delete_comment_date:
         extra_data["comment_deleted"] = True
+
+    # Detect edited comment
+    if instance.comment_versions is not None and len(instance.comment_versions)>0:
+        extra_data["comment_edited"] = True
 
     created_datetime = instance.created_at
     _push_to_timelines(project, user, obj, event_type, created_datetime, extra_data=extra_data)

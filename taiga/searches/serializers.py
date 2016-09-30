@@ -16,37 +16,56 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.projects.issues.serializers import IssueSerializer
-from taiga.projects.userstories.serializers import UserStorySerializer
-from taiga.projects.tasks.serializers import TaskSerializer
-from taiga.projects.wiki.serializers import WikiPageSerializer
-
-from taiga.projects.issues.models import Issue
-from taiga.projects.userstories.models import UserStory
-from taiga.projects.tasks.models import Task
-from taiga.projects.wiki.models import WikiPage
+from taiga.base.api import serializers
+from taiga.base.fields import Field, MethodField
 
 
-class IssueSearchResultsSerializer(IssueSerializer):
-    class Meta:
-        model = Issue
-        fields = ('id', 'ref', 'subject', 'status', 'assigned_to')
+class EpicSearchResultsSerializer(serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    subject = Field()
+    status = Field(attr="status_id")
+    assigned_to = Field(attr="assigned_to_id")
 
 
-class TaskSearchResultsSerializer(TaskSerializer):
-    class Meta:
-        model = Task
-        fields = ('id', 'ref', 'subject', 'status', 'assigned_to')
+class UserStorySearchResultsSerializer(serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    subject = Field()
+    status = Field(attr="status_id")
+    total_points = MethodField()
+    milestone_name = MethodField()
+    milestone_slug = MethodField()
+
+    def get_milestone_name(self, obj):
+        return obj.milestone.name if obj.milestone else None
+
+    def get_milestone_slug(self, obj):
+        return obj.milestone.slug if obj.milestone else None
+
+    def get_total_points(self, obj):
+        assert hasattr(obj, "total_points_attr"), \
+            "instance must have a total_points_attr attribute"
+
+        return obj.total_points_attr
 
 
-class UserStorySearchResultsSerializer(UserStorySerializer):
-    class Meta:
-        model = UserStory
-        fields = ('id', 'ref', 'subject', 'status', 'total_points',
-                  'milestone_name', 'milestone_slug')
+class TaskSearchResultsSerializer(serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    subject = Field()
+    status = Field(attr="status_id")
+    assigned_to = Field(attr="assigned_to_id")
 
 
-class WikiPageSearchResultsSerializer(WikiPageSerializer):
-    class Meta:
-        model = WikiPage
-        fields = ('id', 'slug')
+class IssueSearchResultsSerializer(serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    subject = Field()
+    status = Field(attr="status_id")
+    assigned_to = Field(attr="assigned_to_id")
+
+
+class WikiPageSearchResultsSerializer(serializers.LightSerializer):
+    id = Field()
+    slug = Field()

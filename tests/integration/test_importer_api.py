@@ -68,7 +68,7 @@ def test_valid_project_import_without_extra_data(client):
     }
 
     response = client.json.post(url, json.dumps(data))
-    assert response.status_code == 201
+    assert response.status_code == 201, response.data
     must_empty_children = [
         "issues", "user_stories", "us_statuses", "wiki_pages", "priorities",
         "severities", "milestones", "points", "issue_types", "task_statuses",

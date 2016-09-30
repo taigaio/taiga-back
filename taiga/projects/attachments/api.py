@@ -34,6 +34,7 @@ from taiga.projects.history.mixins import HistoryResourceMixin
 
 from . import permissions
 from . import serializers
+from . import validators
 from . import models
 
 
@@ -42,6 +43,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
 
     model = models.Attachment
     serializer_class = serializers.AttachmentSerializer
+    validator_class = validators.AttachmentValidator
     filter_fields = ["project", "object_id"]
 
     content_type = None
@@ -63,6 +65,9 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
             obj.size = obj.attached_file.size
             obj.name = path.basename(obj.attached_file.name)
 
+        if obj.content_object is None:
+            raise exc.WrongArguments(_("Object id issue isn't exists"))
+
         if obj.project_id != obj.content_object.project_id:
             raise exc.WrongArguments(_("Project ID not matches between object and project"))
 
@@ -72,10 +77,16 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
         # NOTE: When destroy an attachment, the content_object change
         #       after and not before
         self.persist_history_snapshot(obj, delete=True)
-        super().pre_delete(obj)
+        super().post_delete(obj)
 
     def get_object_for_snapshot(self, obj):
         return obj.content_object
+
+
+class EpicAttachmentViewSet(BaseAttachmentViewSet):
+    permission_classes = (permissions.EpicAttachmentPermission,)
+    filter_backends = (filters.CanViewEpicAttachmentFilterBackend,)
+    content_type = "epics.epic"
 
 
 class UserStoryAttachmentViewSet(BaseAttachmentViewSet):

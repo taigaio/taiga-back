@@ -28,6 +28,15 @@ class IsAttachmentOwnerPerm(PermissionComponent):
         return False
 
 
+class EpicAttachmentPermission(TaigaResourcePermission):
+    retrieve_perms = HasProjectPerm('view_epics') | IsAttachmentOwnerPerm()
+    create_perms = HasProjectPerm('modify_epic')
+    update_perms = HasProjectPerm('modify_epic') | IsAttachmentOwnerPerm()
+    partial_update_perms = HasProjectPerm('modify_epic') | IsAttachmentOwnerPerm()
+    destroy_perms = HasProjectPerm('modify_epic') | IsAttachmentOwnerPerm()
+    list_perms = AllowAny()
+
+
 class UserStoryAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_us') | IsAttachmentOwnerPerm()
     create_perms = HasProjectPerm('modify_us')
@@ -67,7 +76,9 @@ class WikiAttachmentPermission(TaigaResourcePermission):
 class RawAttachmentPerm(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
         is_owner = IsAttachmentOwnerPerm().check_permissions(request, view, obj)
-        if obj.content_type.app_label == "userstories" and obj.content_type.model == "userstory":
+        if obj.content_type.app_label == "epics" and obj.content_type.model == "epic":
+            return EpicAttachmentPermission(request, view).check_permissions('retrieve', obj) or is_owner
+        elif obj.content_type.app_label == "userstories" and obj.content_type.model == "userstory":
             return UserStoryAttachmentPermission(request, view).check_permissions('retrieve', obj) or is_owner
         elif obj.content_type.app_label == "tasks" and obj.content_type.model == "task":
             return TaskAttachmentPermission(request, view).check_permissions('retrieve', obj) or is_owner

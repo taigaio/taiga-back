@@ -110,7 +110,9 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('projects', '0029_project_is_looking_for_people'),
+        ('likes', '0001_initial'),
         ('timeline', '0004_auto_20150603_1312'),
+        ('likes', '0001_initial'),
     ]
 
     operations = [

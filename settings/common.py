@@ -124,7 +124,7 @@ LANGUAGES = [
     #("mn", "Монгол"),  # Mongolian
     #("mr", "मराठी"),  # Marathi
     #("my", "မြန်မာ"),  # Burmese
-    #("nb", "Norsk (bokmål)"),  # Norwegian Bokmal
+    ("nb", "Norsk (bokmål)"),  # Norwegian Bokmal
     #("ne", "नेपाली"),  # Nepali
     ("nl", "Nederlands"),  # Dutch
     #("nn", "Norsk (nynorsk)"),  # Norwegian Nynorsk
@@ -300,6 +300,7 @@ INSTALLED_APPS = [
     "taiga.projects.likes",
     "taiga.projects.votes",
     "taiga.projects.milestones",
+    "taiga.projects.epics",
     "taiga.projects.userstories",
     "taiga.projects.tasks",
     "taiga.projects.issues",
@@ -313,6 +314,7 @@ INSTALLED_APPS = [
     "taiga.hooks.github",
     "taiga.hooks.gitlab",
     "taiga.hooks.bitbucket",
+    "taiga.hooks.gogs",
     "taiga.webhooks",
 
     "djmail",
@@ -436,11 +438,14 @@ APP_EXTRA_EXPOSE_HEADERS = [
     "taiga-info-total-opened-milestones",
     "taiga-info-total-closed-milestones",
     "taiga-info-project-memberships",
-    "taiga-info-project-is-private"
+    "taiga-info-project-is-private",
+    "taiga-info-order-updated"
 ]
 
 DEFAULT_PROJECT_TEMPLATE = "scrum"
 PUBLIC_REGISTER_ENABLED = False
+# None or [] values in USER_EMAIL_ALLOWED_DOMAINS means allow any domain
+USER_EMAIL_ALLOWED_DOMAINS = None
 
 SEARCHES_MAX_RESULTS = 150
 
@@ -477,10 +482,6 @@ THUMBNAIL_ALIASES = {
     },
 }
 
-# GRAVATAR_DEFAULT_AVATAR = "img/user-noimage.png"
-GRAVATAR_DEFAULT_AVATAR = ""
-GRAVATAR_AVATAR_SIZE = THN_AVATAR_SIZE
-
 TAGS_PREDEFINED_COLORS = ["#fce94f", "#edd400", "#c4a000", "#8ae234",
                           "#73d216", "#4e9a06", "#d3d7cf", "#fcaf3e",
                           "#f57900", "#ce5c00", "#729fcf", "#3465a4",
@@ -508,6 +509,7 @@ PROJECT_MODULES_CONFIGURATORS = {
     "github": "taiga.hooks.github.services.get_or_generate_config",
     "gitlab": "taiga.hooks.gitlab.services.get_or_generate_config",
     "bitbucket": "taiga.hooks.bitbucket.services.get_or_generate_config",
+    "gogs": "taiga.hooks.gogs.services.get_or_generate_config",
 }
 
 BITBUCKET_VALID_ORIGIN_IPS = ["131.103.20.165", "131.103.20.166", "104.192.143.192/28", "104.192.143.208/28"]

@@ -17,14 +17,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib.auth import get_user_model
-
 from taiga.base.api import serializers
+from taiga.base.fields import Field, MethodField
 
 
-class VoterSerializer(serializers.ModelSerializer):
-    full_name = serializers.CharField(source='get_full_name', required=False)
+class VoterSerializer(serializers.LightSerializer):
+    id = Field()
+    username = Field()
+    full_name = MethodField()
 
-    class Meta:
-        model = get_user_model()
-        fields = ('id', 'username', 'full_name')
+    def get_full_name(self, obj):
+        return obj.get_full_name()

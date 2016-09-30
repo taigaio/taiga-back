@@ -1,4 +1,22 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
@@ -224,16 +242,19 @@ def test_webhook_action_test(client, data):
     ]
 
     with mock.patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
+        _send_request_mock.return_value = data.webhooklog1
         results = helper_test_http_method(client, 'post', url1, None, users)
         assert results == [404, 404, 200]
         assert _send_request_mock.called is True
 
     with mock.patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
+        _send_request_mock.return_value = data.webhooklog1
         results = helper_test_http_method(client, 'post', url2, None, users)
         assert results == [404, 404, 404]
         assert _send_request_mock.called is False
 
     with mock.patch('taiga.webhooks.tasks._send_request') as _send_request_mock:
+        _send_request_mock.return_value = data.webhooklog1
         results = helper_test_http_method(client, 'post', blocked_url, None, users)
         assert results == [404, 404, 451]
         assert _send_request_mock.called is False

@@ -19,48 +19,47 @@
 # This makes all code that import services works and
 # is not the baddest practice ;)
 
-import base64
 import gc
-import os
-
-from django.core.files.storage import default_storage
 
 from taiga.base.utils import json
+from taiga.base.fields import MethodField
 from taiga.timeline.service import get_project_timeline
 from taiga.base.api.fields import get_component
 
 from .. import serializers
 
 
-def render_project(project, outfile, chunk_size = 8190):
+def render_project(project, outfile, chunk_size=8190):
     serializer = serializers.ProjectExportSerializer(project)
     outfile.write(b'{\n')
 
     first_field = True
-    for field_name in serializer.fields.keys():
+    for field_name in serializer._field_map.keys():
         # Avoid writing "," in the last element
         if not first_field:
             outfile.write(b",\n")
         else:
             first_field = False
 
-        field = serializer.fields.get(field_name)
-        field.initialize(parent=serializer, field_name=field_name)
+        field = serializer._field_map.get(field_name)
+        # field.initialize(parent=serializer, field_name=field_name)
 
         # These four "special" fields hava attachments so we use them in a special way
-        if field_name in ["wiki_pages", "user_stories", "tasks", "issues"]:
+        if field_name in ["wiki_pages", "user_stories", "tasks", "issues", "epics"]:
             value = get_component(project, field_name)
             if field_name != "wiki_pages":
-                value = value.select_related('owner', 'status', 'milestone', 'project', 'assigned_to', 'custom_attributes_values')
+                value = value.select_related('owner', 'status',
+                                             'project', 'assigned_to',
+                                             'custom_attributes_values')
+
+            if field_name in ["user_stories", "tasks", "issues"]:
+                value = value.select_related('milestone')
+
             if field_name == "issues":
                 value = value.select_related('severity', 'priority', 'type')
             value = value.prefetch_related('history_entry', 'attachments')
 
             outfile.write('"{}": [\n'.format(field_name).encode())
-
-            attachments_field = field.fields.pop("attachments", None)
-            if attachments_field:
-                attachments_field.initialize(parent=field, field_name="attachments")
 
             first_item = True
             for item in value.iterator():
@@ -70,47 +69,18 @@ def render_project(project, outfile, chunk_size = 8190):
                 else:
                     first_item = False
 
-
-                dumped_value = json.dumps(field.to_native(item))
-                writing_value = dumped_value[:-1]+ ',\n    "attachments": [\n'
-                outfile.write(writing_value.encode())
-
-                first_attachment = True
-                for attachment in item.attachments.iterator():
-                    # Avoid writing "," in the last element
-                    if not first_attachment:
-                        outfile.write(b",\n")
-                    else:
-                        first_attachment = False
-
-                    # Write all the data expect the serialized file
-                    attachment_serializer = serializers.AttachmentExportSerializer(instance=attachment)
-                    attached_file_serializer = attachment_serializer.fields.pop("attached_file")
-                    dumped_value = json.dumps(attachment_serializer.data)
-                    dumped_value = dumped_value[:-1] + ',\n        "attached_file":{\n            "data":"'
-                    outfile.write(dumped_value.encode())
-
-                    # We write the attached_files by chunks so the memory used is not increased
-                    attachment_file = attachment.attached_file
-                    if default_storage.exists(attachment_file.name):
-                        with default_storage.open(attachment_file.name) as f:
-                            while True:
-                                bin_data = f.read(chunk_size)
-                                if not bin_data:
-                                    break
-
-                                b64_data = base64.b64encode(bin_data)
-                                outfile.write(b64_data)
-
-                    outfile.write('", \n            "name":"{}"}}\n}}'.format(
-                                        os.path.basename(attachment_file.name)).encode())
-
-                outfile.write(b']}')
+                field.many = False
+                dumped_value = json.dumps(field.to_value(item))
+                outfile.write(dumped_value.encode())
                 outfile.flush()
             gc.collect()
             outfile.write(b']')
         else:
-            value = field.field_to_native(project, field_name)
+            if isinstance(field, MethodField):
+                value = field.as_getter(field_name, serializers.ProjectExportSerializer)(serializer, project)
+            else:
+                attr = getattr(project, field_name)
+                value = field.to_value(attr)
             outfile.write('"{}": {}'.format(field_name, json.dumps(value)).encode())
 
     # Generate the timeline
@@ -127,4 +97,3 @@ def render_project(project, outfile, chunk_size = 8190):
         outfile.write(dumped_value.encode())
 
     outfile.write(b']}\n')
-

@@ -16,235 +16,201 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import copy
-
-from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext as _
-
 from taiga.base.api import serializers
-from taiga.base.fields import JsonField, PgArrayField
+from taiga.base.fields import Field, DateTimeField, MethodField
 
-from taiga.projects import models as projects_models
-from taiga.projects.custom_attributes import models as custom_attributes_models
-from taiga.projects.userstories import models as userstories_models
-from taiga.projects.tasks import models as tasks_models
-from taiga.projects.issues import models as issues_models
-from taiga.projects.milestones import models as milestones_models
-from taiga.projects.wiki import models as wiki_models
-from taiga.projects.history import models as history_models
-from taiga.projects.attachments import models as attachments_models
-from taiga.timeline import models as timeline_models
-from taiga.users import models as users_models
 from taiga.projects.votes import services as votes_service
 
-from .fields import (FileField, RelatedNoneSafeField, UserRelatedField,
-                     UserPkField, CommentField, ProjectRelatedField,
-                     HistoryUserField, HistoryValuesField, HistoryDiffField,
-                     TimelineDataField, ContentTypeField)
+from .fields import (FileField, UserRelatedField, TimelineDataField,
+                     ContentTypeField, SlugRelatedField)
 from .mixins import (HistoryExportSerializerMixin,
                      AttachmentExportSerializerMixin,
                      CustomAttributesValuesExportSerializerMixin,
-                     WatcheableObjectModelSerializerMixin)
+                     WatcheableObjectLightSerializerMixin)
 from .cache import (_custom_tasks_attributes_cache,
                     _custom_userstories_attributes_cache,
+                    _custom_epics_attributes_cache,
                     _custom_issues_attributes_cache)
 
 
-class PointsExportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = projects_models.Points
-        exclude = ('id', 'project')
+class RelatedExportSerializer(serializers.LightSerializer):
+    def to_value(self, value):
+        if hasattr(value, 'all'):
+            return super().to_value(value.all())
+        return super().to_value(value)
 
 
-class UserStoryStatusExportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = projects_models.UserStoryStatus
-        exclude = ('id', 'project')
+class PointsExportSerializer(RelatedExportSerializer):
+    name = Field()
+    order = Field()
+    value = Field()
 
 
-class TaskStatusExportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = projects_models.TaskStatus
-        exclude = ('id', 'project')
+class UserStoryStatusExportSerializer(RelatedExportSerializer):
+    name = Field()
+    slug = Field()
+    order = Field()
+    is_closed = Field()
+    is_archived = Field()
+    color = Field()
+    wip_limit = Field()
 
 
-class IssueStatusExportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = projects_models.IssueStatus
-        exclude = ('id', 'project')
+class EpicStatusExportSerializer(RelatedExportSerializer):
+    name = Field()
+    slug = Field()
+    order = Field()
+    is_closed = Field()
+    color = Field()
 
 
-class PriorityExportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = projects_models.Priority
-        exclude = ('id', 'project')
+class TaskStatusExportSerializer(RelatedExportSerializer):
+    name = Field()
+    slug = Field()
+    order = Field()
+    is_closed = Field()
+    color = Field()
 
 
-class SeverityExportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = projects_models.Severity
-        exclude = ('id', 'project')
+class IssueStatusExportSerializer(RelatedExportSerializer):
+    name = Field()
+    slug = Field()
+    order = Field()
+    is_closed = Field()
+    color = Field()
 
 
-class IssueTypeExportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = projects_models.IssueType
-        exclude = ('id', 'project')
+class PriorityExportSerializer(RelatedExportSerializer):
+    name = Field()
+    order = Field()
+    color = Field()
 
 
-class RoleExportSerializer(serializers.ModelSerializer):
-    permissions = PgArrayField(required=False)
-
-    class Meta:
-        model = users_models.Role
-        exclude = ('id', 'project')
+class SeverityExportSerializer(RelatedExportSerializer):
+    name = Field()
+    order = Field()
+    color = Field()
 
 
-class UserStoryCustomAttributeExportSerializer(serializers.ModelSerializer):
-    modified_date = serializers.DateTimeField(required=False)
-
-    class Meta:
-        model = custom_attributes_models.UserStoryCustomAttribute
-        exclude = ('id', 'project')
+class IssueTypeExportSerializer(RelatedExportSerializer):
+    name = Field()
+    order = Field()
+    color = Field()
 
 
-class TaskCustomAttributeExportSerializer(serializers.ModelSerializer):
-    modified_date = serializers.DateTimeField(required=False)
-
-    class Meta:
-        model = custom_attributes_models.TaskCustomAttribute
-        exclude = ('id', 'project')
-
-
-class IssueCustomAttributeExportSerializer(serializers.ModelSerializer):
-    modified_date = serializers.DateTimeField(required=False)
-
-    class Meta:
-        model = custom_attributes_models.IssueCustomAttribute
-        exclude = ('id', 'project')
+class RoleExportSerializer(RelatedExportSerializer):
+    name = Field()
+    slug = Field()
+    order = Field()
+    computable = Field()
+    permissions = Field()
 
 
-class BaseCustomAttributesValuesExportSerializer(serializers.ModelSerializer):
-    attributes_values = JsonField(source="attributes_values",required=True)
-    _custom_attribute_model = None
-    _container_field = None
+class EpicCustomAttributesExportSerializer(RelatedExportSerializer):
+    name = Field()
+    description = Field()
+    type = Field()
+    order = Field()
+    created_date = DateTimeField()
+    modified_date = DateTimeField()
 
-    class Meta:
-        exclude = ("id",)
 
-    def validate_attributes_values(self, attrs, source):
-        # values must be a dict
-        data_values = attrs.get("attributes_values", None)
-        if self.object:
-            data_values = (data_values or self.object.attributes_values)
+class UserStoryCustomAttributeExportSerializer(RelatedExportSerializer):
+    name = Field()
+    description = Field()
+    type = Field()
+    order = Field()
+    created_date = DateTimeField()
+    modified_date = DateTimeField()
 
-        if type(data_values) is not dict:
-            raise ValidationError(_("Invalid content. It must be {\"key\": \"value\",...}"))
 
-        # Values keys must be in the container object project
-        data_container = attrs.get(self._container_field, None)
-        if data_container:
-            project_id = data_container.project_id
-        elif self.object:
-            project_id = getattr(self.object, self._container_field).project_id
-        else:
-            project_id = None
+class TaskCustomAttributeExportSerializer(RelatedExportSerializer):
+    name = Field()
+    description = Field()
+    type = Field()
+    order = Field()
+    created_date = DateTimeField()
+    modified_date = DateTimeField()
 
-        values_ids = list(data_values.keys())
-        qs = self._custom_attribute_model.objects.filter(project=project_id,
-                                                         id__in=values_ids)
-        if qs.count() != len(values_ids):
-            raise ValidationError(_("It contain invalid custom fields."))
 
-        return attrs
+class IssueCustomAttributeExportSerializer(RelatedExportSerializer):
+    name = Field()
+    description = Field()
+    type = Field()
+    order = Field()
+    created_date = DateTimeField()
+    modified_date = DateTimeField()
+
+
+class BaseCustomAttributesValuesExportSerializer(RelatedExportSerializer):
+    attributes_values = Field(required=True)
+
 
 class UserStoryCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer):
-    _custom_attribute_model = custom_attributes_models.UserStoryCustomAttribute
-    _container_model = "userstories.UserStory"
-    _container_field = "user_story"
-
-    class Meta(BaseCustomAttributesValuesExportSerializer.Meta):
-        model = custom_attributes_models.UserStoryCustomAttributesValues
+    user_story = Field(attr="user_story.id")
 
 
 class TaskCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer):
-    _custom_attribute_model = custom_attributes_models.TaskCustomAttribute
-    _container_field = "task"
-
-    class Meta(BaseCustomAttributesValuesExportSerializer.Meta):
-        model = custom_attributes_models.TaskCustomAttributesValues
+    task = Field(attr="task.id")
 
 
 class IssueCustomAttributesValuesExportSerializer(BaseCustomAttributesValuesExportSerializer):
-    _custom_attribute_model = custom_attributes_models.IssueCustomAttribute
-    _container_field = "issue"
-
-    class Meta(BaseCustomAttributesValuesExportSerializer.Meta):
-        model = custom_attributes_models.IssueCustomAttributesValues
+    issue = Field(attr="issue.id")
 
 
-class MembershipExportSerializer(serializers.ModelSerializer):
-    user = UserRelatedField(required=False)
-    role = ProjectRelatedField(slug_field="name")
-    invited_by = UserRelatedField(required=False)
-
-    class Meta:
-        model = projects_models.Membership
-        exclude = ('id', 'project', 'token')
-
-    def full_clean(self, instance):
-        return instance
+class MembershipExportSerializer(RelatedExportSerializer):
+    user = UserRelatedField()
+    role = SlugRelatedField(slug_field="name")
+    invited_by = UserRelatedField()
+    is_admin = Field()
+    email = Field()
+    created_at = DateTimeField()
+    invitation_extra_text = Field()
+    user_order = Field()
 
 
-class RolePointsExportSerializer(serializers.ModelSerializer):
-    role = ProjectRelatedField(slug_field="name")
-    points = ProjectRelatedField(slug_field="name")
-
-    class Meta:
-        model = userstories_models.RolePoints
-        exclude = ('id', 'user_story')
+class RolePointsExportSerializer(RelatedExportSerializer):
+    role = SlugRelatedField(slug_field="name")
+    points = SlugRelatedField(slug_field="name")
 
 
-class MilestoneExportSerializer(WatcheableObjectModelSerializerMixin):
-    owner = UserRelatedField(required=False)
-    modified_date = serializers.DateTimeField(required=False)
-    estimated_start = serializers.DateField(required=False)
-    estimated_finish = serializers.DateField(required=False)
-
-    def __init__(self, *args, **kwargs):
-        project = kwargs.pop('project', None)
-        super(MilestoneExportSerializer, self).__init__(*args, **kwargs)
-        if project:
-            self.project = project
-
-    def validate_name(self, attrs, source):
-        """
-        Check the milestone name is not duplicated in the project
-        """
-        name = attrs[source]
-        qs = self.project.milestones.filter(name=name)
-        if qs.exists():
-            raise serializers.ValidationError(_("Name duplicated for the project"))
-
-        return attrs
-
-    class Meta:
-        model = milestones_models.Milestone
-        exclude = ('id', 'project')
+class MilestoneExportSerializer(WatcheableObjectLightSerializerMixin, RelatedExportSerializer):
+    name = Field()
+    owner = UserRelatedField()
+    created_date = DateTimeField()
+    modified_date = DateTimeField()
+    estimated_start = Field()
+    estimated_finish = Field()
+    slug = Field()
+    closed = Field()
+    disponibility = Field()
+    order = Field()
 
 
-class TaskExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
-                           AttachmentExportSerializerMixin, WatcheableObjectModelSerializerMixin):
-    owner = UserRelatedField(required=False)
-    status = ProjectRelatedField(slug_field="name")
-    user_story = ProjectRelatedField(slug_field="ref", required=False)
-    milestone = ProjectRelatedField(slug_field="name", required=False)
-    assigned_to = UserRelatedField(required=False)
-    modified_date = serializers.DateTimeField(required=False)
-
-    class Meta:
-        model = tasks_models.Task
-        exclude = ('id', 'project')
+class TaskExportSerializer(CustomAttributesValuesExportSerializerMixin,
+                           HistoryExportSerializerMixin,
+                           AttachmentExportSerializerMixin,
+                           WatcheableObjectLightSerializerMixin,
+                           RelatedExportSerializer):
+    owner = UserRelatedField()
+    status = SlugRelatedField(slug_field="name")
+    user_story = SlugRelatedField(slug_field="ref")
+    milestone = SlugRelatedField(slug_field="name")
+    assigned_to = UserRelatedField()
+    modified_date = DateTimeField()
+    created_date = DateTimeField()
+    finished_date = DateTimeField()
+    ref = Field()
+    subject = Field()
+    us_order = Field()
+    taskboard_order = Field()
+    description = Field()
+    is_iocaine = Field()
+    external_reference = Field()
+    version = Field()
+    blocked_note = Field()
+    is_blocked = Field()
+    tags = Field()
 
     def custom_attributes_queryset(self, project):
         if project.id not in _custom_tasks_attributes_cache:
@@ -252,41 +218,108 @@ class TaskExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryE
         return _custom_tasks_attributes_cache[project.id]
 
 
-class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
-                                AttachmentExportSerializerMixin, WatcheableObjectModelSerializerMixin):
-    role_points = RolePointsExportSerializer(many=True, required=False)
-    owner = UserRelatedField(required=False)
-    assigned_to = UserRelatedField(required=False)
-    status = ProjectRelatedField(slug_field="name")
-    milestone = ProjectRelatedField(slug_field="name", required=False)
-    modified_date = serializers.DateTimeField(required=False)
-    generated_from_issue = ProjectRelatedField(slug_field="ref", required=False)
-
-    class Meta:
-        model = userstories_models.UserStory
-        exclude = ('id', 'project', 'points', 'tasks')
+class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin,
+                                HistoryExportSerializerMixin,
+                                AttachmentExportSerializerMixin,
+                                WatcheableObjectLightSerializerMixin,
+                                RelatedExportSerializer):
+    role_points = RolePointsExportSerializer(many=True)
+    owner = UserRelatedField()
+    assigned_to = UserRelatedField()
+    status = SlugRelatedField(slug_field="name")
+    milestone = SlugRelatedField(slug_field="name")
+    modified_date = DateTimeField()
+    created_date = DateTimeField()
+    finish_date = DateTimeField()
+    generated_from_issue = SlugRelatedField(slug_field="ref")
+    ref = Field()
+    is_closed = Field()
+    backlog_order = Field()
+    sprint_order = Field()
+    kanban_order = Field()
+    subject = Field()
+    description = Field()
+    client_requirement = Field()
+    team_requirement = Field()
+    external_reference = Field()
+    tribe_gig = Field()
+    version = Field()
+    blocked_note = Field()
+    is_blocked = Field()
+    tags = Field()
 
     def custom_attributes_queryset(self, project):
         if project.id not in _custom_userstories_attributes_cache:
-            _custom_userstories_attributes_cache[project.id] = list(project.userstorycustomattributes.all().values('id', 'name'))
+            _custom_userstories_attributes_cache[project.id] = list(
+                project.userstorycustomattributes.all().values('id', 'name')
+            )
         return _custom_userstories_attributes_cache[project.id]
 
 
-class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin, HistoryExportSerializerMixin,
-                            AttachmentExportSerializerMixin, WatcheableObjectModelSerializerMixin):
-    owner = UserRelatedField(required=False)
-    status = ProjectRelatedField(slug_field="name")
-    assigned_to = UserRelatedField(required=False)
-    priority = ProjectRelatedField(slug_field="name")
-    severity = ProjectRelatedField(slug_field="name")
-    type = ProjectRelatedField(slug_field="name")
-    milestone = ProjectRelatedField(slug_field="name", required=False)
-    votes = serializers.SerializerMethodField("get_votes")
-    modified_date = serializers.DateTimeField(required=False)
+class EpicRelatedUserStoryExportSerializer(RelatedExportSerializer):
+    user_story = SlugRelatedField(slug_field="ref")
+    order = Field()
 
-    class Meta:
-        model = issues_models.Issue
-        exclude = ('id', 'project')
+
+class EpicExportSerializer(CustomAttributesValuesExportSerializerMixin,
+                           HistoryExportSerializerMixin,
+                           AttachmentExportSerializerMixin,
+                           WatcheableObjectLightSerializerMixin,
+                           RelatedExportSerializer):
+    ref = Field()
+    owner = UserRelatedField()
+    status = SlugRelatedField(slug_field="name")
+    epics_order = Field()
+    created_date = DateTimeField()
+    modified_date = DateTimeField()
+    subject = Field()
+    description = Field()
+    color = Field()
+    assigned_to = UserRelatedField()
+    client_requirement = Field()
+    team_requirement = Field()
+    version = Field()
+    blocked_note = Field()
+    is_blocked = Field()
+    tags = Field()
+    related_user_stories = MethodField()
+
+    def get_related_user_stories(self, obj):
+        return EpicRelatedUserStoryExportSerializer(obj.relateduserstory_set.all(), many=True).data
+
+    def custom_attributes_queryset(self, project):
+        if project.id not in _custom_epics_attributes_cache:
+            _custom_epics_attributes_cache[project.id] = list(
+                project.userstorycustomattributes.all().values('id', 'name')
+            )
+        return _custom_epics_attributes_cache[project.id]
+
+
+class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin,
+                            HistoryExportSerializerMixin,
+                            AttachmentExportSerializerMixin,
+                            WatcheableObjectLightSerializerMixin,
+                            RelatedExportSerializer):
+    owner = UserRelatedField()
+    status = SlugRelatedField(slug_field="name")
+    assigned_to = UserRelatedField()
+    priority = SlugRelatedField(slug_field="name")
+    severity = SlugRelatedField(slug_field="name")
+    type = SlugRelatedField(slug_field="name")
+    milestone = SlugRelatedField(slug_field="name")
+    votes = MethodField("get_votes")
+    modified_date = DateTimeField()
+    created_date = DateTimeField()
+    finished_date = DateTimeField()
+
+    ref = Field()
+    subject = Field()
+    description = Field()
+    external_reference = Field()
+    version = Field()
+    blocked_note = Field()
+    is_blocked = Field()
+    tags = Field()
 
     def get_votes(self, obj):
         return [x.email for x in votes_service.get_voters(obj)]
@@ -297,65 +330,99 @@ class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin, History
         return _custom_issues_attributes_cache[project.id]
 
 
-class WikiPageExportSerializer(HistoryExportSerializerMixin, AttachmentExportSerializerMixin,
-                               WatcheableObjectModelSerializerMixin):
-    owner = UserRelatedField(required=False)
-    last_modifier = UserRelatedField(required=False)
-    modified_date = serializers.DateTimeField(required=False)
-
-    class Meta:
-        model = wiki_models.WikiPage
-        exclude = ('id', 'project')
-
-
-class WikiLinkExportSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = wiki_models.WikiLink
-        exclude = ('id', 'project')
+class WikiPageExportSerializer(HistoryExportSerializerMixin,
+                               AttachmentExportSerializerMixin,
+                               WatcheableObjectLightSerializerMixin,
+                               RelatedExportSerializer):
+    slug = Field()
+    owner = UserRelatedField()
+    last_modifier = UserRelatedField()
+    modified_date = DateTimeField()
+    created_date = DateTimeField()
+    content = Field()
+    version = Field()
 
 
+class WikiLinkExportSerializer(RelatedExportSerializer):
+    title = Field()
+    href = Field()
+    order = Field()
 
-class TimelineExportSerializer(serializers.ModelSerializer):
+
+class TimelineExportSerializer(RelatedExportSerializer):
     data = TimelineDataField()
     data_content_type = ContentTypeField()
-    class Meta:
-        model = timeline_models.Timeline
-        exclude = ('id', 'project', 'namespace', 'object_id', 'content_type')
+    event_type = Field()
+    created = DateTimeField()
 
 
-class ProjectExportSerializer(WatcheableObjectModelSerializerMixin):
-    logo = FileField(required=False)
-    anon_permissions = PgArrayField(required=False)
-    public_permissions = PgArrayField(required=False)
-    modified_date = serializers.DateTimeField(required=False)
-    roles = RoleExportSerializer(many=True, required=False)
-    owner = UserRelatedField(required=False)
-    memberships = MembershipExportSerializer(many=True, required=False)
-    points = PointsExportSerializer(many=True, required=False)
-    us_statuses = UserStoryStatusExportSerializer(many=True, required=False)
-    task_statuses = TaskStatusExportSerializer(many=True, required=False)
-    issue_types = IssueTypeExportSerializer(many=True, required=False)
-    issue_statuses = IssueStatusExportSerializer(many=True, required=False)
-    priorities = PriorityExportSerializer(many=True, required=False)
-    severities = SeverityExportSerializer(many=True, required=False)
-    tags_colors = JsonField(required=False)
-    default_points = serializers.SlugRelatedField(slug_field="name", required=False)
-    default_us_status = serializers.SlugRelatedField(slug_field="name", required=False)
-    default_task_status = serializers.SlugRelatedField(slug_field="name", required=False)
-    default_priority = serializers.SlugRelatedField(slug_field="name", required=False)
-    default_severity = serializers.SlugRelatedField(slug_field="name", required=False)
-    default_issue_status = serializers.SlugRelatedField(slug_field="name", required=False)
-    default_issue_type = serializers.SlugRelatedField(slug_field="name", required=False)
-    userstorycustomattributes = UserStoryCustomAttributeExportSerializer(many=True, required=False)
-    taskcustomattributes = TaskCustomAttributeExportSerializer(many=True, required=False)
-    issuecustomattributes = IssueCustomAttributeExportSerializer(many=True, required=False)
-    user_stories = UserStoryExportSerializer(many=True, required=False)
-    tasks = TaskExportSerializer(many=True, required=False)
-    milestones = MilestoneExportSerializer(many=True, required=False)
-    issues = IssueExportSerializer(many=True, required=False)
-    wiki_links = WikiLinkExportSerializer(many=True, required=False)
-    wiki_pages = WikiPageExportSerializer(many=True, required=False)
-
-    class Meta:
-        model = projects_models.Project
-        exclude = ('id', 'creation_template', 'members')
+class ProjectExportSerializer(WatcheableObjectLightSerializerMixin):
+    name = Field()
+    slug = Field()
+    description = Field()
+    created_date = DateTimeField()
+    logo = FileField()
+    total_milestones = Field()
+    total_story_points = Field()
+    is_epics_activated = Field()
+    is_backlog_activated = Field()
+    is_kanban_activated = Field()
+    is_wiki_activated = Field()
+    is_issues_activated = Field()
+    videoconferences = Field()
+    videoconferences_extra_data = Field()
+    creation_template = SlugRelatedField(slug_field="slug")
+    is_private = Field()
+    is_featured = Field()
+    is_looking_for_people = Field()
+    looking_for_people_note = Field()
+    epics_csv_uuid = Field()
+    userstories_csv_uuid = Field()
+    tasks_csv_uuid = Field()
+    issues_csv_uuid = Field()
+    transfer_token = Field()
+    blocked_code = Field()
+    totals_updated_datetime = DateTimeField()
+    total_fans = Field()
+    total_fans_last_week = Field()
+    total_fans_last_month = Field()
+    total_fans_last_year = Field()
+    total_activity = Field()
+    total_activity_last_week = Field()
+    total_activity_last_month = Field()
+    total_activity_last_year = Field()
+    anon_permissions = Field()
+    public_permissions = Field()
+    modified_date = DateTimeField()
+    roles = RoleExportSerializer(many=True)
+    owner = UserRelatedField()
+    memberships = MembershipExportSerializer(many=True)
+    points = PointsExportSerializer(many=True)
+    epic_statuses = EpicStatusExportSerializer(many=True)
+    us_statuses = UserStoryStatusExportSerializer(many=True)
+    task_statuses = TaskStatusExportSerializer(many=True)
+    issue_types = IssueTypeExportSerializer(many=True)
+    issue_statuses = IssueStatusExportSerializer(many=True)
+    priorities = PriorityExportSerializer(many=True)
+    severities = SeverityExportSerializer(many=True)
+    tags_colors = Field()
+    default_points = SlugRelatedField(slug_field="name")
+    default_epic_status = SlugRelatedField(slug_field="name")
+    default_us_status = SlugRelatedField(slug_field="name")
+    default_task_status = SlugRelatedField(slug_field="name")
+    default_priority = SlugRelatedField(slug_field="name")
+    default_severity = SlugRelatedField(slug_field="name")
+    default_issue_status = SlugRelatedField(slug_field="name")
+    default_issue_type = SlugRelatedField(slug_field="name")
+    epiccustomattributes = EpicCustomAttributesExportSerializer(many=True)
+    userstorycustomattributes = UserStoryCustomAttributeExportSerializer(many=True)
+    taskcustomattributes = TaskCustomAttributeExportSerializer(many=True)
+    issuecustomattributes = IssueCustomAttributeExportSerializer(many=True)
+    epics = EpicExportSerializer(many=True)
+    user_stories = UserStoryExportSerializer(many=True)
+    tasks = TaskExportSerializer(many=True)
+    milestones = MilestoneExportSerializer(many=True)
+    issues = IssueExportSerializer(many=True)
+    wiki_links = WikiLinkExportSerializer(many=True)
+    wiki_pages = WikiPageExportSerializer(many=True)
+    tags = Field()

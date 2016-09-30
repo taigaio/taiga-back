@@ -22,9 +22,9 @@ from taiga.base import exceptions as exc
 from taiga.base import response
 from taiga.base.api import viewsets
 from taiga.base.api.utils import get_object_or_404
-from taiga.permissions.service import user_has_perm
+from taiga.permissions.services import user_has_perm
 
-from .serializers import ResolverSerializer
+from .validators import ResolverValidator
 from . import permissions
 
 
@@ -32,11 +32,11 @@ class ResolverViewSet(viewsets.ViewSet):
     permission_classes = (permissions.ResolverPermission,)
 
     def list(self, request, **kwargs):
-        serializer = ResolverSerializer(data=request.QUERY_PARAMS)
-        if not serializer.is_valid():
-            raise exc.BadRequest(serializer.errors)
+        validator = ResolverValidator(data=request.QUERY_PARAMS)
+        if not validator.is_valid():
+            raise exc.BadRequest(validator.errors)
 
-        data = serializer.data
+        data = validator.data
 
         project_model = apps.get_model("projects", "Project")
         project = get_object_or_404(project_model, slug=data["project"])
@@ -45,6 +45,9 @@ class ResolverViewSet(viewsets.ViewSet):
 
         result = {"project": project.pk}
 
+        if data["epic"] and user_has_perm(request.user, "view_epics", project):
+            result["epic"] = get_object_or_404(project.epics.all(),
+                                               ref=data["epic"]).pk
         if data["us"] and user_has_perm(request.user, "view_us", project):
             result["us"] = get_object_or_404(project.user_stories.all(),
                                              ref=data["us"]).pk
@@ -63,6 +66,11 @@ class ResolverViewSet(viewsets.ViewSet):
 
         if data["ref"]:
             ref_found = False  # No need to continue once one ref is found
+            if ref_found is False and user_has_perm(request.user, "view_epics", project):
+                epic = project.epics.filter(ref=data["ref"]).first()
+                if epic:
+                    result["epic"] = epic.pk
+                    ref_found = True
             if user_has_perm(request.user, "view_us", project):
                 us = project.user_stories.filter(ref=data["ref"]).first()
                 if us:

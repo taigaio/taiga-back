@@ -18,26 +18,31 @@
 
 from django.utils.translation import ugettext as _
 
-from taiga.base.api.permissions import IsAuthenticated
-
-from taiga.base import filters
 from taiga.base import exceptions as exc
+from taiga.base import filters
 from taiga.base import response
-from taiga.base.api import ModelCrudViewSet, ModelListViewSet
+from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.decorators import list_route
-from taiga.projects.models import Project
+
 from taiga.mdrender.service import render as mdrender
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.history.services import take_snapshot
+from taiga.projects.models import Project
+from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchersViewSetMixin
+from taiga.projects.notifications.services import analize_object_for_watchers
+from taiga.projects.notifications.services import send_notifications
 from taiga.projects.occ import OCCResourceMixin
-
 
 from . import models
 from . import permissions
 from . import serializers
+from . import validators
+from . import utils as wiki_utils
 
 
 class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
@@ -45,6 +50,7 @@ class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
 
     model = models.WikiPage
     serializer_class = serializers.WikiPageSerializer
+    validator_class = validators.WikiPageValidator
     permission_classes = (permissions.WikiPagePermission,)
     filter_backends = (filters.CanViewWikiPagesFilterBackend,)
     filter_fields = ("project", "slug")
@@ -52,7 +58,7 @@ class WikiViewSet(OCCResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = self.attach_watchers_attrs_to_queryset(qs)
+        qs = wiki_utils.attach_extra_info(qs, user=self.request.user)
         return qs
 
     @list_route(methods=["GET"])
@@ -96,6 +102,32 @@ class WikiWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
 class WikiLinkViewSet(BlockedByProjectMixin, ModelCrudViewSet):
     model = models.WikiLink
     serializer_class = serializers.WikiLinkSerializer
+    validator_class = validators.WikiLinkValidator
     permission_classes = (permissions.WikiLinkPermission,)
     filter_backends = (filters.CanViewWikiPagesFilterBackend,)
     filter_fields = ["project"]
+
+    def post_save(self, obj, created=False):
+        if created:
+            self._create_wiki_page_when_create_wiki_link_if_not_exist(self.request, obj)
+        super().pre_save(obj)
+
+    def _create_wiki_page_when_create_wiki_link_if_not_exist(self, request, wiki_link):
+        try:
+            self.check_permissions(request, "create_wiki_page", wiki_link)
+        except exc.PermissionDenied:
+            # Create only the wiki link because the user doesn't have permission.
+            pass
+        else:
+            # Create the wiki link and the wiki page if not exist.
+            wiki_page, created = models.WikiPage.objects.get_or_create(
+                slug=wiki_link.href,
+                project=wiki_link.project,
+                defaults={"owner": self.request.user, "last_modifier": self.request.user})
+
+            if created:
+                # Creaste the new history entre, sSet watcher for the new wiki page
+                # and send notifications about the new page created
+                history = take_snapshot(wiki_page, user=self.request.user)
+                analize_object_for_watchers(wiki_page, history.comment, history.owner)
+                send_notifications(wiki_page, history=history)

@@ -18,7 +18,6 @@
 
 import uuid
 
-from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
@@ -41,18 +40,3 @@ def get_or_generate_config(project):
     url = "{}?project={}&key={}".format(url, project.id, g_config["secret"])
     g_config["webhooks_url"] = url
     return g_config
-
-
-def get_gitlab_user(user_email):
-    user = None
-
-    if user_email:
-        try:
-            user = get_user_model().objects.get(email=user_email)
-        except get_user_model().DoesNotExist:
-            pass
-
-    if user is None:
-        user = get_user_model().objects.get(is_system=True, username__startswith="gitlab")
-
-    return user

@@ -21,10 +21,11 @@ from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
+from taiga.projects.models import Project
+from taiga.projects.epics.models import Epic
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
-from taiga.projects.models import Project
 
 from . import sequences as seq
 
@@ -103,11 +104,22 @@ def attach_sequence(sender, instance, created, **kwargs):
             instance.save(update_fields=['ref'])
 
 
+# Project
 models.signals.post_save.connect(create_sequence, sender=Project, dispatch_uid="refproj")
-models.signals.pre_save.connect(store_previous_project, sender=UserStory, dispatch_uid="refus")
-models.signals.pre_save.connect(store_previous_project, sender=Issue, dispatch_uid="refissue")
-models.signals.pre_save.connect(store_previous_project, sender=Task, dispatch_uid="reftask")
-models.signals.post_save.connect(attach_sequence, sender=UserStory, dispatch_uid="refus")
-models.signals.post_save.connect(attach_sequence, sender=Issue, dispatch_uid="refissue")
-models.signals.post_save.connect(attach_sequence, sender=Task, dispatch_uid="reftask")
 models.signals.post_delete.connect(delete_sequence, sender=Project, dispatch_uid="refprojdel")
+
+# Epic
+models.signals.pre_save.connect(store_previous_project, sender=Epic, dispatch_uid="refepic")
+models.signals.post_save.connect(attach_sequence, sender=Epic, dispatch_uid="refepic")
+
+# User Story
+models.signals.pre_save.connect(store_previous_project, sender=UserStory, dispatch_uid="refus")
+models.signals.post_save.connect(attach_sequence, sender=UserStory, dispatch_uid="refus")
+
+# Task
+models.signals.pre_save.connect(store_previous_project, sender=Task, dispatch_uid="reftask")
+models.signals.post_save.connect(attach_sequence, sender=Task, dispatch_uid="reftask")
+
+# Issue
+models.signals.pre_save.connect(store_previous_project, sender=Issue, dispatch_uid="refissue")
+models.signals.post_save.connect(attach_sequence, sender=Issue, dispatch_uid="refissue")

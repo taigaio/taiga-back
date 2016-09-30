@@ -50,7 +50,6 @@ They are very similar to Django's form fields.
 from django import forms
 from django.conf import settings
 from django.core import validators
-from django.core.exceptions import ValidationError
 from django.db.models.fields import BLANK_CHOICE_DASH
 from django.forms import widgets
 from django.http import QueryDict
@@ -65,6 +64,8 @@ from django.utils.encoding import is_protected_type
 from django.utils.functional import Promise
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
+
+from taiga.base.exceptions import ValidationError
 
 from . import ISO_8601
 from .settings import api_settings
@@ -611,6 +612,15 @@ class ChoiceField(WritableField):
         return value
 
 
+def validate_user_email_allowed_domains(value):
+    validators.validate_email(value)
+
+    domain_name = value.split("@")[1]
+
+    if settings.USER_EMAIL_ALLOWED_DOMAINS and domain_name not in settings.USER_EMAIL_ALLOWED_DOMAINS:
+        raise ValidationError(_("You email domain is not allowed"))
+
+
 class EmailField(CharField):
     type_name = "EmailField"
     type_label = "email"
@@ -619,7 +629,7 @@ class EmailField(CharField):
     default_error_messages = {
         "invalid": _("Enter a valid email address."),
     }
-    default_validators = [validators.validate_email]
+    default_validators = [validate_user_email_allowed_domains]
 
     def from_native(self, value):
         ret = super(EmailField, self).from_native(value)

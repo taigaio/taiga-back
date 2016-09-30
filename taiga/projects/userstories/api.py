@@ -18,50 +18,60 @@
 
 from django.apps import apps
 from django.db import transaction
+
 from django.utils.translation import ugettext as _
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 
-from taiga.base import filters
+from taiga.base import filters as base_filters
 from taiga.base import exceptions as exc
 from taiga.base import response
 from taiga.base import status
 from taiga.base.decorators import list_route
 from taiga.base.api.mixins import BlockedByProjectMixin
-from taiga.base.api import ModelCrudViewSet, ModelListViewSet
+from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelListViewSet
 from taiga.base.api.utils import get_object_or_404
+from taiga.base.utils import json
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
-from taiga.projects.occ import OCCResourceMixin
-from taiga.projects.models import Project, UserStoryStatus
 from taiga.projects.history.services import take_snapshot
-from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
+from taiga.projects.milestones.models import Milestone
+from taiga.projects.models import Project, UserStoryStatus
+from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchersViewSetMixin
+from taiga.projects.occ import OCCResourceMixin
+from taiga.projects.tagging.api import TaggedResourceMixin
+from taiga.projects.votes.mixins.viewsets import VotedResourceMixin
+from taiga.projects.votes.mixins.viewsets import VotersViewSetMixin
+from taiga.projects.userstories.utils import attach_extra_info
 
+from . import filters
 from . import models
 from . import permissions
 from . import serializers
 from . import services
+from . import validators
 
 
 class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                       BlockedByProjectMixin, ModelCrudViewSet):
+                       TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
+    validator_class = validators.UserStoryValidator
     queryset = models.UserStory.objects.all()
     permission_classes = (permissions.UserStoryPermission,)
-    filter_backends = (filters.CanViewUsFilterBackend,
-                       filters.OwnersFilter,
-                       filters.AssignedToFilter,
-                       filters.StatusesFilter,
-                       filters.TagsFilter,
-                       filters.WatchersFilter,
-                       filters.QFilter,
-                       filters.OrderByFilterMixin)
-    retrieve_exclude_filters = (filters.OwnersFilter,
-                                filters.AssignedToFilter,
-                                filters.StatusesFilter,
-                                filters.TagsFilter,
-                                filters.WatchersFilter)
+    filter_backends = (base_filters.CanViewUsFilterBackend,
+                       filters.EpicFilter,
+                       base_filters.OwnersFilter,
+                       base_filters.AssignedToFilter,
+                       base_filters.StatusesFilter,
+                       base_filters.TagsFilter,
+                       base_filters.WatchersFilter,
+                       base_filters.QFilter,
+                       base_filters.CreatedDateFilter,
+                       base_filters.ModifiedDateFilter,
+                       base_filters.FinishDateFilter,
+                       base_filters.OrderByFilterMixin)
     filter_fields = ["project",
+                     "project__slug",
                      "milestone",
                      "milestone__isnull",
                      "is_closed",
@@ -70,10 +80,8 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
     order_by_fields = ["backlog_order",
                        "sprint_order",
                        "kanban_order",
+                       "epic_order",
                        "total_voters"]
-
-    # Specific filter used for filtering neighbor user stories
-    _neighbor_tags_filter = filters.TagsFilter('neighbor_tags')
 
     def get_serializer_class(self, *args, **kwargs):
         if self.action in ["retrieve", "by_ref"]:
@@ -84,9 +92,165 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
 
         return serializers.UserStorySerializer
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.select_related("milestone",
+                               "project",
+                               "status",
+                               "owner",
+                               "assigned_to",
+                               "generated_from_issue")
+
+        include_attachments = "include_attachments" in self.request.QUERY_PARAMS
+        include_tasks = "include_tasks" in self.request.QUERY_PARAMS
+        epic_id = self.request.QUERY_PARAMS.get("epic", None)
+        # We can be filtering by more than one epic so epic_id can consist
+        # of different ids separete by comma. In that situation we will use
+        # only the first
+        if epic_id is not None:
+            epic_id = epic_id.split(",")[0]
+
+        qs = attach_extra_info(qs, user=self.request.user,
+                               include_attachments=include_attachments,
+                               include_tasks=include_tasks,
+                               epic_id=epic_id)
+
+        return qs
+
+    def pre_conditions_on_save(self, obj):
+        super().pre_conditions_on_save(obj)
+
+        if obj.milestone and obj.milestone.project != obj.project:
+            raise exc.PermissionDenied(_("You don't have permissions to set this sprint "
+                                         "to this user story."))
+
+        if obj.status and obj.status.project != obj.project:
+            raise exc.PermissionDenied(_("You don't have permissions to set this status "
+                                         "to this user story."))
+
+    """
+    Updating some attributes of the userstory can affect the ordering in the backlog, kanban or taskboard
+    These three methods generate a key for the user story and can be used to be compared before and after
+    saving
+    If there is any difference it means an extra ordering update must be done
+    """
+    def _backlog_order_key(self, obj):
+        return "{}-{}".format(obj.project_id, obj.backlog_order)
+
+    def _kanban_order_key(self, obj):
+        return "{}-{}-{}".format(obj.project_id, obj.status_id, obj.kanban_order)
+
+    def _sprint_order_key(self, obj):
+        return "{}-{}-{}".format(obj.project_id, obj.milestone_id, obj.sprint_order)
+
+    def pre_save(self, obj):
+        # This is very ugly hack, but having
+        # restframework is the only way to do it.
+        #
+        # NOTE: code moved as is from serializer
+        #       to api because is not serializer logic.
+        related_data = getattr(obj, "_related_data", {})
+        self._role_points = related_data.pop("role_points", None)
+
+        if not obj.id:
+            obj.owner = self.request.user
+        else:
+            self._old_backlog_order_key = self._backlog_order_key(self.get_object())
+            self._old_kanban_order_key = self._kanban_order_key(self.get_object())
+            self._old_sprint_order_key = self._sprint_order_key(self.get_object())
+
+        super().pre_save(obj)
+
+    def _reorder_if_needed(self, obj, old_order_key, order_key, order_attr,
+                           project, status=None, milestone=None):
+        # Executes the extra ordering if there is a difference in the  ordering keys
+        if old_order_key != order_key:
+            extra_orders = json.loads(self.request.META.get("HTTP_SET_ORDERS", "{}"))
+            data = [{"us_id": obj.id, "order": getattr(obj, order_attr)}]
+            for id, order in extra_orders.items():
+                data.append({"us_id": int(id), "order": order})
+
+            return services.update_userstories_order_in_bulk(data,
+                                                             order_attr,
+                                                             project,
+                                                             status=status,
+                                                             milestone=milestone)
+        return {}
+
+    def post_save(self, obj, created=False):
+        if not created:
+            # Let's reorder the related stuff after edit the element
+            orders_updated = {}
+            updated = self._reorder_if_needed(obj,
+                                              self._old_backlog_order_key,
+                                              self._backlog_order_key(obj),
+                                              "backlog_order",
+                                              obj.project)
+            orders_updated.update(updated)
+            updated = self._reorder_if_needed(obj,
+                                              self._old_kanban_order_key,
+                                              self._kanban_order_key(obj),
+                                              "kanban_order",
+                                              obj.project,
+                                              status=obj.status)
+            orders_updated.update(updated)
+            updated = self._reorder_if_needed(obj,
+                                              self._old_sprint_order_key,
+                                              self._sprint_order_key(obj),
+                                              "sprint_order",
+                                              obj.project,
+                                              milestone=obj.milestone)
+            orders_updated.update(updated)
+            self.headers["Taiga-Info-Order-Updated"] = json.dumps(orders_updated)
+
+        # Code related to the hack of pre_save method.
+        # Rather, this is the continuation of it.
+        if self._role_points:
+            Points = apps.get_model("projects", "Points")
+            RolePoints = apps.get_model("userstories", "RolePoints")
+
+            for role_id, points_id in self._role_points.items():
+                try:
+                    role_points = RolePoints.objects.get(role__id=role_id, user_story_id=obj.pk,
+                                                         role__computable=True)
+                except (ValueError, RolePoints.DoesNotExist):
+                    raise exc.BadRequest({
+                        "points": _("Invalid role id '{role_id}'").format(role_id=role_id)
+                    })
+
+                try:
+                    role_points.points = Points.objects.get(id=points_id, project_id=obj.project_id)
+                except (ValueError, Points.DoesNotExist):
+                    raise exc.BadRequest({
+                        "points": _("Invalid points id '{points_id}'").format(points_id=points_id)
+                    })
+
+                role_points.save()
+
+        super().post_save(obj, created)
+
+    @transaction.atomic
+    def create(self, *args, **kwargs):
+        response = super().create(*args, **kwargs)
+
+        # Added comment to the origin (issue)
+        if response.status_code == status.HTTP_201_CREATED and self.object.generated_from_issue:
+            self.object.generated_from_issue.save()
+
+            comment = _("Generating the user story #{ref} - {subject}")
+            comment = comment.format(ref=self.object.ref, subject=self.object.subject)
+            history = take_snapshot(self.object.generated_from_issue,
+                                    comment=comment,
+                                    user=self.request.user)
+
+            self.send_notifications(self.object.generated_from_issue, history)
+
+        return response
+
     def update(self, request, *args, **kwargs):
         self.object = self.get_object_or_none()
         project_id = request.DATA.get('project', None)
+
         if project_id and self.object and self.object.project.id != project_id:
             try:
                 new_project = Project.objects.get(pk=project_id)
@@ -110,95 +274,47 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
 
         return super().update(request, *args, **kwargs)
 
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        qs = qs.prefetch_related("role_points",
-                                 "role_points__points",
-                                 "role_points__role")
-        qs = qs.select_related("milestone",
-                               "project",
-                               "status",
-                               "owner",
-                               "assigned_to",
-                               "generated_from_issue")
-        qs = self.attach_votes_attrs_to_queryset(qs)
-        return self.attach_watchers_attrs_to_queryset(qs)
-
-    def pre_save(self, obj):
-        # This is very ugly hack, but having
-        # restframework is the only way to do it.
-        # NOTE: code moved as is from serializer
-        # to api because is not serializer logic.
-        related_data = getattr(obj, "_related_data", {})
-        self._role_points = related_data.pop("role_points", None)
-
-        if not obj.id:
-            obj.owner = self.request.user
-
-        super().pre_save(obj)
-
-    def post_save(self, obj, created=False):
-        # Code related to the hack of pre_save method. Rather, this is the continuation of it.
-        if self._role_points:
-            Points = apps.get_model("projects", "Points")
-            RolePoints = apps.get_model("userstories", "RolePoints")
-
-            for role_id, points_id in self._role_points.items():
-                try:
-                    role_points = RolePoints.objects.get(role__id=role_id, user_story_id=obj.pk,
-                                                         role__computable=True)
-                except (ValueError, RolePoints.DoesNotExist):
-                    raise exc.BadRequest({"points": _("Invalid role id '{role_id}'").format(
-                                                                            role_id=role_id)})
-
-                try:
-                    role_points.points = Points.objects.get(id=points_id, project_id=obj.project_id)
-                except (ValueError, Points.DoesNotExist):
-                    raise exc.BadRequest({"points": _("Invalid points id '{points_id}'").format(
-                                                                             points_id=points_id)})
-
-                role_points.save()
-
-        super().post_save(obj, created)
-
-    def pre_conditions_on_save(self, obj):
-        super().pre_conditions_on_save(obj)
-
-        if obj.milestone and obj.milestone.project != obj.project:
-            raise exc.PermissionDenied(_("You don't have permissions to set this sprint "
-                                         "to this user story."))
-
-        if obj.status and obj.status.project != obj.project:
-            raise exc.PermissionDenied(_("You don't have permissions to set this status "
-                                         "to this user story."))
-
     @list_route(methods=["GET"])
     def filters_data(self, request, *args, **kwargs):
         project_id = request.QUERY_PARAMS.get("project", None)
         project = get_object_or_404(Project, id=project_id)
 
         filter_backends = self.get_filter_backends()
-        statuses_filter_backends = (f for f in filter_backends if f != filters.StatusesFilter)
-        assigned_to_filter_backends = (f for f in filter_backends if f != filters.AssignedToFilter)
-        owners_filter_backends = (f for f in filter_backends if f != filters.OwnersFilter)
-        tags_filter_backends = (f for f in filter_backends if f != filters.TagsFilter)
+        statuses_filter_backends = (f for f in filter_backends if f != base_filters.StatusesFilter)
+        assigned_to_filter_backends = (f for f in filter_backends if f != base_filters.AssignedToFilter)
+        owners_filter_backends = (f for f in filter_backends if f != base_filters.OwnersFilter)
+        epics_filter_backends = (f for f in filter_backends if f != filters.EpicFilter)
 
         queryset = self.get_queryset()
         querysets = {
             "statuses": self.filter_queryset(queryset, filter_backends=statuses_filter_backends),
             "assigned_to": self.filter_queryset(queryset, filter_backends=assigned_to_filter_backends),
             "owners": self.filter_queryset(queryset, filter_backends=owners_filter_backends),
-            "tags": self.filter_queryset(queryset)
+            "tags": self.filter_queryset(queryset),
+            "epics": self.filter_queryset(queryset, filter_backends=epics_filter_backends)
         }
         return response.Ok(services.get_userstories_filters_data(project, querysets))
 
     @list_route(methods=["GET"])
     def by_ref(self, request):
-        ref = request.QUERY_PARAMS.get("ref", None)
+        if "ref" not in request.QUERY_PARAMS:
+            return response.BadRequest(_("ref param is needed"))
+
+        if "project_slug" not in request.QUERY_PARAMS and "project" not in request.QUERY_PARAMS:
+            return response.BadRequest(_("project or project_slug param is needed"))
+
+        retrieve_kwargs = {
+            "ref": request.QUERY_PARAMS["ref"]
+        }
         project_id = request.QUERY_PARAMS.get("project", None)
-        userstory = get_object_or_404(models.UserStory, ref=ref, project_id=project_id)
-        return self.retrieve(request, pk=userstory.pk)
+        if project_id is not None:
+            retrieve_kwargs["project_id"] = project_id
+
+        project_slug = request.QUERY_PARAMS.get("project__slug", None)
+        if project_slug is not None:
+            retrieve_kwargs["project__slug"] = project_slug
+
+        return self.retrieve(request, **retrieve_kwargs)
 
     @list_route(methods=["GET"])
     def csv(self, request):
@@ -215,9 +331,9 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
-        serializer = serializers.UserStoriesBulkSerializer(data=request.DATA)
-        if serializer.is_valid():
-            data = serializer.data
+        validator = validators.UserStoriesBulkValidator(data=request.DATA)
+        if validator.is_valid():
+            data = validator.data
             project = Project.objects.get(id=data["project_id"])
             self.check_permissions(request, 'bulk_create', project)
             if project.blocked_code is not None:
@@ -227,28 +343,60 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                 data["bulk_stories"], project=project, owner=request.user,
                 status_id=data.get("status_id") or project.default_us_status_id,
                 callback=self.post_save, precall=self.pre_save)
+
+            user_stories = self.get_queryset().filter(id__in=[i.id for i in user_stories])
+            for user_story in user_stories:
+                self.persist_history_snapshot(obj=user_story)
+
             user_stories_serialized = self.get_serializer_class()(user_stories, many=True)
+
             return response.Ok(user_stories_serialized.data)
-        return response.BadRequest(serializer.errors)
+        return response.BadRequest(validator.errors)
+
+    @list_route(methods=["POST"])
+    def bulk_update_milestone(self, request, **kwargs):
+        validator = validators.UpdateMilestoneBulkValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+
+        data = validator.data
+        project = get_object_or_404(Project, pk=data["project_id"])
+        milestone = get_object_or_404(Milestone, pk=data["milestone_id"])
+
+        self.check_permissions(request, "bulk_update_milestone", project)
+
+        services.update_userstories_milestone_in_bulk(data["bulk_stories"], milestone)
+        services.snapshot_userstories_in_bulk(data["bulk_stories"], request.user)
+
+        return response.NoContent()
 
     def _bulk_update_order(self, order_field, request, **kwargs):
-        serializer = serializers.UpdateUserStoriesOrderBulkSerializer(data=request.DATA)
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
+        validator = validators.UpdateUserStoriesOrderBulkValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
-        data = serializer.data
+        data = validator.data
         project = get_object_or_404(Project, pk=data["project_id"])
+        status = None
+        status_id = data.get("status_id", None)
+        if status_id is not None:
+            status = get_object_or_404(UserStoryStatus, pk=status_id)
+
+        milestone = None
+        milestone_id = data.get("milestone_id", None)
+        if milestone_id is not None:
+            milestone = get_object_or_404(Milestone, pk=milestone_id)
 
         self.check_permissions(request, "bulk_update_order", project)
         if project.blocked_code is not None:
             raise exc.Blocked(_("Blocked element"))
 
-        services.update_userstories_order_in_bulk(data["bulk_stories"],
-                                                  project=project,
-                                                  field=order_field)
-        services.snapshot_userstories_in_bulk(data["bulk_stories"], request.user)
-
-        return response.NoContent()
+        ret = services.update_userstories_order_in_bulk(data["bulk_stories"],
+                                                        order_field,
+                                                        project,
+                                                        status=status,
+                                                        milestone=milestone)
+        return response.Ok(ret)
 
     @list_route(methods=["POST"])
     def bulk_update_backlog_order(self, request, **kwargs):
@@ -262,23 +410,6 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
     def bulk_update_kanban_order(self, request, **kwargs):
         return self._bulk_update_order("kanban_order", request, **kwargs)
 
-    @transaction.atomic
-    def create(self, *args, **kwargs):
-        response = super().create(*args, **kwargs)
-
-        # Added comment to the origin (issue)
-        if response.status_code == status.HTTP_201_CREATED and self.object.generated_from_issue:
-            self.object.generated_from_issue.save()
-
-            comment = _("Generating the user story #{ref} - {subject}")
-            comment = comment.format(ref=self.object.ref, subject=self.object.subject)
-            history = take_snapshot(self.object.generated_from_issue,
-                                    comment=comment,
-                                    user=self.request.user)
-
-            self.send_notifications(self.object.generated_from_issue, history)
-
-        return response
 
 class UserStoryVotersViewSet(VotersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.UserStoryVotersPermission,)

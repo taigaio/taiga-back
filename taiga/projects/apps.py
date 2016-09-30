@@ -25,18 +25,16 @@ from django.db.models import signals
 
 def connect_projects_signals():
     from . import signals as handlers
+    from .tagging import signals as tagging_handlers
     # On project object is created apply template.
     signals.post_save.connect(handlers.project_post_save,
                               sender=apps.get_model("projects", "Project"),
                               dispatch_uid='project_post_save')
 
     # Tags normalization after save a project
-    signals.pre_save.connect(handlers.tags_normalization,
+    signals.pre_save.connect(tagging_handlers.tags_normalization,
                              sender=apps.get_model("projects", "Project"),
                              dispatch_uid="tags_normalization_projects")
-    signals.pre_save.connect(handlers.update_project_tags_when_create_or_edit_taggable_item,
-                             sender=apps.get_model("projects", "Project"),
-                             dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_projects")
 
 
 def disconnect_projects_signals():
@@ -44,8 +42,6 @@ def disconnect_projects_signals():
                                  dispatch_uid='project_post_save')
     signals.pre_save.disconnect(sender=apps.get_model("projects", "Project"),
                                 dispatch_uid="tags_normalization_projects")
-    signals.pre_save.disconnect(sender=apps.get_model("projects", "Project"),
-                                dispatch_uid="update_project_tags_when_create_or_edit_taggable_item_projects")
 
 
 ## Memberships Signals

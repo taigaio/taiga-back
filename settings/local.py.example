@@ -18,6 +18,10 @@
 
 from .development import *
 
+#########################################
+## GENERIC
+#########################################
+
 #DEBUG = False
 
 #ADMINS = (
@@ -54,6 +58,25 @@ DATABASES = {
 #STATIC_ROOT = '/home/taiga/static'
 
 
+#########################################
+## THROTTLING
+#########################################
+
+#REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
+#    "anon": "20/min",
+#    "user": "200/min",
+#    "import-mode": "20/sec",
+#    "import-dump-mode": "1/minute"
+#}
+
+
+#########################################
+## MAIL SYSTEM SETTINGS
+#########################################
+
+#DEFAULT_FROM_EMAIL = "john@doe.com"
+#CHANGE_NOTIFICATIONS_MIN_INTERVAL = 300 #seconds
+
 # EMAIL SETTINGS EXAMPLE
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #EMAIL_USE_TLS = False
@@ -61,7 +84,6 @@ DATABASES = {
 #EMAIL_PORT = 25
 #EMAIL_HOST_USER = 'user'
 #EMAIL_HOST_PASSWORD = 'password'
-#DEFAULT_FROM_EMAIL = "john@doe.com"
 
 # GMAIL SETTINGS EXAMPLE
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -71,13 +93,22 @@ DATABASES = {
 #EMAIL_HOST_USER = 'youremail@gmail.com'
 #EMAIL_HOST_PASSWORD = 'yourpassword'
 
-# THROTTLING
-#REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
-#    "anon": "20/min",
-#    "user": "200/min",
-#    "import-mode": "20/sec",
-#    "import-dump-mode": "1/minute"
-#}
+
+#########################################
+## REGISTRATION
+#########################################
+
+#PUBLIC_REGISTER_ENABLED = True
+
+# LIMIT ALLOWED DOMAINS FOR REGISTER AND INVITE
+# None or [] values in USER_EMAIL_ALLOWED_DOMAINS means allow any domain
+#USER_EMAIL_ALLOWED_DOMAINS = None
+
+# PUCLIC OR PRIVATE NUMBER OF PROJECT PER USER
+#MAX_PRIVATE_PROJECTS_PER_USER = None # None == no limit
+#MAX_PUBLIC_PROJECTS_PER_USER = None # None == no limit
+#MAX_MEMBERSHIPS_PRIVATE_PROJECTS = None # None == no limit
+#MAX_MEMBERSHIPS_PUBLIC_PROJECTS = None # None == no limit
 
 # GITHUB SETTINGS
 #GITHUB_URL = "https://github.com/"
@@ -85,20 +116,37 @@ DATABASES = {
 #GITHUB_API_CLIENT_ID = "yourgithubclientid"
 #GITHUB_API_CLIENT_SECRET = "yourgithubclientsecret"
 
-# FEEDBACK MODULE (See config in taiga-front too)
-#FEEDBACK_ENABLED = True
-#FEEDBACK_EMAIL = "support@taiga.io"
 
-# STATS MODULE
-#STATS_ENABLED = False
-#FRONT_SITEMAP_CACHE_TIMEOUT = 60*60  # In second
+#########################################
+## SITEMAP
+#########################################
 
-# SITEMAP
 # If is True /front/sitemap.xml show a valid sitemap of taiga-front client
 #FRONT_SITEMAP_ENABLED = False
 #FRONT_SITEMAP_CACHE_TIMEOUT = 24*60*60  # In second
 
-# CELERY
+
+#########################################
+## FEEDBACK
+#########################################
+
+# Note: See config in taiga-front too
+#FEEDBACK_ENABLED = True
+#FEEDBACK_EMAIL = "support@taiga.io"
+
+
+#########################################
+## STATS
+#########################################
+
+#STATS_ENABLED = False
+#FRONT_SITEMAP_CACHE_TIMEOUT = 60*60  # In second
+
+
+#########################################
+## CELERY
+#########################################
+
 #from .celery import *
 #CELERY_ENABLED = True
 #

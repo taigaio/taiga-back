@@ -17,131 +17,60 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.apps import apps
-from django.utils.translation import ugettext_lazy as _
-
-from taiga.base.fields import JsonField
-from taiga.base.api.serializers import ValidationError
-from taiga.base.api.serializers import ModelSerializer
-
-from . import models
+from taiga.base.fields import JsonField, Field
+from taiga.base.api import serializers
 
 
 ######################################################
 # Custom Attribute Serializer
 #######################################################
 
-class BaseCustomAttributeSerializer(ModelSerializer):
-    class Meta:
-        read_only_fields = ('id',)
-        exclude = ('created_date', 'modified_date')
+class BaseCustomAttributeSerializer(serializers.LightSerializer):
+    id = Field()
+    name = Field()
+    description = Field()
+    type = Field()
+    order = Field()
+    project = Field(attr="project_id")
+    created_date = Field()
+    modified_date = Field()
 
-    def _validate_integrity_between_project_and_name(self, attrs, source):
-        """
-        Check the name is not duplicated in the project. Check when:
-          - create a new one
-          - update the name
-          - update the project (move to another project)
-        """
-        data_id = attrs.get("id", None)
-        data_name = attrs.get("name", None)
-        data_project = attrs.get("project", None)
 
-        if self.object:
-            data_id = data_id or self.object.id
-            data_name = data_name or self.object.name
-            data_project = data_project or self.object.project
-
-        model = self.Meta.model
-        qs = (model.objects.filter(project=data_project, name=data_name)
-                           .exclude(id=data_id))
-        if qs.exists():
-            raise ValidationError(_("Already exists one with the same name."))
-
-        return attrs
-
-    def validate_name(self, attrs, source):
-        return self._validate_integrity_between_project_and_name(attrs, source)
-
-    def validate_project(self, attrs, source):
-        return self._validate_integrity_between_project_and_name(attrs, source)
+class EpicCustomAttributeSerializer(BaseCustomAttributeSerializer):
+    pass
 
 
 class UserStoryCustomAttributeSerializer(BaseCustomAttributeSerializer):
-    class Meta(BaseCustomAttributeSerializer.Meta):
-        model = models.UserStoryCustomAttribute
+    pass
 
 
 class TaskCustomAttributeSerializer(BaseCustomAttributeSerializer):
-    class Meta(BaseCustomAttributeSerializer.Meta):
-        model = models.TaskCustomAttribute
+    pass
 
 
 class IssueCustomAttributeSerializer(BaseCustomAttributeSerializer):
-    class Meta(BaseCustomAttributeSerializer.Meta):
-        model = models.IssueCustomAttribute
+    pass
 
 
 ######################################################
 # Custom Attribute Serializer
 #######################################################
+class BaseCustomAttributesValuesSerializer(serializers.LightSerializer):
+    attributes_values = Field()
+    version = Field()
 
 
-class BaseCustomAttributesValuesSerializer(ModelSerializer):
-    attributes_values = JsonField(source="attributes_values", label="attributes values")
-    _custom_attribute_model = None
-    _container_field = None
-
-    class Meta:
-        exclude = ("id",)
-
-    def validate_attributes_values(self, attrs, source):
-        # values must be a dict
-        data_values = attrs.get("attributes_values", None)
-        if self.object:
-            data_values = (data_values or self.object.attributes_values)
-
-        if type(data_values) is not dict:
-            raise ValidationError(_("Invalid content. It must be {\"key\": \"value\",...}"))
-
-        # Values keys must be in the container object project
-        data_container = attrs.get(self._container_field, None)
-        if data_container:
-            project_id = data_container.project_id
-        elif self.object:
-            project_id = getattr(self.object, self._container_field).project_id
-        else:
-            project_id = None
-
-        values_ids = list(data_values.keys())
-        qs = self._custom_attribute_model.objects.filter(project=project_id,
-                                                         id__in=values_ids)
-        if qs.count() != len(values_ids):
-            raise ValidationError(_("It contain invalid custom fields."))
-
-        return attrs
+class EpicCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerializer):
+    epic = Field(attr="epic.id")
 
 
 class UserStoryCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerializer):
-    _custom_attribute_model = models.UserStoryCustomAttribute
-    _container_model = "userstories.UserStory"
-    _container_field = "user_story"
-
-    class Meta(BaseCustomAttributesValuesSerializer.Meta):
-        model = models.UserStoryCustomAttributesValues
+    user_story = Field(attr="user_story.id")
 
 
-class TaskCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerializer, ModelSerializer):
-    _custom_attribute_model = models.TaskCustomAttribute
-    _container_field = "task"
-
-    class Meta(BaseCustomAttributesValuesSerializer.Meta):
-        model = models.TaskCustomAttributesValues
+class TaskCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerializer):
+    task = Field(attr="task.id")
 
 
-class IssueCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerializer, ModelSerializer):
-    _custom_attribute_model = models.IssueCustomAttribute
-    _container_field = "issue"
-
-    class Meta(BaseCustomAttributesValuesSerializer.Meta):
-        model = models.IssueCustomAttributesValues
+class IssueCustomAttributesValuesSerializer(BaseCustomAttributesValuesSerializer):
+    issue = Field(attr="issue.id")

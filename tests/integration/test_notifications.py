@@ -42,7 +42,7 @@ from taiga.projects.history.services import take_snapshot
 from taiga.projects.issues.serializers import IssueSerializer
 from taiga.projects.userstories.serializers import UserStorySerializer
 from taiga.projects.tasks.serializers import TaskSerializer
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+from taiga.permissions.choices import MEMBERS_PERMISSIONS
 
 pytestmark = pytest.mark.django_db
 
@@ -354,6 +354,7 @@ def test_send_notifications_using_services_method_for_user_stories(settings, mai
 
     us = f.UserStoryFactory.create(project=project, owner=member2.user)
     history_change = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.change,
@@ -363,6 +364,7 @@ def test_send_notifications_using_services_method_for_user_stories(settings, mai
     )
 
     history_create = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.create,
@@ -372,6 +374,7 @@ def test_send_notifications_using_services_method_for_user_stories(settings, mai
     )
 
     history_delete = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="test:delete",
         type=HistoryType.delete,
@@ -446,6 +449,7 @@ def test_send_notifications_using_services_method_for_tasks(settings, mail):
 
     task = f.TaskFactory.create(project=project, owner=member2.user)
     history_change = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.change,
@@ -455,6 +459,7 @@ def test_send_notifications_using_services_method_for_tasks(settings, mail):
     )
 
     history_create = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.create,
@@ -464,6 +469,7 @@ def test_send_notifications_using_services_method_for_tasks(settings, mail):
     )
 
     history_delete = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="test:delete",
         type=HistoryType.delete,
@@ -538,6 +544,7 @@ def test_send_notifications_using_services_method_for_issues(settings, mail):
 
     issue = f.IssueFactory.create(project=project, owner=member2.user)
     history_change = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.change,
@@ -547,6 +554,7 @@ def test_send_notifications_using_services_method_for_issues(settings, mail):
     )
 
     history_create = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.create,
@@ -556,6 +564,7 @@ def test_send_notifications_using_services_method_for_issues(settings, mail):
     )
 
     history_delete = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="test:delete",
         type=HistoryType.delete,
@@ -630,6 +639,7 @@ def test_send_notifications_using_services_method_for_wiki_pages(settings, mail)
 
     wiki = f.WikiPageFactory.create(project=project, owner=member2.user)
     history_change = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.change,
@@ -639,6 +649,7 @@ def test_send_notifications_using_services_method_for_wiki_pages(settings, mail)
     )
 
     history_create = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="",
         type=HistoryType.create,
@@ -648,6 +659,7 @@ def test_send_notifications_using_services_method_for_wiki_pages(settings, mail)
     )
 
     history_delete = f.HistoryEntryFactory.create(
+        project=project,
         user={"pk": member1.user.id},
         comment="test:delete",
         type=HistoryType.delete,
@@ -778,7 +790,7 @@ def test_watchers_assignation_for_issue(client):
     assert response.status_code == 400
 
     issue = f.create_issue(project=project1, owner=user1)
-    data = dict(IssueSerializer(issue).data)
+    data = {}
     data["id"] = None
     data["version"] = None
     data["watchers"] = [user1.pk, user2.pk]
@@ -790,8 +802,7 @@ def test_watchers_assignation_for_issue(client):
     # Test the impossible case when project is not
     # exists in create request, and validator works as expected
     issue = f.create_issue(project=project1, owner=user1)
-    data = dict(IssueSerializer(issue).data)
-
+    data = {}
     data["id"] = None
     data["watchers"] = [user1.pk, user2.pk]
     data["project"] = None
@@ -830,10 +841,11 @@ def test_watchers_assignation_for_task(client):
     assert response.status_code == 400
 
     task = f.create_task(project=project1, owner=user1, status__project=project1, milestone__project=project1)
-    data = dict(TaskSerializer(task).data)
-    data["id"] = None
-    data["version"] = None
-    data["watchers"] = [user1.pk, user2.pk]
+    data = {
+        "id": None,
+        "version": None,
+        "watchers": [user1.pk, user2.pk]
+    }
 
     url = reverse("tasks-list")
     response = client.json.post(url, json.dumps(data))
@@ -842,11 +854,11 @@ def test_watchers_assignation_for_task(client):
     # Test the impossible case when project is not
     # exists in create request, and validator works as expected
     task = f.create_task(project=project1, owner=user1, status__project=project1, milestone__project=project1)
-    data = dict(TaskSerializer(task).data)
-
-    data["id"] = None
-    data["watchers"] = [user1.pk, user2.pk]
-    data["project"] = None
+    data = {
+        "id": None,
+        "watchers": [user1.pk, user2.pk],
+        "project": None
+    }
 
     url = reverse("tasks-list")
     response = client.json.post(url, json.dumps(data))
@@ -882,10 +894,11 @@ def test_watchers_assignation_for_us(client):
     assert response.status_code == 400
 
     us = f.create_userstory(project=project1, owner=user1, status__project=project1)
-    data = dict(UserStorySerializer(us).data)
-    data["id"] = None
-    data["version"] = None
-    data["watchers"] = [user1.pk, user2.pk]
+    data = {
+        "id": None,
+        "version": None,
+        "watchers": [user1.pk, user2.pk]
+    }
 
     url = reverse("userstories-list")
     response = client.json.post(url, json.dumps(data))
@@ -894,11 +907,11 @@ def test_watchers_assignation_for_us(client):
     # Test the impossible case when project is not
     # exists in create request, and validator works as expected
     us = f.create_userstory(project=project1, owner=user1, status__project=project1)
-    data = dict(UserStorySerializer(us).data)
-
-    data["id"] = None
-    data["watchers"] = [user1.pk, user2.pk]
-    data["project"] = None
+    data = {
+        "id": None,
+        "watchers": [user1.pk, user2.pk],
+        "project": None
+    }
 
     url = reverse("userstories-list")
     response = client.json.post(url, json.dumps(data))

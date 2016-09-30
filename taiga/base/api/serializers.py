@@ -69,6 +69,7 @@ import copy
 import datetime
 import inspect
 import types
+import serpy
 
 # Note: We do the following so that users of the framework can use this style:
 #
@@ -76,6 +77,8 @@ import types
 #
 # This helps keep the separation between model fields, form fields, and
 # serializer fields more explicit.
+
+from taiga.base.exceptions import ValidationError
 
 from .relations import *
 from .fields import *
@@ -1220,3 +1223,27 @@ class HyperlinkedModelSerializer(ModelSerializer):
             "model_name": model_meta.object_name.lower()
         }
         return self._default_view_name % format_kwargs
+
+
+class LightSerializer(serpy.Serializer):
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("read_only", None)
+        kwargs.pop("partial", None)
+        kwargs.pop("files", None)
+        context = kwargs.pop("context", {})
+        view = kwargs.pop("view", {})
+        super().__init__(*args, **kwargs)
+        self.context = context
+        self.view = view
+
+
+class LightDictSerializer(serpy.DictSerializer):
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("read_only", None)
+        kwargs.pop("partial", None)
+        kwargs.pop("files", None)
+        context = kwargs.pop("context", {})
+        view = kwargs.pop("view", {})
+        super().__init__(*args, **kwargs)
+        self.context = context
+        self.view = view

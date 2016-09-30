@@ -43,7 +43,7 @@ def test_update_milestone_with_userstories_list(client):
 
     form_data = {
         "name": "test",
-        "user_stories": [UserStorySerializer(us).data]
+        "user_stories": [{"id": us.id}]
     }
 
     client.login(user)

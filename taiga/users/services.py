@@ -37,9 +37,6 @@ from taiga.base.utils.urls import get_absolute_url
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.notifications.services import get_projects_watched
 
-from .gravatar import get_gravatar_url
-
-
 
 def get_user_by_username_or_email(username_or_email):
     user_model = get_user_model()
@@ -57,7 +54,7 @@ def get_user_by_username_or_email(username_or_email):
     return user
 
 
-def get_and_validate_user(*, username:str, password:str) -> bool:
+def get_and_validate_user(*, username: str, password: str) -> bool:
     """
     Check if user with username/email exists and specified
     password matchs well with existing user password.
@@ -75,6 +72,8 @@ def get_and_validate_user(*, username:str, password:str) -> bool:
 
 def get_photo_url(photo):
     """Get a photo absolute url and the photo automatically cropped."""
+    if not photo:
+        return None
     try:
         url = get_thumbnailer(photo)[settings.THN_AVATAR_SMALL].url
         return get_absolute_url(url)
@@ -82,15 +81,17 @@ def get_photo_url(photo):
         return None
 
 
-def get_photo_or_gravatar_url(user):
-    """Get the user's photo/gravatar url."""
-    if user:
-        return get_photo_url(user.photo) if user.photo else get_gravatar_url(user.email)
-    return settings.GRAVATAR_DEFAULT_AVATAR
+def get_user_photo_url(user):
+    """Get the user's photo url."""
+    if not user:
+        return None
+    return get_photo_url(user.photo)
 
 
 def get_big_photo_url(photo):
     """Get a big photo absolute url and the photo automatically cropped."""
+    if not photo:
+        return None
     try:
         url = get_thumbnailer(photo)[settings.THN_AVATAR_BIG].url
         return get_absolute_url(url)
@@ -98,15 +99,11 @@ def get_big_photo_url(photo):
         return None
 
 
-def get_big_photo_or_gravatar_url(user):
-    """Get the user's big photo/gravatar url."""
+def get_user_big_photo_url(user):
+    """Get the user's big photo url."""
     if not user:
-        return ""
-
-    if user.photo:
-        return get_big_photo_url(user.photo)
-    else:
-        return get_gravatar_url(user.email, size=settings.THN_AVATAR_BIG_SIZE)
+        return None
+    return get_big_photo_url(user.photo)
 
 
 def get_visible_project_ids(from_user, by_user):
@@ -118,17 +115,17 @@ def get_visible_project_ids(from_user, by_user):
 
     # Authenticated
     if by_user.is_authenticated():
-        #Calculating the projects wich from_user user is member
+        # Calculating the projects wich from_user user is member
         by_user_project_ids = by_user.memberships.values_list("project__id", flat=True)
-        #Adding to the condition two OR situations:
-        #- The from user has a role that allows access to the project
-        #- The to user is the owner
+        # Adding to the condition two OR situations:
+        # - The from user has a role that allows access to the project
+        # - The to user is the owner
         member_perm_conditions |= \
             Q(project__id__in=by_user_project_ids, role__permissions__contains=required_permissions) |\
             Q(project__id__in=by_user_project_ids, is_admin=True)
 
     Membership = apps.get_model('projects', 'Membership')
-    #Calculating the user memberships adding the permission filter for the by user
+    # Calculating the user memberships adding the permission filter for the by user
     memberships_qs = Membership.objects.filter(member_perm_conditions, user=from_user)
     project_ids = memberships_qs.values_list("project__id", flat=True)
     return project_ids
@@ -140,8 +137,8 @@ def get_stats_for_user(from_user, by_user):
 
     total_num_projects = len(project_ids)
 
-    roles = [_(r) for r in from_user.memberships.filter(project__id__in=project_ids).values_list(
-                                                                          "role__name", flat=True)]
+    role_names = from_user.memberships.filter(project__id__in=project_ids).values_list("role__name", flat=True)
+    roles = [_(r) for r in role_names]
     roles = list(set(roles))
 
     User = apps.get_model('users', 'User')
@@ -213,9 +210,9 @@ def get_watched_content_for_user(user):
         list.append(object_id)
         user_watches[ct_model] = list
 
-    #Now for projects,
+    # Now for projects,
     projects_watched = get_projects_watched(user)
-    project_content_type_model=ContentType.objects.get(app_label="projects", model="project").model
+    project_content_type_model = ContentType.objects.get(app_label="projects", model="project").model
     user_watches[project_content_type_model] = projects_watched.values_list("id", flat=True)
 
     return user_watches
@@ -223,22 +220,22 @@ def get_watched_content_for_user(user):
 
 def _build_watched_sql_for_projects(for_user):
     sql = """
-	SELECT projects_project.id AS id, null::integer AS ref, 'project'::text AS type,
+    SELECT projects_project.id AS id, null::integer AS ref, 'project'::text AS type,
         tags, notifications_notifypolicy.project_id AS object_id, projects_project.id AS project,
         slug, projects_project.name, null::text AS subject,
         notifications_notifypolicy.created_at as created_date,
         coalesce(watchers, 0) AS total_watchers, projects_project.total_fans AS total_fans, null::integer AS total_voters,
         null::integer AS assigned_to, null::text as status, null::text as status_color
-	    FROM notifications_notifypolicy
-	    INNER JOIN projects_project
-		      ON (projects_project.id = notifications_notifypolicy.project_id)
-	    LEFT JOIN (SELECT project_id, count(*) watchers
+        FROM notifications_notifypolicy
+        INNER JOIN projects_project
+            ON (projects_project.id = notifications_notifypolicy.project_id)
+        LEFT JOIN (SELECT project_id, count(*) watchers
                    FROM notifications_notifypolicy
                    WHERE notifications_notifypolicy.notify_level != {none_notify_level}
                    GROUP BY project_id
                 ) type_watchers
-		      ON projects_project.id = type_watchers.project_id
-	    WHERE
+            ON projects_project.id = type_watchers.project_id
+        WHERE
               notifications_notifypolicy.user_id = {for_user_id}
               AND notifications_notifypolicy.notify_level != {none_notify_level}
     """
@@ -251,22 +248,22 @@ def _build_watched_sql_for_projects(for_user):
 
 def _build_liked_sql_for_projects(for_user):
     sql = """
-	SELECT projects_project.id AS id, null::integer AS ref, 'project'::text AS type,
+    SELECT projects_project.id AS id, null::integer AS ref, 'project'::text AS type,
         tags, likes_like.object_id AS object_id, projects_project.id AS project,
         slug, projects_project.name, null::text AS subject,
         likes_like.created_date,
         coalesce(watchers, 0) AS total_watchers, projects_project.total_fans AS total_fans,
         null::integer AS assigned_to, null::text as status, null::text as status_color
-	    FROM likes_like
-	    INNER JOIN projects_project
-		      ON (projects_project.id = likes_like.object_id)
-	    LEFT JOIN (SELECT project_id, count(*) watchers
+        FROM likes_like
+        INNER JOIN projects_project
+              ON (projects_project.id = likes_like.object_id)
+        LEFT JOIN (SELECT project_id, count(*) watchers
                    FROM notifications_notifypolicy
                    WHERE notifications_notifypolicy.notify_level != {none_notify_level}
                    GROUP BY project_id
                 ) type_watchers
-		      ON projects_project.id = type_watchers.project_id
-	    WHERE likes_like.user_id = {for_user_id} AND {project_content_type_id} = likes_like.content_type_id
+              ON projects_project.id = type_watchers.project_id
+        WHERE likes_like.user_id = {for_user_id} AND {project_content_type_id} = likes_like.content_type_id
     """
     sql = sql.format(
         for_user_id=for_user.id,
@@ -277,39 +274,38 @@ def _build_liked_sql_for_projects(for_user):
 
 
 def _build_sql_for_type(for_user, type, table_name, action_table, ref_column="ref",
-                              project_column="project_id", assigned_to_column="assigned_to_id",
-                              slug_column="slug", subject_column="subject"):
+                        project_column="project_id", assigned_to_column="assigned_to_id",
+                        slug_column="slug", subject_column="subject"):
     sql = """
-	SELECT {table_name}.id AS id, {ref_column} AS ref, '{type}' AS type,
+    SELECT {table_name}.id AS id, {ref_column} AS ref, '{type}' AS type,
         tags, {action_table}.object_id AS object_id, {table_name}.{project_column} AS project,
         {slug_column} AS slug, null AS name, {subject_column} AS subject,
         {action_table}.created_date,
         coalesce(watchers, 0) AS total_watchers, null::integer AS total_fans, coalesce(votes_votes.count, 0) AS total_voters,
         {assigned_to_column}  AS assigned_to, projects_{type}status.name as status, projects_{type}status.color as status_color
-	    FROM {action_table}
-	    INNER JOIN django_content_type
-		      ON ({action_table}.content_type_id = django_content_type.id AND django_content_type.model = '{type}')
-	    INNER JOIN {table_name}
-		      ON ({table_name}.id = {action_table}.object_id)
+        FROM {action_table}
+        INNER JOIN django_content_type
+              ON ({action_table}.content_type_id = django_content_type.id AND django_content_type.model = '{type}')
+        INNER JOIN {table_name}
+              ON ({table_name}.id = {action_table}.object_id)
         INNER JOIN projects_{type}status
-		      ON (projects_{type}status.id = {table_name}.status_id)
-	    LEFT JOIN (SELECT object_id, content_type_id, count(*) watchers FROM notifications_watched GROUP BY object_id, content_type_id) type_watchers
-		      ON {table_name}.id = type_watchers.object_id AND django_content_type.id = type_watchers.content_type_id
-	    LEFT JOIN votes_votes
-		      ON ({table_name}.id = votes_votes.object_id AND django_content_type.id = votes_votes.content_type_id)
-	    WHERE {action_table}.user_id = {for_user_id}
+              ON (projects_{type}status.id = {table_name}.status_id)
+        LEFT JOIN (SELECT object_id, content_type_id, count(*) watchers FROM notifications_watched GROUP BY object_id, content_type_id) type_watchers
+              ON {table_name}.id = type_watchers.object_id AND django_content_type.id = type_watchers.content_type_id
+        LEFT JOIN votes_votes
+              ON ({table_name}.id = votes_votes.object_id AND django_content_type.id = votes_votes.content_type_id)
+        WHERE {action_table}.user_id = {for_user_id}
     """
     sql = sql.format(for_user_id=for_user.id, type=type, table_name=table_name,
-                      action_table=action_table, ref_column = ref_column,
-                      project_column=project_column, assigned_to_column=assigned_to_column,
-                      slug_column=slug_column, subject_column=subject_column)
+                     action_table=action_table, ref_column=ref_column,
+                     project_column=project_column, assigned_to_column=assigned_to_column,
+                     slug_column=slug_column, subject_column=subject_column)
 
     return sql
 
 
 def get_watched_list(for_user, from_user, type=None, q=None):
     filters_sql = ""
-    and_needed = False
 
     if type:
         filters_sql += " AND type = %(type)s "
@@ -325,8 +321,12 @@ def get_watched_list(for_user, from_user, type=None, q=None):
     SELECT entities.*,
            projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
            projects_project.blocked_code as project_blocked_code, projects_project.tags_colors, projects_project.logo,
-           users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
+           users_user.id as assigned_to_id,
+           row_to_json(users_user) as assigned_to_extra_info
+
         FROM (
+            {epics_sql}
+            UNION
             {userstories_sql}
             UNION
             {tasks_sql}
@@ -367,6 +367,7 @@ def get_watched_list(for_user, from_user, type=None, q=None):
                     OR (entities.type = 'task' AND 'view_tasks' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
                     OR (entities.type = 'userstory' AND 'view_us' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
                     OR (entities.type = 'project' AND 'view_project' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
+                    OR (entities.type = 'epic' AND 'view_epic' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
                 )
         ))
     -- END Permissions checking
@@ -386,6 +387,7 @@ def get_watched_list(for_user, from_user, type=None, q=None):
         userstories_sql=_build_sql_for_type(for_user, "userstory", "userstories_userstory", "notifications_watched", slug_column="null"),
         tasks_sql=_build_sql_for_type(for_user, "task", "tasks_task", "notifications_watched", slug_column="null"),
         issues_sql=_build_sql_for_type(for_user, "issue", "issues_issue", "notifications_watched", slug_column="null"),
+        epics_sql=_build_sql_for_type(for_user, "epic", "epics_epic", "notifications_watched", slug_column="null"),
         projects_sql=_build_watched_sql_for_projects(for_user))
 
     cursor = connection.cursor()
@@ -404,7 +406,6 @@ def get_watched_list(for_user, from_user, type=None, q=None):
 
 def get_liked_list(for_user, from_user, type=None, q=None):
     filters_sql = ""
-    and_needed = False
 
     if type:
         filters_sql += " AND type = %(type)s "
@@ -420,7 +421,8 @@ def get_liked_list(for_user, from_user, type=None, q=None):
     SELECT entities.*,
            projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
            projects_project.blocked_code as project_blocked_code, projects_project.tags_colors, projects_project.logo,
-           users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
+           users_user.id as assigned_to_id,
+           row_to_json(users_user) as assigned_to_extra_info
         FROM (
             {projects_sql}
         ) as entities
@@ -487,7 +489,6 @@ def get_liked_list(for_user, from_user, type=None, q=None):
 
 def get_voted_list(for_user, from_user, type=None, q=None):
     filters_sql = ""
-    and_needed = False
 
     if type:
         filters_sql += " AND type = %(type)s "
@@ -503,8 +504,11 @@ def get_voted_list(for_user, from_user, type=None, q=None):
     SELECT entities.*,
            projects_project.name as project_name, projects_project.description as description, projects_project.slug as project_slug, projects_project.is_private as project_is_private,
            projects_project.blocked_code as project_blocked_code, projects_project.tags_colors, projects_project.logo,
-           users_user.username assigned_to_username, users_user.full_name assigned_to_full_name, users_user.photo assigned_to_photo, users_user.email assigned_to_email
+           users_user.id as assigned_to_id,
+           row_to_json(users_user) as assigned_to_extra_info
         FROM (
+            {epics_sql}
+            UNION
             {userstories_sql}
             UNION
             {tasks_sql}
@@ -542,6 +546,7 @@ def get_voted_list(for_user, from_user, type=None, q=None):
                     (entities.type = 'issue' AND 'view_issues' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
                     OR (entities.type = 'task' AND 'view_tasks' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
                     OR (entities.type = 'userstory' AND 'view_us' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
+                    OR (entities.type = 'epic' AND 'view_epic' = ANY (array_cat(users_role.permissions, projects_project.anon_permissions)))
                 )
         ))
     -- END Permissions checking
@@ -560,7 +565,8 @@ def get_voted_list(for_user, from_user, type=None, q=None):
         filters_sql=filters_sql,
         userstories_sql=_build_sql_for_type(for_user, "userstory", "userstories_userstory", "votes_vote", slug_column="null"),
         tasks_sql=_build_sql_for_type(for_user, "task", "tasks_task", "votes_vote", slug_column="null"),
-        issues_sql=_build_sql_for_type(for_user, "issue", "issues_issue", "votes_vote", slug_column="null"))
+        issues_sql=_build_sql_for_type(for_user, "issue", "issues_issue", "votes_vote", slug_column="null"),
+        epics_sql=_build_sql_for_type(for_user, "epic", "epics_epic", "votes_vote", slug_column="null"))
 
     cursor = connection.cursor()
     params = {

@@ -24,25 +24,83 @@ from taiga.projects import models
 from contextlib import suppress
 
 
-def update_projects_order_in_bulk(bulk_data:list, field:str, user):
+def apply_order_updates(base_orders: dict, new_orders: dict):
+    """
+    `base_orders` must be a dict containing all the elements that can be affected by
+    order modifications.
+    `new_orders` must be a dict containing the basic order modifications to apply.
+
+    The result will a base_orders with the specified order changes in new_orders
+    and the extra calculated ones applied.
+    Extra order updates can be needed when moving elements to intermediate positions.
+    The elements where no order update is needed will be removed.
+    """
+    updated_order_ids = set()
+    # We will apply the multiple order changes by the new position order
+    sorted_new_orders = [(k, v) for k, v in new_orders.items()]
+    sorted_new_orders = sorted(sorted_new_orders, key=lambda e: e[1])
+
+    for new_order in sorted_new_orders:
+        old_order = base_orders[new_order[0]]
+        new_order = new_order[1]
+        for id, order in base_orders.items():
+            # When moving forward only the elements contained in the range new_order - old_order
+            # positions need to be updated
+            moving_backward = new_order <= old_order and order >= new_order and order < old_order
+            # When moving backward all the elements from the new_order position need to bee updated
+            moving_forward = new_order >= old_order and order >= new_order
+            if moving_backward or moving_forward:
+                base_orders[id] += 1
+                updated_order_ids.add(id)
+
+    # Overwritting the orders specified
+    for id, order in new_orders.items():
+        if base_orders[id] != order:
+            base_orders[id] = order
+            updated_order_ids.add(id)
+
+    # Remove not modified elements
+    removing_keys = [id for id in base_orders if id not in updated_order_ids]
+    [base_orders.pop(id, None) for id in removing_keys]
+
+
+def update_projects_order_in_bulk(bulk_data: list, field: str, user):
     """
     Update the order of user projects in the user membership.
-    `bulk_data` should be a list of tuples with the following format:
+    `bulk_data` should be a list of dicts with the following format:
 
-    [(<project id>, {<field>: <value>, ...}), ...]
+    [{'project_id': <value>, 'order': <value>}, ...]
     """
-    membership_ids = []
-    new_order_values = []
+    memberships_orders = {m.id: getattr(m, field) for m in user.memberships.all()}
+    new_memberships_orders = {}
+
     for membership_data in bulk_data:
         project_id = membership_data["project_id"]
         with suppress(ObjectDoesNotExist):
             membership = user.memberships.get(project_id=project_id)
-            membership_ids.append(membership.id)
-            new_order_values.append({field: membership_data["order"]})
+            new_memberships_orders[membership.id] = membership_data["order"]
+
+    apply_order_updates(memberships_orders, new_memberships_orders)
 
     from taiga.base.utils import db
+    db.update_attr_in_bulk_for_ids(memberships_orders, field, model=models.Membership)
 
-    db.update_in_bulk_with_ids(membership_ids, new_order_values, model=models.Membership)
+
+@transaction.atomic
+def bulk_update_epic_status_order(project, user, data):
+    cursor = connection.cursor()
+
+    sql = """
+    prepare bulk_update_order as update projects_epicstatus set "order" = $1
+        where projects_epicstatus.id = $2 and
+              projects_epicstatus.project_id = $3;
+    """
+    cursor.execute(sql)
+    for id, order in data:
+        cursor.execute("EXECUTE bulk_update_order (%s, %s, %s);",
+                       (order, id, project.id))
+    cursor.execute("DEALLOCATE bulk_update_order")
+    cursor.close()
 
 
 @transaction.atomic

@@ -26,6 +26,7 @@ from django.apps.config import MODELS_MODULE_NAME
 from django.conf import settings
 from django.contrib.auth.models import UserManager, AbstractBaseUser
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.postgres.fields import ArrayField
 from django.core import validators
 from django.core.exceptions import AppRegistryNotReady
 from django.db import models
@@ -34,12 +35,13 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from django_pgjson.fields import JsonField
-from djorm_pgarray.fields import TextArrayField
+from django_pglocks import advisory_lock
 
 from taiga.auth.tokens import get_token_for_user
+from taiga.base.utils.colors import generate_random_hex_color
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.files import get_file_path
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+from taiga.permissions.choices import MEMBERS_PERMISSIONS
 from taiga.projects.choices import BLOCKED_BY_OWNER_LEAVING
 from taiga.projects.notifications.choices import NotifyLevel
 
@@ -53,8 +55,8 @@ def get_user_model_safe():
     registry not being ready yet.
     Raises LookupError if model isn't found.
 
-    Based on:               https://github.com/django-oscar/django-oscar/blob/1.0/oscar/core/loading.py#L310-L340
-    Ongoing Django issue:   https://code.djangoproject.com/ticket/22872
+    Based on: https://github.com/django-oscar/django-oscar/blob/1.0/oscar/core/loading.py#L310-L340
+    Ongoing Django issue: https://code.djangoproject.com/ticket/22872
     """
     user_app, user_model = settings.AUTH_USER_MODEL.split('.')
 
@@ -79,10 +81,6 @@ def get_user_model_safe():
             # This must be a different case (e.g. the model really doesn't
             # exist). We just re-raise the exception.
             raise
-
-
-def generate_random_hex_color():
-    return "#{:06x}".format(random.randint(0,0xFFFFFF))
 
 
 def get_user_file_path(instance, filename):
@@ -198,7 +196,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def _fill_cached_memberships(self):
         self._cached_memberships = {}
-        qs = self.memberships.prefetch_related("user", "project", "role")
+        qs = self.memberships.select_related("user", "project", "role")
         for membership in qs.all():
             self._cached_memberships[membership.project.id] = membership
 
@@ -265,20 +263,21 @@ class User(AbstractBaseUser, PermissionsMixin):
         super().save(*args, **kwargs)
 
     def cancel(self):
-        self.username = slugify_uniquely("deleted-user", User, slugfield="username")
-        self.email = "{}@taiga.io".format(self.username)
-        self.is_active = False
-        self.full_name = "Deleted user"
-        self.color = ""
-        self.bio = ""
-        self.lang = ""
-        self.theme = ""
-        self.timezone = ""
-        self.colorize_tags = True
-        self.token = None
-        self.set_unusable_password()
-        self.photo = None
-        self.save()
+        with advisory_lock("delete-user"):
+            self.username = slugify_uniquely("deleted-user", User, slugfield="username")
+            self.email = "{}@taiga.io".format(self.username)
+            self.is_active = False
+            self.full_name = "Deleted user"
+            self.color = ""
+            self.bio = ""
+            self.lang = ""
+            self.theme = ""
+            self.timezone = ""
+            self.colorize_tags = True
+            self.token = None
+            self.set_unusable_password()
+            self.photo = None
+            self.save()
         self.auth_data.all().delete()
 
         # Blocking all owned projects
@@ -293,10 +292,8 @@ class Role(models.Model):
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, null=False, blank=True,
                             verbose_name=_("slug"))
-    permissions = TextArrayField(blank=True, null=True,
-                                 default=[],
-                                 verbose_name=_("permissions"),
-                                 choices=MEMBERS_PERMISSIONS)
+    permissions = ArrayField(models.TextField(null=False, blank=False, choices=MEMBERS_PERMISSIONS),
+                             null=True, blank=True, default=[], verbose_name=_("permissions"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
     # null=True is for make work django 1.7 migrations. project

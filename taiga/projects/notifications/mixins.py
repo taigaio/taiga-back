@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from functools import partial
 from operator import is_not
 
@@ -25,14 +26,10 @@ from taiga.base import response
 from taiga.base.decorators import detail_route
 from taiga.base.api import serializers
 from taiga.base.api.utils import get_object_or_404
-from taiga.base.fields import WatchersField
+from taiga.base.fields import WatchersField, MethodField
 from taiga.projects.notifications import services
-from taiga.projects.notifications.utils import (attach_watchers_to_queryset,
-    attach_is_watcher_to_queryset,
-    attach_total_watchers_to_queryset)
 
 from . serializers import WatcherSerializer
-
 
 
 class WatchedResourceMixin:
@@ -50,14 +47,6 @@ class WatchedResourceMixin:
     """
 
     _not_notify = False
-
-    def attach_watchers_attrs_to_queryset(self, queryset):
-        queryset = attach_watchers_to_queryset(queryset)
-        queryset = attach_total_watchers_to_queryset(queryset)
-        if self.request.user.is_authenticated():
-            queryset = attach_is_watcher_to_queryset(queryset, self.request.user)
-
-        return queryset
 
     @detail_route(methods=["POST"])
     def watch(self, request, pk=None):
@@ -183,14 +172,15 @@ class WatchedModelMixin(object):
         return frozenset(filter(is_not_none, participants))
 
 
-class WatchedResourceModelSerializer(serializers.ModelSerializer):
-    is_watcher = serializers.SerializerMethodField("get_is_watcher")
-    total_watchers = serializers.SerializerMethodField("get_total_watchers")
+class WatchedResourceSerializer(serializers.LightSerializer):
+    is_watcher = MethodField()
+    total_watchers = MethodField()
 
     def get_is_watcher(self, obj):
+        # The "is_watcher" attribute is attached in the get_queryset of the viewset.
         if "request" in self.context:
             user = self.context["request"].user
-            return user.is_authenticated() and user.is_watcher(obj)
+            return user.is_authenticated() and getattr(obj, "is_watcher", False)
 
         return False
 
@@ -199,18 +189,18 @@ class WatchedResourceModelSerializer(serializers.ModelSerializer):
         return getattr(obj, "total_watchers", 0) or 0
 
 
-class EditableWatchedResourceModelSerializer(WatchedResourceModelSerializer):
+class EditableWatchedResourceSerializer(serializers.ModelSerializer):
     watchers = WatchersField(required=False)
 
     def restore_object(self, attrs, instance=None):
-        #watchers is not a field from the model but can be attached in the get_queryset of the viewset.
-        #If that's the case we need to remove it before calling the super method
-        watcher_field = self.fields.pop("watchers", None)
+        # watchers is not a field from the model but can be attached in the get_queryset of the viewset.
+        # If that's the case we need to remove it before calling the super method
+        self.fields.pop("watchers", None)
         self.validate_watchers(attrs, "watchers")
         new_watcher_ids = attrs.pop("watchers", None)
-        obj = super(WatchedResourceModelSerializer, self).restore_object(attrs, instance)
+        obj = super(EditableWatchedResourceSerializer, self).restore_object(attrs, instance)
 
-        #A partial update can exclude the watchers field or if the new instance can still not be saved
+        # A partial update can exclude the watchers field or if the new instance can still not be saved
         if instance is None or new_watcher_ids is None:
             return obj
 
@@ -219,7 +209,6 @@ class EditableWatchedResourceModelSerializer(WatchedResourceModelSerializer):
         adding_watcher_ids = list(new_watcher_ids.difference(old_watcher_ids))
         removing_watcher_ids = list(old_watcher_ids.difference(new_watcher_ids))
 
-        User = get_user_model()
         adding_users = get_user_model().objects.filter(id__in=adding_watcher_ids)
         removing_users = get_user_model().objects.filter(id__in=removing_watcher_ids)
         for user in adding_users:
@@ -233,7 +222,7 @@ class EditableWatchedResourceModelSerializer(WatchedResourceModelSerializer):
         return obj
 
     def to_native(self, obj):
-        #if watchers wasn't attached via the get_queryset of the viewset we need to manually add it
+        # if watchers wasn't attached via the get_queryset of the viewset we need to manually add it
         if obj is not None:
             if not hasattr(obj, "watchers"):
                 obj.watchers = [user.id for user in obj.get_watchers()]
@@ -243,10 +232,10 @@ class EditableWatchedResourceModelSerializer(WatchedResourceModelSerializer):
             if user and user.is_authenticated():
                 obj.is_watcher = user.id in obj.watchers
 
-        return super(WatchedResourceModelSerializer, self).to_native(obj)
+        return super(WatchedResourceSerializer, self).to_native(obj)
 
     def save(self, **kwargs):
-        obj = super(EditableWatchedResourceModelSerializer, self).save(**kwargs)
+        obj = super(EditableWatchedResourceSerializer, self).save(**kwargs)
         self.fields["watchers"] = WatchersField(required=False)
         obj.watchers = [user.id for user in obj.get_watchers()]
         return obj

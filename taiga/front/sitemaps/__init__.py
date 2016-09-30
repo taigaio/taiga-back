@@ -21,10 +21,13 @@ from collections import OrderedDict
 from .generics import GenericSitemap
 
 from .projects import ProjectsSitemap
+from .projects import ProjectEpicsSitemap
 from .projects import ProjectBacklogsSitemap
 from .projects import ProjectKanbansSitemap
 from .projects import ProjectIssuesSitemap
 from .projects import ProjectTeamsSitemap
+
+from .epics import EpicsSitemap
 
 from .milestones import MilestonesSitemap
 
@@ -43,10 +46,13 @@ sitemaps = OrderedDict([
     ("generics", GenericSitemap),
 
     ("projects", ProjectsSitemap),
+    ("project-epics-list", ProjectEpicsSitemap),
     ("project-backlogs", ProjectBacklogsSitemap),
     ("project-kanbans", ProjectKanbansSitemap),
     ("project-issues-list", ProjectIssuesSitemap),
     ("project-teams", ProjectTeamsSitemap),
+
+    ("epics", EpicsSitemap),
 
     ("milestones", MilestonesSitemap),
 

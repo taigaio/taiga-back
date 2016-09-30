@@ -17,24 +17,25 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.apps import apps
-from django.db.models import Prefetch
 
 from taiga.base import filters
 from taiga.base import response
 from taiga.base.decorators import detail_route
-from taiga.base.api import ModelCrudViewSet, ModelListViewSet
+from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.db import get_object_or_none
 
-from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
-from taiga.projects.votes.utils import attach_total_voters_to_queryset, attach_is_voter_to_queryset
-from taiga.projects.notifications.utils import attach_watchers_to_queryset, attach_is_watcher_to_queryset
 
 from . import serializers
+from . import validators
 from . import models
 from . import permissions
+from . import utils as milestones_utils
 
 import datetime
 
@@ -42,9 +43,14 @@ import datetime
 class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
                        BlockedByProjectMixin, ModelCrudViewSet):
     serializer_class = serializers.MilestoneSerializer
+    validator_class = validators.MilestoneValidator
     permission_classes = (permissions.MilestonePermission,)
     filter_backends = (filters.CanViewMilestonesFilterBackend,)
-    filter_fields = ("project", "closed")
+    filter_fields = (
+        "project",
+        "project__slug",
+        "closed"
+    )
     queryset = models.Milestone.objects.all()
 
     def list(self, request, *args, **kwargs):
@@ -69,32 +75,8 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
 
     def get_queryset(self):
         qs = super().get_queryset()
-
-        # Userstories prefetching
-        UserStory = apps.get_model("userstories", "UserStory")
-        us_qs = UserStory.objects.prefetch_related("role_points",
-                                                   "role_points__points",
-                                                   "role_points__role")
-
-        us_qs = us_qs.select_related("milestone",
-                                     "project",
-                                     "status",
-                                     "owner",
-                                     "assigned_to",
-                                     "generated_from_issue")
-
-        us_qs = self.attach_watchers_attrs_to_queryset(us_qs)
-
-        if self.request.user.is_authenticated():
-            us_qs = attach_is_voter_to_queryset(self.request.user, us_qs)
-            us_qs = attach_is_watcher_to_queryset(us_qs, self.request.user)
-
-        qs = qs.prefetch_related(Prefetch("user_stories", queryset=us_qs))
-
-        # Milestones prefetching
         qs = qs.select_related("project", "owner")
-        qs = self.attach_watchers_attrs_to_queryset(qs)
-
+        qs = milestones_utils.attach_extra_info(qs, user=self.request.user)
         qs = qs.order_by("-estimated_start")
         return qs
 

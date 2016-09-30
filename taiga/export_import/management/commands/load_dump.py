@@ -50,24 +50,27 @@ class Command(BaseCommand):
 
         data = json.loads(open(dump_file_path, 'r').read())
         try:
-            with transaction.atomic():
-                if overwrite:
-                    receivers_back = signals.post_delete.receivers
-                    signals.post_delete.receivers = []
-                    try:
-                        proj = Project.objects.get(slug=data.get("slug", "not a slug"))
-                        proj.tasks.all().delete()
-                        proj.user_stories.all().delete()
-                        proj.issues.all().delete()
-                        proj.memberships.all().delete()
-                        proj.roles.all().delete()
-                        proj.delete()
-                    except Project.DoesNotExist:
-                        pass
-                    signals.post_delete.receivers = receivers_back
+            if overwrite:
+                receivers_back = signals.post_delete.receivers
+                signals.post_delete.receivers = []
+                try:
+                    proj = Project.objects.get(slug=data.get("slug", "not a slug"))
+                    proj.tasks.all().delete()
+                    proj.user_stories.all().delete()
+                    proj.issues.all().delete()
+                    proj.memberships.all().delete()
+                    proj.roles.all().delete()
+                    proj.delete()
+                except Project.DoesNotExist:
+                    pass
+                signals.post_delete.receivers = receivers_back
+            else:
+                slug = data.get('slug', None)
+                if slug is not None and Project.objects.filter(slug=slug).exists():
+                    del data['slug']
 
-                user = User.objects.get(email=owner_email)
-                services.store_project_from_dict(data, user)
+            user = User.objects.get(email=owner_email)
+            services.store_project_from_dict(data, user)
         except err.TaigaImportError as e:
             if e.project:
                 e.project.delete_related_content()

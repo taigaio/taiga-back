@@ -36,7 +36,7 @@ from taiga.projects.history.choices import HistoryType
 from taiga.projects.history.services import (make_key_from_model_object,
                                              get_last_snapshot_for_key,
                                              get_model_from_key)
-from taiga.permissions.service import user_has_perm
+from taiga.permissions.services import user_has_perm
 
 from .models import HistoryChangeNotification, Watched
 
@@ -112,6 +112,7 @@ def _filter_by_permissions(obj, user):
     UserStory = apps.get_model("userstories", "UserStory")
     Issue = apps.get_model("issues", "Issue")
     Task = apps.get_model("tasks", "Task")
+    Epic = apps.get_model("epics", "Epic")
     WikiPage = apps.get_model("wiki", "WikiPage")
 
     if isinstance(obj, UserStory):
@@ -120,6 +121,8 @@ def _filter_by_permissions(obj, user):
         return user_has_perm(user, "view_issues", obj, cache="project")
     elif isinstance(obj, Task):
         return user_has_perm(user, "view_tasks", obj, cache="project")
+    elif isinstance(obj, Epic):
+        return user_has_perm(user, "view_epics", obj, cache="project")
     elif isinstance(obj, WikiPage):
         return user_has_perm(user, "view_wiki_pages", obj, cache="project")
     return False
@@ -223,6 +226,7 @@ def send_notifications(obj, *, history):
     if settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL == 0:
         send_sync_notifications(notification.id)
 
+
 @transaction.atomic
 def send_sync_notifications(notification_id):
     """
@@ -261,19 +265,21 @@ def send_sync_notifications(notification_id):
         msg_id = 'taiga-system'
 
     now = datetime.datetime.now()
-    format_args = {"project_slug": notification.project.slug,
-                   "project_name": notification.project.name,
-                   "msg_id": msg_id,
-                   "time": int(now.timestamp()),
-                   "domain": domain}
+    format_args = {
+        "project_slug": notification.project.slug,
+        "project_name": notification.project.name,
+        "msg_id": msg_id,
+        "time": int(now.timestamp()),
+        "domain": domain
+    }
 
-    headers = {"Message-ID": "<{project_slug}/{msg_id}/{time}@{domain}>".format(**format_args),
-               "In-Reply-To": "<{project_slug}/{msg_id}@{domain}>".format(**format_args),
-               "References": "<{project_slug}/{msg_id}@{domain}>".format(**format_args),
-
-               "List-ID": 'Taiga/{project_name} <taiga.{project_slug}@{domain}>'.format(**format_args),
-
-               "Thread-Index": make_ms_thread_index("<{project_slug}/{msg_id}@{domain}>".format(**format_args), now)}
+    headers = {
+        "Message-ID": "<{project_slug}/{msg_id}/{time}@{domain}>".format(**format_args),
+        "In-Reply-To": "<{project_slug}/{msg_id}@{domain}>".format(**format_args),
+        "References": "<{project_slug}/{msg_id}@{domain}>".format(**format_args),
+        "List-ID": 'Taiga/{project_name} <taiga.{project_slug}@{domain}>'.format(**format_args),
+        "Thread-Index": make_ms_thread_index("<{project_slug}/{msg_id}@{domain}>".format(**format_args), now)
+    }
 
     for user in notification.notify_users.distinct():
         context["user"] = user
@@ -330,6 +336,7 @@ def get_related_people(obj):
     related_people = related_people.exclude(is_active=False)
     related_people = related_people.exclude(is_system=True)
     related_people = related_people.distinct()
+
     return related_people
 
 
@@ -370,8 +377,10 @@ def get_projects_watched(user_or_id):
         user = get_user_model().objects.get(id=user_or_id)
 
     project_class = apps.get_model("projects", "Project")
-    project_ids = user.notify_policies.exclude(notify_level=NotifyLevel.none).values_list("project__id", flat=True)
+    project_ids = (user.notify_policies.exclude(notify_level=NotifyLevel.none)
+                                       .values_list("project__id", flat=True))
     return project_class.objects.filter(id__in=project_ids)
+
 
 def add_watcher(obj, user):
     """Add a watcher to an object.

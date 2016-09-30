@@ -23,7 +23,7 @@ from django.utils import timezone
 from taiga.base import response
 from taiga.base.decorators import detail_route
 from taiga.base.api import ReadOnlyListViewSet
-from taiga.base.api.utils import get_object_or_404
+from taiga.mdrender.service import render as mdrender
 
 from . import permissions
 from . import serializers
@@ -37,7 +37,7 @@ class HistoryViewSet(ReadOnlyListViewSet):
 
     def get_content_type(self):
         app_name, model = self.content_type.split(".", 1)
-        return get_object_or_404(ContentType, app_label=app_name, model=model)
+        return ContentType.objects.get_by_natural_key(app_name, model)
 
     def get_queryset(self):
         ct = self.get_content_type()
@@ -57,42 +57,102 @@ class HistoryViewSet(ReadOnlyListViewSet):
 
         return response.Ok(serializer.data)
 
+    @detail_route(methods=['get'])
+    def comment_versions(self, request, pk):
+        obj = self.get_object()
+        history_entry_id = request.QUERY_PARAMS.get('id', None)
+        history_entry = services.get_history_queryset_by_model_instance(obj).filter(id=history_entry_id).first()
+        if history_entry is None:
+            return response.NotFound()
+
+        self.check_permissions(request, 'comment_versions', history_entry)
+
+        if history_entry is None:
+            return response.NotFound()
+
+        history_entry.attach_user_info_to_comment_versions()
+        return response.Ok(history_entry.comment_versions)
+
+    @detail_route(methods=['post'])
+    def edit_comment(self, request, pk):
+        obj = self.get_object()
+        history_entry_id = request.QUERY_PARAMS.get('id', None)
+        history_entry = services.get_history_queryset_by_model_instance(obj).filter(id=history_entry_id).first()
+        if history_entry is None:
+            return response.NotFound()
+
+        obj = services.get_instance_from_key(history_entry.key)
+        comment = request.DATA.get("comment", None)
+
+        self.check_permissions(request, 'edit_comment', history_entry)
+
+        if history_entry is None:
+            return response.NotFound()
+
+        if comment is None:
+            return response.BadRequest({"error": _("comment is required")})
+
+        if history_entry.delete_comment_date or history_entry.delete_comment_user:
+            return response.BadRequest({"error": _("deleted comments can't be edited")})
+
+        # comment_versions can be None if there are no historic versions of the comment
+        comment_versions = history_entry.comment_versions or []
+        comment_versions.append({
+            "date": history_entry.created_at,
+            "comment": history_entry.comment,
+            "comment_html": history_entry.comment_html,
+            "user": {
+                "id": request.user.pk,
+            }
+        })
+
+        history_entry.edit_comment_date = timezone.now()
+        history_entry.comment = comment
+        history_entry.comment_html = mdrender(obj.project, comment)
+        history_entry.comment_versions = comment_versions
+        history_entry.save()
+        return response.Ok()
+
     @detail_route(methods=['post'])
     def delete_comment(self, request, pk):
         obj = self.get_object()
-        comment_id = request.QUERY_PARAMS.get('id', None)
-        comment = services.get_history_queryset_by_model_instance(obj).filter(id=comment_id).first()
-
-        self.check_permissions(request, 'delete_comment', comment)
-
-        if comment is None:
+        history_entry_id = request.QUERY_PARAMS.get('id', None)
+        history_entry = services.get_history_queryset_by_model_instance(obj).filter(id=history_entry_id).first()
+        if history_entry is None:
             return response.NotFound()
 
-        if comment.delete_comment_date or comment.delete_comment_user:
+        self.check_permissions(request, 'delete_comment', history_entry)
+
+        if history_entry is None:
+            return response.NotFound()
+
+        if history_entry.delete_comment_date or history_entry.delete_comment_user:
             return response.BadRequest({"error": _("Comment already deleted")})
 
-        comment.delete_comment_date = timezone.now()
-        comment.delete_comment_user = {"pk": request.user.pk, "name": request.user.get_full_name()}
-        comment.save()
+        history_entry.delete_comment_date = timezone.now()
+        history_entry.delete_comment_user = {"pk": request.user.pk, "name": request.user.get_full_name()}
+        history_entry.save()
         return response.Ok()
 
     @detail_route(methods=['post'])
     def undelete_comment(self, request, pk):
         obj = self.get_object()
-        comment_id = request.QUERY_PARAMS.get('id', None)
-        comment = services.get_history_queryset_by_model_instance(obj).filter(id=comment_id).first()
-
-        self.check_permissions(request, 'undelete_comment', comment)
-
-        if comment is None:
+        history_entry_id = request.QUERY_PARAMS.get('id', None)
+        history_entry = services.get_history_queryset_by_model_instance(obj).filter(id=history_entry_id).first()
+        if history_entry is None:
             return response.NotFound()
 
-        if not comment.delete_comment_date and not comment.delete_comment_user:
+        self.check_permissions(request, 'undelete_comment', history_entry)
+
+        if history_entry is None:
+            return response.NotFound()
+
+        if not history_entry.delete_comment_date and not history_entry.delete_comment_user:
             return response.BadRequest({"error": _("Comment not deleted")})
 
-        comment.delete_comment_date = None
-        comment.delete_comment_user = None
-        comment.save()
+        history_entry.delete_comment_date = None
+        history_entry.delete_comment_user = None
+        history_entry.save()
         return response.Ok()
 
     # Just for restframework! Because it raises
@@ -106,6 +166,11 @@ class HistoryViewSet(ReadOnlyListViewSet):
         qs = services.get_history_queryset_by_model_instance(obj)
         qs = services.prefetch_owners_in_history_queryset(qs)
         return self.response_for_queryset(qs)
+
+
+class EpicHistory(HistoryViewSet):
+    content_type = "epics.epic"
+    permission_classes = (permissions.EpicHistoryPermission,)
 
 
 class UserStoryHistory(HistoryViewSet):

@@ -19,90 +19,87 @@
 from django.core.exceptions import ObjectDoesNotExist
 
 from taiga.base.api import serializers
-from taiga.base.fields import TagsField, PgArrayField, JsonField
-
+from taiga.base.fields import Field, MethodField
 from taiga.front.templatetags.functions import resolve as resolve_front_url
 
-from taiga.projects.history import models as history_models
-from taiga.projects.issues import models as issue_models
-from taiga.projects.milestones import models as milestone_models
-from taiga.projects.notifications.mixins import EditableWatchedResourceModelSerializer
 from taiga.projects.services import get_logo_big_thumbnail_url
-from taiga.projects.tasks import models as task_models
-from taiga.projects.userstories import models as us_models
-from taiga.projects.wiki import models as wiki_models
 
-from taiga.users.gravatar import get_gravatar_url
-from taiga.users.services import get_photo_or_gravatar_url
-
-from .models import Webhook, WebhookLog
-
+from taiga.users.services import get_user_photo_url
+from taiga.users.gravatar import get_user_gravatar_id
 
 ########################################################################
-## WebHooks
+# WebHooks
 ########################################################################
 
-class WebhookSerializer(serializers.ModelSerializer):
-    logs_counter = serializers.SerializerMethodField("get_logs_counter")
 
-    class Meta:
-        model = Webhook
+class WebhookSerializer(serializers.LightSerializer):
+    id = Field()
+    project = Field(attr="project_id")
+    name = Field()
+    url = Field()
+    key = Field()
+    logs_counter = MethodField()
 
     def get_logs_counter(self, obj):
         return obj.logs.count()
 
 
-class WebhookLogSerializer(serializers.ModelSerializer):
-    request_data = JsonField()
-    request_headers = JsonField()
-    response_headers = JsonField()
-
-    class Meta:
-        model = WebhookLog
+class WebhookLogSerializer(serializers.LightSerializer):
+    id = Field()
+    webhook = Field(attr="webhook_id")
+    url = Field()
+    status = Field()
+    request_data = Field()
+    request_headers = Field()
+    response_data = Field()
+    response_headers = Field()
+    duration = Field()
+    created = Field()
 
 
 ########################################################################
-## User
+# User
 ########################################################################
 
-class UserSerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField("get_pk")
-    permalink = serializers.SerializerMethodField("get_permalink")
-    gravatar_url = serializers.SerializerMethodField("get_gravatar_url")
-    username = serializers.SerializerMethodField("get_username")
-    full_name = serializers.SerializerMethodField("get_full_name")
-    photo = serializers.SerializerMethodField("get_photo")
-
-    def get_pk(self, obj):
-        return obj.pk
+class UserSerializer(serializers.LightSerializer):
+    id = Field(attr="pk")
+    permalink = MethodField()
+    username = MethodField()
+    full_name = MethodField()
+    photo = MethodField()
+    gravatar_id = MethodField()
 
     def get_permalink(self, obj):
         return resolve_front_url("user", obj.username)
 
-    def get_gravatar_url(self, obj):
-        return get_gravatar_url(obj.email)
-
     def get_username(self, obj):
-        return obj.get_username
+        return obj.get_username()
 
     def get_full_name(self, obj):
         return obj.get_full_name()
 
     def get_photo(self, obj):
-        return get_photo_or_gravatar_url(obj)
+        return get_user_photo_url(obj)
+
+    def get_gravatar_id(self, obj):
+        return get_user_gravatar_id(obj)
+
+    def to_value(self, instance):
+        if instance is None:
+            return None
+
+        return super().to_value(instance)
+
 
 ########################################################################
-## Project
+# Project
 ########################################################################
 
-class ProjectSerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField("get_pk")
-    permalink = serializers.SerializerMethodField("get_permalink")
-    name = serializers.SerializerMethodField("get_name")
-    logo_big_url = serializers.SerializerMethodField("get_logo_big_url")
-
-    def get_pk(self, obj):
-        return obj.pk
+class ProjectSerializer(serializers.LightSerializer):
+    id = Field(attr="pk")
+    permalink = MethodField()
+    name = MethodField()
+    logo_big_url = MethodField()
 
     def get_permalink(self, obj):
         return resolve_front_url("project", obj.slug)
@@ -115,16 +112,15 @@ class ProjectSerializer(serializers.Serializer):
 
 
 ########################################################################
-## History Serializer
+# History Serializer
 ########################################################################
 
-class HistoryDiffField(serializers.Field):
-    def to_native(self, value):
+class HistoryDiffField(Field):
+    def to_value(self, value):
         # Tip: 'value' is the object returned by
         #      taiga.projects.history.models.HistoryEntry.values_diff()
 
         ret = {}
-
         for key, val in value.items():
             if key in ["attachments", "custom_attributes", "description_diff"]:
                 ret[key] = val
@@ -136,21 +132,21 @@ class HistoryDiffField(serializers.Field):
         return ret
 
 
-class HistoryEntrySerializer(serializers.ModelSerializer):
-    diff = HistoryDiffField(source="values_diff")
-
-    class Meta:
-        model = history_models.HistoryEntry
-        exclude = ("id", "type", "key", "is_hidden", "is_snapshot", "snapshot", "user", "delete_comment_user",
-                   "values", "created_at")
+class HistoryEntrySerializer(serializers.LightSerializer):
+    comment = Field()
+    comment_html = Field()
+    delete_comment_date = Field()
+    comment_versions = Field()
+    edit_comment_date = Field()
+    diff = HistoryDiffField(attr="values_diff")
 
 
 ########################################################################
-## _Misc_
+# _Misc_
 ########################################################################
 
-class CustomAttributesValuesWebhookSerializerMixin(serializers.ModelSerializer):
-    custom_attributes_values = serializers.SerializerMethodField("get_custom_attributes_values")
+class CustomAttributesValuesWebhookSerializerMixin(serializers.LightSerializer):
+    custom_attributes_values = MethodField()
 
     def custom_attributes_queryset(self, project):
         raise NotImplementedError()
@@ -160,13 +156,13 @@ class CustomAttributesValuesWebhookSerializerMixin(serializers.ModelSerializer):
             ret = {}
             for attr in custom_attributes:
                 value = values.get(str(attr["id"]), None)
-                if value is not  None:
+                if value is not None:
                     ret[attr["name"]] = value
 
             return ret
 
         try:
-            values =  obj.custom_attributes_values.attributes_values
+            values = obj.custom_attributes_values.attributes_values
             custom_attributes = self.custom_attributes_queryset(obj.project).values('id', 'name')
 
             return _use_name_instead_id_as_key_in_custom_attributes_values(custom_attributes, values)
@@ -174,10 +170,10 @@ class CustomAttributesValuesWebhookSerializerMixin(serializers.ModelSerializer):
             return None
 
 
-class RolePointsSerializer(serializers.Serializer):
-    role = serializers.SerializerMethodField("get_role")
-    name = serializers.SerializerMethodField("get_name")
-    value = serializers.SerializerMethodField("get_value")
+class RolePointsSerializer(serializers.LightSerializer):
+    role = MethodField()
+    name = MethodField()
+    value = MethodField()
 
     def get_role(self, obj):
         return obj.role.name
@@ -189,16 +185,33 @@ class RolePointsSerializer(serializers.Serializer):
         return obj.points.value
 
 
-class UserStoryStatusSerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField("get_pk")
-    name = serializers.SerializerMethodField("get_name")
-    slug = serializers.SerializerMethodField("get_slug")
-    color = serializers.SerializerMethodField("get_color")
-    is_closed = serializers.SerializerMethodField("get_is_closed")
-    is_archived = serializers.SerializerMethodField("get_is_archived")
+class EpicStatusSerializer(serializers.LightSerializer):
+    id = Field(attr="pk")
+    name = MethodField()
+    slug = MethodField()
+    color = MethodField()
+    is_closed = MethodField()
 
-    def get_pk(self, obj):
-        return obj.pk
+    def get_name(self, obj):
+        return obj.name
+
+    def get_slug(self, obj):
+        return obj.slug
+
+    def get_color(self, obj):
+        return obj.color
+
+    def get_is_closed(self, obj):
+        return obj.is_closed
+
+
+class UserStoryStatusSerializer(serializers.LightSerializer):
+    id = Field(attr="pk")
+    name = MethodField()
+    slug = MethodField()
+    color = MethodField()
+    is_closed = MethodField()
+    is_archived = MethodField()
 
     def get_name(self, obj):
         return obj.name
@@ -216,15 +229,12 @@ class UserStoryStatusSerializer(serializers.Serializer):
         return obj.is_archived
 
 
-class TaskStatusSerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField("get_pk")
-    name = serializers.SerializerMethodField("get_name")
-    slug = serializers.SerializerMethodField("get_slug")
-    color = serializers.SerializerMethodField("get_color")
-    is_closed = serializers.SerializerMethodField("get_is_closed")
-
-    def get_pk(self, obj):
-        return obj.pk
+class TaskStatusSerializer(serializers.LightSerializer):
+    id = Field(attr="pk")
+    name = MethodField()
+    slug = MethodField()
+    color = MethodField()
+    is_closed = MethodField()
 
     def get_name(self, obj):
         return obj.name
@@ -239,15 +249,12 @@ class TaskStatusSerializer(serializers.Serializer):
         return obj.is_closed
 
 
-class IssueStatusSerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField("get_pk")
-    name = serializers.SerializerMethodField("get_name")
-    slug = serializers.SerializerMethodField("get_slug")
-    color = serializers.SerializerMethodField("get_color")
-    is_closed = serializers.SerializerMethodField("get_is_closed")
-
-    def get_pk(self, obj):
-        return obj.pk
+class IssueStatusSerializer(serializers.LightSerializer):
+    id = Field(attr="pk")
+    name = MethodField()
+    slug = MethodField()
+    color = MethodField()
+    is_closed = MethodField()
 
     def get_name(self, obj):
         return obj.name
@@ -262,13 +269,10 @@ class IssueStatusSerializer(serializers.Serializer):
         return obj.is_closed
 
 
-class IssueTypeSerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField("get_pk")
-    name = serializers.SerializerMethodField("get_name")
-    color = serializers.SerializerMethodField("get_color")
-
-    def get_pk(self, obj):
-        return obj.pk
+class IssueTypeSerializer(serializers.LightSerializer):
+    id = Field(attr="pk")
+    name = MethodField()
+    color = MethodField()
 
     def get_name(self, obj):
         return obj.name
@@ -277,13 +281,10 @@ class IssueTypeSerializer(serializers.Serializer):
         return obj.color
 
 
-class PrioritySerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField("get_pk")
-    name = serializers.SerializerMethodField("get_name")
-    color = serializers.SerializerMethodField("get_color")
-
-    def get_pk(self, obj):
-        return obj.pk
+class PrioritySerializer(serializers.LightSerializer):
+    id = Field(attr="pk")
+    name = MethodField()
+    color = MethodField()
 
     def get_name(self, obj):
         return obj.name
@@ -292,13 +293,10 @@ class PrioritySerializer(serializers.Serializer):
         return obj.color
 
 
-class SeveritySerializer(serializers.Serializer):
-    id = serializers.SerializerMethodField("get_pk")
-    name = serializers.SerializerMethodField("get_name")
-    color = serializers.SerializerMethodField("get_color")
-
-    def get_pk(self, obj):
-        return obj.pk
+class SeveritySerializer(serializers.LightSerializer):
+    id = Field(attr="pk")
+    name = MethodField()
+    color = MethodField()
 
     def get_name(self, obj):
         return obj.name
@@ -308,41 +306,61 @@ class SeveritySerializer(serializers.Serializer):
 
 
 ########################################################################
-## Milestone
+# Milestone
 ########################################################################
 
-class MilestoneSerializer(serializers.ModelSerializer):
+class MilestoneSerializer(serializers.LightSerializer):
+    id = Field()
+    name = Field()
+    slug = Field()
+    estimated_start = Field()
+    estimated_finish = Field()
+    created_date = Field()
+    modified_date = Field()
+    closed = Field()
+    disponibility = Field()
     permalink = serializers.SerializerMethodField("get_permalink")
     project = ProjectSerializer()
     owner = UserSerializer()
-
-    class Meta:
-        model = milestone_models.Milestone
-        exclude = ("order", "watchers")
 
     def get_permalink(self, obj):
         return resolve_front_url("taskboard", obj.project.slug, obj.slug)
 
+    def to_value(self, instance):
+        if instance is None:
+            return None
+
+        return super().to_value(instance)
+
 
 ########################################################################
-## User Story
+# User Story
 ########################################################################
 
-class UserStorySerializer(CustomAttributesValuesWebhookSerializerMixin, EditableWatchedResourceModelSerializer,
-                          serializers.ModelSerializer):
-    permalink = serializers.SerializerMethodField("get_permalink")
-    tags = TagsField(default=[], required=False)
-    external_reference = PgArrayField(required=False)
+class UserStorySerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.LightSerializer):
+    id = Field()
+    ref = Field()
     project = ProjectSerializer()
+    is_closed = Field()
+    created_date = Field()
+    modified_date = Field()
+    finish_date = Field()
+    subject = Field()
+    client_requirement = Field()
+    team_requirement = Field()
+    generated_from_issue = Field(attr="generated_from_issue_id")
+    external_reference = Field()
+    tribe_gig = Field()
+    watchers = MethodField()
+    is_blocked = Field()
+    blocked_note = Field()
+    tags = Field()
+    permalink = serializers.SerializerMethodField("get_permalink")
     owner = UserSerializer()
     assigned_to = UserSerializer()
-    points = RolePointsSerializer(source="role_points", many=True)
+    points = MethodField()
     status = UserStoryStatusSerializer()
     milestone = MilestoneSerializer()
-
-    class Meta:
-        model = us_models.UserStory
-        exclude = ("backlog_order", "sprint_order", "kanban_order", "version", "total_watchers", "is_watcher")
 
     def get_permalink(self, obj):
         return resolve_front_url("userstory", obj.project.slug, obj.ref)
@@ -350,15 +368,34 @@ class UserStorySerializer(CustomAttributesValuesWebhookSerializerMixin, Editable
     def custom_attributes_queryset(self, project):
         return project.userstorycustomattributes.all()
 
+    def get_watchers(self, obj):
+        return list(obj.get_watchers().values_list("id", flat=True))
+
+    def get_points(self, obj):
+        return RolePointsSerializer(obj.role_points.all(), many=True).data
+
 
 ########################################################################
-## Task
+# Task
 ########################################################################
 
-class TaskSerializer(CustomAttributesValuesWebhookSerializerMixin, EditableWatchedResourceModelSerializer,
-                     serializers.ModelSerializer):
+class TaskSerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    created_date = Field()
+    modified_date = Field()
+    finished_date = Field()
+    subject = Field()
+    us_order = Field()
+    taskboard_order = Field()
+    is_iocaine = Field()
+    external_reference = Field()
+    watchers = MethodField()
+    is_blocked = Field()
+    blocked_note = Field()
+    description = Field()
+    tags = Field()
     permalink = serializers.SerializerMethodField("get_permalink")
-    tags = TagsField(default=[], required=False)
     project = ProjectSerializer()
     owner = UserSerializer()
     assigned_to = UserSerializer()
@@ -366,25 +403,32 @@ class TaskSerializer(CustomAttributesValuesWebhookSerializerMixin, EditableWatch
     user_story = UserStorySerializer()
     milestone = MilestoneSerializer()
 
-    class Meta:
-        model = task_models.Task
-        exclude = ("version", "total_watchers", "is_watcher")
-
     def get_permalink(self, obj):
         return resolve_front_url("task", obj.project.slug, obj.ref)
 
     def custom_attributes_queryset(self, project):
         return project.taskcustomattributes.all()
 
+    def get_watchers(self, obj):
+        return list(obj.get_watchers().values_list("id", flat=True))
+
 
 ########################################################################
-## Issue
+# Issue
 ########################################################################
 
-class IssueSerializer(CustomAttributesValuesWebhookSerializerMixin, EditableWatchedResourceModelSerializer,
-                      serializers.ModelSerializer):
+class IssueSerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    created_date = Field()
+    modified_date = Field()
+    finished_date = Field()
+    subject = Field()
+    external_reference = Field()
+    watchers = MethodField()
+    description = Field()
+    tags = Field()
     permalink = serializers.SerializerMethodField("get_permalink")
-    tags = TagsField(default=[], required=False)
     project = ProjectSerializer()
     milestone = MilestoneSerializer()
     owner = UserSerializer()
@@ -394,30 +438,78 @@ class IssueSerializer(CustomAttributesValuesWebhookSerializerMixin, EditableWatc
     priority = PrioritySerializer()
     severity = SeveritySerializer()
 
-    class Meta:
-        model = issue_models.Issue
-        exclude = ("version", "total_watchers", "is_watcher")
-
     def get_permalink(self, obj):
         return resolve_front_url("issue", obj.project.slug, obj.ref)
 
     def custom_attributes_queryset(self, project):
         return project.issuecustomattributes.all()
 
+    def get_watchers(self, obj):
+        return list(obj.get_watchers().values_list("id", flat=True))
+
 
 ########################################################################
-## Wiki Page
+# Wiki Page
 ########################################################################
 
-class WikiPageSerializer(serializers.ModelSerializer):
+class WikiPageSerializer(serializers.LightSerializer):
+    id = Field()
+    slug = Field()
+    content = Field()
+    created_date = Field()
+    modified_date = Field()
     permalink = serializers.SerializerMethodField("get_permalink")
     project = ProjectSerializer()
     owner = UserSerializer()
     last_modifier = UserSerializer()
 
-    class Meta:
-        model = wiki_models.WikiPage
-        exclude = ("watchers", "total_watchers", "is_watcher", "version")
-
     def get_permalink(self, obj):
         return resolve_front_url("wiki", obj.project.slug, obj.slug)
+
+
+########################################################################
+# Epic
+########################################################################
+
+class EpicSerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    created_date = Field()
+    modified_date = Field()
+    subject = Field()
+    watchers = MethodField()
+    description = Field()
+    tags = Field()
+    permalink = serializers.SerializerMethodField("get_permalink")
+    project = ProjectSerializer()
+    owner = UserSerializer()
+    assigned_to = UserSerializer()
+    status = EpicStatusSerializer()
+    epics_order = Field()
+    color = Field()
+    client_requirement = Field()
+    team_requirement = Field()
+    client_requirement = Field()
+    team_requirement = Field()
+
+    def get_permalink(self, obj):
+        return resolve_front_url("epic", obj.project.slug, obj.ref)
+
+    def custom_attributes_queryset(self, project):
+        return project.epiccustomattributes.all()
+
+    def get_watchers(self, obj):
+        return list(obj.get_watchers().values_list("id", flat=True))
+
+
+class EpicRelatedUserStorySerializer(serializers.LightSerializer):
+    id = Field()
+    user_story = MethodField()
+    epic = MethodField()
+    order = Field()
+
+    def get_user_story(self, obj):
+        return UserStorySerializer(obj.user_story).data
+
+    def get_epic(self, obj):
+        return EpicSerializer(obj.epic).data

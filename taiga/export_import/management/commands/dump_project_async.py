@@ -22,7 +22,7 @@ from django.conf import settings
 
 from taiga.projects.models import Project
 from taiga.users.models import User
-from taiga.permissions.service import is_project_admin
+from taiga.permissions.services import is_project_admin
 from taiga.export_import import tasks
 
 

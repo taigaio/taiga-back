@@ -33,7 +33,8 @@ from taiga.base.utils.diff import make_diff as make_diff_from_dicts
 
 # This keys has been removed from freeze_impl so we can have objects where the
 # previous diff has value for the attribute and we want to prevent their propagation
-IGNORE_DIFF_FIELDS = [ "watchers", "description_diff", "content_diff", "blocked_note_diff"]
+IGNORE_DIFF_FIELDS = ["watchers", "description_diff", "content_diff", "blocked_note_diff"]
+
 
 def _generate_uuid():
     return str(uuid.uuid1())
@@ -49,6 +50,7 @@ class HistoryEntry(models.Model):
     """
     id = models.CharField(primary_key=True, max_length=255, unique=True,
                           editable=False, default=_generate_uuid)
+    project = models.ForeignKey("projects.Project")
 
     user = JsonField(null=True, blank=True, default=None)
     created_at = models.DateTimeField(default=timezone.now)
@@ -71,6 +73,10 @@ class HistoryEntry(models.Model):
     delete_comment_date = models.DateTimeField(null=True, blank=True, default=None)
     delete_comment_user = JsonField(null=True, blank=True, default=None)
 
+    # Historic version of comments
+    comment_versions = JsonField(null=True, blank=True, default=None)
+    edit_comment_date = models.DateTimeField(null=True, blank=True, default=None)
+
     # Flag for mark some history entries as
     # hidden. Hidden history entries are important
     # for save but not important to preview.
@@ -87,15 +93,15 @@ class HistoryEntry(models.Model):
 
     @cached_property
     def is_change(self):
-      return self.type == HistoryType.change
+        return self.type == HistoryType.change
 
     @cached_property
     def is_create(self):
-      return self.type == HistoryType.create
+        return self.type == HistoryType.create
 
     @cached_property
     def is_delete(self):
-      return self.type == HistoryType.delete
+        return self.type == HistoryType.delete
 
     @property
     def owner(self):
@@ -114,6 +120,20 @@ class HistoryEntry(models.Model):
     def prefetch_owner(self, owner):
         self._owner = owner
         self._prefetched_owner = True
+
+    def attach_user_info_to_comment_versions(self):
+        if not self.comment_versions:
+            return
+
+        from taiga.users.serializers import UserSerializer
+
+        user_ids = [v["user"]["id"] for v in self.comment_versions if "user" in v and "id" in v["user"]]
+        users_by_id = {u.id: u for u in get_user_model().objects.filter(id__in=user_ids)}
+
+        for version in self.comment_versions:
+            user = users_by_id.get(version["user"]["id"], None)
+            if user:
+                version["user"] = UserSerializer(user).data
 
     @cached_property
     def values_diff(self):
@@ -166,7 +186,7 @@ class HistoryEntry(models.Model):
                         role_name = resolve_value("roles", role_id)
                         oldpoint_id = pointsold.get(role_id, None)
                         points[role_name] = [resolve_value("points", oldpoint_id),
-                                           resolve_value("points", point_id)]
+                                             resolve_value("points", point_id)]
 
                 # Process that removes points entries with
                 # duplicate value.
@@ -185,8 +205,8 @@ class HistoryEntry(models.Model):
                     "deleted": [],
                 }
 
-                oldattachs = {x["id"]:x for x in self.diff["attachments"][0]}
-                newattachs = {x["id"]:x for x in self.diff["attachments"][1]}
+                oldattachs = {x["id"]: x for x in self.diff["attachments"][0]}
+                newattachs = {x["id"]: x for x in self.diff["attachments"][1]}
 
                 for aid in set(tuple(oldattachs.keys()) + tuple(newattachs.keys())):
                     if aid in oldattachs and aid in newattachs:
@@ -216,8 +236,8 @@ class HistoryEntry(models.Model):
                     "deleted": [],
                 }
 
-                oldcustattrs = {x["id"]:x for x in self.diff["custom_attributes"][0] or []}
-                newcustattrs = {x["id"]:x for x in self.diff["custom_attributes"][1] or []}
+                oldcustattrs = {x["id"]: x for x in self.diff["custom_attributes"][0] or []}
+                newcustattrs = {x["id"]: x for x in self.diff["custom_attributes"][1] or []}
 
                 for aid in set(tuple(oldcustattrs.keys()) + tuple(newcustattrs.keys())):
                     if aid in oldcustattrs and aid in newcustattrs:
@@ -237,6 +257,24 @@ class HistoryEntry(models.Model):
 
                 if custom_attributes["new"] or custom_attributes["changed"] or custom_attributes["deleted"]:
                     value = custom_attributes
+
+            elif key == "user_stories":
+                user_stories = {
+                    "new": [],
+                    "deleted": [],
+                }
+
+                olduss = {x["id"]: x for x in self.diff["user_stories"][0]}
+                newuss = {x["id"]: x for x in self.diff["user_stories"][1]}
+
+                for usid in set(tuple(olduss.keys()) + tuple(newuss.keys())):
+                    if usid in olduss and usid not in newuss:
+                        user_stories["deleted"].append(olduss[usid])
+                    elif usid not in olduss and usid in newuss:
+                        user_stories["new"].append(newuss[usid])
+
+                if user_stories["new"] or user_stories["deleted"]:
+                    value = user_stories
 
             elif key in self.values:
                 value = [resolve_value(key, x) for x in self.diff[key]]

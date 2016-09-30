@@ -19,7 +19,7 @@
 from taiga.base.api.permissions import (TaigaResourcePermission, IsProjectAdmin,
                                         AllowAny, PermissionComponent)
 
-from taiga.permissions.service import is_project_admin
+from taiga.permissions.services import is_project_admin
 
 
 class IsWebhookProjectAdmin(PermissionComponent):

@@ -16,22 +16,27 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
-                                        IsAuthenticated, IsProjectAdmin,
-                                        AllowAny, IsSuperUser)
+from taiga.base.api.permissions import TaigaResourcePermission, AllowAny, IsAuthenticated, IsSuperUser
+from taiga.permissions.permissions import HasProjectPerm, IsProjectAdmin
+
+from taiga.permissions.permissions import CommentAndOrUpdatePerm
 
 
 class UserStoryPermission(TaigaResourcePermission):
+    enought_perms = IsProjectAdmin() | IsSuperUser()
+    global_perms = None
     retrieve_perms = HasProjectPerm('view_us')
+    by_ref_perms = HasProjectPerm('view_us')
     create_perms = HasProjectPerm('add_us_to_project') | HasProjectPerm('add_us')
-    update_perms = HasProjectPerm('modify_us')
-    partial_update_perms = HasProjectPerm('modify_us')
+    update_perms = CommentAndOrUpdatePerm('modify_us', 'comment_us')
+    partial_update_perms = CommentAndOrUpdatePerm('modify_us', 'comment_us')
     destroy_perms = HasProjectPerm('delete_us')
     list_perms = AllowAny()
     filters_data_perms = AllowAny()
     csv_perms = AllowAny()
     bulk_create_perms = IsAuthenticated() & (HasProjectPerm('add_us_to_project') | HasProjectPerm('add_us'))
     bulk_update_order_perms = HasProjectPerm('modify_us')
+    bulk_update_milestone_perms = HasProjectPerm('modify_us')
     upvote_perms = IsAuthenticated() & HasProjectPerm('view_us')
     downvote_perms = IsAuthenticated() & HasProjectPerm('view_us')
     watch_perms = IsAuthenticated() & HasProjectPerm('view_us')

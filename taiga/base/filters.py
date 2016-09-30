@@ -18,6 +18,8 @@
 
 import logging
 
+from dateutil.parser import parse as parse_date
+
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
@@ -28,7 +30,6 @@ from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.db import to_tsquery
 
 logger = logging.getLogger(__name__)
-
 
 
 #####################################################################
@@ -152,11 +153,15 @@ class PermissionBasedFilterBackend(FilterBackend):
         else:
             qs = qs.filter(project__anon_permissions__contains=[self.permission])
 
-        return super().filter_queryset(request, qs.distinct(), view)
+        return super().filter_queryset(request, qs, view)
 
 
 class CanViewProjectFilterBackend(PermissionBasedFilterBackend):
     permission = "view_project"
+
+
+class CanViewEpicsFilterBackend(PermissionBasedFilterBackend):
+    permission = "view_epics"
 
 
 class CanViewUsFilterBackend(PermissionBasedFilterBackend):
@@ -197,6 +202,10 @@ class PermissionBasedAttachmentFilterBackend(PermissionBasedFilterBackend):
         return qs.filter(content_type=ct)
 
 
+class CanViewEpicAttachmentFilterBackend(PermissionBasedAttachmentFilterBackend):
+    permission = "view_epics"
+
+
 class CanViewUserStoryAttachmentFilterBackend(PermissionBasedAttachmentFilterBackend):
     permission = "view_us"
 
@@ -229,7 +238,7 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
                 project_id = int(request.QUERY_PARAMS["project"])
             except:
                 logger.error("Filtering project diferent value than an integer: {}".format(
-                                                              request.QUERY_PARAMS["project"]))
+                             request.QUERY_PARAMS["project"]))
                 raise exc.BadRequest(_("'project' must be an integer value."))
 
         if project_id:
@@ -256,14 +265,14 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
 
             q = Q(memberships__project_id__in=projects_list) | Q(id=request.user.id)
 
-            #If there is no selected project we want access to users from public projects
+            # If there is no selected project we want access to users from public projects
             if not project:
                 q = q | Q(memberships__project__public_permissions__contains=[self.permission])
 
             qs = qs.filter(q)
 
         else:
-            if project and not "view_project" in project.anon_permissions:
+            if project and "view_project" not in project.anon_permissions:
                 qs = qs.none()
 
             qs = qs.filter(memberships__project__anon_permissions__contains=[self.permission])
@@ -307,7 +316,7 @@ class IsProjectAdminFilterBackend(FilterBackend, BaseIsProjectAdminFilterBackend
         else:
             queryset = queryset.filter(project_id__in=project_ids)
 
-        return super().filter_queryset(request, queryset.distinct(), view)
+        return super().filter_queryset(request, queryset, view)
 
 
 class IsProjectAdminFromWebhookLogFilterBackend(FilterBackend, BaseIsProjectAdminFilterBackend):
@@ -328,9 +337,15 @@ class IsProjectAdminFromWebhookLogFilterBackend(FilterBackend, BaseIsProjectAdmi
 #####################################################################
 
 class BaseRelatedFieldsFilter(FilterBackend):
-    def __init__(self, filter_name=None):
+    filter_name = None
+    param_name = None
+
+    def __init__(self, filter_name=None, param_name=None):
         if filter_name:
             self.filter_name = filter_name
+
+        if param_name:
+            self.param_name = param_name
 
     def _prepare_filter_data(self, query_param_value):
         def _transform_value(value):
@@ -346,7 +361,8 @@ class BaseRelatedFieldsFilter(FilterBackend):
         return list(values)
 
     def _get_queryparams(self, params):
-        raw_value = params.get(self.filter_name, None)
+        param_name = self.param_name or self.filter_name
+        raw_value = params.get(param_name, None)
 
         if raw_value:
             value = self._prepare_filter_data(raw_value)
@@ -433,18 +449,81 @@ class WatchersFilter(FilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         query_watchers = self._get_watchers_queryparams(request.QUERY_PARAMS)
-        model = queryset.model
         if query_watchers:
             WatchedModel = apps.get_model("notifications", "Watched")
             watched_type = ContentType.objects.get_for_model(queryset.model)
 
             try:
-                watched_ids = WatchedModel.objects.filter(content_type=watched_type, user__id__in=query_watchers).values_list("object_id", flat=True)
+                watched_ids = (WatchedModel.objects.filter(content_type=watched_type,
+                                                           user__id__in=query_watchers)
+                                                   .values_list("object_id", flat=True))
                 queryset = queryset.filter(id__in=watched_ids)
             except ValueError:
                 raise exc.BadRequest(_("Error in filter params types."))
 
         return super().filter_queryset(request, queryset, view)
+
+
+class BaseCompareFilter(FilterBackend):
+    operators = ["", "lt", "gt", "lte", "gte"]
+
+    def __init__(self, filter_name_base=None, operators=None):
+        if filter_name_base:
+            self.filter_name_base = filter_name_base
+
+    def _get_filter_names(self):
+        return [
+            self._get_filter_name(operator)
+            for operator in self.operators
+        ]
+
+    def _get_filter_name(self, operator):
+        if operator and len(operator) > 0:
+            return "{base}__{operator}".format(
+                base=self.filter_name_base, operator=operator
+            )
+        else:
+            return self.filter_name_base
+
+    def _get_constraints(self, params):
+        constraints = {}
+        for filter_name in self._get_filter_names():
+            raw_value = params.get(filter_name, None)
+            if raw_value is not None:
+                constraints[filter_name] = self._get_value(raw_value)
+        return constraints
+
+    def _get_value(self, raw_value):
+        return raw_value
+
+    def filter_queryset(self, request, queryset, view):
+        constraints = self._get_constraints(request.QUERY_PARAMS)
+
+        if len(constraints) > 0:
+            queryset = queryset.filter(**constraints)
+
+        return super().filter_queryset(request, queryset, view)
+
+
+class BaseDateFilter(BaseCompareFilter):
+    def _get_value(self, raw_value):
+        return parse_date(raw_value)
+
+
+class CreatedDateFilter(BaseDateFilter):
+    filter_name_base = "created_date"
+
+
+class ModifiedDateFilter(BaseDateFilter):
+    filter_name_base = "modified_date"
+
+
+class FinishedDateFilter(BaseDateFilter):
+    filter_name_base = "finished_date"
+
+
+class FinishDateFilter(BaseDateFilter):
+    filter_name_base = "finish_date"
 
 
 #####################################################################
@@ -459,6 +538,7 @@ class QFilter(FilterBackend):
             where_clause = ("""
                 to_tsvector('english_nostop',
                             coalesce({table}.subject, '') || ' ' ||
+                            coalesce(array_to_string({table}.tags, ' '), '') || ' ' ||
                             coalesce({table}.ref) || ' ' ||
                             coalesce({table}.description, '')) @@ to_tsquery('english_nostop', %s)
             """.format(table=table))

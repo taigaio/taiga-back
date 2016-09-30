@@ -1,6 +1,28 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import uuid
 import csv
+import pytz
+
+from datetime import datetime, timedelta
+from urllib.parse import quote
 
 from unittest import mock
 
@@ -36,15 +58,6 @@ Issue #2
     with mock.patch("taiga.projects.issues.services.db") as db:
         issues = services.create_issues_in_bulk(data)
         db.save_in_bulk.assert_called_once_with(issues, None, None)
-
-
-def test_update_issues_order_in_bulk():
-    data = [(1, 1), (2, 2)]
-
-    with mock.patch("taiga.projects.issues.services.db") as db:
-        services.update_issues_order_in_bulk(data)
-        db.update_in_bulk_with_ids.assert_called_once_with([1, 2], [{"order": 1}, {"order": 2}],
-                                                           model=models.Issue)
 
 
 def test_create_issue_without_status(client):
@@ -211,6 +224,150 @@ def test_api_filter_by_text_6(client):
     assert response.status_code == 200
     assert number_of_issues == 1
 
+
+def test_api_filter_by_created_date(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_issue = f.create_issue(owner=user, created_date=one_day_ago)
+    issue = f.create_issue(owner=user)
+
+    url = reverse("issues-list") + "?created_date=%s" % (
+        quote(issue.created_date.isoformat())
+    )
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 1
+    assert response.data[0]["ref"] == issue.ref
+
+
+def test_api_filter_by_created_date__gt(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_issue = f.create_issue(owner=user, created_date=one_day_ago)
+    issue = f.create_issue(owner=user)
+
+    url = reverse("issues-list") + "?created_date__gt=%s" % (
+        quote(one_day_ago.isoformat())
+    )
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 1
+    assert response.data[0]["ref"] == issue.ref
+
+
+def test_api_filter_by_created_date__gte(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_issue = f.create_issue(owner=user, created_date=one_day_ago)
+    issue = f.create_issue(owner=user)
+
+    url = reverse("issues-list") + "?created_date__gte=%s" % (
+        quote(one_day_ago.isoformat())
+    )
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 2
+
+
+def test_api_filter_by_created_date__lt(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_issue = f.create_issue(owner=user, created_date=one_day_ago)
+    issue = f.create_issue(owner=user)
+
+    url = reverse("issues-list") + "?created_date__lt=%s" % (
+        quote(issue.created_date.isoformat())
+    )
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert response.data[0]["ref"] == old_issue.ref
+
+
+def test_api_filter_by_created_date__lte(client):
+    user = f.UserFactory(is_superuser=True)
+    one_day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    old_issue = f.create_issue(owner=user, created_date=one_day_ago)
+    issue = f.create_issue(owner=user)
+
+    url = reverse("issues-list") + "?created_date__lte=%s" % (
+        quote(issue.created_date.isoformat())
+    )
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 2
+
+
+def test_api_filter_by_modified_date__gte(client):
+    user = f.UserFactory(is_superuser=True)
+    _day_ago = datetime.now(pytz.utc) - timedelta(days=1)
+
+    older_issue = f.create_issue(owner=user)
+    issue = f.create_issue(owner=user)
+    # we have to refresh as it slightly differs
+    issue.refresh_from_db()
+
+    assert older_issue.modified_date < issue.modified_date
+
+    url = reverse("issues-list") + "?modified_date__gte=%s" % (
+        quote(issue.modified_date.isoformat())
+    )
+
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 1
+    assert response.data[0]["ref"] == issue.ref
+
+
+def test_api_filter_by_finished_date(client):
+    user = f.UserFactory(is_superuser=True)
+    project = f.ProjectFactory.create()
+    status0 = f.IssueStatusFactory.create(project=project, is_closed=True)
+
+    issue = f.create_issue(owner=user)
+    finished_issue = f.create_issue(owner=user, status=status0)
+
+    assert finished_issue.finished_date
+
+    url = reverse("issues-list") + "?finished_date__gte=%s" % (
+        quote(finished_issue.finished_date.isoformat())
+    )
+    client.login(issue.owner)
+    response = client.get(url)
+    number_of_issues = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_issues == 1
+    assert response.data[0]["ref"] == finished_issue.ref
+
+
 def test_api_filters_data(client):
     project = f.ProjectFactory.create()
     user1 = f.UserFactory.create(is_superuser=True)
@@ -360,8 +517,7 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['id'] == severity2.id, response.data["severities"]))["count"] == 0
     assert next(filter(lambda i: i['id'] == severity3.id, response.data["severities"]))["count"] == 1
 
-    with pytest.raises(StopIteration):
-        assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 0
+    assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 0
     assert next(filter(lambda i: i['name'] == tag1, response.data["tags"]))["count"] == 4
     assert next(filter(lambda i: i['name'] == tag2, response.data["tags"]))["count"] == 2
     assert next(filter(lambda i: i['name'] == tag3, response.data["tags"]))["count"] == 1
@@ -397,8 +553,7 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['id'] == severity2.id, response.data["severities"]))["count"] == 0
     assert next(filter(lambda i: i['id'] == severity3.id, response.data["severities"]))["count"] == 1
 
-    with pytest.raises(StopIteration):
-        assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 0
+    assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 0
     assert next(filter(lambda i: i['name'] == tag1, response.data["tags"]))["count"] == 2
     assert next(filter(lambda i: i['name'] == tag2, response.data["tags"]))["count"] == 2
     assert next(filter(lambda i: i['name'] == tag3, response.data["tags"]))["count"] == 1

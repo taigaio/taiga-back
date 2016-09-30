@@ -19,17 +19,20 @@
 from django.utils.translation import ugettext as _
 
 from taiga.base.api.permissions import TaigaResourcePermission
-from taiga.base.api.permissions import HasProjectPerm
 from taiga.base.api.permissions import IsAuthenticated
-from taiga.base.api.permissions import IsProjectAdmin
 from taiga.base.api.permissions import AllowAny
 from taiga.base.api.permissions import IsSuperUser
+from taiga.base.api.permissions import IsObjectOwner
 from taiga.base.api.permissions import PermissionComponent
 
 from taiga.base import exceptions as exc
-from taiga.projects.models import Membership
 
+from taiga.permissions.permissions import HasProjectPerm
+from taiga.permissions.permissions import IsProjectAdmin
+
+from . import models
 from . import services
+
 
 class CanLeaveProject(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
@@ -38,20 +41,12 @@ class CanLeaveProject(PermissionComponent):
 
         try:
             if not services.can_user_leave_project(request.user, obj):
-                raise exc.PermissionDenied(_("You can't leave the project if you are the owner or there are no more admins"))
+                raise exc.PermissionDenied(_("You can't leave the project if you are the owner or there are "
+                                             "no more admins"))
             return True
-        except Membership.DoesNotExist:
+        except models.Membership.DoesNotExist:
             return False
 
-class IsMainOwner(PermissionComponent):
-    def check_permissions(self, request, view, obj=None):
-        if not obj or not request.user.is_authenticated():
-            return False
-
-        if obj.owner is None:
-            return False
-
-        return obj.owner == request.user
 
 class ProjectPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_project')
@@ -67,6 +62,7 @@ class ProjectPermission(TaigaResourcePermission):
     stats_perms = HasProjectPerm('view_project')
     member_stats_perms = HasProjectPerm('view_project')
     issues_stats_perms = HasProjectPerm('view_project')
+    regenerate_epics_csv_uuid_perms = IsProjectAdmin()
     regenerate_userstories_csv_uuid_perms = IsProjectAdmin()
     regenerate_issues_csv_uuid_perms = IsProjectAdmin()
     regenerate_tasks_csv_uuid_perms = IsProjectAdmin()
@@ -80,9 +76,13 @@ class ProjectPermission(TaigaResourcePermission):
     leave_perms = CanLeaveProject()
     transfer_validate_token_perms = IsAuthenticated() & HasProjectPerm('view_project')
     transfer_request_perms = IsProjectAdmin()
-    transfer_start_perms = IsMainOwner()
+    transfer_start_perms = IsObjectOwner()
     transfer_reject_perms = IsAuthenticated() & HasProjectPerm('view_project')
     transfer_accept_perms = IsAuthenticated() & HasProjectPerm('view_project')
+    create_tag_perms = IsProjectAdmin()
+    edit_tag_perms = IsProjectAdmin()
+    delete_tag_perms = IsProjectAdmin()
+    mix_tags_perms = IsProjectAdmin()
 
 
 class ProjectFansPermission(TaigaResourcePermission):
@@ -108,6 +108,18 @@ class MembershipPermission(TaigaResourcePermission):
     list_perms = AllowAny()
     bulk_create_perms = IsProjectAdmin()
     resend_invitation_perms = IsProjectAdmin()
+
+
+# Epics
+
+class EpicStatusPermission(TaigaResourcePermission):
+    retrieve_perms = HasProjectPerm('view_project')
+    create_perms = IsProjectAdmin()
+    update_perms = IsProjectAdmin()
+    partial_update_perms = IsProjectAdmin()
+    destroy_perms = IsProjectAdmin()
+    list_perms = AllowAny()
+    bulk_update_order_perms = IsProjectAdmin()
 
 
 # User Stories

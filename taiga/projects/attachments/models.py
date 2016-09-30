@@ -70,6 +70,7 @@ class Attachment(models.Model):
         permissions = (
             ("view_attachment", "Can view attachment"),
         )
+        index_together = [("content_type", "object_id")]
 
     def __init__(self, *args, **kwargs):
         super(Attachment, self).__init__(*args, **kwargs)

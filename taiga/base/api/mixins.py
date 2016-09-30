@@ -44,18 +44,19 @@
 
 import warnings
 
-from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.db import transaction as tx
 from django.utils.translation import ugettext as _
 
 from taiga.base import response
+from taiga.base.exceptions import ValidationError
 
 from .settings import api_settings
 from .utils import get_object_or_404
 
 from .. import exceptions as exc
 from ..decorators import model_pk_lock
+
 
 def _get_validation_exclusions(obj, pk=None, slug_field=None, lookup_field=None):
     """
@@ -89,19 +90,21 @@ class CreateModelMixin:
     Create a model instance.
     """
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.DATA, files=request.FILES)
+        validator = self.get_validator(data=request.DATA, files=request.FILES)
 
-        if serializer.is_valid():
-            self.check_permissions(request, 'create', serializer.object)
+        if validator.is_valid():
+            self.check_permissions(request, 'create', validator.object)
 
-            self.pre_save(serializer.object)
-            self.pre_conditions_on_save(serializer.object)
-            self.object = serializer.save(force_insert=True)
+            self.pre_save(validator.object)
+            self.pre_conditions_on_save(validator.object)
+            self.object = validator.save(force_insert=True)
             self.post_save(self.object, created=True)
+            instance = self.get_queryset().get(id=self.object.id)
+            serializer = self.get_serializer(instance)
             headers = self.get_success_headers(serializer.data)
             return response.Created(serializer.data, headers=headers)
 
-        return response.BadRequest(serializer.errors)
+        return response.BadRequest(validator.errors)
 
     def get_success_headers(self, data):
         try:
@@ -171,28 +174,32 @@ class UpdateModelMixin:
         if self.object is None:
             raise Http404
 
-        serializer = self.get_serializer(self.object, data=request.DATA,
-                                         files=request.FILES, partial=partial)
+        validator = self.get_validator(self.object, data=request.DATA,
+                                       files=request.FILES, partial=partial)
 
-        if not serializer.is_valid():
-            return response.BadRequest(serializer.errors)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
 
         # Hooks
         try:
-            self.pre_save(serializer.object)
-            self.pre_conditions_on_save(serializer.object)
+            self.pre_save(validator.object)
+            self.pre_conditions_on_save(validator.object)
         except ValidationError as err:
             # full_clean on model instance may be called in pre_save,
             # so we have to handle eventual errors.
             return response.BadRequest(err.message_dict)
 
         if self.object is None:
-            self.object = serializer.save(force_insert=True)
+            self.object = validator.save(force_insert=True)
             self.post_save(self.object, created=True)
+            instance = self.get_queryset().get(id=self.object.id)
+            serializer = self.get_serializer(instance)
             return response.Created(serializer.data)
 
-        self.object = serializer.save(force_update=True)
+        self.object = validator.save(force_update=True)
         self.post_save(self.object, created=False)
+        instance = self.get_queryset().get(id=self.object.id)
+        serializer = self.get_serializer(instance)
         return response.Ok(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
@@ -204,14 +211,14 @@ class UpdateModelMixin:
         Set any attributes on the object that are implicit in the request.
         """
         # pk and/or slug attributes are implicit in the URL.
-        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
-        lookup = self.kwargs.get(lookup_url_kwarg, None)
+        ##lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        ##lookup = self.kwargs.get(lookup_url_kwarg, None)
         pk = self.kwargs.get(self.pk_url_kwarg, None)
         slug = self.kwargs.get(self.slug_url_kwarg, None)
         slug_field = slug and self.slug_field or None
 
-        if lookup:
-            setattr(obj, self.lookup_field, lookup)
+        ##if lookup:
+        ##    setattr(obj, self.lookup_field, lookup)
 
         if pk:
             setattr(obj, 'pk', pk)
@@ -246,12 +253,33 @@ class DestroyModelMixin:
         return response.NoContent()
 
 
+class NestedViewSetMixin(object):
+    def get_queryset(self):
+        return self._filter_queryset_by_parents_lookups(super().get_queryset())
+
+    def _filter_queryset_by_parents_lookups(self, queryset):
+        parents_query_dict = self._get_parents_query_dict()
+        if parents_query_dict:
+            return queryset.filter(**parents_query_dict)
+        else:
+            return queryset
+
+    def _get_parents_query_dict(self):
+        result = {}
+        for kwarg_name in self.kwargs:
+            query_value = self.kwargs.get(kwarg_name)
+            result[kwarg_name] = query_value
+        return result
+
+
+## TODO: Move blocked mixind out of the base module because is related to project
+
 class BlockeableModelMixin:
     def is_blocked(self, obj):
         raise NotImplementedError("is_blocked must be overridden")
 
     def pre_conditions_blocked(self, obj):
-        #Raises permission exception
+        # Raises permission exception
         if obj is not None and self.is_blocked(obj):
             raise exc.Blocked(_("Blocked element"))
 

@@ -1,11 +1,31 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from django.core.urlresolvers import reverse
 from django.apps import apps
 
 from taiga.base.utils import json
 from taiga.projects import choices as project_choices
-from taiga.projects.serializers import ProjectDetailSerializer
-from taiga.permissions.permissions import MEMBERS_PERMISSIONS
+from taiga.projects import models as project_models
+from taiga.projects.serializers import ProjectSerializer
+from taiga.permissions.choices import MEMBERS_PERMISSIONS
+from taiga.projects.utils import attach_extra_info
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, helper_test_http_method_and_count
@@ -27,19 +47,26 @@ def data():
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=['view_project'],
                                         public_permissions=['view_project'])
+    m.public_project = attach_extra_info(project_models.Project.objects.all()).get(id=m.public_project.id)
+
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=['view_project'],
                                           public_permissions=['view_project'],
                                           owner=m.project_owner)
+    m.private_project1 = attach_extra_info(project_models.Project.objects.all()).get(id=m.private_project1.id)
+
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
                                           public_permissions=[],
                                           owner=m.project_owner)
+    m.private_project2 = attach_extra_info(project_models.Project.objects.all()).get(id=m.private_project2.id)
+
     m.blocked_project = f.ProjectFactory(is_private=True,
                                          anon_permissions=[],
                                          public_permissions=[],
                                          owner=m.project_owner,
                                          blocked_code=project_choices.BLOCKED_BY_STAFF)
+    m.blocked_project = attach_extra_info(project_models.Project.objects.all()).get(id=m.blocked_project.id)
 
     f.RoleFactory(project=m.public_project)
 
@@ -135,12 +162,12 @@ def test_project_update(client, data):
         data.project_owner
     ]
 
-    project_data = ProjectDetailSerializer(data.private_project2).data
+    project_data = ProjectSerializer(data.private_project2).data
     project_data["is_private"] = False
     results = helper_test_http_method(client, 'put', url, json.dumps(project_data), users)
     assert results == [401, 403, 403, 200]
 
-    project_data = ProjectDetailSerializer(data.blocked_project).data
+    project_data = ProjectSerializer(data.blocked_project).data
     project_data["is_private"] = False
     results = helper_test_http_method(client, 'put', blocked_url, json.dumps(project_data), users)
     assert results == [401, 403, 403, 451]
@@ -457,6 +484,31 @@ def test_invitations_retrieve(client, data):
     ]
     results = helper_test_http_method(client, 'get', url, None, users)
     assert results == [200, 200, 200, 200]
+
+
+def test_regenerate_epics_csv_uuid(client, data):
+    public_url = reverse('projects-regenerate-epics-csv-uuid', kwargs={"pk": data.public_project.pk})
+    private1_url = reverse('projects-regenerate-epics-csv-uuid', kwargs={"pk": data.private_project1.pk})
+    private2_url = reverse('projects-regenerate-epics-csv-uuid', kwargs={"pk": data.private_project2.pk})
+    blocked_url = reverse('projects-regenerate-epics-csv-uuid', kwargs={"pk": data.blocked_project.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+    results = helper_test_http_method(client, 'post', public_url, None, users)
+    assert results == [401, 403, 403, 200]
+
+    results = helper_test_http_method(client, 'post', private1_url, None, users)
+    assert results == [401, 403, 403, 200]
+
+    results = helper_test_http_method(client, 'post', private2_url, None, users)
+    assert results == [404, 404, 403, 200]
+
+    results = helper_test_http_method(client, 'post', blocked_url, None, users)
+    assert results == [404, 404, 403, 451]
 
 
 def test_regenerate_userstories_csv_uuid(client, data):

@@ -17,75 +17,56 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from django.core import validators
-from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.api import serializers
-from taiga.base.fields import PgArrayField, TagsField
+from taiga.base.fields import Field, MethodField, I18NField
+
 from taiga.base.utils.thumbnails import get_thumbnail_url
 
 from taiga.projects.models import Project
-from .models import User, Role
-from .services import get_photo_or_gravatar_url, get_big_photo_or_gravatar_url
-
-from collections import namedtuple
-
-import re
+from .services import get_user_photo_url, get_user_big_photo_url
+from taiga.users.gravatar import get_user_gravatar_id
+from taiga.users.models import User
 
 
 ######################################################
-## User
+# User
 ######################################################
 
-class ContactProjectDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Project
-        fields = ("id", "slug", "name")
+class ContactProjectDetailSerializer(serializers.LightSerializer):
+    id = Field()
+    slug = Field()
+    name = Field()
 
 
-class UserSerializer(serializers.ModelSerializer):
-    full_name_display = serializers.SerializerMethodField("get_full_name_display")
-    photo = serializers.SerializerMethodField("get_photo")
-    big_photo = serializers.SerializerMethodField("get_big_photo")
-    roles = serializers.SerializerMethodField("get_roles")
-    projects_with_me = serializers.SerializerMethodField("get_projects_with_me")
-
-    class Meta:
-        model = User
-        # IMPORTANT: Maintain the UserAdminSerializer Meta up to date
-        # with this info (including there the email)
-        fields = ("id", "username", "full_name", "full_name_display",
-                  "color", "bio", "lang", "theme", "timezone", "is_active",
-                  "photo", "big_photo", "roles", "projects_with_me")
-        read_only_fields = ("id",)
-
-    def validate_username(self, attrs, source):
-        value = attrs[source]
-        validator = validators.RegexValidator(re.compile('^[\w.-]+$'), _("invalid username"),
-                                              _("invalid"))
-
-        try:
-            validator(value)
-        except ValidationError:
-            raise serializers.ValidationError(_("Required. 255 characters or fewer. Letters, "
-                                                "numbers and /./-/_ characters'"))
-
-        if (self.object and
-                self.object.username != value and
-                User.objects.filter(username=value).exists()):
-            raise serializers.ValidationError(_("Invalid username. Try with a different one."))
-
-        return attrs
+class UserSerializer(serializers.LightSerializer):
+    id = Field()
+    username = Field()
+    full_name = Field()
+    full_name_display = MethodField()
+    color = Field()
+    bio = Field()
+    lang = Field()
+    theme = Field()
+    timezone = Field()
+    is_active = Field()
+    photo = MethodField()
+    big_photo = MethodField()
+    gravatar_id = MethodField()
+    roles = MethodField()
+    projects_with_me = MethodField()
 
     def get_full_name_display(self, obj):
         return obj.get_full_name() if obj else ""
 
     def get_photo(self, user):
-        return get_photo_or_gravatar_url(user)
+        return get_user_photo_url(user)
 
     def get_big_photo(self, user):
-        return get_big_photo_or_gravatar_url(user)
+        return get_user_big_photo_url(user)
+
+    def get_gravatar_id(self, user):
+        return get_user_gravatar_id(user)
 
     def get_roles(self, user):
         return user.memberships. order_by("role__name").values_list("role__name", flat=True).distinct()
@@ -104,25 +85,15 @@ class UserSerializer(serializers.ModelSerializer):
             projects = Project.objects.filter(id__in=project_ids)
             return ContactProjectDetailSerializer(projects, many=True).data
 
+
 class UserAdminSerializer(UserSerializer):
-    total_private_projects = serializers.SerializerMethodField("get_total_private_projects")
-    total_public_projects = serializers.SerializerMethodField("get_total_public_projects")
-
-    class Meta:
-        model = User
-        # IMPORTANT: Maintain the UserSerializer Meta up to date
-        # with this info (including here the email)
-        fields = ("id", "username", "full_name", "full_name_display", "email",
-                  "color", "bio", "lang", "theme", "timezone", "is_active", "photo",
-                  "big_photo",
-                  "max_private_projects", "max_public_projects",
-                  "max_memberships_private_projects", "max_memberships_public_projects",
-                  "total_private_projects", "total_public_projects")
-
-        read_only_fields = ("id", "email",
-                            "max_private_projects", "max_public_projects",
-                            "max_memberships_private_projects",
-                            "max_memberships_public_projects")
+    total_private_projects = MethodField()
+    total_public_projects = MethodField()
+    email = Field()
+    max_private_projects = Field()
+    max_public_projects = Field()
+    max_memberships_private_projects = Field()
+    max_memberships_public_projects = Field()
 
     def get_total_private_projects(self, user):
         return user.owned_projects.filter(is_private=True).count()
@@ -131,82 +102,83 @@ class UserAdminSerializer(UserSerializer):
         return user.owned_projects.filter(is_private=False).count()
 
 
-class UserBasicInfoSerializer(UserSerializer):
-    class Meta:
-        model = User
-        fields = ("username", "full_name_display","photo", "big_photo", "is_active", "id")
+class UserBasicInfoSerializer(serializers.LightSerializer):
+    username = Field()
+    full_name_display = MethodField()
+    photo = MethodField()
+    big_photo = MethodField()
+    gravatar_id = MethodField()
+    is_active = Field()
+    id = Field()
 
+    def get_full_name_display(self, obj):
+        return obj.get_full_name()
 
-class RecoverySerializer(serializers.Serializer):
-    token = serializers.CharField(max_length=200)
-    password = serializers.CharField(min_length=6)
+    def get_photo(self, obj):
+        return get_user_photo_url(obj)
 
+    def get_big_photo(self, obj):
+        return get_user_big_photo_url(obj)
 
-class ChangeEmailSerializer(serializers.Serializer):
-    email_token = serializers.CharField(max_length=200)
+    def get_gravatar_id(self, obj):
+        return get_user_gravatar_id(obj)
 
+    def to_value(self, instance):
+        if instance is None:
+            return None
 
-class CancelAccountSerializer(serializers.Serializer):
-    cancel_token = serializers.CharField(max_length=200)
+        return super().to_value(instance)
 
 
 ######################################################
-## Role
+# Role
 ######################################################
 
-class RoleSerializer(serializers.ModelSerializer):
-    members_count = serializers.SerializerMethodField("get_members_count")
-    permissions = PgArrayField(required=False)
-
-    class Meta:
-        model = Role
-        fields = ('id', 'name', 'permissions', 'computable', 'project', 'order', 'members_count')
-        i18n_fields = ("name",)
+class RoleSerializer(serializers.LightSerializer):
+    id = Field()
+    name = Field()
+    slug = Field()
+    project = Field(attr="project_id")
+    order = Field()
+    computable = Field()
+    permissions = Field()
+    members_count = MethodField()
 
     def get_members_count(self, obj):
         return obj.memberships.count()
 
 
-class ProjectRoleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Role
-        fields = ('id', 'name', 'slug', 'order', 'computable')
-        i18n_fields = ("name",)
-
-
 ######################################################
-## Like
+# Like
 ######################################################
 
+class HighLightedContentSerializer(serializers.LightSerializer):
+    type = Field()
+    id = Field()
+    ref = Field()
+    slug = Field()
+    name = Field()
+    subject = Field()
+    description = MethodField()
+    assigned_to = Field()
+    status = Field()
+    status_color = Field()
+    tags_colors = MethodField()
+    created_date = Field()
+    is_private = MethodField()
+    logo_small_url = MethodField()
 
-class HighLightedContentSerializer(serializers.Serializer):
-    type = serializers.CharField()
-    id = serializers.IntegerField()
-    ref = serializers.IntegerField()
-    slug = serializers.CharField()
-    name = serializers.CharField()
-    subject = serializers.CharField()
-    description = serializers.SerializerMethodField("get_description")
-    assigned_to = serializers.IntegerField()
-    status = serializers.CharField()
-    status_color = serializers.CharField()
-    tags_colors = serializers.SerializerMethodField("get_tags_color")
-    created_date = serializers.DateTimeField()
-    is_private = serializers.SerializerMethodField("get_is_private")
-    logo_small_url = serializers.SerializerMethodField("get_logo_small_url")
+    project = MethodField()
+    project_name = MethodField()
+    project_slug = MethodField()
+    project_is_private = MethodField()
+    project_blocked_code = Field()
 
-    project = serializers.SerializerMethodField("get_project")
-    project_name = serializers.SerializerMethodField("get_project_name")
-    project_slug = serializers.SerializerMethodField("get_project_slug")
-    project_is_private = serializers.SerializerMethodField("get_project_is_private")
-    project_blocked_code = serializers.CharField()
+    assigned_to = Field(attr="assigned_to_id")
+    assigned_to_extra_info = MethodField()
 
-    assigned_to_username = serializers.CharField()
-    assigned_to_full_name = serializers.CharField()
-    assigned_to_photo = serializers.SerializerMethodField("get_photo")
-
-    is_watcher = serializers.SerializerMethodField("get_is_watcher")
-    total_watchers = serializers.IntegerField()
+    is_watcher = MethodField()
+    total_watchers = Field()
 
     def __init__(self, *args, **kwargs):
         # Don't pass the extra ids args up to the superclass
@@ -216,18 +188,18 @@ class HighLightedContentSerializer(serializers.Serializer):
         super().__init__(*args, **kwargs)
 
     def _none_if_project(self, obj, property):
-        type = obj.get("type", "")
+        type = getattr(obj, "type", "")
         if type == "project":
             return None
 
-        return obj.get(property)
+        return getattr(obj, property)
 
     def _none_if_not_project(self, obj, property):
-        type = obj.get("type", "")
+        type = getattr(obj, "type", "")
         if type != "project":
             return None
 
-        return obj.get(property)
+        return getattr(obj, property)
 
     def get_project(self, obj):
         return self._none_if_project(obj, "project")
@@ -253,51 +225,48 @@ class HighLightedContentSerializer(serializers.Serializer):
             return get_thumbnail_url(logo, settings.THN_LOGO_SMALL)
         return None
 
-    def get_photo(self, obj):
-        type = obj.get("type", "")
-        if type == "project":
-            return None
+    def get_assigned_to_extra_info(self, obj):
+        assigned_to = None
+        if obj.assigned_to_extra_info is not None:
+            assigned_to = User(**obj.assigned_to_extra_info)
+        return UserBasicInfoSerializer(assigned_to).data
 
-        UserData = namedtuple("UserData", ["photo", "email"])
-        user_data = UserData(photo=obj["assigned_to_photo"], email=obj.get("assigned_to_email") or "")
-        return get_photo_or_gravatar_url(user_data)
-
-    def get_tags_color(self, obj):
-        tags = obj.get("tags", [])
+    def get_tags_colors(self, obj):
+        tags = getattr(obj, "tags", [])
         tags = tags if tags is not None else []
-        tags_colors = obj.get("tags_colors", [])
+        tags_colors = getattr(obj, "tags_colors", [])
         tags_colors = tags_colors if tags_colors is not None else []
         return [{"name": tc[0], "color": tc[1]} for tc in tags_colors if tc[0] in tags]
 
     def get_is_watcher(self, obj):
-        return obj["id"] in self.user_watching.get(obj["type"], [])
+        return obj.id in self.user_watching.get(obj.type, [])
 
 
 class LikedObjectSerializer(HighLightedContentSerializer):
-    is_fan = serializers.SerializerMethodField("get_is_fan")
-    total_fans = serializers.IntegerField()
+    is_fan = MethodField()
+    total_fans = Field()
 
     def __init__(self, *args, **kwargs):
         # Don't pass the extra ids args up to the superclass
-        self.user_likes  = kwargs.pop("user_likes", {})
+        self.user_likes = kwargs.pop("user_likes", {})
 
         # Instantiate the superclass normally
         super().__init__(*args, **kwargs)
 
     def get_is_fan(self, obj):
-        return obj["id"] in self.user_likes.get(obj["type"], [])
+        return obj.id in self.user_likes.get(obj.type, [])
 
 
 class VotedObjectSerializer(HighLightedContentSerializer):
-    is_voter = serializers.SerializerMethodField("get_is_voter")
-    total_voters = serializers.IntegerField()
+    is_voter = MethodField()
+    total_voters = Field()
 
     def __init__(self, *args, **kwargs):
         # Don't pass the extra ids args up to the superclass
-        self.user_votes  = kwargs.pop("user_votes", {})
+        self.user_votes = kwargs.pop("user_votes", {})
 
         # Instantiate the superclass normally
         super().__init__(*args, **kwargs)
 
     def get_is_voter(self, obj):
-        return obj["id"] in self.user_votes.get(obj["type"], [])
+        return obj.id in self.user_votes.get(obj.type, [])

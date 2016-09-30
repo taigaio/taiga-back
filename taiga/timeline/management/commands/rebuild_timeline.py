@@ -58,7 +58,8 @@ class BulkCreator(object):
 bulk_creator = BulkCreator()
 
 
-def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, created_datetime:object, namespace:str="default", extra_data:dict={}):
+def custom_add_to_object_timeline(obj:object, instance:object, event_type:str, created_datetime:object,
+                                  namespace:str="default", extra_data:dict={}):
     assert isinstance(obj, Model), "obj must be a instance of Model"
     assert isinstance(instance, Model), "instance must be a instance of Model"
     event_type_key = _get_impl_key_from_model(instance.__class__, event_type)
@@ -102,11 +103,13 @@ def generate_timeline(initial_date, final_date, project_id):
 
         if project_id:
             project = Project.objects.get(id=project_id)
-            us_keys = ['userstories.userstory:%s'%(id) for id in project.user_stories.values_list("id", flat=True)]
+            epic_keys = ['epics.epic:%s'%(id) for id in project.epics.values_list("id", flat=True)]
+            us_keys = ['userstories.userstory:%s'%(id) for id in project.user_stories.values_list("id",
+                                                                                                  flat=True)]
             tasks_keys = ['tasks.task:%s'%(id) for id in project.tasks.values_list("id", flat=True)]
             issue_keys = ['issues.issue:%s'%(id) for id in project.issues.values_list("id", flat=True)]
             wiki_keys = ['wiki.wikipage:%s'%(id) for id in project.wiki_pages.values_list("id", flat=True)]
-            keys = us_keys + tasks_keys + issue_keys + wiki_keys
+            keys = epic_keys + us_keys + tasks_keys + issue_keys + wiki_keys
 
             projects = projects.filter(id=project_id)
             history_entries = history_entries.filter(key__in=keys)
@@ -116,12 +119,13 @@ def generate_timeline(initial_date, final_date, project_id):
                 _push_to_timelines(project, membership.user, membership, "create", membership.created_at)
 
         for project in projects.iterator():
-            print("Project:", bulk_creator.created)
+            print("Project:", project)
             extra_data = {
                 "values_diff": {},
                 "user": extract_user_info(project.owner),
             }
-            _push_to_timelines(project, project.owner, project, "create", project.created_date, extra_data=extra_data)
+            _push_to_timelines(project, project.owner, project, "create", project.created_date,
+                               extra_data=extra_data)
             del extra_data
 
         for historyEntry in history_entries.iterator():

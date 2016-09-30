@@ -28,16 +28,19 @@ from django.utils.translation import ugettext as _
 
 from taiga.base.utils import db, text
 from taiga.projects.history.services import take_snapshot
-from taiga.projects.userstories.apps import (
-    connect_userstories_signals,
-    disconnect_userstories_signals)
-
+from taiga.projects.services import apply_order_updates
+from taiga.projects.userstories.apps import connect_userstories_signals
+from taiga.projects.userstories.apps import disconnect_userstories_signals
 from taiga.events import events
 from taiga.projects.votes.utils import attach_total_voters_to_queryset
 from taiga.projects.notifications.utils import attach_watchers_to_queryset
 
 from . import models
 
+
+#####################################################
+# Bulk actions
+#####################################################
 
 def get_userstories_from_bulk(bulk_data, **additional_fields):
     """Convert `bulk_data` into a list of user stories.
@@ -72,28 +75,64 @@ def create_userstories_in_bulk(bulk_data, callback=None, precall=None, **additio
     return userstories
 
 
-def update_userstories_order_in_bulk(bulk_data:list, field:str, project:object):
+def update_userstories_order_in_bulk(bulk_data: list, field: str, project: object,
+                                     status: object=None, milestone: object=None):
     """
-    Update the order of some user stories.
-    `bulk_data` should be a list of tuples with the following format:
+    Updates the order of the userstories specified adding the extra updates needed
+    to keep consistency.
+    `bulk_data` should be a list of dicts with the following format:
+    `field` is the order field used
 
-    [(<user story id>, {<field>: <value>, ...}), ...]
+    [{'us_id': <value>, 'order': <value>}, ...]
     """
-    user_story_ids = []
-    new_order_values = []
-    for us_data in bulk_data:
-        user_story_ids.append(us_data["us_id"])
-        new_order_values.append({field: us_data["order"]})
+    user_stories = project.user_stories.all()
+    if status is not None:
+        user_stories = user_stories.filter(status=status)
+    if milestone is not None:
+        user_stories = user_stories.filter(milestone=milestone)
 
+    us_orders = {us.id: getattr(us, field) for us in user_stories}
+    new_us_orders = {e["us_id"]: e["order"] for e in bulk_data}
+    apply_order_updates(us_orders, new_us_orders)
+
+    user_story_ids = us_orders.keys()
     events.emit_event_for_ids(ids=user_story_ids,
                               content_type="userstories.userstory",
                               projectid=project.pk)
+    db.update_attr_in_bulk_for_ids(us_orders, field, models.UserStory)
+    return us_orders
 
-    db.update_in_bulk_with_ids(user_story_ids, new_order_values, model=models.UserStory)
+
+def update_userstories_milestone_in_bulk(bulk_data: list, milestone: object):
+    """
+    Update the milestone and the milestone order of some user stories adding the
+    extra orders needed to keep consistency.
+    `bulk_data` should be a list of dicts with the following format:
+    [{'us_id': <value>, 'order': <value>}, ...]
+    """
+    user_stories = milestone.user_stories.all()
+    us_orders = {us.id: getattr(us, "sprint_order") for us in user_stories}
+    new_us_orders = {}
+    for e in bulk_data:
+        new_us_orders[e["us_id"]] = e["order"]
+        # The base orders where we apply the new orders must containg all the values
+        us_orders[e["us_id"]] = e["order"]
+
+    apply_order_updates(us_orders, new_us_orders)
+
+    us_milestones = {e["us_id"]: milestone.id for e in bulk_data}
+    user_story_ids = us_milestones.keys()
+
+    events.emit_event_for_ids(ids=user_story_ids,
+                              content_type="userstories.userstory",
+                              projectid=milestone.project.pk)
+
+    db.update_attr_in_bulk_for_ids(us_milestones, "milestone_id", model=models.UserStory)
+    db.update_attr_in_bulk_for_ids(us_orders, "sprint_order", models.UserStory)
+    return us_orders
 
 
 def snapshot_userstories_in_bulk(bulk_data, user):
-    user_story_ids = []
     for us_data in bulk_data:
         try:
             us = models.UserStory.objects.get(pk=us_data['us_id'])
@@ -101,6 +140,10 @@ def snapshot_userstories_in_bulk(bulk_data, user):
         except models.UserStory.DoesNotExist:
             pass
 
+
+#####################################################
+# Open/Close calcs
+#####################################################
 
 def calculate_userstory_is_closed(user_story):
     if user_story.status is None:
@@ -129,7 +172,11 @@ def open_userstory(us):
         us.save(update_fields=["is_closed", "finish_date"])
 
 
-def userstories_to_csv(project,queryset):
+#####################################################
+# CSV
+#####################################################
+
+def userstories_to_csv(project, queryset):
     csv_data = io.StringIO()
     fieldnames = ["ref", "subject", "description", "sprint", "sprint_estimated_start",
                   "sprint_estimated_finish", "owner", "owner_full_name", "assigned_to",
@@ -145,7 +192,7 @@ def userstories_to_csv(project,queryset):
                    "created_date", "modified_date", "finish_date",
                    "client_requirement", "team_requirement", "attachments",
                    "generated_from_issue", "external_reference", "tasks",
-                   "tags","watchers", "voters"]
+                   "tags", "watchers", "voters"]
 
     custom_attrs = project.userstorycustomattributes.all()
     for custom_attr in custom_attrs:
@@ -197,7 +244,7 @@ def userstories_to_csv(project,queryset):
             "tasks": ",".join([str(task.ref) for task in us.tasks.all()]),
             "tags": ",".join(us.tags or []),
             "watchers": us.watchers,
-            "voters": us.total_voters,
+            "voters": us.total_voters
         }
 
         us_role_points_by_role_id = {us_rp.role.id: us_rp.points.value for us_rp in us.role_points.all()}
@@ -215,6 +262,10 @@ def userstories_to_csv(project,queryset):
     return csv_data
 
 
+#####################################################
+# Api filter data
+#####################################################
+
 def _get_userstories_statuses(project, queryset):
     compiler = connection.ops.compiler(queryset.query.compiler)(queryset.query, connection, None)
     queryset_where_tuple = queryset.query.where.as_sql(compiler, connection)
@@ -222,18 +273,33 @@ def _get_userstories_statuses(project, queryset):
     where_params = queryset_where_tuple[1]
 
     extra_sql = """
-      SELECT "projects_userstorystatus"."id",
-             "projects_userstorystatus"."name",
-             "projects_userstorystatus"."color",
-             "projects_userstorystatus"."order",
-             (SELECT count(*)
-                FROM "userstories_userstory"
-                     INNER JOIN "projects_project" ON
-                                ("userstories_userstory"."project_id" = "projects_project"."id")
-               WHERE {where} AND "userstories_userstory"."status_id" = "projects_userstorystatus"."id")
-        FROM "projects_userstorystatus"
-       WHERE "projects_userstorystatus"."project_id" = %s
-    ORDER BY "projects_userstorystatus"."order";
+     WITH "us_counters" AS (
+         SELECT DISTINCT "userstories_userstory"."status_id" "status_id",
+                         "userstories_userstory"."id" "us_id"
+                    FROM "userstories_userstory"
+              INNER JOIN "projects_project"
+                      ON ("userstories_userstory"."project_id" = "projects_project"."id")
+         LEFT OUTER JOIN "epics_relateduserstory"
+                      ON "userstories_userstory"."id" = "epics_relateduserstory"."user_story_id"
+                   WHERE {where}
+            ),
+             "counters" AS (
+                  SELECT "status_id",
+                         COUNT("status_id") "count"
+                    FROM "us_counters"
+                GROUP BY "status_id"
+            )
+
+                 SELECT "projects_userstorystatus"."id",
+                        "projects_userstorystatus"."name",
+                        "projects_userstorystatus"."color",
+                        "projects_userstorystatus"."order",
+                        COALESCE("counters"."count", 0)
+                   FROM "projects_userstorystatus"
+        LEFT OUTER JOIN "counters"
+                     ON "counters"."status_id" = "projects_userstorystatus"."id"
+                  WHERE "projects_userstorystatus"."project_id" = %s
+               ORDER BY "projects_userstorystatus"."order";
     """.format(where=where)
 
     with closing(connection.cursor()) as cursor:
@@ -259,31 +325,49 @@ def _get_userstories_assigned_to(project, queryset):
     where_params = queryset_where_tuple[1]
 
     extra_sql = """
-        WITH counters AS (
-                SELECT assigned_to_id,  count(assigned_to_id) count
-                  FROM "userstories_userstory"
-            INNER JOIN "projects_project" ON ("userstories_userstory"."project_id" = "projects_project"."id")
-                 WHERE {where} AND "userstories_userstory"."assigned_to_id" IS NOT NULL
-              GROUP BY assigned_to_id
-        )
+     WITH "us_counters" AS (
+         SELECT DISTINCT "userstories_userstory"."assigned_to_id" "assigned_to_id",
+                         "userstories_userstory"."id" "us_id"
+                    FROM "userstories_userstory"
+              INNER JOIN "projects_project"
+                      ON ("userstories_userstory"."project_id" = "projects_project"."id")
+         LEFT OUTER JOIN "epics_relateduserstory"
+                      ON "userstories_userstory"."id" = "epics_relateduserstory"."user_story_id"
+                   WHERE {where}
+            ),
 
-                 SELECT "projects_membership"."user_id" user_id,
-                        "users_user"."full_name",
-                        "users_user"."username",
-                        COALESCE("counters".count, 0) count
-                   FROM projects_membership
-        LEFT OUTER JOIN counters ON ("projects_membership"."user_id" = "counters"."assigned_to_id")
-             INNER JOIN "users_user" ON ("projects_membership"."user_id" = "users_user"."id")
+            "counters" AS (
+                 SELECT "assigned_to_id",
+                        COUNT("assigned_to_id")
+                   FROM "us_counters"
+               GROUP BY "assigned_to_id"
+            )
+
+                 SELECT "projects_membership"."user_id" "user_id",
+                        "users_user"."full_name" "full_name",
+                        "users_user"."username" "username",
+                        COALESCE("counters".count, 0) "count"
+                   FROM "projects_membership"
+        LEFT OUTER JOIN "counters"
+                     ON ("projects_membership"."user_id" = "counters"."assigned_to_id")
+             INNER JOIN "users_user"
+                     ON ("projects_membership"."user_id" = "users_user"."id")
                   WHERE "projects_membership"."project_id" = %s AND "projects_membership"."user_id" IS NOT NULL
 
         -- unassigned userstories
         UNION
 
-                 SELECT NULL user_id, NULL, NULL, count(coalesce(assigned_to_id, -1)) count
+                 SELECT NULL "user_id",
+                        NULL "full_name",
+                        NULL "username",
+                        count(coalesce("assigned_to_id", -1)) "count"
                    FROM "userstories_userstory"
-             INNER JOIN "projects_project" ON ("userstories_userstory"."project_id" = "projects_project"."id")
+             INNER JOIN "projects_project"
+                     ON ("userstories_userstory"."project_id" = "projects_project"."id")
+        LEFT OUTER JOIN "epics_relateduserstory"
+                     ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
                   WHERE {where} AND "userstories_userstory"."assigned_to_id" IS NULL
-               GROUP BY assigned_to_id
+               GROUP BY "assigned_to_id"
     """.format(where=where)
 
     with closing(connection.cursor()) as cursor:
@@ -320,32 +404,45 @@ def _get_userstories_owners(project, queryset):
     where_params = queryset_where_tuple[1]
 
     extra_sql = """
-        WITH counters AS (
-                SELECT "userstories_userstory"."owner_id" owner_id,  count(coalesce("userstories_userstory"."owner_id", -1)) count
-                  FROM "userstories_userstory"
-            INNER JOIN "projects_project" ON ("userstories_userstory"."project_id" = "projects_project"."id")
-                 WHERE {where}
-              GROUP BY "userstories_userstory"."owner_id"
-        )
+     WITH "us_counters" AS(
+         SELECT DISTINCT "userstories_userstory"."owner_id" "owner_id",
+                         "userstories_userstory"."id" "us_id"
+                    FROM "userstories_userstory"
+              INNER JOIN "projects_project"
+                      ON ("userstories_userstory"."project_id" = "projects_project"."id")
+         LEFT OUTER JOIN "epics_relateduserstory"
+                      ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
+                   WHERE {where}
+            ),
 
-                 SELECT "projects_membership"."user_id" id,
+            "counters" AS (
+                 SELECT "owner_id",
+                        COUNT("owner_id")
+                   FROM "us_counters"
+               GROUP BY "owner_id"
+            )
+
+                 SELECT "projects_membership"."user_id" "user_id",
                         "users_user"."full_name",
                         "users_user"."username",
-                        COALESCE("counters".count, 0) count
-                   FROM projects_membership
-        LEFT OUTER JOIN counters ON ("projects_membership"."user_id" = "counters"."owner_id")
-             INNER JOIN "users_user" ON ("projects_membership"."user_id" = "users_user"."id")
-                  WHERE ("projects_membership"."project_id" = %s AND "projects_membership"."user_id" IS NOT NULL)
+                        COALESCE("counters".count, 0) "count"
+                   FROM "projects_membership"
+        LEFT OUTER JOIN "counters"
+                     ON ("projects_membership"."user_id" = "counters"."owner_id")
+             INNER JOIN "users_user"
+                     ON ("projects_membership"."user_id" = "users_user"."id")
+                  WHERE "projects_membership"."project_id" = %s AND "projects_membership"."user_id" IS NOT NULL
 
         -- System users
-        UNION
+                  UNION
 
-                 SELECT "users_user"."id" user_id,
-                        "users_user"."full_name" full_name,
-                        "users_user"."username" username,
-                        COALESCE("counters".count, 0) count
-                   FROM users_user
-        LEFT OUTER JOIN counters ON ("users_user"."id" = "counters"."owner_id")
+                 SELECT "users_user"."id" "user_id",
+                        "users_user"."full_name" "full_name",
+                        "users_user"."username" "username",
+                        COALESCE("counters"."count", 0) "count"
+                   FROM "users_user"
+        LEFT OUTER JOIN "counters"
+                     ON ("users_user"."id" = "counters"."owner_id")
                   WHERE ("users_user"."is_system" IS TRUE)
     """.format(where=where)
 
@@ -364,16 +461,127 @@ def _get_userstories_owners(project, queryset):
     return sorted(result, key=itemgetter("full_name"))
 
 
-def _get_userstories_tags(queryset):
-    tags = []
-    for t_list in queryset.values_list("tags", flat=True):
-        if t_list is None:
-            continue
-        tags += list(t_list)
+def _get_userstories_tags(project, queryset):
+    compiler = connection.ops.compiler(queryset.query.compiler)(queryset.query, connection, None)
+    queryset_where_tuple = queryset.query.where.as_sql(compiler, connection)
+    where = queryset_where_tuple[0]
+    where_params = queryset_where_tuple[1]
 
-    tags = [{"name":e, "count":tags.count(e)} for e in set(tags)]
+    extra_sql = """
+           WITH "userstories_tags" AS (
+                       SELECT "tag",
+                              COUNT("tag") "counter"
+                         FROM (
+                          SELECT DISTINCT "userstories_userstory"."id" "us_id",
+                                           UNNEST("userstories_userstory"."tags") "tag"
+                                     FROM "userstories_userstory"
+                               INNER JOIN "projects_project"
+                                       ON ("userstories_userstory"."project_id" = "projects_project"."id")
+                          LEFT OUTER JOIN "epics_relateduserstory"
+                                       ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
+                                    WHERE {where}
+                              ) "tags"
+                     GROUP BY "tag"),
 
-    return sorted(tags, key=itemgetter("name"))
+                "project_tags" AS (
+                       SELECT reduce_dim("tags_colors") "tag_color"
+                         FROM "projects_project"
+                        WHERE "id"=%s)
+
+         SELECT "tag_color"[1] "tag",
+                "tag_color"[2] "color",
+                COALESCE("userstories_tags"."counter", 0) "counter"
+           FROM "project_tags"
+LEFT OUTER JOIN "userstories_tags"
+             ON "project_tags"."tag_color"[1] = "userstories_tags"."tag"
+       ORDER BY "tag"
+    """.format(where=where)
+
+    with closing(connection.cursor()) as cursor:
+        cursor.execute(extra_sql, where_params + [project.id])
+        rows = cursor.fetchall()
+
+    result = []
+    for name, color, count in rows:
+        result.append({
+            "name": name,
+            "color": color,
+            "count": count,
+        })
+    return sorted(result, key=itemgetter("name"))
+
+
+def _get_userstories_epics(project, queryset):
+    compiler = connection.ops.compiler(queryset.query.compiler)(queryset.query, connection, None)
+    queryset_where_tuple = queryset.query.where.as_sql(compiler, connection)
+    where = queryset_where_tuple[0]
+    where_params = queryset_where_tuple[1]
+    extra_sql = """
+       WITH "counters" AS (
+               SELECT "epics_relateduserstory"."epic_id" AS "epic_id",
+                      count("epics_relateduserstory"."id") AS "counter"
+                 FROM "epics_relateduserstory"
+           INNER JOIN "userstories_userstory"
+                   ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
+           INNER JOIN "projects_project"
+                   ON ("userstories_userstory"."project_id" = "projects_project"."id")
+                WHERE {where}
+             GROUP BY "epics_relateduserstory"."epic_id"
+       )
+
+         -- User stories with no epics (return results only if there are userstories)
+               SELECT NULL AS "id",
+                      NULL AS "ref",
+                      NULL AS "subject",
+                      0 AS "order",
+                      count(COALESCE("epics_relateduserstory"."epic_id", -1)) AS "counter"
+                 FROM "userstories_userstory"
+      LEFT OUTER JOIN "epics_relateduserstory"
+                   ON ("epics_relateduserstory"."user_story_id" = "userstories_userstory"."id")
+           INNER JOIN "projects_project"
+                   ON ("userstories_userstory"."project_id" = "projects_project"."id")
+                WHERE {where} AND "epics_relateduserstory"."epic_id" IS NULL
+             GROUP BY "epics_relateduserstory"."epic_id"
+
+                UNION
+
+               SELECT "epics_epic"."id" AS "id",
+                      "epics_epic"."ref" AS "ref",
+                      "epics_epic"."subject" AS "subject",
+                      "epics_epic"."epics_order" AS "order",
+                      COALESCE("counters"."counter", 0) AS "counter"
+                 FROM "epics_epic"
+      LEFT OUTER JOIN "counters"
+                   ON ("counters"."epic_id" = "epics_epic"."id")
+                WHERE "epics_epic"."project_id" = %s
+        """.format(where=where)
+
+    with closing(connection.cursor()) as cursor:
+        cursor.execute(extra_sql, where_params + where_params + [project.id])
+        rows = cursor.fetchall()
+
+    result = []
+    for id, ref, subject, order, count in rows:
+        result.append({
+            "id": id,
+            "ref": ref,
+            "subject": subject,
+            "order": order,
+            "count": count,
+        })
+
+    result = sorted(result, key=lambda k: (k["order"], k["id"] or 0))
+
+    # Add row when there is no user stories with no epics
+    if result == [] or result[0]["id"] is not None:
+        result.insert(0, {
+            "id": None,
+            "ref": None,
+            "subject": None,
+            "order": 0,
+            "count": 0,
+        })
+    return result
 
 
 def get_userstories_filters_data(project, querysets):
@@ -385,7 +593,8 @@ def get_userstories_filters_data(project, querysets):
         ("statuses", _get_userstories_statuses(project, querysets["statuses"])),
         ("assigned_to", _get_userstories_assigned_to(project, querysets["assigned_to"])),
         ("owners", _get_userstories_owners(project, querysets["owners"])),
-        ("tags", _get_userstories_tags(querysets["tags"])),
+        ("tags", _get_userstories_tags(project, querysets["tags"])),
+        ("epics", _get_userstories_epics(project, querysets["epics"])),
     ])
 
     return data

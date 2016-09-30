@@ -17,15 +17,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
-from taiga.base.fields import JsonField
-
-from . import models
+from taiga.base.fields import Field
 
 
-class StorageEntrySerializer(serializers.ModelSerializer):
-    value = JsonField(label="value")
-
-    class Meta:
-        model = models.StorageEntry
-        fields = ("key", "value", "created_date", "modified_date")
-        read_only_fields = ("created_date", "modified_date")
+class StorageEntrySerializer(serializers.LightSerializer):
+    key = Field()
+    value = Field()
+    created_date = Field()
+    modified_date = Field()

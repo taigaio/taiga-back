@@ -27,21 +27,25 @@ from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_404
 
+from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.models import Project, IssueStatus, Severity, Priority, IssueType
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
-from taiga.projects.history.mixins import HistoryResourceMixin
-
-from taiga.projects.models import Project, IssueStatus, Severity, Priority, IssueType
+from taiga.projects.tagging.api import TaggedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
+
+from .utils import attach_extra_info
 
 from . import models
 from . import services
 from . import permissions
 from . import serializers
+from . import validators
 
 
 class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                   BlockedByProjectMixin, ModelCrudViewSet):
+                   TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
+    validator_class = validators.IssueValidator
     queryset = models.Issue.objects.all()
     permission_classes = (permissions.IssuePermission, )
     filter_backends = (filters.CanViewIssuesFilterBackend,
@@ -54,19 +58,13 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
                        filters.TagsFilter,
                        filters.WatchersFilter,
                        filters.QFilter,
+                       filters.CreatedDateFilter,
+                       filters.ModifiedDateFilter,
+                       filters.FinishedDateFilter,
                        filters.OrderByFilterMixin)
-    retrieve_exclude_filters = (filters.OwnersFilter,
-                                filters.AssignedToFilter,
-                                filters.StatusesFilter,
-                                filters.IssueTypesFilter,
-                                filters.SeveritiesFilter,
-                                filters.PrioritiesFilter,
-                                filters.TagsFilter,
-                                filters.WatchersFilter,)
-
     filter_fields = ("project",
+                     "project__slug",
                      "status__is_closed")
-
     order_by_fields = ("type",
                        "status",
                        "severity",
@@ -143,10 +141,9 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.prefetch_related("attachments", "generated_user_stories")
         qs = qs.select_related("owner", "assigned_to", "status", "project")
-        qs = self.attach_votes_attrs_to_queryset(qs)
-        return self.attach_watchers_attrs_to_queryset(qs)
+        qs = attach_extra_info(qs, user=self.request.user)
+        return qs
 
     def pre_save(self, obj):
         if not obj.id:
@@ -179,10 +176,18 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
 
     @list_route(methods=["GET"])
     def by_ref(self, request):
-        ref = request.QUERY_PARAMS.get("ref", None)
+        retrieve_kwargs = {
+            "ref": request.QUERY_PARAMS.get("ref", None)
+        }
         project_id = request.QUERY_PARAMS.get("project", None)
-        issue = get_object_or_404(models.Issue, ref=ref, project_id=project_id)
-        return self.retrieve(request, pk=issue.pk)
+        if project_id is not None:
+            retrieve_kwargs["project_id"] = project_id
+
+        project_slug = request.QUERY_PARAMS.get("project__slug", None)
+        if project_slug is not None:
+            retrieve_kwargs["project__slug"] = project_slug
+
+        return self.retrieve(request, **retrieve_kwargs)
 
     @list_route(methods=["GET"])
     def filters_data(self, request, *args, **kwargs):
@@ -196,7 +201,6 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
         owners_filter_backends = (f for f in filter_backends if f != filters.OwnersFilter)
         priorities_filter_backends = (f for f in filter_backends if f != filters.PrioritiesFilter)
         severities_filter_backends = (f for f in filter_backends if f != filters.SeveritiesFilter)
-        tags_filter_backends = (f for f in filter_backends if f != filters.TagsFilter)
 
         queryset = self.get_queryset()
         querysets = {
@@ -225,9 +229,9 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
-        serializer = serializers.IssuesBulkSerializer(data=request.DATA)
-        if serializer.is_valid():
-            data = serializer.data
+        validator = validators.IssuesBulkValidator(data=request.DATA)
+        if validator.is_valid():
+            data = validator.data
             project = Project.objects.get(pk=data["project_id"])
             self.check_permissions(request, 'bulk_create', project)
             if project.blocked_code is not None:
@@ -238,11 +242,13 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
                 status=project.default_issue_status, severity=project.default_severity,
                 priority=project.default_priority, type=project.default_issue_type,
                 callback=self.post_save, precall=self.pre_save)
+
+            issues = self.get_queryset().filter(id__in=[i.id for i in issues])
             issues_serialized = self.get_serializer_class()(issues, many=True)
 
             return response.Ok(data=issues_serialized.data)
 
-        return response.BadRequest(serializer.errors)
+        return response.BadRequest(validator.errors)
 
 
 class IssueVotersViewSet(VotersViewSetMixin, ModelListViewSet):

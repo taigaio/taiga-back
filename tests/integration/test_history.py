@@ -18,6 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
+import datetime
+
 from unittest.mock import patch
 
 from django.core.urlresolvers import reverse
@@ -226,6 +228,7 @@ def test_delete_comment_by_project_owner(client):
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     key = make_key_from_model_object(us)
     history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                 project=project,
                                                  comment="testing",
                                                  key=key,
                                                  diff={},
@@ -236,3 +239,87 @@ def test_delete_comment_by_project_owner(client):
     url = "%s?id=%s" % (url, history_entry.id)
     response = client.post(url, content_type="application/json")
     assert 200 == response.status_code, response.status_code
+
+
+def test_edit_comment(client):
+    project = f.create_project()
+    us = f.create_userstory(project=project)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    key = make_key_from_model_object(us)
+    history_entry = f.HistoryEntryFactory.create(type=HistoryType.change,
+                                                 project=project,
+                                                 comment="testing",
+                                                 key=key,
+                                                 diff={},
+                                                 user={"pk": project.owner.id})
+
+    history_entry_created_at = history_entry.created_at
+    assert history_entry.comment_versions == None
+    assert history_entry.edit_comment_date == None
+
+    client.login(project.owner)
+    url = reverse("userstory-history-edit-comment", args=(us.id,))
+    url = "%s?id=%s" % (url, history_entry.id)
+
+    data = json.dumps({"comment": "testing update comment"})
+    response = client.post(url, data, content_type="application/json")
+    assert 200 == response.status_code, response.status_code
+
+
+    history_entry = HistoryEntry.objects.get(id=history_entry.id)
+    assert len(history_entry.comment_versions) == 1
+    assert history_entry.comment == "testing update comment"
+    assert history_entry.comment_versions[0]["comment"] == "testing"
+    assert history_entry.edit_comment_date != None
+    assert history_entry.comment_versions[0]["user"]["id"] == project.owner.id
+
+
+def test_get_comment_versions(client):
+    project = f.create_project()
+    us = f.create_userstory(project=project)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    key = make_key_from_model_object(us)
+    history_entry = f.HistoryEntryFactory.create(
+                             project=project,
+                             type=HistoryType.change,
+                             comment="testing",
+                             key=key,
+                             diff={},
+                             user={"pk": project.owner.id},
+                             edit_comment_date=datetime.datetime.now(),
+                             comment_versions = [{
+                                "comment_html": "<p>test</p>",
+                                "date": "2016-05-09T09:34:27.221Z",
+                                "comment": "test",
+                                "user": {
+                                    "id": project.owner.id,
+                                }}])
+
+    client.login(project.owner)
+    url = reverse("userstory-history-comment-versions", args=(us.id,))
+    url = "%s?id=%s" % (url, history_entry.id)
+
+    response = client.get(url, content_type="application/json")
+    assert 200 == response.status_code, response.status_code
+    assert response.data[0]["user"]["username"] == project.owner.username
+
+
+def test_get_comment_versions_from_history_entry_without_comment(client):
+    project = f.create_project()
+    us = f.create_userstory(project=project)
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    key = make_key_from_model_object(us)
+    history_entry = f.HistoryEntryFactory.create(
+                             project=project,
+                             type=HistoryType.change,
+                             key=key,
+                             diff={},
+                             user={"pk": project.owner.id})
+
+    client.login(project.owner)
+    url = reverse("userstory-history-comment-versions", args=(us.id,))
+    url = "%s?id=%s" % (url, history_entry.id)
+
+    response = client.get(url, content_type="application/json")
+    assert 200 == response.status_code, response.status_code
+    assert response.data == None

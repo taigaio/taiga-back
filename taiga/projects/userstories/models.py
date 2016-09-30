@@ -18,14 +18,15 @@
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
-from djorm_pgarray.fields import TextArrayField
 from picklefield.fields import PickledObjectField
 
-from taiga.base.tags import TaggedMixin
+from taiga.base.utils.time import timestamp_ms
+from taiga.projects.tagging.models import TaggedMixin
 from taiga.projects.occ import OCCModelMixin
 from taiga.projects.notifications.mixins import WatchedModelMixin
 from taiga.projects.mixins.blocked import BlockedMixin
@@ -55,6 +56,7 @@ class RolePoints(models.Model):
     def project(self):
         return self.user_story.project
 
+
 class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.Model):
     ref = models.BigIntegerField(db_index=True, null=True, blank=True, default=None,
                                  verbose_name=_("ref"))
@@ -74,12 +76,12 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
                                     related_name="userstories", through="RolePoints",
                                     verbose_name=_("points"))
 
-    backlog_order = models.IntegerField(null=False, blank=False, default=10000,
+    backlog_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
                                         verbose_name=_("backlog order"))
-    sprint_order = models.IntegerField(null=False, blank=False, default=10000,
+    sprint_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
                                        verbose_name=_("sprint order"))
-    kanban_order = models.IntegerField(null=False, blank=False, default=10000,
-                                       verbose_name=_("sprint order"))
+    kanban_order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms,
+                                       verbose_name=_("kanban order"))
 
     created_date = models.DateTimeField(null=False, blank=False,
                                         verbose_name=_("created date"),
@@ -103,7 +105,8 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
                                              on_delete=models.SET_NULL,
                                              related_name="generated_user_stories",
                                              verbose_name=_("generated from issue"))
-    external_reference = TextArrayField(default=None, verbose_name=_("external reference"))
+    external_reference = ArrayField(models.TextField(null=False, blank=False),
+                                    null=True, blank=True, default=None, verbose_name=_("external reference"))
 
     tribe_gig = PickledObjectField(null=True, blank=True, default=None,
                                    verbose_name="taiga tribe gig")
