@@ -130,6 +130,9 @@ def update_attr_in_bulk_for_ids(values, attr, model):
     :params attr: attr to update
     :params model: Model of the ids.
     """
+    if not values:
+        return
+
     values = [str((id, order)) for id, order in values.items()]
     sql = """
         UPDATE "{tbl}"
