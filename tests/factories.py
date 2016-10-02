@@ -560,7 +560,6 @@ class ApplicationFactory(Factory):
         model = "external_apps.Application"
         strategy = factory.CREATE_STRATEGY
 
-    key = "testingkey"
 
 class ApplicationTokenFactory(Factory):
     class Meta:

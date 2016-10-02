@@ -23,8 +23,6 @@ from taiga.base.api.utils import get_object_or_404
 from django.apps import apps
 from django.utils.translation import ugettext as _
 
-from . import encryption
-
 import json
 
 def get_user_for_application_token(token:str) -> object:
@@ -46,11 +44,3 @@ def authorize_token(application_id:int, user:object, state:str) -> object:
     token.state = state
     token.save()
     return token
-
-
-def cypher_token(application_token:object) -> str:
-    content = {
-        "token": application_token.token
-    }
-
-    return encryption.encrypt(json.dumps(content), application_token.application.key)

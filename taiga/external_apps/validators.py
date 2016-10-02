@@ -29,7 +29,7 @@ class ApplicationValidator(validators.ModelValidator):
 
 
 class ApplicationTokenValidator(validators.ModelValidator):
-    cyphered_token = serializers.CharField(source="cyphered_token", read_only=True)
+    token = serializers.CharField(source="token", read_only=True)
     next_url = serializers.CharField(source="next_url", read_only=True)
     application = ApplicationValidator(read_only=True)
 
@@ -46,9 +46,9 @@ class AuthorizationCodeValidator(validators.ModelValidator):
 
 
 class AccessTokenValidator(validators.ModelValidator):
-    cyphered_token = serializers.CharField(source="cyphered_token", read_only=True)
+    token = serializers.CharField(source="token", read_only=True)
     next_url = serializers.CharField(source="next_url", read_only=True)
 
     class Meta:
         model = models.ApplicationToken
-        fields = ("cyphered_token", )
+        fields = ("token", )
