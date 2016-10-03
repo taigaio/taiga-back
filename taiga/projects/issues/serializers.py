@@ -47,6 +47,8 @@ class IssueListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer
     external_reference = Field()
     version = Field()
     watchers = Field()
+    is_blocked = Field()
+    blocked_note = Field()
     is_closed = Field()
 
 
