@@ -354,6 +354,7 @@ class UserStorySerializer(CustomAttributesValuesWebhookSerializerMixin, serializ
     watchers = MethodField()
     is_blocked = Field()
     blocked_note = Field()
+    description = Field()
     tags = Field()
     permalink = serializers.SerializerMethodField("get_permalink")
     owner = UserSerializer()
