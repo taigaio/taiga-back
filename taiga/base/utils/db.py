@@ -18,10 +18,9 @@
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import connection
+from django.db import DatabaseError
 from django.db import transaction
 from django.shortcuts import _get_queryset
-
-from django_pglocks import advisory_lock
 
 from . import functions
 
@@ -45,7 +44,7 @@ def get_object_or_none(klass, *args, **kwargs):
         return None
 
 
-def get_typename_for_model_class(model:object, for_concrete_model=True) -> str:
+def get_typename_for_model_class(model: object, for_concrete_model=True) -> str:
     """
     Get typename for model instance.
     """
@@ -101,6 +100,7 @@ def save_in_bulk(instances, callback=None, precall=None, **save_options):
 
     return ret
 
+
 @transaction.atomic
 def update_in_bulk(instances, list_of_new_values, callback=None, precall=None):
     """Update a list of model instances.
@@ -123,6 +123,7 @@ def update_in_bulk(instances, list_of_new_values, callback=None, precall=None):
         callback(instance)
 
 
+@transaction.atomic
 def update_attr_in_bulk_for_ids(values, attr, model):
     """Update a table using a list of ids.
 
@@ -147,7 +148,18 @@ def update_attr_in_bulk_for_ids(values, attr, model):
                attr=attr)
 
     cursor = connection.cursor()
-    cursor.execute(sql)
+
+    # We can have deadlocks with multiple updates over the same object
+    # In that situation we just retry
+    def _run_sql(retries=0, max_retries=3):
+        try:
+            cursor.execute(sql)
+        except DatabaseError:
+            print("retries", 0)
+            if retries < max_retries:
+                _run_sql(retries + 1)
+
+    transaction.on_commit(_run_sql)
 
 
 def to_tsquery(term):
@@ -230,10 +242,10 @@ def to_tsquery(term):
             if not bit:
                 continue
 
-            if bit.startswith('"') and bit.endswith('"') and len(bit)>2:
+            if bit.startswith('"') and bit.endswith('"') and len(bit) > 2:
                 res.append(bit.replace('"', "'"))
             else:
-                res.append("'%s':*" %(bit.replace("'", ""), ))
+                res.append("'%s':*" % (bit.replace("'", ""), ))
 
             res.append("&")
 

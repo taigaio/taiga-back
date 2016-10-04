@@ -33,7 +33,7 @@ from taiga.projects.userstories import services, models
 from .. import factories as f
 
 import pytest
-pytestmark = pytest.mark.django_db
+pytestmark = pytest.mark.django_db(transaction=True)
 
 
 def test_get_userstories_from_bulk():
