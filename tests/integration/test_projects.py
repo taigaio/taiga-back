@@ -45,7 +45,7 @@ import pytest
 
 from unittest import mock
 
-pytestmark = pytest.mark.django_db
+pytestmark = pytest.mark.django_db(transaction=True)
 
 class ExpiredSigner(signing.TimestampSigner):
     def __init__(self, *args, **kwargs):
