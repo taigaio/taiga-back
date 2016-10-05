@@ -29,7 +29,6 @@ from .routers import router
 
 urlpatterns = [
     url(r'^api/v1/', include(router.urls)),
-    url(r'^api/v1/api-auth/', include('taiga.base.api.urls', namespace='api')),
     url(r'^admin/', include(admin.site.urls)),
 ]
 
