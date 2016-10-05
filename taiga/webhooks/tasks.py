@@ -22,6 +22,7 @@ import requests
 from requests.exceptions import RequestException
 
 from taiga.base.api.renderers import UnicodeJSONRenderer
+from taiga.base.utils import json
 from taiga.base.utils.db import get_typename_for_model_instance
 from taiga.celery import app
 
@@ -86,11 +87,14 @@ def _send_request(webhook_id, url, key, data):
                                                     duration=0)
         else:
             # Webhook was sent successfully
+
+            # response.content can be a not valid json so we encapsulate it
+            response_data = json.dumps({"content": response.text})
             webhook_log = WebhookLog.objects.create(webhook_id=webhook_id, url=url,
                                                     status=response.status_code,
                                                     request_data=data,
                                                     request_headers=dict(prepared_request.headers),
-                                                    response_data=response.content,
+                                                    response_data=response_data,
                                                     response_headers=dict(response.headers),
                                                     duration=response.elapsed.total_seconds())
         finally:
