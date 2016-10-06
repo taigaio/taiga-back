@@ -40,7 +40,7 @@ def test_new_object_with_one_webhook_signal(settings):
         f.WikiPageFactory.create(project=project)
     ]
 
-    response = Mock(status_code=200, headers={}, content="ok")
+    response = Mock(status_code=200, headers={}, text="ok")
     response.elapsed.total_seconds.return_value = 100
 
     for obj in objects:
@@ -77,7 +77,7 @@ def test_new_object_with_two_webhook_signals(settings):
         f.WikiPageFactory.create(project=project)
     ]
 
-    response = Mock(status_code=200, headers={}, content="ok")
+    response = Mock(status_code=200, headers={}, text="ok")
     response.elapsed.total_seconds.return_value = 100
 
     for obj in objects:
@@ -113,7 +113,7 @@ def test_send_request_one_webhook_signal(settings):
         f.WikiPageFactory.create(project=project)
     ]
 
-    response = Mock(status_code=200, headers={}, content="ok")
+    response = Mock(status_code=200, headers={}, text="ok")
     response.elapsed.total_seconds.return_value = 100
 
     for obj in objects:
