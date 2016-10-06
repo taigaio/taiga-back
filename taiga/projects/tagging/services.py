@@ -34,7 +34,6 @@ def create_tag(project, tag, color):
 
 
 def edit_tag(project, from_tag, to_tag, color):
-    print("edit_tag", project, from_tag, to_tag, color)
     sql = """
         UPDATE userstories_userstory
            SET tags = array_distinct(array_replace(tags, '{from_tag}', '{to_tag}'))

@@ -76,7 +76,6 @@ DEFAULTS = {
     # Base API policies
     "DEFAULT_RENDERER_CLASSES": (
         "taiga.base.api.renderers.JSONRenderer",
-        "taiga.base.api.renderers.BrowsableAPIRenderer",
     ),
     "DEFAULT_PARSER_CLASSES": (
         "taiga.base.api.parsers.JSONParser",
