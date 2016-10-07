@@ -28,4 +28,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         qs = HistoryChangeNotification.objects.all()
         for change_notification in iter_queryset(qs, itersize=100):
-            send_sync_notifications(change_notification.pk)
+            try:
+                send_sync_notifications(change_notification.pk)
+            except HistoryChangeNotification.DoesNotExist:
+                pass
