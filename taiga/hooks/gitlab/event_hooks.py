@@ -40,7 +40,7 @@ class IssuesEventHook(BaseGitLabEventHook, BaseNewIssueEventHook):
 
     def get_data(self):
         description = self.payload.get('object_attributes', {}).get('description', None)
-        project_url = self.payload.get('repository', {}).get('homepage', None)
+        project_url = self.payload.get('repository', {}).get('homepage', "")
         user_name = self.payload.get('user', {}).get('username', None)
         return {
             "number": self.payload.get('object_attributes', {}).get('iid', None),
@@ -59,7 +59,7 @@ class IssueCommentEventHook(BaseGitLabEventHook, BaseIssueCommentEventHook):
 
     def get_data(self):
         comment_message = self.payload.get('object_attributes', {}).get('note', None)
-        project_url = self.payload.get('repository', {}).get('homepage', None)
+        project_url = self.payload.get('repository', {}).get('homepage', "")
         number = self.payload.get('issue', {}).get('iid', None)
         user_name = self.payload.get('user', {}).get('username', None)
         return {
