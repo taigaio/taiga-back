@@ -37,6 +37,7 @@ from . import models
 from . import permissions
 from . import utils as milestones_utils
 
+from django_pglocks import advisory_lock
 import datetime
 
 
@@ -52,6 +53,11 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
         "closed"
     )
     queryset = models.Milestone.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        project_id = request.DATA.get("project", 0)
+        with advisory_lock("milestone-creation-{}".format(project_id)):
+            return super().create(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
         res = super().list(request, *args, **kwargs)
