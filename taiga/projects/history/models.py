@@ -60,6 +60,9 @@ class HistoryEntry(models.Model):
     # Stores the last diff
     diff = JsonField(null=True, blank=True, default=None)
 
+    # Stores the values_diff cache
+    values_diff_cache = JsonField(null=True, blank=True, default=None)
+
     # Stores the last complete frozen object snapshot
     snapshot = JsonField(null=True, blank=True, default=None)
 
@@ -135,8 +138,11 @@ class HistoryEntry(models.Model):
             if user:
                 version["user"] = UserSerializer(user).data
 
-    @cached_property
+    @property
     def values_diff(self):
+        if self.values_diff_cache is not None:
+            return self.values_diff_cache
+
         result = {}
         users_keys = ["assigned_to", "owner"]
 
@@ -286,7 +292,10 @@ class HistoryEntry(models.Model):
 
             result[key] = value
 
-        return result
+        self.values_diff_cache = result
+        # Update values_diff_cache without dispatching signals
+        HistoryEntry.objects.filter(pk=self.pk).update(values_diff_cache=self.values_diff_cache)
+        return self.values_diff_cache
 
     class Meta:
         ordering = ["created_at"]
