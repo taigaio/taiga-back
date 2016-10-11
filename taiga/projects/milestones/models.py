@@ -27,7 +27,6 @@ from django.utils.functional import cached_property
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.dicts import dict_sum
 from taiga.projects.notifications.mixins import WatchedModelMixin
-from django_pglocks import advisory_lock
 
 import itertools
 import datetime
@@ -83,11 +82,8 @@ class Milestone(WatchedModelMixin, models.Model):
         if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
         if not self.slug:
-            with advisory_lock("milestone-creation-{}".format(self.project_id)):
-                self.slug = slugify_uniquely(self.name, self.__class__)
-                super().save(*args, **kwargs)
-        else:
-            super().save(*args, **kwargs)
+            self.slug = slugify_uniquely(self.name, self.__class__)
+        super().save(*args, **kwargs)
 
     @cached_property
     def cached_user_stories(self):
