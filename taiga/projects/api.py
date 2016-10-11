@@ -474,6 +474,11 @@ class EpicStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
     move_on_destroy_related_field = "status"
     move_on_destroy_project_default_field = "default_epic_status"
 
+    def create(self, request, *args, **kwargs):
+        project_id = request.DATA.get("project", 0)
+        with advisory_lock("epic-status-creation-{}".format(project_id)):
+            return super().create(request, *args, **kwargs)
+
 
 class UserStoryStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
                              ModelCrudViewSet, BulkUpdateOrderMixin):
@@ -490,6 +495,11 @@ class UserStoryStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
     move_on_destroy_related_class = UserStory
     move_on_destroy_related_field = "status"
     move_on_destroy_project_default_field = "default_us_status"
+
+    def create(self, request, *args, **kwargs):
+        project_id = request.DATA.get("project", 0)
+        with advisory_lock("epic-user-story-status-creation-{}".format(project_id)):
+            return super().create(request, *args, **kwargs)
 
 
 class PointsViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
@@ -508,6 +518,11 @@ class PointsViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
     move_on_destroy_related_field = "points"
     move_on_destroy_project_default_field = "default_points"
 
+    def create(self, request, *args, **kwargs):
+        project_id = request.DATA.get("project", 0)
+        with advisory_lock("points-creation-{}".format(project_id)):
+            return super().create(request, *args, **kwargs)
+
 
 class TaskStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
                         ModelCrudViewSet, BulkUpdateOrderMixin):
@@ -524,6 +539,11 @@ class TaskStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
     move_on_destroy_related_class = Task
     move_on_destroy_related_field = "status"
     move_on_destroy_project_default_field = "default_task_status"
+
+    def create(self, request, *args, **kwargs):
+        project_id = request.DATA.get("project", 0)
+        with advisory_lock("task-status-creation-{}".format(project_id)):
+            return super().create(request, *args, **kwargs)
 
 
 class SeverityViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
@@ -542,6 +562,11 @@ class SeverityViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
     move_on_destroy_related_field = "severity"
     move_on_destroy_project_default_field = "default_severity"
 
+    def create(self, request, *args, **kwargs):
+        project_id = request.DATA.get("project", 0)
+        with advisory_lock("severity-creation-{}".format(project_id)):
+            return super().create(request, *args, **kwargs)
+
 
 class PriorityViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
                       ModelCrudViewSet, BulkUpdateOrderMixin):
@@ -557,6 +582,11 @@ class PriorityViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
     move_on_destroy_related_class = Issue
     move_on_destroy_related_field = "priority"
     move_on_destroy_project_default_field = "default_priority"
+
+    def create(self, request, *args, **kwargs):
+        project_id = request.DATA.get("project", 0)
+        with advisory_lock("priority-creation-{}".format(project_id)):
+            return super().create(request, *args, **kwargs)
 
 
 class IssueTypeViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
@@ -574,6 +604,11 @@ class IssueTypeViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
     move_on_destroy_related_field = "type"
     move_on_destroy_project_default_field = "default_issue_type"
 
+    def create(self, request, *args, **kwargs):
+        project_id = request.DATA.get("project", 0)
+        with advisory_lock("issue-type-creation-{}".format(project_id)):
+            return super().create(request, *args, **kwargs)
+
 
 class IssueStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
                          ModelCrudViewSet, BulkUpdateOrderMixin):
@@ -589,6 +624,12 @@ class IssueStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
     move_on_destroy_related_class = Issue
     move_on_destroy_related_field = "status"
     move_on_destroy_project_default_field = "default_issue_status"
+
+    def create(self, request, *args, **kwargs):
+        project_id = request.DATA.get("project", 0)
+        with advisory_lock("issue-status-creation-{}".format(project_id)):
+            return super().create(request, *args, **kwargs)
+
 
 
 ######################################################
