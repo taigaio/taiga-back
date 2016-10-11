@@ -36,6 +36,11 @@ def apply_order_updates(base_orders: dict, new_orders: dict):
     The elements where no order update is needed will be removed.
     """
     updated_order_ids = set()
+
+    # Remove the elements from new_orders non existint in base_orders
+    invalid_keys = new_orders.keys() - base_orders.keys()
+    [new_orders.pop(id, None) for id in invalid_keys]
+
     # We will apply the multiple order changes by the new position order
     sorted_new_orders = [(k, v) for k, v in new_orders.items()]
     sorted_new_orders = sorted(sorted_new_orders, key=lambda e: e[1])
