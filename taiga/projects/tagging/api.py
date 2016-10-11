@@ -109,6 +109,7 @@ class TaggedResourceMixin:
         for tag in obj.tags:
             if isinstance(tag, (list, tuple)):
                 name, color = tag
+                name = name.lower()
 
                 if color and not services.tag_exist_for_project_elements(obj.project, name):
                     new_tags_colors[name] = color
