@@ -159,3 +159,25 @@ def test_api_create_new_user_story_with_tags(client):
     assert tags_colors["back"] == "#fff8e7"
     assert tags_colors["ux"] == "#fabada"
     assert tags_colors["front"] == "#aaaaaa"
+
+
+def test_api_create_new_user_story_with_tag_capitalized(client):
+    project = f.ProjectFactory.create()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+    url = reverse("userstories-list")
+
+    data = {
+        "subject": "Test user story",
+        "project": project.id,
+        "tags": [
+            ["CapTag", "#fabada"]
+        ]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 201, response.data
+
+    project.refresh_from_db()
+    assert project.tags_colors == [["captag", "#fabada"]]
