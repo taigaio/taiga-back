@@ -26,25 +26,26 @@ def attach_members(queryset, as_field="members_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(t))
-                FROM(
-                    SELECT
-                        users_user.id,
-                        users_user.username,
-                        users_user.full_name,
-                        users_user.email,
-                        concat(full_name, username) complete_user_name,
-                        users_user.color,
-                        users_user.photo,
-                        users_user.is_active,
-                        users_role.id "role",
-                        users_role.name role_name
-
-                    FROM projects_membership
-                    LEFT JOIN users_user ON projects_membership.user_id = users_user.id
-                    LEFT JOIN users_role ON users_role.id = projects_membership.role_id
-                    WHERE projects_membership.project_id = {tbl}.id
-                    ORDER BY complete_user_name) t"""
+    sql = """
+             SELECT json_agg(row_to_json(t))
+              FROM  (
+                        SELECT users_user.id,
+                               users_user.username,
+                               users_user.full_name,
+                               users_user.email,
+                               concat(full_name, username) complete_user_name,
+                               users_user.color,
+                               users_user.photo,
+                               users_user.is_active,
+                               users_role.id "role",
+                               users_role.name role_name
+                          FROM projects_membership
+                     LEFT JOIN users_user ON projects_membership.user_id = users_user.id
+                     LEFT JOIN users_role ON users_role.id = projects_membership.role_id
+                         WHERE projects_membership.project_id = {tbl}.id
+                      ORDER BY complete_user_name
+                    ) t
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -60,16 +61,18 @@ def attach_milestones(queryset, as_field="milestones_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(t))
-                FROM(
-                    SELECT
-                        milestones_milestone.id,
-                        milestones_milestone.slug,
-                        milestones_milestone.name,
-                        milestones_milestone.closed
-                    FROM milestones_milestone
-                    WHERE milestones_milestone.project_id = {tbl}.id
-                    ORDER BY estimated_start) t"""
+    sql = """
+             SELECT json_agg(row_to_json(t))
+               FROM (
+                        SELECT milestones_milestone.id,
+                               milestones_milestone.slug,
+                               milestones_milestone.name,
+                               milestones_milestone.closed
+                          FROM milestones_milestone
+                         WHERE milestones_milestone.project_id = {tbl}.id
+                      ORDER BY estimated_start
+                    ) t
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -85,12 +88,12 @@ def attach_closed_milestones(queryset, as_field="closed_milestones_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT COUNT(milestones_milestone.id)
-        	    FROM milestones_milestone
-                WHERE
-                    milestones_milestone.project_id = {tbl}.id AND
+    sql = """
+             SELECT COUNT(milestones_milestone.id)
+               FROM milestones_milestone
+              WHERE milestones_milestone.project_id = {tbl}.id AND
                     milestones_milestone.closed = True
-                """
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -106,11 +109,11 @@ def attach_notify_policies(queryset, as_field="notify_policies_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(notifications_notifypolicy))
-        	    FROM notifications_notifypolicy
-                WHERE
-                    notifications_notifypolicy.project_id = {tbl}.id
-                """
+    sql = """
+             SELECT json_agg(row_to_json(notifications_notifypolicy))
+               FROM notifications_notifypolicy
+              WHERE notifications_notifypolicy.project_id = {tbl}.id
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -126,11 +129,14 @@ def attach_epic_statuses(queryset, as_field="epic_statuses_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(projects_epicstatus))
-        	    FROM projects_epicstatus
-                WHERE
-                    projects_epicstatus.project_id = {tbl}.id
-                """
+    sql = """
+             SELECT json_agg(
+                        row_to_json(projects_epicstatus)
+                        ORDER BY projects_epicstatus.order
+                    )
+               FROM projects_epicstatus
+              WHERE projects_epicstatus.project_id = {tbl}.id
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -146,11 +152,14 @@ def attach_userstory_statuses(queryset, as_field="userstory_statuses_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(projects_userstorystatus))
-        	    FROM projects_userstorystatus
-                WHERE
-                    projects_userstorystatus.project_id = {tbl}.id
-                """
+    sql = """
+             SELECT json_agg(
+                        row_to_json(projects_userstorystatus)
+                        ORDER BY projects_userstorystatus.order
+                    )
+               FROM projects_userstorystatus
+              WHERE projects_userstorystatus.project_id = {tbl}.id
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -166,10 +175,13 @@ def attach_points(queryset, as_field="points_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(projects_points))
-        	    FROM projects_points
-                WHERE
-                    projects_points.project_id = {tbl}.id
+    sql = """
+             SELECT json_agg(
+                        row_to_json(projects_points)
+                        ORDER BY projects_points.order
+                    )
+               FROM projects_points
+              WHERE projects_points.project_id = {tbl}.id
                 """
 
     sql = sql.format(tbl=model._meta.db_table)
@@ -186,11 +198,14 @@ def attach_task_statuses(queryset, as_field="task_statuses_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(projects_taskstatus))
-        	    FROM projects_taskstatus
-                WHERE
-                    projects_taskstatus.project_id = {tbl}.id
-                """
+    sql = """
+             SELECT json_agg(
+                        row_to_json(projects_taskstatus)
+                        ORDER BY projects_taskstatus
+                    )
+               FROM projects_taskstatus
+              WHERE projects_taskstatus.project_id = {tbl}.id
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -206,11 +221,14 @@ def attach_issue_statuses(queryset, as_field="issue_statuses_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(projects_issuestatus))
-        	    FROM projects_issuestatus
-                WHERE
-                    projects_issuestatus.project_id = {tbl}.id
-                """
+    sql = """
+             SELECT json_agg(
+                        row_to_json(projects_issuestatus)
+                        ORDER BY projects_issuestatus.order
+                    )
+               FROM projects_issuestatus
+              WHERE projects_issuestatus.project_id = {tbl}.id
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -226,11 +244,14 @@ def attach_issue_types(queryset, as_field="issue_types_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(projects_issuetype))
-        	    FROM projects_issuetype
-                WHERE
-                    projects_issuetype.project_id = {tbl}.id
-                """
+    sql = """
+             SELECT json_agg(
+                        row_to_json(projects_issuetype)
+                        ORDER BY projects_issuetype.order
+                    )
+               FROM projects_issuetype
+              WHERE projects_issuetype.project_id = {tbl}.id
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -246,11 +267,14 @@ def attach_priorities(queryset, as_field="priorities_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(projects_priority))
-        	    FROM projects_priority
-                WHERE
-                    projects_priority.project_id = {tbl}.id
-                """
+    sql = """
+             SELECT json_agg(
+                        row_to_json(projects_priority)
+                        ORDER BY projects_priority.order
+                    )
+               FROM projects_priority
+              WHERE projects_priority.project_id = {tbl}.id
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -266,11 +290,14 @@ def attach_severities(queryset, as_field="severities_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(projects_severity))
-        	    FROM projects_severity
-                WHERE
-                    projects_severity.project_id = {tbl}.id
-                """
+    sql = """
+             SELECT json_agg(
+                        row_to_json(projects_severity)
+                        ORDER BY projects_severity.order
+                    )
+               FROM projects_severity
+              WHERE projects_severity.project_id = {tbl}.id
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -286,11 +313,14 @@ def attach_epic_custom_attributes(queryset, as_field="epic_custom_attributes_att
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(custom_attributes_epiccustomattribute))
-        	    FROM custom_attributes_epiccustomattribute
-                WHERE
-                    custom_attributes_epiccustomattribute.project_id = {tbl}.id
-                """
+    sql = """
+             SELECT json_agg(
+                        row_to_json(custom_attributes_epiccustomattribute)
+                        ORDER BY custom_attributes_epiccustomattribute.order
+                    )
+               FROM custom_attributes_epiccustomattribute
+              WHERE custom_attributes_epiccustomattribute.project_id = {tbl}.id
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -306,11 +336,14 @@ def attach_userstory_custom_attributes(queryset, as_field="userstory_custom_attr
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(custom_attributes_userstorycustomattribute))
-        	    FROM custom_attributes_userstorycustomattribute
-                WHERE
-                    custom_attributes_userstorycustomattribute.project_id = {tbl}.id
-                """
+    sql = """
+             SELECT json_agg(
+                        row_to_json(custom_attributes_userstorycustomattribute)
+                        ORDER BY custom_attributes_userstorycustomattribute.order
+                    )
+               FROM custom_attributes_userstorycustomattribute
+              WHERE custom_attributes_userstorycustomattribute.project_id = {tbl}.id
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -326,11 +359,14 @@ def attach_task_custom_attributes(queryset, as_field="task_custom_attributes_att
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(custom_attributes_taskcustomattribute))
-        	    FROM custom_attributes_taskcustomattribute
-                WHERE
-                    custom_attributes_taskcustomattribute.project_id = {tbl}.id
-                """
+    sql = """
+             SELECT json_agg(
+                        row_to_json(custom_attributes_taskcustomattribute)
+                        ORDER BY custom_attributes_taskcustomattribute.order
+                    )
+               FROM custom_attributes_taskcustomattribute
+              WHERE custom_attributes_taskcustomattribute.project_id = {tbl}.id
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -346,11 +382,14 @@ def attach_issue_custom_attributes(queryset, as_field="issue_custom_attributes_a
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(custom_attributes_issuecustomattribute))
-        	    FROM custom_attributes_issuecustomattribute
-                WHERE
-                    custom_attributes_issuecustomattribute.project_id = {tbl}.id
-                """
+    sql = """
+             SELECT json_agg(
+                        row_to_json(custom_attributes_issuecustomattribute)
+                        ORDER BY custom_attributes_issuecustomattribute.order
+                    )
+               FROM custom_attributes_issuecustomattribute
+              WHERE custom_attributes_issuecustomattribute.project_id = {tbl}.id
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -366,11 +405,14 @@ def attach_roles(queryset, as_field="roles_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    sql = """SELECT json_agg(row_to_json(users_role))
-        	    FROM users_role
-                WHERE
-                    users_role.project_id = {tbl}.id
-                """
+    sql = """
+             SELECT json_agg(
+                        row_to_json(users_role)
+                        ORDER BY users_role.order
+                    )
+               FROM users_role
+              WHERE users_role.project_id = {tbl}.id
+          """
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
@@ -387,17 +429,17 @@ def attach_is_fan(queryset, user, as_field="is_fan_attr"):
     """
     model = queryset.model
     if user is None or user.is_anonymous():
-        sql = """SELECT false"""
+        sql = "SELECT false"
     else:
-        sql = """SELECT COUNT(likes_like.id) > 0
-                    FROM likes_like
-                    INNER JOIN django_content_type
-                    ON likes_like.content_type_id = django_content_type.id
-                    WHERE
-                        django_content_type.model = 'project' AND
+        sql = """
+                 SELECT COUNT(likes_like.id) > 0
+                   FROM likes_like
+             INNER JOIN django_content_type ON likes_like.content_type_id = django_content_type.id
+                  WHERE django_content_type.model = 'project' AND
                         django_content_type.app_label = 'projects' AND
                         likes_like.user_id = {user_id} AND
-                        likes_like.object_id = {tbl}.id"""
+                        likes_like.object_id = {tbl}.id
+              """
 
         sql = sql.format(tbl=model._meta.db_table, user_id=user.id)
 
@@ -415,15 +457,15 @@ def attach_my_role_permissions(queryset, user, as_field="my_role_permissions_att
     """
     model = queryset.model
     if user is None or user.is_anonymous():
-        sql = """SELECT '{}'"""
+        sql = "SELECT '{}'"
     else:
-        sql = """SELECT users_role.permissions
-                        FROM projects_membership
-                        LEFT JOIN users_user ON projects_membership.user_id = users_user.id
-                        LEFT JOIN users_role ON users_role.id = projects_membership.role_id
-                        WHERE
-                            projects_membership.project_id = {tbl}.id AND
-                            users_user.id = {user_id}"""
+        sql = """
+                 SELECT users_role.permissions
+                   FROM projects_membership
+              LEFT JOIN users_user ON projects_membership.user_id = users_user.id
+              LEFT JOIN users_role ON users_role.id = projects_membership.role_id
+                  WHERE projects_membership.project_id = {tbl}.id AND
+                        users_user.id = {user_id}"""
 
         sql = sql.format(tbl=model._meta.db_table, user_id=user.id)
 
@@ -441,13 +483,14 @@ def attach_private_projects_same_owner(queryset, user, as_field="private_project
     """
     model = queryset.model
     if user is None or user.is_anonymous():
-        sql = """SELECT 0"""
+        sql = "SELECT 0"
     else:
-        sql = """SELECT COUNT(id)
-                        FROM projects_project p_aux
-                        WHERE
-                            p_aux.is_private = True AND
-                            p_aux.owner_id = {tbl}.owner_id"""
+        sql = """
+                 SELECT COUNT(id)
+                   FROM projects_project p_aux
+                  WHERE p_aux.is_private = True AND
+                        p_aux.owner_id = {tbl}.owner_id
+              """
 
         sql = sql.format(tbl=model._meta.db_table, user_id=user.id)
 
@@ -465,13 +508,14 @@ def attach_public_projects_same_owner(queryset, user, as_field="public_projects_
     """
     model = queryset.model
     if user is None or user.is_anonymous():
-        sql = """SELECT 0"""
+        sql = "SELECT 0"
     else:
-        sql = """SELECT COUNT(id)
-                        FROM projects_project p_aux
-                        WHERE
-                            p_aux.is_private = False AND
-                            p_aux.owner_id = {tbl}.owner_id"""
+        sql = """
+                 SELECT COUNT(id)
+                   FROM projects_project p_aux
+                  WHERE p_aux.is_private = False AND
+                        p_aux.owner_id = {tbl}.owner_id
+              """
 
         sql = sql.format(tbl=model._meta.db_table, user_id=user.id)
 
