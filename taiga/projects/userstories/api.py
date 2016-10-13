@@ -36,6 +36,7 @@ from taiga.base.utils import json
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.milestones.models import Milestone
+from taiga.projects.mixins.by_ref import ByRefMixin
 from taiga.projects.models import Project, UserStoryStatus
 from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.notifications.mixins import WatchersViewSetMixin
@@ -54,7 +55,7 @@ from . import validators
 
 
 class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                       TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
+                       ByRefMixin, TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
     validator_class = validators.UserStoryValidator
     queryset = models.UserStory.objects.all()
     permission_classes = (permissions.UserStoryPermission,)
@@ -294,27 +295,6 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
             "epics": self.filter_queryset(queryset, filter_backends=epics_filter_backends)
         }
         return response.Ok(services.get_userstories_filters_data(project, querysets))
-
-    @list_route(methods=["GET"])
-    def by_ref(self, request):
-        if "ref" not in request.QUERY_PARAMS:
-            return response.BadRequest(_("ref param is needed"))
-
-        if "project_slug" not in request.QUERY_PARAMS and "project" not in request.QUERY_PARAMS:
-            return response.BadRequest(_("project or project_slug param is needed"))
-
-        retrieve_kwargs = {
-            "ref": request.QUERY_PARAMS["ref"]
-        }
-        project_id = request.QUERY_PARAMS.get("project", None)
-        if project_id is not None:
-            retrieve_kwargs["project_id"] = project_id
-
-        project_slug = request.QUERY_PARAMS.get("project__slug", None)
-        if project_slug is not None:
-            retrieve_kwargs["project__slug"] = project_slug
-
-        return self.retrieve(request, **retrieve_kwargs)
 
     @list_route(methods=["GET"])
     def csv(self, request):
