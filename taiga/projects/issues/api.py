@@ -28,6 +28,7 @@ from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_404
 
 from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.mixins.by_ref import ByRefMixin
 from taiga.projects.models import Project, IssueStatus, Severity, Priority, IssueType
 from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
@@ -44,7 +45,7 @@ from . import validators
 
 
 class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                   TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
+                   ByRefMixin, TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
     validator_class = validators.IssueValidator
     queryset = models.Issue.objects.all()
     permission_classes = (permissions.IssuePermission, )
@@ -173,21 +174,6 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
                                          "to this issue."))
 
         super().pre_conditions_on_save(obj)
-
-    @list_route(methods=["GET"])
-    def by_ref(self, request):
-        retrieve_kwargs = {
-            "ref": request.QUERY_PARAMS.get("ref", None)
-        }
-        project_id = request.QUERY_PARAMS.get("project", None)
-        if project_id is not None:
-            retrieve_kwargs["project_id"] = project_id
-
-        project_slug = request.QUERY_PARAMS.get("project__slug", None)
-        if project_slug is not None:
-            retrieve_kwargs["project__slug"] = project_slug
-
-        return self.retrieve(request, **retrieve_kwargs)
 
     @list_route(methods=["GET"])
     def filters_data(self, request, *args, **kwargs):
