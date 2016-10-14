@@ -36,6 +36,8 @@ from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.tagging.api import TaggedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
 
+from django_pglocks import advisory_lock
+
 from . import models
 from . import permissions
 from . import serializers
@@ -260,6 +262,11 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, HistoryResourceMixin,
             self.headers["Taiga-Info-Order-Updated"] = json.dumps(orders_updated)
 
         super().post_save(obj, created)
+
+    def create(self, request, *args, **kwargs):
+        epic_id = request.DATA.get("epic", 0)
+        with advisory_lock("epic-related-user-stories-creation-{}".format(epic_id)):
+            return super().create(request, *args, **kwargs)
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
