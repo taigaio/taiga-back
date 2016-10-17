@@ -35,7 +35,6 @@ from taiga.base.utils.time import timestamp_ms
 from taiga.projects.tagging.models import TaggedMixin
 from taiga.projects.tagging.models import TagsColorsdMixin
 from taiga.base.utils.files import get_file_path
-from taiga.base.utils.sequence import arithmetic_progression
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.slug import slugify_uniquely_for_queryset
 
@@ -287,14 +286,8 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
 
         if not self.slug:
             with advisory_lock("project-creation"):
-                base_name = "{}-{}".format(self.owner.username, self.name)
-                base_slug = slugify_uniquely(base_name, self.__class__)
-                slug = base_slug
-                for i in arithmetic_progression():
-                    if not type(self).objects.filter(slug=slug).exists() or i > 100:
-                        break
-                    slug = "{}-{}".format(base_slug, i)
-                self.slug = slug
+                base_slug = "{}-{}".format(self.owner.username, self.name)
+                self.slug = slugify_uniquely(base_slug, self.__class__)
                 super().save(*args, **kwargs)
         else:
             super().save(*args, **kwargs)

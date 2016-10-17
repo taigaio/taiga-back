@@ -20,7 +20,6 @@ import abc
 
 from functools import reduce
 
-from taiga.base.utils import sequence as sq
 from taiga.permissions.services import user_has_perm, is_project_admin
 from django.apps import apps
 
@@ -112,7 +111,7 @@ class Not(PermissionOperator):
         super().__init__(component)
 
     def check_permissions(self, *args, **kwargs):
-        component = sq.first(self.components)
+        component = self.components[0]
         return (not component.check_permissions(*args, **kwargs))
 
 
