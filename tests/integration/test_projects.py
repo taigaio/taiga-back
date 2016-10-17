@@ -1915,19 +1915,19 @@ def test_create_tag_without_color(client, settings):
 
 def test_edit_tag_only_name(client, settings):
     user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user, tags_colors=[("tag", "#123123")])
-    user_story = f.UserStoryFactory.create(project=project, tags=["tag"])
-    task = f.TaskFactory.create(project=project, tags=["tag"])
-    issue = f.IssueFactory.create(project=project, tags=["tag"])
-    epic = f.EpicFactory.create(project=project, tags=["tag"])
+    project = f.ProjectFactory.create(owner=user, tags_colors=[("tag'1", "#123123")])
+    user_story = f.UserStoryFactory.create(project=project, tags=["tag'1"])
+    task = f.TaskFactory.create(project=project, tags=["tag'1"])
+    issue = f.IssueFactory.create(project=project, tags=["tag'1"])
+    epic = f.EpicFactory.create(project=project, tags=["tag'1"])
 
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
     membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
     url = reverse("projects-edit-tag", args=(project.id,))
     client.login(user)
     data = {
-        "from_tag": "tag",
-        "to_tag": "renamed_tag"
+        "from_tag": "tag'1",
+        "to_tag": "renamed_tag'1"
     }
 
     client.login(user)
@@ -1935,15 +1935,15 @@ def test_edit_tag_only_name(client, settings):
 
     assert response.status_code == 200
     project = Project.objects.get(id=project.pk)
-    assert project.tags_colors == [["renamed_tag", "#123123"]]
+    assert project.tags_colors == [["renamed_tag'1", "#123123"]]
     user_story = UserStory.objects.get(id=user_story.pk)
-    assert user_story.tags == ["renamed_tag"]
+    assert user_story.tags == ["renamed_tag'1"]
     task = Task.objects.get(id=task.pk)
-    assert task.tags == ["renamed_tag"]
+    assert task.tags == ["renamed_tag'1"]
     issue = Issue.objects.get(id=issue.pk)
-    assert issue.tags == ["renamed_tag"]
+    assert issue.tags == ["renamed_tag'1"]
     epic = Epic.objects.get(id=epic.pk)
-    assert epic.tags == ["renamed_tag"]
+    assert epic.tags == ["renamed_tag'1"]
 
 
 def test_edit_tag_only_color(client, settings):
@@ -2013,18 +2013,18 @@ def test_edit_tag(client, settings):
 
 def test_delete_tag(client, settings):
     user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user, tags_colors=[("tag", "#123123")])
-    user_story = f.UserStoryFactory.create(project=project, tags=["tag"])
-    task = f.TaskFactory.create(project=project, tags=["tag"])
-    issue = f.IssueFactory.create(project=project, tags=["tag"])
-    epic = f.EpicFactory.create(project=project, tags=["tag"])
+    project = f.ProjectFactory.create(owner=user, tags_colors=[("tag'1", "#123123")])
+    user_story = f.UserStoryFactory.create(project=project, tags=["tag'1"])
+    task = f.TaskFactory.create(project=project, tags=["tag'1"])
+    issue = f.IssueFactory.create(project=project, tags=["tag'1"])
+    epic = f.EpicFactory.create(project=project, tags=["tag'1"])
 
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
     membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
     url = reverse("projects-delete-tag", args=(project.id,))
     client.login(user)
     data = {
-        "tag": "tag"
+        "tag": "tag'1"
     }
 
     client.login(user)
@@ -2044,18 +2044,18 @@ def test_delete_tag(client, settings):
 
 def test_mix_tags(client, settings):
     user = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user, tags_colors=[("tag1", "#123123"), ("tag2", "#123123"), ("tag3", "#123123")])
-    user_story = f.UserStoryFactory.create(project=project, tags=["tag1", "tag3"])
+    project = f.ProjectFactory.create(owner=user, tags_colors=[("tag'1", "#123123"), ("tag2", "#123123"), ("tag3", "#123123")])
+    user_story = f.UserStoryFactory.create(project=project, tags=["tag'1", "tag3"])
     task = f.TaskFactory.create(project=project, tags=["tag2", "tag3"])
-    issue = f.IssueFactory.create(project=project, tags=["tag1", "tag2", "tag3"])
-    epic = f.EpicFactory.create(project=project, tags=["tag1", "tag2", "tag3"])
+    issue = f.IssueFactory.create(project=project, tags=["tag'1", "tag2", "tag3"])
+    epic = f.EpicFactory.create(project=project, tags=["tag'1", "tag2", "tag3"])
 
     role = f.RoleFactory.create(project=project, permissions=["view_project"])
     membership = f.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
     url = reverse("projects-mix-tags", args=(project.id,))
     client.login(user)
     data = {
-        "from_tags": ["tag1", "tag2"],
+        "from_tags": ["tag'1", "tag2"],
         "to_tag": "tag2"
     }
 
