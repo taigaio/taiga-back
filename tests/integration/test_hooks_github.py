@@ -43,6 +43,19 @@ from .. import factories as f
 pytestmark = pytest.mark.django_db
 
 
+def test_bad_project(client):
+    project = f.ProjectFactory()
+    url = reverse("github-hook-list")
+    url = "%s?project=%s-extra-text-added" % (url, project.id)
+    data = {"test:": "data"}
+    response = client.post(url, json.dumps(data),
+                           HTTP_X_HUB_SIGNATURE="sha1=3c8e83fdaa266f81c036ea0b71e98eb5e054581a",
+                           content_type="application/json")
+    response_content = response.data
+    assert response.status_code == 400
+    assert "The project doesn't exist" in response_content["_error_message"]
+
+
 def test_bad_signature(client):
     project = f.ProjectFactory()
     url = reverse("github-hook-list")
