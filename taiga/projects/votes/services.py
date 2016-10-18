@@ -23,6 +23,8 @@ from django.db import transaction as tx
 from django.apps import apps
 from django.contrib.auth import get_user_model
 
+from django_pglocks import advisory_lock
+
 from .models import Votes, Vote
 
 
@@ -37,14 +39,15 @@ def add_vote(obj, user):
     :param user: User adding the vote. :class:`~taiga.users.models.User` instance.
     """
     obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
-    vote, created = Vote.objects.get_or_create(content_type=obj_type, object_id=obj.id, user=user)
-    if not created:
-        return
+    with advisory_lock("vote-{}-{}".format(obj_type.id, obj.id)):
+        vote, created = Vote.objects.get_or_create(content_type=obj_type, object_id=obj.id, user=user)
+        if not created:
+            return
 
-    votes, _ = Votes.objects.get_or_create(content_type=obj_type, object_id=obj.id)
-    votes.count = F('count') + 1
-    votes.save()
-    return vote
+        votes, _ = Votes.objects.get_or_create(content_type=obj_type, object_id=obj.id)
+        votes.count = F('count') + 1
+        votes.save()
+        return vote
 
 
 @tx.atomic
@@ -58,9 +61,10 @@ def remove_vote(obj, user):
     :param user: User removing her vote. :class:`~taiga.users.models.User` instance.
     """
     obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
-    qs = Vote.objects.filter(content_type=obj_type, object_id=obj.id, user=user)
-    if not qs.exists():
-        return
+    with advisory_lock("vote-{}-{}".format(obj_type.id, obj.id)):
+        qs = Vote.objects.filter(content_type=obj_type, object_id=obj.id, user=user)
+        if not qs.exists():
+            return
 
     qs.delete()
 
