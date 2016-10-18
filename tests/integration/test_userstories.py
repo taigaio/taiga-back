@@ -317,7 +317,10 @@ def test_api_update_milestone_in_bulk(client):
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     milestone = f.MilestoneFactory.create(project=project)
     us1 = f.create_userstory(project=project)
+    t1 = f.create_task(user_story=us1, project=project)
+    t2 = f.create_task(user_story=us1, project=project)
     us2 = f.create_userstory(project=project)
+    t3 = f.create_task(user_story=us2, project=project)
     us3 = f.create_userstory(project=project, milestone=milestone, sprint_order=1)
     us4 = f.create_userstory(project=project, milestone=milestone, sprint_order=2)
 
@@ -335,10 +338,14 @@ def test_api_update_milestone_in_bulk(client):
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 204, response.data
     assert project.milestones.get(id=milestone.id).user_stories.count() == 4
-    assert list(project.milestones.get(id=milestone.id).\
-        user_stories.\
-        order_by("sprint_order").\
-        values_list("id", "sprint_order")) == [(us3.id, 1), (us1.id, 2), (us2.id,3), (us4.id,4)]
+
+    uss_list = list(project.milestones.get(id=milestone.id).user_stories.order_by("sprint_order")
+                                                                        .values_list("id", "sprint_order"))
+    assert uss_list == [(us3.id, 1), (us1.id, 2), (us2.id,3), (us4.id,4)]
+
+    tasks_list = list(project.milestones.get(id=milestone.id).tasks.order_by("id")
+                                                                   .values_list("id", flat=True))
+    assert tasks_list == [t1.id, t2.id, t3.id]
 
 
 def test_api_update_milestone_in_bulk_invalid_milestone(client):

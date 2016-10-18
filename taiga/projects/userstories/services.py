@@ -32,11 +32,11 @@ from taiga.projects.services import apply_order_updates
 from taiga.projects.userstories.apps import connect_userstories_signals
 from taiga.projects.userstories.apps import disconnect_userstories_signals
 from taiga.events import events
+from taiga.projects.tasks.models import Task
 from taiga.projects.votes.utils import attach_total_voters_to_queryset
 from taiga.projects.notifications.utils import attach_watchers_to_queryset
 
 from . import models
-
 
 #####################################################
 # Bulk actions
@@ -129,6 +129,10 @@ def update_userstories_milestone_in_bulk(bulk_data: list, milestone: object):
 
     db.update_attr_in_bulk_for_ids(us_milestones, "milestone_id", model=models.UserStory)
     db.update_attr_in_bulk_for_ids(us_orders, "sprint_order", models.UserStory)
+
+    # Updating the milestone for the tasks
+    Task.objects.filter(user_story_id__in=[e["us_id"] for e in bulk_data]).update(milestone=milestone)
+
     return us_orders
 
 
