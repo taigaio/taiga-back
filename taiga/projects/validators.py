@@ -16,15 +16,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.core.validators import validate_email
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
 from taiga.base.api import validators
+from taiga.base.api.fields import validate_user_email_allowed_domains, InvalidEmailValidationError
 from taiga.base.exceptions import ValidationError
 from taiga.base.fields import JSONField
 from taiga.base.fields import PgArrayField
-from taiga.users.models import Role
+from taiga.users.models import User, Role
+from taiga.users import filters as user_filters
+
 
 from .tagging.fields import TagsField
 
@@ -112,21 +116,24 @@ class IssueTypeValidator(DuplicatedNameInProjectValidator, validators.ModelValid
 ######################################################
 
 class MembershipValidator(validators.ModelValidator):
-    email = serializers.EmailField(required=True)
+    username = serializers.CharField(required=True)
+    # email = serializers.EmailField(required=False)
+    # user = serializers.PrimaryKeyRelatedField(required=False)
 
     class Meta:
         model = models.Membership
-        # IMPORTANT: Maintain the MembershipAdminSerializer Meta up to date
-        # with this info (excluding here user_email and email)
-        read_only_fields = ("user",)
-        exclude = ("token", "email")
+        read_only_fields = ("user", "email")
 
-    def validate_email(self, attrs, source):
-        project = attrs.get("project", None)
+    def restore_object(self, attrs, instance=None):
+        username = attrs.pop("username", None)
+        obj = super(MembershipValidator, self).restore_object(attrs, instance=instance)
+        obj.username = username
+        return obj
+
+    def _validate_member_doesnt_exist(self, attrs, email):
+        project = attrs.get("project", None if self.object is None else self.object.project)
         if project is None:
-            project = self.object.project
-
-        email = attrs[source]
+            return attrs
 
         qs = models.Membership.objects.all()
 
@@ -139,14 +146,12 @@ class MembershipValidator(validators.ModelValidator):
                        Q(project_id=project.id, email=email))
 
         if qs.count() > 0:
-            raise ValidationError(_("Email address is already taken"))
-
-        return attrs
+            raise ValidationError(_("The user yet exists in the project"))
 
     def validate_role(self, attrs, source):
-        project = attrs.get("project", None)
+        project = attrs.get("project", None if self.object is None else self.object.project)
         if project is None:
-            project = self.object.project
+            return attrs
 
         role = attrs[source]
 
@@ -155,10 +160,35 @@ class MembershipValidator(validators.ModelValidator):
 
         return attrs
 
+    def validate_username(self, attrs, source):
+        username = attrs.get(source, None)
+        try:
+            validate_user_email_allowed_domains(username)
+
+        except ValidationError:
+            # If the validation comes from a request let's check the user is a valid contact
+            request = self.context.get("request", None)
+            if request is not None and request.user.is_authenticated():
+                valid_usernames = request.user.contacts_visible_by_user(request.user).values_list("username", flat=True)
+                if username not in valid_usernames:
+                    raise ValidationError(_("The user must be a valid contact"))
+
+        user = User.objects.filter(Q(username=username) | Q(email=username)).first()
+        if user is not None:
+            email = user.email
+            self.user = user
+
+        else:
+            email = username
+
+        self.email = email
+        self._validate_member_doesnt_exist(attrs, email)
+        return attrs
+
     def validate_is_admin(self, attrs, source):
-        project = attrs.get("project", None)
+        project = attrs.get("project", None if self.object is None else self.object.project)
         if project is None:
-            project = self.object.project
+            return attrs
 
         if (self.object and self.object.user):
             if self.object.user.id == project.owner_id and not attrs[source]:
@@ -171,20 +201,34 @@ class MembershipValidator(validators.ModelValidator):
 
         return attrs
 
+    def is_valid(self):
+        errors = super().is_valid()
+        if hasattr(self, "email") and self.object is not None:
+            self.object.email = self.email
 
-class MembershipAdminValidator(MembershipValidator):
-    class Meta:
-        model = models.Membership
-        # IMPORTANT: Maintain the MembershipSerializer Meta up to date
-        # with this info (excluding there user_email and email)
-        read_only_fields = ("user",)
-        exclude = ("token",)
+        if hasattr(self, "user") and self.object is not None:
+            self.object.user = self.user
+
+        return errors
 
 
 class _MemberBulkValidator(validators.Validator):
-    email = serializers.EmailField()
+    username = serializers.CharField()
     role_id = serializers.IntegerField()
 
+    def validate_username(self, attrs, source):
+        username = attrs.get(source)
+        try:
+            validate_user_email_allowed_domains(username)
+        except InvalidEmailValidationError:
+            # If the validation comes from a request let's check the user is a valid contact
+            request = self.context.get("request", None)
+            if request is not None and request.user.is_authenticated():
+                valid_usernames = set(request.user.contacts_visible_by_user(request.user).values_list("username", flat=True))
+                if username not in valid_usernames:
+                    raise ValidationError(_("The user must be a valid contact"))
+
+        return attrs
 
 class MembersBulkValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
@@ -192,12 +236,10 @@ class MembersBulkValidator(ProjectExistsValidator, validators.Validator):
     invitation_extra_text = serializers.CharField(required=False, max_length=255)
 
     def validate_bulk_memberships(self, attrs, source):
-        filters = {
-            "project__id": attrs["project_id"],
-            "id__in": [r["role_id"] for r in attrs["bulk_memberships"]]
-        }
+        project_id = attrs["project_id"]
+        role_ids = [r["role_id"] for r in attrs["bulk_memberships"]]
 
-        if Role.objects.filter(**filters).count() != len(set(filters["id__in"])):
+        if Role.objects.filter(project_id=project_id, id__in=role_ids).count() != len(set(role_ids)):
             raise ValidationError(_("Invalid role ids. All roles must belong to the same project."))
 
         return attrs

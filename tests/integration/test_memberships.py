@@ -30,8 +30,8 @@ pytestmark = pytest.mark.django_db
 
 
 def test_get_members_from_bulk():
-    data = [{"role_id": "1", "email": "member1@email.com"},
-            {"role_id": "1", "email": "member2@email.com"}]
+    data = [{"role_id": "1", "username": "member1@email.com"},
+            {"role_id": "1", "username": "member2@email.com"}]
     members = services.get_members_from_bulk(data, project_id=1)
 
     assert len(members) == 2
@@ -39,10 +39,65 @@ def test_get_members_from_bulk():
     assert members[1].email == "member2@email.com"
 
 
+def test_create_member_using_email(client):
+    project = f.ProjectFactory()
+    john = f.UserFactory.create()
+    joseph = f.UserFactory.create()
+    tester = f.RoleFactory(project=project, name="Tester")
+    f.MembershipFactory(project=project, user=john, is_admin=True)
+    url = reverse("memberships-list")
+
+    data = {"project": project.id, "role": tester.pk, "username": joseph.email}
+    client.login(john)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 201
+    assert response.data["email"] == joseph.email
+
+
+def test_create_member_using_username_without_being_contacts(client):
+    project = f.ProjectFactory()
+    john = f.UserFactory.create()
+    joseph = f.UserFactory.create()
+    tester = f.RoleFactory(project=project, name="Tester")
+    f.MembershipFactory(project=project, user=john, is_admin=True)
+    url = reverse("memberships-list")
+
+    data = {"project": project.id, "role": tester.pk, "username": joseph.username}
+    client.login(john)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert "The user must be a valid contact" in response.data["username"][0]
+
+
+def test_create_member_using_username_being_contacts(client):
+    project = f.ProjectFactory()
+    john = f.UserFactory.create()
+    joseph = f.UserFactory.create()
+    tester = f.RoleFactory(project=project, name="Tester", permissions=["view_project"])
+    f.MembershipFactory(project=project, user=john, role=tester, is_admin=True)
+
+    # They are members from another project
+    project2 = f.ProjectFactory()
+    gamer = f.RoleFactory(project=project2, name="Gamer", permissions=["view_project"])
+    f.MembershipFactory(project=project2, user=john, role=gamer, is_admin=True)
+    f.MembershipFactory(project=project2, user=joseph, role=gamer)
+
+    url = reverse("memberships-list")
+
+    data = {"project": project.id, "role": tester.pk, "username": joseph.username}
+    client.login(john)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 201
+    assert response.data["user"] == joseph.id
+
+
 def test_create_members_in_bulk():
     with mock.patch("taiga.projects.services.members.db") as db:
-        data = [{"role_id": "1", "email": "member1@email.com"},
-                {"role_id": "1", "email": "member2@email.com"}]
+        data = [{"role_id": "1", "username": "member1@email.com"},
+                {"role_id": "1", "username": "member2@email.com"}]
         members = services.create_members_in_bulk(data, project_id=1)
         db.save_in_bulk.assert_called_once_with(members, None, None)
 
@@ -51,25 +106,57 @@ def test_api_create_bulk_members(client):
     project = f.ProjectFactory()
     john = f.UserFactory.create()
     joseph = f.UserFactory.create()
-    tester = f.RoleFactory(project=project, name="Tester")
-    gamer = f.RoleFactory(project=project, name="Gamer")
-    f.MembershipFactory(project=project, user=project.owner, is_admin=True)
+    other = f.UserFactory.create()
+    tester = f.RoleFactory(project=project, name="Tester", permissions=["view_project"])
+    gamer = f.RoleFactory(project=project, name="Gamer", permissions=["view_project"])
+    f.MembershipFactory(project=project, user=john, role=tester, is_admin=True)
+
+    # John and Other are members from another project
+    project2 = f.ProjectFactory()
+    f.MembershipFactory(project=project2, user=john, role=gamer, is_admin=True)
+    f.MembershipFactory(project=project2, user=other, role=gamer)
 
     url = reverse("memberships-bulk-create")
 
     data = {
         "project_id": project.id,
         "bulk_memberships": [
-            {"role_id": tester.pk, "email": john.email},
-            {"role_id": gamer.pk, "email": joseph.email},
+            {"role_id": gamer.pk, "username": joseph.email},
+            {"role_id": gamer.pk, "username": other.username},
         ]
     }
-    client.login(project.owner)
+    client.login(john)
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 200
-    assert response.data[0]["email"] == john.email
-    assert response.data[1]["email"] == joseph.email
+    response_user_ids = set([u["user"] for u in response.data])
+    user_ids = {other.id, joseph.id}
+    assert(user_ids.issubset(response_user_ids))
+
+
+def test_api_create_bulk_members_invalid_user_id(client):
+    project = f.ProjectFactory()
+    john = f.UserFactory.create()
+    joseph = f.UserFactory.create()
+    other = f.UserFactory.create()
+    tester = f.RoleFactory(project=project, name="Tester", permissions=["view_project"])
+    gamer = f.RoleFactory(project=project, name="Gamer", permissions=["view_project"])
+    f.MembershipFactory(project=project, user=john, role=tester, is_admin=True)
+
+    url = reverse("memberships-bulk-create")
+
+    data = {
+        "project_id": project.id,
+        "bulk_memberships": [
+            {"role_id": gamer.pk, "username": joseph.email},
+            {"role_id": gamer.pk, "username": other.username},
+        ]
+    }
+    client.login(john)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    test_api_create_bulk_members_invalid_user_id
 
 
 def test_api_create_bulk_members_with_invalid_roles(client):
@@ -85,8 +172,8 @@ def test_api_create_bulk_members_with_invalid_roles(client):
     data = {
         "project_id": project.id,
         "bulk_memberships": [
-            {"role_id": tester.pk, "email": john.email},
-            {"role_id": gamer.pk, "email": joseph.email},
+            {"role_id": tester.pk, "username": john.email},
+            {"role_id": gamer.pk, "username": joseph.email},
         ]
     }
     client.login(project.owner)
@@ -109,8 +196,8 @@ def test_api_create_bulk_members_with_allowed_domain(client):
     data = {
         "project_id": project.id,
         "bulk_memberships": [
-            {"role_id": tester.pk, "email": "test1@email.com"},
-            {"role_id": gamer.pk, "email": "test2@email.com"},
+            {"role_id": tester.pk, "username": "test1@email.com"},
+            {"role_id": gamer.pk, "username": "test2@email.com"},
         ]
     }
     client.login(project.owner)
@@ -133,16 +220,17 @@ def test_api_create_bulk_members_with_allowed_and_unallowed_domain(client, setti
     data = {
         "project_id": project.id,
         "bulk_memberships": [
-            {"role_id": tester.pk, "email": "test@invalid-domain.com"},
-            {"role_id": gamer.pk, "email": "test@email.com"},
+            {"role_id": tester.pk, "username": "test@invalid-domain.com"},
+            {"role_id": gamer.pk, "username": "test@email.com"},
         ]
     }
     client.login(project.owner)
     response = client.json.post(url, json.dumps(data))
 
+    print(response.data)
     assert response.status_code == 400
-    assert "email" in response.data["bulk_memberships"][0]
-    assert "email" not in response.data["bulk_memberships"][1]
+    assert "username" in response.data["bulk_memberships"][0]
+    assert "username" not in response.data["bulk_memberships"][1]
 
 
 def test_api_create_bulk_members_with_unallowed_domains(client, settings):
@@ -157,16 +245,16 @@ def test_api_create_bulk_members_with_unallowed_domains(client, settings):
     data = {
         "project_id": project.id,
         "bulk_memberships": [
-            {"role_id": tester.pk, "email": "test1@invalid-domain.com"},
-            {"role_id": gamer.pk, "email": "test2@invalid-domain.com"},
+            {"role_id": tester.pk, "username": "test1@invalid-domain.com"},
+            {"role_id": gamer.pk, "username": "test2@invalid-domain.com"},
         ]
     }
     client.login(project.owner)
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 400
-    assert "email" in response.data["bulk_memberships"][0]
-    assert "email" in response.data["bulk_memberships"][1]
+    assert "username" in response.data["bulk_memberships"][0]
+    assert "username" in response.data["bulk_memberships"][1]
 
 
 def test_api_create_bulk_members_without_enough_memberships_private_project_slots_one_project(client):
@@ -180,10 +268,10 @@ def test_api_create_bulk_members_without_enough_memberships_private_project_slot
     data = {
         "project_id": project.id,
         "bulk_memberships": [
-            {"role_id": role.pk, "email": "test1@test.com"},
-            {"role_id": role.pk, "email": "test2@test.com"},
-            {"role_id": role.pk, "email": "test3@test.com"},
-            {"role_id": role.pk, "email": "test4@test.com"},
+            {"role_id": role.pk, "username": "test1@test.com"},
+            {"role_id": role.pk, "username": "test2@test.com"},
+            {"role_id": role.pk, "username": "test3@test.com"},
+            {"role_id": role.pk, "username": "test4@test.com"},
         ]
     }
     client.login(user)
@@ -206,10 +294,10 @@ def test_api_create_bulk_members_for_admin_without_enough_memberships_private_pr
     data = {
         "project_id": project.id,
         "bulk_memberships": [
-            {"role_id": role.pk, "email": "test1@test.com"},
-            {"role_id": role.pk, "email": "test2@test.com"},
-            {"role_id": role.pk, "email": "test3@test.com"},
-            {"role_id": role.pk, "email": "test4@test.com"},
+            {"role_id": role.pk, "username": "test1@test.com"},
+            {"role_id": role.pk, "username": "test2@test.com"},
+            {"role_id": role.pk, "username": "test3@test.com"},
+            {"role_id": role.pk, "username": "test4@test.com"},
         ]
     }
     client.login(user)
@@ -237,10 +325,10 @@ def test_api_create_bulk_members_with_enough_memberships_private_project_slots_m
     data = {
         "project_id": project.id,
         "bulk_memberships": [
-            {"role_id": role.pk, "email": "test1@test.com"},
-            {"role_id": role.pk, "email": "test2@test.com"},
-            {"role_id": role.pk, "email": "test3@test.com"},
-            {"role_id": role.pk, "email": "test4@test.com"},
+            {"role_id": role.pk, "username": "test1@test.com"},
+            {"role_id": role.pk, "username": "test2@test.com"},
+            {"role_id": role.pk, "username": "test3@test.com"},
+            {"role_id": role.pk, "username": "test4@test.com"},
         ]
     }
     client.login(user)
@@ -260,10 +348,10 @@ def test_api_create_bulk_members_without_enough_memberships_public_project_slots
     data = {
         "project_id": project.id,
         "bulk_memberships": [
-            {"role_id": role.pk, "email": "test1@test.com"},
-            {"role_id": role.pk, "email": "test2@test.com"},
-            {"role_id": role.pk, "email": "test3@test.com"},
-            {"role_id": role.pk, "email": "test4@test.com"},
+            {"role_id": role.pk, "username": "test1@test.com"},
+            {"role_id": role.pk, "username": "test2@test.com"},
+            {"role_id": role.pk, "username": "test3@test.com"},
+            {"role_id": role.pk, "username": "test4@test.com"},
         ]
     }
     client.login(user)
@@ -290,10 +378,10 @@ def test_api_create_bulk_members_with_enough_memberships_public_project_slots_mu
     data = {
         "project_id": project.id,
         "bulk_memberships": [
-            {"role_id": role.pk, "email": "test1@test.com"},
-            {"role_id": role.pk, "email": "test2@test.com"},
-            {"role_id": role.pk, "email": "test3@test.com"},
-            {"role_id": role.pk, "email": "test4@test.com"},
+            {"role_id": role.pk, "username": "test1@test.com"},
+            {"role_id": role.pk, "username": "test2@test.com"},
+            {"role_id": role.pk, "username": "test3@test.com"},
+            {"role_id": role.pk, "username": "test4@test.com"},
         ]
     }
     client.login(user)
@@ -312,7 +400,7 @@ def test_api_create_bulk_members_with_extra_text(client, outbox):
     data = {
         "project_id": project.id,
         "bulk_memberships": [
-            {"role_id": tester.pk, "email": "john@email.com"},
+            {"role_id": tester.pk, "username": "john@email.com"},
         ],
         "invitation_extra_text": invitation_extra_text
     }
@@ -350,7 +438,7 @@ def test_api_invite_existing_user(client, outbox):
     client.login(role.project.owner)
 
     url = reverse("memberships-list")
-    data = {"role": role.pk, "project": role.project.pk, "email": user.email}
+    data = {"role": role.pk, "project": role.project.pk, "username": user.email}
 
     response = client.json.post(url, json.dumps(data))
 
@@ -364,7 +452,7 @@ def test_api_invite_existing_user(client, outbox):
     assert "Added to the project" in message.subject
 
 
-def test_api_create_invalid_membership_email_failing(client):
+def test_api_create_invalid_membership_no_email_no_user(client):
     "Should not create the invitation linked to that user"
     user = f.UserFactory.create()
     role = f.RoleFactory.create()
@@ -388,7 +476,7 @@ def test_api_create_invalid_membership_role_doesnt_exist_in_the_project(client):
     client.login(project.owner)
 
     url = reverse("memberships-list")
-    data = {"role": role.pk, "project": project.pk, "email": user.email}
+    data = {"role": role.pk, "project": project.pk, "username": user.email}
 
     response = client.json.post(url, json.dumps(data))
 
@@ -404,7 +492,7 @@ def test_api_create_membership(client):
 
     client.login(membership.user)
     url = reverse("memberships-list")
-    data = {"role": role.pk, "project": role.project.pk, "email": user.email}
+    data = {"role": role.pk, "project": role.project.pk, "username": user.email}
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 201
@@ -419,11 +507,11 @@ def test_api_create_membership_with_unallowed_domain(client, settings):
 
     client.login(membership.user)
     url = reverse("memberships-list")
-    data = {"role": role.pk, "project": role.project.pk, "email": "test@invalid-email.com"}
+    data = {"role": role.pk, "project": role.project.pk, "username": "test@invalid-email.com"}
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 400
-    assert "email" in response.data
+    assert "username" in response.data
 
 
 def test_api_create_membership_with_allowed_domain(client, settings):
@@ -434,7 +522,7 @@ def test_api_create_membership_with_allowed_domain(client, settings):
 
     client.login(membership.user)
     url = reverse("memberships-list")
-    data = {"role": role.pk, "project": role.project.pk, "email": "test@email.com"}
+    data = {"role": role.pk, "project": role.project.pk, "username": "test@email.com"}
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 201
@@ -449,7 +537,7 @@ def test_api_create_membership_without_enough_memberships_private_project_slots_
 
     client.login(user)
     url = reverse("memberships-list")
-    data = {"role": role.pk, "project": project.pk, "email": "test@test.com"}
+    data = {"role": role.pk, "project": project.pk, "username": "test@test.com"}
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 400
@@ -470,7 +558,7 @@ def test_api_create_membership_with_enough_memberships_private_project_slots_mul
 
     client.login(user)
     url = reverse("memberships-list")
-    data = {"role": role.pk, "project": project.pk, "email": "test@test.com"}
+    data = {"role": role.pk, "project": project.pk, "username": "test@test.com"}
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 201
@@ -484,7 +572,7 @@ def test_api_create_membership_without_enough_memberships_public_project_slots_o
 
     client.login(user)
     url = reverse("memberships-list")
-    data = {"role": role.pk, "project": project.pk, "email": "test@test.com"}
+    data = {"role": role.pk, "project": project.pk, "username": "test@test.com"}
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 400
@@ -505,7 +593,7 @@ def test_api_create_membership_with_enough_memberships_public_project_slots_mult
 
     client.login(user)
     url = reverse("memberships-list")
-    data = {"role": role.pk, "project": project.pk, "email": "test@test.com"}
+    data = {"role": role.pk, "project": project.pk, "username": "test@test.com"}
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 201
@@ -515,10 +603,19 @@ def test_api_edit_membership(client):
     membership = f.MembershipFactory(is_admin=True)
     client.login(membership.user)
     url = reverse("memberships-detail", args=[membership.id])
-    data = {"email": "new@email.com"}
+    data = {"username": "new@email.com"}
     response = client.json.patch(url, json.dumps(data))
-
     assert response.status_code == 200
+
+
+def test_api_edit_membership(client):
+    membership = f.MembershipFactory(is_admin=True)
+    client.login(membership.user)
+    url = reverse("memberships-detail", args=[membership.id])
+    data = {"username": "new@email.com"}
+    response = client.json.patch(url, json.dumps(data))
+    assert response.status_code == 200
+
 
 def test_api_change_owner_membership_to_no_admin_return_error(client):
     project = f.ProjectFactory()

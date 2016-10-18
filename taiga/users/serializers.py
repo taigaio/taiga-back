@@ -54,7 +54,6 @@ class UserSerializer(serializers.LightSerializer):
     big_photo = MethodField()
     gravatar_id = MethodField()
     roles = MethodField()
-    projects_with_me = MethodField()
 
     def get_full_name_display(self, obj):
         return obj.get_full_name() if obj else ""
@@ -69,21 +68,10 @@ class UserSerializer(serializers.LightSerializer):
         return get_user_gravatar_id(user)
 
     def get_roles(self, user):
-        return user.memberships. order_by("role__name").values_list("role__name", flat=True).distinct()
+        if hasattr(user, "roles_attr"):
+            return user.roles_attr
 
-    def get_projects_with_me(self, user):
-        request = self.context.get("request", None)
-        requesting_user = request and request.user or None
-
-        if not requesting_user or not requesting_user.is_authenticated():
-            return []
-
-        else:
-            project_ids = requesting_user.memberships.values_list("project__id", flat=True)
-            memberships = user.memberships.filter(project__id__in=project_ids)
-            project_ids = memberships.values_list("project__id", flat=True)
-            projects = Project.objects.filter(id__in=project_ids)
-            return ContactProjectDetailSerializer(projects, many=True).data
+        return user.memberships.order_by("role__name").values_list("role__name", flat=True).distinct()
 
 
 class UserAdminSerializer(UserSerializer):

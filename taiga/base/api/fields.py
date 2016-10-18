@@ -618,13 +618,24 @@ class ChoiceField(WritableField):
         return value
 
 
+class InvalidEmailValidationError(ValidationError):
+    pass
+
+
+class InvalidDomainValidationError(ValidationError):
+    pass
+
+
 def validate_user_email_allowed_domains(value):
-    validators.validate_email(value)
+    try:
+        validators.validate_email(value)
+    except ValidationError as e:
+        raise InvalidEmailValidationError(e)
 
     domain_name = value.split("@")[1]
 
     if settings.USER_EMAIL_ALLOWED_DOMAINS and domain_name not in settings.USER_EMAIL_ALLOWED_DOMAINS:
-        raise ValidationError(_("You email domain is not allowed"))
+        raise InvalidDomainValidationError(_("You email domain is not allowed"))
 
 
 class EmailField(CharField):

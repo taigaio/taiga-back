@@ -17,13 +17,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.filters import PermissionBasedFilterBackend
+from taiga.base.utils.db import to_tsquery
+
 from . import services
 
 
 class ContactsFilterBackend(PermissionBasedFilterBackend):
     def filter_queryset(self, user, request, queryset, view):
-        qs = queryset.filter(is_active=True)
-        project_ids = services.get_visible_project_ids(user, request.user)
-        qs = qs.filter(memberships__project_id__in=project_ids)
-        qs = qs.exclude(id=user.id)
+        qs = user.contacts_visible_by_user(request.user)
+        q = request.QUERY_PARAMS.get('q', None)
+        if q:
+            table = qs.model._meta.db_table
+            where_clause = ("""
+                to_tsvector('english_nostop',
+                            coalesce({table}.username, '') || ' ' ||
+                            coalesce({table}.full_name) || ' ' ||
+                            coalesce({table}.email, '')) @@ to_tsquery('english_nostop', %s)
+            """.format(table=table))
+
+            qs = qs.extra(where=[where_clause], params=[to_tsquery(q)])
+
         return qs.distinct()
