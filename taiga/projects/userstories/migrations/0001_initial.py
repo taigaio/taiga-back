@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 from django.conf import settings
 import django.utils.timezone
-import djorm_pgarray.fields
+import django.contrib.postgres.fields
 import django.db.models.deletion
 
 
@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
             name='UserStory',
             fields=[
                 ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
-                ('tags', djorm_pgarray.fields.TextArrayField(dbtype='text', verbose_name='tags')),
+                ('tags', django.contrib.postgres.fields.ArrayField(base_field=models.TextField(), blank=True, default=[], null=True, size=None, verbose_name='tags')),
                 ('version', models.IntegerField(default=1, verbose_name='version')),
                 ('is_blocked', models.BooleanField(default=False, verbose_name='is blocked')),
                 ('blocked_note', models.TextField(default='', blank=True, verbose_name='blocked note')),

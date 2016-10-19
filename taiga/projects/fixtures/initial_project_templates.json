@@ -17,16 +17,554 @@
         "is_issues_activated": true,
         "videoconferences": null,
         "videoconferences_extra_data": "",
-        "default_options": "{\"epic_status\": \"New\", \"issue_status\": \"New\", \"task_status\": \"New\", \"points\": \"?\", \"issue_type\": \"Bug\", \"severity\": \"Normal\", \"priority\": \"Normal\", \"us_status\": \"New\"}",
-        "epic_statuses": "[{\"is_closed\": false, \"name\": \"New\", \"color\": \"#999999\", \"slug\": \"new\", \"order\": 1}, {\"is_closed\": false, \"name\": \"Ready\", \"color\": \"#ff8a84\", \"slug\": \"ready\", \"order\": 2}, {\"is_closed\": false, \"name\": \"In progress\", \"color\": \"#ff9900\", \"slug\": \"in-progress\", \"order\": 3}, {\"is_closed\": false, \"name\": \"Ready for test\", \"color\": \"#fcc000\", \"slug\": \"ready-for-test\", \"order\": 4}, {\"is_closed\": true, \"name\": \"Done\", \"color\": \"#669900\", \"slug\": \"done\", \"order\": 5}]",
-        "us_statuses": "[{\"is_archived\": false, \"name\": \"New\", \"slug\": \"new\", \"order\": 1, \"color\": \"#999999\", \"wip_limit\": null, \"is_closed\": false}, {\"is_archived\": false, \"name\": \"Ready\", \"slug\": \"ready\", \"order\": 2, \"color\": \"#ff8a84\", \"wip_limit\": null, \"is_closed\": false}, {\"is_archived\": false, \"name\": \"In progress\", \"slug\": \"in-progress\", \"order\": 3, \"color\": \"#ff9900\", \"wip_limit\": null, \"is_closed\": false}, {\"is_archived\": false, \"name\": \"Ready for test\", \"slug\": \"ready-for-test\", \"order\": 4, \"color\": \"#fcc000\", \"wip_limit\": null, \"is_closed\": false}, {\"is_archived\": false, \"name\": \"Done\", \"slug\": \"done\", \"order\": 5, \"color\": \"#669900\", \"wip_limit\": null, \"is_closed\": true}, {\"is_archived\": true, \"name\": \"Archived\", \"slug\": \"archived\", \"order\": 6, \"color\": \"#5c3566\", \"wip_limit\": null, \"is_closed\": true}]",
-        "points": "[{\"value\": null, \"name\": \"?\", \"order\": 1}, {\"value\": 0.0, \"name\": \"0\", \"order\": 2}, {\"value\": 0.5, \"name\": \"1/2\", \"order\": 3}, {\"value\": 1.0, \"name\": \"1\", \"order\": 4}, {\"value\": 2.0, \"name\": \"2\", \"order\": 5}, {\"value\": 3.0, \"name\": \"3\", \"order\": 6}, {\"value\": 5.0, \"name\": \"5\", \"order\": 7}, {\"value\": 8.0, \"name\": \"8\", \"order\": 8}, {\"value\": 10.0, \"name\": \"10\", \"order\": 9}, {\"value\": 13.0, \"name\": \"13\", \"order\": 10}, {\"value\": 20.0, \"name\": \"20\", \"order\": 11}, {\"value\": 40.0, \"name\": \"40\", \"order\": 12}]",
-        "task_statuses": "[{\"is_closed\": false, \"name\": \"New\", \"color\": \"#999999\", \"slug\": \"new\", \"order\": 1}, {\"is_closed\": false, \"name\": \"In progress\", \"color\": \"#ff9900\", \"slug\": \"in-progress\", \"order\": 2}, {\"is_closed\": true, \"name\": \"Ready for test\", \"color\": \"#ffcc00\", \"slug\": \"ready-for-test\", \"order\": 3}, {\"is_closed\": true, \"name\": \"Closed\", \"color\": \"#669900\", \"slug\": \"closed\", \"order\": 4}, {\"is_closed\": false, \"name\": \"Needs Info\", \"color\": \"#999999\", \"slug\": \"needs-info\", \"order\": 5}]",
-        "issue_statuses": "[{\"is_closed\": false, \"name\": \"New\", \"color\": \"#8C2318\", \"slug\": \"new\", \"order\": 1}, {\"is_closed\": false, \"name\": \"In progress\", \"color\": \"#5E8C6A\", \"slug\": \"in-progress\", \"order\": 2}, {\"is_closed\": true, \"name\": \"Ready for test\", \"color\": \"#88A65E\", \"slug\": \"ready-for-test\", \"order\": 3}, {\"is_closed\": true, \"name\": \"Closed\", \"color\": \"#BFB35A\", \"slug\": \"closed\", \"order\": 4}, {\"is_closed\": false, \"name\": \"Needs Info\", \"color\": \"#89BAB4\", \"slug\": \"needs-info\", \"order\": 5}, {\"is_closed\": true, \"name\": \"Rejected\", \"color\": \"#CC0000\", \"slug\": \"rejected\", \"order\": 6}, {\"is_closed\": false, \"name\": \"Postponed\", \"color\": \"#666666\", \"slug\": \"posponed\", \"order\": 7}]",
-        "issue_types": "[{\"name\": \"Bug\", \"color\": \"#89BAB4\", \"order\": 1}, {\"name\": \"Question\", \"color\": \"#ba89a8\", \"order\": 2}, {\"name\": \"Enhancement\", \"color\": \"#89a8ba\", \"order\": 3}]",
-        "priorities": "[{\"name\": \"Low\", \"color\": \"#666666\", \"order\": 1}, {\"name\": \"Normal\", \"color\": \"#669933\", \"order\": 3}, {\"name\": \"High\", \"color\": \"#CC0000\", \"order\": 5}]",
-        "severities": "[{\"name\": \"Wishlist\", \"color\": \"#666666\", \"order\": 1}, {\"name\": \"Minor\", \"color\": \"#669933\", \"order\": 2}, {\"name\": \"Normal\", \"color\": \"#0000FF\", \"order\": 3}, {\"name\": \"Important\", \"color\": \"#FFA500\", \"order\": 4}, {\"name\": \"Critical\", \"color\": \"#CC0000\", \"order\": 5}]",
-        "roles": "[{\"name\": \"UX\", \"computable\": true, \"slug\": \"ux\", \"permissions\": [\"add_issue\", \"modify_issue\", \"delete_issue\", \"view_issues\", \"add_milestone\", \"modify_milestone\", \"delete_milestone\", \"view_milestones\", \"view_project\", \"add_task\", \"modify_task\", \"delete_task\", \"view_tasks\", \"add_us\", \"modify_us\", \"delete_us\", \"view_us\", \"add_wiki_page\", \"modify_wiki_page\", \"delete_wiki_page\", \"view_wiki_pages\", \"add_wiki_link\", \"delete_wiki_link\", \"view_wiki_links\", \"view_epics\", \"add_epic\", \"modify_epic\", \"delete_epic\", \"comment_epic\", \"comment_us\", \"comment_task\", \"comment_issue\", \"comment_wiki_page\"], \"order\": 10}, {\"name\": \"Design\", \"computable\": true, \"slug\": \"design\", \"permissions\": [\"add_issue\", \"modify_issue\", \"delete_issue\", \"view_issues\", \"add_milestone\", \"modify_milestone\", \"delete_milestone\", \"view_milestones\", \"view_project\", \"add_task\", \"modify_task\", \"delete_task\", \"view_tasks\", \"add_us\", \"modify_us\", \"delete_us\", \"view_us\", \"add_wiki_page\", \"modify_wiki_page\", \"delete_wiki_page\", \"view_wiki_pages\", \"add_wiki_link\", \"delete_wiki_link\", \"view_wiki_links\", \"view_epics\", \"add_epic\", \"modify_epic\", \"delete_epic\", \"comment_epic\", \"comment_us\", \"comment_task\", \"comment_issue\", \"comment_wiki_page\"], \"order\": 20}, {\"name\": \"Front\", \"computable\": true, \"slug\": \"front\", \"permissions\": [\"add_issue\", \"modify_issue\", \"delete_issue\", \"view_issues\", \"add_milestone\", \"modify_milestone\", \"delete_milestone\", \"view_milestones\", \"view_project\", \"add_task\", \"modify_task\", \"delete_task\", \"view_tasks\", \"add_us\", \"modify_us\", \"delete_us\", \"view_us\", \"add_wiki_page\", \"modify_wiki_page\", \"delete_wiki_page\", \"view_wiki_pages\", \"add_wiki_link\", \"delete_wiki_link\", \"view_wiki_links\", \"view_epics\", \"add_epic\", \"modify_epic\", \"delete_epic\", \"comment_epic\", \"comment_us\", \"comment_task\", \"comment_issue\", \"comment_wiki_page\"], \"order\": 30}, {\"name\": \"Back\", \"computable\": true, \"slug\": \"back\", \"permissions\": [\"add_issue\", \"modify_issue\", \"delete_issue\", \"view_issues\", \"add_milestone\", \"modify_milestone\", \"delete_milestone\", \"view_milestones\", \"view_project\", \"add_task\", \"modify_task\", \"delete_task\", \"view_tasks\", \"add_us\", \"modify_us\", \"delete_us\", \"view_us\", \"add_wiki_page\", \"modify_wiki_page\", \"delete_wiki_page\", \"view_wiki_pages\", \"add_wiki_link\", \"delete_wiki_link\", \"view_wiki_links\", \"view_epics\", \"add_epic\", \"modify_epic\", \"delete_epic\", \"comment_epic\", \"comment_us\", \"comment_task\", \"comment_issue\", \"comment_wiki_page\"], \"order\": 40}, {\"name\": \"Product Owner\", \"computable\": false, \"slug\": \"product-owner\", \"permissions\": [\"add_issue\", \"modify_issue\", \"delete_issue\", \"view_issues\", \"add_milestone\", \"modify_milestone\", \"delete_milestone\", \"view_milestones\", \"view_project\", \"add_task\", \"modify_task\", \"delete_task\", \"view_tasks\", \"add_us\", \"modify_us\", \"delete_us\", \"view_us\", \"add_wiki_page\", \"modify_wiki_page\", \"delete_wiki_page\", \"view_wiki_pages\", \"add_wiki_link\", \"delete_wiki_link\", \"view_wiki_links\", \"view_epics\", \"add_epic\", \"modify_epic\", \"delete_epic\", \"comment_epic\", \"comment_us\", \"comment_task\", \"comment_issue\", \"comment_wiki_page\"], \"order\": 50}, {\"name\": \"Stakeholder\", \"computable\": false, \"slug\": \"stakeholder\", \"permissions\": [\"add_issue\", \"modify_issue\", \"delete_issue\", \"view_issues\", \"view_milestones\", \"view_project\", \"view_tasks\", \"view_us\", \"modify_wiki_page\", \"view_wiki_pages\", \"add_wiki_link\", \"delete_wiki_link\", \"view_wiki_links\", \"view_epics\", \"comment_epic\", \"comment_us\", \"comment_task\", \"comment_issue\", \"comment_wiki_page\"], \"order\": 60}]"
+        "default_options": {
+            "points": "?",
+            "priority": "Normal",
+            "us_status": "New",
+            "issue_type": "Bug",
+            "epic_status": "New",
+            "severity": "Normal",
+            "task_status": "New",
+            "issue_status": "New"
+        },
+        "epic_statuses": [
+            {
+                "slug": "new",
+                "color": "#999999",
+                "name": "New",
+                "order": 1,
+                "is_closed": false
+            },
+            {
+                "slug": "ready",
+                "color": "#ff8a84",
+                "name": "Ready",
+                "order": 2,
+                "is_closed": false
+            },
+            {
+                "slug": "in-progress",
+                "color": "#ff9900",
+                "name": "In progress",
+                "order": 3,
+                "is_closed": false
+            },
+            {
+                "slug": "ready-for-test",
+                "color": "#fcc000",
+                "name": "Ready for test",
+                "order": 4,
+                "is_closed": false
+            },
+            {
+                "slug": "done",
+                "color": "#669900",
+                "name": "Done",
+                "order": 5,
+                "is_closed": true
+            }
+        ],
+        "us_statuses": [
+            {
+                "slug": "new",
+                "name": "New",
+                "order": 1,
+                "is_archived": false,
+                "color": "#999999",
+                "is_closed": false,
+                "wip_limit": null
+            },
+            {
+                "slug": "ready",
+                "name": "Ready",
+                "order": 2,
+                "is_archived": false,
+                "color": "#ff8a84",
+                "is_closed": false,
+                "wip_limit": null
+            },
+            {
+                "slug": "in-progress",
+                "name": "In progress",
+                "order": 3,
+                "is_archived": false,
+                "color": "#ff9900",
+                "is_closed": false,
+                "wip_limit": null
+            },
+            {
+                "slug": "ready-for-test",
+                "name": "Ready for test",
+                "order": 4,
+                "is_archived": false,
+                "color": "#fcc000",
+                "is_closed": false,
+                "wip_limit": null
+            },
+            {
+                "slug": "done",
+                "name": "Done",
+                "order": 5,
+                "is_archived": false,
+                "color": "#669900",
+                "is_closed": true,
+                "wip_limit": null
+            },
+            {
+                "slug": "archived",
+                "name": "Archived",
+                "order": 6,
+                "is_archived": true,
+                "color": "#5c3566",
+                "is_closed": true,
+                "wip_limit": null
+            }
+        ],
+        "points": [
+            {
+                "name": "?",
+                "order": 1,
+                "value": null
+            },
+            {
+                "name": "0",
+                "order": 2,
+                "value": 0.0
+            },
+            {
+                "name": "1/2",
+                "order": 3,
+                "value": 0.5
+            },
+            {
+                "name": "1",
+                "order": 4,
+                "value": 1.0
+            },
+            {
+                "name": "2",
+                "order": 5,
+                "value": 2.0
+            },
+            {
+                "name": "3",
+                "order": 6,
+                "value": 3.0
+            },
+            {
+                "name": "5",
+                "order": 7,
+                "value": 5.0
+            },
+            {
+                "name": "8",
+                "order": 8,
+                "value": 8.0
+            },
+            {
+                "name": "10",
+                "order": 9,
+                "value": 10.0
+            },
+            {
+                "name": "13",
+                "order": 10,
+                "value": 13.0
+            },
+            {
+                "name": "20",
+                "order": 11,
+                "value": 20.0
+            },
+            {
+                "name": "40",
+                "order": 12,
+                "value": 40.0
+            }
+        ],
+        "task_statuses": [
+            {
+                "slug": "new",
+                "color": "#999999",
+                "name": "New",
+                "order": 1,
+                "is_closed": false
+            },
+            {
+                "slug": "in-progress",
+                "color": "#ff9900",
+                "name": "In progress",
+                "order": 2,
+                "is_closed": false
+            },
+            {
+                "slug": "ready-for-test",
+                "color": "#ffcc00",
+                "name": "Ready for test",
+                "order": 3,
+                "is_closed": true
+            },
+            {
+                "slug": "closed",
+                "color": "#669900",
+                "name": "Closed",
+                "order": 4,
+                "is_closed": true
+            },
+            {
+                "slug": "needs-info",
+                "color": "#999999",
+                "name": "Needs Info",
+                "order": 5,
+                "is_closed": false
+            }
+        ],
+        "issue_statuses": [
+            {
+                "slug": "new",
+                "color": "#8C2318",
+                "name": "New",
+                "order": 1,
+                "is_closed": false
+            },
+            {
+                "slug": "in-progress",
+                "color": "#5E8C6A",
+                "name": "In progress",
+                "order": 2,
+                "is_closed": false
+            },
+            {
+                "slug": "ready-for-test",
+                "color": "#88A65E",
+                "name": "Ready for test",
+                "order": 3,
+                "is_closed": true
+            },
+            {
+                "slug": "closed",
+                "color": "#BFB35A",
+                "name": "Closed",
+                "order": 4,
+                "is_closed": true
+            },
+            {
+                "slug": "needs-info",
+                "color": "#89BAB4",
+                "name": "Needs Info",
+                "order": 5,
+                "is_closed": false
+            },
+            {
+                "slug": "rejected",
+                "color": "#CC0000",
+                "name": "Rejected",
+                "order": 6,
+                "is_closed": true
+            },
+            {
+                "slug": "posponed",
+                "color": "#666666",
+                "name": "Postponed",
+                "order": 7,
+                "is_closed": false
+            }
+        ],
+        "issue_types": [
+            {
+                "color": "#89BAB4",
+                "name": "Bug",
+                "order": 1
+            },
+            {
+                "color": "#ba89a8",
+                "name": "Question",
+                "order": 2
+            },
+            {
+                "color": "#89a8ba",
+                "name": "Enhancement",
+                "order": 3
+            }
+        ],
+        "priorities": [
+            {
+                "color": "#666666",
+                "name": "Low",
+                "order": 1
+            },
+            {
+                "color": "#669933",
+                "name": "Normal",
+                "order": 3
+            },
+            {
+                "color": "#CC0000",
+                "name": "High",
+                "order": 5
+            }
+        ],
+        "severities": [
+            {
+                "color": "#666666",
+                "name": "Wishlist",
+                "order": 1
+            },
+            {
+                "color": "#669933",
+                "name": "Minor",
+                "order": 2
+            },
+            {
+                "color": "#0000FF",
+                "name": "Normal",
+                "order": 3
+            },
+            {
+                "color": "#FFA500",
+                "name": "Important",
+                "order": 4
+            },
+            {
+                "color": "#CC0000",
+                "name": "Critical",
+                "order": 5
+            }
+        ],
+        "roles": [
+            {
+                "slug": "ux",
+                "computable": true,
+                "name": "UX",
+                "order": 10,
+                "permissions": [
+                    "add_issue",
+                    "modify_issue",
+                    "delete_issue",
+                    "view_issues",
+                    "add_milestone",
+                    "modify_milestone",
+                    "delete_milestone",
+                    "view_milestones",
+                    "view_project",
+                    "add_task",
+                    "modify_task",
+                    "delete_task",
+                    "view_tasks",
+                    "add_us",
+                    "modify_us",
+                    "delete_us",
+                    "view_us",
+                    "add_wiki_page",
+                    "modify_wiki_page",
+                    "delete_wiki_page",
+                    "view_wiki_pages",
+                    "add_wiki_link",
+                    "delete_wiki_link",
+                    "view_wiki_links",
+                    "view_epics",
+                    "add_epic",
+                    "modify_epic",
+                    "delete_epic",
+                    "comment_epic",
+                    "comment_us",
+                    "comment_task",
+                    "comment_issue",
+                    "comment_wiki_page"
+                ]
+            },
+            {
+                "slug": "design",
+                "computable": true,
+                "name": "Design",
+                "order": 20,
+                "permissions": [
+                    "add_issue",
+                    "modify_issue",
+                    "delete_issue",
+                    "view_issues",
+                    "add_milestone",
+                    "modify_milestone",
+                    "delete_milestone",
+                    "view_milestones",
+                    "view_project",
+                    "add_task",
+                    "modify_task",
+                    "delete_task",
+                    "view_tasks",
+                    "add_us",
+                    "modify_us",
+                    "delete_us",
+                    "view_us",
+                    "add_wiki_page",
+                    "modify_wiki_page",
+                    "delete_wiki_page",
+                    "view_wiki_pages",
+                    "add_wiki_link",
+                    "delete_wiki_link",
+                    "view_wiki_links",
+                    "view_epics",
+                    "add_epic",
+                    "modify_epic",
+                    "delete_epic",
+                    "comment_epic",
+                    "comment_us",
+                    "comment_task",
+                    "comment_issue",
+                    "comment_wiki_page"
+                ]
+            },
+            {
+                "slug": "front",
+                "computable": true,
+                "name": "Front",
+                "order": 30,
+                "permissions": [
+                    "add_issue",
+                    "modify_issue",
+                    "delete_issue",
+                    "view_issues",
+                    "add_milestone",
+                    "modify_milestone",
+                    "delete_milestone",
+                    "view_milestones",
+                    "view_project",
+                    "add_task",
+                    "modify_task",
+                    "delete_task",
+                    "view_tasks",
+                    "add_us",
+                    "modify_us",
+                    "delete_us",
+                    "view_us",
+                    "add_wiki_page",
+                    "modify_wiki_page",
+                    "delete_wiki_page",
+                    "view_wiki_pages",
+                    "add_wiki_link",
+                    "delete_wiki_link",
+                    "view_wiki_links",
+                    "view_epics",
+                    "add_epic",
+                    "modify_epic",
+                    "delete_epic",
+                    "comment_epic",
+                    "comment_us",
+                    "comment_task",
+                    "comment_issue",
+                    "comment_wiki_page"
+                ]
+            },
+            {
+                "slug": "back",
+                "computable": true,
+                "name": "Back",
+                "order": 40,
+                "permissions": [
+                    "add_issue",
+                    "modify_issue",
+                    "delete_issue",
+                    "view_issues",
+                    "add_milestone",
+                    "modify_milestone",
+                    "delete_milestone",
+                    "view_milestones",
+                    "view_project",
+                    "add_task",
+                    "modify_task",
+                    "delete_task",
+                    "view_tasks",
+                    "add_us",
+                    "modify_us",
+                    "delete_us",
+                    "view_us",
+                    "add_wiki_page",
+                    "modify_wiki_page",
+                    "delete_wiki_page",
+                    "view_wiki_pages",
+                    "add_wiki_link",
+                    "delete_wiki_link",
+                    "view_wiki_links",
+                    "view_epics",
+                    "add_epic",
+                    "modify_epic",
+                    "delete_epic",
+                    "comment_epic",
+                    "comment_us",
+                    "comment_task",
+                    "comment_issue",
+                    "comment_wiki_page"
+                ]
+            },
+            {
+                "slug": "product-owner",
+                "computable": false,
+                "name": "Product Owner",
+                "order": 50,
+                "permissions": [
+                    "add_issue",
+                    "modify_issue",
+                    "delete_issue",
+                    "view_issues",
+                    "add_milestone",
+                    "modify_milestone",
+                    "delete_milestone",
+                    "view_milestones",
+                    "view_project",
+                    "add_task",
+                    "modify_task",
+                    "delete_task",
+                    "view_tasks",
+                    "add_us",
+                    "modify_us",
+                    "delete_us",
+                    "view_us",
+                    "add_wiki_page",
+                    "modify_wiki_page",
+                    "delete_wiki_page",
+                    "view_wiki_pages",
+                    "add_wiki_link",
+                    "delete_wiki_link",
+                    "view_wiki_links",
+                    "view_epics",
+                    "add_epic",
+                    "modify_epic",
+                    "delete_epic",
+                    "comment_epic",
+                    "comment_us",
+                    "comment_task",
+                    "comment_issue",
+                    "comment_wiki_page"
+                ]
+            },
+            {
+                "slug": "stakeholder",
+                "computable": false,
+                "name": "Stakeholder",
+                "order": 60,
+                "permissions": [
+                    "add_issue",
+                    "modify_issue",
+                    "delete_issue",
+                    "view_issues",
+                    "view_milestones",
+                    "view_project",
+                    "view_tasks",
+                    "view_us",
+                    "modify_wiki_page",
+                    "view_wiki_pages",
+                    "add_wiki_link",
+                    "delete_wiki_link",
+                    "view_wiki_links",
+                    "view_epics",
+                    "comment_epic",
+                    "comment_us",
+                    "comment_task",
+                    "comment_issue",
+                    "comment_wiki_page"
+                ]
+            }
+        ]
     }
 },
 {
@@ -47,16 +585,554 @@
         "is_issues_activated": false,
         "videoconferences": null,
         "videoconferences_extra_data": "",
-        "default_options": "{\"epic_status\": \"New\", \"issue_status\": \"New\", \"task_status\": \"New\", \"points\": \"?\", \"issue_type\": \"Bug\", \"severity\": \"Normal\", \"priority\": \"Normal\", \"us_status\": \"New\"}",
-        "epic_statuses": "[{\"is_closed\": false, \"name\": \"New\", \"color\": \"#999999\", \"slug\": \"new\", \"order\": 1}, {\"is_closed\": false, \"name\": \"Ready\", \"color\": \"#ff8a84\", \"slug\": \"ready\", \"order\": 2}, {\"is_closed\": false, \"name\": \"In progress\", \"color\": \"#ff9900\", \"slug\": \"in-progress\", \"order\": 3}, {\"is_closed\": false, \"name\": \"Ready for test\", \"color\": \"#fcc000\", \"slug\": \"ready-for-test\", \"order\": 4}, {\"is_closed\": true, \"name\": \"Done\", \"color\": \"#669900\", \"slug\": \"done\", \"order\": 5}]",
-        "us_statuses": "[{\"is_archived\": false, \"name\": \"New\", \"slug\": \"new\", \"order\": 1, \"color\": \"#999999\", \"wip_limit\": null, \"is_closed\": false}, {\"is_archived\": false, \"name\": \"Ready\", \"slug\": \"ready\", \"order\": 2, \"color\": \"#f57900\", \"wip_limit\": null, \"is_closed\": false}, {\"is_archived\": false, \"name\": \"In progress\", \"slug\": \"in-progress\", \"order\": 3, \"color\": \"#729fcf\", \"wip_limit\": null, \"is_closed\": false}, {\"is_archived\": false, \"name\": \"Ready for test\", \"slug\": \"ready-for-test\", \"order\": 4, \"color\": \"#4e9a06\", \"wip_limit\": null, \"is_closed\": false}, {\"is_archived\": false, \"name\": \"Done\", \"slug\": \"done\", \"order\": 5, \"color\": \"#cc0000\", \"wip_limit\": null, \"is_closed\": true}, {\"is_archived\": true, \"name\": \"Archived\", \"slug\": \"archived\", \"order\": 6, \"color\": \"#5c3566\", \"wip_limit\": null, \"is_closed\": true}]",
-        "points": "[{\"value\": null, \"name\": \"?\", \"order\": 1}, {\"value\": 0.0, \"name\": \"0\", \"order\": 2}, {\"value\": 0.5, \"name\": \"1/2\", \"order\": 3}, {\"value\": 1.0, \"name\": \"1\", \"order\": 4}, {\"value\": 2.0, \"name\": \"2\", \"order\": 5}, {\"value\": 3.0, \"name\": \"3\", \"order\": 6}, {\"value\": 5.0, \"name\": \"5\", \"order\": 7}, {\"value\": 8.0, \"name\": \"8\", \"order\": 8}, {\"value\": 10.0, \"name\": \"10\", \"order\": 9}, {\"value\": 13.0, \"name\": \"13\", \"order\": 10}, {\"value\": 20.0, \"name\": \"20\", \"order\": 11}, {\"value\": 40.0, \"name\": \"40\", \"order\": 12}]",
-        "task_statuses": "[{\"is_closed\": false, \"name\": \"New\", \"color\": \"#999999\", \"slug\": \"new\", \"order\": 1}, {\"is_closed\": false, \"name\": \"In progress\", \"color\": \"#729fcf\", \"slug\": \"in-progress\", \"order\": 2}, {\"is_closed\": true, \"name\": \"Ready for test\", \"color\": \"#f57900\", \"slug\": \"ready-for-test\", \"order\": 3}, {\"is_closed\": true, \"name\": \"Closed\", \"color\": \"#4e9a06\", \"slug\": \"closed\", \"order\": 4}, {\"is_closed\": false, \"name\": \"Needs Info\", \"color\": \"#cc0000\", \"slug\": \"needs-info\", \"order\": 5}]",
-        "issue_statuses": "[{\"is_closed\": false, \"name\": \"New\", \"color\": \"#999999\", \"slug\": \"new\", \"order\": 1}, {\"is_closed\": false, \"name\": \"In progress\", \"color\": \"#729fcf\", \"slug\": \"in-progress\", \"order\": 2}, {\"is_closed\": true, \"name\": \"Ready for test\", \"color\": \"#f57900\", \"slug\": \"ready-for-test\", \"order\": 3}, {\"is_closed\": true, \"name\": \"Closed\", \"color\": \"#4e9a06\", \"slug\": \"closed\", \"order\": 4}, {\"is_closed\": false, \"name\": \"Needs Info\", \"color\": \"#cc0000\", \"slug\": \"needs-info\", \"order\": 5}, {\"is_closed\": true, \"name\": \"Rejected\", \"color\": \"#d3d7cf\", \"slug\": \"rejected\", \"order\": 6}, {\"is_closed\": false, \"name\": \"Postponed\", \"color\": \"#75507b\", \"slug\": \"posponed\", \"order\": 7}]",
-        "issue_types": "[{\"name\": \"Bug\", \"color\": \"#cc0000\", \"order\": 1}, {\"name\": \"Question\", \"color\": \"#729fcf\", \"order\": 2}, {\"name\": \"Enhancement\", \"color\": \"#4e9a06\", \"order\": 3}]",
-        "priorities": "[{\"name\": \"Low\", \"color\": \"#999999\", \"order\": 1}, {\"name\": \"Normal\", \"color\": \"#4e9a06\", \"order\": 3}, {\"name\": \"High\", \"color\": \"#CC0000\", \"order\": 5}]",
-        "severities": "[{\"name\": \"Wishlist\", \"color\": \"#999999\", \"order\": 1}, {\"name\": \"Minor\", \"color\": \"#729fcf\", \"order\": 2}, {\"name\": \"Normal\", \"color\": \"#4e9a06\", \"order\": 3}, {\"name\": \"Important\", \"color\": \"#f57900\", \"order\": 4}, {\"name\": \"Critical\", \"color\": \"#CC0000\", \"order\": 5}]",
-        "roles": "[{\"name\": \"UX\", \"computable\": true, \"slug\": \"ux\", \"permissions\": [\"add_issue\", \"modify_issue\", \"delete_issue\", \"view_issues\", \"add_milestone\", \"modify_milestone\", \"delete_milestone\", \"view_milestones\", \"view_project\", \"add_task\", \"modify_task\", \"delete_task\", \"view_tasks\", \"add_us\", \"modify_us\", \"delete_us\", \"view_us\", \"add_wiki_page\", \"modify_wiki_page\", \"delete_wiki_page\", \"view_wiki_pages\", \"add_wiki_link\", \"delete_wiki_link\", \"view_wiki_links\", \"view_epics\", \"add_epic\", \"modify_epic\", \"delete_epic\", \"comment_epic\", \"comment_us\", \"comment_task\", \"comment_issue\", \"comment_wiki_page\"], \"order\": 10}, {\"name\": \"Design\", \"computable\": true, \"slug\": \"design\", \"permissions\": [\"add_issue\", \"modify_issue\", \"delete_issue\", \"view_issues\", \"add_milestone\", \"modify_milestone\", \"delete_milestone\", \"view_milestones\", \"view_project\", \"add_task\", \"modify_task\", \"delete_task\", \"view_tasks\", \"add_us\", \"modify_us\", \"delete_us\", \"view_us\", \"add_wiki_page\", \"modify_wiki_page\", \"delete_wiki_page\", \"view_wiki_pages\", \"add_wiki_link\", \"delete_wiki_link\", \"view_wiki_links\", \"view_epics\", \"add_epic\", \"modify_epic\", \"delete_epic\", \"comment_epic\", \"comment_us\", \"comment_task\", \"comment_issue\", \"comment_wiki_page\"], \"order\": 20}, {\"name\": \"Front\", \"computable\": true, \"slug\": \"front\", \"permissions\": [\"add_issue\", \"modify_issue\", \"delete_issue\", \"view_issues\", \"add_milestone\", \"modify_milestone\", \"delete_milestone\", \"view_milestones\", \"view_project\", \"add_task\", \"modify_task\", \"delete_task\", \"view_tasks\", \"add_us\", \"modify_us\", \"delete_us\", \"view_us\", \"add_wiki_page\", \"modify_wiki_page\", \"delete_wiki_page\", \"view_wiki_pages\", \"add_wiki_link\", \"delete_wiki_link\", \"view_wiki_links\", \"view_epics\", \"add_epic\", \"modify_epic\", \"delete_epic\", \"comment_epic\", \"comment_us\", \"comment_task\", \"comment_issue\", \"comment_wiki_page\"], \"order\": 30}, {\"name\": \"Back\", \"computable\": true, \"slug\": \"back\", \"permissions\": [\"add_issue\", \"modify_issue\", \"delete_issue\", \"view_issues\", \"add_milestone\", \"modify_milestone\", \"delete_milestone\", \"view_milestones\", \"view_project\", \"add_task\", \"modify_task\", \"delete_task\", \"view_tasks\", \"add_us\", \"modify_us\", \"delete_us\", \"view_us\", \"add_wiki_page\", \"modify_wiki_page\", \"delete_wiki_page\", \"view_wiki_pages\", \"add_wiki_link\", \"delete_wiki_link\", \"view_wiki_links\", \"view_epics\", \"add_epic\", \"modify_epic\", \"delete_epic\", \"comment_epic\", \"comment_us\", \"comment_task\", \"comment_issue\", \"comment_wiki_page\"], \"order\": 40}, {\"name\": \"Product Owner\", \"computable\": false, \"slug\": \"product-owner\", \"permissions\": [\"add_issue\", \"modify_issue\", \"delete_issue\", \"view_issues\", \"add_milestone\", \"modify_milestone\", \"delete_milestone\", \"view_milestones\", \"view_project\", \"add_task\", \"modify_task\", \"delete_task\", \"view_tasks\", \"add_us\", \"modify_us\", \"delete_us\", \"view_us\", \"add_wiki_page\", \"modify_wiki_page\", \"delete_wiki_page\", \"view_wiki_pages\", \"add_wiki_link\", \"delete_wiki_link\", \"view_wiki_links\", \"view_epics\", \"add_epic\", \"modify_epic\", \"delete_epic\", \"comment_epic\", \"comment_us\", \"comment_task\", \"comment_issue\", \"comment_wiki_page\"], \"order\": 50}, {\"name\": \"Stakeholder\", \"computable\": false, \"slug\": \"stakeholder\", \"permissions\": [\"add_issue\", \"modify_issue\", \"delete_issue\", \"view_issues\", \"view_milestones\", \"view_project\", \"view_tasks\", \"view_us\", \"modify_wiki_page\", \"view_wiki_pages\", \"add_wiki_link\", \"delete_wiki_link\", \"view_wiki_links\", \"view_epics\", \"comment_epic\", \"comment_us\", \"comment_task\", \"comment_issue\", \"comment_wiki_page\"], \"order\": 60}]"
+        "default_options": {
+            "points": "?",
+            "priority": "Normal",
+            "us_status": "New",
+            "issue_type": "Bug",
+            "epic_status": "New",
+            "severity": "Normal",
+            "task_status": "New",
+            "issue_status": "New"
+        },
+        "epic_statuses": [
+            {
+                "slug": "new",
+                "color": "#999999",
+                "name": "New",
+                "order": 1,
+                "is_closed": false
+            },
+            {
+                "slug": "ready",
+                "color": "#ff8a84",
+                "name": "Ready",
+                "order": 2,
+                "is_closed": false
+            },
+            {
+                "slug": "in-progress",
+                "color": "#ff9900",
+                "name": "In progress",
+                "order": 3,
+                "is_closed": false
+            },
+            {
+                "slug": "ready-for-test",
+                "color": "#fcc000",
+                "name": "Ready for test",
+                "order": 4,
+                "is_closed": false
+            },
+            {
+                "slug": "done",
+                "color": "#669900",
+                "name": "Done",
+                "order": 5,
+                "is_closed": true
+            }
+        ],
+        "us_statuses": [
+            {
+                "slug": "new",
+                "name": "New",
+                "order": 1,
+                "is_archived": false,
+                "color": "#999999",
+                "is_closed": false,
+                "wip_limit": null
+            },
+            {
+                "slug": "ready",
+                "name": "Ready",
+                "order": 2,
+                "is_archived": false,
+                "color": "#f57900",
+                "is_closed": false,
+                "wip_limit": null
+            },
+            {
+                "slug": "in-progress",
+                "name": "In progress",
+                "order": 3,
+                "is_archived": false,
+                "color": "#729fcf",
+                "is_closed": false,
+                "wip_limit": null
+            },
+            {
+                "slug": "ready-for-test",
+                "name": "Ready for test",
+                "order": 4,
+                "is_archived": false,
+                "color": "#4e9a06",
+                "is_closed": false,
+                "wip_limit": null
+            },
+            {
+                "slug": "done",
+                "name": "Done",
+                "order": 5,
+                "is_archived": false,
+                "color": "#cc0000",
+                "is_closed": true,
+                "wip_limit": null
+            },
+            {
+                "slug": "archived",
+                "name": "Archived",
+                "order": 6,
+                "is_archived": true,
+                "color": "#5c3566",
+                "is_closed": true,
+                "wip_limit": null
+            }
+        ],
+        "points": [
+            {
+                "name": "?",
+                "order": 1,
+                "value": null
+            },
+            {
+                "name": "0",
+                "order": 2,
+                "value": 0.0
+            },
+            {
+                "name": "1/2",
+                "order": 3,
+                "value": 0.5
+            },
+            {
+                "name": "1",
+                "order": 4,
+                "value": 1.0
+            },
+            {
+                "name": "2",
+                "order": 5,
+                "value": 2.0
+            },
+            {
+                "name": "3",
+                "order": 6,
+                "value": 3.0
+            },
+            {
+                "name": "5",
+                "order": 7,
+                "value": 5.0
+            },
+            {
+                "name": "8",
+                "order": 8,
+                "value": 8.0
+            },
+            {
+                "name": "10",
+                "order": 9,
+                "value": 10.0
+            },
+            {
+                "name": "13",
+                "order": 10,
+                "value": 13.0
+            },
+            {
+                "name": "20",
+                "order": 11,
+                "value": 20.0
+            },
+            {
+                "name": "40",
+                "order": 12,
+                "value": 40.0
+            }
+        ],
+        "task_statuses": [
+            {
+                "slug": "new",
+                "color": "#999999",
+                "name": "New",
+                "order": 1,
+                "is_closed": false
+            },
+            {
+                "slug": "in-progress",
+                "color": "#729fcf",
+                "name": "In progress",
+                "order": 2,
+                "is_closed": false
+            },
+            {
+                "slug": "ready-for-test",
+                "color": "#f57900",
+                "name": "Ready for test",
+                "order": 3,
+                "is_closed": true
+            },
+            {
+                "slug": "closed",
+                "color": "#4e9a06",
+                "name": "Closed",
+                "order": 4,
+                "is_closed": true
+            },
+            {
+                "slug": "needs-info",
+                "color": "#cc0000",
+                "name": "Needs Info",
+                "order": 5,
+                "is_closed": false
+            }
+        ],
+        "issue_statuses": [
+            {
+                "slug": "new",
+                "color": "#999999",
+                "name": "New",
+                "order": 1,
+                "is_closed": false
+            },
+            {
+                "slug": "in-progress",
+                "color": "#729fcf",
+                "name": "In progress",
+                "order": 2,
+                "is_closed": false
+            },
+            {
+                "slug": "ready-for-test",
+                "color": "#f57900",
+                "name": "Ready for test",
+                "order": 3,
+                "is_closed": true
+            },
+            {
+                "slug": "closed",
+                "color": "#4e9a06",
+                "name": "Closed",
+                "order": 4,
+                "is_closed": true
+            },
+            {
+                "slug": "needs-info",
+                "color": "#cc0000",
+                "name": "Needs Info",
+                "order": 5,
+                "is_closed": false
+            },
+            {
+                "slug": "rejected",
+                "color": "#d3d7cf",
+                "name": "Rejected",
+                "order": 6,
+                "is_closed": true
+            },
+            {
+                "slug": "posponed",
+                "color": "#75507b",
+                "name": "Postponed",
+                "order": 7,
+                "is_closed": false
+            }
+        ],
+        "issue_types": [
+            {
+                "color": "#cc0000",
+                "name": "Bug",
+                "order": 1
+            },
+            {
+                "color": "#729fcf",
+                "name": "Question",
+                "order": 2
+            },
+            {
+                "color": "#4e9a06",
+                "name": "Enhancement",
+                "order": 3
+            }
+        ],
+        "priorities": [
+            {
+                "color": "#999999",
+                "name": "Low",
+                "order": 1
+            },
+            {
+                "color": "#4e9a06",
+                "name": "Normal",
+                "order": 3
+            },
+            {
+                "color": "#CC0000",
+                "name": "High",
+                "order": 5
+            }
+        ],
+        "severities": [
+            {
+                "color": "#999999",
+                "name": "Wishlist",
+                "order": 1
+            },
+            {
+                "color": "#729fcf",
+                "name": "Minor",
+                "order": 2
+            },
+            {
+                "color": "#4e9a06",
+                "name": "Normal",
+                "order": 3
+            },
+            {
+                "color": "#f57900",
+                "name": "Important",
+                "order": 4
+            },
+            {
+                "color": "#CC0000",
+                "name": "Critical",
+                "order": 5
+            }
+        ],
+        "roles": [
+            {
+                "slug": "ux",
+                "computable": true,
+                "name": "UX",
+                "order": 10,
+                "permissions": [
+                    "add_issue",
+                    "modify_issue",
+                    "delete_issue",
+                    "view_issues",
+                    "add_milestone",
+                    "modify_milestone",
+                    "delete_milestone",
+                    "view_milestones",
+                    "view_project",
+                    "add_task",
+                    "modify_task",
+                    "delete_task",
+                    "view_tasks",
+                    "add_us",
+                    "modify_us",
+                    "delete_us",
+                    "view_us",
+                    "add_wiki_page",
+                    "modify_wiki_page",
+                    "delete_wiki_page",
+                    "view_wiki_pages",
+                    "add_wiki_link",
+                    "delete_wiki_link",
+                    "view_wiki_links",
+                    "view_epics",
+                    "add_epic",
+                    "modify_epic",
+                    "delete_epic",
+                    "comment_epic",
+                    "comment_us",
+                    "comment_task",
+                    "comment_issue",
+                    "comment_wiki_page"
+                ]
+            },
+            {
+                "slug": "design",
+                "computable": true,
+                "name": "Design",
+                "order": 20,
+                "permissions": [
+                    "add_issue",
+                    "modify_issue",
+                    "delete_issue",
+                    "view_issues",
+                    "add_milestone",
+                    "modify_milestone",
+                    "delete_milestone",
+                    "view_milestones",
+                    "view_project",
+                    "add_task",
+                    "modify_task",
+                    "delete_task",
+                    "view_tasks",
+                    "add_us",
+                    "modify_us",
+                    "delete_us",
+                    "view_us",
+                    "add_wiki_page",
+                    "modify_wiki_page",
+                    "delete_wiki_page",
+                    "view_wiki_pages",
+                    "add_wiki_link",
+                    "delete_wiki_link",
+                    "view_wiki_links",
+                    "view_epics",
+                    "add_epic",
+                    "modify_epic",
+                    "delete_epic",
+                    "comment_epic",
+                    "comment_us",
+                    "comment_task",
+                    "comment_issue",
+                    "comment_wiki_page"
+                ]
+            },
+            {
+                "slug": "front",
+                "computable": true,
+                "name": "Front",
+                "order": 30,
+                "permissions": [
+                    "add_issue",
+                    "modify_issue",
+                    "delete_issue",
+                    "view_issues",
+                    "add_milestone",
+                    "modify_milestone",
+                    "delete_milestone",
+                    "view_milestones",
+                    "view_project",
+                    "add_task",
+                    "modify_task",
+                    "delete_task",
+                    "view_tasks",
+                    "add_us",
+                    "modify_us",
+                    "delete_us",
+                    "view_us",
+                    "add_wiki_page",
+                    "modify_wiki_page",
+                    "delete_wiki_page",
+                    "view_wiki_pages",
+                    "add_wiki_link",
+                    "delete_wiki_link",
+                    "view_wiki_links",
+                    "view_epics",
+                    "add_epic",
+                    "modify_epic",
+                    "delete_epic",
+                    "comment_epic",
+                    "comment_us",
+                    "comment_task",
+                    "comment_issue",
+                    "comment_wiki_page"
+                ]
+            },
+            {
+                "slug": "back",
+                "computable": true,
+                "name": "Back",
+                "order": 40,
+                "permissions": [
+                    "add_issue",
+                    "modify_issue",
+                    "delete_issue",
+                    "view_issues",
+                    "add_milestone",
+                    "modify_milestone",
+                    "delete_milestone",
+                    "view_milestones",
+                    "view_project",
+                    "add_task",
+                    "modify_task",
+                    "delete_task",
+                    "view_tasks",
+                    "add_us",
+                    "modify_us",
+                    "delete_us",
+                    "view_us",
+                    "add_wiki_page",
+                    "modify_wiki_page",
+                    "delete_wiki_page",
+                    "view_wiki_pages",
+                    "add_wiki_link",
+                    "delete_wiki_link",
+                    "view_wiki_links",
+                    "view_epics",
+                    "add_epic",
+                    "modify_epic",
+                    "delete_epic",
+                    "comment_epic",
+                    "comment_us",
+                    "comment_task",
+                    "comment_issue",
+                    "comment_wiki_page"
+                ]
+            },
+            {
+                "slug": "product-owner",
+                "computable": false,
+                "name": "Product Owner",
+                "order": 50,
+                "permissions": [
+                    "add_issue",
+                    "modify_issue",
+                    "delete_issue",
+                    "view_issues",
+                    "add_milestone",
+                    "modify_milestone",
+                    "delete_milestone",
+                    "view_milestones",
+                    "view_project",
+                    "add_task",
+                    "modify_task",
+                    "delete_task",
+                    "view_tasks",
+                    "add_us",
+                    "modify_us",
+                    "delete_us",
+                    "view_us",
+                    "add_wiki_page",
+                    "modify_wiki_page",
+                    "delete_wiki_page",
+                    "view_wiki_pages",
+                    "add_wiki_link",
+                    "delete_wiki_link",
+                    "view_wiki_links",
+                    "view_epics",
+                    "add_epic",
+                    "modify_epic",
+                    "delete_epic",
+                    "comment_epic",
+                    "comment_us",
+                    "comment_task",
+                    "comment_issue",
+                    "comment_wiki_page"
+                ]
+            },
+            {
+                "slug": "stakeholder",
+                "computable": false,
+                "name": "Stakeholder",
+                "order": 60,
+                "permissions": [
+                    "add_issue",
+                    "modify_issue",
+                    "delete_issue",
+                    "view_issues",
+                    "view_milestones",
+                    "view_project",
+                    "view_tasks",
+                    "view_us",
+                    "modify_wiki_page",
+                    "view_wiki_pages",
+                    "add_wiki_link",
+                    "delete_wiki_link",
+                    "view_wiki_links",
+                    "view_epics",
+                    "comment_epic",
+                    "comment_us",
+                    "comment_task",
+                    "comment_issue",
+                    "comment_wiki_page"
+                ]
+            }
+        ]
     }
 }
 ]

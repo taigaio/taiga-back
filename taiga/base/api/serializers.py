@@ -817,8 +817,18 @@ class ModelSerializer((six.with_metaclass(SerializerMetaclass, BaseSerializer)))
         else:
             # Reverse relationships are only included if they are explicitly
             # present in the `fields` option on the serializer
-            reverse_rels = opts.get_all_related_objects()
-            reverse_rels += opts.get_all_related_many_to_many_objects()
+
+            # NOTE: Rewrite after Django 1.10 upgrade.
+            #       See https://docs.djangoproject.com/es/1.10/ref/models/meta/#migrating-from-the-old-api
+            reverse_rels = [
+                f for f in opts.get_fields()
+                if (f.one_to_many or f.one_to_one)
+                and f.auto_created and not f.concrete
+            ]
+            reverse_rels += [
+                f for f in opts.get_fields(include_hidden=True)
+                if f.many_to_many and f.auto_created
+            ]
 
         for relation in reverse_rels:
             accessor_name = relation.get_accessor_name()
@@ -1024,16 +1034,32 @@ class ModelSerializer((six.with_metaclass(SerializerMetaclass, BaseSerializer)))
         m2m_data = {}
         related_data = {}
         nested_forward_relations = {}
+        model = self.opts.model
         meta = self.opts.model._meta
 
         # Reverse fk or one-to-one relations
-        for (obj, model) in meta.get_all_related_objects_with_model():
+        # NOTE: Rewrite after Django 1.10 upgrade.
+        #       See https://docs.djangoproject.com/es/1.10/ref/models/meta/#migrating-from-the-old-api
+        related_objes_with_models = [
+            (f, f.model if f.model != model else None)
+            for f in meta.get_fields()
+            if (f.one_to_many or f.one_to_one)
+            and f.auto_created and not f.concrete
+        ]
+        for (obj, model) in related_objes_with_models:
             field_name = obj.get_accessor_name()
             if field_name in attrs:
                 related_data[field_name] = attrs.pop(field_name)
 
         # Reverse m2m relations
-        for (obj, model) in meta.get_all_related_m2m_objects_with_model():
+        # NOTE: Rewrite after Django 1.10 upgrade.
+        #       See https://docs.djangoproject.com/es/1.10/ref/models/meta/#migrating-from-the-old-api
+        related_m2m_objects_with_model = [
+            (f, f.model if f.model != model else None)
+            for f in meta.get_fields(include_hidden=True)
+            if f.many_to_many and f.auto_created
+        ]
+        for (obj, model) in related_m2m_objects_with_model:
             field_name = obj.get_accessor_name()
             if field_name in attrs:
                 m2m_data[field_name] = attrs.pop(field_name)

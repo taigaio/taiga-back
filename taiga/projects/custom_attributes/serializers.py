@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from taiga.base.fields import JsonField, Field
+from taiga.base.fields import JSONField, Field
 from taiga.base.api import serializers
 
 

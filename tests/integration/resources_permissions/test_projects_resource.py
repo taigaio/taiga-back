@@ -163,12 +163,18 @@ def test_project_update(client, data):
     ]
 
     project_data = ProjectSerializer(data.private_project2).data
+    # Because in serializer is a dict anin model is a list of lists
+    project_data["tags_colors"] = list(map(list, project_data["tags_colors"].items()))
     project_data["is_private"] = False
+
     results = helper_test_http_method(client, 'put', url, json.dumps(project_data), users)
     assert results == [401, 403, 403, 200]
 
     project_data = ProjectSerializer(data.blocked_project).data
+    # Because in serializer is a dict anin model is a list of lists
+    project_data["tags_colors"] = list(map(list, project_data["tags_colors"].items()))
     project_data["is_private"] = False
+
     results = helper_test_http_method(client, 'put', blocked_url, json.dumps(project_data), users)
     assert results == [401, 403, 403, 451]
 

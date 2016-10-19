@@ -282,6 +282,7 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
+    "django.contrib.postgres",
 
     "taiga.base",
     "taiga.base.api",

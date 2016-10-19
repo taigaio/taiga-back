@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import django_pgjson.fields
+import taiga.base.db.models.fields
 
 
 class Migration(migrations.Migration):
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
                 ('url', models.URLField(verbose_name='URL')),
                 ('status', models.IntegerField(verbose_name='Status code')),
-                ('request_data', django_pgjson.fields.JsonField(verbose_name='Request data')),
+                ('request_data', taiga.base.db.models.fields.JSONField(verbose_name='Request data')),
                 ('response_data', models.TextField(verbose_name='Response data')),
                 ('webhook', models.ForeignKey(related_name='logs', to='webhooks.Webhook')),
             ],

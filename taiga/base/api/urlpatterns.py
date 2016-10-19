@@ -44,7 +44,7 @@
 
 
 from django.core.urlresolvers import RegexURLResolver
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 
 from .settings import api_settings
 
@@ -67,7 +67,7 @@ def apply_suffix_patterns(urlpatterns, suffix_pattern, suffix_required):
         else:
             # Regular URL pattern
             regex = urlpattern.regex.pattern.rstrip("$") + suffix_pattern
-            view = urlpattern._callback or urlpattern._callback_str
+            view = urlpattern.callback
             kwargs = urlpattern.default_args
             name = urlpattern.name
             # Add in both the existing and the new urlpattern

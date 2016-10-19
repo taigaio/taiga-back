@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import django_pgjson.fields
+import taiga.base.db.models.fields
 
 
 class Migration(migrations.Migration):
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('version', models.IntegerField(default=1, verbose_name='version')),
-                ('attributes_values', django_pgjson.fields.JsonField(default={}, verbose_name='attributes_values')),
+                ('attributes_values', taiga.base.db.models.fields.JSONField(default={}, verbose_name='attributes_values')),
                 ('issue', models.OneToOneField(verbose_name='issue', to='issues.Issue', related_name='custom_attributes_values')),
             ],
             options={
@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('version', models.IntegerField(default=1, verbose_name='version')),
-                ('attributes_values', django_pgjson.fields.JsonField(default={}, verbose_name='attributes_values')),
+                ('attributes_values', taiga.base.db.models.fields.JSONField(default={}, verbose_name='attributes_values')),
                 ('task', models.OneToOneField(verbose_name='task', to='tasks.Task', related_name='custom_attributes_values')),
             ],
             options={
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('version', models.IntegerField(default=1, verbose_name='version')),
-                ('attributes_values', django_pgjson.fields.JsonField(default={}, verbose_name='attributes_values')),
+                ('attributes_values', taiga.base.db.models.fields.JSONField(default={}, verbose_name='attributes_values')),
                 ('user_story', models.OneToOneField(verbose_name='user story', to='userstories.UserStory', related_name='custom_attributes_values')),
             ],
             options={

@@ -25,10 +25,13 @@ import datetime
 import hashlib
 import binascii
 import struct
+import pytz
 
 from unittest.mock import MagicMock, patch
 
 from django.core.urlresolvers import reverse
+from django.utils import timezone
+
 from django.apps import apps
 from .. import factories as f
 
@@ -931,7 +934,7 @@ def test_retrieve_notify_policies_by_anonymous_user(client):
 
 def test_ms_thread_id():
     id = '<test/message@localhost>'
-    now = datetime.datetime.now()
+    now = timezone.now()
 
     index = services.make_ms_thread_index(id, now)
     parsed = parse_ms_thread_index(index)
@@ -953,7 +956,7 @@ def parse_ms_thread_index(index):
     # guid = '%08X-%04X-%04X-%04X-%12X' % (guid[0], guid[1], guid[2], (guid[3] >> 48) & 0xFFFF, guid[3] & 0xFFFFFFFFFFFF)
 
     f = struct.unpack('>Q', s[:6] + b'\0\0')[0]
-    ts = [datetime.datetime(1601, 1, 1) + datetime.timedelta(microseconds=f//10)]
+    ts = [datetime.datetime(1601, 1, 1, tzinfo=pytz.utc) + datetime.timedelta(microseconds=f//10)]
 
     # for the 5 byte appendixes that we won't use
     for n in range(22, len(s), 5):

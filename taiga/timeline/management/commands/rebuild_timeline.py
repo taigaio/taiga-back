@@ -46,7 +46,7 @@ class BulkCreator(object):
 
     def create_element(self, element):
         self.timeline_objects.append(element)
-        if len(self.timeline_objects) > 1000:
+        if len(self.timeline_objects) > 999:
             self.flush()
 
     def flush(self):
@@ -140,31 +140,28 @@ def generate_timeline(initial_date, final_date, project_id):
 
 class Command(BaseCommand):
     help = 'Regenerate project timeline'
-    option_list = BaseCommand.option_list + (
-        make_option('--purge',
-                    action='store_true',
-                    dest='purge',
-                    default=False,
-                    help='Purge existing timelines'),
-        ) + (
-        make_option('--initial_date',
-                    action='store',
-                    dest='initial_date',
-                    default=None,
-                    help='Initial date for timeline generation'),
-        ) + (
-        make_option('--final_date',
-                    action='store',
-                    dest='final_date',
-                    default=None,
-                    help='Final date for timeline generation'),
-        ) + (
-        make_option('--project',
-                    action='store',
-                    dest='project',
-                    default=None,
-                    help='Selected project id for timeline generation'),
-        )
+
+    def add_arguments(self, parser):
+        parser.add_argument('--purge',
+                            action='store_true',
+                            dest='purge',
+                            default=False,
+                            help='Purge existing timelines')
+        parser.add_argument('--initial_date',
+                            action='store',
+                            dest='initial_date',
+                            default=None,
+                            help='Initial date for timeline generation')
+        parser.add_argument('--final_date',
+                            action='store',
+                            dest='final_date',
+                            default=None,
+                            help='Final date for timeline generation')
+        parser.add_argument('--project',
+                            action='store',
+                            dest='project',
+                            default=None,
+                            help='Selected project id for timeline generation')
 
     @override_settings(DEBUG=False)
     def handle(self, *args, **options):

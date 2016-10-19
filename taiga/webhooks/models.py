@@ -19,7 +19,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from django_pgjson.fields import JsonField
+from taiga.base.db.models.fields import JSONField
 
 
 class Webhook(models.Model):
@@ -39,10 +39,10 @@ class WebhookLog(models.Model):
                                 related_name="logs")
     url = models.URLField(null=False, blank=False, verbose_name=_("URL"))
     status = models.IntegerField(null=False, blank=False, verbose_name=_("status code"))
-    request_data = JsonField(null=False, blank=False, verbose_name=_("request data"))
-    request_headers = JsonField(null=False, blank=False, verbose_name=_("request headers"), default={})
+    request_data = JSONField(null=False, blank=False, verbose_name=_("request data"))
+    request_headers = JSONField(null=False, blank=False, verbose_name=_("request headers"), default={})
     response_data = models.TextField(null=False, blank=False, verbose_name=_("response data"))
-    response_headers = JsonField(null=False, blank=False, verbose_name=_("response headers"), default={})
+    response_headers = JSONField(null=False, blank=False, verbose_name=_("response headers"), default={})
     duration = models.FloatField(null=False, blank=False, verbose_name=_("duration"), default=0)
     created = models.DateTimeField(auto_now_add=True)
 

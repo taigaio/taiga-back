@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
-import django_pgjson.fields
+import taiga.base.db.models.fields
 
 
 class Migration(migrations.Migration):
@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('version', models.IntegerField(default=1, verbose_name='version')),
-                ('attributes_values', django_pgjson.fields.JsonField(default={}, verbose_name='values')),
+                ('attributes_values', taiga.base.db.models.fields.JSONField(default={}, verbose_name='values')),
                 ('epic', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='custom_attributes_values', to='epics.Epic', verbose_name='epic')),
             ],
             options={

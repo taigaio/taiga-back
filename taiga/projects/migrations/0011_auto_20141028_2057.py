@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import django_pgjson.fields
+import taiga.base.db.models.fields
 
 
 class Migration(migrations.Migration):
@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='ProjectModulesConfig',
             fields=[
                 ('id', models.AutoField(serialize=False, auto_created=True, verbose_name='ID', primary_key=True)),
-                ('config', django_pgjson.fields.JsonField(null=True, verbose_name='modules config', blank=True)),
+                ('config', taiga.base.db.models.fields.JSONField(null=True, verbose_name='modules config', blank=True)),
                 ('project', models.OneToOneField(to='projects.Project', verbose_name='project', related_name='modules_config')),
             ],
             options={

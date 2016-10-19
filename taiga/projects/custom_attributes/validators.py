@@ -19,7 +19,7 @@
 
 from django.utils.translation import ugettext_lazy as _
 
-from taiga.base.fields import JsonField
+from taiga.base.fields import JSONField
 from taiga.base.exceptions import ValidationError
 from taiga.base.api.validators import ModelValidator
 
@@ -92,7 +92,7 @@ class IssueCustomAttributeValidator(BaseCustomAttributeValidator):
 
 
 class BaseCustomAttributesValuesValidator(ModelValidator):
-    attributes_values = JsonField(source="attributes_values", label="attributes values")
+    attributes_values = JSONField(source="attributes_values", label="attributes values")
     _custom_attribute_model = None
     _container_field = None
 

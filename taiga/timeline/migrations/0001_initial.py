@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import django_pgjson.fields
+import taiga.base.db.models.fields
 import django.utils.timezone
 
 
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('object_id', models.PositiveIntegerField()),
                 ('namespace', models.SlugField(default='default')),
                 ('event_type', models.SlugField()),
-                ('data', django_pgjson.fields.JsonField()),
+                ('data', taiga.base.db.models.fields.JSONField()),
                 ('created', models.DateTimeField(default=django.utils.timezone.now)),
                 ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
             ],

@@ -67,6 +67,8 @@ def test_sequences(seq):
 
 @pytest.mark.django_db
 def test_unique_reference_per_project(seq, refmodels):
+    refmodels.Reference.objects.all().delete()
+
     project = factories.ProjectFactory.create()
     seqname = refmodels.make_sequence_name(project)
 
@@ -82,6 +84,8 @@ def test_unique_reference_per_project(seq, refmodels):
 
 @pytest.mark.django_db
 def test_regenerate_us_reference_on_project_change(seq, refmodels):
+    refmodels.Reference.objects.all().delete()
+
     project1 = factories.ProjectFactory.create()
     seqname1 = refmodels.make_sequence_name(project1)
     project2 = factories.ProjectFactory.create()
@@ -104,6 +108,8 @@ def test_regenerate_us_reference_on_project_change(seq, refmodels):
 
 @pytest.mark.django_db
 def test_regenerate_task_reference_on_project_change(seq, refmodels):
+    refmodels.Reference.objects.all().delete()
+
     project1 = factories.ProjectFactory.create()
     seqname1 = refmodels.make_sequence_name(project1)
     project2 = factories.ProjectFactory.create()
@@ -126,6 +132,8 @@ def test_regenerate_task_reference_on_project_change(seq, refmodels):
 
 @pytest.mark.django_db
 def test_regenerate_issue_reference_on_project_change(seq, refmodels):
+    refmodels.Reference.objects.all().delete()
+
     project1 = factories.ProjectFactory.create()
     seqname1 = refmodels.make_sequence_name(project1)
     project2 = factories.ProjectFactory.create()
@@ -149,6 +157,8 @@ def test_regenerate_issue_reference_on_project_change(seq, refmodels):
 
 @pytest.mark.django_db
 def test_params_validation_in_api_request(client, refmodels):
+    refmodels.Reference.objects.all().delete()
+
     user = factories.UserFactory.create()
     project = factories.ProjectFactory.create(owner=user)
     seqname1 = refmodels.make_sequence_name(project)
