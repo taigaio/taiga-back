@@ -716,11 +716,12 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
             self._check_if_project_can_have_more_memberships(project, total_new_memberships)
 
         try:
-            members = services.create_members_in_bulk(data["bulk_memberships"],
-                                                      project=project,
-                                                      invitation_extra_text=invitation_extra_text,
-                                                      callback=self.post_save,
-                                                      precall=self.pre_save)
+            with advisory_lock("membership-creation-{}".format(project.id)):
+                members = services.create_members_in_bulk(data["bulk_memberships"],
+                                                          project=project,
+                                                          invitation_extra_text=invitation_extra_text,
+                                                          callback=self.post_save,
+                                                          precall=self.pre_save)
         except exc.ValidationError as err:
             return response.BadRequest(err.message_dict)
 
