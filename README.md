@@ -64,7 +64,7 @@ Currently, we have authored three main documentation hubs:
 
 #### Translation ####
 
-We are ready now to accept your help translating Taiga. It's easy (and fun!) just access our team of translators with the link below, set up an account in Transifex and start contributing. Join us to make sure your language is covered! **[Help Taiga to translate content](https://www.transifex.com/signup/ "Help Taiga to trasnlatecontent")**
+We are ready now to accept your help translating Taiga. It's easy (and fun!) just access our team of translators with the link below, set up an account in Transifex and start contributing. Join us to make sure your language is covered! **[Help Taiga to translate content](https://www.transifex.com/taiga-agile-llc/taiga-back/ "Help Taiga to trasnlatecontent")**
 
 
 #### Code patches ####
