@@ -42,11 +42,15 @@ def test_project_update_role_points():
     """
     project = f.ProjectFactory.create()
     related_role = f.RoleFactory.create(project=project, computable=True)
-    not_related_role = f.RoleFactory.create(project=project, computable=True)
     null_points = f.PointsFactory.create(project=project, value=None)
     user_story = f.UserStoryFactory(project=project)
-    user_story.role_points.add(f.RolePointsFactory(role=related_role, points=null_points))
+
+    new_related_role = f.RoleFactory.create(project=project, computable=True)
+
+    assert user_story.role_points.count() == 1
+    assert user_story.role_points.filter(role=new_related_role, points=null_points).count() == 0
 
     project.update_role_points()
 
-    assert user_story.role_points.filter(role=not_related_role, points=null_points).count() == 1
+    assert user_story.role_points.count() == 2
+    assert user_story.role_points.filter(role=new_related_role, points=null_points).count() == 1
