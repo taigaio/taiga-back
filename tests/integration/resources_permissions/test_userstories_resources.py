@@ -60,33 +60,42 @@ def data():
     m.project_owner = f.UserFactory.create()
     m.other_user = f.UserFactory.create()
 
+
+    m.public_points = f.PointsFactory()
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                         owner=m.project_owner,
-                                        userstories_csv_uuid=uuid.uuid4().hex)
+                                        userstories_csv_uuid=uuid.uuid4().hex,
+                                        default_points=m.public_points)
     m.public_project = attach_project_extra_info(Project.objects.all()).get(id=m.public_project.id)
 
+    m.private_points1 = f.PointsFactory()
     m.private_project1 = f.ProjectFactory(is_private=True,
                                           anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
                                           owner=m.project_owner,
-                                          userstories_csv_uuid=uuid.uuid4().hex)
+                                          userstories_csv_uuid=uuid.uuid4().hex,
+                                          default_points=m.private_points1)
     m.private_project1 = attach_project_extra_info(Project.objects.all()).get(id=m.private_project1.id)
 
+    m.private_points2 = f.PointsFactory()
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
                                           public_permissions=[],
                                           owner=m.project_owner,
-                                          userstories_csv_uuid=uuid.uuid4().hex)
+                                          userstories_csv_uuid=uuid.uuid4().hex,
+                                          default_points=m.private_points2)
     m.private_project2 = attach_project_extra_info(Project.objects.all()).get(id=m.private_project2.id)
 
+    m.blocked_points = f.PointsFactory()
     m.blocked_project = f.ProjectFactory(is_private=True,
                                          anon_permissions=[],
                                          public_permissions=[],
                                          owner=m.project_owner,
                                          userstories_csv_uuid=uuid.uuid4().hex,
-                                         blocked_code=project_choices.BLOCKED_BY_STAFF)
+                                         blocked_code=project_choices.BLOCKED_BY_STAFF,
+                                         default_points=m.blocked_points)
     m.blocked_project = attach_project_extra_info(Project.objects.all()).get(id=m.blocked_project.id)
 
     m.public_membership = f.MembershipFactory(
@@ -138,39 +147,24 @@ def data():
                         user=m.project_owner,
                         is_admin=True)
 
-    m.public_points = f.PointsFactory(project=m.public_project)
-    m.private_points1 = f.PointsFactory(project=m.private_project1)
-    m.private_points2 = f.PointsFactory(project=m.private_project2)
-    m.blocked_points = f.PointsFactory(project=m.blocked_project)
-
-    m.public_role_points = f.RolePointsFactory(role=m.public_project.roles.all()[0],
-                                               points=m.public_points,
-                                               user_story__project=m.public_project,
-                                               user_story__milestone__project=m.public_project,
-                                               user_story__status__project=m.public_project)
-    m.private_role_points1 = f.RolePointsFactory(role=m.private_project1.roles.all()[0],
-                                                 points=m.private_points1,
-                                                 user_story__project=m.private_project1,
-                                                 user_story__milestone__project=m.private_project1,
-                                                 user_story__status__project=m.private_project1)
-    m.private_role_points2 = f.RolePointsFactory(role=m.private_project2.roles.all()[0],
-                                                 points=m.private_points2,
-                                                 user_story__project=m.private_project2,
-                                                 user_story__milestone__project=m.private_project2,
-                                                 user_story__status__project=m.private_project2)
-    m.blocked_role_points = f.RolePointsFactory(role=m.blocked_project.roles.all()[0],
-                                                points=m.blocked_points,
-                                                user_story__project=m.blocked_project,
-                                                user_story__milestone__project=m.blocked_project,
-                                                user_story__status__project=m.blocked_project)
-
-    m.public_user_story = m.public_role_points.user_story
+    m.public_user_story = f.UserStoryFactory(project=m.public_project,
+                                             milestone__project=m.public_project,
+                                             status__project=m.public_project)
     m.public_user_story = attach_userstory_extra_info(UserStory.objects.all()).get(id=m.public_user_story.id)
-    m.private_user_story1 = m.private_role_points1.user_story
+
+    m.private_user_story1 = f.UserStoryFactory(project=m.private_project1,
+                                             milestone__project=m.private_project1,
+                                             status__project=m.private_project1)
     m.private_user_story1 = attach_userstory_extra_info(UserStory.objects.all()).get(id=m.private_user_story1.id)
-    m.private_user_story2 = m.private_role_points2.user_story
+
+    m.private_user_story2 = f.UserStoryFactory(project=m.private_project2,
+                                             milestone__project=m.private_project2,
+                                             status__project=m.private_project2)
     m.private_user_story2 = attach_userstory_extra_info(UserStory.objects.all()).get(id=m.private_user_story2.id)
-    m.blocked_user_story = m.blocked_role_points.user_story
+
+    m.blocked_user_story = f.UserStoryFactory(project=m.blocked_project,
+                                             milestone__project=m.blocked_project,
+                                             status__project=m.blocked_project)
     m.blocked_user_story = attach_userstory_extra_info(UserStory.objects.all()).get(id=m.blocked_user_story.id)
 
     return m
@@ -274,24 +268,28 @@ def test_user_story_put_update(client, data):
 
     with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
         user_story_data = UserStorySerializer(data.public_user_story).data
+        del user_story_data["points"]
         user_story_data["subject"] = "test"
         user_story_data = json.dumps(user_story_data)
         results = helper_test_http_method(client, 'put', public_url, user_story_data, users)
         assert results == [401, 403, 403, 200, 200]
 
         user_story_data = UserStorySerializer(data.private_user_story1).data
+        del user_story_data["points"]
         user_story_data["subject"] = "test"
         user_story_data = json.dumps(user_story_data)
         results = helper_test_http_method(client, 'put', private_url1, user_story_data, users)
         assert results == [401, 403, 403, 200, 200]
 
         user_story_data = UserStorySerializer(data.private_user_story2).data
+        del user_story_data["points"]
         user_story_data["subject"] = "test"
         user_story_data = json.dumps(user_story_data)
         results = helper_test_http_method(client, 'put', private_url2, user_story_data, users)
         assert results == [401, 403, 403, 200, 200]
 
         user_story_data = UserStorySerializer(data.blocked_user_story).data
+        del user_story_data["points"]
         user_story_data["subject"] = "test"
         user_story_data = json.dumps(user_story_data)
         results = helper_test_http_method(client, 'put', blocked_url, user_story_data, users)
@@ -314,24 +312,28 @@ def test_user_story_put_comment(client, data):
 
     with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
         user_story_data = UserStorySerializer(data.public_user_story).data
+        del user_story_data["points"]
         user_story_data["comment"] = "test comment"
         user_story_data = json.dumps(user_story_data)
         results = helper_test_http_method(client, 'put', public_url, user_story_data, users)
         assert results == [401, 403, 403, 200, 200]
 
         user_story_data = UserStorySerializer(data.private_user_story1).data
+        del user_story_data["points"]
         user_story_data["comment"] = "test comment"
         user_story_data = json.dumps(user_story_data)
         results = helper_test_http_method(client, 'put', private_url1, user_story_data, users)
         assert results == [401, 403, 403, 200, 200]
 
         user_story_data = UserStorySerializer(data.private_user_story2).data
+        del user_story_data["points"]
         user_story_data["comment"] = "test comment"
         user_story_data = json.dumps(user_story_data)
         results = helper_test_http_method(client, 'put', private_url2, user_story_data, users)
         assert results == [401, 403, 403, 200, 200]
 
         user_story_data = UserStorySerializer(data.blocked_user_story).data
+        del user_story_data["points"]
         user_story_data["comment"] = "test comment"
         user_story_data = json.dumps(user_story_data)
         results = helper_test_http_method(client, 'put', blocked_url, user_story_data, users)
@@ -354,6 +356,7 @@ def test_user_story_put_update_and_comment(client, data):
 
     with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
         user_story_data = UserStorySerializer(data.public_user_story).data
+        del user_story_data["points"]
         user_story_data["subject"] = "test"
         user_story_data["comment"] = "test comment"
         user_story_data = json.dumps(user_story_data)
@@ -361,6 +364,7 @@ def test_user_story_put_update_and_comment(client, data):
         assert results == [401, 403, 403, 200, 200]
 
         user_story_data = UserStorySerializer(data.private_user_story1).data
+        del user_story_data["points"]
         user_story_data["subject"] = "test"
         user_story_data["comment"] = "test comment"
         user_story_data = json.dumps(user_story_data)
@@ -368,6 +372,7 @@ def test_user_story_put_update_and_comment(client, data):
         assert results == [401, 403, 403, 200, 200]
 
         user_story_data = UserStorySerializer(data.private_user_story2).data
+        del user_story_data["points"]
         user_story_data["subject"] = "test"
         user_story_data["comment"] = "test comment"
         user_story_data = json.dumps(user_story_data)
@@ -375,6 +380,7 @@ def test_user_story_put_update_and_comment(client, data):
         assert results == [401, 403, 403, 200, 200]
 
         user_story_data = UserStorySerializer(data.blocked_user_story).data
+        del user_story_data["points"]
         user_story_data["subject"] = "test"
         user_story_data["comment"] = "test comment"
         user_story_data = json.dumps(user_story_data)
@@ -392,9 +398,13 @@ def test_user_story_put_update_with_project_change(client):
 
     us_status1 = f.UserStoryStatusFactory.create(project=project1)
     us_status2 = f.UserStoryStatusFactory.create(project=project2)
+    points1 = f.PointsFactory.create(project=project1)
+    points2 = f.PointsFactory.create(project=project2)
 
     project1.default_us_status = us_status1
     project2.default_us_status = us_status2
+    project1.default_points = points1
+    project2.default_points = points2
 
     project1.save()
     project2.save()
@@ -429,6 +439,7 @@ def test_user_story_put_update_with_project_change(client):
 
     us_data = UserStorySerializer(us).data
     us_data["project"] = project2.id
+    del us_data["points"]
     us_data = json.dumps(us_data)
 
     response = client.put(url, data=us_data, content_type="application/json")
@@ -443,6 +454,7 @@ def test_user_story_put_update_with_project_change(client):
 
     us_data = UserStorySerializer(us).data
     us_data["project"] = project2.id
+    del us_data["points"]
     us_data = json.dumps(us_data)
 
     response = client.put(url, data=us_data, content_type="application/json")
@@ -457,6 +469,7 @@ def test_user_story_put_update_with_project_change(client):
 
     us_data = UserStorySerializer(us).data
     us_data["project"] = project2.id
+    del us_data["points"]
     us_data = json.dumps(us_data)
 
     response = client.put(url, data=us_data, content_type="application/json")
@@ -471,6 +484,7 @@ def test_user_story_put_update_with_project_change(client):
 
     us_data = UserStorySerializer(us).data
     us_data["project"] = project2.id
+    del us_data["points"]
     us_data = json.dumps(us_data)
 
     response = client.put(url, data=us_data, content_type="application/json")
