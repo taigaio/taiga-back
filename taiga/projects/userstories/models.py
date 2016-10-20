@@ -127,6 +127,12 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, mod
 
         super().save(*args, **kwargs)
 
+        if not self.role_points.all():
+            for role in self.project.roles.all():
+                RolePoints.objects.create(role=role,
+                                          points=self.project.default_points,
+                                          user_story=self)
+
     def __str__(self):
         return "({1}) {0}".format(self.ref, self.subject)
 
