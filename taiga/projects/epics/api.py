@@ -292,6 +292,7 @@ class EpicRelatedUserStoryViewSet(NestedViewSetMixin, HistoryResourceMixin,
 
         for related_userstory in related_userstories:
             self.persist_history_snapshot(obj=related_userstory)
+            self.persist_history_snapshot(obj=related_userstory.user_story)
 
         related_uss_serialized = self.get_serializer_class()(epic.relateduserstory_set.all(), many=True)
         return response.Ok(related_uss_serialized.data)
