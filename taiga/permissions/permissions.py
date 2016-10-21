@@ -74,18 +74,10 @@ class CommentAndOrUpdatePerm(PermissionComponent):
         else:
             project = obj.project
 
-        data_keys = request.DATA.keys()
+        data_keys = set(request.DATA.keys()) - {"version"}
+        just_a_comment = data_keys == {"comment"}
 
-        if (not services.user_has_perm(request.user, self.comment_perm, project) and
-            "comment" in data_keys):
-                # User can't comment but there is a comment in the request
-                #raise exc.PermissionDenied(_("You don't have permissions to comment this."))
-                return False
+        if (just_a_comment and services.user_has_perm(request.user, self.comment_perm, project)):
+                return True
 
-        if (not services.user_has_perm(request.user, self.update_perm, project) and
-            len(data_keys - "comment")):
-                # User can't update but there is a change in the request
-                #raise exc.PermissionDenied(_("You don't have permissions to update this."))
-                return False
-
-        return True
+        return services.user_has_perm(request.user, self.update_perm, project)

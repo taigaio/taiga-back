@@ -64,7 +64,7 @@ def data():
     m.public_points = f.PointsFactory()
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                        public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
+                                        public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)) + ["comment_us"],
                                         owner=m.project_owner,
                                         userstories_csv_uuid=uuid.uuid4().hex,
                                         default_points=m.public_points)
@@ -544,7 +544,7 @@ def test_user_story_patch_comment(client, data):
     with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
         patch_data = json.dumps({"comment": "test comment", "version": data.public_user_story.version})
         results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
-        assert results == [401, 403, 403, 200, 200]
+        assert results == [401, 200, 200, 200, 200]
 
         patch_data = json.dumps({"comment": "test comment", "version": data.private_user_story1.version})
         results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
