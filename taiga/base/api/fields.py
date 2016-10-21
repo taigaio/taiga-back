@@ -467,6 +467,11 @@ class ModelField(WritableField):
             "type": self.model_field.get_internal_type()
         }
 
+    def validate(self, value):
+        super(ModelField, self).validate(value)
+        if value is None and not self.model_field.null:
+            raise ValidationError(self.error_messages['invalid'])
+
 
 ##### Typed Fields #####
 
@@ -512,8 +517,9 @@ class CharField(WritableField):
             self.validators.append(validators.MaxLengthValidator(max_length))
 
     def from_native(self, value):
-        if isinstance(value, six.string_types) or value is None:
-            return value
+        if value in validators.EMPTY_VALUES:
+            return ""
+            
         return smart_text(value)
 
     def to_native(self, value):
