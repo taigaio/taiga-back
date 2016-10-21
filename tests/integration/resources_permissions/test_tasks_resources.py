@@ -58,7 +58,7 @@ def data():
 
     m.public_project = f.ProjectFactory(is_private=False,
                                         anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
-                                        public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
+                                        public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)) + ["comment_task"],
                                         owner=m.project_owner,
                                         tasks_csv_uuid=uuid.uuid4().hex)
     m.public_project = attach_project_extra_info(Project.objects.all()).get(id=m.public_project.id)
@@ -556,7 +556,7 @@ def test_task_patch_comment(client, data):
     with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
         patch_data = json.dumps({"comment": "test comment", "version": data.public_task.version})
         results = helper_test_http_method(client, 'patch', public_url, patch_data, users)
-        assert results == [401, 403, 403, 200, 200]
+        assert results == [401, 200, 200, 200, 200]
 
         patch_data = json.dumps({"comment": "test comment", "version": data.private_task1.version})
         results = helper_test_http_method(client, 'patch', private_url1, patch_data, users)
