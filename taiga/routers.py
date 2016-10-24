@@ -223,6 +223,10 @@ router.register(r"history/task", TaskHistory, base_name="task-history")
 router.register(r"history/issue", IssueHistory, base_name="issue-history")
 router.register(r"history/wiki", WikiHistory, base_name="wiki-history")
 
+# Contact
+from taiga.projects.contact.api import ContactViewSet
+router.register(r"contact", ContactViewSet, base_name="contact")
+
 
 # Timelines
 from taiga.timeline.api import ProfileTimeline

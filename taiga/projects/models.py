@@ -164,7 +164,8 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
     total_milestones = models.IntegerField(null=True, blank=True,
                                            verbose_name=_("total of milestones"))
     total_story_points = models.FloatField(null=True, blank=True, verbose_name=_("total story points"))
-
+    is_contact_activated = models.BooleanField(default=True, null=False, blank=True,
+                                               verbose_name=_("active contact"))
     is_epics_activated = models.BooleanField(default=False, null=False, blank=True,
                                              verbose_name=_("active epics panel"))
     is_backlog_activated = models.BooleanField(default=True, null=False, blank=True,
@@ -734,7 +735,8 @@ class ProjectTemplate(models.Model):
     default_owner_role = models.CharField(max_length=50, null=False,
                                           blank=False,
                                           verbose_name=_("default owner's role"))
-
+    is_contact_activated = models.BooleanField(default=True, null=False, blank=True,
+                                               verbose_name=_("active contact"))
     is_epics_activated = models.BooleanField(default=False, null=False, blank=True,
                                              verbose_name=_("active epics panel"))
     is_backlog_activated = models.BooleanField(default=True, null=False, blank=True,
@@ -780,6 +782,7 @@ class ProjectTemplate(models.Model):
         super().save(*args, **kwargs)
 
     def load_data_from_project(self, project):
+        self.is_contact_activated = project.is_contact_activated
         self.is_epics_activated = project.is_epics_activated
         self.is_backlog_activated = project.is_backlog_activated
         self.is_kanban_activated = project.is_kanban_activated
@@ -896,6 +899,7 @@ class ProjectTemplate(models.Model):
             raise Exception("Project need an id (must be a saved project)")
 
         project.creation_template = self
+        project.is_contact_activated = self.is_contact_activated
         project.is_epics_activated = self.is_epics_activated
         project.is_backlog_activated = self.is_backlog_activated
         project.is_kanban_activated = self.is_kanban_activated
