@@ -16,14 +16,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils.translation import ugettext_lazy as _
-
 from taiga.base.api import ModelCrudViewSet
 from taiga.base.api import ModelUpdateRetrieveViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin
-from taiga.base import exceptions as exc
 from taiga.base import filters
-from taiga.base import response
 
 from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.history.mixins import HistoryResourceMixin

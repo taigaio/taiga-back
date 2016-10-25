@@ -30,7 +30,7 @@ class TaggedMixin(models.Model):
         abstract = True
 
 
-class TagsColorsdMixin(models.Model):
+class TagsColorsMixin(models.Model):
     tags_colors = ArrayField(ArrayField(models.TextField(null=True, blank=True), size=2),
                              null=True, blank=True, default=[], verbose_name=_("tags colors"))
 

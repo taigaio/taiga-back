@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.exceptions import ValidationError
-from taiga.base.utils import db, text
+from taiga.base.utils import db
 from taiga.users.models import User
 
 from django.conf import settings
@@ -84,9 +84,9 @@ def project_has_valid_admins(project, exclude_user=None):
 def can_user_leave_project(user, project):
     membership = project.memberships.get(user=user)
     if not membership.is_admin:
-         return True
+        return True
 
-    #The user can't leave if is the real owner of the project
+    # The user can't leave if is the real owner of the project
     if project.owner == user:
         return False
 

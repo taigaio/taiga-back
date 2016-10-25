@@ -582,7 +582,7 @@ def get_voted_list(for_user, from_user, type=None, q=None):
     ]
 
 
-def has_available_slot_for_import_new_project(owner, is_private, total_memberships):
+def has_available_slot_for_new_project(owner, is_private, total_memberships):
     if is_private:
         current_projects = owner.owned_projects.filter(is_private=True).count()
         max_projects = owner.max_private_projects

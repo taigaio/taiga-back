@@ -66,6 +66,10 @@ class ProjectTemplateFactory(Factory):
     priorities = []
     severities = []
     roles = []
+    epic_custom_attributes = []
+    us_custom_attributes = []
+    task_custom_attributes = []
+    issue_custom_attributes = []
     default_owner_role = "tester"
 
 

@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 def attach_members(queryset, as_field="members_attr"):
     """Attach a json members representation to each object of the queryset.
 

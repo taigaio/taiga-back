@@ -83,6 +83,7 @@ class ProjectPermission(TaigaResourcePermission):
     edit_tag_perms = IsProjectAdmin()
     delete_tag_perms = IsProjectAdmin()
     mix_tags_perms = IsProjectAdmin()
+    duplicate_perms = IsAuthenticated() & HasProjectPerm('view_project')
 
 
 class ProjectFansPermission(TaigaResourcePermission):

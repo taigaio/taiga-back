@@ -19,7 +19,12 @@
 from django.apps import apps
 from django.utils.translation import ugettext as _
 from taiga.celery import app
+from taiga.base.api.utils import get_object_or_404
+from taiga.permissions import services as permissions_services
+from taiga.projects.history.services import take_snapshot
+
 from .. import choices
+from ..apps import connect_projects_signals, disconnect_projects_signals
 
 ERROR_MAX_PUBLIC_PROJECTS_MEMBERSHIPS = 'max_public_projects_memberships'
 ERROR_MAX_PRIVATE_PROJECTS_MEMBERSHIPS = 'max_private_projects_memberships'
@@ -27,7 +32,9 @@ ERROR_MAX_PUBLIC_PROJECTS = 'max_public_projects'
 ERROR_MAX_PRIVATE_PROJECTS = 'max_private_projects'
 ERROR_PROJECT_WITHOUT_OWNER = 'project_without_owner'
 
-def check_if_project_privacity_can_be_changed(project,
+
+def check_if_project_privacity_can_be_changed(
+        project,
         current_memberships=None,
         current_private_projects=None,
         current_public_projects=None):
@@ -91,7 +98,7 @@ def check_if_project_can_be_created_or_updated(project):
     if project.is_private:
         current_projects = project.owner.owned_projects.filter(is_private=True).count()
         max_projects = project.owner.max_private_projects
-        error_project_exceeded =  _("You can't have more private projects")
+        error_project_exceeded = _("You can't have more private projects")
 
         current_memberships = project.memberships.count() or 1
         max_memberships = project.owner.max_memberships_private_projects
@@ -131,7 +138,7 @@ def check_if_project_can_be_transfered(project, new_owner):
     if project.is_private:
         current_projects = new_owner.owned_projects.filter(is_private=True).count()
         max_projects = new_owner.max_private_projects
-        error_project_exceeded =  _("You can't have more private projects")
+        error_project_exceeded = _("You can't have more private projects")
 
         current_memberships = project.memberships.count()
         max_memberships = new_owner.max_memberships_private_projects
@@ -154,7 +161,8 @@ def check_if_project_can_be_transfered(project, new_owner):
     return (True, None)
 
 
-def check_if_project_is_out_of_owner_limits(project,
+def check_if_project_is_out_of_owner_limits(
+        project,
         current_memberships=None,
         current_private_projects=None,
         current_public_projects=None):
@@ -219,3 +227,47 @@ def delete_project(project_id):
 
     project.delete_related_content()
     project.delete()
+
+
+def duplicate_project(project, **new_project_extra_args):
+    owner = new_project_extra_args.get("owner")
+    users = new_project_extra_args.pop("users")
+
+    disconnect_projects_signals()
+    Project = apps.get_model("projects", "Project")
+    new_project = Project.objects.create(**new_project_extra_args)
+    connect_projects_signals()
+
+    permissions_services.set_base_permissions_for_project(new_project)
+
+    # Cloning the structure from the old project using templates
+    Template = apps.get_model("projects", "ProjectTemplate")
+    template = Template()
+    template.load_data_from_project(project)
+    template.apply_to_project(new_project)
+    new_project.creation_template = project.creation_template
+    new_project.save()
+
+    # Creating the membership for the new owner
+    Membership = apps.get_model("projects", "Membership")
+    Membership.objects.create(
+        user=owner,
+        is_admin=True,
+        role=new_project.roles.get(slug=template.default_owner_role),
+        project=new_project
+    )
+
+    # Creating the extra memberships
+    for user in users:
+        project_memberships = project.memberships.exclude(user_id=owner.id)
+        membership = get_object_or_404(project_memberships, user_id=user["id"])
+        Membership.objects.create(
+            user=membership.user,
+            is_admin=membership.is_admin,
+            role=new_project.roles.get(slug=membership.role.slug),
+            project=new_project
+        )
+
+    # Take initial snapshot for the project
+    take_snapshot(new_project, user=owner)
+    return new_project

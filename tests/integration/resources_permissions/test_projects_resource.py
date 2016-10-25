@@ -97,18 +97,22 @@ def data():
 
     f.MembershipFactory(project=m.public_project,
                         user=m.project_owner,
+                        role__project=m.public_project,
                         is_admin=True)
 
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_owner,
+                        role__project=m.private_project1,
                         is_admin=True)
 
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_owner,
+                        role__project=m.private_project2,
                         is_admin=True)
 
     f.MembershipFactory(project=m.blocked_project,
                         user=m.project_owner,
+                        role__project=m.blocked_project,
                         is_admin=True)
 
     ContentType = apps.get_model("contenttypes", "ContentType")
@@ -664,3 +668,33 @@ def test_project_list_with_discover_mode_enabled(client, data):
     projects_data = json.loads(response.content.decode('utf-8'))
     assert len(projects_data) == 2
     assert response.status_code == 200
+
+
+def test_project_duplicate(client, data):
+    public_url = reverse('projects-duplicate', kwargs={"pk": data.public_project.pk})
+    private1_url = reverse('projects-duplicate', kwargs={"pk": data.private_project1.pk})
+    private2_url = reverse('projects-duplicate', kwargs={"pk": data.private_project2.pk})
+    blocked_url = reverse('projects-duplicate', kwargs={"pk": data.blocked_project.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    data = json.dumps({
+        "name": "test",
+        "description": "description",
+        "is_private": True,
+        "users": []
+    })
+
+    results = helper_test_http_method(client, 'post', public_url, data, users)
+    assert results == [401, 201, 201, 201]
+    results = helper_test_http_method(client, 'post', private1_url, data, users)
+    assert results == [401, 201, 201, 201]
+    results = helper_test_http_method(client, 'post', private2_url, data, users)
+    assert results == [404, 404, 201, 201]
+    results = helper_test_http_method(client, 'post', blocked_url, data, users)
+    assert results == [404, 404, 451, 451]

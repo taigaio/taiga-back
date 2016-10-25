@@ -20,9 +20,6 @@ from django.apps import apps
 from django.conf import settings
 
 from taiga.projects.notifications.services import create_notify_policy_if_not_exists
-from taiga.base.utils.db import get_typename_for_model_class
-
-from easy_thumbnails.files import get_thumbnailer
 
 
 ####################################
@@ -58,6 +55,13 @@ def project_post_save(sender, instance, created, **kwargs):
     if template is None:
         ProjectTemplate = apps.get_model("projects", "ProjectTemplate")
         template = ProjectTemplate.objects.get(slug=settings.DEFAULT_PROJECT_TEMPLATE)
+
+    if instance.tags:
+        template.tags = instance.tags
+
+    if instance.tags_colors:
+        template.tags_colors = instance.tags_colors
+
     template.apply_to_project(instance)
 
     instance.save()

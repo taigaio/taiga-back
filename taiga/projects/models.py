@@ -32,8 +32,12 @@ from django_pglocks import advisory_lock
 from taiga.base.db.models.fields import JSONField
 
 from taiga.base.utils.time import timestamp_ms
+from taiga.projects.custom_attributes.models import EpicCustomAttribute
+from taiga.projects.custom_attributes.models import UserStoryCustomAttribute
+from taiga.projects.custom_attributes.models import TaskCustomAttribute
+from taiga.projects.custom_attributes.models import IssueCustomAttribute
 from taiga.projects.tagging.models import TaggedMixin
-from taiga.projects.tagging.models import TagsColorsdMixin
+from taiga.projects.tagging.models import TagsColorsMixin
 from taiga.base.utils.files import get_file_path
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.slug import slugify_uniquely_for_queryset
@@ -82,10 +86,10 @@ class Membership(models.Model):
                                    null=True, blank=True)
 
     invitation_extra_text = models.TextField(null=True, blank=True,
-                                   verbose_name=_("invitation extra text"))
+                                             verbose_name=_("invitation extra text"))
 
     user_order = models.BigIntegerField(default=timestamp_ms, null=False, blank=False,
-                            verbose_name=_("user order"))
+                                        verbose_name=_("user order"))
 
     class Meta:
         verbose_name = "membership"
@@ -106,9 +110,9 @@ class Membership(models.Model):
 
 class ProjectDefaults(models.Model):
     default_epic_status = models.OneToOneField("projects.EpicStatus",
-                                             on_delete=models.SET_NULL, related_name="+",
-                                             null=True, blank=True,
-                                             verbose_name=_("default epic status"))
+                                               on_delete=models.SET_NULL, related_name="+",
+                                               null=True, blank=True,
+                                               verbose_name=_("default epic status"))
     default_us_status = models.OneToOneField("projects.UserStoryStatus",
                                              on_delete=models.SET_NULL, related_name="+",
                                              null=True, blank=True,
@@ -139,7 +143,7 @@ class ProjectDefaults(models.Model):
         abstract = True
 
 
-class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
+class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
     name = models.CharField(max_length=250, null=False, blank=False,
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, unique=True, null=False, blank=True,
@@ -148,8 +152,8 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
                                    verbose_name=_("description"))
 
     logo = models.FileField(upload_to=get_project_logo_file_path,
-                             max_length=500, null=True, blank=True,
-                             verbose_name=_("logo"))
+                            max_length=500, null=True, blank=True,
+                            verbose_name=_("logo"))
 
     created_date = models.DateTimeField(null=False, blank=False,
                                         verbose_name=_("created date"),
@@ -180,7 +184,7 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
                                         choices=choices.VIDEOCONFERENCES_CHOICES,
                                         verbose_name=_("videoconference system"))
     videoconferences_extra_data = models.CharField(max_length=250, null=True, blank=True,
-                                             verbose_name=_("videoconference extra data"))
+                                                   verbose_name=_("videoconference extra data"))
 
     creation_template = models.ForeignKey("projects.ProjectTemplate",
                                           related_name="projects", null=True,
@@ -196,10 +200,10 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
                                     null=True, blank=True, default=[], verbose_name=_("user permissions"))
 
     is_featured = models.BooleanField(default=False, null=False, blank=True,
-                                     verbose_name=_("is featured"))
+                                      verbose_name=_("is featured"))
 
     is_looking_for_people = models.BooleanField(default=False, null=False, blank=True,
-                                     verbose_name=_("is looking for people"))
+                                                verbose_name=_("is looking for people"))
     looking_for_people_note = models.TextField(default="", null=False, blank=True,
                                                verbose_name=_("loking for people note"))
 
@@ -218,36 +222,39 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
                                       verbose_name=_("project transfer token"))
 
     blocked_code = models.CharField(null=True, blank=True, max_length=255,
-                            choices=choices.BLOCKING_CODES + settings.EXTRA_BLOCKING_CODES, default=None,
-                            verbose_name=_("blocked code"))
-
-    #Totals:
+                                    choices=choices.BLOCKING_CODES + settings.EXTRA_BLOCKING_CODES,
+                                    default=None, verbose_name=_("blocked code"))
+    # Totals:
     totals_updated_datetime = models.DateTimeField(null=False, blank=False, auto_now_add=True,
-                                            verbose_name=_("updated date time"), db_index=True)
+                                                   verbose_name=_("updated date time"), db_index=True)
 
     total_fans = models.PositiveIntegerField(null=False, blank=False, default=0,
                                              verbose_name=_("count"), db_index=True)
 
     total_fans_last_week = models.PositiveIntegerField(null=False, blank=False, default=0,
-                                             verbose_name=_("fans last week"), db_index=True)
+                                                       verbose_name=_("fans last week"), db_index=True)
 
     total_fans_last_month = models.PositiveIntegerField(null=False, blank=False, default=0,
-                                              verbose_name=_("fans last month"), db_index=True)
+                                                        verbose_name=_("fans last month"), db_index=True)
 
     total_fans_last_year = models.PositiveIntegerField(null=False, blank=False, default=0,
-                                             verbose_name=_("fans last year"), db_index=True)
+                                                       verbose_name=_("fans last year"), db_index=True)
 
     total_activity = models.PositiveIntegerField(null=False, blank=False, default=0,
-                                                 verbose_name=_("count"), db_index=True)
+                                                 verbose_name=_("count"),
+                                                 db_index=True)
 
     total_activity_last_week = models.PositiveIntegerField(null=False, blank=False, default=0,
-                                             verbose_name=_("activity last week"), db_index=True)
+                                                           verbose_name=_("activity last week"),
+                                                           db_index=True)
 
     total_activity_last_month = models.PositiveIntegerField(null=False, blank=False, default=0,
-                                              verbose_name=_("activity last month"), db_index=True)
+                                                            verbose_name=_("activity last month"),
+                                                            db_index=True)
 
     total_activity_last_year = models.PositiveIntegerField(null=False, blank=False, default=0,
-                                             verbose_name=_("activity last year"), db_index=True)
+                                                           verbose_name=_("activity last year"),
+                                                           db_index=True)
 
     _importing = None
 
@@ -303,13 +310,13 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
 
         self.total_fans = qs.count()
 
-        qs_week = qs.filter(created_date__gte=now-relativedelta(weeks=1))
+        qs_week = qs.filter(created_date__gte=now - relativedelta(weeks=1))
         self.total_fans_last_week = qs_week.count()
 
-        qs_month = qs.filter(created_date__gte=now-relativedelta(months=1))
+        qs_month = qs.filter(created_date__gte=now - relativedelta(months=1))
         self.total_fans_last_month = qs_month.count()
 
-        qs_year = qs.filter(created_date__gte=now-relativedelta(years=1))
+        qs_year = qs.filter(created_date__gte=now - relativedelta(years=1))
         self.total_fans_last_year = qs_year.count()
 
         tl_model = apps.get_model("timeline", "Timeline")
@@ -318,13 +325,13 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
         qs = tl_model.objects.filter(namespace=namespace)
         self.total_activity = qs.count()
 
-        qs_week = qs.filter(created__gte=now-relativedelta(weeks=1))
+        qs_week = qs.filter(created__gte=now - relativedelta(weeks=1))
         self.total_activity_last_week = qs_week.count()
 
-        qs_month = qs.filter(created__gte=now-relativedelta(months=1))
+        qs_month = qs.filter(created__gte=now - relativedelta(months=1))
         self.total_activity_last_month = qs_month.count()
 
-        qs_year = qs.filter(created__gte=now-relativedelta(years=1))
+        qs_year = qs.filter(created__gte=now - relativedelta(years=1))
         self.total_activity_last_year = qs_year.count()
 
         if save:
@@ -358,7 +365,7 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
             policy = model_cls.objects.create(
                 project=self,
                 user=user,
-                notify_level= NotifyLevel.involved)
+                notify_level=NotifyLevel.involved)
 
             del self.cached_notify_policies
 
@@ -460,6 +467,8 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
         # NOTE: Remember to update code in taiga.projects.admin.ProjectAdmin.delete_selected
         from taiga.events.apps import (connect_events_signals,
                                        disconnect_events_signals)
+        from taiga.projects.epics.apps import (connect_all_epics_signals,
+                                             disconnect_all_epics_signals)
         from taiga.projects.tasks.apps import (connect_all_tasks_signals,
                                                disconnect_all_tasks_signals)
         from taiga.projects.userstories.apps import (connect_all_userstories_signals,
@@ -470,12 +479,14 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
                                          disconnect_memberships_signals)
 
         disconnect_events_signals()
+        disconnect_all_epics_signals()
         disconnect_all_issues_signals()
         disconnect_all_tasks_signals()
         disconnect_all_userstories_signals()
         disconnect_memberships_signals()
 
         try:
+            self.epics.all().delete()
             self.tasks.all().delete()
             self.user_stories.all().delete()
             self.issues.all().delete()
@@ -486,12 +497,13 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
             connect_all_issues_signals()
             connect_all_tasks_signals()
             connect_all_userstories_signals()
+            connect_all_epics_signals()
             connect_memberships_signals()
 
 
 class ProjectModulesConfig(models.Model):
     project = models.OneToOneField("Project", null=False, blank=False,
-                                related_name="modules_config", verbose_name=_("project"))
+                                   related_name="modules_config", verbose_name=_("project"))
     config = JSONField(null=True, blank=True, verbose_name=_("modules config"))
 
     class Meta:
@@ -544,7 +556,7 @@ class UserStoryStatus(models.Model):
     is_closed = models.BooleanField(default=False, null=False, blank=True,
                                     verbose_name=_("is closed"))
     is_archived = models.BooleanField(default=False, null=False, blank=True,
-                                verbose_name=_("is archived"))
+                                      verbose_name=_("is archived"))
     color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
                              verbose_name=_("color"))
     wip_limit = models.IntegerField(null=True, blank=True, default=None,
@@ -718,7 +730,7 @@ class IssueType(models.Model):
         return self.name
 
 
-class ProjectTemplate(models.Model):
+class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
     name = models.CharField(max_length=250, null=False, blank=False,
                             verbose_name=_("name"))
     slug = models.SlugField(max_length=250, null=False, blank=True,
@@ -726,7 +738,7 @@ class ProjectTemplate(models.Model):
     description = models.TextField(null=False, blank=False,
                                    verbose_name=_("description"))
     order = models.BigIntegerField(default=timestamp_ms, null=False, blank=False,
-                                verbose_name=_("user order"))
+                                   verbose_name=_("user order"))
     created_date = models.DateTimeField(null=False, blank=False,
                                         verbose_name=_("created date"),
                                         default=timezone.now)
@@ -747,11 +759,15 @@ class ProjectTemplate(models.Model):
                                             verbose_name=_("active wiki panel"))
     is_issues_activated = models.BooleanField(default=True, null=False, blank=True,
                                               verbose_name=_("active issues panel"))
+    is_looking_for_people = models.BooleanField(default=False, null=False, blank=True,
+                                                verbose_name=_("is looking for people"))
+    looking_for_people_note = models.TextField(default="", null=False, blank=True,
+                                               verbose_name=_("loking for people note"))
     videoconferences = models.CharField(max_length=250, null=True, blank=True,
                                         choices=choices.VIDEOCONFERENCES_CHOICES,
                                         verbose_name=_("videoconference system"))
     videoconferences_extra_data = models.CharField(max_length=250, null=True, blank=True,
-                                             verbose_name=_("videoconference extra data"))
+                                                   verbose_name=_("videoconference extra data"))
 
     default_options = JSONField(null=True, blank=True, verbose_name=_("default options"))
     epic_statuses = JSONField(null=True, blank=True, verbose_name=_("epic statuses"))
@@ -763,6 +779,11 @@ class ProjectTemplate(models.Model):
     priorities = JSONField(null=True, blank=True, verbose_name=_("priorities"))
     severities = JSONField(null=True, blank=True, verbose_name=_("severities"))
     roles = JSONField(null=True, blank=True, verbose_name=_("roles"))
+    epic_custom_attributes = JSONField(null=True, blank=True, verbose_name=_("epic custom attributes"))
+    us_custom_attributes = JSONField(null=True, blank=True, verbose_name=_("us custom attributes"))
+    task_custom_attributes = JSONField(null=True, blank=True, verbose_name=_("task custom attributes"))
+    issue_custom_attributes = JSONField(null=True, blank=True, verbose_name=_("issue custom attributes"))
+
     _importing = None
 
     class Meta:
@@ -779,6 +800,8 @@ class ProjectTemplate(models.Model):
     def save(self, *args, **kwargs):
         if not self._importing or not self.modified_date:
             self.modified_date = timezone.now()
+        if not self.slug:
+            self.slug = slugify_uniquely(self.name, self.__class__)
         super().save(*args, **kwargs)
 
     def load_data_from_project(self, project):
@@ -886,11 +909,52 @@ class ProjectTemplate(models.Model):
                 "computable": role.computable
             })
 
+        self.epic_custom_attributes = []
+        for ca in project.epiccustomattributes.all():
+            self.epic_custom_attributes.append({
+                "name": ca.name,
+                "description": ca.description,
+                "type": ca.type,
+                "order": ca.order
+            })
+
+        self.us_custom_attributes = []
+        for ca in project.userstorycustomattributes.all():
+            self.us_custom_attributes.append({
+                "name": ca.name,
+                "description": ca.description,
+                "type": ca.type,
+                "order": ca.order
+            })
+
+        self.task_custom_attributes = []
+        for ca in project.taskcustomattributes.all():
+            self.task_custom_attributes.append({
+                "name": ca.name,
+                "description": ca.description,
+                "type": ca.type,
+                "order": ca.order
+            })
+
+        self.issue_custom_attributes = []
+        for ca in project.issuecustomattributes.all():
+            self.issue_custom_attributes.append({
+                "name": ca.name,
+                "description": ca.description,
+                "type": ca.type,
+                "order": ca.order
+            })
+
         try:
             owner_membership = Membership.objects.get(project=project, user=project.owner)
             self.default_owner_role = owner_membership.role.slug
         except Membership.DoesNotExist:
             self.default_owner_role = self.roles[0].get("slug", None)
+
+        self.tags = project.tags
+        self.tags_colors = project.tags_colors
+        self.is_looking_for_people = project.is_looking_for_people
+        self.looking_for_people_note = project.looking_for_people_note
 
     def apply_to_project(self, project):
         Role = apps.get_model("users", "Role")
@@ -1021,5 +1085,46 @@ class ProjectTemplate(models.Model):
         if self.severities:
             project.default_severity = Severity.objects.get(name=self.default_options["severity"],
                                                             project=project)
+
+        for ca in self.epic_custom_attributes:
+            EpicCustomAttribute.objects.create(
+                name=ca["name"],
+                description=ca["description"],
+                type=ca["type"],
+                order=ca["order"],
+                project=project
+            )
+
+        for ca in self.us_custom_attributes:
+            UserStoryCustomAttribute.objects.create(
+                name=ca["name"],
+                description=ca["description"],
+                type=ca["type"],
+                order=ca["order"],
+                project=project
+            )
+
+        for ca in self.task_custom_attributes:
+            TaskCustomAttribute.objects.create(
+                name=ca["name"],
+                description=ca["description"],
+                type=ca["type"],
+                order=ca["order"],
+                project=project
+            )
+
+        for ca in self.issue_custom_attributes:
+            IssueCustomAttribute.objects.create(
+                name=ca["name"],
+                description=ca["description"],
+                type=ca["type"],
+                order=ca["order"],
+                project=project
+            )
+
+        project.tags = self.tags
+        project.tags_colors = self.tags_colors
+        project.is_looking_for_people = self.is_looking_for_people
+        project.looking_for_people_note = self.looking_for_people_note
 
         return project

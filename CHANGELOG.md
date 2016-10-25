@@ -6,7 +6,8 @@
 ### Features
 - Contact with the project: if the projects have this module enabled Taiga users can contact them.
 - Ability to create rich text custom fields in Epics, User Stories, Tasks and Isues.
-- Full text search now use simple as tolenizer so search with non-english text are allowed.
+- Full text search now use simple as tokenizer so search with non-english text are allowed.
+- Duplicate project: allows creating a new project based on the structure of another (status, tags, colors, default values...)
 - i18n:
   - Add japanese (ja) translation.
   - Add chinese simplified (zh-Hans) translation.

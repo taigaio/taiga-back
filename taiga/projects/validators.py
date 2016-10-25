@@ -277,9 +277,25 @@ class ProjectTemplateValidator(validators.ModelValidator):
 
 
 ######################################################
-# Project order bulk serializers
+# Project order bulk validators
 ######################################################
 
 class UpdateProjectOrderBulkValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
     order = serializers.IntegerField()
+
+
+######################################################
+# Project duplication validator
+######################################################
+
+
+class DuplicateProjectMemberValidator(validators.Validator):
+    id = serializers.CharField()
+
+
+class DuplicateProjectValidator(validators.Validator):
+    name = serializers.CharField()
+    description = serializers.CharField()
+    is_private = serializers.BooleanField()
+    users = DuplicateProjectMemberValidator(many=True)

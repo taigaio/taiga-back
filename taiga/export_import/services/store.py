@@ -700,7 +700,7 @@ def _validate_if_owner_have_enought_space_to_this_project(owner, data):
                             if m.get("email", None) != data["owner"]])
 
     total_memberships = total_memberships + 1  # 1 is the owner
-    (enough_slots, error_message) = users_service.has_available_slot_for_import_new_project(
+    (enough_slots, error_message) = users_service.has_available_slot_for_new_project(
         owner,
         is_private,
         total_memberships
