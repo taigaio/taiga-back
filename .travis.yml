@@ -2,15 +2,17 @@ language: python
 python:
   - "3.4"
   - "3.5"
+addons:
+  postgresql: "9.4"
 services:
-  - rabbitmq # will start rabbitmq-server
+  - rabbitmq
+  - postgresql
 cache:
   - apt
   - pip
 before_install:
   - sudo apt-get -qq update
   - sudo /etc/init.d/postgresql stop
-  - sudo apt-get install -y postgresql-9.4
   - sudo apt-get install -y postgresql-plpython-9.4
   - sudo /etc/init.d/postgresql start 9.4
   - psql -c 'create database taiga;' -U postgres
