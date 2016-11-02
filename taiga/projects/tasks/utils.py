@@ -23,6 +23,7 @@ from taiga.projects.notifications.utils import attach_total_watchers_to_queryset
 from taiga.projects.notifications.utils import attach_is_watcher_to_queryset
 from taiga.projects.votes.utils import attach_total_voters_to_queryset
 from taiga.projects.votes.utils import attach_is_voter_to_queryset
+from taiga.projects.history.utils import attach_total_comments_to_queryset
 
 
 def attach_user_story_extra_info(queryset, as_field="user_story_extra_info"):
@@ -76,4 +77,5 @@ def attach_extra_info(queryset, user=None, include_attachments=False):
     queryset = attach_is_voter_to_queryset(queryset, user)
     queryset = attach_is_watcher_to_queryset(queryset, user)
     queryset = attach_user_story_extra_info(queryset)
+    queryset = attach_total_comments_to_queryset(queryset)
     return queryset

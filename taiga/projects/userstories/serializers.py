@@ -29,6 +29,7 @@ from taiga.projects.mixins.serializers import StatusExtraInfoSerializerMixin
 from taiga.projects.notifications.mixins import WatchedResourceSerializer
 from taiga.projects.tagging.serializers import TaggedInProjectResourceSerializer
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
+from taiga.projects.history.mixins import TotalCommentsSerializerMixin
 
 
 class OriginIssueSerializer(serializers.LightSerializer):
@@ -47,7 +48,7 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
         VoteResourceSerializerMixin, WatchedResourceSerializer,
         OwnerExtraInfoSerializerMixin, AssignedToExtraInfoSerializerMixin,
         StatusExtraInfoSerializerMixin, BasicAttachmentsInfoSerializerMixin,
-        TaggedInProjectResourceSerializer,
+        TaggedInProjectResourceSerializer, TotalCommentsSerializerMixin,
         serializers.LightSerializer):
 
     id = Field()

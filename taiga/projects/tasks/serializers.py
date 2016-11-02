@@ -28,11 +28,13 @@ from taiga.projects.mixins.serializers import StatusExtraInfoSerializerMixin
 from taiga.projects.notifications.mixins import WatchedResourceSerializer
 from taiga.projects.tagging.serializers import TaggedInProjectResourceSerializer
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
+from taiga.projects.history.mixins import TotalCommentsSerializerMixin
 
 class TaskListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
                          OwnerExtraInfoSerializerMixin, AssignedToExtraInfoSerializerMixin,
                          StatusExtraInfoSerializerMixin, BasicAttachmentsInfoSerializerMixin,
-                         TaggedInProjectResourceSerializer, serializers.LightSerializer):
+                         TaggedInProjectResourceSerializer, TotalCommentsSerializerMixin,
+                         serializers.LightSerializer):
 
     id = Field()
     user_story = Field(attr="user_story_id")
