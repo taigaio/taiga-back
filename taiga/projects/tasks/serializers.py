@@ -23,6 +23,7 @@ from taiga.base.neighbors import NeighborsSerializerMixin
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.attachments.serializers import BasicAttachmentsInfoSerializerMixin
 from taiga.projects.mixins.serializers import OwnerExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import ProjectExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import AssignedToExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import StatusExtraInfoSerializerMixin
 from taiga.projects.notifications.mixins import WatchedResourceSerializer
@@ -30,11 +31,12 @@ from taiga.projects.tagging.serializers import TaggedInProjectResourceSerializer
 from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
 from taiga.projects.history.mixins import TotalCommentsSerializerMixin
 
+
 class TaskListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
                          OwnerExtraInfoSerializerMixin, AssignedToExtraInfoSerializerMixin,
-                         StatusExtraInfoSerializerMixin, BasicAttachmentsInfoSerializerMixin,
-                         TaggedInProjectResourceSerializer, TotalCommentsSerializerMixin,
-                         serializers.LightSerializer):
+                         StatusExtraInfoSerializerMixin, ProjectExtraInfoSerializerMixin,
+                         BasicAttachmentsInfoSerializerMixin, TaggedInProjectResourceSerializer,
+                         TotalCommentsSerializerMixin, serializers.LightSerializer):
 
     id = Field()
     user_story = Field(attr="user_story_id")

@@ -10,7 +10,9 @@
 - Ability to create rich text custom fields in Epics, User Stories, Tasks and Isues.
 
 ### Misc
-- API: Filter milestones, user stories and tasks by estimated_start and estimated_finish dates.
+- API:
+    - Filter milestones, user stories and tasks by estimated_start and estimated_finish dates.
+    - Add project_extra_info to epics, tasks, milestones, issues and wiki pages endpoints.
 - Lots of small and not so small bugfixes.
 
 

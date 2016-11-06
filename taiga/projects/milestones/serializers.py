@@ -20,9 +20,12 @@ from taiga.base.api import serializers
 from taiga.base.fields import Field, MethodField
 from taiga.projects.notifications.mixins import WatchedResourceSerializer
 from taiga.projects.userstories.serializers import UserStoryListSerializer
+from taiga.projects.mixins.serializers import ProjectExtraInfoSerializerMixin
 
 
-class MilestoneSerializer(WatchedResourceSerializer, serializers.LightSerializer):
+class MilestoneSerializer(WatchedResourceSerializer,
+                          ProjectExtraInfoSerializerMixin,
+                          serializers.LightSerializer):
     id = Field()
     name = Field()
     slug = Field()

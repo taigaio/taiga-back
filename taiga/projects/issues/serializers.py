@@ -22,6 +22,7 @@ from taiga.base.neighbors import NeighborsSerializerMixin
 
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.mixins.serializers import OwnerExtraInfoSerializerMixin
+from taiga.projects.mixins.serializers import ProjectExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import AssignedToExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import StatusExtraInfoSerializerMixin
 from taiga.projects.notifications.mixins import WatchedResourceSerializer
@@ -31,7 +32,7 @@ from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
 
 class IssueListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
                           OwnerExtraInfoSerializerMixin, AssignedToExtraInfoSerializerMixin,
-                          StatusExtraInfoSerializerMixin,
+                          StatusExtraInfoSerializerMixin, ProjectExtraInfoSerializerMixin,
                           TaggedInProjectResourceSerializer, serializers.LightSerializer):
     id = Field()
     ref = Field()

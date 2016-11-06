@@ -19,11 +19,15 @@
 from taiga.base.api import serializers
 from taiga.base.fields import Field, MethodField
 from taiga.projects.history import services as history_service
+from taiga.projects.mixins.serializers import ProjectExtraInfoSerializerMixin
 from taiga.projects.notifications.mixins import WatchedResourceSerializer
 from taiga.mdrender.service import render as mdrender
 
 
-class WikiPageSerializer(WatchedResourceSerializer, serializers.LightSerializer):
+class WikiPageSerializer(
+    WatchedResourceSerializer, ProjectExtraInfoSerializerMixin,
+    serializers.LightSerializer
+):
     id = Field()
     project = Field(attr="project_id")
     slug = Field()
