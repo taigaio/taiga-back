@@ -526,6 +526,22 @@ class FinishDateFilter(BaseDateFilter):
     filter_name_base = "finish_date"
 
 
+class EstimatedStartFilter(BaseDateFilter):
+    filter_name_base = "estimated_start"
+
+
+class EstimatedFinishFilter(BaseDateFilter):
+    filter_name_base = "estimated_finish"
+
+
+class MilestoneEstimatedStartFilter(BaseDateFilter):
+    filter_name_base = "milestone__estimated_start"
+
+
+class MilestoneEstimatedFinishFilter(BaseDateFilter):
+    filter_name_base = "milestone__estimated_finish"
+
+
 #####################################################################
 # Text search filters
 #####################################################################

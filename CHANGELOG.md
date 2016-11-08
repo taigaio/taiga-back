@@ -10,6 +10,7 @@
 - Ability to create rich text custom fields in Epics, User Stories, Tasks and Isues.
 
 ### Misc
+- API: Filter milestones, user stories and tasks by estimated_start and estimated_finish dates.
 - Lots of small and not so small bugfixes.
 
 

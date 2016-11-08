@@ -702,6 +702,38 @@ def test_api_filter_by_finished_date(client):
     assert response.data[0]["subject"] == finished_task.subject
 
 
+@pytest.mark.parametrize("field_name", ["estimated_start", "estimated_finish"])
+def test_api_filter_by_milestone__estimated_start_and_end(client, field_name):
+    user = f.UserFactory(is_superuser=True)
+    task = f.create_task(owner=user)
+
+    assert task.milestone
+    assert hasattr(task.milestone, field_name)
+    date = getattr(task.milestone, field_name)
+    before = (date - timedelta(days=1)).isoformat()
+    after = (date + timedelta(days=1)).isoformat()
+
+    client.login(task.owner)
+
+    full_field_name = "milestone__" + field_name
+    expections = {
+        full_field_name + "__gte=" + quote(before): 1,
+        full_field_name + "__gte=" + quote(after): 0,
+        full_field_name + "__lte=" + quote(before): 0,
+        full_field_name + "__lte=" + quote(after): 1
+    }
+
+    for param, expection in expections.items():
+        url = reverse("tasks-list") + "?" + param
+        response = client.get(url)
+        number_of_tasks = len(response.data)
+
+        assert response.status_code == 200
+        assert number_of_tasks == expection, param
+        if number_of_tasks > 0:
+            assert response.data[0]["subject"] == task.subject
+
+
 def test_api_filters_data(client):
     project = f.ProjectFactory.create()
     user1 = f.UserFactory.create(is_superuser=True)

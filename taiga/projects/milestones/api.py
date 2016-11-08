@@ -46,7 +46,13 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
     serializer_class = serializers.MilestoneSerializer
     validator_class = validators.MilestoneValidator
     permission_classes = (permissions.MilestonePermission,)
-    filter_backends = (filters.CanViewMilestonesFilterBackend,)
+    filter_backends = (
+        filters.CanViewMilestonesFilterBackend,
+        filters.CreatedDateFilter,
+        filters.ModifiedDateFilter,
+        filters.EstimatedStartFilter,
+        filters.EstimatedFinishFilter,
+    )
     filter_fields = (
         "project",
         "project__slug",
