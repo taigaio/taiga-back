@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import djorm_pgarray.fields
+import django.contrib.postgres.fields
 
 
 class Migration(migrations.Migration):
@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userstory',
             name='external_reference',
-            field=djorm_pgarray.fields.TextArrayField(dbtype='text', verbose_name='external reference'),
+            field=django.contrib.postgres.fields.ArrayField(base_field=models.TextField(blank=False, null=False), blank=True, default=None, null=True, size=None, verbose_name='external reference'),
             preserve_default=True,
         ),
     ]

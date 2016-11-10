@@ -19,7 +19,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django_pgjson.fields import JsonField
+from taiga.base.db.models.fields import JSONField
 
 
 class StorageEntry(models.Model):
@@ -30,7 +30,7 @@ class StorageEntry(models.Model):
     modified_date = models.DateTimeField(auto_now=True, null=False, blank=False,
                                          verbose_name=_("modified date"))
     key = models.CharField(max_length=255, null=False, blank=False, verbose_name=_("key"))
-    value = JsonField(blank=True, default=None, null=True, verbose_name=_("value"))
+    value = JSONField(blank=True, default=None, null=True, verbose_name=_("value"))
 
     class Meta:
         verbose_name = "storage entry"

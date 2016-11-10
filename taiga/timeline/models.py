@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
-from django_pgjson.fields import JsonField
+from taiga.base.db.models.fields import JSONField
 from django.utils import timezone
 
 from django.contrib.contenttypes.models import ContentType
@@ -33,7 +33,7 @@ class Timeline(models.Model):
     namespace = models.CharField(max_length=250, default="default", db_index=True)
     event_type = models.CharField(max_length=250, db_index=True)
     project = models.ForeignKey(Project, null=True)
-    data = JsonField()
+    data = JSONField()
     data_content_type = models.ForeignKey(ContentType, related_name="data_timelines")
     created = models.DateTimeField(default=timezone.now, db_index=True)
 

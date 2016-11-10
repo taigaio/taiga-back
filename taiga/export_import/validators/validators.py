@@ -20,7 +20,7 @@ from django.utils.translation import ugettext as _
 
 from taiga.base.api import serializers
 from taiga.base.api import validators
-from taiga.base.fields import JsonField, PgArrayField
+from taiga.base.fields import JSONField, PgArrayField
 from taiga.base.exceptions import ValidationError
 
 from taiga.projects import models as projects_models
@@ -133,7 +133,7 @@ class IssueCustomAttributeExportValidator(validators.ModelValidator):
 
 
 class BaseCustomAttributesValuesExportValidator(validators.ModelValidator):
-    attributes_values = JsonField(source="attributes_values", required=True)
+    attributes_values = JSONField(source="attributes_values", required=True)
     _custom_attribute_model = None
     _container_field = None
 
@@ -378,7 +378,7 @@ class ProjectExportValidator(WatcheableObjectModelValidatorMixin):
     issue_statuses = IssueStatusExportValidator(many=True, required=False)
     priorities = PriorityExportValidator(many=True, required=False)
     severities = SeverityExportValidator(many=True, required=False)
-    tags_colors = JsonField(required=False)
+    tags_colors = JSONField(required=False)
     creation_template = serializers.SlugRelatedField(slug_field="slug", required=False)
     default_points = serializers.SlugRelatedField(slug_field="name", required=False)
     default_us_status = serializers.SlugRelatedField(slug_field="name", required=False)

@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 import django.utils.timezone
-import django_pgjson.fields
+import taiga.base.db.models.fields
 import django.db.models.deletion
 import taiga.projects.history.models
 
@@ -100,15 +100,15 @@ class Migration(migrations.Migration):
                 ('is_issues_activated', models.BooleanField(verbose_name='active issues panel', default=True)),
                 ('videoconferences', models.CharField(max_length=250, null=True, choices=[('appear-in', 'AppearIn'), ('talky', 'Talky')], verbose_name='videoconference system', blank=True)),
                 ('videoconferences_salt', models.CharField(max_length=250, null=True, verbose_name='videoconference room salt', blank=True)),
-                ('default_options', django_pgjson.fields.JsonField(null=True, verbose_name='default options', blank=True)),
-                ('us_statuses', django_pgjson.fields.JsonField(null=True, verbose_name='us statuses', blank=True)),
-                ('points', django_pgjson.fields.JsonField(null=True, verbose_name='points', blank=True)),
-                ('task_statuses', django_pgjson.fields.JsonField(null=True, verbose_name='task statuses', blank=True)),
-                ('issue_statuses', django_pgjson.fields.JsonField(null=True, verbose_name='issue statuses', blank=True)),
-                ('issue_types', django_pgjson.fields.JsonField(null=True, verbose_name='issue types', blank=True)),
-                ('priorities', django_pgjson.fields.JsonField(null=True, verbose_name='priorities', blank=True)),
-                ('severities', django_pgjson.fields.JsonField(null=True, verbose_name='severities', blank=True)),
-                ('roles', django_pgjson.fields.JsonField(null=True, verbose_name='roles', blank=True)),
+                ('default_options', taiga.base.db.models.fields.JSONField(null=True, verbose_name='default options', blank=True)),
+                ('us_statuses', taiga.base.db.models.fields.JSONField(null=True, verbose_name='us statuses', blank=True)),
+                ('points', taiga.base.db.models.fields.JSONField(null=True, verbose_name='points', blank=True)),
+                ('task_statuses', taiga.base.db.models.fields.JSONField(null=True, verbose_name='task statuses', blank=True)),
+                ('issue_statuses', taiga.base.db.models.fields.JSONField(null=True, verbose_name='issue statuses', blank=True)),
+                ('issue_types', taiga.base.db.models.fields.JSONField(null=True, verbose_name='issue types', blank=True)),
+                ('priorities', taiga.base.db.models.fields.JSONField(null=True, verbose_name='priorities', blank=True)),
+                ('severities', taiga.base.db.models.fields.JSONField(null=True, verbose_name='severities', blank=True)),
+                ('roles', taiga.base.db.models.fields.JSONField(null=True, verbose_name='roles', blank=True)),
             ],
             options={
                 'verbose_name_plural': 'project templates',

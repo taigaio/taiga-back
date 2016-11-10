@@ -3,7 +3,9 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 import datetime
-import django_pgjson.fields
+import taiga.base.db.models.fields
+
+from django.utils import timezone
 
 
 class Migration(migrations.Migration):
@@ -16,7 +18,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='webhooklog',
             name='created',
-            field=models.DateTimeField(default=datetime.datetime(2015, 1, 22, 10, 21, 17, 188643), auto_now_add=True),
+            field=models.DateTimeField(
+                default=datetime.datetime(2015, 1, 22, 10, 21, 17, 188643, timezone.get_default_timezone()),
+                auto_now_add=True),
             preserve_default=False,
         ),
         migrations.AddField(
@@ -28,13 +32,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='webhooklog',
             name='request_headers',
-            field=django_pgjson.fields.JsonField(default={}, verbose_name='Request headers'),
+            field=taiga.base.db.models.fields.JSONField(default={}, verbose_name='Request headers'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='webhooklog',
             name='response_headers',
-            field=django_pgjson.fields.JsonField(default={}, verbose_name='Response headers'),
+            field=taiga.base.db.models.fields.JSONField(default={}, verbose_name='Response headers'),
             preserve_default=True,
         ),
     ]

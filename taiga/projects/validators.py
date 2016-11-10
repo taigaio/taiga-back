@@ -22,7 +22,7 @@ from django.utils.translation import ugettext as _
 from taiga.base.api import serializers
 from taiga.base.api import validators
 from taiga.base.exceptions import ValidationError
-from taiga.base.fields import JsonField
+from taiga.base.fields import JSONField
 from taiga.base.fields import PgArrayField
 from taiga.users.models import Role
 
@@ -222,15 +222,15 @@ class ProjectValidator(validators.ModelValidator):
 ######################################################
 
 class ProjectTemplateValidator(validators.ModelValidator):
-    default_options = JsonField(required=False, label=_("Default options"))
-    us_statuses = JsonField(required=False, label=_("User story's statuses"))
-    points = JsonField(required=False, label=_("Points"))
-    task_statuses = JsonField(required=False, label=_("Task's statuses"))
-    issue_statuses = JsonField(required=False, label=_("Issue's statuses"))
-    issue_types = JsonField(required=False, label=_("Issue's types"))
-    priorities = JsonField(required=False, label=_("Priorities"))
-    severities = JsonField(required=False, label=_("Severities"))
-    roles = JsonField(required=False, label=_("Roles"))
+    default_options = JSONField(required=False, label=_("Default options"))
+    us_statuses = JSONField(required=False, label=_("User story's statuses"))
+    points = JSONField(required=False, label=_("Points"))
+    task_statuses = JSONField(required=False, label=_("Task's statuses"))
+    issue_statuses = JSONField(required=False, label=_("Issue's statuses"))
+    issue_types = JSONField(required=False, label=_("Issue's types"))
+    priorities = JSONField(required=False, label=_("Priorities"))
+    severities = JSONField(required=False, label=_("Severities"))
+    roles = JSONField(required=False, label=_("Roles"))
 
     class Meta:
         model = models.ProjectTemplate

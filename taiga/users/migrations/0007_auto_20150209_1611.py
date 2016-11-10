@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 from django.conf import settings
-import django_pgjson.fields
+import taiga.base.db.models.fields
 
 
 def migrate_github_id(apps, schema_editor):
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
                 ('key', models.SlugField()),
                 ('value', models.CharField(max_length=300)),
-                ('extra', django_pgjson.fields.JsonField()),
+                ('extra', taiga.base.db.models.fields.JSONField()),
                 ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={

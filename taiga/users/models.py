@@ -34,7 +34,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from django_pgjson.fields import JsonField
+from taiga.base.db.models.fields import JSONField
 from django_pglocks import advisory_lock
 
 from taiga.auth.tokens import get_token_for_user
@@ -323,7 +323,7 @@ class AuthData(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="auth_data")
     key = models.SlugField(max_length=50)
     value = models.CharField(max_length=300)
-    extra = JsonField()
+    extra = JSONField()
 
     class Meta:
         unique_together = ["key", "value"]

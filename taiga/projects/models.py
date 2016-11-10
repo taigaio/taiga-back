@@ -29,7 +29,7 @@ from django.utils.functional import cached_property
 
 from django_pglocks import advisory_lock
 
-from django_pgjson.fields import JsonField
+from taiga.base.db.models.fields import JSONField
 
 from taiga.base.utils.time import timestamp_ms
 from taiga.projects.tagging.models import TaggedMixin
@@ -491,7 +491,7 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsdMixin, models.Model):
 class ProjectModulesConfig(models.Model):
     project = models.OneToOneField("Project", null=False, blank=False,
                                 related_name="modules_config", verbose_name=_("project"))
-    config = JsonField(null=True, blank=True, verbose_name=_("modules config"))
+    config = JSONField(null=True, blank=True, verbose_name=_("modules config"))
 
     class Meta:
         verbose_name = "project modules config"
@@ -751,16 +751,16 @@ class ProjectTemplate(models.Model):
     videoconferences_extra_data = models.CharField(max_length=250, null=True, blank=True,
                                              verbose_name=_("videoconference extra data"))
 
-    default_options = JsonField(null=True, blank=True, verbose_name=_("default options"))
-    epic_statuses = JsonField(null=True, blank=True, verbose_name=_("epic statuses"))
-    us_statuses = JsonField(null=True, blank=True, verbose_name=_("us statuses"))
-    points = JsonField(null=True, blank=True, verbose_name=_("points"))
-    task_statuses = JsonField(null=True, blank=True, verbose_name=_("task statuses"))
-    issue_statuses = JsonField(null=True, blank=True, verbose_name=_("issue statuses"))
-    issue_types = JsonField(null=True, blank=True, verbose_name=_("issue types"))
-    priorities = JsonField(null=True, blank=True, verbose_name=_("priorities"))
-    severities = JsonField(null=True, blank=True, verbose_name=_("severities"))
-    roles = JsonField(null=True, blank=True, verbose_name=_("roles"))
+    default_options = JSONField(null=True, blank=True, verbose_name=_("default options"))
+    epic_statuses = JSONField(null=True, blank=True, verbose_name=_("epic statuses"))
+    us_statuses = JSONField(null=True, blank=True, verbose_name=_("us statuses"))
+    points = JSONField(null=True, blank=True, verbose_name=_("points"))
+    task_statuses = JSONField(null=True, blank=True, verbose_name=_("task statuses"))
+    issue_statuses = JSONField(null=True, blank=True, verbose_name=_("issue statuses"))
+    issue_types = JSONField(null=True, blank=True, verbose_name=_("issue types"))
+    priorities = JSONField(null=True, blank=True, verbose_name=_("priorities"))
+    severities = JSONField(null=True, blank=True, verbose_name=_("severities"))
+    roles = JSONField(null=True, blank=True, verbose_name=_("roles"))
     _importing = None
 
     class Meta:

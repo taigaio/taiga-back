@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
-from taiga.base.fields import I18NJsonField, Field, MethodField
+from taiga.base.fields import I18NJSONField, Field, MethodField
 
 from taiga.users.services import get_user_photo_url
 from taiga.users.gravatar import get_user_gravatar_id
@@ -35,8 +35,8 @@ class HistoryEntrySerializer(serializers.LightSerializer):
     diff = Field()
     snapshot = Field()
     values = Field()
-    values_diff = I18NJsonField()
-    comment = I18NJsonField()
+    values_diff = I18NJSONField()
+    comment = I18NJSONField()
     comment_html = Field()
     delete_comment_date = Field()
     delete_comment_user = Field()

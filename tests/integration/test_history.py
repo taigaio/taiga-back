@@ -18,11 +18,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import datetime
 
 from unittest.mock import patch
 
 from django.core.urlresolvers import reverse
+from django.utils import timezone
+
 from .. import factories as f
 
 from taiga.base.utils import json
@@ -286,7 +287,7 @@ def test_get_comment_versions(client):
                              key=key,
                              diff={},
                              user={"pk": project.owner.id},
-                             edit_comment_date=datetime.datetime.now(),
+                             edit_comment_date=timezone.now(),
                              comment_versions = [{
                                 "comment_html": "<p>test</p>",
                                 "date": "2016-05-09T09:34:27.221Z",

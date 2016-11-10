@@ -30,7 +30,7 @@ import serpy
 # NOTE: This should be in other place, for example taiga.base.api.serializers
 
 
-class JsonField(serializers.WritableField):
+class JSONField(serializers.WritableField):
     """
     Json objects serializer.
     """
@@ -95,12 +95,12 @@ class I18NField(Field):
         return _(ret)
 
 
-class I18NJsonField(Field):
+class I18NJSONField(Field):
     """
     Json objects serializer.
     """
     def __init__(self, i18n_fields=(), *args, **kwargs):
-        super(I18NJsonField, self).__init__(*args, **kwargs)
+        super(I18NJSONField, self).__init__(*args, **kwargs)
         self.i18n_fields = i18n_fields
 
     def translate_values(self, d):

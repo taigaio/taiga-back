@@ -26,7 +26,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from taiga.base.api import serializers
 from taiga.base.exceptions import ValidationError
-from taiga.base.fields import JsonField
+from taiga.base.fields import JSONField
 from taiga.mdrender.service import render as mdrender
 from taiga.users import models as users_models
 
@@ -144,7 +144,7 @@ class ProjectRelatedField(serializers.RelatedField):
             raise ValidationError(_("{}=\"{}\" not found in this project".format(self.slug_field, data)))
 
 
-class HistoryUserField(JsonField):
+class HistoryUserField(JSONField):
     def from_native(self, data):
         if data is None:
             return {}
@@ -162,7 +162,7 @@ class HistoryUserField(JsonField):
         return {"pk": pk, "name": data[1]}
 
 
-class HistoryValuesField(JsonField):
+class HistoryValuesField(JSONField):
     def from_native(self, data):
         if data is None:
             return []
@@ -171,7 +171,7 @@ class HistoryValuesField(JsonField):
         return data
 
 
-class HistoryDiffField(JsonField):
+class HistoryDiffField(JSONField):
     def from_native(self, data):
         if data is None:
             return []

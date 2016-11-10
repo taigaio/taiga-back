@@ -22,7 +22,7 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.functional import cached_property
-from django_pgjson.fields import JsonField
+from taiga.base.db.models.fields import JSONField
 
 from taiga.mdrender.service import get_diff_of_htmls
 
@@ -52,32 +52,32 @@ class HistoryEntry(models.Model):
                           editable=False, default=_generate_uuid)
     project = models.ForeignKey("projects.Project")
 
-    user = JsonField(null=True, blank=True, default=None)
+    user = JSONField(null=True, blank=True, default=None)
     created_at = models.DateTimeField(default=timezone.now)
     type = models.SmallIntegerField(choices=HISTORY_TYPE_CHOICES)
     key = models.CharField(max_length=255, null=True, default=None, blank=True, db_index=True)
 
     # Stores the last diff
-    diff = JsonField(null=True, blank=True, default=None)
+    diff = JSONField(null=True, blank=True, default=None)
 
     # Stores the values_diff cache
-    values_diff_cache = JsonField(null=True, blank=True, default=None)
+    values_diff_cache = JSONField(null=True, blank=True, default=None)
 
     # Stores the last complete frozen object snapshot
-    snapshot = JsonField(null=True, blank=True, default=None)
+    snapshot = JSONField(null=True, blank=True, default=None)
 
     # Stores a values of all identifiers used in
-    values = JsonField(null=True, blank=True, default=None)
+    values = JSONField(null=True, blank=True, default=None)
 
     # Stores a comment
     comment = models.TextField(blank=True)
     comment_html = models.TextField(blank=True)
 
     delete_comment_date = models.DateTimeField(null=True, blank=True, default=None)
-    delete_comment_user = JsonField(null=True, blank=True, default=None)
+    delete_comment_user = JSONField(null=True, blank=True, default=None)
 
     # Historic version of comments
-    comment_versions = JsonField(null=True, blank=True, default=None)
+    comment_versions = JSONField(null=True, blank=True, default=None)
     edit_comment_date = models.DateTimeField(null=True, blank=True, default=None)
 
     # Flag for mark some history entries as

@@ -55,27 +55,3 @@ def test_destroy_role_and_reassign_members(client):
 
     qs = Membership.objects.filter(project=project, role_id=role1.pk)
     assert qs.count() == 2
-
-
-def test_destroy_role_and_reassign_members_with_deleted_project(client):
-    """
-    Regression test, that fixes some 500 errors on production
-    """
-
-    user1 = f.UserFactory.create()
-    user2 = f.UserFactory.create()
-    project = f.ProjectFactory.create(owner=user1)
-    role1 = f.RoleFactory.create(project=project)
-    role2 = f.RoleFactory.create(project=project)
-    f.MembershipFactory.create(project=project, user=user1, role=role1)
-    f.MembershipFactory.create(project=project, user=user2, role=role2)
-
-    Project.objects.filter(pk=project.id).delete()
-
-    url = reverse("roles-detail", args=[role2.pk]) + "?moveTo={}".format(role1.pk)
-    client.login(user1)
-
-    response = client.delete(url)
-
-    # FIXME: really should return 403? I think it should be 404
-    assert response.status_code == 403, response.content
