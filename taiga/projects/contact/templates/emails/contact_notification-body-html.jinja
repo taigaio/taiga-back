@@ -1,0 +1,24 @@
+{% extends "emails/base-body-html.jinja" %}
+
+{% block body %}
+    <p>
+    {% if photo_url %}
+        <a href="{{ user_profile_url }}" title="{{ full_name }}" >
+            <img style="vertical-align:middle;" src="{{ photo_url }}" alt="{{ full_name }}" width="60"/>
+        </a>
+    {% endif %}
+    {% trans full_name=full_name, comment=comment, project_name=project_name %}
+        <a style="font-weight: bold;text-decoration:none;color:#222;" href="{{ user_profile_url }}" title="{{ full_name }}">{{ full_name }}</a> has written to {{ project_name }}
+    {% endtrans %}
+    </p>
+
+    <p>{{ comment }}</p>
+
+    <hr>
+
+    <p>
+        {% trans project_name=project_name %}
+        You are receiving this message because you are listed as administrator of the project titled {{ project_name }}. If you don't want members of the Taiga community contacting your project, please <a href="{{ project_settings_url }}">update your project settings</a> to prevent such contacts. Regular communications amongst members of the project will not be affected.
+    {% endtrans %}
+    </p>
+{% endblock %}

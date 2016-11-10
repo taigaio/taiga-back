@@ -1,0 +1,9 @@
+{% trans full_name=full_name, comment=comment, project_name=project_name %}
+{{ full_name }} has written to {{ project_name }}
+{% endtrans %}
+---------
+{{ comment }}
+---------
+{% trans project_name=project_name %}
+You are receiving this message because you are listed as administrator of the project titled {{ project_name }}. If you don't want members of the Taiga community contacting your project, please <a href="{{ project_settings_url }}">update your project settings</a< to prevent such contacts. Regular communications amongst members of the project will not be affected.
+{% endtrans %}

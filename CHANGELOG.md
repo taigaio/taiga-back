@@ -1,5 +1,9 @@
 # Changelog #
 
+## 3.1.0 ¿¿?? (¿¿??)
+
+### Features
+- Contact with the project: if the projects have this module enabled Taiga users can contact them.
 
 ## 3.0.0 Stellaria Borealis (2016-10-02)
 

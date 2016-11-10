@@ -157,7 +157,6 @@
                 padding-bottom:20px;
                 padding-left:20px;
                 padding-top:20px;
-                text-align:center;
             }
 
             /**
@@ -186,6 +185,13 @@
 
             a.button:hover {
                 background: #aad400;
+            }
+
+            hr {
+                width: 90%;
+                margin: 0 auto;
+                border-bottom: 1px solid #e1e1e1;
+                border-top: 0;
             }
 
             .bodyContent img{
@@ -392,20 +398,29 @@
                                     <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateHeader">
                                         <tr>
                                             <td valign="top" class="headerContent">
-                                                <img src="{{ static("emails/top-bg-update.png") }}" />
-                                                <a href="{{ resolve_front_url("home") }}" title="Taiga">
-                                                    <img src="{{ static("emails/logo-color.png") }}" id="headerImage" alt="Taiga logo" />
+                                                <img src="{{ static('emails/top-bg-update.png') }}" >
+                                                <a href="{{ resolve_front_url('home') }}" title="Taiga">
+                                                    <img src="{{ static('emails/logo-color.png') }}" id="headerImage" alt="Taiga logo" />
                                                 </a>
-                                                {% block body %}
-                                                {% endblock %}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" valign="top">
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateBody">
+                                        <tr>
+                                            <td valign="top" class="bodyContent">
+                                                {% block body %}{% endblock %}
                                             </td>
                                         </tr>
                                         {% block social %}
                                         <tr>
                                             <td valign="top" class="social-links">
-                                                <a href="{{ sr("social.twitter_url") }}" title="{{ _("Follow us on Twitter") }}" style="color: #9dce0a">{{ _("Twitter") }}</a>
-                                                <a href="{{ sr("social.github_url") }}" title="{{ _("Get the code on GitHub") }}" style="color: #9dce0a">{{ _("GitHub") }}</a>
-                                                <a href="{{ sr("taigaio_url") }}" title="{{ _("Visit our website") }}" style="color: #9dce0a">{{ _("Taiga.io") }}</a>
+                                                <a href="{{ sr('social.twitter_url') }}" title="{{ _('Follow us on Twitter') }}" style="color: #9dce0a">{{ _("Twitter") }}</a>
+                                                <a href="{{ sr('social.github_url') }}" title="{{ _('Get the code on GitHub') }}" style="color: #9dce0a">{{ _("GitHub") }}</a>
+                                                <a href="{{ sr('taigaio_url') }}" title="{{ _('Visit our website') }}" style="color: #9dce0a">{{ _("Taiga.io") }}</a>
                                             </td>
                                         </tr>
                                         {% endblock %}
