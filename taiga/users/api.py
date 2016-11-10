@@ -48,6 +48,7 @@ from . import filters as user_filters
 from . import services
 from . import utils as user_utils
 from .signals import user_cancel_account as user_cancel_account_signal
+from .signals import user_change_email as user_change_email_signal
 
 class UsersViewSet(ModelCrudViewSet):
     permission_classes = (permissions.UserPermission,)
@@ -279,10 +280,19 @@ class UsersViewSet(ModelCrudViewSet):
                                        "didn't use it before?"))
 
         self.check_permissions(request, "change_email", user)
-        user.email = user.new_email
+
+        old_email = user.email
+        new_email = user.new_email
+
+        user.email = new_email
         user.new_email = None
         user.email_token = None
         user.save(update_fields=["email", "new_email", "email_token"])
+
+        user_change_email_signal.send(sender=user.__class__,
+                                      user=user,
+                                      old_email=old_email,
+                                      new_email=new_email)
 
         return response.NoContent()
 
