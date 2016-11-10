@@ -1856,24 +1856,28 @@ def test_membership_update(client, data):
 
     membership_data = serializers.MembershipSerializer(data.public_membership).data
     membership_data["token"] = "test"
+    membership_data["username"] = data.public_membership.user.email
     membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'put', public_url, membership_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     membership_data = serializers.MembershipSerializer(data.private_membership1).data
     membership_data["token"] = "test"
+    membership_data["username"] = data.private_membership1.user.email
     membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'put', private1_url, membership_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     membership_data = serializers.MembershipSerializer(data.private_membership2).data
     membership_data["token"] = "test"
+    membership_data["username"] = data.private_membership2.user.email
     membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'put', private2_url, membership_data, users)
     assert results == [401, 403, 403, 403, 200]
 
     membership_data = serializers.MembershipSerializer(data.blocked_membership).data
     membership_data["token"] = "test"
+    membership_data["username"] = data.blocked_membership.user.email
     membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'put', blocked_url, membership_data, users)
     assert results == [401, 403, 403, 403, 451]
@@ -1972,29 +1976,33 @@ def test_membership_create(client, data):
     ]
 
     membership_data = serializers.MembershipSerializer(data.public_membership).data
-    membership_data["id"] = None
-    membership_data["email"] = "test1@test.com"
+    del(membership_data["id"])
+    del(membership_data["user"])
+    membership_data["username"] = "test1@test.com"
     membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'post', url, membership_data, users)
     assert results == [401, 403, 403, 403, 201]
 
     membership_data = serializers.MembershipSerializer(data.private_membership1).data
-    membership_data["id"] = None
-    membership_data["email"] = "test2@test.com"
+    del(membership_data["id"])
+    del(membership_data["user"])
+    membership_data["username"] = "test2@test.com"
     membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'post', url, membership_data, users)
     assert results == [401, 403, 403, 403, 201]
 
     membership_data = serializers.MembershipSerializer(data.private_membership2).data
-    membership_data["id"] = None
-    membership_data["email"] = "test3@test.com"
+    del(membership_data["id"])
+    del(membership_data["user"])
+    membership_data["username"] = "test3@test.com"
     membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'post', url, membership_data, users)
     assert results == [401, 403, 403, 403, 201]
 
     membership_data = serializers.MembershipSerializer(data.blocked_membership).data
-    membership_data["id"] = None
-    membership_data["email"] = "test4@test.com"
+    del(membership_data["id"])
+    del(membership_data["user"])
+    membership_data["username"] = "test4@test.com"
     membership_data = json.dumps(membership_data)
     results = helper_test_http_method(client, 'post', url, membership_data, users)
     assert results == [401, 403, 403, 403, 451]
@@ -2014,8 +2022,8 @@ def test_membership_action_bulk_create(client, data):
     bulk_data = {
         "project_id": data.public_project.id,
         "bulk_memberships": [
-            {"role_id": data.public_membership.role.pk, "email": "test1@test.com"},
-            {"role_id": data.public_membership.role.pk, "email": "test2@test.com"},
+            {"role_id": data.public_membership.role.pk, "username": "test1@test.com"},
+            {"role_id": data.public_membership.role.pk, "username": "test2@test.com"},
         ]
     }
     bulk_data = json.dumps(bulk_data)
@@ -2025,8 +2033,8 @@ def test_membership_action_bulk_create(client, data):
     bulk_data = {
         "project_id": data.private_project1.id,
         "bulk_memberships": [
-            {"role_id": data.private_membership1.role.pk, "email": "test1@test.com"},
-            {"role_id": data.private_membership1.role.pk, "email": "test2@test.com"},
+            {"role_id": data.private_membership1.role.pk, "username": "test1@test.com"},
+            {"role_id": data.private_membership1.role.pk, "username": "test2@test.com"},
         ]
     }
     bulk_data = json.dumps(bulk_data)
@@ -2036,8 +2044,8 @@ def test_membership_action_bulk_create(client, data):
     bulk_data = {
         "project_id": data.private_project2.id,
         "bulk_memberships": [
-            {"role_id": data.private_membership2.role.pk, "email": "test1@test.com"},
-            {"role_id": data.private_membership2.role.pk, "email": "test2@test.com"},
+            {"role_id": data.private_membership2.role.pk, "username": "test1@test.com"},
+            {"role_id": data.private_membership2.role.pk, "username": "test2@test.com"},
         ]
     }
     bulk_data = json.dumps(bulk_data)
@@ -2047,8 +2055,8 @@ def test_membership_action_bulk_create(client, data):
     bulk_data = {
         "project_id": data.blocked_project.id,
         "bulk_memberships": [
-            {"role_id": data.blocked_membership.role.pk, "email": "test1@test.com"},
-            {"role_id": data.blocked_membership.role.pk, "email": "test2@test.com"},
+            {"role_id": data.blocked_membership.role.pk, "username": "test1@test.com"},
+            {"role_id": data.blocked_membership.role.pk, "username": "test2@test.com"},
         ]
     }
     bulk_data = json.dumps(bulk_data)

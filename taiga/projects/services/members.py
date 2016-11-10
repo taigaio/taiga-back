@@ -16,10 +16,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from taiga.base.exceptions import ValidationError
 from taiga.base.utils import db, text
+from taiga.users.models import User
+
+from django.core.validators import validate_email
 from django.utils.translation import ugettext as _
 
 from .. import models
+
 
 def get_members_from_bulk(bulk_data, **additional_fields):
     """Convert `bulk_data` into a list of members.
@@ -32,6 +37,15 @@ def get_members_from_bulk(bulk_data, **additional_fields):
     members = []
     for data in bulk_data:
         data_copy = data.copy()
+        username = data_copy.pop("username")
+        try:
+            validate_email(username)
+            data_copy["email"] = username
+
+        except ValidationError:
+            user = User.objects.filter(username=username).first()
+            data_copy["user_id"] = user.id
+
         data_copy.update(additional_fields)
         members.append(models.Membership(**data_copy))
     return members
@@ -40,7 +54,7 @@ def get_members_from_bulk(bulk_data, **additional_fields):
 def create_members_in_bulk(bulk_data, callback=None, precall=None, **additional_fields):
     """Create members from `bulk_data`.
 
-    :param bulk_data: List of dicts `{"project_id": <>, "role_id": <>, "email": <>}`.
+    :param bulk_data: List of dicts `{"project_id": <>, "role_id": <>, "username": <>}`.
     :param callback: Callback to execute after each task save.
     :param additional_fields: Additional fields when instantiating each task.
 
@@ -116,7 +130,7 @@ def check_if_project_can_have_more_memberships(project, total_new_memberships):
     """
     if project.owner is None:
         return False, _("Project without owner")
-        
+
     if project.is_private:
         total_memberships = project.memberships.count() + total_new_memberships
         max_memberships = project.owner.max_memberships_private_projects

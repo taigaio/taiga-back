@@ -45,6 +45,8 @@ from taiga.permissions.choices import MEMBERS_PERMISSIONS
 from taiga.projects.choices import BLOCKED_BY_OWNER_LEAVING
 from taiga.projects.notifications.choices import NotifyLevel
 
+from . import services
+
 
 def get_user_model_safe():
     """
@@ -257,6 +259,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         return self.full_name or self.username or self.email
+
+    def contacts_visible_by_user(self, user):
+        qs = User.objects.filter(is_active=True)
+        project_ids = services.get_visible_project_ids(self, user)
+        qs = qs.filter(memberships__project_id__in=project_ids)
+        qs = qs.exclude(id=self.id)        
+        return qs
 
     def save(self, *args, **kwargs):
         get_token_for_user(self, "cancel_account")

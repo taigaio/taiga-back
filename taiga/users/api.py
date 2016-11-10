@@ -46,8 +46,8 @@ from . import validators
 from . import permissions
 from . import filters as user_filters
 from . import services
+from . import utils as user_utils
 from .signals import user_cancel_account as user_cancel_account_signal
-
 
 class UsersViewSet(ModelCrudViewSet):
     permission_classes = (permissions.UserPermission,)
@@ -55,8 +55,8 @@ class UsersViewSet(ModelCrudViewSet):
     serializer_class = serializers.UserSerializer
     admin_validator_class = validators.UserAdminValidator
     validator_class = validators.UserValidator
-    queryset = models.User.objects.all().prefetch_related("memberships")
     filter_backends = (MembersFilterBackend,)
+    model = models.User
 
     def get_serializer_class(self):
         if self.action in ["partial_update", "update", "retrieve", "by_username"]:
@@ -73,6 +73,12 @@ class UsersViewSet(ModelCrudViewSet):
                 return self.admin_validator_class
 
         return self.validator_class
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.prefetch_related("memberships")
+        qs = user_utils.attach_extra_info(qs, user=self.request.user)
+        return qs
 
     def create(self, *args, **kwargs):
         raise exc.NotSupported()
@@ -91,7 +97,7 @@ class UsersViewSet(ModelCrudViewSet):
         return response.Ok(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
-        self.object = get_object_or_404(models.User, **kwargs)
+        self.object = get_object_or_404(self.get_queryset(), **kwargs)
         self.check_permissions(request, 'retrieve', self.object)
         serializer = self.get_serializer(self.object)
         return response.Ok(serializer.data)

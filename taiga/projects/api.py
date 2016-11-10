@@ -653,7 +653,6 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
 class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
     model = models.Membership
     admin_serializer_class = serializers.MembershipAdminSerializer
-    admin_validator_class = validators.MembershipAdminValidator
     serializer_class = serializers.MembershipSerializer
     validator_class = validators.MembershipValidator
     permission_classes = (permissions.MembershipPermission,)
@@ -680,12 +679,6 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         else:
             return self.serializer_class
 
-    def get_validator_class(self):
-        if self.action == "create":
-            return self.admin_validator_class
-
-        return self.validator_class
-
     def _check_if_project_can_have_more_memberships(self, project, total_new_memberships):
         (can_add_memberships, error_type) = services.check_if_project_can_have_more_memberships(
             project,
@@ -700,7 +693,10 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
-        validator = validators.MembersBulkValidator(data=request.DATA)
+        context = {
+            "request": request
+        }
+        validator = validators.MembersBulkValidator(data=request.DATA, context=context)
         if not validator.is_valid():
             return response.BadRequest(validator.errors)
 
