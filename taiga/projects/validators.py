@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.core.validators import validate_email
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 
@@ -27,7 +26,6 @@ from taiga.base.exceptions import ValidationError
 from taiga.base.fields import JSONField
 from taiga.base.fields import PgArrayField
 from taiga.users.models import User, Role
-from taiga.users import filters as user_filters
 
 
 from .tagging.fields import TagsField
@@ -117,8 +115,6 @@ class IssueTypeValidator(DuplicatedNameInProjectValidator, validators.ModelValid
 
 class MembershipValidator(validators.ModelValidator):
     username = serializers.CharField(required=True)
-    # email = serializers.EmailField(required=False)
-    # user = serializers.PrimaryKeyRelatedField(required=False)
 
     class Meta:
         model = models.Membership
@@ -229,6 +225,7 @@ class _MemberBulkValidator(validators.Validator):
                     raise ValidationError(_("The user must be a valid contact"))
 
         return attrs
+
 
 class MembersBulkValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
