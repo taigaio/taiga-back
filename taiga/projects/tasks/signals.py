@@ -39,6 +39,7 @@ def try_to_close_or_open_us_and_milestone_when_create_or_edit_task(sender, insta
     _try_to_close_or_open_us_when_create_or_edit_task(instance)
     _try_to_close_or_open_milestone_when_create_or_edit_task(instance)
 
+
 def try_to_close_or_open_us_and_milestone_when_delete_task(sender, instance, **kwargs):
     _try_to_close_or_open_us_when_delete_task(instance)
     _try_to_close_milestone_when_delete_task(instance)
@@ -95,6 +96,7 @@ def _try_to_close_milestone_when_delete_task(instance):
     with suppress(ObjectDoesNotExist):
         if instance.milestone_id and services.calculate_milestone_is_closed(instance.milestone):
             services.close_milestone(instance.milestone)
+
 
 ####################################
 # Signals for set finished date

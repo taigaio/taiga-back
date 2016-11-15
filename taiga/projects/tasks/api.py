@@ -258,7 +258,6 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
 
         return response.Ok(tasks_serialized.data)
 
-
     def _bulk_update_order(self, order_field, request, **kwargs):
         validator = validators.UpdateTasksOrderBulkValidator(data=request.DATA)
         if not validator.is_valid():
