@@ -64,7 +64,6 @@ class TaskViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, Wa
                      "milestone",
                      "project",
                      "project__slug",
-                     "assigned_to",
                      "status__is_closed"]
 
     def get_serializer_class(self, *args, **kwargs):
