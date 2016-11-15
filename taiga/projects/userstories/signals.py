@@ -59,8 +59,9 @@ def update_role_points_when_create_or_edit_us(sender, instance, **kwargs):
 
 def update_milestone_of_tasks_when_edit_us(sender, instance, created, **kwargs):
     if not created:
-        instance.tasks.exclude(milestone=instance.milestone).update(milestone=instance.milestone)
-        for task in instance.tasks.all():
+        tasks = instance.tasks.exclude(milestone=instance.milestone)
+        tasks.update(milestone=instance.milestone)
+        for task in tasks:
             take_snapshot(task)
 
 
