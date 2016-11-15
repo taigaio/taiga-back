@@ -70,6 +70,7 @@ def _get_user_story_values(ids:set) -> dict:
 
 _get_us_status_values = partial(_get_generic_values, typename="projects.userstorystatus")
 _get_task_status_values = partial(_get_generic_values, typename="projects.taskstatus")
+_get_epic_status_values = partial(_get_generic_values, typename="projects.epicstatus")
 _get_issue_status_values = partial(_get_generic_values, typename="projects.issuestatus")
 _get_issue_type_values = partial(_get_generic_values, typename="projects.issuetype")
 _get_role_values = partial(_get_generic_values, typename="users.role")
@@ -110,7 +111,7 @@ def epic_values(diff):
     values = _common_users_values(diff)
 
     if "status" in diff:
-        values["status"] = _get_us_status_values(diff["status"])
+        values["status"] = _get_epic_status_values(diff["status"])
 
     return values
 
