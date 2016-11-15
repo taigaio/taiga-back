@@ -112,7 +112,7 @@ class UsersViewSet(ModelCrudViewSet):
         user = self.get_object()
         self.check_permissions(request, "update", user)
 
-        new_email = request.DATA.get('email', None)
+        new_email = request.DATA.pop('email', None)
         if new_email is not None:
             valid_new_email = True
             duplicated_email = models.User.objects.filter(email=new_email).exists()
@@ -143,9 +143,7 @@ class UsersViewSet(ModelCrudViewSet):
             )
             email.send()
 
-        ret = super().partial_update(request, *args, **kwargs)
-
-        return ret
+        return super().partial_update(request, *args, **kwargs)
 
     def destroy(self, request, pk=None):
         user = self.get_object()

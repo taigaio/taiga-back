@@ -47,6 +47,10 @@ import os
 pytestmark = pytest.mark.django_db
 
 
+##############################
+## Create user
+##############################
+
 def test_users_create_through_standard_api(client):
     user = f.UserFactory.create(is_superuser=True)
 
@@ -62,6 +66,10 @@ def test_users_create_through_standard_api(client):
     assert response.status_code == 405
 
 
+##############################
+## Change email
+##############################
+
 def test_update_user_with_same_email(client):
     user = f.UserFactory.create(email="same@email.com")
     url = reverse('users-detail', kwargs={"pk": user.pk})
@@ -72,6 +80,9 @@ def test_update_user_with_same_email(client):
 
     assert response.status_code == 400
     assert response.data['_error_message'] == 'Duplicated email'
+
+    user.refresh_from_db()
+    assert user.email == "same@email.com"
 
 
 def test_update_user_with_duplicated_email(client):
@@ -86,6 +97,9 @@ def test_update_user_with_duplicated_email(client):
     assert response.status_code == 400
     assert response.data['_error_message'] == 'Duplicated email'
 
+    user.refresh_from_db()
+    assert user.email == "two@email.com"
+
 
 def test_update_user_with_invalid_email(client):
     user = f.UserFactory.create(email="my@email.com")
@@ -97,6 +111,9 @@ def test_update_user_with_invalid_email(client):
 
     assert response.status_code == 400
     assert response.data['_error_message'] == 'Not valid email'
+
+    user.refresh_from_db()
+    assert user.email == "my@email.com"
 
 
 def test_update_user_with_unallowed_domain_email(client, settings):
@@ -111,6 +128,8 @@ def test_update_user_with_unallowed_domain_email(client, settings):
     assert response.status_code == 400
     assert response.data['_error_message'] == 'Not valid email'
 
+    user.refresh_from_db()
+    assert user.email == "my@email.com"
 
 def test_update_user_with_allowed_domain_email(client, settings):
     settings.USER_EMAIL_ALLOWED_DOMAINS = ['email.com']
@@ -123,7 +142,9 @@ def test_update_user_with_allowed_domain_email(client, settings):
     response = client.patch(url, json.dumps(data), content_type="application/json")
 
     assert response.status_code == 200
-    user = models.User.objects.get(pk=user.id)
+
+    user.refresh_from_db()
+    assert user.email == "old@email.com"
     assert user.email_token is not None
     assert user.new_email == "new@email.com"
 
@@ -137,13 +158,14 @@ def test_update_user_with_valid_email(client):
     response = client.patch(url, json.dumps(data), content_type="application/json")
 
     assert response.status_code == 200
-    user = models.User.objects.get(pk=user.id)
+    user.refresh_from_db()
+    assert user.email == "old@email.com"
     assert user.email_token is not None
     assert user.new_email == "new@email.com"
 
 
 def test_validate_requested_email_change(client):
-    user = f.UserFactory.create(email_token="change_email_token", new_email="new@email.com")
+    user = f.UserFactory.create(email="old@email.com", email_token="change_email_token", new_email="new@email.com")
     url = reverse('users-change-email')
     data = {"email_token": "change_email_token"}
 
@@ -151,23 +173,25 @@ def test_validate_requested_email_change(client):
     response = client.post(url, json.dumps(data), content_type="application/json")
 
     assert response.status_code == 204
-    user = models.User.objects.get(pk=user.id)
+    user.refresh_from_db()
     assert user.email_token is None
     assert user.new_email is None
     assert user.email == "new@email.com"
 
+
 def test_validate_requested_email_change_for_anonymous_user(client):
-    user = f.UserFactory.create(email_token="change_email_token", new_email="new@email.com")
+    user = f.UserFactory.create(email="old@email.com", email_token="change_email_token", new_email="new@email.com")
     url = reverse('users-change-email')
     data = {"email_token": "change_email_token"}
 
     response = client.post(url, json.dumps(data), content_type="application/json")
 
     assert response.status_code == 204
-    user = models.User.objects.get(pk=user.id)
+    user.refresh_from_db()
     assert user.email_token is None
     assert user.new_email is None
     assert user.email == "new@email.com"
+
 
 def test_validate_requested_email_change_without_token(client):
     user = f.UserFactory.create(email_token="change_email_token", new_email="new@email.com")
@@ -189,6 +213,10 @@ def test_validate_requested_email_change_with_invalid_token(client):
 
     assert response.status_code == 400
 
+
+##############################
+## Delete user
+##############################
 
 def test_delete_self_user(client):
     user = f.UserFactory.create()
@@ -229,6 +257,10 @@ def test_delete_self_user_remove_membership_projects(client):
     assert project.memberships.all().count() == 0
 
 
+##############################
+## Cancel account
+##############################
+
 def test_cancel_self_user_with_valid_token(client):
     user = f.UserFactory.create()
     url = reverse('users-cancel')
@@ -251,6 +283,10 @@ def test_cancel_self_user_with_invalid_token(client):
 
     assert response.status_code == 400
 
+
+##############################
+## Avatar
+##############################
 
 def test_change_avatar(client):
     url = reverse('users-change-avatar')
@@ -346,6 +382,10 @@ def test_remove_avatar(client):
     assert not any(list(map(os.path.exists, original_photo_paths)))
 
 
+##############################
+## Contacts
+##############################
+
 def test_list_contacts_private_projects(client):
     project = f.ProjectFactory.create()
     user_1 = f.UserFactory.create()
@@ -406,6 +446,10 @@ def test_list_contacts_public_projects(client):
     assert response_content[0]["id"] == user_2.id
 
 
+##############################
+## Mail permissions
+##############################
+
 def test_mail_permissions(client):
     user_1 = f.UserFactory.create(is_superuser=True)
     user_2 = f.UserFactory.create()
@@ -444,6 +488,10 @@ def test_mail_permissions(client):
     assert response.status_code == 200
     assert "email" in response.data
 
+
+##############################
+## Watchers, Likes and Votes
+##############################
 
 def test_get_watched_list():
     fav_user = f.UserFactory()
