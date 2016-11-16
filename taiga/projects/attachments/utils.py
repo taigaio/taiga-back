@@ -37,8 +37,10 @@ def attach_basic_attachments(queryset, as_field="attachments_attr"):
                         attachments_attachment.id,
                         attachments_attachment.attached_file
                     FROM attachments_attachment
-                    WHERE attachments_attachment.object_id = {tbl}.id AND  attachments_attachment.content_type_id = {type_id}
-                    ORDER BY attachments_attachment.order, attachments_attachment.id) t"""
+                    WHERE attachments_attachment.object_id = {tbl}.id
+                     AND  attachments_attachment.content_type_id = {type_id}
+                     AND  attachments_attachment.is_deprecated = False
+                    ORDER BY attachments_attachment.order, attachments_attachment.created_date, attachments_attachment.id) t"""
 
     sql = sql.format(tbl=model._meta.db_table, type_id=type.id)
     queryset = queryset.extra(select={as_field: sql})
