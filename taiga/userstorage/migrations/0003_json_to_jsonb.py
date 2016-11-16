@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ALTER TABLE "{table_name}"
                    ALTER COLUMN "{column_name}"
                            TYPE jsonb
-                          USING to_json("{column_name}"::text)::jsonb;
+                          USING regexp_replace("{column_name}"::text, '\\u0000', '\\\\u0000', 'g')::jsonb;
             """.format(
                 table_name="userstorage_storageentry",
                 column_name="value",
