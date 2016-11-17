@@ -347,6 +347,10 @@ LOGGING = {
         "null": {
             "format": "%(message)s",
         },
+        "django.server": {
+            "()": "django.utils.log.ServerFormatter",
+            "format": "[%(server_time)s] %(message)s",
+        },
     },
     "handlers": {
         "null": {
@@ -362,7 +366,12 @@ LOGGING = {
             "level": "ERROR",
             "filters": ["require_debug_false"],
             "class": "django.utils.log.AdminEmailHandler",
-        }
+        },
+        "django.server": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "django.server",
+        },
     },
     "loggers": {
         "django": {
@@ -383,6 +392,11 @@ LOGGING = {
         "taiga": {
             "handlers": ["console"],
             "level": "DEBUG",
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["django.server"],
+            "level": "INFO",
             "propagate": False,
         }
     }
