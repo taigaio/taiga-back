@@ -201,7 +201,7 @@ def attach_task_statuses(queryset, as_field="task_statuses_attr"):
     sql = """
              SELECT json_agg(
                         row_to_json(projects_taskstatus)
-                        ORDER BY projects_taskstatus
+                        ORDER BY projects_taskstatus.order
                     )
                FROM projects_taskstatus
               WHERE projects_taskstatus.project_id = {tbl}.id
