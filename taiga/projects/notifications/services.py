@@ -72,14 +72,14 @@ def create_notify_policy_if_not_exists(project, user, level=NotifyLevel.involved
     model_cls = apps.get_model("notifications", "NotifyPolicy")
     try:
         result = model_cls.objects.get_or_create(project=project,
-                                               user=user,
-                                               defaults={"notify_level": level})
+                                                 user=user,
+                                                 defaults={"notify_level": level})
         return result[0]
     except IntegrityError as e:
         raise exc.IntegrityError(_("Notify exists for specified user and project")) from e
 
 
-def analize_object_for_watchers(obj:object, comment:str, user:object):
+def analize_object_for_watchers(obj: object, comment: str, user: object):
     """
     Generic implementation for analize model objects and
     extract mentions from it and add it to watchers.
@@ -90,7 +90,6 @@ def analize_object_for_watchers(obj:object, comment:str, user:object):
 
     if not hasattr(obj, "add_watcher"):
         return
-
 
     texts = (getattr(obj, "description", ""),
              getattr(obj, "content", ""),
@@ -142,7 +141,7 @@ def get_users_to_notify(obj, *, discard_users=None) -> list:
     """
     project = obj.get_project()
 
-    def _check_level(project:object, user:object, levels:tuple) -> bool:
+    def _check_level(project: object, user: object, levels: tuple) -> bool:
         policy = project.cached_notify_policy_for_user(user)
         return policy.notify_level in levels
 
@@ -167,7 +166,7 @@ def get_users_to_notify(obj, *, discard_users=None) -> list:
     return frozenset(candidates)
 
 
-def _resolve_template_name(model:object, *, change_type:int) -> str:
+def _resolve_template_name(model: object, *, change_type: int) -> str:
     """
     Ginven an changed model instance and change type,
     return the preformated template name for it.
@@ -187,7 +186,7 @@ def _resolve_template_name(model:object, *, change_type:int) -> str:
                        change=change_type)
 
 
-def _make_template_mail(name:str):
+def _make_template_mail(name: str):
     """
     Helper that creates a adhoc djmail template email
     instance for specified name, and return an instance
@@ -211,7 +210,7 @@ def send_notifications(obj, *, history):
                              .get_or_create(key=key,
                                             owner=owner,
                                             project=obj.project,
-                                            history_type = history.type))
+                                            history_type=history.type))
 
     notification.updated_datetime = timezone.now()
     notification.save()
@@ -221,6 +220,14 @@ def send_notifications(obj, *, history):
     # object and send the change notification to them.
     notify_users = get_users_to_notify(obj, discard_users=[notification.owner])
     notification.notify_users.add(*notify_users)
+
+    # If the history is an unassignment change we should notify that user too
+    if history.type == HistoryType.change and "assigned_to" in history.diff:
+        if history.diff["assigned_to"][0] is not None:
+            notification.notify_users.add(history.diff["assigned_to"][0])
+
+        if history.diff["assigned_to"][1] is not None:
+            notification.notify_users.add(history.diff["assigned_to"][1])
 
     # If we are the min interval is 0 it just work in a synchronous and spamming way
     if settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL == 0:
@@ -392,8 +399,11 @@ def add_watcher(obj, user):
     :param user: User adding the watch. :class:`~taiga.users.models.User` instance.
     """
     obj_type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(obj)
-    watched, created = Watched.objects.get_or_create(content_type=obj_type,
-        object_id=obj.id, user=user, project=obj.project)
+    watched, created = Watched.objects.get_or_create(
+        content_type=obj_type,
+        object_id=obj.id,
+        user=user,
+        project=obj.project)
 
     notify_policy, _ = apps.get_model("notifications", "NotifyPolicy").objects.get_or_create(
         project=obj.project, user=user, defaults={"notify_level": NotifyLevel.involved})
@@ -422,7 +432,7 @@ def set_notify_policy_level(notify_policy, notify_level):
     """
     Set notification level for specified policy.
     """
-    if not notify_level in [e.value for e in NotifyLevel]:
+    if notify_level not in [e.value for e in NotifyLevel]:
         raise exc.IntegrityError(_("Invalid value for notify level"))
 
     notify_policy.notify_level = notify_level

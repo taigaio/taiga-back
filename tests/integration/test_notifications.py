@@ -723,6 +723,42 @@ def test_send_notifications_using_services_method_for_wiki_pages(settings, mail)
         assert services.make_ms_thread_index(in_reply_to, msg_ts) == headers.get('Thread-Index')
 
 
+def test_send_notifications_on_unassigned(client, mail):
+    project = f.ProjectFactory.create()
+    role = f.RoleFactory.create(project=project, permissions=['modify_issue', 'view_issues', 'view_us', 'view_tasks', 'view_wiki_pages'])
+    member1 = f.MembershipFactory.create(project=project, role=role)
+    member2 = f.MembershipFactory.create(project=project, role=role)
+    issue = f.IssueFactory.create(project=project,
+                                  owner=member1.user,
+                                  milestone=None,
+                                  status=project.default_issue_status,
+                                  severity=project.default_severity,
+                                  priority=project.default_priority,
+                                  type=project.default_issue_type)
+
+    take_snapshot(issue, user=issue.owner)
+
+    client.login(member1.user)
+    url = reverse("issues-detail", args=[issue.pk])
+    data = {
+        "assigned_to": member2.user.id,
+        "version": issue.version
+    }
+    response = client.json.patch(url, json.dumps(data))
+    assert len(mail.outbox) == 1
+    assert mail.outbox[0].to == [member2.user.email]
+
+    mail.outbox = []
+
+    data = {
+        "assigned_to": None,
+        "version": issue.version + 1
+    }
+    response = client.json.patch(url, json.dumps(data))
+    assert len(mail.outbox) == 1
+    assert mail.outbox[0].to == [member2.user.email]
+
+
 def test_resource_notification_test(client, settings, mail):
     settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL = 1
 
