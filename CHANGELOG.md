@@ -1,11 +1,17 @@
 # Changelog #
 
-## 3.1.0 ¿¿?? (¿¿??)
+
+## 3.1.0 unnamed (unreleased)
 
 ### Features
 - Contact with the project: if the projects have this module enabled Taiga users can contact them.
-- Memberships API endpoints now allows using usernames and emails instead of using only emails
-- Contacts API search by free text: consulting the username, full name and email
+- Memberships API endpoints now allows using usernames and emails instead of using only emails.
+- Contacts API search by free text: consulting the username, full name and email.
+- Ability to create rich text custom fields in Epics, User Stories, Tasks and Isues.
+
+### Misc
+- Lots of small and not so small bugfixes.
+
 
 ## 3.0.0 Stellaria Borealis (2016-10-02)
 

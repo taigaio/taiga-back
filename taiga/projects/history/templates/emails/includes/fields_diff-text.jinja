@@ -66,27 +66,27 @@
 
     {% elif field_name == "custom_attributes" %}
     {# CUSTOM ATTRIBUTES #}
-        {% elif field_name == "attachments" %}
-            {% if values.new %}
-                {% for attr in values['new']%}
+        {% if values.new %}
+            {% for attr in values['new']%}
+    
     - {{ attr.name }}:
         * {{ attr.value }}
-                {% endfor %}
-            {% endif %}
+            {% endfor %}
+        {% endif %}
 
-            {% if values.changed %}
-                {% for attr in values['changed'] %}
+        {% if values.changed %}
+            {% for attr in values['changed'] %}
     - {{ attr.name }}:
         * {{ _("From:") }} {{ attr.changes.value.0 }}
         * {{ _("To:") }} {{ attr.changes.value.1 }}
-                {% endfor %}
-            {% endif %}
+            {% endfor %}
+        {% endif %}
 
-            {% if values.deleted %}
-                {% for attr in values['deleted']%}
+        {% if values.deleted %}
+            {% for attr in values['deleted']%}
     - {{ attr.name }}: {{ _("-deleted-") }}
         * {{ attr.value }}
-                {% endfor %}
-            {% endif %}
+            {% endfor %}
+        {% endif %}
     {% endif %}
 {% endfor %}

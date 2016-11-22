@@ -167,7 +167,7 @@ class DiffMatchPatch(diff_match_patch.diff_match_patch):
 
 def get_diff_of_htmls(html1, html2):
     diffutil = DiffMatchPatch()
-    diffs = diffutil.diff_main(html1, html2)
+    diffs = diffutil.diff_main(html1 or "", html2 or "")
     diffutil.diff_cleanupSemantic(diffs)
     return diffutil.diff_pretty_html(diffs)
 
