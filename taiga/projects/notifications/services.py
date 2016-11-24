@@ -223,11 +223,9 @@ def send_notifications(obj, *, history):
 
     # If the history is an unassignment change we should notify that user too
     if history.type == HistoryType.change and "assigned_to" in history.diff:
-        if history.diff["assigned_to"][0] is not None:
-            notification.notify_users.add(history.diff["assigned_to"][0])
-
-        if history.diff["assigned_to"][1] is not None:
-            notification.notify_users.add(history.diff["assigned_to"][1])
+        for assigned_to in history.diff["assigned_to"]:
+            if assigned_to is not None and owner.id != assigned_to:
+                notification.notify_users.add(assigned_to)
 
     # If we are the min interval is 0 it just work in a synchronous and spamming way
     if settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL == 0:

@@ -759,6 +759,40 @@ def test_send_notifications_on_unassigned(client, mail):
     assert mail.outbox[0].to == [member2.user.email]
 
 
+def test_not_send_notifications_on_unassigned_if_executer_and_unassigned_match(client, mail):
+    project = f.ProjectFactory.create()
+    role = f.RoleFactory.create(project=project, permissions=['modify_issue', 'view_issues', 'view_us', 'view_tasks', 'view_wiki_pages'])
+    member1 = f.MembershipFactory.create(project=project, role=role)
+    member2 = f.MembershipFactory.create(project=project, role=role)
+    issue = f.IssueFactory.create(project=project,
+                                  owner=member1.user,
+                                  milestone=None,
+                                  status=project.default_issue_status,
+                                  severity=project.default_severity,
+                                  priority=project.default_priority,
+                                  type=project.default_issue_type)
+
+    take_snapshot(issue, user=issue.owner)
+
+    client.login(member1.user)
+    url = reverse("issues-detail", args=[issue.pk])
+    data = {
+        "assigned_to": member1.user.id,
+        "version": issue.version
+    }
+    response = client.json.patch(url, json.dumps(data))
+    assert len(mail.outbox) == 0
+
+    mail.outbox = []
+
+    data = {
+        "assigned_to": None,
+        "version": issue.version + 1
+    }
+    response = client.json.patch(url, json.dumps(data))
+    assert len(mail.outbox) == 0
+
+
 def test_resource_notification_test(client, settings, mail):
     settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL = 1
 
