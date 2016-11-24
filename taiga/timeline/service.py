@@ -93,7 +93,7 @@ def _push_to_timeline(objects, instance: object, event_type: str, created_dateti
 
 @app.task
 def push_to_timelines(project_id, user_id, obj_app_label, obj_model_name, obj_id, event_type,
-                      created_datetime, extra_data={}):
+                      created_datetime, extra_data={}, refresh_totals=True):
 
     ObjModel = apps.get_model(obj_app_label, obj_model_name)
     try:
@@ -120,7 +120,8 @@ def push_to_timelines(project_id, user_id, obj_app_label, obj_model_name, obj_id
                           namespace=build_project_namespace(project),
                           extra_data=extra_data)
 
-        project.refresh_totals()
+        if refresh_totals:
+            project.refresh_totals()
 
         if hasattr(obj, "get_related_people"):
             related_people = obj.get_related_people()
