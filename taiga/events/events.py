@@ -17,10 +17,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import json
 import collections
 
-from django.contrib.contenttypes.models import ContentType
+from django.db import connection
 
 from taiga.base.utils import json
 from taiga.base.utils.db import get_typename_for_model_instance
@@ -39,7 +38,8 @@ watched_types = set([
 
 
 def emit_event(data:dict, routing_key:str, *,
-               sessionid:str=None, channel:str="events"):
+               sessionid:str=None, channel:str="events",
+               on_commit:bool=True):
     if not sessionid:
         sessionid = mw.get_current_session_id()
 
@@ -47,9 +47,14 @@ def emit_event(data:dict, routing_key:str, *,
             "data": data}
 
     backend = backends.get_events_backend()
-    return backend.emit_event(message=json.dumps(data),
-                              routing_key=routing_key,
-                              channel=channel)
+
+    def backend_emit_event():
+        backend.emit_event(message=json.dumps(data), routing_key=routing_key, channel=channel)
+
+    if on_commit:
+        connection.on_commit(backend_emit_event)
+    else:
+        backend_emit_event()
 
 
 def emit_event_for_model(obj, *, type:str="change", channel:str="events",

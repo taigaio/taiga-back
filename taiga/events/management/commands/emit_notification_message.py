@@ -33,4 +33,4 @@ class Command(BaseCommand):
             "desc": options["description"],
         }
         routing_key = "notifications"
-        emit_event(data, routing_key)
+        emit_event(data, routing_key, on_commit=False)
