@@ -50,17 +50,21 @@ class EventsPushBackend(base.BaseEventsPushBackend):
 
     def emit_event(self, message:str, *, routing_key:str, channel:str="events"):
         connection = _make_rabbitmq_connection(self.url)
-
         try:
-            rchannel = connection.channel()
-            message = AmqpMessage(message)
+            connection.connect()
+        except ConnectionRefusedError:
+            log.error("EventsPushBackend: Unable to connect with RabbitMQ at {}".format(self.url),
+                      exc_info=True)
+        else:
+            try:
+                message = AmqpMessage(message)
+                rchannel = connection.channel()
 
-            rchannel.exchange_declare(exchange=channel, type="topic", auto_delete=True)
-            rchannel.basic_publish(message, routing_key=routing_key, exchange=channel)
-            rchannel.close()
-
-        except Exception:
-            log.error("Unhandled exception", exc_info=True)
-
-        finally:
-            connection.close()
+                rchannel.exchange_declare(exchange=channel, type="topic", auto_delete=True)
+                rchannel.basic_publish(message, routing_key=routing_key, exchange=channel)
+                rchannel.close()
+            except Exception:
+                log.error("EventsPushBackend: Unhandled exception",
+                          exc_info=True)
+            finally:
+                connection.close()
