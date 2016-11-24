@@ -30,6 +30,7 @@ from .choices import HistoryType
 from .choices import HISTORY_TYPE_CHOICES
 
 from taiga.base.utils.diff import make_diff as make_diff_from_dicts
+from taiga.projects.custom_attributes.choices import TEXT_TYPE
 
 # This keys has been removed from freeze_impl so we can have objects where the
 # previous diff has value for the attribute and we want to prevent their propagation
@@ -250,15 +251,25 @@ class HistoryEntry(models.Model):
                         changes = make_diff_from_dicts(oldcustattrs[aid], newcustattrs[aid],
                                                        excluded_keys=("name"))
 
+                        newcustattr = newcustattrs.get(aid, {})
                         if changes:
+                            change_type = newcustattr.get("type", TEXT_TYPE)
+                            old_value = oldcustattrs[aid].get("value", "")
+                            new_value = newcustattrs[aid].get("value", "")
+                            value_diff = get_diff_of_htmls(old_value, new_value)
                             change = {
-                                "name": newcustattrs.get(aid, {}).get("name", ""),
-                                "changes": changes
+                                "name": newcustattr.get("name", ""),
+                                "changes": changes,
+                                "type": change_type,
+                                "value_diff": value_diff
                             }
                             custom_attributes["changed"].append(change)
                     elif aid in oldcustattrs and aid not in newcustattrs:
                         custom_attributes["deleted"].append(oldcustattrs[aid])
                     elif aid not in oldcustattrs and aid in newcustattrs:
+                        new_value = newcustattrs[aid].get("value", "")
+                        value_diff = get_diff_of_htmls("", new_value)
+                        newcustattrs[aid]["value_diff"] = value_diff
                         custom_attributes["new"].append(newcustattrs[aid])
 
                 if custom_attributes["new"] or custom_attributes["changed"] or custom_attributes["deleted"]:

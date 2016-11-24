@@ -208,13 +208,14 @@ def extract_attachments(obj) -> list:
 @as_tuple
 def extract_epic_custom_attributes(obj) -> list:
     with suppress(ObjectDoesNotExist):
-        custom_attributes_values =  obj.custom_attributes_values.attributes_values
+        custom_attributes_values = obj.custom_attributes_values.attributes_values
         for attr in obj.project.epiccustomattributes.all():
             with suppress(KeyError):
                 value = custom_attributes_values[str(attr.id)]
                 yield {"id": attr.id,
                        "name": attr.name,
-                       "value": value}
+                       "value": value,
+                       "type": attr.type}
 
 
 @as_tuple
@@ -226,7 +227,8 @@ def extract_user_story_custom_attributes(obj) -> list:
                 value = custom_attributes_values[str(attr.id)]
                 yield {"id": attr.id,
                        "name": attr.name,
-                       "value": value}
+                       "value": value,
+                       "type": attr.type}
 
 
 @as_tuple
@@ -238,7 +240,8 @@ def extract_task_custom_attributes(obj) -> list:
                 value = custom_attributes_values[str(attr.id)]
                 yield {"id": attr.id,
                        "name": attr.name,
-                       "value": value}
+                       "value": value,
+                       "type": attr.type}
 
 
 @as_tuple
@@ -250,7 +253,8 @@ def extract_issue_custom_attributes(obj) -> list:
                 value = custom_attributes_values[str(attr.id)]
                 yield {"id": attr.id,
                        "name": attr.name,
-                       "value": value}
+                       "value": value,
+                       "type": attr.type}
 
 
 def project_freezer(project) -> dict:
