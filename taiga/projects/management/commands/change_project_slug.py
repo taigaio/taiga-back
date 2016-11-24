@@ -23,7 +23,7 @@ from django.test.utils import override_settings
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.projects.models import Project
 from taiga.projects.history.models import HistoryEntry
-from taiga.timeline.management.commands.rebuild_timeline import generate_timeline
+from taiga.timeline.rebuilder import rebuild_timeline
 
 
 class Command(BaseCommand):
@@ -58,4 +58,4 @@ class Command(BaseCommand):
 
         # Regenerate timeline
         self.stdout.write(self.style.SUCCESS("-> Regenerate timeline entries."))
-        generate_timeline(None, None, project.id)
+        rebuild_timeline(None, None, project.id)
