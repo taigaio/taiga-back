@@ -318,7 +318,6 @@ class Command(BaseCommand):
             attachment = self.create_attachment(wiki_page, i+1)
 
         take_snapshot(wiki_page,
-                      comment=self.sd.paragraph(),
                       user=wiki_page.owner)
 
         # Add history entry
@@ -374,7 +373,6 @@ class Command(BaseCommand):
             bug.save()
 
         take_snapshot(bug,
-                      comment=self.sd.paragraph(),
                       user=bug.owner)
 
         # Add history entry
@@ -421,7 +419,6 @@ class Command(BaseCommand):
             attachment = self.create_attachment(task, i+1)
 
         take_snapshot(task,
-                      comment=self.sd.paragraph(),
                       user=task.owner)
 
         # Add history entry
@@ -476,7 +473,6 @@ class Command(BaseCommand):
 
 
         take_snapshot(us,
-                      comment=self.sd.paragraph(),
                       user=us.owner)
 
         # Add history entry
@@ -533,7 +529,6 @@ class Command(BaseCommand):
             epic.save()
 
         take_snapshot(epic,
-                      comment=self.sd.paragraph(),
                       user=epic.owner)
 
         # Add history entry
@@ -559,8 +554,14 @@ class Command(BaseCommand):
 
         # Add history entry
         take_snapshot(epic,
-                      comment=self.sd.paragraph(),
                       user=epic.owner)
+
+        # Add history entry
+        epic.status=self.sd.db_object_from_queryset(project.epic_statuses.filter(is_closed=False))
+        epic.save()
+        take_snapshot(epic,
+              comment=self.sd.paragraph(),
+              user=epic.owner)
 
         return epic
 
@@ -633,4 +634,3 @@ class Command(BaseCommand):
     def generate_color(self, tag):
         color = sha1(tag.encode("utf-8")).hexdigest()[0:6]
         return "#{}".format(color)
-
