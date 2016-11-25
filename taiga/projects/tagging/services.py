@@ -24,12 +24,12 @@ def tag_exist_for_project_elements(project, tag):
 
 
 def create_tags(project, new_tags_colors):
-    project.tags_colors += [[k, v] for k, v in new_tags_colors.items()]
+    project.tags_colors += [[k.lower(), v] for k, v in new_tags_colors.items()]
     project.save(update_fields=["tags_colors"])
 
 
 def create_tag(project, tag, color):
-    project.tags_colors.append([tag, color])
+    project.tags_colors.append([tag.lower(), color])
     project.save(update_fields=["tags_colors"])
 
 
