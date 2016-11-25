@@ -131,7 +131,7 @@ def _filter_notificable(user):
     return user.is_active and not user.is_system
 
 
-def get_users_to_notify(obj, *, discard_users=None) -> list:
+def get_users_to_notify(obj, *, history=None, discard_users=None) -> list:
     """
     Get filtered set of users to notify for specified
     model instance and changer.
@@ -156,13 +156,21 @@ def get_users_to_notify(obj, *, discard_users=None) -> list:
     candidates.update(filter(_can_notify_light, obj.get_watchers()))
     candidates.update(filter(_can_notify_light, obj.get_participants()))
 
+    # If the history is an unassignment change we should notify that user too
+    if history and history.type == HistoryType.change and "assigned_to" in history.diff:
+        assigned_to_users = get_user_model().objects.filter(id__in=history.diff["assigned_to"])
+        candidates.update(filter(_can_notify_light, assigned_to_users))
+
     # Remove the changer from candidates
     if discard_users:
         candidates = candidates - set(discard_users)
 
+    # Filter by object permissions
     candidates = set(filter(partial(_filter_by_permissions, obj), candidates))
+
     # Filter disabled and system users
     candidates = set(filter(partial(_filter_notificable), candidates))
+
     return frozenset(candidates)
 
 
@@ -218,14 +226,8 @@ def send_notifications(obj, *, history):
 
     # Get a complete list of notifiable users for current
     # object and send the change notification to them.
-    notify_users = get_users_to_notify(obj, discard_users=[notification.owner])
+    notify_users = get_users_to_notify(obj, history=history, discard_users=[notification.owner])
     notification.notify_users.add(*notify_users)
-
-    # If the history is an unassignment change we should notify that user too
-    if history.type == HistoryType.change and "assigned_to" in history.diff:
-        for assigned_to in history.diff["assigned_to"]:
-            if assigned_to is not None and owner.id != assigned_to:
-                notification.notify_users.add(assigned_to)
 
     # If we are the min interval is 0 it just work in a synchronous and spamming way
     if settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL == 0:
