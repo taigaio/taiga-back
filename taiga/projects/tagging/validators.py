@@ -50,7 +50,7 @@ class CreateTagValidator(ProjectTagValidator):
 
     def validate_color(self, attrs, source):
         color = attrs.get(source, None)
-        if color is not None and not re.match('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
+        if color and not re.match('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
             raise ValidationError(_("The color is not a valid HEX color."))
 
         return attrs
