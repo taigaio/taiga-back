@@ -94,14 +94,14 @@ class QFilterBackend(FilterBackend):
         # NOTE: See migtration 0033_text_search_indexes
         q = request.QUERY_PARAMS.get('q', None)
         if q:
-            tsquery = "to_tsquery('english_nostop', %s)"
+            tsquery = "to_tsquery('simple', %s)"
             tsquery_params = [to_tsquery(q)]
             tsvector = """
-             setweight(to_tsvector('english_nostop',
+             setweight(to_tsvector('simple',
                                    coalesce(projects_project.name, '')), 'A') ||
-             setweight(to_tsvector('english_nostop',
+             setweight(to_tsvector('simple',
                                    coalesce(inmutable_array_to_string(projects_project.tags), '')), 'B') ||
-             setweight(to_tsvector('english_nostop',
+             setweight(to_tsvector('simple',
                                    coalesce(projects_project.description, '')), 'C')
             """
 

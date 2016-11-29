@@ -312,7 +312,7 @@ def get_watched_list(for_user, from_user, type=None, q=None):
 
     if q:
         filters_sql += """ AND (
-            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', %(q)s)
+            to_tsvector('simple', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('simple', %(q)s)
         )
         """
 
@@ -412,7 +412,7 @@ def get_liked_list(for_user, from_user, type=None, q=None):
 
     if q:
         filters_sql += """ AND (
-            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', %(q)s)
+            to_tsvector('simple', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('simple', %(q)s)
         )
         """
 
@@ -495,7 +495,7 @@ def get_voted_list(for_user, from_user, type=None, q=None):
 
     if q:
         filters_sql += """ AND (
-            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', %(q)s)
+            to_tsvector('simple', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('simple', %(q)s)
         )
         """
 
