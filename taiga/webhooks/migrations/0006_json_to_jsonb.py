@@ -18,15 +18,15 @@ class Migration(migrations.Migration):
                 ALTER TABLE "webhooks_webhooklog"
                    ALTER COLUMN "request_headers"
                            TYPE jsonb
-                          USING regexp_replace("request_headers"::text, '\\u0000', '\\\\u0000', 'g')::jsonb,
+                          USING regexp_replace("request_headers"::text, '[\\\\]+u0000', '\\\\\\\\u0000', 'g')::jsonb,
 
                    ALTER COLUMN "request_data"
                            TYPE jsonb
-                          USING regexp_replace("request_data"::text, '\\u0000', '\\\\u0000', 'g')::jsonb,
+                          USING regexp_replace("request_data"::text, '[\\\\]+u0000', '\\\\\\\\u0000', 'g')::jsonb,
 
                    ALTER COLUMN "response_headers"
                            TYPE jsonb
-                          USING regexp_replace("response_headers"::text, '\\u0000', '\\\\u0000', 'g')::jsonb;
+                          USING regexp_replace("response_headers"::text, '[\\\\]+u0000', '\\\\\\\\u0000', 'g')::jsonb;
             """,
             reverse_sql=migrations.RunSQL.noop
         ),
