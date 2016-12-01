@@ -5,15 +5,16 @@
 
 ### Features
 - Contact with the project: if the projects have this module enabled Taiga users can contact them.
-- Memberships API endpoints now allows using usernames and emails instead of using only emails.
-- Contacts API search by free text: consulting the username, full name and email.
 - Ability to create rich text custom fields in Epics, User Stories, Tasks and Isues.
+- Full text search now use simple as tolenizer so search with non-english text are allowed.
 - i18n:
   - Add japanese (ja) translation.
   - Add chinese simplified (zh-Hans) translation.
 
 ### Misc
 - API:
+    - Memberships API endpoints now allows using usernames and emails instead of using only emails.
+    - Contacts API allow full text search (by the username, full name or email).
     - Filter milestones, user stories and tasks by estimated_start and estimated_finish dates.
     - Add project_extra_info to epics, tasks, milestones, issues and wiki pages endpoints.
 - Lots of small and not so small bugfixes.

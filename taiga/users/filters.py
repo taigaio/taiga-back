@@ -29,10 +29,10 @@ class ContactsFilterBackend(PermissionBasedFilterBackend):
         if q:
             table = qs.model._meta.db_table
             where_clause = ("""
-                to_tsvector('english_nostop',
+                to_tsvector('simple',
                             coalesce({table}.username, '') || ' ' ||
                             coalesce({table}.full_name) || ' ' ||
-                            coalesce({table}.email, '')) @@ to_tsquery('english_nostop', %s)
+                            coalesce({table}.email, '')) @@ to_tsquery('simple', %s)
             """.format(table=table))
 
             qs = qs.extra(where=[where_clause], params=[to_tsquery(q)])

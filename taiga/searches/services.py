@@ -55,23 +55,23 @@ def search_issues(project, text):
 def search_wiki_pages(project, text):
     model = apps.get_model("wiki", "WikiPage")
     queryset = model.objects.filter(project_id=project.pk)
-    tsquery = "to_tsquery('english_nostop', %s)"
+    tsquery = "to_tsquery('simple', %s)"
     tsvector = """
-        setweight(to_tsvector('english_nostop', coalesce(wiki_wikipage.slug)), 'A') ||
-        setweight(to_tsvector('english_nostop', coalesce(wiki_wikipage.content)), 'B')
+        setweight(to_tsvector('simple', coalesce(wiki_wikipage.slug)), 'A') ||
+        setweight(to_tsvector('simple', coalesce(wiki_wikipage.content)), 'B')
     """
 
     return _search_by_query(queryset, tsquery, tsvector, text)
 
 
 def _search_items(queryset, table, text):
-    tsquery = "to_tsquery('english_nostop', %s)"
+    tsquery = "to_tsquery('simple', %s)"
     tsvector = """
-        setweight(to_tsvector('english_nostop',
+        setweight(to_tsvector('simple',
                               coalesce({table}.subject) || ' ' ||
                               coalesce({table}.ref)), 'A') ||
-        setweight(to_tsvector('english_nostop', coalesce(inmutable_array_to_string({table}.tags))), 'B') ||
-        setweight(to_tsvector('english_nostop', coalesce({table}.description)), 'C')
+        setweight(to_tsvector('simple', coalesce(inmutable_array_to_string({table}.tags))), 'B') ||
+        setweight(to_tsvector('simple', coalesce({table}.description)), 'C')
     """.format(table=table)
     return _search_by_query(queryset, tsquery, tsvector, text)
 

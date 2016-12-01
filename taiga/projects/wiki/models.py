@@ -33,7 +33,7 @@ class WikiPage(OCCModelMixin, WatchedModelMixin, models.Model):
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="wiki_pages", verbose_name=_("project"))
     slug = models.SlugField(max_length=500, db_index=True, null=False, blank=False,
-                            verbose_name=_("slug"))
+                            verbose_name=_("slug"), allow_unicode=True)
     content = models.TextField(null=False, blank=True,
                                verbose_name=_("content"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,

@@ -552,11 +552,11 @@ class QFilter(FilterBackend):
         if q:
             table = queryset.model._meta.db_table
             where_clause = ("""
-                to_tsvector('english_nostop',
+                to_tsvector('simple',
                             coalesce({table}.subject, '') || ' ' ||
                             coalesce(array_to_string({table}.tags, ' '), '') || ' ' ||
                             coalesce({table}.ref) || ' ' ||
-                            coalesce({table}.description, '')) @@ to_tsquery('english_nostop', %s)
+                            coalesce({table}.description, '')) @@ to_tsquery('simple', %s)
             """.format(table=table))
 
             queryset = queryset.extra(where=[where_clause], params=[to_tsquery(q)])
