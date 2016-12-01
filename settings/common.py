@@ -110,7 +110,7 @@ LANGUAGES = [
     #("io", "IDO"),  # Ido
     #("is", "Íslenska"),  # Icelandic
     ("it", "Italiano"),  # Italian
-    #("ja", "日本語"),  # Japanese
+    ("ja", "日本語"),  # Japanese
     #("ka", "ქართული"),  # Georgian
     #("kk", "Қазақша"),  # Kazakh
     #("km", "ភាសាខ្មែរ"),  # Khmer
@@ -151,7 +151,7 @@ LANGUAGES = [
     #("uk", "Українська"),  # Ukrainian
     #("ur", "اردو‏"),  # Urdu
     #("vi", "Tiếng Việt"),  # Vietnamese
-    #("zh-hans", "中文(简体)"),  # Simplified Chinese
+    ("zh-hans", "中文(简体)"),  # Simplified Chinese
     ("zh-hant", "中文(香港)"),  # Traditional Chinese
 ]
 

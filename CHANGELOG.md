@@ -8,6 +8,9 @@
 - Memberships API endpoints now allows using usernames and emails instead of using only emails.
 - Contacts API search by free text: consulting the username, full name and email.
 - Ability to create rich text custom fields in Epics, User Stories, Tasks and Isues.
+- i18n:
+  - Add japanese (ja) translation.
+  - Add chinese simplified (zh-Hans) translation.
 
 ### Misc
 - API:
