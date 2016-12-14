@@ -108,6 +108,7 @@ def create_related_userstories_in_bulk(bulk_data, epic, **additional_fields):
     :return: List of created `Task` instances.
     """
     userstories = get_userstories_from_bulk(bulk_data, **additional_fields)
+    project = additional_fields.get("project")
     disconnect_userstories_signals()
 
     try:
@@ -121,6 +122,7 @@ def create_related_userstories_in_bulk(bulk_data, epic, **additional_fields):
                 )
             )
         db.save_in_bulk(related_userstories)
+        project.update_role_points(user_stories=userstories)
     finally:
         connect_userstories_signals()
 
