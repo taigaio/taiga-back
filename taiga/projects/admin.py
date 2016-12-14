@@ -44,11 +44,11 @@ class MembershipAdmin(admin.ModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name in ["user", "invited_by"] and getattr(self, 'obj', None):
-            kwargs["queryset"] = db_field.related.model.objects.filter(
+            kwargs["queryset"] = db_field.related_model.objects.filter(
                     memberships__project=self.obj.project)
 
         elif db_field.name in ["role"] and getattr(self, 'obj', None):
-            kwargs["queryset"] = db_field.related.model.objects.filter(
+            kwargs["queryset"] = db_field.related_model.objects.filter(
                                          project=self.obj.project)
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
@@ -59,17 +59,17 @@ class MembershipInline(admin.TabularInline):
     extra = 0
 
     def get_formset(self, request, obj=None, **kwargs):
-        # Hack! Hook parent obj just in time to use in formfield_for_manytomany
+        # Hack! Hook parent obj just in time to use in formfield_for_foreignkey
         self.parent_obj = obj
         return super(MembershipInline, self).get_formset(request, obj, **kwargs)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if (db_field.name in ["user", "invited_by"]):
-            kwargs["queryset"] = db_field.related.model.objects.filter(
+            kwargs["queryset"] = db_field.related_model.objects.filter(
                                          memberships__project=self.parent_obj)
 
         elif (db_field.name in ["role"]):
-            kwargs["queryset"] = db_field.related.model.objects.filter(
+            kwargs["queryset"] = db_field.related_model.objects.filter(
                                                       project=self.parent_obj)
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
@@ -152,24 +152,17 @@ class ProjectAdmin(admin.ModelAdmin):
                               "default_priority", "default_severity",
                               "default_issue_status", "default_issue_type"]):
             if getattr(self, 'obj', None):
-                kwargs["queryset"] = db_field.related.model.objects.filter(
+                kwargs["queryset"] = db_field.related_model.objects.filter(
                                                           project=self.obj)
             else:
-                kwargs["queryset"] = db_field.related.model.objects.none()
+                kwargs["queryset"] = db_field.related_model.objects.none()
 
         elif (db_field.name in ["owner"]
                 and getattr(self, 'obj', None)):
-            kwargs["queryset"] = db_field.related.model.objects.filter(
+            kwargs["queryset"] = db_field.related_model.objects.filter(
                                          memberships__project=self.obj.project)
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-    def formfield_for_manytomany(self, db_field, request, **kwargs):
-        if (db_field.name in ["watchers"]
-                and getattr(self, 'obj', None)):
-            kwargs["queryset"] = db_field.related.parent_model.objects.filter(
-                                         memberships__project=self.obj)
-        return super().formfield_for_manytomany(db_field, request, **kwargs)
 
     def delete_model(self, request, obj):
         obj.delete_related_content()

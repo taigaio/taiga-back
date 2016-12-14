@@ -34,7 +34,7 @@ class MilestoneInline(admin.TabularInline):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if (db_field.name in ["owner"]):
-            kwargs["queryset"] = db_field.related.model.objects.filter(
+            kwargs["queryset"] = db_field.related_model.objects.filter(
                                          memberships__project=self.parent_obj)
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)

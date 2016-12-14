@@ -44,10 +44,10 @@ class EpicAdmin(admin.ModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if (db_field.name in ["status"] and getattr(self, 'obj', None)):
-            kwargs["queryset"] = db_field.related.model.objects.filter(project=self.obj.project)
+            kwargs["queryset"] = db_field.related_model.objects.filter(project=self.obj.project)
 
         elif (db_field.name in ["owner", "assigned_to"] and getattr(self, 'obj', None)):
-            kwargs["queryset"] = db_field.related.model.objects.filter(memberships__project=self.obj.project)
+            kwargs["queryset"] = db_field.related_model.objects.filter(memberships__project=self.obj.project)
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 

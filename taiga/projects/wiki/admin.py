@@ -38,7 +38,7 @@ class WikiPageAdmin(admin.ModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if (db_field.name in ["owner", "last_modifier"] and getattr(self, 'obj', None)):
-            kwargs["queryset"] = db_field.related.model.objects.filter(
+            kwargs["queryset"] = db_field.related_model.objects.filter(
                                          memberships__project=self.obj.project)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
