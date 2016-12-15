@@ -47,9 +47,10 @@ def test_get_userstories_from_bulk():
 
 def test_create_userstories_in_bulk():
     data = "User Story #1\nUser Story #2\n"
+    project = f.ProjectFactory.create()
 
     with mock.patch("taiga.projects.userstories.services.db") as db:
-        userstories = services.create_userstories_in_bulk(data)
+        userstories = services.create_userstories_in_bulk(data, project=project)
         db.save_in_bulk.assert_called_once_with(userstories, None, None)
 
 

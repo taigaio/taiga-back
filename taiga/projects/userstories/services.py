@@ -64,11 +64,12 @@ def create_userstories_in_bulk(bulk_data, callback=None, precall=None, **additio
     :return: List of created `Task` instances.
     """
     userstories = get_userstories_from_bulk(bulk_data, **additional_fields)
-
+    project = additional_fields.get("project")
     disconnect_userstories_signals()
 
     try:
         db.save_in_bulk(userstories, callback, precall)
+        project.update_role_points(user_stories=userstories)
     finally:
         connect_userstories_signals()
 
