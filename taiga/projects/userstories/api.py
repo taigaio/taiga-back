@@ -85,6 +85,13 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                        "sprint_order",
                        "kanban_order",
                        "epic_order",
+                       "project",
+                       "milestone",
+                       "status",
+                       "created_date",
+                       "modified_date",
+                       "assigned_to",
+                       "subject",
                        "total_voters"]
 
     def get_serializer_class(self, *args, **kwargs):

@@ -58,6 +58,12 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
         "project__slug",
         "closed"
     )
+    order_by_fields = ("project",
+                       "name",
+                       "estimated_start",
+                       "estimated_finish",
+                       "closed",
+                       "created_date")
     queryset = models.Milestone.objects.all()
 
     def create(self, request, *args, **kwargs):
