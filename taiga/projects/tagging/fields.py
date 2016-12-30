@@ -43,7 +43,7 @@ class TagsAndTagsColorsField(serializers.WritableField):
                     color = tag[1]
 
                     if isinstance(name, str):
-                        if color is None:
+                        if color is None or color == "":
                             continue
 
                         if isinstance(color, str) and re.match('^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$', color):
