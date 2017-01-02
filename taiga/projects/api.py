@@ -60,6 +60,7 @@ from . import serializers
 from . import validators
 from . import services
 from . import utils as project_utils
+from . import throttling
 
 ######################################################
 # Project
@@ -658,6 +659,7 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
     permission_classes = (permissions.MembershipPermission,)
     filter_backends = (filters.CanViewProjectFilterBackend,)
     filter_fields = ("project", "role")
+    throttle_classes = (throttling.MembershipsRateThrottle,)
 
     def get_serializer_class(self):
         use_admin_serializer = False
