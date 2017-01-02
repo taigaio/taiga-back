@@ -657,3 +657,43 @@ def test_api_delete_membership_without_user(client):
     response = client.json.delete(url)
 
     assert response.status_code == 204
+
+
+def test_api_create_member_max_pending_memberships(client, settings):
+    settings.MAX_PENDING_MEMBERSHIPS = 2
+    project = f.ProjectFactory()
+    john = f.UserFactory.create()
+    joseph = f.UserFactory.create()
+    tester = f.RoleFactory(project=project, name="Tester")
+    f.MembershipFactory(project=project, user=john, is_admin=True)
+    f.MembershipFactory(project=project, user=None)
+    f.MembershipFactory(project=project, user=None)
+
+    url = reverse("memberships-list")
+    data = {"project": project.id, "role": tester.id, "username": joseph.email}
+    client.login(john)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
+    assert "limit of pending memberships" in response.data["_error_message"]
+
+
+def test_api_create_bulk_members_max_pending_memberships(client, settings):
+    settings.MAX_PENDING_MEMBERSHIPS = 2
+    project = f.ProjectFactory()
+    john = f.UserFactory.create()
+    joseph = f.UserFactory.create()
+    tester = f.RoleFactory(project=project, name="Tester")
+    f.MembershipFactory(project=project, user=john, is_admin=True)
+    f.MembershipFactory(project=project, user=None)
+    f.MembershipFactory(project=project, user=None)
+
+    url = reverse("memberships-bulk-create")
+    data = {
+        "project_id": project.id,
+        "bulk_memberships": [
+            {"role_id": tester.id, "username": "testing@taiga.io"},
+        ]
+    }
+    client.login(john)
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 400
