@@ -21,7 +21,19 @@ from taiga.base.api import throttling
 
 class AnonRateThrottle(throttling.AnonRateThrottle):
     scope = "anon"
+    throttled_methods = ["GET", "POST", "PUT", "DELETE", "PATCH"]
+
+    def allow_request(self, request, view):
+        if request.method not in self.throttled_methods:
+            return True
+        return super().allow_request(request, view)
 
 
 class UserRateThrottle(throttling.UserRateThrottle):
     scope = "user"
+    throttled_methods = ["GET", "POST", "PUT", "DELETE", "PATCH"]
+
+    def allow_request(self, request, view):
+        if request.method not in self.throttled_methods:
+            return True
+        return super().allow_request(request, view)

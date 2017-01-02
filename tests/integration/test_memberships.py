@@ -697,3 +697,88 @@ def test_api_create_bulk_members_max_pending_memberships(client, settings):
     client.login(john)
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
+    assert "limit of pending memberships" in response.data["_error_message"]
+
+
+def test_create_memberhips_throttling(client, settings):
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["memberships"] = "1/minute"
+
+    membership = f.MembershipFactory(is_admin=True)
+    role = f.RoleFactory.create(project=membership.project)
+    user = f.UserFactory.create()
+    user2 = f.UserFactory.create()
+
+    client.login(membership.user)
+    url = reverse("memberships-list")
+    data = {"role": role.pk, "project": role.project.pk, "username": user.email}
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 201
+    assert response.data["user_email"] == user.email
+
+    data = {"role": role.pk, "project": role.project.pk, "username": user2.email}
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 429
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["memberships"] = None
+
+
+def test_api_resend_invitation_throttling(client, outbox, settings):
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["memberships"] = "1/minute"
+
+    invitation = f.create_invitation(user=None)
+    f.MembershipFactory(project=invitation.project, user=invitation.project.owner, is_admin=True)
+    url = reverse("memberships-resend-invitation", kwargs={"pk": invitation.pk})
+
+    client.login(invitation.project.owner)
+    response = client.post(url)
+
+    assert response.status_code == 204
+    assert len(outbox) == 1
+    assert outbox[0].to == [invitation.email]
+
+    response = client.post(url)
+
+    assert response.status_code == 429
+    assert len(outbox) == 1
+    assert outbox[0].to == [invitation.email]
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["memberships"] = None
+
+
+def test_api_create_bulk_members_throttling(client, settings):
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["memberships"] = "1/minute"
+
+    project = f.ProjectFactory()
+    john = f.UserFactory.create()
+    joseph = f.UserFactory.create()
+    other = f.UserFactory.create()
+    tester = f.RoleFactory(project=project, name="Tester", permissions=["view_project"])
+    gamer = f.RoleFactory(project=project, name="Gamer", permissions=["view_project"])
+    f.MembershipFactory(project=project, user=john, role=tester, is_admin=True)
+
+    # John and Other are members from another project
+    project2 = f.ProjectFactory()
+    f.MembershipFactory(project=project2, user=john, role=gamer, is_admin=True)
+    f.MembershipFactory(project=project2, user=other, role=gamer)
+
+    url = reverse("memberships-bulk-create")
+
+    data = {
+        "project_id": project.id,
+        "bulk_memberships": [
+            {"role_id": gamer.pk, "username": joseph.email},
+            {"role_id": gamer.pk, "username": other.username},
+        ]
+    }
+    client.login(john)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 200
+    response_user_ids = set([u["user"] for u in response.data])
+    user_ids = {other.id, joseph.id}
+    assert(user_ids.issubset(response_user_ids))
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 429
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["memberships"] = None
