@@ -533,6 +533,8 @@ MAX_PUBLIC_PROJECTS_PER_USER = None # None == no limit
 MAX_MEMBERSHIPS_PRIVATE_PROJECTS = None # None == no limit
 MAX_MEMBERSHIPS_PUBLIC_PROJECTS = None # None == no limit
 
+MAX_PENDING_MEMBERSHIPS = 30 # Max number of unconfirmed memberships in a project
+
 from .sr import *
 
 

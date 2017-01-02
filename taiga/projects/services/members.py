@@ -17,6 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.utils import db, text
+
+from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from .. import models
@@ -116,7 +118,7 @@ def check_if_project_can_have_more_memberships(project, total_new_memberships):
     """
     if project.owner is None:
         return False, _("Project without owner")
-        
+
     if project.is_private:
         total_memberships = project.memberships.count() + total_new_memberships
         max_memberships = project.owner.max_memberships_private_projects
@@ -128,5 +130,9 @@ def check_if_project_can_have_more_memberships(project, total_new_memberships):
 
     if max_memberships is not None and total_memberships > max_memberships:
         return False, error_members_exceeded
+
+    if project.memberships.filter(user=None).count() + total_new_memberships > settings.MAX_PENDING_MEMBERSHIPS:
+        error_pending_memberships_exceeded = _("You have reached the current limit of pending memberships")
+        return False, error_pending_memberships_exceeded
 
     return True, None
