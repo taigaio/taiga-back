@@ -128,16 +128,9 @@ def public_register(username:str, password:str, email:str, full_name:str):
 
 
 @tx.atomic
-def private_register_for_existing_user(token:str, username:str, password:str):
-    """
-    Register works not only for register users, also serves for accept
-    inviatations for projects as existing user.
-
-    Given a invitation token with parsed parameters, accept inviation
-    as existing user.
-    """
-
-    user = get_and_validate_user(username=username, password=password)
+def accept_invitation_by_existing_user(token:str, user_id:int):
+    user_model = get_user_model()
+    user = user_model.objects.get(id=user_id)
     membership = get_membership_by_token(token)
 
     try:
@@ -145,8 +138,6 @@ def private_register_for_existing_user(token:str, username:str, password:str):
         membership.save(update_fields=["user"])
     except IntegrityError:
         raise exc.IntegrityError(_("This user is already a member of the project."))
-
-    send_register_email(user)
     return user
 
 

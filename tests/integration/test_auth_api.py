@@ -62,23 +62,21 @@ def test_respond_201_when_the_email_domain_is_in_allowed_domains(client, setting
     assert response.status_code == 201
 
 
-def test_respond_201_with_invitation_without_public_registration(client, register_form, settings):
+def test_respond_201_with_invitation_login(client, settings):
     settings.PUBLIC_REGISTER_ENABLED = False
     user = factories.UserFactory()
     membership = factories.MembershipFactory(user=user)
 
-    register_form.update({
-        "type": "private",
-        "existing": "1",
-        "token": membership.token,
+    auth_data = {
+        "type": "normal",
+        "invitation_token": membership.token,
         "username": user.username,
-        "email": user.email,
         "password": user.username,
-    })
+    }
 
-    response = client.post(reverse("auth-register"), register_form)
+    response = client.post(reverse("auth-list"), auth_data)
 
-    assert response.status_code == 201, response.data
+    assert response.status_code == 200, response.data
 
 
 def test_response_200_in_public_registration(client, settings):

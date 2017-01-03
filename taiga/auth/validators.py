@@ -48,11 +48,5 @@ class PublicRegisterValidator(BaseRegisterValidator):
     pass
 
 
-class PrivateRegisterForNewUserValidator(BaseRegisterValidator):
-    token = serializers.CharField(max_length=255, required=True)
-
-
-class PrivateRegisterForExistingUserValidator(validators.Validator):
-    username = serializers.CharField(max_length=255)
-    password = serializers.CharField(min_length=4)
+class PrivateRegisterValidator(BaseRegisterValidator):
     token = serializers.CharField(max_length=255, required=True)
