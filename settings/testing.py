@@ -33,5 +33,5 @@ REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
     "user": None,
     "import-mode": None,
     "import-dump-mode": None,
-    "memberships": None,
+    "create-memberships": None,
 }

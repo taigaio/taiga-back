@@ -153,11 +153,15 @@ class SimpleRateThrottle(BaseThrottle):
         # throttle duration
         while self.history and self.history[-1] <= self.now - self.duration:
             self.history.pop()
-        if len(self.history) >= self.num_requests:
-            return self.throttle_failure()
-        return self.throttle_success()
 
-    def throttle_success(self):
+        if self.exceeded_throttling_restriction(request, view):
+            return self.throttle_failure()
+        return self.throttle_success(request, view)
+
+    def exceeded_throttling_restriction(self, request, view):
+        return len(self.history) >= self.num_requests
+
+    def throttle_success(self, request, view):
         """
         Inserts the current request's timestamp along with the key
         into the cache.
