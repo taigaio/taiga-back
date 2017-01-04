@@ -606,7 +606,7 @@ def test_api_create_bulk_members_max_pending_memberships(client, settings):
 
 
 def test_create_memberhips_throttling(client, settings):
-    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["memberships"] = "1/minute"
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["create-memberships"] = "1/minute"
 
     membership = f.MembershipFactory(is_admin=True)
     role = f.RoleFactory.create(project=membership.project)
@@ -625,11 +625,11 @@ def test_create_memberhips_throttling(client, settings):
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 429
-    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["memberships"] = None
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["create-memberships"] = None
 
 
 def test_api_resend_invitation_throttling(client, outbox, settings):
-    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["memberships"] = "1/minute"
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["create-memberships"] = "1/minute"
 
     invitation = f.create_invitation(user=None)
     f.MembershipFactory(project=invitation.project, user=invitation.project.owner, is_admin=True)
@@ -647,11 +647,11 @@ def test_api_resend_invitation_throttling(client, outbox, settings):
     assert response.status_code == 429
     assert len(outbox) == 1
     assert outbox[0].to == [invitation.email]
-    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["memberships"] = None
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["create-memberships"] = None
 
 
 def test_api_create_bulk_members_throttling(client, settings):
-    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["memberships"] = "1/minute"
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["create-memberships"] = "2/minute"
 
     project = f.ProjectFactory()
     john = f.UserFactory.create()
@@ -686,4 +686,4 @@ def test_api_create_bulk_members_throttling(client, settings):
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 429
-    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["memberships"] = None
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["create-memberships"] = None
