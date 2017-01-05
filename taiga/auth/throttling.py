@@ -19,21 +19,28 @@
 from taiga.base import throttling
 
 
-class MembershipsRateThrottle(throttling.ThrottleByActionMixin, throttling.UserRateThrottle):
-    scope = "create-memberships"
-    throttled_actions = ["create", "resend_invitation", "bulk_create"]
-
-    def exceeded_throttling_restriction(self, request, view):
-        self.created_memberships = 0
-        if view.action in ["create", "resend_invitation"]:
-            self.created_memberships = 1
-        elif view.action == "bulk_create":
-            self.created_memberships = len(request.DATA.get("bulk_memberships", []))
-        return len(self.history) + self.created_memberships > self.num_requests
+class LoginFailRateThrottle(throttling.GlobalThrottlingMixin, throttling.ThrottleByActionMixin, throttling.SimpleRateThrottle):
+    scope = "login-fail"
+    throttled_actions = ["create"]
 
     def throttle_success(self, request, view):
-        for i in range(self.created_memberships):
-            self.history.insert(0, self.now)
-
-        self.cache.set(self.key, self.history, self.duration)
         return True
+
+    def finalize(self, request, response, view):
+        if response.status_code == 400:
+            self.history.insert(0, self.now)
+            self.cache.set(self.key, self.history, self.duration)
+
+
+class RegisterSuccessRateThrottle(throttling.GlobalThrottlingMixin, throttling.ThrottleByActionMixin, throttling.SimpleRateThrottle):
+    scope = "register-success"
+    throttled_actions = ["register"]
+
+    def throttle_success(self, request, view):
+        return True
+
+    def finalize(self, request, response, view):
+        if response.status_code == 201:
+            self.history.insert(0, self.now)
+            self.cache.set(self.key, self.history, self.duration)
+

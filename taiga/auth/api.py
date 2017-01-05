@@ -39,6 +39,7 @@ from .services import get_auth_plugins
 from .services import accept_invitation_by_existing_user
 
 from .permissions import AuthPermission
+from .throttling import LoginFailRateThrottle, RegisterSuccessRateThrottle
 
 
 def _parse_data(data:dict, *, cls):
@@ -66,6 +67,7 @@ parse_private_register_data = partial(_parse_data, cls=PrivateRegisterValidator)
 
 class AuthViewSet(viewsets.ViewSet):
     permission_classes = (AuthPermission,)
+    throttle_classes = (LoginFailRateThrottle, RegisterSuccessRateThrottle)
 
     def _public_register(self, request):
         if not settings.PUBLIC_REGISTER_ENABLED:
@@ -111,6 +113,5 @@ class AuthViewSet(viewsets.ViewSet):
             if invitation_token:
                 accept_invitation_by_existing_user(invitation_token, data['id'])
             return response.Ok(data)
-
 
         raise exc.BadRequest(_("invalid login type"))

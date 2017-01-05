@@ -440,7 +440,10 @@ REST_FRAMEWORK = {
         "user": None,
         "import-mode": None,
         "import-dump-mode": "1/minute",
-        "create-memberships": None
+        "create-memberships": None,
+        "login-fail": None,
+        "register-success": None,
+        "user-detail": None,
     },
     "FILTER_BACKEND": "taiga.base.filters.FilterBackend",
     "EXCEPTION_HANDLER": "taiga.base.exceptions.exception_handler",

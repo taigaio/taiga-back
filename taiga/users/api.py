@@ -49,6 +49,7 @@ from . import services
 from . import utils as user_utils
 from .signals import user_cancel_account as user_cancel_account_signal
 from .signals import user_change_email as user_change_email_signal
+from .throttling import UserDetailRateThrottle
 
 class UsersViewSet(ModelCrudViewSet):
     permission_classes = (permissions.UserPermission,)
@@ -57,6 +58,7 @@ class UsersViewSet(ModelCrudViewSet):
     admin_validator_class = validators.UserAdminValidator
     validator_class = validators.UserValidator
     filter_backends = (MembersFilterBackend,)
+    throttle_classes = (UserDetailRateThrottle,)
     model = models.User
 
     def get_serializer_class(self):

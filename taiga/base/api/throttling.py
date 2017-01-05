@@ -64,6 +64,12 @@ class BaseThrottle(object):
         """
         raise NotImplementedError(".allow_request() must be overridden")
 
+    def finalize(self, request, response, view):
+        """
+        Optionally, update the Trottling information based on de response.
+        """
+        return None
+
     def wait(self):
         """
         Optionally, return a recommended number of seconds to wait before
@@ -104,6 +110,12 @@ class SimpleRateThrottle(BaseThrottle):
         May return `None` if the request should not be throttled.
         """
         raise NotImplementedError(".get_cache_key() must be overridden")
+
+    def has_to_finalize(self, request, response, view):
+        """
+        Determine if the finalize method must be executed.
+        """
+        return self.rate is not None
 
     def get_rate(self):
         """

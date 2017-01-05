@@ -24,6 +24,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.core.files import File
+from django.core.cache import cache as default_cache
 
 from .. import factories as f
 from ..utils import DUMMY_BMP_DATA
@@ -980,3 +981,39 @@ def test_get_voted_list_permissions():
     project.anon_permissions = ["view_project", "view_epic", "view_us", "view_tasks", "view_issues"]
     project.save()
     assert len(get_voted_list(fav_user, viewer_unpriviliged_user)) == 4
+
+##############################
+## Retrieve user
+##############################
+
+def test_users_retrieve_throttling_api(client):
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["user-detail"] = "1/minute"
+
+    user = f.UserFactory.create()
+
+    url = reverse('users-detail', kwargs={"pk": user.pk})
+    data = {}
+
+    response = client.get(url, content_type="application/json")
+    assert response.status_code == 200
+
+    response = client.get(url, content_type="application/json")
+    assert response.status_code == 429
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["user-detail"] = None
+    default_cache.clear()
+
+
+def test_users_by_username_throttling_api(client):
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["user-detail"] = "1/minute"
+    user = f.UserFactory.create(username="test-user-detail")
+
+    url = reverse('users-by-username')
+    data = {}
+
+    response = client.get(url, {"username": user.username}, content_type="application/json")
+    assert response.status_code == 200
+
+    response = client.get(url, {"username": user.username}, content_type="application/json")
+    assert response.status_code == 429
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["user-detail"] = None
+    default_cache.clear()
