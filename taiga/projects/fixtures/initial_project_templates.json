@@ -564,7 +564,11 @@
                     "comment_wiki_page"
                 ]
             }
-        ]
+        ],
+        "epic_custom_attributes": [],
+        "us_custom_attributes": [],
+        "task_custom_attributes": [],
+        "issue_custom_attributes": []
     }
 },
 {
@@ -1132,7 +1136,11 @@
                     "comment_wiki_page"
                 ]
             }
-        ]
+        ],
+        "epic_custom_attributes": [],
+        "us_custom_attributes": [],
+        "task_custom_attributes": [],
+        "issue_custom_attributes": []
     }
 }
 ]

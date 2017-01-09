@@ -52,6 +52,7 @@ from .projects import check_if_project_can_be_transfered
 from .projects import check_if_project_is_out_of_owner_limits
 from .projects import orphan_project
 from .projects import delete_project
+from .projects import duplicate_project
 
 from .stats import get_stats_for_project_issues
 from .stats import get_stats_for_project
