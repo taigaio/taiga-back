@@ -18,12 +18,22 @@
 
 import os
 
+from psd_tools import PSDImage
 from django.db.models.fields.files import FieldFile
 
 from taiga.base.utils.urls import get_absolute_url
 
 from easy_thumbnails.files import get_thumbnailer
 from easy_thumbnails.exceptions import InvalidImageFormatError
+from PIL import Image
+
+
+def psd_image_factory(data, *args):
+    return PSDImage.from_stream(data).as_PIL()
+
+
+Image.init()
+Image.register_open("PSD", psd_image_factory)
 
 
 def get_thumbnail_url(file_obj, thumbnailer_size):
