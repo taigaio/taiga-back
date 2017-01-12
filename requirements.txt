@@ -33,3 +33,4 @@ pyjwkest==1.3.2
 python-dateutil==2.6.0
 netaddr==0.7.18
 serpy==0.1.1
+psd-tools==1.4
