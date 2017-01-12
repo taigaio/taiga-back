@@ -35,6 +35,8 @@ def get_thumbnail_url(file_obj, thumbnailer_size):
     source_extension = os.path.splitext(relative_name)[1][1:]
     if source_extension == "tiff":
         return None
+    if source_extension == "psd":
+        return None
 
     try:
         path_url = get_thumbnailer(file_obj)[thumbnailer_size].url
