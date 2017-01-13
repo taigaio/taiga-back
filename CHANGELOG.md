@@ -11,6 +11,7 @@
 - i18n:
   - Add japanese (ja) translation.
   - Add chinese simplified (zh-Hans) translation.
+- Add thumbnails for PSD files.
 
 ### Misc
 - API:
