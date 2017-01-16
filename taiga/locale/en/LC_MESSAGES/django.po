@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-10 11:50+0100\n"
+"POT-Creation-Date: 2017-01-16 17:35+0100\n"
 "PO-Revision-Date: 2015-03-25 20:09+0100\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Taiga Dev Team <support@taiga.io>\n"
@@ -1339,9 +1339,9 @@ msgid ""
 "\n"
 "You are receiving this message because you are listed as administrator of "
 "the project titled %(project_name)s. If you don't want members of the Taiga "
-"community contacting your project, please <a href=\"%(project_settings_url)s"
-"\">update your project settings</a< to prevent such contacts. Regular "
-"communications amongst members of the project will not be affected.\n"
+"community contacting your project, please update your project settings in "
+"%(project_settings_url)s to prevent such contacts. Regular communications "
+"amongst members of the project will not be affected.\n"
 msgstr ""
 
 #: taiga/projects/contact/templates/emails/contact_notification-subject.jinja:1
@@ -1828,7 +1828,7 @@ msgid "is looking for people"
 msgstr ""
 
 #: taiga/projects/models.py:208 taiga/projects/models.py:765
-msgid "loking for people note"
+msgid "looking for people note"
 msgstr ""
 
 #: taiga/projects/models.py:222

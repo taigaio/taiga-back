@@ -205,7 +205,7 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
     is_looking_for_people = models.BooleanField(default=False, null=False, blank=True,
                                                 verbose_name=_("is looking for people"))
     looking_for_people_note = models.TextField(default="", null=False, blank=True,
-                                               verbose_name=_("loking for people note"))
+                                               verbose_name=_("looking for people note"))
 
     epics_csv_uuid = models.CharField(max_length=32, editable=False, null=True,
                                       blank=True, default=None, db_index=True)
@@ -762,7 +762,7 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
     is_looking_for_people = models.BooleanField(default=False, null=False, blank=True,
                                                 verbose_name=_("is looking for people"))
     looking_for_people_note = models.TextField(default="", null=False, blank=True,
-                                               verbose_name=_("loking for people note"))
+                                               verbose_name=_("looking for people note"))
     videoconferences = models.CharField(max_length=250, null=True, blank=True,
                                         choices=choices.VIDEOCONFERENCES_CHOICES,
                                         verbose_name=_("videoconference system"))
