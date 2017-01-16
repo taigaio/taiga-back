@@ -115,7 +115,7 @@ LANGUAGES = [
     #("kk", "Қазақша"),  # Kazakh
     #("km", "ភាសាខ្មែរ"),  # Khmer
     #("kn", "ಕನ್ನಡ"),  # Kannada
-    #("ko", "한국어"),  # Korean
+    ("ko", "한국어"),  # Korean
     #("lb", "Lëtzebuergesch"),  # Luxembourgish
     #("lt", "Lietuvių"),  # Lithuanian
     #("lv", "Latviešu"),  # Latvian
