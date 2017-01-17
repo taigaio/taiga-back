@@ -8,8 +8,8 @@
 - Ability to create rich text custom fields in Epics, User Stories, Tasks and Isues.
 - Full text search now use simple as tokenizer so search with non-english text are allowed.
 - Duplicate project: allows creating a new project based on the structure of another (status, tags, colors, default values...)
-- Add thumbnails for PSD files.
-- Add thumbnails for SVG files (Cario lib is needed).
+- Add thumbnails and preview for PSD files.
+- Add thumbnails and preview for SVG files (Cario lib is needed).
 - i18n:
   - Add japanese (ja) translation.
   - Add korean (ko) translation.

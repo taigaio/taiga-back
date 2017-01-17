@@ -42,12 +42,18 @@ class AttachmentSerializer(serializers.LightSerializer):
     sha1 = Field()
     url = MethodField("get_url")
     thumbnail_card_url = MethodField("get_thumbnail_card_url")
+    preview_url = MethodField("get_preview_url")
 
     def get_url(self, obj):
         return obj.attached_file.url
 
     def get_thumbnail_card_url(self, obj):
         return services.get_card_image_thumbnail_url(obj)
+
+    def get_preview_url(self, obj):
+        if obj.name.endswith(".psd"):
+            return services.get_attachment_image_preview_url(obj)
+        return self.get_url(obj)
 
 
 class BasicAttachmentsInfoSerializerMixin(serializers.LightSerializer):
