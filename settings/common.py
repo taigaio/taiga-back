@@ -483,6 +483,7 @@ THN_LOGO_BIG_SIZE = 300             # 300x300 pixels
 THN_TIMELINE_IMAGE_SIZE = 640       # 640x??? pixels
 THN_CARD_IMAGE_WIDTH = 300          # 300 pixels
 THN_CARD_IMAGE_HEIGHT = 200         # 200 pixels
+THN_PREVIEW_IMAGE_WIDTH = 800       # 800 pixels
 
 THN_AVATAR_SMALL = "avatar"
 THN_AVATAR_BIG = "big-avatar"
@@ -490,6 +491,7 @@ THN_LOGO_SMALL = "logo-small"
 THN_LOGO_BIG = "logo-big"
 THN_ATTACHMENT_TIMELINE = "timeline-image"
 THN_ATTACHMENT_CARD = "card-image"
+THN_ATTACHMENT_PREVIEW = "preview-image"
 
 THUMBNAIL_ALIASES = {
     "": {
@@ -499,6 +501,7 @@ THUMBNAIL_ALIASES = {
         THN_LOGO_BIG: {"size": (THN_LOGO_BIG_SIZE, THN_LOGO_BIG_SIZE), "crop": True},
         THN_ATTACHMENT_TIMELINE: {"size": (THN_TIMELINE_IMAGE_SIZE, 0), "crop": True},
         THN_ATTACHMENT_CARD: {"size": (THN_CARD_IMAGE_WIDTH, THN_CARD_IMAGE_HEIGHT), "crop": True},
+        THN_ATTACHMENT_PREVIEW: {"size": (THN_PREVIEW_IMAGE_WIDTH, 0), "crop": False},
     },
 }
 
