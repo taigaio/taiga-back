@@ -29,5 +29,5 @@ class AttachmentValidator(validators.ModelValidator):
         model = models.Attachment
         fields = ("id", "project", "owner", "name", "attached_file", "size",
                   "description", "is_deprecated", "created_date",
-                  "modified_date", "object_id", "order", "sha1")
+                  "modified_date", "object_id", "order", "sha1", "from_comment")
         read_only_fields = ("owner", "created_date", "modified_date", "sha1")
