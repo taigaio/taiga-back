@@ -283,6 +283,11 @@ from taiga.external_apps.api import Application, ApplicationToken
 router.register(r"applications", Application, base_name="applications")
 router.register(r"application-tokens", ApplicationToken, base_name="application-tokens")
 
+# Third party importers
+from taiga.importers.trello.api import TrelloImporterViewSet
+
+router.register(r"importers/trello", TrelloImporterViewSet, base_name="importers-trello")
+
 
 # Stats
 #   - see taiga.stats.routers and taiga.stats.apps

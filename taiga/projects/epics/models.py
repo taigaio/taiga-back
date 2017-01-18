@@ -18,6 +18,7 @@
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
@@ -67,6 +68,8 @@ class Epic(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, models.M
     user_stories = models.ManyToManyField("userstories.UserStory", related_name="epics",
                                           through='RelatedUserStory',
                                           verbose_name=_("user stories"))
+    external_reference = ArrayField(models.TextField(null=False, blank=False),
+                                    null=True, blank=True, default=None, verbose_name=_("external reference"))
 
     attachments = GenericRelation("attachments.Attachment")
 

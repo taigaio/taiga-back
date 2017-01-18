@@ -318,6 +318,7 @@ INSTALLED_APPS = [
     "taiga.hooks.bitbucket",
     "taiga.hooks.gogs",
     "taiga.webhooks",
+    "taiga.importers",
 
     "djmail",
     "django_jinja",
@@ -560,6 +561,9 @@ MAX_PENDING_MEMBERSHIPS = 30 # Max number of unconfirmed memberships in a projec
 
 from .sr import *
 
+
+TRELLO_API_KEY = ""
+TRELLO_SECRET_KEY = ""
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"
