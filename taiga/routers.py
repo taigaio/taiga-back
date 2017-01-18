@@ -287,10 +287,12 @@ router.register(r"application-tokens", ApplicationToken, base_name="application-
 from taiga.importers.trello.api import TrelloImporterViewSet
 from taiga.importers.jira.api import JiraImporterViewSet
 from taiga.importers.github.api import GithubImporterViewSet
+from taiga.importers.asana.api import AsanaImporterViewSet
 
 router.register(r"importers/trello", TrelloImporterViewSet, base_name="importers-trello")
 router.register(r"importers/jira", JiraImporterViewSet, base_name="importers-jira")
 router.register(r"importers/github", GithubImporterViewSet, base_name="importers-github")
+router.register(r"importers/asana", AsanaImporterViewSet, base_name="importers-asana")
 
 
 # Stats
