@@ -286,9 +286,11 @@ router.register(r"application-tokens", ApplicationToken, base_name="application-
 # Third party importers
 from taiga.importers.trello.api import TrelloImporterViewSet
 from taiga.importers.jira.api import JiraImporterViewSet
+from taiga.importers.github.api import GithubImporterViewSet
 
 router.register(r"importers/trello", TrelloImporterViewSet, base_name="importers-trello")
 router.register(r"importers/jira", JiraImporterViewSet, base_name="importers-jira")
+router.register(r"importers/github", GithubImporterViewSet, base_name="importers-github")
 
 
 # Stats

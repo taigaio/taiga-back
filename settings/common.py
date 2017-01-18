@@ -561,6 +561,8 @@ MAX_PENDING_MEMBERSHIPS = 30 # Max number of unconfirmed memberships in a projec
 
 from .sr import *
 
+GITHUB_API_CLIENT_ID = ""
+GITHUB_API_CLIENT_SECRET = ""
 
 TRELLO_API_KEY = ""
 TRELLO_SECRET_KEY = ""
