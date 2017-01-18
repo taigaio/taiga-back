@@ -58,6 +58,7 @@ class Attachment(models.Model):
     sha1 = models.CharField(default="", max_length=40, verbose_name=_("sha1"), blank=True)
 
     is_deprecated = models.BooleanField(default=False, verbose_name=_("is deprecated"))
+    from_comment = models.BooleanField(default=False, verbose_name=_("from_comment"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
     order = models.IntegerField(default=0, null=False, blank=False, verbose_name=_("order"))
 

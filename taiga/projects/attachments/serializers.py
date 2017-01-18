@@ -35,6 +35,7 @@ class AttachmentSerializer(serializers.LightSerializer):
     url = Field()
     description = Field()
     is_deprecated = Field()
+    from_comment = Field()
     created_date = Field()
     modified_date = Field()
     object_id = Field()
