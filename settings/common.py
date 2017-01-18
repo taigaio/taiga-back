@@ -565,6 +565,10 @@ from .sr import *
 TRELLO_API_KEY = ""
 TRELLO_SECRET_KEY = ""
 
+JIRA_CONSUMER_KEY = ""
+JIRA_CERT = ""
+JIRA_PUB_CERT = ""
+
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"
 
