@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-16 17:35+0100\n"
-"PO-Revision-Date: 2017-01-16 16:35+0000\n"
+"POT-Creation-Date: 2017-01-20 09:45+0100\n"
+"PO-Revision-Date: 2017-01-20 08:45+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Korean (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ko/)\n"
@@ -914,7 +914,7 @@ msgstr "아이콘 url"
 msgid "web"
 msgstr "웹"
 
-#: taiga/external_apps/models.py:39 taiga/projects/attachments/models.py:61
+#: taiga/external_apps/models.py:39 taiga/projects/attachments/models.py:62
 #: taiga/projects/custom_attributes/models.py:37
 #: taiga/projects/epics/models.py:55
 #: taiga/projects/history/templatetags/functions.py:25
@@ -1449,7 +1449,11 @@ msgstr "sha1"
 msgid "is deprecated"
 msgstr "지원안함"
 
-#: taiga/projects/attachments/models.py:62
+#: taiga/projects/attachments/models.py:61
+msgid "from_comment"
+msgstr ""
+
+#: taiga/projects/attachments/models.py:63
 #: taiga/projects/custom_attributes/models.py:41
 #: taiga/projects/epics/models.py:101 taiga/projects/milestones/models.py:57
 #: taiga/projects/models.py:522 taiga/projects/models.py:555
@@ -1544,6 +1548,11 @@ msgid ""
 "%(project_settings_url)s to prevent such contacts. Regular communications "
 "amongst members of the project will not be affected.\n"
 msgstr ""
+"\n"
+"이 메시지는 당신이 %(project_name)s 이름의 프로젝트의 관리자로 되어기 때문에 "
+"수신되었습니다. 타이가 커뮤니티의 회원이 귀하의 프로젝트에 연락하기를 원치 않"
+"으시면, %(project_settings_url)s 에서 당신의 프로젝트 설정을 변경하십시오. 프"
+"로젝트 회원간의 대화에는 영향을 받지 않습니다.\n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-subject.jinja:1
 #, python-format
@@ -2033,7 +2042,7 @@ msgstr "구인중"
 
 #: taiga/projects/models.py:208 taiga/projects/models.py:765
 msgid "looking for people note"
-msgstr ""
+msgstr "구인 메모"
 
 #: taiga/projects/models.py:222
 msgid "project transfer token"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-16 17:35+0100\n"
+"POT-Creation-Date: 2017-01-20 09:47+0100\n"
 "PO-Revision-Date: 2015-03-25 20:09+0100\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Taiga Dev Team <support@taiga.io>\n"
@@ -762,7 +762,7 @@ msgstr ""
 msgid "web"
 msgstr ""
 
-#: taiga/external_apps/models.py:39 taiga/projects/attachments/models.py:61
+#: taiga/external_apps/models.py:39 taiga/projects/attachments/models.py:62
 #: taiga/projects/custom_attributes/models.py:37
 #: taiga/projects/epics/models.py:55
 #: taiga/projects/history/templatetags/functions.py:25
@@ -1260,7 +1260,11 @@ msgstr ""
 msgid "is deprecated"
 msgstr ""
 
-#: taiga/projects/attachments/models.py:62
+#: taiga/projects/attachments/models.py:61
+msgid "from comment"
+msgstr ""
+
+#: taiga/projects/attachments/models.py:63
 #: taiga/projects/custom_attributes/models.py:41
 #: taiga/projects/epics/models.py:101 taiga/projects/milestones/models.py:57
 #: taiga/projects/models.py:522 taiga/projects/models.py:555

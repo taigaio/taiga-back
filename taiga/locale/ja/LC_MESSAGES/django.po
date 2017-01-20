@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-16 17:35+0100\n"
-"PO-Revision-Date: 2017-01-16 16:35+0000\n"
+"POT-Creation-Date: 2017-01-20 09:45+0100\n"
+"PO-Revision-Date: 2017-01-20 08:45+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Japanese (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ja/)\n"
@@ -914,7 +914,7 @@ msgstr "アイコンのURL"
 msgid "web"
 msgstr "ウェブ"
 
-#: taiga/external_apps/models.py:39 taiga/projects/attachments/models.py:61
+#: taiga/external_apps/models.py:39 taiga/projects/attachments/models.py:62
 #: taiga/projects/custom_attributes/models.py:37
 #: taiga/projects/epics/models.py:55
 #: taiga/projects/history/templatetags/functions.py:25
@@ -1454,7 +1454,11 @@ msgstr "sha1"
 msgid "is deprecated"
 msgstr "は廃止予定である"
 
-#: taiga/projects/attachments/models.py:62
+#: taiga/projects/attachments/models.py:61
+msgid "from_comment"
+msgstr ""
+
+#: taiga/projects/attachments/models.py:63
 #: taiga/projects/custom_attributes/models.py:41
 #: taiga/projects/epics/models.py:101 taiga/projects/milestones/models.py:57
 #: taiga/projects/models.py:522 taiga/projects/models.py:555
