@@ -246,7 +246,7 @@ You need transifex-client, install it.
 
     or
 
-       $ pip install --upgrade transifex-client==0.11.1.beta
+       $ pip install --upgrade transifex-client==0.12.2
 
  2. Create ~/.transifexrc file:
 
