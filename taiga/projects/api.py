@@ -106,7 +106,15 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.select_related("owner")
-        qs = project_utils.attach_extra_info(qs, user=self.request.user)
+        if self.request.QUERY_PARAMS.get('discover_mode', False):
+            qs = project_utils.attach_members(qs)
+            qs = project_utils.attach_notify_policies(qs)
+            qs = project_utils.attach_is_fan(qs, user=self.request.user)
+            qs = project_utils.attach_my_role_permissions(qs, user=self.request.user)
+            qs = project_utils.attach_my_role_permissions(qs, user=self.request.user)
+            qs = project_utils.attach_closed_milestones(qs)
+        else:
+            qs = project_utils.attach_extra_info(qs, user=self.request.user)
 
         # If filtering an activity period we must exclude the activities not updated recently enough
         now = timezone.now()
