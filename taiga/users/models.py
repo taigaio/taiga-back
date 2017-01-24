@@ -41,6 +41,7 @@ from taiga.auth.tokens import get_token_for_user
 from taiga.base.utils.colors import generate_random_hex_color
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.base.utils.files import get_file_path
+from taiga.base.utils.time import timestamp_ms
 from taiga.permissions.choices import MEMBERS_PERMISSIONS
 from taiga.projects.choices import BLOCKED_BY_OWNER_LEAVING
 from taiga.projects.notifications.choices import NotifyLevel
@@ -264,7 +265,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         qs = User.objects.filter(is_active=True)
         project_ids = services.get_visible_project_ids(self, user)
         qs = qs.filter(memberships__project_id__in=project_ids)
-        qs = qs.exclude(id=self.id)        
+        qs = qs.exclude(id=self.id)
         return qs
 
     def save(self, *args, **kwargs):
@@ -273,7 +274,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def cancel(self):
         with advisory_lock("delete-user"):
-            self.username = slugify_uniquely("deleted-user", User, slugfield="username")
+            deleted_user_prefix = "deleted-user-{}".format(timestamp_ms())
+            self.username = slugify_uniquely(deleted_user_prefix, User, slugfield="username")
             self.email = "{}@taiga.io".format(self.username)
             self.is_active = False
             self.full_name = "Deleted user"
