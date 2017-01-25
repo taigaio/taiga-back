@@ -39,14 +39,14 @@ def import_project(self, user_id, token, project_id, options):
         # Error
         ctx = {
             "user": user,
-            "error_subject": _("Error importing pivotal project"),
-            "error_message": _("Error importing pivotal project"),
+            "error_subject": _("Error importing PivotalTracker project"),
+            "error_message": _("Error importing PivotalTracker project"),
             "project": project_id,
             "exception": e
         }
         email = mail_builder.pivotal_import_error(admin, ctx)
         email.send()
-        logger.error('Error importing pivotal project %s (by %s)', project_id, user, exc_info=sys.exc_info())
+        logger.error('Error importing PivotalTracker project %s (by %s)', project_id, user, exc_info=sys.exc_info())
     else:
         ctx = {
             "project": project,

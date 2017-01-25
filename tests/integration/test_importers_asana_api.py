@@ -95,7 +95,7 @@ def test_authorize_with_bad_verify(client, settings):
     assert response.status_code == 400
     assert 'token' not in response.data
     assert '_error_message' in response.data
-    assert response.data['_error_message'] == "Invalid asana api request"
+    assert response.data['_error_message'] == "Invalid Asana API request"
 
 
 def test_import_asana_list_users(client):

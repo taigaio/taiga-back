@@ -39,14 +39,14 @@ def import_project(self, user_id, token, project_id, options):
         # Error
         ctx = {
             "user": user,
-            "error_subject": _("Error importing trello project"),
-            "error_message": _("Error importing trello project"),
+            "error_subject": _("Error importing Trello project"),
+            "error_message": _("Error importing Trello project"),
             "project": project_id,
             "exception": e
         }
         email = mail_builder.trello_import_error(admin, ctx)
         email.send()
-        logger.error('Error importing trello project %s (by %s)', project_id, user, exc_info=sys.exc_info())
+        logger.error('Error importing Trello project %s (by %s)', project_id, user, exc_info=sys.exc_info())
     else:
         ctx = {
             "project": project,

@@ -48,9 +48,9 @@ class AsanaImporterViewSet(viewsets.ViewSet):
         try:
             users = importer.list_users(project_id)
         except exceptions.InvalidRequest:
-            raise exc.BadRequest(_('Invalid asana api request'))
+            raise exc.BadRequest(_('Invalid Asana API request'))
         except exceptions.FailedRequest:
-            raise exc.BadRequest(_('Failed to make the request to asana api'))
+            raise exc.BadRequest(_('Failed to make the request to Asana API'))
 
         for user in users:
             if user['detected_user']:
@@ -71,9 +71,9 @@ class AsanaImporterViewSet(viewsets.ViewSet):
         try:
             projects = importer.list_projects()
         except exceptions.InvalidRequest:
-            raise exc.BadRequest(_('Invalid asana api request'))
+            raise exc.BadRequest(_('Invalid Asana API request'))
         except exceptions.FailedRequest:
-            raise exc.BadRequest(_('Failed to make the request to asana api'))
+            raise exc.BadRequest(_('Failed to make the request to Asana API'))
         return response.Ok(projects)
 
     @list_route(methods=["POST"])
@@ -128,8 +128,8 @@ class AsanaImporterViewSet(viewsets.ViewSet):
         try:
             asana_token = AsanaImporter.get_access_token(code, settings.ASANA_APP_ID, settings.ASANA_APP_SECRET, settings.ASANA_APP_CALLBACK_URL)
         except exceptions.InvalidRequest:
-            raise exc.BadRequest(_('Invalid asana api request'))
+            raise exc.BadRequest(_('Invalid Asana API request'))
         except exceptions.FailedRequest:
-            raise exc.BadRequest(_('Failed to make the request to asana api'))
+            raise exc.BadRequest(_('Failed to make the request to Asana API'))
 
         return response.Ok({"token": asana_token})
