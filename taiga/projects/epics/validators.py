@@ -22,10 +22,10 @@ from taiga.base.api import serializers
 from taiga.base.api import validators
 from taiga.base.exceptions import ValidationError
 from taiga.base.fields import PgArrayField
+from taiga.projects.mixins.validators import AssignedToValidator
 from taiga.projects.notifications.mixins import EditableWatchedResourceSerializer
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.tagging.fields import TagsAndTagsColorsField
-from taiga.projects.userstories.validators import UserStoryExistsValidator
 from taiga.projects.validators import ProjectExistsValidator
 from . import models
 
@@ -39,7 +39,8 @@ class EpicExistsValidator:
         return attrs
 
 
-class EpicValidator(WatchersValidator, EditableWatchedResourceSerializer, validators.ModelValidator):
+class EpicValidator(AssignedToValidator, WatchersValidator, EditableWatchedResourceSerializer,
+                    validators.ModelValidator):
     tags = TagsAndTagsColorsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
 
@@ -59,7 +60,6 @@ class CreateRelatedUserStoriesBulkValidator(ProjectExistsValidator, EpicExistsVa
                                             validators.Validator):
     project_id = serializers.IntegerField()
     bulk_userstories = serializers.CharField()
-
 
 
 class EpicRelatedUserStoryValidator(validators.ModelValidator):

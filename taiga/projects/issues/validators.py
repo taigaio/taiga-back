@@ -19,6 +19,7 @@
 from taiga.base.api import serializers
 from taiga.base.api import validators
 from taiga.base.fields import PgArrayField
+from taiga.projects.mixins.validators import AssignedToValidator
 from taiga.projects.notifications.mixins import EditableWatchedResourceSerializer
 from taiga.projects.notifications.validators import WatchersValidator
 from taiga.projects.tagging.fields import TagsAndTagsColorsField
@@ -27,7 +28,7 @@ from taiga.projects.validators import ProjectExistsValidator
 from . import models
 
 
-class IssueValidator(WatchersValidator, EditableWatchedResourceSerializer,
+class IssueValidator(AssignedToValidator, WatchersValidator, EditableWatchedResourceSerializer,
                      validators.ModelValidator):
 
     tags = TagsAndTagsColorsField(default=[], required=False)

@@ -28,8 +28,10 @@ from unittest import mock
 
 from django.core.urlresolvers import reverse
 
-from taiga.projects.issues import services, models
 from taiga.base.utils import json
+from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
+from taiga.projects.issues import services, models
+from taiga.projects.occ import OCCResourceMixin
 
 from .. import factories as f
 
@@ -592,3 +594,119 @@ def test_custom_fields_csv_generation():
     assert row[23] == attr.name
     row = next(reader)
     assert row[23] == "val1"
+
+
+def test_api_validator_assigned_to_when_update_issues(client):
+    project = f.create_project(anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
+                               public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)))
+    project_member_owner = f.MembershipFactory.create(project=project,
+                                                      user=project.owner,
+                                                      is_admin=True,
+                                                      role__project=project,
+                                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    project_member = f.MembershipFactory.create(project=project,
+                                                is_admin=True,
+                                                role__project=project,
+                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    project_no_member = f.MembershipFactory.create(is_admin=True)
+
+    issue = f.create_issue(project=project, owner=project.owner)
+
+    url = reverse('issues-detail', kwargs={"pk": issue.pk})
+
+    # assign
+    data = {
+        "assigned_to": project_member.user.id,
+    }
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        client.login(project.owner)
+
+        response = client.json.patch(url, json.dumps(data))
+        assert response.status_code == 200, response.data
+        assert "assigned_to" in response.data
+        assert response.data["assigned_to"] == project_member.user.id
+
+    # unassign
+    data = {
+        "assigned_to": None,
+    }
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        client.login(project.owner)
+
+        response = client.json.patch(url, json.dumps(data))
+        assert response.status_code == 200, response.data
+        assert "assigned_to" in response.data
+        assert response.data["assigned_to"] == None
+
+    # assign to invalid user
+    data = {
+        "assigned_to": project_no_member.user.id,
+    }
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        client.login(project.owner)
+
+        response = client.json.patch(url, json.dumps(data))
+        assert response.status_code == 400, response.data
+
+
+def test_api_validator_assigned_to_when_create_issues(client):
+    project = f.create_project(anon_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)),
+                               public_permissions=list(map(lambda x: x[0], ANON_PERMISSIONS)))
+    project_member_owner = f.MembershipFactory.create(project=project,
+                                                      user=project.owner,
+                                                      is_admin=True,
+                                                      role__project=project,
+                                                      role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    project_member = f.MembershipFactory.create(project=project,
+                                                is_admin=True,
+                                                role__project=project,
+                                                role__permissions=list(map(lambda x: x[0], MEMBERS_PERMISSIONS)))
+    project_no_member = f.MembershipFactory.create(is_admin=True)
+
+    url = reverse('issues-list')
+
+    # assign
+    data = {
+        "subject": "test",
+        "project": project.id,
+        "assigned_to": project_member.user.id,
+    }
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        client.login(project.owner)
+
+        response = client.json.post(url, json.dumps(data))
+        assert response.status_code == 201, response.data
+        assert "assigned_to" in response.data
+        assert response.data["assigned_to"] == project_member.user.id
+
+    # unassign
+    data = {
+        "subject": "test",
+        "project": project.id,
+        "assigned_to": None,
+    }
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        client.login(project.owner)
+
+        response = client.json.post(url, json.dumps(data))
+        assert response.status_code == 201, response.data
+        assert "assigned_to" in response.data
+        assert response.data["assigned_to"] == None
+
+    # assign to invalid user
+    data = {
+        "subject": "test",
+        "project": project.id,
+        "assigned_to": project_no_member.user.id,
+    }
+
+    with mock.patch.object(OCCResourceMixin, "_validate_and_update_version"):
+        client.login(project.owner)
+
+        response = client.json.post(url, json.dumps(data))
+        assert response.status_code == 400, response.data

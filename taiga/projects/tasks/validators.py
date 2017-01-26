@@ -23,6 +23,7 @@ from taiga.base.api import validators
 from taiga.base.exceptions import ValidationError
 from taiga.base.fields import PgArrayField
 from taiga.projects.milestones.models import Milestone
+from taiga.projects.mixins.validators import AssignedToValidator
 from taiga.projects.models import TaskStatus
 from taiga.projects.notifications.mixins import EditableWatchedResourceSerializer
 from taiga.projects.notifications.validators import WatchersValidator
@@ -33,7 +34,8 @@ from taiga.projects.validators import ProjectExistsValidator
 from . import models
 
 
-class TaskValidator(WatchersValidator, EditableWatchedResourceSerializer, validators.ModelValidator):
+class TaskValidator(AssignedToValidator, WatchersValidator, EditableWatchedResourceSerializer,
+                    validators.ModelValidator):
     tags = TagsAndTagsColorsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
 

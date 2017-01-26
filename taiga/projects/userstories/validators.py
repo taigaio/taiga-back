@@ -23,7 +23,9 @@ from taiga.base.api import validators
 from taiga.base.exceptions import ValidationError
 from taiga.base.fields import PgArrayField
 from taiga.base.fields import PickledObjectField
+from taiga.base.utils import json
 from taiga.projects.milestones.models import Milestone
+from taiga.projects.mixins.validators import AssignedToValidator
 from taiga.projects.models import UserStoryStatus
 from taiga.projects.notifications.mixins import EditableWatchedResourceSerializer
 from taiga.projects.notifications.validators import WatchersValidator
@@ -32,8 +34,6 @@ from taiga.projects.userstories.models import UserStory
 from taiga.projects.validators import ProjectExistsValidator
 
 from . import models
-
-import json
 
 
 class UserStoryExistsValidator:
@@ -55,7 +55,8 @@ class RolePointsField(serializers.WritableField):
         return json.loads(obj)
 
 
-class UserStoryValidator(WatchersValidator, EditableWatchedResourceSerializer, validators.ModelValidator):
+class UserStoryValidator(AssignedToValidator, WatchersValidator,
+                         EditableWatchedResourceSerializer, validators.ModelValidator):
     tags = TagsAndTagsColorsField(default=[], required=False)
     external_reference = PgArrayField(required=False)
     points = RolePointsField(source="role_points", required=False)
