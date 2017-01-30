@@ -707,6 +707,7 @@ def create_project(**kwargs):
     project.default_issue_type = IssueTypeFactory.create(project=project)
     project.default_us_status = UserStoryStatusFactory.create(project=project)
     project.default_task_status = TaskStatusFactory.create(project=project)
+    project.default_epic_status = EpicStatusFactory.create(project=project)
 
     project.save()
 
