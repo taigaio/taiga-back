@@ -447,6 +447,42 @@ def test_list_contacts_public_projects(client):
     assert response_content[0]["id"] == user_2.id
 
 
+def test_list_contacts_filter_exclude_project(client):
+    project1 = f.ProjectFactory.create()
+    project2 = f.ProjectFactory.create()
+    user_1 = f.UserFactory.create()
+    user_2 = f.UserFactory.create()
+    user_3 = f.UserFactory.create()
+    user_4 = f.UserFactory.create()
+    role1 = f.RoleFactory(project=project1, permissions=["view_project"])
+    role2 = f.RoleFactory(project=project2, permissions=["view_project"])
+
+    membership_11 = f.MembershipFactory.create(project=project1, user=user_1, role=role1)
+    membership_12 = f.MembershipFactory.create(project=project1, user=user_2, role=role1)
+
+    membership_21 = f.MembershipFactory.create(project=project2, user=user_1, role=role2)
+    membership_23 = f.MembershipFactory.create(project=project2, user=user_3, role=role2)
+    membership_24 = f.MembershipFactory.create(project=project2, user=user_4, role=role2)
+
+    url = reverse('users-contacts', kwargs={"pk": user_1.pk})
+
+    client.login(user_1)
+    response = client.get(url, content_type="application/json")
+    assert response.status_code == 200
+    response_content = response.data
+    assert len(response_content) == 3
+
+    response = client.get(url + "?exclude_project={}".format(project1.id), content_type="application/json")
+    assert response.status_code == 200
+    response_content = response.data
+    assert len(response_content) == 2
+
+    response = client.get(url + "?exclude_project={}".format(project2.id), content_type="application/json")
+    assert response.status_code == 200
+    response_content = response.data
+    assert len(response_content) == 1
+
+
 ##############################
 ## Mail permissions
 ##############################
