@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-20 09:45+0100\n"
-"PO-Revision-Date: 2017-01-20 08:45+0000\n"
+"POT-Creation-Date: 2017-01-20 09:47+0100\n"
+"PO-Revision-Date: 2017-02-05 12:23+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Japanese (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ja/)\n"
@@ -1455,7 +1455,7 @@ msgid "is deprecated"
 msgstr "は廃止予定である"
 
 #: taiga/projects/attachments/models.py:61
-msgid "from_comment"
+msgid "from comment"
 msgstr ""
 
 #: taiga/projects/attachments/models.py:63
