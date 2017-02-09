@@ -20,8 +20,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-02-09 09:12+0100\n"
-"PO-Revision-Date: 2017-02-09 08:12+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"PO-Revision-Date: 2017-02-09 09:06+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -1935,7 +1935,7 @@ msgstr "el parámetro 'project' es obligatório"
 
 #: taiga/projects/mixins/validators.py:19
 msgid "The user must be a project member."
-msgstr ""
+msgstr "El usuario debe ser miembro del proyecto."
 
 #: taiga/projects/models.py:79
 msgid "email"
