@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-20 09:47+0100\n"
-"PO-Revision-Date: 2017-02-05 12:23+0000\n"
+"POT-Creation-Date: 2017-02-09 09:12+0100\n"
+"PO-Revision-Date: 2017-02-09 08:12+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
@@ -67,8 +67,8 @@ msgid "Error on creating new user."
 msgstr "Error al crear un nuevo usuario "
 
 #: taiga/auth/tokens.py:49 taiga/auth/tokens.py:56
-#: taiga/external_apps/services.py:34 taiga/projects/api.py:366
-#: taiga/projects/api.py:387
+#: taiga/external_apps/services.py:34 taiga/projects/api.py:374
+#: taiga/projects/api.py:395
 msgid "Invalid token"
 msgstr "Token inválido"
 
@@ -208,8 +208,8 @@ msgid ""
 msgstr "Adjunta una imagen válida. El fichero no es una imagen o está dañada."
 
 #: taiga/base/api/mixins.py:284 taiga/base/exceptions.py:211
-#: taiga/hooks/api.py:69 taiga/projects/api.py:401 taiga/projects/api.py:434
-#: taiga/projects/api.py:746 taiga/projects/epics/api.py:200
+#: taiga/hooks/api.py:69 taiga/projects/api.py:409 taiga/projects/api.py:442
+#: taiga/projects/api.py:754 taiga/projects/epics/api.py:200
 #: taiga/projects/epics/api.py:284 taiga/projects/issues/api.py:224
 #: taiga/projects/mixins/ordering.py:59 taiga/projects/tasks/api.py:247
 #: taiga/projects/tasks/api.py:272 taiga/projects/userstories/api.py:322
@@ -914,7 +914,7 @@ msgstr "Se requiere autenticación"
 #: taiga/projects/models.py:643 taiga/projects/models.py:663
 #: taiga/projects/models.py:683 taiga/projects/models.py:715
 #: taiga/projects/models.py:735 taiga/users/admin.py:54
-#: taiga/users/models.py:301 taiga/webhooks/models.py:29
+#: taiga/users/models.py:303 taiga/webhooks/models.py:29
 msgid "name"
 msgstr "nombre"
 
@@ -950,11 +950,11 @@ msgstr "usuario"
 msgid "application"
 msgstr "aplicación"
 
-#: taiga/feedback/models.py:25 taiga/users/models.py:139
+#: taiga/feedback/models.py:25 taiga/users/models.py:140
 msgid "full name"
 msgstr "nombre completo"
 
-#: taiga/feedback/models.py:27 taiga/users/models.py:134
+#: taiga/feedback/models.py:27 taiga/users/models.py:135
 msgid "email address"
 msgstr "dirección de email"
 
@@ -1367,35 +1367,35 @@ msgstr "Haz privado"
 msgid "Delete selected %(verbose_name_plural)s"
 msgstr "Eliminar seleccionados %(verbose_name_plural)s"
 
-#: taiga/projects/api.py:152 taiga/users/api.py:244
+#: taiga/projects/api.py:160 taiga/users/api.py:244
 msgid "Incomplete arguments"
 msgstr "Argumentos incompletos"
 
-#: taiga/projects/api.py:156 taiga/users/api.py:249
+#: taiga/projects/api.py:164 taiga/users/api.py:249
 msgid "Invalid image format"
 msgstr "Formato de imagen no válido"
 
-#: taiga/projects/api.py:217
+#: taiga/projects/api.py:225
 msgid "Not valid template name"
 msgstr "Nombre de plantilla invalido"
 
-#: taiga/projects/api.py:220
+#: taiga/projects/api.py:228
 msgid "Not valid template description"
 msgstr "Descripción de plantilla invalida"
 
-#: taiga/projects/api.py:346
+#: taiga/projects/api.py:354
 msgid "Invalid user id"
 msgstr "id de usuario inválido"
 
-#: taiga/projects/api.py:352
+#: taiga/projects/api.py:360
 msgid "The user doesn't exist"
 msgstr "El usuario no existe"
 
-#: taiga/projects/api.py:356
+#: taiga/projects/api.py:364
 msgid "The user must be already a project member"
 msgstr "El usuario debe ser un miembro del proyecto"
 
-#: taiga/projects/api.py:777
+#: taiga/projects/api.py:785
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
@@ -1403,7 +1403,7 @@ msgstr ""
 "El proyecto debe tener un dueño y al menos uno de los usuarios debe ser un "
 "administrador activo"
 
-#: taiga/projects/api.py:811
+#: taiga/projects/api.py:819
 msgid "You don't have permisions to see that."
 msgstr "No tienes suficientes permisos para ver esto."
 
@@ -1430,7 +1430,7 @@ msgstr "El ID de proyecto no coincide entre el adjunto y un proyecto"
 #: taiga/projects/notifications/models.py:74
 #: taiga/projects/notifications/models.py:91 taiga/projects/tasks/models.py:43
 #: taiga/projects/userstories/models.py:67 taiga/projects/wiki/models.py:34
-#: taiga/projects/wiki/models.py:72 taiga/users/models.py:312
+#: taiga/projects/wiki/models.py:72 taiga/users/models.py:314
 msgid "project"
 msgstr "Proyecto"
 
@@ -1475,7 +1475,7 @@ msgstr "desde comentario"
 #: taiga/projects/models.py:589 taiga/projects/models.py:613
 #: taiga/projects/models.py:645 taiga/projects/models.py:665
 #: taiga/projects/models.py:687 taiga/projects/models.py:717
-#: taiga/projects/wiki/models.py:77 taiga/users/models.py:307
+#: taiga/projects/wiki/models.py:77 taiga/users/models.py:309
 msgid "order"
 msgstr "orden"
 
@@ -1660,7 +1660,7 @@ msgstr "asunto"
 #: taiga/projects/models.py:561 taiga/projects/models.py:617
 #: taiga/projects/models.py:647 taiga/projects/models.py:667
 #: taiga/projects/models.py:691 taiga/projects/models.py:719
-#: taiga/users/models.py:141
+#: taiga/users/models.py:142
 msgid "color"
 msgstr "color"
 
@@ -1880,7 +1880,7 @@ msgstr "Likes"
 #: taiga/projects/models.py:520 taiga/projects/models.py:553
 #: taiga/projects/models.py:611 taiga/projects/models.py:685
 #: taiga/projects/models.py:737 taiga/projects/wiki/models.py:36
-#: taiga/users/admin.py:58 taiga/users/models.py:303
+#: taiga/users/admin.py:58 taiga/users/models.py:305
 msgid "slug"
 msgstr "slug"
 
@@ -1933,6 +1933,10 @@ msgstr "el parámetro '{param}' es obligatório"
 msgid "'project' parameter is mandatory"
 msgstr "el parámetro 'project' es obligatório"
 
+#: taiga/projects/mixins/validators.py:19
+msgid "The user must be a project member."
+msgstr ""
+
 #: taiga/projects/models.py:79
 msgid "email"
 msgstr "email"
@@ -1941,7 +1945,7 @@ msgstr "email"
 msgid "create at"
 msgstr "creado el"
 
-#: taiga/projects/models.py:83 taiga/users/models.py:156
+#: taiga/projects/models.py:83 taiga/users/models.py:157
 msgid "token"
 msgstr "token"
 
@@ -3226,34 +3230,34 @@ msgstr "orden en el taskboard"
 msgid "is iocaine"
 msgstr "tiene iocaína"
 
-#: taiga/projects/tasks/validators.py:59
+#: taiga/projects/tasks/validators.py:61
 msgid "Invalid milestone id."
 msgstr "invalido id de milestone."
 
-#: taiga/projects/tasks/validators.py:70
+#: taiga/projects/tasks/validators.py:72
 msgid "Invalid task status id."
 msgstr "Estado de la tarea tiene un id que no es válido"
 
-#: taiga/projects/tasks/validators.py:83
+#: taiga/projects/tasks/validators.py:85
 msgid "Invalid user story id."
 msgstr "inválido id de historia de usuario."
 
-#: taiga/projects/tasks/validators.py:107
+#: taiga/projects/tasks/validators.py:109
 msgid "Invalid task status id. The status must belong to the same project."
 msgstr ""
 "Invalido id de estado de tarea. El estado debe pertenecer al mismo proyecto."
 
-#: taiga/projects/tasks/validators.py:121
+#: taiga/projects/tasks/validators.py:123
 msgid "Invalid user story id. The user story must belong to the same project."
 msgstr ""
 "Invalido id de historia de usuario. La historia debe pertenecer al mismo "
 "proyecto."
 
-#: taiga/projects/tasks/validators.py:133
+#: taiga/projects/tasks/validators.py:135
 msgid "Invalid milestone id. The milestone must belong to the same project."
 msgstr "Invalido id de milestone. El estado debe pertenecer al mismo proyecto."
 
-#: taiga/projects/tasks/validators.py:150
+#: taiga/projects/tasks/validators.py:152
 msgid ""
 "Invalid task ids. All tasks must belong to the same project and, if it "
 "exists, to the same status, user story and/or milestone."
@@ -4015,19 +4019,19 @@ msgstr "generada desde una petición"
 msgid "There's no user story with that id"
 msgstr "No existe ninguna historia de usuario con este id"
 
-#: taiga/projects/userstories/validators.py:82
-#: taiga/projects/userstories/validators.py:108
+#: taiga/projects/userstories/validators.py:83
+#: taiga/projects/userstories/validators.py:109
 msgid ""
 "Invalid user story status id. The status must belong to the same project."
 msgstr ""
 "Invalido id de estado de historia de usuario. El estado debe pertenecer al "
 "mismo proyecto."
 
-#: taiga/projects/userstories/validators.py:120
+#: taiga/projects/userstories/validators.py:121
 msgid "Invalid milestone id. The milistone must belong to the same project."
 msgstr "Invalido id de milestone. El estado debe pertenecer al mismo proyecto."
 
-#: taiga/projects/userstories/validators.py:135
+#: taiga/projects/userstories/validators.py:136
 msgid ""
 "Invalid user story ids. All stories must belong to the same project and, if "
 "it exists, to the same status and milestone."
@@ -4035,11 +4039,11 @@ msgstr ""
 "Inválidos ids de historias de usuario. Todas las historias deben pertenecer "
 "al msimo proyecto y, si existe, al mismo estado y milestone."
 
-#: taiga/projects/userstories/validators.py:159
+#: taiga/projects/userstories/validators.py:160
 msgid "The milestone isn't valid for the project"
 msgstr "El milestone no es válido para este proyecto"
 
-#: taiga/projects/userstories/validators.py:169
+#: taiga/projects/userstories/validators.py:170
 msgid "All the user stories must be from the same project"
 msgstr "Todas las historias de usuario deben ser del mismo proyecto"
 
@@ -4216,11 +4220,11 @@ msgstr ""
 msgid "Invalid, are you sure the token is correct?"
 msgstr "Inválido, ¿estás seguro de que el token es correcto?"
 
-#: taiga/users/models.py:97
+#: taiga/users/models.py:98
 msgid "superuser status"
 msgstr "es superusuario"
 
-#: taiga/users/models.py:98
+#: taiga/users/models.py:99
 msgid ""
 "Designates that this user has all permissions without explicitly assigning "
 "them."
@@ -4228,24 +4232,24 @@ msgstr ""
 "Otorga todos los permisos a este usuario sin necesidad de hacerlo "
 "explicitamente."
 
-#: taiga/users/models.py:128
+#: taiga/users/models.py:129
 msgid "username"
 msgstr "nombre de usuario"
 
-#: taiga/users/models.py:129
+#: taiga/users/models.py:130
 msgid ""
 "Required. 30 characters or fewer. Letters, numbers and /./-/_ characters"
 msgstr "Obligatorio. 30 caracteres o menos. Letras, números y /./-/_"
 
-#: taiga/users/models.py:132
+#: taiga/users/models.py:133
 msgid "Enter a valid username."
 msgstr "Introduce un nombre de usuario válido"
 
-#: taiga/users/models.py:135
+#: taiga/users/models.py:136
 msgid "active"
 msgstr "activo"
 
-#: taiga/users/models.py:136
+#: taiga/users/models.py:137
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
@@ -4253,59 +4257,59 @@ msgstr ""
 "Denota a los usuarios activos. Desmárcalo para dar de baja/borrar a un "
 "usuario."
 
-#: taiga/users/models.py:142
+#: taiga/users/models.py:143
 msgid "biography"
 msgstr "biografía"
 
-#: taiga/users/models.py:145
+#: taiga/users/models.py:146
 msgid "photo"
 msgstr "foto"
 
-#: taiga/users/models.py:146
+#: taiga/users/models.py:147
 msgid "date joined"
 msgstr "fecha de registro"
 
-#: taiga/users/models.py:148
+#: taiga/users/models.py:149
 msgid "default language"
 msgstr "idioma por defecto"
 
-#: taiga/users/models.py:150
+#: taiga/users/models.py:151
 msgid "default theme"
 msgstr "tema por defecto"
 
-#: taiga/users/models.py:152
+#: taiga/users/models.py:153
 msgid "default timezone"
 msgstr "zona horaria por defecto"
 
-#: taiga/users/models.py:154
+#: taiga/users/models.py:155
 msgid "colorize tags"
 msgstr "añade color a los tags"
 
-#: taiga/users/models.py:159
+#: taiga/users/models.py:160
 msgid "email token"
 msgstr "token de email"
 
-#: taiga/users/models.py:161
+#: taiga/users/models.py:162
 msgid "new email address"
 msgstr "nueva dirección de email"
 
-#: taiga/users/models.py:168
+#: taiga/users/models.py:169
 msgid "max number of owned private projects"
 msgstr "numero maximo de proyectos privados asignados"
 
-#: taiga/users/models.py:171
+#: taiga/users/models.py:172
 msgid "max number of owned public projects"
 msgstr "numero maximo de proyectos publicos asignados"
 
-#: taiga/users/models.py:174
+#: taiga/users/models.py:175
 msgid "max number of memberships for each owned private project"
 msgstr "máximo de membresías para cada proyecto privado poseído"
 
-#: taiga/users/models.py:178
+#: taiga/users/models.py:179
 msgid "max number of memberships for each owned public project"
 msgstr "máximo de membresías para cada proyecto público poseído"
 
-#: taiga/users/models.py:305
+#: taiga/users/models.py:307
 msgid "permissions"
 msgstr "permisos"
 
