@@ -34,6 +34,7 @@ def create_tag(project, tag, color):
 
 
 def edit_tag(project, from_tag, to_tag, color):
+    to_tag = to_tag.lower()
     sql = """
         UPDATE userstories_userstory
            SET tags = array_distinct(array_replace(tags, %(from_tag)s, %(to_tag)s))
@@ -64,6 +65,7 @@ def edit_tag(project, from_tag, to_tag, color):
 def rename_tag(project, from_tag, to_tag, **kwargs):
     # Kwargs can have a color parameter
     update_color = "color" in kwargs
+    to_tag = to_tag.lower()
     if update_color:
         color = kwargs.get("color")
     else:
