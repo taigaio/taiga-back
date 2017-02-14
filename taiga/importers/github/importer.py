@@ -19,6 +19,8 @@ from taiga.timeline.rebuilder import rebuild_timeline
 from taiga.timeline.models import Timeline
 from taiga.users.models import User, AuthData
 
+from taiga.importers.exceptions import InvalidAuthResult
+
 
 class GithubClient:
     def __init__(self, token):
@@ -530,7 +532,10 @@ class GithubImporter:
         if result.status_code > 299:
             raise InvalidAuthResult()
         else:
-            return dict(parse_qsl(result.content))[b'access_token'].decode('utf-8')
+            try:
+                return dict(parse_qsl(result.content))[b'access_token'].decode('utf-8')
+            except:
+                raise InvalidAuthResult()
 
 
 class AssignedEventHandler:
