@@ -59,7 +59,9 @@ class HistoryResourceMixin(object):
         """
 
         user = self.request.user
-        comment = self.request.DATA.get("comment", "")
+        comment = ""
+        if isinstance(self.request.DATA, dict):
+            comment = self.request.DATA.get("comment", "")
 
         if obj is None:
             obj = self.get_object()
