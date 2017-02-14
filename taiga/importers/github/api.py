@@ -27,6 +27,7 @@ from taiga.projects.serializers import ProjectSerializer
 
 from taiga.importers import permissions
 from taiga.importers import exceptions
+from taiga.importers.services import resolve_users_bindings
 from .importer import GithubImporter
 from . import tasks
 
@@ -85,7 +86,7 @@ class GithubImporterViewSet(viewsets.ViewSet):
             "description": request.DATA.get('description', None),
             "template": template,
             "type": items_type,
-            "users_bindings": request.DATA.get("users_bindings", {}),
+            "users_bindings": resolve_users_bindings(request.DATA.get("users_bindings", {})),
             "keep_external_reference": request.DATA.get("keep_external_reference", False),
             "is_private": request.DATA.get("is_private", False),
         }

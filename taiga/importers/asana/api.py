@@ -26,6 +26,7 @@ from taiga.users.gravatar import get_user_gravatar_id
 from taiga.projects.serializers import ProjectSerializer
 
 from taiga.importers import permissions, exceptions
+from taiga.importers.services import resolve_users_bindings
 from .importer import AsanaImporter
 from . import tasks
 
@@ -89,7 +90,7 @@ class AsanaImporterViewSet(viewsets.ViewSet):
             "name": request.DATA.get('name', None),
             "description": request.DATA.get('description', None),
             "template": request.DATA.get('template', "scrum"),
-            "users_bindings": request.DATA.get("users_bindings", {}),
+            "users_bindings": resolve_users_bindings(request.DATA.get("users_bindings", {})),
             "keep_external_reference": request.DATA.get("keep_external_reference", False),
             "is_private": request.DATA.get("is_private", False),
         }

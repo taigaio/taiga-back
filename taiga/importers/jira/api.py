@@ -25,6 +25,7 @@ from taiga.users.services import get_user_photo_url
 from taiga.users.gravatar import get_user_gravatar_id
 
 from taiga.importers import permissions
+from taiga.importers.services import resolve_users_bindings
 from .normal import JiraNormalImporter
 from .agile import JiraAgileImporter
 from . import tasks
@@ -107,7 +108,7 @@ class JiraImporterViewSet(viewsets.ViewSet):
         options = {
             "name": request.DATA.get('name', None),
             "description": request.DATA.get('description', None),
-            "users_bindings": request.DATA.get("user_bindings", {}),
+            "users_bindings": resolve_users_bindings(request.DATA.get("users_bindings", {})),
             "keep_external_reference": request.DATA.get("keep_external_reference", False),
             "is_private": request.DATA.get("is_private", False),
         }
