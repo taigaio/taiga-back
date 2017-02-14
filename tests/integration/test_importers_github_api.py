@@ -53,7 +53,11 @@ def test_authorize(client, settings):
     with mock.patch('taiga.importers.github.api.GithubImporter') as GithubImporterMock:
         GithubImporterMock.get_access_token.return_value = "token"
         response = client.post(authorize_url, content_type="application/json", data=json.dumps({"code": "code"}))
-        assert GithubImporterMock.get_access_token.calledWith(settings.GITHUB_API_CLIENT_ID, settings.GITHUB_API_CLIENT_SECRET, "code")
+        assert GithubImporterMock.get_access_token.calledWith(
+            settings.IMPORTERS['github']['client_id'],
+            settings.IMPORTERS['github']['client_secret'],
+            "code"
+        )
 
     assert response.status_code == 200
     assert 'token' in response.data
@@ -82,7 +86,11 @@ def test_authorize_with_bad_verify(client, settings):
     with mock.patch('taiga.importers.github.api.GithubImporter') as GithubImporterMock:
         GithubImporterMock.get_access_token.side_effect = exceptions.InvalidAuthResult()
         response = client.post(authorize_url, content_type="application/json", data=json.dumps({"code": "bad"}))
-        assert GithubImporterMock.get_access_token.calledWith(settings.GITHUB_API_CLIENT_ID, settings.GITHUB_API_CLIENT_SECRET, "bad")
+        assert GithubImporterMock.get_access_token.calledWith(
+            settings.IMPORTERS['github']['client_id'],
+            settings.IMPORTERS['github']['client_secret'],
+            "bad"
+        )
 
     assert response.status_code == 400
     assert 'token' not in response.data

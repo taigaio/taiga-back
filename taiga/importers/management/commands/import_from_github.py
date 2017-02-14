@@ -51,10 +51,16 @@ class Command(BaseCommand):
         if options.get('token', None):
             token = options.get('token')
         else:
-            url = GithubImporter.get_auth_url(settings.GITHUB_API_CLIENT_ID)
+            url = GithubImporter.get_auth_url(
+                settings.IMPORTERS.get('github', {}).get('client_id', None)
+            )
             print("Go to here and come with your code (in the redirected url): {}".format(url))
             code = input("Code: ")
-            access_data = GithubImporter.get_access_token(settings.GITHUB_API_CLIENT_ID, settings.GITHUB_API_CLIENT_SECRET, code)
+            access_data = GithubImporter.get_access_token(
+                settings.IMPORTERS.get('github', {}).get('client_id', None)
+                settings.IMPORTERS.get('github', {}).get('client_secret', None)
+                code
+            )
             token = access_data
 
         importer = GithubImporter(admin, token)

@@ -110,7 +110,10 @@ class GithubImporterViewSet(viewsets.ViewSet):
     def auth_url(self, request, *args, **kwargs):
         self.check_permissions(request, "auth_url", None)
         callback_uri = request.QUERY_PARAMS.get('uri')
-        url = GithubImporter.get_auth_url(settings.GITHUB_API_CLIENT_ID, callback_uri)
+        url = GithubImporter.get_auth_url(
+            settings.IMPORTERS.get('github', {}).get('client_id', None),
+            callback_uri
+        )
         return response.Ok({"url": url})
 
     @list_route(methods=["POST"])
@@ -122,7 +125,11 @@ class GithubImporterViewSet(viewsets.ViewSet):
             raise exc.BadRequest(_("Code param needed"))
 
         try:
-            token = GithubImporter.get_access_token(settings.GITHUB_API_CLIENT_ID, settings.GITHUB_API_CLIENT_SECRET, code)
+            token = GithubImporter.get_access_token(
+                settings.IMPORTERS.get('github', {}).get('client_id', None),
+                settings.IMPORTERS.get('github', {}).get('client_secret', None),
+                code
+            )
             return response.Ok({
                 "token": token
             })

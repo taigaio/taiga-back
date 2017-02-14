@@ -38,3 +38,9 @@ REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
     "register-success": None,
     "user-detail": None,
 }
+
+
+IMPORTERS['github']['active'] = True
+IMPORTERS['jira']['active'] = True
+IMPORTERS['asana']['active'] = True
+IMPORTERS['trello']['active'] = True

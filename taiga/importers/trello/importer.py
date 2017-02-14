@@ -92,8 +92,8 @@ class TrelloImporter:
         self._user = user
         self._cached_orgs = {}
         self._client = TrelloClient(
-            api_key=settings.TRELLO_API_KEY,
-            api_secret=settings.TRELLO_SECRET_KEY,
+            api_key=settings.IMPORTERS.get('trello', {}).get('api_key', None),
+            api_secret=settings.IMPORTERS.get('trello', {}).get('secret_key', None),
             token=token,
         )
 
@@ -492,8 +492,8 @@ class TrelloImporter:
         return_url = resolve_front_url("new-project-import", "trello")
         expiration = "1day"
         scope = "read,write,account"
-        trello_key = settings.TRELLO_API_KEY
-        trello_secret = settings.TRELLO_SECRET_KEY
+        trello_key = settings.IMPORTERS.get('trello', {}).get('api_key', None)
+        trello_secret = settings.IMPORTERS.get('trello', {}).get('secret_key', None)
         name = "Taiga"
 
         session = OAuth1Session(client_key=trello_key, client_secret=trello_secret)
@@ -515,8 +515,8 @@ class TrelloImporter:
 
     @classmethod
     def get_access_token(cls, oauth_token, oauth_token_secret, oauth_verifier):
-        api_key = settings.TRELLO_API_KEY
-        api_secret = settings.TRELLO_SECRET_KEY
+        api_key = settings.IMPORTERS.get('trello', {}).get('api_key', None)
+        api_secret = settings.IMPORTERS.get('trello', {}).get('secret_key', None)
         access_token_url = 'https://trello.com/1/OAuthGetAccessToken'
         session = OAuth1Session(client_key=api_key, client_secret=api_secret,
                                 resource_owner_key=oauth_token, resource_owner_secret=oauth_token_secret,

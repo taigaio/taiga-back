@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base import routers
+from django.conf import settings
 
 router = routers.DefaultRouter(trailing_slash=False)
 
@@ -284,15 +285,21 @@ router.register(r"applications", Application, base_name="applications")
 router.register(r"application-tokens", ApplicationToken, base_name="application-tokens")
 
 # Third party importers
-from taiga.importers.trello.api import TrelloImporterViewSet
-from taiga.importers.jira.api import JiraImporterViewSet
-from taiga.importers.github.api import GithubImporterViewSet
-from taiga.importers.asana.api import AsanaImporterViewSet
+if settings.IMPORTERS.get('trello', {}).get('active', False):
+    from taiga.importers.trello.api import TrelloImporterViewSet
+    router.register(r"importers/trello", TrelloImporterViewSet, base_name="importers-trello")
 
-router.register(r"importers/trello", TrelloImporterViewSet, base_name="importers-trello")
-router.register(r"importers/jira", JiraImporterViewSet, base_name="importers-jira")
-router.register(r"importers/github", GithubImporterViewSet, base_name="importers-github")
-router.register(r"importers/asana", AsanaImporterViewSet, base_name="importers-asana")
+if settings.IMPORTERS.get('jira', {}).get('active', False):
+    from taiga.importers.jira.api import JiraImporterViewSet
+    router.register(r"importers/jira", JiraImporterViewSet, base_name="importers-jira")
+
+if settings.IMPORTERS.get('github', {}).get('active', False):
+    from taiga.importers.github.api import GithubImporterViewSet
+    router.register(r"importers/github", GithubImporterViewSet, base_name="importers-github")
+
+if settings.IMPORTERS.get('asana', {}).get('active', False):
+    from taiga.importers.asana.api import AsanaImporterViewSet
+    router.register(r"importers/asana", AsanaImporterViewSet, base_name="importers-asana")
 
 
 # Stats

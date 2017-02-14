@@ -40,8 +40,8 @@ class JiraImporterViewSet(viewsets.ViewSet):
         token = {
             "access_token": token_data[0],
             "access_token_secret": token_data[1],
-            "key_cert": settings.JIRA_CERT,
-            "consumer_key": settings.JIRA_CONSUMER_KEY
+            "key_cert": settings.IMPORTERS.get('jira', {}).get('cert', None),
+            "consumer_key": settings.IMPORTERS.get('jira', {}).get('consumer_key', None)
         }
         return token
 
@@ -180,8 +180,8 @@ class JiraImporterViewSet(viewsets.ViewSet):
 
         (oauth_token, oauth_secret, url) = JiraNormalImporter.get_auth_url(
             jira_url,
-            settings.JIRA_CONSUMER_KEY,
-            settings.JIRA_CERT,
+            settings.IMPORTERS.get('jira', {}).get('consumer_key', None),
+            settings.IMPORTERS.get('jira', {}).get('cert', None),
             True
         )
 
@@ -215,8 +215,8 @@ class JiraImporterViewSet(viewsets.ViewSet):
 
             jira_token = JiraNormalImporter.get_access_token(
                 server_url,
-                settings.JIRA_CONSUMER_KEY,
-                settings.JIRA_CERT,
+                settings.IMPORTERS.get('jira', {}).get('consumer_key', None),
+                settings.IMPORTERS.get('jira', {}).get('cert', None),
                 oauth_token,
                 oauth_secret,
                 True

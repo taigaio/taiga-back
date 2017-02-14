@@ -561,19 +561,30 @@ MAX_PENDING_MEMBERSHIPS = 30 # Max number of unconfirmed memberships in a projec
 
 from .sr import *
 
-GITHUB_API_CLIENT_ID = ""
-GITHUB_API_CLIENT_SECRET = ""
-
-TRELLO_API_KEY = ""
-TRELLO_SECRET_KEY = ""
-
-ASANA_APP_CALLBACK_URL = ""
-ASANA_APP_ID = ""
-ASANA_APP_SECRET = ""
-
-JIRA_CONSUMER_KEY = ""
-JIRA_CERT = ""
-JIRA_PUB_CERT = ""
+IMPORTERS = {
+    "github": {
+        "active": False,
+        "client_id": "",
+        "client_secret": "",
+    },
+    "trello": {
+        "active": False,
+        "api_key": "",
+        "secret_key": "",
+    },
+    "jira": {
+        "active": False,
+        "consumer_key": "",
+        "cert": "",
+        "pub_cert": "",
+    },
+    "asana": {
+        "active": False,
+        "callback_url": "",
+        "app_id": "",
+        "app_secret": "",
+    }
+}
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"

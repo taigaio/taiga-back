@@ -52,10 +52,19 @@ class Command(BaseCommand):
         if options.get('token', None):
             token = json.loads(options.get('token'))
         else:
-            url = AsanaImporter.get_auth_url(settings.ASANA_APP_ID, settings.ASANA_APP_SECRET, settings.ASANA_APP_CALLBACK_URL)
+            url = AsanaImporter.get_auth_url(
+                settings.IMPORTERS.get('asana', {}).get('app_id', None),
+                settings.IMPORTERS.get('asana', {}).get('app_secret', None),
+                settings.IMPORTERS.get('asana', {}).get('callback_url', None)
+            )
             print("Go to here and come with your code (in the redirected url): {}".format(url))
             code = input("Code: ")
-            access_data = AsanaImporter.get_access_token(code, settings.ASANA_APP_ID, settings.ASANA_APP_SECRET, settings.ASANA_APP_CALLBACK_URL)
+            access_data = AsanaImporter.get_access_token(
+                code,
+                settings.IMPORTERS.get('asana', {}).get('app_id', None),
+                settings.IMPORTERS.get('asana', {}).get('app_secret', None),
+                settings.IMPORTERS.get('asana', {}).get('callback_url', None)
+            )
             token = access_data
 
         importer = AsanaImporter(admin, token)

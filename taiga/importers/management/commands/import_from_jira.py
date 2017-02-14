@@ -62,10 +62,22 @@ class Command(BaseCommand):
         elif options.get('token', None):
             token = json.loads(options.get('token'))
         else:
-            (rtoken, rtoken_secret, url) = JiraNormalImporter.get_auth_url(server, settings.JIRA_CONSUMER_KEY, settings.JIRA_CERT, True)
+            (rtoken, rtoken_secret, url) = JiraNormalImporter.get_auth_url(
+                server,
+                settings.IMPORTERS.get('jira', {}).get('consumer_key', None),
+                settings.IMPORTERS.get('jira', {}).get('cert', None),
+                True
+            )
             print(url)
             code = input("Go to the url and get back the code")
-            token = JiraNormalImporter.get_access_token(server, settings.JIRA_CONSUMER_KEY, settings.JIRA_CERT, rtoken, rtoken_secret, True)
+            token = JiraNormalImporter.get_access_token(
+                server,
+                settings.IMPORTERS.get('jira', {}).get('consumer_key', None),
+                settings.IMPORTERS.get('jira', {}).get('cert', None),
+                rtoken,
+                rtoken_secret,
+                True
+            )
             print("Auth token: {}".format(json.dumps(token)))
 
 

@@ -114,7 +114,11 @@ class AsanaImporterViewSet(viewsets.ViewSet):
     def auth_url(self, request, *args, **kwargs):
         self.check_permissions(request, "auth_url", None)
 
-        url = AsanaImporter.get_auth_url(settings.ASANA_APP_ID, settings.ASANA_APP_SECRET, settings.ASANA_APP_CALLBACK_URL)
+        url = AsanaImporter.get_auth_url(
+            settings.IMPORTERS.get('asana', {}).get('app_id', None),
+            settings.IMPORTERS.get('asana', {}).get('app_secret', None),
+            settings.IMPORTERS.get('asana', {}).get('callback_url', None)
+        )
 
         return response.Ok({"url": url})
 
@@ -127,7 +131,12 @@ class AsanaImporterViewSet(viewsets.ViewSet):
             raise exc.BadRequest(_("Code param needed"))
 
         try:
-            asana_token = AsanaImporter.get_access_token(code, settings.ASANA_APP_ID, settings.ASANA_APP_SECRET, settings.ASANA_APP_CALLBACK_URL)
+            asana_token = AsanaImporter.get_access_token(
+                code,
+                settings.IMPORTERS.get('asana', {}).get('app_id', None),
+                settings.IMPORTERS.get('asana', {}).get('app_secret', None),
+                settings.IMPORTERS.get('asana', {}).get('callback_url', None)
+            )
         except exceptions.InvalidRequest:
             raise exc.BadRequest(_('Invalid Asana API request'))
         except exceptions.FailedRequest:

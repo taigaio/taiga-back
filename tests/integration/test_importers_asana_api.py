@@ -35,16 +35,20 @@ pytestmark = pytest.mark.django_db
 def test_auth_url(client, settings):
     user = f.UserFactory.create()
     client.login(user)
-    settings.ASANA_APP_CALLBACK_URL = "http://testserver/url"
-    settings.ASANA_APP_ID = "test-id"
-    settings.ASANA_APP_SECRET = "test-secret"
+    settings.IMPORTERS['asana']['callback_url'] = "http://testserver/url"
+    settings.IMPORTERS['asana']['app_id'] = "test-id"
+    settings.IMPORTERS['asana']['app_secret'] = "test-secret"
 
     url = reverse("importers-asana-auth-url")
 
     with mock.patch('taiga.importers.asana.api.AsanaImporter') as AsanaImporterMock:
         AsanaImporterMock.get_auth_url.return_value = "https://auth_url"
         response = client.get(url, content_type="application/json")
-        assert AsanaImporterMock.get_auth_url.calledWith(settings.ASANA_APP_ID, settings.ASANA_APP_SECRET, settings.ASANA_APP_CALLBACK_URL)
+        assert AsanaImporterMock.get_auth_url.calledWith(
+            settings.IMPORTERS['asana']['app_id'],
+            settings.IMPORTERS['asana']['app_secret'],
+            settings.IMPORTERS['asana']['callback_url']
+        )
 
     assert response.status_code == 200
     assert 'url' in response.data
@@ -60,7 +64,11 @@ def test_authorize(client, settings):
     with mock.patch('taiga.importers.asana.api.AsanaImporter') as AsanaImporterMock:
         AsanaImporterMock.get_access_token.return_value = "token"
         response = client.post(authorize_url, content_type="application/json", data=json.dumps({"code": "code"}))
-        assert AsanaImporterMock.get_access_token.calledWith(settings.ASANA_APP_ID, settings.ASANA_APP_SECRET, "code")
+        assert AsanaImporterMock.get_access_token.calledWith(
+            settings.IMPORTERS['asana']['app_id'],
+            settings.IMPORTERS['asana']['app_secret'],
+            "code"
+        )
 
     assert response.status_code == 200
     assert 'token' in response.data
@@ -90,7 +98,11 @@ def test_authorize_with_bad_verify(client, settings):
     with mock.patch('taiga.importers.asana.api.AsanaImporter') as AsanaImporterMock:
         AsanaImporterMock.get_access_token.side_effect = exceptions.InvalidRequest()
         response = client.post(authorize_url, content_type="application/json", data=json.dumps({"code": "bad"}))
-        assert AsanaImporterMock.get_access_token.calledWith(settings.ASANA_APP_ID, settings.ASANA_APP_SECRET, "bad")
+        assert AsanaImporterMock.get_access_token.calledWith(
+            settings.IMPORTERS['asana']['app_id'],
+            settings.IMPORTERS['asana']['app_secret'],
+            "bad"
+        )
 
     assert response.status_code == 400
     assert 'token' not in response.data
