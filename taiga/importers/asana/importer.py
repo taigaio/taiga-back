@@ -49,11 +49,12 @@ class AsanaImporter:
     def list_users(self, project_id):
         users = []
         for ws in self._client.workspaces.find_all():
-            for user in self._client.users.find_by_workspace(ws['id'], fields=["id", "name", "email"]):
+            for user in self._client.users.find_by_workspace(ws['id'], fields=["id", "name", "email", "photo"]):
                 users.append({
                     "id": user["id"],
                     "full_name": user['name'],
-                    "detected_user": self._get_user(user)
+                    "detected_user": self._get_user(user),
+                    "avatar": user.get('photo', None) and user['photo'].get('image_60x60', None)
                 })
         return users
 

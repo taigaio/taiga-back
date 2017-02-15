@@ -88,6 +88,7 @@ class GithubImporter:
         return [{"id": u['id'],
                  "username": u['login'],
                  "full_name": u.get('name', u['login']),
+                 "avatar": u.get('avatar_url', None),
                  "detected_user": self._get_user(u) } for u in collaborators]
 
     def _get_user(self, user, default=None):

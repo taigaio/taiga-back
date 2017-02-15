@@ -126,11 +126,18 @@ class TrelloImporter:
     def list_users(self, project_id):
         members = []
         for member in self._client.get("/board/{}/members/all".format(project_id), {"fields": "id"}):
-            user = self._client.get("/member/{}".format(member['id']), {"fields": "id,fullName,email"})
+            user = self._client.get("/member/{}".format(member['id']), {"fields": "id,fullName,email,avatarSource,avatarHash,gravatarHash"})
+            print(user)
+            if user['avatarSource'] == "gravatar":
+                avatar = 'https://www.gravatar.com/avatar/' + user['gravatarHash'] + '.jpg?s=50'
+            else:
+                avatar = 'https://trello-avatars.s3.amazonaws.com/' + user['avatarHash'] + '/50.png'
+
             members.append({
                 "id": user['id'],
                 "full_name": user['fullName'],
                 "email": user['email'],
+                "avatar": avatar
             })
         return members
 

@@ -176,6 +176,7 @@ class JiraImporterCommon:
                 "id": user_data['key'],
                 "full_name": user_data['displayName'],
                 "email": user_data['emailAddress'],
+                "avatar": user_data.get('avatarUrls', None) and user_data['avatarUrls'].get('48x48', None),
             })
         return result
 
