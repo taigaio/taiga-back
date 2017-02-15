@@ -153,3 +153,43 @@ DATABASES = {
 # To use celery in memory
 #CELERY_ENABLED = True
 #CELERY_ALWAYS_EAGER = True
+
+
+#########################################
+## IMPORTERS
+#########################################
+
+# Configuration for the GitHub importer
+# Remember to enable it in the front client too.
+#IMPORTERS["github"] = {
+#    "active": True, # Enable or disable the importer
+#    "client_id": "XXXXXX_get_a_valid_client_id_from_github_XXXXXX",
+#    "client_secret": "XXXXXX_get_a_valid_client_secret_from_github_XXXXXX"
+#}
+
+# Configuration for the Trello importer
+# Remember to enable it in the front client too.
+#IMPORTERS["trello"] = {
+#    "active": True, # Enable or disable the importer
+#    "api_key": "XXXXXX_get_a_valid_api_key_from_trello_XXXXXX",
+#    "secret_key": "XXXXXX_get_a_valid_secret_key_from_trello_XXXXXX"
+#}
+
+# Configuration for the Jira importer
+# Remember to enable it in the front client too.
+#IMPORTERS["jira"] = {
+#    "active": True, # Enable or disable the importer
+#    "consumer_key": "XXXXXX_get_a_valid_consumer_key_from_jira_XXXXXX",
+#    "cert": "XXXXXX_get_a_valid_cert_from_jira_XXXXXX",
+#    "pub_cert": "XXXXXX_get_a_valid_pub_cert_from_jira_XXXXXX"
+#}
+
+# Configuration for the Asane importer
+# Remember to enable it in the front client too.
+#IMPORTERS["asana"] = {
+#    "active": True, # Enable or disable the importer
+#    "callback_url": "{}://{}/project/new/import/asana".format(SITES["front"]["scheme"],
+#                                                              SITES["front"]["domain"]),
+#    "app_id": "XXXXXX_get_a_valid_app_id_from_asana_XXXXXX",
+#    "app_secret": "XXXXXX_get_a_valid_app_secret_from_asana_XXXXXX"
+#}
