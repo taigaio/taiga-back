@@ -1,5 +1,5 @@
 # taiga-back.taiga.
-# Copyright (C) 2014-2017 Taiga Dev Team <support@taiga.io>
+# Copyright (C) 2014-2016 Taiga Dev Team <support@taiga.io>
 # This file is distributed under the same license as the taiga-back package.
 #
 # Translators:
@@ -20,8 +20,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-02-20 12:30+0100\n"
-"PO-Revision-Date: 2017-02-15 11:08+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"PO-Revision-Date: 2017-02-20 16:40+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -1157,78 +1157,78 @@ msgstr "El estado no existe"
 #: taiga/importers/pivotal/api.py:44 taiga/importers/pivotal/api.py:81
 #: taiga/importers/trello/api.py:47 taiga/importers/trello/api.py:84
 msgid "The project param is needed"
-msgstr ""
+msgstr "El parámetro project es necesario"
 
 #: taiga/importers/asana/api.py:52 taiga/importers/asana/api.py:75
 #: taiga/importers/asana/api.py:141
 msgid "Invalid Asana API request"
-msgstr ""
+msgstr "Solicitud de API de Asana no válida"
 
 #: taiga/importers/asana/api.py:54 taiga/importers/asana/api.py:77
 #: taiga/importers/asana/api.py:143
 msgid "Failed to make the request to Asana API"
-msgstr ""
+msgstr "No se pudo realizar la solicitud a la API de Asana"
 
 #: taiga/importers/asana/api.py:131 taiga/importers/github/api.py:125
 msgid "Code param needed"
-msgstr ""
+msgstr "El parámetro code es necesario"
 
 #: taiga/importers/asana/tasks.py:42 taiga/importers/asana/tasks.py:43
 msgid "Error importing Asana project"
-msgstr ""
+msgstr "Error importando el proyecto de Asana"
 
 #: taiga/importers/github/api.py:137
 msgid "Invalid auth data"
-msgstr ""
+msgstr "Datos de autenticación inválidos"
 
 #: taiga/importers/github/api.py:139
 msgid "Third party service failing"
-msgstr ""
+msgstr "El servicio de terceros está fallando"
 
 #: taiga/importers/github/tasks.py:42 taiga/importers/github/tasks.py:43
 msgid "Error importing GitHub project"
-msgstr ""
+msgstr "Error importando el proyecto de GitHub"
 
 #: taiga/importers/jira/api.py:59 taiga/importers/jira/api.py:86
 #: taiga/importers/jira/api.py:106 taiga/importers/jira/api.py:179
 msgid "The url param is needed"
-msgstr ""
+msgstr "El parámetro url es necesario"
 
 #: taiga/importers/jira/api.py:155
 msgid "Invalid project_type {}"
-msgstr ""
+msgstr "project_type {} inválido"
 
 #: taiga/importers/jira/api.py:225 taiga/importers/pivotal/api.py:139
 #: taiga/importers/trello/api.py:144
 msgid "Invalid or expired auth token"
-msgstr ""
+msgstr "El token de atuenticación es inválido o ha expirado"
 
 #: taiga/importers/jira/tasks.py:47 taiga/importers/jira/tasks.py:48
 msgid "Error importing Jira project"
-msgstr ""
+msgstr "Error importando el proyecto deJira"
 
 #: taiga/importers/pivotal/tasks.py:42 taiga/importers/pivotal/tasks.py:43
 msgid "Error importing PivotalTracker project"
-msgstr ""
+msgstr "Error inportando el proyecto de PivotalTracker"
 
 #: taiga/importers/trello/importer.py:77
 #, python-format
 msgid "Invalid Request: %s at %s"
-msgstr ""
+msgstr "Solicitud inválida: %s en %s"
 
 #: taiga/importers/trello/importer.py:79 taiga/importers/trello/importer.py:81
 #, python-format
 msgid "Unauthorized: %s at %s"
-msgstr ""
+msgstr "No autorizado: %s en %s"
 
 #: taiga/importers/trello/importer.py:83 taiga/importers/trello/importer.py:85
 #, python-format
 msgid "Resource Unavailable: %s at %s"
-msgstr ""
+msgstr "Recurso no disponible: %s en %s"
 
 #: taiga/importers/trello/tasks.py:42 taiga/importers/trello/tasks.py:43
 msgid "Error importing Trello project"
-msgstr ""
+msgstr "Error importando proyecto de Trello"
 
 #: taiga/permissions/choices.py:23 taiga/permissions/choices.py:34
 msgid "View project"
