@@ -106,6 +106,7 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
 
         include_attachments = "include_attachments" in self.request.QUERY_PARAMS
         include_tasks = "include_tasks" in self.request.QUERY_PARAMS
+
         epic_id = self.request.QUERY_PARAMS.get("epic", None)
         # We can be filtering by more than one epic so epic_id can consist
         # of different ids separete by comma. In that situation we will use

@@ -14,6 +14,12 @@
   - Add japanese (ja) translation.
   - Add korean (ko) translation.
   - Add chinese simplified (zh-Hans) translation.
+- Third party services project importers:
+  - Trello
+  - Jira 7
+  - Github
+  - Asana
+  - Pivotal Tracker
 
 ### Misc
 - API:

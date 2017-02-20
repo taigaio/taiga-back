@@ -16,31 +16,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .development import *
+from taiga.base.api.permissions import TaigaResourcePermission, AllowAny, IsAuthenticated
+from taiga.base.api.permissions import IsSuperUser, HasProjectPerm, IsProjectAdmin
 
-CELERY_ENABLED = False
-CELERY_ALWAYS_EAGER = True
-
-MEDIA_ROOT = "/tmp"
-
-EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
-INSTALLED_APPS = INSTALLED_APPS + [
-    "tests",
-]
-
-REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
-    "anon": None,
-    "user": None,
-    "import-mode": None,
-    "import-dump-mode": None,
-    "create-memberships": None,
-    "login-fail": None,
-    "register-success": None,
-    "user-detail": None,
-}
+from taiga.permissions.permissions import CommentAndOrUpdatePerm
 
 
-IMPORTERS['github']['active'] = True
-IMPORTERS['jira']['active'] = True
-IMPORTERS['asana']['active'] = True
-IMPORTERS['trello']['active'] = True
+class ImporterPermission(TaigaResourcePermission):
+    enought_perms = IsAuthenticated()
+    global_perms = None
+    auth_url_perms = IsAuthenticated()
+    authorize_perms = IsAuthenticated()
+    list_users_perms = IsAuthenticated()
+    list_projects_perms = IsAuthenticated()
+    import_project_perms = IsAuthenticated()

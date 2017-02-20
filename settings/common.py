@@ -318,6 +318,7 @@ INSTALLED_APPS = [
     "taiga.hooks.bitbucket",
     "taiga.hooks.gogs",
     "taiga.webhooks",
+    "taiga.importers",
 
     "djmail",
     "django_jinja",
@@ -560,6 +561,30 @@ MAX_PENDING_MEMBERSHIPS = 30 # Max number of unconfirmed memberships in a projec
 
 from .sr import *
 
+IMPORTERS = {
+    "github": {
+        "active": False,
+        "client_id": "",
+        "client_secret": "",
+    },
+    "trello": {
+        "active": False,
+        "api_key": "",
+        "secret_key": "",
+    },
+    "jira": {
+        "active": False,
+        "consumer_key": "",
+        "cert": "",
+        "pub_cert": "",
+    },
+    "asana": {
+        "active": False,
+        "callback_url": "",
+        "app_id": "",
+        "app_secret": "",
+    }
+}
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"
