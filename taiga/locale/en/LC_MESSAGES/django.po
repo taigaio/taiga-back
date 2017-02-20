@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-15 12:07+0100\n"
+"POT-Creation-Date: 2017-02-20 12:30+0100\n"
 "PO-Revision-Date: 2015-03-25 20:09+0100\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Taiga Dev Team <support@taiga.io>\n"
@@ -949,25 +949,25 @@ msgstr ""
 msgid "The status doesn't exist"
 msgstr ""
 
-#: taiga/importers/asana/api.py:44 taiga/importers/asana/api.py:86
-#: taiga/importers/github/api.py:45 taiga/importers/github/api.py:75
-#: taiga/importers/jira/api.py:56 taiga/importers/jira/api.py:102
+#: taiga/importers/asana/api.py:45 taiga/importers/asana/api.py:87
+#: taiga/importers/github/api.py:46 taiga/importers/github/api.py:76
+#: taiga/importers/jira/api.py:57 taiga/importers/jira/api.py:103
 #: taiga/importers/pivotal/api.py:44 taiga/importers/pivotal/api.py:81
-#: taiga/importers/trello/api.py:46 taiga/importers/trello/api.py:83
+#: taiga/importers/trello/api.py:47 taiga/importers/trello/api.py:84
 msgid "The project param is needed"
 msgstr ""
 
-#: taiga/importers/asana/api.py:51 taiga/importers/asana/api.py:74
-#: taiga/importers/asana/api.py:131
+#: taiga/importers/asana/api.py:52 taiga/importers/asana/api.py:75
+#: taiga/importers/asana/api.py:141
 msgid "Invalid Asana API request"
 msgstr ""
 
-#: taiga/importers/asana/api.py:53 taiga/importers/asana/api.py:76
-#: taiga/importers/asana/api.py:133
+#: taiga/importers/asana/api.py:54 taiga/importers/asana/api.py:77
+#: taiga/importers/asana/api.py:143
 msgid "Failed to make the request to Asana API"
 msgstr ""
 
-#: taiga/importers/asana/api.py:126 taiga/importers/github/api.py:121
+#: taiga/importers/asana/api.py:131 taiga/importers/github/api.py:125
 msgid "Code param needed"
 msgstr ""
 
@@ -975,11 +975,11 @@ msgstr ""
 msgid "Error importing Asana project"
 msgstr ""
 
-#: taiga/importers/github/api.py:129
+#: taiga/importers/github/api.py:137
 msgid "Invalid auth data"
 msgstr ""
 
-#: taiga/importers/github/api.py:131
+#: taiga/importers/github/api.py:139
 msgid "Third party service failing"
 msgstr ""
 
@@ -987,17 +987,17 @@ msgstr ""
 msgid "Error importing GitHub project"
 msgstr ""
 
-#: taiga/importers/jira/api.py:58 taiga/importers/jira/api.py:85
-#: taiga/importers/jira/api.py:105 taiga/importers/jira/api.py:178
+#: taiga/importers/jira/api.py:59 taiga/importers/jira/api.py:86
+#: taiga/importers/jira/api.py:106 taiga/importers/jira/api.py:179
 msgid "The url param is needed"
 msgstr ""
 
-#: taiga/importers/jira/api.py:154
+#: taiga/importers/jira/api.py:155
 msgid "Invalid project_type {}"
 msgstr ""
 
-#: taiga/importers/jira/api.py:224 taiga/importers/pivotal/api.py:139
-#: taiga/importers/trello/api.py:143
+#: taiga/importers/jira/api.py:225 taiga/importers/pivotal/api.py:139
+#: taiga/importers/trello/api.py:144
 msgid "Invalid or expired auth token"
 msgstr ""
 

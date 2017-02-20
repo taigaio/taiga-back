@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-09 09:12+0100\n"
-"PO-Revision-Date: 2017-02-09 08:12+0000\n"
+"POT-Creation-Date: 2017-02-20 12:30+0100\n"
+"PO-Revision-Date: 2017-02-15 11:08+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Finnish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/fi/)\n"
@@ -195,8 +195,8 @@ msgstr ""
 #: taiga/projects/api.py:754 taiga/projects/epics/api.py:200
 #: taiga/projects/epics/api.py:284 taiga/projects/issues/api.py:224
 #: taiga/projects/mixins/ordering.py:59 taiga/projects/tasks/api.py:247
-#: taiga/projects/tasks/api.py:272 taiga/projects/userstories/api.py:322
-#: taiga/projects/userstories/api.py:374 taiga/webhooks/api.py:71
+#: taiga/projects/tasks/api.py:272 taiga/projects/userstories/api.py:323
+#: taiga/projects/userstories/api.py:375 taiga/webhooks/api.py:71
 msgid "Blocked element"
 msgstr "Estetty elementti"
 
@@ -869,7 +869,7 @@ msgstr ""
 
 #: taiga/external_apps/models.py:39 taiga/projects/attachments/models.py:62
 #: taiga/projects/custom_attributes/models.py:37
-#: taiga/projects/epics/models.py:55
+#: taiga/projects/epics/models.py:56
 #: taiga/projects/history/templatetags/functions.py:25
 #: taiga/projects/issues/models.py:60 taiga/projects/models.py:152
 #: taiga/projects/models.py:739 taiga/projects/tasks/models.py:62
@@ -906,7 +906,7 @@ msgstr "kommentti"
 #: taiga/feedback/models.py:31 taiga/projects/attachments/models.py:48
 #: taiga/projects/contact/models.py:34
 #: taiga/projects/custom_attributes/models.py:46
-#: taiga/projects/epics/models.py:48 taiga/projects/issues/models.py:52
+#: taiga/projects/epics/models.py:49 taiga/projects/issues/models.py:52
 #: taiga/projects/likes/models.py:33 taiga/projects/milestones/models.py:48
 #: taiga/projects/models.py:159 taiga/projects/models.py:743
 #: taiga/projects/notifications/models.py:89 taiga/projects/tasks/models.py:48
@@ -983,7 +983,7 @@ msgstr "The payload is not a valid json"
 
 #: taiga/hooks/api.py:63 taiga/projects/epics/api.py:154
 #: taiga/projects/issues/api.py:139 taiga/projects/tasks/api.py:201
-#: taiga/projects/userstories/api.py:276
+#: taiga/projects/userstories/api.py:277
 msgid "The project doesn't exist"
 msgstr "Projektia ei löydy"
 
@@ -1070,6 +1070,85 @@ msgstr "Viitattu elementtiä ei löydy"
 #: taiga/hooks/event_hooks.py:222
 msgid "The status doesn't exist"
 msgstr "Tilaa ei löydy"
+
+#: taiga/importers/asana/api.py:45 taiga/importers/asana/api.py:87
+#: taiga/importers/github/api.py:46 taiga/importers/github/api.py:76
+#: taiga/importers/jira/api.py:57 taiga/importers/jira/api.py:103
+#: taiga/importers/pivotal/api.py:44 taiga/importers/pivotal/api.py:81
+#: taiga/importers/trello/api.py:47 taiga/importers/trello/api.py:84
+msgid "The project param is needed"
+msgstr ""
+
+#: taiga/importers/asana/api.py:52 taiga/importers/asana/api.py:75
+#: taiga/importers/asana/api.py:141
+msgid "Invalid Asana API request"
+msgstr ""
+
+#: taiga/importers/asana/api.py:54 taiga/importers/asana/api.py:77
+#: taiga/importers/asana/api.py:143
+msgid "Failed to make the request to Asana API"
+msgstr ""
+
+#: taiga/importers/asana/api.py:131 taiga/importers/github/api.py:125
+msgid "Code param needed"
+msgstr ""
+
+#: taiga/importers/asana/tasks.py:42 taiga/importers/asana/tasks.py:43
+msgid "Error importing Asana project"
+msgstr ""
+
+#: taiga/importers/github/api.py:137
+msgid "Invalid auth data"
+msgstr ""
+
+#: taiga/importers/github/api.py:139
+msgid "Third party service failing"
+msgstr ""
+
+#: taiga/importers/github/tasks.py:42 taiga/importers/github/tasks.py:43
+msgid "Error importing GitHub project"
+msgstr ""
+
+#: taiga/importers/jira/api.py:59 taiga/importers/jira/api.py:86
+#: taiga/importers/jira/api.py:106 taiga/importers/jira/api.py:179
+msgid "The url param is needed"
+msgstr ""
+
+#: taiga/importers/jira/api.py:155
+msgid "Invalid project_type {}"
+msgstr ""
+
+#: taiga/importers/jira/api.py:225 taiga/importers/pivotal/api.py:139
+#: taiga/importers/trello/api.py:144
+msgid "Invalid or expired auth token"
+msgstr ""
+
+#: taiga/importers/jira/tasks.py:47 taiga/importers/jira/tasks.py:48
+msgid "Error importing Jira project"
+msgstr ""
+
+#: taiga/importers/pivotal/tasks.py:42 taiga/importers/pivotal/tasks.py:43
+msgid "Error importing PivotalTracker project"
+msgstr ""
+
+#: taiga/importers/trello/importer.py:77
+#, python-format
+msgid "Invalid Request: %s at %s"
+msgstr ""
+
+#: taiga/importers/trello/importer.py:79 taiga/importers/trello/importer.py:81
+#, python-format
+msgid "Unauthorized: %s at %s"
+msgstr ""
+
+#: taiga/importers/trello/importer.py:83 taiga/importers/trello/importer.py:85
+#, python-format
+msgid "Resource Unavailable: %s at %s"
+msgstr ""
+
+#: taiga/importers/trello/tasks.py:42 taiga/importers/trello/tasks.py:43
+msgid "Error importing Trello project"
+msgstr ""
 
 #: taiga/permissions/choices.py:23 taiga/permissions/choices.py:34
 msgid "View project"
@@ -1256,7 +1335,7 @@ msgid "Fans"
 msgstr ""
 
 #: taiga/projects/admin.py:144 taiga/projects/attachments/models.py:39
-#: taiga/projects/epics/models.py:39 taiga/projects/issues/models.py:37
+#: taiga/projects/epics/models.py:40 taiga/projects/issues/models.py:37
 #: taiga/projects/milestones/models.py:42 taiga/projects/models.py:164
 #: taiga/projects/notifications/models.py:62 taiga/projects/tasks/models.py:39
 #: taiga/projects/userstories/models.py:69 taiga/projects/wiki/models.py:40
@@ -1339,7 +1418,7 @@ msgstr "Projekti ID ei vastaa kohdetta ja projektia"
 
 #: taiga/projects/attachments/models.py:41 taiga/projects/contact/models.py:29
 #: taiga/projects/custom_attributes/models.py:43
-#: taiga/projects/epics/models.py:37 taiga/projects/issues/models.py:50
+#: taiga/projects/epics/models.py:38 taiga/projects/issues/models.py:50
 #: taiga/projects/milestones/models.py:44 taiga/projects/models.py:506
 #: taiga/projects/models.py:528 taiga/projects/models.py:565
 #: taiga/projects/models.py:593 taiga/projects/models.py:619
@@ -1362,7 +1441,7 @@ msgstr "objekti ID"
 
 #: taiga/projects/attachments/models.py:51
 #: taiga/projects/custom_attributes/models.py:48
-#: taiga/projects/epics/models.py:51 taiga/projects/issues/models.py:55
+#: taiga/projects/epics/models.py:52 taiga/projects/issues/models.py:55
 #: taiga/projects/milestones/models.py:51 taiga/projects/models.py:162
 #: taiga/projects/models.py:746 taiga/projects/tasks/models.py:51
 #: taiga/projects/userstories/models.py:90 taiga/projects/wiki/models.py:47
@@ -1388,7 +1467,7 @@ msgstr ""
 
 #: taiga/projects/attachments/models.py:63
 #: taiga/projects/custom_attributes/models.py:41
-#: taiga/projects/epics/models.py:101 taiga/projects/milestones/models.py:57
+#: taiga/projects/epics/models.py:104 taiga/projects/milestones/models.py:57
 #: taiga/projects/models.py:522 taiga/projects/models.py:555
 #: taiga/projects/models.py:589 taiga/projects/models.py:613
 #: taiga/projects/models.py:645 taiga/projects/models.py:665
@@ -1531,26 +1610,26 @@ msgstr "Nimi on jo olemassa"
 msgid "You don't have permissions to set this status to this epic."
 msgstr ""
 
-#: taiga/projects/epics/models.py:35 taiga/projects/issues/models.py:35
+#: taiga/projects/epics/models.py:36 taiga/projects/issues/models.py:35
 #: taiga/projects/tasks/models.py:37 taiga/projects/userstories/models.py:62
 msgid "ref"
 msgstr "viittaus"
 
-#: taiga/projects/epics/models.py:42 taiga/projects/issues/models.py:39
+#: taiga/projects/epics/models.py:43 taiga/projects/issues/models.py:39
 #: taiga/projects/tasks/models.py:41 taiga/projects/userstories/models.py:72
 msgid "status"
 msgstr "tila"
 
-#: taiga/projects/epics/models.py:45
+#: taiga/projects/epics/models.py:46
 msgid "epics order"
 msgstr ""
 
-#: taiga/projects/epics/models.py:54 taiga/projects/issues/models.py:59
+#: taiga/projects/epics/models.py:55 taiga/projects/issues/models.py:59
 #: taiga/projects/tasks/models.py:55 taiga/projects/userstories/models.py:94
 msgid "subject"
 msgstr "aihe"
 
-#: taiga/projects/epics/models.py:58 taiga/projects/models.py:526
+#: taiga/projects/epics/models.py:59 taiga/projects/models.py:526
 #: taiga/projects/models.py:561 taiga/projects/models.py:617
 #: taiga/projects/models.py:647 taiga/projects/models.py:667
 #: taiga/projects/models.py:691 taiga/projects/models.py:719
@@ -1558,22 +1637,27 @@ msgstr "aihe"
 msgid "color"
 msgstr "väri"
 
-#: taiga/projects/epics/models.py:61 taiga/projects/issues/models.py:63
+#: taiga/projects/epics/models.py:62 taiga/projects/issues/models.py:63
 #: taiga/projects/tasks/models.py:65 taiga/projects/userstories/models.py:98
 msgid "assigned to"
 msgstr "tekijä"
 
-#: taiga/projects/epics/models.py:63 taiga/projects/userstories/models.py:100
+#: taiga/projects/epics/models.py:64 taiga/projects/userstories/models.py:100
 msgid "is client requirement"
 msgstr "on asiakkaan vaatimus"
 
-#: taiga/projects/epics/models.py:65 taiga/projects/userstories/models.py:102
+#: taiga/projects/epics/models.py:66 taiga/projects/userstories/models.py:102
 msgid "is team requirement"
 msgstr "on tiimin vaatimus"
 
-#: taiga/projects/epics/models.py:69
+#: taiga/projects/epics/models.py:70
 msgid "user stories"
 msgstr ""
+
+#: taiga/projects/epics/models.py:72 taiga/projects/issues/models.py:66
+#: taiga/projects/tasks/models.py:70 taiga/projects/userstories/models.py:109
+msgid "external reference"
+msgstr "ulkoinen viittaus"
 
 #: taiga/projects/epics/validators.py:37
 msgid "There's no epic with that id"
@@ -1756,11 +1840,6 @@ msgstr "virstapylväs"
 #: taiga/projects/issues/models.py:57 taiga/projects/tasks/models.py:53
 msgid "finished date"
 msgstr "loppupvm"
-
-#: taiga/projects/issues/models.py:66 taiga/projects/tasks/models.py:70
-#: taiga/projects/userstories/models.py:109
-msgid "external reference"
-msgstr "ulkoinen viittaus"
 
 #: taiga/projects/likes/models.py:36
 msgid "Like"
@@ -3724,25 +3803,25 @@ msgstr "Tuoteomistaja"
 msgid "Stakeholder"
 msgstr "Sidosryhmä"
 
-#: taiga/projects/userstories/api.py:127
+#: taiga/projects/userstories/api.py:128
 msgid "You don't have permissions to set this sprint to this user story."
 msgstr ""
 
-#: taiga/projects/userstories/api.py:131
+#: taiga/projects/userstories/api.py:132
 msgid "You don't have permissions to set this status to this user story."
 msgstr ""
 
-#: taiga/projects/userstories/api.py:221
+#: taiga/projects/userstories/api.py:222
 #, python-brace-format
 msgid "Invalid role id '{role_id}'"
 msgstr ""
 
-#: taiga/projects/userstories/api.py:228
+#: taiga/projects/userstories/api.py:229
 #, python-brace-format
 msgid "Invalid points id '{points_id}'"
 msgstr ""
 
-#: taiga/projects/userstories/api.py:243
+#: taiga/projects/userstories/api.py:244
 #, python-brace-format
 msgid "Generating the user story #{ref} - {subject}"
 msgstr ""
