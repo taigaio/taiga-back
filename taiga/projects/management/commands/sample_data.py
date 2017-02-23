@@ -178,6 +178,9 @@ class Command(BaseCommand):
                 if role.computable:
                     computable_project_roles.add(role)
 
+            # Delete a random member so all the projects doesn't have the same team
+            Membership.objects.filter(project=project).exclude(user=project.owner).order_by("?").first().delete()
+
             # added invitations
             for i in range(NUM_INVITATIONS):
                 role = self.sd.db_object_from_queryset(project.roles.all())
