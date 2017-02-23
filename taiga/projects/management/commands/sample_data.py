@@ -157,7 +157,7 @@ class Command(BaseCommand):
         for x in projects_range:
             project = self.create_project(
                 x,
-                is_private=(x in [2, 4] or self.sd.boolean()),
+                is_private=x in [2, 4],
                 blocked_code = BLOCKED_BY_STAFF if x in(blocked_projects_range) else None
             )
 
@@ -584,11 +584,12 @@ class Command(BaseCommand):
                                          total_story_points=self.sd.int(600, 3000),
                                          total_milestones=self.sd.int(5,10),
                                          tags=self.sd.words(1, 10).split(" "),
-                                         is_looking_for_people=counter in LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS,
-                                         looking_for_people_note=self.sd.short_sentence(),
-                                         is_featured=counter in FEATURED_PROJECTS_POSITIONS,
                                          blocked_code=blocked_code)
 
+        project.is_looking_for_people = counter in LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS
+        if project.is_looking_for_people:
+            project.looking_for_people_note = self.sd.short_sentence()
+        project.is_featured = counter in FEATURED_PROJECTS_POSITIONS
         project.is_kanban_activated = True
         project.is_epics_activated = True
         project.save()
