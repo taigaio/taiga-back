@@ -475,8 +475,6 @@ SOUTH_MIGRATION_MODULES = {
 }
 
 
-
-
 THN_AVATAR_SIZE = 80                # 80x80 pixels
 THN_AVATAR_BIG_SIZE = 300           # 300x300 pixels
 THN_LOGO_SMALL_SIZE = 80            # 80x80 pixels
