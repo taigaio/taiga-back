@@ -44,7 +44,7 @@ def import_project(self, user_id, token, project_id, options):
             "project": project_id,
             "exception": e
         }
-        email = mail_builder.github_import_error(admin, ctx)
+        email = mail_builder.importer_import_error(admin, ctx)
         email.send()
         logger.error('Error importing GitHub project %s (by %s)', project_id, user, exc_info=sys.exc_info())
     else:

@@ -1,0 +1,14 @@
+{% trans user=user.get_full_name(), error_message=error_message, support_email=sr("support.email") %}
+Hello {{ user }},
+
+{{ error_message }}
+
+Your project has not been importer correctly.
+
+The Taiga system administrators have been informed.
+
+Please, try it again or contact with the support team at {{ support_email }}
+
+---
+The Taiga Team
+{% endtrans %}

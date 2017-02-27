@@ -31,7 +31,7 @@ logger = logging.getLogger('taiga.importers.jira')
 
 @app.task(bind=True)
 def import_project(self, user_id, url, token, project_id, options, importer_type):
-    user = User.object.get(id=user_id)
+    user = User.objects.get(id=user_id)
 
     if importer_type == "agile":
         importer = JiraAgileImporter(user, url, token)
@@ -49,7 +49,7 @@ def import_project(self, user_id, url, token, project_id, options, importer_type
             "project": project_id,
             "exception": e
         }
-        email = mail_builder.jira_import_error(admin, ctx)
+        email = mail_builder.importer_import_error(admin, ctx)
         email.send()
         logger.error('Error importing Jira project %s (by %s)', project_id, user, exc_info=sys.exc_info())
     else:
