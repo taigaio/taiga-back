@@ -31,7 +31,7 @@ logger = logging.getLogger('taiga.importers.github')
 
 @app.task(bind=True)
 def import_project(self, user_id, token, project_id, options):
-    user = User.object.get(id=user_id)
+    user = User.objects.get(id=user_id)
     importer = GithubImporter(user, token)
     try:
         project = importer.import_project(project_id, options)
