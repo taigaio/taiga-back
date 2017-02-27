@@ -21,6 +21,8 @@ from kombu import Exchange, Queue
 BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
+CELERY_ACCEPT_CONTENT = ['pickle',] # Values are 'pickle', 'json', 'msgpack' and 'yaml'
+
 CELERY_TIMEZONE = 'Europe/Madrid'
 CELERY_ENABLE_UTC = True
 
