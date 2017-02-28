@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import throttling
+from django.conf import settings
 
 
 class GlobalThrottlingMixin:
@@ -55,6 +56,136 @@ class AnonRateThrottle(throttling.AnonRateThrottle):
 
 class UserRateThrottle(throttling.UserRateThrottle):
     scope = "user"
+
+
+class CommonThrottle(throttling.SimpleRateThrottle):
+    cache_format = "throtte_%(scope)s_%(rate)s_%(ident)s"
+
+    def __init__(self):
+        pass
+
+    def has_to_finalize(self, request, response, view):
+        return False
+
+    def allow_request(self, request, view):
+        scope = self.get_scope(request)
+        ident = self.get_ident(request)
+        rates = self.get_rates(scope)
+        if ident in settings.REST_FRAMEWORK['DEFAULT_THROTTLE_WHITELIST']:
+            return True
+
+        if rates is None or rates == []:
+            return True
+
+        now = self.timer()
+
+        waits = []
+        history_writes = []
+
+        for rate in rates:
+            rate_name = rate[0]
+            rate_num_requests = rate[1]
+            rate_duration = rate[2]
+
+            key = self.get_cache_key(ident, scope, rate_name)
+            history = self.cache.get(key, [])
+
+            while history and history[-1] <= now - rate_duration:
+                history.pop()
+
+            if len(history) >= rate_num_requests:
+                waits.append(self.wait_time(history, rate, now))
+
+            history_writes.append({
+                "key": key,
+                "history": history,
+                "rate_duration": rate_duration,
+            })
+
+        if waits:
+            self._wait = max(waits)
+            return False
+
+        for history_write in history_writes:
+            history_write['history'].insert(0, now)
+            self.cache.set(
+                history_write['key'],
+                history_write['history'],
+                history_write['rate_duration']
+            )
+        return True
+
+    def get_rates(self, scope):
+        try:
+            rates = self.THROTTLE_RATES[scope]
+        except KeyError:
+            msg = "No default throttle rate set for \"%s\" scope" % scope
+            raise ImproperlyConfigured(msg)
+
+        if rates is None:
+            return []
+        elif isinstance(rates, str):
+            return [self.parse_rate(rates)]
+        elif isinstance(rates, list):
+            return list(map(self.parse_rate, rates))
+        else:
+            msg = "No valid throttle rate set for \"%s\" scope" % scope
+            raise ImproperlyConfigured(msg)
+
+    def parse_rate(self, rate):
+        """
+        Given the request rate string, return a two tuple of:
+        <allowed number of requests>, <period of time in seconds>
+        """
+        if rate is None:
+            return None
+        num, period = rate.split("/")
+        num_requests = int(num)
+        duration = {"s": 1, "m": 60, "h": 3600, "d": 86400}[period[0]]
+        return (rate, num_requests, duration)
+
+    def get_scope(self, request):
+        if request.user.is_authenticated():
+            if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
+                scope = "user-write"
+            else:
+                scope = "user-read"
+        else:
+            if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
+                scope = "anon-write"
+            else:
+                scope = "anon-read"
+        return scope
+
+    def get_ident(self, request):
+        if request.user.is_authenticated():
+            ident = request.user.id
+        else:
+            ident = request.META.get("HTTP_X_FORWARDED_FOR")
+            if ident is None:
+                ident = request.META.get("REMOTE_ADDR")
+        return ident
+
+    def get_cache_key(self, ident, scope, rate):
+        return self.cache_format % { "scope": scope, "ident": ident, "rate": rate }
+
+    def wait_time(self, history, rate, now):
+        rate_num_requests = rate[1]
+        rate_duration = rate[2]
+
+        if history:
+            remaining_duration = rate_duration - (now - history[-1])
+        else:
+            remaining_duration = rate_duration
+
+        available_requests = rate_num_requests - len(history) + 1
+        if available_requests <= 0:
+            return remaining_duration
+
+        return remaining_duration / float(available_requests)
+
+    def wait(self):
+        return self._wait
 
 
 class SimpleRateThrottle(throttling.SimpleRateThrottle):

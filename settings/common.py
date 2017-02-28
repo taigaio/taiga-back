@@ -433,12 +433,13 @@ REST_FRAMEWORK = {
         "taiga.external_apps.auth_backends.Token",
     ),
     "DEFAULT_THROTTLE_CLASSES": (
-        "taiga.base.throttling.AnonRateThrottle",
-        "taiga.base.throttling.UserRateThrottle"
+        "taiga.base.throttling.CommonThrottle",
     ),
     "DEFAULT_THROTTLE_RATES": {
-        "anon": None,
-        "user": None,
+        "anon-write": None,
+        "user-write": None,
+        "anon-read": None,
+        "user-read": None,
         "import-mode": None,
         "import-dump-mode": "1/minute",
         "create-memberships": None,
@@ -446,6 +447,7 @@ REST_FRAMEWORK = {
         "register-success": None,
         "user-detail": None,
     },
+    "DEFAULT_THROTTLE_WHITELIST": [],
     "FILTER_BACKEND": "taiga.base.filters.FilterBackend",
     "EXCEPTION_HANDLER": "taiga.base.exceptions.exception_handler",
     "PAGINATE_BY": 30,

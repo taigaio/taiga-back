@@ -106,6 +106,7 @@ DEFAULTS = {
         "user": None,
         "anon": None,
     },
+    "DEFAULT_THROTTLE_WHITELIST": [],
 
     # Pagination
     "PAGINATE_BY": None,
