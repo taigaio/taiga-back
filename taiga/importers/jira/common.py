@@ -394,8 +394,6 @@ class JiraImporterCommon:
 
         custom_attributes_values = {}
         for custom_field in self.custom_fields:
-            if issue['key'] == "PS-10":
-                import pprint; pprint.pprint(issue['fields'])
             data = issue['fields'].get(custom_field['jira_field_name'], None)
             if data and "transform" in custom_field:
                 data = custom_field['transform'](issue, data)
@@ -693,8 +691,6 @@ class JiraImporterCommon:
                     "id": field_obj.id
                 }]
                 has_data = True
-            else:
-                import pprint; pprint.pprint(history_item)
 
         if not has_data:
             return None
