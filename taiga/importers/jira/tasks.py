@@ -25,6 +25,7 @@ from taiga.base.mails import mail_builder
 from taiga.users.models import User
 from taiga.celery import app
 from .normal import JiraNormalImporter
+from .agile import JiraAgileImporter
 
 logger = logging.getLogger('taiga.importers.jira')
 
@@ -49,7 +50,7 @@ def import_project(self, user_id, url, token, project_id, options, importer_type
             "project": project_id,
             "exception": e
         }
-        email = mail_builder.importer_import_error(admin, ctx)
+        email = mail_builder.importer_import_error(user, ctx)
         email.send()
         logger.error('Error importing Jira project %s (by %s)', project_id, user, exc_info=sys.exc_info())
     else:

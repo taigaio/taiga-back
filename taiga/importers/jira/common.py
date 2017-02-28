@@ -155,12 +155,16 @@ class JiraImporterCommon:
         self._client = JiraClient(server=server, oauth=oauth)
 
     def resolve_user_bindings(self, options):
-        for option in list(options['users_bindings'].keys()):
+        def resolve_user(user_id):
+            if isinstance(user_id, User):
+                return user_id
             try:
-                user = User.objects.get(id=options['users_bindings'][option])
-                options['users_bindings'][option] = user
+                user = User.objects.get(id=user_id)
+                return user
             except User.DoesNotExist:
-                del(options['users_bindings'][option])
+                return None
+
+        options['users_bindings'] = {k: resolve_user(v) for k,v in options['users_bindings'].items() if v is not None}
 
     def list_users(self):
         result = []
