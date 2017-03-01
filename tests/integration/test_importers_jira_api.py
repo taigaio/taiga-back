@@ -203,6 +203,7 @@ def test_import_jira_project_without_project_id(client, settings):
         response = client.post(url, content_type="application/json", data=json.dumps({"token": "access.secret", "url": "http://jiraserver"}))
 
     assert response.status_code == 400
+    settings.CELERY_ENABLED = False
 
 
 def test_import_jira_project_without_url(client, settings):
@@ -217,6 +218,7 @@ def test_import_jira_project_without_url(client, settings):
         response = client.post(url, content_type="application/json", data=json.dumps({"token": "access.secret", "project_id": 1}))
 
     assert response.status_code == 400
+    settings.CELERY_ENABLED = False
 
 
 def test_import_jira_project_with_celery_enabled(client, settings):
@@ -236,11 +238,10 @@ def test_import_jira_project_with_celery_enabled(client, settings):
 
     assert response.status_code == 202
     assert "task_id" in response.data
+    settings.CELERY_ENABLED = False
 
 
 def test_import_jira_project_with_celery_disabled(client, settings):
-    settings.CELERY_ENABLED = False
-
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(slug="imported-project")
     client.login(user)

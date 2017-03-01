@@ -36,3 +36,5 @@ def pytest_runtest_setup(item):
 
 def pytest_configure(config):
     django.setup()
+    from taiga.celery import app
+    app.conf.task_always_eager = True

@@ -19,7 +19,6 @@
 from .development import *
 
 CELERY_ENABLED = False
-CELERY_ALWAYS_EAGER = True
 
 MEDIA_ROOT = "/tmp"
 

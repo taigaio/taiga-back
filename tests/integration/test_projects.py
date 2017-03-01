@@ -1861,11 +1861,10 @@ def test_delete_project_with_celery_enabled(client, settings):
         assert project.memberships.count() == 0
         assert project.blocked_code == BLOCKED_BY_DELETING
         delete_project_mock.delay.assert_called_once_with(project.id)
+    settings.CELERY_ENABLED = False
 
 
 def test_delete_project_with_celery_disabled(client, settings):
-    settings.CELERY_ENABLED = False
-
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     role = f.RoleFactory.create(project=project, permissions=["view_project"])

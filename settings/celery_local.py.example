@@ -1,0 +1,4 @@
+from .celery import *
+
+# To use celery in memory
+#task_always_eager = True

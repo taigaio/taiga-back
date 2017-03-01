@@ -157,13 +157,10 @@ DATABASES = {
 #########################################
 ## CELERY
 #########################################
-
-#from .celery import *
+# Set to True to enable celery and work in async mode or False
+# to disable it and work in sync mode. You can find the celery
+# settings in settings/celery.py and settings/celery-local.py
 #CELERY_ENABLED = True
-#
-# To use celery in memory
-#CELERY_ENABLED = True
-#CELERY_ALWAYS_EAGER = True
 
 
 #########################################
