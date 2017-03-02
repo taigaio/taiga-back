@@ -18,6 +18,9 @@
 
 from taiga.base.api import throttling
 from django.conf import settings
+from ipware.ip import get_ip
+from netaddr import all_matching_cidrs
+from netaddr.core import AddrFormatError
 
 
 class GlobalThrottlingMixin:
@@ -26,9 +29,7 @@ class GlobalThrottlingMixin:
     logged in or not.
     """
     def get_cache_key(self, request, view):
-        ident = request.META.get("HTTP_X_FORWARDED_FOR")
-        if ident is None:
-            ident = request.META.get("REMOTE_ADDR")
+        ident = get_ip(request)
 
         return self.cache_format % {
             "scope": self.scope,
@@ -67,11 +68,24 @@ class CommonThrottle(throttling.SimpleRateThrottle):
     def has_to_finalize(self, request, response, view):
         return False
 
+    def is_whitelisted(self, ident):
+        for whitelisted in settings.REST_FRAMEWORK['DEFAULT_THROTTLE_WHITELIST']:
+            if isinstance(whitelisted, int) and whitelisted == ident:
+                return True
+            elif isinstance(whitelisted, str):
+                try:
+                    if all_matching_cidrs(ident, [whitelisted]) != []:
+                        return True
+                except(AddrFormatError, ValueError):
+                    pass
+        return False
+
     def allow_request(self, request, view):
         scope = self.get_scope(request)
         ident = self.get_ident(request)
         rates = self.get_rates(scope)
-        if ident in settings.REST_FRAMEWORK['DEFAULT_THROTTLE_WHITELIST']:
+
+        if self.is_whitelisted(ident):
             return True
 
         if rates is None or rates == []:
@@ -145,25 +159,15 @@ class CommonThrottle(throttling.SimpleRateThrottle):
         return (rate, num_requests, duration)
 
     def get_scope(self, request):
-        if request.user.is_authenticated():
-            if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
-                scope = "user-write"
-            else:
-                scope = "user-read"
-        else:
-            if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
-                scope = "anon-write"
-            else:
-                scope = "anon-read"
+        scope_prefix = "user" if request.user.is_authenticated() else "anon"
+        scope_sufix = "write" if request.method in ["POST", "PUT", "PATCH", "DELETE"] else "read"
+        scope = "{}-{}".format(scope_prefix, scope_sufix)
         return scope
 
     def get_ident(self, request):
         if request.user.is_authenticated():
-            ident = request.user.id
-        else:
-            ident = request.META.get("HTTP_X_FORWARDED_FOR")
-            if ident is None:
-                ident = request.META.get("REMOTE_ADDR")
+            return request.user.id
+        ident = get_ip(request)
         return ident
 
     def get_cache_key(self, ident, scope, rate):

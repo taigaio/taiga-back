@@ -263,3 +263,33 @@ def test_not_whitelisted_anon_throttling(settings, rf):
     cache.clear()
     settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon-read'] = None
     settings.REST_FRAMEWORK['DEFAULT_THROTTLE_WHITELIST'] = []
+
+def test_whitelisted_subnet_anon_throttling(settings, rf):
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon-read'] = "1/min"
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_WHITELIST'] = ["192.168.0.0/24"]
+    request = rf.get("/test")
+    request.user = AnonymousUser()
+    request.META["REMOTE_ADDR"] = "192.168.0.123"
+    throttling = CommonThrottle()
+    assert throttling.allow_request(request, None)
+    assert throttling.allow_request(request, None)
+    for x in range(100):
+        assert throttling.allow_request(request, None)
+    cache.clear()
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon-read'] = None
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_WHITELIST'] = []
+
+def test_not_whitelisted_subnet_anon_throttling(settings, rf):
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon-read'] = "1/min"
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_WHITELIST'] = ["192.168.0.0/24"]
+    request = rf.get("/test")
+    request.user = AnonymousUser()
+    request.META["REMOTE_ADDR"] = "192.168.1.123"
+    throttling = CommonThrottle()
+    assert throttling.allow_request(request, None)
+    assert throttling.allow_request(request, None) is False
+    for x in range(100):
+        assert throttling.allow_request(request, None) is False
+    cache.clear()
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon-read'] = None
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_WHITELIST'] = []
