@@ -79,7 +79,7 @@ Taiga is made for developers and designers. We care enormously about UI because 
 
 There are two possible ways to contribute to our UI:
 - **Bugs**: If you find a bug regarding front-end, please report it as previously indicated in the Bug reports section or send a pull-request as indicated in the Code Patches section.
-- **Enhancements**: If its a design or UX bug or enhancement we will love to receive your feedback. Please send us your enhancement, with the reason and, if possible, an example. Our design and UX team will review your enhancement and fix it as soon as possible. We recommend you to use our [mailing list](http://groups.google.co.uk/d/forum/taigaio){target="_blank"} so we can have a lot of different opinions and debate.
+- **Enhancements**: If its a design or UX bug or enhancement we will love to receive your feedback. Please send us your enhancement, with the reason and, if possible, an example. Our design and UX team will review your enhancement and fix it as soon as possible. We recommend you to use our [mailing list](http://groups.google.co.uk/d/forum/taigaio) so we can have a lot of different opinions and debate.
 - **Language Localization**: We are eager to offer localized versions of Taiga. Some members of the community have already volunteered to work to provide a variety of languages. We are working to implement some changes to allow for this and expect to accept these requests in the near future.
 
 
