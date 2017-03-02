@@ -63,11 +63,22 @@ DATABASES = {
 #########################################
 
 #REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
-#    "anon": "20/min",
-#    "user": "200/min",
-#    "import-mode": "20/sec",
-#    "import-dump-mode": "1/minute"
+#    "anon-write": "20/min",
+#    "user-write": None,
+#    "anon-read": None,
+#    "user-read": None,
+#    "import-mode": None,
+#    "import-dump-mode": "1/minute",
+#    "create-memberships": None,
+#    "login-fail": None,
+#    "register-success": None,
+#    "user-detail": None,
 #}
+
+# This list should containt:
+#  - Tiga users IDs
+#  - Valid clients IP addresses (X-Forwarded-For header)
+#REST_FRAMEWORK["DEFAULT_THROTTLE_WHITELIST"] = []
 
 
 #########################################
