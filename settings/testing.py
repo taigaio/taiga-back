@@ -29,8 +29,10 @@ INSTALLED_APPS = INSTALLED_APPS + [
 ]
 
 REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
-    "anon": None,
-    "user": None,
+    "anon-write": None,
+    "anon-read": None,
+    "user-write": None,
+    "user-read": None,
     "import-mode": None,
     "import-dump-mode": None,
     "create-memberships": None,
