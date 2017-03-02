@@ -3,6 +3,7 @@
 *.log
 taiga/search
 settings/local.py
+settings/celery_local.py
 database.sqlite
 logs
 media

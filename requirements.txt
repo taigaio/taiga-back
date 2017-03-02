@@ -21,7 +21,7 @@ requests-oauthlib==0.6.2
 webcolors==1.5
 django-sr==0.0.4
 easy-thumbnails==2.3
-celery==3.1.24
+celery==4.0.2
 redis==2.10.5
 Unidecode==0.04.19
 raven==5.32.0

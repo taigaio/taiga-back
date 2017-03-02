@@ -40,8 +40,6 @@ def test_invalid_project_export(client):
 
 
 def test_valid_project_export_with_celery_disabled(client, settings):
-    settings.CELERY_ENABLED = False
-
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     f.MembershipFactory(project=project, user=user, is_admin=True)
@@ -57,8 +55,6 @@ def test_valid_project_export_with_celery_disabled(client, settings):
 
 
 def test_valid_project_export_with_celery_disabled_and_gzip(client, settings):
-    settings.CELERY_ENABLED = False
-
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     f.MembershipFactory(project=project, user=user, is_admin=True)
@@ -93,6 +89,7 @@ def test_valid_project_export_with_celery_enabled(client, settings):
         args = (project.id, project.slug, response_data["export_id"], "plain")
         kwargs = {"countdown": settings.EXPORTS_TTL}
         delete_project_dump_mock.apply_async.assert_called_once_with(args, **kwargs)
+    settings.CELERY_ENABLED = False
 
 
 def test_valid_project_export_with_celery_enabled_and_gzip(client, settings):
@@ -115,10 +112,10 @@ def test_valid_project_export_with_celery_enabled_and_gzip(client, settings):
         args = (project.id, project.slug, response_data["export_id"], "gzip")
         kwargs = {"countdown": settings.EXPORTS_TTL}
         delete_project_dump_mock.apply_async.assert_called_once_with(args, **kwargs)
+    settings.CELERY_ENABLED = False
 
 
 def test_valid_project_with_throttling(client, settings):
-    settings.CELERY_ENABLED = False
     settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["import-dump-mode"] = "1/minute"
 
     user = f.UserFactory.create()
