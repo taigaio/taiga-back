@@ -21,11 +21,8 @@ from django.conf import settings
 from django.db.models import Q
 
 from taiga.importers.asana.importer import AsanaImporter
-from taiga.users.models import User, AuthData
-from taiga.projects.services import projects as service
+from taiga.users.models import User
 
-import unittest.mock
-import timeit
 import json
 
 

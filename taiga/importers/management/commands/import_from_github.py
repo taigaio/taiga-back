@@ -21,11 +21,7 @@ from django.conf import settings
 from django.db.models import Q
 
 from taiga.importers.github.importer import GithubImporter
-from taiga.users.models import User, AuthData
-from taiga.projects.services import projects as service
-
-import unittest.mock
-import timeit
+from taiga.users.models import User
 
 
 class Command(BaseCommand):
@@ -57,8 +53,8 @@ class Command(BaseCommand):
             print("Go to here and come with your code (in the redirected url): {}".format(url))
             code = input("Code: ")
             access_data = GithubImporter.get_access_token(
-                settings.IMPORTERS.get('github', {}).get('client_id', None)
-                settings.IMPORTERS.get('github', {}).get('client_secret', None)
+                settings.IMPORTERS.get('github', {}).get('client_id', None),
+                settings.IMPORTERS.get('github', {}).get('client_secret', None),
                 code
             )
             token = access_data

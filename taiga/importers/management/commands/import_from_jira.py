@@ -23,10 +23,7 @@ from django.conf import settings
 from taiga.importers.jira.agile import JiraAgileImporter
 from taiga.importers.jira.normal import JiraNormalImporter
 from taiga.users.models import User
-from taiga.projects.services import projects as service
 
-import unittest.mock
-import timeit
 import json
 
 
@@ -69,7 +66,7 @@ class Command(BaseCommand):
                 True
             )
             print(url)
-            code = input("Go to the url and get back the code")
+            input("Go to the url, allow the user and get back and press enter")
             token = JiraNormalImporter.get_access_token(
                 server,
                 settings.IMPORTERS.get('jira', {}).get('consumer_key', None),

@@ -20,10 +20,8 @@ from taiga.base.api import viewsets
 from taiga.base import response
 from taiga.base import exceptions as exc
 from taiga.base.decorators import list_route
-from taiga.users.models import AuthData, User
 from taiga.users.services import get_user_photo_url
 from taiga.users.gravatar import get_user_gravatar_id
-from taiga.projects.serializers import ProjectSerializer
 
 from taiga.importers import permissions, exceptions
 from taiga.importers.services import resolve_users_bindings

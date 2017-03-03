@@ -21,10 +21,6 @@ from django.db.models import Q
 
 from taiga.importers.pivotal import PivotalImporter
 from taiga.users.models import User
-from taiga.projects.services import projects as service
-
-import unittest.mock
-import timeit
 
 
 class Command(BaseCommand):

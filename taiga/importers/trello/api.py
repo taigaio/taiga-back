@@ -25,7 +25,6 @@ from taiga.base.decorators import list_route
 from taiga.users.models import AuthData, User
 from taiga.users.services import get_user_photo_url
 from taiga.users.gravatar import get_user_gravatar_id
-from taiga.projects.serializers import ProjectSerializer
 
 from .importer import TrelloImporter
 from taiga.importers import permissions
