@@ -1,5 +1,5 @@
 # taiga-back.taiga.
-# Copyright (C) 2014-2016 Taiga Dev Team <support@taiga.io>
+# Copyright (C) 2014-2017 Taiga Dev Team <support@taiga.io>
 # This file is distributed under the same license as the taiga-back package.
 #
 # Translators:
@@ -19,9 +19,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-20 12:30+0100\n"
-"PO-Revision-Date: 2017-02-20 16:40+0000\n"
-"Last-Translator: David Barragán <bameda@gmail.com>\n"
+"POT-Creation-Date: 2017-03-03 14:17+0100\n"
+"PO-Revision-Date: 2017-03-03 13:17+0000\n"
+"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -770,6 +770,7 @@ msgid "[%(project)s] %(error_subject)s"
 msgstr "[%(project)s] %(error_subject)s"
 
 #: taiga/export_import/templates/emails/import_error-body-html.jinja:4
+#: taiga/importers/templates/emails/importer_import_error-body-html.jinja:4
 #, python-format
 msgid ""
 "\n"
@@ -794,6 +795,7 @@ msgstr ""
 "<p><small>El Equipo de Taiga</small></p>"
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:1
+#: taiga/importers/templates/emails/importer_import_error-body-text.jinja:1
 #, python-format
 msgid ""
 "\n"
@@ -826,6 +828,7 @@ msgstr ""
 "El Equipo de Taiga\n"
 
 #: taiga/export_import/templates/emails/import_error-subject.jinja:1
+#: taiga/importers/templates/emails/importer_import_error-subject.jinja:1
 #, python-format
 msgid "[Taiga] %(error_subject)s"
 msgstr "[Taiga] %(error_subject)s"
@@ -1151,25 +1154,25 @@ msgstr "El elemento referenciado no existe"
 msgid "The status doesn't exist"
 msgstr "El estado no existe"
 
-#: taiga/importers/asana/api.py:45 taiga/importers/asana/api.py:87
-#: taiga/importers/github/api.py:46 taiga/importers/github/api.py:76
+#: taiga/importers/asana/api.py:43 taiga/importers/asana/api.py:85
+#: taiga/importers/github/api.py:44 taiga/importers/github/api.py:74
 #: taiga/importers/jira/api.py:57 taiga/importers/jira/api.py:103
-#: taiga/importers/pivotal/api.py:44 taiga/importers/pivotal/api.py:81
-#: taiga/importers/trello/api.py:47 taiga/importers/trello/api.py:84
+#: taiga/importers/pivotal/api.py:43 taiga/importers/pivotal/api.py:80
+#: taiga/importers/trello/api.py:46 taiga/importers/trello/api.py:83
 msgid "The project param is needed"
 msgstr "El parámetro project es necesario"
 
-#: taiga/importers/asana/api.py:52 taiga/importers/asana/api.py:75
-#: taiga/importers/asana/api.py:141
+#: taiga/importers/asana/api.py:50 taiga/importers/asana/api.py:73
+#: taiga/importers/asana/api.py:139
 msgid "Invalid Asana API request"
 msgstr "Solicitud de API de Asana no válida"
 
-#: taiga/importers/asana/api.py:54 taiga/importers/asana/api.py:77
-#: taiga/importers/asana/api.py:143
+#: taiga/importers/asana/api.py:52 taiga/importers/asana/api.py:75
+#: taiga/importers/asana/api.py:141
 msgid "Failed to make the request to Asana API"
 msgstr "No se pudo realizar la solicitud a la API de Asana"
 
-#: taiga/importers/asana/api.py:131 taiga/importers/github/api.py:125
+#: taiga/importers/asana/api.py:129 taiga/importers/github/api.py:123
 msgid "Code param needed"
 msgstr "El parámetro code es necesario"
 
@@ -1177,11 +1180,11 @@ msgstr "El parámetro code es necesario"
 msgid "Error importing Asana project"
 msgstr "Error importando el proyecto de Asana"
 
-#: taiga/importers/github/api.py:137
+#: taiga/importers/github/api.py:135
 msgid "Invalid auth data"
 msgstr "Datos de autenticación inválidos"
 
-#: taiga/importers/github/api.py:139
+#: taiga/importers/github/api.py:137
 msgid "Third party service failing"
 msgstr "El servicio de terceros está fallando"
 
@@ -1198,18 +1201,154 @@ msgstr "El parámetro url es necesario"
 msgid "Invalid project_type {}"
 msgstr "project_type {} inválido"
 
-#: taiga/importers/jira/api.py:225 taiga/importers/pivotal/api.py:139
-#: taiga/importers/trello/api.py:144
+#: taiga/importers/jira/api.py:225 taiga/importers/pivotal/api.py:138
+#: taiga/importers/trello/api.py:143
 msgid "Invalid or expired auth token"
 msgstr "El token de atuenticación es inválido o ha expirado"
 
-#: taiga/importers/jira/tasks.py:47 taiga/importers/jira/tasks.py:48
+#: taiga/importers/jira/tasks.py:48 taiga/importers/jira/tasks.py:49
 msgid "Error importing Jira project"
 msgstr "Error importando el proyecto deJira"
 
 #: taiga/importers/pivotal/tasks.py:42 taiga/importers/pivotal/tasks.py:43
 msgid "Error importing PivotalTracker project"
 msgstr "Error inportando el proyecto de PivotalTracker"
+
+#: taiga/importers/templates/emails/asana_import_success-body-html.jinja:4
+#, python-format
+msgid ""
+"\n"
+"    <h1>Asana Project imported</h1>\n"
+"    <p>Hello %(user)s,</p>\n"
+"    <h3>Your Asana project has been correctly imported.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project "
+"%(project)s\">Go to %(project)s</a>\n"
+"    <p><small>The Taiga Team</small></p>\n"
+"    "
+msgstr ""
+
+#: taiga/importers/templates/emails/asana_import_success-body-text.jinja:1
+#, python-format
+msgid ""
+"\n"
+"Hello %(user)s,\n"
+"\n"
+"Your Asana project has been correctly imported.\n"
+"\n"
+"You can see the project %(project)s here:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"The Taiga Team\n"
+msgstr ""
+
+#: taiga/importers/templates/emails/asana_import_success-subject.jinja:1
+#, python-format
+msgid "[%(project)s] Your Asana project has been imported"
+msgstr ""
+
+#: taiga/importers/templates/emails/github_import_success-body-html.jinja:4
+#, python-format
+msgid ""
+"\n"
+"    <h1>Github Project imported</h1>\n"
+"    <p>Hello %(user)s,</p>\n"
+"    <h3>Your Github project has been correctly imported.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project "
+"%(project)s\">Go to %(project)s</a>\n"
+"    <p><small>The Taiga Team</small></p>\n"
+"    "
+msgstr ""
+
+#: taiga/importers/templates/emails/github_import_success-body-text.jinja:1
+#, python-format
+msgid ""
+"\n"
+"Hello %(user)s,\n"
+"\n"
+"Your Github project has been correctly imported.\n"
+"\n"
+"You can see the project %(project)s here:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"The Taiga Team\n"
+msgstr ""
+
+#: taiga/importers/templates/emails/github_import_success-subject.jinja:1
+#, python-format
+msgid "[%(project)s] Your Github project has been imported"
+msgstr ""
+
+#: taiga/importers/templates/emails/jira_import_success-body-html.jinja:4
+#, python-format
+msgid ""
+"\n"
+"    <h1>Jira Project imported</h1>\n"
+"    <p>Hello %(user)s,</p>\n"
+"    <h3>Your Jira project has been correctly imported.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project "
+"%(project)s\">Go to %(project)s</a>\n"
+"    <p><small>The Taiga Team</small></p>\n"
+"    "
+msgstr ""
+
+#: taiga/importers/templates/emails/jira_import_success-body-text.jinja:1
+#, python-format
+msgid ""
+"\n"
+"Hello %(user)s,\n"
+"\n"
+"Your Jira project has been correctly imported.\n"
+"\n"
+"You can see the project %(project)s here:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"The Taiga Team\n"
+msgstr ""
+
+#: taiga/importers/templates/emails/jira_import_success-subject.jinja:1
+#, python-format
+msgid "[%(project)s] Your Jira project has been imported"
+msgstr ""
+
+#: taiga/importers/templates/emails/trello_import_success-body-html.jinja:4
+#, python-format
+msgid ""
+"\n"
+"    <h1>Trello Project imported</h1>\n"
+"    <p>Hello %(user)s,</p>\n"
+"    <h3>Your Trello project has been correctly imported.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project "
+"%(project)s\">Go to %(project)s</a>\n"
+"    <p><small>The Taiga Team</small></p>\n"
+"    "
+msgstr ""
+
+#: taiga/importers/templates/emails/trello_import_success-body-text.jinja:1
+#, python-format
+msgid ""
+"\n"
+"Hello %(user)s,\n"
+"\n"
+"Your Trello project has been correctly imported.\n"
+"\n"
+"You can see the project %(project)s here:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"The Taiga Team\n"
+msgstr ""
+
+#: taiga/importers/templates/emails/trello_import_success-subject.jinja:1
+#, python-format
+msgid "[%(project)s] Your Trello project has been imported"
+msgstr ""
 
 #: taiga/importers/trello/importer.py:77
 #, python-format

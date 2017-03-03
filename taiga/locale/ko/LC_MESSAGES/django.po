@@ -1,8 +1,9 @@
 # taiga-back.taiga.
-# Copyright (C) 2014-2016 Taiga Dev Team <support@taiga.io>
+# Copyright (C) 2014-2017 Taiga Dev Team <support@taiga.io>
 # This file is distributed under the same license as the taiga-back package.
 #
 # Translators:
+# Jonghyuk Baik <aprfirst@naver.com>, 2017
 # 안민규 (luasenvy) <luas.envy@gmail.com>, 2017
 # mcsong <mcsong@gmail.com>, 2015
 # mcsong <mcsong@gmail.com>, 2015
@@ -10,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-20 12:30+0100\n"
-"PO-Revision-Date: 2017-02-15 11:08+0000\n"
+"POT-Creation-Date: 2017-03-03 14:17+0100\n"
+"PO-Revision-Date: 2017-03-03 13:17+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Korean (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ko/)\n"
@@ -757,6 +758,7 @@ msgid "[%(project)s] %(error_subject)s"
 msgstr "[%(project)s] %(error_subject)s"
 
 #: taiga/export_import/templates/emails/import_error-body-html.jinja:4
+#: taiga/importers/templates/emails/importer_import_error-body-html.jinja:4
 #, python-format
 msgid ""
 "\n"
@@ -782,6 +784,7 @@ msgstr ""
 "    "
 
 #: taiga/export_import/templates/emails/import_error-body-text.jinja:1
+#: taiga/importers/templates/emails/importer_import_error-body-text.jinja:1
 #, python-format
 msgid ""
 "\n"
@@ -813,6 +816,7 @@ msgstr ""
 "타이가 팀\n"
 
 #: taiga/export_import/templates/emails/import_error-subject.jinja:1
+#: taiga/importers/templates/emails/importer_import_error-subject.jinja:1
 #, python-format
 msgid "[Taiga] %(error_subject)s"
 msgstr "[타이가] %(error_subject)s"
@@ -1136,84 +1140,220 @@ msgstr "참조된 엘리먼트가 존재하지 않습니다."
 msgid "The status doesn't exist"
 msgstr "상태가 존재하지 않습니다."
 
-#: taiga/importers/asana/api.py:45 taiga/importers/asana/api.py:87
-#: taiga/importers/github/api.py:46 taiga/importers/github/api.py:76
+#: taiga/importers/asana/api.py:43 taiga/importers/asana/api.py:85
+#: taiga/importers/github/api.py:44 taiga/importers/github/api.py:74
 #: taiga/importers/jira/api.py:57 taiga/importers/jira/api.py:103
-#: taiga/importers/pivotal/api.py:44 taiga/importers/pivotal/api.py:81
-#: taiga/importers/trello/api.py:47 taiga/importers/trello/api.py:84
+#: taiga/importers/pivotal/api.py:43 taiga/importers/pivotal/api.py:80
+#: taiga/importers/trello/api.py:46 taiga/importers/trello/api.py:83
 msgid "The project param is needed"
-msgstr ""
+msgstr "프로젝트 값이 필요합니다."
+
+#: taiga/importers/asana/api.py:50 taiga/importers/asana/api.py:73
+#: taiga/importers/asana/api.py:139
+msgid "Invalid Asana API request"
+msgstr "Asana API 요청이 올바르지 않습니다."
 
 #: taiga/importers/asana/api.py:52 taiga/importers/asana/api.py:75
 #: taiga/importers/asana/api.py:141
-msgid "Invalid Asana API request"
-msgstr ""
-
-#: taiga/importers/asana/api.py:54 taiga/importers/asana/api.py:77
-#: taiga/importers/asana/api.py:143
 msgid "Failed to make the request to Asana API"
-msgstr ""
+msgstr "Asana API에 요청하는 중 실패하였습니다."
 
-#: taiga/importers/asana/api.py:131 taiga/importers/github/api.py:125
+#: taiga/importers/asana/api.py:129 taiga/importers/github/api.py:123
 msgid "Code param needed"
-msgstr ""
+msgstr "Code 값이 필요합니다."
 
 #: taiga/importers/asana/tasks.py:42 taiga/importers/asana/tasks.py:43
 msgid "Error importing Asana project"
-msgstr ""
+msgstr "Asana 프로젝트를 가져오는 중 에러가 발생하였습니다."
+
+#: taiga/importers/github/api.py:135
+msgid "Invalid auth data"
+msgstr "인증 정보가 유효하지 않습니다."
 
 #: taiga/importers/github/api.py:137
-msgid "Invalid auth data"
-msgstr ""
-
-#: taiga/importers/github/api.py:139
 msgid "Third party service failing"
-msgstr ""
+msgstr "서드 파티 서비스에 실패하였습니다."
 
 #: taiga/importers/github/tasks.py:42 taiga/importers/github/tasks.py:43
 msgid "Error importing GitHub project"
-msgstr ""
+msgstr "GitHub프로젝트를 가져오는 중 에러가 발생하였습니다."
 
 #: taiga/importers/jira/api.py:59 taiga/importers/jira/api.py:86
 #: taiga/importers/jira/api.py:106 taiga/importers/jira/api.py:179
 msgid "The url param is needed"
-msgstr ""
+msgstr "url값이 필요합니다."
 
 #: taiga/importers/jira/api.py:155
 msgid "Invalid project_type {}"
-msgstr ""
+msgstr "유효하지 않은 프로젝트_유형 {}"
 
-#: taiga/importers/jira/api.py:225 taiga/importers/pivotal/api.py:139
-#: taiga/importers/trello/api.py:144
+#: taiga/importers/jira/api.py:225 taiga/importers/pivotal/api.py:138
+#: taiga/importers/trello/api.py:143
 msgid "Invalid or expired auth token"
-msgstr ""
+msgstr "인증 토큰이 유효하지 않거나 만료되었습니다."
 
-#: taiga/importers/jira/tasks.py:47 taiga/importers/jira/tasks.py:48
+#: taiga/importers/jira/tasks.py:48 taiga/importers/jira/tasks.py:49
 msgid "Error importing Jira project"
-msgstr ""
+msgstr "Jira 프로젝트를 가져오는 중 에러가 발생하였습니다."
 
 #: taiga/importers/pivotal/tasks.py:42 taiga/importers/pivotal/tasks.py:43
 msgid "Error importing PivotalTracker project"
+msgstr "PivotalTracker 프로젝트를 가져오는 중 에러가 발생하였습니다."
+
+#: taiga/importers/templates/emails/asana_import_success-body-html.jinja:4
+#, python-format
+msgid ""
+"\n"
+"    <h1>Asana Project imported</h1>\n"
+"    <p>Hello %(user)s,</p>\n"
+"    <h3>Your Asana project has been correctly imported.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project "
+"%(project)s\">Go to %(project)s</a>\n"
+"    <p><small>The Taiga Team</small></p>\n"
+"    "
+msgstr ""
+
+#: taiga/importers/templates/emails/asana_import_success-body-text.jinja:1
+#, python-format
+msgid ""
+"\n"
+"Hello %(user)s,\n"
+"\n"
+"Your Asana project has been correctly imported.\n"
+"\n"
+"You can see the project %(project)s here:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"The Taiga Team\n"
+msgstr ""
+
+#: taiga/importers/templates/emails/asana_import_success-subject.jinja:1
+#, python-format
+msgid "[%(project)s] Your Asana project has been imported"
+msgstr ""
+
+#: taiga/importers/templates/emails/github_import_success-body-html.jinja:4
+#, python-format
+msgid ""
+"\n"
+"    <h1>Github Project imported</h1>\n"
+"    <p>Hello %(user)s,</p>\n"
+"    <h3>Your Github project has been correctly imported.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project "
+"%(project)s\">Go to %(project)s</a>\n"
+"    <p><small>The Taiga Team</small></p>\n"
+"    "
+msgstr ""
+
+#: taiga/importers/templates/emails/github_import_success-body-text.jinja:1
+#, python-format
+msgid ""
+"\n"
+"Hello %(user)s,\n"
+"\n"
+"Your Github project has been correctly imported.\n"
+"\n"
+"You can see the project %(project)s here:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"The Taiga Team\n"
+msgstr ""
+
+#: taiga/importers/templates/emails/github_import_success-subject.jinja:1
+#, python-format
+msgid "[%(project)s] Your Github project has been imported"
+msgstr ""
+
+#: taiga/importers/templates/emails/jira_import_success-body-html.jinja:4
+#, python-format
+msgid ""
+"\n"
+"    <h1>Jira Project imported</h1>\n"
+"    <p>Hello %(user)s,</p>\n"
+"    <h3>Your Jira project has been correctly imported.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project "
+"%(project)s\">Go to %(project)s</a>\n"
+"    <p><small>The Taiga Team</small></p>\n"
+"    "
+msgstr ""
+
+#: taiga/importers/templates/emails/jira_import_success-body-text.jinja:1
+#, python-format
+msgid ""
+"\n"
+"Hello %(user)s,\n"
+"\n"
+"Your Jira project has been correctly imported.\n"
+"\n"
+"You can see the project %(project)s here:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"The Taiga Team\n"
+msgstr ""
+
+#: taiga/importers/templates/emails/jira_import_success-subject.jinja:1
+#, python-format
+msgid "[%(project)s] Your Jira project has been imported"
+msgstr ""
+
+#: taiga/importers/templates/emails/trello_import_success-body-html.jinja:4
+#, python-format
+msgid ""
+"\n"
+"    <h1>Trello Project imported</h1>\n"
+"    <p>Hello %(user)s,</p>\n"
+"    <h3>Your Trello project has been correctly imported.</h3>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project "
+"%(project)s\">Go to %(project)s</a>\n"
+"    <p><small>The Taiga Team</small></p>\n"
+"    "
+msgstr ""
+
+#: taiga/importers/templates/emails/trello_import_success-body-text.jinja:1
+#, python-format
+msgid ""
+"\n"
+"Hello %(user)s,\n"
+"\n"
+"Your Trello project has been correctly imported.\n"
+"\n"
+"You can see the project %(project)s here:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"The Taiga Team\n"
+msgstr ""
+
+#: taiga/importers/templates/emails/trello_import_success-subject.jinja:1
+#, python-format
+msgid "[%(project)s] Your Trello project has been imported"
 msgstr ""
 
 #: taiga/importers/trello/importer.py:77
 #, python-format
 msgid "Invalid Request: %s at %s"
-msgstr ""
+msgstr "유효하지 않은 요청: %s 의 %s"
 
 #: taiga/importers/trello/importer.py:79 taiga/importers/trello/importer.py:81
 #, python-format
 msgid "Unauthorized: %s at %s"
-msgstr ""
+msgstr "인증되지 않음: %s 의 %s"
 
 #: taiga/importers/trello/importer.py:83 taiga/importers/trello/importer.py:85
 #, python-format
 msgid "Resource Unavailable: %s at %s"
-msgstr ""
+msgstr "자원 사용 불가: %s 의 %s"
 
 #: taiga/importers/trello/tasks.py:42 taiga/importers/trello/tasks.py:43
 msgid "Error importing Trello project"
-msgstr ""
+msgstr "Trello 프로젝트를 가져오는 중 에러가 발생하였습니다."
 
 #: taiga/permissions/choices.py:23 taiga/permissions/choices.py:34
 msgid "View project"
