@@ -1,7 +1,7 @@
 # Changelog #
 
 
-## 3.1.0 unnamed (unreleased)
+## 3.1.0 Perovskia Atriplicifolia (2017-03-10)
 
 ### Features
 - Contact with the project: if the projects have this module enabled Taiga users can contact them.
@@ -19,7 +19,6 @@
   - Jira 7
   - Github
   - Asana
-  - Pivotal Tracker
 
 ### Misc
 - API:
