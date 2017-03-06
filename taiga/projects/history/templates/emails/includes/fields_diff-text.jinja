@@ -3,8 +3,10 @@
     "description_html",
     "content_diff",
     "content_html",
+    "epics_order",
     "backlog_order",
     "kanban_order",
+    "sprint_order",
     "taskboard_order",
     "us_order",
     "blocked_note_diff",
@@ -68,7 +70,7 @@
     {# CUSTOM ATTRIBUTES #}
         {% if values.new %}
             {% for attr in values['new']%}
-    
+
     - {{ attr.name }}:
         * {{ attr.value }}
             {% endfor %}
