@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-03 14:17+0100\n"
-"PO-Revision-Date: 2017-03-03 13:17+0000\n"
+"POT-Creation-Date: 2017-03-06 17:53+0100\n"
+"PO-Revision-Date: 2017-03-06 16:55+0000\n"
 "Last-Translator: Taiga Dev Team <support@taiga.io>\n"
 "Language-Team: Italian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/it/)\n"
@@ -1308,9 +1308,9 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"    <h1>Github Project imported</h1>\n"
+"    <h1>GitHub Project imported</h1>\n"
 "    <p>Hello %(user)s,</p>\n"
-"    <h3>Your Github project has been correctly imported.</h3>\n"
+"    <h3>Your GitHub project has been correctly imported.</h3>\n"
 "    <a class=\"button\" href=\"%(url)s\" title=\"Go to the project "
 "%(project)s\">Go to %(project)s</a>\n"
 "    <p><small>The Taiga Team</small></p>\n"
@@ -1323,7 +1323,7 @@ msgid ""
 "\n"
 "Hello %(user)s,\n"
 "\n"
-"Your Github project has been correctly imported.\n"
+"Your GitHub project has been correctly imported.\n"
 "\n"
 "You can see the project %(project)s here:\n"
 "\n"
@@ -1335,7 +1335,7 @@ msgstr ""
 
 #: taiga/importers/templates/emails/github_import_success-subject.jinja:1
 #, python-format
-msgid "[%(project)s] Your Github project has been imported"
+msgid "[%(project)s] Your GitHub project has been imported"
 msgstr ""
 
 #: taiga/importers/templates/emails/jira_import_success-body-html.jinja:4
@@ -1968,102 +1968,102 @@ msgstr "Creato"
 msgid "Delete"
 msgstr "Eliminato"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:23
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:25
 #, python-format
 msgid "%(role)s role points"
 msgstr "%(role)s punti del ruolo"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:26
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:131
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:134
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:157
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:211
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:28
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:133
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:136
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:159
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:213
 msgid "from"
 msgstr "da"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:32
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:142
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:145
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:163
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:188
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:217
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:34
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:144
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:147
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:165
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:190
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:219
 msgid "to"
 msgstr "a"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:44
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:46
 msgid "Added new attachment"
 msgstr "Aggiunto un nuovo allegato"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:62
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:64
 msgid "Updated attachment"
 msgstr "Allegato aggiornato"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:68
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:70
 msgid "deprecated"
 msgstr "non approvato"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:70
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:72
 msgid "not deprecated"
 msgstr "accettato"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:86
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:88
 msgid "Deleted attachment"
 msgstr "Allegato eliminato"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:105
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:107
 msgid "added"
 msgstr "aggiunto"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:110
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:112
 msgid "removed"
 msgstr "rimosso"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:135
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:146
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:137
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:148
 #: taiga/projects/services/stats.py:55 taiga/projects/services/stats.py:56
 msgid "Unassigned"
 msgstr "Non assegnato"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:230
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:87
+#: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:232
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:89
 msgid "-deleted-"
 msgstr "-eliminato-"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:21
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:23
 msgid "to:"
 msgstr "a:"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:21
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:23
 msgid "from:"
 msgstr "da:"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:27
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:29
 msgid "Added"
 msgstr "Aggiunto"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:34
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:36
 msgid "Changed"
 msgstr "Modificato"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:41
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:43
 msgid "Deleted"
 msgstr "Eliminato"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:55
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:57
 msgid "added:"
 msgstr "aggiunto:"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:58
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:60
 msgid "removed:"
 msgstr "rimosso:"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:63
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:80
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:65
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:82
 msgid "From:"
 msgstr "Da:"
 
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:64
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:81
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:66
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:83
 msgid "To:"
 msgstr "A:"
 
