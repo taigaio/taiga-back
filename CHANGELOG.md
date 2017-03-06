@@ -27,6 +27,7 @@
     - Contacts API allow full text search (by the username, full name or email).
     - Filter milestones, user stories and tasks by estimated_start and estimated_finish dates.
     - Add project_extra_info to epics, tasks, milestones, issues and wiki pages endpoints.
+- Gogs integration: Adding new Gogs signature method.
 - Lots of small and not so small bugfixes.
 
 
