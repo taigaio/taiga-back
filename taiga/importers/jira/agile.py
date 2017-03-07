@@ -20,7 +20,7 @@ import datetime
 
 from django.template.defaultfilters import slugify
 from taiga.projects.references.models import recalc_reference_counter
-from taiga.projects.models import Project, ProjectTemplate, Membership, Points
+from taiga.projects.models import Project, ProjectTemplate, Points
 from taiga.projects.userstories.models import UserStory, RolePoints
 from taiga.projects.tasks.models import Task
 from taiga.projects.milestones.models import Milestone
@@ -29,6 +29,7 @@ from taiga.projects.history.services import take_snapshot
 from taiga.timeline.rebuilder import rebuild_timeline
 from taiga.timeline.models import Timeline
 from .common import JiraImporterCommon
+from taiga.importers import services as import_service
 
 
 class JiraAgileImporter(JiraImporterCommon):
@@ -140,15 +141,7 @@ class JiraAgileImporter(JiraImporterCommon):
         )
 
         self._create_custom_fields(project)
-
-        for user in options.get('users_bindings', {}).values():
-            if user != self._user:
-                Membership.objects.get_or_create(
-                    user=user,
-                    project=project,
-                    role=project.get_roles().get(slug="main"),
-                    is_admin=False,
-                )
+        import_service.create_memberships(options.get('users_bindings', {}), project, self._user, "main")
 
         if project_template.slug == "scrum":
             for sprint in self._client.get_agile("/board/{}/sprint".format(project_id))['values']:

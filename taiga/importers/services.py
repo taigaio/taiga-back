@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.users.models import User
+from taiga.projects.models import Membership
 
 
 def resolve_users_bindings(users_bindings):
@@ -29,11 +30,23 @@ def resolve_users_bindings(users_bindings):
 
         if isinstance(value, str):
             try:
-                new_users_bindings[user_key] = User.objects.get(email_iexact=value)
+                new_users_bindings[user_key] = User.objects.get(email__iexact=value)
             except User.MultipleObjectsReturned:
                 new_users_bindings[user_key] = User.objects.get(email=value)
-            except User.DoesNotExists:
+            except User.DoesNotExist:
                 new_users_bindings[user_key] = None
         else:
             new_users_bindings[user_key] = User.objects.get(id=value)
     return new_users_bindings
+
+def create_memberships(users_bindings, project, creator, role_name):
+    for user in users_bindings.values():
+        if Membership.objects.filter(project=project, user=user).count() > 0:
+            continue
+        Membership.objects.create(
+            user=user,
+            project=project,
+            role=project.get_roles().get(slug=role_name),
+            is_admin=False,
+            invited_by=creator,
+        )

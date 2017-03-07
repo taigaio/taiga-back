@@ -20,7 +20,7 @@ import requests
 from urllib.parse import parse_qsl
 from django.core.files.base import ContentFile
 
-from taiga.projects.models import Project, ProjectTemplate, Membership
+from taiga.projects.models import Project, ProjectTemplate
 from taiga.projects.references.models import recalc_reference_counter
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.issues.models import Issue
@@ -38,6 +38,7 @@ from taiga.timeline.models import Timeline
 from taiga.users.models import User, AuthData
 
 from taiga.importers.exceptions import InvalidAuthResult, FailedRequest
+from taiga.importers import services as import_service
 
 
 class GithubClient:
@@ -209,18 +210,7 @@ class GithubImporter:
             data = requests.get(repo['organization']['avatar_url'])
             project.logo.save("logo.png", ContentFile(data.content), save=True)
 
-        for user in self._client.get("/repos/{}/collaborators".format(repo['full_name'])):
-            taiga_user = users_bindings.get(user['id'], None)
-            if taiga_user is None or taiga_user == self._user:
-                continue
-
-            Membership.objects.create(
-                user=taiga_user,
-                project=project,
-                role=project.get_roles().get(slug="github"),
-                is_admin=False,
-                invited_by=self._user,
-            )
+        import_service.create_memberships(options.get('users_bindings', {}), project, self._user, "github")
 
         for milestone in self._client.get("/repos/{}/milestones".format(repo['full_name'])):
             taiga_milestone = Milestone.objects.create(

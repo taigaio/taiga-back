@@ -28,7 +28,7 @@ import webcolors
 from django.template.defaultfilters import slugify
 from taiga.base import exceptions as exc
 from taiga.projects.services import projects as projects_service
-from taiga.projects.models import Project, ProjectTemplate, Membership
+from taiga.projects.models import Project, ProjectTemplate
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.tasks.models import Task
 from taiga.projects.attachments.models import Attachment
@@ -44,6 +44,7 @@ from taiga.mdrender.service import render as mdrender
 from taiga.timeline.rebuilder import rebuild_timeline
 from taiga.timeline.models import Timeline
 from taiga.front.templatetags.functions import resolve as resolve_front_url
+from taiga.importers import services as import_service
 
 from taiga.base import exceptions
 
@@ -250,14 +251,7 @@ class TrelloImporter:
             order=1,
             project=project
         )
-        for user in options.get('users_bindings', {}).values():
-            Membership.objects.create(
-                user=user,
-                project=project,
-                role=project.get_roles().get(slug="trello"),
-                is_admin=False,
-                invited_by=self._user,
-            )
+        import_service.create_memberships(options.get('users_bindings', {}), project, self._user, "trello")
         return project
 
     def _import_user_stories_data(self, data, project, options):

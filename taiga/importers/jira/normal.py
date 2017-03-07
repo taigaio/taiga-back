@@ -20,7 +20,7 @@ from collections import OrderedDict
 
 from django.template.defaultfilters import slugify
 from taiga.projects.references.models import recalc_reference_counter
-from taiga.projects.models import Project, ProjectTemplate, Membership, Points
+from taiga.projects.models import Project, ProjectTemplate, Points
 from taiga.projects.userstories.models import UserStory, RolePoints
 from taiga.projects.tasks.models import Task
 from taiga.projects.issues.models import Issue
@@ -29,6 +29,7 @@ from taiga.projects.history.services import take_snapshot
 from taiga.timeline.rebuilder import rebuild_timeline
 from taiga.timeline.models import Timeline
 from .common import JiraImporterCommon
+from taiga.importers import services as import_service
 
 
 class JiraNormalImporter(JiraImporterCommon):
@@ -177,15 +178,8 @@ class JiraNormalImporter(JiraImporterCommon):
         )
 
         self._create_custom_fields(project)
+        import_service.create_memberships(options.get('users_bindings', {}), project, self._user, "main")
 
-        for user in options.get('users_bindings', {}).values():
-            if user != self._user:
-                Membership.objects.get_or_create(
-                    user=user,
-                    project=project,
-                    role=project.get_roles().get(slug="main"),
-                    is_admin=False,
-                )
         return project
 
     def _import_user_stories_data(self, project_id, project, options):

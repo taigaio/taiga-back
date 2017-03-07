@@ -21,7 +21,7 @@ import asana
 from django.core.files.base import ContentFile
 from django.contrib.contenttypes.models import ContentType
 
-from taiga.projects.models import Project, ProjectTemplate, Membership
+from taiga.projects.models import Project, ProjectTemplate
 from taiga.projects.userstories.models import UserStory
 from taiga.projects.tasks.models import Task
 from taiga.projects.attachments.models import Attachment
@@ -32,6 +32,7 @@ from taiga.users.models import User
 from taiga.timeline.rebuilder import rebuild_timeline
 from taiga.timeline.models import Timeline
 from taiga.importers import exceptions
+from taiga.importers import services as import_service
 
 
 class AsanaClient(asana.Client):
@@ -159,18 +160,7 @@ class AsanaImporter:
             is_private=options.get('is_private', False)
         )
 
-        for user in self._client.users.find_by_workspace(project['workspace']['id']):
-            taiga_user = users_bindings.get(user['id'], None)
-            if taiga_user is None or taiga_user == self._user:
-                continue
-
-            Membership.objects.create(
-                user=taiga_user,
-                project=taiga_project,
-                role=taiga_project.get_roles().get(slug="asana"),
-                is_admin=False,
-                invited_by=self._user,
-            )
+        import_service.create_memberships(options.get('users_bindings', {}), project, self._user, "asana")
 
         UserStoryCustomAttribute.objects.create(
             name="Due date",
