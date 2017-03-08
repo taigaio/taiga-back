@@ -17,6 +17,7 @@ import json
 import logging
 
 from amqp import Connection as AmqpConnection
+from amqp.exceptions import AccessRefused
 from amqp.basic_message import Message as AmqpMessage
 from urllib.parse import urlparse
 
@@ -53,8 +54,13 @@ class EventsPushBackend(base.BaseEventsPushBackend):
         try:
             connection.connect()
         except ConnectionRefusedError:
-            log.error("EventsPushBackend: Unable to connect with RabbitMQ at {}".format(self.url),
-                      exc_info=True)
+            err_msg = "EventsPushBackend: Unable to connect with RabbitMQ (connection refused) at {}".format(
+                                                                                                     self.url)
+            log.error(err_msg, exc_info=True)
+        except AccessRefused:
+            err_msg = "EventsPushBackend: Unable to connect with RabbitMQ (access refused) at {}".format(
+                                                                                                 self.url)
+            log.error(err_msg, exc_info=True)
         else:
             try:
                 message = AmqpMessage(message)
@@ -64,7 +70,6 @@ class EventsPushBackend(base.BaseEventsPushBackend):
                 rchannel.basic_publish(message, routing_key=routing_key, exchange=channel)
                 rchannel.close()
             except Exception:
-                log.error("EventsPushBackend: Unhandled exception",
-                          exc_info=True)
+                log.error("EventsPushBackend: Unhandled exception", exc_info=True)
             finally:
                 connection.close()
