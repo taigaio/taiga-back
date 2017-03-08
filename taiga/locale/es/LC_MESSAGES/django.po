@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-06 17:53+0100\n"
+"POT-Creation-Date: 2017-03-08 16:30+0100\n"
 "PO-Revision-Date: 2017-03-06 17:04+0000\n"
 "Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
@@ -1425,17 +1425,17 @@ msgstr ""
 msgid "[%(project)s] Your Trello project has been imported"
 msgstr "[%(project)s] Tu proyecto de Trello se ha importado"
 
-#: taiga/importers/trello/importer.py:77
+#: taiga/importers/trello/importer.py:78
 #, python-format
 msgid "Invalid Request: %s at %s"
 msgstr "Solicitud inválida: %s en %s"
 
-#: taiga/importers/trello/importer.py:79 taiga/importers/trello/importer.py:81
+#: taiga/importers/trello/importer.py:80 taiga/importers/trello/importer.py:82
 #, python-format
 msgid "Unauthorized: %s at %s"
 msgstr "No autorizado: %s en %s"
 
-#: taiga/importers/trello/importer.py:83 taiga/importers/trello/importer.py:85
+#: taiga/importers/trello/importer.py:84 taiga/importers/trello/importer.py:86
 #, python-format
 msgid "Resource Unavailable: %s at %s"
 msgstr "Recurso no disponible: %s en %s"
