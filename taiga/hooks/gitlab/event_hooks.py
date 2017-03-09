@@ -85,5 +85,6 @@ class PushEventHook(BaseGitLabEventHook, BasePushEventHook):
                 "commit_id": commit.get("id", None),
                 "commit_url": commit.get("url", None),
                 "commit_message": commit.get("message").strip(),
+                "commit_short_message": commit.get("message").split("\n")[0].strip(),
             })
         return result
