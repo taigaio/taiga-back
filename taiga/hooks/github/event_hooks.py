@@ -81,7 +81,8 @@ class PushEventHook(BaseGitHubEventHook, BasePushEventHook):
                 "user_url": github_user.get('html_url', None),
                 "commit_id": commit.get("id", None),
                 "commit_url": commit.get("url", None),
-                "commit_message": commit.get("message", None),
+                "commit_message": commit.get("message").strip(),
+                "commit_short_message": commit.get("message").split("\n")[0].strip(),
             })
 
         return result

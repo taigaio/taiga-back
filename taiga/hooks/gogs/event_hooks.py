@@ -47,6 +47,7 @@ class PushEventHook(BaseGogsEventHook, BasePushEventHook):
                 "user_url": os.path.join(os.path.dirname(os.path.dirname(project_url)), user_name),
                 "commit_id": commit.get("id", None),
                 "commit_url": commit.get("url", None),
-                "commit_message": commit.get("message", None),
+                "commit_message": commit.get("message").strip(),
+                "commit_short_message": commit.get("message").split("\n")[0].strip(),
             })
         return result

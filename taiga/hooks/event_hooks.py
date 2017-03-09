@@ -154,7 +154,7 @@ class BasePushEventHook(BaseEventHook):
             )
         _status_change_message = _(
             "{user_text} changed the status from "
-            "[{platform} commit]({commit_url} \"See commit '{commit_id} - {commit_message}'\")\n\n"
+            "[{platform} commit]({commit_url} \"See commit '{commit_id} - {commit_short_message}'\")\n\n"
             "  - Status: **{src_status}** → **{dst_status}**"
         )
         _simple_status_change_message = _(
@@ -177,7 +177,7 @@ class BasePushEventHook(BaseEventHook):
 
         _status_change_message = _(
             "This {type_name} has been mentioned by {user_text} "
-            "in the [{platform} commit]({commit_url} \"See commit '{commit_id} - {commit_message}'\") "
+            "in the [{platform} commit]({commit_url} \"See commit '{commit_id} - {commit_short_message}'\") "
             "\"{commit_message}\""
         )
         _simple_status_change_message = _(
