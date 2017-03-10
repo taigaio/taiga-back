@@ -12,11 +12,11 @@ WITH status_update AS(
 	WITH status_update AS(
 		WITH history_entries AS (
 			SELECT
-				diff#>>'{status, 1}' new_status_id,
+				diff #>>'{status, 1}' new_status_id,
 				regexp_split_to_array(key, ':') as split_key,
 				created_at as date
 			FROM history_historyentry
-			WHERE diff#>>'{status, 1}' != ''
+			WHERE diff #>>'{status, 1}' != ''
 		)
 		SELECT
 			split_key[2] as object_id,

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -22,7 +22,7 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.functional import cached_property
-from django_pgjson.fields import JsonField
+from taiga.base.db.models.fields import JSONField
 
 from taiga.mdrender.service import get_diff_of_htmls
 
@@ -30,6 +30,7 @@ from .choices import HistoryType
 from .choices import HISTORY_TYPE_CHOICES
 
 from taiga.base.utils.diff import make_diff as make_diff_from_dicts
+from taiga.projects.custom_attributes.choices import TEXT_TYPE
 
 # This keys has been removed from freeze_impl so we can have objects where the
 # previous diff has value for the attribute and we want to prevent their propagation
@@ -52,32 +53,32 @@ class HistoryEntry(models.Model):
                           editable=False, default=_generate_uuid)
     project = models.ForeignKey("projects.Project")
 
-    user = JsonField(null=True, blank=True, default=None)
+    user = JSONField(null=True, blank=True, default=None)
     created_at = models.DateTimeField(default=timezone.now)
     type = models.SmallIntegerField(choices=HISTORY_TYPE_CHOICES)
     key = models.CharField(max_length=255, null=True, default=None, blank=True, db_index=True)
 
     # Stores the last diff
-    diff = JsonField(null=True, blank=True, default=None)
+    diff = JSONField(null=True, blank=True, default=None)
 
     # Stores the values_diff cache
-    values_diff_cache = JsonField(null=True, blank=True, default=None)
+    values_diff_cache = JSONField(null=True, blank=True, default=None)
 
     # Stores the last complete frozen object snapshot
-    snapshot = JsonField(null=True, blank=True, default=None)
+    snapshot = JSONField(null=True, blank=True, default=None)
 
     # Stores a values of all identifiers used in
-    values = JsonField(null=True, blank=True, default=None)
+    values = JSONField(null=True, blank=True, default=None)
 
     # Stores a comment
     comment = models.TextField(blank=True)
     comment_html = models.TextField(blank=True)
 
     delete_comment_date = models.DateTimeField(null=True, blank=True, default=None)
-    delete_comment_user = JsonField(null=True, blank=True, default=None)
+    delete_comment_user = JSONField(null=True, blank=True, default=None)
 
     # Historic version of comments
-    comment_versions = JsonField(null=True, blank=True, default=None)
+    comment_versions = JSONField(null=True, blank=True, default=None)
     edit_comment_date = models.DateTimeField(null=True, blank=True, default=None)
 
     # Flag for mark some history entries as
@@ -250,15 +251,25 @@ class HistoryEntry(models.Model):
                         changes = make_diff_from_dicts(oldcustattrs[aid], newcustattrs[aid],
                                                        excluded_keys=("name"))
 
+                        newcustattr = newcustattrs.get(aid, {})
                         if changes:
+                            change_type = newcustattr.get("type", TEXT_TYPE)
+                            old_value = oldcustattrs[aid].get("value", "")
+                            new_value = newcustattrs[aid].get("value", "")
+                            value_diff = get_diff_of_htmls(old_value, new_value)
                             change = {
-                                "name": newcustattrs.get(aid, {}).get("name", ""),
-                                "changes": changes
+                                "name": newcustattr.get("name", ""),
+                                "changes": changes,
+                                "type": change_type,
+                                "value_diff": value_diff
                             }
                             custom_attributes["changed"].append(change)
                     elif aid in oldcustattrs and aid not in newcustattrs:
                         custom_attributes["deleted"].append(oldcustattrs[aid])
                     elif aid not in oldcustattrs and aid in newcustattrs:
+                        new_value = newcustattrs[aid].get("value", "")
+                        value_diff = get_diff_of_htmls("", new_value)
+                        newcustattrs[aid]["value_diff"] = value_diff
                         custom_attributes["new"].append(newcustattrs[aid])
 
                 if custom_attributes["new"] or custom_attributes["changed"] or custom_attributes["deleted"]:

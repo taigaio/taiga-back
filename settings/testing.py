@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -19,7 +19,6 @@
 from .development import *
 
 CELERY_ENABLED = False
-CELERY_ALWAYS_EAGER = True
 
 MEDIA_ROOT = "/tmp"
 
@@ -29,9 +28,20 @@ INSTALLED_APPS = INSTALLED_APPS + [
 ]
 
 REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
-    "anon": None,
-    "user": None,
+    "anon-write": None,
+    "anon-read": None,
+    "user-write": None,
+    "user-read": None,
     "import-mode": None,
     "import-dump-mode": None,
     "create-memberships": None,
+    "login-fail": None,
+    "register-success": None,
+    "user-detail": None,
 }
+
+
+IMPORTERS['github']['active'] = True
+IMPORTERS['jira']['active'] = True
+IMPORTERS['asana']['active'] = True
+IMPORTERS['trello']['active'] = True

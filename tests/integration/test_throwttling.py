@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -29,20 +29,15 @@ from .. import factories as f
 pytestmark = pytest.mark.django_db
 
 
-anon_rate_path = "taiga.base.throttling.AnonRateThrottle.get_rate"
-user_rate_path = "taiga.base.throttling.UserRateThrottle.get_rate"
 import_rate_path = "taiga.export_import.throttling.ImportModeRateThrottle.get_rate"
 
 
 def test_anonimous_throttling_policy(client, settings):
     f.create_project()
     url = reverse("projects-list")
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon-read'] = "2/min"
 
-    with mock.patch(anon_rate_path) as anon_rate, \
-            mock.patch(user_rate_path) as user_rate, \
-            mock.patch(import_rate_path) as import_rate:
-        anon_rate.return_value = "2/day"
-        user_rate.return_value = "4/day"
+    with mock.patch(import_rate_path) as import_rate:
         import_rate.return_value = "7/day"
 
         cache.clear()
@@ -53,19 +48,19 @@ def test_anonimous_throttling_policy(client, settings):
         response = client.json.get(url)
         assert response.status_code == 429
 
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon-read'] = None
+    cache.clear()
+
 
 def test_user_throttling_policy(client, settings):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
     url = reverse("projects-detail", kwargs={"pk": project.pk})
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['user-read'] = "4/min"
 
     client.login(project.owner)
 
-    with mock.patch(anon_rate_path) as anon_rate, \
-            mock.patch(user_rate_path) as user_rate, \
-            mock.patch(import_rate_path) as import_rate:
-        anon_rate.return_value = "2/day"
-        user_rate.return_value = "4/day"
+    with mock.patch(import_rate_path) as import_rate:
         import_rate.return_value = "7/day"
 
         cache.clear()
@@ -81,6 +76,8 @@ def test_user_throttling_policy(client, settings):
         assert response.status_code == 429
 
     client.logout()
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['user-read'] = None
+    cache.clear()
 
 
 def test_import_mode_throttling_policy(client, settings):
@@ -95,14 +92,12 @@ def test_import_mode_throttling_policy(client, settings):
     data = {
         "subject": "Test"
     }
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon-read'] = "2/min"
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['user-read'] = "4/min"
 
     client.login(project.owner)
 
-    with mock.patch(anon_rate_path) as anon_rate, \
-            mock.patch(user_rate_path) as user_rate, \
-            mock.patch(import_rate_path) as import_rate:
-        anon_rate.return_value = "2/day"
-        user_rate.return_value = "4/day"
+    with mock.patch(import_rate_path) as import_rate:
         import_rate.return_value = "7/day"
 
         cache.clear()
@@ -124,3 +119,7 @@ def test_import_mode_throttling_policy(client, settings):
         assert response.status_code == 429
 
     client.logout()
+
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon-read'] = None
+    settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['user-read'] = None
+    cache.clear()

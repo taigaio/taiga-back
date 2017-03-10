@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
-# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -657,6 +657,37 @@ def test_api_filter_by_finish_date(client):
     assert response.status_code == 200
     assert number_of_userstories == 1
     assert response.data[0]["subject"] == userstory_to_finish.subject
+
+@pytest.mark.parametrize("field_name", ["estimated_start", "estimated_finish"])
+def test_api_filter_by_milestone__estimated_start_and_end(client, field_name):
+    user = f.UserFactory(is_superuser=True)
+    userstory = f.create_userstory(owner=user)
+
+    assert userstory.milestone
+    assert hasattr(userstory.milestone, field_name)
+    date = getattr(userstory.milestone, field_name)
+    before = (date - timedelta(days=1)).isoformat()
+    after = (date + timedelta(days=1)).isoformat()
+
+    client.login(userstory.owner)
+
+    full_field_name = "milestone__" + field_name
+    expections = {
+        full_field_name + "__gte=" + quote(before): 1,
+        full_field_name + "__gte=" + quote(after): 0,
+        full_field_name + "__lte=" + quote(before): 0,
+        full_field_name + "__lte=" + quote(after): 1
+    }
+
+    for param, expection in expections.items():
+        url = reverse("userstories-list") + "?" + param
+        response = client.get(url)
+        number_of_userstories = len(response.data)
+
+        assert response.status_code == 200
+        assert number_of_userstories == expection, param
+        if number_of_userstories > 0:
+            assert response.data[0]["subject"] == userstory.subject
 
 
 def test_api_filters_data(client):

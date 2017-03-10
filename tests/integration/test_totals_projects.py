@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
-# Copyright (C) 2014-2016 Taiga Agile LLC <taiga@taiga.io>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Taiga Agile LLC <taiga@taiga.io>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -27,13 +27,15 @@ from taiga.projects.history.choices import HistoryType
 from taiga.projects.models import Project
 
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 
 pytestmark = pytest.mark.django_db
+
 
 def test_project_totals_updated_on_activity(client):
     project = f.create_project()
     totals_updated_datetime = project.totals_updated_datetime
-    now = datetime.datetime.now()
+    now = timezone.now()
     assert project.total_activity == 0
 
     totals_updated_datetime = project.totals_updated_datetime
@@ -120,10 +122,10 @@ def test_project_totals_updated_on_like(client):
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
 
     totals_updated_datetime = project.totals_updated_datetime
-    now = datetime.datetime.now()
+    now = timezone.now()
     assert project.total_activity == 0
 
-    now = datetime.datetime.now()
+    now = timezone.now()
     totals_updated_datetime = project.totals_updated_datetime
     us = f.UserStoryFactory.create(project=project, owner=project.owner)
 

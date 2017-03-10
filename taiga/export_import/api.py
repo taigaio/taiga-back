@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -104,7 +104,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         is_private = data.get('is_private', False)
         total_memberships = len([m for m in data.get("memberships", []) if m.get("email", None) != data["owner"]])
         total_memberships = total_memberships + 1  # 1 is the owner
-        (enough_slots, error_message) = users_services.has_available_slot_for_import_new_project(
+        (enough_slots, error_message) = users_services.has_available_slot_for_new_project(
             self.request.user,
             is_private,
             total_memberships
@@ -344,7 +344,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
         total_memberships = len([m for m in dump.get("memberships", [])
                                             if m.get("email", None) != dump["owner"]])
         total_memberships = total_memberships + 1 # 1 is the owner
-        (enough_slots, error_message) = users_services.has_available_slot_for_import_new_project(
+        (enough_slots, error_message) = users_services.has_available_slot_for_new_project(
             user,
             is_private,
             total_memberships

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -527,6 +527,22 @@ class FinishDateFilter(BaseDateFilter):
     filter_name_base = "finish_date"
 
 
+class EstimatedStartFilter(BaseDateFilter):
+    filter_name_base = "estimated_start"
+
+
+class EstimatedFinishFilter(BaseDateFilter):
+    filter_name_base = "estimated_finish"
+
+
+class MilestoneEstimatedStartFilter(BaseDateFilter):
+    filter_name_base = "milestone__estimated_start"
+
+
+class MilestoneEstimatedFinishFilter(BaseDateFilter):
+    filter_name_base = "milestone__estimated_finish"
+
+
 #####################################################################
 # Text search filters
 #####################################################################
@@ -537,11 +553,11 @@ class QFilter(FilterBackend):
         if q:
             table = queryset.model._meta.db_table
             where_clause = ("""
-                to_tsvector('english_nostop',
+                to_tsvector('simple',
                             coalesce({table}.subject, '') || ' ' ||
                             coalesce(array_to_string({table}.tags, ' '), '') || ' ' ||
                             coalesce({table}.ref) || ' ' ||
-                            coalesce({table}.description, '')) @@ to_tsquery('english_nostop', %s)
+                            coalesce({table}.description, '')) @@ to_tsquery('simple', %s)
             """.format(table=table))
 
             queryset = queryset.extra(where=[where_clause], params=[to_tsquery(q)])

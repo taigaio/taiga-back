@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -16,12 +16,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taiga.base.utils import db, text
+from taiga.base.exceptions import ValidationError
+from taiga.base.utils import db
+from taiga.users.models import User
 
 from django.conf import settings
+from django.core.validators import validate_email
 from django.utils.translation import ugettext as _
 
 from .. import models
+
 
 def get_members_from_bulk(bulk_data, **additional_fields):
     """Convert `bulk_data` into a list of members.
@@ -34,6 +38,15 @@ def get_members_from_bulk(bulk_data, **additional_fields):
     members = []
     for data in bulk_data:
         data_copy = data.copy()
+        username = data_copy.pop("username")
+        try:
+            validate_email(username)
+            data_copy["email"] = username
+
+        except ValidationError:
+            user = User.objects.filter(username=username).first()
+            data_copy["user_id"] = user.id
+
         data_copy.update(additional_fields)
         members.append(models.Membership(**data_copy))
     return members
@@ -42,7 +55,7 @@ def get_members_from_bulk(bulk_data, **additional_fields):
 def create_members_in_bulk(bulk_data, callback=None, precall=None, **additional_fields):
     """Create members from `bulk_data`.
 
-    :param bulk_data: List of dicts `{"project_id": <>, "role_id": <>, "email": <>}`.
+    :param bulk_data: List of dicts `{"project_id": <>, "role_id": <>, "username": <>}`.
     :param callback: Callback to execute after each task save.
     :param additional_fields: Additional fields when instantiating each task.
 
@@ -71,9 +84,9 @@ def project_has_valid_admins(project, exclude_user=None):
 def can_user_leave_project(user, project):
     membership = project.memberships.get(user=user)
     if not membership.is_admin:
-         return True
+        return True
 
-    #The user can't leave if is the real owner of the project
+    # The user can't leave if is the real owner of the project
     if project.owner == user:
         return False
 

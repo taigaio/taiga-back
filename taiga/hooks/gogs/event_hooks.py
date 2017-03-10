@@ -1,7 +1,7 @@
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -47,6 +47,7 @@ class PushEventHook(BaseGogsEventHook, BasePushEventHook):
                 "user_url": os.path.join(os.path.dirname(os.path.dirname(project_url)), user_name),
                 "commit_id": commit.get("id", None),
                 "commit_url": commit.get("url", None),
-                "commit_message": commit.get("message", None),
+                "commit_message": commit.get("message").strip(),
+                "commit_short_message": commit.get("message").split("\n")[0].strip(),
             })
         return result

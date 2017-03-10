@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -54,11 +54,11 @@ class UserStoryAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if (db_field.name in ["status", "milestone", "generated_from_issue"]
                 and getattr(self, 'obj', None)):
-            kwargs["queryset"] = db_field.related.model.objects.filter(
+            kwargs["queryset"] = db_field.related_model.objects.filter(
                                                       project=self.obj.project)
         elif (db_field.name in ["owner", "assigned_to"]
                 and getattr(self, 'obj', None)):
-            kwargs["queryset"] = db_field.related.model.objects.filter(
+            kwargs["queryset"] = db_field.related_model.objects.filter(
                                          memberships__project=self.obj.project)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 

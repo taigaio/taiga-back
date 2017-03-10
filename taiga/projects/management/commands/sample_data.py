@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -157,7 +157,7 @@ class Command(BaseCommand):
         for x in projects_range:
             project = self.create_project(
                 x,
-                is_private=(x in [2, 4] or self.sd.boolean()),
+                is_private=x in [2, 4],
                 blocked_code = BLOCKED_BY_STAFF if x in(blocked_projects_range) else None
             )
 
@@ -177,6 +177,9 @@ class Command(BaseCommand):
 
                 if role.computable:
                     computable_project_roles.add(role)
+
+            # Delete a random member so all the projects doesn't have the same team
+            Membership.objects.filter(project=project).exclude(user=project.owner).order_by("?").first().delete()
 
             # added invitations
             for i in range(NUM_INVITATIONS):
@@ -318,7 +321,6 @@ class Command(BaseCommand):
             attachment = self.create_attachment(wiki_page, i+1)
 
         take_snapshot(wiki_page,
-                      comment=self.sd.paragraph(),
                       user=wiki_page.owner)
 
         # Add history entry
@@ -374,7 +376,6 @@ class Command(BaseCommand):
             bug.save()
 
         take_snapshot(bug,
-                      comment=self.sd.paragraph(),
                       user=bug.owner)
 
         # Add history entry
@@ -421,7 +422,6 @@ class Command(BaseCommand):
             attachment = self.create_attachment(task, i+1)
 
         take_snapshot(task,
-                      comment=self.sd.paragraph(),
                       user=task.owner)
 
         # Add history entry
@@ -476,7 +476,6 @@ class Command(BaseCommand):
 
 
         take_snapshot(us,
-                      comment=self.sd.paragraph(),
                       user=us.owner)
 
         # Add history entry
@@ -533,7 +532,6 @@ class Command(BaseCommand):
             epic.save()
 
         take_snapshot(epic,
-                      comment=self.sd.paragraph(),
                       user=epic.owner)
 
         # Add history entry
@@ -559,8 +557,14 @@ class Command(BaseCommand):
 
         # Add history entry
         take_snapshot(epic,
-                      comment=self.sd.paragraph(),
                       user=epic.owner)
+
+        # Add history entry
+        epic.status=self.sd.db_object_from_queryset(project.epic_statuses.filter(is_closed=False))
+        epic.save()
+        take_snapshot(epic,
+              comment=self.sd.paragraph(),
+              user=epic.owner)
 
         return epic
 
@@ -580,11 +584,12 @@ class Command(BaseCommand):
                                          total_story_points=self.sd.int(600, 3000),
                                          total_milestones=self.sd.int(5,10),
                                          tags=self.sd.words(1, 10).split(" "),
-                                         is_looking_for_people=counter in LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS,
-                                         looking_for_people_note=self.sd.short_sentence(),
-                                         is_featured=counter in FEATURED_PROJECTS_POSITIONS,
                                          blocked_code=blocked_code)
 
+        project.is_looking_for_people = counter in LOOKING_FOR_PEOPLE_PROJECTS_POSITIONS
+        if project.is_looking_for_people:
+            project.looking_for_people_note = self.sd.short_sentence()
+        project.is_featured = counter in FEATURED_PROJECTS_POSITIONS
         project.is_kanban_activated = True
         project.is_epics_activated = True
         project.save()
@@ -633,4 +638,3 @@ class Command(BaseCommand):
     def generate_color(self, tag):
         color = sha1(tag.encode("utf-8")).hexdigest()[0:6]
         return "#{}".format(color)
-

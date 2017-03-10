@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -64,6 +64,12 @@ class BaseThrottle(object):
         """
         raise NotImplementedError(".allow_request() must be overridden")
 
+    def finalize(self, request, response, view):
+        """
+        Optionally, update the Trottling information based on de response.
+        """
+        return None
+
     def wait(self):
         """
         Optionally, return a recommended number of seconds to wait before
@@ -104,6 +110,12 @@ class SimpleRateThrottle(BaseThrottle):
         May return `None` if the request should not be throttled.
         """
         raise NotImplementedError(".get_cache_key() must be overridden")
+
+    def has_to_finalize(self, request, response, view):
+        """
+        Determine if the finalize method must be executed.
+        """
+        return self.rate is not None
 
     def get_rate(self):
         """

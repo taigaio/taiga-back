@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -35,6 +35,7 @@ class AttachmentSerializer(serializers.LightSerializer):
     url = Field()
     description = Field()
     is_deprecated = Field()
+    from_comment = Field()
     created_date = Field()
     modified_date = Field()
     object_id = Field()
@@ -42,12 +43,18 @@ class AttachmentSerializer(serializers.LightSerializer):
     sha1 = Field()
     url = MethodField("get_url")
     thumbnail_card_url = MethodField("get_thumbnail_card_url")
+    preview_url = MethodField("get_preview_url")
 
     def get_url(self, obj):
         return obj.attached_file.url
 
     def get_thumbnail_card_url(self, obj):
         return services.get_card_image_thumbnail_url(obj)
+
+    def get_preview_url(self, obj):
+        if obj.name.endswith(".psd"):
+            return services.get_attachment_image_preview_url(obj)
+        return self.get_url(obj)
 
 
 class BasicAttachmentsInfoSerializerMixin(serializers.LightSerializer):

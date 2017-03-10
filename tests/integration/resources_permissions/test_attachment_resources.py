@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
-# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -1027,3 +1027,67 @@ def test_wiki_attachment_list(client, data, data_wiki):
 
     results = helper_test_http_method_and_count(client, 'get', url, None, users)
     assert results == [(200, 2), (200, 2), (200, 2), (200, 4), (200, 4)]
+
+
+def test_create_attachment_by_external_user_without_comment_permission(client):
+    issue = f.create_issue()
+    user = f.UserFactory()
+
+    assert issue.owner != user
+    assert issue.project.owner != user
+
+    url = reverse("issue-attachments-list")
+
+    data = {"description": "test",
+            "object_id": issue.pk,
+            "project": issue.project.id,
+            "attached_file": SimpleUploadedFile("test.txt", b"test"),
+            "from_comment": True}
+
+    client.login(user)
+    response = client.post(url, data)
+    assert response.status_code == 403
+
+
+def test_create_attachment_by_external_user_with_comment_permission_but_without_from_comment_flag(client):
+    project = f.ProjectFactory(public_permissions=['comment_issue'])
+    issue = f.create_issue(project=project)
+
+    user = f.UserFactory()
+
+    assert issue.owner != user
+    assert issue.project.owner != user
+
+    url = reverse("issue-attachments-list")
+
+    data = {"description": "test",
+            "object_id": issue.pk,
+            "project": issue.project.id,
+            "attached_file": SimpleUploadedFile("test.txt", b"test"),
+            "from_comment": False}
+
+    client.login(user)
+    response = client.post(url, data)
+    assert response.status_code == 403
+
+
+def test_create_attachment_by_external_user_with_comment_permission_and_with_from_comment_flag(client):
+    project = f.ProjectFactory(public_permissions=['comment_issue'])
+    issue = f.create_issue(project=project)
+
+    user = f.UserFactory()
+
+    assert issue.owner != user
+    assert issue.project.owner != user
+
+    url = reverse("issue-attachments-list")
+
+    data = {"description": "test",
+            "object_id": issue.pk,
+            "project": issue.project.id,
+            "attached_file": SimpleUploadedFile("test.txt", b"test"),
+            "from_comment": True}
+
+    client.login(user)
+    response = client.post(url, data)
+    assert response.status_code == 201

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -27,7 +27,7 @@ pytestmark = pytest.mark.django_db
 
 
 def test_export_issue_finish_date(client):
-    issue = f.IssueFactory.create(finished_date="2014-10-22")
+    issue = f.IssueFactory.create(finished_date="2014-10-22T00:00:00+0000")
     output = io.BytesIO()
     render_project(issue.project, output)
     project_data = json.loads(output.getvalue())
@@ -36,7 +36,7 @@ def test_export_issue_finish_date(client):
 
 
 def test_export_user_story_finish_date(client):
-    user_story = f.UserStoryFactory.create(finish_date="2014-10-22")
+    user_story = f.UserStoryFactory.create(finish_date="2014-10-22T00:00:00+0000")
     output = io.BytesIO()
     render_project(user_story.project, output)
     project_data = json.loads(output.getvalue())

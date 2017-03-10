@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import django_pgjson.fields
+import taiga.base.db.models.fields
 
 
 class Migration(migrations.Migration):
@@ -15,19 +15,19 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='historyentry',
             name='diff',
-            field=django_pgjson.fields.JsonField(null=True, default=None, blank=True),
+            field=taiga.base.db.models.fields.JSONField(null=True, default=None, blank=True),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='historyentry',
             name='snapshot',
-            field=django_pgjson.fields.JsonField(null=True, default=None, blank=True),
+            field=taiga.base.db.models.fields.JSONField(null=True, default=None, blank=True),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='historyentry',
             name='values',
-            field=django_pgjson.fields.JsonField(null=True, default=None, blank=True),
+            field=taiga.base.db.models.fields.JSONField(null=True, default=None, blank=True),
             preserve_default=True,
         ),
     ]

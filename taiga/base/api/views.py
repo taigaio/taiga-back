@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -143,6 +143,8 @@ class APIView(View):
 
     # Allow dependancy injection of other settings to make testing easier.
     settings = api_settings
+
+    _trottle_instances = None
 
     @classmethod
     def as_view(cls, **initkwargs):
@@ -286,7 +288,9 @@ class APIView(View):
         """
         Instantiates and returns the list of throttles that this view uses.
         """
-        return [throttle() for throttle in self.throttle_classes]
+        if self._trottle_instances is None:
+            self._trottle_instances = [throttle() for throttle in self.throttle_classes]
+        return self._trottle_instances
 
     def get_content_negotiator(self):
         """
@@ -342,6 +346,15 @@ class APIView(View):
             if not throttle.allow_request(request, self):
                 self.throttled(request, throttle.wait())
 
+    def finalize_throttles(self, request, response):
+        """
+        Check if request should be throttled.
+        Raises an appropriate exception if the request is throttled.
+        """
+        for throttle in self.get_throttles():
+            if throttle.has_to_finalize(request, response, self):
+                throttle.finalize(request, response, self)
+
     # Dispatch methods
 
     def initialize_request(self, request, *args, **kwargs):
@@ -390,6 +403,8 @@ class APIView(View):
 
         for key, value in self.headers.items():
             response[key] = value
+
+        self.finalize_throttles(request, response)
 
         return response
 

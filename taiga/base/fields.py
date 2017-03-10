@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -30,7 +30,7 @@ import serpy
 # NOTE: This should be in other place, for example taiga.base.api.serializers
 
 
-class JsonField(serializers.WritableField):
+class JSONField(serializers.WritableField):
     """
     Json objects serializer.
     """
@@ -95,12 +95,12 @@ class I18NField(Field):
         return _(ret)
 
 
-class I18NJsonField(Field):
+class I18NJSONField(Field):
     """
     Json objects serializer.
     """
     def __init__(self, i18n_fields=(), *args, **kwargs):
-        super(I18NJsonField, self).__init__(*args, **kwargs)
+        super(I18NJSONField, self).__init__(*args, **kwargs)
         self.i18n_fields = i18n_fields
 
     def translate_values(self, d):

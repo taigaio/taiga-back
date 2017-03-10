@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -63,11 +63,22 @@ DATABASES = {
 #########################################
 
 #REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
-#    "anon": "20/min",
-#    "user": "200/min",
-#    "import-mode": "20/sec",
-#    "import-dump-mode": "1/minute"
+#    "anon-write": "20/min",
+#    "user-write": None,
+#    "anon-read": None,
+#    "user-read": None,
+#    "import-mode": None,
+#    "import-dump-mode": "1/minute",
+#    "create-memberships": None,
+#    "login-fail": None,
+#    "register-success": None,
+#    "user-detail": None,
 #}
+
+# This list should containt:
+#  - Tiga users IDs
+#  - Valid clients IP addresses (X-Forwarded-For header)
+#REST_FRAMEWORK["DEFAULT_THROTTLE_WHITELIST"] = []
 
 
 #########################################
@@ -146,10 +157,47 @@ DATABASES = {
 #########################################
 ## CELERY
 #########################################
+# Set to True to enable celery and work in async mode or False
+# to disable it and work in sync mode. You can find the celery
+# settings in settings/celery.py and settings/celery-local.py
+#CELERY_ENABLED = True
 
-#from .celery import *
-#CELERY_ENABLED = True
-#
-# To use celery in memory
-#CELERY_ENABLED = True
-#CELERY_ALWAYS_EAGER = True
+
+#########################################
+## IMPORTERS
+#########################################
+
+# Configuration for the GitHub importer
+# Remember to enable it in the front client too.
+#IMPORTERS["github"] = {
+#    "active": True, # Enable or disable the importer
+#    "client_id": "XXXXXX_get_a_valid_client_id_from_github_XXXXXX",
+#    "client_secret": "XXXXXX_get_a_valid_client_secret_from_github_XXXXXX"
+#}
+
+# Configuration for the Trello importer
+# Remember to enable it in the front client too.
+#IMPORTERS["trello"] = {
+#    "active": True, # Enable or disable the importer
+#    "api_key": "XXXXXX_get_a_valid_api_key_from_trello_XXXXXX",
+#    "secret_key": "XXXXXX_get_a_valid_secret_key_from_trello_XXXXXX"
+#}
+
+# Configuration for the Jira importer
+# Remember to enable it in the front client too.
+#IMPORTERS["jira"] = {
+#    "active": True, # Enable or disable the importer
+#    "consumer_key": "XXXXXX_get_a_valid_consumer_key_from_jira_XXXXXX",
+#    "cert": "XXXXXX_get_a_valid_cert_from_jira_XXXXXX",
+#    "pub_cert": "XXXXXX_get_a_valid_pub_cert_from_jira_XXXXXX"
+#}
+
+# Configuration for the Asane importer
+# Remember to enable it in the front client too.
+#IMPORTERS["asana"] = {
+#    "active": True, # Enable or disable the importer
+#    "callback_url": "{}://{}/project/new/import/asana".format(SITES["front"]["scheme"],
+#                                                              SITES["front"]["domain"]),
+#    "app_id": "XXXXXX_get_a_valid_app_id_from_asana_XXXXXX",
+#    "app_secret": "XXXXXX_get_a_valid_app_secret_from_asana_XXXXXX"
+#}

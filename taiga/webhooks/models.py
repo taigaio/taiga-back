@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -19,7 +19,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from django_pgjson.fields import JsonField
+from taiga.base.db.models.fields import JSONField
 
 
 class Webhook(models.Model):
@@ -39,10 +39,10 @@ class WebhookLog(models.Model):
                                 related_name="logs")
     url = models.URLField(null=False, blank=False, verbose_name=_("URL"))
     status = models.IntegerField(null=False, blank=False, verbose_name=_("status code"))
-    request_data = JsonField(null=False, blank=False, verbose_name=_("request data"))
-    request_headers = JsonField(null=False, blank=False, verbose_name=_("request headers"), default={})
+    request_data = JSONField(null=False, blank=False, verbose_name=_("request data"))
+    request_headers = JSONField(null=False, blank=False, verbose_name=_("request headers"), default={})
     response_data = models.TextField(null=False, blank=False, verbose_name=_("response data"))
-    response_headers = JsonField(null=False, blank=False, verbose_name=_("response headers"), default={})
+    response_headers = JSONField(null=False, blank=False, verbose_name=_("response headers"), default={})
     duration = models.FloatField(null=False, blank=False, verbose_name=_("duration"), default=0)
     created = models.DateTimeField(auto_now_add=True)
 

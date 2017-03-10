@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -27,10 +27,16 @@ class IsAttachmentOwnerPerm(PermissionComponent):
             return request.user == obj.owner
         return False
 
+class CommentAttachmentPerm(PermissionComponent):
+    def check_permissions(self, request, view, obj=None):
+        if obj.from_comment:
+            return True
+        return False
+
 
 class EpicAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_epics') | IsAttachmentOwnerPerm()
-    create_perms = HasProjectPerm('modify_epic')
+    create_perms = HasProjectPerm('modify_epic') | (CommentAttachmentPerm() & HasProjectPerm('comment_epic'))
     update_perms = HasProjectPerm('modify_epic') | IsAttachmentOwnerPerm()
     partial_update_perms = HasProjectPerm('modify_epic') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_epic') | IsAttachmentOwnerPerm()
@@ -39,7 +45,7 @@ class EpicAttachmentPermission(TaigaResourcePermission):
 
 class UserStoryAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_us') | IsAttachmentOwnerPerm()
-    create_perms = HasProjectPerm('modify_us')
+    create_perms = HasProjectPerm('modify_us') | (CommentAttachmentPerm() & HasProjectPerm('comment_us'))
     update_perms = HasProjectPerm('modify_us') | IsAttachmentOwnerPerm()
     partial_update_perms = HasProjectPerm('modify_us') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_us') | IsAttachmentOwnerPerm()
@@ -48,7 +54,7 @@ class UserStoryAttachmentPermission(TaigaResourcePermission):
 
 class TaskAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_tasks') | IsAttachmentOwnerPerm()
-    create_perms = HasProjectPerm('modify_task')
+    create_perms = HasProjectPerm('modify_task') | (CommentAttachmentPerm() & HasProjectPerm('comment_task'))
     update_perms = HasProjectPerm('modify_task') | IsAttachmentOwnerPerm()
     partial_update_perms = HasProjectPerm('modify_task') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_task') | IsAttachmentOwnerPerm()
@@ -57,7 +63,7 @@ class TaskAttachmentPermission(TaigaResourcePermission):
 
 class IssueAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_issues') | IsAttachmentOwnerPerm()
-    create_perms = HasProjectPerm('modify_issue')
+    create_perms = HasProjectPerm('modify_issue') | (CommentAttachmentPerm() & HasProjectPerm('comment_issue'))
     update_perms = HasProjectPerm('modify_issue') | IsAttachmentOwnerPerm()
     partial_update_perms = HasProjectPerm('modify_issue') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_issue') | IsAttachmentOwnerPerm()
@@ -66,7 +72,7 @@ class IssueAttachmentPermission(TaigaResourcePermission):
 
 class WikiAttachmentPermission(TaigaResourcePermission):
     retrieve_perms = HasProjectPerm('view_wiki_pages') | IsAttachmentOwnerPerm()
-    create_perms = HasProjectPerm('modify_wiki_page')
+    create_perms = HasProjectPerm('modify_wiki_page') | (CommentAttachmentPerm() & HasProjectPerm('comment_wiki_page'))
     update_perms = HasProjectPerm('modify_wiki_page') | IsAttachmentOwnerPerm()
     partial_update_perms = HasProjectPerm('modify_wiki_page') | IsAttachmentOwnerPerm()
     destroy_perms = HasProjectPerm('modify_wiki_page') | IsAttachmentOwnerPerm()

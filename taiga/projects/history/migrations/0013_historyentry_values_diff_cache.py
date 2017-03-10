@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-import django_pgjson.fields
+import taiga.base.db.models.fields
 
 
 class Migration(migrations.Migration):
@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='historyentry',
             name='values_diff_cache',
-            field=django_pgjson.fields.JsonField(blank=True, default=None, null=True),
+            field=taiga.base.db.models.fields.JSONField(blank=True, default=None, null=True),
         ),
     ]

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Taiga Agile LLC <taiga@taiga.io>
+# Copyright (C) 2014-2017 Taiga Agile LLC <taiga@taiga.io>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -27,4 +27,9 @@ def get_timeline_image_thumbnail_url(attachment):
 def get_card_image_thumbnail_url(attachment):
     if attachment.attached_file:
         return get_thumbnail_url(attachment.attached_file, settings.THN_ATTACHMENT_CARD)
+    return None
+
+def get_attachment_image_preview_url(attachment):
+    if attachment.attached_file:
+        return get_thumbnail_url(attachment.attached_file, settings.THN_ATTACHMENT_PREVIEW)
     return None

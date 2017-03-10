@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
-# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -62,23 +62,21 @@ def test_respond_201_when_the_email_domain_is_in_allowed_domains(client, setting
     assert response.status_code == 201
 
 
-def test_respond_201_with_invitation_without_public_registration(client, register_form, settings):
+def test_respond_201_with_invitation_login(client, settings):
     settings.PUBLIC_REGISTER_ENABLED = False
     user = factories.UserFactory()
     membership = factories.MembershipFactory(user=user)
 
-    register_form.update({
-        "type": "private",
-        "existing": "1",
-        "token": membership.token,
+    auth_data = {
+        "type": "normal",
+        "invitation_token": membership.token,
         "username": user.username,
-        "email": user.email,
         "password": user.username,
-    })
+    }
 
-    response = client.post(reverse("auth-register"), register_form)
+    response = client.post(reverse("auth-list"), auth_data)
 
-    assert response.status_code == 201, response.data
+    assert response.status_code == 200, response.data
 
 
 def test_response_200_in_public_registration(client, settings):
@@ -186,3 +184,83 @@ def test_auth_uppercase_ignore(client, settings):
 
     response = client.post(reverse("auth-list"), login_form)
     assert response.status_code == 400
+
+
+def test_login_fail_throttling(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = True
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["login-fail"] = "1/minute"
+
+    register_form = {"username": "valid_username_login_fail",
+                     "password": "valid_password",
+                     "full_name": "fullname",
+                     "email": "valid_username_login_fail@email.com",
+                     "type": "public"}
+    response = client.post(reverse("auth-register"), register_form)
+
+    login_form = {"type": "normal",
+                  "username": "valid_username_login_fail",
+                  "password": "valid_password"}
+
+    response = client.post(reverse("auth-list"), login_form)
+    assert response.status_code == 200
+
+    login_form = {"type": "normal",
+                  "username": "invalid_username_login_fail",
+                  "password": "invalid_password"}
+
+    response = client.post(reverse("auth-list"), login_form)
+    assert response.status_code == 400
+
+    login_form = {"type": "normal",
+                  "username": "invalid_username_login_fail",
+                  "password": "invalid_password"}
+
+    response = client.post(reverse("auth-list"), login_form)
+    assert response.status_code == 429
+
+    login_form = {"type": "normal",
+                  "username": "valid_username_login_fail",
+                  "password": "valid_password"}
+
+    response = client.post(reverse("auth-list"), login_form)
+    assert response.status_code == 429
+
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["login-fail"] = None
+
+def test_register_success_throttling(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = True
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["register-success"] = "1/minute"
+
+    register_form = {"username": "valid_username_register_success",
+                     "password": "valid_password",
+                     "full_name": "fullname",
+                     "email": "",
+                     "type": "public"}
+    response = client.post(reverse("auth-register"), register_form)
+    assert response.status_code == 400
+
+    register_form = {"username": "valid_username_register_success",
+                     "password": "valid_password",
+                     "full_name": "fullname",
+                     "email": "valid_username_register_success@email.com",
+                     "type": "public"}
+    response = client.post(reverse("auth-register"), register_form)
+    assert response.status_code == 201
+
+    register_form = {"username": "valid_username_register_success2",
+                     "password": "valid_password2",
+                     "full_name": "fullname",
+                     "email": "valid_username_register_success2@email.com",
+                     "type": "public"}
+    response = client.post(reverse("auth-register"), register_form)
+    assert response.status_code == 429
+
+    register_form = {"username": "valid_username_register_success2",
+                     "password": "valid_password2",
+                     "full_name": "fullname",
+                     "email": "",
+                     "type": "public"}
+    response = client.post(reverse("auth-register"), register_form)
+    assert response.status_code == 429
+
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["register-success"] = None

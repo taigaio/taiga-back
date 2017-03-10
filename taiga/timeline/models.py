@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
-from django_pgjson.fields import JsonField
+from taiga.base.db.models.fields import JSONField
 from django.utils import timezone
 
 from django.contrib.contenttypes.models import ContentType
@@ -33,7 +33,7 @@ class Timeline(models.Model):
     namespace = models.CharField(max_length=250, default="default", db_index=True)
     event_type = models.CharField(max_length=250, db_index=True)
     project = models.ForeignKey(Project, null=True)
-    data = JsonField()
+    data = JSONField()
     data_content_type = models.ForeignKey(ContentType, related_name="data_timelines")
     created = models.DateTimeField(default=timezone.now, db_index=True)
 

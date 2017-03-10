@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -23,7 +23,7 @@ from django.test.utils import override_settings
 from taiga.base.utils.slug import slugify_uniquely
 from taiga.projects.models import Project
 from taiga.projects.history.models import HistoryEntry
-from taiga.timeline.management.commands.rebuild_timeline import generate_timeline
+from taiga.timeline.rebuilder import rebuild_timeline
 
 
 class Command(BaseCommand):
@@ -58,4 +58,4 @@ class Command(BaseCommand):
 
         # Regenerate timeline
         self.stdout.write(self.style.SUCCESS("-> Regenerate timeline entries."))
-        generate_timeline(None, None, project.id)
+        rebuild_timeline(None, None, project.id)

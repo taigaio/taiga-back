@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django_pgjson.fields import JsonField
+from taiga.base.db.models.fields import JSONField
 
 from django.db import models, migrations
 

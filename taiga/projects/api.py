@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -52,6 +52,7 @@ from taiga.projects.mixins.ordering import BulkUpdateOrderMixin
 from taiga.projects.tasks.models import Task
 from taiga.projects.tagging.api import TagsColorsResourceMixin
 from taiga.projects.userstories.models import UserStory, RolePoints
+from taiga.users import services as users_services
 
 from . import filters as project_filters
 from . import models
@@ -226,7 +227,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         if not template_description:
             raise response.BadRequest(_("Not valid template description"))
 
-        with advisory_lock("create-project-template") as acquired_key_lock:
+        with advisory_lock("create-project-template"):
             template_slug = slugify_uniquely(template_name, models.ProjectTemplate)
 
             project = self.get_object()
@@ -399,6 +400,42 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         reason = request.DATA.get('reason', None)
         services.reject_project_transfer(project, request.user, token, reason)
         return response.Ok()
+
+    @detail_route(methods=["POST"])
+    def duplicate(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "duplicate", project)
+        if project.blocked_code is not None:
+            raise exc.Blocked(_("Blocked element"))
+
+        validator = validators.DuplicateProjectValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+
+        data = validator.data
+
+        # Validate if the project can be imported
+        is_private = data.get('is_private', False)
+        total_memberships = len(data.get("users", [])) + 1
+        (enough_slots, error_message) = users_services.has_available_slot_for_new_project(
+            self.request.user,
+            is_private,
+            total_memberships
+        )
+        if not enough_slots:
+            raise exc.NotEnoughSlotsForProject(is_private, total_memberships, error_message)
+
+        new_project = services.duplicate_project(
+            project=project,
+            owner=request.user,
+            name=data["name"],
+            description=data["description"],
+            is_private=data["is_private"],
+            users=data["users"]
+        )
+        new_project = get_object_or_404(self.get_queryset(), id=new_project.id)
+        serializer = self.get_serializer(new_project)
+        return response.Created(serializer.data)
 
     def _raise_if_blocked(self, project):
         if self.is_blocked(project):
@@ -640,7 +677,6 @@ class IssueStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
             return super().create(request, *args, **kwargs)
 
 
-
 ######################################################
 ## Project Template
 ######################################################
@@ -662,7 +698,6 @@ class ProjectTemplateViewSet(ModelCrudViewSet):
 class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
     model = models.Membership
     admin_serializer_class = serializers.MembershipAdminSerializer
-    admin_validator_class = validators.MembershipAdminValidator
     serializer_class = serializers.MembershipSerializer
     validator_class = validators.MembershipValidator
     permission_classes = (permissions.MembershipPermission,)
@@ -690,12 +725,6 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         else:
             return self.serializer_class
 
-    def get_validator_class(self):
-        if self.action == "create":
-            return self.admin_validator_class
-
-        return self.validator_class
-
     def _check_if_project_can_have_more_memberships(self, project, total_new_memberships):
         (can_add_memberships, error_type) = services.check_if_project_can_have_more_memberships(
             project,
@@ -710,7 +739,10 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
 
     @list_route(methods=["POST"])
     def bulk_create(self, request, **kwargs):
-        validator = validators.MembersBulkValidator(data=request.DATA)
+        context = {
+            "request": request
+        }
+        validator = validators.MembersBulkValidator(data=request.DATA, context=context)
         if not validator.is_valid():
             return response.BadRequest(validator.errors)
 

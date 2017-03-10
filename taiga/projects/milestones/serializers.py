@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -20,9 +20,12 @@ from taiga.base.api import serializers
 from taiga.base.fields import Field, MethodField
 from taiga.projects.notifications.mixins import WatchedResourceSerializer
 from taiga.projects.userstories.serializers import UserStoryListSerializer
+from taiga.projects.mixins.serializers import ProjectExtraInfoSerializerMixin
 
 
-class MilestoneSerializer(WatchedResourceSerializer, serializers.LightSerializer):
+class MilestoneSerializer(WatchedResourceSerializer,
+                          ProjectExtraInfoSerializerMixin,
+                          serializers.LightSerializer):
     id = Field()
     name = Field()
     slug = Field()

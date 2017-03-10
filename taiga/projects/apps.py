@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -58,6 +58,7 @@ def connect_memberships_signals():
                               sender=apps.get_model("projects", "Membership"),
                               dispatch_uid='create-notify-policy')
 
+
 def disconnect_memberships_signals():
     signals.pre_delete.disconnect(sender=apps.get_model("projects", "Membership"),
                                   dispatch_uid='membership_pre_delete')
@@ -79,7 +80,6 @@ def disconnect_us_status_signals():
                                  dispatch_uid="try_to_close_or_open_user_stories_when_edit_us_status")
 
 
-
 ## Tasks Statuses Signals
 
 def connect_task_status_signals():
@@ -92,7 +92,6 @@ def connect_task_status_signals():
 def disconnect_task_status_signals():
     signals.post_save.disconnect(sender=apps.get_model("projects", "TaskStatus"),
                                  dispatch_uid="try_to_close_or_open_user_stories_when_edit_task_status")
-
 
 
 class ProjectsAppConfig(AppConfig):

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
-# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -24,6 +24,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.core.files import File
+from django.core.cache import cache as default_cache
 
 from .. import factories as f
 from ..utils import DUMMY_BMP_DATA
@@ -444,6 +445,42 @@ def test_list_contacts_public_projects(client):
     response_content = response.data
     assert len(response_content) == 1
     assert response_content[0]["id"] == user_2.id
+
+
+def test_list_contacts_filter_exclude_project(client):
+    project1 = f.ProjectFactory.create()
+    project2 = f.ProjectFactory.create()
+    user_1 = f.UserFactory.create()
+    user_2 = f.UserFactory.create()
+    user_3 = f.UserFactory.create()
+    user_4 = f.UserFactory.create()
+    role1 = f.RoleFactory(project=project1, permissions=["view_project"])
+    role2 = f.RoleFactory(project=project2, permissions=["view_project"])
+
+    membership_11 = f.MembershipFactory.create(project=project1, user=user_1, role=role1)
+    membership_12 = f.MembershipFactory.create(project=project1, user=user_2, role=role1)
+
+    membership_21 = f.MembershipFactory.create(project=project2, user=user_1, role=role2)
+    membership_23 = f.MembershipFactory.create(project=project2, user=user_3, role=role2)
+    membership_24 = f.MembershipFactory.create(project=project2, user=user_4, role=role2)
+
+    url = reverse('users-contacts', kwargs={"pk": user_1.pk})
+
+    client.login(user_1)
+    response = client.get(url, content_type="application/json")
+    assert response.status_code == 200
+    response_content = response.data
+    assert len(response_content) == 3
+
+    response = client.get(url + "?exclude_project={}".format(project1.id), content_type="application/json")
+    assert response.status_code == 200
+    response_content = response.data
+    assert len(response_content) == 2
+
+    response = client.get(url + "?exclude_project={}".format(project2.id), content_type="application/json")
+    assert response.status_code == 200
+    response_content = response.data
+    assert len(response_content) == 1
 
 
 ##############################
@@ -980,3 +1017,39 @@ def test_get_voted_list_permissions():
     project.anon_permissions = ["view_project", "view_epic", "view_us", "view_tasks", "view_issues"]
     project.save()
     assert len(get_voted_list(fav_user, viewer_unpriviliged_user)) == 4
+
+##############################
+## Retrieve user
+##############################
+
+def test_users_retrieve_throttling_api(client):
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["user-detail"] = "1/minute"
+
+    user = f.UserFactory.create()
+
+    url = reverse('users-detail', kwargs={"pk": user.pk})
+    data = {}
+
+    response = client.get(url, content_type="application/json")
+    assert response.status_code == 200
+
+    response = client.get(url, content_type="application/json")
+    assert response.status_code == 429
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["user-detail"] = None
+    default_cache.clear()
+
+
+def test_users_by_username_throttling_api(client):
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["user-detail"] = "1/minute"
+    user = f.UserFactory.create(username="test-user-detail")
+
+    url = reverse('users-by-username')
+    data = {}
+
+    response = client.get(url, {"username": user.username}, content_type="application/json")
+    assert response.status_code == 200
+
+    response = client.get(url, {"username": user.username}, content_type="application/json")
+    assert response.status_code == 429
+    settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["user-detail"] = None
+    default_cache.clear()

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -208,13 +208,14 @@ def extract_attachments(obj) -> list:
 @as_tuple
 def extract_epic_custom_attributes(obj) -> list:
     with suppress(ObjectDoesNotExist):
-        custom_attributes_values =  obj.custom_attributes_values.attributes_values
+        custom_attributes_values = obj.custom_attributes_values.attributes_values
         for attr in obj.project.epiccustomattributes.all():
             with suppress(KeyError):
                 value = custom_attributes_values[str(attr.id)]
                 yield {"id": attr.id,
                        "name": attr.name,
-                       "value": value}
+                       "value": value,
+                       "type": attr.type}
 
 
 @as_tuple
@@ -226,7 +227,8 @@ def extract_user_story_custom_attributes(obj) -> list:
                 value = custom_attributes_values[str(attr.id)]
                 yield {"id": attr.id,
                        "name": attr.name,
-                       "value": value}
+                       "value": value,
+                       "type": attr.type}
 
 
 @as_tuple
@@ -238,7 +240,8 @@ def extract_task_custom_attributes(obj) -> list:
                 value = custom_attributes_values[str(attr.id)]
                 yield {"id": attr.id,
                        "name": attr.name,
-                       "value": value}
+                       "value": value,
+                       "type": attr.type}
 
 
 @as_tuple
@@ -250,7 +253,8 @@ def extract_issue_custom_attributes(obj) -> list:
                 value = custom_attributes_values[str(attr.id)]
                 yield {"id": attr.id,
                        "name": attr.name,
-                       "value": value}
+                       "value": value,
+                       "type": attr.type}
 
 
 def project_freezer(project) -> dict:

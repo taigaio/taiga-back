@@ -1,6 +1,35 @@
 # Changelog #
 
 
+## 3.1.0 Perovskia Atriplicifolia (2017-03-10)
+
+### Features
+- Contact with the project: if the projects have this module enabled Taiga users can contact them.
+- Ability to create rich text custom fields in Epics, User Stories, Tasks and Isues.
+- Full text search now use simple as tokenizer so search with non-english text are allowed.
+- Duplicate project: allows creating a new project based on the structure of another (status, tags, colors, default values...)
+- Add thumbnails and preview for PSD files.
+- Add thumbnails and preview for SVG files (Cario lib is needed).
+- i18n:
+  - Add japanese (ja) translation.
+  - Add korean (ko) translation.
+  - Add chinese simplified (zh-Hans) translation.
+- Third party services project importers:
+  - Trello
+  - Jira 7
+  - Github
+  - Asana
+
+### Misc
+- API:
+    - Memberships API endpoints now allows using usernames and emails instead of using only emails.
+    - Contacts API allow full text search (by the username, full name or email).
+    - Filter milestones, user stories and tasks by estimated_start and estimated_finish dates.
+    - Add project_extra_info to epics, tasks, milestones, issues and wiki pages endpoints.
+- Gogs integration: Adding new Gogs signature method.
+- Lots of small and not so small bugfixes.
+
+
 ## 3.0.0 Stellaria Borealis (2016-10-02)
 
 ### Features

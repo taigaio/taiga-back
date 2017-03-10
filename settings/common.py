@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -110,12 +110,12 @@ LANGUAGES = [
     #("io", "IDO"),  # Ido
     #("is", "Íslenska"),  # Icelandic
     ("it", "Italiano"),  # Italian
-    #("ja", "日本語"),  # Japanese
+    ("ja", "日本語"),  # Japanese
     #("ka", "ქართული"),  # Georgian
     #("kk", "Қазақша"),  # Kazakh
     #("km", "ភាសាខ្មែរ"),  # Khmer
     #("kn", "ಕನ್ನಡ"),  # Kannada
-    #("ko", "한국어"),  # Korean
+    ("ko", "한국어"),  # Korean
     #("lb", "Lëtzebuergesch"),  # Luxembourgish
     #("lt", "Lietuvių"),  # Lithuanian
     #("lv", "Latviešu"),  # Latvian
@@ -151,7 +151,7 @@ LANGUAGES = [
     #("uk", "Українська"),  # Ukrainian
     #("ur", "اردو‏"),  # Urdu
     #("vi", "Tiếng Việt"),  # Vietnamese
-    #("zh-hans", "中文(简体)"),  # Simplified Chinese
+    ("zh-hans", "中文(简体)"),  # Simplified Chinese
     ("zh-hant", "中文(香港)"),  # Traditional Chinese
 ]
 
@@ -282,6 +282,7 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
+    "django.contrib.postgres",
 
     "taiga.base",
     "taiga.base.api",
@@ -305,6 +306,7 @@ INSTALLED_APPS = [
     "taiga.projects.tasks",
     "taiga.projects.issues",
     "taiga.projects.wiki",
+    "taiga.projects.contact",
     "taiga.searches",
     "taiga.timeline",
     "taiga.mdrender",
@@ -316,6 +318,7 @@ INSTALLED_APPS = [
     "taiga.hooks.bitbucket",
     "taiga.hooks.gogs",
     "taiga.webhooks",
+    "taiga.importers",
 
     "djmail",
     "django_jinja",
@@ -345,6 +348,10 @@ LOGGING = {
         "null": {
             "format": "%(message)s",
         },
+        "django.server": {
+            "()": "django.utils.log.ServerFormatter",
+            "format": "[%(server_time)s] %(message)s",
+        },
     },
     "handlers": {
         "null": {
@@ -360,7 +367,12 @@ LOGGING = {
             "level": "ERROR",
             "filters": ["require_debug_false"],
             "class": "django.utils.log.AdminEmailHandler",
-        }
+        },
+        "django.server": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "django.server",
+        },
     },
     "loggers": {
         "django": {
@@ -381,6 +393,11 @@ LOGGING = {
         "taiga": {
             "handlers": ["console"],
             "level": "DEBUG",
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["django.server"],
+            "level": "INFO",
             "propagate": False,
         }
     }
@@ -416,16 +433,21 @@ REST_FRAMEWORK = {
         "taiga.external_apps.auth_backends.Token",
     ),
     "DEFAULT_THROTTLE_CLASSES": (
-        "taiga.base.throttling.AnonRateThrottle",
-        "taiga.base.throttling.UserRateThrottle"
+        "taiga.base.throttling.CommonThrottle",
     ),
     "DEFAULT_THROTTLE_RATES": {
-        "anon": None,
-        "user": None,
+        "anon-write": None,
+        "user-write": None,
+        "anon-read": None,
+        "user-read": None,
         "import-mode": None,
         "import-dump-mode": "1/minute",
-        "create-memberships": None
+        "create-memberships": None,
+        "login-fail": None,
+        "register-success": None,
+        "user-detail": None,
     },
+    "DEFAULT_THROTTLE_WHITELIST": [],
     "FILTER_BACKEND": "taiga.base.filters.FilterBackend",
     "EXCEPTION_HANDLER": "taiga.base.exceptions.exception_handler",
     "PAGINATE_BY": 30,
@@ -455,8 +477,6 @@ SOUTH_MIGRATION_MODULES = {
 }
 
 
-
-
 THN_AVATAR_SIZE = 80                # 80x80 pixels
 THN_AVATAR_BIG_SIZE = 300           # 300x300 pixels
 THN_LOGO_SMALL_SIZE = 80            # 80x80 pixels
@@ -464,6 +484,7 @@ THN_LOGO_BIG_SIZE = 300             # 300x300 pixels
 THN_TIMELINE_IMAGE_SIZE = 640       # 640x??? pixels
 THN_CARD_IMAGE_WIDTH = 300          # 300 pixels
 THN_CARD_IMAGE_HEIGHT = 200         # 200 pixels
+THN_PREVIEW_IMAGE_WIDTH = 800       # 800 pixels
 
 THN_AVATAR_SMALL = "avatar"
 THN_AVATAR_BIG = "big-avatar"
@@ -471,6 +492,7 @@ THN_LOGO_SMALL = "logo-small"
 THN_LOGO_BIG = "logo-big"
 THN_ATTACHMENT_TIMELINE = "timeline-image"
 THN_ATTACHMENT_CARD = "card-image"
+THN_ATTACHMENT_PREVIEW = "preview-image"
 
 THUMBNAIL_ALIASES = {
     "": {
@@ -480,6 +502,7 @@ THUMBNAIL_ALIASES = {
         THN_LOGO_BIG: {"size": (THN_LOGO_BIG_SIZE, THN_LOGO_BIG_SIZE), "crop": True},
         THN_ATTACHMENT_TIMELINE: {"size": (THN_TIMELINE_IMAGE_SIZE, 0), "crop": True},
         THN_ATTACHMENT_CARD: {"size": (THN_CARD_IMAGE_WIDTH, THN_CARD_IMAGE_HEIGHT), "crop": True},
+        THN_ATTACHMENT_PREVIEW: {"size": (THN_PREVIEW_IMAGE_WIDTH, 0), "crop": False},
     },
 }
 
@@ -538,6 +561,30 @@ MAX_PENDING_MEMBERSHIPS = 30 # Max number of unconfirmed memberships in a projec
 
 from .sr import *
 
+IMPORTERS = {
+    "github": {
+        "active": False,
+        "client_id": "",
+        "client_secret": "",
+    },
+    "trello": {
+        "active": False,
+        "api_key": "",
+        "secret_key": "",
+    },
+    "jira": {
+        "active": False,
+        "consumer_key": "",
+        "cert": "",
+        "pub_cert": "",
+    },
+    "asana": {
+        "active": False,
+        "callback_url": "",
+        "app_id": "",
+        "app_secret": "",
+    }
+}
 
 # NOTE: DON'T INSERT MORE SETTINGS AFTER THIS LINE
 TEST_RUNNER="django.test.runner.DiscoverRunner"

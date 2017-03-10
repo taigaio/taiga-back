@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -33,7 +33,7 @@ class WikiPage(OCCModelMixin, WatchedModelMixin, models.Model):
     project = models.ForeignKey("projects.Project", null=False, blank=False,
                                 related_name="wiki_pages", verbose_name=_("project"))
     slug = models.SlugField(max_length=500, db_index=True, null=False, blank=False,
-                            verbose_name=_("slug"))
+                            verbose_name=_("slug"), allow_unicode=True)
     content = models.TextField(null=False, blank=True,
                                verbose_name=_("content"))
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -154,7 +154,7 @@ class BasePushEventHook(BaseEventHook):
             )
         _status_change_message = _(
             "{user_text} changed the status from "
-            "[{platform} commit]({commit_url} \"See commit '{commit_id} - {commit_message}'\")\n\n"
+            "[{platform} commit]({commit_url} \"See commit '{commit_id} - {commit_short_message}'\")\n\n"
             "  - Status: **{src_status}** → **{dst_status}**"
         )
         _simple_status_change_message = _(
@@ -177,7 +177,7 @@ class BasePushEventHook(BaseEventHook):
 
         _status_change_message = _(
             "This {type_name} has been mentioned by {user_text} "
-            "in the [{platform} commit]({commit_url} \"See commit '{commit_id} - {commit_message}'\") "
+            "in the [{platform} commit]({commit_url} \"See commit '{commit_id} - {commit_short_message}'\") "
             "\"{commit_message}\""
         )
         _simple_status_change_message = _(

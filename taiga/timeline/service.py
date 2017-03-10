@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -93,7 +93,7 @@ def _push_to_timeline(objects, instance: object, event_type: str, created_dateti
 
 @app.task
 def push_to_timelines(project_id, user_id, obj_app_label, obj_model_name, obj_id, event_type,
-                      created_datetime, extra_data={}):
+                      created_datetime, extra_data={}, refresh_totals=True):
 
     ObjModel = apps.get_model(obj_app_label, obj_model_name)
     try:
@@ -120,7 +120,8 @@ def push_to_timelines(project_id, user_id, obj_app_label, obj_model_name, obj_id
                           namespace=build_project_namespace(project),
                           extra_data=extra_data)
 
-        project.refresh_totals()
+        if refresh_totals:
+            project.refresh_totals()
 
         if hasattr(obj, "get_related_people"):
             related_people = obj.get_related_people()

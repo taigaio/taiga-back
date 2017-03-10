@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base import routers
+from django.conf import settings
 
 router = routers.DefaultRouter(trailing_slash=False)
 
@@ -223,6 +224,10 @@ router.register(r"history/task", TaskHistory, base_name="task-history")
 router.register(r"history/issue", IssueHistory, base_name="issue-history")
 router.register(r"history/wiki", WikiHistory, base_name="wiki-history")
 
+# Contact
+from taiga.projects.contact.api import ContactViewSet
+router.register(r"contact", ContactViewSet, base_name="contact")
+
 
 # Timelines
 from taiga.timeline.api import ProfileTimeline
@@ -278,6 +283,23 @@ from taiga.external_apps.api import Application, ApplicationToken
 
 router.register(r"applications", Application, base_name="applications")
 router.register(r"application-tokens", ApplicationToken, base_name="application-tokens")
+
+# Third party importers
+if settings.IMPORTERS.get('trello', {}).get('active', False):
+    from taiga.importers.trello.api import TrelloImporterViewSet
+    router.register(r"importers/trello", TrelloImporterViewSet, base_name="importers-trello")
+
+if settings.IMPORTERS.get('jira', {}).get('active', False):
+    from taiga.importers.jira.api import JiraImporterViewSet
+    router.register(r"importers/jira", JiraImporterViewSet, base_name="importers-jira")
+
+if settings.IMPORTERS.get('github', {}).get('active', False):
+    from taiga.importers.github.api import GithubImporterViewSet
+    router.register(r"importers/github", GithubImporterViewSet, base_name="importers-github")
+
+if settings.IMPORTERS.get('asana', {}).get('active', False):
+    from taiga.importers.asana.api import AsanaImporterViewSet
+    router.register(r"importers/asana", AsanaImporterViewSet, base_name="importers-asana")
 
 
 # Stats

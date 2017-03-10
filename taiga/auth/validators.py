@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -48,11 +48,5 @@ class PublicRegisterValidator(BaseRegisterValidator):
     pass
 
 
-class PrivateRegisterForNewUserValidator(BaseRegisterValidator):
-    token = serializers.CharField(max_length=255, required=True)
-
-
-class PrivateRegisterForExistingUserValidator(validators.Validator):
-    username = serializers.CharField(max_length=255)
-    password = serializers.CharField(min_length=4)
+class PrivateRegisterValidator(BaseRegisterValidator):
     token = serializers.CharField(max_length=255, required=True)

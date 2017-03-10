@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -19,7 +19,7 @@
 
 from django.utils.translation import ugettext_lazy as _
 
-from taiga.base.fields import JsonField
+from taiga.base.fields import JSONField
 from taiga.base.exceptions import ValidationError
 from taiga.base.api.validators import ModelValidator
 
@@ -92,7 +92,7 @@ class IssueCustomAttributeValidator(BaseCustomAttributeValidator):
 
 
 class BaseCustomAttributesValuesValidator(ModelValidator):
-    attributes_values = JsonField(source="attributes_values", label="attributes values")
+    attributes_values = JSONField(source="attributes_values", label="attributes values")
     _custom_attribute_model = None
     _container_field = None
 

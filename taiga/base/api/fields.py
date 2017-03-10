@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -618,13 +618,24 @@ class ChoiceField(WritableField):
         return value
 
 
+class InvalidEmailValidationError(ValidationError):
+    pass
+
+
+class InvalidDomainValidationError(ValidationError):
+    pass
+
+
 def validate_user_email_allowed_domains(value):
-    validators.validate_email(value)
+    try:
+        validators.validate_email(value)
+    except ValidationError as e:
+        raise InvalidEmailValidationError(e)
 
     domain_name = value.split("@")[1]
 
     if settings.USER_EMAIL_ALLOWED_DOMAINS and domain_name not in settings.USER_EMAIL_ALLOWED_DOMAINS:
-        raise ValidationError(_("You email domain is not allowed"))
+        raise InvalidDomainValidationError(_("You email domain is not allowed"))
 
 
 class EmailField(CharField):

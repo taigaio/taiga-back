@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -94,14 +94,14 @@ class QFilterBackend(FilterBackend):
         # NOTE: See migtration 0033_text_search_indexes
         q = request.QUERY_PARAMS.get('q', None)
         if q:
-            tsquery = "to_tsquery('english_nostop', %s)"
+            tsquery = "to_tsquery('simple', %s)"
             tsquery_params = [to_tsquery(q)]
             tsvector = """
-             setweight(to_tsvector('english_nostop',
+             setweight(to_tsvector('simple',
                                    coalesce(projects_project.name, '')), 'A') ||
-             setweight(to_tsvector('english_nostop',
+             setweight(to_tsvector('simple',
                                    coalesce(inmutable_array_to_string(projects_project.tags), '')), 'B') ||
-             setweight(to_tsvector('english_nostop',
+             setweight(to_tsvector('simple',
                                    coalesce(projects_project.description, '')), 'C')
             """
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -28,13 +28,13 @@ from taiga.projects.notifications import services as notifications_services
 from taiga.projects.history import services as history_service
 
 from .fields import (UserRelatedField, HistoryUserField, HistoryDiffField,
-                     JsonField, HistoryValuesField, CommentField, FileField)
+                     JSONField, HistoryValuesField, CommentField, FileField)
 
 
 class HistoryExportValidator(validators.ModelValidator):
     user = HistoryUserField()
     diff = HistoryDiffField(required=False)
-    snapshot = JsonField(required=False)
+    snapshot = JSONField(required=False)
     values = HistoryValuesField(required=False)
     comment = CommentField(required=False)
     delete_comment_date = serializers.DateTimeField(required=False)

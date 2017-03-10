@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.be>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.be>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -18,18 +18,16 @@
 
 from django.apps import apps
 from django.db import models, connection
-from django.db.utils import DEFAULT_DB_ALIAS, ConnectionHandler
 from django.db.models.signals import pre_save, post_delete
+from django.dispatch import Signal
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
-from django.dispatch import Signal
-
 cleanup_pre_delete = Signal(providing_args=["file"])
 cleanup_post_delete = Signal(providing_args=["file"])
-
 
 
 def _find_models_with_filefield():
@@ -50,7 +48,7 @@ def _delete_file(file_obj):
             cleanup_post_delete.send(sender=None, file=file_obj)
         except Exception:
             logger.exception("Unexpected exception while attempting "
-			     "to delete old file '%s'".format(file_obj.name))
+                             "to delete old file '%s'".format(file_obj.name))
 
     storage = file_obj.storage
     if storage and storage.exists(file_obj.name):
@@ -90,9 +88,6 @@ def remove_files_on_delete(sender, instance, **kwargs):
 
 
 def connect_cleanup_files_signals():
-    connections = ConnectionHandler()
-    backend = connections[DEFAULT_DB_ALIAS]
-
     for model in _find_models_with_filefield():
         pre_save.connect(remove_files_on_change, sender=model)
         post_delete.connect(remove_files_on_delete, sender=model)

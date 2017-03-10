@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -312,7 +312,7 @@ def get_watched_list(for_user, from_user, type=None, q=None):
 
     if q:
         filters_sql += """ AND (
-            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', %(q)s)
+            to_tsvector('simple', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('simple', %(q)s)
         )
         """
 
@@ -412,7 +412,7 @@ def get_liked_list(for_user, from_user, type=None, q=None):
 
     if q:
         filters_sql += """ AND (
-            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', %(q)s)
+            to_tsvector('simple', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('simple', %(q)s)
         )
         """
 
@@ -495,7 +495,7 @@ def get_voted_list(for_user, from_user, type=None, q=None):
 
     if q:
         filters_sql += """ AND (
-            to_tsvector('english_nostop', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('english_nostop', %(q)s)
+            to_tsvector('simple', coalesce(subject,'') || ' ' ||coalesce(entities.name,'') || ' ' ||coalesce(to_char(ref, '999'),'')) @@ to_tsquery('simple', %(q)s)
         )
         """
 
@@ -582,7 +582,7 @@ def get_voted_list(for_user, from_user, type=None, q=None):
     ]
 
 
-def has_available_slot_for_import_new_project(owner, is_private, total_memberships):
+def has_available_slot_for_new_project(owner, is_private, total_memberships):
     if is_private:
         current_projects = owner.owned_projects.filter(is_private=True).count()
         max_projects = owner.max_private_projects

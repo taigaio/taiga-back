@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -58,6 +58,7 @@ class Attachment(models.Model):
     sha1 = models.CharField(default="", max_length=40, verbose_name=_("sha1"), blank=True)
 
     is_deprecated = models.BooleanField(default=False, verbose_name=_("is deprecated"))
+    from_comment = models.BooleanField(default=False, verbose_name=_("from comment"))
     description = models.TextField(null=False, blank=True, verbose_name=_("description"))
     order = models.IntegerField(default=0, null=False, blank=False, verbose_name=_("order"))
 

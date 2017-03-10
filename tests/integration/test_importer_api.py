@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -1147,7 +1147,6 @@ def test_invalid_dump_import(client):
 
 
 def test_valid_dump_import_without_enough_public_projects_slots(client, settings):
-    settings.CELERY_ENABLED = False
     user = f.UserFactory.create(max_public_projects=0)
     client.login(user)
 
@@ -1170,7 +1169,6 @@ def test_valid_dump_import_without_enough_public_projects_slots(client, settings
 
 
 def test_valid_dump_import_without_enough_private_projects_slots(client, settings):
-    settings.CELERY_ENABLED = False
     user = f.UserFactory.create(max_private_projects=0)
     client.login(user)
 
@@ -1193,7 +1191,6 @@ def test_valid_dump_import_without_enough_private_projects_slots(client, setting
 
 
 def test_valid_dump_import_without_enough_membership_private_project_slots_one_project(client, settings):
-    settings.CELERY_ENABLED = False
     user = f.UserFactory.create(max_memberships_private_projects=5)
     client.login(user)
 
@@ -1241,7 +1238,6 @@ def test_valid_dump_import_without_enough_membership_private_project_slots_one_p
 
 
 def test_valid_dump_import_without_enough_membership_public_project_slots_one_project(client, settings):
-    settings.CELERY_ENABLED = False
     user = f.UserFactory.create(max_memberships_public_projects=5)
     client.login(user)
 
@@ -1289,7 +1285,6 @@ def test_valid_dump_import_without_enough_membership_public_project_slots_one_pr
 
 
 def test_valid_dump_import_with_enough_membership_private_project_slots_multiple_projects(client, settings):
-    settings.CELERY_ENABLED = False
 
     user = f.UserFactory.create(max_memberships_private_projects=10)
     project = f.ProjectFactory.create(owner=user)
@@ -1344,8 +1339,6 @@ def test_valid_dump_import_with_enough_membership_private_project_slots_multiple
 
 
 def test_valid_dump_import_with_enough_membership_public_project_slots_multiple_projects(client, settings):
-    settings.CELERY_ENABLED = False
-
     user = f.UserFactory.create(max_memberships_public_projects=10)
     project = f.ProjectFactory.create(owner=user)
     f.MembershipFactory.create(project=project)
@@ -1400,7 +1393,6 @@ def test_valid_dump_import_with_enough_membership_public_project_slots_multiple_
 
 
 def test_valid_dump_import_with_the_limit_of_membership_whit_you_for_private_project(client, settings):
-    settings.CELERY_ENABLED = False
     user = f.UserFactory.create(max_memberships_private_projects=5)
     client.login(user)
 
@@ -1443,7 +1435,6 @@ def test_valid_dump_import_with_the_limit_of_membership_whit_you_for_private_pro
 
 
 def test_valid_dump_import_with_the_limit_of_membership_whit_you_for_public_project(client, settings):
-    settings.CELERY_ENABLED = False
     user = f.UserFactory.create(max_memberships_public_projects=5)
     client.login(user)
 
@@ -1486,8 +1477,6 @@ def test_valid_dump_import_with_the_limit_of_membership_whit_you_for_public_proj
 
 
 def test_valid_dump_import_with_celery_disabled(client, settings):
-    settings.CELERY_ENABLED = False
-
     user = f.UserFactory.create()
     client.login(user)
 
@@ -1508,7 +1497,6 @@ def test_valid_dump_import_with_celery_disabled(client, settings):
 
 
 def test_invalid_dump_import_with_celery_disabled(client, settings):
-    settings.CELERY_ENABLED = False
     user = f.UserFactory.create(max_memberships_public_projects=5)
     client.login(user)
 
@@ -1568,6 +1556,7 @@ def test_valid_dump_import_with_celery_enabled(client, settings):
     assert response.status_code == 202
     assert "import_id" in response.data
     assert Project.objects.filter(slug="valid-project").count() == 1
+    settings.CELERY_ENABLED = False
 
 
 def test_invalid_dump_import_with_celery_enabled(client, settings):
@@ -1611,6 +1600,7 @@ def test_invalid_dump_import_with_celery_enabled(client, settings):
     assert response.status_code == 202
     assert "import_id" in response.data
     assert Project.objects.filter(slug="invalid-project").count() == 0
+    settings.CELERY_ENABLED = False
 
 
 def test_dump_import_throttling(client, settings):

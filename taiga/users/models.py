@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -34,7 +34,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from django_pgjson.fields import JsonField
+from taiga.base.db.models.fields import JSONField
 from django_pglocks import advisory_lock
 
 from taiga.auth.tokens import get_token_for_user
@@ -45,6 +45,8 @@ from taiga.base.utils.time import timestamp_ms
 from taiga.permissions.choices import MEMBERS_PERMISSIONS
 from taiga.projects.choices import BLOCKED_BY_OWNER_LEAVING
 from taiga.projects.notifications.choices import NotifyLevel
+
+from . import services
 
 
 def get_user_model_safe():
@@ -259,6 +261,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         return self.full_name or self.username or self.email
 
+    def contacts_visible_by_user(self, user):
+        qs = User.objects.filter(is_active=True)
+        project_ids = services.get_visible_project_ids(self, user)
+        qs = qs.filter(memberships__project_id__in=project_ids)
+        qs = qs.exclude(id=self.id)
+        return qs
+
     def save(self, *args, **kwargs):
         get_token_for_user(self, "cancel_account")
         super().save(*args, **kwargs)
@@ -325,7 +334,7 @@ class AuthData(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="auth_data")
     key = models.SlugField(max_length=50)
     value = models.CharField(max_length=300)
-    extra = JsonField()
+    extra = JSONField()
 
     class Meta:
         unique_together = ["key", "value"]

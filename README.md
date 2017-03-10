@@ -1,10 +1,9 @@
 # Taiga Backend #
 
-![Kaleidos Project](http://kaleidos.net/static/img/badge.png "Kaleidos Project")
-[![Managed with Taiga.io](https://taiga.io/media/support/attachments/article-22/banner-gh.png)](https://taiga.io "Managed with Taiga.io")
-[![Build Status](https://travis-ci.org/taigaio/taiga-back.svg?branch=master)](https://travis-ci.org/taigaio/taiga-back "Build Status")
-[![Coverage Status](https://coveralls.io/repos/taigaio/taiga-back/badge.svg?branch=master)](https://coveralls.io/r/taigaio/taiga-back?branch=master "Coverage Status")
-[![Dependency Status](https://www.versioneye.com/user/projects/561bd091a193340f32001464/badge.svg?style=flat)](https://www.versioneye.com/user/projects/561bd091a193340f32001464)
+![Kaleidos Project](http://kaleidos.net/static/img/badge.svg "Kaleidos Project")
+[![Managed with Taiga.io](https://img.shields.io/badge/managed%20with-TAIGA.io-709f14.svg)](https://tree.taiga.io/project/taiga/ "Managed with Taiga.io")
+[![Build Status](https://img.shields.io/travis/taigaio/taiga-back.svg)](https://travis-ci.org/taigaio/taiga-back "Build Status")
+[![Coverage Status](https://img.shields.io/coveralls/taigaio/taiga-back/master.svg)](https://coveralls.io/r/taigaio/taiga-back?branch=master "Coverage Status")
 
 
 ## Contribute to Taiga ##
@@ -64,7 +63,7 @@ Currently, we have authored three main documentation hubs:
 
 #### Translation ####
 
-We are ready now to accept your help translating Taiga. It's easy (and fun!) just access our team of translators with the link below, set up an account in Transifex and start contributing. Join us to make sure your language is covered! **[Help Taiga to translate content](https://www.transifex.com/signup/ "Help Taiga to trasnlatecontent")**
+We are ready now to accept your help translating Taiga. It's easy (and fun!) just access our team of translators with the link below, set up an account in Transifex and start contributing. Join us to make sure your language is covered! **[Help Taiga to translate content](https://www.transifex.com/taiga-agile-llc/taiga-back/ "Help Taiga to trasnlatecontent")**
 
 
 #### Code patches ####
@@ -80,7 +79,7 @@ Taiga is made for developers and designers. We care enormously about UI because 
 
 There are two possible ways to contribute to our UI:
 - **Bugs**: If you find a bug regarding front-end, please report it as previously indicated in the Bug reports section or send a pull-request as indicated in the Code Patches section.
-- **Enhancements**: If its a design or UX bug or enhancement we will love to receive your feedback. Please send us your enhancement, with the reason and, if possible, an example. Our design and UX team will review your enhancement and fix it as soon as possible. We recommend you to use our [mailing list](http://groups.google.co.uk/d/forum/taigaio){target="_blank"} so we can have a lot of different opinions and debate.
+- **Enhancements**: If its a design or UX bug or enhancement we will love to receive your feedback. Please send us your enhancement, with the reason and, if possible, an example. Our design and UX team will review your enhancement and fix it as soon as possible. We recommend you to use our [mailing list](http://groups.google.co.uk/d/forum/taigaio) so we can have a lot of different opinions and debate.
 - **Language Localization**: We are eager to offer localized versions of Taiga. Some members of the community have already volunteered to work to provide a variety of languages. We are working to implement some changes to allow for this and expect to accept these requests in the near future.
 
 

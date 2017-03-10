@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -20,9 +20,6 @@ from django.apps import apps
 from django.conf import settings
 
 from taiga.projects.notifications.services import create_notify_policy_if_not_exists
-from taiga.base.utils.db import get_typename_for_model_class
-
-from easy_thumbnails.files import get_thumbnailer
 
 
 ####################################
@@ -58,6 +55,13 @@ def project_post_save(sender, instance, created, **kwargs):
     if template is None:
         ProjectTemplate = apps.get_model("projects", "ProjectTemplate")
         template = ProjectTemplate.objects.get(slug=settings.DEFAULT_PROJECT_TEMPLATE)
+
+    if instance.tags:
+        template.tags = instance.tags
+
+    if instance.tags_colors:
+        template.tags_colors = instance.tags_colors
+
     template.apply_to_project(instance)
 
     instance.save()

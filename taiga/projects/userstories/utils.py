@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
-# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -21,6 +21,7 @@ from taiga.projects.attachments.utils import attach_basic_attachments
 from taiga.projects.notifications.utils import attach_watchers_to_queryset
 from taiga.projects.notifications.utils import attach_total_watchers_to_queryset
 from taiga.projects.notifications.utils import attach_is_watcher_to_queryset
+from taiga.projects.history.utils import attach_total_comments_to_queryset
 from taiga.projects.votes.utils import attach_total_voters_to_queryset
 from taiga.projects.votes.utils import attach_is_voter_to_queryset
 
@@ -174,4 +175,5 @@ def attach_extra_info(queryset, user=None, include_attachments=False, include_ta
     queryset = attach_total_watchers_to_queryset(queryset)
     queryset = attach_is_voter_to_queryset(queryset, user)
     queryset = attach_is_watcher_to_queryset(queryset, user)
+    queryset = attach_total_comments_to_queryset(queryset)
     return queryset

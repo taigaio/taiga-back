@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -46,9 +46,10 @@ from . import validators
 from . import permissions
 from . import filters as user_filters
 from . import services
+from . import utils as user_utils
 from .signals import user_cancel_account as user_cancel_account_signal
 from .signals import user_change_email as user_change_email_signal
-
+from .throttling import UserDetailRateThrottle
 
 class UsersViewSet(ModelCrudViewSet):
     permission_classes = (permissions.UserPermission,)
@@ -56,8 +57,9 @@ class UsersViewSet(ModelCrudViewSet):
     serializer_class = serializers.UserSerializer
     admin_validator_class = validators.UserAdminValidator
     validator_class = validators.UserValidator
-    queryset = models.User.objects.all().prefetch_related("memberships")
     filter_backends = (MembersFilterBackend,)
+    throttle_classes = (UserDetailRateThrottle,)
+    model = models.User
 
     def get_serializer_class(self):
         if self.action in ["partial_update", "update", "retrieve", "by_username"]:
@@ -74,6 +76,12 @@ class UsersViewSet(ModelCrudViewSet):
                 return self.admin_validator_class
 
         return self.validator_class
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.prefetch_related("memberships")
+        qs = user_utils.attach_extra_info(qs, user=self.request.user)
+        return qs
 
     def create(self, *args, **kwargs):
         raise exc.NotSupported()
@@ -92,7 +100,7 @@ class UsersViewSet(ModelCrudViewSet):
         return response.Ok(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
-        self.object = get_object_or_404(models.User, **kwargs)
+        self.object = get_object_or_404(self.get_queryset(), **kwargs)
         self.check_permissions(request, 'retrieve', self.object)
         serializer = self.get_serializer(self.object)
         return response.Ok(serializer.data)

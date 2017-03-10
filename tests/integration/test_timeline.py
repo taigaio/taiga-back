@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
-# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -35,7 +35,7 @@ def test_add_to_object_timeline():
     user1 = factories.UserFactory()
     task = factories.TaskFactory()
 
-    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: str(id(x)))
+    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: id(x))
 
     service._add_to_object_timeline(user1, task, "test", task.created_date)
 
@@ -54,7 +54,7 @@ def test_get_timeline():
     task3= factories.TaskFactory()
     task4= factories.TaskFactory()
 
-    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: str(id(x)))
+    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: id(x))
 
     service._add_to_object_timeline(user1, task1, "test", task1.created_date)
     service._add_to_object_timeline(user1, task2, "test", task2.created_date)
@@ -73,7 +73,7 @@ def test_filter_timeline_no_privileges():
     user2 = factories.UserFactory()
     task1= factories.TaskFactory()
 
-    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: str(id(x)))
+    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: id(x))
     service._add_to_object_timeline(user1, task1, "test", task1.created_date)
     timeline = Timeline.objects.exclude(event_type="users.user.create")
     timeline = service.filter_timeline_for_user(timeline, user2)
@@ -88,7 +88,7 @@ def test_filter_timeline_public_project():
     task1= factories.TaskFactory()
     task2= factories.TaskFactory.create(project=project)
 
-    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: str(id(x)))
+    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: id(x))
     service._add_to_object_timeline(user1, task1, "test", task1.created_date)
     service._add_to_object_timeline(user1, task2, "test", task2.created_date)
     timeline = Timeline.objects.exclude(event_type="users.user.create")
@@ -104,7 +104,7 @@ def test_filter_timeline_private_project_anon_permissions():
     task1= factories.TaskFactory()
     task2= factories.TaskFactory.create(project=project)
 
-    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: str(id(x)))
+    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: id(x))
     service._add_to_object_timeline(user1, task1, "test", task1.created_date)
     service._add_to_object_timeline(user1, task2, "test", task2.created_date)
     timeline = Timeline.objects.exclude(event_type="users.user.create")
@@ -123,7 +123,7 @@ def test_filter_timeline_private_project_member_permissions():
     task1= factories.TaskFactory()
     task2= factories.TaskFactory.create(project=project)
 
-    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: str(id(x)))
+    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: id(x))
     service._add_to_object_timeline(user1, task1, "test", task1.created_date)
     service._add_to_object_timeline(user1, task2, "test", task2.created_date)
     timeline = Timeline.objects.exclude(event_type="users.user.create")
@@ -140,7 +140,7 @@ def test_filter_timeline_private_project_member_admin():
     task1= factories.TaskFactory()
     task2= factories.TaskFactory.create(project=project)
 
-    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: str(id(x)))
+    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: id(x))
     service._add_to_object_timeline(user1, task1, "test", task1.created_date)
     service._add_to_object_timeline(user1, task2, "test", task2.created_date)
     timeline = Timeline.objects.exclude(event_type="users.user.create")
@@ -157,7 +157,7 @@ def test_filter_timeline_private_project_member_superuser():
     task1= factories.TaskFactory()
     task2= factories.TaskFactory.create(project=project)
 
-    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: str(id(x)))
+    service.register_timeline_implementation("tasks.task", "test", lambda x, extra_data=None: id(x))
     service._add_to_object_timeline(user1, task1, "test", task1.created_date)
     service._add_to_object_timeline(user1, task2, "test", task2.created_date)
     timeline = Timeline.objects.exclude(event_type="users.user.create")

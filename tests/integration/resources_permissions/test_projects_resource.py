@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2014-2016 Andrey Antukh <niwi@niwi.nz>
-# Copyright (C) 2014-2016 Jesús Espino <jespinog@gmail.com>
-# Copyright (C) 2014-2016 David Barragán <bameda@dbarragan.com>
-# Copyright (C) 2014-2016 Alejandro Alonso <alejandro.alonso@kaleidos.net>
-# Copyright (C) 2014-2016 Anler Hernández <hello@anler.me>
+# Copyright (C) 2014-2017 Andrey Antukh <niwi@niwi.nz>
+# Copyright (C) 2014-2017 Jesús Espino <jespinog@gmail.com>
+# Copyright (C) 2014-2017 David Barragán <bameda@dbarragan.com>
+# Copyright (C) 2014-2017 Alejandro Alonso <alejandro.alonso@kaleidos.net>
+# Copyright (C) 2014-2017 Anler Hernández <hello@anler.me>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -97,18 +97,22 @@ def data():
 
     f.MembershipFactory(project=m.public_project,
                         user=m.project_owner,
+                        role__project=m.public_project,
                         is_admin=True)
 
     f.MembershipFactory(project=m.private_project1,
                         user=m.project_owner,
+                        role__project=m.private_project1,
                         is_admin=True)
 
     f.MembershipFactory(project=m.private_project2,
                         user=m.project_owner,
+                        role__project=m.private_project2,
                         is_admin=True)
 
     f.MembershipFactory(project=m.blocked_project,
                         user=m.project_owner,
+                        role__project=m.blocked_project,
                         is_admin=True)
 
     ContentType = apps.get_model("contenttypes", "ContentType")
@@ -163,12 +167,18 @@ def test_project_update(client, data):
     ]
 
     project_data = ProjectSerializer(data.private_project2).data
+    # Because in serializer is a dict anin model is a list of lists
+    project_data["tags_colors"] = list(map(list, project_data["tags_colors"].items()))
     project_data["is_private"] = False
+
     results = helper_test_http_method(client, 'put', url, json.dumps(project_data), users)
     assert results == [401, 403, 403, 200]
 
     project_data = ProjectSerializer(data.blocked_project).data
+    # Because in serializer is a dict anin model is a list of lists
+    project_data["tags_colors"] = list(map(list, project_data["tags_colors"].items()))
     project_data["is_private"] = False
+
     results = helper_test_http_method(client, 'put', blocked_url, json.dumps(project_data), users)
     assert results == [401, 403, 403, 451]
 
@@ -658,3 +668,33 @@ def test_project_list_with_discover_mode_enabled(client, data):
     projects_data = json.loads(response.content.decode('utf-8'))
     assert len(projects_data) == 2
     assert response.status_code == 200
+
+
+def test_project_duplicate(client, data):
+    public_url = reverse('projects-duplicate', kwargs={"pk": data.public_project.pk})
+    private1_url = reverse('projects-duplicate', kwargs={"pk": data.private_project1.pk})
+    private2_url = reverse('projects-duplicate', kwargs={"pk": data.private_project2.pk})
+    blocked_url = reverse('projects-duplicate', kwargs={"pk": data.blocked_project.pk})
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    data = json.dumps({
+        "name": "test",
+        "description": "description",
+        "is_private": True,
+        "users": []
+    })
+
+    results = helper_test_http_method(client, 'post', public_url, data, users)
+    assert results == [401, 201, 201, 201]
+    results = helper_test_http_method(client, 'post', private1_url, data, users)
+    assert results == [401, 201, 201, 201]
+    results = helper_test_http_method(client, 'post', private2_url, data, users)
+    assert results == [404, 404, 201, 201]
+    results = helper_test_http_method(client, 'post', blocked_url, data, users)
+    assert results == [404, 404, 451, 451]
