@@ -78,9 +78,11 @@
 
         {% if values.changed %}
             {% for attr in values['changed'] %}
+                {% if attr.changes.value%}
     - {{ attr.name }}:
         * {{ _("From:") }} {{ attr.changes.value.0 }}
         * {{ _("To:") }} {{ attr.changes.value.1 }}
+                {% endif %}
             {% endfor %}
         {% endif %}
 
