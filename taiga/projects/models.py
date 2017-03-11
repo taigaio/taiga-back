@@ -382,9 +382,12 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
     def get_roles(self):
         return self.roles.all()
 
-    def get_users(self):
+    def get_users(self, with_admin_privileges=None):
         user_model = get_user_model()
-        members = self.memberships.values_list("user", flat=True)
+        members = self.memberships.all()
+        if with_admin_privileges is not None:
+            members = members.filter(Q(is_admin=True)|Q(user__id=self.owner.id))
+        members = members.values_list("user", flat=True)
         return user_model.objects.filter(id__in=list(members))
 
     def update_role_points(self, user_stories=None):
