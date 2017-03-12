@@ -8,7 +8,7 @@ Pillow==3.4.2
 pytz==2016.10
 six==1.10.0
 amqp==2.1.4
-djmail==1.0.0
+djmail==1.0.1
 django-jinja==2.2.2
 jinja2==2.9.5
 pygments==2.2.0
