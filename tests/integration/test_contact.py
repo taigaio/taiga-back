@@ -31,7 +31,9 @@ pytestmark = pytest.mark.django_db
 def test_create_comment(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create()
-    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+    m1 = f.MembershipFactory(user=project.owner, project=project)
+    m2 = f.MembershipFactory(project=project, is_admin=True)
+    m3 = f.MembershipFactory(project=project, is_admin=False)
 
     url = reverse("contact-list")
 
@@ -46,7 +48,7 @@ def test_create_comment(client):
     response = client.post(url, contact_data, content_type="application/json")
     assert response.status_code == 201
     assert len(mail.outbox) == 1
-    assert mail.outbox[0].to == [project.owner.email]
+    assert set(mail.outbox[0].to[0].split(", ")) == set([project.owner.email, m2.user.email])
 
 
 
