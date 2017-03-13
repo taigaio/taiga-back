@@ -129,10 +129,20 @@ class TrelloImporter:
         for member in self._client.get("/board/{}/members/all".format(project_id), {"fields": "id"}):
             user = self._client.get("/member/{}".format(member['id']), {"fields": "id,fullName,email,avatarSource,avatarHash,gravatarHash"})
             avatar = None
-            if user['avatarSource'] == "gravatar" and user['gravatarHash']:
-                avatar = 'https://www.gravatar.com/avatar/' + user['gravatarHash'] + '.jpg?s=50'
-            elif user['avatarHash']:
-                avatar = 'https://trello-avatars.s3.amazonaws.com/' + user['avatarHash'] + '/50.png'
+            try:
+                if user['avatarSource'] == "gravatar" and user['gravatarHash']:
+                    avatar = 'https://www.gravatar.com/avatar/' + user['gravatarHash'] + '.jpg?s=50'
+                elif user['avatarHash'] is not None:
+                    avatar = 'https://trello-avatars.s3.amazonaws.com/' + user['avatarHash'] + '/50.png'
+            except:
+                # NOTE: Sometimes this piece of code return this exception:
+                #
+                # File "/home/taiga/taiga-back/taiga/importers/trello/importer.py" in list_users
+                #  135.   avatar = 'https://trello-avatars.s3.amazonaws.com/' + user['avatarHash'] + '/50.png'
+                #
+                # Exception Type: TypeError at /api/v1/importers/trello/list_users
+                # Exception Value: Can't convert 'NoneType' object to str implicitly
+                pass
 
             members.append({
                 "id": user['id'],
