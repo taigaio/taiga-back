@@ -23,11 +23,15 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
+from taiga.base.mails import InlineCSSTemplateMail
 from taiga.base.mails import mail_builder
 
 from taiga.projects.models import Project, Membership
 from taiga.projects.history.models import HistoryEntry
 from taiga.projects.history.services import get_history_queryset_by_model_instance
+
+from taiga.users.services import get_user_photo_url
+from taiga.front.templatetags.functions import resolve as resolve_front_url
 
 
 class Command(BaseCommand):
@@ -186,18 +190,17 @@ class Command(BaseCommand):
             email = cls()
             email.send(email_address, context)
 
-
         # Transfer Emails
         context = {
             "project": Project.objects.all().order_by("?").first(),
-            "requester": User.objects.all().order_by("?").first(),
+            "requester": get_user_model().objects.all().order_by("?").first(),
         }
         email = mail_builder.transfer_request(email_address, context)
         email.send()
 
         context = {
             "project": Project.objects.all().order_by("?").first(),
-            "receiver": User.objects.all().order_by("?").first(),
+            "receiver": get_user_model().objects.all().order_by("?").first(),
             "token": "test-token",
             "reason": "Test reason"
         }
@@ -206,8 +209,8 @@ class Command(BaseCommand):
 
         context = {
             "project": Project.objects.all().order_by("?").first(),
-            "old_owner": User.objects.all().order_by("?").first(),
-            "new_owner": User.objects.all().order_by("?").first(),
+            "old_owner": get_user_model().objects.all().order_by("?").first(),
+            "new_owner": get_user_model().objects.all().order_by("?").first(),
             "reason": "Test reason"
         }
         email = mail_builder.transfer_accept(email_address, context)
@@ -215,8 +218,66 @@ class Command(BaseCommand):
 
         context = {
             "project": Project.objects.all().order_by("?").first(),
-            "rejecter": User.objects.all().order_by("?").first(),
+            "rejecter": get_user_model().objects.all().order_by("?").first(),
             "reason": "Test reason"
         }
         email = mail_builder.transfer_reject(email_address, context)
+        email.send()
+
+
+        # Contact with project admins email
+        project = Project.objects.all().order_by("?").first()
+        user = get_user_model().objects.all().order_by("?").first()
+        context = {
+            "full_name": user.get_full_name(),
+            "project_name": project.name,
+            "photo_url": get_user_photo_url(user),
+            "user_profile_url": resolve_front_url("user", user.username),
+            "project_settings_url": resolve_front_url("project-admin", project.slug),
+            "comment": "Test comment notification."
+        }
+        email = mail_builder.contact_notification(email_address, context)
+        email.send()
+
+        # GitHub importer email
+        context = {
+            "project": Project.objects.all().order_by("?").first(),
+            "user": get_user_model().objects.all().order_by("?").first()
+        }
+        email = mail_builder.github_import_success(email_address, context)
+        email.send()
+
+        # Jira importer email
+        context = {
+            "project": Project.objects.all().order_by("?").first(),
+            "user": get_user_model().objects.all().order_by("?").first()
+        }
+        email = mail_builder.jira_import_success(email_address, context)
+        email.send()
+
+        # Trello importer email
+        context = {
+            "project": Project.objects.all().order_by("?").first(),
+            "user": get_user_model().objects.all().order_by("?").first()
+        }
+        email = mail_builder.trello_import_success(email_address, context)
+        email.send()
+
+        # Asana importer email
+        context = {
+            "project": Project.objects.all().order_by("?").first(),
+            "user": get_user_model().objects.all().order_by("?").first()
+        }
+        email = mail_builder.asana_import_success(email_address, context)
+        email.send()
+
+        # Error importer email
+        context = {
+            "user": get_user_model().objects.all().order_by("?").first(),
+            "error_subject": "Error importing GitHub project",
+            "error_message": "Error importing GitHub project",
+            "project": 1234,
+            "exception": "Exception message"
+        }
+        email = mail_builder.importer_import_error(email_address, context)
         email.send()
