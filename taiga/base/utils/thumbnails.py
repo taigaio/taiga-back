@@ -34,13 +34,16 @@ from io import BytesIO
 try:
     from cairosvg.surface import PNGSurface
 
+    def _accept(prefix):
+        return "svg" in str(prefix.lower())
+
     def svg_image_factory(data, *args):
         png_data = PNGSurface.convert(data.read())
         return PngImageFile(BytesIO(png_data))
 
     Image.register_mime("SVG", "image/svg+xml")
     Image.register_extension("SVG", ".svg")
-    Image.register_open("SVG", svg_image_factory)
+    Image.register_open("SVG", svg_image_factory, _accept)
 except Exception:
     pass
 
