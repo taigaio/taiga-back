@@ -45,6 +45,7 @@ from taiga.projects.custom_attributes.models import (UserStoryCustomAttribute,
 from taiga.projects.history.models import HistoryEntry
 from taiga.projects.history.choices import HistoryType
 from taiga.mdrender.service import render as mdrender
+from taiga.importers import exceptions
 
 EPIC_COLORS = {
     "ghx-label-0": "#ffffff",
@@ -737,6 +738,8 @@ class JiraImporterCommon:
         oauth = OAuth1(consumer_key, signature_method=SIGNATURE_RSA, rsa_key=key_cert_data)
         r = requests.post(
             server + '/plugins/servlet/oauth/request-token', verify=verify, auth=oauth)
+        if r.status_code != 200:
+            raise exceptions.InvalidServiceConfiguration()
         request = dict(parse_qsl(r.text))
         request_token = request['oauth_token']
         request_token_secret = request['oauth_token_secret']

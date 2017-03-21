@@ -25,6 +25,7 @@ from taiga.users.services import get_user_photo_url
 from taiga.users.gravatar import get_user_gravatar_id
 
 from taiga.importers import permissions
+from taiga.importers import exceptions
 from taiga.importers.services import resolve_users_bindings
 from .normal import JiraNormalImporter
 from .agile import JiraAgileImporter
@@ -178,12 +179,15 @@ class JiraImporterViewSet(viewsets.ViewSet):
         if not jira_url:
             raise exc.WrongArguments(_("The url param is needed"))
 
-        (oauth_token, oauth_secret, url) = JiraNormalImporter.get_auth_url(
-            jira_url,
-            settings.IMPORTERS.get('jira', {}).get('consumer_key', None),
-            settings.IMPORTERS.get('jira', {}).get('cert', None),
-            True
-        )
+        try:
+            (oauth_token, oauth_secret, url) = JiraNormalImporter.get_auth_url(
+                jira_url,
+                settings.IMPORTERS.get('jira', {}).get('consumer_key', None),
+                settings.IMPORTERS.get('jira', {}).get('cert', None),
+                True
+            )
+        except exceptions.InvalidServiceConfiguration:
+            raise exc.BadRequest(_("Invalid Jira server configuration."))
 
         (auth_data, created) = AuthData.objects.get_or_create(
             user=request.user,
