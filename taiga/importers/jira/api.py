@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import uuid
+
 from django.utils.translation import ugettext as _
 from django.conf import settings
 
@@ -193,7 +195,7 @@ class JiraImporterViewSet(viewsets.ViewSet):
             user=request.user,
             key="jira-oauth",
             defaults={
-                "value": "",
+                "value": uuid.uuid4().hex,
                 "extra": {},
             }
         )
