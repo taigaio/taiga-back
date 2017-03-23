@@ -214,6 +214,7 @@ class JiraImporterViewSet(viewsets.ViewSet):
 
         try:
             oauth_data = request.user.auth_data.get(key="jira-oauth")
+            oauth_verifier = request.DATA.get("oauth_verifier", None)
             oauth_token = oauth_data.extra['oauth_token']
             oauth_secret = oauth_data.extra['oauth_secret']
             server_url = oauth_data.extra['url']
@@ -225,7 +226,8 @@ class JiraImporterViewSet(viewsets.ViewSet):
                 settings.IMPORTERS.get('jira', {}).get('cert', None),
                 oauth_token,
                 oauth_secret,
-                True
+                oauth_verifier,
+                False
             )
         except Exception as e:
             raise exc.WrongArguments(_("Invalid or expired auth token"))

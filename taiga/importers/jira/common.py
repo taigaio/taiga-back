@@ -17,12 +17,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import requests
-from urllib.parse import parse_qsl
+from urllib.parse import parse_qsl, quote_plus
 from oauthlib.oauth1 import SIGNATURE_RSA
 
 from requests_oauthlib import OAuth1
 from django.core.files.base import ContentFile
 from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 
 from taiga.users.models import User
 from taiga.projects.models import Points
@@ -46,6 +47,7 @@ from taiga.projects.history.models import HistoryEntry
 from taiga.projects.history.choices import HistoryType
 from taiga.mdrender.service import render as mdrender
 from taiga.importers import exceptions
+from taiga.front.templatetags.functions import resolve as resolve_front_url
 
 EPIC_COLORS = {
     "ghx-label-0": "#ffffff",
@@ -735,7 +737,9 @@ class JiraImporterCommon:
         if verify is None:
             verify = server.startswith('https')
 
-        oauth = OAuth1(consumer_key, signature_method=SIGNATURE_RSA, rsa_key=key_cert_data)
+        callback_uri = resolve_front_url("project-import-jira", quote_plus(server))
+        oauth = OAuth1(consumer_key, signature_method=SIGNATURE_RSA, rsa_key=key_cert_data, callback_uri=callback_uri)
+
         r = requests.post(
             server + '/plugins/servlet/oauth/request-token', verify=verify, auth=oauth)
         if r.status_code != 200:
@@ -751,13 +755,16 @@ class JiraImporterCommon:
         )
 
     @classmethod
-    def get_access_token(cls, server, consumer_key, key_cert_data, request_token, request_token_secret, verify=False):
+    def get_access_token(cls, server, consumer_key, key_cert_data, request_token, request_token_secret, request_verifier, verify=False):
+        callback_uri = resolve_front_url("project-import-jira", quote_plus(server))
         oauth = OAuth1(
             consumer_key,
             signature_method=SIGNATURE_RSA,
+            callback_uri=callback_uri,
             rsa_key=key_cert_data,
             resource_owner_key=request_token,
-            resource_owner_secret=request_token_secret
+            resource_owner_secret=request_token_secret,
+            verifier=request_verifier,
         )
         r = requests.post(server + '/plugins/servlet/oauth/access-token', verify=verify, auth=oauth)
         access = dict(parse_qsl(r.text))
