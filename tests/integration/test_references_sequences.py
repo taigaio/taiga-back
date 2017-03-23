@@ -191,3 +191,44 @@ def test_params_validation_in_api_request(client, refmodels):
     response = client.json.get("{}?project={}&ref={}&milestone={}".format(url, project.slug, us.ref,
                                                                           milestone.slug))
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_by_ref_calls_in_api_request(client, refmodels):
+    refmodels.Reference.objects.all().delete()
+
+    user = factories.UserFactory.create()
+    project = factories.ProjectFactory.create(owner=user)
+    seqname1 = refmodels.make_sequence_name(project)
+    role = factories.RoleFactory.create(project=project)
+    factories.MembershipFactory.create(project=project, user=user, role=role, is_admin=True)
+
+    epic = factories.EpicFactory.create(project=project)
+    milestone = factories.MilestoneFactory.create(project=project)
+    us = factories.UserStoryFactory.create(project=project)
+    task = factories.TaskFactory.create(project=project)
+    issue = factories.IssueFactory.create(project=project)
+    wiki_page = factories.WikiPageFactory.create(project=project)
+
+    client.login(user)
+
+    url = reverse("resolver-list")
+    response = client.json.get("{}?project={}&ref={}".format(url, project.slug, epic.ref))
+    assert response.status_code == 200
+    assert response.data["epic"] == epic.id
+
+    response = client.json.get("{}?project={}&ref={}".format(url, project.slug, us.ref))
+    assert response.status_code == 200
+    assert response.data["us"] == us.id
+
+    response = client.json.get("{}?project={}&ref={}".format(url, project.slug, task.ref))
+    assert response.status_code == 200
+    assert response.data["task"] == task.id
+
+    response = client.json.get("{}?project={}&ref={}".format(url, project.slug, issue.ref))
+    assert response.status_code == 200
+    assert response.data["issue"] == issue.id
+
+    response = client.json.get("{}?project={}&ref={}".format(url, project.slug, wiki_page.slug))
+    assert response.status_code == 200
+    assert response.data["wikipage"] == wiki_page.id

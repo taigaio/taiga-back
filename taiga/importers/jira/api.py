@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import uuid
+
 from django.utils.translation import ugettext as _
 from django.conf import settings
 
@@ -25,6 +27,7 @@ from taiga.users.services import get_user_photo_url
 from taiga.users.gravatar import get_user_gravatar_id
 
 from taiga.importers import permissions
+from taiga.importers import exceptions
 from taiga.importers.services import resolve_users_bindings
 from .normal import JiraNormalImporter
 from .agile import JiraAgileImporter
@@ -178,18 +181,21 @@ class JiraImporterViewSet(viewsets.ViewSet):
         if not jira_url:
             raise exc.WrongArguments(_("The url param is needed"))
 
-        (oauth_token, oauth_secret, url) = JiraNormalImporter.get_auth_url(
-            jira_url,
-            settings.IMPORTERS.get('jira', {}).get('consumer_key', None),
-            settings.IMPORTERS.get('jira', {}).get('cert', None),
-            True
-        )
+        try:
+            (oauth_token, oauth_secret, url) = JiraNormalImporter.get_auth_url(
+                jira_url,
+                settings.IMPORTERS.get('jira', {}).get('consumer_key', None),
+                settings.IMPORTERS.get('jira', {}).get('cert', None),
+                True
+            )
+        except exceptions.InvalidServiceConfiguration:
+            raise exc.BadRequest(_("Invalid Jira server configuration."))
 
         (auth_data, created) = AuthData.objects.get_or_create(
             user=request.user,
             key="jira-oauth",
             defaults={
-                "value": "",
+                "value": uuid.uuid4().hex,
                 "extra": {},
             }
         )
@@ -208,6 +214,7 @@ class JiraImporterViewSet(viewsets.ViewSet):
 
         try:
             oauth_data = request.user.auth_data.get(key="jira-oauth")
+            oauth_verifier = request.DATA.get("oauth_verifier", None)
             oauth_token = oauth_data.extra['oauth_token']
             oauth_secret = oauth_data.extra['oauth_secret']
             server_url = oauth_data.extra['url']
@@ -219,7 +226,8 @@ class JiraImporterViewSet(viewsets.ViewSet):
                 settings.IMPORTERS.get('jira', {}).get('cert', None),
                 oauth_token,
                 oauth_secret,
-                True
+                oauth_verifier,
+                False
             )
         except Exception as e:
             raise exc.WrongArguments(_("Invalid or expired auth token"))

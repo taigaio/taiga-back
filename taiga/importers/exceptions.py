@@ -22,5 +22,8 @@ class InvalidRequest(Exception):
 class InvalidAuthResult(Exception):
     pass
 
+class InvalidServiceConfiguration(Exception):
+    pass
+
 class FailedRequest(Exception):
     pass

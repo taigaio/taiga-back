@@ -66,24 +66,34 @@ class ResolverViewSet(viewsets.ViewSet):
 
         if data["ref"]:
             ref_found = False  # No need to continue once one ref is found
-            if ref_found is False and user_has_perm(request.user, "view_epics", project):
-                epic = project.epics.filter(ref=data["ref"]).first()
-                if epic:
-                    result["epic"] = epic.pk
-                    ref_found = True
-            if user_has_perm(request.user, "view_us", project):
-                us = project.user_stories.filter(ref=data["ref"]).first()
-                if us:
-                    result["us"] = us.pk
-                    ref_found = True
-            if ref_found is False and user_has_perm(request.user, "view_tasks", project):
-                task = project.tasks.filter(ref=data["ref"]).first()
-                if task:
-                    result["task"] = task.pk
-                    ref_found = True
-            if ref_found is False and user_has_perm(request.user, "view_issues", project):
-                issue = project.issues.filter(ref=data["ref"]).first()
-                if issue:
-                    result["issue"] = issue.pk
+            try:
+                value = int(data["ref"])
+
+                if user_has_perm(request.user, "view_epics", project):
+                    epic = project.epics.filter(ref=value).first()
+                    if epic:
+                        result["epic"] = epic.pk
+                        ref_found = True
+                if ref_found is False and user_has_perm(request.user, "view_us", project):
+                    us = project.user_stories.filter(ref=value).first()
+                    if us:
+                        result["us"] = us.pk
+                        ref_found = True
+                if ref_found is False and user_has_perm(request.user, "view_tasks", project):
+                    task = project.tasks.filter(ref=value).first()
+                    if task:
+                        result["task"] = task.pk
+                        ref_found = True
+                if ref_found is False and user_has_perm(request.user, "view_issues", project):
+                    issue = project.issues.filter(ref=value).first()
+                    if issue:
+                        result["issue"] = issue.pk
+            except:
+                value = data["ref"]
+
+                if user_has_perm(request.user, "view_wiki_pages", project):
+                    wiki_page = project.wiki_pages.filter(slug=value).first()
+                    if wiki_page:
+                        result["wikipage"] = wiki_page.pk
 
         return response.Ok(result)
