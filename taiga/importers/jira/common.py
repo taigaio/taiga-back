@@ -189,11 +189,13 @@ class JiraImporterCommon:
 
     def list_users(self):
         result = []
-        users = self._client.get("/user/picker", {
-            "query": "@",
+        projects = self._client.get('/project')
+        users = self._client.get("/user/assignable/multiProjectSearch", {
+            "username": "",
+            "projectKeys": list(map(lambda x: x['key'], projects)),
             "maxResults": 1000,
         })
-        for user in users['users']:
+        for user in users:
             user_data = self._client.get("/user", {
                 "key": user['key']
             })
