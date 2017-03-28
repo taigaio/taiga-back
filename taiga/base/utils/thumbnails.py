@@ -33,17 +33,20 @@ from io import BytesIO
 # SVG thumbnail generator
 try:
     from cairosvg.surface import PNGSurface
+    import magic
 
-    def _accept(prefix):
-        return "svg" in str(prefix.lower())
+    def svg_image_factory(fp, filename):
+        mime_type = magic.from_buffer(fp.read(1024), mime=True)
+        if mime_type != "image/svg+xml":
+            raise TypeError
 
-    def svg_image_factory(data, *args):
-        png_data = PNGSurface.convert(data.read())
+        fp.seek(0)
+        png_data = PNGSurface.convert(fp.read())
         return PngImageFile(BytesIO(png_data))
 
     Image.register_mime("SVG", "image/svg+xml")
     Image.register_extension("SVG", ".svg")
-    Image.register_open("SVG", svg_image_factory, _accept)
+    Image.register_open("SVG", svg_image_factory)
 except Exception:
     pass
 
