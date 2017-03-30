@@ -38,6 +38,7 @@ from taiga.projects.history.services import (make_key_from_model_object,
                                              get_last_snapshot_for_key,
                                              get_model_from_key)
 from taiga.permissions.services import user_has_perm
+from taiga.events import events
 
 from .models import HistoryChangeNotification, Watched
 from .squashing import squash_history_entries
@@ -221,7 +222,6 @@ def send_notifications(obj, *, history):
                                             owner=owner,
                                             project=obj.project,
                                             history_type=history.type))
-
     notification.updated_datetime = timezone.now()
     notification.save()
     notification.history_entries.add(history)
@@ -234,6 +234,9 @@ def send_notifications(obj, *, history):
     # If we are the min interval is 0 it just work in a synchronous and spamming way
     if settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL == 0:
         send_sync_notifications(notification.id)
+
+    for user in notify_users:
+        events.emit_live_notification_for_model(obj, user, history)
 
 
 @transaction.atomic
@@ -304,6 +307,7 @@ def send_sync_notifications(notification_id):
         context["user"] = user
         context["lang"] = user.lang or settings.LANGUAGE_CODE
         email.send(user.email, context, headers=headers)
+
 
     notification.delete()
 
