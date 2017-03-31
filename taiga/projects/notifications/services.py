@@ -55,7 +55,7 @@ def notify_policy_exists(project, user) -> bool:
     return qs.exists()
 
 
-def create_notify_policy(project, user, level=NotifyLevel.involved):
+def create_notify_policy(project, user, level=NotifyLevel.involved, live_level=NotifyLevel.all):
     """
     Given a project and user, create notification policy for it.
     """
@@ -63,12 +63,13 @@ def create_notify_policy(project, user, level=NotifyLevel.involved):
     try:
         return model_cls.objects.create(project=project,
                                         user=user,
-                                        notify_level=level)
+                                        notify_level=level,
+                                        live_notify_level=live_level)
     except IntegrityError as e:
         raise exc.IntegrityError(_("Notify exists for specified user and project")) from e
 
 
-def create_notify_policy_if_not_exists(project, user, level=NotifyLevel.involved):
+def create_notify_policy_if_not_exists(project, user, level=NotifyLevel.involved, live_level=NotifyLevel.all):
     """
     Given a project and user, create notification policy for it.
     """
@@ -76,7 +77,8 @@ def create_notify_policy_if_not_exists(project, user, level=NotifyLevel.involved
     try:
         result = model_cls.objects.get_or_create(project=project,
                                                  user=user,
-                                                 defaults={"notify_level": level})
+                                                 defaults={"notify_level": level,
+                                                           "live_notify_level": live_level})
         return result[0]
     except IntegrityError as e:
         raise exc.IntegrityError(_("Notify exists for specified user and project")) from e
@@ -134,7 +136,7 @@ def _filter_notificable(user):
     return user.is_active and not user.is_system
 
 
-def get_users_to_notify(obj, *, history=None, discard_users=None) -> list:
+def get_users_to_notify(obj, *, history=None, discard_users=None, live=False) -> list:
     """
     Get filtered set of users to notify for specified
     model instance and changer.
@@ -146,6 +148,8 @@ def get_users_to_notify(obj, *, history=None, discard_users=None) -> list:
 
     def _check_level(project: object, user: object, levels: tuple) -> bool:
         policy = project.cached_notify_policy_for_user(user)
+        if live:
+            return policy.live_notify_level in levels
         return policy.notify_level in levels
 
     _can_notify_hard = partial(_check_level, project,
@@ -235,7 +239,8 @@ def send_notifications(obj, *, history):
     if settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL == 0:
         send_sync_notifications(notification.id)
 
-    for user in notify_users:
+    live_notify_users = get_users_to_notify(obj, history=history, discard_users=[notification.owner], live=True)
+    for user in live_notify_users:
         events.emit_live_notification_for_model(obj, user, history)
 
 
@@ -420,7 +425,11 @@ def add_watcher(obj, user):
         project=obj.project)
 
     notify_policy, _ = apps.get_model("notifications", "NotifyPolicy").objects.get_or_create(
-        project=obj.project, user=user, defaults={"notify_level": NotifyLevel.involved})
+        project=obj.project,
+        user=user,
+        defaults={"notify_level": NotifyLevel.involved,
+                  "live_notify_level": NotifyLevel.involved}
+    )
 
     return watched
 
@@ -442,22 +451,25 @@ def remove_watcher(obj, user):
     qs.delete()
 
 
-def set_notify_policy_level(notify_policy, notify_level):
+def set_notify_policy_level(notify_policy, notify_level, live=False):
     """
     Set notification level for specified policy.
     """
     if notify_level not in [e.value for e in NotifyLevel]:
         raise exc.IntegrityError(_("Invalid value for notify level"))
 
-    notify_policy.notify_level = notify_level
+    if live:
+        notify_policy.live_notify_level = notify_level
+    else:
+        notify_policy.notify_level = notify_level
     notify_policy.save()
 
 
-def set_notify_policy_level_to_ignore(notify_policy):
+def set_notify_policy_level_to_ignore(notify_policy, live=False):
     """
     Set notification level for specified policy.
     """
-    set_notify_policy_level(notify_policy, NotifyLevel.none)
+    set_notify_policy_level(notify_policy, NotifyLevel.none, live=live)
 
 
 def make_ms_thread_index(msg_id, dt):

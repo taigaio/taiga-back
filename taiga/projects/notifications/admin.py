@@ -32,5 +32,5 @@ class WatchedInline(GenericTabularInline):
 class NotifyPolicyInline(TabularInline):
     model = models.NotifyPolicy
     extra = 0
-    readonly_fields = ("notify_level",)
+    readonly_fields = ("notify_level", "live_notify_level")
     raw_id_fields = ["user"]
