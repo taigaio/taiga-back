@@ -38,7 +38,8 @@ class Timeline(models.Model):
     created = models.DateTimeField(default=timezone.now, db_index=True)
 
     class Meta:
-        index_together = [('content_type', 'object_id', 'namespace'), ]
+        index_together = [('content_type', 'object_id', 'namespace'),
+                          ('namespace', 'created'),]
 
 # Register all implementations
 from .timeline_implementations import *
