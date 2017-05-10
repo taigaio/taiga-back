@@ -16,11 +16,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import connection
 from django.db import DatabaseError
 from django.db import transaction
 from django.shortcuts import _get_queryset
+from taiga.celery import app
 
 from . import functions
 
@@ -122,9 +124,9 @@ def update_in_bulk(instances, list_of_new_values, callback=None, precall=None):
         instance.save()
         callback(instance)
 
-
+@app.task
 @transaction.atomic
-def update_attr_in_bulk_for_ids(values, attr, model):
+def _update_attr_in_bulk_for_ids(values, attr, model):
     """Update a table using a list of ids.
 
     :params values: Dict of new values where the key is the pk of the element to update.
@@ -160,6 +162,14 @@ def update_attr_in_bulk_for_ids(values, attr, model):
                 _run_sql(retries + 1)
 
     transaction.on_commit(_run_sql)
+
+
+@transaction.atomic
+def update_attr_in_bulk_for_ids(values, attr, model):
+    if settings.CELERY_ENABLED:
+        _update_attr_in_bulk_for_ids.delay(values, attr, model)
+    else:
+        _update_attr_in_bulk_for_ids(values, attr, model)
 
 
 def to_tsquery(term):
