@@ -30,7 +30,11 @@ from .mixins import (HistoryExportSerializerMixin,
 from .cache import (_custom_tasks_attributes_cache,
                     _custom_userstories_attributes_cache,
                     _custom_epics_attributes_cache,
-                    _custom_issues_attributes_cache)
+                    _custom_issues_attributes_cache,
+                    _tasks_statuses_cache,
+                    _issues_statuses_cache,
+                    _userstories_statuses_cache,
+                    _epics_statuses_cache)
 
 
 class RelatedExportSerializer(serializers.LightSerializer):
@@ -217,6 +221,11 @@ class TaskExportSerializer(CustomAttributesValuesExportSerializerMixin,
             _custom_tasks_attributes_cache[project.id] = list(project.taskcustomattributes.all().values('id', 'name'))
         return _custom_tasks_attributes_cache[project.id]
 
+    def statuses_queryset(self, project):
+        if project.id not in _tasks_statuses_cache:
+            _tasks_statuses_cache[project.id] = {s.id: s.name for s in project.task_statuses.all()}
+        return _tasks_statuses_cache[project.id]
+
 
 class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin,
                                 HistoryExportSerializerMixin,
@@ -255,6 +264,10 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin,
             )
         return _custom_userstories_attributes_cache[project.id]
 
+    def statuses_queryset(self, project):
+        if project.id not in _userstories_statuses_cache:
+            _userstories_statuses_cache[project.id] = {s.id: s.name for s in project.us_statuses.all()}
+        return _userstories_statuses_cache[project.id]
 
 class EpicRelatedUserStoryExportSerializer(RelatedExportSerializer):
     user_story = SlugRelatedField(slug_field="ref")
@@ -285,14 +298,19 @@ class EpicExportSerializer(CustomAttributesValuesExportSerializerMixin,
     related_user_stories = MethodField()
 
     def get_related_user_stories(self, obj):
-        return EpicRelatedUserStoryExportSerializer(obj.relateduserstory_set.all(), many=True).data
+        return EpicRelatedUserStoryExportSerializer(obj.relateduserstory_set.filter(epic__project=obj.project), many=True).data
 
     def custom_attributes_queryset(self, project):
         if project.id not in _custom_epics_attributes_cache:
             _custom_epics_attributes_cache[project.id] = list(
-                project.userstorycustomattributes.all().values('id', 'name')
+                project.epiccustomattributes.all().values('id', 'name')
             )
         return _custom_epics_attributes_cache[project.id]
+
+    def statuses_queryset(self, project):
+        if project.id not in _epics_statuses_cache:
+            _epics_statuses_cache[project.id] = {s.id: s.name for s in project.epic_statuses.all()}
+        return _epics_statuses_cache[project.id]
 
 
 class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin,
@@ -329,6 +347,10 @@ class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin,
             _custom_issues_attributes_cache[project.id] = list(project.issuecustomattributes.all().values('id', 'name'))
         return _custom_issues_attributes_cache[project.id]
 
+    def statuses_queryset(self, project):
+        if project.id not in _issues_statuses_cache:
+            _issues_statuses_cache[project.id] = {s.id: s.name for s in project.issue_statuses.all()}
+        return _issues_statuses_cache[project.id]
 
 class WikiPageExportSerializer(HistoryExportSerializerMixin,
                                AttachmentExportSerializerMixin,
@@ -342,6 +364,8 @@ class WikiPageExportSerializer(HistoryExportSerializerMixin,
     content = Field()
     version = Field()
 
+    def statuses_queryset(self, project):
+        return {}
 
 class WikiLinkExportSerializer(RelatedExportSerializer):
     title = Field()

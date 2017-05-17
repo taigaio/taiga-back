@@ -28,13 +28,14 @@ from taiga.projects.notifications import services as notifications_services
 from taiga.projects.history import services as history_service
 
 from .fields import (UserRelatedField, HistoryUserField, HistoryDiffField,
-                     JSONField, HistoryValuesField, CommentField, FileField)
+                     JSONField, HistorySnapshotField,
+                     HistoryValuesField, CommentField, FileField)
 
 
 class HistoryExportValidator(validators.ModelValidator):
     user = HistoryUserField()
     diff = HistoryDiffField(required=False)
-    snapshot = JSONField(required=False)
+    snapshot = HistorySnapshotField(required=False)
     values = HistoryValuesField(required=False)
     comment = CommentField(required=False)
     delete_comment_date = serializers.DateTimeField(required=False)
@@ -44,6 +45,15 @@ class HistoryExportValidator(validators.ModelValidator):
         model = history_models.HistoryEntry
         exclude = ("id", "comment_html", "key", "project")
 
+    def restore_object(self, attrs, instance=None):
+        snapshot = attrs["snapshot"]
+        statuses = self.context.get("statuses", {})
+        if "status" in snapshot:
+            status_id = statuses.get(snapshot["status"], None)
+            attrs["snapshot"]["status"] = status_id
+
+        instance = super(HistoryExportValidator, self).restore_object(attrs, instance)
+        return instance
 
 class AttachmentExportValidator(validators.ModelValidator):
     owner = UserRelatedField(required=False)

@@ -12,6 +12,7 @@ from .validators import UserStoryCustomAttributeExportValidator
 from .validators import TaskCustomAttributeExportValidator
 from .validators import IssueCustomAttributeExportValidator
 from .validators import BaseCustomAttributesValuesExportValidator
+from .validators import EpicCustomAttributesValuesExportValidator
 from .validators import UserStoryCustomAttributesValuesExportValidator
 from .validators import TaskCustomAttributesValuesExportValidator
 from .validators import IssueCustomAttributesValuesExportValidator

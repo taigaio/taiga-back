@@ -144,6 +144,21 @@ class ProjectRelatedField(serializers.RelatedField):
             raise ValidationError(_("{}=\"{}\" not found in this project".format(self.slug_field, data)))
 
 
+class HistorySnapshotField(JSONField):
+    def from_native(self, data):
+        if data is None:
+            return {}
+
+        owner = UserRelatedField().from_native(data.get("owner"))
+        if owner:
+            data["owner"] = owner.pk
+
+        assigned_to = UserRelatedField().from_native(data.get("assigned_to"))
+        if assigned_to:
+            data["assigned_to"] = assigned_to.pk
+
+        return data
+
 class HistoryUserField(JSONField):
     def from_native(self, data):
         if data is None:
