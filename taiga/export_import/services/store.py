@@ -155,8 +155,8 @@ def _store_attachment(project, obj, attachment):
     return validator
 
 
-def _store_history(project, obj, history):
-    validator = validators.HistoryExportValidator(data=history, context={"project": project})
+def _store_history(project, obj, history, statuses={}):
+    validator = validators.HistoryExportValidator(data=history, context={"project": project, "statuses": statuses})
     if validator.is_valid():
         validator.object.key = make_key_from_model_object(obj)
         if validator.object.diff is None:
@@ -360,8 +360,9 @@ def store_user_story(project, data):
             _store_role_point(project, validator.object, role_point)
 
         history_entries = data.get("history", [])
+        statuses = {s.name: s.id for s in project.us_statuses.all()}
         for history in history_entries:
-            _store_history(project, validator.object, history)
+            _store_history(project, validator.object, history, statuses)
 
         if not history_entries:
             take_snapshot(validator.object, user=validator.object.owner)
@@ -436,8 +437,9 @@ def store_epic(project, data):
             _store_epic_related_user_story(project, validator.object, related_user_story)
 
         history_entries = data.get("history", [])
+        statuses = {s.name: s.id for s in project.epic_statuses.all()}
         for history in history_entries:
-            _store_history(project, validator.object, history)
+            _store_history(project, validator.object, history, statuses)
 
         if not history_entries:
             take_snapshot(validator.object, user=validator.object.owner)
@@ -496,8 +498,9 @@ def store_task(project, data):
             _store_attachment(project, validator.object, task_attachment)
 
         history_entries = data.get("history", [])
+        statuses = {s.name: s.id for s in project.task_statuses.all()}
         for history in history_entries:
-            _store_history(project, validator.object, history)
+            _store_history(project, validator.object, history, statuses)
 
         if not history_entries:
             take_snapshot(validator.object, user=validator.object.owner)
@@ -567,8 +570,9 @@ def store_issue(project, data):
             _store_attachment(project, validator.object, attachment)
 
         history_entries = data.get("history", [])
+        statuses = {s.name: s.id for s in project.issue_statuses.all()}
         for history in history_entries:
-            _store_history(project, validator.object, history)
+            _store_history(project, validator.object, history, statuses)
 
         if not history_entries:
             take_snapshot(validator.object, user=validator.object.owner)
