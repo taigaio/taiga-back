@@ -18,6 +18,7 @@
 
 from django.apps import apps
 from django.db import transaction
+from django.db.models import Max
 
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse
@@ -156,6 +157,10 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
         related_data = getattr(obj, "_related_data", {})
         self._role_points = related_data.pop("role_points", None)
 
+        if obj.kanban_order == -1:
+            if self._max_order:
+                obj.kanban_order = self._max_order + 1;
+
         if not obj.id:
             obj.owner = self.request.user
         else:
@@ -275,6 +280,12 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                         request.DATA['status'] = new_project.default_us_status.id
             except Project.DoesNotExist:
                 return response.BadRequest(_("The project doesn't exist"))
+
+        if self.object and self.object.project_id:
+            self._max_order = models.UserStory.objects.filter(
+                project_id=self.object.project_id,
+                status_id=request.DATA.get('status', None)
+            ).aggregate(Max('kanban_order'))['kanban_order__max']
 
         return super().update(request, *args, **kwargs)
 
