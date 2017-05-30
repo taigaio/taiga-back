@@ -24,6 +24,10 @@ _custom_tasks_attributes_cache = {}
 _custom_issues_attributes_cache = {}
 _custom_userstories_attributes_cache = {}
 _custom_epics_attributes_cache = {}
+_tasks_statuses_cache = {}
+_issues_statuses_cache = {}
+_userstories_statuses_cache = {}
+_epics_statuses_cache = {}
 
 def cached_get_user_by_pk(pk):
     if pk not in _cache_user_by_pk:

@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 
 from taiga.base.api import serializers
@@ -25,14 +26,15 @@ from taiga.projects.history import models as history_models
 from taiga.projects.attachments import models as attachments_models
 from taiga.projects.history import services as history_service
 
-from .fields import (UserRelatedField, HistoryUserField, HistoryDiffField,
-                     HistoryValuesField, FileField)
-
+from .cache import cached_get_user_by_pk
+from .fields import (UserRelatedField, HistoryUserField,
+                     HistoryDiffField, HistoryValuesField,
+                     SlugRelatedField, FileField)
 
 class HistoryExportSerializer(serializers.LightSerializer):
     user = HistoryUserField()
     diff = HistoryDiffField()
-    snapshot = Field()
+    snapshot = MethodField()
     values = HistoryValuesField()
     comment = Field()
     delete_comment_date = DateTimeField()
@@ -44,17 +46,49 @@ class HistoryExportSerializer(serializers.LightSerializer):
     is_snapshot = Field()
     type = Field()
 
+    def __init__(self, *args, **kwargs):
+        # Don't pass the extra ids args up to the superclass
+        self.statuses_queryset = kwargs.pop("statuses_queryset", {})
+
+        # Instantiate the superclass normally
+        super().__init__(*args, **kwargs)
+
+    def get_snapshot(self, obj):
+        user_model_cls = get_user_model()
+
+        snapshot = obj.snapshot
+        if snapshot is None:
+            return None
+
+        try:
+            owner = cached_get_user_by_pk(snapshot.get("owner", None))
+            snapshot["owner"] = owner.email
+        except user_model_cls.DoesNotExist:
+            pass
+
+        try:
+            assigned_to = cached_get_user_by_pk(snapshot.get("assigned_to", None))
+            snapshot["assigned_to"] = assigned_to.email
+        except user_model_cls.DoesNotExist:
+            pass
+
+        if "status" in snapshot:
+            snapshot["status"] = self.statuses_queryset.get(snapshot["status"])
+
+        return snapshot
 
 class HistoryExportSerializerMixin(serializers.LightSerializer):
     history = MethodField("get_history")
+
+    def statuses_queryset(self, project):
+        raise NotImplementedError()
 
     def get_history(self, obj):
         history_qs = history_service.get_history_queryset_by_model_instance(
             obj,
             types=(history_models.HistoryType.change, history_models.HistoryType.create,)
         )
-
-        return HistoryExportSerializer(history_qs, many=True).data
+        return HistoryExportSerializer(history_qs, many=True, statuses_queryset=self.statuses_queryset(obj.project)).data
 
 
 class AttachmentExportSerializer(serializers.LightSerializer):
