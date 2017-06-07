@@ -43,7 +43,7 @@ class Application(models.Model):
     class Meta:
         verbose_name = "application"
         verbose_name_plural = "applications"
-        ordering = ["name"]
+        ordering = ["name", "id"]
 
     def __str__(self):
         return self.name
@@ -64,6 +64,9 @@ class ApplicationToken(models.Model):
     state = models.CharField(max_length=255, null=True, blank=True, default="")
 
     class Meta:
+        verbose_name = "application token"
+        verbose_name_plural = "application tolens"
+        ordering = ["application", "user",]
         unique_together = ("application", "user",)
 
     def __str__(self):

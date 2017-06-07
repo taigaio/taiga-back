@@ -22,7 +22,7 @@ import bleach
 
 # BEGIN PATCH
 import html5lib
-from html5lib.serializer.htmlserializer import HTMLSerializer
+from html5lib.serializer import HTMLSerializer
 
 
 def _serialize(domtree):

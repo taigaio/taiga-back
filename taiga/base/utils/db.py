@@ -155,7 +155,6 @@ def update_attr_in_bulk_for_ids(values, attr, model):
         try:
             cursor.execute(sql)
         except DatabaseError:
-            print("retries", 0)
             if retries < max_retries:
                 _run_sql(retries + 1)
 
