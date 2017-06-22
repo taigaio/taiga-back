@@ -41,14 +41,24 @@ def attach_extra_info(queryset, user=None, include_attachments=False):
 
 def attach_user_stories_counts_to_queryset(queryset, as_field="user_stories_counts"):
     model = queryset.model
-    sql = """SELECT (SELECT row_to_json(t)
-                       FROM (SELECT COALESCE(SUM(CASE WHEN is_closed IS FALSE THEN 1 ELSE 0 END), 0) AS "opened",
-                                    COALESCE(SUM(CASE WHEN is_closed IS TRUE THEN 1 ELSE 0 END), 0)  AS "closed"
-                            ) t
-                    )
-               FROM epics_relateduserstory
-         INNER JOIN userstories_userstory ON epics_relateduserstory.user_story_id = userstories_userstory.id
-              WHERE epics_relateduserstory.epic_id = {tbl}.id"""
+    sql = """
+            SELECT json_build_object('total', count(t.*), 'progress', sum(t.percentaje_completed))
+            FROM(
+                SELECT
+                    --userstories_userstory.id as userstories_userstory_id,
+                    --userstories_userstory.is_closed as userstories_userstory_is_closed,
+                    CASE WHEN userstories_userstory.is_closed
+                         THEN 1
+                         ELSE
+                            COALESCE(COUNT(tasks_task.id) FILTER (WHERE projects_taskstatus.is_closed = TRUE)::real / NULLIF(COUNT(tasks_task.id), 0),0)--,
+                    END AS percentaje_completed
+
+                FROM epics_relateduserstory
+                INNER JOIN userstories_userstory ON epics_relateduserstory.user_story_id = userstories_userstory.id
+                LEFT JOIN tasks_task ON tasks_task.user_story_id = userstories_userstory.id
+                LEFT JOIN projects_taskstatus ON tasks_task.status_id = projects_taskstatus.id
+                     WHERE epics_relateduserstory.epic_id = {tbl}.id
+                     GROUP BY userstories_userstory.id) t"""
 
     sql = sql.format(tbl=model._meta.db_table)
     queryset = queryset.extra(select={as_field: sql})
