@@ -57,11 +57,14 @@ try:
 except Exception:
     pass
 
+Image.init()
 # PSD thumbnail generator
 def psd_image_factory(data, *args):
-    return PSDImage.from_stream(data).as_PIL()
+    try:
+        return PSDImage.from_stream(data).as_PIL()
+    except Exception:
+        raise TypeError
 
-Image.init()
 Image.register_open("PSD", psd_image_factory)
 
 
