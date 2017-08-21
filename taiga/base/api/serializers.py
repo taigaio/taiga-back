@@ -56,6 +56,7 @@ python primitives.
 response content is handled by parsers and renderers.
 """
 from decimal import Decimal
+from django.apps import apps
 from django.core.paginator import Page
 from django.db import models
 from django.forms import widgets
@@ -98,7 +99,7 @@ def _resolve_model(obj):
     """
     if type(obj) == str and len(obj.split(".")) == 2:
         app_name, model_name = obj.split(".")
-        return models.get_model(app_name, model_name)
+        return apps.get_model(app_name, model_name)
     elif inspect.isclass(obj) and issubclass(obj, models.Model):
         return obj
     else:
