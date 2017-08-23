@@ -73,6 +73,7 @@ DATABASES = {
 #    "login-fail": None,
 #    "register-success": None,
 #    "user-detail": None,
+#    "user-update": None,
 #}
 
 # This list should containt:
