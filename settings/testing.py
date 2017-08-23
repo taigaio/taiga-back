@@ -38,6 +38,7 @@ REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
     "login-fail": None,
     "register-success": None,
     "user-detail": None,
+    "user-update": None,
 }
 
 
