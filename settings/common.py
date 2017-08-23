@@ -446,6 +446,7 @@ REST_FRAMEWORK = {
         "login-fail": None,
         "register-success": None,
         "user-detail": None,
+        "user-update": None,
     },
     "DEFAULT_THROTTLE_WHITELIST": [],
     "FILTER_BACKEND": "taiga.base.filters.FilterBackend",
