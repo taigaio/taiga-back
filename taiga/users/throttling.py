@@ -24,6 +24,6 @@ class UserDetailRateThrottle(throttling.GlobalThrottlingMixin, throttling.Thrott
     throttled_actions = ["by_username", "retrieve"]
 
 
-class UserUpdateRateThrottle(throttling.UserRateThrottle, throttling.ThrottleByActionMixin):
+class UserUpdateRateThrottle(throttling.ThrottleByActionMixin, throttling.UserRateThrottle):
     scope = "user-update"
     throttled_actions = ["update", "partial_update"]

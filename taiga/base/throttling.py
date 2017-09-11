@@ -39,6 +39,8 @@ class GlobalThrottlingMixin:
         }
 
 
+# If you derive a class from this mixin you have to put this class previously
+# to the base throttling class.
 class ThrottleByActionMixin:
     throttled_actions = []
 
