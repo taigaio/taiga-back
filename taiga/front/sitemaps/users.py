@@ -41,7 +41,7 @@ class UsersSitemap(Sitemap):
         return None
 
     def changefreq(self, obj):
-        return "daily"
+        return "weekly"
 
     def priority(self, obj):
-        return 0.6
+        return 0.5

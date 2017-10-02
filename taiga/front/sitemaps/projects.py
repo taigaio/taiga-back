@@ -20,6 +20,8 @@ from django.db.models import Q
 from django.apps import apps
 
 from taiga.front.templatetags.functions import resolve
+from datetime import timedelta
+from django.utils import timezone
 
 from .base import Sitemap
 
@@ -35,6 +37,9 @@ class ProjectsSitemap(Sitemap):
 
         # Exclude blocked projects
         queryset = queryset.filter(blocked_code__isnull=True)
+        queryset = queryset.exclude(description="")
+        queryset = queryset.exclude(description__isnull=True)
+        queryset = queryset.exclude(total_activity__gt=5)
 
         return queryset
 
@@ -45,38 +50,12 @@ class ProjectsSitemap(Sitemap):
         return obj.modified_date
 
     def changefreq(self, obj):
-        return "hourly"
-
-    def priority(self, obj):
-        return 0.9
-
-
-class ProjectEpicsSitemap(Sitemap):
-    def items(self):
-        project_model = apps.get_model("projects", "Project")
-
-        # Get public projects OR private projects if anon user can view them and epics
-        queryset = project_model.objects.filter(Q(is_private=False) |
-                                                Q(is_private=True,
-                                                  anon_permissions__contains=["view_project",
-                                                                              "view_epics"]))
-
-        # Exclude projects without epics enabled
-        queryset = queryset.exclude(is_epics_activated=False)
-
-        return queryset
-
-    def location(self, obj):
-        return resolve("epics", obj.slug)
-
-    def lastmod(self, obj):
-        return obj.modified_date
-
-    def changefreq(self, obj):
+        if (timezone.now() - obj.modified_date) > timedelta(days=30):
+            return "montly"
         return "daily"
 
     def priority(self, obj):
-        return 0.6
+        return 0.8
 
 
 class ProjectBacklogsSitemap(Sitemap):
@@ -88,6 +67,10 @@ class ProjectBacklogsSitemap(Sitemap):
                                                 Q(is_private=True,
                                                   anon_permissions__contains=["view_project",
                                                                               "view_us"]))
+
+        queryset = queryset.exclude(description="")
+        queryset = queryset.exclude(description__isnull=True)
+        queryset = queryset.exclude(total_activity__gt=5)
 
         # Exclude projects without backlog enabled
         queryset = queryset.exclude(is_backlog_activated=False)
@@ -101,10 +84,12 @@ class ProjectBacklogsSitemap(Sitemap):
         return obj.modified_date
 
     def changefreq(self, obj):
-        return "daily"
+        if (timezone.now() - obj.modified_date) > timedelta(days=90):
+            return "montly"
+        return "weekly"
 
     def priority(self, obj):
-        return 0.6
+        return 0.1
 
 
 class ProjectKanbansSitemap(Sitemap):
@@ -116,6 +101,10 @@ class ProjectKanbansSitemap(Sitemap):
                                                 Q(is_private=True,
                                                   anon_permissions__contains=["view_project",
                                                                               "view_us"]))
+
+        queryset = queryset.exclude(description="")
+        queryset = queryset.exclude(description__isnull=True)
+        queryset = queryset.exclude(total_activity__gt=5)
 
         # Exclude projects without kanban enabled
         queryset = queryset.exclude(is_kanban_activated=False)
@@ -129,59 +118,9 @@ class ProjectKanbansSitemap(Sitemap):
         return obj.modified_date
 
     def changefreq(self, obj):
-        return "daily"
+        if (timezone.now() - obj.modified_date) > timedelta(days=90):
+            return "montly"
+        return "weekly"
 
     def priority(self, obj):
-        return 0.6
-
-
-class ProjectIssuesSitemap(Sitemap):
-    def items(self):
-        project_model = apps.get_model("projects", "Project")
-
-        # Get public projects OR private projects if anon user can view them and issues
-        queryset = project_model.objects.filter(Q(is_private=False) |
-                                                Q(is_private=True,
-                                                  anon_permissions__contains=["view_project",
-                                                                              "view_issues"]))
-
-        # Exclude projects without issues enabled
-        queryset = queryset.exclude(is_issues_activated=False)
-
-        return queryset
-
-    def location(self, obj):
-        return resolve("issues", obj.slug)
-
-    def lastmod(self, obj):
-        return obj.modified_date
-
-    def changefreq(self, obj):
-        return "daily"
-
-    def priority(self, obj):
-        return 0.6
-
-
-class ProjectTeamsSitemap(Sitemap):
-    def items(self):
-        project_model = apps.get_model("projects", "Project")
-
-        # Get public projects OR private projects if anon user can view them
-        queryset = project_model.objects.filter(Q(is_private=False) |
-                                                Q(is_private=True,
-                                                  anon_permissions__contains=["view_project"]))
-
-        return queryset
-
-    def location(self, obj):
-        return resolve("team", obj.slug)
-
-    def lastmod(self, obj):
-        return obj.modified_date
-
-    def changefreq(self, obj):
-        return "daily"
-
-    def priority(self, obj):
-        return 0.6
+        return 0.1
