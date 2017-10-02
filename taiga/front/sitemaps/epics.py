@@ -18,6 +18,8 @@
 
 from django.db.models import Q
 from django.apps import apps
+from datetime import timedelta
+from django.utils import timezone
 
 from taiga.front.templatetags.functions import resolve
 
@@ -32,6 +34,9 @@ class EpicsSitemap(Sitemap):
         queryset = epic_model.objects.filter(Q(project__is_private=False) |
                                              Q(project__is_private=True,
                                                project__anon_permissions__contains=["view_epics"]))
+
+        queryset = queryset.exclude(description="")
+        queryset = queryset.exclude(description__isnull=True)
 
         # Exclude blocked projects
         queryset = queryset.filter(project__blocked_code__isnull=True)
@@ -48,7 +53,9 @@ class EpicsSitemap(Sitemap):
         return obj.modified_date
 
     def changefreq(self, obj):
-        return "daily"
+        if (timezone.now() - obj.modified_date) > timedelta(days=90):
+            return "montly"
+        return "weekly"
 
     def priority(self, obj):
-        return 0.4
+        return 0.5

@@ -18,6 +18,8 @@
 
 from django.db.models import Q
 from django.apps import apps
+from datetime import timedelta
+from django.utils import timezone
 
 from taiga.front.templatetags.functions import resolve
 
@@ -48,7 +50,9 @@ class UserStoriesSitemap(Sitemap):
         return obj.modified_date
 
     def changefreq(self, obj):
-        return "daily"
+        if (timezone.now() - obj.modified_date) > timedelta(days=90):
+            return "montly"
+        return "weekly"
 
     def priority(self, obj):
-        return 0.6
+        return 0.5
