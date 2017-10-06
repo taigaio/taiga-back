@@ -54,7 +54,7 @@ class WikiPagesSitemap(Sitemap):
 
     def changefreq(self, obj):
         if (timezone.now() - obj.modified_date) > timedelta(days=90):
-            return "montly"
+            return "monthly"
         return "weekly"
 
     def priority(self, obj):
