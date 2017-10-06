@@ -3,24 +3,27 @@
 # This file is distributed under the same license as the taiga-back package.
 #
 # Translators:
+# Ares <yangzibin.cn@hotmail.com>, 2017
 # gm l <linguangmo@gmail.com>, 2016
 # Hanbing Yin <yin_suk@hotmail.com>, 2016
 # ifelse <wxfans@gmail.com>, 2015
 # Longyang Zhang <zhanglongyang.cn@gmail.com>, 2015
 # Qi Fan <fun224@gmail.com>, 2016
+# qing cao <qingcaomc@gmail.com>, 2017
 # waring id <waringid@gmail.com>, 2016
 # wuwenbin <wenbin.wu@foxmail.com>, 2015
 # Yang Yu <yuyangmkdir@yahoo.com>, 2016
 # yonee <yangqo@hotmail.com>, 2015
 # 5791113 <yonglong.ma@outlook.com>, 2016
 # 5791113 <yonglong.ma@outlook.com>, 2016
+# 朱坚 <garyzhu2009@gmail.com>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-08 16:30+0100\n"
-"PO-Revision-Date: 2017-03-06 16:55+0000\n"
-"Last-Translator: Taiga Dev Team <support@taiga.io>\n"
+"POT-Creation-Date: 2017-10-06 11:42+0200\n"
+"PO-Revision-Date: 2017-10-06 09:43+0000\n"
+"Last-Translator: David Barragán <bameda@gmail.com>\n"
 "Language-Team: Chinese Simplified (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/zh-Hans/)\n"
 "MIME-Version: 1.0\n"
@@ -197,8 +200,8 @@ msgstr "请上传一张有效的图片。所上传的不是图片或已损坏"
 #: taiga/projects/api.py:754 taiga/projects/epics/api.py:200
 #: taiga/projects/epics/api.py:284 taiga/projects/issues/api.py:224
 #: taiga/projects/mixins/ordering.py:59 taiga/projects/tasks/api.py:247
-#: taiga/projects/tasks/api.py:272 taiga/projects/userstories/api.py:323
-#: taiga/projects/userstories/api.py:375 taiga/webhooks/api.py:71
+#: taiga/projects/tasks/api.py:272 taiga/projects/userstories/api.py:334
+#: taiga/projects/userstories/api.py:386 taiga/webhooks/api.py:71
 msgid "Blocked element"
 msgstr "冻结的元素"
 
@@ -251,19 +254,19 @@ msgstr "无效的超链接 - 对象不存在"
 msgid "Incorrect type.  Expected url string, received %s."
 msgstr "错误的数据类型。期望收到URL， 但是收到了 %s"
 
-#: taiga/base/api/serializers.py:324
+#: taiga/base/api/serializers.py:325
 msgid "Invalid data"
 msgstr "无效的数据"
 
-#: taiga/base/api/serializers.py:416
+#: taiga/base/api/serializers.py:417
 msgid "No input provided"
 msgstr "没提供输入数据"
 
-#: taiga/base/api/serializers.py:579
+#: taiga/base/api/serializers.py:580
 msgid "Cannot create a new item, only existing items may be updated."
 msgstr "不能创建新项目，可能只是现有项目被修改。"
 
-#: taiga/base/api/serializers.py:590
+#: taiga/base/api/serializers.py:591
 msgid "Expected a list of items."
 msgstr "期望一个项目列表"
 
@@ -275,7 +278,7 @@ msgstr "找不到"
 msgid "Permission denied"
 msgstr "无此权限"
 
-#: taiga/base/api/views.py:492
+#: taiga/base/api/views.py:491
 msgid "Server application error"
 msgstr "服务器端错误"
 
@@ -517,68 +520,68 @@ msgstr "需要备份文件"
 msgid "Invalid dump format"
 msgstr "非法的备份文件格式"
 
-#: taiga/export_import/services/store.py:718
-#: taiga/export_import/services/store.py:736
+#: taiga/export_import/services/store.py:722
+#: taiga/export_import/services/store.py:740
 msgid "error importing project data"
 msgstr "无法导入项目数据"
 
-#: taiga/export_import/services/store.py:743
+#: taiga/export_import/services/store.py:747
 msgid "error importing roles"
 msgstr "角色导入错误"
 
-#: taiga/export_import/services/store.py:748
+#: taiga/export_import/services/store.py:752
 msgid "error importing memberships"
 msgstr "成员关系导入错误"
 
-#: taiga/export_import/services/store.py:759
+#: taiga/export_import/services/store.py:763
 msgid "error importing lists of project attributes"
 msgstr "项目属性列表导入错误"
 
-#: taiga/export_import/services/store.py:763
+#: taiga/export_import/services/store.py:767
 msgid "error importing default project attributes values"
 msgstr "默认项目属性值导入错误"
 
-#: taiga/export_import/services/store.py:774
+#: taiga/export_import/services/store.py:778
 msgid "error importing custom attributes"
 msgstr "客户化属性导入错误"
 
-#: taiga/export_import/services/store.py:778
+#: taiga/export_import/services/store.py:782
 msgid "error importing sprints"
 msgstr "sprints导入错误"
 
-#: taiga/export_import/services/store.py:782
+#: taiga/export_import/services/store.py:786
 msgid "error importing issues"
 msgstr "问题导入错误"
 
-#: taiga/export_import/services/store.py:786
+#: taiga/export_import/services/store.py:790
 msgid "error importing user stories"
 msgstr "用户故事导入错误"
 
-#: taiga/export_import/services/store.py:790
+#: taiga/export_import/services/store.py:794
 msgid "error importing epics"
 msgstr "史诗导入错误"
 
-#: taiga/export_import/services/store.py:794
+#: taiga/export_import/services/store.py:798
 msgid "error importing tasks"
 msgstr "任务导入错误"
 
-#: taiga/export_import/services/store.py:798
+#: taiga/export_import/services/store.py:802
 msgid "error importing wiki pages"
 msgstr "维基页面导入错误"
 
-#: taiga/export_import/services/store.py:802
+#: taiga/export_import/services/store.py:806
 msgid "error importing wiki links"
 msgstr "维基链接导入错误"
 
-#: taiga/export_import/services/store.py:806
+#: taiga/export_import/services/store.py:810
 msgid "error importing tags"
 msgstr "标签导入错误"
 
-#: taiga/export_import/services/store.py:810
+#: taiga/export_import/services/store.py:814
 msgid "error importing timelines"
 msgstr "时间线导入错误"
 
-#: taiga/export_import/services/store.py:832
+#: taiga/export_import/services/store.py:836
 msgid "unexpected error importing project"
 msgstr "导入项目发生未知错误"
 
@@ -892,11 +895,11 @@ msgstr "需要身份认证"
 #: taiga/external_apps/models.py:35
 #: taiga/projects/custom_attributes/models.py:36
 #: taiga/projects/milestones/models.py:37 taiga/projects/models.py:148
-#: taiga/projects/models.py:518 taiga/projects/models.py:551
-#: taiga/projects/models.py:587 taiga/projects/models.py:609
-#: taiga/projects/models.py:643 taiga/projects/models.py:663
-#: taiga/projects/models.py:683 taiga/projects/models.py:715
-#: taiga/projects/models.py:735 taiga/users/admin.py:54
+#: taiga/projects/models.py:521 taiga/projects/models.py:554
+#: taiga/projects/models.py:590 taiga/projects/models.py:612
+#: taiga/projects/models.py:646 taiga/projects/models.py:666
+#: taiga/projects/models.py:686 taiga/projects/models.py:718
+#: taiga/projects/models.py:738 taiga/users/admin.py:54
 #: taiga/users/models.py:303 taiga/webhooks/models.py:29
 msgid "name"
 msgstr "名称"
@@ -914,7 +917,7 @@ msgstr "网页"
 #: taiga/projects/epics/models.py:56
 #: taiga/projects/history/templatetags/functions.py:25
 #: taiga/projects/issues/models.py:60 taiga/projects/models.py:152
-#: taiga/projects/models.py:739 taiga/projects/tasks/models.py:62
+#: taiga/projects/models.py:742 taiga/projects/tasks/models.py:62
 #: taiga/projects/userstories/models.py:95
 msgid "description"
 msgstr "描述"
@@ -950,7 +953,7 @@ msgstr "评论"
 #: taiga/projects/custom_attributes/models.py:46
 #: taiga/projects/epics/models.py:49 taiga/projects/issues/models.py:52
 #: taiga/projects/likes/models.py:33 taiga/projects/milestones/models.py:48
-#: taiga/projects/models.py:159 taiga/projects/models.py:743
+#: taiga/projects/models.py:159 taiga/projects/models.py:746
 #: taiga/projects/notifications/models.py:89 taiga/projects/tasks/models.py:48
 #: taiga/projects/userstories/models.py:87 taiga/projects/votes/models.py:54
 #: taiga/projects/wiki/models.py:44 taiga/userstorage/models.py:29
@@ -1024,7 +1027,7 @@ msgstr "内容不是一个合法的JSON"
 
 #: taiga/hooks/api.py:63 taiga/projects/epics/api.py:154
 #: taiga/projects/issues/api.py:139 taiga/projects/tasks/api.py:201
-#: taiga/projects/userstories/api.py:277
+#: taiga/projects/userstories/api.py:282
 msgid "The project doesn't exist"
 msgstr "项目不存在"
 
@@ -1086,14 +1089,10 @@ msgstr "未知用户"
 #, python-brace-format
 msgid ""
 "{user_text} changed the status from [{platform} commit]({commit_url} \"See "
-"commit '{commit_id} - {commit_message}'\")\n"
+"commit '{commit_id} - {commit_short_message}'\")\n"
 "\n"
 "  - Status: **{src_status}** → **{dst_status}**"
 msgstr ""
-"{user_text} 改变状态 [{platform} commit]({commit_url} \"查看提交 "
-"'{commit_id} - {commit_message}'\")\n"
-"\n"
-"  - 状态: **{src_status}** → **{dst_status}**"
 
 #: taiga/hooks/event_hooks.py:161
 #, python-brace-format
@@ -1110,11 +1109,9 @@ msgstr ""
 #, python-brace-format
 msgid ""
 "This {type_name} has been mentioned by {user_text} in the [{platform} commit]"
-"({commit_url} \"See commit '{commit_id} - {commit_message}'\") "
+"({commit_url} \"See commit '{commit_id} - {commit_short_message}'\") "
 "\"{commit_message}\""
 msgstr ""
-"这个{type_name}已经被{user_text}提到，从这个[{platform} commit]({commit_url} "
-"\"查看提交 '{commit_id} - {commit_message}'\") \"{commit_message}\""
 
 #: taiga/hooks/event_hooks.py:184
 #, python-brace-format
@@ -1132,63 +1129,67 @@ msgstr "状态不存在"
 
 #: taiga/importers/asana/api.py:43 taiga/importers/asana/api.py:85
 #: taiga/importers/github/api.py:44 taiga/importers/github/api.py:74
-#: taiga/importers/jira/api.py:57 taiga/importers/jira/api.py:103
+#: taiga/importers/jira/api.py:60 taiga/importers/jira/api.py:106
 #: taiga/importers/pivotal/api.py:43 taiga/importers/pivotal/api.py:80
 #: taiga/importers/trello/api.py:46 taiga/importers/trello/api.py:83
 msgid "The project param is needed"
-msgstr ""
+msgstr "该项目参数必填"
 
 #: taiga/importers/asana/api.py:50 taiga/importers/asana/api.py:73
 #: taiga/importers/asana/api.py:139
 msgid "Invalid Asana API request"
-msgstr ""
+msgstr "无效的Asana API请求"
 
 #: taiga/importers/asana/api.py:52 taiga/importers/asana/api.py:75
 #: taiga/importers/asana/api.py:141
 msgid "Failed to make the request to Asana API"
-msgstr ""
+msgstr "构造Asana API的请求失败"
 
 #: taiga/importers/asana/api.py:129 taiga/importers/github/api.py:123
 msgid "Code param needed"
-msgstr ""
+msgstr "代码参数必填"
 
 #: taiga/importers/asana/tasks.py:42 taiga/importers/asana/tasks.py:43
 msgid "Error importing Asana project"
-msgstr ""
+msgstr "导入Asana项目错误"
 
 #: taiga/importers/github/api.py:135
 msgid "Invalid auth data"
-msgstr ""
+msgstr "无效用户ID"
 
 #: taiga/importers/github/api.py:137
 msgid "Third party service failing"
-msgstr ""
+msgstr "第三方服务失败"
 
 #: taiga/importers/github/tasks.py:42 taiga/importers/github/tasks.py:43
 msgid "Error importing GitHub project"
-msgstr ""
+msgstr "导入GitHub项目错误"
 
-#: taiga/importers/jira/api.py:59 taiga/importers/jira/api.py:86
-#: taiga/importers/jira/api.py:106 taiga/importers/jira/api.py:179
+#: taiga/importers/jira/api.py:62 taiga/importers/jira/api.py:89
+#: taiga/importers/jira/api.py:109 taiga/importers/jira/api.py:182
 msgid "The url param is needed"
-msgstr ""
+msgstr "这个url参数必填"
 
-#: taiga/importers/jira/api.py:155
+#: taiga/importers/jira/api.py:158
 msgid "Invalid project_type {}"
+msgstr "无效的项目类型 {}"
+
+#: taiga/importers/jira/api.py:192
+msgid "Invalid Jira server configuration."
 msgstr ""
 
-#: taiga/importers/jira/api.py:225 taiga/importers/pivotal/api.py:138
+#: taiga/importers/jira/api.py:233 taiga/importers/pivotal/api.py:138
 #: taiga/importers/trello/api.py:143
 msgid "Invalid or expired auth token"
-msgstr ""
+msgstr "无效或失效的账户token"
 
 #: taiga/importers/jira/tasks.py:48 taiga/importers/jira/tasks.py:49
 msgid "Error importing Jira project"
-msgstr ""
+msgstr "导入JIRA项目错误"
 
 #: taiga/importers/pivotal/tasks.py:42 taiga/importers/pivotal/tasks.py:43
 msgid "Error importing PivotalTracker project"
-msgstr ""
+msgstr "导入PivotalTracker项目错误"
 
 #: taiga/importers/templates/emails/asana_import_success-body-html.jinja:4
 #, python-format
@@ -1614,11 +1615,11 @@ msgstr "对象和项目间的项目ID不匹配"
 #: taiga/projects/attachments/models.py:41 taiga/projects/contact/models.py:29
 #: taiga/projects/custom_attributes/models.py:43
 #: taiga/projects/epics/models.py:38 taiga/projects/issues/models.py:50
-#: taiga/projects/milestones/models.py:44 taiga/projects/models.py:506
-#: taiga/projects/models.py:528 taiga/projects/models.py:565
-#: taiga/projects/models.py:593 taiga/projects/models.py:619
-#: taiga/projects/models.py:649 taiga/projects/models.py:669
-#: taiga/projects/models.py:693 taiga/projects/models.py:721
+#: taiga/projects/milestones/models.py:44 taiga/projects/models.py:509
+#: taiga/projects/models.py:531 taiga/projects/models.py:568
+#: taiga/projects/models.py:596 taiga/projects/models.py:622
+#: taiga/projects/models.py:652 taiga/projects/models.py:672
+#: taiga/projects/models.py:696 taiga/projects/models.py:724
 #: taiga/projects/notifications/models.py:74
 #: taiga/projects/notifications/models.py:91 taiga/projects/tasks/models.py:43
 #: taiga/projects/userstories/models.py:67 taiga/projects/wiki/models.py:34
@@ -1638,7 +1639,7 @@ msgstr "对象id"
 #: taiga/projects/custom_attributes/models.py:48
 #: taiga/projects/epics/models.py:52 taiga/projects/issues/models.py:55
 #: taiga/projects/milestones/models.py:51 taiga/projects/models.py:162
-#: taiga/projects/models.py:746 taiga/projects/tasks/models.py:51
+#: taiga/projects/models.py:749 taiga/projects/tasks/models.py:51
 #: taiga/projects/userstories/models.py:90 taiga/projects/wiki/models.py:47
 #: taiga/userstorage/models.py:31
 msgid "modified date"
@@ -1663,10 +1664,10 @@ msgstr ""
 #: taiga/projects/attachments/models.py:63
 #: taiga/projects/custom_attributes/models.py:41
 #: taiga/projects/epics/models.py:104 taiga/projects/milestones/models.py:57
-#: taiga/projects/models.py:522 taiga/projects/models.py:555
-#: taiga/projects/models.py:589 taiga/projects/models.py:613
-#: taiga/projects/models.py:645 taiga/projects/models.py:665
-#: taiga/projects/models.py:687 taiga/projects/models.py:717
+#: taiga/projects/models.py:525 taiga/projects/models.py:558
+#: taiga/projects/models.py:592 taiga/projects/models.py:616
+#: taiga/projects/models.py:648 taiga/projects/models.py:668
+#: taiga/projects/models.py:690 taiga/projects/models.py:720
 #: taiga/projects/wiki/models.py:77 taiga/users/models.py:309
 msgid "order"
 msgstr "次序"
@@ -1824,10 +1825,10 @@ msgstr "史诗次序"
 msgid "subject"
 msgstr "主题"
 
-#: taiga/projects/epics/models.py:59 taiga/projects/models.py:526
-#: taiga/projects/models.py:561 taiga/projects/models.py:617
-#: taiga/projects/models.py:647 taiga/projects/models.py:667
-#: taiga/projects/models.py:691 taiga/projects/models.py:719
+#: taiga/projects/epics/models.py:59 taiga/projects/models.py:529
+#: taiga/projects/models.py:564 taiga/projects/models.py:620
+#: taiga/projects/models.py:650 taiga/projects/models.py:670
+#: taiga/projects/models.py:694 taiga/projects/models.py:722
 #: taiga/users/models.py:142
 msgid "color"
 msgstr "颜色"
@@ -1943,7 +1944,7 @@ msgid "Unassigned"
 msgstr "未指派"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:232
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:89
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:91
 msgid "-deleted-"
 msgstr "-删除-"
 
@@ -1976,12 +1977,12 @@ msgid "removed:"
 msgstr "已移除:"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:65
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:82
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:83
 msgid "From:"
 msgstr "来自:"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:66
-#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:83
+#: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:84
 msgid "To:"
 msgstr "发送给:"
 
@@ -2045,9 +2046,9 @@ msgid "Likes"
 msgstr "点赞"
 
 #: taiga/projects/milestones/models.py:40 taiga/projects/models.py:150
-#: taiga/projects/models.py:520 taiga/projects/models.py:553
-#: taiga/projects/models.py:611 taiga/projects/models.py:685
-#: taiga/projects/models.py:737 taiga/projects/wiki/models.py:36
+#: taiga/projects/models.py:523 taiga/projects/models.py:556
+#: taiga/projects/models.py:614 taiga/projects/models.py:688
+#: taiga/projects/models.py:740 taiga/projects/wiki/models.py:36
 #: taiga/users/admin.py:58 taiga/users/models.py:305
 msgid "slug"
 msgstr "代称"
@@ -2060,9 +2061,9 @@ msgstr "预估开始日期"
 msgid "estimated finish date"
 msgstr "预估结束日期"
 
-#: taiga/projects/milestones/models.py:53 taiga/projects/models.py:524
-#: taiga/projects/models.py:557 taiga/projects/models.py:615
-#: taiga/projects/models.py:689
+#: taiga/projects/milestones/models.py:53 taiga/projects/models.py:527
+#: taiga/projects/models.py:560 taiga/projects/models.py:618
+#: taiga/projects/models.py:692
 msgid "is closed"
 msgstr "是关闭的"
 
@@ -2101,7 +2102,7 @@ msgstr "'project' 参数必填"
 
 #: taiga/projects/mixins/validators.py:19
 msgid "The user must be a project member."
-msgstr ""
+msgstr "用户必须为项目成员。"
 
 #: taiga/projects/models.py:79
 msgid "email"
@@ -2119,7 +2120,7 @@ msgstr "令牌"
 msgid "invitation extra text"
 msgstr "需要更多的文本内容"
 
-#: taiga/projects/models.py:92 taiga/projects/models.py:741
+#: taiga/projects/models.py:92 taiga/projects/models.py:744
 msgid "user order"
 msgstr "用户故事次序"
 
@@ -2175,35 +2176,35 @@ msgstr "里程碑总数"
 msgid "total story points"
 msgstr "总故事点数"
 
-#: taiga/projects/models.py:172 taiga/projects/models.py:751
+#: taiga/projects/models.py:172 taiga/projects/models.py:754
 msgid "active contact"
 msgstr ""
 
-#: taiga/projects/models.py:174 taiga/projects/models.py:753
+#: taiga/projects/models.py:174 taiga/projects/models.py:756
 msgid "active epics panel"
 msgstr "活动史诗面板"
 
-#: taiga/projects/models.py:176 taiga/projects/models.py:755
+#: taiga/projects/models.py:176 taiga/projects/models.py:758
 msgid "active backlog panel"
 msgstr "活动积压面板"
 
-#: taiga/projects/models.py:178 taiga/projects/models.py:757
+#: taiga/projects/models.py:178 taiga/projects/models.py:760
 msgid "active kanban panel"
 msgstr "活动看板面板"
 
-#: taiga/projects/models.py:180 taiga/projects/models.py:759
+#: taiga/projects/models.py:180 taiga/projects/models.py:762
 msgid "active wiki panel"
 msgstr "活动维基面板"
 
-#: taiga/projects/models.py:182 taiga/projects/models.py:761
+#: taiga/projects/models.py:182 taiga/projects/models.py:764
 msgid "active issues panel"
 msgstr "活动问题面板"
 
-#: taiga/projects/models.py:185 taiga/projects/models.py:768
+#: taiga/projects/models.py:185 taiga/projects/models.py:771
 msgid "videoconference system"
 msgstr "视频会议系统"
 
-#: taiga/projects/models.py:187 taiga/projects/models.py:770
+#: taiga/projects/models.py:187 taiga/projects/models.py:773
 msgid "videoconference extra data"
 msgstr "视像会议的额外数据"
 
@@ -2227,11 +2228,11 @@ msgstr "用户权限"
 msgid "is featured"
 msgstr "被推荐"
 
-#: taiga/projects/models.py:206 taiga/projects/models.py:763
+#: taiga/projects/models.py:206 taiga/projects/models.py:766
 msgid "is looking for people"
 msgstr "招募成员"
 
-#: taiga/projects/models.py:208 taiga/projects/models.py:765
+#: taiga/projects/models.py:208 taiga/projects/models.py:768
 msgid "looking for people note"
 msgstr ""
 
@@ -2276,80 +2277,80 @@ msgstr "上月活动"
 msgid "activity last year"
 msgstr "去年活动"
 
-#: taiga/projects/models.py:507
+#: taiga/projects/models.py:510
 msgid "modules config"
 msgstr "模块配置"
 
-#: taiga/projects/models.py:559
+#: taiga/projects/models.py:562
 msgid "is archived"
 msgstr "已归档"
 
-#: taiga/projects/models.py:563
+#: taiga/projects/models.py:566
 msgid "work in progress limit"
 msgstr "工作进度限制"
 
-#: taiga/projects/models.py:591 taiga/userstorage/models.py:33
+#: taiga/projects/models.py:594 taiga/userstorage/models.py:33
 msgid "value"
 msgstr "值"
 
-#: taiga/projects/models.py:749
+#: taiga/projects/models.py:752
 msgid "default owner's role"
 msgstr "默认所有者角色"
 
-#: taiga/projects/models.py:772
+#: taiga/projects/models.py:775
 msgid "default options"
 msgstr "默认选项"
 
-#: taiga/projects/models.py:773
+#: taiga/projects/models.py:776
 msgid "epic statuses"
 msgstr "史诗状态"
 
-#: taiga/projects/models.py:774
+#: taiga/projects/models.py:777
 msgid "us statuses"
 msgstr "用户故事状态"
 
-#: taiga/projects/models.py:775 taiga/projects/userstories/models.py:44
+#: taiga/projects/models.py:778 taiga/projects/userstories/models.py:44
 #: taiga/projects/userstories/models.py:77
 msgid "points"
 msgstr "点数"
 
-#: taiga/projects/models.py:776
+#: taiga/projects/models.py:779
 msgid "task statuses"
 msgstr "任务状态"
 
-#: taiga/projects/models.py:777
+#: taiga/projects/models.py:780
 msgid "issue statuses"
 msgstr "问题状态"
 
-#: taiga/projects/models.py:778
+#: taiga/projects/models.py:781
 msgid "issue types"
 msgstr "问题类型"
 
-#: taiga/projects/models.py:779
+#: taiga/projects/models.py:782
 msgid "priorities"
 msgstr "优先级"
 
-#: taiga/projects/models.py:780
+#: taiga/projects/models.py:783
 msgid "severities"
 msgstr "严重程度"
 
-#: taiga/projects/models.py:781
+#: taiga/projects/models.py:784
 msgid "roles"
 msgstr "角色"
 
-#: taiga/projects/models.py:782
+#: taiga/projects/models.py:785
 msgid "epic custom attributes"
 msgstr ""
 
-#: taiga/projects/models.py:783
+#: taiga/projects/models.py:786
 msgid "us custom attributes"
 msgstr ""
 
-#: taiga/projects/models.py:784
+#: taiga/projects/models.py:787
 msgid "task custom attributes"
 msgstr ""
 
-#: taiga/projects/models.py:785
+#: taiga/projects/models.py:788
 msgid "issue custom attributes"
 msgstr ""
 
@@ -2387,7 +2388,7 @@ msgstr "关注"
 msgid "Notify exists for specified user and project"
 msgstr "通知已存在"
 
-#: taiga/projects/notifications/services.py:436
+#: taiga/projects/notifications/services.py:434
 msgid "Invalid value for notify level"
 msgstr "此通知级别该值非法"
 
@@ -4083,25 +4084,25 @@ msgstr "产品所有者"
 msgid "Stakeholder"
 msgstr "相关人员"
 
-#: taiga/projects/userstories/api.py:128
+#: taiga/projects/userstories/api.py:129
 msgid "You don't have permissions to set this sprint to this user story."
 msgstr "你无权对这个用户故事设置此冲刺任务。"
 
-#: taiga/projects/userstories/api.py:132
+#: taiga/projects/userstories/api.py:133
 msgid "You don't have permissions to set this status to this user story."
 msgstr "你无权对这个用户故事设置此状态。"
 
-#: taiga/projects/userstories/api.py:222
+#: taiga/projects/userstories/api.py:227
 #, python-brace-format
 msgid "Invalid role id '{role_id}'"
 msgstr "无效的角色ID  '{role_id}'"
 
-#: taiga/projects/userstories/api.py:229
+#: taiga/projects/userstories/api.py:234
 #, python-brace-format
 msgid "Invalid points id '{points_id}'"
 msgstr "无效的点数ID '{points_id}'"
 
-#: taiga/projects/userstories/api.py:244
+#: taiga/projects/userstories/api.py:249
 #, python-brace-format
 msgid "Generating the user story #{ref} - {subject}"
 msgstr "生成用户故事#{ref} - {subject}"
@@ -4164,7 +4165,7 @@ msgstr "该ID无对应项目"
 
 #: taiga/projects/validators.py:145
 msgid "The user yet exists in the project"
-msgstr ""
+msgstr "该用户已经是项目成员。"
 
 #: taiga/projects/validators.py:155
 msgid "Invalid role for the project"
