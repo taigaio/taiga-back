@@ -204,7 +204,7 @@ class JiraNormalImporter(JiraImporterCommon):
                     owner = users_bindings.get(issue['fields']['creator']['key'] if issue['fields']['creator'] else None, self._user)
 
                     external_reference = None
-                    if options.get('keep_external_reference', False):
+                    if options.get('keep_external_reference', False) and 'url' in issue['fields']:
                         external_reference = ["jira", issue['fields']['url']]
 
 
@@ -278,7 +278,7 @@ class JiraNormalImporter(JiraImporterCommon):
                 owner = users_bindings.get(issue['fields']['creator']['key'] if issue['fields']['creator'] else None, self._user)
 
                 external_reference = None
-                if options.get('keep_external_reference', False):
+                if options.get('keep_external_reference', False) and 'url' in issue['fields']:
                     external_reference = ["jira", issue['fields']['url']]
 
                 task = Task.objects.create(
@@ -333,7 +333,7 @@ class JiraNormalImporter(JiraImporterCommon):
                     owner = users_bindings.get(issue['fields']['creator']['key'] if issue['fields']['creator'] else None, self._user)
 
                     external_reference = None
-                    if options.get('keep_external_reference', False):
+                    if options.get('keep_external_reference', False) and 'url' in issue['fields']:
                         external_reference = ["jira", issue['fields']['url']]
 
                     taiga_issue = Issue.objects.create(
@@ -388,7 +388,7 @@ class JiraNormalImporter(JiraImporterCommon):
                     owner = users_bindings.get(issue['fields']['creator']['key'] if issue['fields']['creator'] else None, self._user)
 
                     external_reference = None
-                    if options.get('keep_external_reference', False):
+                    if options.get('keep_external_reference', False) and 'url' in issue['fields']:
                         external_reference = ["jira", issue['fields']['url']]
 
                     epic = Epic.objects.create(
