@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import datetime
+from collections import OrderedDict
 
 from django.template.defaultfilters import slugify
 from taiga.projects.references.models import recalc_reference_counter
@@ -67,55 +68,56 @@ class JiraAgileImporter(JiraImporterCommon):
             options['type'] = "kanban"
 
         project_template.is_epics_activated = True
-        project_template.epic_statuses = []
-        project_template.us_statuses = []
-        project_template.task_statuses = []
-        project_template.issue_statuses = []
+        project_template.epic_statuses = OrderedDict()
+        project_template.us_statuses = OrderedDict()
+        project_template.task_statuses = OrderedDict()
+        project_template.issue_statuses = OrderedDict()
 
         counter = 0
         for column in project_config['columnConfig']['columns']:
-            project_template.epic_statuses.append({
+            column_slug = slugify(column['name'])
+            project_template.epic_statuses[column_slug] = {
                 "name": column['name'],
-                "slug": slugify(column['name']),
+                "slug": column_slug,
                 "is_closed": False,
                 "is_archived": False,
                 "color": "#999999",
                 "wip_limit": None,
                 "order": counter,
-            })
-            project_template.us_statuses.append({
+            }
+            project_template.us_statuses[column_slug] = {
                 "name": column['name'],
-                "slug": slugify(column['name']),
+                "slug": column_slug,
                 "is_closed": False,
                 "is_archived": False,
                 "color": "#999999",
                 "wip_limit": None,
                 "order": counter,
-            })
-            project_template.task_statuses.append({
+            }
+            project_template.task_statuses[column_slug] = {
                 "name": column['name'],
-                "slug": slugify(column['name']),
+                "slug": column_slug,
                 "is_closed": False,
                 "is_archived": False,
                 "color": "#999999",
                 "wip_limit": None,
                 "order": counter,
-            })
-            project_template.issue_statuses.append({
+            }
+            project_template.issue_statuses[column_slug] = {
                 "name": column['name'],
-                "slug": slugify(column['name']),
+                "slug": column_slug,
                 "is_closed": False,
                 "is_archived": False,
                 "color": "#999999",
                 "wip_limit": None,
                 "order": counter,
-            })
+            }
             counter += 1
 
-        project_template.default_options["epic_status"] = project_template.epic_statuses[0]['name']
-        project_template.default_options["us_status"] = project_template.us_statuses[0]['name']
-        project_template.default_options["task_status"] = project_template.task_statuses[0]['name']
-        project_template.default_options["issue_status"] = project_template.issue_statuses[0]['name']
+        project_template.default_options["epic_status"] = project_template.epic_statuses.values()[0]['name']
+        project_template.default_options["us_status"] = project_template.us_statuses.values()[0]['name']
+        project_template.default_options["task_status"] = project_template.task_statuses.values()[0]['name']
+        project_template.default_options["issue_status"] = project_template.issue_statuses.values()[0]['name']
 
         project_template.points = [{
             "value": None,
