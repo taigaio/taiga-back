@@ -114,10 +114,10 @@ class JiraAgileImporter(JiraImporterCommon):
             }
             counter += 1
 
-        project_template.default_options["epic_status"] = project_template.epic_statuses.values()[0]['name']
-        project_template.default_options["us_status"] = project_template.us_statuses.values()[0]['name']
-        project_template.default_options["task_status"] = project_template.task_statuses.values()[0]['name']
-        project_template.default_options["issue_status"] = project_template.issue_statuses.values()[0]['name']
+        project_template.default_options["epic_status"] = list(project_template.epic_statuses.values())[0]['name']
+        project_template.default_options["us_status"] = list(project_template.us_statuses.values())[0]['name']
+        project_template.default_options["task_status"] = list(project_template.task_statuses.values())[0]['name']
+        project_template.default_options["issue_status"] = list(project_template.issue_statuses.values())[0]['name']
 
         project_template.points = [{
             "value": None,
@@ -203,7 +203,7 @@ class JiraAgileImporter(JiraImporterCommon):
                     project=project,
                     owner=owner,
                     assigned_to=assigned_to,
-                    status=project.us_statuses.get(name=issue['fields']['status']['name']),
+                    status=project.us_statuses.get(slug=slugify(issue['fields']['status']['name'])),
                     kanban_order=counter,
                     sprint_order=counter,
                     backlog_order=counter,
@@ -287,7 +287,7 @@ class JiraAgileImporter(JiraImporterCommon):
                     project=project,
                     owner=owner,
                     assigned_to=assigned_to,
-                    status=project.task_statuses.get(name=issue['fields']['status']['name']),
+                    status=project.task_statuses.get(slug=slugify(issue['fields']['status']['name'])),
                     subject=issue['fields']['summary'],
                     description=issue['fields']['description'] or '',
                     tags=issue['fields']['labels'],
@@ -338,7 +338,7 @@ class JiraAgileImporter(JiraImporterCommon):
                     project=project,
                     owner=owner,
                     assigned_to=assigned_to,
-                    status=project.epic_statuses.get(name=issue['fields']['status']['name']),
+                    status=project.epic_statuses.get(slug=slugify(issue['fields']['status']['name'])),
                     subject=issue['fields']['summary'],
                     description=issue['fields']['description'] or '',
                     epics_order=counter,
