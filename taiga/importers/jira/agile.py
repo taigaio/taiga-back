@@ -199,7 +199,7 @@ class JiraAgileImporter(JiraImporterCommon):
                     external_reference = ["jira", self._client.get_issue_url(issue['key'])]
 
                 try:
-                    milestone = project.milestones.get(name=issue['fields'].get('sprint', {}).get('name', ''))
+                    milestone = project.milestones.get(name=(issue['fields'].get('sprint', {}) or {}).get('name', ''))
                 except Milestone.DoesNotExist:
                     milestone = None
 
