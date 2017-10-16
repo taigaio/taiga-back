@@ -119,9 +119,9 @@ class JiraAgileImporter(JiraImporterCommon):
         project_template.task_statuses = list(project_template.task_statuses.values())
         project_template.issue_statuses = list(project_template.issue_statuses.values())
         project_template.default_options["epic_status"] = project_template.epic_statuses[0]['name']
-        project_template.default_options["us_status"] = project_template.us_statuses.values()[0]['name']
-        project_template.default_options["task_status"] = project_template.task_statuses.values()[0]['name']
-        project_template.default_options["issue_status"] = project_template.issue_statuses.values()[0]['name']
+        project_template.default_options["us_status"] = project_template.us_statuses[0]['name']
+        project_template.default_options["task_status"] = project_template.task_statuses[0]['name']
+        project_template.default_options["issue_status"] = project_template.issue_statuses[0]['name']
 
         project_template.points = [{
             "value": None,
