@@ -149,6 +149,17 @@ class Milestone(WatchedModelMixin, models.Model):
 
                 self._total_closed_points_by_date[finished_date] = points_by_date
 
+            for us in self.cached_user_stories:
+                if us.num_tasks > 0 or us.finish_date is None:
+                    continue
+                finished_date = us.finish_date.date()
+                if finished_date < self.estimated_start:
+                    finished_date = self.estimated_start
+                points_by_date = self._total_closed_points_by_date.get(finished_date, 0)
+                points_by_date += us._total_us_points
+                self._total_closed_points_by_date[finished_date] = points_by_date
+
+
             # At this point self._total_closed_points_by_date keeps a dict where the
             # finished date of the task is the key and the value is the increment of points
             # We are transforming this dict of increments in an acumulation one including
