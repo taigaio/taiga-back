@@ -37,6 +37,8 @@ fraudulent modifications.
 import re
 
 from django.conf import settings
+from django.utils import timezone
+from datetime import timedelta
 from taiga.base.api.authentication import BaseAuthentication
 
 from .tokens import get_user_for_token
@@ -85,6 +87,10 @@ class Token(BaseAuthentication):
         max_age_auth_token = getattr(settings, "MAX_AGE_AUTH_TOKEN", None)
         user = get_user_for_token(token, "authentication",
                                   max_age=max_age_auth_token)
+
+        if user.last_login < (timezone.now() - timedelta(minutes=1)):
+            user.last_login = timezone.now()
+            user.save(update_fields=["last_login"])
 
         return (user, token)
 
