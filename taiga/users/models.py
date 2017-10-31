@@ -19,6 +19,7 @@
 from importlib import import_module
 
 import random
+import uuid
 import re
 
 from django.apps import apps
@@ -125,7 +126,13 @@ class PermissionsMixin(models.Model):
         return self.is_superuser
 
 
+def get_default_uuid():
+    return uuid.uuid4().hex
+
+
 class User(AbstractBaseUser, PermissionsMixin):
+    uuid = models.CharField(max_length=32, editable=False, null=False,
+                            blank=False, unique=True, default=get_default_uuid)
     username = models.CharField(_("username"), max_length=255, unique=True,
         help_text=_("Required. 30 characters or fewer. Letters, numbers and "
                     "/./-/_ characters"),
