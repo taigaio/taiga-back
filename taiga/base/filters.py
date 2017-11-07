@@ -587,3 +587,22 @@ class QFilter(FilterBackend):
             queryset = queryset.extra(where=[where_clause], params=[to_tsquery(q)])
 
         return queryset
+
+
+class RoleFilter(BaseRelatedFieldsFilter):
+    filter_name = "role_id"
+    param_name = "role"
+
+    def filter_queryset(self, request, queryset, view):
+        Membership = apps.get_model('projects', 'Membership')
+        query = self._get_queryparams(request.QUERY_PARAMS)
+        if query:
+            if isinstance(query, dict):
+                memberships = Membership.objects.filter(**query).values_list("user_id", flat=True)
+                queryset = queryset.filter(assigned_to__in=memberships)
+            else:
+                memberships = Membership.objects.filter(query).values_list("user_id", flat=True)
+            if memberships:
+                queryset = queryset.filter(assigned_to__in=memberships)
+
+        return FilterBackend.filter_queryset(self, request, queryset, view)

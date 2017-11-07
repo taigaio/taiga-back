@@ -420,6 +420,57 @@ def _get_issues_owners(project, queryset):
     return sorted(result, key=itemgetter("full_name"))
 
 
+def _get_issues_roles(project, queryset):
+    compiler = connection.ops.compiler(queryset.query.compiler)(queryset.query, connection, None)
+    queryset_where_tuple = queryset.query.where.as_sql(compiler, connection)
+    where = queryset_where_tuple[0]
+    where_params = queryset_where_tuple[1]
+
+    extra_sql = """
+     WITH "issue_counters" AS (
+         SELECT DISTINCT "issues_issue"."status_id" "status_id",
+                         "issues_issue"."id" "issue_id",
+                         "projects_membership"."role_id" "role_id"
+                    FROM "issues_issue"
+              INNER JOIN "projects_project"
+                      ON ("issues_issue"."project_id" = "projects_project"."id")
+         LEFT OUTER JOIN "projects_membership"
+                      ON "projects_membership"."user_id" = "issues_issue"."assigned_to_id"
+                   WHERE {where}
+            ),
+             "counters" AS (
+                  SELECT "role_id" as "role_id",
+                         COUNT("role_id") "count"
+                    FROM "issue_counters"
+                GROUP BY "role_id"
+            )
+
+                 SELECT "users_role"."id",
+                        "users_role"."name",
+                        "users_role"."order",
+                        COALESCE("counters"."count", 0)
+                   FROM "users_role"
+        LEFT OUTER JOIN "counters"
+                     ON "counters"."role_id" = "users_role"."id"
+                  WHERE "users_role"."project_id" = %s
+               ORDER BY "users_role"."order";
+    """.format(where=where)
+
+    with closing(connection.cursor()) as cursor:
+        cursor.execute(extra_sql, where_params + [project.id])
+        rows = cursor.fetchall()
+
+    result = []
+    for id, name, order, count in rows:
+        result.append({
+            "id": id,
+            "name": _(name),
+            "color": None,
+            "order": order,
+            "count": count,
+        })
+    return sorted(result, key=itemgetter("order"))
+
 def _get_issues_tags(project, queryset):
     compiler = connection.ops.compiler(queryset.query.compiler)(queryset.query, connection, None)
     queryset_where_tuple = queryset.query.where.as_sql(compiler, connection)
@@ -478,6 +529,7 @@ def get_issues_filters_data(project, querysets):
         ("assigned_to", _get_issues_assigned_to(project, querysets["assigned_to"])),
         ("owners", _get_issues_owners(project, querysets["owners"])),
         ("tags", _get_issues_tags(project, querysets["tags"])),
+        ("roles", _get_issues_roles(project, querysets["roles"])),
     ])
 
     return data

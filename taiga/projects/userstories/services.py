@@ -589,6 +589,60 @@ def _get_userstories_epics(project, queryset):
     return result
 
 
+def _get_userstories_roles(project, queryset):
+    compiler = connection.ops.compiler(queryset.query.compiler)(queryset.query, connection, None)
+    queryset_where_tuple = queryset.query.where.as_sql(compiler, connection)
+    where = queryset_where_tuple[0]
+    where_params = queryset_where_tuple[1]
+
+    extra_sql = """
+     WITH "us_counters" AS (
+         SELECT DISTINCT "userstories_userstory"."status_id" "status_id",
+                         "userstories_userstory"."id" "us_id",
+                         "projects_membership"."role_id" "role_id"
+                    FROM "userstories_userstory"
+              INNER JOIN "projects_project"
+                      ON ("userstories_userstory"."project_id" = "projects_project"."id")
+         LEFT OUTER JOIN "epics_relateduserstory"
+                      ON "userstories_userstory"."id" = "epics_relateduserstory"."user_story_id"
+         LEFT OUTER JOIN "projects_membership"
+                      ON "projects_membership"."user_id" = "userstories_userstory"."assigned_to_id"
+                   WHERE {where}
+            ),
+             "counters" AS (
+                  SELECT "role_id" as "role_id",
+                         COUNT("role_id") "count"
+                    FROM "us_counters"
+                GROUP BY "role_id"
+            )
+
+                 SELECT "users_role"."id",
+                        "users_role"."name",
+                        "users_role"."order",
+                        COALESCE("counters"."count", 0)
+                   FROM "users_role"
+        LEFT OUTER JOIN "counters"
+                     ON "counters"."role_id" = "users_role"."id"
+                  WHERE "users_role"."project_id" = %s
+               ORDER BY "users_role"."order";
+    """.format(where=where)
+
+    with closing(connection.cursor()) as cursor:
+        cursor.execute(extra_sql, where_params + [project.id])
+        rows = cursor.fetchall()
+
+    result = []
+    for id, name, order, count in rows:
+        result.append({
+            "id": id,
+            "name": _(name),
+            "color": None,
+            "order": order,
+            "count": count,
+        })
+    return sorted(result, key=itemgetter("order"))
+
+
 def get_userstories_filters_data(project, querysets):
     """
     Given a project and an userstories queryset, return a simple data structure
@@ -600,6 +654,7 @@ def get_userstories_filters_data(project, querysets):
         ("owners", _get_userstories_owners(project, querysets["owners"])),
         ("tags", _get_userstories_tags(project, querysets["tags"])),
         ("epics", _get_userstories_epics(project, querysets["epics"])),
+        ("roles", _get_userstories_roles(project, querysets["roles"])),
     ])
 
     return data
