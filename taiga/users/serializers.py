@@ -79,6 +79,7 @@ class UserAdminSerializer(UserSerializer):
     total_public_projects = MethodField()
     email = Field()
     uuid = Field()
+    date_joined = Field()
     max_private_projects = Field()
     max_public_projects = Field()
     max_memberships_private_projects = Field()
