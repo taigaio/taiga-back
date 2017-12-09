@@ -92,6 +92,7 @@ DATABASES = {
 # EMAIL SETTINGS EXAMPLE
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #EMAIL_USE_TLS = False
+#EMAIL_USE_SSL = False # You cannot use both (TLS and SSL) at the same time!
 #EMAIL_HOST = 'localhost'
 #EMAIL_PORT = 25
 #EMAIL_HOST_USER = 'user'
