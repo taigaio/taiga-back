@@ -780,6 +780,38 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         services.send_invitation(invitation=invitation)
         return response.NoContent()
 
+    @list_route(methods=["POST"])
+    def remove_user_from_all_my_projects(self, request, **kwargs):
+        private_only = request.DATA.get('private_only', False)
+
+        user_id = request.DATA.get('user', None)
+        if user_id is None:
+            raise exc.WrongArguments(_("Invalid user id"))
+
+        user_model = apps.get_model("users", "User")
+        try:
+            user = user_model.objects.get(id=user_id)
+        except user_model.DoesNotExist:
+            return response.BadRequest(_("The user doesn't exist"))
+
+        memberships = models.Membership.objects.filter(project__owner=request.user, user=user)
+        if private_only:
+            memberships = memberships.filter(project__is_private=True)
+
+        errors = []
+        for membership in memberships:
+            if not services.can_user_leave_project(user, membership.project):
+                errors.append(membership.project.name)
+
+        if len(errors) > 0:
+            error = _("This user can't be removed from the following projects, because would "
+                      "leave them without any active admin: {}.".format(", ".join(errors)))
+            return response.BadRequest(error)
+
+        memberships.delete()
+
+        return response.NoContent()
+
     def pre_delete(self, obj):
         if obj.user is not None and not services.can_user_leave_project(obj.user, obj.project):
             raise exc.BadRequest(_("The project must have an owner and at least one of the users "
