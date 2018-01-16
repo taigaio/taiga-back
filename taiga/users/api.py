@@ -134,7 +134,7 @@ class UsersViewSet(ModelCrudViewSet):
                 raise exc.WrongArguments(_("Not valid email"))
 
             # We need to generate a token for the email
-            request.user.email_token = str(uuid.uuid1())
+            request.user.email_token = str(uuid.uuid4())
             request.user.new_email = new_email
             request.user.save(update_fields=["email_token", "new_email"])
             email = mail_builder.change_email(
@@ -172,7 +172,7 @@ class UsersViewSet(ModelCrudViewSet):
             raise exc.WrongArguments(_("Invalid username or email"))
 
         user = get_user_by_username_or_email(username_or_email)
-        user.token = str(uuid.uuid1())
+        user.token = str(uuid.uuid4())
         user.save(update_fields=["token"])
 
         email = mail_builder.password_recovery(user, {"user": user})
