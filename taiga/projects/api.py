@@ -139,6 +139,8 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         qs = self.get_queryset()
         if self.action == "by_slug":
             self.lookup_field = "slug"
+            # If we retrieve the project by slug we want to filter by user the
+            # permissions and return 404 in case the user don't have access
             flt = filters.get_filter_expression_can_view_projects(
                 self.request.user)
 
