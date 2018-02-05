@@ -39,6 +39,7 @@ from taiga.projects.history.services import (make_key_from_model_object,
 from taiga.permissions.services import user_has_perm
 
 from .models import HistoryChangeNotification, Watched
+from .squashing import squash_history_entries
 
 
 def notify_policy_exists(project, user) -> bool:
@@ -250,6 +251,8 @@ def send_sync_notifications(notification_id):
         return
 
     history_entries = tuple(notification.history_entries.all().order_by("created_at"))
+    history_entries = squash_history_entries(history_entries)
+
     obj, _ = get_last_snapshot_for_key(notification.key)
     obj_class = get_model_from_key(obj.key)
 
