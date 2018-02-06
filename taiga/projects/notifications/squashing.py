@@ -1,4 +1,4 @@
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 
 
 HistoryEntry = namedtuple('HistoryEntry', 'comment values_diff')
@@ -61,7 +61,6 @@ def squash_history_entries(history_entries):
     a squashable algorithm available.
     """
     history_entries = (HistoryEntry(entry.comment, entry.values_diff) for entry in history_entries)
-    from collections import OrderedDict
     grouped = OrderedDict()
     for entry in history_entries:
         if entry.comment:
