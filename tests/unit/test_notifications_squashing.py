@@ -84,3 +84,16 @@ def test_squash_values_diff_with_multiple_fields():
 
     squashed = squashing.squash_history_entries(history_entries)
     assert_(expected, squashed, ordered=False)
+
+
+def test_squash_arrays():
+    history_entries = [
+        squashing.HistoryEntry(comment='', values_diff={'tags': [['A', 'B'], ['A']]}),
+        squashing.HistoryEntry(comment='', values_diff={'tags': [['A'], ['A', 'C']]}),
+    ]
+    expected = [
+        squashing.HistoryEntry(comment='', values_diff={'tags': [['A', 'B'], ['A', 'C']]}),
+    ]
+
+    squashed = squashing.squash_history_entries(history_entries)
+    assert_(expected, squashed, ordered=False)

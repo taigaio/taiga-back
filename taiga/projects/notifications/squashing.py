@@ -29,7 +29,6 @@ EXCLUDED_FIELDS = (
 NON_SQUASHABLE_FIELDS = (
     'points',
     'attachments',
-    'tags',
     'watchers',
     'description_diff',
     'content_diff',
@@ -49,9 +48,14 @@ def summary(field, entries):
     if len(entries) <= 1:
         return entries
 
+    # Apply squashing algorithm. In this case, get first `from` and last `to`.
     initial = entries[0].values_diff[field]
     final = entries[-1].values_diff[field]
     from_, to = initial[0], final[1]
+
+    # If the resulting squashed `from` and `to` are equal we can skip
+    # this entry completely
+
     return [] if from_ == to else [HistoryEntry('', {field: [from_, to]})]
 
 
