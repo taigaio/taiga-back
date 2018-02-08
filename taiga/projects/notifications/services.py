@@ -31,6 +31,7 @@ from django.utils.translation import ugettext as _
 
 from taiga.base import exceptions as exc
 from taiga.base.mails import InlineCSSTemplateMail
+from taiga.front.templatetags.functions import resolve as resolve_front_url
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.history.choices import HistoryType
 from taiga.projects.history.services import (make_key_from_model_object,
@@ -273,6 +274,7 @@ def send_sync_notifications(notification_id):
 
     now = datetime.datetime.now()
     format_args = {
+        "unsubscribe_url": resolve_front_url('settings-mail-notifications'),
         "project_slug": notification.project.slug,
         "project_name": notification.project.name,
         "msg_id": msg_id,
@@ -285,7 +287,8 @@ def send_sync_notifications(notification_id):
         "In-Reply-To": "<{project_slug}/{msg_id}@{domain}>".format(**format_args),
         "References": "<{project_slug}/{msg_id}@{domain}>".format(**format_args),
         "List-ID": 'Taiga/{project_name} <taiga.{project_slug}@{domain}>'.format(**format_args),
-        "Thread-Index": make_ms_thread_index("<{project_slug}/{msg_id}@{domain}>".format(**format_args), now)
+        "Thread-Index": make_ms_thread_index("<{project_slug}/{msg_id}@{domain}>".format(**format_args), now),
+        "List-Unsubscribe": "<{unsubscribe_url}>".format(**format_args),
     }
 
     for user in notification.notify_users.distinct():
