@@ -72,6 +72,21 @@ def test_get_project_by_slug(client):
     assert response.status_code == 404
 
 
+def test_get_private_project_by_slug(client):
+    project = f.create_project(is_private=True)
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+
+    url = reverse("projects-by-slug")
+
+    response = client.json.get(url, {"slug": project.slug})
+
+    assert response.status_code == 404
+
+    client.login(project.owner)
+    response = client.json.get(url, {"slug": project.slug})
+    assert response.status_code == 200
+
+
 def test_create_project(client):
     user = f.create_user()
     url = reverse("projects-list")
