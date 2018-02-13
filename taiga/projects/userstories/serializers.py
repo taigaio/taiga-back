@@ -22,6 +22,7 @@ from taiga.base.neighbors import NeighborsSerializerMixin
 
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.attachments.serializers import BasicAttachmentsInfoSerializerMixin
+from taiga.projects.due_dates.serializers import DueDateSerializerMixin
 from taiga.projects.mixins.serializers import AssignedToExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import OwnerExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import ProjectExtraInfoSerializerMixin
@@ -49,7 +50,7 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
         OwnerExtraInfoSerializerMixin, AssignedToExtraInfoSerializerMixin,
         StatusExtraInfoSerializerMixin, BasicAttachmentsInfoSerializerMixin,
         TaggedInProjectResourceSerializer, TotalCommentsSerializerMixin,
-        serializers.LightSerializer):
+        DueDateSerializerMixin, serializers.LightSerializer):
 
     id = Field()
     ref = Field()
