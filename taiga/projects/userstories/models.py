@@ -97,6 +97,9 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                     default=None, related_name="userstories_assigned_to_me",
                                     verbose_name=_("assigned to"))
+    assigned_users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True,
+                                    default=None, related_name="assigned_userstories",
+                                    verbose_name=_("assigned users"))
     client_requirement = models.BooleanField(default=False, null=False, blank=True,
                                              verbose_name=_("is client requirement"))
     team_requirement = models.BooleanField(default=False, null=False, blank=True,

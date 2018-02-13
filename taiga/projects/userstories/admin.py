@@ -67,6 +67,10 @@ class UserStoryAdmin(admin.ModelAdmin):
                 and getattr(self, 'obj', None)):
             kwargs["queryset"] = db_field.related.parent_model.objects.filter(
                                          memberships__project=self.obj.project)
+        elif (db_field.name in ["assigned_users"]
+                and getattr(self, 'obj', None)):
+            kwargs["queryset"] = db_field.related_model.objects.filter(
+                                         memberships__project=self.obj.project)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 

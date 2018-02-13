@@ -302,6 +302,7 @@ class UserStoryExportValidator(WatcheableObjectModelValidatorMixin):
     role_points = RolePointsExportValidator(many=True, required=False)
     owner = UserRelatedField(required=False)
     assigned_to = UserRelatedField(required=False)
+    assigned_users = UserRelatedField(many=True, required=False)
     status = ProjectRelatedField(slug_field="name")
     milestone = ProjectRelatedField(slug_field="name", required=False)
     modified_date = serializers.DateTimeField(required=False)

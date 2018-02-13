@@ -237,6 +237,7 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin,
     role_points = RolePointsExportSerializer(many=True)
     owner = UserRelatedField()
     assigned_to = UserRelatedField()
+    assigned_users = MethodField()
     status = SlugRelatedField(slug_field="name")
     milestone = SlugRelatedField(slug_field="name")
     modified_date = DateTimeField()
@@ -272,6 +273,10 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin,
         if project.id not in _userstories_statuses_cache:
             _userstories_statuses_cache[project.id] = {s.id: s.name for s in project.us_statuses.all()}
         return _userstories_statuses_cache[project.id]
+
+    def get_assigned_users(self, obj):
+        return [user.email for user in obj.assigned_users.all()]
+
 
 class EpicRelatedUserStoryExportSerializer(RelatedExportSerializer):
     user_story = SlugRelatedField(slug_field="ref")

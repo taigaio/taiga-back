@@ -83,6 +83,22 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
     epic_order = MethodField()
     tasks = MethodField()
 
+    assigned_users = MethodField()
+
+    # def get_assigned_users(self, obj):
+    #     assert hasattr(obj, "assigned_users_attr"), "instance must have a assigned_users_attr attribute"
+    #     if not obj.assigned_users_attr:
+    #         return []
+    #
+    #     return obj.assigned_users_attr
+
+    def get_assigned_users(self, obj):
+        """Get the assigned of an object.
+
+        :return: User queryset object representing the assigned users
+        """
+        return [user.id for user in obj.assigned_users.all()]
+
     def get_epic_order(self, obj):
         include_epic_order = getattr(obj, "include_epic_order", False)
 

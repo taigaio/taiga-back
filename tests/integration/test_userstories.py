@@ -69,6 +69,44 @@ def test_update_userstories_order_in_bulk():
                                                                 models.UserStory)
 
 
+def test_create_userstory_with_assign_to(client):
+    user = f.UserFactory.create()
+    user_watcher = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+    f.MembershipFactory.create(project=project, user=user_watcher,
+                               is_admin=True)
+    url = reverse("userstories-list")
+
+    data = {"subject": "Test user story", "project": project.id,
+            "assigned_to": user.id}
+    client.login(user)
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 201
+    assert response.data["assigned_to"] == user.id
+
+
+def test_create_userstory_with_assigned_users(client):
+    user = f.UserFactory.create()
+    user_watcher = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+    f.MembershipFactory.create(project=project, user=user_watcher,
+                               is_admin=True)
+    url = reverse("userstories-list")
+
+    data = {"subject": "Test user story", "project": project.id,
+            "assigned_users": [user.id, user_watcher.id]}
+    client.login(user)
+    json_data = json.dumps(data)
+
+    response = client.json.post(url, json_data)
+
+    assert response.status_code == 201
+    assert response.data["assigned_users"] == [user.id, user_watcher.id]
+
+
 def test_create_userstory_with_watchers(client):
     user = f.UserFactory.create()
     user_watcher = f.UserFactory.create()

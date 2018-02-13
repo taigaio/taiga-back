@@ -92,10 +92,13 @@ def _common_users_values(diff):
         users.update(diff["owner"])
     if "assigned_to" in diff:
         users.update(diff["assigned_to"])
+    if "assigned_users" in diff:
+        [users.update(usrs_id) if usrs_id else None for usrs_id in diff["assigned_users"]]
     if users:
         values["users"] = _get_users_values(users)
 
     return values
+
 
 def project_values(diff):
     values = _common_users_values(diff)
@@ -344,7 +347,7 @@ def userstory_freezer(us) -> dict:
         "subject": us.subject,
         "description": us.description,
         "description_html": mdrender(us.project, us.description),
-        "assigned_to": us.assigned_to_id,
+        "assigned_users": [u.id for u in us.assigned_users.all()],
         "milestone": us.milestone_id,
         "client_requirement": us.client_requirement,
         "team_requirement": us.team_requirement,
