@@ -13,9 +13,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-06 11:42+0200\n"
-"PO-Revision-Date: 2017-10-06 09:43+0000\n"
-"Last-Translator: David Barragán <bameda@gmail.com>\n"
+"POT-Creation-Date: 2018-02-15 18:20+0100\n"
+"PO-Revision-Date: 2018-02-15 17:25+0000\n"
+"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
 "Language-Team: Japanese (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ja/)\n"
 "MIME-Version: 1.0\n"
@@ -61,8 +61,8 @@ msgid "Error on creating new user."
 msgstr "新しいユーザを作成中にエラーが発生しました。"
 
 #: taiga/auth/tokens.py:49 taiga/auth/tokens.py:56
-#: taiga/external_apps/services.py:34 taiga/projects/api.py:374
-#: taiga/projects/api.py:395
+#: taiga/external_apps/services.py:34 taiga/projects/api.py:389
+#: taiga/projects/api.py:410
 msgid "Invalid token"
 msgstr "トークンが間違っています"
 
@@ -199,12 +199,12 @@ msgstr ""
 "か破損しています。"
 
 #: taiga/base/api/mixins.py:284 taiga/base/exceptions.py:211
-#: taiga/hooks/api.py:69 taiga/projects/api.py:409 taiga/projects/api.py:442
-#: taiga/projects/api.py:754 taiga/projects/epics/api.py:200
-#: taiga/projects/epics/api.py:284 taiga/projects/issues/api.py:224
-#: taiga/projects/mixins/ordering.py:59 taiga/projects/tasks/api.py:247
-#: taiga/projects/tasks/api.py:272 taiga/projects/userstories/api.py:334
-#: taiga/projects/userstories/api.py:386 taiga/webhooks/api.py:71
+#: taiga/hooks/api.py:69 taiga/projects/api.py:424 taiga/projects/api.py:457
+#: taiga/projects/api.py:769 taiga/projects/epics/api.py:200
+#: taiga/projects/epics/api.py:284 taiga/projects/issues/api.py:225
+#: taiga/projects/mixins/ordering.py:59 taiga/projects/tasks/api.py:255
+#: taiga/projects/tasks/api.py:280 taiga/projects/userstories/api.py:341
+#: taiga/projects/userstories/api.py:393 taiga/webhooks/api.py:71
 msgid "Blocked element"
 msgstr "ブロックされた要素"
 
@@ -363,12 +363,12 @@ msgstr "前提条件エラー"
 msgid "No room left for more projects."
 msgstr "新しいプロジェクトを作成するスペースがありません。"
 
-#: taiga/base/filters.py:81 taiga/base/filters.py:463
+#: taiga/base/filters.py:105 taiga/base/filters.py:487
 msgid "Error in filter params types."
 msgstr "パラメータタイプのフィルターエラー"
 
-#: taiga/base/filters.py:136 taiga/base/filters.py:243
-#: taiga/projects/filters.py:64
+#: taiga/base/filters.py:160 taiga/base/filters.py:267
+#: taiga/projects/filters.py:65
 msgid "'project' must be an integer value."
 msgstr "'project'は整数である必要があります。"
 
@@ -418,6 +418,12 @@ msgstr "Taiga.io"
 #, python-format
 msgid ""
 "\n"
+"                                                    <strong>Configure email "
+"notifications or unsubscribe:</strong>\n"
+"                                                    <a href="
+"\"%(unsubscribe_url)s\" title=\"Unsubscribe\" style=\"color: #9dce0a\">"
+"%(unsubscribe_url)s</a>\n"
+"                                                    <br>\n"
 "                                                    <strong>Taiga Support:</"
 "strong>\n"
 "                                                    <a href=\"%(support_url)s"
@@ -438,22 +444,6 @@ msgid ""
 "                                                    </a>\n"
 "                                                    "
 msgstr ""
-"\n"
-"<strong>Taigaサポート</strong>\n"
-"<a href=\"%(support_url)s\" title=\"サポートページ\" style=\"color: #9dce0a"
-"\">%(support_url)s</a>\n"
-"<br>\n"
-"<strong>問い合わせ</strong>\n"
-"<a href=\"mailto:%(support_email)s\" title=\"サポートメール\" style=\"color: "
-"#9dce0a\">\n"
-"%(support_email)s\n"
-"</a>\n"
-"<br>\n"
-"<strong>メールリスト</strong>\n"
-"<a href=\"%(mailing_list_url)s\" title=\"メールリスト\" style=\"color: "
-"#9dce0a\">\n"
-"%(mailing_list_url)s\n"
-"</a>"
 
 #: taiga/base/templates/emails/hero-body-html.jinja:6
 msgid "You have been Taigatized"
@@ -905,7 +895,7 @@ msgstr "認証が必要です。"
 #: taiga/projects/models.py:646 taiga/projects/models.py:666
 #: taiga/projects/models.py:686 taiga/projects/models.py:718
 #: taiga/projects/models.py:738 taiga/users/admin.py:54
-#: taiga/users/models.py:303 taiga/webhooks/models.py:29
+#: taiga/users/models.py:310 taiga/webhooks/models.py:29
 msgid "name"
 msgstr "名前"
 
@@ -941,11 +931,11 @@ msgstr "ユーザー"
 msgid "application"
 msgstr "アプリケーション"
 
-#: taiga/feedback/models.py:25 taiga/users/models.py:140
+#: taiga/feedback/models.py:25 taiga/users/models.py:147
 msgid "full name"
 msgstr "フルネーム"
 
-#: taiga/feedback/models.py:27 taiga/users/models.py:135
+#: taiga/feedback/models.py:27 taiga/users/models.py:142
 msgid "email address"
 msgstr "メールアドレス"
 
@@ -1032,8 +1022,8 @@ msgid "The payload is not a valid json"
 msgstr "ペイロードは有効なjsonではありません。"
 
 #: taiga/hooks/api.py:63 taiga/projects/epics/api.py:154
-#: taiga/projects/issues/api.py:139 taiga/projects/tasks/api.py:201
-#: taiga/projects/userstories/api.py:282
+#: taiga/projects/issues/api.py:140 taiga/projects/tasks/api.py:209
+#: taiga/projects/userstories/api.py:289
 msgid "The project doesn't exist"
 msgstr "プロジェクトは存在していません。"
 
@@ -1572,35 +1562,41 @@ msgstr "プライベートにする"
 msgid "Delete selected %(verbose_name_plural)s"
 msgstr "選択中の%(verbose_name_plural)sらを削除する"
 
-#: taiga/projects/api.py:160 taiga/users/api.py:244
+#: taiga/projects/api.py:175 taiga/users/api.py:244
 msgid "Incomplete arguments"
 msgstr "引数は不足している"
 
-#: taiga/projects/api.py:164 taiga/users/api.py:249
+#: taiga/projects/api.py:179 taiga/users/api.py:249
 msgid "Invalid image format"
 msgstr "画像形式が正しくありません"
 
-#: taiga/projects/api.py:225
+#: taiga/projects/api.py:240
 msgid "Not valid template name"
 msgstr "無効なテンプレート名"
 
-#: taiga/projects/api.py:228
+#: taiga/projects/api.py:243
 msgid "Not valid template description"
 msgstr "無効なテンプレートの説明文"
 
-#: taiga/projects/api.py:354
+#: taiga/projects/api.py:369 taiga/projects/api.py:804
 msgid "Invalid user id"
 msgstr "無効なユーザーID"
 
-#: taiga/projects/api.py:360
+#: taiga/projects/api.py:375 taiga/projects/api.py:810
 msgid "The user doesn't exist"
 msgstr "このユーザーは存在しません。"
 
-#: taiga/projects/api.py:364
+#: taiga/projects/api.py:379
 msgid "The user must be already a project member"
 msgstr "ユーザーはプロジェクトのメンバーである必要がある"
 
-#: taiga/projects/api.py:785
+#: taiga/projects/api.py:822
+msgid ""
+"This user can't be removed from the following projects, because would leave "
+"them without any active admin: {}."
+msgstr ""
+
+#: taiga/projects/api.py:832
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
@@ -1608,7 +1604,7 @@ msgstr ""
 "プロジェクトにオーナーと、1人以上のアクティブな管理者であるユーザーが必要で"
 "す。"
 
-#: taiga/projects/api.py:819
+#: taiga/projects/api.py:866
 msgid "You don't have permisions to see that."
 msgstr "閲覧する権限がありません。"
 
@@ -1635,7 +1631,7 @@ msgstr ""
 #: taiga/projects/notifications/models.py:74
 #: taiga/projects/notifications/models.py:91 taiga/projects/tasks/models.py:43
 #: taiga/projects/userstories/models.py:67 taiga/projects/wiki/models.py:34
-#: taiga/projects/wiki/models.py:72 taiga/users/models.py:314
+#: taiga/projects/wiki/models.py:72 taiga/users/models.py:321
 msgid "project"
 msgstr "プロジェクト"
 
@@ -1680,7 +1676,7 @@ msgstr ""
 #: taiga/projects/models.py:592 taiga/projects/models.py:616
 #: taiga/projects/models.py:648 taiga/projects/models.py:668
 #: taiga/projects/models.py:690 taiga/projects/models.py:720
-#: taiga/projects/wiki/models.py:77 taiga/users/models.py:309
+#: taiga/projects/wiki/models.py:77 taiga/users/models.py:316
 msgid "order"
 msgstr "並べ替え"
 
@@ -1841,7 +1837,7 @@ msgstr "件名"
 #: taiga/projects/models.py:564 taiga/projects/models.py:620
 #: taiga/projects/models.py:650 taiga/projects/models.py:670
 #: taiga/projects/models.py:694 taiga/projects/models.py:722
-#: taiga/users/models.py:142
+#: taiga/users/models.py:149
 msgid "color"
 msgstr "色"
 
@@ -2012,23 +2008,23 @@ msgstr "ブロックされたノート"
 msgid "sprint"
 msgstr "スプリント"
 
-#: taiga/projects/issues/api.py:157
+#: taiga/projects/issues/api.py:158
 msgid "You don't have permissions to set this sprint to this issue."
 msgstr "このイッシューにこのスプリントを付与する権限がありません。"
 
-#: taiga/projects/issues/api.py:161
+#: taiga/projects/issues/api.py:162
 msgid "You don't have permissions to set this status to this issue."
 msgstr "このイッシューにこのステータスを付与する権限がありません。"
 
-#: taiga/projects/issues/api.py:165
+#: taiga/projects/issues/api.py:166
 msgid "You don't have permissions to set this severity to this issue."
 msgstr "このイッシューにこの深刻度を付与する権限がありません。"
 
-#: taiga/projects/issues/api.py:169
+#: taiga/projects/issues/api.py:170
 msgid "You don't have permissions to set this priority to this issue."
 msgstr "このイッシューにこの優先度を付与する権限がありません。"
 
-#: taiga/projects/issues/api.py:173
+#: taiga/projects/issues/api.py:174
 msgid "You don't have permissions to set this type to this issue."
 msgstr "このイッシューのこのタイプを付与する権限がありません。"
 
@@ -2061,7 +2057,7 @@ msgstr "いいねの数"
 #: taiga/projects/models.py:523 taiga/projects/models.py:556
 #: taiga/projects/models.py:614 taiga/projects/models.py:688
 #: taiga/projects/models.py:740 taiga/projects/wiki/models.py:36
-#: taiga/users/admin.py:58 taiga/users/models.py:305
+#: taiga/users/admin.py:58 taiga/users/models.py:312
 msgid "slug"
 msgstr "スラグ"
 
@@ -2124,7 +2120,7 @@ msgstr "メール"
 msgid "create at"
 msgstr ""
 
-#: taiga/projects/models.py:83 taiga/users/models.py:157
+#: taiga/projects/models.py:83 taiga/users/models.py:164
 msgid "token"
 msgstr "トークン"
 
@@ -2395,12 +2391,12 @@ msgstr ""
 msgid "Watched"
 msgstr ""
 
-#: taiga/projects/notifications/services.py:65
-#: taiga/projects/notifications/services.py:79
+#: taiga/projects/notifications/services.py:67
+#: taiga/projects/notifications/services.py:81
 msgid "Notify exists for specified user and project"
 msgstr ""
 
-#: taiga/projects/notifications/services.py:434
+#: taiga/projects/notifications/services.py:440
 msgid "Invalid value for notify level"
 msgstr ""
 
@@ -3092,15 +3088,15 @@ msgstr ""
 msgid "The tag doesn't exist."
 msgstr ""
 
-#: taiga/projects/tasks/api.py:98 taiga/projects/tasks/api.py:107
+#: taiga/projects/tasks/api.py:106 taiga/projects/tasks/api.py:115
 msgid "You don't have permissions to set this sprint to this task."
 msgstr ""
 
-#: taiga/projects/tasks/api.py:101
+#: taiga/projects/tasks/api.py:109
 msgid "You don't have permissions to set this user story to this task."
 msgstr ""
 
-#: taiga/projects/tasks/api.py:104
+#: taiga/projects/tasks/api.py:112
 msgid "You don't have permissions to set this status to this task."
 msgstr ""
 
@@ -3716,25 +3712,25 @@ msgstr "プロダクトオーナー"
 msgid "Stakeholder"
 msgstr ""
 
-#: taiga/projects/userstories/api.py:129
+#: taiga/projects/userstories/api.py:136
 msgid "You don't have permissions to set this sprint to this user story."
 msgstr ""
 
-#: taiga/projects/userstories/api.py:133
+#: taiga/projects/userstories/api.py:140
 msgid "You don't have permissions to set this status to this user story."
-msgstr ""
-
-#: taiga/projects/userstories/api.py:227
-#, python-brace-format
-msgid "Invalid role id '{role_id}'"
 msgstr ""
 
 #: taiga/projects/userstories/api.py:234
 #, python-brace-format
+msgid "Invalid role id '{role_id}'"
+msgstr ""
+
+#: taiga/projects/userstories/api.py:241
+#, python-brace-format
 msgid "Invalid points id '{points_id}'"
 msgstr ""
 
-#: taiga/projects/userstories/api.py:249
+#: taiga/projects/userstories/api.py:256
 #, python-brace-format
 msgid "Generating the user story #{ref} - {subject}"
 msgstr ""
@@ -3961,92 +3957,92 @@ msgstr ""
 msgid "Invalid, are you sure the token is correct?"
 msgstr ""
 
-#: taiga/users/models.py:98
+#: taiga/users/models.py:99
 msgid "superuser status"
 msgstr "管理者の状態"
 
-#: taiga/users/models.py:99
+#: taiga/users/models.py:100
 msgid ""
 "Designates that this user has all permissions without explicitly assigning "
 "them."
 msgstr ""
 
-#: taiga/users/models.py:129
+#: taiga/users/models.py:136
 msgid "username"
 msgstr "ユーザー名"
 
-#: taiga/users/models.py:130
+#: taiga/users/models.py:137
 msgid ""
 "Required. 30 characters or fewer. Letters, numbers and /./-/_ characters"
 msgstr ""
 
-#: taiga/users/models.py:133
+#: taiga/users/models.py:140
 msgid "Enter a valid username."
 msgstr "有効なユーザー名を入力してください。"
 
-#: taiga/users/models.py:136
+#: taiga/users/models.py:143
 msgid "active"
 msgstr "有効"
 
-#: taiga/users/models.py:137
+#: taiga/users/models.py:144
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
 msgstr ""
 
-#: taiga/users/models.py:143
+#: taiga/users/models.py:150
 msgid "biography"
 msgstr "経歴"
 
-#: taiga/users/models.py:146
+#: taiga/users/models.py:153
 msgid "photo"
 msgstr "写真"
 
-#: taiga/users/models.py:147
+#: taiga/users/models.py:154
 msgid "date joined"
 msgstr "参加日"
 
-#: taiga/users/models.py:149
+#: taiga/users/models.py:156
 msgid "default language"
 msgstr "既定の言語"
 
-#: taiga/users/models.py:151
+#: taiga/users/models.py:158
 msgid "default theme"
 msgstr "既定のテーマ"
 
-#: taiga/users/models.py:153
+#: taiga/users/models.py:160
 msgid "default timezone"
 msgstr "既定のタイムゾーン"
 
-#: taiga/users/models.py:155
+#: taiga/users/models.py:162
 msgid "colorize tags"
 msgstr "タグを色付け"
 
-#: taiga/users/models.py:160
+#: taiga/users/models.py:167
 msgid "email token"
 msgstr "Eメールトークン"
 
-#: taiga/users/models.py:162
+#: taiga/users/models.py:169
 msgid "new email address"
 msgstr "新しいEメールアドレス"
 
-#: taiga/users/models.py:169
+#: taiga/users/models.py:176
 msgid "max number of owned private projects"
 msgstr "非公開プロジェクトの最大数"
 
-#: taiga/users/models.py:172
+#: taiga/users/models.py:179
 msgid "max number of owned public projects"
 msgstr "公開プロジェクトの最大数"
 
-#: taiga/users/models.py:175
+#: taiga/users/models.py:182
 msgid "max number of memberships for each owned private project"
 msgstr "非公開プロジェクトごとのメンバーの最大数"
 
-#: taiga/users/models.py:179
+#: taiga/users/models.py:186
 msgid "max number of memberships for each owned public project"
 msgstr "公開プロジェクトごとのメンバーの最大数"
 
-#: taiga/users/models.py:307
+#: taiga/users/models.py:314
 msgid "permissions"
 msgstr "アクセス権"
 

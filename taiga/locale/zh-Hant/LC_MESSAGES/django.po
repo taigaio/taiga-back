@@ -13,9 +13,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-06 11:42+0200\n"
-"PO-Revision-Date: 2017-10-06 09:43+0000\n"
-"Last-Translator: David Barragán <bameda@gmail.com>\n"
+"POT-Creation-Date: 2018-02-15 18:20+0100\n"
+"PO-Revision-Date: 2018-02-15 17:25+0000\n"
+"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
 "Language-Team: Chinese Traditional (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/zh-Hant/)\n"
 "MIME-Version: 1.0\n"
@@ -61,8 +61,8 @@ msgid "Error on creating new user."
 msgstr "無法創建新使用者"
 
 #: taiga/auth/tokens.py:49 taiga/auth/tokens.py:56
-#: taiga/external_apps/services.py:34 taiga/projects/api.py:374
-#: taiga/projects/api.py:395
+#: taiga/external_apps/services.py:34 taiga/projects/api.py:389
+#: taiga/projects/api.py:410
 msgid "Invalid token"
 msgstr "無效的代碼　"
 
@@ -188,12 +188,12 @@ msgid ""
 msgstr "上傳有效圖片，你所上傳的檔案非圖檔或已損壞"
 
 #: taiga/base/api/mixins.py:284 taiga/base/exceptions.py:211
-#: taiga/hooks/api.py:69 taiga/projects/api.py:409 taiga/projects/api.py:442
-#: taiga/projects/api.py:754 taiga/projects/epics/api.py:200
-#: taiga/projects/epics/api.py:284 taiga/projects/issues/api.py:224
-#: taiga/projects/mixins/ordering.py:59 taiga/projects/tasks/api.py:247
-#: taiga/projects/tasks/api.py:272 taiga/projects/userstories/api.py:334
-#: taiga/projects/userstories/api.py:386 taiga/webhooks/api.py:71
+#: taiga/hooks/api.py:69 taiga/projects/api.py:424 taiga/projects/api.py:457
+#: taiga/projects/api.py:769 taiga/projects/epics/api.py:200
+#: taiga/projects/epics/api.py:284 taiga/projects/issues/api.py:225
+#: taiga/projects/mixins/ordering.py:59 taiga/projects/tasks/api.py:255
+#: taiga/projects/tasks/api.py:280 taiga/projects/userstories/api.py:341
+#: taiga/projects/userstories/api.py:393 taiga/webhooks/api.py:71
 msgid "Blocked element"
 msgstr ""
 
@@ -349,12 +349,12 @@ msgstr "前提出錯"
 msgid "No room left for more projects."
 msgstr "沒有空間再放入專案"
 
-#: taiga/base/filters.py:81 taiga/base/filters.py:463
+#: taiga/base/filters.py:105 taiga/base/filters.py:487
 msgid "Error in filter params types."
 msgstr "過濾參數類型出錯"
 
-#: taiga/base/filters.py:136 taiga/base/filters.py:243
-#: taiga/projects/filters.py:64
+#: taiga/base/filters.py:160 taiga/base/filters.py:267
+#: taiga/projects/filters.py:65
 msgid "'project' must be an integer value."
 msgstr "專案須為整數值"
 
@@ -404,6 +404,12 @@ msgstr "Taiga.io"
 #, python-format
 msgid ""
 "\n"
+"                                                    <strong>Configure email "
+"notifications or unsubscribe:</strong>\n"
+"                                                    <a href="
+"\"%(unsubscribe_url)s\" title=\"Unsubscribe\" style=\"color: #9dce0a\">"
+"%(unsubscribe_url)s</a>\n"
+"                                                    <br>\n"
 "                                                    <strong>Taiga Support:</"
 "strong>\n"
 "                                                    <a href=\"%(support_url)s"
@@ -854,7 +860,7 @@ msgstr "要求取得授權"
 #: taiga/projects/models.py:646 taiga/projects/models.py:666
 #: taiga/projects/models.py:686 taiga/projects/models.py:718
 #: taiga/projects/models.py:738 taiga/users/admin.py:54
-#: taiga/users/models.py:303 taiga/webhooks/models.py:29
+#: taiga/users/models.py:310 taiga/webhooks/models.py:29
 msgid "name"
 msgstr "姓名"
 
@@ -890,11 +896,11 @@ msgstr "使用者"
 msgid "application"
 msgstr "應用程式"
 
-#: taiga/feedback/models.py:25 taiga/users/models.py:140
+#: taiga/feedback/models.py:25 taiga/users/models.py:147
 msgid "full name"
 msgstr "全名"
 
-#: taiga/feedback/models.py:27 taiga/users/models.py:135
+#: taiga/feedback/models.py:27 taiga/users/models.py:142
 msgid "email address"
 msgstr "電子郵件"
 
@@ -977,8 +983,8 @@ msgid "The payload is not a valid json"
 msgstr "載荷為無效json"
 
 #: taiga/hooks/api.py:63 taiga/projects/epics/api.py:154
-#: taiga/projects/issues/api.py:139 taiga/projects/tasks/api.py:201
-#: taiga/projects/userstories/api.py:282
+#: taiga/projects/issues/api.py:140 taiga/projects/tasks/api.py:209
+#: taiga/projects/userstories/api.py:289
 msgid "The project doesn't exist"
 msgstr "專案不存在"
 
@@ -1515,41 +1521,47 @@ msgstr ""
 msgid "Delete selected %(verbose_name_plural)s"
 msgstr ""
 
-#: taiga/projects/api.py:160 taiga/users/api.py:244
+#: taiga/projects/api.py:175 taiga/users/api.py:244
 msgid "Incomplete arguments"
 msgstr "不完整參數"
 
-#: taiga/projects/api.py:164 taiga/users/api.py:249
+#: taiga/projects/api.py:179 taiga/users/api.py:249
 msgid "Invalid image format"
 msgstr "無效的圖片檔案"
 
-#: taiga/projects/api.py:225
+#: taiga/projects/api.py:240
 msgid "Not valid template name"
 msgstr "非有效樣板名稱　"
 
-#: taiga/projects/api.py:228
+#: taiga/projects/api.py:243
 msgid "Not valid template description"
 msgstr "無效樣板描述"
 
-#: taiga/projects/api.py:354
+#: taiga/projects/api.py:369 taiga/projects/api.py:804
 msgid "Invalid user id"
 msgstr ""
 
-#: taiga/projects/api.py:360
+#: taiga/projects/api.py:375 taiga/projects/api.py:810
 msgid "The user doesn't exist"
 msgstr ""
 
-#: taiga/projects/api.py:364
+#: taiga/projects/api.py:379
 msgid "The user must be already a project member"
 msgstr ""
 
-#: taiga/projects/api.py:785
+#: taiga/projects/api.py:822
+msgid ""
+"This user can't be removed from the following projects, because would leave "
+"them without any active admin: {}."
+msgstr ""
+
+#: taiga/projects/api.py:832
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
 msgstr ""
 
-#: taiga/projects/api.py:819
+#: taiga/projects/api.py:866
 msgid "You don't have permisions to see that."
 msgstr "您無觀看權限"
 
@@ -1576,7 +1588,7 @@ msgstr "專案ID不符合物件與專案"
 #: taiga/projects/notifications/models.py:74
 #: taiga/projects/notifications/models.py:91 taiga/projects/tasks/models.py:43
 #: taiga/projects/userstories/models.py:67 taiga/projects/wiki/models.py:34
-#: taiga/projects/wiki/models.py:72 taiga/users/models.py:314
+#: taiga/projects/wiki/models.py:72 taiga/users/models.py:321
 msgid "project"
 msgstr "專案"
 
@@ -1621,7 +1633,7 @@ msgstr ""
 #: taiga/projects/models.py:592 taiga/projects/models.py:616
 #: taiga/projects/models.py:648 taiga/projects/models.py:668
 #: taiga/projects/models.py:690 taiga/projects/models.py:720
-#: taiga/projects/wiki/models.py:77 taiga/users/models.py:309
+#: taiga/projects/wiki/models.py:77 taiga/users/models.py:316
 msgid "order"
 msgstr "次序"
 
@@ -1782,7 +1794,7 @@ msgstr "主旨"
 #: taiga/projects/models.py:564 taiga/projects/models.py:620
 #: taiga/projects/models.py:650 taiga/projects/models.py:670
 #: taiga/projects/models.py:694 taiga/projects/models.py:722
-#: taiga/users/models.py:142
+#: taiga/users/models.py:149
 msgid "color"
 msgstr "顏色"
 
@@ -1953,23 +1965,23 @@ msgstr "封鎖筆記"
 msgid "sprint"
 msgstr "衝刺任務"
 
-#: taiga/projects/issues/api.py:157
+#: taiga/projects/issues/api.py:158
 msgid "You don't have permissions to set this sprint to this issue."
 msgstr "您無權限設定此問題的衝刺任務"
 
-#: taiga/projects/issues/api.py:161
+#: taiga/projects/issues/api.py:162
 msgid "You don't have permissions to set this status to this issue."
 msgstr "您無權限設定此問題的狀態"
 
-#: taiga/projects/issues/api.py:165
+#: taiga/projects/issues/api.py:166
 msgid "You don't have permissions to set this severity to this issue."
 msgstr "您無權限設定此問題的嚴重性"
 
-#: taiga/projects/issues/api.py:169
+#: taiga/projects/issues/api.py:170
 msgid "You don't have permissions to set this priority to this issue."
 msgstr "您無權限設定此問題的優先性"
 
-#: taiga/projects/issues/api.py:173
+#: taiga/projects/issues/api.py:174
 msgid "You don't have permissions to set this type to this issue."
 msgstr "您無權限設定此問題的類型"
 
@@ -2002,7 +2014,7 @@ msgstr "喜歡"
 #: taiga/projects/models.py:523 taiga/projects/models.py:556
 #: taiga/projects/models.py:614 taiga/projects/models.py:688
 #: taiga/projects/models.py:740 taiga/projects/wiki/models.py:36
-#: taiga/users/admin.py:58 taiga/users/models.py:305
+#: taiga/users/admin.py:58 taiga/users/models.py:312
 msgid "slug"
 msgstr "代稱"
 
@@ -2065,7 +2077,7 @@ msgstr "電子郵件"
 msgid "create at"
 msgstr "創建於"
 
-#: taiga/projects/models.py:83 taiga/users/models.py:157
+#: taiga/projects/models.py:83 taiga/users/models.py:164
 msgid "token"
 msgstr "代號"
 
@@ -2336,12 +2348,12 @@ msgstr "通知用戶"
 msgid "Watched"
 msgstr "已觀注"
 
-#: taiga/projects/notifications/services.py:65
-#: taiga/projects/notifications/services.py:79
+#: taiga/projects/notifications/services.py:67
+#: taiga/projects/notifications/services.py:81
 msgid "Notify exists for specified user and project"
 msgstr "通知特定使用者與專案退出"
 
-#: taiga/projects/notifications/services.py:434
+#: taiga/projects/notifications/services.py:440
 msgid "Invalid value for notify level"
 msgstr "通知水平的無效值"
 
@@ -3283,15 +3295,15 @@ msgstr ""
 msgid "The tag doesn't exist."
 msgstr ""
 
-#: taiga/projects/tasks/api.py:98 taiga/projects/tasks/api.py:107
+#: taiga/projects/tasks/api.py:106 taiga/projects/tasks/api.py:115
 msgid "You don't have permissions to set this sprint to this task."
 msgstr "無權限更動此任務下的衝刺任務"
 
-#: taiga/projects/tasks/api.py:101
+#: taiga/projects/tasks/api.py:109
 msgid "You don't have permissions to set this user story to this task."
 msgstr "無權限更動此務下的使用者故事"
 
-#: taiga/projects/tasks/api.py:104
+#: taiga/projects/tasks/api.py:112
 msgid "You don't have permissions to set this status to this task."
 msgstr "無權限更動此任務下的狀態"
 
@@ -3949,25 +3961,25 @@ msgstr "產品所有人"
 msgid "Stakeholder"
 msgstr "利害關係人"
 
-#: taiga/projects/userstories/api.py:129
+#: taiga/projects/userstories/api.py:136
 msgid "You don't have permissions to set this sprint to this user story."
 msgstr "無權限更動使用者故事的衝刺任務"
 
-#: taiga/projects/userstories/api.py:133
+#: taiga/projects/userstories/api.py:140
 msgid "You don't have permissions to set this status to this user story."
 msgstr "無權限更動此使用者故事的狀態"
 
-#: taiga/projects/userstories/api.py:227
+#: taiga/projects/userstories/api.py:234
 #, python-brace-format
 msgid "Invalid role id '{role_id}'"
 msgstr ""
 
-#: taiga/projects/userstories/api.py:234
+#: taiga/projects/userstories/api.py:241
 #, python-brace-format
 msgid "Invalid points id '{points_id}'"
 msgstr ""
 
-#: taiga/projects/userstories/api.py:249
+#: taiga/projects/userstories/api.py:256
 #, python-brace-format
 msgid "Generating the user story #{ref} - {subject}"
 msgstr "産生使用者故事 #{ref} - {subject}"
@@ -4194,92 +4206,92 @@ msgstr "無效，請確認代號正確，之前是否曾使用過？"
 msgid "Invalid, are you sure the token is correct?"
 msgstr "無效，請確認代號是否正確？"
 
-#: taiga/users/models.py:98
+#: taiga/users/models.py:99
 msgid "superuser status"
 msgstr "超級使用者狀態　"
 
-#: taiga/users/models.py:99
+#: taiga/users/models.py:100
 msgid ""
 "Designates that this user has all permissions without explicitly assigning "
 "them."
 msgstr "無經明確分派，即賦予該使用者所有權限，"
 
-#: taiga/users/models.py:129
+#: taiga/users/models.py:136
 msgid "username"
 msgstr "使用者名稱"
 
-#: taiga/users/models.py:130
+#: taiga/users/models.py:137
 msgid ""
 "Required. 30 characters or fewer. Letters, numbers and /./-/_ characters"
 msgstr "必填。最多30字元(可為數字，字母，符號....)"
 
-#: taiga/users/models.py:133
+#: taiga/users/models.py:140
 msgid "Enter a valid username."
 msgstr "輸入有效的使用者名稱　"
 
-#: taiga/users/models.py:136
+#: taiga/users/models.py:143
 msgid "active"
 msgstr "活躍"
 
-#: taiga/users/models.py:137
+#: taiga/users/models.py:144
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
 msgstr "賦予該使用者活躍角色，以不選擇取代刪除帳戶功能。"
 
-#: taiga/users/models.py:143
+#: taiga/users/models.py:150
 msgid "biography"
 msgstr "自傳"
 
-#: taiga/users/models.py:146
+#: taiga/users/models.py:153
 msgid "photo"
 msgstr "照片"
 
-#: taiga/users/models.py:147
+#: taiga/users/models.py:154
 msgid "date joined"
 msgstr "加入日期"
 
-#: taiga/users/models.py:149
+#: taiga/users/models.py:156
 msgid "default language"
 msgstr "預設語言　"
 
-#: taiga/users/models.py:151
+#: taiga/users/models.py:158
 msgid "default theme"
 msgstr "預設主題"
 
-#: taiga/users/models.py:153
+#: taiga/users/models.py:160
 msgid "default timezone"
 msgstr "預設時區"
 
-#: taiga/users/models.py:155
+#: taiga/users/models.py:162
 msgid "colorize tags"
 msgstr "顏色標籤"
 
-#: taiga/users/models.py:160
+#: taiga/users/models.py:167
 msgid "email token"
 msgstr "電子郵件符號　"
 
-#: taiga/users/models.py:162
+#: taiga/users/models.py:169
 msgid "new email address"
 msgstr "新電子郵件地址"
 
-#: taiga/users/models.py:169
+#: taiga/users/models.py:176
 msgid "max number of owned private projects"
 msgstr ""
 
-#: taiga/users/models.py:172
+#: taiga/users/models.py:179
 msgid "max number of owned public projects"
 msgstr ""
 
-#: taiga/users/models.py:175
+#: taiga/users/models.py:182
 msgid "max number of memberships for each owned private project"
 msgstr ""
 
-#: taiga/users/models.py:179
+#: taiga/users/models.py:186
 msgid "max number of memberships for each owned public project"
 msgstr ""
 
-#: taiga/users/models.py:307
+#: taiga/users/models.py:314
 msgid "permissions"
 msgstr "許可"
 
