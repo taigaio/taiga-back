@@ -416,7 +416,7 @@
                                                         <tr>
                                                             <th colspan="2"><h2>{{ _("Updates") }}</h2></th>
                                                         </tr>
-                                                        {% for entry in history_entries%}
+                                                        {% for entry in history_entries %}
                                                             {% if entry.comment %}
                                                             <tr>
                                                                 <td colspan="2">
@@ -456,7 +456,10 @@
                                         <tr>
                                             <td valign="top" class="footerContent">
                                                 {% block footer %}
-                                                    {% trans support_url=sr("support.url"), support_email=sr("support.email"), mailing_list_url=sr("support.mailing_list") %}
+                                                    {% trans unsubscribe_url=resolve_front_url("settings-mail-notifications"), support_url=sr("support.url"), support_email=sr("support.email"), mailing_list_url=sr("support.mailing_list") %}
+                                                    <strong>Configure email notifications or unsubscribe:</strong>
+                                                    <a href="{{ unsubscribe_url }}" title="Unsubscribe" style="color: #9dce0a">{{ unsubscribe_url}}</a>
+                                                    <br>
                                                     <strong>Taiga Support:</strong>
                                                     <a href="{{ support_url }}" title="Support page" style="color: #9dce0a">{{ support_url}}</a>
                                                     <br>

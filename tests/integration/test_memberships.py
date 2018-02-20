@@ -227,7 +227,6 @@ def test_api_create_bulk_members_with_allowed_and_unallowed_domain(client, setti
     client.login(project.owner)
     response = client.json.post(url, json.dumps(data))
 
-    print(response.data)
     assert response.status_code == 400
     assert "username" in response.data["bulk_memberships"][0]
     assert "username" not in response.data["bulk_memberships"][1]

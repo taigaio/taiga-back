@@ -25,6 +25,7 @@ urls = {
     "forgot-password": "/forgot-password",
     "new-project": "/project/new",
     "new-project-import": "/project/new/import/{0}",
+    "settings-mail-notifications": "/user-settings/mail-notifications",
 
     "change-password": "/change-password/{0}", # user.token
     "change-email": "/change-email/{0}", # user.email_token

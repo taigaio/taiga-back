@@ -252,17 +252,17 @@ def exception_handler(exc):
     """
 
     if isinstance(exc, APIException):
-        headers = {}
-        if getattr(exc, "auth_header", None):
-            headers["WWW-Authenticate"] = exc.auth_header
-        if getattr(exc, "wait", None):
-            headers["X-Throttle-Wait-Seconds"] = "%d" % exc.wait
-        if getattr(exc, "project_data", None):
-            headers["Taiga-Info-Project-Memberships"] = exc.project_data["total_memberships"]
-            headers["Taiga-Info-Project-Is-Private"] = exc.project_data["is_private"]
+        res = response.Response(format_exception(exc), status=exc.status_code)
 
-        detail = format_exception(exc)
-        return response.Response(detail, status=exc.status_code, headers=headers)
+        if getattr(exc, "auth_header", None):
+            res["WWW-Authenticate"] = exc.auth_header
+        if getattr(exc, "wait", None):
+            res["X-Throttle-Wait-Seconds"] = "%d" % exc.wait
+        if getattr(exc, "project_data", None):
+            res["Taiga-Info-Project-Memberships"] = exc.project_data["total_memberships"]
+            res["Taiga-Info-Project-Is-Private"] = exc.project_data["is_private"]
+
+        return res
 
     elif isinstance(exc, Http404):
         return response.NotFound({'_error_message': str(exc)})

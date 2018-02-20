@@ -1,6 +1,6 @@
 # Taiga Backend #
 
-![Kaleidos Project](http://kaleidos.net/static/img/badge.svg "Kaleidos Project")
+[![Kaleidos Project](http://kaleidos.net/static/img/badge.png)](https://github.com/kaleidos "Kaleidos Project")
 [![Managed with Taiga.io](https://img.shields.io/badge/managed%20with-TAIGA.io-709f14.svg)](https://tree.taiga.io/project/taiga/ "Managed with Taiga.io")
 [![Build Status](https://img.shields.io/travis/taigaio/taiga-back.svg)](https://travis-ci.org/taigaio/taiga-back "Build Status")
 [![Coverage Status](https://img.shields.io/coveralls/taigaio/taiga-back/master.svg)](https://coveralls.io/r/taigaio/taiga-back?branch=master "Coverage Status")
@@ -68,14 +68,14 @@ We are ready now to accept your help translating Taiga. It's easy (and fun!) jus
 
 #### Code patches ####
 
-Taiga will always be glad to receive code patches to update, fix or improve its code. 
+Taiga will always be glad to receive code patches to update, fix or improve its code.
 
 If you know how to improve our code base or you found a bug, a security vulnerability or a performance issue and you think you can solve it, we will be very happy to accept your pull-request. If your code requires considerable changes, we recommend you first  talk to us directly. We will find the best way to help.
 
 
 #### UI enhancements ####
 
-Taiga is made for developers and designers. We care enormously about UI because usability and design are both critical aspects of the Taiga experience. 
+Taiga is made for developers and designers. We care enormously about UI because usability and design are both critical aspects of the Taiga experience.
 
 There are two possible ways to contribute to our UI:
 - **Bugs**: If you find a bug regarding front-end, please report it as previously indicated in the Bug reports section or send a pull-request as indicated in the Code Patches section.
@@ -93,7 +93,6 @@ pip install -r requirements.txt
 python manage.py migrate --noinput
 python manage.py loaddata initial_user
 python manage.py loaddata initial_project_templates
-python manage.py loaddata initial_role
 python manage.py sample_data
 ```
 
@@ -102,4 +101,4 @@ python manage.py sample_data
 Initial auth data: admin/123123
 
 If you want a complete environment for production usage, you can try the taiga bootstrapping
-scripts https://github.com/taigaio/taiga-scripts (warning: alpha state). All the information about the different installation methods (production, development, vagrant, docker...) can be found here http://taigaio.github.io/taiga-doc/dist/#_installation_guide. 
+scripts https://github.com/taigaio/taiga-scripts (warning: alpha state). All the information about the different installation methods (production, development, vagrant, docker...) can be found here http://taigaio.github.io/taiga-doc/dist/#_installation_guide.

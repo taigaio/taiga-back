@@ -23,6 +23,7 @@ from django.utils.translation import ugettext as _
 
 from taiga.base import exceptions as exc
 from taiga.base.filters import FilterBackend
+from taiga.base.filters import get_filter_expression_can_view_projects
 from taiga.base.utils.db import to_tsquery
 
 logger = logging.getLogger(__name__)
@@ -63,28 +64,11 @@ class CanViewProjectObjFilterBackend(FilterBackend):
                 ))
                 raise exc.BadRequest(_("'project' must be an integer value."))
 
-        qs = queryset
+        filter_expression = get_filter_expression_can_view_projects(
+            request.user,
+            project_id)
 
-        # Filter by user permissions
-        if request.user.is_authenticated() and request.user.is_superuser:
-            # superuser
-            qs = qs
-        elif request.user.is_authenticated():
-            # authenticated user & project member
-            membership_model = apps.get_model("projects", "Membership")
-            memberships_qs = membership_model.objects.filter(user=request.user)
-            if project_id:
-                memberships_qs = memberships_qs.filter(project_id=project_id)
-            memberships_qs = memberships_qs.filter(Q(role__permissions__contains=['view_project']) |
-                                                   Q(is_admin=True))
-
-            projects_list = [membership.project_id for membership in memberships_qs]
-
-            qs = qs.filter((Q(id__in=projects_list) |
-                            Q(public_permissions__contains=["view_project"])))
-        else:
-            # external users / anonymous
-            qs = qs.filter(anon_permissions__contains=["view_project"])
+        qs = queryset.filter(filter_expression)
 
         return super().filter_queryset(request, qs, view)
 

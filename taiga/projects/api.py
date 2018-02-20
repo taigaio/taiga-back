@@ -136,10 +136,25 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         return qs
 
     def retrieve(self, request, *args, **kwargs):
+        qs = self.get_queryset()
         if self.action == "by_slug":
             self.lookup_field = "slug"
+            # If we retrieve the project by slug we want to filter by user the
+            # permissions and return 404 in case the user don't have access
+            flt = filters.get_filter_expression_can_view_projects(
+                self.request.user)
 
-        return super().retrieve(request, *args, **kwargs)
+            qs = qs.filter(flt)
+
+        self.object = get_object_or_404(qs, **kwargs)
+
+        self.check_permissions(request, 'retrieve', self.object)
+
+        if self.object is None:
+            raise Http404
+
+        serializer = self.get_serializer(self.object)
+        return response.Ok(serializer.data)
 
     def get_serializer_class(self):
         if self.action == "list":

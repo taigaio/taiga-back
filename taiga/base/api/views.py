@@ -456,7 +456,6 @@ class APIView(View):
                 handler = self.http_method_not_allowed
 
             response = handler(request, *args, **kwargs)
-
         except Exception as exc:
             response = self.handle_exception(exc)
 

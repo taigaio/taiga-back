@@ -28,7 +28,7 @@ Please read carefully [our license](https://github.com/taigaio/taiga-back/blob/m
 
 #### Bug reports, enhancements and support ####
 
-If you **need help to setup Taiga**, want to **talk about some cool enhancemnt** or you have **some questions**, please write us to our [mailing list](http://groups.google.com/d/forum/taigaio).
+If you **need help to setup Taiga**, want to **talk about some cool enhancement** or you have **some questions**, please write us to our [mailing list](http://groups.google.com/d/forum/taigaio).
 
 If you **find a bug** in Taiga you can always report it:
 
