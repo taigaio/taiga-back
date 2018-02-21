@@ -359,7 +359,7 @@ def test_send_notifications_using_services_method_for_user_stories(settings, mai
     history_change = f.HistoryEntryFactory.create(
         project=project,
         user={"pk": member1.user.id},
-        comment="",
+        comment="test:change",
         type=HistoryType.change,
         key="userstories.userstory:{}".format(us.id),
         is_hidden=False,
@@ -454,7 +454,7 @@ def test_send_notifications_using_services_method_for_tasks(settings, mail):
     history_change = f.HistoryEntryFactory.create(
         project=project,
         user={"pk": member1.user.id},
-        comment="",
+        comment="test:change",
         type=HistoryType.change,
         key="tasks.task:{}".format(task.id),
         is_hidden=False,
@@ -549,7 +549,7 @@ def test_send_notifications_using_services_method_for_issues(settings, mail):
     history_change = f.HistoryEntryFactory.create(
         project=project,
         user={"pk": member1.user.id},
-        comment="",
+        comment="test:change",
         type=HistoryType.change,
         key="issues.issue:{}".format(issue.id),
         is_hidden=False,
@@ -644,7 +644,7 @@ def test_send_notifications_using_services_method_for_wiki_pages(settings, mail)
     history_change = f.HistoryEntryFactory.create(
         project=project,
         user={"pk": member1.user.id},
-        comment="",
+        comment="test:change",
         type=HistoryType.change,
         key="wiki.wikipage:{}".format(wiki.id),
         is_hidden=False,

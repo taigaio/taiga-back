@@ -245,14 +245,20 @@ def send_sync_notifications(notification_id):
     """
 
     notification = HistoryChangeNotification.objects.select_for_update().get(pk=notification_id)
-    # If the last modification is too recent we ignore it
+    # If the last modification is too recent we ignore it for the time being
     now = timezone.now()
     time_diff = now - notification.updated_datetime
     if time_diff.seconds < settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL:
         return
 
     history_entries = tuple(notification.history_entries.all().order_by("created_at"))
-    history_entries = squash_history_entries(history_entries)
+    history_entries = list(squash_history_entries(history_entries))
+
+    # If there are no effective modifications we can delete this notification
+    # without further processing
+    if notification.history_type == HistoryType.change and not history_entries:
+        notification.delete()
+        return
 
     obj, _ = get_last_snapshot_for_key(notification.key)
     obj_class = get_model_from_key(obj.key)
