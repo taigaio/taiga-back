@@ -211,8 +211,10 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-# Defautl storage
+# Default storage
 DEFAULT_FILE_STORAGE = "taiga.base.storage.FileSystemStorage"
+
+FILE_UPLOAD_PERMISSIONS = 0o644
 
 SECRET_KEY = "aw3+t2r(8(0kkrhg8)gx6i96v5^kv%6cfep9wxfom0%7dy0m9e"
 
