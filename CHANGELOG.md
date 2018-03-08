@@ -1,10 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Fix milestone burndown graph with empty US
+
+
 ## 3.2.2 (2018-03-15)
 
 ### Misc
 
 - Minor bug fixes.
+
 
 ## 3.2.0 Betula nana (2018-03-07)
 
