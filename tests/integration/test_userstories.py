@@ -264,17 +264,14 @@ def test_api_update_orders_in_bulk_invalid_status(client):
     response = client.json.post(url1, json.dumps(data))
     assert response.status_code == 400, response.data
     assert "status_id" in response.data
-    assert "bulk_stories" in response.data
 
     response = client.json.post(url2, json.dumps(data))
     assert response.status_code == 400, response.data
     assert "status_id" in response.data
-    assert "bulk_stories" in response.data
 
     response = client.json.post(url3, json.dumps(data))
     assert response.status_code == 400, response.data
     assert "status_id" in response.data
-    assert "bulk_stories" in response.data
 
 
 def test_api_update_orders_in_bulk_invalid_milestione(client):
