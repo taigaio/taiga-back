@@ -24,7 +24,7 @@ from taiga.projects import models
 from contextlib import suppress
 
 
-def apply_order_updates(base_orders: dict, new_orders: dict):
+def apply_order_updates(base_orders: dict, new_orders: dict, *, remove_equal_original=False):
     """
     `base_orders` must be a dict containing all the elements that can be affected by
     order modifications.
@@ -36,6 +36,7 @@ def apply_order_updates(base_orders: dict, new_orders: dict):
     The elements where no order update is needed will be removed.
     """
     updated_order_ids = set()
+    original_orders = {k:v for k,v in base_orders.items()}
 
     # Remove the elements from new_orders non existint in base_orders
     invalid_keys = new_orders.keys() - base_orders.keys()
@@ -67,6 +68,11 @@ def apply_order_updates(base_orders: dict, new_orders: dict):
     # Remove not modified elements
     removing_keys = [id for id in base_orders if id not in updated_order_ids]
     [base_orders.pop(id, None) for id in removing_keys]
+
+    # Remove elements that are equal to the original
+    if remove_equal_original:
+        common_keys = original_orders.keys() & base_orders.keys()
+        [base_orders.pop(id, None) for id in common_keys if base_orders[id] == original_orders[id]]
 
 
 def update_projects_order_in_bulk(bulk_data: list, field: str, user):

@@ -60,11 +60,11 @@ def test_update_userstories_order_in_bulk():
     project = f.ProjectFactory.create()
     us1 = f.UserStoryFactory.create(project=project, backlog_order=1)
     us2 = f.UserStoryFactory.create(project=project, backlog_order=2)
-    data = [{"us_id": us1.id, "order": 1}, {"us_id": us2.id, "order": 2}]
+    data = [{"us_id": us1.id, "order": 2}, {"us_id": us2.id, "order": 1}]
 
     with mock.patch("taiga.projects.userstories.services.db") as db:
         services.update_userstories_order_in_bulk(data, "backlog_order", project)
-        db.update_attr_in_bulk_for_ids.assert_called_once_with({us1.id: 1, us2.id: 2},
+        db.update_attr_in_bulk_for_ids.assert_called_once_with({us2.id: 1, us1.id: 2},
                                                                 "backlog_order",
                                                                 models.UserStory)
 
@@ -264,17 +264,14 @@ def test_api_update_orders_in_bulk_invalid_status(client):
     response = client.json.post(url1, json.dumps(data))
     assert response.status_code == 400, response.data
     assert "status_id" in response.data
-    assert "bulk_stories" in response.data
 
     response = client.json.post(url2, json.dumps(data))
     assert response.status_code == 400, response.data
     assert "status_id" in response.data
-    assert "bulk_stories" in response.data
 
     response = client.json.post(url3, json.dumps(data))
     assert response.status_code == 400, response.data
     assert "status_id" in response.data
-    assert "bulk_stories" in response.data
 
 
 def test_api_update_orders_in_bulk_invalid_milestione(client):
