@@ -155,6 +155,8 @@ def test_apply_order_updates_multiple_elements_duplicated_orders():
     }
     apply_order_updates(orders, new_orders)
     assert orders == {
+        "c": 3,
+        "d": 3,
         "a": 4,
         "e": 5,
         "f": 6
@@ -178,6 +180,8 @@ def test_apply_order_invalid_new_order():
     }
     apply_order_updates(orders, new_orders)
     assert orders == {
+        "c": 3,
+        "d": 3,
         "a": 4,
         "e": 5,
         "f": 6
@@ -191,5 +195,5 @@ def test_apply_order_not_include_noop():
     new_orders = {
         "a": 1,
     }
-    apply_order_updates(orders, new_orders)
+    apply_order_updates(orders, new_orders, remove_equal_original=True)
     assert orders == {}
