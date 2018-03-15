@@ -94,7 +94,7 @@ def update_userstories_order_in_bulk(bulk_data: list, field: str, project: objec
 
     us_orders = {us.id: getattr(us, field) for us in user_stories}
     new_us_orders = {e["us_id"]: e["order"] for e in bulk_data}
-    apply_order_updates(us_orders, new_us_orders)
+    apply_order_updates(us_orders, new_us_orders, remove_equal_original=True)
 
     user_story_ids = us_orders.keys()
     events.emit_event_for_ids(ids=user_story_ids,
