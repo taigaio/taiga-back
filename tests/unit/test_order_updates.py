@@ -186,3 +186,14 @@ def test_apply_order_invalid_new_order():
         "e": 5,
         "f": 6
     }
+
+
+def test_apply_order_not_include_noop():
+    orders = {
+        "a": 1,
+    }
+    new_orders = {
+        "a": 1,
+    }
+    apply_order_updates(orders, new_orders, remove_equal_original=True)
+    assert orders == {}

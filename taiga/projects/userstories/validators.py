@@ -125,8 +125,6 @@ class UpdateUserStoriesOrderBulkValidator(ProjectExistsValidator, validators.Val
 
     def validate_bulk_stories(self, attrs, source):
         filters = {"project__id": attrs["project_id"]}
-        if "status_id" in attrs:
-            filters["status__id"] = attrs["status_id"]
         if "milestone_id" in attrs:
             filters["milestone__id"] = attrs["milestone_id"]
 
