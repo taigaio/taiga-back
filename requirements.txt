@@ -1,7 +1,7 @@
 #djangorestframework==2.3.13    # It's not necessary since Taiga 1.7
 CairoSVG==2.0.3
 Django==1.11.2
-Markdown==2.6.8
+git+git://github.com/Python-Markdown/markdown.git@a4d4b61b5ce4a7dd96ddc13c66b8716d3ad8eb51 # This version solves 'infinite execution' and other issues.
 Pillow==4.1.1
 PyJWT==1.5.0
 Unidecode==0.4.20

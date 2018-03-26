@@ -45,7 +45,6 @@ from markdown import Markdown
 from .extensions.autolink import AutolinkExtension
 from .extensions.automail import AutomailExtension
 from .extensions.semi_sane_lists import SemiSaneListExtension
-from .extensions.spaced_link import SpacedLinkExtension
 from .extensions.strikethrough import StrikethroughExtension
 from .extensions.wikilinks import WikiLinkExtension
 from .extensions.emojify import EmojifyExtension
@@ -70,7 +69,6 @@ def _make_extensions_list(project=None):
     return [AutolinkExtension(),
             AutomailExtension(),
             SemiSaneListExtension(),
-            SpacedLinkExtension(),
             StrikethroughExtension(),
             WikiLinkExtension(project),
             EmojifyExtension(),
