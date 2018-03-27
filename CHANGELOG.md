@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add due date to US, tasks and issues (https://tree.taiga.io/project/taiga/issue/3070).
+
 ## 3.2.3 (2018-04-04)
 
 ### Misc
