@@ -2,8 +2,13 @@
 
 ## Unreleased
 
-- Fix milestone burndown graph with empty US
+## 3.2.3 (2018-04-04)
 
+### Misc
+
+- Fix milestone burndown graph with empty US.
+- Upgrade markdown library to solve bug.
+- Update locales.
 
 ## 3.2.2 (2018-03-15)
 
