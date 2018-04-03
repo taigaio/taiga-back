@@ -5,6 +5,7 @@
 # Translators:
 # Alibek Kaparov <alibekkaparov@gmail.com>, 2018
 # Artem Biryukov <impowski@protonmail.ch>, 2017
+# Denis Vadimov, 2018
 # Дмитрий Пугац <dvpugats@gmail.com>, 2015
 # Dmitriy Volkov <wldhx+reg+transifex@wldhx.me>, 2015
 # Dmitry Lobanov <cyborgandroid.kun@gmail.com>, 2015
@@ -23,8 +24,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-02-15 18:20+0100\n"
-"PO-Revision-Date: 2018-02-19 10:25+0000\n"
-"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
+"PO-Revision-Date: 2018-02-28 00:53+0000\n"
+"Last-Translator: Denis Vadimov\n"
 "Language-Team: Russian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -453,6 +454,26 @@ msgid ""
 "                                                    </a>\n"
 "                                                    "
 msgstr ""
+"\n"
+"<strong>Настройте e-mail уведомления или отпишитесь:</strong>\n"
+"<a href=\"%(unsubscribe_url)s\" title=\"Unsubscribe\" style=\"color: #9dce0a"
+"\">%(unsubscribe_url)s</a>\n"
+"<br>\n"
+"<strong>Поддержка Taiga:</strong>\n"
+"<a href=\"%(support_url)s\" title=\"Support page\" style=\"color: #9dce0a\">"
+"%(support_url)s</a>\n"
+"<br>\n"
+"<strong>Свяжитесь с нами:</strong>\n"
+"<a href=\"mailto:%(support_email)s\" title=\"Support email\" style=\"color: "
+"#9dce0a\">\n"
+"%(support_email)s\n"
+"</a>\n"
+"<br>\n"
+"<strong>Список рассылки:</strong>\n"
+"<a href=\"%(mailing_list_url)s\" title=\"Mailing list\" style=\"color: "
+"#9dce0a\">\n"
+"%(mailing_list_url)s\n"
+"</a>"
 
 #: taiga/base/templates/emails/hero-body-html.jinja:6
 msgid "You have been Taigatized"
@@ -1100,6 +1121,10 @@ msgid ""
 "\n"
 "  - Status: **{src_status}** → **{dst_status}**"
 msgstr ""
+"{user_text} сменил статус с [{platform} commit]({commit_url} \"Просмотрите "
+"версию '{commit_id} - {commit_short_message}'\")\n"
+"\n"
+"- Статус: **{src_status}** → **{dst_status}**"
 
 #: taiga/hooks/event_hooks.py:161
 #, python-brace-format
@@ -1108,6 +1133,9 @@ msgid ""
 "\n"
 " - Status: **{src_status}** → **{dst_status}**"
 msgstr ""
+"Изменен статус с {platform} версии.\n"
+"\n"
+"- Статус: **{src_status}** → **{dst_status}**"
 
 #: taiga/hooks/event_hooks.py:179
 #, python-brace-format
@@ -1121,7 +1149,7 @@ msgstr ""
 #, python-brace-format
 msgid ""
 "This issue has been mentioned in the {platform} commit \"{commit_message}\""
-msgstr ""
+msgstr "Эта проблема была упомянута в {platform} версии \"{commit_message}\""
 
 #: taiga/hooks/event_hooks.py:206
 msgid "The referenced element doesn't exist"
@@ -1207,6 +1235,13 @@ msgid ""
 "    <p><small>The Taiga Team</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"<h1>Импортирован проект Asana</h1>\n"
+"<p>Добро пожаловать, %(user)s,</p>\n"
+"<h3>Ваш проект Asana был успешно импортирован.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)s"
+"\">Перейдите к проекту(-ам): %(project)s</a>\n"
+"<small>Команда Taiga</small><p>"
 
 #: taiga/importers/templates/emails/asana_import_success-body-text.jinja:1
 #, python-format
@@ -1223,11 +1258,22 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Добро пожаловать, %(user)s,\n"
+"\n"
+"Ваш Asana проект был успешно импортирован.\n"
+"\n"
+"Вы можете его увидеть здесь: %(project)s\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"Команда Taiga\n"
 
 #: taiga/importers/templates/emails/asana_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your Asana project has been imported"
-msgstr ""
+msgstr "[%(project)s] Ваш Asana проект был импортирован"
 
 #: taiga/importers/templates/emails/github_import_success-body-html.jinja:4
 #, python-format
@@ -1241,6 +1287,13 @@ msgid ""
 "    <p><small>The Taiga Team</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"<h1>Импортирован проект GitHub</h1>\n"
+"<p>Добро пожаловать, %(user)s,</p>\n"
+"<h3>Ваш проект GitHub был успешно импортирован.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)s"
+"\">Перейдите к проекту(-ам):%(project)s</a>\n"
+"<p><small>Команда Taiga</small></p>"
 
 #: taiga/importers/templates/emails/github_import_success-body-text.jinja:1
 #, python-format
@@ -1257,11 +1310,22 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Добро пожаловать, %(user)s,\n"
+"\n"
+"Ваш GitHub проект был успешно импортирован.\n"
+"\n"
+"Вы можете его увидеть здесь: %(project)s\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"Команда Taiga\n"
 
 #: taiga/importers/templates/emails/github_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your GitHub project has been imported"
-msgstr ""
+msgstr "[%(project)s] Ваш GitHub проект был импортирован"
 
 #: taiga/importers/templates/emails/jira_import_success-body-html.jinja:4
 #, python-format
@@ -1275,6 +1339,13 @@ msgid ""
 "    <p><small>The Taiga Team</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"<h1>Импортирован проект Jira</h1>\n"
+"<p>Добро пожаловать, %(user)s,</p>\n"
+"<h3>Ваш проект Jira был успешно импортирован.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)s"
+"\">Перейдите к проекту(-ам):%(project)s</a>\n"
+"<p><small>Команда Taiga</small></p>"
 
 #: taiga/importers/templates/emails/jira_import_success-body-text.jinja:1
 #, python-format
@@ -1291,11 +1362,22 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Добро пожаловать, %(user)s,\n"
+"\n"
+"Ваш Jira проект был успешно импортирован.\n"
+"\n"
+"Вы можете его увидеть здесь: %(project)s\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"Команда Taiga\n"
 
 #: taiga/importers/templates/emails/jira_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your Jira project has been imported"
-msgstr ""
+msgstr "[%(project)s] Ваш проект Jira был импортирован"
 
 #: taiga/importers/templates/emails/trello_import_success-body-html.jinja:4
 #, python-format
@@ -1309,6 +1391,13 @@ msgid ""
 "    <p><small>The Taiga Team</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"<h1>Импортирован проект Trello</h1>\n"
+"<p>Добро пожаловать, %(user)s,</p>\n"
+"<h3>Ваш проект Trello был успешно импортирован.</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)s"
+"\">Перейдите к проекту(-ам): %(project)s</a>\n"
+"<p><small>Команда Taiga</small></p>"
 
 #: taiga/importers/templates/emails/trello_import_success-body-text.jinja:1
 #, python-format
@@ -1325,30 +1414,41 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Hello %(user)s,\n"
+"\n"
+"Your Trello project has been correctly imported.\n"
+"\n"
+"You can see the project %(project)s here:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"The Taiga Team\n"
 
 #: taiga/importers/templates/emails/trello_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your Trello project has been imported"
-msgstr ""
+msgstr "[%(project)s] Ваш проект Trello был успешно импортирован"
 
 #: taiga/importers/trello/importer.py:78
 #, python-format
 msgid "Invalid Request: %s at %s"
-msgstr ""
+msgstr "Некорректный запрос: %s на %s"
 
 #: taiga/importers/trello/importer.py:80 taiga/importers/trello/importer.py:82
 #, python-format
 msgid "Unauthorized: %s at %s"
-msgstr ""
+msgstr "Неавторизованый запрос: %sна %s"
 
 #: taiga/importers/trello/importer.py:84 taiga/importers/trello/importer.py:86
 #, python-format
 msgid "Resource Unavailable: %s at %s"
-msgstr ""
+msgstr "Источник недоступен: %s на %s"
 
 #: taiga/importers/trello/tasks.py:42 taiga/importers/trello/tasks.py:43
 msgid "Error importing Trello project"
-msgstr ""
+msgstr "Ошибка импорта проекта Trello"
 
 #: taiga/permissions/choices.py:23 taiga/permissions/choices.py:34
 msgid "View project"
@@ -1532,7 +1632,7 @@ msgstr "Активность"
 
 #: taiga/projects/admin.py:130
 msgid "Fans"
-msgstr ""
+msgstr "Поклонники"
 
 #: taiga/projects/admin.py:144 taiga/projects/attachments/models.py:39
 #: taiga/projects/epics/models.py:40 taiga/projects/issues/models.py:37
@@ -1599,6 +1699,8 @@ msgid ""
 "This user can't be removed from the following projects, because would leave "
 "them without any active admin: {}."
 msgstr ""
+"Этого пользователя нельзя удалить из списка пользователей следующих "
+"проектов, так как он может их покинуть без администратора: {}."
 
 #: taiga/projects/api.py:832
 msgid ""
@@ -1618,7 +1720,7 @@ msgstr "Частичные обновления не поддерживаютс�
 
 #: taiga/projects/attachments/api.py:69
 msgid "Object id issue isn't exists"
-msgstr ""
+msgstr "Проблема идентификатора обьекта не существует"
 
 #: taiga/projects/attachments/api.py:72
 msgid "Project ID not matches between object and project"
@@ -1671,7 +1773,7 @@ msgstr "устаревшее"
 
 #: taiga/projects/attachments/models.py:61
 msgid "from comment"
-msgstr ""
+msgstr "из комментария"
 
 #: taiga/projects/attachments/models.py:63
 #: taiga/projects/custom_attributes/models.py:41
@@ -1714,7 +1816,7 @@ msgstr "Проект заблокирован, потому что владел�
 
 #: taiga/projects/choices.py:38
 msgid "This project is blocked while it's deleted"
-msgstr ""
+msgstr "Этот проект будет заблокирован при удалении"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:10
 #, python-format
@@ -1725,6 +1827,10 @@ msgid ""
 "written to %(project_name)s\n"
 "    "
 msgstr ""
+"\n"
+"<a style=\"font-weight: bold;text-decoration:none;color:#222;\" href="
+"\"%(user_profile_url)s\" title=\"%(full_name)s\">%(full_name)s</a> сделал "
+"запись в проект(ы) %(project_name)s"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:20
 #, python-format
@@ -1738,6 +1844,13 @@ msgid ""
 "not be affected.\n"
 "    "
 msgstr ""
+"\n"
+"Вы получили это сообщение, так как вы назначены администратором проектов "
+"%(project_name)s. Если вы не хотите, чтобы участники сообщества Taiga "
+"связывались с вами по поводу вашего проекта, пожалуйста, <a href="
+"\"%(project_settings_url)s\">обновите настройки вашего проекта</a>, чтобы "
+"предотвратить такие контакты. Это не повлияет на обычные контакты между "
+"участниками проекта."
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-text.jinja:1
 #, python-format
@@ -1745,6 +1858,8 @@ msgid ""
 "\n"
 "%(full_name)s has written to %(project_name)s\n"
 msgstr ""
+"\n"
+"%(full_name)s сделал(-а) запись в проект(-ы) %(project_name)s\n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-text.jinja:7
 #, python-format
@@ -1756,6 +1871,12 @@ msgid ""
 "%(project_settings_url)s to prevent such contacts. Regular communications "
 "amongst members of the project will not be affected.\n"
 msgstr ""
+"\n"
+"Вы получили это сообщение, так как вы были указаны администратором проекта "
+"%(project_name)s. Если вы не хотите, чтобы участники сообщества Taiga "
+"связывались с вами по поводу вашего проекта, пожалуйста, обновите настройки "
+"проекта в %(project_settings_url)s чтобы предотвратить подобные контакты. "
+"Это не повлияет на обычные контакты между участниками проекта. \n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-subject.jinja:1
 #, python-format
@@ -1763,6 +1884,8 @@ msgid ""
 "\n"
 "[Taiga] %(full_name)s has sent a message to the project %(project_name)s\n"
 msgstr ""
+"\n"
+"[Taiga] %(full_name)s отправил(-а) сообщение в проект %(project_name)s\n"
 
 #: taiga/projects/custom_attributes/choices.py:29
 msgid "Text"
@@ -1774,7 +1897,7 @@ msgstr "Многострочный текст"
 
 #: taiga/projects/custom_attributes/choices.py:31
 msgid "Rich text"
-msgstr ""
+msgstr "Большой текст"
 
 #: taiga/projects/custom_attributes/choices.py:32
 msgid "Date"
@@ -2107,7 +2230,7 @@ msgstr ""
 
 #: taiga/projects/mixins/by_ref.py:35
 msgid "project or project__slug param is needed"
-msgstr ""
+msgstr "требуется параметр project или project__slug"
 
 #: taiga/projects/mixins/ordering.py:49
 #, python-brace-format
@@ -2120,7 +2243,7 @@ msgstr "параметр 'project' является обязательным"
 
 #: taiga/projects/mixins/validators.py:19
 msgid "The user must be a project member."
-msgstr ""
+msgstr "Пользователь должен быть участником проекта."
 
 #: taiga/projects/models.py:79
 msgid "email"
@@ -2196,7 +2319,7 @@ msgstr "очки истории"
 
 #: taiga/projects/models.py:172 taiga/projects/models.py:754
 msgid "active contact"
-msgstr ""
+msgstr "активный контакт"
 
 #: taiga/projects/models.py:174 taiga/projects/models.py:756
 msgid "active epics panel"
@@ -2252,7 +2375,7 @@ msgstr "ищут людей"
 
 #: taiga/projects/models.py:208 taiga/projects/models.py:768
 msgid "looking for people note"
-msgstr ""
+msgstr "поиск примечаний людей"
 
 #: taiga/projects/models.py:222
 msgid "project transfer token"
@@ -2366,11 +2489,11 @@ msgstr ""
 
 #: taiga/projects/models.py:787
 msgid "task custom attributes"
-msgstr ""
+msgstr "атрибуты задачи"
 
 #: taiga/projects/models.py:788
 msgid "issue custom attributes"
-msgstr ""
+msgstr "атрибуты проблемы"
 
 #: taiga/projects/notifications/choices.py:30
 msgid "Involved"
@@ -3267,7 +3390,7 @@ msgstr "Вы достигли лимита участников для публ�
 
 #: taiga/projects/services/members.py:148
 msgid "You have reached the current limit of pending memberships"
-msgstr ""
+msgstr "Вы достигли текущего лимита пользователей, ожидающих членства"
 
 #: taiga/projects/services/projects.py:101
 #: taiga/projects/services/projects.py:141 taiga/users/services.py:589
@@ -3413,6 +3536,8 @@ msgid ""
 "Invalid task ids. All tasks must belong to the same project and, if it "
 "exists, to the same status, user story and/or milestone."
 msgstr ""
+"Неверные идентификаторы задач. Все задачи должны принадлежать одному проекту "
+"и, если это возможно, одному статусу, пользовательской истории и/или этапу."
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:6
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:4
@@ -4133,7 +4258,7 @@ msgstr "Неверный id роли '{role_id}'"
 #: taiga/projects/userstories/api.py:241
 #, python-brace-format
 msgid "Invalid points id '{points_id}'"
-msgstr ""
+msgstr "Неверный идентификатор точки '{points_id}'"
 
 #: taiga/projects/userstories/api.py:256
 #, python-brace-format
@@ -4185,6 +4310,8 @@ msgid ""
 "Invalid user story ids. All stories must belong to the same project and, if "
 "it exists, to the same status and milestone."
 msgstr ""
+"Неверные идентификаторы пользовательской истории. Все истории должны "
+"принадлежать одному проекта и, если это возможно, одному статусу и этапу."
 
 #: taiga/projects/userstories/validators.py:160
 msgid "The milestone isn't valid for the project"
@@ -4200,7 +4327,7 @@ msgstr "Не существует проекта с таким идентифи�
 
 #: taiga/projects/validators.py:145
 msgid "The user yet exists in the project"
-msgstr ""
+msgstr "Пользователь уже является участником проекта"
 
 #: taiga/projects/validators.py:155
 msgid "Invalid role for the project"
@@ -4208,7 +4335,7 @@ msgstr "Неверная роль для этого проекта"
 
 #: taiga/projects/validators.py:170 taiga/projects/validators.py:225
 msgid "The user must be a valid contact"
-msgstr ""
+msgstr "Пользователь должен являться существующим контактом"
 
 #: taiga/projects/validators.py:191
 msgid "The project owner must be admin."

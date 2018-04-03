@@ -7,18 +7,19 @@
 # Andrea Raimondi <raimondi.and@gmail.com>, 2015
 # David Barragán <bameda@gmail.com>, 2015
 # F B <fabio.baleani@gmail.com>, 2016
+# lorenzo farnararo <lorenzo.farnararo@gmail.com>, 2018
 # luca corsato <luca@opensensorsdata.it>, 2015
 # Marco Somma <marcosomma@mail.com>, 2015
 # Marco Vito Moscaritolo <marco@mavimo.org>, 2015
-# Roberto Bizzozero <zenovalle@gmail.com>, 2017
+# Roberto Bizzozero <zenovalle@gmail.com>, 2017-2018
 # Vittorio Della Rossa <vidierre@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-02-15 18:20+0100\n"
-"PO-Revision-Date: 2018-02-15 17:25+0000\n"
-"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
+"PO-Revision-Date: 2018-03-13 15:37+0000\n"
+"Last-Translator: Roberto Bizzozero <zenovalle@gmail.com>\n"
 "Language-Team: Italian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -447,6 +448,32 @@ msgid ""
 "                                                    </a>\n"
 "                                                    "
 msgstr ""
+"\n"
+"                                                    <strong>Configura le "
+"notifiche via email oppure disiscriviti:</strong>\n"
+"                                                    <a href="
+"\"%(unsubscribe_url)s\" title=\"Unsubscribe\" style=\"color: #9dce0a\">"
+"%(unsubscribe_url)s</a>\n"
+"                                                    <br>\n"
+"                                                    <strong>Supporto Taiga:</"
+"strong>\n"
+"                                                    <a href=\"%(support_url)s"
+"\" title=\"Support page\" style=\"color: #9dce0a\">%(support_url)s</a>\n"
+"                                                    <br>\n"
+"                                                    <strong>Contattaci:</"
+"strong>\n"
+"                                                     <a href=\"mailto:"
+"%(support_email)s\" title=\"Support email\" style=\"color: #9dce0a\">\n"
+"                                                        %(support_email)s\n"
+"                                                    </a>\n"
+"                                                    <br>\n"
+"                                                    <strong>Mailing list:</"
+"strong>\n"
+"                                                    <a href="
+"\"%(mailing_list_url)s\" title=\"Mailing list\" style=\"color: #9dce0a\">\n"
+"                                                        %(mailing_list_url)s\n"
+"                                                    </a>\n"
+"                                                    "
 
 #: taiga/base/templates/emails/hero-body-html.jinja:6
 msgid "You have been Taigatized"
@@ -1741,6 +1768,8 @@ msgid ""
 "This user can't be removed from the following projects, because would leave "
 "them without any active admin: {}."
 msgstr ""
+"Questo utente non può essere rimosso dai seguenti progetti, perché "
+"verrebbero lasciati senza nessun amministratore attivo: {}."
 
 #: taiga/projects/api.py:832
 msgid ""
