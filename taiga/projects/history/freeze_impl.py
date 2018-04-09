@@ -347,6 +347,7 @@ def userstory_freezer(us) -> dict:
         "subject": us.subject,
         "description": us.description,
         "description_html": mdrender(us.project, us.description),
+        "assigned_to": us.assigned_to_id,
         "assigned_users": [u.id for u in us.assigned_users.all()],
         "milestone": us.milestone_id,
         "client_requirement": us.client_requirement,

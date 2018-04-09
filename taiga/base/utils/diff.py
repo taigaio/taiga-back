@@ -17,12 +17,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-def make_diff(first:dict, second:dict, not_found_value=None, excluded_keys:tuple=()) -> dict:
+def make_diff(first: dict, second: dict, not_found_value=None,
+              excluded_keys: tuple = ()) -> dict:
     """
     Compute a diff between two dicts.
     """
     diff = {}
-
     # Check all keys in first dict
     for key in first:
         if key not in second:

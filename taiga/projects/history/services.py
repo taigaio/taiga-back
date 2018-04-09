@@ -85,6 +85,10 @@ _not_important_fields = {
     "tasks.task": frozenset(["us_order", "taskboard_order"]),
 }
 
+_deprecated_fields = {
+    "userstories.userstory": frozenset(["assigned_to"]),
+}
+
 log = logging.getLogger("taiga.history")
 
 
@@ -216,7 +220,15 @@ def is_hidden_snapshot(obj: FrozenDiff) -> bool:
     return False
 
 
-def make_diff(oldobj: FrozenObj, newobj: FrozenObj) -> FrozenDiff:
+def get_excluded_fields(typename: str) -> tuple:
+    """
+    Get excluded and deprected fields to avoid in the diff
+    """
+    return _deprecated_fields.get(typename)
+
+
+def make_diff(oldobj: FrozenObj, newobj: FrozenObj,
+              excluded_keys: tuple = ()) -> FrozenDiff:
     """
     Compute a diff between two frozen objects.
     """
@@ -229,7 +241,7 @@ def make_diff(oldobj: FrozenObj, newobj: FrozenObj) -> FrozenDiff:
     first = oldobj.snapshot
     second = newobj.snapshot
 
-    diff = make_diff_from_dicts(first, second)
+    diff = make_diff_from_dicts(first, second, None, excluded_keys)
 
     return FrozenDiff(newobj.key, diff, newobj.snapshot)
 
@@ -338,7 +350,8 @@ def take_snapshot(obj: object, *, comment: str="", user=None, delete: bool=False
         else:
             raise RuntimeError("Unexpected condition")
 
-        fdiff = make_diff(old_fobj, new_fobj)
+        excluded_fields = get_excluded_fields(typename)
+        fdiff = make_diff(old_fobj, new_fobj, excluded_fields)
 
         # If diff and comment are empty, do
         # not create empty history entry
