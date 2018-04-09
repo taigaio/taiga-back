@@ -295,6 +295,15 @@ class UserStoryFactory(Factory):
     due_date = factory.LazyAttribute(lambda o: date.today() + timedelta(days=7))
     due_date_reason = factory.Faker("words")
 
+    @factory.post_generation
+    def assigned_users(self, create, users_list, **kwargs):
+        if not create:
+            return
+
+        if users_list:
+            for user in users_list:
+                self.assigned_users.add(user)
+
 
 class TaskFactory(Factory):
     class Meta:
