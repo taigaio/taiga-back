@@ -921,13 +921,16 @@ def test_get_valid_csv(client):
     url = reverse("userstories-csv")
     project = f.ProjectFactory.create(userstories_csv_uuid=uuid.uuid4().hex)
 
-    response = client.get("{}?uuid={}".format(url, project.userstories_csv_uuid))
+    response = client.get(
+        "{}?uuid={}".format(url, project.userstories_csv_uuid))
     assert response.status_code == 200
 
 
 def test_custom_fields_csv_generation():
     project = f.ProjectFactory.create(userstories_csv_uuid=uuid.uuid4().hex)
-    attr = f.UserStoryCustomAttributeFactory.create(project=project, name="attr1", description="desc")
+    attr = f.UserStoryCustomAttributeFactory.create(project=project,
+                                                    name="attr1",
+                                                    description="desc")
     us = f.UserStoryFactory.create(project=project)
     attr_values = us.custom_attributes_values
     attr_values.attributes_values = {str(attr.id): "val1"}
@@ -937,6 +940,7 @@ def test_custom_fields_csv_generation():
     data.seek(0)
     reader = csv.reader(data)
     row = next(reader)
+
     assert row.pop() == attr.name
     row = next(reader)
     assert row.pop() == "val1"
@@ -945,9 +949,11 @@ def test_custom_fields_csv_generation():
 def test_update_userstory_respecting_watchers(client):
     watching_user = f.create_user()
     project = f.ProjectFactory.create()
-    us = f.UserStoryFactory.create(project=project, status__project=project, milestone__project=project)
+    us = f.UserStoryFactory.create(project=project, status__project=project,
+                                   milestone__project=project)
     us.add_watcher(watching_user)
-    f.MembershipFactory.create(project=us.project, user=us.owner, is_admin=True)
+    f.MembershipFactory.create(project=us.project, user=us.owner,
+                               is_admin=True)
     f.MembershipFactory.create(project=us.project, user=watching_user)
 
     client.login(user=us.owner)
@@ -963,8 +969,10 @@ def test_update_userstory_respecting_watchers(client):
 def test_update_userstory_update_watchers(client):
     watching_user = f.create_user()
     project = f.ProjectFactory.create()
-    us = f.UserStoryFactory.create(project=project, status__project=project, milestone__project=project)
-    f.MembershipFactory.create(project=us.project, user=us.owner, is_admin=True)
+    us = f.UserStoryFactory.create(project=project, status__project=project,
+                                   milestone__project=project)
+    f.MembershipFactory.create(project=us.project, user=us.owner,
+                               is_admin=True)
     f.MembershipFactory.create(project=us.project, user=watching_user)
 
     client.login(user=us.owner)
@@ -981,9 +989,11 @@ def test_update_userstory_update_watchers(client):
 def test_update_userstory_remove_watchers(client):
     watching_user = f.create_user()
     project = f.ProjectFactory.create()
-    us = f.UserStoryFactory.create(project=project, status__project=project, milestone__project=project)
+    us = f.UserStoryFactory.create(project=project, status__project=project,
+                                   milestone__project=project)
     us.add_watcher(watching_user)
-    f.MembershipFactory.create(project=us.project, user=us.owner, is_admin=True)
+    f.MembershipFactory.create(project=us.project, user=us.owner,
+                               is_admin=True)
     f.MembershipFactory.create(project=us.project, user=watching_user)
 
     client.login(user=us.owner)
@@ -999,8 +1009,10 @@ def test_update_userstory_remove_watchers(client):
 
 def test_update_userstory_update_tribe_gig(client):
     project = f.ProjectFactory.create()
-    us = f.UserStoryFactory.create(project=project, status__project=project, milestone__project=project)
-    f.MembershipFactory.create(project=us.project, user=us.owner, is_admin=True)
+    us = f.UserStoryFactory.create(project=project, status__project=project,
+                                   milestone__project=project)
+    f.MembershipFactory.create(project=us.project, user=us.owner,
+                               is_admin=True)
 
     url = reverse("userstories-detail", kwargs={"pk": us.pk})
     data = {
