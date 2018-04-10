@@ -17,6 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import pytz
+
+from datetime import datetime, timedelta
 import pytest
 
 from .. import factories
@@ -467,6 +470,26 @@ def test_assigned_to_user_story_timeline():
     user_timeline = service.get_profile_timeline(user_story.assigned_to)
     assert user_timeline[0].event_type == "userstories.userstory.create"
     assert user_timeline[0].data["userstory"]["subject"] == "test us timeline"
+
+
+def test_due_date_user_story_timeline():
+    initial_due_date = datetime.now(pytz.utc) + timedelta(days=1)
+    membership = factories.MembershipFactory.create()
+    user_story = factories.UserStoryFactory.create(subject="test us timeline",
+                                                   due_date=initial_due_date,
+                                                   project=membership.project)
+    history_services.take_snapshot(user_story, user=user_story.owner)
+
+    new_due_date = datetime.now(pytz.utc) + timedelta(days=3)
+    user_story.due_date = new_due_date
+    user_story.save()
+
+    history_services.take_snapshot(user_story, user=user_story.owner)
+    user_timeline = service.get_profile_timeline(user_story.owner)
+
+    assert user_timeline[0].event_type == "userstories.userstory.change"
+    assert user_timeline[0].data["values_diff"]['due_date'] == [str(initial_due_date.date()),
+                                                                str(new_due_date.date())]
 
 
 def test_user_data_for_non_system_users():

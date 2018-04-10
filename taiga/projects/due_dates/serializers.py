@@ -29,7 +29,7 @@ class DueDateSerializerMixin(serializers.LightSerializer):
     def get_due_date_status(self, obj):
         if obj.due_date is None:
             return 'not_set'
-        elif obj.status.is_closed:
+        elif obj.status and obj.status.is_closed:
             return 'no_longer_applicable'
         elif timezone.now().date() > obj.due_date:
             return 'past_due'

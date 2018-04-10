@@ -215,6 +215,8 @@ class TaskExportSerializer(CustomAttributesValuesExportSerializerMixin,
     blocked_note = Field()
     is_blocked = Field()
     tags = Field()
+    due_date = DateTimeField()
+    due_date_reason = Field()
 
     def custom_attributes_queryset(self, project):
         if project.id not in _custom_tasks_attributes_cache:
@@ -256,6 +258,8 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin,
     blocked_note = Field()
     is_blocked = Field()
     tags = Field()
+    due_date = DateTimeField()
+    due_date_reason = Field()
 
     def custom_attributes_queryset(self, project):
         if project.id not in _custom_userstories_attributes_cache:
@@ -338,6 +342,9 @@ class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin,
     blocked_note = Field()
     is_blocked = Field()
     tags = Field()
+
+    due_date = DateTimeField()
+    due_date_reason = Field()
 
     def get_votes(self, obj):
         return [x.email for x in votes_service.get_voters(obj)]

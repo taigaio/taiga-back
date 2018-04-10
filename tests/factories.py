@@ -292,6 +292,8 @@ class UserStoryFactory(Factory):
     status = factory.SubFactory("tests.factories.UserStoryStatusFactory")
     milestone = factory.SubFactory("tests.factories.MilestoneFactory")
     tags = factory.Faker("words")
+    due_date = factory.LazyAttribute(lambda o: date.today() + timedelta(days=7))
+    due_date_reason = factory.Faker("words")
 
 
 class TaskFactory(Factory):
@@ -308,6 +310,8 @@ class TaskFactory(Factory):
     milestone = factory.SubFactory("tests.factories.MilestoneFactory")
     user_story = factory.SubFactory("tests.factories.UserStoryFactory")
     tags = factory.Faker("words")
+    due_date = factory.LazyAttribute(lambda o: date.today() + timedelta(days=7))
+    due_date_reason = factory.Faker("words")
 
 
 class IssueFactory(Factory):
@@ -326,6 +330,8 @@ class IssueFactory(Factory):
     type = factory.SubFactory("tests.factories.IssueTypeFactory")
     milestone = factory.SubFactory("tests.factories.MilestoneFactory")
     tags = factory.Faker("words")
+    due_date = factory.LazyAttribute(lambda o: date.today() + timedelta(days=7))
+    due_date_reason = factory.Faker("words")
 
 
 class WikiPageFactory(Factory):
