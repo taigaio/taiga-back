@@ -55,7 +55,8 @@ def notify_policy_exists(project, user) -> bool:
     return qs.exists()
 
 
-def create_notify_policy(project, user, level=NotifyLevel.involved, live_level=NotifyLevel.all):
+def create_notify_policy(project, user, level=NotifyLevel.involved,
+                         live_level=NotifyLevel.involved):
     """
     Given a project and user, create notification policy for it.
     """
@@ -66,22 +67,27 @@ def create_notify_policy(project, user, level=NotifyLevel.involved, live_level=N
                                         notify_level=level,
                                         live_notify_level=live_level)
     except IntegrityError as e:
-        raise exc.IntegrityError(_("Notify exists for specified user and project")) from e
+        raise exc.IntegrityError(
+            _("Notify exists for specified user and project")) from e
 
 
-def create_notify_policy_if_not_exists(project, user, level=NotifyLevel.involved, live_level=NotifyLevel.all):
+def create_notify_policy_if_not_exists(project, user,
+                                       level=NotifyLevel.involved,
+                                       live_level=NotifyLevel.involved):
     """
     Given a project and user, create notification policy for it.
     """
     model_cls = apps.get_model("notifications", "NotifyPolicy")
     try:
-        result = model_cls.objects.get_or_create(project=project,
-                                                 user=user,
-                                                 defaults={"notify_level": level,
-                                                           "live_notify_level": live_level})
+        result = model_cls.objects.get_or_create(
+            project=project,
+            user=user,
+            defaults={"notify_level": level, "live_notify_level": live_level}
+        )
         return result[0]
     except IntegrityError as e:
-        raise exc.IntegrityError(_("Notify exists for specified user and project")) from e
+        raise exc.IntegrityError(
+            _("Notify exists for specified user and project")) from e
 
 
 def analize_object_for_watchers(obj: object, comment: str, user: object):
