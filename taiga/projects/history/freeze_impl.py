@@ -357,8 +357,7 @@ def userstory_freezer(us) -> dict:
         "blocked_note_html": mdrender(us.project, us.blocked_note),
         "custom_attributes": extract_user_story_custom_attributes(us),
         "tribe_gig": us.tribe_gig,
-        "due_date": str(us.due_date),
-        "due_date_reason": str(us.due_date_reason),
+        "due_date": str(us.due_date) if us.due_date else None
     }
 
     return snapshot
@@ -383,8 +382,7 @@ def issue_freezer(issue) -> dict:
         "blocked_note": issue.blocked_note,
         "blocked_note_html": mdrender(issue.project, issue.blocked_note),
         "custom_attributes": extract_issue_custom_attributes(issue),
-        "due_date": str(issue.due_date),
-        "due_date_reason": str(issue.due_date_reason),
+        "due_date": str(issue.due_date) if issue.due_date else None
     }
 
     return snapshot
@@ -410,8 +408,7 @@ def task_freezer(task) -> dict:
         "blocked_note": task.blocked_note,
         "blocked_note_html": mdrender(task.project, task.blocked_note),
         "custom_attributes": extract_task_custom_attributes(task),
-        "due_date": str(task.due_date),
-        "due_date_reason": str(task.due_date_reason),
+        "due_date": str(task.due_date) if task.due_date else None
     }
 
     return snapshot
