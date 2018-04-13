@@ -157,7 +157,6 @@ def attach_extra_info(queryset, user=None, include_attachments=False, include_ta
     queryset = attach_total_points(queryset)
     queryset = attach_role_points(queryset)
     queryset = attach_epics(queryset)
-    # queryset = attach_assigned_users(queryset)
 
     if include_attachments:
         queryset = attach_basic_attachments(queryset)

@@ -82,6 +82,38 @@ def test_webhooks_when_update_user_story(settings):
         assert data["change"]["diff"]["subject"]["from"] !=  data["data"]["subject"]
 
 
+def test_webhooks_when_update_assigned_users_user_story(settings):
+    settings.WEBHOOKS_ENABLED = True
+    project = f.ProjectFactory()
+    f.WebhookFactory.create(project=project)
+    f.WebhookFactory.create(project=project)
+
+    obj = f.UserStoryFactory.create(project=project)
+
+    with patch('taiga.webhooks.tasks._send_request') as send_request_mock:
+        services.take_snapshot(obj, user=obj.owner)
+        assert send_request_mock.call_count == 2
+
+    user = f.create_user()
+    obj.assigned_users.add(user)
+    obj.save()
+
+    with patch('taiga.webhooks.tasks._send_request') as send_request_mock:
+        services.take_snapshot(obj, user=obj.owner,)
+        assert send_request_mock.call_count == 2
+
+        (webhook_id, url, key, data) = send_request_mock.call_args[0]
+
+        assert data["action"] == "change"
+        assert data["type"] == "userstory"
+        assert data["by"]["id"] == obj.owner.id
+        assert len(data["data"]["assigned_users"]) == \
+            obj.assigned_users.count()
+        assert data["data"]["assigned_users"] == [user.id]
+        assert not data["change"]["diff"]["assigned_users"]["from"]
+        assert data["change"]["diff"]["assigned_users"]["to"] == user.username
+
+
 def test_webhooks_when_delete_user_story(settings):
     settings.WEBHOOKS_ENABLED = True
     project = f.ProjectFactory()

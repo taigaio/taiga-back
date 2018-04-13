@@ -85,13 +85,6 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
 
     assigned_users = MethodField()
 
-    # def get_assigned_users(self, obj):
-    #     assert hasattr(obj, "assigned_users_attr"), "instance must have a assigned_users_attr attribute"
-    #     if not obj.assigned_users_attr:
-    #         return []
-    #
-    #     return obj.assigned_users_attr
-
     def get_assigned_users(self, obj):
         """Get the assigned of an object.
 
