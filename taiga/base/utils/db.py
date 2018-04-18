@@ -151,9 +151,14 @@ def update_attr_in_bulk_for_ids(values, attr, model):
 
     # We can have deadlocks with multiple updates over the same object
     # In that situation we just retry
+    import time
+    ts = time.time()
+    def trace_info(retries):
+        return '/* query=update_attr_in_bulk id={ts} retries={retries} */'.format(retries=retries, ts=ts)
+
     def _run_sql(retries=0, max_retries=3):
         try:
-            cursor.execute(sql)
+            cursor.execute(trace_info(retries) + sql)
         except DatabaseError:
             if retries < max_retries:
                 _run_sql(retries + 1)
