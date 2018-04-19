@@ -104,7 +104,7 @@ def test_create_userstory_with_assigned_users(client):
     response = client.json.post(url, json_data)
 
     assert response.status_code == 201
-    assert response.data["assigned_users"] == [user.id, user_watcher.id]
+    assert response.data["assigned_users"] == set([user.id, user_watcher.id])
 
 
 def test_create_userstory_with_watchers(client):

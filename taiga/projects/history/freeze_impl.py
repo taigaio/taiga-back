@@ -93,7 +93,8 @@ def _common_users_values(diff):
     if "assigned_to" in diff:
         users.update(diff["assigned_to"])
     if "assigned_users" in diff:
-        [users.update(usrs_id) if usrs_id else None for usrs_id in diff["assigned_users"]]
+        [users.update(usrs_ids) for usrs_ids in diff["assigned_users"] if
+         usrs_ids]
     if users:
         values["users"] = _get_users_values(users)
 
@@ -335,6 +336,12 @@ def userstory_freezer(us) -> dict:
     for rp in rpqsd:
         points[str(rp.role_id)] = rp.points_id
 
+    assigned_users = [u.id for u in us.assigned_users.all()]
+    # Due to multiple assignment migration, for new snapshots we add to
+    # assigned users a list with the 'assigned to' value
+    if us.assigned_to_id and not assigned_users:
+        assigned_users = [us.assigned_to_id]
+
     snapshot = {
         "ref": us.ref,
         "owner": us.owner_id,
@@ -348,7 +355,7 @@ def userstory_freezer(us) -> dict:
         "description": us.description,
         "description_html": mdrender(us.project, us.description),
         "assigned_to": us.assigned_to_id,
-        "assigned_users": [u.id for u in us.assigned_users.all()],
+        "assigned_users": assigned_users,
         "milestone": us.milestone_id,
         "client_requirement": us.client_requirement,
         "team_requirement": us.team_requirement,

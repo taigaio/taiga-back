@@ -229,6 +229,31 @@ def get_excluded_fields(typename: str) -> tuple:
     return _deprecated_fields.get(typename, ())
 
 
+def migrate_userstory_diff(obj: FrozenObj) -> FrozenObj:
+    # Due to multiple assignment migration, for old snapshots we add a list
+    # with the 'assigned to' value
+    if 'assigned_users' not in obj.snapshot.keys():
+        snapshot = deepcopy(obj.snapshot)
+        snapshot['assigned_users'] = [obj.snapshot['assigned_to']]
+
+        obj = FrozenObj(obj.key, snapshot)
+
+    return obj
+
+
+_migrations = {"userstories.userstory": migrate_userstory_diff}
+
+
+def migrate_to_last_version(typename: str, obj: FrozenObj) -> FrozenObj:
+    """""
+    Adapt old snapshots to the last format in order to generate correct diffs.
+    :param typename:
+    :param obj:
+    :return:
+    """
+    return _migrations.get(typename, lambda x: x)(obj)
+
+
 def make_diff(oldobj: FrozenObj, newobj: FrozenObj,
               excluded_keys: tuple = ()) -> FrozenDiff:
     """
@@ -342,6 +367,10 @@ def take_snapshot(obj: object, *, comment: str="", user=None,
         new_fobj = freeze_model_instance(obj)
         old_fobj, need_real_snapshot = get_last_snapshot_for_key(key)
 
+        # migrate diff to latest schema
+        if old_fobj:
+            old_fobj = migrate_to_last_version(typename, old_fobj)
+
         entry_model = apps.get_model("history", "HistoryEntry")
         user_id = None if user is None else user.id
         user_name = "" if user is None else user.get_full_name()
@@ -358,6 +387,7 @@ def take_snapshot(obj: object, *, comment: str="", user=None,
             raise RuntimeError("Unexpected condition")
 
         excluded_fields = get_excluded_fields(typename)
+
         fdiff = make_diff(old_fobj, new_fobj, excluded_fields)
 
         # If diff and comment are empty, do

@@ -90,7 +90,16 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
 
         :return: User queryset object representing the assigned users
         """
-        return [user.id for user in obj.assigned_users.all()]
+        if not obj.assigned_to:
+            return set([user.id for user in obj.assigned_users.all()])
+
+        assigned_users = [user.id for user in obj.assigned_users.all()] + \
+                         [obj.assigned_to.id]
+
+        if not assigned_users:
+            return None
+
+        return set(assigned_users)
 
     def get_epic_order(self, obj):
         include_epic_order = getattr(obj, "include_epic_order", False)
