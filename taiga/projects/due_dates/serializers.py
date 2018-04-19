@@ -24,7 +24,7 @@ class DueDateSerializerMixin(serializers.LightSerializer):
     due_date_reason = Field()
     due_date_status = MethodField()
 
-    THRESHOLD = 3
+    THRESHOLD = 14
 
     def get_due_date_status(self, obj):
         if obj.due_date is None:
@@ -33,7 +33,8 @@ class DueDateSerializerMixin(serializers.LightSerializer):
             return 'no_longer_applicable'
         elif timezone.now().date() > obj.due_date:
             return 'past_due'
-        elif (timezone.now().date() + dt.timedelta(days=self.THRESHOLD)) >= obj.due_date:
+        elif (timezone.now().date() + dt.timedelta(
+                days=self.THRESHOLD)) >= obj.due_date:
             return 'due_soon'
         else:
             return 'set'
