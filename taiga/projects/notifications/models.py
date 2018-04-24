@@ -36,6 +36,7 @@ class NotifyPolicy(models.Model):
     project = models.ForeignKey("projects.Project", related_name="notify_policies")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notify_policies")
     notify_level = models.SmallIntegerField(choices=NOTIFY_LEVEL_CHOICES)
+    live_notify_level = models.SmallIntegerField(choices=NOTIFY_LEVEL_CHOICES, default=NotifyLevel.involved)
 
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField()

@@ -27,7 +27,7 @@ class NotifyPolicySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.NotifyPolicy
-        fields = ('id', 'project', 'project_name', 'notify_level')
+        fields = ('id', 'project', 'project_name', 'notify_level', "live_notify_level")
 
     def get_project_name(self, obj):
         return obj.project.name

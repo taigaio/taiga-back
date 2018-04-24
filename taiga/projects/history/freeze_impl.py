@@ -92,10 +92,14 @@ def _common_users_values(diff):
         users.update(diff["owner"])
     if "assigned_to" in diff:
         users.update(diff["assigned_to"])
+    if "assigned_users" in diff:
+        [users.update(usrs_ids) for usrs_ids in diff["assigned_users"] if
+         usrs_ids]
     if users:
         values["users"] = _get_users_values(users)
 
     return values
+
 
 def project_values(diff):
     values = _common_users_values(diff)
@@ -332,6 +336,12 @@ def userstory_freezer(us) -> dict:
     for rp in rpqsd:
         points[str(rp.role_id)] = rp.points_id
 
+    assigned_users = [u.id for u in us.assigned_users.all()]
+    # Due to multiple assignment migration, for new snapshots we add to
+    # assigned users a list with the 'assigned to' value
+    if us.assigned_to_id and not assigned_users:
+        assigned_users = [us.assigned_to_id]
+
     snapshot = {
         "ref": us.ref,
         "owner": us.owner_id,
@@ -345,6 +355,7 @@ def userstory_freezer(us) -> dict:
         "description": us.description,
         "description_html": mdrender(us.project, us.description),
         "assigned_to": us.assigned_to_id,
+        "assigned_users": assigned_users,
         "milestone": us.milestone_id,
         "client_requirement": us.client_requirement,
         "team_requirement": us.team_requirement,
@@ -357,6 +368,7 @@ def userstory_freezer(us) -> dict:
         "blocked_note_html": mdrender(us.project, us.blocked_note),
         "custom_attributes": extract_user_story_custom_attributes(us),
         "tribe_gig": us.tribe_gig,
+        "due_date": str(us.due_date) if us.due_date else None
     }
 
     return snapshot
@@ -381,6 +393,7 @@ def issue_freezer(issue) -> dict:
         "blocked_note": issue.blocked_note,
         "blocked_note_html": mdrender(issue.project, issue.blocked_note),
         "custom_attributes": extract_issue_custom_attributes(issue),
+        "due_date": str(issue.due_date) if issue.due_date else None
     }
 
     return snapshot
@@ -406,6 +419,7 @@ def task_freezer(task) -> dict:
         "blocked_note": task.blocked_note,
         "blocked_note_html": mdrender(task.project, task.blocked_note),
         "custom_attributes": extract_task_custom_attributes(task),
+        "due_date": str(task.due_date) if task.due_date else None
     }
 
     return snapshot

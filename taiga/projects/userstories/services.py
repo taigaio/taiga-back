@@ -38,6 +38,7 @@ from taiga.projects.notifications.utils import attach_watchers_to_queryset
 
 from . import models
 
+
 #####################################################
 # Bulk actions
 #####################################################
@@ -46,7 +47,8 @@ def get_userstories_from_bulk(bulk_data, **additional_fields):
     """Convert `bulk_data` into a list of user stories.
 
     :param bulk_data: List of user stories in bulk format.
-    :param additional_fields: Additional fields when instantiating each user story.
+    :param additional_fields: Additional fields when instantiating each user
+    story.
 
     :return: List of `UserStory` instances.
     """
@@ -54,12 +56,14 @@ def get_userstories_from_bulk(bulk_data, **additional_fields):
             for line in text.split_in_lines(bulk_data)]
 
 
-def create_userstories_in_bulk(bulk_data, callback=None, precall=None, **additional_fields):
+def create_userstories_in_bulk(bulk_data, callback=None, precall=None,
+                               **additional_fields):
     """Create user stories from `bulk_data`.
 
     :param bulk_data: List of user stories in bulk format.
     :param callback: Callback to execute after each user story save.
-    :param additional_fields: Additional fields when instantiating each user story.
+    :param additional_fields: Additional fields when instantiating each user
+    story.
 
     :return: List of created `Task` instances.
     """
@@ -76,11 +80,13 @@ def create_userstories_in_bulk(bulk_data, callback=None, precall=None, **additio
     return userstories
 
 
-def update_userstories_order_in_bulk(bulk_data: list, field: str, project: object,
-                                     status: object=None, milestone: object=None):
+def update_userstories_order_in_bulk(bulk_data: list, field: str,
+                                     project: object,
+                                     status: object = None,
+                                     milestone: object = None):
     """
-    Updates the order of the userstories specified adding the extra updates needed
-    to keep consistency.
+    Updates the order of the userstories specified adding the extra updates
+    needed to keep consistency.
     `bulk_data` should be a list of dicts with the following format:
     `field` is the order field used
 
@@ -106,8 +112,8 @@ def update_userstories_order_in_bulk(bulk_data: list, field: str, project: objec
 
 def update_userstories_milestone_in_bulk(bulk_data: list, milestone: object):
     """
-    Update the milestone and the milestone order of some user stories adding the
-    extra orders needed to keep consistency.
+    Update the milestone and the milestone order of some user stories adding
+    the extra orders needed to keep consistency.
     `bulk_data` should be a list of dicts with the following format:
     [{'us_id': <value>, 'order': <value>}, ...]
     """
@@ -116,7 +122,8 @@ def update_userstories_milestone_in_bulk(bulk_data: list, milestone: object):
     new_us_orders = {}
     for e in bulk_data:
         new_us_orders[e["us_id"]] = e["order"]
-        # The base orders where we apply the new orders must containg all the values
+        # The base orders where we apply the new orders must containg all
+        # the values
         us_orders[e["us_id"]] = e["order"]
 
     apply_order_updates(us_orders, new_us_orders)
@@ -128,11 +135,14 @@ def update_userstories_milestone_in_bulk(bulk_data: list, milestone: object):
                               content_type="userstories.userstory",
                               projectid=milestone.project.pk)
 
-    db.update_attr_in_bulk_for_ids(us_milestones, "milestone_id", model=models.UserStory)
+    db.update_attr_in_bulk_for_ids(us_milestones, "milestone_id",
+                                   model=models.UserStory)
     db.update_attr_in_bulk_for_ids(us_orders, "sprint_order", models.UserStory)
 
     # Updating the milestone for the tasks
-    Task.objects.filter(user_story_id__in=[e["us_id"] for e in bulk_data]).update(milestone=milestone)
+    Task.objects.filter(
+        user_story_id__in=[e["us_id"] for e in bulk_data]).update(
+        milestone=milestone)
 
     return us_orders
 
@@ -157,7 +167,8 @@ def calculate_userstory_is_closed(user_story):
     if user_story.tasks.count() == 0:
         return user_story.status is not None and user_story.status.is_closed
 
-    if all([task.status is not None and task.status.is_closed for task in user_story.tasks.all()]):
+    if all([task.status is not None and task.status.is_closed for task in
+            user_story.tasks.all()]):
         return True
 
     return False
@@ -183,9 +194,12 @@ def open_userstory(us):
 
 def userstories_to_csv(project, queryset):
     csv_data = io.StringIO()
-    fieldnames = ["ref", "subject", "description", "sprint", "sprint_estimated_start",
-                  "sprint_estimated_finish", "owner", "owner_full_name", "assigned_to",
-                  "assigned_to_full_name", "status", "is_closed"]
+    fieldnames = ["ref", "subject", "description", "sprint",
+                  "sprint_estimated_start",
+                  "sprint_estimated_finish", "owner", "owner_full_name",
+                  "assigned_to",
+                  "assigned_to_full_name", "assigned_users",
+                  "assigned_users_full_name", "status", "is_closed"]
 
     roles = project.roles.filter(computable=True).order_by('slug')
     for role in roles:
@@ -197,7 +211,7 @@ def userstories_to_csv(project, queryset):
                    "created_date", "modified_date", "finish_date",
                    "client_requirement", "team_requirement", "attachments",
                    "generated_from_issue", "external_reference", "tasks",
-                   "tags", "watchers", "voters"]
+                   "tags", "watchers", "voters", "due_date", "due_date_reason"]
 
     custom_attrs = project.userstorycustomattributes.all()
     for custom_attr in custom_attrs:
@@ -227,12 +241,21 @@ def userstories_to_csv(project, queryset):
             "subject": us.subject,
             "description": us.description,
             "sprint": us.milestone.name if us.milestone else None,
-            "sprint_estimated_start": us.milestone.estimated_start if us.milestone else None,
-            "sprint_estimated_finish": us.milestone.estimated_finish if us.milestone else None,
+            "sprint_estimated_start": us.milestone.estimated_start if
+            us.milestone else None,
+            "sprint_estimated_finish": us.milestone.estimated_finish if
+            us.milestone else None,
             "owner": us.owner.username if us.owner else None,
             "owner_full_name": us.owner.get_full_name() if us.owner else None,
             "assigned_to": us.assigned_to.username if us.assigned_to else None,
-            "assigned_to_full_name": us.assigned_to.get_full_name() if us.assigned_to else None,
+            "assigned_to_full_name": us.assigned_to.get_full_name() if
+            us.assigned_to else None,
+            "assigned_users": ",".join(
+                [assigned_user.username for assigned_user in
+                 us.assigned_users.all()]),
+            "assigned_users_full_name": ",".join(
+                [assigned_user.get_full_name() for assigned_user in
+                 us.assigned_users.all()]),
             "status": us.status.name if us.status else None,
             "is_closed": us.is_closed,
             "backlog_order": us.backlog_order,
@@ -244,22 +267,28 @@ def userstories_to_csv(project, queryset):
             "client_requirement": us.client_requirement,
             "team_requirement": us.team_requirement,
             "attachments": us.attachments.count(),
-            "generated_from_issue": us.generated_from_issue.ref if us.generated_from_issue else None,
+            "generated_from_issue": us.generated_from_issue.ref if
+            us.generated_from_issue else None,
             "external_reference": us.external_reference,
             "tasks": ",".join([str(task.ref) for task in us.tasks.all()]),
             "tags": ",".join(us.tags or []),
             "watchers": us.watchers,
-            "voters": us.total_voters
+            "voters": us.total_voters,
+            "due_date": us.due_date,
+            "due_date_reason": us.due_date_reason,
         }
 
-        us_role_points_by_role_id = {us_rp.role.id: us_rp.points.value for us_rp in us.role_points.all()}
+        us_role_points_by_role_id = {us_rp.role.id: us_rp.points.value for
+                                     us_rp in us.role_points.all()}
         for role in roles:
-            row["{}-points".format(role.slug)] = us_role_points_by_role_id.get(role.id, 0)
+            row["{}-points".format(role.slug)] = \
+                us_role_points_by_role_id.get(role.id, 0)
 
         row['total-points'] = us.get_total_points()
 
         for custom_attr in custom_attrs:
-            value = us.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
+            value = us.custom_attributes_values.attributes_values.get(
+                str(custom_attr.id), None)
             row[custom_attr.name] = value
 
         writer.writerow(row)

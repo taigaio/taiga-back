@@ -159,6 +159,7 @@ class HistorySnapshotField(JSONField):
 
         return data
 
+
 class HistoryUserField(JSONField):
     def from_native(self, data):
         if data is None:

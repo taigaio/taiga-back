@@ -127,7 +127,6 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                                include_attachments=include_attachments,
                                include_tasks=include_tasks,
                                epic_id=epic_id)
-
         return qs
 
     def pre_conditions_on_save(self, obj):

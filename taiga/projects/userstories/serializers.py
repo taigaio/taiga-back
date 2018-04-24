@@ -22,6 +22,7 @@ from taiga.base.neighbors import NeighborsSerializerMixin
 
 from taiga.mdrender.service import render as mdrender
 from taiga.projects.attachments.serializers import BasicAttachmentsInfoSerializerMixin
+from taiga.projects.due_dates.serializers import DueDateSerializerMixin
 from taiga.projects.mixins.serializers import AssignedToExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import OwnerExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import ProjectExtraInfoSerializerMixin
@@ -49,7 +50,7 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
         OwnerExtraInfoSerializerMixin, AssignedToExtraInfoSerializerMixin,
         StatusExtraInfoSerializerMixin, BasicAttachmentsInfoSerializerMixin,
         TaggedInProjectResourceSerializer, TotalCommentsSerializerMixin,
-        serializers.LightSerializer):
+        DueDateSerializerMixin, serializers.LightSerializer):
 
     id = Field()
     ref = Field()
@@ -81,6 +82,24 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
     epics = MethodField()
     epic_order = MethodField()
     tasks = MethodField()
+
+    assigned_users = MethodField()
+
+    def get_assigned_users(self, obj):
+        """Get the assigned of an object.
+
+        :return: User queryset object representing the assigned users
+        """
+        if not obj.assigned_to:
+            return set([user.id for user in obj.assigned_users.all()])
+
+        assigned_users = [user.id for user in obj.assigned_users.all()] + \
+                         [obj.assigned_to.id]
+
+        if not assigned_users:
+            return None
+
+        return set(assigned_users)
 
     def get_epic_order(self, obj):
         include_epic_order = getattr(obj, "include_epic_order", False)

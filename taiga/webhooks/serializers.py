@@ -345,6 +345,8 @@ class UserStorySerializer(CustomAttributesValuesWebhookSerializerMixin, serializ
     created_date = Field()
     modified_date = Field()
     finish_date = Field()
+    due_date = Field()
+    due_date_reason = Field()
     subject = Field()
     client_requirement = Field()
     team_requirement = Field()
@@ -359,6 +361,7 @@ class UserStorySerializer(CustomAttributesValuesWebhookSerializerMixin, serializ
     permalink = serializers.SerializerMethodField("get_permalink")
     owner = UserSerializer()
     assigned_to = UserSerializer()
+    assigned_users = MethodField()
     points = MethodField()
     status = UserStoryStatusSerializer()
     milestone = MilestoneSerializer()
@@ -368,6 +371,13 @@ class UserStorySerializer(CustomAttributesValuesWebhookSerializerMixin, serializ
 
     def custom_attributes_queryset(self, project):
         return project.userstorycustomattributes.all()
+
+    def get_assigned_users(self, obj):
+        """Get the assigned of an object.
+
+        :return: User queryset object representing the assigned users
+        """
+        return [user.id for user in obj.assigned_users.all()]
 
     def get_watchers(self, obj):
         return list(obj.get_watchers().values_list("id", flat=True))
@@ -386,6 +396,8 @@ class TaskSerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.L
     created_date = Field()
     modified_date = Field()
     finished_date = Field()
+    due_date = Field()
+    due_date_reason = Field()
     subject = Field()
     us_order = Field()
     taskboard_order = Field()
@@ -424,6 +436,8 @@ class IssueSerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.
     created_date = Field()
     modified_date = Field()
     finished_date = Field()
+    due_date = Field()
+    due_date_reason = Field()
     subject = Field()
     external_reference = Field()
     watchers = MethodField()

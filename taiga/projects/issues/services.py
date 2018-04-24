@@ -82,7 +82,8 @@ def issues_to_csv(project, queryset):
                   "sprint_estimated_finish", "owner", "owner_full_name", "assigned_to",
                   "assigned_to_full_name", "status", "severity", "priority", "type",
                   "is_closed", "attachments", "external_reference", "tags", "watchers",
-                  "voters", "created_date", "modified_date", "finished_date"]
+                  "voters", "created_date", "modified_date", "finished_date", "due_date",
+                  "due_date_reason"]
 
     custom_attrs = project.issuecustomattributes.all()
     for custom_attr in custom_attrs:
@@ -125,6 +126,8 @@ def issues_to_csv(project, queryset):
             "created_date": issue.created_date,
             "modified_date": issue.modified_date,
             "finished_date": issue.finished_date,
+            "due_date": issue.due_date,
+            "due_date_reason": issue.due_date_reason,
         }
 
         for custom_attr in custom_attrs:

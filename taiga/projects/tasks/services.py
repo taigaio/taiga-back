@@ -121,8 +121,9 @@ def tasks_to_csv(project, queryset):
     fieldnames = ["ref", "subject", "description", "user_story", "sprint", "sprint_estimated_start",
                   "sprint_estimated_finish", "owner", "owner_full_name", "assigned_to",
                   "assigned_to_full_name", "status", "is_iocaine", "is_closed", "us_order",
-                  "taskboard_order", "attachments", "external_reference", "tags", "watchers", "voters",
-                  "created_date", "modified_date", "finished_date"]
+                  "taskboard_order", "attachments", "external_reference", "tags", "watchers",
+                  "voters", "created_date", "modified_date", "finished_date", "due_date",
+                  "due_date_reason"]
 
     custom_attrs = project.taskcustomattributes.all()
     for custom_attr in custom_attrs:
@@ -167,6 +168,8 @@ def tasks_to_csv(project, queryset):
             "created_date": task.created_date,
             "modified_date": task.modified_date,
             "finished_date": task.finished_date,
+            "due_date": task.due_date,
+            "due_date_reason": task.due_date_reason,
         }
         for custom_attr in custom_attrs:
             value = task.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)

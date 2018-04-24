@@ -149,6 +149,60 @@
                     {% endif %}
                 </td>
             </tr>
+    {# ASSIGNED TO #}
+        {% elif field_name == "due_date" %}
+            <tr>
+                <td valign="middle" rowspan="2" class="update-row-name">
+                    <h3>{{ verbose_name(obj_class, field_name) }}</h3>
+                </td>
+                <td valign="top" class="update-row-from">
+                    {% if values.0 != None and values.0 != "" %}
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ values.0|date }}</strong>
+                    {% else %}
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ _("Not set") }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    {% if values.1 != None and values.1 != "" %}
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ values.1|date }}</strong>
+                    {% else %}
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ _("Not set") }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
+    {# ASSIGNED users #}
+        {% elif field_name == "assigned_users" %}
+            <tr>
+                <td valign="middle" rowspan="2" class="update-row-name">
+                    <h3>{{ verbose_name(obj_class, field_name) }}</h3>
+                </td>
+                <td valign="top" class="update-row-from">
+                    {% if values.0 != None and values.0 != "" %}
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ values.0 }}</strong>
+                    {% else %}
+                        <span>{{ _("from") }}</span><br>
+                        <strong>{{ _("Unassigned") }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">
+                    {% if values.1 != None and values.1 != "" %}
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ values.1 }}</strong>
+                    {% else %}
+                        <span>{{ _("to") }}</span><br>
+                        <strong>{{ _("Unassigned") }}</strong>
+                    {% endif %}
+                </td>
+            </tr>
     {# * #}
         {% else %}
             <tr>

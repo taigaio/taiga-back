@@ -215,6 +215,8 @@ class TaskExportSerializer(CustomAttributesValuesExportSerializerMixin,
     blocked_note = Field()
     is_blocked = Field()
     tags = Field()
+    due_date = DateTimeField()
+    due_date_reason = Field()
 
     def custom_attributes_queryset(self, project):
         if project.id not in _custom_tasks_attributes_cache:
@@ -235,6 +237,7 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin,
     role_points = RolePointsExportSerializer(many=True)
     owner = UserRelatedField()
     assigned_to = UserRelatedField()
+    assigned_users = MethodField()
     status = SlugRelatedField(slug_field="name")
     milestone = SlugRelatedField(slug_field="name")
     modified_date = DateTimeField()
@@ -256,6 +259,8 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin,
     blocked_note = Field()
     is_blocked = Field()
     tags = Field()
+    due_date = DateTimeField()
+    due_date_reason = Field()
 
     def custom_attributes_queryset(self, project):
         if project.id not in _custom_userstories_attributes_cache:
@@ -268,6 +273,10 @@ class UserStoryExportSerializer(CustomAttributesValuesExportSerializerMixin,
         if project.id not in _userstories_statuses_cache:
             _userstories_statuses_cache[project.id] = {s.id: s.name for s in project.us_statuses.all()}
         return _userstories_statuses_cache[project.id]
+
+    def get_assigned_users(self, obj):
+        return [user.email for user in obj.assigned_users.all()]
+
 
 class EpicRelatedUserStoryExportSerializer(RelatedExportSerializer):
     user_story = SlugRelatedField(slug_field="ref")
@@ -338,6 +347,9 @@ class IssueExportSerializer(CustomAttributesValuesExportSerializerMixin,
     blocked_note = Field()
     is_blocked = Field()
     tags = Field()
+
+    due_date = DateTimeField()
+    due_date_reason = Field()
 
     def get_votes(self, obj):
         return [x.email for x in votes_service.get_voters(obj)]

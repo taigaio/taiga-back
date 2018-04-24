@@ -20,11 +20,15 @@
 import collections
 
 from django.db import connection
+from django.utils.translation import ugettext_lazy as _
 
 from taiga.base.utils import json
 from taiga.base.utils.db import get_typename_for_model_instance
 from . import middleware as mw
 from . import backends
+from taiga.front.templatetags.functions import resolve
+from taiga.projects.history.choices import HistoryType
+
 
 # The complete list of content types
 # of allowed models for change events
@@ -87,6 +91,85 @@ def emit_event_for_model(obj, *, type:str="change", channel:str="events",
                       sessionid=sessionid,
                       data=data)
 
+def emit_live_notification_for_model(obj, user, history, *, type:str="change", channel:str="events",
+                                     sessionid:str="not-existing"):
+    """
+    Sends a model live notification to users.
+    """
+
+    if obj._importing:
+        return None
+
+    content_type = get_typename_for_model_instance(obj)
+    if content_type == "userstories.userstory":
+        if history.type == HistoryType.create:
+            title = _("User story created")
+            url = resolve("userstory", obj.project.slug, obj.ref)
+        elif history.type == HistoryType.change:
+            title = _("User story changed")
+            url = resolve("userstory", obj.project.slug, obj.ref)
+        else:
+            title = _("User story deleted")
+            url = None
+        body = _("US #{} - {}").format(obj.ref, obj.subject)
+    elif content_type == "tasks.task":
+        if history.type == HistoryType.create:
+            title = _("Task created")
+            url = resolve("task", obj.project.slug, obj.ref)
+        elif history.type == HistoryType.change:
+            title = _("Task changed")
+            url = resolve("task", obj.project.slug, obj.ref)
+        else:
+            title = _("Task deleted")
+            url = None
+        body = _("Task #{} - {}").format(obj.ref, obj.subject)
+    elif content_type == "issues.issue":
+        if history.type == HistoryType.create:
+            title = _("Issue created")
+            url = resolve("issue", obj.project.slug, obj.ref)
+        elif history.type == HistoryType.change:
+            title = _("Issue changed")
+            url = resolve("issue", obj.project.slug, obj.ref)
+        else:
+            title = _("Issue deleted")
+            url = None
+        body = _("Issue: #{} - {}").format(obj.ref, obj.subject)
+    elif content_type == "wiki.wiki_page":
+        if history.type == HistoryType.create:
+            title = _("Wiki Page created")
+            url = resolve("wiki", obj.project.slug, obj.slug)
+        elif history.type == HistoryType.change:
+            title = _("Wiki Page changed")
+            url = resolve("wiki", obj.project.slug, obj.slug)
+        else:
+            title = _("Wiki Page deleted")
+            url = None
+        body = _("Wiki Page: {}").format(obj.slug)
+    elif content_type == "milestones.milestone":
+        if history.type == HistoryType.create:
+            title = _("Sprint created")
+            url = resolve("taskboard", obj.project.slug, obj.slug)
+        elif history.type == HistoryType.change:
+            title = _("Sprint changed")
+            url = resolve("taskboard", obj.project.slug, obj.slug)
+        else:
+            title = _("Sprint deleted")
+            url = None
+        body = _("Sprint: {}").format(obj.name)
+    else:
+        return None
+
+    return emit_event(
+        {
+            "title": title,
+            "body": "Project: {}\n{}".format(obj.project.name, body),
+            "url": url,
+            "timeout": 10000,
+            "id": history.id
+        },
+        "live_notifications.{}".format(user.id),
+        sessionid=sessionid
+    )
 
 def emit_event_for_ids(ids, content_type:str, projectid:int, *,
                        type:str="change", channel:str="events", sessionid:str=None):

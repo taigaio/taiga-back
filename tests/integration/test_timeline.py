@@ -17,6 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import pytz
+
+from datetime import datetime, timedelta
 import pytest
 
 from .. import factories
@@ -445,10 +448,12 @@ def test_delete_membership_timeline():
 def test_comment_user_story_timeline():
     user_story = factories.UserStoryFactory.create(subject="test us timeline")
     history_services.take_snapshot(user_story, user=user_story.owner)
-    history_services.take_snapshot(user_story, user=user_story.owner, comment="testing comment")
+    history_services.take_snapshot(user_story, user=user_story.owner,
+                                   comment="testing comment")
     project_timeline = service.get_project_timeline(user_story.project)
     assert project_timeline[0].event_type == "userstories.userstory.change"
-    assert project_timeline[0].data["userstory"]["subject"] == "test us timeline"
+    assert project_timeline[0].data["userstory"]["subject"] \
+        == "test us timeline"
     assert project_timeline[0].data["comment"] == "testing comment"
 
 
@@ -462,11 +467,57 @@ def test_owner_user_story_timeline():
 
 def test_assigned_to_user_story_timeline():
     membership = factories.MembershipFactory.create()
-    user_story = factories.UserStoryFactory.create(subject="test us timeline", assigned_to=membership.user, project=membership.project)
+    user_story = factories.UserStoryFactory.create(subject="test us timeline",
+                                                   assigned_to=membership.user,
+                                                   project=membership.project)
     history_services.take_snapshot(user_story, user=user_story.owner)
     user_timeline = service.get_profile_timeline(user_story.assigned_to)
     assert user_timeline[0].event_type == "userstories.userstory.create"
     assert user_timeline[0].data["userstory"]["subject"] == "test us timeline"
+
+
+def test_due_date_user_story_timeline():
+    initial_due_date = datetime.now(pytz.utc) + timedelta(days=1)
+    membership = factories.MembershipFactory.create()
+    user_story = factories.UserStoryFactory.create(subject="test us timeline",
+                                                   due_date=initial_due_date,
+                                                   project=membership.project)
+    history_services.take_snapshot(user_story, user=user_story.owner)
+
+    new_due_date = datetime.now(pytz.utc) + timedelta(days=3)
+    user_story.due_date = new_due_date
+    user_story.save()
+
+    history_services.take_snapshot(user_story, user=user_story.owner)
+    user_timeline = service.get_profile_timeline(user_story.owner)
+
+    assert user_timeline[0].event_type == "userstories.userstory.change"
+    assert user_timeline[0].data["values_diff"]['due_date'] == [str(initial_due_date.date()),
+                                                                str(new_due_date.date())]
+
+
+def test_assigned_users_user_story_timeline():
+    membership = factories.MembershipFactory.create()
+    user_story = factories.UserStoryFactory.create(subject="test us timeline",
+                                                   project=membership.project)
+    history_services.take_snapshot(user_story, user=user_story.owner)
+    user_timeline = service.get_profile_timeline(user_story.owner)
+
+    assert user_timeline[0].event_type == "userstories.userstory.create"
+    assert user_timeline[0].data["userstory"]["subject"] == "test us timeline"
+
+    user_story.assigned_to = membership.user
+    user_story.assigned_users = (membership.user,)
+    user_story.save()
+
+    history_services.take_snapshot(user_story, user=user_story.owner)
+
+    user_timeline = service.get_profile_timeline(user_story.owner)
+
+    assert user_timeline[0].event_type == "userstories.userstory.change"
+    assert "assigned_to" not in user_timeline[0].data["values_diff"].keys()
+    assert user_timeline[0].data["values_diff"]['assigned_users'] == \
+        [None, membership.user.username]
 
 
 def test_user_data_for_non_system_users():
@@ -497,9 +548,11 @@ def test_user_data_for_unactived_users():
     serialized_obj.data["data"]["user"]["is_profile_visible"] = False
     serialized_obj.data["data"]["user"]["username"] = "deleted-user"
 
+
 def test_timeline_error_use_member_ids_instead_of_memberships_ids():
-    user_story = factories.UserStoryFactory.create(subject="test error use member ids instead of "
-                                                           "memberships ids")
+    user_story = factories.UserStoryFactory.create(
+        subject="test error use member ids instead of "
+                "memberships ids")
 
     member_user = user_story.owner
     external_user = factories.UserFactory.create()

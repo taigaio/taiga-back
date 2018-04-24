@@ -177,3 +177,22 @@ def attach_extra_info(queryset, user=None, include_attachments=False, include_ta
     queryset = attach_is_watcher_to_queryset(queryset, user)
     queryset = attach_total_comments_to_queryset(queryset)
     return queryset
+
+
+def attach_assigned_users(queryset, as_field="assigned_users_attr"):
+    """Attach assigned users as json column to each object of the queryset.
+
+    :param queryset: A Django user stories queryset object.
+    :param as_field: Attach assigned as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+
+    model = queryset.model
+    sql = """SELECT "userstories_userstory_assigned_users"."user_id" AS "user_id"
+                FROM "userstories_userstory_assigned_users"
+                WHERE "userstories_userstory_assigned_users"."userstory_id" = {tbl}.id"""
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
