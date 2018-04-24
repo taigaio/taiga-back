@@ -2,7 +2,24 @@
 
 ## Unreleased
 
-- Add due date to US, tasks and issues (https://tree.taiga.io/project/taiga/issue/3070).
+## 3.3.0 Picea mariana (2018-04-26)
+
+### Features
+
+- Add "live notifications" to Taiga:
+    - Migration for user configuration.
+- Add due date to US, tasks and issues (https://tree.taiga.io/project/taiga/issue/3070):
+    - Add to csv export.
+    - Add to projects import/export.
+    - Add to webhooks.
+    - Add to django admin.
+- Add multiple assignement only in US (https://tree.taiga.io/project/taiga/issue/1961):
+    - The `assigned_to` field is still active.
+    - Add to csv export.
+    - Add to projects import/export.
+    - Add to webhooks.
+    - Add to django admin.
+- Delete cards in Kanban and sprint Taskboard (https://tree.taiga.io/project/taiga/issue/2683).
 
 ## 3.2.3 (2018-04-04)
 
