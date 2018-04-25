@@ -5,6 +5,7 @@
 # Translators:
 # David Barragán <bameda@gmail.com>, 2015
 # Karol Sokolowski <sokoow@gmail.com>, 2017
+# Łukasz Sokolnicki <sokolnicki.lukasz@gmail.com>, 2018
 # Wiktor Żurawik <wiktor.zurawik@gmail.com>, 2015
 # Wojtek Jurkowlaniec <wojtek.jurkowlaniec@gmail.com>, 2015
 msgid ""
@@ -12,8 +13,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-02-15 18:20+0100\n"
-"PO-Revision-Date: 2018-02-15 17:25+0000\n"
-"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
+"PO-Revision-Date: 2018-04-16 13:47+0000\n"
+"Last-Translator: Łukasz Sokolnicki <sokolnicki.lukasz@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -26,11 +27,11 @@ msgstr ""
 
 #: taiga/auth/api.py:74
 msgid "Public register is disabled."
-msgstr "Publiczna rejestracja jest wyłączona"
+msgstr "Publiczny rejestr jest zablokowany"
 
 #: taiga/auth/api.py:101
 msgid "invalid register type"
-msgstr "Nieprawidłowy typ rejestracji"
+msgstr "Nieprawidłowy typ rejestru"
 
 #: taiga/auth/api.py:117
 msgid "invalid login type"
@@ -2165,7 +2166,7 @@ msgstr "domyślny typ dla zgłoszenia"
 
 #: taiga/projects/models.py:156
 msgid "logo"
-msgstr ""
+msgstr "logo"
 
 #: taiga/projects/models.py:166
 msgid "members"
@@ -2181,7 +2182,7 @@ msgstr "wszystkich punktów "
 
 #: taiga/projects/models.py:172 taiga/projects/models.py:754
 msgid "active contact"
-msgstr ""
+msgstr "aktywny kontakt"
 
 #: taiga/projects/models.py:174 taiga/projects/models.py:756
 msgid "active epics panel"
@@ -2233,7 +2234,7 @@ msgstr ""
 
 #: taiga/projects/models.py:206 taiga/projects/models.py:766
 msgid "is looking for people"
-msgstr ""
+msgstr "szuka ludzi"
 
 #: taiga/projects/models.py:208 taiga/projects/models.py:768
 msgid "looking for people note"
@@ -2359,15 +2360,15 @@ msgstr ""
 
 #: taiga/projects/notifications/choices.py:30
 msgid "Involved"
-msgstr ""
+msgstr "Zaangażowani"
 
 #: taiga/projects/notifications/choices.py:31
 msgid "All"
-msgstr ""
+msgstr "Wszyscy"
 
 #: taiga/projects/notifications/choices.py:32
 msgid "None"
-msgstr ""
+msgstr "Żaden"
 
 #: taiga/projects/notifications/models.py:64
 msgid "created date time"
@@ -3247,7 +3248,7 @@ msgstr ""
 
 #: taiga/projects/services/members.py:133
 msgid "Project without owner"
-msgstr ""
+msgstr "Projekt bez właściciela"
 
 #: taiga/projects/services/members.py:138
 msgid "You have reached your current limit of memberships for private projects"
@@ -3264,7 +3265,7 @@ msgstr ""
 #: taiga/projects/services/projects.py:101
 #: taiga/projects/services/projects.py:141 taiga/users/services.py:589
 msgid "You can't have more private projects"
-msgstr ""
+msgstr "Nie możesz posiadać więcej prywatnych projektów"
 
 #: taiga/projects/services/projects.py:105
 #: taiga/projects/services/projects.py:145 taiga/users/services.py:592
@@ -3275,7 +3276,7 @@ msgstr ""
 #: taiga/projects/services/projects.py:109
 #: taiga/projects/services/projects.py:149 taiga/users/services.py:596
 msgid "You can't have more public projects"
-msgstr ""
+msgstr "Nie możesz posiadać więcej publicznych projektów"
 
 #: taiga/projects/services/projects.py:113
 #: taiga/projects/services/projects.py:153 taiga/users/services.py:599
@@ -3300,7 +3301,7 @@ msgstr "Nieprawidłowy token."
 
 #: taiga/projects/services/transfer.py:67
 msgid "Token has expired"
-msgstr ""
+msgstr "Token wygasł"
 
 #: taiga/projects/tagging/fields.py:52
 #, python-brace-format
@@ -3317,7 +3318,7 @@ msgstr ""
 #: taiga/projects/tagging/fields.py:77
 #, python-brace-format
 msgid "Invalid tag '{value}'. It must be the tag name."
-msgstr ""
+msgstr "Nieprawidłowy tag '{value}'. To musi być nazwa tagu."
 
 #: taiga/projects/tagging/models.py:27
 msgid "tags"
@@ -3330,19 +3331,19 @@ msgstr "kolory tagów"
 #: taiga/projects/tagging/validators.py:47
 #: taiga/projects/tagging/validators.py:74
 msgid "This tag already exists."
-msgstr ""
+msgstr "Taki tag już istnieje."
 
 #: taiga/projects/tagging/validators.py:54
 #: taiga/projects/tagging/validators.py:81
 msgid "The color is not a valid HEX color."
-msgstr ""
+msgstr "Nieprawidłowy kolor w systemie HEX."
 
 #: taiga/projects/tagging/validators.py:67
 #: taiga/projects/tagging/validators.py:101
 #: taiga/projects/tagging/validators.py:114
 #: taiga/projects/tagging/validators.py:121
 msgid "The tag doesn't exist."
-msgstr ""
+msgstr "Tag nie istnieje"
 
 #: taiga/projects/tasks/api.py:106 taiga/projects/tasks/api.py:115
 msgid "You don't have permissions to set this sprint to this task."
@@ -3371,11 +3372,11 @@ msgstr "Iokaina"
 
 #: taiga/projects/tasks/validators.py:61
 msgid "Invalid milestone id."
-msgstr ""
+msgstr "Nieprawidłowy identyfikator kamienia milowego"
 
 #: taiga/projects/tasks/validators.py:72
 msgid "Invalid task status id."
-msgstr ""
+msgstr "Nieprawidłowy identyfikator statusu."
 
 #: taiga/projects/tasks/validators.py:85
 msgid "Invalid user story id."
@@ -3561,7 +3562,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_accept-body-html.jinja:10
 #, python-format
 msgid "<p>%(new_owner_name)s says:</p>"
-msgstr ""
+msgstr "<p>%(new_owner_name)s mówi:</p>"
 
 #: taiga/projects/templates/emails/transfer_accept-body-html.jinja:14
 msgid ""
@@ -3570,6 +3571,10 @@ msgid ""
 "p>\n"
 "    "
 msgstr ""
+"\n"
+"        <p>Od teraz, twoim nowym statusem dla tego projektu jest \"admin\".</"
+"p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:1
 #, python-format
@@ -3583,13 +3588,15 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:7
 #, python-format
 msgid "%(new_owner_name)s says:"
-msgstr ""
+msgstr "%(new_owner_name)s mówi:"
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:11
 msgid ""
 "\n"
 "From now on, your new status for this project will be \"admin\".\n"
 msgstr ""
+"\n"
+"Od teraz, twoim nowym statusem dla tego projektu jest \"admin\".\n"
 
 #: taiga/projects/templates/emails/transfer_accept-body-text.jinja:16
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:19
@@ -3599,6 +3606,8 @@ msgid ""
 "\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Zespół Taiga\n"
 
 #: taiga/projects/templates/emails/transfer_accept-subject.jinja:1
 #, python-format
@@ -3606,6 +3615,8 @@ msgid ""
 "\n"
 "[%(project)s] Project ownership transfer offer accepted!\n"
 msgstr ""
+"\n"
+"[%(project)s] Propozycja zmiany właściciela projektu zaakceptowana!\n"
 
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:4
 #, python-format
@@ -3624,6 +3635,9 @@ msgid ""
 "    <p>%(rejecter_name)s says:</p>\n"
 "    "
 msgstr ""
+"\n"
+"    <p>%(rejecter_name)s mówi:</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:16
 msgid ""
@@ -3646,11 +3660,15 @@ msgid ""
 "%(rejecter_name)s has declined your offer and will not become the new "
 "project owner for \"%(project_name)s\".\n"
 msgstr ""
+"\n"
+"Cześć %(owner_name)s,\n"
+"%(rejecter_name)s odrzucił Twoją propozycję i nie będzie nowym właścicielem "
+"projektu \"%(project_name)s\".\n"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:7
 #, python-format
 msgid "%(rejecter_name)s says:"
-msgstr ""
+msgstr "%(rejecter_name)s mówi:"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:11
 msgid ""
@@ -3691,7 +3709,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_request-body-html.jinja:14
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:22
 msgid "Continue"
-msgstr ""
+msgstr "Kontynuuj"
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:1
 #, python-format
@@ -3711,7 +3729,7 @@ msgstr ""
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:10
 msgid "Go to your project settings:"
-msgstr ""
+msgstr "Przejdź do ustawień projektu:"
 
 #: taiga/projects/templates/emails/transfer_request-subject.jinja:1
 #, python-format
@@ -3729,6 +3747,11 @@ msgid ""
 "would like you to become the new project owner.</p>\n"
 "    "
 msgstr ""
+"\n"
+"        Cześć %(receiver_name)s,</p>\n"
+"        <p>%(owner_name)s, aktualny właściciel projektu \"%(project_name)s\" "
+"chciałby Cię mianować nowym właścicielem projektu.</p>\n"
+"    "
 
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:10
 #, python-format
@@ -3737,6 +3760,9 @@ msgid ""
 "        <p>%(owner_name)s says:</p>\n"
 "        "
 msgstr ""
+"\n"
+"        <p>%(owner_name)s mówi:</p>\n"
+"        "
 
 #: taiga/projects/templates/emails/transfer_start-body-html.jinja:17
 msgid ""
@@ -3758,7 +3784,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:6
 #, python-format
 msgid "%(owner_name)s says:"
-msgstr ""
+msgstr "%(owner_name)s mówi:"
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:11
 msgid ""
@@ -3766,10 +3792,13 @@ msgid ""
 "Please, go to the following link to either accept or reject this proposal.</"
 "p>\n"
 msgstr ""
+"\n"
+"Proszę przejść do poniższego linku aby zaakceptować lub odrzucić tę "
+"propozycję.</p>\n"
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:15
 msgid "Accept or reject the project ownership transfer:"
-msgstr ""
+msgstr "Zaakceptuj bądź odrzuć zmianę właściciela projektu:"
 
 #: taiga/projects/templates/emails/transfer_start-subject.jinja:1
 #, python-format
@@ -4033,7 +4062,7 @@ msgstr ""
 #: taiga/projects/userstories/api.py:234
 #, python-brace-format
 msgid "Invalid role id '{role_id}'"
-msgstr ""
+msgstr "Nieprawidłowy identyfikator roli '{role_id}'"
 
 #: taiga/projects/userstories/api.py:241
 #, python-brace-format
@@ -4059,7 +4088,7 @@ msgstr "kolejność sprintu"
 
 #: taiga/projects/userstories/models.py:84
 msgid "kanban order"
-msgstr ""
+msgstr "Zamówienie kanban"
 
 #: taiga/projects/userstories/models.py:92
 msgid "finish date"
@@ -4091,7 +4120,7 @@ msgstr ""
 
 #: taiga/projects/userstories/validators.py:160
 msgid "The milestone isn't valid for the project"
-msgstr ""
+msgstr "Nieprawidłowy kamień milowy"
 
 #: taiga/projects/userstories/validators.py:170
 msgid "All the user stories must be from the same project"
@@ -4103,7 +4132,7 @@ msgstr "Nie ma projektu z takim ID"
 
 #: taiga/projects/validators.py:145
 msgid "The user yet exists in the project"
-msgstr ""
+msgstr "Użytkownik już istnieje w tym projekcie."
 
 #: taiga/projects/validators.py:155
 msgid "Invalid role for the project"
@@ -4111,19 +4140,23 @@ msgstr "Nieprawidłowa rola w projekcie"
 
 #: taiga/projects/validators.py:170 taiga/projects/validators.py:225
 msgid "The user must be a valid contact"
-msgstr ""
+msgstr "Użytkownik musi być prawidłowym kontaktem"
 
 #: taiga/projects/validators.py:191
 msgid "The project owner must be admin."
-msgstr ""
+msgstr "Właściciel projektu musi być administratorem."
 
 #: taiga/projects/validators.py:195
 msgid "At least one user must be an active admin for this project."
 msgstr ""
+"Przynajmniej jeden użytkownik musi być aktywnym administratorem dla tego "
+"projektu."
 
 #: taiga/projects/validators.py:240
 msgid "Invalid role ids. All roles must belong to the same project."
 msgstr ""
+"Nieprawidłowe identyfikatory roli. Wszystkie role muszą należeć do tego "
+"samego projektu"
 
 #: taiga/projects/validators.py:264
 msgid "Default options"
@@ -4192,15 +4225,15 @@ msgstr "Dla pełengo diffa sprawdź API historii"
 
 #: taiga/users/admin.py:39
 msgid "Project Member"
-msgstr ""
+msgstr "Zespół projektowy"
 
 #: taiga/users/admin.py:40
 msgid "Project Members"
-msgstr ""
+msgstr "Zespół projektowy"
 
 #: taiga/users/admin.py:50
 msgid "id"
-msgstr ""
+msgstr "id"
 
 #: taiga/users/admin.py:81
 msgid "Project Ownership"
@@ -4220,7 +4253,7 @@ msgstr "Uprawnienia"
 
 #: taiga/users/admin.py:123
 msgid "Restrictions"
-msgstr ""
+msgstr "Ograniczenia"
 
 #: taiga/users/admin.py:125
 msgid "Important dates"
@@ -4346,11 +4379,11 @@ msgstr "nowy adres e-mail"
 
 #: taiga/users/models.py:176
 msgid "max number of owned private projects"
-msgstr ""
+msgstr "maksymalna liczba przypisanych prywatnych projektów"
 
 #: taiga/users/models.py:179
 msgid "max number of owned public projects"
-msgstr ""
+msgstr "maksymalna liczba przypisanych publicznych projektów"
 
 #: taiga/users/models.py:182
 msgid "max number of memberships for each owned private project"
