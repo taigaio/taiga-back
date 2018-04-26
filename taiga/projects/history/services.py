@@ -234,7 +234,8 @@ def migrate_userstory_diff(obj: FrozenObj) -> FrozenObj:
     # with the 'assigned to' value
     if 'assigned_users' not in obj.snapshot.keys():
         snapshot = deepcopy(obj.snapshot)
-        snapshot['assigned_users'] = [obj.snapshot['assigned_to']]
+        snapshot['assigned_users'] = [obj.snapshot['assigned_to']] \
+            if obj.snapshot['assigned_to'] else []
 
         obj = FrozenObj(obj.key, snapshot)
 
