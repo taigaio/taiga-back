@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 3.3.1 (2018-04-30)
+
+### Misc
+
+- Minor bug fixes.
+
 ## 3.3.0 Picea mariana (2018-04-26)
 
 ### Features
