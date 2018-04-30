@@ -420,6 +420,10 @@ class AssignedToFilter(BaseRelatedFieldsFilter):
     filter_name = 'assigned_to'
 
 
+class AssignedUsersFilter(BaseRelatedFieldsFilter):
+    filter_name = 'assigned_users'
+
+
 class StatusesFilter(BaseRelatedFieldsFilter):
     filter_name = 'status'
 

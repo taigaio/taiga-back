@@ -65,6 +65,7 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
                        base_filters.RoleFilter,
                        base_filters.OwnersFilter,
                        base_filters.AssignedToFilter,
+                       base_filters.AssignedUsersFilter,
                        base_filters.StatusesFilter,
                        base_filters.TagsFilter,
                        base_filters.WatchersFilter,
