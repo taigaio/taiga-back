@@ -95,7 +95,7 @@ LANGUAGES = [
     #("es-ve", "Español (Venezuela)"),  # Venezuelan Spanish
     #("et", "Eesti"),  # Estonian
     #("eu", "Euskara"),  # Basque
-    #("fa", "فارسی‏"),  # Persian
+    ("fa", "فارسی‏"),  # Persian
     ("fi", "Suomi"),  # Finnish
     ("fr", "Français"),  # French
     #("fy", "Frysk"),  # Frisian
