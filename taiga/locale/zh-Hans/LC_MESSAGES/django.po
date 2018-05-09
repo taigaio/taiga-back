@@ -16,6 +16,7 @@
 # Yang Yu <yuyangmkdir@yahoo.com>, 2016
 # yonee <yangqo@hotmail.com>, 2015
 # 5791113 <yonglong.ma@outlook.com>, 2016
+# yungang <zangyungang@gmail.com>, 2018
 # 5791113 <yonglong.ma@outlook.com>, 2016
 # 朱坚 <garyzhu2009@gmail.com>, 2017
 msgid ""
@@ -23,8 +24,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-02-15 18:20+0100\n"
-"PO-Revision-Date: 2018-02-15 17:25+0000\n"
-"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
+"PO-Revision-Date: 2018-05-06 15:26+0000\n"
+"Last-Translator: yungang <zangyungang@gmail.com>\n"
 "Language-Team: Chinese Simplified (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/zh-Hans/)\n"
 "MIME-Version: 1.0\n"
@@ -439,6 +440,22 @@ msgid ""
 "                                                    </a>\n"
 "                                                    "
 msgstr ""
+"\n"
+"<strong>配置邮件提醒或者取消订阅：</strong>\n"
+"<a href=\"%(unsubscribe_url)s\" title=\"Unsubscribe\" style=\"color: #9dce0a"
+"\">%(unsubscribe_url)s</a>\n"
+"<br>\n"
+"<strong>Taiga支持：</strong>\n"
+"<a href=\"%(support_url)s\" title=\"Support page\" style=\"color: #9dce0a\">"
+"%(support_url)s</a>\n"
+"<br>\n"
+"<strong>联系我们：</strong>\n"
+"<a href=\"mailto:%(support_email)s\" title=\"Support email\" style=\"color: "
+"#9dce0a\">%(support_email)s</a>\n"
+"<br>\n"
+"<strong>邮件列表：</strong>\n"
+"<a href=\"%(mailing_list_url)s\" title=\"Mailing list\" style=\"color: "
+"#9dce0a\">%(mailing_list_url)s</a>"
 
 #: taiga/base/templates/emails/hero-body-html.jinja:6
 msgid "You have been Taigatized"
@@ -1081,6 +1098,10 @@ msgid ""
 "\n"
 "  - Status: **{src_status}** → **{dst_status}**"
 msgstr ""
+"{user_text} 已经从 [{platform} commit] 修改了状态（{commit_url}  \"查看提交 "
+"'{commit_id} - {commit_short_message}'\"）\n"
+"\n"
+"-状态：**{src_status}** → **{dst_status}**"
 
 #: taiga/hooks/event_hooks.py:161
 #, python-brace-format
@@ -1100,6 +1121,8 @@ msgid ""
 "({commit_url} \"See commit '{commit_id} - {commit_short_message}'\") "
 "\"{commit_message}\""
 msgstr ""
+"这个{type_name}已经被{user_text}在[{platform} commit]({commit_url}中提到 \"查"
+"看提交 '{commit_id} - {commit_short_message}'\") \"{commit_message}\""
 
 #: taiga/hooks/event_hooks.py:184
 #, python-brace-format
@@ -1191,6 +1214,13 @@ msgid ""
 "    <p><small>The Taiga Team</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"<h1>已导入Asana项目</h1>\n"
+"<p>你好 %(user)s，</p>\n"
+"<h3>你的Asana项目已经被正确导入。</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)s\">"
+"前往%(project)s</a>\n"
+"<p><small>Taiga团队</small></p>"
 
 #: taiga/importers/templates/emails/asana_import_success-body-text.jinja:1
 #, python-format
@@ -1207,6 +1237,17 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"你好%(user)s，\n"
+"\n"
+"你的Asana项目已经被正确导入。\n"
+"\n"
+"你可以在这里查看项目%(project)s：\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"Taiga团队\n"
 
 #: taiga/importers/templates/emails/asana_import_success-subject.jinja:1
 #, python-format
@@ -1225,6 +1266,13 @@ msgid ""
 "    <p><small>The Taiga Team</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"<h1>GitHub项目已导入</h1>\n"
+"<p>你好 %(user)s，</p>\n"
+"<h3>你的GitHub项目已经被正确导入。</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)s\">"
+"前往 %(project)s</a>\n"
+"<p><small>Taiga团队</small></p>"
 
 #: taiga/importers/templates/emails/github_import_success-body-text.jinja:1
 #, python-format
@@ -1241,6 +1289,16 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"你好%(user)s，\n"
+"你的GitHub项目已经被正确导入。\n"
+"\n"
+"你可以在这里查看项目%(project)s：\n"
+"\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"Taiga团队\n"
 
 #: taiga/importers/templates/emails/github_import_success-subject.jinja:1
 #, python-format
@@ -1259,6 +1317,13 @@ msgid ""
 "    <p><small>The Taiga Team</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"<h1>Jira项目已经导入</h1>\n"
+"<p>你好 %(user)s，</p>\n"
+"<h3>你的Jira项目已经被正确导入。</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)s\">"
+"前往%(project)s</a>\n"
+"<p><small>Taiga团队</small></p>"
 
 #: taiga/importers/templates/emails/jira_import_success-body-text.jinja:1
 #, python-format
@@ -1275,11 +1340,21 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"你好%(user)s，\n"
+"\n"
+"你的Jira项目已经被正确导入。\n"
+"\n"
+"你可以在这里查看项目%(project)s：\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"Taiga团队\n"
 
 #: taiga/importers/templates/emails/jira_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your Jira project has been imported"
-msgstr ""
+msgstr "[%(project)s]你的Jira项目已经被导入"
 
 #: taiga/importers/templates/emails/trello_import_success-body-html.jinja:4
 #, python-format
@@ -1293,6 +1368,13 @@ msgid ""
 "    <p><small>The Taiga Team</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"<h1>Trello项目已导入</h1>\n"
+"<p>你好 %(user)s，</p>\n"
+"<h3>你的Trello项目已经正确导入。</h3>\n"
+"<a class=\"button\" href=\"%(url)s\" title=\"Go to the project %(project)s\">"
+"前往%(project)s</a>\n"
+"<p><small>Taiga团队</small></p>"
 
 #: taiga/importers/templates/emails/trello_import_success-body-text.jinja:1
 #, python-format
@@ -1309,30 +1391,39 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"你好 %(user)s，\n"
+"你的Trello项目已经正确导入。\n"
+"\n"
+"你可以在这里查看项目%(project)s：\n"
+"%(url)s\n"
+"\n"
+"---\n"
+"Taiga团队奖\n"
 
 #: taiga/importers/templates/emails/trello_import_success-subject.jinja:1
 #, python-format
 msgid "[%(project)s] Your Trello project has been imported"
-msgstr ""
+msgstr "[%(project)s] 你的Trello项目已经被导入"
 
 #: taiga/importers/trello/importer.py:78
 #, python-format
 msgid "Invalid Request: %s at %s"
-msgstr ""
+msgstr "无效请求：%s在%s"
 
 #: taiga/importers/trello/importer.py:80 taiga/importers/trello/importer.py:82
 #, python-format
 msgid "Unauthorized: %s at %s"
-msgstr ""
+msgstr "未授权：%s在%s"
 
 #: taiga/importers/trello/importer.py:84 taiga/importers/trello/importer.py:86
 #, python-format
 msgid "Resource Unavailable: %s at %s"
-msgstr ""
+msgstr "资源不可用：%s在%s"
 
 #: taiga/importers/trello/tasks.py:42 taiga/importers/trello/tasks.py:43
 msgid "Error importing Trello project"
-msgstr ""
+msgstr "导入Trello项目的时候出错"
 
 #: taiga/permissions/choices.py:23 taiga/permissions/choices.py:34
 msgid "View project"
@@ -1582,7 +1673,7 @@ msgstr "用户必须属于某一个项目"
 msgid ""
 "This user can't be removed from the following projects, because would leave "
 "them without any active admin: {}."
-msgstr ""
+msgstr "该用户不能从如下项目中删除，因为除了他们没有其他活跃的管理员：{}。"
 
 #: taiga/projects/api.py:832
 msgid ""
@@ -1653,7 +1744,7 @@ msgstr "已废弃"
 
 #: taiga/projects/attachments/models.py:61
 msgid "from comment"
-msgstr ""
+msgstr "来自评论"
 
 #: taiga/projects/attachments/models.py:63
 #: taiga/projects/custom_attributes/models.py:41
@@ -1707,6 +1798,10 @@ msgid ""
 "written to %(project_name)s\n"
 "    "
 msgstr ""
+"\n"
+"<a style=\"font-weight: bold;text-decoration:none;color:#222;\" href="
+"\"%(user_profile_url)s\" title=\"%(full_name)s\">%(full_name)s</a>已写入"
+"到%(project_name)s"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:20
 #, python-format
@@ -1720,6 +1815,10 @@ msgid ""
 "not be affected.\n"
 "    "
 msgstr ""
+"\n"
+"        你接收到这个消息是因为你被添加到了项目%(project_name)s的管理员列表"
+"中。如果你不希望Taiga社区接触到你的项目，请<a href=\"%(project_settings_url)s"
+"\">更新你的项目设置</a>来阻止这些接触。项目成员间的常规通信不受影响。"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-text.jinja:1
 #, python-format
@@ -1727,6 +1826,8 @@ msgid ""
 "\n"
 "%(full_name)s has written to %(project_name)s\n"
 msgstr ""
+"\n"
+"%(full_name)s已写入到%(project_name)s\n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-text.jinja:7
 #, python-format
@@ -1738,6 +1839,10 @@ msgid ""
 "%(project_settings_url)s to prevent such contacts. Regular communications "
 "amongst members of the project will not be affected.\n"
 msgstr ""
+"\n"
+"        你接收到这个消息是因为你被添加到了项目%(project_name)s的管理员列表"
+"中。如果你不希望Taiga社区接触到你的项目，请在%(project_settings_url)s中更新项"
+"目设置来阻止这些接触。项目成员间的常规通信不受影响。\n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-subject.jinja:1
 #, python-format
@@ -1745,6 +1850,8 @@ msgid ""
 "\n"
 "[Taiga] %(full_name)s has sent a message to the project %(project_name)s\n"
 msgstr ""
+"\n"
+"[Taiga] %(full_name)s已经向项目%(project_name)s 发送了一条消息\n"
 
 #: taiga/projects/custom_attributes/choices.py:29
 msgid "Text"
@@ -1756,7 +1863,7 @@ msgstr "多行文字"
 
 #: taiga/projects/custom_attributes/choices.py:31
 msgid "Rich text"
-msgstr ""
+msgstr "富文本"
 
 #: taiga/projects/custom_attributes/choices.py:32
 msgid "Date"
@@ -2083,7 +2190,7 @@ msgstr "ref 参数必需"
 
 #: taiga/projects/mixins/by_ref.py:35
 msgid "project or project__slug param is needed"
-msgstr ""
+msgstr "需要project 或者project_slug"
 
 #: taiga/projects/mixins/ordering.py:49
 #, python-brace-format
@@ -2172,7 +2279,7 @@ msgstr "总故事点数"
 
 #: taiga/projects/models.py:172 taiga/projects/models.py:754
 msgid "active contact"
-msgstr ""
+msgstr "主动联系"
 
 #: taiga/projects/models.py:174 taiga/projects/models.py:756
 msgid "active epics panel"
@@ -2228,7 +2335,7 @@ msgstr "招募成员"
 
 #: taiga/projects/models.py:208 taiga/projects/models.py:768
 msgid "looking for people note"
-msgstr ""
+msgstr "查找用户注解"
 
 #: taiga/projects/models.py:222
 msgid "project transfer token"
@@ -2334,19 +2441,19 @@ msgstr "角色"
 
 #: taiga/projects/models.py:785
 msgid "epic custom attributes"
-msgstr ""
+msgstr "史诗自定义属性"
 
 #: taiga/projects/models.py:786
 msgid "us custom attributes"
-msgstr ""
+msgstr "用户故事自定义属性"
 
 #: taiga/projects/models.py:787
 msgid "task custom attributes"
-msgstr ""
+msgstr "任务自定义属性"
 
 #: taiga/projects/models.py:788
 msgid "issue custom attributes"
-msgstr ""
+msgstr "问题自定义属性"
 
 #: taiga/projects/notifications/choices.py:30
 msgid "Involved"
@@ -3249,7 +3356,7 @@ msgstr "你已经达到了公开项目的最大成员数目"
 
 #: taiga/projects/services/members.py:148
 msgid "You have reached the current limit of pending memberships"
-msgstr ""
+msgstr "你已经达到当前待定成员的限制"
 
 #: taiga/projects/services/projects.py:101
 #: taiga/projects/services/projects.py:141 taiga/users/services.py:589
@@ -4167,7 +4274,7 @@ msgstr "此角色在该项目无效"
 
 #: taiga/projects/validators.py:170 taiga/projects/validators.py:225
 msgid "The user must be a valid contact"
-msgstr ""
+msgstr "该用户必须是有效的联系方式"
 
 #: taiga/projects/validators.py:191
 msgid "The project owner must be admin."

@@ -8,14 +8,15 @@
 # 안민규 (luasenvy) <luas.envy@gmail.com>, 2017
 # mcsong <mcsong@gmail.com>, 2015
 # mcsong <mcsong@gmail.com>, 2015
+# Sori Kang <sorikuya@gmail.com>, 2018
 # Theodore Leesuk Kim <theodore.leesuk.kim@gmail.com>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-02-15 18:20+0100\n"
-"PO-Revision-Date: 2018-02-15 17:25+0000\n"
-"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
+"PO-Revision-Date: 2018-05-03 04:15+0000\n"
+"Last-Translator: Sori Kang <sorikuya@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ko/)\n"
 "MIME-Version: 1.0\n"
@@ -1171,7 +1172,7 @@ msgstr "유효하지 않은 프로젝트_유형 {}"
 
 #: taiga/importers/jira/api.py:192
 msgid "Invalid Jira server configuration."
-msgstr ""
+msgstr "잘못된 지라 서버 설정입니다."
 
 #: taiga/importers/jira/api.py:233 taiga/importers/pivotal/api.py:138
 #: taiga/importers/trello/api.py:143
