@@ -64,8 +64,15 @@ class UserAdminValidator(UserValidator):
         # IMPORTANT: Maintain the UserSerializer Meta up to date
         # with this info (including here the email)
         fields = ("username", "full_name", "color", "bio", "lang",
-                  "theme", "timezone", "is_active", "email")
+                  "theme", "timezone", "is_active", "email", "read_new_terms")
 
+    def validate_read_new_terms(self, attrs, source):
+        value = attrs[source]
+        if not value:
+            raise ValidationError(
+                _("Read new terms has to be true'"))
+
+        return attrs
 
 class RecoveryValidator(validators.Validator):
     token = serializers.CharField(max_length=200)

@@ -152,6 +152,8 @@ class User(AbstractBaseUser, PermissionsMixin):
                              max_length=500, null=True, blank=True,
                              verbose_name=_("photo"))
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+    accepted_terms = models.BooleanField(_("accepted terms"), default=True)
+    read_new_terms = models.BooleanField(_("new terms read"), default=False)
     lang = models.CharField(max_length=20, null=True, blank=True, default="",
                             verbose_name=_("default language"))
     theme = models.CharField(max_length=100, null=True, blank=True, default="",

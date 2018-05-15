@@ -80,6 +80,8 @@ class UserAdminSerializer(UserSerializer):
     email = Field()
     uuid = Field()
     date_joined = Field()
+    read_new_terms = Field()
+    accepted_terms = Field()
     max_private_projects = Field()
     max_public_projects = Field()
     max_memberships_private_projects = Field()
