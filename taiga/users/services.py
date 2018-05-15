@@ -19,9 +19,16 @@
 """
 This model contains a domain logic for users application.
 """
+from io import StringIO
+import csv
+import os
+import uuid
+import zipfile
+
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
+from django.core.files.storage import default_storage
 from django.db.models import Q
 from django.db import connection
 from django.conf import settings
@@ -605,3 +612,42 @@ def has_available_slot_for_new_project(owner, is_private, total_memberships):
         return (False, error_memberships_exceeded)
 
     return (True, None)
+
+
+def render_profile(user, outfile):
+    csv_data = StringIO()
+    fieldnames = ["username", "email", "full_name", "bio"]
+
+    writer = csv.DictWriter(csv_data, fieldnames=fieldnames)
+    writer.writeheader()
+
+    user_data = {}
+    for fieldname in fieldnames:
+        user_data[fieldname] = getattr(user, fieldname, '')
+
+    writer.writerow(user_data)
+
+    outfile.write(csv_data.getvalue().encode())
+
+
+def export_profile(user):
+    filename = "{}-{}".format(user.username, uuid.uuid4().hex)
+
+    csv_path = "exports/{}/{}.csv".format(user.pk, filename)
+    zip_path = "exports/{}/{}.zip".format(user.pk, filename)
+
+    with default_storage.open(csv_path, mode="wb") as output:
+        render_profile(user, output)
+        output.close()
+
+    zf = zipfile.ZipFile(default_storage.path(zip_path), "w", zipfile.ZIP_DEFLATED)
+
+    with default_storage.open(csv_path, mode="rb") as f_in:
+        zf.write(default_storage.path(csv_path), "{}-profile.csv".format(filename))
+
+        if user.photo:
+            _, file_extension = os.path.splitext(default_storage.path(user.photo.name))
+            zf.write(default_storage.path(user.photo.name),
+                     "{}-photo{}".format(filename, file_extension))
+
+    return default_storage.url(zip_path)
