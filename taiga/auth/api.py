@@ -17,13 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from functools import partial
-from enum import Enum
 
 from django.utils.translation import ugettext as _
 from django.conf import settings
 
-from taiga.base.api import validators
-from taiga.base.api import serializers
 from taiga.base.api import viewsets
 from taiga.base.decorators import list_route
 from taiga.base import exceptions as exc
@@ -91,6 +88,10 @@ class AuthViewSet(viewsets.ViewSet):
 
     @list_route(methods=["POST"])
     def register(self, request, **kwargs):
+        accepted_terms = request.DATA.get("accepted_terms", None)
+        if accepted_terms in (None, False):
+            raise exc.BadRequest(_("You must accept our terms of service and privacy policy"))
+
         self.check_permissions(request, 'register', None)
 
         type = request.DATA.get("type", None)

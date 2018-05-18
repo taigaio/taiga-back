@@ -115,7 +115,8 @@ def public_register(username:str, password:str, email:str, full_name:str):
     user_model = get_user_model()
     user = user_model(username=username,
                       email=email,
-                      full_name=full_name)
+                      full_name=full_name,
+                      read_new_terms=True)
     user.set_password(password)
     try:
         user.save()
