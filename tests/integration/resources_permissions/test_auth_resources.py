@@ -61,6 +61,7 @@ def test_auth_action_register(client, settings):
         "password": "test",
         "full_name": "test",
         "email": "test@test.com",
+        "accepted_terms": True,
     })
 
     result = client.post(url, register_data, content_type="application/json")

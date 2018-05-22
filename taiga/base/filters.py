@@ -423,6 +423,29 @@ class AssignedToFilter(BaseRelatedFieldsFilter):
 class AssignedUsersFilter(BaseRelatedFieldsFilter):
     filter_name = 'assigned_users'
 
+    def get_lookup_expression(self, field_name, value):
+        if None in value:
+            qs_in_kwargs = {
+                "{}__in".format(field_name): [v for v in value if
+                                                    v is not None]}
+            qs_isnull_kwargs = {"{}__isnull".format(field_name): True}
+            return Q(**qs_in_kwargs) | Q(**qs_isnull_kwargs)
+        else:
+            return Q(**{"{}__in".format(field_name): value})
+
+    def _get_queryparams(self, params):
+        param_name = self.param_name or self.filter_name
+        raw_value = params.get(param_name, None)
+
+        if raw_value:
+            value = self._prepare_filter_data(raw_value)
+            assigned_user_filter = self.get_lookup_expression(param_name, value)
+            assigned_to_filter = self.get_lookup_expression('assigned_to', value)
+
+            return Q(assigned_user_filter | assigned_to_filter)
+
+        return None
+
 
 class StatusesFilter(BaseRelatedFieldsFilter):
     filter_name = 'status'

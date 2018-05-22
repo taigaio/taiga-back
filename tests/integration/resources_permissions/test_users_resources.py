@@ -22,7 +22,7 @@ from tempfile import NamedTemporaryFile
 from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
-from taiga.users.serializers import UserSerializer
+from taiga.users.serializers import UserAdminSerializer
 
 from tests import factories as f
 from tests.utils import helper_test_http_method, disconnect_signals, reconnect_signals
@@ -102,7 +102,7 @@ def test_user_update(client, data):
         data.superuser,
     ]
 
-    user_data = UserSerializer(data.registered_user).data
+    user_data = UserAdminSerializer(data.registered_user).data
     user_data["full_name"] = "test"
     user_data = json.dumps(user_data)
 

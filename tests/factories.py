@@ -188,6 +188,8 @@ class UserFactory(Factory):
     username = factory.Sequence(lambda n: "user{}".format(n))
     email = factory.LazyAttribute(lambda obj: '%s@email.com' % obj.username)
     password = factory.PostGeneration(lambda obj, *args, **kwargs: obj.set_password(obj.username))
+    accepted_terms = True
+    read_new_terms = True
 
 
 class MembershipFactory(Factory):
