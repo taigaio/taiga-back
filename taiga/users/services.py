@@ -642,12 +642,12 @@ def export_profile(user):
 
     zf = zipfile.ZipFile(default_storage.path(zip_path), "w", zipfile.ZIP_DEFLATED)
 
-    with default_storage.open(csv_path, mode="rb") as f_in:
-        zf.write(default_storage.path(csv_path), "{}-profile.csv".format(filename))
+    zf.write(default_storage.path(csv_path), "{}-profile.csv".format(filename))
+    os.remove(default_storage.path(csv_path))
 
-        if user.photo:
-            _, file_extension = os.path.splitext(default_storage.path(user.photo.name))
-            zf.write(default_storage.path(user.photo.name),
-                     "{}-photo{}".format(filename, file_extension))
+    if user.photo:
+        _, file_extension = os.path.splitext(default_storage.path(user.photo.name))
+        zf.write(default_storage.path(user.photo.name),
+                 "{}-photo{}".format(filename, file_extension))
 
     return default_storage.url(zip_path)
