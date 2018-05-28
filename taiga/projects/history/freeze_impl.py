@@ -88,15 +88,15 @@ def _common_users_values(diff):
     values = {}
     users = set()
 
-    if "owner" in diff:
+    if "owner" in diff and isinstance(diff["owner"], int):
         users.update(diff["owner"])
     if "assigned_to" in diff:
         users.update(diff["assigned_to"])
     if "assigned_users" in diff:
         [users.update(usrs_ids) for usrs_ids in diff["assigned_users"] if
          usrs_ids]
-    if users:
-        values["users"] = _get_users_values(users)
+
+    values["users"] = _get_users_values(users) if users else {}
 
     return values
 
