@@ -67,6 +67,17 @@ class PointsSerializer(serializers.LightSerializer):
     project = Field(attr="project_id")
 
 
+class UserStoryDueDateSerializer(serializers.LightSerializer):
+    id = Field()
+    name = I18NField()
+    slug = Field()
+    order = Field()
+    by_default = Field()
+    days_to_due = Field()
+    color = Field()
+    project = Field(attr="project_id")
+
+
 class TaskStatusSerializer(serializers.LightSerializer):
     id = Field()
     name = I18NField()

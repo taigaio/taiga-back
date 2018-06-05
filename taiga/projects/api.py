@@ -585,6 +585,21 @@ class PointsViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
             return super().create(request, *args, **kwargs)
 
 
+class UserStoryDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
+
+    model = models.UserStoryDueDate
+    serializer_class = serializers.UserStoryDueDateSerializer
+    validator_class = validators.UserStoryDueDateValidator
+    permission_classes = (permissions.UserStoryDueDatePermission,)
+    filter_backends = (filters.CanViewProjectFilterBackend,)
+    filter_fields = ('project',)
+
+    def create(self, request, *args, **kwargs):
+        project_id = request.DATA.get("project", 0)
+        with advisory_lock("user-story-duedate-creation-{}".format(project_id)):
+            return super().create(request, *args, **kwargs)
+
+
 class TaskStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
                         ModelCrudViewSet, BulkUpdateOrderMixin):
 

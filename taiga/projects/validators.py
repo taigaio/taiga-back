@@ -84,6 +84,11 @@ class PointsValidator(DuplicatedNameInProjectValidator, validators.ModelValidato
         model = models.Points
 
 
+class UserStoryDueDateValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
+    class Meta:
+        model = models.UserStoryDueDate
+
+
 class TaskStatusValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
     class Meta:
         model = models.TaskStatus

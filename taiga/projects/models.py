@@ -120,6 +120,11 @@ class ProjectDefaults(models.Model):
     default_points = models.OneToOneField("projects.Points", on_delete=models.SET_NULL,
                                           related_name="+", null=True, blank=True,
                                           verbose_name=_("default points"))
+    default_us_duedate = models.OneToOneField("projects.UserStoryDueDate",
+                                              on_delete=models.SET_NULL,
+                                              related_name="+",
+                                              null=True, blank=True,
+                                              verbose_name=_("default US duedate"))
     default_task_status = models.OneToOneField("projects.TaskStatus",
                                                on_delete=models.SET_NULL, related_name="+",
                                                null=True, blank=True,
@@ -605,8 +610,41 @@ class Points(models.Model):
         return self.name
 
 
-# Tasks common models
+class UserStoryDueDate(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False,
+                            verbose_name=_("name"))
+    slug = models.SlugField(max_length=255, null=False, blank=True,
+                            verbose_name=_("slug"))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
+    by_default = models.BooleanField(default=False, null=False, blank=True,
+                                    verbose_name=_("by default"))
+    color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
+                             verbose_name=_("color"))
+    days_to_due = models.IntegerField(null=True, blank=True, default=None,
+                                    verbose_name=_("days to due"))
+    project = models.ForeignKey("Project", null=False, blank=False,
+                                related_name="us_duedates", verbose_name=_("project"))
 
+    class Meta:
+        verbose_name = "user story due date"
+        verbose_name_plural = "user story due dates"
+        ordering = ["project", "order", "name"]
+        unique_together = (("project", "name"), ("project", "slug"))
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        qs = self.project.us_duedates
+        if self.id:
+            qs = qs.exclude(id=self.id)
+
+        self.slug = slugify_uniquely_for_queryset(self.name, qs)
+        return super().save(*args, **kwargs)
+
+
+# Tasks common models
 class TaskStatus(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False,
                             verbose_name=_("name"))
