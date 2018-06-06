@@ -167,6 +167,29 @@ def attach_userstory_statuses(queryset, as_field="userstory_statuses_attr"):
     return queryset
 
 
+def attach_userstory_duedates(queryset, as_field="userstory_duedates_attr"):
+    """Attach a json userstory duedates representation to each object of the queryset.
+
+    :param queryset: A Django projects queryset object.
+    :param as_field: Attach the userstory duedates as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    sql = """
+             SELECT json_agg(
+                        row_to_json(projects_userstoryduedate)
+                        ORDER BY projects_userstoryduedate.order
+                    )
+               FROM projects_userstoryduedate
+              WHERE projects_userstoryduedate.project_id = {tbl}.id
+          """
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
+
+
 def attach_points(queryset, as_field="points_attr"):
     """Attach a json points representation to each object of the queryset.
 
@@ -213,6 +236,29 @@ def attach_task_statuses(queryset, as_field="task_statuses_attr"):
     return queryset
 
 
+def attach_task_duedates(queryset, as_field="task_duedates_attr"):
+    """Attach a json task duedates representation to each object of the queryset.
+
+    :param queryset: A Django projects queryset object.
+    :param as_field: Attach the task duedates as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    sql = """
+             SELECT json_agg(
+                        row_to_json(projects_taskduedate)
+                        ORDER BY projects_taskduedate.order
+                    )
+               FROM projects_taskduedate
+              WHERE projects_taskduedate.project_id = {tbl}.id
+          """
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
+
+
 def attach_issue_statuses(queryset, as_field="issue_statuses_attr"):
     """Attach a json issue statuses representation to each object of the queryset.
 
@@ -252,6 +298,29 @@ def attach_issue_types(queryset, as_field="issue_types_attr"):
                     )
                FROM projects_issuetype
               WHERE projects_issuetype.project_id = {tbl}.id
+          """
+
+    sql = sql.format(tbl=model._meta.db_table)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
+
+
+def attach_issue_duedates(queryset, as_field="issue_duedates_attr"):
+    """Attach a json issue duedates representation to each object of the queryset.
+
+    :param queryset: A Django projects queryset object.
+    :param as_field: Attach the duedates as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    sql = """
+             SELECT json_agg(
+                        row_to_json(projects_issueduedate)
+                        ORDER BY projects_issueduedate.order
+                    )
+               FROM projects_issueduedate
+              WHERE projects_issueduedate.project_id = {tbl}.id
           """
 
     sql = sql.format(tbl=model._meta.db_table)
@@ -530,9 +599,12 @@ def attach_extra_info(queryset, user=None):
     queryset = attach_notify_policies(queryset)
     queryset = attach_epic_statuses(queryset)
     queryset = attach_userstory_statuses(queryset)
+    queryset = attach_userstory_duedates(queryset)
     queryset = attach_points(queryset)
     queryset = attach_task_statuses(queryset)
+    queryset = attach_task_duedates(queryset)
     queryset = attach_issue_statuses(queryset)
+    queryset = attach_issue_duedates(queryset)
     queryset = attach_issue_types(queryset)
     queryset = attach_priorities(queryset)
     queryset = attach_severities(queryset)

@@ -940,9 +940,12 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
             "points": getattr(project.default_points, "name", None),
             "epic_status": getattr(project.default_epic_status, "name", None),
             "us_status": getattr(project.default_us_status, "name", None),
+            "us_duedate": getattr(project.default_us_duedate, "name", None),
             "task_status": getattr(project.default_task_status, "name", None),
+            "task_duedate": getattr(project.default_task_duedate, "name", None),
             "issue_status": getattr(project.default_issue_status, "name", None),
             "issue_type": getattr(project.default_issue_type, "name", None),
+            "issue_duedate": getattr(project.default_issue_duedate, "name", None),
             "priority": getattr(project.default_priority, "name", None),
             "severity": getattr(project.default_severity, "name", None)
         }
@@ -969,6 +972,17 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
                 "order": us_status.order,
             })
 
+        self.us_duedates = []
+        for us_duedate in project.us_duedates.all():
+            self.us_duedates.append({
+                "name": us_duedate.name,
+                "slug": us_duedate.slug,
+                "by_default": us_duedate.by_default,
+                "color": us_duedate.color,
+                "days_to_due": us_duedate.days_to_due,
+                "order": us_duedate.order,
+            })
+
         self.points = []
         for us_point in project.points.all():
             self.points.append({
@@ -987,6 +1001,17 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
                 "order": task_status.order,
             })
 
+        self.task_duedates = []
+        for task_duedate in project.task_duedates.all():
+            self.task_duedates.append({
+                "name": task_duedate.name,
+                "slug": task_duedate.slug,
+                "by_default": task_duedate.by_default,
+                "color": task_duedate.color,
+                "days_to_due": task_duedate.days_to_due,
+                "order": task_duedate.order,
+            })
+
         self.issue_statuses = []
         for issue_status in project.issue_statuses.all():
             self.issue_statuses.append({
@@ -1003,6 +1028,17 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
                 "name": issue_type.name,
                 "color": issue_type.color,
                 "order": issue_type.order,
+            })
+
+        self.issue_duedates = []
+        for issue_duedate in project.issue_duedates.all():
+            self.issue_duedates.append({
+                "name": issue_duedate.name,
+                "slug": issue_duedate.slug,
+                "by_default": issue_duedate.by_default,
+                "color": issue_duedate.color,
+                "days_to_due": issue_duedate.days_to_due,
+                "order": issue_duedate.order,
             })
 
         self.priorities = []
@@ -1116,6 +1152,17 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
                 project=project
             )
 
+        for us_duedate in self.us_duedates:
+            UserStoryDueDate.objects.create(
+                name=us_duedate["name"],
+                slug=us_duedate["slug"],
+                by_default=us_duedate["by_default"],
+                color=us_duedate["color"],
+                days_to_due=us_duedate["days_to_due"],
+                order=us_duedate["order"],
+                project=project
+            )
+
         for point in self.points:
             Points.objects.create(
                 name=point["name"],
@@ -1134,6 +1181,17 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
                 project=project
             )
 
+        for task_duedate in self.task_duedates:
+            TaskDueDate.objects.create(
+                name=task_duedate["name"],
+                slug=task_duedate["slug"],
+                by_default=task_duedate["by_default"],
+                color=task_duedate["color"],
+                days_to_due=task_duedate["days_to_due"],
+                order=task_duedate["order"],
+                project=project
+            )
+
         for issue_status in self.issue_statuses:
             IssueStatus.objects.create(
                 name=issue_status["name"],
@@ -1149,6 +1207,17 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
                 name=issue_type["name"],
                 color=issue_type["color"],
                 order=issue_type["order"],
+                project=project
+            )
+
+        for issue_duedate in self.issue_duedates:
+            IssueDueDate.objects.create(
+                name=issue_duedate["name"],
+                slug=issue_duedate["slug"],
+                by_default=issue_duedate["by_default"],
+                color=issue_duedate["color"],
+                days_to_due=issue_duedate["days_to_due"],
+                order=issue_duedate["order"],
                 project=project
             )
 
@@ -1185,6 +1254,9 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
         if self.us_statuses:
             project.default_us_status = UserStoryStatus.objects.get(name=self.default_options["us_status"],
                                                                     project=project)
+        if self.us_duedates:
+            project.default_us_duedate = UserStoryDueDate.objects.get(name=self.default_options["us_duedates"],
+                                                                    project=project)
         if self.points:
             project.default_points = Points.objects.get(name=self.default_options["points"],
                                                         project=project)
@@ -1192,10 +1264,15 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
         if self.task_statuses:
             project.default_task_status = TaskStatus.objects.get(name=self.default_options["task_status"],
                                                                  project=project)
+        if self.task_duedates:
+            project.default_task_duedate = TaskDueDate.objects.get(name=self.default_options["task_duedates"],
+                                                                    project=project)
         if self.issue_statuses:
             project.default_issue_status = IssueStatus.objects.get(name=self.default_options["issue_status"],
                                                                    project=project)
-
+        if self.issue_duedates:
+            project.default_issue_duedate = TaskDueDate.objects.get(name=self.default_options["issue_duedates"],
+                                                                    project=project)
         if self.issue_types:
             project.default_issue_type = IssueType.objects.get(name=self.default_options["issue_type"],
                                                                project=project)
