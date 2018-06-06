@@ -94,6 +94,11 @@ class TaskStatusValidator(DuplicatedNameInProjectValidator, validators.ModelVali
         model = models.TaskStatus
 
 
+class TaskDueDateValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
+    class Meta:
+        model = models.TaskDueDate
+
+
 class SeverityValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
     class Meta:
         model = models.Severity
@@ -112,6 +117,11 @@ class IssueStatusValidator(DuplicatedNameInProjectValidator, validators.ModelVal
 class IssueTypeValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
     class Meta:
         model = models.IssueType
+
+
+class IssueDueDateValidator(DuplicatedNameInProjectValidator, validators.ModelValidator):
+    class Meta:
+        model = models.IssueDueDate
 
 
 ######################################################

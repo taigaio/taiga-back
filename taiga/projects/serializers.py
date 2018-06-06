@@ -67,7 +67,7 @@ class PointsSerializer(serializers.LightSerializer):
     project = Field(attr="project_id")
 
 
-class UserStoryDueDateSerializer(serializers.LightSerializer):
+class BaseDueDateSerializer(serializers.LightSerializer):
     id = Field()
     name = I18NField()
     slug = Field()
@@ -78,6 +78,10 @@ class UserStoryDueDateSerializer(serializers.LightSerializer):
     project = Field(attr="project_id")
 
 
+class UserStoryDueDateSerializer(BaseDueDateSerializer):
+    pass
+
+
 class TaskStatusSerializer(serializers.LightSerializer):
     id = Field()
     name = I18NField()
@@ -86,6 +90,10 @@ class TaskStatusSerializer(serializers.LightSerializer):
     is_closed = Field()
     color = Field()
     project = Field(attr="project_id")
+
+
+class TaskDueDateSerializer(BaseDueDateSerializer):
+    pass
 
 
 class SeveritySerializer(serializers.LightSerializer):
@@ -120,6 +128,10 @@ class IssueTypeSerializer(serializers.LightSerializer):
     order = Field()
     color = Field()
     project = Field(attr="project_id")
+
+
+class IssueDueDateSerializer(BaseDueDateSerializer):
+    pass
 
 
 ######################################################

@@ -596,7 +596,7 @@ class UserStoryDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
 
     def create(self, request, *args, **kwargs):
         project_id = request.DATA.get("project", 0)
-        with advisory_lock("user-story-duedate-creation-{}".format(project_id)):
+        with advisory_lock("user-story-due-date-creation-{}".format(project_id)):
             return super().create(request, *args, **kwargs)
 
 
@@ -619,6 +619,21 @@ class TaskStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
     def create(self, request, *args, **kwargs):
         project_id = request.DATA.get("project", 0)
         with advisory_lock("task-status-creation-{}".format(project_id)):
+            return super().create(request, *args, **kwargs)
+
+
+class TaskDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
+
+    model = models.TaskDueDate
+    serializer_class = serializers.TaskDueDateSerializer
+    validator_class = validators.TaskDueDateValidator
+    permission_classes = (permissions.TaskDueDatePermission,)
+    filter_backends = (filters.CanViewProjectFilterBackend,)
+    filter_fields = ('project',)
+
+    def create(self, request, *args, **kwargs):
+        project_id = request.DATA.get("project", 0)
+        with advisory_lock("task-due-date-creation-{}".format(project_id)):
             return super().create(request, *args, **kwargs)
 
 
@@ -704,6 +719,21 @@ class IssueStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
     def create(self, request, *args, **kwargs):
         project_id = request.DATA.get("project", 0)
         with advisory_lock("issue-status-creation-{}".format(project_id)):
+            return super().create(request, *args, **kwargs)
+
+
+class IssueDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
+
+    model = models.IssueDueDate
+    serializer_class = serializers.IssueDueDateSerializer
+    validator_class = validators.IssueDueDateValidator
+    permission_classes = (permissions.IssueDueDatePermission,)
+    filter_backends = (filters.CanViewProjectFilterBackend,)
+    filter_fields = ('project',)
+
+    def create(self, request, *args, **kwargs):
+        project_id = request.DATA.get("project", 0)
+        with advisory_lock("issue-due-date-creation-{}".format(project_id)):
             return super().create(request, *args, **kwargs)
 
 

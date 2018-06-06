@@ -677,6 +677,40 @@ class TaskStatus(models.Model):
         return super().save(*args, **kwargs)
 
 
+class TaskDueDate(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False,
+                            verbose_name=_("name"))
+    slug = models.SlugField(max_length=255, null=False, blank=True,
+                            verbose_name=_("slug"))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
+    by_default = models.BooleanField(default=False, null=False, blank=True,
+                                    verbose_name=_("by default"))
+    color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
+                             verbose_name=_("color"))
+    days_to_due = models.IntegerField(null=True, blank=True, default=None,
+                                    verbose_name=_("days to due"))
+    project = models.ForeignKey("Project", null=False, blank=False,
+                                related_name="task_duedates", verbose_name=_("project"))
+
+    class Meta:
+        verbose_name = "task due date"
+        verbose_name_plural = "task due dates"
+        ordering = ["project", "order", "name"]
+        unique_together = (("project", "name"), ("project", "slug"))
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        qs = self.project.task_duedates
+        if self.id:
+            qs = qs.exclude(id=self.id)
+
+        self.slug = slugify_uniquely_for_queryset(self.name, qs)
+        return super().save(*args, **kwargs)
+
+
 # Issue common Models
 
 class Priority(models.Model):
@@ -769,6 +803,40 @@ class IssueType(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class IssueDueDate(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False,
+                            verbose_name=_("name"))
+    slug = models.SlugField(max_length=255, null=False, blank=True,
+                            verbose_name=_("slug"))
+    order = models.IntegerField(default=10, null=False, blank=False,
+                                verbose_name=_("order"))
+    by_default = models.BooleanField(default=False, null=False, blank=True,
+                                    verbose_name=_("by default"))
+    color = models.CharField(max_length=20, null=False, blank=False, default="#999999",
+                             verbose_name=_("color"))
+    days_to_due = models.IntegerField(null=True, blank=True, default=None,
+                                    verbose_name=_("days to due"))
+    project = models.ForeignKey("Project", null=False, blank=False,
+                                related_name="issue_duedates", verbose_name=_("project"))
+
+    class Meta:
+        verbose_name = "issue due date"
+        verbose_name_plural = "issue due dates"
+        ordering = ["project", "order", "name"]
+        unique_together = (("project", "name"), ("project", "slug"))
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        qs = self.project.issue_duedates
+        if self.id:
+            qs = qs.exclude(id=self.id)
+
+        self.slug = slugify_uniquely_for_queryset(self.name, qs)
+        return super().save(*args, **kwargs)
 
 
 class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
