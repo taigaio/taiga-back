@@ -1250,12 +1250,8 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
         if self.epic_statuses:
             project.default_epic_status = EpicStatus.objects.get(name=self.default_options["epic_status"],
                                                                  project=project)
-
         if self.us_statuses:
             project.default_us_status = UserStoryStatus.objects.get(name=self.default_options["us_status"],
-                                                                    project=project)
-        if self.us_duedates:
-            project.default_us_duedate = UserStoryDueDate.objects.get(name=self.default_options["us_duedates"],
                                                                     project=project)
         if self.points:
             project.default_points = Points.objects.get(name=self.default_options["points"],
@@ -1264,23 +1260,15 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
         if self.task_statuses:
             project.default_task_status = TaskStatus.objects.get(name=self.default_options["task_status"],
                                                                  project=project)
-        if self.task_duedates:
-            project.default_task_duedate = TaskDueDate.objects.get(name=self.default_options["task_duedates"],
-                                                                    project=project)
         if self.issue_statuses:
             project.default_issue_status = IssueStatus.objects.get(name=self.default_options["issue_status"],
                                                                    project=project)
-        if self.issue_duedates:
-            project.default_issue_duedate = TaskDueDate.objects.get(name=self.default_options["issue_duedates"],
-                                                                    project=project)
         if self.issue_types:
             project.default_issue_type = IssueType.objects.get(name=self.default_options["issue_type"],
                                                                project=project)
-
         if self.priorities:
             project.default_priority = Priority.objects.get(name=self.default_options["priority"],
                                                             project=project)
-
         if self.severities:
             project.default_severity = Severity.objects.get(name=self.default_options["severity"],
                                                             project=project)
