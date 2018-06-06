@@ -118,9 +118,10 @@ class ProjectAdmin(admin.ModelAdmin):
         }),
         (_("Default values"), {
             "classes": ("collapse",),
-            "fields": (("default_points", "default_us_status"),
-                       "default_task_status",
-                       ("default_issue_status", "default_priority", "default_severity", "default_issue_type")),
+            "fields": (("default_us_status", "default_us_duedate", "default_points"),
+                       ("default_task_status", "default_task_duedate"),
+                       ("default_issue_status", "default_issue_duedate"),
+                       ("default_priority", "default_severity", "default_issue_type")),
         }),
         (_("Activity"), {
             "classes": ("collapse",),

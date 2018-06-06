@@ -129,6 +129,11 @@ class ProjectDefaults(models.Model):
                                                on_delete=models.SET_NULL, related_name="+",
                                                null=True, blank=True,
                                                verbose_name=_("default task status"))
+    default_task_duedate = models.OneToOneField("projects.TaskDueDate",
+                                                on_delete=models.SET_NULL,
+                                                related_name="+",
+                                                null=True, blank=True,
+                                                verbose_name=_("default task duedate"))
     default_priority = models.OneToOneField("projects.Priority", on_delete=models.SET_NULL,
                                             related_name="+", null=True, blank=True,
                                             verbose_name=_("default priority"))
@@ -143,6 +148,11 @@ class ProjectDefaults(models.Model):
                                               on_delete=models.SET_NULL, related_name="+",
                                               null=True, blank=True,
                                               verbose_name=_("default issue type"))
+    default_issue_duedate = models.OneToOneField("projects.IssueDueDate",
+                                                 on_delete=models.SET_NULL,
+                                                 related_name="+",
+                                                 null=True, blank=True,
+                                                 verbose_name=_("default issue duedate"))
 
     class Meta:
         abstract = True
@@ -881,10 +891,13 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
     default_options = JSONField(null=True, blank=True, verbose_name=_("default options"))
     epic_statuses = JSONField(null=True, blank=True, verbose_name=_("epic statuses"))
     us_statuses = JSONField(null=True, blank=True, verbose_name=_("us statuses"))
+    us_duedates = JSONField(null=True, blank=True, verbose_name=_("us duedates"))
     points = JSONField(null=True, blank=True, verbose_name=_("points"))
     task_statuses = JSONField(null=True, blank=True, verbose_name=_("task statuses"))
+    task_duedates = JSONField(null=True, blank=True, verbose_name=_("task duedates"))
     issue_statuses = JSONField(null=True, blank=True, verbose_name=_("issue statuses"))
     issue_types = JSONField(null=True, blank=True, verbose_name=_("issue types"))
+    issue_duedates = JSONField(null=True, blank=True, verbose_name=_("issue duedates"))
     priorities = JSONField(null=True, blank=True, verbose_name=_("priorities"))
     severities = JSONField(null=True, blank=True, verbose_name=_("severities"))
     roles = JSONField(null=True, blank=True, verbose_name=_("roles"))
