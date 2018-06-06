@@ -120,20 +120,10 @@ class ProjectDefaults(models.Model):
     default_points = models.OneToOneField("projects.Points", on_delete=models.SET_NULL,
                                           related_name="+", null=True, blank=True,
                                           verbose_name=_("default points"))
-    default_us_duedate = models.OneToOneField("projects.UserStoryDueDate",
-                                              on_delete=models.SET_NULL,
-                                              related_name="+",
-                                              null=True, blank=True,
-                                              verbose_name=_("default US duedate"))
     default_task_status = models.OneToOneField("projects.TaskStatus",
                                                on_delete=models.SET_NULL, related_name="+",
                                                null=True, blank=True,
                                                verbose_name=_("default task status"))
-    default_task_duedate = models.OneToOneField("projects.TaskDueDate",
-                                                on_delete=models.SET_NULL,
-                                                related_name="+",
-                                                null=True, blank=True,
-                                                verbose_name=_("default task duedate"))
     default_priority = models.OneToOneField("projects.Priority", on_delete=models.SET_NULL,
                                             related_name="+", null=True, blank=True,
                                             verbose_name=_("default priority"))
@@ -148,11 +138,6 @@ class ProjectDefaults(models.Model):
                                               on_delete=models.SET_NULL, related_name="+",
                                               null=True, blank=True,
                                               verbose_name=_("default issue type"))
-    default_issue_duedate = models.OneToOneField("projects.IssueDueDate",
-                                                 on_delete=models.SET_NULL,
-                                                 related_name="+",
-                                                 null=True, blank=True,
-                                                 verbose_name=_("default issue duedate"))
 
     class Meta:
         abstract = True
@@ -940,12 +925,9 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
             "points": getattr(project.default_points, "name", None),
             "epic_status": getattr(project.default_epic_status, "name", None),
             "us_status": getattr(project.default_us_status, "name", None),
-            "us_duedate": getattr(project.default_us_duedate, "name", None),
             "task_status": getattr(project.default_task_status, "name", None),
-            "task_duedate": getattr(project.default_task_duedate, "name", None),
             "issue_status": getattr(project.default_issue_status, "name", None),
             "issue_type": getattr(project.default_issue_type, "name", None),
-            "issue_duedate": getattr(project.default_issue_duedate, "name", None),
             "priority": getattr(project.default_priority, "name", None),
             "severity": getattr(project.default_severity, "name", None)
         }
