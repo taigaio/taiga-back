@@ -59,10 +59,13 @@ class ProjectTemplateFactory(Factory):
 
     epic_statuses = []
     us_statuses = []
+    us_duedates = []
     points = []
     task_statuses = []
+    task_duedates = []
     issue_statuses = []
     issue_types = []
+    issue_duedates = []
     priorities = []
     severities = []
     roles = []
