@@ -127,7 +127,7 @@
                 "name": "Default",
                 "order": 1,
                 "by_default": true,
-                "color": "#999999",
+                "color": "#9dce0a",
                 "days_to_due": null
             },
             {
@@ -135,7 +135,7 @@
                 "name": "Due soon",
                 "order": 2,
                 "by_default": false,
-                "color": "#ff8a84",
+                "color": "#ff9900",
                 "days_to_due": 14
             },
             {
@@ -143,7 +143,7 @@
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
-                "color": "#ff9900",
+                "color": "#ff8a84",
                 "days_to_due": 0
             }
         ],
@@ -252,7 +252,7 @@
                 "name": "Default",
                 "order": 1,
                 "by_default": true,
-                "color": "#999999",
+                "color": "#9dce0a",
                 "days_to_due": null
             },
             {
@@ -260,7 +260,7 @@
                 "name": "Due soon",
                 "order": 2,
                 "by_default": false,
-                "color": "#ff8a84",
+                "color": "#ff9900",
                 "days_to_due": 14
             },
             {
@@ -268,7 +268,7 @@
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
-                "color": "#ff9900",
+                "color": "#ff8a84",
                 "days_to_due": 0
             }
         ],
@@ -346,7 +346,7 @@
                 "name": "Default",
                 "order": 1,
                 "by_default": true,
-                "color": "#999999",
+                "color": "#9dce0a",
                 "days_to_due": null
             },
             {
@@ -354,7 +354,7 @@
                 "name": "Due soon",
                 "order": 2,
                 "by_default": false,
-                "color": "#ff8a84",
+                "color": "#ff9900",
                 "days_to_due": 14
             },
             {
@@ -362,7 +362,7 @@
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
-                "color": "#ff9900",
+                "color": "#ff8a84",
                 "days_to_due": 0
             }
         ],
@@ -777,7 +777,7 @@
                 "name": "Default",
                 "order": 1,
                 "by_default": true,
-                "color": "#999999",
+                "color": "#9dce0a",
                 "days_to_due": null
             },
             {
@@ -785,7 +785,7 @@
                 "name": "Due soon",
                 "order": 2,
                 "by_default": false,
-                "color": "#ff8a84",
+                "color": "#ff9900",
                 "days_to_due": 14
             },
             {
@@ -793,7 +793,7 @@
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
-                "color": "#ff9900",
+                "color": "#ff8a84",
                 "days_to_due": 0
             }
         ],
@@ -902,7 +902,7 @@
                 "name": "Default",
                 "order": 1,
                 "by_default": true,
-                "color": "#999999",
+                "color": "#9dce0a",
                 "days_to_due": null
             },
             {
@@ -910,7 +910,7 @@
                 "name": "Due soon",
                 "order": 2,
                 "by_default": false,
-                "color": "#ff8a84",
+                "color": "#ff9900",
                 "days_to_due": 14
             },
             {
@@ -918,7 +918,7 @@
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
-                "color": "#ff9900",
+                "color": "#ff8a84",
                 "days_to_due": 0
             }
         ],
@@ -996,7 +996,7 @@
                 "name": "Default",
                 "order": 1,
                 "by_default": true,
-                "color": "#999999",
+                "color": "#9dce0a",
                 "days_to_due": null
             },
             {
@@ -1004,7 +1004,7 @@
                 "name": "Due soon",
                 "order": 2,
                 "by_default": false,
-                "color": "#ff8a84",
+                "color": "#ff9900",
                 "days_to_due": 14
             },
             {
@@ -1012,7 +1012,7 @@
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
-                "color": "#ff9900",
+                "color": "#ff8a84",
                 "days_to_due": 0
             }
         ],
