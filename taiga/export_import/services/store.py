@@ -233,7 +233,8 @@ def _store_project_attribute_value(project, data, field, serializer):
 def store_project_attributes_values(project, data, field, serializer):
     result = []
     for choice_data in data.get(field, []):
-        result.append(_store_project_attribute_value(project, choice_data, field, serializer))
+        result.append(_store_project_attribute_value(project, choice_data, field,
+                                                     serializer))
     return result
 
 

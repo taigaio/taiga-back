@@ -62,15 +62,33 @@ class UserStoryStatusExportValidator(validators.ModelValidator):
         exclude = ('id', 'project')
 
 
+class UserStoryDueDateExportValidator(validators.ModelValidator):
+    class Meta:
+        model = projects_models.UserStoryDueDate
+        exclude = ('id', 'project')
+
+
 class TaskStatusExportValidator(validators.ModelValidator):
     class Meta:
         model = projects_models.TaskStatus
         exclude = ('id', 'project')
 
 
+class TaskDueDateExportValidator(validators.ModelValidator):
+    class Meta:
+        model = projects_models.TaskDueDate
+        exclude = ('id', 'project')
+
+
 class IssueStatusExportValidator(validators.ModelValidator):
     class Meta:
         model = projects_models.IssueStatus
+        exclude = ('id', 'project')
+
+
+class IssueDueDateExportValidator(validators.ModelValidator):
+    class Meta:
+        model = projects_models.IssueDueDate
         exclude = ('id', 'project')
 
 

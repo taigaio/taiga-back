@@ -70,9 +70,10 @@ def test_valid_project_import_without_extra_data(client):
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 201, response.data
     must_empty_children = [
-        "issues", "user_stories", "us_statuses", "wiki_pages", "priorities",
-        "severities", "milestones", "points", "issue_types", "task_statuses",
-        "issue_statuses", "wiki_links",
+        "issues", "user_stories", "us_statuses", "us_duedates", "wiki_pages",
+        "priorities", "severities", "milestones", "points", "issue_types",
+        "task_statuses", "task_duedates", "issue_statuses", "issue_duedates",
+        "wiki_links"
     ]
     assert all(map(lambda x: len(response.data[x]) == 0, must_empty_children))
     assert response.data["owner"] == user.email
@@ -218,6 +219,9 @@ def test_valid_project_import_with_extra_data(client):
         "us_statuses": [{
             "name": "Test"
         }],
+        "us_duedates": [{
+            "name": "Test"
+        }],
         "severities": [{
             "name": "Test"
         }],
@@ -246,8 +250,9 @@ def test_valid_project_import_with_extra_data(client):
     ]
 
     must_one_instance_children = [
-        "roles", "us_statuses", "severities", "priorities", "points",
-        "issue_types", "task_statuses", "issue_statuses", "memberships",
+        "roles", "us_statuses", "us_duedates", "severities", "priorities",
+        "points", "issue_types", "task_statuses", "task_duedates",
+        "issue_statuses", "issue_duedates", "memberships"
     ]
 
     assert all(map(lambda x: len(response.data[x]) == 0, must_empty_children))
@@ -284,17 +289,20 @@ def test_invalid_project_import_with_extra_data(client):
             "name": "Test"
         }],
         "us_statuses": [{}],
+        "us_duedates": [{}],
         "severities": [{}],
         "priorities": [{}],
         "points": [{}],
         "issue_types": [{}],
         "task_statuses": [{}],
+        "task_duedates": [{}],
+        "issue_duedates": [{}],
         "issue_statuses": [{}],
     }
 
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 400
-    assert len(response.data) == 7
+    assert len(response.data) == 10
     assert Project.objects.filter(slug="imported-project").count() == 0
 
 

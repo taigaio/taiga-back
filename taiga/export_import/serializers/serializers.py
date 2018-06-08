@@ -60,6 +60,15 @@ class UserStoryStatusExportSerializer(RelatedExportSerializer):
     wip_limit = Field()
 
 
+class UserStoryDueDateExportSerializer(RelatedExportSerializer):
+    name = Field()
+    slug = Field()
+    order = Field()
+    by_default = Field()
+    color = Field()
+    days_to_due = Field()
+
+
 class EpicStatusExportSerializer(RelatedExportSerializer):
     name = Field()
     slug = Field()
@@ -76,12 +85,30 @@ class TaskStatusExportSerializer(RelatedExportSerializer):
     color = Field()
 
 
+class TaskDueDateExportSerializer(RelatedExportSerializer):
+    name = Field()
+    slug = Field()
+    order = Field()
+    by_default = Field()
+    color = Field()
+    days_to_due = Field()
+
+
 class IssueStatusExportSerializer(RelatedExportSerializer):
     name = Field()
     slug = Field()
     order = Field()
     is_closed = Field()
     color = Field()
+
+
+class IssueDueDateExportSerializer(RelatedExportSerializer):
+    name = Field()
+    slug = Field()
+    order = Field()
+    by_default = Field()
+    color = Field()
+    days_to_due = Field()
 
 
 class PriorityExportSerializer(RelatedExportSerializer):
@@ -436,9 +463,12 @@ class ProjectExportSerializer(WatcheableObjectLightSerializerMixin):
     points = PointsExportSerializer(many=True)
     epic_statuses = EpicStatusExportSerializer(many=True)
     us_statuses = UserStoryStatusExportSerializer(many=True)
+    us_duedates = UserStoryDueDateExportSerializer(many=True)
     task_statuses = TaskStatusExportSerializer(many=True)
+    task_duedates = TaskDueDateExportSerializer(many=True)
     issue_types = IssueTypeExportSerializer(many=True)
     issue_statuses = IssueStatusExportSerializer(many=True)
+    issue_duedates = IssueDueDateExportSerializer(many=True)
     priorities = PriorityExportSerializer(many=True)
     severities = SeverityExportSerializer(many=True)
     tags_colors = Field()

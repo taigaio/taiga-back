@@ -155,14 +155,26 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
             services.store.store_project_attributes_values(project_serialized.object, data,
                                                            "issue_statuses",
                                                            validators.IssueStatusExportValidator,)
+        if "issue_duedates" in data:
+            services.store.store_project_attributes_values(project_serialized.object, data,
+                                                           "issue_duedates",
+                                                           validators.IssueDueDateExportValidator,)
         if "us_statuses" in data:
             services.store.store_project_attributes_values(project_serialized.object, data,
                                                            "us_statuses",
                                                            validators.UserStoryStatusExportValidator,)
+        if "us_duedates" in data:
+            services.store.store_project_attributes_values(project_serialized.object, data,
+                                                           "us_duedates",
+                                                           validators.UserStoryDueDateExportValidator,)
         if "task_statuses" in data:
             services.store.store_project_attributes_values(project_serialized.object, data,
                                                            "task_statuses",
                                                            validators.TaskStatusExportValidator)
+        if "task_duedates" in data:
+            services.store.store_project_attributes_values(project_serialized.object, data,
+                                                           "task_duedates",
+                                                           validators.TaskDueDateExportValidator)
         if "priorities" in data:
             services.store.store_project_attributes_values(project_serialized.object, data,
                                                            "priorities",
