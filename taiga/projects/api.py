@@ -372,7 +372,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         try:
             user = user_model.objects.get(id=user_id)
         except user_model.DoesNotExist:
-            return response.BadRequest(_("The user doesn't exist"))
+            return response.BadRequest(_("Project already have due dates"))
 
         # Check the user is a membership from the project
         if not project.memberships.filter(user=user).exists():
@@ -598,6 +598,45 @@ class UserStoryDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         project_id = request.DATA.get("project", 0)
         with advisory_lock("user-story-due-date-creation-{}".format(project_id)):
             return super().create(request, *args, **kwargs)
+
+    def pre_delete(self, obj):
+        if obj.by_default:
+            raise exc.BadRequest(_("You can't delete by default due date"))
+
+    @list_route(methods=["POST"])
+    def create_default(self, request, **kwargs):
+        context = {
+            "request": request
+        }
+        validator = validators.DueDatesCreationValidator(data=request.DATA,
+                                                         context=context)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+
+        project_id = request.DATA.get('project_id')
+        project = models.Project.objects.get(id=project_id)
+
+        if project.us_duedates.all():
+            raise exc.BadRequest(_("Project already have due dates"))
+
+        project_template = models.ProjectTemplate.objects.get(
+            id=project.creation_template.id)
+
+        for us_duedate in project_template.us_duedates:
+            models.UserStoryDueDate.objects.create(
+                name=us_duedate["name"],
+                slug=us_duedate["slug"],
+                by_default=us_duedate["by_default"],
+                color=us_duedate["color"],
+                days_to_due=us_duedate["days_to_due"],
+                order=us_duedate["order"],
+                project=project
+            )
+        project.save()
+
+        serializer = self.get_serializer(project.us_duedates.all(), many=True)
+
+        return response.Ok(serializer.data)
 
 
 class TaskStatusViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,

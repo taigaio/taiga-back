@@ -124,6 +124,10 @@ class IssueDueDateValidator(DuplicatedNameInProjectValidator, validators.ModelVa
         model = models.IssueDueDate
 
 
+class DueDatesCreationValidator(ProjectExistsValidator, validators.Validator):
+    project_id = serializers.IntegerField()
+
+
 ######################################################
 # Members
 ######################################################
