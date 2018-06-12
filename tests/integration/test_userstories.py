@@ -693,6 +693,29 @@ def test_api_filter_by_finish_date(client):
     assert number_of_userstories == 1
     assert response.data[0]["subject"] == userstory_to_finish.subject
 
+
+def test_api_filter_by_assigned_users(client):
+    user = f.UserFactory(is_superuser=True)
+    user2 = f.UserFactory(is_superuser=True)
+
+    userstory = f.create_userstory(owner=user, subject="test 2 users",
+                                   assigned_to=user,
+                                   assigned_users=[user.id, user2.id])
+    f.create_userstory(
+        owner=user, subject="test 1 user", assigned_to=user,
+        assigned_users=[user.id]
+    )
+
+    url = reverse("userstories-list") + "?assigned_users=%s" % (user.id)
+
+    client.login(userstory.owner)
+    response = client.get(url)
+    number_of_userstories = len(response.data)
+
+    assert response.status_code == 200
+    assert number_of_userstories == 2
+
+
 @pytest.mark.parametrize("field_name", ["estimated_start", "estimated_finish"])
 def test_api_filter_by_milestone__estimated_start_and_end(client, field_name):
     user = f.UserFactory(is_superuser=True)
