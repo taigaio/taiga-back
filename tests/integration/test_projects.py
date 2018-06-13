@@ -2289,3 +2289,153 @@ def test_duplicate_public_project_without_enough_memberships_slots(client):
     assert "current limit of memberships" in response.data["_error_message"]
     assert response["Taiga-Info-Project-Memberships"] == "2"
     assert response["Taiga-Info-Project-Is-Private"] == "False"
+
+
+def test_create_us_default_due_dates(client):
+    project = f.create_project()
+
+    us_duedates = [{
+        "name": 'Default',
+        "slug": 'default',
+        "by_default": True,
+        'color': '#0000',
+        'days_to_due': None,
+        'order': 0,
+    }]
+    creation_template = project.creation_template
+    creation_template.us_duedates = us_duedates
+    creation_template.save()
+
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+    url = reverse('userstory-due-dates-create-default')
+    data = {"project_id": project.pk}
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 200
+    assert project.us_duedates.count() == 1
+
+
+def test_prevent_create_us_default_due_dates_when_already_exists(client):
+    us_duedates = [{
+        "name": 'Default',
+        "slug": 'default',
+        "by_default": True,
+        'color': '#0000',
+        'days_to_due': None,
+        'order': 0,
+    }]
+    f.ProjectTemplateFactory.create(
+        slug=settings.DEFAULT_PROJECT_TEMPLATE, us_duedates=us_duedates)
+    project = f.create_project()
+
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+    url = reverse('userstory-due-dates-create-default')
+    data = {"project_id": project.pk}
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert project.us_duedates.count() == 1
+
+
+def test_create_issue_default_due_dates(client):
+    project = f.create_project()
+
+    issue_duedates = [{
+        "name": 'Default',
+        "slug": 'default',
+        "by_default": True,
+        'color': '#0000',
+        'days_to_due': None,
+        'order': 0,
+    }]
+    creation_template = project.creation_template
+    creation_template.issue_duedates = issue_duedates
+    creation_template.save()
+
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+    url = reverse('issue-due-dates-create-default')
+    data = {"project_id": project.pk}
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 200
+    assert project.issue_duedates.count() == 1
+
+
+def test_prevent_create_issue_default_due_dates_when_already_exists(client):
+    issue_duedates = [{
+        "name": 'Default',
+        "slug": 'default',
+        "by_default": True,
+        'color': '#0000',
+        'days_to_due': None,
+        'order': 0,
+    }]
+    f.ProjectTemplateFactory.create(
+        slug=settings.DEFAULT_PROJECT_TEMPLATE, issue_duedates=issue_duedates)
+    project = f.create_project()
+
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+    url = reverse('issue-due-dates-create-default')
+    data = {"project_id": project.pk}
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert project.issue_duedates.count() == 1
+
+
+def test_create_task_default_due_dates(client):
+    project = f.create_project()
+
+    task_duedates = [{
+        "name": 'Default',
+        "slug": 'default',
+        "by_default": True,
+        'color': '#0000',
+        'days_to_due': None,
+        'order': 0,
+    }]
+    creation_template = project.creation_template
+    creation_template.task_duedates = task_duedates
+    creation_template.save()
+
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+    url = reverse('task-due-dates-create-default')
+    data = {"project_id": project.pk}
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 200
+    assert project.task_duedates.count() == 1
+
+
+def test_prevent_create_task_default_due_dates_when_already_exists(client):
+    task_duedates = [{
+        "name": 'Default',
+        "slug": 'default',
+        "by_default": True,
+        'color': '#0000',
+        'days_to_due': None,
+        'order': 0,
+    }]
+    f.ProjectTemplateFactory.create(
+        slug=settings.DEFAULT_PROJECT_TEMPLATE, task_duedates=task_duedates)
+    project = f.create_project()
+
+    f.MembershipFactory(user=project.owner, project=project, is_admin=True)
+    url = reverse('task-due-dates-create-default')
+    data = {"project_id": project.pk}
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 400
+    assert project.task_duedates.count() == 1

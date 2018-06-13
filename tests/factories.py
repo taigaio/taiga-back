@@ -388,6 +388,15 @@ class UserStoryStatusFactory(Factory):
     project = factory.SubFactory("tests.factories.ProjectFactory")
 
 
+class UserStoryDueDateFactory(Factory):
+    class Meta:
+        model = "projects.UserStoryDueDate"
+        strategy = factory.CREATE_STRATEGY
+
+    name = factory.Sequence(lambda n: "User Story due date {}".format(n))
+    project = factory.SubFactory("tests.factories.ProjectFactory")
+
+
 class TaskStatusFactory(Factory):
     class Meta:
         model = "projects.TaskStatus"

@@ -601,7 +601,8 @@ class UserStoryDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
 
     def pre_delete(self, obj):
         if obj.by_default:
-            raise exc.BadRequest(_("You can't delete by default due date"))
+            raise exc.BadRequest(
+                _("You can't delete user story by default due date"))
 
     @list_route(methods=["POST"])
     def create_default(self, request, **kwargs):
@@ -674,6 +675,42 @@ class TaskDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         project_id = request.DATA.get("project", 0)
         with advisory_lock("task-due-date-creation-{}".format(project_id)):
             return super().create(request, *args, **kwargs)
+
+    @list_route(methods=["POST"])
+    def create_default(self, request, **kwargs):
+        context = {
+            "request": request
+        }
+        validator = validators.DueDatesCreationValidator(data=request.DATA,
+                                                         context=context)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+
+        project_id = request.DATA.get('project_id')
+        project = models.Project.objects.get(id=project_id)
+
+        if project.task_duedates.all():
+            raise exc.BadRequest(_("Project already have task due dates"))
+
+        project_template = models.ProjectTemplate.objects.get(
+            id=project.creation_template.id)
+
+        for task_duedate in project_template.task_duedates:
+            models.TaskDueDate.objects.create(
+                name=task_duedate["name"],
+                slug=task_duedate["slug"],
+                by_default=task_duedate["by_default"],
+                color=task_duedate["color"],
+                days_to_due=task_duedate["days_to_due"],
+                order=task_duedate["order"],
+                project=project
+            )
+        project.save()
+
+        serializer = self.get_serializer(project.task_duedates.all(),
+                                         many=True)
+
+        return response.Ok(serializer.data)
 
 
 class SeverityViewSet(MoveOnDestroyMixin, BlockedByProjectMixin,
@@ -774,6 +811,42 @@ class IssueDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         project_id = request.DATA.get("project", 0)
         with advisory_lock("issue-due-date-creation-{}".format(project_id)):
             return super().create(request, *args, **kwargs)
+
+    @list_route(methods=["POST"])
+    def create_default(self, request, **kwargs):
+        context = {
+            "request": request
+        }
+        validator = validators.DueDatesCreationValidator(data=request.DATA,
+                                                         context=context)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+
+        project_id = request.DATA.get('project_id')
+        project = models.Project.objects.get(id=project_id)
+
+        if project.issue_duedates.all():
+            raise exc.BadRequest(_("Project already have issue due dates"))
+
+        project_template = models.ProjectTemplate.objects.get(
+            id=project.creation_template.id)
+
+        for issue_duedate in project_template.issue_duedates:
+            models.IssueDueDate.objects.create(
+                name=issue_duedate["name"],
+                slug=issue_duedate["slug"],
+                by_default=issue_duedate["by_default"],
+                color=issue_duedate["color"],
+                days_to_due=issue_duedate["days_to_due"],
+                order=issue_duedate["order"],
+                project=project
+            )
+        project.save()
+
+        serializer = self.get_serializer(project.issue_duedates.all(),
+                                         many=True)
+
+        return response.Ok(serializer.data)
 
 
 ######################################################
