@@ -237,7 +237,13 @@ def test_valid_project_import_with_extra_data(client):
         "task_statuses": [{
             "name": "Test"
         }],
+        "task_duedates": [{
+            "name": "Test"
+        }],
         "issue_statuses": [{
+            "name": "Test"
+        }],
+        "issue_duedates": [{
             "name": "Test"
         }],
     }
@@ -275,6 +281,7 @@ def test_invalid_project_import_without_roles(client):
     assert response.status_code == 400
     assert len(response.data) == 2
     assert Project.objects.filter(slug="imported-project").count() == 0
+
 
 def test_invalid_project_import_with_extra_data(client):
     user = f.UserFactory.create()

@@ -372,7 +372,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         try:
             user = user_model.objects.get(id=user_id)
         except user_model.DoesNotExist:
-            return response.BadRequest(_("Project already have due dates"))
+            return response.BadRequest(_("The user doesn't exist"))
 
         # Check the user is a membership from the project
         if not project.memberships.filter(user=user).exists():
