@@ -602,7 +602,7 @@ class UserStoryDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
     def pre_delete(self, obj):
         if obj.by_default:
             raise exc.BadRequest(
-                _("You can't delete user story by default due date"))
+                _("You can't delete user story due date by default"))
 
     @list_route(methods=["POST"])
     def create_default(self, request, **kwargs):
@@ -675,6 +675,11 @@ class TaskDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         project_id = request.DATA.get("project", 0)
         with advisory_lock("task-due-date-creation-{}".format(project_id)):
             return super().create(request, *args, **kwargs)
+
+    def pre_delete(self, obj):
+        if obj.by_default:
+            raise exc.BadRequest(
+                _("You can't delete task due date by default"))
 
     @list_route(methods=["POST"])
     def create_default(self, request, **kwargs):
@@ -811,6 +816,11 @@ class IssueDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         project_id = request.DATA.get("project", 0)
         with advisory_lock("issue-due-date-creation-{}".format(project_id)):
             return super().create(request, *args, **kwargs)
+
+    def pre_delete(self, obj):
+        if obj.by_default:
+            raise exc.BadRequest(
+                _("You can't delete issue due date by default"))
 
     @list_route(methods=["POST"])
     def create_default(self, request, **kwargs):
