@@ -40,7 +40,6 @@ from .notifications.choices import NotifyLevel
 class BaseDueDateSerializer(serializers.LightSerializer):
     id = Field()
     name = I18NField()
-    slug = Field()
     order = Field()
     by_default = Field()
     days_to_due = Field()

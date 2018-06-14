@@ -626,7 +626,6 @@ class UserStoryDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         for us_duedate in project_template.us_duedates:
             models.UserStoryDueDate.objects.create(
                 name=us_duedate["name"],
-                slug=us_duedate["slug"],
                 by_default=us_duedate["by_default"],
                 color=us_duedate["color"],
                 days_to_due=us_duedate["days_to_due"],
@@ -703,7 +702,6 @@ class TaskDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         for task_duedate in project_template.task_duedates:
             models.TaskDueDate.objects.create(
                 name=task_duedate["name"],
-                slug=task_duedate["slug"],
                 by_default=task_duedate["by_default"],
                 color=task_duedate["color"],
                 days_to_due=task_duedate["days_to_due"],
@@ -844,7 +842,6 @@ class IssueDueDateViewSet(BlockedByProjectMixin, ModelCrudViewSet):
         for issue_duedate in project_template.issue_duedates:
             models.IssueDueDate.objects.create(
                 name=issue_duedate["name"],
-                slug=issue_duedate["slug"],
                 by_default=issue_duedate["by_default"],
                 color=issue_duedate["color"],
                 days_to_due=issue_duedate["days_to_due"],

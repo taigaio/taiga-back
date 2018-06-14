@@ -62,7 +62,6 @@ class UserStoryStatusExportSerializer(RelatedExportSerializer):
 
 class UserStoryDueDateExportSerializer(RelatedExportSerializer):
     name = Field()
-    slug = Field()
     order = Field()
     by_default = Field()
     color = Field()
@@ -87,7 +86,6 @@ class TaskStatusExportSerializer(RelatedExportSerializer):
 
 class TaskDueDateExportSerializer(RelatedExportSerializer):
     name = Field()
-    slug = Field()
     order = Field()
     by_default = Field()
     color = Field()
@@ -104,7 +102,6 @@ class IssueStatusExportSerializer(RelatedExportSerializer):
 
 class IssueDueDateExportSerializer(RelatedExportSerializer):
     name = Field()
-    slug = Field()
     order = Field()
     by_default = Field()
     color = Field()

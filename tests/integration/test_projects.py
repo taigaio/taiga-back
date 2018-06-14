@@ -2296,7 +2296,6 @@ def test_create_us_default_due_dates(client):
 
     us_duedates = [{
         "name": 'Default',
-        "slug": 'default',
         "by_default": True,
         'color': '#0000',
         'days_to_due': None,
@@ -2320,7 +2319,6 @@ def test_create_us_default_due_dates(client):
 def test_prevent_create_us_default_due_dates_when_already_exists(client):
     us_duedates = [{
         "name": 'Default',
-        "slug": 'default',
         "by_default": True,
         'color': '#0000',
         'days_to_due': None,
@@ -2344,7 +2342,6 @@ def test_prevent_create_us_default_due_dates_when_already_exists(client):
 def test_prevent_delete_us_default_due_dates(client):
     us_duedates = [{
         "name": 'Default',
-        "slug": 'default',
         "by_default": True,
         'color': '#0000',
         'days_to_due': None,
@@ -2370,7 +2367,6 @@ def test_create_task_default_due_dates(client):
 
     task_duedates = [{
         "name": 'Default',
-        "slug": 'default',
         "by_default": True,
         'color': '#0000',
         'days_to_due': None,
@@ -2394,7 +2390,6 @@ def test_create_task_default_due_dates(client):
 def test_prevent_create_task_default_due_dates_when_already_exists(client):
     task_duedates = [{
         "name": 'Default',
-        "slug": 'default',
         "by_default": True,
         'color': '#0000',
         'days_to_due': None,
@@ -2418,7 +2413,6 @@ def test_prevent_create_task_default_due_dates_when_already_exists(client):
 def test_prevent_delete_task_default_due_dates(client):
     task_duedates = [{
         "name": 'Default',
-        "slug": 'default',
         "by_default": True,
         'color': '#0000',
         'days_to_due': None,
@@ -2444,7 +2438,6 @@ def test_create_issue_default_due_dates(client):
 
     issue_duedates = [{
         "name": 'Default',
-        "slug": 'default',
         "by_default": True,
         'color': '#0000',
         'days_to_due': None,
@@ -2468,7 +2461,6 @@ def test_create_issue_default_due_dates(client):
 def test_prevent_create_issue_default_due_dates_when_already_exists(client):
     issue_duedates = [{
         "name": 'Default',
-        "slug": 'default',
         "by_default": True,
         'color': '#0000',
         'days_to_due': None,
@@ -2492,7 +2484,6 @@ def test_prevent_create_issue_default_due_dates_when_already_exists(client):
 def test_prevent_delete_issue_default_due_dates(client):
     issue_duedates = [{
         "name": 'Default',
-        "slug": 'default',
         "by_default": True,
         'color': '#0000',
         'days_to_due': None,

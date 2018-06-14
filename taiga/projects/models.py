@@ -608,8 +608,6 @@ class Points(models.Model):
 class UserStoryDueDate(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False,
                             verbose_name=_("name"))
-    slug = models.SlugField(max_length=255, null=False, blank=True,
-                            verbose_name=_("slug"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
     by_default = models.BooleanField(default=False, null=False, blank=True,
@@ -625,18 +623,10 @@ class UserStoryDueDate(models.Model):
         verbose_name = "user story due date"
         verbose_name_plural = "user story due dates"
         ordering = ["project", "order", "name"]
-        unique_together = (("project", "name"), ("project", "slug"))
+        unique_together = ("project", "name")
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        qs = self.project.us_duedates
-        if self.id:
-            qs = qs.exclude(id=self.id)
-
-        self.slug = slugify_uniquely_for_queryset(self.name, qs)
-        return super().save(*args, **kwargs)
 
 
 # Tasks common models
@@ -675,8 +665,6 @@ class TaskStatus(models.Model):
 class TaskDueDate(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False,
                             verbose_name=_("name"))
-    slug = models.SlugField(max_length=255, null=False, blank=True,
-                            verbose_name=_("slug"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
     by_default = models.BooleanField(default=False, null=False, blank=True,
@@ -692,18 +680,10 @@ class TaskDueDate(models.Model):
         verbose_name = "task due date"
         verbose_name_plural = "task due dates"
         ordering = ["project", "order", "name"]
-        unique_together = (("project", "name"), ("project", "slug"))
+        unique_together = (("project", "name"))
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        qs = self.project.task_duedates
-        if self.id:
-            qs = qs.exclude(id=self.id)
-
-        self.slug = slugify_uniquely_for_queryset(self.name, qs)
-        return super().save(*args, **kwargs)
 
 
 # Issue common Models
@@ -803,8 +783,6 @@ class IssueType(models.Model):
 class IssueDueDate(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False,
                             verbose_name=_("name"))
-    slug = models.SlugField(max_length=255, null=False, blank=True,
-                            verbose_name=_("slug"))
     order = models.IntegerField(default=10, null=False, blank=False,
                                 verbose_name=_("order"))
     by_default = models.BooleanField(default=False, null=False, blank=True,
@@ -820,18 +798,10 @@ class IssueDueDate(models.Model):
         verbose_name = "issue due date"
         verbose_name_plural = "issue due dates"
         ordering = ["project", "order", "name"]
-        unique_together = (("project", "name"), ("project", "slug"))
+        unique_together = ("project", "name")
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        qs = self.project.issue_duedates
-        if self.id:
-            qs = qs.exclude(id=self.id)
-
-        self.slug = slugify_uniquely_for_queryset(self.name, qs)
-        return super().save(*args, **kwargs)
 
 
 class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
@@ -958,7 +928,6 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
         for us_duedate in project.us_duedates.all():
             self.us_duedates.append({
                 "name": us_duedate.name,
-                "slug": us_duedate.slug,
                 "by_default": us_duedate.by_default,
                 "color": us_duedate.color,
                 "days_to_due": us_duedate.days_to_due,
@@ -987,7 +956,6 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
         for task_duedate in project.task_duedates.all():
             self.task_duedates.append({
                 "name": task_duedate.name,
-                "slug": task_duedate.slug,
                 "by_default": task_duedate.by_default,
                 "color": task_duedate.color,
                 "days_to_due": task_duedate.days_to_due,
@@ -1016,7 +984,6 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
         for issue_duedate in project.issue_duedates.all():
             self.issue_duedates.append({
                 "name": issue_duedate.name,
-                "slug": issue_duedate.slug,
                 "by_default": issue_duedate.by_default,
                 "color": issue_duedate.color,
                 "days_to_due": issue_duedate.days_to_due,
@@ -1137,7 +1104,6 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
         for us_duedate in self.us_duedates:
             UserStoryDueDate.objects.create(
                 name=us_duedate["name"],
-                slug=us_duedate["slug"],
                 by_default=us_duedate["by_default"],
                 color=us_duedate["color"],
                 days_to_due=us_duedate["days_to_due"],
@@ -1166,7 +1132,6 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
         for task_duedate in self.task_duedates:
             TaskDueDate.objects.create(
                 name=task_duedate["name"],
-                slug=task_duedate["slug"],
                 by_default=task_duedate["by_default"],
                 color=task_duedate["color"],
                 days_to_due=task_duedate["days_to_due"],
@@ -1195,7 +1160,6 @@ class ProjectTemplate(TaggedMixin, TagsColorsMixin, models.Model):
         for issue_duedate in self.issue_duedates:
             IssueDueDate.objects.create(
                 name=issue_duedate["name"],
-                slug=issue_duedate["slug"],
                 by_default=issue_duedate["by_default"],
                 color=issue_duedate["color"],
                 days_to_due=issue_duedate["days_to_due"],

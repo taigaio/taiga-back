@@ -21,7 +21,6 @@
             "points": "?",
             "priority": "Normal",
             "us_status": "New",
-            "us_duedate": "Default",
             "issue_type": "Bug",
             "epic_status": "New",
             "severity": "Normal",
@@ -123,7 +122,6 @@
         ],
         "us_duedates": [
             {
-                "slug": "default",
                 "name": "Default",
                 "order": 1,
                 "by_default": true,
@@ -131,7 +129,6 @@
                 "days_to_due": null
             },
             {
-                "slug": "due-soon",
                 "name": "Due soon",
                 "order": 2,
                 "by_default": false,
@@ -139,7 +136,6 @@
                 "days_to_due": 14
             },
             {
-                "slug": "past-due",
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
@@ -248,7 +244,6 @@
         ],
         "task_duedates": [
             {
-                "slug": "default",
                 "name": "Default",
                 "order": 1,
                 "by_default": true,
@@ -256,7 +251,6 @@
                 "days_to_due": null
             },
             {
-                "slug": "due-soon",
                 "name": "Due soon",
                 "order": 2,
                 "by_default": false,
@@ -264,7 +258,6 @@
                 "days_to_due": 14
             },
             {
-                "slug": "past-due",
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
@@ -342,7 +335,6 @@
         ],
         "issue_duedates": [
             {
-                "slug": "default",
                 "name": "Default",
                 "order": 1,
                 "by_default": true,
@@ -350,7 +342,6 @@
                 "days_to_due": null
             },
             {
-                "slug": "due-soon",
                 "name": "Due soon",
                 "order": 2,
                 "by_default": false,
@@ -358,7 +349,6 @@
                 "days_to_due": 14
             },
             {
-                "slug": "past-due",
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
@@ -773,7 +763,6 @@
         ],
         "us_duedates": [
             {
-                "slug": "default",
                 "name": "Default",
                 "order": 1,
                 "by_default": true,
@@ -781,7 +770,6 @@
                 "days_to_due": null
             },
             {
-                "slug": "due-soon",
                 "name": "Due soon",
                 "order": 2,
                 "by_default": false,
@@ -789,7 +777,6 @@
                 "days_to_due": 14
             },
             {
-                "slug": "past-due",
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
@@ -898,7 +885,6 @@
         ],
         "task_duedates": [
             {
-                "slug": "default",
                 "name": "Default",
                 "order": 1,
                 "by_default": true,
@@ -906,7 +892,6 @@
                 "days_to_due": null
             },
             {
-                "slug": "due-soon",
                 "name": "Due soon",
                 "order": 2,
                 "by_default": false,
@@ -914,7 +899,6 @@
                 "days_to_due": 14
             },
             {
-                "slug": "past-due",
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
@@ -992,7 +976,6 @@
         ],
         "issue_duedates": [
             {
-                "slug": "default",
                 "name": "Default",
                 "order": 1,
                 "by_default": true,
@@ -1000,7 +983,6 @@
                 "days_to_due": null
             },
             {
-                "slug": "due-soon",
                 "name": "Due soon",
                 "order": 2,
                 "by_default": false,
@@ -1008,7 +990,6 @@
                 "days_to_due": 14
             },
             {
-                "slug": "past-due",
                 "name": "Past due",
                 "order": 3,
                 "by_default": false,
