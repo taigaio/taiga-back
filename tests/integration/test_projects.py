@@ -2355,7 +2355,8 @@ def test_prevent_delete_us_default_due_dates(client):
     project = f.create_project()
 
     f.MembershipFactory(user=project.owner, project=project, is_admin=True)
-    url = reverse('userstory-due-dates-detail', kwargs={"pk": 1})
+    url = reverse('userstory-due-dates-detail',
+                  kwargs={"pk": project.us_duedates.last().pk})
     client.login(project.owner)
 
     response = client.json.delete(url)
@@ -2428,7 +2429,8 @@ def test_prevent_delete_task_default_due_dates(client):
     project = f.create_project()
 
     f.MembershipFactory(user=project.owner, project=project, is_admin=True)
-    url = reverse('task-due-dates-detail', kwargs={"pk": 1})
+    url = reverse('task-due-dates-detail',
+                  kwargs={"pk": project.task_duedates.last().pk})
     client.login(project.owner)
 
     response = client.json.delete(url)
@@ -2501,7 +2503,8 @@ def test_prevent_delete_issue_default_due_dates(client):
     project = f.create_project()
 
     f.MembershipFactory(user=project.owner, project=project, is_admin=True)
-    url = reverse('issue-due-dates-detail', kwargs={"pk": 1})
+    url = reverse('issue-due-dates-detail',
+                  kwargs={"pk": project.issue_duedates.last().pk})
     client.login(project.owner)
 
     response = client.json.delete(url)
