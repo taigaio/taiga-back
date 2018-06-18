@@ -431,6 +431,89 @@ def _get_userstories_assigned_to(project, queryset):
     return sorted(result, key=itemgetter("full_name"))
 
 
+def _get_userstories_assigned_users(project, queryset):
+    compiler = connection.ops.compiler(queryset.query.compiler)(queryset.query, connection, None)
+    queryset_where_tuple = queryset.query.where.as_sql(compiler, connection)
+    where = queryset_where_tuple[0]
+    where_params = queryset_where_tuple[1]
+
+    extra_sql = """
+     WITH "us_counters" AS (
+            SELECT "userstories_userstory_assigned_users"."user_id"
+                    FROM "userstories_userstory_assigned_users"
+              INNER JOIN "userstories_userstory"
+                      ON "userstories_userstory"."id" = "userstories_userstory_assigned_users"."userstory_id"
+              INNER JOIN "projects_project"
+                      ON ("userstories_userstory"."project_id" = "projects_project"."id")
+              LEFT OUTER JOIN "epics_relateduserstory"
+                      ON "userstories_userstory"."id" = "epics_relateduserstory"."user_story_id"
+                   WHERE {where}
+            ),
+
+            "counters" AS (
+                 SELECT "user_id",
+                        COUNT("user_id")
+                   FROM "us_counters"
+               GROUP BY "user_id"
+            )
+
+                 SELECT "projects_membership"."user_id" "user_id",
+                        "users_user"."full_name" "full_name",
+                        "users_user"."username" "username",
+                        COALESCE("counters".count, 0) "count"
+                   FROM "projects_membership"
+        LEFT OUTER JOIN "counters"
+                     ON ("projects_membership"."user_id" = "counters"."user_id")
+             INNER JOIN "users_user"
+                     ON ("projects_membership"."user_id" = "users_user"."id")
+                  WHERE "projects_membership"."project_id" = %s AND "projects_membership"."user_id" IS NOT NULL
+
+        -- unassigned userstories
+        UNION
+
+                 SELECT NULL "user_id",
+                        NULL "full_name",
+                        NULL "username",
+                        count(coalesce("assigned_to_id", -1)) "count"
+                   FROM "userstories_userstory"
+             INNER JOIN "projects_project"
+                     ON ("userstories_userstory"."project_id" = "projects_project"."id")
+        LEFT OUTER JOIN "epics_relateduserstory"
+                     ON ("userstories_userstory"."id" = "epics_relateduserstory"."user_story_id")
+                  WHERE {where} AND "userstories_userstory"."id" NOT IN (
+                    SELECT "userstories_userstory_assigned_users"."userstory_id" FROM
+                      "userstories_userstory_assigned_users"
+                  )
+               GROUP BY "assigned_to_id";
+    """.format(where=where)
+
+    with closing(connection.cursor()) as cursor:
+        cursor.execute(extra_sql, where_params + [project.id] + where_params)
+        rows = cursor.fetchall()
+
+    result = []
+    none_valued_added = False
+    for id, full_name, username, count in rows:
+        result.append({
+            "id": id,
+            "full_name": full_name or username or "",
+            "count": count,
+        })
+
+        if id is None:
+            none_valued_added = True
+
+    # If there was no userstory with null assigned_to we manually add it
+    if not none_valued_added:
+        result.append({
+            "id": None,
+            "full_name": "",
+            "count": 0,
+        })
+
+    return sorted(result, key=itemgetter("full_name"))
+
+
 def _get_userstories_owners(project, queryset):
     compiler = connection.ops.compiler(queryset.query.compiler)(queryset.query, connection, None)
     queryset_where_tuple = queryset.query.where.as_sql(compiler, connection)
@@ -679,7 +762,10 @@ def get_userstories_filters_data(project, querysets):
     """
     data = OrderedDict([
         ("statuses", _get_userstories_statuses(project, querysets["statuses"])),
-        ("assigned_to", _get_userstories_assigned_to(project, querysets["assigned_to"])),
+        ("assigned_to",
+         _get_userstories_assigned_to(project, querysets["assigned_to"])),
+        ("assigned_users",
+         _get_userstories_assigned_users(project, querysets["assigned_users"])),
         ("owners", _get_userstories_owners(project, querysets["owners"])),
         ("tags", _get_userstories_tags(project, querysets["tags"])),
         ("epics", _get_userstories_epics(project, querysets["epics"])),

@@ -305,6 +305,7 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
         filter_backends = self.get_filter_backends()
         statuses_filter_backends = (f for f in filter_backends if f != base_filters.StatusesFilter)
         assigned_to_filter_backends = (f for f in filter_backends if f != base_filters.AssignedToFilter)
+        assigned_users_filter_backends = (f for f in filter_backends if f != base_filters.AssignedUsersFilter)
         owners_filter_backends = (f for f in filter_backends if f != base_filters.OwnersFilter)
         epics_filter_backends = (f for f in filter_backends if f != filters.EpicFilter)
         roles_filter_backends = (f for f in filter_backends if f != base_filters.RoleFilter)
@@ -313,6 +314,7 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
         querysets = {
             "statuses": self.filter_queryset(queryset, filter_backends=statuses_filter_backends),
             "assigned_to": self.filter_queryset(queryset, filter_backends=assigned_to_filter_backends),
+            "assigned_users": self.filter_queryset(queryset, filter_backends=assigned_users_filter_backends),
             "owners": self.filter_queryset(queryset, filter_backends=owners_filter_backends),
             "tags": self.filter_queryset(queryset),
             "epics": self.filter_queryset(queryset, filter_backends=epics_filter_backends),
