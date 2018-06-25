@@ -197,3 +197,18 @@ def test_apply_order_not_include_noop():
     }
     apply_order_updates(orders, new_orders, remove_equal_original=True)
     assert orders == {}
+
+
+def test_apply_order_does_no_generate_holes():
+    orders = {
+        "a": 0,
+        "b": 2,
+        "c": 1,
+        "z": 99,
+    }
+    new_orders = {
+        "c": 1,
+        "z": 99,
+    }
+    apply_order_updates(orders, new_orders, remove_equal_original=True)
+    assert orders == {}
