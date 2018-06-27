@@ -430,7 +430,7 @@ class AssignedUsersFilter(BaseRelatedFieldsFilter):
         assigned_user_filter = Q(pk__in=Subquery(assigned_users_ids))
         assigned_to_filter = Q(assigned_to__in=value)
 
-        return Q(assigned_user_filter, assigned_to_filter)
+        return Q(assigned_user_filter | assigned_to_filter)
 
     def _get_queryparams(self, params):
         param_name = self.param_name or self.filter_name
