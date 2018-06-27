@@ -423,6 +423,15 @@ class AssignedToFilter(BaseRelatedFieldsFilter):
 class AssignedUsersFilter(BaseRelatedFieldsFilter):
     filter_name = 'assigned_users'
 
+    def get_assigned_users_filter(self, us_model, value):
+        assigned_users_ids = us_model.objects.order_by().filter(
+            assigned_users__in=value, id=OuterRef('pk')).values('pk')
+
+        assigned_user_filter = Q(pk__in=Subquery(assigned_users_ids))
+        assigned_to_filter = Q(assigned_to__in=value)
+
+        return Q(assigned_user_filter, assigned_to_filter)
+
     def _get_queryparams(self, params):
         param_name = self.param_name or self.filter_name
         raw_value = params.get(param_name, None)
@@ -431,13 +440,19 @@ class AssignedUsersFilter(BaseRelatedFieldsFilter):
             value = self._prepare_filter_data(raw_value)
             UserStoryModel = apps.get_model("userstories", "UserStory")
 
-            assigned_users_ids = UserStoryModel.objects.order_by().filter(
-                assigned_users__in=value, id=OuterRef('pk')).values('pk')
+            if None in value:
+                value.remove(None)
+                assigned_users_ids = UserStoryModel.objects.order_by().filter(
+                    assigned_users__isnull=True,
+                    id=OuterRef('pk')).values('pk')
 
-            assigned_user_filter = Q(pk__in=Subquery(assigned_users_ids))
-            assigned_to_filter = Q(assigned_to__in=value)
+                assigned_user_filter_none = Q(pk__in=Subquery(assigned_users_ids))
+                assigned_to_filter_none = Q(assigned_to__isnull=True)
 
-            return Q(assigned_user_filter | assigned_to_filter)
+                return (self.get_assigned_users_filter(UserStoryModel, value)
+                        | assigned_user_filter_none | assigned_to_filter_none)
+            else:
+                return self.get_assigned_users_filter(UserStoryModel, value)
 
         return None
 
