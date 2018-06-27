@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 3.3.9 (2018-06-27)
+
+### Features
+
+- Add assigned users kanban/taskboard filter
+- Improve US reorder in kanban
+- Upgrade psycopg2 library
+
 ## 3.3.8 (2018-06-14)
 
 ### Misc
