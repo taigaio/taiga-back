@@ -450,7 +450,7 @@ class AssignedUsersFilter(BaseRelatedFieldsFilter):
                 assigned_to_filter_none = Q(assigned_to__isnull=True)
 
                 return (self.get_assigned_users_filter(UserStoryModel, value)
-                        | assigned_user_filter_none | assigned_to_filter_none)
+                        | Q(assigned_user_filter_none, assigned_to_filter_none))
             else:
                 return self.get_assigned_users_filter(UserStoryModel, value)
 
