@@ -755,3 +755,37 @@ def test_api_create_in_bulk_with_status_milestone(client):
     assert response.status_code == 200
     assert response.data[0]["status"] == project.default_issue_status.id
     assert response.data[0]["milestone"] == milestone.id
+
+
+def test_get_issues(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    f.IssueFactory.create(project=project)
+    url = reverse("issues-list")
+
+    client.login(project.owner)
+
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert response.data[0].get("milestone")
+
+
+def test_get_issues_in_milestone(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+    project.save()
+    milestone = f.MilestoneFactory(project=project)
+    f.IssueFactory.create(project=project, milestone=milestone)
+    f.IssueFactory.create(project=project)
+    url = reverse("issues-list") + "?milestone={}".format(milestone.id)
+
+    client.login(project.owner)
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert response.data[0].get("milestone") == milestone.id

@@ -64,7 +64,8 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
                        filters.ModifiedDateFilter,
                        filters.FinishedDateFilter,
                        filters.OrderByFilterMixin)
-    filter_fields = ("project",
+    filter_fields = ("milestone",
+                     "project",
                      "project__slug",
                      "status__is_closed")
     order_by_fields = ("type",
