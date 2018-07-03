@@ -140,6 +140,17 @@ class FilterBackend(OrderByFilterMixin):
     pass
 
 
+class FilterModelAssignedUsers:
+    def get_assigned_users_filter(self, model, value):
+        assigned_users_ids = model.objects.order_by().filter(
+            assigned_users__in=value, id=OuterRef('pk')).values('pk')
+
+        assigned_user_filter = Q(pk__in=Subquery(assigned_users_ids))
+        assigned_to_filter = Q(assigned_to__in=value)
+
+        return Q(assigned_user_filter | assigned_to_filter)
+
+
 #####################################################################
 # Permissions filters
 #####################################################################
@@ -420,17 +431,8 @@ class AssignedToFilter(BaseRelatedFieldsFilter):
     filter_name = 'assigned_to'
 
 
-class AssignedUsersFilter(BaseRelatedFieldsFilter):
+class AssignedUsersFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
     filter_name = 'assigned_users'
-
-    def get_assigned_users_filter(self, us_model, value):
-        assigned_users_ids = us_model.objects.order_by().filter(
-            assigned_users__in=value, id=OuterRef('pk')).values('pk')
-
-        assigned_user_filter = Q(pk__in=Subquery(assigned_users_ids))
-        assigned_to_filter = Q(assigned_to__in=value)
-
-        return Q(assigned_user_filter | assigned_to_filter)
 
     def _get_queryparams(self, params):
         param_name = self.param_name or self.filter_name
@@ -641,5 +643,27 @@ class RoleFilter(BaseRelatedFieldsFilter):
                 memberships = Membership.objects.filter(query).values_list("user_id", flat=True)
             if memberships:
                 queryset = queryset.filter(assigned_to__in=memberships)
+
+        return FilterBackend.filter_queryset(self, request, queryset, view)
+
+
+class UserStoriesRoleFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
+    filter_name = "role_id"
+    param_name = "role"
+
+    def filter_queryset(self, request, queryset, view):
+        Membership = apps.get_model('projects', 'Membership')
+        query = self._get_queryparams(request.QUERY_PARAMS)
+
+        if query:
+            if isinstance(query, dict):
+                memberships = Membership.objects.filter(**query).values_list("user_id", flat=True)
+            else:
+                memberships = Membership.objects.filter(query).values_list("user_id", flat=True)
+            if memberships:
+                user_story_model = apps.get_model("userstories", "UserStory")
+                queryset = queryset.filter(
+                    self.get_assigned_users_filter(user_story_model, memberships)
+                )
 
         return FilterBackend.filter_queryset(self, request, queryset, view)

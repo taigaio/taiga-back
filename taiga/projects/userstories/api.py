@@ -62,7 +62,7 @@ class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixi
     permission_classes = (permissions.UserStoryPermission,)
     filter_backends = (base_filters.CanViewUsFilterBackend,
                        filters.EpicFilter,
-                       base_filters.RoleFilter,
+                       base_filters.UserStoriesRoleFilter,
                        base_filters.OwnersFilter,
                        base_filters.AssignedToFilter,
                        base_filters.AssignedUsersFilter,
