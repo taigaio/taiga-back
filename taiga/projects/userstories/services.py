@@ -719,8 +719,11 @@ def _get_userstories_roles(project, queryset):
                       ON ("userstories_userstory"."project_id" = "projects_project"."id")
          LEFT OUTER JOIN "epics_relateduserstory"
                       ON "userstories_userstory"."id" = "epics_relateduserstory"."user_story_id"
+         LEFT OUTER JOIN "userstories_userstory_assigned_users"
+                      ON "userstories_userstory_assigned_users"."userstory_id" = "userstories_userstory"."id"
          LEFT OUTER JOIN "projects_membership"
                       ON "projects_membership"."user_id" = "userstories_userstory"."assigned_to_id"
+                      OR "projects_membership"."user_id" = "userstories_userstory_assigned_users"."user_id"
                    WHERE {where}
             ),
              "counters" AS (
