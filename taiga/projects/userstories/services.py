@@ -439,10 +439,12 @@ def _get_userstories_assigned_users(project, queryset):
 
     extra_sql = """
      WITH "us_counters" AS (
-            SELECT "userstories_userstory_assigned_users"."user_id"
-                    FROM "userstories_userstory_assigned_users"
-              INNER JOIN "userstories_userstory"
-                      ON "userstories_userstory"."id" = "userstories_userstory_assigned_users"."userstory_id"
+         SELECT DISTINCT COALESCE("userstories_userstory_assigned_users"."user_id",
+            "userstories_userstory"."assigned_to_id") as "assigned_user_id",
+                "userstories_userstory"."id" "us_id"
+                    FROM "userstories_userstory"
+              LEFT JOIN "userstories_userstory_assigned_users"
+                      ON "userstories_userstory_assigned_users"."userstory_id" = "userstories_userstory"."id"
               INNER JOIN "projects_project"
                       ON ("userstories_userstory"."project_id" = "projects_project"."id")
               LEFT OUTER JOIN "epics_relateduserstory"
@@ -451,10 +453,10 @@ def _get_userstories_assigned_users(project, queryset):
             ),
 
             "counters" AS (
-                 SELECT "user_id",
-                        COUNT("user_id")
+                 SELECT "assigned_user_id",
+                        COUNT("assigned_user_id")
                    FROM "us_counters"
-               GROUP BY "user_id"
+               GROUP BY "assigned_user_id"
             )
 
                  SELECT "projects_membership"."user_id" "user_id",
@@ -463,7 +465,7 @@ def _get_userstories_assigned_users(project, queryset):
                         COALESCE("counters".count, 0) "count"
                    FROM "projects_membership"
         LEFT OUTER JOIN "counters"
-                     ON ("projects_membership"."user_id" = "counters"."user_id")
+                     ON ("projects_membership"."user_id" = "counters"."assigned_user_id")
              INNER JOIN "users_user"
                      ON ("projects_membership"."user_id" = "users_user"."id")
                   WHERE "projects_membership"."project_id" = %s AND "projects_membership"."user_id" IS NOT NULL
@@ -483,8 +485,8 @@ def _get_userstories_assigned_users(project, queryset):
                   WHERE {where} AND "userstories_userstory"."id" NOT IN (
                     SELECT "userstories_userstory_assigned_users"."userstory_id" FROM
                       "userstories_userstory_assigned_users"
-                  )
-               GROUP BY "assigned_to_id";
+                  ) AND "userstories_userstory"."assigned_to_id" IS NULL
+               GROUP BY "username";
     """.format(where=where)
 
     with closing(connection.cursor()) as cursor:

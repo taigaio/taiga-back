@@ -830,8 +830,8 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['id'] == user2.id, response.data["assigned_to"]))["count"] == 2
     assert next(filter(lambda i: i['id'] == user3.id, response.data["assigned_to"]))["count"] == 1
 
-    assert next(filter(lambda i: i['id'] == user1.id, response.data["assigned_users"]))["count"] == 2
-    assert next(filter(lambda i: i['id'] == user2.id, response.data["assigned_users"]))["count"] == 0
+    assert next(filter(lambda i: i['id'] == user1.id, response.data["assigned_users"]))["count"] == 5
+    assert next(filter(lambda i: i['id'] == user2.id, response.data["assigned_users"]))["count"] == 2
 
     assert next(filter(lambda i: i['id'] == status0.id, response.data["statuses"]))["count"] == 3
     assert next(filter(lambda i: i['id'] == status1.id, response.data["statuses"]))["count"] == 2
