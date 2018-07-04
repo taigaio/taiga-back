@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 3.3.13 (2018-07-05)
+
+### Misc
+
+- Minor bug fixes.
+
 ## 3.3.11 (2018-06-27)
 
 ### Features
