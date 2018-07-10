@@ -41,5 +41,5 @@ class IssueValidator(AssignedToValidator, WatchersValidator, EditableWatchedReso
 
 class IssuesBulkValidator(ProjectExistsValidator, validators.Validator):
     project_id = serializers.IntegerField()
-    milestone_id = serializers.IntegerField()
+    milestone_id = serializers.IntegerField(required=False)
     bulk_issues = serializers.CharField()
