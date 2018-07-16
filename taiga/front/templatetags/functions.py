@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from datetime import datetime
+import datetime as dt
 
 from django_jinja import library
 from django_sites import get_by_id as get_site_by_id
@@ -34,7 +34,7 @@ def resolve(type, *args):
     return url_tmpl.format(scheme=scheme, domain=site.domain, url=url)
 
 
-@library.filter(name="date")
-def format_date(value, *args):
-    date_value = datetime.strptime(value, '%Y-%m-%d')
+@library.filter(name="parse_and_format_date")
+def parse_and_format_date(value, *args):
+    date_value = dt.datetime.strptime(value, '%Y-%m-%d')
     return date_value.strftime('%d %b %Y')

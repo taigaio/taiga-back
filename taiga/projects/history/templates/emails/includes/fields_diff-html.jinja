@@ -149,7 +149,7 @@
                     {% endif %}
                 </td>
             </tr>
-    {# ASSIGNED TO #}
+    {# DUE DATE #}
         {% elif field_name == "due_date" %}
             <tr>
                 <td valign="middle" rowspan="2" class="update-row-name">
@@ -158,7 +158,7 @@
                 <td valign="top" class="update-row-from">
                     {% if values.0 != None and values.0 != "" %}
                         <span>{{ _("from") }}</span><br>
-                        <strong>{{ values.0|date }}</strong>
+                        <strong>{{ values.0|parse_and_format_date }}</strong>
                     {% else %}
                         <span>{{ _("from") }}</span><br>
                         <strong>{{ _("Not set") }}</strong>
@@ -169,7 +169,7 @@
                 <td valign="top">
                     {% if values.1 != None and values.1 != "" %}
                         <span>{{ _("to") }}</span><br>
-                        <strong>{{ values.1|date }}</strong>
+                        <strong>{{ values.1|parse_and_format_date }}</strong>
                     {% else %}
                         <span>{{ _("to") }}</span><br>
                         <strong>{{ _("Not set") }}</strong>
