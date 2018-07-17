@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from taiga.projects.attachments.utils import attach_basic_attachments
 from taiga.projects.notifications.utils import attach_watchers_to_queryset
 from taiga.projects.notifications.utils import attach_total_watchers_to_queryset
 from taiga.projects.notifications.utils import attach_is_watcher_to_queryset
@@ -47,7 +48,11 @@ def attach_generated_user_stories(queryset, as_field="generated_user_stories_att
     return queryset
 
 
-def attach_extra_info(queryset, user=None):
+def attach_extra_info(queryset, user=None, include_attachments=False):
+    if include_attachments:
+        queryset = attach_basic_attachments(queryset)
+        queryset = queryset.extra(select={"include_attachments": "True"})
+
     queryset = attach_generated_user_stories(queryset)
     queryset = attach_total_voters_to_queryset(queryset)
     queryset = attach_watchers_to_queryset(queryset)

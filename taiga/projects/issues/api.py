@@ -146,7 +146,11 @@ class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, W
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.select_related("owner", "assigned_to", "status", "project")
-        qs = attach_extra_info(qs, user=self.request.user)
+
+        include_attachments = "include_attachments" in self.request.QUERY_PARAMS
+        qs = attach_extra_info(qs, user=self.request.user,
+                               include_attachments=include_attachments)
+
         return qs
 
     def pre_save(self, obj):
