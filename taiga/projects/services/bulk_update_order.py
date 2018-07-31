@@ -42,11 +42,6 @@ def apply_order_updates(base_orders: dict, new_orders: dict, *, remove_equal_ori
     invalid_keys = new_orders.keys() - base_orders.keys()
     [new_orders.pop(id, None) for id in invalid_keys]
 
-    # Remove the elements from new_orders contained in base_orders
-    if remove_equal_original:
-        common_keys = base_orders.keys() & new_orders.keys()
-        [new_orders.pop(id, None) for id in common_keys if new_orders[id] == base_orders[id]]
-
     # We will apply the multiple order changes by the new position order
     sorted_new_orders = [(k, v) for k, v in new_orders.items()]
     sorted_new_orders = sorted(sorted_new_orders, key=lambda e: e[1])
@@ -73,6 +68,11 @@ def apply_order_updates(base_orders: dict, new_orders: dict, *, remove_equal_ori
     # Remove not modified elements
     removing_keys = [id for id in base_orders if id not in updated_order_ids]
     [base_orders.pop(id, None) for id in removing_keys]
+
+    # Remove the elements that remains the same
+    if remove_equal_original:
+        common_keys = base_orders.keys() & original_orders.keys()
+        [base_orders.pop(id, None) for id in common_keys if original_orders[id] == base_orders[id]]
 
 
 def update_projects_order_in_bulk(bulk_data: list, field: str, user):

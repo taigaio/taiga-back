@@ -199,16 +199,82 @@ def test_apply_order_not_include_noop():
     assert orders == {}
 
 
-def test_apply_order_does_no_generate_holes():
+def test_apply_order_put_it_first():
     orders = {
         "a": 0,
-        "b": 2,
-        "c": 1,
+        "b": 1,
+        "c": 2,
         "z": 99,
     }
     new_orders = {
-        "c": 1,
-        "z": 99,
+        "z": 0,
     }
     apply_order_updates(orders, new_orders, remove_equal_original=True)
-    assert orders == {}
+    assert orders == {
+        "z": 0,
+        "a": 1,
+        "b": 2,
+        "c": 3,
+    }
+
+
+def test_apply_order_put_it_first_with_tie():
+    orders = {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "z": 99,
+    }
+    new_orders = {
+        "z": 0,
+    }
+    apply_order_updates(orders, new_orders, remove_equal_original=True)
+    assert orders == {
+        "z": 0,
+        "a": 1,
+        "b": 1,
+        "c": 1,
+        "d": 2,
+    }
+
+
+def test_apply_order_refresh():
+    orders = {
+        "a": 0,
+        "b": 0,
+        "c": 0,
+        "d": 1,
+        "w": 99,
+        "z": 0,
+    }
+    new_orders = {
+        "z": 0,
+    }
+    apply_order_updates(orders, new_orders, remove_equal_original=True)
+    assert orders == {
+        "a": 1,
+        "b": 1,
+        "c": 1,
+        "d": 2,
+        "w": 100,
+    }
+
+
+def test_apply_order_maintain_new_values():
+    orders = {
+        "a": 1,
+        "b": 2,
+        "c": 3,
+        "d": 4,
+        "e": 7,
+        "f": 6,
+        "g": 7,
+    }
+    new_orders = {
+        "e": 7,
+        "g": 8,
+    }
+    expected = {"g": 8}
+    apply_order_updates(orders, new_orders, remove_equal_original=True)
+    assert expected == orders
