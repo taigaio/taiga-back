@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 3.3.14 (2018-08-06)
+
+### Misc
+
+- Improve US reorder algorithm.
+- Drop python 3.4 and add python 3.6 to travis configuration.
+
 ## 3.3.13 (2018-07-05)
 
 ### Misc
