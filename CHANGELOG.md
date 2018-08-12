@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 3.4.0 Pinus contorta (2018-08-13)
+
+### Features
+
+- Due dates configuration (https://tree.taiga.io/project/taiga/issue/3070):
+    - Add due dates to admin attributes
+    - Update project templates
+- Issues to Sprints (https://tree.taiga.io/project/taiga/issue/1181):
+    - Add milestone filters
+
 ## 3.3.14 (2018-08-06)
 
 ### Misc
