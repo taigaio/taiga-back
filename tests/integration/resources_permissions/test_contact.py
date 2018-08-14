@@ -32,7 +32,7 @@ pytestmark = pytest.mark.django_db
 def data():
     m = type("Models", (object,), {})
     m.user = f.UserFactory.create()
-    m.project = f.ProjectFactory.create()
+    m.project = f.ProjectFactory.create(is_private=False)
     f.MembershipFactory(user=m.project.owner, project=m.project, is_admin=True)
 
     return m
