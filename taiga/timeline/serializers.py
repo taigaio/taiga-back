@@ -15,7 +15,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from urllib.parse import urlparse
 
+from django.core.files.storage import default_storage
 from django.contrib.auth import get_user_model
 
 from taiga.base.api import serializers
@@ -65,4 +67,17 @@ class TimelineSerializer(serializers.LightSerializer):
                 "date_joined": user.date_joined
             }
 
+        if "attachments" in obj.data["values_diff"].keys():
+            [[self.parse_url(item) for item in value] for key, value in
+             obj.data["values_diff"].get("attachments").items() if value]
+
         return obj.data
+
+    def parse_url(self, item):
+        file_path = urlparse(item['url']).path
+        index = file_path.find('/attachments')
+        attached_file = file_path[index+1:]
+
+        item['url'] = default_storage.url(attached_file)
+
+        return item['url']
