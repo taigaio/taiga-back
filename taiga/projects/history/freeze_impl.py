@@ -203,6 +203,7 @@ def extract_attachments(obj) -> list:
         yield {"id": attach.id,
                "filename": os.path.basename(attach.attached_file.name),
                "url": attach.attached_file.url,
+               "attached_file": str(attach.attached_file),
                "thumb_url": thumb_url,
                "is_deprecated": attach.is_deprecated,
                "description": attach.description,

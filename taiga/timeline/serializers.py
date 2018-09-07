@@ -74,10 +74,11 @@ class TimelineSerializer(serializers.LightSerializer):
         return obj.data
 
     def parse_url(self, item):
-        file_path = urlparse(item['url']).path
-        index = file_path.find('/attachments')
-        attached_file = file_path[index+1:]
+        if 'attached_file' in item:
+            attached_file = item['attached_file']
+        else:
+            file_path = urlparse(item['url']).path
+            index = file_path.find('/attachments')
+            attached_file = file_path[index+1:]
 
         item['url'] = default_storage.url(attached_file)
-
-        return item['url']
