@@ -78,12 +78,13 @@ def create_issues_in_bulk(bulk_data, callback=None, precall=None, **additional_f
 
 def issues_to_csv(project, queryset):
     csv_data = io.StringIO()
-    fieldnames = ["ref", "subject", "description", "sprint", "sprint_estimated_start",
-                  "sprint_estimated_finish", "owner", "owner_full_name", "assigned_to",
-                  "assigned_to_full_name", "status", "severity", "priority", "type",
-                  "is_closed", "attachments", "external_reference", "tags", "watchers",
-                  "voters", "created_date", "modified_date", "finished_date", "due_date",
-                  "due_date_reason"]
+    fieldnames = ["id", "ref", "subject", "description", "sprint_id", "sprint",
+                  "sprint_estimated_start", "sprint_estimated_finish", "owner",
+                  "owner_full_name", "assigned_to", "assigned_to_full_name",
+                  "status", "severity", "priority", "type", "is_closed",
+                  "attachments", "external_reference", "tags",  "watchers",
+                  "voters", "created_date", "modified_date", "finished_date",
+                  "due_date", "due_date_reason"]
 
     custom_attrs = project.issuecustomattributes.all()
     for custom_attr in custom_attrs:
@@ -103,9 +104,11 @@ def issues_to_csv(project, queryset):
     writer.writeheader()
     for issue in queryset:
         issue_data = {
+            "id": issue.id,
             "ref": issue.ref,
             "subject": issue.subject,
             "description": issue.description,
+            "sprint_id": issue.milestone.id if issue.milestone else None,
             "sprint": issue.milestone.name if issue.milestone else None,
             "sprint_estimated_start": issue.milestone.estimated_start if issue.milestone else None,
             "sprint_estimated_finish": issue.milestone.estimated_finish if issue.milestone else None,

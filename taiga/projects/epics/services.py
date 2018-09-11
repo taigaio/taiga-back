@@ -164,10 +164,11 @@ def update_epic_related_userstories_order_in_bulk(bulk_data: list, epic: object)
 
 def epics_to_csv(project, queryset):
     csv_data = io.StringIO()
-    fieldnames = ["ref", "subject", "description", "owner", "owner_full_name", "assigned_to",
-                  "assigned_to_full_name", "status", "epics_order", "client_requirement",
-                  "team_requirement", "attachments", "tags", "watchers", "voters",
-                  "created_date", "modified_date", "related_user_stories"]
+    fieldnames = ["id", "ref", "subject", "description", "owner", "owner_full_name",
+                  "assigned_to", "assigned_to_full_name", "status", "epics_order",
+                  "client_requirement", "team_requirement", "attachments", "tags",
+                  "watchers", "voters", "created_date", "modified_date",
+                  "related_user_stories"]
 
     custom_attrs = project.epiccustomattributes.all()
     for custom_attr in custom_attrs:
@@ -188,6 +189,7 @@ def epics_to_csv(project, queryset):
     writer.writeheader()
     for epic in queryset:
         epic_data = {
+            "id": epic.id,
             "ref": epic.ref,
             "subject": epic.subject,
             "description": epic.description,

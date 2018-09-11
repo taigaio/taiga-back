@@ -194,12 +194,11 @@ def open_userstory(us):
 
 def userstories_to_csv(project, queryset):
     csv_data = io.StringIO()
-    fieldnames = ["ref", "subject", "description", "sprint",
-                  "sprint_estimated_start",
-                  "sprint_estimated_finish", "owner", "owner_full_name",
-                  "assigned_to",
-                  "assigned_to_full_name", "assigned_users",
-                  "assigned_users_full_name", "status", "is_closed"]
+    fieldnames = ["id", "ref", "subject", "description", "sprint_id", "sprint",
+                  "sprint_estimated_start", "sprint_estimated_finish", "owner",
+                  "owner_full_name", "assigned_to", "assigned_to_full_name",
+                  "assigned_users", "assigned_users_full_name", "status",
+                  "is_closed"]
 
     roles = project.roles.filter(computable=True).order_by('slug')
     for role in roles:
@@ -237,9 +236,11 @@ def userstories_to_csv(project, queryset):
     writer.writeheader()
     for us in queryset:
         row = {
+            "id": us.id,
             "ref": us.ref,
             "subject": us.subject,
             "description": us.description,
+            "sprint_id": us.milestone.id if us.milestone else None,
             "sprint": us.milestone.name if us.milestone else None,
             "sprint_estimated_start": us.milestone.estimated_start if
             us.milestone else None,

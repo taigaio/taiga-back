@@ -118,11 +118,16 @@ def snapshot_tasks_in_bulk(bulk_data, user):
 
 def tasks_to_csv(project, queryset):
     csv_data = io.StringIO()
-    fieldnames = ["ref", "subject", "description", "user_story", "sprint", "sprint_estimated_start",
-                  "sprint_estimated_finish", "owner", "owner_full_name", "assigned_to",
-                  "assigned_to_full_name", "status", "is_iocaine", "is_closed", "us_order",
-                  "taskboard_order", "attachments", "external_reference", "tags", "watchers",
-                  "voters", "created_date", "modified_date", "finished_date", "due_date",
+    fieldnames = ["id", "ref", "subject", "description", "user_story", "sprint_id",
+                  "sprint", "sprint_estimated_start", "sprint_estimated_finish",
+                  "owner", "owner_full_name",
+                  "assigned_to",
+                  "assigned_to_full_name", "status", "is_iocaine", "is_closed",
+                  "us_order",
+                  "taskboard_order", "attachments", "external_reference",
+                  "tags", "watchers",
+                  "voters", "created_date", "modified_date", "finished_date",
+                  "due_date",
                   "due_date_reason"]
 
     custom_attrs = project.taskcustomattributes.all()
@@ -144,10 +149,12 @@ def tasks_to_csv(project, queryset):
     writer.writeheader()
     for task in queryset:
         task_data = {
+            "id": task.id,
             "ref": task.ref,
             "subject": task.subject,
             "description": task.description,
             "user_story": task.user_story.ref if task.user_story else None,
+            "sprint_id": task.milestone.id if task.milestone else None,
             "sprint": task.milestone.name if task.milestone else None,
             "sprint_estimated_start": task.milestone.estimated_start if task.milestone else None,
             "sprint_estimated_finish": task.milestone.estimated_finish if task.milestone else None,
