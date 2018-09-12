@@ -274,6 +274,11 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         project.save()
         return uuid_value
 
+    def _delete_csv_uuid(self, project, field):
+        setattr(project, field, None)
+        project.save()
+        return getattr(project, field)
+
     @detail_route(methods=["POST"])
     def regenerate_epics_csv_uuid(self, request, pk=None):
         project = self.get_object()
@@ -304,6 +309,38 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         self.check_permissions(request, "regenerate_issues_csv_uuid", project)
         self.pre_conditions_on_save(project)
         data = {"uuid": self._regenerate_csv_uuid(project, "issues_csv_uuid")}
+        return response.Ok(data)
+
+    @detail_route(methods=["POST"])
+    def delete_epics_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "delete_epics_csv_uuid", project)
+        self.pre_conditions_on_save(project)
+        data = {"uuid": self._delete_csv_uuid(project, "epics_csv_uuid")}
+        return response.Ok(data)
+
+    @detail_route(methods=["POST"])
+    def delete_userstories_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "delete_userstories_csv_uuid", project)
+        self.pre_conditions_on_save(project)
+        data = {"uuid": self._delete_csv_uuid(project, "userstories_csv_uuid")}
+        return response.Ok(data)
+
+    @detail_route(methods=["POST"])
+    def delete_tasks_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "delete_tasks_csv_uuid", project)
+        self.pre_conditions_on_save(project)
+        data = {"uuid": self._delete_csv_uuid(project, "tasks_csv_uuid")}
+        return response.Ok(data)
+
+    @detail_route(methods=["POST"])
+    def delete_issues_csv_uuid(self, request, pk=None):
+        project = self.get_object()
+        self.check_permissions(request, "delete_issues_csv_uuid", project)
+        self.pre_conditions_on_save(project)
+        data = {"uuid": self._delete_csv_uuid(project, "issues_csv_uuid")}
         return response.Ok(data)
 
     @list_route(methods=["GET"])
