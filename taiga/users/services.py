@@ -29,7 +29,7 @@ import zipfile
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.core.files.storage import default_storage
-from django.db.models import Q
+from django.db.models import OuterRef, Q, Subquery
 from django.db import connection
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -155,10 +155,14 @@ def get_stats_for_user(from_user, by_user):
         .count()
 
     UserStory = apps.get_model('userstories', 'UserStory')
+
+    assigned_users_ids = UserStory.objects.order_by().filter(
+        assigned_users__in=[from_user], id=OuterRef('pk')).values('pk')
+
     total_num_closed_userstories = UserStory.objects.filter(
         is_closed=True,
-        project__id__in=project_ids,
-        assigned_to=from_user).count()
+        project__id__in=project_ids).filter(
+        Q(assigned_to=from_user) | Q(pk__in=Subquery(assigned_users_ids))).count()
 
     project_stats = {
         'total_num_projects': total_num_projects,
