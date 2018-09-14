@@ -591,9 +591,10 @@ def test_custom_fields_csv_generation():
     data.seek(0)
     reader = csv.reader(data)
     row = next(reader)
-    assert row[25] == attr.name
+
+    assert row[27] == attr.name
     row = next(reader)
-    assert row[25] == "val1"
+    assert row[27] == "val1"
 
 
 def test_api_validator_assigned_to_when_update_issues(client):
