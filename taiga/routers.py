@@ -49,6 +49,13 @@ from taiga.projects.notifications.api import NotifyPolicyViewSet
 router.register(r"notify-policies", NotifyPolicyViewSet, base_name="notifications")
 
 
+# Project settings
+from taiga.projects.settings.api import UserProjectSettingsViewSet, SectionsViewSet
+
+router.register(r"user-project-settings", UserProjectSettingsViewSet, base_name="user-project-settings")
+router.register(r"sections", SectionsViewSet, base_name="sections")
+
+
 # Projects & Selectors
 from taiga.projects.api import ProjectViewSet
 from taiga.projects.api import ProjectFansViewSet

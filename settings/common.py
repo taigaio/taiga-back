@@ -309,6 +309,7 @@ INSTALLED_APPS = [
     "taiga.projects.issues",
     "taiga.projects.wiki",
     "taiga.projects.contact",
+    "taiga.projects.settings",
     "taiga.searches",
     "taiga.timeline",
     "taiga.mdrender",
