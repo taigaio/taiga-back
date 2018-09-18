@@ -9,9 +9,10 @@
 # M S, 2015
 # Guido Brand, 2015
 # Hans Raaf, 2015
-# Hans Raaf, 2015
+# Hans Raaf, 2015,2018
 # Henning Matthaei, 2015
 # Horst Maier <andreashuppert+transifex@googlemail.com>, 2018
+# Jonas Zürcher <info@jonaszuercher.ch>, 2018
 # Niklas KPY. <niklas.kopyciok@googlemail.com>, 2018
 # Philipp Schartlmüller <schartiph@gmail.com>, 2017
 # Regina <r.raaf@metatexx.de>, 2015
@@ -25,9 +26,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-10 11:35+0200\n"
-"PO-Revision-Date: 2018-08-10 09:46+0000\n"
-"Last-Translator: Alejandro Hermida <alexhermida@gmail.com>\n"
+"POT-Creation-Date: 2018-09-18 17:14+0200\n"
+"PO-Revision-Date: 2018-09-04 08:41+0000\n"
+"Last-Translator: Jonas Zürcher <info@jonaszuercher.ch>\n"
 "Language-Team: German (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -77,8 +78,8 @@ msgid "Error on creating new user."
 msgstr "Fehler bei der Erstellung des neuen Benutzers."
 
 #: taiga/auth/tokens.py:49 taiga/auth/tokens.py:56
-#: taiga/external_apps/services.py:34 taiga/projects/api.py:389
-#: taiga/projects/api.py:410
+#: taiga/external_apps/services.py:34 taiga/projects/api.py:426
+#: taiga/projects/api.py:447
 msgid "Invalid token"
 msgstr "Ungültiges Token"
 
@@ -230,8 +231,8 @@ msgstr ""
 "haben, ist entweder kein Bild oder defekt."
 
 #: taiga/base/api/mixins.py:284 taiga/base/exceptions.py:211
-#: taiga/hooks/api.py:69 taiga/projects/api.py:424 taiga/projects/api.py:457
-#: taiga/projects/api.py:933 taiga/projects/epics/api.py:200
+#: taiga/hooks/api.py:69 taiga/projects/api.py:461 taiga/projects/api.py:494
+#: taiga/projects/api.py:970 taiga/projects/epics/api.py:200
 #: taiga/projects/epics/api.py:284 taiga/projects/issues/api.py:233
 #: taiga/projects/mixins/ordering.py:59 taiga/projects/tasks/api.py:258
 #: taiga/projects/tasks/api.py:283 taiga/projects/userstories/api.py:346
@@ -548,15 +549,15 @@ msgstr ""
 
 #: taiga/events/events.py:106
 msgid "User story created"
-msgstr ""
+msgstr "User story erstellt"
 
 #: taiga/events/events.py:109
 msgid "User story changed"
-msgstr ""
+msgstr "User story geändert"
 
 #: taiga/events/events.py:112
 msgid "User story deleted"
-msgstr ""
+msgstr "User story gelöscht"
 
 #: taiga/events/events.py:114
 msgid "US #{} - {}"
@@ -564,67 +565,67 @@ msgstr ""
 
 #: taiga/events/events.py:117
 msgid "Task created"
-msgstr ""
+msgstr "Aufgabe erzeugt"
 
 #: taiga/events/events.py:120
 msgid "Task changed"
-msgstr ""
+msgstr "Task geändert"
 
 #: taiga/events/events.py:123
 msgid "Task deleted"
-msgstr ""
+msgstr "Task gelöscht"
 
 #: taiga/events/events.py:125
 msgid "Task #{} - {}"
-msgstr ""
+msgstr "Task #{} - {}"
 
 #: taiga/events/events.py:128
 msgid "Issue created"
-msgstr ""
+msgstr "Ticket erzeugt"
 
 #: taiga/events/events.py:131
 msgid "Issue changed"
-msgstr ""
+msgstr "Ticket geändert"
 
 #: taiga/events/events.py:134
 msgid "Issue deleted"
-msgstr ""
+msgstr "Ticket gelöscht"
 
 #: taiga/events/events.py:136
 msgid "Issue: #{} - {}"
-msgstr ""
+msgstr "Ticket: #{} - {}"
 
 #: taiga/events/events.py:139
 msgid "Wiki Page created"
-msgstr ""
+msgstr "Wiki-Seite erstellt"
 
 #: taiga/events/events.py:142
 msgid "Wiki Page changed"
-msgstr ""
+msgstr "Wiki-Seite geändert"
 
 #: taiga/events/events.py:145
 msgid "Wiki Page deleted"
-msgstr ""
+msgstr "Wiki-Seite gelöscht"
 
 #: taiga/events/events.py:147
 msgid "Wiki Page: {}"
-msgstr ""
+msgstr "Wiki-Seite: {}"
 
 #: taiga/events/events.py:150
 msgid "Sprint created"
-msgstr ""
+msgstr "Sprint erstellt"
 
 #: taiga/events/events.py:153
 msgid "Sprint changed"
-msgstr ""
+msgstr "Sprint geändert"
 
 #: taiga/events/events.py:156
 msgid "Sprint deleted"
-msgstr ""
+msgstr "Sprint gelöscht"
 
 #: taiga/events/events.py:158
 msgid "Sprint: {}"
-msgstr ""
+msgstr "Sprint: {}"
 
 #: taiga/export_import/api.py:127
 msgid "We needed at least one role"
@@ -1200,11 +1201,13 @@ msgid ""
 "Issue created by [@{user_name}]({user_url} \"See @{user_name}'s {platform} "
 "profile\") from [{platform}#{number}]({url} \"Go to issue\")."
 msgstr ""
+"Ticket erstellt von [@{user_name}]({user_url} \"Siehe @{user_name}'s "
+"{platform} Profil\") aus [{platform}#{number}]({url} \"Gehe zum Ticket\")."
 
 #: taiga/hooks/event_hooks.py:107
 #, python-brace-format
 msgid "Issue created from {platform}."
-msgstr "Problem erstellt von {platform}."
+msgstr "Ticket erstellt durch {platform}."
 
 #: taiga/hooks/event_hooks.py:120
 msgid "Invalid issue information"
@@ -1244,6 +1247,7 @@ msgstr ""
 msgid ""
 "This issue has been mentioned in the {platform} commit \"{commit_message}\""
 msgstr ""
+"Das Ticket wurde im Commit \"{commit_message}\" bei {platform} erwähnt."
 
 #: taiga/hooks/event_hooks.py:206
 msgid "The referenced element doesn't exist"
@@ -1269,7 +1273,7 @@ msgstr "Ungültige Asana API Anfrage"
 #: taiga/importers/asana/api.py:52 taiga/importers/asana/api.py:75
 #: taiga/importers/asana/api.py:141
 msgid "Failed to make the request to Asana API"
-msgstr ""
+msgstr "Request an Asana API fehlgeschlagen"
 
 #: taiga/importers/asana/api.py:129 taiga/importers/github/api.py:123
 msgid "Code param needed"
@@ -1277,15 +1281,15 @@ msgstr ""
 
 #: taiga/importers/asana/tasks.py:42 taiga/importers/asana/tasks.py:43
 msgid "Error importing Asana project"
-msgstr ""
+msgstr "Fehler beim importieren von Asana-Projekt"
 
 #: taiga/importers/github/api.py:135
 msgid "Invalid auth data"
-msgstr ""
+msgstr "Ungültige Anmeldedaten"
 
 #: taiga/importers/github/api.py:137
 msgid "Third party service failing"
-msgstr ""
+msgstr "Ausfall des Dienstes eines Drittanbieters"
 
 #: taiga/importers/github/tasks.py:42 taiga/importers/github/tasks.py:43
 msgid "Error importing GitHub project"
@@ -1294,7 +1298,7 @@ msgstr "Fehler beim Importieren des GitHub Projektes"
 #: taiga/importers/jira/api.py:62 taiga/importers/jira/api.py:89
 #: taiga/importers/jira/api.py:109 taiga/importers/jira/api.py:182
 msgid "The url param is needed"
-msgstr ""
+msgstr "Der URL-Parameter wird benötigt"
 
 #: taiga/importers/jira/api.py:158
 msgid "Invalid project_type {}"
@@ -1533,12 +1537,12 @@ msgstr "Ungültiger Request : %s in %s"
 #: taiga/importers/trello/importer.py:80 taiga/importers/trello/importer.py:82
 #, python-format
 msgid "Unauthorized: %s at %s"
-msgstr ""
+msgstr "Nicht autorisiert: %s bei %s"
 
 #: taiga/importers/trello/importer.py:84 taiga/importers/trello/importer.py:86
 #, python-format
 msgid "Resource Unavailable: %s at %s"
-msgstr ""
+msgstr "Ressource nicht verfügbar: %s bei %s"
 
 #: taiga/importers/trello/tasks.py:42 taiga/importers/trello/tasks.py:43
 msgid "Error importing Trello project"
@@ -1710,7 +1714,7 @@ msgstr "Administrator-Rollen"
 
 #: taiga/projects/admin.py:100
 msgid "Privacity"
-msgstr ""
+msgstr "Privatsphäre"
 
 #: taiga/projects/admin.py:111
 msgid "Modules"
@@ -1776,49 +1780,49 @@ msgstr "Unglültiger Templatename"
 msgid "Not valid template description"
 msgstr "Ungültige Templatebeschreibung"
 
-#: taiga/projects/api.py:369 taiga/projects/api.py:968
+#: taiga/projects/api.py:406 taiga/projects/api.py:1005
 msgid "Invalid user id"
 msgstr "Ungültige Benutzer-Id"
 
-#: taiga/projects/api.py:375 taiga/projects/api.py:974
+#: taiga/projects/api.py:412 taiga/projects/api.py:1011
 msgid "The user doesn't exist"
 msgstr "Der Benutzer existiert nicht"
 
-#: taiga/projects/api.py:379
+#: taiga/projects/api.py:416
 msgid "The user must be already a project member"
 msgstr "Der Benutzer muss bereits Mitglied des Projektes sein"
 
-#: taiga/projects/api.py:605
+#: taiga/projects/api.py:642
 msgid "You can't delete user story due date by default"
 msgstr ""
 
-#: taiga/projects/api.py:621
+#: taiga/projects/api.py:658
 msgid "Project already have due dates"
-msgstr ""
+msgstr "Das Projekt hat bereits Ablaufdaten"
 
-#: taiga/projects/api.py:681
+#: taiga/projects/api.py:718
 msgid "You can't delete task due date by default"
 msgstr ""
 
-#: taiga/projects/api.py:697
+#: taiga/projects/api.py:734
 msgid "Project already have task due dates"
 msgstr ""
 
-#: taiga/projects/api.py:821
+#: taiga/projects/api.py:858
 msgid "You can't delete issue due date by default"
-msgstr ""
+msgstr "Die Ticket Fälligkeit kann standardmäßig nicht gelöscht werden."
 
-#: taiga/projects/api.py:837
+#: taiga/projects/api.py:874
 msgid "Project already have issue due dates"
-msgstr ""
+msgstr "Das Projekt hat bereits ein Fälligkeitsdatum"
 
-#: taiga/projects/api.py:986
+#: taiga/projects/api.py:1023
 msgid ""
 "This user can't be removed from the following projects, because would leave "
 "them without any active admin: {}."
 msgstr ""
 
-#: taiga/projects/api.py:996
+#: taiga/projects/api.py:1033
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
@@ -1826,7 +1830,7 @@ msgstr ""
 "Das Projekt muss einen Eigentümer haben und mindestens ein Benutzer muss ein "
 "aktiver Administrator sein"
 
-#: taiga/projects/api.py:1030
+#: taiga/projects/api.py:1067
 msgid "You don't have permisions to see that."
 msgstr "Sie haben keine Berechtigungen für diese Ansicht"
 
@@ -1836,7 +1840,7 @@ msgstr "Teil-Aktualisierungen sind nicht unterstützt"
 
 #: taiga/projects/attachments/api.py:69
 msgid "Object id issue isn't exists"
-msgstr ""
+msgstr "Das Ticket für die Objekt Id existiert nicht"
 
 #: taiga/projects/attachments/api.py:72
 msgid "Project ID not matches between object and project"
@@ -1923,7 +1927,7 @@ msgstr "Gesprächig"
 
 #: taiga/projects/choices.py:35
 msgid "This project is blocked due to payment failure"
-msgstr ""
+msgstr "Dieses Projekt wurde wegen eines Zahlungsfehlers gesperrt."
 
 #: taiga/projects/choices.py:36
 msgid "This project is blocked by admin staff"
@@ -1935,7 +1939,7 @@ msgstr "Dieses Projekt ist blockiert, weil es der Eigentümer verlassen hat."
 
 #: taiga/projects/choices.py:38
 msgid "This project is blocked while it's deleted"
-msgstr ""
+msgstr "Dieses Projekt ist gesperrt bis es gelöscht ist."
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:10
 #, python-format
@@ -2037,11 +2041,11 @@ msgstr "Dieser Name wird schon verwendet."
 
 #: taiga/projects/due_dates/models.py:21
 msgid "due date"
-msgstr ""
+msgstr "Fälligkeitsdatum"
 
 #: taiga/projects/due_dates/models.py:24
 msgid "reason for the due date"
-msgstr ""
+msgstr "Grund des Fälligkeitsdatums"
 
 #: taiga/projects/epics/api.py:94
 msgid "You don't have permissions to set this status to this epic."
@@ -2104,7 +2108,7 @@ msgstr "Es gibt keinen Epic mit dieser ID"
 
 #: taiga/projects/history/api.py:93
 msgid "comment is required"
-msgstr ""
+msgstr "ein Kommentar ist erforderlich"
 
 #: taiga/projects/history/api.py:96
 msgid "deleted comments can't be edited"
@@ -2199,7 +2203,7 @@ msgstr "Nicht zugewiesen"
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:164
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:175
 msgid "Not set"
-msgstr ""
+msgstr "nicht gesetzt"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:286
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:91
@@ -2347,7 +2351,7 @@ msgstr "wird blockiert"
 
 #: taiga/projects/mixins/by_ref.py:32
 msgid "ref param is needed"
-msgstr ""
+msgstr "Referenzangabe benötigt"
 
 #: taiga/projects/mixins/by_ref.py:35
 msgid "project or project__slug param is needed"
@@ -2440,11 +2444,11 @@ msgstr "Story Punkte insgesamt"
 
 #: taiga/projects/models.py:172 taiga/projects/models.py:825
 msgid "active contact"
-msgstr ""
+msgstr "aktiver Kontakt"
 
 #: taiga/projects/models.py:174 taiga/projects/models.py:827
 msgid "active epics panel"
-msgstr ""
+msgstr "aktives Epics Panel"
 
 #: taiga/projects/models.py:176 taiga/projects/models.py:829
 msgid "active backlog panel"
@@ -2496,7 +2500,7 @@ msgstr "sucht nach Mitarbeitern"
 
 #: taiga/projects/models.py:208 taiga/projects/models.py:839
 msgid "looking for people note"
-msgstr ""
+msgstr "Hinweis für Mitarbeitersuche"
 
 #: taiga/projects/models.py:222
 msgid "project transfer token"
@@ -2558,12 +2562,12 @@ msgstr "Wert"
 #: taiga/projects/models.py:614 taiga/projects/models.py:671
 #: taiga/projects/models.py:789
 msgid "by default"
-msgstr ""
+msgstr "Standardmässig"
 
 #: taiga/projects/models.py:618 taiga/projects/models.py:675
 #: taiga/projects/models.py:793
 msgid "days to due"
-msgstr ""
+msgstr "Tage bis zur Fälligkeit"
 
 #: taiga/projects/models.py:823
 msgid "default owner's role"
@@ -2583,7 +2587,7 @@ msgstr "User-Story Status "
 
 #: taiga/projects/models.py:849
 msgid "us duedates"
-msgstr ""
+msgstr "US Fälligkeiten"
 
 #: taiga/projects/models.py:850 taiga/projects/userstories/models.py:45
 #: taiga/projects/userstories/models.py:78
@@ -2596,7 +2600,7 @@ msgstr "Aufgaben Status"
 
 #: taiga/projects/models.py:852
 msgid "task duedates"
-msgstr ""
+msgstr "Aufgaben Fälligkeiten"
 
 #: taiga/projects/models.py:853
 msgid "issue statuses"
@@ -2608,7 +2612,7 @@ msgstr "Ticket Arten"
 
 #: taiga/projects/models.py:855
 msgid "issue duedates"
-msgstr ""
+msgstr "Ticket Fälligkeiten"
 
 #: taiga/projects/models.py:856
 msgid "priorities"
@@ -2624,19 +2628,19 @@ msgstr "Rollen"
 
 #: taiga/projects/models.py:859
 msgid "epic custom attributes"
-msgstr ""
+msgstr "Benutzerdefinierte Epic Attribute"
 
 #: taiga/projects/models.py:860
 msgid "us custom attributes"
-msgstr ""
+msgstr "Benutzerdefinierte User Story Attribute"
 
 #: taiga/projects/models.py:861
 msgid "task custom attributes"
-msgstr ""
+msgstr "Benutzerdefinierte Aufgaben Attribute"
 
 #: taiga/projects/models.py:862
 msgid "issue custom attributes"
-msgstr ""
+msgstr "Benutzerdefinierte Ticket Eigenschaften"
 
 #: taiga/projects/notifications/choices.py:30
 msgid "Involved"
@@ -2785,7 +2789,7 @@ msgstr ""
 "<h1>Ticket aktualisiert</h1>\n"
 "<p>Hallo %(user)s, <br> %(changer)s hat ein Ticket aktualisiert in "
 "%(project)s</p>\n"
-"<p>Issue #%(ref)s %(subject)s</p>\n"
+"<p>Ticket #%(ref)s %(subject)s</p>\n"
 "<a class=\"button\" href=\"%(url)s\" title=\"See Issue #%(ref)s: %(subject)s "
 "in Taiga\">Ticket ansehen</a>\n"
 " "
@@ -3467,7 +3471,7 @@ msgid ""
 "[%(project)s] Created the Wiki Page \"%(page)s\"\n"
 msgstr ""
 "\n"
-"[%(project)s] erstetllte die Wiki Seite \"%(page)s\"\n"
+"[%(project)s] erstellte die Wiki Seite \"%(page)s\"\n"
 "\n"
 
 #: taiga/projects/notifications/templates/emails/wiki/wikipage-delete-body-html.jinja:4
@@ -3572,23 +3576,23 @@ msgid "You have reached the current limit of pending memberships"
 msgstr ""
 
 #: taiga/projects/services/projects.py:101
-#: taiga/projects/services/projects.py:141 taiga/users/services.py:596
+#: taiga/projects/services/projects.py:141 taiga/users/services.py:600
 msgid "You can't have more private projects"
 msgstr "Sie können nicht mehr private Projekte haben"
 
 #: taiga/projects/services/projects.py:105
-#: taiga/projects/services/projects.py:145 taiga/users/services.py:599
+#: taiga/projects/services/projects.py:145 taiga/users/services.py:603
 msgid ""
 "This project reaches your current limit of memberships for private projects"
 msgstr ""
 
 #: taiga/projects/services/projects.py:109
-#: taiga/projects/services/projects.py:149 taiga/users/services.py:603
+#: taiga/projects/services/projects.py:149 taiga/users/services.py:607
 msgid "You can't have more public projects"
 msgstr "Sie können nicht mehr öffentliche Projekte haben."
 
 #: taiga/projects/services/projects.py:113
-#: taiga/projects/services/projects.py:153 taiga/users/services.py:606
+#: taiga/projects/services/projects.py:153 taiga/users/services.py:610
 msgid ""
 "This project reaches your current limit of memberships for public projects"
 msgstr ""
@@ -3640,7 +3644,7 @@ msgstr "Tag Farben"
 #: taiga/projects/tagging/validators.py:47
 #: taiga/projects/tagging/validators.py:74
 msgid "This tag already exists."
-msgstr ""
+msgstr "Dieser Tag existiert bereits"
 
 #: taiga/projects/tagging/validators.py:54
 #: taiga/projects/tagging/validators.py:81
@@ -3684,15 +3688,15 @@ msgstr "ist Iocaine"
 
 #: taiga/projects/tasks/validators.py:61
 msgid "Invalid milestone id."
-msgstr ""
+msgstr "Ungültige milestone id."
 
 #: taiga/projects/tasks/validators.py:72
 msgid "Invalid task status id."
-msgstr ""
+msgstr "Ungültige task status id."
 
 #: taiga/projects/tasks/validators.py:85
 msgid "Invalid user story id."
-msgstr ""
+msgstr "Ungültige user story id."
 
 #: taiga/projects/tasks/validators.py:109
 msgid "Invalid task status id. The status must belong to the same project."
@@ -4388,7 +4392,7 @@ msgstr "Sprintreihenfolge"
 
 #: taiga/projects/userstories/models.py:85
 msgid "kanban order"
-msgstr ""
+msgstr "kanban Reihenfolge"
 
 #: taiga/projects/userstories/models.py:93
 msgid "finish date"
@@ -4396,11 +4400,11 @@ msgstr "Endtermin"
 
 #: taiga/projects/userstories/models.py:102
 msgid "assigned users"
-msgstr ""
+msgstr "zugewiesene Benutzer"
 
 #: taiga/projects/userstories/models.py:111
 msgid "generated from issue"
-msgstr "erzeugt von Ticket"
+msgstr "erzeugt aus Ticket"
 
 #: taiga/projects/userstories/validators.py:43
 msgid "There's no user story with that id"

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-10 11:35+0200\n"
+"POT-Creation-Date: 2018-09-18 17:14+0200\n"
 "PO-Revision-Date: 2018-08-10 09:46+0000\n"
 "Last-Translator: Alejandro Hermida <alexhermida@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
@@ -63,8 +63,8 @@ msgid "Error on creating new user."
 msgstr "Yeni kullanıcı oluşturulurken hata meydana geldi."
 
 #: taiga/auth/tokens.py:49 taiga/auth/tokens.py:56
-#: taiga/external_apps/services.py:34 taiga/projects/api.py:389
-#: taiga/projects/api.py:410
+#: taiga/external_apps/services.py:34 taiga/projects/api.py:426
+#: taiga/projects/api.py:447
 msgid "Invalid token"
 msgstr "Geçersiz kupon"
 
@@ -205,8 +205,8 @@ msgstr ""
 "resim dosyası değil."
 
 #: taiga/base/api/mixins.py:284 taiga/base/exceptions.py:211
-#: taiga/hooks/api.py:69 taiga/projects/api.py:424 taiga/projects/api.py:457
-#: taiga/projects/api.py:933 taiga/projects/epics/api.py:200
+#: taiga/hooks/api.py:69 taiga/projects/api.py:461 taiga/projects/api.py:494
+#: taiga/projects/api.py:970 taiga/projects/epics/api.py:200
 #: taiga/projects/epics/api.py:284 taiga/projects/issues/api.py:233
 #: taiga/projects/mixins/ordering.py:59 taiga/projects/tasks/api.py:258
 #: taiga/projects/tasks/api.py:283 taiga/projects/userstories/api.py:346
@@ -1623,55 +1623,55 @@ msgstr "Geçersiz şablon adı"
 msgid "Not valid template description"
 msgstr "Geçersiz şablon tanımı"
 
-#: taiga/projects/api.py:369 taiga/projects/api.py:968
+#: taiga/projects/api.py:406 taiga/projects/api.py:1005
 msgid "Invalid user id"
 msgstr "Geçersiz kullanıcı id"
 
-#: taiga/projects/api.py:375 taiga/projects/api.py:974
+#: taiga/projects/api.py:412 taiga/projects/api.py:1011
 msgid "The user doesn't exist"
 msgstr "Kullanıcı mevcut değil"
 
-#: taiga/projects/api.py:379
+#: taiga/projects/api.py:416
 msgid "The user must be already a project member"
 msgstr "Kullanıcı zaten proje üyesi durumunda"
 
-#: taiga/projects/api.py:605
+#: taiga/projects/api.py:642
 msgid "You can't delete user story due date by default"
 msgstr ""
 
-#: taiga/projects/api.py:621
+#: taiga/projects/api.py:658
 msgid "Project already have due dates"
 msgstr ""
 
-#: taiga/projects/api.py:681
+#: taiga/projects/api.py:718
 msgid "You can't delete task due date by default"
 msgstr ""
 
-#: taiga/projects/api.py:697
+#: taiga/projects/api.py:734
 msgid "Project already have task due dates"
 msgstr ""
 
-#: taiga/projects/api.py:821
+#: taiga/projects/api.py:858
 msgid "You can't delete issue due date by default"
 msgstr ""
 
-#: taiga/projects/api.py:837
+#: taiga/projects/api.py:874
 msgid "Project already have issue due dates"
 msgstr ""
 
-#: taiga/projects/api.py:986
+#: taiga/projects/api.py:1023
 msgid ""
 "This user can't be removed from the following projects, because would leave "
 "them without any active admin: {}."
 msgstr ""
 
-#: taiga/projects/api.py:996
+#: taiga/projects/api.py:1033
 msgid ""
 "The project must have an owner and at least one of the users must be an "
 "active admin"
 msgstr ""
 
-#: taiga/projects/api.py:1030
+#: taiga/projects/api.py:1067
 msgid "You don't have permisions to see that."
 msgstr "Görebilmek için yetkiniz yok."
 
@@ -3188,23 +3188,23 @@ msgid "You have reached the current limit of pending memberships"
 msgstr ""
 
 #: taiga/projects/services/projects.py:101
-#: taiga/projects/services/projects.py:141 taiga/users/services.py:596
+#: taiga/projects/services/projects.py:141 taiga/users/services.py:600
 msgid "You can't have more private projects"
 msgstr ""
 
 #: taiga/projects/services/projects.py:105
-#: taiga/projects/services/projects.py:145 taiga/users/services.py:599
+#: taiga/projects/services/projects.py:145 taiga/users/services.py:603
 msgid ""
 "This project reaches your current limit of memberships for private projects"
 msgstr ""
 
 #: taiga/projects/services/projects.py:109
-#: taiga/projects/services/projects.py:149 taiga/users/services.py:603
+#: taiga/projects/services/projects.py:149 taiga/users/services.py:607
 msgid "You can't have more public projects"
 msgstr ""
 
 #: taiga/projects/services/projects.py:113
-#: taiga/projects/services/projects.py:153 taiga/users/services.py:606
+#: taiga/projects/services/projects.py:153 taiga/users/services.py:610
 msgid ""
 "This project reaches your current limit of memberships for public projects"
 msgstr ""
