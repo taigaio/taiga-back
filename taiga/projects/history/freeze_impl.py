@@ -198,13 +198,13 @@ def _generic_extract(obj:object, fields:list, default=None) -> dict:
 @as_tuple
 def extract_attachments(obj) -> list:
     for attach in obj.attachments.all():
-        thumb_url = get_timeline_image_thumbnail_url(attach)
+        # Force the creation of a thumbnail for the timeline
+        get_timeline_image_thumbnail_url(attach)
 
         yield {"id": attach.id,
                "filename": os.path.basename(attach.attached_file.name),
                "url": attach.attached_file.url,
                "attached_file": str(attach.attached_file),
-               "thumb_url": thumb_url,
                "is_deprecated": attach.is_deprecated,
                "description": attach.description,
                "order": attach.order}
