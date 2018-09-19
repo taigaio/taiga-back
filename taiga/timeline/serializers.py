@@ -67,9 +67,9 @@ class TimelineSerializer(serializers.LightSerializer):
                 "date_joined": user.date_joined
             }
 
-        if "attachments" in obj.data["values_diff"].keys():
+        if "values_diff" in obj.data and "attachments" in obj.data["values_diff"]:
             [[self.parse_url(item) for item in value] for key, value in
-             obj.data["values_diff"].get("attachments").items() if value]
+             obj.data["values_diff"]["attachments"].items() if value]
 
         return obj.data
 
