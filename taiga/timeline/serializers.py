@@ -85,7 +85,12 @@ class TimelineSerializer(serializers.LightSerializer):
             attached_file = file_path[index+1:]
 
         item['url'] = default_storage.url(attached_file)
-        thumb_url = get_thumbnail_url(attached_file,
-                                      settings.THN_ATTACHMENT_TIMELINE)
+
+        if 'thumbnail_file' in item:
+            thumb_file = item['thumbnail_file']
+            thumb_url = default_storage.url(thumb_file) if thumb_file else None
+        else:
+            thumb_url = get_thumbnail_url(attached_file,
+                                          settings.THN_ATTACHMENT_TIMELINE)
 
         item['thumb_url'] = thumb_url

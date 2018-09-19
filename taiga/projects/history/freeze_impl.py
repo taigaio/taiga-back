@@ -28,7 +28,7 @@ from taiga.base.utils.iterators import as_tuple
 from taiga.base.utils.iterators import as_dict
 from taiga.mdrender.service import render as mdrender
 
-from taiga.projects.attachments.services import get_timeline_image_thumbnail_url
+from taiga.projects.attachments.services import get_timeline_image_thumbnail_name
 
 import os
 
@@ -199,12 +199,13 @@ def _generic_extract(obj:object, fields:list, default=None) -> dict:
 def extract_attachments(obj) -> list:
     for attach in obj.attachments.all():
         # Force the creation of a thumbnail for the timeline
-        get_timeline_image_thumbnail_url(attach)
+        thumbnail_file = get_timeline_image_thumbnail_name(attach)
 
         yield {"id": attach.id,
                "filename": os.path.basename(attach.attached_file.name),
                "url": attach.attached_file.url,
                "attached_file": str(attach.attached_file),
+               "thumbnail_file": thumbnail_file,
                "is_deprecated": attach.is_deprecated,
                "description": attach.description,
                "order": attach.order}
