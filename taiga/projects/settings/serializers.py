@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from taiga.base.api import serializers
+from taiga.permissions.services import is_project_admin, user_has_perm
 
 from . import models
 
@@ -36,13 +37,20 @@ class UserProjectSettingsSerializer(serializers.ModelSerializer):
 
     def get_allowed_sections(self, obj):
         sections = [Section.timeline, Section.search, Section.team]
+        active_modules = {'epics': 'view_epics', 'backlog': 'view_us',
+                          'kanban': 'view_us', 'wiki': 'view_wiki_pages',
+                          'issues': 'view_issues'}
 
-        active_modules = ['epics', 'backlog', 'kanban', 'wiki', 'issues']
+        for key in active_modules:
+            module_name = "is_{}_activated".format(key)
+            if getattr(obj.project, module_name) and \
+                    user_has_perm(obj.user, active_modules[key], obj.project):
+                sections.append(getattr(Section, key))
 
-        for module in active_modules:
-            module_name = "is_{}_activated".format(module)
-            if getattr(obj.project, module_name):
-                sections.append(getattr(Section, module))
         if obj.project.videoconferences:
             sections.append(Section.meetup)
+
+        if is_project_admin(obj.user, obj.project):
+            sections.append(Section.admin)
+
         return sections
