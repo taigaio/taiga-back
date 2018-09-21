@@ -28,11 +28,13 @@ from . import models
 from . import permissions
 from . import serializers
 from . import services
+from . import validators
 
 
 class UserProjectSettingsViewSet(ModelCrudViewSet):
     serializer_class = serializers.UserProjectSettingsSerializer
     permission_classes = (permissions.UserProjectSettingsPermission,)
+    validator_class = validators.UserProjectSettingsValidator
 
     def _build_user_project_settings(self):
         projects = Project.objects.filter(

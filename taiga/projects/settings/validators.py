@@ -15,24 +15,24 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from django.utils.translation import ugettext as _
 
-from taiga.base.api import serializers
+from taiga.base.api import validators
+from taiga.base.exceptions import ValidationError
+from taiga.projects.settings.utils import get_allowed_sections
 
 from . import models
 
-from taiga.projects.settings.utils import get_allowed_sections
 
-
-class UserProjectSettingsSerializer(serializers.ModelSerializer):
-    project_name = serializers.SerializerMethodField("get_project_name")
-    allowed_sections = serializers.SerializerMethodField("get_allowed_sections")
+class UserProjectSettingsValidator(validators.ModelValidator):
 
     class Meta:
         model = models.UserProjectSettings
-        fields = ('id', 'project', 'project_name', 'homepage', 'allowed_sections')
+        read_only_fields = ('id', 'created_at', 'modified_at', 'project',
+                            'user')
 
-    def get_project_name(self, obj):
-        return obj.project.name
-
-    def get_allowed_sections(self, obj):
-        return get_allowed_sections(obj)
+    def validate_homepage(self, attrs, source):
+        if attrs[source] not in get_allowed_sections(self.object):
+            msg = _("You don't have access to this section")
+            raise ValidationError(msg)
+        return attrs

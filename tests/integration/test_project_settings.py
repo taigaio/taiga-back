@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from django.apps import apps
@@ -34,7 +36,7 @@ def test_create_retrieve_home_page_setting():
     assert setting.homepage == Section.timeline
 
 
-def test_retrieve_home_page_setting_with_allowed_sections(client):
+def test_retrieve_homepage_setting_with_allowed_sections(client):
     # Default template has next configuration:
     # "is_epics_activated": false,
     # "is_backlog_activated": true,
@@ -66,3 +68,31 @@ def test_retrieve_home_page_setting_with_allowed_sections(client):
 
     assert Section.epics not in response.data[0].get("allowed_sections")
     assert Section.issues not in response.data[0].get("allowed_sections")
+
+
+def test_avoid_patch_homepage_setting_with_not_allowed_section(client):
+    # Default template has next configuration:
+    # "is_epics_activated": false,
+    # "is_backlog_activated": true,
+    # "is_kanban_activated": false,
+    # "is_wiki_activated": true,
+    # "is_issues_activated": true,
+    # "videoconferences": null,
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    membership = f.MembershipFactory.create(user=user, project=project,
+                                            is_admin=False)
+    membership.role.permissions = ["view_us", "view_wiki_pages"]
+    membership.role.save()
+
+    setting = services.create_user_project_settings_if_not_exists(project,
+                                                                  project.owner)
+
+    url = reverse("user-project-settings-detail", args=[setting.pk])
+
+    client.login(project.owner)
+    response = client.json.patch(url, data=json.dumps({"homepage": Section.backlog}))
+    assert response.status_code == 200
+
+    response = client.json.patch(url, data=json.dumps({"homepage": Section.issues}))
+    assert response.status_code == 400
