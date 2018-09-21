@@ -23,18 +23,20 @@ from django.utils.translation import ugettext_lazy as _
 class Section(enum.IntEnum):
     timeline = 1
     search = 2
-    backlog = 3
-    kanban = 4
-    issues = 5
-    wiki = 6
-    team = 7
-    meetup = 8
-    admin = 9
+    epics = 3
+    backlog = 4
+    kanban = 5
+    issues = 6
+    wiki = 7
+    team = 8
+    meetup = 9
+    admin = 10
 
 
 HOMEPAGE_CHOICES = (
     (Section.timeline, _("Timeline")),
     (Section.search, _("Search")),
+    (Section.epics, _("Epics")),
     (Section.backlog, _("Backlog")),
     (Section.kanban, _("Kanban")),
     (Section.issues, _("Issues")),

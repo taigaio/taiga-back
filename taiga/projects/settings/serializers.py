@@ -20,13 +20,29 @@ from taiga.base.api import serializers
 
 from . import models
 
+from taiga.projects.settings.choices import Section
+
 
 class UserProjectSettingsSerializer(serializers.ModelSerializer):
     project_name = serializers.SerializerMethodField("get_project_name")
+    allowed_sections = serializers.SerializerMethodField("get_allowed_sections")
 
     class Meta:
         model = models.UserProjectSettings
-        fields = ('id', 'project', 'project_name', 'homepage')
+        fields = ('id', 'project', 'project_name', 'homepage', 'allowed_sections')
 
     def get_project_name(self, obj):
         return obj.project.name
+
+    def get_allowed_sections(self, obj):
+        sections = [Section.timeline, Section.search, Section.team]
+
+        active_modules = ['epics', 'backlog', 'kanban', 'wiki', 'issues']
+
+        for module in active_modules:
+            module_name = "is_{}_activated".format(module)
+            if getattr(obj.project, module_name):
+                sections.append(getattr(Section, module))
+        if obj.project.videoconferences:
+            sections.append(Section.meetup)
+        return sections

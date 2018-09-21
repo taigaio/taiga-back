@@ -1,6 +1,7 @@
 import pytest
 
 from django.apps import apps
+from django.core.urlresolvers import reverse
 
 from .. import factories as f
 
@@ -31,3 +32,37 @@ def test_create_retrieve_home_page_setting():
     current_number = policy_model_cls.objects.all().count()
     assert current_number == 1
     assert setting.homepage == Section.timeline
+
+
+def test_retrieve_home_page_setting_with_allowed_sections(client):
+    # Default template has next configuration:
+    # "is_epics_activated": false,
+    # "is_backlog_activated": true,
+    # "is_kanban_activated": false,
+    # "is_wiki_activated": true,
+    # "is_issues_activated": true,
+    # "videoconferences": null,
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    url = reverse("user-project-settings-list")
+
+    client.login(project.owner)
+
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert 1 == len(response.data)
+    assert 1 == response.data[0].get("homepage")
+
+    assert 6 == len(response.data[0].get("allowed_sections"))
+
+    assert Section.timeline in response.data[0].get("allowed_sections")
+    assert Section.search in response.data[0].get("allowed_sections")
+    assert Section.team in response.data[0].get("allowed_sections")
+    assert Section.backlog in response.data[0].get("allowed_sections")
+    assert Section.issues in response.data[0].get("allowed_sections")
+    assert Section.wiki in response.data[0].get("allowed_sections")
+
+    assert Section.epics not in response.data[0].get("allowed_sections")
