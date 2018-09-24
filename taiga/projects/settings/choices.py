@@ -29,8 +29,7 @@ class Section(enum.IntEnum):
     issues = 6
     wiki = 7
     team = 8
-    meetup = 9
-    admin = 10
+    admin = 9
 
 
 HOMEPAGE_CHOICES = (
@@ -42,6 +41,5 @@ HOMEPAGE_CHOICES = (
     (Section.issues, _("Issues")),
     (Section.wiki, _("TeamWiki")),
     (Section.team, _("Team")),
-    (Section.meetup, _("Meet Up")),
     (Section.admin, _("Admin")),
 )

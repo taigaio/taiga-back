@@ -14,9 +14,6 @@ def get_allowed_sections(obj):
                 user_has_perm(obj.user, active_modules[key], obj.project):
             sections.append(getattr(Section, key))
 
-    if obj.project.videoconferences:
-        sections.append(Section.meetup)
-
     if is_project_admin(obj.user, obj.project):
         sections.append(Section.admin)
 

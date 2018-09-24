@@ -43,7 +43,6 @@ def test_retrieve_homepage_setting_with_allowed_sections(client):
     # "is_kanban_activated": false,
     # "is_wiki_activated": true,
     # "is_issues_activated": true,
-    # "videoconferences": null,
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     membership = f.MembershipFactory.create(user=user, project=project, is_admin=False)
@@ -77,7 +76,6 @@ def test_avoid_patch_homepage_setting_with_not_allowed_section(client):
     # "is_kanban_activated": false,
     # "is_wiki_activated": true,
     # "is_issues_activated": true,
-    # "videoconferences": null,
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)
     membership = f.MembershipFactory.create(user=user, project=project,
