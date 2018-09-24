@@ -3,7 +3,7 @@ from taiga.projects.settings.choices import Section
 
 
 def get_allowed_sections(obj):
-    sections = [Section.timeline, Section.search, Section.team]
+    sections = [Section.timeline]
     active_modules = {'epics': 'view_epics', 'backlog': 'view_us',
                       'kanban': 'view_us', 'wiki': 'view_wiki_pages',
                       'issues': 'view_issues'}
