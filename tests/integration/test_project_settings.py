@@ -57,11 +57,9 @@ def test_retrieve_homepage_setting_with_allowed_sections(client):
     assert response.status_code == 200
     assert 1 == len(response.data)
     assert 1 == response.data[0].get("homepage")
-    assert 5 == len(response.data[0].get("allowed_sections"))
+    assert 3 == len(response.data[0].get("allowed_sections"))
 
     assert Section.timeline in response.data[0].get("allowed_sections")
-    assert Section.search in response.data[0].get("allowed_sections")
-    assert Section.team in response.data[0].get("allowed_sections")
     assert Section.backlog in response.data[0].get("allowed_sections")
     assert Section.wiki in response.data[0].get("allowed_sections")
 
