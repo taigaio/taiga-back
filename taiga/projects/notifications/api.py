@@ -17,8 +17,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db.models import Q
+from django.utils import timezone
 
+from taiga.base import response
 from taiga.base.api import ModelCrudViewSet
+from taiga.base.api import GenericViewSet
+from taiga.base.api.utils import get_object_or_404
 
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.models import Project
@@ -50,3 +54,50 @@ class NotifyPolicyViewSet(ModelCrudViewSet):
         return models.NotifyPolicy.objects.filter(user=self.request.user).filter(
             Q(project__owner=self.request.user) | Q(project__memberships__user=self.request.user)
         ).distinct()
+
+
+class WebNotificationsViewSet(GenericViewSet):
+    serializer_class = serializers.WebNotificationSerializer
+    resource_model = models.WebNotification
+
+    def check_permissions(self, request, obj=None):
+        return obj and request.user.is_authenticated() and \
+               request.user.pk == obj.user_id
+
+    def list(self, request):
+        queryset = models.WebNotification.objects\
+            .filter(user=self.request.user)
+
+        if request.GET.get("only_unread", False):
+            queryset = queryset.filter(read__isnull=True)
+
+        queryset = queryset.order_by('-read', '-created')
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_pagination_serializer(page)
+            return response.Ok({
+                "objects": serializer.data,
+                "total": queryset.count()
+            })
+
+        serializer = self.get_serializer(queryset, many=True)
+        return response.Ok(serializer.data)
+
+    def patch(self, request, *args, **kwargs):
+        self.check_permissions(request)
+
+        resource_id = kwargs.get("resource_id", None)
+        resource = get_object_or_404(self.resource_model, pk=resource_id)
+        resource.read = timezone.now()
+        resource.save()
+
+        return response.Ok({})
+
+    def post(self, request):
+        self.check_permissions(request)
+
+        models.WebNotification.objects.filter(user=self.request.user)\
+            .update(read=timezone.now())
+
+        return response.Ok()

@@ -45,6 +45,7 @@ from taiga.projects.epics.models import Epic
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.issues.models import Issue
 from taiga.projects.likes.mixins.viewsets import LikedResourceMixin, FansViewSetMixin
+from taiga.projects.notifications.apps import signal_members_added
 from taiga.projects.notifications.mixins import WatchersViewSetMixin
 from taiga.projects.notifications.choices import NotifyLevel
 from taiga.projects.mixins.on_destroy import MoveOnDestroyMixin
@@ -980,6 +981,10 @@ class MembershipViewSet(BlockedByProjectMixin, ModelCrudViewSet):
                                                           invitation_extra_text=invitation_extra_text,
                                                           callback=self.post_save,
                                                           precall=self.pre_save)
+                signal_members_added.send(sender=self.__class__,
+                                          user=self.request.user,
+                                          project=project,
+                                          new_members=members)
         except exc.ValidationError as err:
             return response.BadRequest(err.message_dict)
 

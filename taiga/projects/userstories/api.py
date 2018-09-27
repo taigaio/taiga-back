@@ -39,6 +39,7 @@ from taiga.projects.history.services import take_snapshot
 from taiga.projects.milestones.models import Milestone
 from taiga.projects.mixins.by_ref import ByRefMixin
 from taiga.projects.models import Project, UserStoryStatus
+from taiga.projects.notifications.mixins import AssignedUsersSignalMixin
 from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.notifications.mixins import WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
@@ -55,8 +56,10 @@ from . import services
 from . import validators
 
 
-class UserStoryViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                       ByRefMixin, TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
+class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
+                       VotedResourceMixin, HistoryResourceMixin,
+                       WatchedResourceMixin, ByRefMixin, TaggedResourceMixin,
+                       BlockedByProjectMixin, ModelCrudViewSet):
     validator_class = validators.UserStoryValidator
     queryset = models.UserStory.objects.all()
     permission_classes = (permissions.UserStoryPermission,)

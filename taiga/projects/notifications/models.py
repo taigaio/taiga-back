@@ -23,6 +23,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
+from taiga.base.db.models.fields import JSONField
 from taiga.projects.history.choices import HISTORY_TYPE_CHOICES
 
 from .choices import NOTIFY_LEVEL_CHOICES, NotifyLevel
@@ -37,6 +38,7 @@ class NotifyPolicy(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notify_policies")
     notify_level = models.SmallIntegerField(choices=NOTIFY_LEVEL_CHOICES)
     live_notify_level = models.SmallIntegerField(choices=NOTIFY_LEVEL_CHOICES, default=NotifyLevel.involved)
+    web_notify_level = models.BooleanField(default=True, null=False, blank=True)
 
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField()
@@ -94,3 +96,11 @@ class Watched(models.Model):
         verbose_name = _("Watched")
         verbose_name_plural = _("Watched")
         unique_together = ("content_type", "object_id", "user", "project")
+
+
+class WebNotification(models.Model):
+    created = models.DateTimeField(default=timezone.now, db_index=True)
+    read = models.DateTimeField(default=None, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="web_notifications")
+    event_type = models.PositiveIntegerField()
+    data = JSONField()

@@ -30,7 +30,9 @@ from taiga.base.api.utils import get_object_or_404
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.mixins.by_ref import ByRefMixin
 from taiga.projects.models import Project, IssueStatus, Severity, Priority, IssueType
-from taiga.projects.notifications.mixins import WatchedResourceMixin, WatchersViewSetMixin
+from taiga.projects.notifications.mixins import AssignedToSignalMixin
+from taiga.projects.notifications.mixins import WatchedResourceMixin
+from taiga.projects.notifications.mixins import WatchersViewSetMixin
 from taiga.projects.occ import OCCResourceMixin
 from taiga.projects.tagging.api import TaggedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin, VotersViewSetMixin
@@ -44,8 +46,10 @@ from . import serializers
 from . import validators
 
 
-class IssueViewSet(OCCResourceMixin, VotedResourceMixin, HistoryResourceMixin, WatchedResourceMixin,
-                   ByRefMixin, TaggedResourceMixin, BlockedByProjectMixin, ModelCrudViewSet):
+class IssueViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
+                   HistoryResourceMixin, WatchedResourceMixin, ByRefMixin,
+                   TaggedResourceMixin, BlockedByProjectMixin,
+                   ModelCrudViewSet):
     validator_class = validators.IssueValidator
     queryset = models.Issue.objects.all()
     permission_classes = (permissions.IssuePermission, )

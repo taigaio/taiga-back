@@ -43,11 +43,14 @@ from taiga.userstorage.api import StorageEntriesViewSet
 router.register(r"user-storage", StorageEntriesViewSet, base_name="user-storage")
 
 
-# Notify policies
+# Notifications & Notify policies
 from taiga.projects.notifications.api import NotifyPolicyViewSet
+from taiga.projects.notifications.api import WebNotificationsViewSet
 
 router.register(r"notify-policies", NotifyPolicyViewSet, base_name="notifications")
-
+router.register(r"web-notifications", WebNotificationsViewSet, base_name="web-notifications")
+router.register(r"web-notifications/set-as-read", WebNotificationsViewSet, base_name="web-notifications")
+router.register(r"web-notifications/(?P<resource_id>\d+)/set-as-read", WebNotificationsViewSet, base_name="web-notifications")
 
 # Project settings
 from taiga.projects.settings.api import UserProjectSettingsViewSet, SectionsViewSet

@@ -91,6 +91,22 @@ def emit_event_for_model(obj, *, type:str="change", channel:str="events",
                       sessionid=sessionid,
                       data=data)
 
+
+def emit_event_for_user_notification(user_id,
+                                     *,
+                                     session_id: str=None,
+                                     event_type: str=None,
+                                     data: dict=None):
+    """
+    Sends a user notification event.
+    """
+    return emit_event(
+        data,
+        "web_notifications.{}".format(user_id),
+        sessionid=session_id
+    )
+
+
 def emit_live_notification_for_model(obj, user, history, *, type:str="change", channel:str="events",
                                      sessionid:str="not-existing"):
     """

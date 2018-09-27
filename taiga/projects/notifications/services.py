@@ -73,7 +73,8 @@ def create_notify_policy(project, user, level=NotifyLevel.involved,
 
 def create_notify_policy_if_not_exists(project, user,
                                        level=NotifyLevel.involved,
-                                       live_level=NotifyLevel.involved):
+                                       live_level=NotifyLevel.involved,
+                                       web_level=True):
     """
     Given a project and user, create notification policy for it.
     """
@@ -82,7 +83,11 @@ def create_notify_policy_if_not_exists(project, user,
         result = model_cls.objects.get_or_create(
             project=project,
             user=user,
-            defaults={"notify_level": level, "live_notify_level": live_level}
+            defaults={
+                "notify_level": level,
+                "live_notify_level": live_level,
+                "web_notify_level": web_level
+            }
         )
         return result[0]
     except IntegrityError as e:
@@ -95,27 +100,39 @@ def analize_object_for_watchers(obj: object, comment: str, user: object):
     Generic implementation for analize model objects and
     extract mentions from it and add it to watchers.
     """
-
-    if not hasattr(obj, "get_project"):
+    if not hasattr(obj, "add_watcher"):
         return
 
-    if not hasattr(obj, "add_watcher"):
+    mentions = get_object_mentions(obj, comment)
+    if mentions:
+        for user in mentions:
+            obj.add_watcher(user)
+
+    # Adding the person who edited the object to the watchers
+    if comment and not user.is_system:
+        obj.add_watcher(user)
+
+
+def get_object_mentions(obj: object, comment: str):
+    """
+    Generic implementation for analize model objects and
+    extract mentions from it.
+    """
+    if not hasattr(obj, "get_project"):
         return
 
     texts = (getattr(obj, "description", ""),
              getattr(obj, "content", ""),
              comment,)
 
+    return get_mentions(obj.get_project(), "\n".join(texts))
+
+
+def get_mentions(project: object, text: str):
     from taiga.mdrender.service import render_and_extract
-    _, data = render_and_extract(obj.get_project(), "\n".join(texts))
+    _, data = render_and_extract(project, text)
 
-    if data["mentions"]:
-        for user in data["mentions"]:
-            obj.add_watcher(user)
-
-    # Adding the person who edited the object to the watchers
-    if comment and not user.is_system:
-        obj.add_watcher(user)
+    return data.get("mentions")
 
 
 def _filter_by_permissions(obj, user):
