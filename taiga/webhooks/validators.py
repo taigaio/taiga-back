@@ -15,12 +15,27 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import ipaddress
+
+from django.utils.translation import ugettext as _
 
 from taiga.base.api import validators
+from urllib.parse import urlparse
 
+from taiga.base.exceptions import ValidationError
 from .models import Webhook
 
 
 class WebhookValidator(validators.ModelValidator):
     class Meta:
         model = Webhook
+
+    def validate_url(self, attrs, source):
+        host = urlparse(attrs[source]).hostname
+        try:
+            ipa = ipaddress.ip_address(host)
+        except ValueError:
+            return attrs
+        if ipa.is_private:
+            raise ValidationError(_("Not allowed IP Address"))
+        return attrs
