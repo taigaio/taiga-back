@@ -30,6 +30,7 @@ from .serializers import (EpicSerializer, EpicRelatedUserStorySerializer,
                           UserStorySerializer, IssueSerializer, TaskSerializer,
                           WikiPageSerializer, MilestoneSerializer,
                           HistoryEntrySerializer, UserSerializer)
+from . import utils
 from .models import WebhookLog
 
 
@@ -71,6 +72,21 @@ def _send_request(webhook_id, url, key, data):
         "X-Hub-Signature": "sha1={}".format(signature),
         "Content-Type": "application/json"
     }
+
+    try:
+        utils.validate_destination_address(url)
+    except utils.IpaddresValueError as e:
+        # Error validating url
+        webhook_log = WebhookLog.objects.create(webhook_id=webhook_id, url=url,
+                                                status=0,
+                                                request_data=data,
+                                                request_headers=dict(),
+                                                response_data="error-in-request: {}".format(
+                                                    str(e)),
+                                                response_headers={},
+                                                duration=0)
+        return webhook_log
+
     request = requests.Request('POST', url, data=serialized_data, headers=headers)
     prepared_request = request.prepare()
 
