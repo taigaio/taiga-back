@@ -23,7 +23,7 @@ import django_sites as sites
 import re
 
 from taiga.base.utils.urls import get_absolute_url, is_absolute_url, build_url, \
-    validate_private_url, IpAddresValueError
+    validate_private_url, IpAddresValueError, HostnameException
 from taiga.base.utils.db import save_in_bulk, update_in_bulk, to_tsquery
 
 pytestmark = pytest.mark.django_db
@@ -103,6 +103,8 @@ TS_QUERY_TRANSFORMATIONS = [
     ('""', "'\"\"':*"),
     ('"""', "'\"\"':* & '\"':*"),
 ]
+
+
 def test_to_tsquery():
     for (input, expected) in TS_QUERY_TRANSFORMATIONS:
         expected = re.sub("([0-9])", r"'\1':*", expected)
@@ -121,10 +123,18 @@ def test_to_tsquery():
     "http://[::ffff:c0a8:164]/",
     "scp://192.168.1.100/",
     "http://www.192.168.1.100.xip.io/",
-    "http://test.local/",
 ])
 def test_validate_bad_destination_address(url):
     with pytest.raises(IpAddresValueError):
+        validate_private_url(url)
+
+
+@pytest.mark.parametrize("url", [
+    "http://test.local/",
+    "http://test.test/",
+])
+def test_validate_invalid_destination_address(url):
+    with pytest.raises(HostnameException):
         validate_private_url(url)
 
 

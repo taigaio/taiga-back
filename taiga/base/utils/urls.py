@@ -50,7 +50,7 @@ def reverse(viewname, *args, **kwargs):
     return get_absolute_url(django_reverse(viewname, *args, **kwargs))
 
 
-class HostnameValueError(Exception):
+class HostnameException(Exception):
     pass
 
 
@@ -65,7 +65,7 @@ def validate_private_url(url):
     try:
         socket_args, *others = socket.getaddrinfo(host, port)
     except Exception:
-        raise HostnameValueError(_("Host access error"))
+        raise HostnameException(_("Host access error"))
 
     destination_address = socket_args[4][0]
     try:

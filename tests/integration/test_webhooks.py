@@ -55,7 +55,7 @@ def test_webhook_action_test_transform_to_json(client, data):
     response.elapsed.total_seconds.return_value = 100
 
     with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response), \
-         patch("taiga.base.utils.urls.validate_destination_address", return_value=True):
+         patch("taiga.base.utils.urls.validate_private_url", return_value=True):
             client.login(data.project_owner)
             response = client.json.post(url)
             assert response.status_code == 200

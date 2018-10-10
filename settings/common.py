@@ -547,6 +547,7 @@ EXPORTS_TTL = 60 * 60 * 24  # 24 hours
 
 CELERY_ENABLED = False
 WEBHOOKS_ENABLED = False
+WEBHOOKS_BLOCK_PRIVATE_ADDRESS = False
 
 
 # If is True /front/sitemap.xml show a valid sitemap of taiga-front client

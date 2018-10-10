@@ -45,25 +45,25 @@ def test_new_object_with_one_webhook_signal(settings):
 
     for obj in objects:
         with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock, \
-         patch("taiga.base.utils.urls.validate_destination_address", return_value=True):
+         patch("taiga.base.utils.urls.validate_private_url", return_value=True):
             services.take_snapshot(obj, user=obj.owner, comment="test")
             assert session_send_mock.call_count == 1
 
     for obj in objects:
         with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock, \
-         patch("taiga.base.utils.urls.validate_destination_address", return_value=True):
+         patch("taiga.base.utils.urls.validate_private_url", return_value=True):
             services.take_snapshot(obj, user=obj.owner)
             assert session_send_mock.call_count == 0
 
     for obj in objects:
         with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock, \
-         patch("taiga.base.utils.urls.validate_destination_address", return_value=True):
+         patch("taiga.base.utils.urls.validate_private_url", return_value=True):
             services.take_snapshot(obj, user=obj.owner, comment="test")
             assert session_send_mock.call_count == 1
 
     for obj in objects:
         with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock, \
-         patch("taiga.base.utils.urls.validate_destination_address", return_value=True):
+         patch("taiga.base.utils.urls.validate_private_url", return_value=True):
             services.take_snapshot(obj, user=obj.owner, comment="test", delete=True)
             assert session_send_mock.call_count == 1
 
@@ -86,25 +86,25 @@ def test_new_object_with_two_webhook_signals(settings):
 
     for obj in objects:
         with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock, \
-         patch("taiga.base.utils.urls.validate_destination_address", return_value=True):
+         patch("taiga.base.utils.urls.validate_private_url", return_value=True):
             services.take_snapshot(obj, user=obj.owner, comment="test")
             assert session_send_mock.call_count == 2
 
     for obj in objects:
         with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock, \
-         patch("taiga.base.utils.urls.validate_destination_address", return_value=True):
+         patch("taiga.base.utils.urls.validate_private_url", return_value=True):
             services.take_snapshot(obj, user=obj.owner, comment="test")
             assert session_send_mock.call_count == 2
 
     for obj in objects:
         with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock, \
-         patch("taiga.base.utils.urls.validate_destination_address", return_value=True):
+         patch("taiga.base.utils.urls.validate_private_url", return_value=True):
             services.take_snapshot(obj, user=obj.owner)
             assert session_send_mock.call_count == 0
 
     for obj in objects:
         with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock, \
-         patch("taiga.base.utils.urls.validate_destination_address", return_value=True):
+         patch("taiga.base.utils.urls.validate_private_url", return_value=True):
             services.take_snapshot(obj, user=obj.owner, comment="test", delete=True)
             assert session_send_mock.call_count == 2
 
@@ -126,12 +126,12 @@ def test_send_request_one_webhook_signal(settings):
 
     for obj in objects:
         with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock, \
-         patch("taiga.base.utils.urls.validate_destination_address", return_value=True):
+         patch("taiga.base.utils.urls.validate_private_url", return_value=True):
             services.take_snapshot(obj, user=obj.owner, comment="test")
             assert session_send_mock.call_count == 1
 
     for obj in objects:
         with patch("taiga.webhooks.tasks.requests.Session.send", return_value=response) as session_send_mock, \
-         patch("taiga.base.utils.urls.validate_destination_address", return_value=True):
+         patch("taiga.base.utils.urls.validate_private_url", return_value=True):
             services.take_snapshot(obj, user=obj.owner, comment="test", delete=True)
             assert session_send_mock.call_count == 1
