@@ -22,7 +22,8 @@ from unittest import mock
 import django_sites as sites
 import re
 
-from taiga.base.utils.urls import get_absolute_url, is_absolute_url, build_url
+from taiga.base.utils.urls import get_absolute_url, is_absolute_url, build_url, \
+    validate_private_url, IpAddresValueError
 from taiga.base.utils.db import save_in_bulk, update_in_bulk, to_tsquery
 
 pytestmark = pytest.mark.django_db
@@ -124,7 +125,7 @@ def test_to_tsquery():
 ])
 def test_validate_bad_destination_address(url):
     with pytest.raises(IpAddresValueError):
-        validate_destination_address(url)
+        validate_private_url(url)
 
 
 @pytest.mark.parametrize("url", [
@@ -138,4 +139,4 @@ def test_validate_bad_destination_address(url):
     "http://1.1.1.1/",
 ])
 def test_validate_good_destination_address(url):
-    assert validate_destination_address(url)
+    assert validate_private_url(url) is None

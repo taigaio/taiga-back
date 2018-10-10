@@ -54,11 +54,11 @@ class HostnameValueError(Exception):
     pass
 
 
-class IpAddresValueError(Exception):
+class IpAddresValueError(ValueError):
     pass
 
 
-def validate_destination_address(url):
+def validate_private_url(url):
     host = urlparse(url).hostname
     port = urlparse(url).port
 
@@ -74,5 +74,3 @@ def validate_destination_address(url):
         raise IpAddresValueError(_("IP Address error"))
     if ipa.is_private:
         raise IpAddresValueError("Private IP Address not allowed")
-
-    return True
