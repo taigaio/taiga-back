@@ -22,7 +22,7 @@ import requests
 from requests.exceptions import RequestException
 
 from taiga.base.api.renderers import UnicodeJSONRenderer
-from taiga.base.utils import json
+from taiga.base.utils import json, urls
 from taiga.base.utils.db import get_typename_for_model_instance
 from taiga.celery import app
 
@@ -30,7 +30,7 @@ from .serializers import (EpicSerializer, EpicRelatedUserStorySerializer,
                           UserStorySerializer, IssueSerializer, TaskSerializer,
                           WikiPageSerializer, MilestoneSerializer,
                           HistoryEntrySerializer, UserSerializer)
-from . import utils
+
 from .models import WebhookLog
 
 
@@ -74,8 +74,8 @@ def _send_request(webhook_id, url, key, data):
     }
 
     try:
-        utils.validate_destination_address(url)
-    except utils.IpaddresValueError as e:
+        urls.validate_destination_address(url)
+    except urls.IpAddresValueError as e:
         # Error validating url
         webhook_log = WebhookLog.objects.create(webhook_id=webhook_id, url=url,
                                                 status=0,

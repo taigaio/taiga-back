@@ -107,3 +107,35 @@ def test_to_tsquery():
         expected = re.sub("([0-9])", r"'\1':*", expected)
         actual = to_tsquery(input)
         assert actual == expected
+
+
+@pytest.mark.parametrize("url", [
+    "http://127.0.0.1",
+    "http://[::1]",
+    "http://192.168.0.12",
+    "http://10.0.0.1",
+    "https://172.25.0.1",
+    "https://10.25.23.100",
+    "ftp://192.168.1.100/",
+    "http://[::ffff:c0a8:164]/",
+    "scp://192.168.1.100/",
+    "http://www.192.168.1.100.xip.io/",
+    "http://test.local/",
+])
+def test_validate_bad_destination_address(url):
+    with pytest.raises(IpAddresValueError):
+        validate_destination_address(url)
+
+
+@pytest.mark.parametrize("url", [
+    "http://192.167.0.12",
+    "http://11.0.0.1",
+    "https://173.25.0.1",
+    "https://193.24.23.100",
+    "ftp://173.168.1.100/",
+    "scp://194.168.1.100/",
+    "http://www.google.com/",
+    "http://1.1.1.1/",
+])
+def test_validate_good_destination_address(url):
+    assert validate_destination_address(url)

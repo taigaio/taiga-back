@@ -17,8 +17,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import ipaddress
+import socket
+from urllib.parse import urlparse
+
 import django_sites as sites
 from django.core.urlresolvers import reverse as django_reverse
+from django.utils.translation import ugettext as _
 
 URL_TEMPLATE = "{scheme}://{domain}/{path}"
 
@@ -43,3 +48,31 @@ def get_absolute_url(path):
 def reverse(viewname, *args, **kwargs):
     """Same behavior as django's reverse but uses django_sites to compute absolute url."""
     return get_absolute_url(django_reverse(viewname, *args, **kwargs))
+
+
+class HostnameValueError(Exception):
+    pass
+
+
+class IpAddresValueError(Exception):
+    pass
+
+
+def validate_destination_address(url):
+    host = urlparse(url).hostname
+    port = urlparse(url).port
+
+    try:
+        socket_args, *others = socket.getaddrinfo(host, port)
+    except Exception:
+        raise HostnameValueError(_("Host access error"))
+
+    destination_address = socket_args[4][0]
+    try:
+        ipa = ipaddress.ip_address(destination_address)
+    except ValueError:
+        raise IpAddresValueError(_("IP Address error"))
+    if ipa.is_private:
+        raise IpAddresValueError("Private IP Address not allowed")
+
+    return True
