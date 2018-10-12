@@ -97,9 +97,9 @@ def _send_request(webhook_id, url, key, data):
                                                         str(e)),
                                                     response_headers={},
                                                     duration=0)
-            return webhook_log
-        finally:
             _remove_leftover_webhooklogs(webhook_id)
+
+            return webhook_log
 
     request = requests.Request('POST', url, data=serialized_data, headers=headers)
     prepared_request = request.prepare()
