@@ -24,8 +24,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-18 17:14+0200\n"
-"PO-Revision-Date: 2018-08-10 09:46+0000\n"
+"POT-Creation-Date: 2018-10-11 14:11+0200\n"
+"PO-Revision-Date: 2018-10-14 17:29+0000\n"
 "Last-Translator: Alejandro Hermida <alexhermida@gmail.com>\n"
 "Language-Team: Chinese Simplified (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/zh-Hans/)\n"
@@ -206,8 +206,8 @@ msgstr "请上传一张有效的图片。所上传的不是图片或已损坏"
 #: taiga/hooks/api.py:69 taiga/projects/api.py:461 taiga/projects/api.py:494
 #: taiga/projects/api.py:970 taiga/projects/epics/api.py:200
 #: taiga/projects/epics/api.py:284 taiga/projects/issues/api.py:233
-#: taiga/projects/mixins/ordering.py:59 taiga/projects/tasks/api.py:258
-#: taiga/projects/tasks/api.py:283 taiga/projects/userstories/api.py:346
+#: taiga/projects/mixins/ordering.py:59 taiga/projects/tasks/api.py:259
+#: taiga/projects/tasks/api.py:284 taiga/projects/userstories/api.py:346
 #: taiga/projects/userstories/api.py:398 taiga/webhooks/api.py:71
 msgid "Blocked element"
 msgstr "冻结的元素"
@@ -517,6 +517,14 @@ msgstr ""
 "\n"
 "    评论: %(comment)s\n"
 "        "
+
+#: taiga/base/utils/urls.py:68
+msgid "Host access error"
+msgstr ""
+
+#: taiga/base/utils/urls.py:74
+msgid "IP Address error"
+msgstr ""
 
 #: taiga/events/events.py:106
 msgid "User story created"
@@ -1118,7 +1126,7 @@ msgid "The payload is not a valid json"
 msgstr "内容不是一个合法的JSON"
 
 #: taiga/hooks/api.py:63 taiga/projects/epics/api.py:154
-#: taiga/projects/issues/api.py:142 taiga/projects/tasks/api.py:210
+#: taiga/projects/issues/api.py:142 taiga/projects/tasks/api.py:211
 #: taiga/projects/userstories/api.py:290
 msgid "The project doesn't exist"
 msgstr "项目不存在"
@@ -3602,15 +3610,15 @@ msgstr "该颜色不是一个合法的HEX颜色"
 msgid "The tag doesn't exist."
 msgstr "该标签不存在"
 
-#: taiga/projects/tasks/api.py:107 taiga/projects/tasks/api.py:116
+#: taiga/projects/tasks/api.py:108 taiga/projects/tasks/api.py:117
 msgid "You don't have permissions to set this sprint to this task."
 msgstr "你无权对这个任务设置该冲刺任务。"
 
-#: taiga/projects/tasks/api.py:110
+#: taiga/projects/tasks/api.py:111
 msgid "You don't have permissions to set this user story to this task."
 msgstr "你无权对这个任务设置该用户故事。"
 
-#: taiga/projects/tasks/api.py:113
+#: taiga/projects/tasks/api.py:114
 msgid "You don't have permissions to set this status to this task."
 msgstr "你无权对这个任务设置该状态。"
 
@@ -4928,3 +4936,7 @@ msgstr "响应Header头"
 #: taiga/webhooks/models.py:46
 msgid "duration"
 msgstr "持续时间"
+
+#: taiga/webhooks/validators.py:42
+msgid "Not allowed IP Address"
+msgstr ""
