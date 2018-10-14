@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 3.4.5 (2018-10-15)
+
+### Features
+
+- Prevent local Webhooks 
+
 ## 3.4.4 (2018-09-19)
 
 ### Misc
