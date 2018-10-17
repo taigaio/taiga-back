@@ -262,6 +262,7 @@ class TrelloImporter:
             project=project
         )
         import_service.create_memberships(options.get('users_bindings', {}), project, self._user, "trello")
+        import_service.set_base_permissions_for_project(project)
         return project
 
     def _import_user_stories_data(self, data, project, options):
