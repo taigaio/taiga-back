@@ -87,6 +87,7 @@ class TimelineViewSet(ReadOnlyListViewSet):
                                              userstories.userstory.change,
                                              epics.epic.change,
                                              wiki.wikipage.change}'::text[])
+                    OR data->'values_diff'->'attachments'->>'new' = '[]'
                 )
                 """])
 
