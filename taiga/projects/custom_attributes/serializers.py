@@ -32,6 +32,7 @@ class BaseCustomAttributeSerializer(serializers.LightSerializer):
     type = Field()
     order = Field()
     project = Field(attr="project_id")
+    extra = Field()
     created_date = Field()
     modified_date = Field()
 

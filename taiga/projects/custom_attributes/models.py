@@ -41,7 +41,7 @@ class AbstractCustomAttribute(models.Model):
     order = models.BigIntegerField(null=False, blank=False, default=timestamp_ms, verbose_name=_("order"))
     project = models.ForeignKey("projects.Project", null=False, blank=False, related_name="%(class)ss",
                                 verbose_name=_("project"))
-
+    extra = JSONField(blank=True, default=None, null=True)
     created_date = models.DateTimeField(null=False, blank=False, default=timezone.now,
                                         verbose_name=_("created date"))
     modified_date = models.DateTimeField(null=False, blank=False,
