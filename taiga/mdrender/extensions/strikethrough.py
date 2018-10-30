@@ -14,6 +14,6 @@ class StrikethroughExtension(markdown.Extension):
     For example: ``~~strike~~``.
     """
 
-    def extendMarkdown(self, md, md_globals):
+    def extendMarkdown(self, md):
         pattern = markdown.inlinepatterns.SimpleTagPattern(STRIKE_RE, 'del')
         md.inlinePatterns.add('gfm-strikethrough', pattern, '_end')

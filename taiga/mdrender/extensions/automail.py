@@ -19,7 +19,7 @@ class AutomailPattern(markdown.inlinepatterns.Pattern):
 class AutomailExtension(markdown.Extension):
     """An extension that turns all email addresses into links."""
 
-    def extendMarkdown(self, md, md_globals):
+    def extendMarkdown(self, md):
         mail_re = r'\b(?i)([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+)\b'
         automail = AutomailPattern(mail_re, md)
         md.inlinePatterns.add('gfm-automail', automail, '_end')

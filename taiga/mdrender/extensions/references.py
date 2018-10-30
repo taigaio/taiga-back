@@ -36,7 +36,7 @@ class TaigaReferencesExtension(Extension):
         self.project = project
         return super().__init__(*args, **kwargs)
 
-    def extendMarkdown(self, md, md_globals):
+    def extendMarkdown(self, md):
         TAIGA_REFERENCE_RE = r'(?<=^|(?<=[^a-zA-Z0-9-\[]))#(\d+)'
         referencesPattern = TaigaReferencesPattern(TAIGA_REFERENCE_RE, self.project)
         referencesPattern.md = md

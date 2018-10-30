@@ -31,7 +31,7 @@ class SpacedLinkExtension(markdown.Extension):
     extension adds such support.
     """
 
-    def extendMarkdown(self, md, md_globals):
+    def extendMarkdown(self, md):
         md.inlinePatterns["link"] = \
             markdown.inlinepatterns.LinkPattern(SPACED_LINK_RE, md)
         md.inlinePatterns["reference"] = \

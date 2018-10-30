@@ -28,6 +28,6 @@ class SemiSaneListExtension(markdown.Extension):
     newlines.
     """
 
-    def extendMarkdown(self, md, md_globals):
+    def extendMarkdown(self, md):
         md.parser.blockprocessors['olist'] = SemiSaneOListProcessor(md.parser)
         md.parser.blockprocessors['ulist'] = SemiSaneUListProcessor(md.parser)

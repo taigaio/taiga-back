@@ -152,7 +152,7 @@ EMOJIS_SET = {
 
 class EmojifyExtension(Extension):
 
-    def extendMarkdown(self, md, md_globals):
+    def extendMarkdown(self, md):
         md.registerExtension(self)
         md.preprocessors.add('emojify',
                              EmojifyPreprocessor(md),
