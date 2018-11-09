@@ -242,11 +242,7 @@ You need transifex-client, install it.
 
  1. Install transifex-client, use
 
-       $ pip install --upgrade -r requirements-devel.txt
-
-    or
-
-       $ pip install --upgrade transifex-client==0.12.2
+       $ pip install --upgrade transifex-client
 
  2. Create ~/.transifexrc file:
 
