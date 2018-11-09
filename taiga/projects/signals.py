@@ -18,6 +18,7 @@
 
 from django.apps import apps
 from django.conf import settings
+from django.db.models import F
 
 from taiga.projects.notifications.services import create_notify_policy_if_not_exists
 
@@ -32,15 +33,21 @@ def membership_post_delete(sender, instance, using, **kwargs):
     instance.project.update_role_points()
 
 
-## Notify policy
+def membership_post_save(sender, instance, using, **kwargs):
+    if not instance.user:
+        return
+    create_notify_policy_if_not_exists(instance.project, instance.user)
 
-def create_notify_policy(sender, instance, using, **kwargs):
-    if instance.user:
-        create_notify_policy_if_not_exists(instance.project, instance.user)
+    # Set project on top on user projects list
+    membership = apps.get_model("projects", "Membership")
+    membership.objects.filter(user=instance.user) \
+        .update(user_order=F('user_order') + 1)
+
+    membership.objects.filter(user=instance.user, project=instance.project)\
+        .update(user_order=0)
 
 
 ## Project attributes
-
 def project_post_save(sender, instance, created, **kwargs):
     """
     Populate new project dependen default data

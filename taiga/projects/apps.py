@@ -53,17 +53,17 @@ def connect_memberships_signals():
                                sender=apps.get_model("projects", "Membership"),
                                dispatch_uid='membership_pre_delete')
 
-    # On membership object is deleted, update notify policies of all objects relation.
-    signals.post_save.connect(handlers.create_notify_policy,
+    # On membership object is created, reorder and create notify policies
+    signals.post_save.connect(handlers.membership_post_save,
                               sender=apps.get_model("projects", "Membership"),
-                              dispatch_uid='create-notify-policy')
+                              dispatch_uid='membership_post_save')
 
 
 def disconnect_memberships_signals():
     signals.pre_delete.disconnect(sender=apps.get_model("projects", "Membership"),
                                   dispatch_uid='membership_pre_delete')
     signals.post_save.disconnect(sender=apps.get_model("projects", "Membership"),
-                                 dispatch_uid='create-notify-policy')
+                                 dispatch_uid='membership_post_save')
 
 
 ## US Statuses Signals
