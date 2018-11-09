@@ -85,7 +85,7 @@ def test_proccessor_valid_us_reference():
         instance.content_type.model = "userstory"
         instance.content_object.subject = "test"
         result = render(dummy_project, "**#1**")
-        expected_result = '<p><strong><a class="reference user-story" href="http://localhost:9001/project/test/us/1" title="#1 test">#1</a></strong></p>'
+        expected_result = '<p><strong><a class="reference user-story" href="http://localhost:9001/project/test/us/1" title="#1 test">&num;1</a></strong></p>'
         assert result == expected_result
 
 
@@ -95,7 +95,7 @@ def test_proccessor_valid_issue_reference():
         instance.content_type.model = "issue"
         instance.content_object.subject = "test"
         result = render(dummy_project, "**#2**")
-        expected_result = '<p><strong><a class="reference issue" href="http://localhost:9001/project/test/issue/2" title="#2 test">#2</a></strong></p>'
+        expected_result = '<p><strong><a class="reference issue" href="http://localhost:9001/project/test/issue/2" title="#2 test">&num;2</a></strong></p>'
         assert result == expected_result
 
 
@@ -105,7 +105,7 @@ def test_proccessor_valid_task_reference():
         instance.content_type.model = "task"
         instance.content_object.subject = "test"
         result = render(dummy_project, "**#3**")
-        expected_result = '<p><strong><a class="reference task" href="http://localhost:9001/project/test/task/3" title="#3 test">#3</a></strong></p>'
+        expected_result = '<p><strong><a class="reference task" href="http://localhost:9001/project/test/task/3" title="#3 test">&num;3</a></strong></p>'
         assert result == expected_result
 
 
@@ -207,13 +207,13 @@ def test_render_relative_image():
 
 
 def test_render_triple_quote_code():
-    expected_result = '<div class="codehilite"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">"test"</span><span class="p">)</span>\n</pre></div>'
+    expected_result = '<div class="codehilite"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>\n</pre></div>'
 
     assert render(dummy_project, "```python\nprint(\"test\")\n```") == expected_result
 
 
 def test_render_triple_quote_and_lang_code():
-    expected_result = '<div class="codehilite"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">"test"</span><span class="p">)</span>\n</pre></div>'
+    expected_result = '<div class="codehilite"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>\n</pre></div>'
 
     assert render(dummy_project, "```python\nprint(\"test\")\n```") == expected_result
 
