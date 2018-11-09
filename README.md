@@ -96,7 +96,7 @@ python manage.py loaddata initial_project_templates
 python manage.py sample_data
 ```
 
-**IMPORTANT: Taiga only runs with python 3.4+**
+**IMPORTANT: Taiga only runs with python 3.5+**
 
 Initial auth data: admin/123123
 
