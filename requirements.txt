@@ -31,7 +31,7 @@ gunicorn==19.7.1
 html5lib==1.0.1
 idna==2.7
 jinja2==2.10
-kombu==4.2.1
+kombu==4.0.2
 lxml==4.2.5
 markdown==3.0.1
 markupsafe==1.1.0
