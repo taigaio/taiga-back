@@ -58,6 +58,17 @@ class UserProjectSettingsViewSet(ModelCrudViewSet):
                 Q(project__memberships__user=self.request.user)
         ).distinct()
 
+    def list(self, request, *args, **kwargs):
+        qs = self.get_queryset()
+
+        project_id = request.QUERY_PARAMS.get("project", None)
+        if project_id:
+            qs = qs.filter(project_id=project_id)
+
+        serializer = self.get_serializer(qs, many=True)
+
+        return response.Ok(serializer.data)
+
 
 class SectionsViewSet(ReadOnlyListViewSet):
     def list(self, request, *args, **kwargs):
