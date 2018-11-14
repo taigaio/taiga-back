@@ -79,6 +79,9 @@ def data():
                                           default_points=m.private_points1)
     m.private_project1 = attach_project_extra_info(Project.objects.all()).get(id=m.private_project1.id)
 
+    m.private_sprint1 = f.MilestoneFactory.create(project=m.private_project1,
+                                                  owner=m.project_owner)
+
     m.private_points2 = f.PointsFactory()
     m.private_project2 = f.ProjectFactory(is_private=True,
                                           anon_permissions=[],
@@ -695,6 +698,28 @@ def test_user_story_action_bulk_update_order(client, data):
     })
     results = helper_test_http_method(client, 'post', url, post_data, users)
     assert results == [401, 403, 403, 451, 451]
+
+
+def test_user_story_action_bulk_update_milestone(client, data):
+    url = reverse('userstories-bulk-update-milestone')
+
+    users = [
+        None,
+        data.registered_user,
+        data.project_member_without_perms,
+        data.project_member_with_perms,
+        data.project_owner
+    ]
+
+    post_data = json.dumps({
+        "bulk_stories": [
+            {"us_id": data.private_user_story1.id, "order": 2}
+        ],
+        "milestone_id": data.private_sprint1.pk,
+        "project_id": data.private_project1.pk
+    })
+    results = helper_test_http_method(client, 'post', url, post_data, users)
+    assert results == [401, 403, 403, 204, 204]
 
 
 def test_user_story_action_upvote(client, data):
