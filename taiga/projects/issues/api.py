@@ -265,7 +265,7 @@ class IssueViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
 
         self.check_permissions(request, "bulk_update_milestone", project)
 
-        ret = services.update_tasks_milestone_in_bulk(data["bulk_issues"], milestone)
+        ret = services.update_issues_milestone_in_bulk(data["bulk_issues"], milestone)
 
         return response.Ok(ret)
 

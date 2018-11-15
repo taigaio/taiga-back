@@ -144,6 +144,7 @@ def update_tasks_milestone_in_bulk(bulk_data: list, milestone: object):
 
     return task_milestones
 
+
 #####################################################
 # CSV
 #####################################################

@@ -84,7 +84,7 @@ def snapshot_issues_in_bulk(bulk_data, user):
             pass
 
 
-def update_tasks_milestone_in_bulk(bulk_data: list, milestone: object):
+def update_issues_milestone_in_bulk(bulk_data: list, milestone: object):
     """
     Update the milestone some issues adding
     `bulk_data` should be a list of dicts with the following format:
@@ -105,6 +105,7 @@ def update_tasks_milestone_in_bulk(bulk_data: list, milestone: object):
 #####################################################
 # CSV
 #####################################################
+
 
 def issues_to_csv(project, queryset):
     csv_data = io.StringIO()
