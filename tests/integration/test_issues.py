@@ -758,6 +758,40 @@ def test_api_create_in_bulk_with_status_milestone(client):
     assert response.data[0]["milestone"] == milestone.id
 
 
+def test_api_update_milestone_in_bulk(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
+
+    milestone1 = f.MilestoneFactory(project=project)
+    milestone2 = f.MilestoneFactory(project=project)
+
+    i1 = f.create_issue(project=project, milestone=milestone1)
+    i2 = f.create_issue(project=project, milestone=milestone1)
+    i3 = f.create_issue(project=project, milestone=milestone1)
+
+    assert project.milestones.get(id=milestone1.id).issues.count() == 3
+
+    url = reverse("issues-bulk-update-milestone")
+    data = {
+        "project_id": project.id,
+        "milestone_id": milestone2.id,
+        "bulk_issues": [
+            {"issue_id": i1.id},
+            {"issue_id": i2.id},
+            {"issue_id": i3.id}
+        ]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 200, response.data
+    assert response.data[i1.id] == milestone2.id
+    assert response.data[i2.id] == milestone2.id
+    assert response.data[i3.id] == milestone2.id
+
+
 def test_get_issues(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user)

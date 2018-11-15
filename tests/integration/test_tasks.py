@@ -544,7 +544,7 @@ def test_api_update_order_in_bulk_invalid_user_story_2(client):
     assert "bulk_tasks" in response.data
 
 
-def test_api_update_action_bulk_update_milestone(client):
+def test_api_update_milestone_in_bulk(client):
     user = f.UserFactory.create()
     project = f.ProjectFactory.create(owner=user, default_task_status=None)
     f.MembershipFactory.create(project=project, user=user, is_admin=True)
