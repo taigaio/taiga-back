@@ -35,6 +35,7 @@ class IssuePermission(TaigaResourcePermission):
     filters_data_perms = AllowAny()
     csv_perms = AllowAny()
     bulk_create_perms = HasProjectPerm('add_issue')
+    bulk_update_milestone_perms = HasProjectPerm('modify_issue')
     delete_comment_perms= HasProjectPerm('modify_issue')
     upvote_perms = IsAuthenticated() & HasProjectPerm('view_issues')
     downvote_perms = IsAuthenticated() & HasProjectPerm('view_issues')

@@ -26,6 +26,9 @@ from django.db import connection
 from django.utils.translation import ugettext as _
 
 from taiga.base.utils import db, text
+from taiga.events import events
+
+from taiga.projects.history.services import take_snapshot
 from taiga.projects.issues.apps import (
     connect_issues_signals,
     disconnect_issues_signals)
@@ -71,6 +74,33 @@ def create_issues_in_bulk(bulk_data, callback=None, precall=None, **additional_f
 
     return issues
 
+
+def snapshot_issues_in_bulk(bulk_data, user):
+    for issue_data in bulk_data:
+        try:
+            issue = models.Issue.objects.get(pk=issue_data['issue_id'])
+            take_snapshot(issue, user=user)
+        except models.Issue.DoesNotExist:
+            pass
+
+
+def update_tasks_milestone_in_bulk(bulk_data: list, milestone: object):
+    """
+    Update the milestone some issues adding
+    `bulk_data` should be a list of dicts with the following format:
+    [{'task_id': <value>}, ...]
+    """
+    issue_milestones = {e["issue_id"]: milestone.id for e in bulk_data}
+    issue_ids = issue_milestones.keys()
+
+    events.emit_event_for_ids(ids=issue_ids,
+                              content_type="issues.issues",
+                              projectid=milestone.project.pk)
+
+    db.update_attr_in_bulk_for_ids(issue_milestones, "milestone_id",
+                                   model=models.Issue)
+
+    return issue_milestones
 
 #####################################################
 # CSV

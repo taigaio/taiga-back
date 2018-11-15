@@ -120,7 +120,6 @@ def update_tasks_milestone_in_bulk(bulk_data: list, milestone: object):
     [{'task_id': <value>, 'order': <value>}, ...]
     """
     tasks = milestone.tasks.all()
-    print('taskss', tasks)
     task_orders = {task.id: getattr(task, "taskboard_order") for task in tasks}
     new_task_orders = {}
     for e in bulk_data:

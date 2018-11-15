@@ -28,6 +28,7 @@ from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_404
 
 from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.milestones.models import Milestone
 from taiga.projects.mixins.by_ref import ByRefMixin
 from taiga.projects.models import Project, IssueStatus, Severity, Priority, IssueType
 from taiga.projects.notifications.mixins import AssignedToSignalMixin
@@ -251,6 +252,22 @@ class IssueViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
             return response.Ok(data=issues_serialized.data)
 
         return response.BadRequest(validator.errors)
+
+    @list_route(methods=["POST"])
+    def bulk_update_milestone(self, request, **kwargs):
+        validator = validators.UpdateMilestoneBulkValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+
+        data = validator.data
+        project = get_object_or_404(Project, pk=data["project_id"])
+        milestone = get_object_or_404(Milestone, pk=data["milestone_id"])
+
+        self.check_permissions(request, "bulk_update_milestone", project)
+
+        ret = services.update_tasks_milestone_in_bulk(data["bulk_issues"], milestone)
+
+        return response.Ok(ret)
 
 
 class IssueVotersViewSet(VotersViewSetMixin, ModelListViewSet):
