@@ -544,6 +544,37 @@ def test_api_update_order_in_bulk_invalid_user_story_2(client):
     assert "bulk_tasks" in response.data
 
 
+def test_api_update_action_bulk_update_milestone(client):
+    user = f.UserFactory.create()
+    project = f.ProjectFactory.create(owner=user, default_task_status=None)
+    f.MembershipFactory.create(project=project, user=user, is_admin=True)
+
+    milestone1 = f.MilestoneFactory(project=project)
+    milestone2 = f.MilestoneFactory(project=project)
+    task1 = f.create_task(project=project, milestone=milestone1)
+    task2 = f.create_task(project=project, milestone=milestone1)
+    task3 = f.create_task(project=project, milestone=milestone1)
+
+    url = reverse("tasks-bulk-update-milestone")
+
+    data = {
+        "project_id": project.id,
+        "milestone_id": milestone2.id,
+        "bulk_tasks": [{"task_id": task1.id, "order": 1},
+                       {"task_id": task2.id, "order": 2},
+                       {"task_id": task3.id, "order": 3}]
+    }
+
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 200, response.data
+    assert response.data[task1.id] == milestone2.id
+    assert response.data[task2.id] == milestone2.id
+    assert response.data[task3.id] == milestone2.id
+
+
 def test_get_invalid_csv(client):
     url = reverse("tasks-csv")
 
