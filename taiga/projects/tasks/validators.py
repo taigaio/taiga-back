@@ -153,3 +153,36 @@ class UpdateTasksOrderBulkValidator(ProjectExistsValidator, validators.Validator
                                     "if it exists, to the same status, user story and/or milestone."))
 
         return attrs
+
+
+# Milestone bulk validators
+
+class _TaskMilestoneBulkValidator(validators.Validator):
+    task_id = serializers.IntegerField()
+    order = serializers.IntegerField()
+
+
+class UpdateMilestoneBulkValidator(ProjectExistsValidator, validators.Validator):
+    project_id = serializers.IntegerField()
+    milestone_id = serializers.IntegerField()
+    bulk_tasks = _TaskMilestoneBulkValidator(many=True)
+
+    def validate_milestone_id(self, attrs, source):
+        filters = {
+            "project__id": attrs["project_id"],
+            "id": attrs[source]
+        }
+        if not Milestone.objects.filter(**filters).exists():
+            raise ValidationError(_("The milestone isn't valid for the project"))
+        return attrs
+
+    def validate_bulk_tasks(self, attrs, source):
+        filters = {
+            "project__id": attrs["project_id"],
+            "id__in": [task["task_id"] for task in attrs[source]]
+        }
+
+        if models.Task.objects.filter(**filters).count() != len(filters["id__in"]):
+            raise ValidationError(_("All the tasks must be from the same project"))
+
+        return attrs

@@ -275,6 +275,23 @@ class TaskViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
 
         return response.Ok(tasks_serialized.data)
 
+    @list_route(methods=["POST"])
+    def bulk_update_milestone(self, request, **kwargs):
+        validator = validators.UpdateMilestoneBulkValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+
+        data = validator.data
+        project = get_object_or_404(Project, pk=data["project_id"])
+        milestone = get_object_or_404(Milestone, pk=data["milestone_id"])
+
+        self.check_permissions(request, "bulk_update_milestone", project)
+
+        ret = services.update_tasks_milestone_in_bulk(data["bulk_tasks"], milestone)
+        services.snapshot_tasks_in_bulk(data["bulk_tasks"], request.user)
+
+        return response.Ok(ret)
+
     def _bulk_update_order(self, order_field, request, **kwargs):
         validator = validators.UpdateTasksOrderBulkValidator(data=request.DATA)
         if not validator.is_valid():

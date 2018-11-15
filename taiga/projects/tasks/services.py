@@ -112,6 +112,39 @@ def snapshot_tasks_in_bulk(bulk_data, user):
             pass
 
 
+def update_tasks_milestone_in_bulk(bulk_data: list, milestone: object):
+    """
+    Update the milestone and the milestone order of some tasks adding
+    the extra orders needed to keep consistency.
+    `bulk_data` should be a list of dicts with the following format:
+    [{'task_id': <value>, 'order': <value>}, ...]
+    """
+    tasks = milestone.tasks.all()
+    print('taskss', tasks)
+    task_orders = {task.id: getattr(task, "taskboard_order") for task in tasks}
+    new_task_orders = {}
+    for e in bulk_data:
+        new_task_orders[e["task_id"]] = e["order"]
+        # The base orders where we apply the new orders must containg all
+        # the values
+        task_orders[e["task_id"]] = e["order"]
+
+    apply_order_updates(task_orders, new_task_orders)
+
+    task_milestones = {e["task_id"]: milestone.id for e in bulk_data}
+    task_ids = task_milestones.keys()
+
+    events.emit_event_for_ids(ids=task_ids,
+                              content_type="tasks.task",
+                              projectid=milestone.project.pk)
+
+    db.update_attr_in_bulk_for_ids(task_milestones, "milestone_id",
+                                   model=models.Task)
+
+    db.update_attr_in_bulk_for_ids(task_orders, "taskboard_order", models.Task)
+
+    return task_milestones
+
 #####################################################
 # CSV
 #####################################################
