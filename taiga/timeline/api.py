@@ -80,14 +80,15 @@ class TimelineViewSet(ReadOnlyListViewSet):
             qs = qs.extra(where=[
                 """
                 NOT(
-                    data::text LIKE '%%\"values_diff\": {}%%'
+                    (data::text LIKE '%%\"values_diff\": {}%%'
+                        OR
+                     data->'values_diff'->'attachments'->'new' = '[]')
                     AND
                     event_type::text = ANY('{issues.issue.change,
                                              tasks.task.change,
                                              userstories.userstory.change,
                                              epics.epic.change,
                                              wiki.wikipage.change}'::text[])
-                    OR data->'values_diff'->'attachments'->>'new' = '[]'
                 )
                 """])
 
