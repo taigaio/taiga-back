@@ -593,6 +593,30 @@ def attach_public_projects_same_owner(queryset, user, as_field="public_projects_
     return queryset
 
 
+def attach_my_homepage(queryset, user, as_field="my_homepage_attr"):
+    """Attach a homepage array to each object of the queryset.
+
+    :param queryset: A Django projects queryset object.
+    :param as_field: Attach the settings homepage as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    if user is None or user.is_anonymous():
+        sql = "SELECT '{}'"
+    else:
+        sql = """
+                 SELECT homepage
+                   FROM settings_userprojectsettings
+                  WHERE settings_userprojectsettings.project_id = {tbl}.id AND
+                        settings_userprojectsettings.user_id = {user_id}"""
+
+        sql = sql.format(tbl=model._meta.db_table, user_id=user.id)
+
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset
+
+
 def attach_extra_info(queryset, user=None):
     queryset = attach_members(queryset)
     queryset = attach_closed_milestones(queryset)
@@ -618,5 +642,6 @@ def attach_extra_info(queryset, user=None):
     queryset = attach_private_projects_same_owner(queryset, user)
     queryset = attach_public_projects_same_owner(queryset, user)
     queryset = attach_milestones(queryset)
+    queryset = attach_my_homepage(queryset, user)
 
     return queryset

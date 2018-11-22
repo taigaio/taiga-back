@@ -290,6 +290,8 @@ class ProjectSerializer(serializers.LightSerializer):
 
     is_fan = Field(attr="is_fan_attr")
 
+    my_homepage = MethodField()
+
     def get_members(self, obj):
         assert hasattr(obj, "members_attr"), "instance must have a members_attr attribute"
         if obj.members_attr is None:
@@ -373,6 +375,13 @@ class ProjectSerializer(serializers.LightSerializer):
 
     def get_logo_big_url(self, obj):
         return services.get_logo_big_thumbnail_url(obj)
+
+    def get_my_homepage(self, obj):
+        assert hasattr(obj, "my_homepage_attr"), "instance must have a my_homepage_attr attribute"
+        if obj.my_homepage_attr is None:
+            return False
+
+        return obj.my_homepage_attr
 
 
 class ProjectDetailSerializer(ProjectSerializer):

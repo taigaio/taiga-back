@@ -113,8 +113,8 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             qs = project_utils.attach_notify_policies(qs)
             qs = project_utils.attach_is_fan(qs, user=self.request.user)
             qs = project_utils.attach_my_role_permissions(qs, user=self.request.user)
-            qs = project_utils.attach_my_role_permissions(qs, user=self.request.user)
             qs = project_utils.attach_closed_milestones(qs)
+            qs = project_utils.attach_my_homepage(qs, user=self.request.user)
         else:
             qs = project_utils.attach_extra_info(qs, user=self.request.user)
 
