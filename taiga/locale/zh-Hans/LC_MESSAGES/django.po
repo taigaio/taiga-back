@@ -17,7 +17,7 @@
 # Yang Yu <yuyangmkdir@yahoo.com>, 2016
 # yonee <yangqo@hotmail.com>, 2015
 # 5791113 <yonglong.ma@outlook.com>, 2016
-# yungang <zangyungang@gmail.com>, 2018
+# zangyg <zangyungang@gmail.com>, 2018
 # 5791113 <yonglong.ma@outlook.com>, 2016
 # 朱坚 <garyzhu2009@gmail.com>, 2017
 msgid ""

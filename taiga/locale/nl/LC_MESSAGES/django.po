@@ -6,13 +6,14 @@
 # Translators:
 # Dajo Hein, 2015
 # Haroun Pacquee, 2015
+# Joannes Anthonius Rommers <ja.rommers@lge.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-11 14:11+0200\n"
-"PO-Revision-Date: 2018-10-14 17:29+0000\n"
-"Last-Translator: Alejandro Hermida <alexhermida@gmail.com>\n"
+"PO-Revision-Date: 2018-11-02 07:56+0000\n"
+"Last-Translator: Joannes Anthonius Rommers <ja.rommers@lge.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -27,7 +28,7 @@ msgstr "Publieke registratie is uitgeschakeld."
 
 #: taiga/auth/api.py:93
 msgid "You must accept our terms of service and privacy policy"
-msgstr ""
+msgstr "U moet onze servicevoorwaarden en ons privacybeleid accepteren"
 
 #: taiga/auth/api.py:102
 msgid "invalid register type"
@@ -55,7 +56,7 @@ msgstr "Gebruiker is al geregistreerd."
 
 #: taiga/auth/services.py:141
 msgid "This user is already a member of the project."
-msgstr ""
+msgstr "Deze gebruiker is al lid van het project."
 
 #: taiga/auth/services.py:165
 msgid "Error on creating new user."
@@ -105,7 +106,7 @@ msgstr ""
 
 #: taiga/base/api/fields.py:638
 msgid "You email domain is not allowed"
-msgstr ""
+msgstr "Jou e-mail domein is niet toegestaan"
 
 #: taiga/base/api/fields.py:647
 msgid "Enter a valid email address."
@@ -211,7 +212,7 @@ msgstr ""
 #: taiga/projects/tasks/api.py:284 taiga/projects/userstories/api.py:346
 #: taiga/projects/userstories/api.py:398 taiga/webhooks/api.py:71
 msgid "Blocked element"
-msgstr ""
+msgstr "Geblokkeerd element"
 
 #: taiga/base/api/pagination.py:228
 msgid "Page is not 'last', nor can it be converted to an int."
@@ -364,7 +365,7 @@ msgstr "Preconditie fout"
 
 #: taiga/base/exceptions.py:219
 msgid "No room left for more projects."
-msgstr ""
+msgstr "Er is geen ruimte over voor meer projecten."
 
 #: taiga/base/filters.py:105 taiga/base/filters.py:526
 msgid "Error in filter params types."
@@ -486,6 +487,9 @@ msgid ""
 "%(comment)s</p>\n"
 "                                                                    "
 msgstr ""
+"\n"
+"<h3>commentaar:</h3>\n"
+"<p>%(comment)s</p>"
 
 #: taiga/base/templates/emails/updates-body-text.jinja:6
 #, python-format
@@ -500,91 +504,91 @@ msgstr ""
 
 #: taiga/base/utils/urls.py:68
 msgid "Host access error"
-msgstr ""
+msgstr "Host toegang fout"
 
 #: taiga/base/utils/urls.py:74
 msgid "IP Address error"
-msgstr ""
+msgstr "IP adres fout"
 
 #: taiga/events/events.py:106
 msgid "User story created"
-msgstr ""
+msgstr "User story aangemaakt"
 
 #: taiga/events/events.py:109
 msgid "User story changed"
-msgstr ""
+msgstr "User story gewijzigd"
 
 #: taiga/events/events.py:112
 msgid "User story deleted"
-msgstr ""
+msgstr "User story verwijderd"
 
 #: taiga/events/events.py:114
 msgid "US #{} - {}"
-msgstr ""
+msgstr "US #{} - {}"
 
 #: taiga/events/events.py:117
 msgid "Task created"
-msgstr ""
+msgstr "Taak aangemaakt"
 
 #: taiga/events/events.py:120
 msgid "Task changed"
-msgstr ""
+msgstr "Taak gewijzigd"
 
 #: taiga/events/events.py:123
 msgid "Task deleted"
-msgstr ""
+msgstr "Taak verwijderd"
 
 #: taiga/events/events.py:125
 msgid "Task #{} - {}"
-msgstr ""
+msgstr "Taak #{} - {}"
 
 #: taiga/events/events.py:128
 msgid "Issue created"
-msgstr ""
+msgstr "Probleem aangemaakt"
 
 #: taiga/events/events.py:131
 msgid "Issue changed"
-msgstr ""
+msgstr "Probleem gewijzigd"
 
 #: taiga/events/events.py:134
 msgid "Issue deleted"
-msgstr ""
+msgstr "Probleem verwijderd"
 
 #: taiga/events/events.py:136
 msgid "Issue: #{} - {}"
-msgstr ""
+msgstr "Probleem: #{} - {}"
 
 #: taiga/events/events.py:139
 msgid "Wiki Page created"
-msgstr ""
+msgstr "Wiki Pagina aangemaakt"
 
 #: taiga/events/events.py:142
 msgid "Wiki Page changed"
-msgstr ""
+msgstr "Wiki Pagina gewijzigd"
 
 #: taiga/events/events.py:145
 msgid "Wiki Page deleted"
-msgstr ""
+msgstr "Wiki Pagina verwijderd"
 
 #: taiga/events/events.py:147
 msgid "Wiki Page: {}"
-msgstr ""
+msgstr "Wiki pagina: {}"
 
 #: taiga/events/events.py:150
 msgid "Sprint created"
-msgstr ""
+msgstr "Sprint aangemaakt"
 
 #: taiga/events/events.py:153
 msgid "Sprint changed"
-msgstr ""
+msgstr "Sprint gewijzigd"
 
 #: taiga/events/events.py:156
 msgid "Sprint deleted"
-msgstr ""
+msgstr "Sprint verwijderd"
 
 #: taiga/events/events.py:158
 msgid "Sprint: {}"
-msgstr ""
+msgstr "Sprint: {}"
 
 #: taiga/export_import/api.py:127
 msgid "We needed at least one role"
@@ -621,23 +625,23 @@ msgstr "fout bij importeren van standaard projectattributen waarden"
 
 #: taiga/export_import/services/store.py:779
 msgid "error importing custom attributes"
-msgstr "fout bij importeren eigen attributen"
+msgstr "fout bij het importeren van aangepaste attributen"
 
 #: taiga/export_import/services/store.py:783
 msgid "error importing sprints"
-msgstr "fout bij importeren sprints"
+msgstr "fout bij het importeren van sprints"
 
 #: taiga/export_import/services/store.py:787
 msgid "error importing issues"
-msgstr "fout bij importeren issues"
+msgstr "fout bij het importeren van problemen"
 
 #: taiga/export_import/services/store.py:791
 msgid "error importing user stories"
-msgstr "fout bij importeren user stories"
+msgstr "fout bij het importeren van user stories"
 
 #: taiga/export_import/services/store.py:795
 msgid "error importing epics"
-msgstr ""
+msgstr "fout bij het importeren van epics"
 
 #: taiga/export_import/services/store.py:799
 msgid "error importing tasks"
@@ -661,7 +665,7 @@ msgstr "fout bij importeren tijdlijnen"
 
 #: taiga/export_import/services/store.py:837
 msgid "unexpected error importing project"
-msgstr ""
+msgstr "onverwachte fout tijdens het importeren van het project"
 
 #: taiga/export_import/tasks.py:62 taiga/export_import/tasks.py:63
 msgid "Error generating project dump"
@@ -693,11 +697,11 @@ msgstr "Fout bij laden project dump"
 
 #: taiga/export_import/tasks.py:121
 msgid "Error loading your project dump file"
-msgstr ""
+msgstr "Fout tijdens het laden van de project dump file"
 
 #: taiga/export_import/tasks.py:135
 msgid "  -- no detail info --"
-msgstr ""
+msgstr "-- geen gedetailleerde informatie --"
 
 #: taiga/export_import/templates/emails/dump_project-body-html.jinja:4
 #, python-format
@@ -893,7 +897,7 @@ msgstr "Naam gedupliceerd voor het project"
 #: taiga/external_apps/api.py:43 taiga/external_apps/api.py:70
 #: taiga/external_apps/api.py:77
 msgid "Authentication required"
-msgstr ""
+msgstr "Authenticatie verreist"
 
 #: taiga/external_apps/models.py:35
 #: taiga/projects/custom_attributes/models.py:36
@@ -911,11 +915,11 @@ msgstr "naam"
 
 #: taiga/external_apps/models.py:37
 msgid "Icon url"
-msgstr ""
+msgstr "Icoon url"
 
 #: taiga/external_apps/models.py:38
 msgid "web"
-msgstr ""
+msgstr "web"
 
 #: taiga/external_apps/models.py:39 taiga/projects/attachments/models.py:62
 #: taiga/projects/custom_attributes/models.py:37
@@ -929,17 +933,17 @@ msgstr "omschrijving"
 
 #: taiga/external_apps/models.py:41
 msgid "Next url"
-msgstr ""
+msgstr "Volgende url"
 
 #: taiga/external_apps/models.py:55 taiga/projects/contact/models.py:26
 #: taiga/projects/likes/models.py:31 taiga/projects/notifications/models.py:88
 #: taiga/projects/votes/models.py:52
 msgid "user"
-msgstr ""
+msgstr "gebruiker"
 
 #: taiga/external_apps/models.py:59
 msgid "application"
-msgstr ""
+msgstr "applicatie"
 
 #: taiga/feedback/models.py:25 taiga/users/models.py:147
 msgid "full name"

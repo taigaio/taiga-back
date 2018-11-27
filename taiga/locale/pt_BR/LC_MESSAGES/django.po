@@ -18,6 +18,7 @@
 # Lucas Boscaini <lucasboscaini@gmail.com>, 2017
 # Mairieli Wessel <mairieliw@alunos.utfpr.edu.br>, 2016
 # Marlon Carvalho <m.lopes@qiwi.com>, 2015
+# Michael Meneses <michael.douglas.meneses.2@gmail.com>, 2018
 # Michel Wilhelm <michelwilhelm@gmail.com>, 2016
 # pedromvm <pedromvm@gmail.com>, 2015
 # Pedro Rangel Raft <me@pedroraft.com>, 2017
@@ -30,8 +31,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-11 14:11+0200\n"
-"PO-Revision-Date: 2018-10-14 17:29+0000\n"
-"Last-Translator: Alejandro Hermida <alexhermida@gmail.com>\n"
+"PO-Revision-Date: 2018-11-17 17:51+0000\n"
+"Last-Translator: Michael Meneses <michael.douglas.meneses.2@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
@@ -46,7 +47,7 @@ msgstr "Registro público está desabilitado. "
 
 #: taiga/auth/api.py:93
 msgid "You must accept our terms of service and privacy policy"
-msgstr ""
+msgstr "Você deve aceitar os termos do serviço e a política de privacidade"
 
 #: taiga/auth/api.py:102
 msgid "invalid register type"
@@ -525,83 +526,83 @@ msgstr ""
 
 #: taiga/events/events.py:106
 msgid "User story created"
-msgstr ""
+msgstr "História de Usuário criada"
 
 #: taiga/events/events.py:109
 msgid "User story changed"
-msgstr ""
+msgstr "História de Usuário alterada"
 
 #: taiga/events/events.py:112
 msgid "User story deleted"
-msgstr ""
+msgstr "História de Usuário excluída"
 
 #: taiga/events/events.py:114
 msgid "US #{} - {}"
-msgstr ""
+msgstr "US #{} - {}"
 
 #: taiga/events/events.py:117
 msgid "Task created"
-msgstr ""
+msgstr "Tarefa criada"
 
 #: taiga/events/events.py:120
 msgid "Task changed"
-msgstr ""
+msgstr "Tarefa alterada"
 
 #: taiga/events/events.py:123
 msgid "Task deleted"
-msgstr ""
+msgstr "Tarefa excluída"
 
 #: taiga/events/events.py:125
 msgid "Task #{} - {}"
-msgstr ""
+msgstr "Tarefa #{} - {}"
 
 #: taiga/events/events.py:128
 msgid "Issue created"
-msgstr ""
+msgstr "Issue criada"
 
 #: taiga/events/events.py:131
 msgid "Issue changed"
-msgstr ""
+msgstr "Issue alterada"
 
 #: taiga/events/events.py:134
 msgid "Issue deleted"
-msgstr ""
+msgstr "Issue excluída"
 
 #: taiga/events/events.py:136
 msgid "Issue: #{} - {}"
-msgstr ""
+msgstr "Issue: #{} - {}"
 
 #: taiga/events/events.py:139
 msgid "Wiki Page created"
-msgstr ""
+msgstr "Página Wiki criada"
 
 #: taiga/events/events.py:142
 msgid "Wiki Page changed"
-msgstr ""
+msgstr "Página Wiki alterada"
 
 #: taiga/events/events.py:145
 msgid "Wiki Page deleted"
-msgstr ""
+msgstr "Página Wiki excluída"
 
 #: taiga/events/events.py:147
 msgid "Wiki Page: {}"
-msgstr ""
+msgstr "Página Wiki: {}"
 
 #: taiga/events/events.py:150
 msgid "Sprint created"
-msgstr ""
+msgstr "Sprint criada"
 
 #: taiga/events/events.py:153
 msgid "Sprint changed"
-msgstr ""
+msgstr "Sprint alterada"
 
 #: taiga/events/events.py:156
 msgid "Sprint deleted"
-msgstr ""
+msgstr "Sprint excluída"
 
 #: taiga/events/events.py:158
 msgid "Sprint: {}"
-msgstr ""
+msgstr "Sprint: {}"
 
 #: taiga/export_import/api.py:127
 msgid "We needed at least one role"
@@ -1279,7 +1280,7 @@ msgstr "O parâmetro url é necessário"
 
 #: taiga/importers/jira/api.py:158
 msgid "Invalid project_type {}"
-msgstr ""
+msgstr "project_type inválido {}"
 
 #: taiga/importers/jira/api.py:192
 msgid "Invalid Jira server configuration."
@@ -1518,7 +1519,7 @@ msgstr "Pedido invalido: %s há %s"
 #: taiga/importers/trello/importer.py:80 taiga/importers/trello/importer.py:82
 #, python-format
 msgid "Unauthorized: %s at %s"
-msgstr ""
+msgstr "Não autorizado: %s até %s"
 
 #: taiga/importers/trello/importer.py:84 taiga/importers/trello/importer.py:86
 #, python-format
