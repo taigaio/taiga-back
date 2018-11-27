@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+## 4.0.0 Larix cajanderi (2018-11-28)
+
+### Features
+
+- Custom home section (https://tree.taiga.io/project/taiga/issue/3059)
+- Custom fields (https://tree.taiga.io/project/taiga/issue/3725):
+    - Dropdown
+    - Checkbox
+    - Number
+- Bulk move unfinished objects in sprint (https://tree.taiga.io/project/taiga/issue/5451)
+- Paginate history activity
+- Improve notifications area (https://tree.taiga.io/project/taiga/issue/2165 and
+  https://tree.taiga.io/project/taiga/issue/3752)
+
+### Misc
+
+- Minor icon changes
+- Lots of small bugfixes
+ 
 ## 3.4.5 (2018-10-15)
 
 ### Features
