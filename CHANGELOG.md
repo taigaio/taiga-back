@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 4.0.1 (2018-11-28)
+
+### Misc
+
+- Minor bug fix.
+
 ## 4.0.0 Larix cajanderi (2018-11-28)
 
 ### Features
