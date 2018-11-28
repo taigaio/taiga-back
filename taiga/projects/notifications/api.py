@@ -65,6 +65,9 @@ class WebNotificationsViewSet(GenericViewSet):
                request.user.pk == obj.user_id
 
     def list(self, request):
+        if self.request.user.is_anonymous():
+            return response.Ok({})
+
         queryset = models.WebNotification.objects\
             .filter(user=self.request.user)
 
