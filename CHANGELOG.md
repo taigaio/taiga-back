@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 4.0.2 (2018-12-04)
+
+### Misc
+
+- Update messages catalog.
+
 ## 4.0.1 (2018-11-28)
 
 ### Misc
