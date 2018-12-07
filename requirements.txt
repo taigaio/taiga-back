@@ -2,12 +2,12 @@
 amqp==2.3.2
 asana==0.6.7
 asn1crypto==0.24.0
-billiard==3.5.0.4
+billiard==3.5.0.5
 bleach==2.1.4
 cairocffi==0.9.0
 cairosvg==2.0.3
 celery==4.0.2
-certifi==2018.10.15
+certifi==2018.11.29
 cffi==1.11.5
 chardet==3.0.4
 contextlib2==0.5.5
@@ -44,6 +44,7 @@ psd-tools==1.4
 psycopg2-binary==2.7.5
 pycparser==2.19
 pygments==2.2.0
+pyjwt==1.7.0
 python-dateutil==2.7.5
 python-magic==0.4.13
 pytz==2018.7

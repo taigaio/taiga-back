@@ -31,6 +31,7 @@ pytz = "*"
 raven = "==6.1.0"
 redis = "==2.10.5"
 requests = "==2.20.0"
+requests_oauthlib = "*"
 serpy = "==0.1.1"
 webcolors = "==1.7"
 CairoSVG = "==2.0.3"
@@ -39,6 +40,7 @@ Markdown = "==3.0.1"
 Pillow = "==4.1.1"
 Unidecode = "==0.4.20"
 Pygments = "==2.2.0"
+oauthlib = {extras = ["signedtoken"],version = "*"}
 
 [dev-packages]
 coverage = "*"
