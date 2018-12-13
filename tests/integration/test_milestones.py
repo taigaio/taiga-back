@@ -180,3 +180,30 @@ def test_api_filter_by_milestone__estimated_start_and_end(client, field_name):
         assert number_of_milestones == expection, param
         if number_of_milestones > 0:
             assert response.data[0]["slug"] == milestone.slug
+
+
+def test_api_update_milestone_in_bulk_userstories(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner,
+                               is_admin=True)
+    milestone1 = f.MilestoneFactory.create(project=project)
+    milestone2 = f.MilestoneFactory.create(project=project)
+    us1 = f.create_userstory(project=project, milestone=milestone1,
+                             sprint_order=1)
+    us2 = f.create_userstory(project=project, milestone=milestone1,
+                             sprint_order=2)
+
+    url = reverse("milestones-bulk-update-items", kwargs={"pk": milestone1.pk})
+
+    data = {
+        "project_id": project.id,
+        "sprint_id": milestone2.id,
+        "bulk_stories": [{"us_id": us2.id, "order": 2}]
+    }
+
+    client.login(project.owner)
+    assert project.milestones.get(id=milestone1.id).user_stories.count() == 1
+
+    response = client.json.post(url, json.dumps(data))
+    assert response.status_code == 204, response.data
+    assert project.milestones.get(id=milestone2.id).user_stories.count() == 1
