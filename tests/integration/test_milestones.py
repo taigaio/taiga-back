@@ -202,8 +202,10 @@ def test_api_update_milestone_in_bulk_userstories(client):
     }
 
     client.login(project.owner)
-    assert project.milestones.get(id=milestone1.id).user_stories.count() == 1
+    assert project.milestones.get(id=milestone1.id).user_stories.count() == 2
 
     response = client.json.post(url, json.dumps(data))
     assert response.status_code == 204, response.data
+    assert project.milestones.get(id=milestone1.id).user_stories.count() == 1
     assert project.milestones.get(id=milestone2.id).user_stories.count() == 1
+

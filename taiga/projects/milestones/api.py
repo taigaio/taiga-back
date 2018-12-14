@@ -27,11 +27,13 @@ from taiga.base.api.mixins import BlockedByProjectMixin
 from taiga.base.api.utils import get_object_or_404
 from taiga.base.utils.db import get_object_or_none
 
+from taiga.projects.models import Project
 from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.notifications.mixins import WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 
 from . import serializers
+from . import services
 from . import validators
 from . import models
 from . import permissions
@@ -142,6 +144,28 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
 
         return response.Ok(milestone_stats)
 
+
+    @detail_route(methods=["POST"])
+    def bulk_update_items(self, request, pk=None, **kwargs):
+        milestone = get_object_or_404(models.Milestone, pk=pk)
+
+        self.check_permissions(request, "bulk_update_items", milestone)
+
+        validator = validators.UpdateMilestoneBulkValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+
+        data = validator.data
+        project = get_object_or_404(Project, pk=data["project_id"])
+        milestone = get_object_or_404(models.Milestone, pk=data["sprint_id"])
+
+        print('data', validator.bulk_stories)
+        if data["bulk_stories"]:
+            self.check_permissions(request, "bulk_update_us_milestone", project)
+            services.update_userstories_milestone_in_bulk(data["bulk_stories"], milestone)
+            services.snapshot_userstories_in_bulk(data["bulk_stories"], request.user)
+
+        return response.NoContent()
 
 class MilestoneWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.MilestoneWatchersPermission,)

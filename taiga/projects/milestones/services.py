@@ -16,10 +16,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils import timezone
+from taiga.base.utils import db
+from taiga.events import events
+from taiga.projects.history.services import take_snapshot
+from taiga.projects.services import apply_order_updates
+from taiga.projects.tasks.models import Task
+from taiga.projects.userstories.models import UserStory
 
 from . import models
-
 
 
 def calculate_milestone_is_closed(milestone):
@@ -38,3 +42,49 @@ def open_milestone(milestone):
     if milestone.closed:
         milestone.closed = False
         milestone.save(update_fields=["closed",])
+
+
+def update_userstories_milestone_in_bulk(bulk_data: list, milestone: object):
+    """
+    Update the milestone and the milestone order of some user stories adding
+    the extra orders needed to keep consistency.
+    `bulk_data` should be a list of dicts with the following format:
+    [{'us_id': <value>, 'order': <value>}, ...]
+    """
+    user_stories = milestone.user_stories.all()
+    us_orders = {us.id: getattr(us, "sprint_order") for us in user_stories}
+    new_us_orders = {}
+    for e in bulk_data:
+        new_us_orders[e["us_id"]] = e["order"]
+        # The base orders where we apply the new orders must containg all
+        # the values
+        us_orders[e["us_id"]] = e["order"]
+
+    apply_order_updates(us_orders, new_us_orders)
+
+    us_milestones = {e["us_id"]: milestone.id for e in bulk_data}
+    user_story_ids = us_milestones.keys()
+
+    events.emit_event_for_ids(ids=user_story_ids,
+                              content_type="userstories.userstory",
+                              projectid=milestone.project.pk)
+
+    db.update_attr_in_bulk_for_ids(us_milestones, "milestone_id",
+                                   model=UserStory)
+    db.update_attr_in_bulk_for_ids(us_orders, "sprint_order", UserStory)
+
+    # Updating the milestone for the tasks
+    Task.objects.filter(
+        user_story_id__in=[e["us_id"] for e in bulk_data]).update(
+        milestone=milestone)
+
+    return us_orders
+
+
+def snapshot_userstories_in_bulk(bulk_data, user):
+    for us_data in bulk_data:
+        try:
+            us = UserStory.objects.get(pk=us_data['us_id'])
+            take_snapshot(us, user=user)
+        except UserStory.DoesNotExist:
+            pass
