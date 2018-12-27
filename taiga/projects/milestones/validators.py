@@ -29,7 +29,7 @@ from . import models
 
 
 class MilestoneExistsValidator:
-    def validate_sprint_id(self, attrs, source):
+    def validate_milestone_id(self, attrs, source):
         value = attrs[source]
         if not models.Milestone.objects.filter(pk=value).exists():
             msg = _("There's no milestone with that id")
@@ -55,15 +55,6 @@ class UpdateMilestoneBulkValidator(MilestoneExistsValidator,
     project_id = serializers.IntegerField()
     milestone_id = serializers.IntegerField()
     bulk_stories = _UserStoryMilestoneBulkValidator(many=True)
-
-    # def validate_milestone_id(self, attrs, source):
-    #     filters = {
-    #         "project__id": attrs["project_id"],
-    #         "id": attrs[source]
-    #     }
-    #     if not Milestone.objects.filter(**filters).exists():
-    #         raise ValidationError(_("The milestone isn't valid for the project"))
-    #     return attrs
 
     def validate_bulk_stories(self, attrs, source):
         filters = {

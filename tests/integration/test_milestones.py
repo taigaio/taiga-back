@@ -188,24 +188,85 @@ def test_api_update_milestone_in_bulk_userstories(client):
                                is_admin=True)
     milestone1 = f.MilestoneFactory.create(project=project)
     milestone2 = f.MilestoneFactory.create(project=project)
+
     us1 = f.create_userstory(project=project, milestone=milestone1,
                              sprint_order=1)
     us2 = f.create_userstory(project=project, milestone=milestone1,
                              sprint_order=2)
 
-    url = reverse("milestones-bulk-update-items", kwargs={"pk": milestone1.pk})
-
-    data = {
-        "project_id": project.id,
-        "sprint_id": milestone2.id,
-        "bulk_stories": [{"us_id": us2.id, "order": 2}]
-    }
-
-    client.login(project.owner)
     assert project.milestones.get(id=milestone1.id).user_stories.count() == 2
 
+    url = reverse("milestones-bulk-update-userstories", kwargs={"pk": milestone1.pk})
+    data = {
+        "project_id": project.id,
+        "milestone_id": milestone2.id,
+        "bulk_stories": [{"us_id": us2.id, "order": 2}]
+    }
+    client.login(project.owner)
+
     response = client.json.post(url, json.dumps(data))
+
     assert response.status_code == 204, response.data
     assert project.milestones.get(id=milestone1.id).user_stories.count() == 1
     assert project.milestones.get(id=milestone2.id).user_stories.count() == 1
 
+
+def test_api_move_userstories_to_another_sprint(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner,
+                               is_admin=True)
+    milestone1 = f.MilestoneFactory.create(project=project)
+    milestone2 = f.MilestoneFactory.create(project=project)
+
+    us1 = f.create_userstory(project=project, milestone=milestone1,
+                             sprint_order=1)
+    us2 = f.create_userstory(project=project, milestone=milestone1,
+                             sprint_order=2)
+
+    assert project.milestones.get(id=milestone1.id).user_stories.count() == 2
+
+    url = reverse("milestones-move-userstories-to-sprint", kwargs={"pk": milestone1.pk})
+    data = {
+        "project_id": project.id,
+        "milestone_id": milestone2.id,
+        "bulk_stories": [{"us_id": us2.id, "order": 2}]
+    }
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 204, response.data
+    assert project.milestones.get(id=milestone1.id).user_stories.count() == 1
+    assert project.milestones.get(id=milestone2.id).user_stories.count() == 1
+
+
+def test_api_move_userstories_to_another_sprint_close_previous(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner,
+                               is_admin=True)
+    milestone1 = f.MilestoneFactory.create(project=project)
+    milestone2 = f.MilestoneFactory.create(project=project)
+
+    closed_status = f.UserStoryStatusFactory.create(is_closed=True)
+    us1 = f.create_userstory(project=project, milestone=milestone1,
+                             sprint_order=1, status=closed_status)
+    us2 = f.create_userstory(project=project, milestone=milestone1,
+                             sprint_order=2)
+
+    assert milestone1.user_stories.count() == 2
+    assert not milestone1.closed
+
+    url = reverse("milestones-move-userstories-to-sprint", kwargs={"pk": milestone1.pk})
+    data = {
+        "project_id": project.id,
+        "milestone_id": milestone2.id,
+        "bulk_stories": [{"us_id": us2.id, "order": 2}]
+    }
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 204, response.data
+    assert project.milestones.get(id=milestone1.id).user_stories.count() == 1
+    assert project.milestones.get(id=milestone2.id).user_stories.count() == 1
+    assert project.milestones.get(id=milestone1.id).closed
