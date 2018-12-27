@@ -144,9 +144,8 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
 
         return response.Ok(milestone_stats)
 
-
     @detail_route(methods=["POST"])
-    def bulk_update_items(self, request, pk=None, **kwargs):
+    def move_userstories_to_sprint(self, request, pk=None, **kwargs):
         milestone = get_object_or_404(models.Milestone, pk=pk)
 
         self.check_permissions(request, "bulk_update_items", milestone)
@@ -157,15 +156,15 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
 
         data = validator.data
         project = get_object_or_404(Project, pk=data["project_id"])
-        milestone = get_object_or_404(models.Milestone, pk=data["sprint_id"])
+        milestone_result = get_object_or_404(models.Milestone, pk=data["milestone_id"])
 
-        print('data', validator.bulk_stories)
         if data["bulk_stories"]:
-            self.check_permissions(request, "bulk_update_us_milestone", project)
-            services.update_userstories_milestone_in_bulk(data["bulk_stories"], milestone)
+            permissions = self.check_permissions(request, "move_uss_to_sprint", project)
+            services.update_userstories_milestone_in_bulk(data["bulk_stories"], milestone_result)
             services.snapshot_userstories_in_bulk(data["bulk_stories"], request.user)
 
         return response.NoContent()
+
 
 class MilestoneWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.MilestoneWatchersPermission,)

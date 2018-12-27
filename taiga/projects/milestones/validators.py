@@ -53,7 +53,7 @@ class UpdateMilestoneBulkValidator(MilestoneExistsValidator,
                                    ProjectExistsValidator,
                                    validators.Validator):
     project_id = serializers.IntegerField()
-    sprint_id = serializers.IntegerField()
+    milestone_id = serializers.IntegerField()
     bulk_stories = _UserStoryMilestoneBulkValidator(many=True)
 
     # def validate_milestone_id(self, attrs, source):

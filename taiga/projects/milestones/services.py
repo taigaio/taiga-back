@@ -69,8 +69,14 @@ def update_userstories_milestone_in_bulk(bulk_data: list, milestone: object):
                               content_type="userstories.userstory",
                               projectid=milestone.project.pk)
 
-    db.update_attr_in_bulk_for_ids(us_milestones, "milestone_id",
-                                   model=UserStory)
+    us_instance_list = []
+    us_values = []
+    for us_id in user_story_ids:
+        us = UserStory.objects.get(pk=us_id)
+        us_instance_list.append(us)
+        us_values.append({'milestone_id': milestone.id})
+
+    db.update_in_bulk(us_instance_list, us_values)
     db.update_attr_in_bulk_for_ids(us_orders, "sprint_order", UserStory)
 
     # Updating the milestone for the tasks
