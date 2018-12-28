@@ -25,6 +25,11 @@ def connect_issues_signals():
     from taiga.projects.tagging import signals as tagging_handlers
     from . import signals as handlers
 
+    # Cached prev object version
+    signals.pre_save.connect(handlers.cached_prev_issue,
+                             sender=apps.get_model("issues", "Issue"),
+                             dispatch_uid="cached_prev_issue")
+
     # Finished date
     signals.pre_save.connect(handlers.set_finished_date_when_edit_issue,
                              sender=apps.get_model("issues", "Issue"),
@@ -34,6 +39,14 @@ def connect_issues_signals():
     signals.pre_save.connect(tagging_handlers.tags_normalization,
                              sender=apps.get_model("issues", "Issue"),
                              dispatch_uid="tags_normalization_issue")
+
+    # Open/Close US and Milestone
+    signals.post_save.connect(handlers.try_to_close_or_open_milestone_when_create_or_edit_issue,
+                              sender=apps.get_model("issues", "Issue"),
+                              dispatch_uid="try_to_close_or_open_milestone_when_create_or_edit_issue")
+    signals.post_delete.connect(handlers.try_to_close_milestone_when_delete_issue,
+                                sender=apps.get_model("issues", "Issue"),
+                                dispatch_uid="try_to_close_milestone_when_delete_issue")
 
 
 def connect_issues_custom_attributes_signals():
@@ -51,9 +64,17 @@ def connect_all_issues_signals():
 
 def disconnect_issues_signals():
     signals.pre_save.disconnect(sender=apps.get_model("issues", "Issue"),
+                                dispatch_uid="cached_prev_issue")
+
+    signals.pre_save.disconnect(sender=apps.get_model("issues", "Issue"),
                                 dispatch_uid="set_finished_date_when_edit_issue")
     signals.pre_save.disconnect(sender=apps.get_model("issues", "Issue"),
                                 dispatch_uid="tags_normalization_issue")
+
+    signals.post_save.disconnect(sender=apps.get_model("issues", "Issue"),
+                                 dispatch_uid="try_to_close_or_open_milestone_when_create_or_edit_issue")
+    signals.post_delete.disconnect(sender=apps.get_model("issues", "Issue"),
+                                   dispatch_uid="try_to_close_milestone_when_delete_issue")
 
 
 def disconnect_issues_custom_attributes_signals():
