@@ -31,6 +31,8 @@ from taiga.projects.models import Project
 from taiga.projects.notifications.mixins import WatchedResourceMixin
 from taiga.projects.notifications.mixins import WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
+from taiga.projects.tasks.validators import UpdateMilestoneBulkValidator as \
+    TasksUpdateMilestoneValidator
 
 from . import serializers
 from . import services
@@ -148,7 +150,7 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
     def move_userstories_to_sprint(self, request, pk=None, **kwargs):
         milestone = get_object_or_404(models.Milestone, pk=pk)
 
-        self.check_permissions(request, "bulk_update_items", milestone)
+        self.check_permissions(request, "move_related_items", milestone)
 
         validator = validators.UpdateMilestoneBulkValidator(data=request.DATA)
         if not validator.is_valid():
@@ -159,9 +161,30 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
         milestone_result = get_object_or_404(models.Milestone, pk=data["milestone_id"])
 
         if data["bulk_stories"]:
-            permissions = self.check_permissions(request, "move_uss_to_sprint", project)
+            self.check_permissions(request, "move_uss_to_sprint", project)
             services.update_userstories_milestone_in_bulk(data["bulk_stories"], milestone_result)
             services.snapshot_userstories_in_bulk(data["bulk_stories"], request.user)
+
+        return response.NoContent()
+
+    @detail_route(methods=["POST"])
+    def move_tasks_to_sprint(self, request, pk=None, **kwargs):
+        milestone = get_object_or_404(models.Milestone, pk=pk)
+
+        self.check_permissions(request, "move_related_items", milestone)
+
+        validator = TasksUpdateMilestoneValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+
+        data = validator.data
+        project = get_object_or_404(Project, pk=data["project_id"])
+        milestone_result = get_object_or_404(models.Milestone, pk=data["milestone_id"])
+
+        if data["bulk_tasks"]:
+            self.check_permissions(request, "move_tasks_to_sprint", project)
+            services.update_tasks_milestone_in_bulk(data["bulk_tasks"], milestone_result)
+            services.snapshot_tasks_in_bulk(data["bulk_tasks"], request.user)
 
         return response.NoContent()
 

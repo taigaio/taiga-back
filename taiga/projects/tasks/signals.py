@@ -31,9 +31,9 @@ def cached_prev_task(sender, instance, **kwargs):
         instance.prev = sender.objects.get(id=instance.id)
 
 
-####################################
-# Signals for close US and Milestone
-####################################
+######################################
+# Signals for close Task and Milestone
+######################################
 
 def try_to_close_or_open_us_and_milestone_when_create_or_edit_task(sender, instance, created, **kwargs):
     _try_to_close_or_open_us_when_create_or_edit_task(instance)

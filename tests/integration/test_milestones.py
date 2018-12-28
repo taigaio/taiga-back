@@ -26,7 +26,6 @@ from urllib.parse import quote
 from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
-from taiga.projects.userstories.serializers import UserStorySerializer
 
 from .. import factories as f
 
@@ -269,4 +268,68 @@ def test_api_move_userstories_to_another_sprint_close_previous(client):
     assert response.status_code == 204, response.data
     assert project.milestones.get(id=milestone1.id).user_stories.count() == 1
     assert project.milestones.get(id=milestone2.id).user_stories.count() == 1
+    assert project.milestones.get(id=milestone1.id).closed
+
+
+def test_api_move_tasks_to_another_sprint(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner,
+                               is_admin=True)
+    milestone1 = f.MilestoneFactory.create(project=project)
+    milestone2 = f.MilestoneFactory.create(project=project)
+
+    task1 = f.create_task(project=project, milestone=milestone1, taskboard_order=1)
+    task2 = f.create_task(project=project, milestone=milestone1, taskboard_order=2)
+
+    assert project.milestones.get(id=milestone1.id).tasks.count() == 2
+
+    url = reverse("milestones-move-tasks-to-sprint", kwargs={"pk": milestone1.pk})
+    data = {
+        "project_id": project.id,
+        "milestone_id": milestone2.id,
+        "bulk_tasks": [{"task_id": task2.id, "order": 2}]
+    }
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 204, response.data
+    assert project.milestones.get(id=milestone1.id).tasks.count() == 1
+    assert project.milestones.get(id=milestone2.id).tasks.count() == 1
+
+
+def test_api_move_tasks_to_another_sprint_close_previous(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner,
+                               is_admin=True)
+    milestone1 = f.MilestoneFactory.create(project=project)
+
+    milestone2 = f.MilestoneFactory.create(project=project)
+
+    closed_status = f.TaskStatusFactory.create(project=project, is_closed=True)
+    task1 = f.create_task(project=project, milestone=milestone1, taskboard_order=1,
+                          status=closed_status)
+    task2 = f.create_task(project=project, milestone=milestone1, taskboard_order=2)
+
+    milestone = project.milestones.get(id=milestone1.id)
+    manager_tasks = milestone.tasks
+    # all_tasks = list(manager_tasks.all())
+    count_result = manager_tasks.count()
+
+    assert count_result == 2
+    assert not milestone1.closed
+
+    url = reverse("milestones-move-tasks-to-sprint", kwargs={"pk": milestone1.pk})
+    data = {
+        "project_id": project.id,
+        "milestone_id": milestone2.id,
+        "bulk_tasks": [{"task_id": task2.id, "order": 2}]
+    }
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 204, response.data
+    assert project.milestones.get(id=milestone1.id).tasks.count() == 1
+    assert project.milestones.get(id=milestone2.id).tasks.count() == 1
     assert project.milestones.get(id=milestone1.id).closed

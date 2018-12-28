@@ -94,3 +94,51 @@ def snapshot_userstories_in_bulk(bulk_data, user):
             take_snapshot(us, user=user)
         except UserStory.DoesNotExist:
             pass
+
+
+def update_tasks_milestone_in_bulk(bulk_data: list, milestone: object):
+    """
+    Update the milestone and the milestone order of some tasks adding
+    the extra orders needed to keep consistency.
+    `bulk_data` should be a list of dicts with the following format:
+    [{'task_id': <value>, 'order': <value>}, ...]
+    """
+    tasks = milestone.tasks.all()
+    task_orders = {task.id: getattr(task, "taskboard_order") for task in tasks}
+    new_task_orders = {}
+    for e in bulk_data:
+        new_task_orders[e["task_id"]] = e["order"]
+        # The base orders where we apply the new orders must containg all
+        # the values
+        task_orders[e["task_id"]] = e["order"]
+
+    apply_order_updates(task_orders, new_task_orders)
+
+    task_milestones = {e["task_id"]: milestone.id for e in bulk_data}
+    task_ids = task_milestones.keys()
+
+    events.emit_event_for_ids(ids=task_ids,
+                              content_type="tasks.task",
+                              projectid=milestone.project.pk)
+
+
+    task_instance_list = []
+    task_values = []
+    for task_id in task_ids:
+        task = Task.objects.get(pk=task_id)
+        task_instance_list.append(task)
+        task_values.append({'milestone_id': milestone.id})
+
+    db.update_in_bulk(task_instance_list, task_values)
+    db.update_attr_in_bulk_for_ids(task_orders, "taskboard_order", Task)
+
+    return task_milestones
+
+
+def snapshot_tasks_in_bulk(bulk_data, user):
+    for task_data in bulk_data:
+        try:
+            task = Task.objects.get(pk=task_data['task_id'])
+            take_snapshot(task, user=user)
+        except Task.DoesNotExist:
+            pass
