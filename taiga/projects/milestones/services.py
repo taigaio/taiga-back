@@ -20,6 +20,7 @@ from taiga.base.utils import db
 from taiga.events import events
 from taiga.projects.history.services import take_snapshot
 from taiga.projects.services import apply_order_updates
+from taiga.projects.issues.models import Issue
 from taiga.projects.tasks.models import Task
 from taiga.projects.userstories.models import UserStory
 
@@ -141,4 +142,38 @@ def snapshot_tasks_in_bulk(bulk_data, user):
             task = Task.objects.get(pk=task_data['task_id'])
             take_snapshot(task, user=user)
         except Task.DoesNotExist:
+            pass
+
+
+def update_issues_milestone_in_bulk(bulk_data: list, milestone: object):
+    """
+    Update the milestone some issues adding
+    `bulk_data` should be a list of dicts with the following format:
+    [{'task_id': <value>}, ...]
+    """
+    issue_milestones = {e["issue_id"]: milestone.id for e in bulk_data}
+    issue_ids = issue_milestones.keys()
+
+    events.emit_event_for_ids(ids=issue_ids,
+                              content_type="issues.issues",
+                              projectid=milestone.project.pk)
+
+    issues_instance_list = []
+    issues_values = []
+    for issue_id in issue_ids:
+        issue = Issue.objects.get(pk=issue_id)
+        issues_instance_list.append(issue)
+        issues_values.append({'milestone_id': milestone.id})
+
+    db.update_in_bulk(issues_instance_list, issues_values)
+
+    return issue_milestones
+
+
+def snapshot_issues_in_bulk(bulk_data, user):
+    for issue_data in bulk_data:
+        try:
+            issue = Issue.objects.get(pk=issue_data['issue_id'])
+            take_snapshot(issue, user=user)
+        except Issue.DoesNotExist:
             pass

@@ -333,3 +333,61 @@ def test_api_move_tasks_to_another_sprint_close_previous(client):
     assert project.milestones.get(id=milestone1.id).tasks.count() == 1
     assert project.milestones.get(id=milestone2.id).tasks.count() == 1
     assert project.milestones.get(id=milestone1.id).closed
+
+
+def test_api_move_issues_to_another_sprint(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner,
+                               is_admin=True)
+    milestone1 = f.MilestoneFactory.create(project=project)
+    milestone2 = f.MilestoneFactory.create(project=project)
+
+    issue1 = f.create_issue(project=project, milestone=milestone1)
+    issue2 = f.create_issue(project=project, milestone=milestone1)
+
+    assert project.milestones.get(id=milestone1.id).issues.count() == 2
+
+    url = reverse("milestones-move-issues-to-sprint", kwargs={"pk": milestone1.pk})
+    data = {
+        "project_id": project.id,
+        "milestone_id": milestone2.id,
+        "bulk_issues": [{"issue_id": issue2.id, "order": 2}]
+    }
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 204, response.data
+    assert project.milestones.get(id=milestone1.id).issues.count() == 1
+    assert project.milestones.get(id=milestone2.id).issues.count() == 1
+
+
+def test_api_move_issues_to_another_sprint_close_previous(client):
+    project = f.create_project()
+    f.MembershipFactory.create(project=project, user=project.owner,
+                               is_admin=True)
+    milestone1 = f.MilestoneFactory.create(project=project)
+    milestone2 = f.MilestoneFactory.create(project=project)
+
+    closed_status = f.IssueStatusFactory.create(project=project,
+                                                is_closed=True)
+    issue1 = f.create_issue(project=project, milestone=milestone1,
+                            status=closed_status)
+    issue2 = f.create_issue(project=project, milestone=milestone1)
+
+    assert project.milestones.get(id=milestone1.id).issues.count() == 2
+
+    url = reverse("milestones-move-issues-to-sprint", kwargs={"pk": milestone1.pk})
+    data = {
+        "project_id": project.id,
+        "milestone_id": milestone2.id,
+        "bulk_issues": [{"issue_id": issue2.id, "order": 2}]
+    }
+    client.login(project.owner)
+
+    response = client.json.post(url, json.dumps(data))
+
+    assert response.status_code == 204, response.data
+    assert project.milestones.get(id=milestone1.id).issues.count() == 1
+    assert project.milestones.get(id=milestone2.id).issues.count() == 1
+    assert project.milestones.get(id=milestone1.id).closed

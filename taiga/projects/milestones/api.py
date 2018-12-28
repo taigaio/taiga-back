@@ -33,6 +33,8 @@ from taiga.projects.notifications.mixins import WatchersViewSetMixin
 from taiga.projects.history.mixins import HistoryResourceMixin
 from taiga.projects.tasks.validators import UpdateMilestoneBulkValidator as \
     TasksUpdateMilestoneValidator
+from taiga.projects.issues.validators import UpdateMilestoneBulkValidator as \
+    IssuesUpdateMilestoneValidator
 
 from . import serializers
 from . import services
@@ -185,6 +187,27 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
             self.check_permissions(request, "move_tasks_to_sprint", project)
             services.update_tasks_milestone_in_bulk(data["bulk_tasks"], milestone_result)
             services.snapshot_tasks_in_bulk(data["bulk_tasks"], request.user)
+
+        return response.NoContent()
+
+    @detail_route(methods=["POST"])
+    def move_issues_to_sprint(self, request, pk=None, **kwargs):
+        milestone = get_object_or_404(models.Milestone, pk=pk)
+
+        self.check_permissions(request, "move_related_items", milestone)
+
+        validator = IssuesUpdateMilestoneValidator(data=request.DATA)
+        if not validator.is_valid():
+            return response.BadRequest(validator.errors)
+
+        data = validator.data
+        project = get_object_or_404(Project, pk=data["project_id"])
+        milestone_result = get_object_or_404(models.Milestone, pk=data["milestone_id"])
+
+        if data["bulk_issues"]:
+            self.check_permissions(request, "move_issues_to_sprint", project)
+            services.update_issues_milestone_in_bulk(data["bulk_issues"], milestone_result)
+            services.snapshot_issues_in_bulk(data["bulk_issues"], request.user)
 
         return response.NoContent()
 
