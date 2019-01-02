@@ -302,19 +302,15 @@ def test_api_move_tasks_to_another_sprint_close_previous(client):
     f.MembershipFactory.create(project=project, user=project.owner,
                                is_admin=True)
     milestone1 = f.MilestoneFactory.create(project=project)
-
     milestone2 = f.MilestoneFactory.create(project=project)
 
     closed_status = f.TaskStatusFactory.create(project=project, is_closed=True)
+
     task1 = f.create_task(project=project, milestone=milestone1, taskboard_order=1,
                           status=closed_status)
     task2 = f.create_task(project=project, milestone=milestone1, taskboard_order=2)
 
-    milestone = project.milestones.get(id=milestone1.id)
-    manager_tasks = milestone.tasks
-    count_result = manager_tasks.count()
-
-    assert count_result == 2
+    assert project.milestones.get(id=milestone1.id).tasks.count() == 2
     assert not milestone1.closed
 
     url = reverse("milestones-move-tasks-to-sprint", kwargs={"pk": milestone1.pk})

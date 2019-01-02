@@ -72,7 +72,6 @@ def update_milestone_of_tasks_when_edit_us(sender, instance, created, **kwargs):
 def try_to_close_or_open_us_and_milestone_when_create_or_edit_us(sender, instance, created, **kwargs):
     if instance._importing:
         return
-
     _try_to_close_or_open_us_when_create_or_edit_us(instance)
     _try_to_close_or_open_milestone_when_create_or_edit_us(instance)
 

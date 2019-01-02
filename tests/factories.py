@@ -626,6 +626,10 @@ def create_issue(**kwargs):
     return IssueFactory.create(**defaults)
 
 
+class Missing:
+    pass
+
+
 def create_task(**kwargs):
     "Create a task and along with its dependencies."
     owner = kwargs.pop("owner", None)
@@ -636,13 +640,23 @@ def create_task(**kwargs):
     if project is None:
         project = ProjectFactory.create(owner=owner)
 
+    status = kwargs.pop("status", None)
+    milestone = kwargs.pop("milestone", None)
+
     defaults = {
         "project": project,
         "owner": owner,
-        "status": TaskStatusFactory.create(project=project),
-        "milestone": MilestoneFactory.create(project=project),
-        "user_story": UserStoryFactory.create(project=project, owner=owner),
+        "status": status or TaskStatusFactory.create(project=project),
+        "milestone": milestone or MilestoneFactory.create(project=project),
     }
+
+    user_story = kwargs.pop("user_story", Missing)
+
+    defaults["user_story"] = (
+        UserStoryFactory.create(project=project, owner=owner, milestone=defaults["milestone"])
+        if user_story is Missing
+        else user_story
+    )
     defaults.update(kwargs)
 
     return TaskFactory.create(**defaults)
