@@ -91,3 +91,7 @@ class Task(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, DueDateM
 
     def __str__(self):
         return "({1}) {0}".format(self.ref, self.subject)
+
+    @property
+    def is_closed(self):
+        return self.status is not None and self.status.is_closed

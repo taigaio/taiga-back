@@ -195,7 +195,7 @@ def test_api_update_milestone_in_bulk_userstories(client):
 
     assert project.milestones.get(id=milestone1.id).user_stories.count() == 2
 
-    url = reverse("milestones-bulk-update-userstories", kwargs={"pk": milestone1.pk})
+    url = reverse("milestones-move-userstories-to-sprint", kwargs={"pk": milestone1.pk})
     data = {
         "project_id": project.id,
         "milestone_id": milestone2.id,
@@ -249,8 +249,7 @@ def test_api_move_userstories_to_another_sprint_close_previous(client):
     closed_status = f.UserStoryStatusFactory.create(is_closed=True)
     us1 = f.create_userstory(project=project, milestone=milestone1,
                              sprint_order=1, status=closed_status)
-    us2 = f.create_userstory(project=project, milestone=milestone1,
-                             sprint_order=2)
+    us2 = f.create_userstory(project=project, milestone=milestone1, sprint_order=2)
 
     assert milestone1.user_stories.count() == 2
     assert not milestone1.closed
@@ -313,7 +312,6 @@ def test_api_move_tasks_to_another_sprint_close_previous(client):
 
     milestone = project.milestones.get(id=milestone1.id)
     manager_tasks = milestone.tasks
-    # all_tasks = list(manager_tasks.all())
     count_result = manager_tasks.count()
 
     assert count_result == 2
