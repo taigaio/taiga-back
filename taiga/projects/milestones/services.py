@@ -30,10 +30,14 @@ def calculate_milestone_is_closed(milestone):
         [task.status is not None and task.status.is_closed for task in
          milestone.tasks.all()]) and all(
         [user_story.is_closed for user_story in milestone.user_stories.all()])
+
     issues_check = milestone.issues.all().count() > 0 and all(
-        [issue.is_closed for issue in milestone.issues.all()])
-    tasks_check = milestone.tasks.all().count() > 0 and all(
+        [issue.is_closed for issue in milestone.issues.all()]) and all(
         [task.is_closed for task in milestone.tasks.all()])
+
+    tasks_check = milestone.tasks.all().count() > 0 and all(
+        [task.is_closed for task in milestone.tasks.all()]) and all(
+        [issue.is_closed for issue in milestone.issues.all()])
 
     return uss_check or issues_check or tasks_check
 

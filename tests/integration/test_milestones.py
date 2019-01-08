@@ -369,6 +369,7 @@ def test_api_move_issues_to_another_sprint_close_previous(client):
                             status=closed_status)
     issue2 = f.create_issue(project=project, milestone=milestone1)
 
+    assert project.milestones.get(id=milestone1.id).closed is False
     assert project.milestones.get(id=milestone1.id).issues.count() == 2
 
     url = reverse("milestones-move-issues-to-sprint", kwargs={"pk": milestone1.pk})
