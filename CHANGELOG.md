@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 4.0.4 (2019-01-15)
+
+### Misc
+
+- Minor bug fixes.
+
 ## 4.0.3 (2018-12-11)
 
 ### Misc
