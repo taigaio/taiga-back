@@ -18,7 +18,7 @@
 # Lucas Boscaini <lucasboscaini@gmail.com>, 2017
 # Mairieli Wessel <mairieliw@alunos.utfpr.edu.br>, 2016
 # Marlon Carvalho <m.lopes@qiwi.com>, 2015
-# Michael Meneses <michael.douglas.meneses.2@gmail.com>, 2018
+# Michael Douglas Meneses de Souza <michael.douglas.meneses.2@gmail.com>, 2018
 # Michel Wilhelm <michelwilhelm@gmail.com>, 2016
 # pedromvm <pedromvm@gmail.com>, 2015
 # Pedro Rangel Raft <me@pedroraft.com>, 2017
@@ -32,7 +32,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-11 14:11+0200\n"
 "PO-Revision-Date: 2018-11-17 17:51+0000\n"
-"Last-Translator: Michael Meneses <michael.douglas.meneses.2@gmail.com>\n"
+"Last-Translator: Michael Douglas Meneses de Souza <michael.douglas."
+"meneses.2@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"

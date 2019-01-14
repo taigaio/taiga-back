@@ -10,13 +10,14 @@
 # Shun Yanaura <metroplexity@gmail.com>, 2016
 # Suguru Sato <usagi.vs.tanuki@gmail.com>, 2016
 # Tomonori Tanabe <tanb+github@me.com>, 2015
+# Masaki Honda <mh35jp@gmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-11 14:11+0200\n"
-"PO-Revision-Date: 2018-10-14 17:29+0000\n"
-"Last-Translator: Alejandro Hermida <alexhermida@gmail.com>\n"
+"PO-Revision-Date: 2018-12-28 01:50+0000\n"
+"Last-Translator: Masaki Honda <mh35jp@gmail.com>\n"
 "Language-Team: Japanese (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ja/)\n"
 "MIME-Version: 1.0\n"
@@ -31,7 +32,7 @@ msgstr "パブリックなレジスタは無効です。"
 
 #: taiga/auth/api.py:93
 msgid "You must accept our terms of service and privacy policy"
-msgstr ""
+msgstr "利用規約とプライバシーポリシーに同意する必要があります"
 
 #: taiga/auth/api.py:102
 msgid "invalid register type"

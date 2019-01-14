@@ -4,6 +4,7 @@
 #
 # Translators:
 # Translators:
+# Andy zhan <daliangzao189@126.com>, 2018
 # Ares <yangzibin.cn@hotmail.com>, 2017
 # gm l <linguangmo@gmail.com>, 2016
 # Hanbing Yin <yin_suk@hotmail.com>, 2016
@@ -25,8 +26,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-11 14:11+0200\n"
-"PO-Revision-Date: 2018-10-14 17:29+0000\n"
-"Last-Translator: Alejandro Hermida <alexhermida@gmail.com>\n"
+"PO-Revision-Date: 2018-12-16 07:10+0000\n"
+"Last-Translator: Andy zhan <daliangzao189@126.com>\n"
 "Language-Team: Chinese Simplified (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/zh-Hans/)\n"
 "MIME-Version: 1.0\n"
@@ -4649,11 +4650,11 @@ msgstr "加入日期"
 
 #: taiga/users/models.py:155
 msgid "accepted terms"
-msgstr ""
+msgstr "已接受的条款"
 
 #: taiga/users/models.py:156
 msgid "new terms read"
-msgstr ""
+msgstr "阅读新条款"
 
 #: taiga/users/models.py:158
 msgid "default language"
@@ -4894,7 +4895,7 @@ msgstr "无效用户名，请尝试其他的。"
 
 #: taiga/users/validators.py:73
 msgid "Read new terms has to be true'"
-msgstr ""
+msgstr "还没有阅读新条款"
 
 #: taiga/userstorage/api.py:53
 msgid ""
@@ -4939,4 +4940,4 @@ msgstr "持续时间"
 
 #: taiga/webhooks/validators.py:42
 msgid "Not allowed IP Address"
-msgstr ""
+msgstr "IP地址被禁用"
