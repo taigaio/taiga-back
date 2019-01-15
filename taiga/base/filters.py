@@ -375,13 +375,17 @@ class IsProjectAdminFromWebhookLogFilterBackend(FilterBackend, BaseIsProjectAdmi
 class BaseRelatedFieldsFilter(FilterBackend):
     filter_name = None
     param_name = None
+    exclude_param_name = None
 
-    def __init__(self, filter_name=None, param_name=None):
+    def __init__(self, filter_name=None, param_name=None, exclude_param_name=None):
         if filter_name:
             self.filter_name = filter_name
 
         if param_name:
             self.param_name = param_name
+
+        if exclude_param_name:
+            self.exclude_param_name
 
     def _prepare_filter_data(self, query_param_value):
         def _transform_value(value):
@@ -396,10 +400,13 @@ class BaseRelatedFieldsFilter(FilterBackend):
         values = map(_transform_value, values)
         return list(values)
 
-    def _get_queryparams(self, params):
-        param_name = self.param_name or self.filter_name
-        raw_value = params.get(param_name, None)
+    def _get_queryparams(self, params, mode=''):
+        if mode == 'exclude':
+            param_name = self.exclude_param_name
+        else:
+            param_name = self.param_name or self.filter_name
 
+        raw_value = params.get(param_name, None)
         if raw_value:
             value = self._prepare_filter_data(raw_value)
 
@@ -414,27 +421,39 @@ class BaseRelatedFieldsFilter(FilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         query = self._get_queryparams(request.QUERY_PARAMS)
+        exclude_query = None
+        if self.exclude_param_name:
+            exclude_query = self._get_queryparams(request.QUERY_PARAMS, mode='exclude')
+
         if query:
             if isinstance(query, dict):
                 queryset = queryset.filter(**query)
             else:
                 queryset = queryset.filter(query)
 
+        if exclude_query:
+            if isinstance(exclude_query, dict):
+                queryset = queryset.exclude(**exclude_query)
+            else:
+                queryset = queryset.exclude(exclude_query)
+
         return super().filter_queryset(request, queryset, view)
 
 
 class OwnersFilter(BaseRelatedFieldsFilter):
     filter_name = 'owner'
+    exclude_param_name = 'exclude_owner'
 
 
 class AssignedToFilter(BaseRelatedFieldsFilter):
     filter_name = 'assigned_to'
+    exclude_param_name = 'exclude_assigned_to'
 
 
 class AssignedUsersFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
     filter_name = 'assigned_users'
 
-    def _get_queryparams(self, params):
+    def _get_queryparams(self, params, mode=''):
         param_name = self.param_name or self.filter_name
         raw_value = params.get(param_name, None)
 
@@ -461,29 +480,43 @@ class AssignedUsersFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
 
 class StatusesFilter(BaseRelatedFieldsFilter):
     filter_name = 'status'
+    exclude_param_name = 'exclude_status'
+
 
 
 class IssueTypesFilter(BaseRelatedFieldsFilter):
     filter_name = 'type'
+    param_name = 'type'
+    exclude_param_name = 'exclude_type'
 
 
 class PrioritiesFilter(BaseRelatedFieldsFilter):
     filter_name = 'priority'
+    exclude_param_name = 'exclude_priority'
 
 
 class SeveritiesFilter(BaseRelatedFieldsFilter):
     filter_name = 'severity'
+    exclude_param_name = 'exclude_severity'
 
 
 class TagsFilter(FilterBackend):
     filter_name = 'tags'
+    exclude_param_name = 'exclude_tags'
 
-    def __init__(self, filter_name=None):
+    def __init__(self, filter_name=None, exclude_param_name=None):
         if filter_name:
             self.filter_name = filter_name
 
-    def _get_tags_queryparams(self, params):
-        tags = params.get(self.filter_name, None)
+        if exclude_param_name:
+            self.exclude_param_name = exclude_param_name
+
+    def _get_tags_queryparams(self, params, mode=''):
+        if mode == 'exclude':
+            tags = params.get(self.exclude_param_name, None)
+        else:
+            tags = params.get(self.filter_name, None)
+
         if tags:
             return tags.split(",")
 
@@ -491,8 +524,13 @@ class TagsFilter(FilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         query_tags = self._get_tags_queryparams(request.QUERY_PARAMS)
+        exclude_query_tags = self._get_tags_queryparams(request.QUERY_PARAMS, mode='exclude')
+
         if query_tags:
             queryset = queryset.filter(tags__contains=query_tags)
+
+        if exclude_query_tags:
+            queryset = queryset.exclude(tags__contains=exclude_query_tags)
 
         return super().filter_queryset(request, queryset, view)
 
@@ -631,10 +669,13 @@ class QFilter(FilterBackend):
 class RoleFilter(BaseRelatedFieldsFilter):
     filter_name = "role_id"
     param_name = "role"
+    exclude_param_name = "exclude_role"
 
     def filter_queryset(self, request, queryset, view):
         Membership = apps.get_model('projects', 'Membership')
         query = self._get_queryparams(request.QUERY_PARAMS)
+        exclude_query = self._get_queryparams(request.QUERY_PARAMS, mode='exclude')
+
         if query:
             if isinstance(query, dict):
                 memberships = Membership.objects.filter(**query).values_list("user_id", flat=True)
@@ -643,6 +684,14 @@ class RoleFilter(BaseRelatedFieldsFilter):
                 memberships = Membership.objects.filter(query).values_list("user_id", flat=True)
             if memberships:
                 queryset = queryset.filter(assigned_to__in=memberships)
+
+        if exclude_query:
+            if isinstance(exclude_query, dict):
+                memberships = Membership.objects.filter(**exclude_query).values_list("user_id", flat=True)
+            else:
+                memberships = Membership.objects.filter(exclude_query).values_list("user_id", flat=True)
+            if memberships:
+                queryset = queryset.exclude(assigned_to__in=memberships)
 
         return FilterBackend.filter_queryset(self, request, queryset, view)
 

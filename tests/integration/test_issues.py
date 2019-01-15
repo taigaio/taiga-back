@@ -39,6 +39,78 @@ import pytest
 pytestmark = pytest.mark.django_db
 
 
+def create_filter_issues_context():
+    data = {}
+
+    data["project"] = f.ProjectFactory.create()
+    project = data["project"]
+    data["users"] = [f.UserFactory.create(is_superuser=True) for i in range(0, 3)]
+    data["roles"] = [f.RoleFactory.create() for i in range(0, 3)]
+    user_roles = zip(data["users"], data["roles"])
+    # Add membership fixtures
+    [f.MembershipFactory.create(user=user, project=project, role=role) for (user, role) in user_roles]
+
+    data["statuses"] = [f.IssueStatusFactory.create(project=project) for i in range(0, 4)]
+    data["types"] = [f.IssueTypeFactory.create(project=project) for i in range(0, 2)]
+    data["severities"] = [f.SeverityFactory.create(project=project) for i in range(0, 4)]
+    data["priorities"] = [f.PriorityFactory.create(project=project) for i in range(0, 4)]
+    data["tags"] = ["test1test2test3", "test1", "test2", "test3"]
+
+    # ------------------------------------------------------------------------------------------------
+    # | Issue |  Owner | Assigned To | Status  | Type  | Priority  | Severity  | Tags                |
+    # |-------#--------#-------------#---------#-------#-----------#-----------#---------------------|
+    # | 0     |  user2 | None        | status3 | type1 | priority2 | severity1 |      tag1           |
+    # | 1     |  user1 | None        | status3 | type2 | priority2 | severity1 |           tag2      |
+    # | 2     |  user3 | None        | status1 | type1 | priority3 | severity2 |      tag1 tag2      |
+    # | 3     |  user2 | None        | status0 | type2 | priority3 | severity1 |                tag3 |
+    # | 4     |  user1 | user1       | status0 | type1 | priority2 | severity3 |      tag1 tag2 tag3 |
+    # | 5     |  user3 | user1       | status2 | type2 | priority3 | severity2 |                tag3 |
+    # | 6     |  user2 | user1       | status3 | type1 | priority2 | severity0 |      tag1 tag2      |
+    # | 7     |  user1 | user2       | status0 | type2 | priority1 | severity3 |                tag3 |
+    # | 8     |  user3 | user2       | status3 | type1 | priority0 | severity1 |      tag1           |
+    # | 9     |  user2 | user3       | status1 | type2 | priority0 | severity2 | tag0                |
+    # ------------------------------------------------------------------------------------------------
+    (user1, user2, user3, ) = data["users"]
+    (status0, status1, status2, status3 ) = data["statuses"]
+    (type1, type2, ) = data["types"]
+    (severity0, severity1, severity2, severity3, ) = data["severities"]
+    (priority0, priority1, priority2, priority3, ) = data["priorities"]
+    (tag0, tag1, tag2, tag3, ) = data["tags"]
+
+    f.IssueFactory.create(project=project, owner=user2, assigned_to=None,
+                                   status=status3, type=type1, priority=priority2, severity=severity1,
+                                   tags=[tag1])
+    f.IssueFactory.create(project=project, owner=user1, assigned_to=None,
+                                   status=status3, type=type2, priority=priority2, severity=severity1,
+                                   tags=[tag2])
+    f.IssueFactory.create(project=project, owner=user3, assigned_to=None,
+                                   status=status1, type=type1, priority=priority3, severity=severity2,
+                                   tags=[tag1, tag2])
+    f.IssueFactory.create(project=project, owner=user2, assigned_to=None,
+                                   status=status0, type=type2, priority=priority3, severity=severity1,
+                                   tags=[tag3])
+    f.IssueFactory.create(project=project, owner=user1, assigned_to=user1,
+                                   status=status0, type=type1, priority=priority2, severity=severity3,
+                                   tags=[tag1, tag2, tag3])
+    f.IssueFactory.create(project=project, owner=user3, assigned_to=user1,
+                                   status=status2, type=type2, priority=priority3, severity=severity2,
+                                   tags=[tag3])
+    f.IssueFactory.create(project=project, owner=user2, assigned_to=user1,
+                                   status=status3, type=type1, priority=priority2, severity=severity0,
+                                   tags=[tag1, tag2])
+    f.IssueFactory.create(project=project, owner=user1, assigned_to=user2,
+                                   status=status0, type=type2, priority=priority1, severity=severity3,
+                                   tags=[tag3])
+    f.IssueFactory.create(project=project, owner=user3, assigned_to=user2,
+                                   status=status3, type=type1, priority=priority0, severity=severity1,
+                                   tags=[tag1])
+    f.IssueFactory.create(project=project, owner=user2, assigned_to=user3,
+                                   status=status1, type=type2, priority=priority0, severity=severity2,
+                                   tags=[tag0])
+
+    return data
+
+
 def test_get_issues_from_bulk():
     data = """
 Issue #1
@@ -370,86 +442,51 @@ def test_api_filter_by_finished_date(client):
     assert response.data[0]["ref"] == finished_issue.ref
 
 
+@pytest.mark.parametrize("filter_name,collection,expected,exclude_expected,is_text", [
+    ('type', 'types', 5, 5, False),
+    ('severity', 'severities', 1, 9, False),
+    ('priority', 'priorities', 2, 8, False),
+    ('status', 'statuses', 3, 7, False),
+    ('assigned_to', 'users', 3, 7, False),
+    ('tags', 'tags', 1, 9, True),
+    ('owner', 'users', 3, 7, False),
+    ('role', 'roles', 3, 7, False),
+])
+def test_api_filters(client, filter_name, collection, expected, exclude_expected, is_text):
+    data = create_filter_issues_context()
+    project = data["project"]
+    options = data[collection]
+
+    client.login(data["users"][0])
+    if is_text:
+        param = options[0]
+    else:
+        param = options[0].id
+
+    # include test
+    url = f"{reverse('issues-list')}?project={project.id}&{filter_name}={param}"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data) == expected
+
+    # exclude test
+    url = f"{reverse('issues-list')}?project={project.id}&exclude_{filter_name}={param}"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data) == exclude_expected
+
+
 def test_api_filters_data(client):
-    project = f.ProjectFactory.create()
-    user1 = f.UserFactory.create(is_superuser=True)
-    f.MembershipFactory.create(user=user1, project=project)
-    user2 = f.UserFactory.create(is_superuser=True)
-    f.MembershipFactory.create(user=user2, project=project)
-    user3 = f.UserFactory.create(is_superuser=True)
-    f.MembershipFactory.create(user=user3, project=project)
-
-    status0 = f.IssueStatusFactory.create(project=project)
-    status1 = f.IssueStatusFactory.create(project=project)
-    status2 = f.IssueStatusFactory.create(project=project)
-    status3 = f.IssueStatusFactory.create(project=project)
-
-    type1 = f.IssueTypeFactory.create(project=project)
-    type2 = f.IssueTypeFactory.create(project=project)
-
-    severity0 = f.SeverityFactory.create(project=project)
-    severity1 = f.SeverityFactory.create(project=project)
-    severity2 = f.SeverityFactory.create(project=project)
-    severity3 = f.SeverityFactory.create(project=project)
-
-    priority0 = f.PriorityFactory.create(project=project)
-    priority1 = f.PriorityFactory.create(project=project)
-    priority2 = f.PriorityFactory.create(project=project)
-    priority3 = f.PriorityFactory.create(project=project)
-
-    tag0 = "test1test2test3"
-    tag1 = "test1"
-    tag2 = "test2"
-    tag3 = "test3"
-
-    # ------------------------------------------------------------------------------------------------
-    # | Issue |  Owner | Assigned To | Status  | Type  | Priority  | Severity  | Tags                |
-    # |-------#--------#-------------#---------#-------#-----------#-----------#---------------------|
-    # | 0     |  user2 | None        | status3 | type1 | priority2 | severity1 |      tag1           |
-    # | 1     |  user1 | None        | status3 | type2 | priority2 | severity1 |           tag2      |
-    # | 2     |  user3 | None        | status1 | type1 | priority3 | severity2 |      tag1 tag2      |
-    # | 3     |  user2 | None        | status0 | type2 | priority3 | severity1 |                tag3 |
-    # | 4     |  user1 | user1       | status0 | type1 | priority2 | severity3 |      tag1 tag2 tag3 |
-    # | 5     |  user3 | user1       | status2 | type2 | priority3 | severity2 |                tag3 |
-    # | 6     |  user2 | user1       | status3 | type1 | priority2 | severity0 |      tag1 tag2      |
-    # | 7     |  user1 | user2       | status0 | type2 | priority1 | severity3 |                tag3 |
-    # | 8     |  user3 | user2       | status3 | type1 | priority0 | severity1 |      tag1           |
-    # | 9     |  user2 | user3       | status1 | type2 | priority0 | severity2 | tag0                |
-    # ------------------------------------------------------------------------------------------------
-
-    issue0 = f.IssueFactory.create(project=project, owner=user2, assigned_to=None,
-                                   status=status3, type=type1, priority=priority2, severity=severity1,
-                                   tags=[tag1])
-    issue1 = f.IssueFactory.create(project=project, owner=user1, assigned_to=None,
-                                   status=status3, type=type2, priority=priority2, severity=severity1,
-                                   tags=[tag2])
-    issue2 = f.IssueFactory.create(project=project, owner=user3, assigned_to=None,
-                                   status=status1, type=type1, priority=priority3, severity=severity2,
-                                   tags=[tag1, tag2])
-    issue3 = f.IssueFactory.create(project=project, owner=user2, assigned_to=None,
-                                   status=status0, type=type2, priority=priority3, severity=severity1,
-                                   tags=[tag3])
-    issue4 = f.IssueFactory.create(project=project, owner=user1, assigned_to=user1,
-                                   status=status0, type=type1, priority=priority2, severity=severity3,
-                                   tags=[tag1, tag2, tag3])
-    issue5 = f.IssueFactory.create(project=project, owner=user3, assigned_to=user1,
-                                   status=status2, type=type2, priority=priority3, severity=severity2,
-                                   tags=[tag3])
-    issue6 = f.IssueFactory.create(project=project, owner=user2, assigned_to=user1,
-                                   status=status3, type=type1, priority=priority2, severity=severity0,
-                                   tags=[tag1, tag2])
-    issue7 = f.IssueFactory.create(project=project, owner=user1, assigned_to=user2,
-                                   status=status0, type=type2, priority=priority1, severity=severity3,
-                                   tags=[tag3])
-    issue8 = f.IssueFactory.create(project=project, owner=user3, assigned_to=user2,
-                                   status=status3, type=type1, priority=priority0, severity=severity1,
-                                   tags=[tag1])
-    issue9 = f.IssueFactory.create(project=project, owner=user2, assigned_to=user3,
-                                   status=status1, type=type2, priority=priority0, severity=severity2,
-                                   tags=[tag0])
+    data = create_filter_issues_context()
+    project = data["project"]
+    (user1, user2, user3, ) = data["users"]
+    (status0, status1, status2, status3, ) = data["statuses"]
+    (type1, type2, ) = data["types"]
+    (priority0, priority1, priority2, priority3, ) = data["priorities"]
+    (severity0, severity1, severity2, severity3, ) = data["severities"]
+    (tag0, tag1, tag2, tag3, ) = data["tags"]
 
     url = reverse("issues-filters-data") + "?project={}".format(project.id)
-
     client.login(user1)
 
     ## No filter
