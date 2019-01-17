@@ -852,7 +852,6 @@ def test_api_filter_by_milestone__estimated_start_and_end(client, field_name):
             assert response.data[0]["subject"] == task.subject
 
 
-@pytest.mark.current
 @pytest.mark.parametrize("filter_name,collection,expected,exclude_expected,is_text", [
     ('status', 'statuses', 3, 7, False),
     ('assigned_to', 'users', 3, 7, False),
