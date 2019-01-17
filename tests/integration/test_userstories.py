@@ -38,6 +38,71 @@ import pytest
 pytestmark = pytest.mark.django_db(transaction=True)
 
 
+def create_uss_fixtures():
+    data = {}
+
+    data["project"] = f.ProjectFactory.create()
+    project = data["project"]
+    data["users"] = [f.UserFactory.create(is_superuser=True) for i in range(0, 3)]
+    data["roles"] = [f.RoleFactory.create() for i in range(0, 3)]
+    user_roles = zip(data["users"], data["roles"])
+    # Add membership fixtures
+    [f.MembershipFactory.create(user=user, project=project, role=role) for (user, role) in user_roles]
+
+    data["statuses"] = [f.UserStoryStatusFactory.create(project=project) for i in range(0, 4)]
+    data["epics"] = [f.EpicFactory.create(project=project) for i in range(0, 3)]
+    data["tags"] = ["test1test2test3", "test1", "test2", "test3"]
+
+    # ----------------------------------------------------------------------------------------------------
+    # | US    | Status  |  Owner | Assigned To | Assigned Users      | Tags                | Epic        |
+    # |-------#---------#--------#-------------#---------------------#---------------------#--------------
+    # | 0     | status3 |  user2 | None        | None                |      tag1           | epic0       |
+    # | 1     | status3 |  user1 | None        | user1               |           tag2      | None        |
+    # | 2     | status1 |  user3 | None        | None                |      tag1 tag2      | epic1       |
+    # | 3     | status0 |  user2 | None        | None                |                tag3 | None        |
+    # | 4     | status0 |  user1 | user1       | None                |      tag1 tag2 tag3 | epic0       |
+    # | 5     | status2 |  user3 | user1       | None                |                tag3 | None        |
+    # | 6     | status3 |  user2 | user1       | None                |      tag1 tag2      | epic0 epic2 |
+    # | 7     | status0 |  user1 | user2       | None                |                tag3 | None        |
+    # | 8     | status3 |  user3 | user2       | None                |      tag1           | epic2       |
+    # | 9     | status1 |  user2 | user3       | user1               | tag0                | None        |
+    # ----------------------------------------------------------------------------------------------------
+
+    (user1, user2, user3, ) = data["users"]
+    (status0, status1, status2, status3 ) = data["statuses"]
+    (epic0, epic1, epic2) = data["epics"]
+    (tag0, tag1, tag2, tag3, ) = data["tags"]
+
+    us0 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=None,
+                              status=status3, tags=[tag1])
+    f.RelatedUserStory.create(user_story=us0, epic=epic0)
+    us1 = f.UserStoryFactory.create(project=project, owner=user1, assigned_to=None,
+                              status=status3, tags=[tag2], assigned_users=[user1])
+    us2 = f.UserStoryFactory.create(project=project, owner=user3, assigned_to=None,
+                              status=status1, tags=[tag1, tag2])
+    f.RelatedUserStory.create(user_story=us2, epic=epic1)
+    us3 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=None,
+                              status=status0, tags=[tag3])
+    us4 = f.UserStoryFactory.create(project=project, owner=user1, assigned_to=user1,
+                              status=status0, tags=[tag1, tag2, tag3])
+    f.RelatedUserStory.create(user_story=us4, epic=epic0)
+    us5 = f.UserStoryFactory.create(project=project, owner=user3, assigned_to=user1,
+                              status=status2, tags=[tag3])
+    us6 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=user1,
+                              status=status3, tags=[tag1, tag2])
+    f.RelatedUserStory.create(user_story=us6, epic=epic0)
+    f.RelatedUserStory.create(user_story=us6, epic=epic2)
+    us7 = f.UserStoryFactory.create(project=project, owner=user1, assigned_to=user2,
+                              status=status0, tags=[tag3])
+    us8 = f.UserStoryFactory.create(project=project, owner=user3, assigned_to=user2,
+                              status=status3, tags=[tag1])
+    f.RelatedUserStory.create(user_story=us8, epic=epic2)
+    us9 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=user3,
+                              status=status1, tags=[tag0], assigned_users=[user1])
+
+    return data
+
+
 def test_get_userstories_from_bulk():
     data = "User Story #1\nUser Story #2\n"
     userstories = services.get_userstories_from_bulk(data)
@@ -777,72 +842,14 @@ def test_api_filter_by_milestone__estimated_start_and_end(client, field_name):
 
 
 def test_api_filters_data(client):
-    project = f.ProjectFactory.create()
-    user1 = f.UserFactory.create(is_superuser=True)
-    f.MembershipFactory.create(user=user1, project=project)
-    user2 = f.UserFactory.create(is_superuser=True)
-    f.MembershipFactory.create(user=user2, project=project)
-    user3 = f.UserFactory.create(is_superuser=True)
-    f.MembershipFactory.create(user=user3, project=project)
-
-    status0 = f.UserStoryStatusFactory.create(project=project)
-    status1 = f.UserStoryStatusFactory.create(project=project)
-    status2 = f.UserStoryStatusFactory.create(project=project)
-    status3 = f.UserStoryStatusFactory.create(project=project)
-
-    epic0 = f.EpicFactory.create(project=project)
-    epic1 = f.EpicFactory.create(project=project)
-    epic2 = f.EpicFactory.create(project=project)
-
-    tag0 = "test1test2test3"
-    tag1 = "test1"
-    tag2 = "test2"
-    tag3 = "test3"
-
-    # ----------------------------------------------------------------------------------------------------
-    # | US    | Status  |  Owner | Assigned To | Assigned Users      | Tags                | Epic        |
-    # |-------#---------#--------#-------------#---------------------#---------------------#--------------
-    # | 0     | status3 |  user2 | None        | None                |      tag1           | epic0       |
-    # | 1     | status3 |  user1 | None        | user1               |           tag2      | None        |
-    # | 2     | status1 |  user3 | None        | None                |      tag1 tag2      | epic1       |
-    # | 3     | status0 |  user2 | None        | None                |                tag3 | None        |
-    # | 4     | status0 |  user1 | user1       | None                |      tag1 tag2 tag3 | epic0       |
-    # | 5     | status2 |  user3 | user1       | None                |                tag3 | None        |
-    # | 6     | status3 |  user2 | user1       | None                |      tag1 tag2      | epic0 epic2 |
-    # | 7     | status0 |  user1 | user2       | None                |                tag3 | None        |
-    # | 8     | status3 |  user3 | user2       | None                |      tag1           | epic2       |
-    # | 9     | status1 |  user2 | user3       | user1               | tag0                | None        |
-    # ----------------------------------------------------------------------------------------------------
-
-    us0 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=None,
-                              status=status3, tags=[tag1])
-    f.RelatedUserStory.create(user_story=us0, epic=epic0)
-    us1 = f.UserStoryFactory.create(project=project, owner=user1, assigned_to=None,
-                              status=status3, tags=[tag2], assigned_users=[user1])
-    us2 = f.UserStoryFactory.create(project=project, owner=user3, assigned_to=None,
-                              status=status1, tags=[tag1, tag2])
-    f.RelatedUserStory.create(user_story=us2, epic=epic1)
-    us3 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=None,
-                              status=status0, tags=[tag3])
-    us4 = f.UserStoryFactory.create(project=project, owner=user1, assigned_to=user1,
-                              status=status0, tags=[tag1, tag2, tag3])
-    f.RelatedUserStory.create(user_story=us4, epic=epic0)
-    us5 = f.UserStoryFactory.create(project=project, owner=user3, assigned_to=user1,
-                              status=status2, tags=[tag3])
-    us6 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=user1,
-                              status=status3, tags=[tag1, tag2])
-    f.RelatedUserStory.create(user_story=us6, epic=epic0)
-    f.RelatedUserStory.create(user_story=us6, epic=epic2)
-    us7 = f.UserStoryFactory.create(project=project, owner=user1, assigned_to=user2,
-                              status=status0, tags=[tag3])
-    us8 = f.UserStoryFactory.create(project=project, owner=user3, assigned_to=user2,
-                              status=status3, tags=[tag1])
-    f.RelatedUserStory.create(user_story=us8, epic=epic2)
-    us9 = f.UserStoryFactory.create(project=project, owner=user2, assigned_to=user3,
-                              status=status1, tags=[tag0], assigned_users=[user1])
+    data = create_uss_fixtures()
+    project = data["project"]
+    (user1, user2, user3, ) = data["users"]
+    (status0, status1, status2, status3, ) = data["statuses"]
+    (epic0, epic1, epic2, ) = data["epics"]
+    (tag0, tag1, tag2, tag3, ) = data["tags"]
 
     url = reverse("userstories-filters-data") + "?project={}".format(project.id)
-
     client.login(user1)
 
     # No filter
@@ -959,6 +966,37 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['id'] == epic0.id, response.data["epics"]))["count"] == 3
     assert next(filter(lambda i: i['id'] == epic1.id, response.data["epics"]))["count"] == 1
     assert next(filter(lambda i: i['id'] == epic2.id, response.data["epics"]))["count"] == 2
+
+
+@pytest.mark.parametrize("filter_name,collection,expected,exclude_expected,is_text", [
+    ('status', 'statuses', 3, 7, False),
+    ('tags', 'tags', 1, 9, True),
+    ('owner', 'users', 3, 7, False),
+    ('role', 'roles', 5, 5, False),
+    ('assigned_users', 'users', 5, 5, False),
+])
+def test_api_filters(client, filter_name, collection, expected, exclude_expected, is_text):
+    data = create_uss_fixtures()
+    project = data["project"]
+    options = data[collection]
+
+    client.login(data["users"][0])
+    if is_text:
+        param = options[0]
+    else:
+        param = options[0].id
+
+    # include test
+    url = f"{reverse('userstories-list')}?project={project.id}&{filter_name}={param}"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data) == expected
+
+    # exclude test
+    url = f"{reverse('userstories-list')}?project={project.id}&exclude_{filter_name}={param}"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data) == exclude_expected
 
 
 def test_api_filters_data_with_assigned_users(client):
