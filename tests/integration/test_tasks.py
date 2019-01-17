@@ -39,6 +39,62 @@ import pytest
 pytestmark = pytest.mark.django_db
 
 
+def create_tasks_fixtures():
+    data = {}
+    data["project"] = f.ProjectFactory.create()
+    project = data["project"]
+    data["users"] = [f.UserFactory.create(is_superuser=True) for i in range(0, 3)]
+    data["roles"] = [f.RoleFactory.create() for i in range(0, 3)]
+    user_roles = zip(data["users"], data["roles"])
+    # Add membership fixtures
+    [f.MembershipFactory.create(user=user, project=project, role=role) for (user, role) in user_roles]
+
+    data["statuses"] = [f.TaskStatusFactory.create(project=project) for i in range(0, 4)]
+    data["tags"] = ["test1test2test3", "test1", "test2", "test3"]
+
+    # ----------------------------------------------------------------
+    # | Task  |  Owner | Assigned To | Tags                | Status  |
+    # |-------#--------#-------------#---------------------|---------|
+    # | 0     |  user2 | None        |      tag1           | status3 |
+    # | 1     |  user1 | None        |           tag2      | status3 |
+    # | 2     |  user3 | None        |      tag1 tag2      | status1 |
+    # | 3     |  user2 | None        |                tag3 | status0 |
+    # | 4     |  user1 | user1       |      tag1 tag2 tag3 | status0 |
+    # | 5     |  user3 | user1       |                tag3 | status2 |
+    # | 6     |  user2 | user1       |      tag1 tag2      | status3 |
+    # | 7     |  user1 | user2       |                tag3 | status0 |
+    # | 8     |  user3 | user2       |      tag1           | status3 |
+    # | 9     |  user2 | user3       | tag0                | status1 |
+    # ----------------------------------------------------------------
+
+    (user1, user2, user3, ) = data["users"]
+    (status0, status1, status2, status3 ) = data["statuses"]
+    (tag0, tag1, tag2, tag3, ) = data["tags"]
+
+    f.TaskFactory.create(project=project, owner=user2, assigned_to=None,
+                                            status=status3, tags=[tag1])
+    f.TaskFactory.create(project=project, owner=user1, assigned_to=None,
+                                            status=status3, tags=[tag2])
+    f.TaskFactory.create(project=project, owner=user3, assigned_to=None,
+                                            status=status1, tags=[tag1, tag2])
+    f.TaskFactory.create(project=project, owner=user2, assigned_to=None,
+                                            status=status0, tags=[tag3])
+    f.TaskFactory.create(project=project, owner=user1, assigned_to=user1,
+                                            status=status0, tags=[tag1, tag2, tag3])
+    f.TaskFactory.create(project=project, owner=user3, assigned_to=user1,
+                                            status=status2, tags=[tag3])
+    f.TaskFactory.create(project=project, owner=user2, assigned_to=user1,
+                                            status=status3, tags=[tag1, tag2])
+    f.TaskFactory.create(project=project, owner=user1, assigned_to=user2,
+                                            status=status0, tags=[tag3])
+    f.TaskFactory.create(project=project, owner=user3, assigned_to=user2,
+                                            status=status3, tags=[tag1])
+    f.TaskFactory.create(project=project, owner=user2, assigned_to=user3,
+                                            status=status1, tags=[tag0])
+
+    return data
+
+
 def test_get_tasks_from_bulk():
     data = """
 Task #1
@@ -796,63 +852,46 @@ def test_api_filter_by_milestone__estimated_start_and_end(client, field_name):
             assert response.data[0]["subject"] == task.subject
 
 
+@pytest.mark.current
+@pytest.mark.parametrize("filter_name,collection,expected,exclude_expected,is_text", [
+    ('status', 'statuses', 3, 7, False),
+    ('assigned_to', 'users', 3, 7, False),
+    ('tags', 'tags', 1, 9, True),
+    ('owner', 'users', 3, 7, False),
+    ('role', 'roles', 3, 7, False),
+])
+def test_api_filters(client, filter_name, collection, expected, exclude_expected, is_text):
+    data = create_tasks_fixtures()
+    project = data["project"]
+    options = data[collection]
+
+    client.login(data["users"][0])
+    if is_text:
+        param = options[0]
+    else:
+        param = options[0].id
+
+    # include test
+    url = f"{reverse('tasks-list')}?project={project.id}&{filter_name}={param}"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data) == expected
+
+    # exclude test
+    url = f"{reverse('tasks-list')}?project={project.id}&exclude_{filter_name}={param}"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data) == exclude_expected
+
+
 def test_api_filters_data(client):
-    project = f.ProjectFactory.create()
-    user1 = f.UserFactory.create(is_superuser=True)
-    f.MembershipFactory.create(user=user1, project=project)
-    user2 = f.UserFactory.create(is_superuser=True)
-    f.MembershipFactory.create(user=user2, project=project)
-    user3 = f.UserFactory.create(is_superuser=True)
-    f.MembershipFactory.create(user=user3, project=project)
-
-    status0 = f.TaskStatusFactory.create(project=project)
-    status1 = f.TaskStatusFactory.create(project=project)
-    status2 = f.TaskStatusFactory.create(project=project)
-    status3 = f.TaskStatusFactory.create(project=project)
-
-    tag0 = "test1test2test3"
-    tag1 = "test1"
-    tag2 = "test2"
-    tag3 = "test3"
-
-    # ------------------------------------------------------
-    # | Task  |  Owner | Assigned To | Tags                |
-    # |-------#--------#-------------#---------------------|
-    # | 0     |  user2 | None        |      tag1           |
-    # | 1     |  user1 | None        |           tag2      |
-    # | 2     |  user3 | None        |      tag1 tag2      |
-    # | 3     |  user2 | None        |                tag3 |
-    # | 4     |  user1 | user1       |      tag1 tag2 tag3 |
-    # | 5     |  user3 | user1       |                tag3 |
-    # | 6     |  user2 | user1       |      tag1 tag2      |
-    # | 7     |  user1 | user2       |                tag3 |
-    # | 8     |  user3 | user2       |      tag1           |
-    # | 9     |  user2 | user3       | tag0                |
-    # ------------------------------------------------------
-
-    task0 = f.TaskFactory.create(project=project, owner=user2, assigned_to=None,
-                                            status=status3, tags=[tag1])
-    task1 = f.TaskFactory.create(project=project, owner=user1, assigned_to=None,
-                                            status=status3, tags=[tag2])
-    task2 = f.TaskFactory.create(project=project, owner=user3, assigned_to=None,
-                                            status=status1, tags=[tag1, tag2])
-    task3 = f.TaskFactory.create(project=project, owner=user2, assigned_to=None,
-                                            status=status0, tags=[tag3])
-    task4 = f.TaskFactory.create(project=project, owner=user1, assigned_to=user1,
-                                            status=status0, tags=[tag1, tag2, tag3])
-    task5 = f.TaskFactory.create(project=project, owner=user3, assigned_to=user1,
-                                            status=status2, tags=[tag3])
-    task6 = f.TaskFactory.create(project=project, owner=user2, assigned_to=user1,
-                                            status=status3, tags=[tag1, tag2])
-    task7 = f.TaskFactory.create(project=project, owner=user1, assigned_to=user2,
-                                            status=status0, tags=[tag3])
-    task8 = f.TaskFactory.create(project=project, owner=user3, assigned_to=user2,
-                                            status=status3, tags=[tag1])
-    task9 = f.TaskFactory.create(project=project, owner=user2, assigned_to=user3,
-                                            status=status1, tags=[tag0])
+    data = create_tasks_fixtures()
+    project = data["project"]
+    (user1, user2, user3, ) = data["users"]
+    (status0, status1, status2, status3, ) = data["statuses"]
+    (tag0, tag1, tag2, tag3, ) = data["tags"]
 
     url = reverse("tasks-filters-data") + "?project={}".format(project.id)
-
     client.login(user1)
 
     ## No filter
