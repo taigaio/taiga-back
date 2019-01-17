@@ -401,11 +401,7 @@ class BaseRelatedFieldsFilter(FilterBackend):
         return list(values)
 
     def _get_queryparams(self, params, mode=''):
-        if mode == 'exclude':
-            param_name = self.exclude_param_name
-        else:
-            param_name = self.param_name or self.filter_name
-
+        param_name = self.exclude_param_name if mode == 'exclude' else self.param_name or self.filter_name
         raw_value = params.get(param_name, None)
         if raw_value:
             value = self._prepare_filter_data(raw_value)
@@ -415,27 +411,20 @@ class BaseRelatedFieldsFilter(FilterBackend):
                 qs_isnull_kwargs = {"{}__isnull".format(self.filter_name): True}
                 return Q(**qs_in_kwargs) | Q(**qs_isnull_kwargs)
             else:
-                return {"{}__in".format(self.filter_name): value}
+                return Q(**{"{}__in".format(self.filter_name): value})
 
         return None
 
     def filter_queryset(self, request, queryset, view):
-        query = self._get_queryparams(request.QUERY_PARAMS)
-        exclude_query = None
-        if self.exclude_param_name:
-            exclude_query = self._get_queryparams(request.QUERY_PARAMS, mode='exclude')
+        operations = {
+            "filter": queryset.filter,
+            "exclude": queryset.exclude,
+        }
 
-        if query:
-            if isinstance(query, dict):
-                queryset = queryset.filter(**query)
-            else:
-                queryset = queryset.filter(query)
-
-        if exclude_query:
-            if isinstance(exclude_query, dict):
-                queryset = queryset.exclude(**exclude_query)
-            else:
-                queryset = queryset.exclude(exclude_query)
+        for mode, qs_method in operations.items():
+            query = self._get_queryparams(request.QUERY_PARAMS, mode=mode)
+            if query:
+                queryset = qs_method(query)
 
         return super().filter_queryset(request, queryset, view)
 
@@ -455,11 +444,7 @@ class AssignedUsersFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
     exclude_param_name = 'exclude_assigned_users'
 
     def _get_queryparams(self, params, mode=''):
-        if mode == 'exclude':
-            param_name = self.exclude_param_name
-        else:
-            param_name = self.param_name or self.filter_name
-
+        param_name = self.exclude_param_name if mode == 'exclude' else self.param_name or self.filter_name
         raw_value = params.get(param_name, None)
         if raw_value:
             value = self._prepare_filter_data(raw_value)
@@ -485,7 +470,6 @@ class AssignedUsersFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
 class StatusesFilter(BaseRelatedFieldsFilter):
     filter_name = 'status'
     exclude_param_name = 'exclude_status'
-
 
 
 class IssueTypesFilter(BaseRelatedFieldsFilter):
@@ -516,10 +500,8 @@ class TagsFilter(FilterBackend):
             self.exclude_param_name = exclude_param_name
 
     def _get_tags_queryparams(self, params, mode=''):
-        if mode == 'exclude':
-            tags = params.get(self.exclude_param_name, None)
-        else:
-            tags = params.get(self.filter_name, None)
+        param_name = self.exclude_param_name if mode == "exclude" else self.filter_name
+        tags = params.get(param_name, None)
 
         if tags:
             return tags.split(",")
@@ -527,14 +509,15 @@ class TagsFilter(FilterBackend):
         return None
 
     def filter_queryset(self, request, queryset, view):
-        query_tags = self._get_tags_queryparams(request.QUERY_PARAMS)
-        exclude_query_tags = self._get_tags_queryparams(request.QUERY_PARAMS, mode='exclude')
+        operations = {
+            "filter": queryset.filter,
+            "exclude": queryset.exclude,
+        }
 
-        if query_tags:
-            queryset = queryset.filter(tags__contains=query_tags)
-
-        if exclude_query_tags:
-            queryset = queryset.exclude(tags__contains=exclude_query_tags)
+        for mode, qs_method in operations.items():
+            query = self._get_tags_queryparams(request.QUERY_PARAMS, mode=mode)
+            if query:
+                queryset = qs_method(tags__contains=query)
 
         return super().filter_queryset(request, queryset, view)
 
@@ -677,25 +660,18 @@ class RoleFilter(BaseRelatedFieldsFilter):
 
     def filter_queryset(self, request, queryset, view):
         Membership = apps.get_model('projects', 'Membership')
-        query = self._get_queryparams(request.QUERY_PARAMS)
-        exclude_query = self._get_queryparams(request.QUERY_PARAMS, mode='exclude')
 
-        if query:
-            if isinstance(query, dict):
-                memberships = Membership.objects.filter(**query).values_list("user_id", flat=True)
-                queryset = queryset.filter(assigned_to__in=memberships)
-            else:
+        operations = {
+            "filter": queryset.filter,
+            "exclude": queryset.exclude,
+        }
+
+        for mode, qs_method in operations.items():
+            query = self._get_queryparams(request.QUERY_PARAMS, mode=mode)
+            if query:
                 memberships = Membership.objects.filter(query).values_list("user_id", flat=True)
-            if memberships:
-                queryset = queryset.filter(assigned_to__in=memberships)
-
-        if exclude_query:
-            if isinstance(exclude_query, dict):
-                memberships = Membership.objects.filter(**exclude_query).values_list("user_id", flat=True)
-            else:
-                memberships = Membership.objects.filter(exclude_query).values_list("user_id", flat=True)
-            if memberships:
-                queryset = queryset.exclude(assigned_to__in=memberships)
+                if memberships:
+                    queryset = qs_method(assigned_to__in=memberships)
 
         return FilterBackend.filter_queryset(self, request, queryset, view)
 
@@ -715,15 +691,10 @@ class UserStoriesRoleFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
 
         for mode, qs_method in operations.items():
             query = self._get_queryparams(request.QUERY_PARAMS, mode=mode)
-            if not query:
-                continue
-
-            if isinstance(query, dict):
-                memberships = Membership.objects.filter(**query).values_list("user_id", flat=True)
-            else:
+            if query:
                 memberships = Membership.objects.filter(query).values_list("user_id", flat=True)
-            if memberships:
-                user_story_model = apps.get_model("userstories", "UserStory")
-                queryset = qs_method(self.get_assigned_users_filter(user_story_model, memberships))
+                if memberships:
+                    user_story_model = apps.get_model("userstories", "UserStory")
+                    queryset = qs_method(self.get_assigned_users_filter(user_story_model, memberships))
 
         return FilterBackend.filter_queryset(self, request, queryset, view)
