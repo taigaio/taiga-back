@@ -405,7 +405,6 @@ class BaseRelatedFieldsFilter(FilterBackend):
         raw_value = params.get(param_name, None)
         if raw_value:
             value = self._prepare_filter_data(raw_value)
-
             if None in value:
                 qs_in_kwargs = {"{}__in".format(self.filter_name): [v for v in value if v is not None]}
                 qs_isnull_kwargs = {"{}__isnull".format(self.filter_name): True}
@@ -669,7 +668,7 @@ class RoleFilter(BaseRelatedFieldsFilter):
         for mode, qs_method in operations.items():
             query = self._get_queryparams(request.QUERY_PARAMS, mode=mode)
             if query:
-                memberships = Membership.objects.filter(query).values_list("user_id", flat=True)
+                memberships = Membership.objects.filter(query).exclude(user__isnull=True).values_list("user_id", flat=True)
                 if memberships:
                     queryset = qs_method(assigned_to__in=memberships)
 
@@ -692,7 +691,7 @@ class UserStoriesRoleFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
         for mode, qs_method in operations.items():
             query = self._get_queryparams(request.QUERY_PARAMS, mode=mode)
             if query:
-                memberships = Membership.objects.filter(query).values_list("user_id", flat=True)
+                memberships = Membership.objects.filter(query).exclude(user__isnull=True).values_list("user_id", flat=True)
                 if memberships:
                     user_story_model = apps.get_model("userstories", "UserStory")
                     queryset = qs_method(self.get_assigned_users_filter(user_story_model, memberships))
