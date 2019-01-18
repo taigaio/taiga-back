@@ -414,16 +414,22 @@ class BaseRelatedFieldsFilter(FilterBackend):
 
         return None
 
+    def _prepare_filter_query(self, query):
+        return query
+
+    def _prepare_exclude_query(self, query):
+        return ~Q(query)
+
     def filter_queryset(self, request, queryset, view):
         operations = {
-            "filter": queryset.filter,
-            "exclude": queryset.exclude,
+            "filter": self._prepare_filter_query,
+            "exclude": self._prepare_exclude_query,
         }
 
-        for mode, qs_method in operations.items():
+        for mode, prepare_method in operations.items():
             query = self._get_queryparams(request.QUERY_PARAMS, mode=mode)
             if query:
-                queryset = qs_method(query)
+                queryset = queryset.filter(prepare_method(query))
 
         return super().filter_queryset(request, queryset, view)
 
@@ -506,16 +512,16 @@ class TagsFilter(FilterBackend):
 
         return None
 
-    def prepare_filter(self, query):
+    def _prepare_filter_query(self, query):
         return Q(tags__contains=query)
 
-    def prepare_exclude(self, query):
+    def _prepare_exclude_query(self, query):
         return ~Q(tags__contains=query)
 
     def filter_queryset(self, request, queryset, view):
         operations = {
-            "filter": self.prepare_filter,
-            "exclude": self.prepare_exclude,
+            "filter": self._prepare_filter_query,
+            "exclude": self._prepare_exclude_query,
         }
 
         for mode, prepare_method in operations.items():
@@ -666,8 +672,8 @@ class RoleFilter(BaseRelatedFieldsFilter):
         Membership = apps.get_model('projects', 'Membership')
 
         operations = {
-            "filter": queryset.filter,
-            "exclude": queryset.exclude,
+            "filter": self._prepare_filter_query,
+            "exclude": self._prepare_exclude_query,
         }
 
         for mode, qs_method in operations.items():
@@ -675,7 +681,7 @@ class RoleFilter(BaseRelatedFieldsFilter):
             if query:
                 memberships = Membership.objects.filter(query).exclude(user__isnull=True).values_list("user_id", flat=True)
                 if memberships:
-                    queryset = qs_method(assigned_to__in=memberships)
+                    queryset = queryset.filter(qs_method(Q(assigned_to__in=memberships)))
 
         return FilterBackend.filter_queryset(self, request, queryset, view)
 
@@ -689,8 +695,8 @@ class UserStoriesRoleFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
         Membership = apps.get_model('projects', 'Membership')
 
         operations = {
-            "filter": queryset.filter,
-            "exclude": queryset.exclude,
+            "filter": self._prepare_filter_query,
+            "exclude": self._prepare_exclude_query,
         }
 
         for mode, qs_method in operations.items():
@@ -699,6 +705,8 @@ class UserStoriesRoleFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
                 memberships = Membership.objects.filter(query).exclude(user__isnull=True).values_list("user_id", flat=True)
                 if memberships:
                     user_story_model = apps.get_model("userstories", "UserStory")
-                    queryset = qs_method(self.get_assigned_users_filter(user_story_model, memberships))
+                    queryset = queryset.filter(
+                        qs_method(Q(self.get_assigned_users_filter(user_story_model, memberships)))
+                    )
 
         return FilterBackend.filter_queryset(self, request, queryset, view)
