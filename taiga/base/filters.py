@@ -501,22 +501,27 @@ class TagsFilter(FilterBackend):
     def _get_tags_queryparams(self, params, mode=''):
         param_name = self.exclude_param_name if mode == "exclude" else self.filter_name
         tags = params.get(param_name, None)
-
         if tags:
             return tags.split(",")
 
         return None
 
+    def prepare_filter(self, query, queryset):
+        return queryset.filter(tags__contains=query)
+
+    def prepare_exclude(self, query, queryset):
+        return queryset.filter(~Q(tags__contains=query))
+
     def filter_queryset(self, request, queryset, view):
         operations = {
-            "filter": queryset.filter,
-            "exclude": queryset.exclude,
+            "filter": self.prepare_filter,
+            "exclude": self.prepare_exclude,
         }
 
         for mode, qs_method in operations.items():
             query = self._get_tags_queryparams(request.QUERY_PARAMS, mode=mode)
             if query:
-                queryset = qs_method(tags__contains=query)
+                queryset = qs_method(query, queryset)
 
         return super().filter_queryset(request, queryset, view)
 
