@@ -871,13 +871,13 @@ def test_api_filters(client, filter_name, collection, expected, exclude_expected
         param = options[0].id
 
     # include test
-    url = f"{reverse('tasks-list')}?project={project.id}&{filter_name}={param}"
+    url = "{}?project={}&{}={}".format(reverse('tasks-list'), project.id, filter_name, param)
     response = client.get(url)
     assert response.status_code == 200
     assert len(response.data) == expected
 
     # exclude test
-    url = f"{reverse('tasks-list')}?project={project.id}&exclude_{filter_name}={param}"
+    url = "{}?project={}&exclude_{}={}".format(reverse('tasks-list'), project.id, filter_name, param)
     response = client.get(url)
     assert response.status_code == 200
     assert len(response.data) == exclude_expected
