@@ -307,8 +307,9 @@ def test_api_move_tasks_to_another_sprint_close_previous(client):
     closed_status = f.TaskStatusFactory.create(project=project, is_closed=True)
 
     task1 = f.create_task(project=project, milestone=milestone1, taskboard_order=1,
-                          status=closed_status)
-    task2 = f.create_task(project=project, milestone=milestone1, taskboard_order=2)
+                          status=closed_status, user_story=None)
+    task2 = f.create_task(project=project, milestone=milestone1, taskboard_order=2,
+                          user_story=None)
 
     assert project.milestones.get(id=milestone1.id).tasks.count() == 2
     assert not milestone1.closed
