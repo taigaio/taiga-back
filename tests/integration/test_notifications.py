@@ -55,6 +55,20 @@ def mail():
     return mail
 
 
+@pytest.mark.parametrize(
+    "header, expected",
+    [
+        ("", ""),
+        ("One line", "One line"),
+        ("Two \nlines", "Two lines"),
+        ("Mix \r\nCR and LF \rin the string", "Mix CR and LF in the string"),
+    ]
+)
+def test_remove_lr_cr(header, expected):
+    rv = services.remove_lr_cr(header)
+    assert rv == expected
+
+
 def test_create_retrieve_notify_policy():
     project = f.ProjectFactory.create()
 

@@ -44,6 +44,10 @@ from .models import HistoryChangeNotification, Watched
 from .squashing import squash_history_entries
 
 
+def remove_lr_cr(s):
+    return s.replace("\n", "").replace("\r", "")
+
+
 def notify_policy_exists(project, user) -> bool:
     """
     Check if policy exists for specified project
@@ -313,10 +317,11 @@ def send_sync_notifications(notification_id):
         msg_id = 'taiga-system'
 
     now = datetime.datetime.now()
+    project_name = remove_lr_cr(notification.project.name)
     format_args = {
         "unsubscribe_url": resolve_front_url('settings-mail-notifications'),
         "project_slug": notification.project.slug,
-        "project_name": notification.project.name,
+        "project_name": project_name,
         "msg_id": msg_id,
         "time": int(now.timestamp()),
         "domain": domain
