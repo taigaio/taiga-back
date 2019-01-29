@@ -148,7 +148,7 @@ LANGUAGES = [
     ("tr", "Türkçe"),  # Turkish
     #("tt", "татар теле"),  # Tatar
     #("udm", "удмурт кыл"),  # Udmurt
-    #("uk", "Українська"),  # Ukrainian
+    ("uk", "Українська"),  # Ukrainian
     #("ur", "اردو‏"),  # Urdu
     #("vi", "Tiếng Việt"),  # Vietnamese
     ("zh-hans", "中文(简体)"),  # Simplified Chinese
