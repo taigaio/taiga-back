@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 4.1.0 (2019-02-04)
+
+### Misc
+
+- Fix Close sprints
+
+### Features:
+
+- Negative filters
+- Activate the Ukrainian language
+
 ## 4.0.4 (2019-01-15)
 
 ### Misc
