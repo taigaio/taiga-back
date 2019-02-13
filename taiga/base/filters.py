@@ -515,8 +515,13 @@ class TagsFilter(FilterBackend):
     def _prepare_filter_query(self, query):
         return Q(tags__contains=query)
 
-    def _prepare_exclude_query(self, query):
-        return ~Q(tags__contains=query)
+    def _prepare_exclude_query(self, tags):
+        queries = [Q(tags__contains=[tag]) for tag in tags]
+        query = queries.pop()
+        for item in queries:
+            query |= item
+
+        return ~Q(query)
 
     def filter_queryset(self, request, queryset, view):
         operations = {
