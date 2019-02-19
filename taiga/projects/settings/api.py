@@ -56,7 +56,7 @@ class UserProjectSettingsViewSet(ModelCrudViewSet):
             .filter(
                 Q(project__owner=self.request.user) |
                 Q(project__memberships__user=self.request.user)
-        ).distinct()
+        ).distinct().order_by('project__name')
 
     def list(self, request, *args, **kwargs):
         qs = self.get_queryset()
