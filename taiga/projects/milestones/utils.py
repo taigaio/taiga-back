@@ -76,7 +76,8 @@ def attach_extra_info(queryset, user=None):
                                                    "status",
                                                    "owner",
                                                    "assigned_to",
-                                                   "generated_from_issue")
+                                                   "generated_from_issue",
+                                                   "generated_from_task")
 
     us_queryset = userstories_utils.attach_total_points(us_queryset)
     us_queryset = userstories_utils.attach_role_points(us_queryset)

@@ -115,7 +115,8 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
                                "status",
                                "owner",
                                "assigned_to",
-                               "generated_from_issue")
+                               "generated_from_issue",
+                               "generated_from_task")
 
         include_attachments = "include_attachments" in self.request.QUERY_PARAMS
         include_tasks = "include_tasks" in self.request.QUERY_PARAMS
@@ -254,16 +255,19 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         response = super().create(*args, **kwargs)
 
         # Added comment to the origin (issue)
-        if response.status_code == status.HTTP_201_CREATED and self.object.generated_from_issue:
-            self.object.generated_from_issue.save()
+        if response.status_code == status.HTTP_201_CREATED:
+            for generated_from in ['generated_from_issue', 'generated_from_task']:
+                generator = getattr(self.object, generated_from)
+                if generator:
+                    generator.save()
 
-            comment = _("Generating the user story #{ref} - {subject}")
-            comment = comment.format(ref=self.object.ref, subject=self.object.subject)
-            history = take_snapshot(self.object.generated_from_issue,
-                                    comment=comment,
-                                    user=self.request.user)
+                    comment = _("Generating the user story #{ref} - {subject}")
+                    comment = comment.format(ref=self.object.ref, subject=self.object.subject)
+                    history = take_snapshot(generator,
+                                            comment=comment,
+                                            user=self.request.user)
 
-            self.send_notifications(self.object.generated_from_issue, history)
+                    self.send_notifications(generator, history)
 
         return response
 

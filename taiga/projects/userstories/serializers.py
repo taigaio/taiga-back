@@ -33,7 +33,7 @@ from taiga.projects.votes.mixins.serializers import VoteResourceSerializerMixin
 from taiga.projects.history.mixins import TotalCommentsSerializerMixin
 
 
-class OriginIssueSerializer(serializers.LightSerializer):
+class OriginItemSerializer(serializers.LightSerializer):
     id = Field()
     ref = Field()
     subject = Field()
@@ -70,6 +70,7 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
     client_requirement = Field()
     team_requirement = Field()
     generated_from_issue = Field(attr="generated_from_issue_id")
+    generated_from_task = Field(attr="generated_from_task_id")
     external_reference = Field()
     tribe_gig = Field()
     version = Field()
@@ -78,7 +79,8 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
     blocked_note = Field()
     total_points = MethodField()
     comment = MethodField()
-    origin_issue = OriginIssueSerializer(attr="generated_from_issue")
+    origin_issue = OriginItemSerializer(attr="generated_from_issue")
+    origin_task = OriginItemSerializer(attr="generated_from_task")
     epics = MethodField()
     epic_order = MethodField()
     tasks = MethodField()

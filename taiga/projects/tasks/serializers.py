@@ -61,6 +61,11 @@ class TaskListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
     is_closed = MethodField()
     user_story_extra_info = Field()
 
+    def get_generated_user_stories(self, obj):
+        assert hasattr(obj, "generated_user_stories_attr"),\
+            "instance must have a generated_user_stories_attr attribute"
+        return obj.generated_user_stories_attr
+
     def get_milestone_slug(self, obj):
         return obj.milestone.slug if obj.milestone else None
 
@@ -70,6 +75,7 @@ class TaskListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
 
 class TaskSerializer(TaskListSerializer):
     comment = MethodField()
+    generated_user_stories = MethodField()
     blocked_note_html = MethodField()
     description = Field()
     description_html = MethodField()

@@ -168,6 +168,7 @@ def tasks_to_csv(project, queryset):
         fieldnames.append(custom_attr.name)
 
     queryset = queryset.prefetch_related("attachments",
+                                         "generated_user_stories",
                                          "custom_attributes_values")
     queryset = queryset.select_related("milestone",
                                        "owner",

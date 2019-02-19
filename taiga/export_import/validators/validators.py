@@ -325,6 +325,7 @@ class UserStoryExportValidator(WatcheableObjectModelValidatorMixin):
     milestone = ProjectRelatedField(slug_field="name", required=False)
     modified_date = serializers.DateTimeField(required=False)
     generated_from_issue = ProjectRelatedField(slug_field="ref", required=False)
+    generated_from_task = ProjectRelatedField(slug_field="ref", required=False)
     due_date = serializers.DateTimeField(required=False)
 
     class Meta:
