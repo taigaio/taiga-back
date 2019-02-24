@@ -26,6 +26,7 @@ from unidecode import unidecode
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import utils
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
 
@@ -202,7 +203,11 @@ def _store_membership(project, membership):
         validator.object.token = str(uuid.uuid1())
         validator.object.user = find_invited_user(validator.object.email,
                                                   default=validator.object.user)
-        validator.save()
+        try:
+            validator.save()
+        except utils.IntegrityError:
+            # Avoid import errors when the project has duplicated invitations
+            return
         return validator
 
     add_errors("memberships", validator.errors)
@@ -212,7 +217,9 @@ def _store_membership(project, membership):
 def store_memberships(project, data):
     results = []
     for membership in data.get("memberships", []):
-        results.append(_store_membership(project, membership))
+        member = _store_membership(project, membership)
+        if member:
+            results.append(member)
     return results
 
 
@@ -777,7 +784,6 @@ def _populate_project_object(project, data):
     store_custom_attributes(project, data, "issuecustomattributes",
                             validators.IssueCustomAttributeExportValidator)
     check_if_there_is_some_error(_("error importing custom attributes"), project)
-
     # Create milestones
     store_milestones(project, data)
     check_if_there_is_some_error(_("error importing sprints"), project)
@@ -830,10 +836,10 @@ def store_project_from_dict(data, owner=None):
     try:
         _populate_project_object(project, data)
     except err.TaigaImportError:
-        # reraise known inport errors
+        # raise known inport errors
         raise
-    except Exception:
-        # reise unknown errors as import error
+    except Exception as e:
+        # raise unknown errors as import error
         raise err.TaigaImportError(_("unexpected error importing project"), project)
 
     return project
