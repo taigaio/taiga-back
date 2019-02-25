@@ -18,6 +18,7 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 
 from taiga.base import response
 from taiga.base.api import ReadOnlyListViewSet
@@ -77,20 +78,13 @@ class TimelineViewSet(ReadOnlyListViewSet):
         qs = self.get_timeline(obj)
 
         if request.GET.get("only_relevant", None) is not None:
-            qs = qs.extra(where=[
-                """
-                NOT(
-                    (data::text LIKE '%%\"values_diff\": {}%%'
-                        OR
-                     data->'values_diff'->'attachments'->'new' = '[]')
-                    AND
-                    event_type::text = ANY('{issues.issue.change,
-                                             tasks.task.change,
-                                             userstories.userstory.change,
-                                             epics.epic.change,
-                                             wiki.wikipage.change}'::text[])
-                )
-                """])
+            qs = qs.exclude(Q(event_type=["issues.issue.change",
+                                          "tasks.task.change",
+                                          "userstories.userstory.change",
+                                          "epics.epic.change",
+                                          "wiki.wikipage.change"]),
+                            Q(data__values_diff={}) |
+                            Q(data__values_diff__attachments__new=[]))
 
             qs = qs.exclude(event_type__in=["issues.issue.delete",
                                             "tasks.task.delete",
