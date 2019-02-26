@@ -53,10 +53,8 @@ class UserProjectSettingsViewSet(ModelCrudViewSet):
         self._build_user_project_settings()
 
         return models.UserProjectSettings.objects.filter(user=self.request.user)\
-            .filter(
-                Q(project__owner=self.request.user) |
-                Q(project__memberships__user=self.request.user)
-        ).distinct().order_by('project__name')
+            .filter(project__memberships__user=self.request.user)\
+            .order_by('project__memberships__user_order')
 
     def list(self, request, *args, **kwargs):
         qs = self.get_queryset()
