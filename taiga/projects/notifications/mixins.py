@@ -409,6 +409,7 @@ class AssignedUsersSignalMixin:
 
     def update(self, request, *args, **kwargs):
         obj = self.get_object_or_none()
+
         if hasattr(obj, "assigned_users") and obj.id:
             self._old_assigned_users = [
                 user for user in obj.assigned_users.all()
@@ -416,13 +417,12 @@ class AssignedUsersSignalMixin:
 
         result = super().update(request, *args, **kwargs)
 
-        if result and obj.assigned_users:
+        if result and result.data.get('assigned_users'):
             new_assigned_users = [
-                user for user in obj.assigned_users.all()
-                if user not in self._old_assigned_users
-                and user != self.request.user
+                user_id for user_id in result.data.get('assigned_users')
+                if user_id not in self._old_assigned_users
+                and user_id != self.request.user
             ]
-
             signal_assigned_users.send(sender=self.__class__,
                                        user=self.request.user,
                                        obj=obj,

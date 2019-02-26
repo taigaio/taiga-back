@@ -74,7 +74,7 @@ def on_assigned_users(sender, user, obj, new_assigned_users, **kwargs):
         "obj": obj,
     }
     recipients = _filter_recipients(obj.project, user,
-                                    [user.id for user in new_assigned_users])
+                                    [user_id for user_id in new_assigned_users])
     _push_to_web_notifications(event_type, data, recipients)
 
 
