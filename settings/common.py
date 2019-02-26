@@ -101,7 +101,7 @@ LANGUAGES = [
     #("fy", "Frysk"),  # Frisian
     #("ga", "Irish"),  # Irish
     #("gl", "Galego"),  # Galician
-    #("he", "עברית‏"),  # Hebrew
+    ("he", "עברית‏"),  # Hebrew
     #("hi", "हिन्दी"),  # Hindi
     #("hr", "Hrvatski"),  # Croatian
     #("hu", "Magyar"),  # Hungarian
