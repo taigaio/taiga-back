@@ -94,7 +94,7 @@ LANGUAGES = [
     #("es-ni", "Español (Nicaragua)"),  # Nicaraguan Spanish
     #("es-ve", "Español (Venezuela)"),  # Venezuelan Spanish
     #("et", "Eesti"),  # Estonian
-    #("eu", "Euskara"),  # Basque
+    ("eu", "Euskara"),  # Basque
     ("fa", "فارسی‏"),  # Persian
     ("fi", "Suomi"),  # Finnish
     ("fr", "Français"),  # French
