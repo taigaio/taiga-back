@@ -44,7 +44,9 @@ class MilestoneSerializer(WatchedResourceSerializer,
     closed_points = MethodField()
 
     def get_user_stories(self, obj):
-        return UserStoryListSerializer(obj.user_stories.all(), many=True).data
+        qs = obj.user_stories.all()
+        qs = qs.prefetch_related("assigned_users")
+        return UserStoryListSerializer(qs, many=True).data
 
     def get_total_points(self, obj):
         assert hasattr(obj, "total_points_attr"), "instance must have a total_points_attr attribute"
