@@ -8,6 +8,7 @@
 # Esther Moreno <soyesthermoreno@yahoo.es>, 2015
 # Gustavo Díaz Jaimes <gustavodiazjaimes@gmail.com>, 2015
 # Hector Colina <hcolina@gmail.com>, 2015
+# Ion Jaureguialzo Sarasola <widemos@gmail.com>, 2019
 # Jesús <contacto@jesusmg.org>, 2015
 # Jorge Sanchez <rickydj@gmail.com>, 2016
 # José Alejandro Díaz Carmona <reiterweg@gmail.com>, 2016
@@ -22,8 +23,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-11 14:11+0200\n"
-"PO-Revision-Date: 2018-10-14 17:29+0000\n"
-"Last-Translator: Alejandro Hermida <alexhermida@gmail.com>\n"
+"PO-Revision-Date: 2019-02-21 12:17+0000\n"
+"Last-Translator: Ion Jaureguialzo Sarasola <widemos@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -546,15 +547,15 @@ msgstr ""
 
 #: taiga/events/events.py:106
 msgid "User story created"
-msgstr ""
+msgstr "Historia de usuario creada"
 
 #: taiga/events/events.py:109
 msgid "User story changed"
-msgstr ""
+msgstr "Historia de usuario modificada"
 
 #: taiga/events/events.py:112
 msgid "User story deleted"
-msgstr ""
+msgstr "Historia de usuario borrada"
 
 #: taiga/events/events.py:114
 msgid "US #{} - {}"
