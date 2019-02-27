@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 4.2.0 (2019-02-28)
+
+### Features:
+
+- Promote Tasks to US
+- Improve queries
+- Activate Hebrew and Basque languages
+
+### Misc
+
+- Minor bug fixes.
+
 ## 4.1.0 (2019-02-04)
 
 ### Misc
