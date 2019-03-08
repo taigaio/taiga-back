@@ -169,3 +169,25 @@ class UserStorySerializer(UserStoryListSerializer):
 
 class UserStoryNeighborsSerializer(NeighborsSerializerMixin, UserStorySerializer):
     pass
+
+
+class UserStoryDashboardSerializer(ProjectExtraInfoSerializerMixin,
+                                   StatusExtraInfoSerializerMixin,
+                                   AssignedToExtraInfoSerializerMixin,
+                                   DueDateSerializerMixin, serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    milestone = Field(attr="milestone_id")
+    project = Field(attr="project_id")
+    is_closed = Field()
+    created_date = Field()
+    modified_date = Field()
+    finish_date = Field()
+    subject = Field()
+    client_requirement = Field()
+    team_requirement = Field()
+    external_reference = Field()
+    version = Field()
+    is_blocked = Field()
+    blocked_note = Field()
+
