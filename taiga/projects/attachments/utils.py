@@ -19,6 +19,27 @@
 
 from django.apps import apps
 
+
+def attach_total_attachments(queryset, as_field="total_attachments"):
+    """Attach attachment count to each object of the queryset.
+
+    :param queryset: A Django queryset object.
+    :param as_field: Attach the attachments count as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(model)
+    sql = """SELECT count(*)
+                  FROM attachments_attachment
+                 WHERE attachments_attachment.content_type_id = {type_id}
+                   AND attachments_attachment.object_id = {tbl}.id"""
+
+    sql = sql.format(type_id=type.id, tbl=model._meta.db_table)
+    qs = queryset.extra(select={as_field: sql})
+    return qs
+
+
 def attach_basic_attachments(queryset, as_field="attachments_attr"):
     """Attach basic attachments info as json column to each object of the queryset.
 

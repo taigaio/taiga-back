@@ -84,6 +84,7 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
     epics = MethodField()
     epic_order = MethodField()
     tasks = MethodField()
+    total_attachments = Field()
 
     assigned_users = MethodField()
 
