@@ -172,10 +172,10 @@ class UserStoryNeighborsSerializer(NeighborsSerializerMixin, UserStorySerializer
     pass
 
 
-class UserStoryDashboardSerializer(ProjectExtraInfoSerializerMixin,
-                                   StatusExtraInfoSerializerMixin,
-                                   AssignedToExtraInfoSerializerMixin,
-                                   DueDateSerializerMixin, serializers.LightSerializer):
+class UserStoryLightSerializer(ProjectExtraInfoSerializerMixin,
+                               StatusExtraInfoSerializerMixin,
+                               AssignedToExtraInfoSerializerMixin,
+                               DueDateSerializerMixin, serializers.LightSerializer):
     id = Field()
     ref = Field()
     milestone = Field(attr="milestone_id")

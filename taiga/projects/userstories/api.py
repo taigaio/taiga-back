@@ -104,7 +104,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
             return serializers.UserStoryNeighborsSerializer
 
         if self.action == "list" and self.request.QUERY_PARAMS.get('dashboard', False):
-            return serializers.UserStoryDashboardSerializer
+            return serializers.UserStoryLightSerializer
 
         if self.action == "list":
             return serializers.UserStoryListSerializer
