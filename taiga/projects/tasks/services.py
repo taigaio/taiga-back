@@ -18,10 +18,13 @@
 
 import csv
 import io
+import logging
+
 from collections import OrderedDict
 from operator import itemgetter
 from contextlib import closing
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
 from django.utils.translation import ugettext as _
 
@@ -35,6 +38,9 @@ from taiga.projects.votes.utils import attach_total_voters_to_queryset
 from taiga.projects.notifications.utils import attach_watchers_to_queryset
 
 from . import models
+
+
+logger = logging.getLogger(__name__)
 
 
 #####################################################
@@ -213,9 +219,15 @@ def tasks_to_csv(project, queryset):
             "due_date_reason": task.due_date_reason,
         }
         for custom_attr in custom_attrs:
-            value = task.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
+            try:
+                task_custom_attrs = task.custom_attributes_values
+            except ObjectDoesNotExist:
+                logger.error("Task without custom attributes. Task: {}".format(
+                    task.id
+                ))
+                continue
+            value = task_custom_attrs.attributes_values.get(str(custom_attr.id), None)
             task_data[custom_attr.name] = value
-
         writer.writerow(task_data)
 
     return csv_data
