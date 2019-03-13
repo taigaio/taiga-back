@@ -29,6 +29,7 @@ _issues_statuses_cache = {}
 _userstories_statuses_cache = {}
 _epics_statuses_cache = {}
 
+
 def cached_get_user_by_pk(pk):
     if pk not in _cache_user_by_pk:
         try:
@@ -36,6 +37,7 @@ def cached_get_user_by_pk(pk):
         except Exception:
             _cache_user_by_pk[pk] = users_models.User.objects.get(pk=pk)
     return _cache_user_by_pk[pk]
+
 
 def cached_get_user_by_email(email):
     if email not in _cache_user_by_email:

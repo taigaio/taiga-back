@@ -26,10 +26,10 @@ from taiga.projects.history import models as history_models
 from taiga.projects.attachments import models as attachments_models
 from taiga.projects.history import services as history_service
 
-from .cache import cached_get_user_by_pk
+from .cache import cached_get_user_by_email, cached_get_user_by_pk
 from .fields import (UserRelatedField, HistoryUserField,
-                     HistoryDiffField, HistoryValuesField,
-                     SlugRelatedField, FileField)
+                     HistoryDiffField, HistoryValuesField, FileField)
+
 
 class HistoryExportSerializer(serializers.LightSerializer):
     user = HistoryUserField()
@@ -61,13 +61,21 @@ class HistoryExportSerializer(serializers.LightSerializer):
             return None
 
         try:
-            owner = cached_get_user_by_pk(snapshot.get("owner", None))
+            owner_field = snapshot.get("owner", None)
+            if isinstance(owner_field, int):
+                owner = cached_get_user_by_pk(owner_field)
+            else:
+                owner = cached_get_user_by_email(owner_field)
             snapshot["owner"] = owner.email
         except user_model_cls.DoesNotExist:
             pass
 
         try:
-            assigned_to = cached_get_user_by_pk(snapshot.get("assigned_to", None))
+            assigned_to_field = snapshot.get("assigned_to", None)
+            if isinstance(assigned_to_field, int):
+                assigned_to = cached_get_user_by_pk(assigned_to_field)
+            else:
+                assigned_to = cached_get_user_by_email(assigned_to_field)
             snapshot["assigned_to"] = assigned_to.email
         except user_model_cls.DoesNotExist:
             pass
@@ -76,6 +84,7 @@ class HistoryExportSerializer(serializers.LightSerializer):
             snapshot["status"] = self.statuses_queryset.get(snapshot["status"])
 
         return snapshot
+
 
 class HistoryExportSerializerMixin(serializers.LightSerializer):
     history = MethodField("get_history")
@@ -88,7 +97,8 @@ class HistoryExportSerializerMixin(serializers.LightSerializer):
             obj,
             types=(history_models.HistoryType.change, history_models.HistoryType.create,)
         )
-        return HistoryExportSerializer(history_qs, many=True, statuses_queryset=self.statuses_queryset(obj.project)).data
+        return HistoryExportSerializer(history_qs, many=True,
+                                       statuses_queryset=self.statuses_queryset(obj.project)).data
 
 
 class AttachmentExportSerializer(serializers.LightSerializer):
