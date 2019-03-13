@@ -146,7 +146,7 @@ def get_timeline(obj, namespace=None):
     if namespace is not None:
         timeline = timeline.filter(namespace=namespace)
 
-    timeline = timeline.order_by("-created", "-id")
+    timeline = timeline.order_by("-created")
     return timeline
 
 
