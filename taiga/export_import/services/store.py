@@ -338,7 +338,7 @@ def store_user_story(project, data):
         data["status"] = project.default_us_status.name
 
     us_data = {key: value for key, value in data.items() if key not in
-               ["role_points", "custom_attributes_values"]}
+               ["role_points", "custom_attributes_values", 'generated_from_task', 'generated_from_issue']}
 
     validator = validators.UserStoryExportValidator(data=us_data, context={"project": project})
 
@@ -393,11 +393,34 @@ def store_user_story(project, data):
 
 
 def store_user_stories(project, data):
-    results = []
+    user_stories = {}
     for userstory in data.get("user_stories", []):
-        us = store_user_story(project, userstory)
-        results.append(us)
-    return results
+        validator = store_user_story(project, userstory)
+        if validator:
+            user_stories[validator.object.ref] = validator.object
+    return user_stories
+
+
+def store_user_stories_related_entities(imported_user_stories,
+                                        imported_tasks,
+                                        imported_issues,
+                                        data):
+    for us_data in data.get("user_stories", []):
+        us = imported_user_stories.get(us_data.get('ref'))
+        if not us or \
+                not (us_data.get('generated_from_task')
+                     or us_data.get('generated_from_issue')):
+            continue
+
+        if us_data.get('generated_from_task'):
+            generated_from_task_ref = int(us_data.get('generated_from_task'))
+            us.generated_from_task = imported_tasks.get(generated_from_task_ref)
+
+        if us_data.get('generated_from_issue'):
+            generated_from_issue_ref = int(us_data.get('generated_from_issue'))
+            us.generated_from_issue = imported_issues.get(generated_from_issue_ref)
+
+        us.save()
 
 
 ## EPICS
@@ -531,11 +554,12 @@ def store_task(project, data):
 
 
 def store_tasks(project, data):
-    results = []
+    tasks = {}
     for task in data.get("tasks", []):
-        task = store_task(project, task)
-        results.append(task)
-    return results
+        validator = store_task(project, task)
+        if validator:
+            tasks[validator.object.ref] = validator.object
+    return tasks
 
 
 ## ISSUES
@@ -602,9 +626,11 @@ def store_issue(project, data):
 
 
 def store_issues(project, data):
-    issues = []
+    issues = {}
     for issue in data.get("issues", []):
-        issues.append(store_issue(project, issue))
+        validator = store_issue(project, issue)
+        if validator:
+            issues[validator.object.ref] = validator.object
     return issues
 
 
@@ -789,20 +815,23 @@ def _populate_project_object(project, data):
     check_if_there_is_some_error(_("error importing sprints"), project)
 
     # Create issues
-    store_issues(project, data)
+    imported_issues = store_issues(project, data)
     check_if_there_is_some_error(_("error importing issues"), project)
 
     # Create user stories
-    store_user_stories(project, data)
+    imported_user_stories = store_user_stories(project, data)
     check_if_there_is_some_error(_("error importing user stories"), project)
 
-    # Creat epics
+    # Create epics
     store_epics(project, data)
     check_if_there_is_some_error(_("error importing epics"), project)
 
-    # Createer tasks
-    store_tasks(project, data)
+    # Create tasks
+    imported_tasks = store_tasks(project, data)
     check_if_there_is_some_error(_("error importing tasks"), project)
+
+    # Create user stories relationships
+    store_user_stories_related_entities(imported_user_stories, imported_tasks, imported_issues, data)
 
     # Create wiki pages
     store_wiki_pages(project, data)
