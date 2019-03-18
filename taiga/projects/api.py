@@ -115,6 +115,8 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             qs = project_utils.attach_my_role_permissions(qs, user=self.request.user)
             qs = project_utils.attach_closed_milestones(qs)
             qs = project_utils.attach_my_homepage(qs, user=self.request.user)
+        elif self.request.QUERY_PARAMS.get('slight', False):
+            qs = project_utils.attach_basic_info(qs, user=self.request.user)
         else:
             qs = project_utils.attach_extra_info(qs, user=self.request.user)
 
@@ -158,6 +160,8 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         return response.Ok(serializer.data)
 
     def get_serializer_class(self):
+        if self.action == "list" and self.request.QUERY_PARAMS.get('slight', False):
+            return serializers.ProjectLightSerializer
         if self.action == "list":
             return serializers.ProjectSerializer
 

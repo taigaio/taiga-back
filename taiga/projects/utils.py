@@ -645,3 +645,22 @@ def attach_extra_info(queryset, user=None):
     queryset = attach_my_homepage(queryset, user)
 
     return queryset
+
+
+def attach_basic_info(queryset, user=None):
+    """Attach basic information to each object of the queryset. It's a conservative approach,
+    could be reduced in future versions.
+
+    :param queryset: A Django projects queryset object.
+
+    :return: Queryset
+    """
+    queryset = attach_members(queryset)
+    queryset = attach_notify_policies(queryset)
+    queryset = attach_is_fan(queryset, user)
+    queryset = attach_my_role_permissions(queryset, user)
+    queryset = attach_private_projects_same_owner(queryset, user)
+    queryset = attach_public_projects_same_owner(queryset, user)
+    queryset = attach_my_homepage(queryset, user)
+
+    return queryset
