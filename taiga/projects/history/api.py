@@ -186,6 +186,9 @@ class HistoryViewSet(ReadOnlyListViewSet):
         if history_type == 'activity':
             qs = qs.filter(diff__isnull=False, comment__exact='').exclude(diff__exact='')
 
+        if history_type == 'comment':
+            qs = qs.exclude(comment__exact='')
+
         if self.request.GET.get(self.page_kwarg):
             qs = qs.order_by("-created_at")
             page = self.paginate_queryset(qs)
