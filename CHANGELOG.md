@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+## 4.2.1 (2019-03-20)
+
+### Features:
+
+- Add dashboard filter for user stories updating queryset and serializer
+- Change milestone user story serializer
+- Remove additional order by in timeline queryset
+- Add user project slight queryset and serializer
+- Filter history comments queryset
+
+### Misc
+
+- Minor bug fixes.
+
 ## 4.2.0 (2019-02-28)
 
 ### Features:
