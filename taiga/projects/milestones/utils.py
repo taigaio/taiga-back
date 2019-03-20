@@ -80,6 +80,7 @@ def attach_extra_info(queryset, user=None):
                                                    "generated_from_task")
 
     us_queryset = userstories_utils.attach_total_points(us_queryset)
+    us_queryset = userstories_utils.attach_total_attachments(us_queryset)
     us_queryset = userstories_utils.attach_role_points(us_queryset)
     us_queryset = userstories_utils.attach_epics(us_queryset)
 

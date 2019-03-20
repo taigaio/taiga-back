@@ -191,4 +191,3 @@ class UserStoryLightSerializer(ProjectExtraInfoSerializerMixin,
     version = Field()
     is_blocked = Field()
     blocked_note = Field()
-
