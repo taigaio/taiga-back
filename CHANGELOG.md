@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 4.2.2 (2019-03-21)
+
+### Features:
+
+- Fix milestone US serializer
+
 ## 4.2.1 (2019-03-20)
 
 ### Features:
