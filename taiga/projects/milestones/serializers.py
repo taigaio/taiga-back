@@ -19,12 +19,11 @@
 from taiga.base.api import serializers
 from taiga.base.fields import Field, MethodField
 from taiga.projects.notifications.mixins import WatchedResourceSerializer
-from taiga.projects.userstories.serializers import UserStorySerializer
+from taiga.projects.userstories.serializers import UserStoryNestedSerializer
 from taiga.projects.mixins.serializers import ProjectExtraInfoSerializerMixin
 
 
-class MilestoneSerializer(WatchedResourceSerializer,
-                          ProjectExtraInfoSerializerMixin,
+class MilestoneSerializer(ProjectExtraInfoSerializerMixin,
                           serializers.LightSerializer):
     id = Field()
     name = Field()
@@ -38,15 +37,12 @@ class MilestoneSerializer(WatchedResourceSerializer,
     closed = Field()
     disponibility = Field()
     order = Field()
-    watchers = Field()
     user_stories = MethodField()
     total_points = MethodField()
     closed_points = MethodField()
 
     def get_user_stories(self, obj):
-        qs = obj.user_stories.all()
-        qs = qs.prefetch_related("assigned_users")
-        return UserStorySerializer(qs, many=True).data
+        return UserStoryNestedSerializer(obj.user_stories.all(), many=True).data
 
     def get_total_points(self, obj):
         assert hasattr(obj, "total_points_attr"), "instance must have a total_points_attr attribute"

@@ -191,3 +191,39 @@ class UserStoryLightSerializer(ProjectExtraInfoSerializerMixin,
     version = Field()
     is_blocked = Field()
     blocked_note = Field()
+
+
+class UserStoryNestedSerializer(ProjectExtraInfoSerializerMixin,
+                                StatusExtraInfoSerializerMixin,
+                                AssignedToExtraInfoSerializerMixin,
+                                DueDateSerializerMixin, serializers.LightSerializer):
+    id = Field()
+    ref = Field()
+    milestone = Field(attr="milestone_id")
+    project = Field(attr="project_id")
+    is_closed = Field()
+    created_date = Field()
+    modified_date = Field()
+    finish_date = Field()
+    subject = Field()
+    client_requirement = Field()
+    team_requirement = Field()
+    external_reference = Field()
+    version = Field()
+    is_blocked = Field()
+    blocked_note = Field()
+    sprint_order = Field()
+
+    points = MethodField()
+    total_points = MethodField()
+
+    def get_points(self, obj):
+        assert hasattr(obj, "role_points_attr"), "instance must have a role_points_attr attribute"
+        if obj.role_points_attr is None:
+            return {}
+
+        return obj.role_points_attr
+
+    def get_total_points(self, obj):
+        assert hasattr(obj, "total_points_attr"), "instance must have a total_points_attr attribute"
+        return obj.total_points_attr
