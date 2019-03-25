@@ -322,6 +322,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         owners_filter_backends = (f for f in filter_backends if f != base_filters.OwnersFilter)
         epics_filter_backends = (f for f in filter_backends if f != filters.EpicFilter)
         roles_filter_backends = (f for f in filter_backends if f != base_filters.RoleFilter)
+        tags_filter_backends = (f for f in filter_backends if f != base_filters.TagsFilter)
 
         queryset = self.get_queryset()
         querysets = {
@@ -329,7 +330,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
             "assigned_to": self.filter_queryset(queryset, filter_backends=assigned_to_filter_backends),
             "assigned_users": self.filter_queryset(queryset, filter_backends=assigned_users_filter_backends),
             "owners": self.filter_queryset(queryset, filter_backends=owners_filter_backends),
-            "tags": self.filter_queryset(queryset),
+            "tags": self.filter_queryset(queryset, filter_backends=tags_filter_backends),
             "epics": self.filter_queryset(queryset, filter_backends=epics_filter_backends),
             "roles": self.filter_queryset(queryset, filter_backends=roles_filter_backends)
         }
