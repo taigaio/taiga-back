@@ -380,7 +380,6 @@ def test_api_update_order_in_bulk_invalid_tasks(client):
     assert "bulk_tasks" in response.data
 
 
-
 def test_api_update_order_in_bulk_invalid_tasks_for_status(client):
     project = f.create_project()
     f.MembershipFactory.create(project=project, user=project.owner, is_admin=True)
@@ -881,6 +880,19 @@ def test_api_filters(client, filter_name, collection, expected, exclude_expected
     response = client.get(url)
     assert response.status_code == 200
     assert len(response.data) == exclude_expected
+
+
+def test_api_filters_tags_or_operator(client):
+    data = create_tasks_fixtures()
+    project = data["project"]
+    client.login(data["users"][0])
+    tags = data["tags"]
+
+    url = "{}?project={}&tags={},{}".format(reverse('tasks-list'), project.id, tags[0], tags[2])
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert len(response.data) == 5
 
 
 def test_api_filters_data(client):

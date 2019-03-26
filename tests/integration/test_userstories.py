@@ -993,7 +993,8 @@ def test_api_filters(client, filter_name, collection, expected, exclude_expected
     assert len(response.data) == expected
 
     # exclude test
-    url = "{}?project={}&exclude_{}={}".format(reverse('userstories-list'), project.id, filter_name, param)
+    url = "{}?project={}&exclude_{}={}".format(reverse('userstories-list'), project.id,
+                                               filter_name, param)
     response = client.get(url)
     assert response.status_code == 200
     assert len(response.data) == exclude_expected
@@ -1003,8 +1004,10 @@ def test_api_filters_tags_or_operator(client):
     data = create_uss_fixtures()
     project = data["project"]
     client.login(data["users"][0])
-    param_filter = "test1test2test3, test2"
-    url = "{}?project={}&tags={}".format(reverse('userstories-list'), project.id, param_filter)
+    tags = data["tags"]
+
+    url = "{}?project={}&tags={},{}".format(reverse('userstories-list'), project.id, tags[0],
+                                            tags[2])
     response = client.get(url)
 
     assert response.status_code == 200

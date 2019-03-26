@@ -482,10 +482,24 @@ def test_mulitple_exclude_filter_tags(client):
     client.login(data["users"][0])
     tags = data["tags"]
 
-    url = "{}?project={}&exclude_tags={},{}".format(reverse('issues-list'), project.id, tags[1], tags[2])
+    url = "{}?project={}&exclude_tags={},{}".format(reverse('issues-list'), project.id, tags[1],
+                                                    tags[2])
     response = client.get(url)
     assert response.status_code == 200
     assert len(response.data) == 4
+
+
+def test_api_filters_tags_or_operator(client):
+    data = create_filter_issues_context()
+    project = data["project"]
+    client.login(data["users"][0])
+    tags = data["tags"]
+
+    url = "{}?project={}&tags={},{}".format(reverse('issues-list'), project.id, tags[0], tags[2])
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert len(response.data) == 5
 
 
 def test_api_filters_data(client):
