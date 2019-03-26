@@ -401,12 +401,14 @@ class BaseRelatedFieldsFilter(FilterBackend):
         return list(values)
 
     def _get_queryparams(self, params, mode=''):
-        param_name = self.exclude_param_name if mode == 'exclude' else self.param_name or self.filter_name
+        param_name = self.exclude_param_name if mode == 'exclude' else \
+            self.param_name or self.filter_name
         raw_value = params.get(param_name, None)
         if raw_value:
             value = self._prepare_filter_data(raw_value)
             if None in value:
-                qs_in_kwargs = {"{}__in".format(self.filter_name): [v for v in value if v is not None]}
+                qs_in_kwargs = {
+                    "{}__in".format(self.filter_name): [v for v in value if v is not None]}
                 qs_isnull_kwargs = {"{}__isnull".format(self.filter_name): True}
                 return Q(**qs_in_kwargs) | Q(**qs_isnull_kwargs)
             else:
@@ -512,8 +514,13 @@ class TagsFilter(FilterBackend):
 
         return None
 
-    def _prepare_filter_query(self, query):
-        return Q(tags__contains=query)
+    def _prepare_filter_query(self, tags):
+        queries = [Q(tags__contains=[tag]) for tag in tags]
+        query = queries.pop()
+        for item in queries:
+            query |= item
+
+        return Q(query)
 
     def _prepare_exclude_query(self, tags):
         queries = [Q(tags__contains=[tag]) for tag in tags]

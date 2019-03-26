@@ -999,6 +999,18 @@ def test_api_filters(client, filter_name, collection, expected, exclude_expected
     assert len(response.data) == exclude_expected
 
 
+def test_api_filters_tags_or_operator(client):
+    data = create_uss_fixtures()
+    project = data["project"]
+    client.login(data["users"][0])
+    param_filter = "test1test2test3, test2"
+    url = "{}?project={}&tags={}".format(reverse('userstories-list'), project.id, param_filter)
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert len(response.data) == 5
+
+
 def test_api_filters_data_with_assigned_users(client):
     project = f.ProjectFactory.create()
     user1 = f.UserFactory.create(is_superuser=True)
