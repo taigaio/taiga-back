@@ -915,11 +915,11 @@ def test_api_filters_data(client):
     response = client.get(url + "&tags={},{}&owner={},{}".format(tag1, tag2, user1.id, user2.id))
     assert response.status_code == 200
 
-    assert next(filter(lambda i: i['id'] == user1.id, response.data["owners"]))["count"] == 1
-    assert next(filter(lambda i: i['id'] == user2.id, response.data["owners"]))["count"] == 1
-    assert next(filter(lambda i: i['id'] == user3.id, response.data["owners"]))["count"] == 1
+    assert next(filter(lambda i: i['id'] == user1.id, response.data["owners"]))["count"] == 2
+    assert next(filter(lambda i: i['id'] == user2.id, response.data["owners"]))["count"] == 2
+    assert next(filter(lambda i: i['id'] == user3.id, response.data["owners"]))["count"] == 2
 
-    assert next(filter(lambda i: i['id'] is None, response.data["assigned_to"]))["count"] == 0
+    assert next(filter(lambda i: i['id'] is None, response.data["assigned_to"]))["count"] == 2
     assert next(filter(lambda i: i['id'] == user1.id, response.data["assigned_to"]))["count"] == 2
     assert next(filter(lambda i: i['id'] == user2.id, response.data["assigned_to"]))["count"] == 0
     assert next(filter(lambda i: i['id'] == user3.id, response.data["assigned_to"]))["count"] == 0
@@ -927,15 +927,15 @@ def test_api_filters_data(client):
     assert next(filter(lambda i: i['id'] == status0.id, response.data["statuses"]))["count"] == 1
     assert next(filter(lambda i: i['id'] == status1.id, response.data["statuses"]))["count"] == 0
     assert next(filter(lambda i: i['id'] == status2.id, response.data["statuses"]))["count"] == 0
-    assert next(filter(lambda i: i['id'] == status3.id, response.data["statuses"]))["count"] == 1
+    assert next(filter(lambda i: i['id'] == status3.id, response.data["statuses"]))["count"] == 3
 
-    assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 0
-    assert next(filter(lambda i: i['name'] == tag1, response.data["tags"]))["count"] == 2
-    assert next(filter(lambda i: i['name'] == tag2, response.data["tags"]))["count"] == 2
-    assert next(filter(lambda i: i['name'] == tag3, response.data["tags"]))["count"] == 1
+    assert next(filter(lambda i: i['name'] == tag0, response.data["tags"]))["count"] == 1
+    assert next(filter(lambda i: i['name'] == tag1, response.data["tags"]))["count"] == 3
+    assert next(filter(lambda i: i['name'] == tag2, response.data["tags"]))["count"] == 3
+    assert next(filter(lambda i: i['name'] == tag3, response.data["tags"]))["count"] == 3
 
-    assert next(filter(lambda i: i['id'] is None, response.data["epics"]))["count"] == 0
-    assert next(filter(lambda i: i['id'] == epic0.id, response.data["epics"]))["count"] == 2
+    assert next(filter(lambda i: i['id'] is None, response.data["epics"]))["count"] == 1
+    assert next(filter(lambda i: i['id'] == epic0.id, response.data["epics"]))["count"] == 3
     assert next(filter(lambda i: i['id'] == epic1.id, response.data["epics"]))["count"] == 0
     assert next(filter(lambda i: i['id'] == epic2.id, response.data["epics"]))["count"] == 1
 
