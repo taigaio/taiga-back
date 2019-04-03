@@ -261,7 +261,7 @@ class HistoryEntry(models.Model):
                 for aid in set(tuple(oldcustattrs.keys()) + tuple(newcustattrs.keys())):
                     if aid in oldcustattrs and aid in newcustattrs:
                         changes = make_diff_from_dicts(oldcustattrs[aid], newcustattrs[aid],
-                                                       excluded_keys=("name"))
+                                                       excluded_keys=("name", "type"))
                         newcustattr = newcustattrs.get(aid, {})
                         if changes:
                             change_type = newcustattr.get("type", TEXT_TYPE)
