@@ -182,9 +182,9 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         if not obj.id:
             obj.owner = self.request.user
         else:
-            self._old_backlog_order_key = self._backlog_order_key(self.get_object())
-            self._old_kanban_order_key = self._kanban_order_key(self.get_object())
-            self._old_sprint_order_key = self._sprint_order_key(self.get_object())
+            self._old_backlog_order_key = self._backlog_order_key(self.object)
+            self._old_kanban_order_key = self._kanban_order_key(self.object)
+            self._old_sprint_order_key = self._sprint_order_key(self.object)
 
         super().pre_save(obj)
 

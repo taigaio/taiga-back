@@ -102,11 +102,14 @@ class WatchedResourceMixin:
         services.send_notifications(obj, history=history)
 
     def update(self, request, *args, **kwargs):
-        obj = self.get_object_or_none()
+        if not self.object:
+            self.object = self.get_object_or_none()
+
+        obj = self.object
         if obj and obj.id:
             if hasattr(obj, "watchers"):
                 self._old_watchers = [
-                    watcher.id for watcher in self.get_object().get_watchers()
+                    watcher.id for watcher in obj.get_watchers()
                 ]
 
             mention_fields = ['description', 'content']
@@ -408,7 +411,9 @@ class AssignedUsersSignalMixin:
     _old_assigned_users = None
 
     def update(self, request, *args, **kwargs):
-        obj = self.get_object_or_none()
+        if not self.object:
+            self.object = self.get_object_or_none()
+        obj = self.object
 
         if hasattr(obj, "assigned_users") and obj.id:
             self._old_assigned_users = [
