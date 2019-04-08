@@ -180,7 +180,6 @@ class HistoryViewSet(ReadOnlyListViewSet):
         obj = self.get_object()
         self.check_permissions(request, "retrieve", obj)
         qs = services.get_history_queryset_by_model_instance(obj)
-        qs = services.prefetch_owners_in_history_queryset(qs)
 
         history_type = self.request.GET.get('type')
         if history_type == 'activity':
@@ -189,8 +188,10 @@ class HistoryViewSet(ReadOnlyListViewSet):
         if history_type == 'comment':
             qs = qs.exclude(comment__exact='')
 
+        qs = qs.order_by("-created_at")
+        qs = services.prefetch_owners_in_history_queryset(qs)
+
         if self.request.GET.get(self.page_kwarg):
-            qs = qs.order_by("-created_at")
             page = self.paginate_queryset(qs)
             serializer = self.get_pagination_serializer(page)
             return response.Ok(serializer.data)
