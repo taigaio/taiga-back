@@ -168,7 +168,8 @@ class UpdateModelMixin:
     @model_pk_lock
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
-        self.object = self.get_object_or_none()
+        if not getattr(self, 'object', None):
+            self.object = self.get_object_or_none()
         self.check_permissions(request, 'update', self.object)
 
         if self.object is None:

@@ -102,7 +102,7 @@ class WatchedResourceMixin:
         services.send_notifications(obj, history=history)
 
     def update(self, request, *args, **kwargs):
-        if not self.object:
+        if not getattr(self, 'object', None):
             self.object = self.get_object_or_none()
 
         obj = self.object
