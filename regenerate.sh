@@ -19,11 +19,16 @@ if $show_answer ; then
 	fi
 fi
 
+echo "Specify database name:"
+read database
+if [ -z "$database" ]; then
+    exit 1
+fi
 
-echo "-> Remove taiga DB"
-dropdb taiga
+echo "-> Remove taiga DB" $database
+dropdb $database
 echo "-> Create taiga DB"
-createdb taiga
+createdb $database
 
 echo "-> Load migrations"
 python manage.py migrate
