@@ -13,6 +13,7 @@
 # Longyang Zhang <zhanglongyang.cn@gmail.com>, 2015
 # Qi Fan <fun224@gmail.com>, 2016
 # qing cao <qingcaomc@gmail.com>, 2017
+# S Sun <caterinasun@outlook.com>, 2019
 # waring id <waringid@gmail.com>, 2016
 # wuwenbin <wenbin.wu@foxmail.com>, 2015
 # Yang Yu <yuyangmkdir@yahoo.com>, 2016
@@ -26,8 +27,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-11 14:11+0200\n"
-"PO-Revision-Date: 2018-12-16 07:10+0000\n"
-"Last-Translator: Andy zhan <daliangzao189@126.com>\n"
+"PO-Revision-Date: 2019-03-25 15:48+0000\n"
+"Last-Translator: S Sun <caterinasun@outlook.com>\n"
 "Language-Team: Chinese Simplified (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/zh-Hans/)\n"
 "MIME-Version: 1.0\n"
@@ -42,7 +43,7 @@ msgstr "注册功能未开放"
 
 #: taiga/auth/api.py:93
 msgid "You must accept our terms of service and privacy policy"
-msgstr ""
+msgstr "您需要接受我们的服务与隐私条款"
 
 #: taiga/auth/api.py:102
 msgid "invalid register type"
