@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 4.2.3 (2019-04-16)
+
+### Features:
+
+- Change tag filter behavour to 'or' operator
+
+### Misc
+
+- Change milestone query
+- Avoid getting non image thumbnails
+- Remove unnecesary queries on saving items
+- Minor bug fixes.
+
 ## 4.2.2 (2019-03-21)
 
 ### Features:
