@@ -13,6 +13,7 @@
 - Change milestone query
 - Avoid getting non image thumbnails
 - Remove unnecesary queries on saving items
+- Update messages catalog
 - Minor bug fixes.
 
 ## 4.2.2 (2019-03-21)
