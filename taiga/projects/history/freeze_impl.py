@@ -37,7 +37,7 @@ import os
 ####################
 
 @as_dict
-def _get_generic_values(ids:tuple, *, typename=None, attr:str="name") -> tuple:
+def _get_generic_values(ids: tuple, *, typename=None, attr: str="name") -> tuple:
     app_label, model_name = typename.split(".", 1)
     content_type = ContentType.objects.get(app_label=app_label, model=model_name)
     model_cls = content_type.model_class()
@@ -49,7 +49,7 @@ def _get_generic_values(ids:tuple, *, typename=None, attr:str="name") -> tuple:
 
 
 @as_dict
-def _get_users_values(ids:set) -> dict:
+def _get_users_values(ids: set) -> dict:
     user_model = get_user_model()
     ids = filter(lambda x: x is not None, ids)
     qs = user_model.objects.filter(pk__in=tuple(ids))
@@ -59,7 +59,7 @@ def _get_users_values(ids:set) -> dict:
 
 
 @as_dict
-def _get_user_story_values(ids:set) -> dict:
+def _get_user_story_values(ids: set) -> dict:
     userstory_model = apps.get_model("userstories", "UserStory")
     ids = filter(lambda x: x is not None, ids)
     qs = userstory_model.objects.filter(pk__in=tuple(ids))
