@@ -96,7 +96,8 @@ def _common_users_values(diff):
         [users.update(usrs_ids) for usrs_ids in diff["assigned_users"] if
          usrs_ids]
 
-    values["users"] = _get_users_values(users) if users else {}
+    user_ids = [user_id for user_id in users if isinstance(user_id, int)]
+    values["users"] = _get_users_values(set(user_ids)) if users else {}
 
     return values
 
