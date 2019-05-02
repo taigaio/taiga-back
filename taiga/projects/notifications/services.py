@@ -191,8 +191,12 @@ def get_users_to_notify(obj, *, history=None, discard_users=None, live=False) ->
     candidates.update(filter(_can_notify_light, obj.get_participants()))
 
     # If the history is an unassignment change we should notify that user too
+    user_ids = []
     if history and history.type == HistoryType.change and "assigned_to" in history.diff:
-        assigned_to_users = get_user_model().objects.filter(id__in=history.diff["assigned_to"])
+        user_ids = [user_id for user_id in history.diff["assigned_to"] if isinstance(user_id, int)]
+
+    if user_ids:
+        assigned_to_users = get_user_model().objects.filter(id__in=user_ids)
         candidates.update(filter(_can_notify_light, assigned_to_users))
 
     # Remove the changer from candidates
