@@ -143,7 +143,7 @@ class ProjectImporterViewSet(mixins.ImportThrottlingPolicyMixin, CreateModelMixi
                 is_admin=True
             )
 
-        # Create project values choicess
+        # Create project values choices
         if "points" in data:
             services.store.store_project_attributes_values(project_serialized.object, data,
                                                            "points", validators.PointsExportValidator)

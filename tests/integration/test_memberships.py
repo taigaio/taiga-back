@@ -189,8 +189,8 @@ def test_api_create_bulk_members_invalid_user_id(client):
     response = client.json.post(url, json.dumps(data))
 
     assert response.status_code == 400
-    test_api_create_bulk_members_invalid_user_id
-
+    assert "bulk_memberships" in response.data
+    assert "username" in response.data["bulk_memberships"][1]
 
 def test_api_create_bulk_members_with_invalid_roles(client):
     project = f.ProjectFactory()

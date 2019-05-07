@@ -729,7 +729,7 @@ def store_timeline_entries(project, data):
 #############################################
 
 
-def _validate_if_owner_have_enought_space_to_this_project(owner, data):
+def _validate_if_owner_have_enough_space_to_this_project(owner, data):
     # Validate if the owner can have this project
     data["owner"] = owner.email
 
@@ -864,7 +864,7 @@ def _populate_project_object(project, data):
 def store_project_from_dict(data, owner=None):
     # Validate
     if owner:
-        _validate_if_owner_have_enought_space_to_this_project(owner, data)
+        _validate_if_owner_have_enough_space_to_this_project(owner, data)
 
     # Create project
     project = _create_project_object(data)
@@ -873,7 +873,7 @@ def store_project_from_dict(data, owner=None):
     try:
         _populate_project_object(project, data)
     except err.TaigaImportError:
-        # raise known inport errors
+        # raise known import errors
         raise
     except Exception as e:
         # raise unknown errors as import error

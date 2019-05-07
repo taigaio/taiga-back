@@ -20,5 +20,5 @@ from taiga.base.api.permissions import TaigaResourcePermission, IsAuthenticated,
 
 
 class StorageEntriesPermission(TaigaResourcePermission):
-    enought_perms = IsAuthenticated()
+    enough_perms = IsAuthenticated()
     global_perms = DenyAll()

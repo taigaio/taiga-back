@@ -178,7 +178,7 @@ class UsersViewSet(ModelCrudViewSet):
         email = mail_builder.password_recovery(user, {"user": user})
         email.send()
 
-        return response.Ok({"detail": _("Mail sended successful!")})
+        return response.Ok({"detail": _("Mail sent successful!")})
 
     @list_route(methods=["POST"])
     def change_password_from_recovery(self, request, pk=None):
@@ -213,7 +213,7 @@ class UsersViewSet(ModelCrudViewSet):
         current_password = request.DATA.get("current_password")
         password = request.DATA.get("password")
 
-        # NOTE: GitHub users have no password yet (request.user.passwor == '') so
+        # NOTE: GitHub users have no password yet (request.user.password == '') so
         #       current_password can be None
         if not current_password and request.user.password:
             raise exc.WrongArguments(_("Current password parameter needed"))
@@ -222,7 +222,7 @@ class UsersViewSet(ModelCrudViewSet):
             raise exc.WrongArguments(_("New password parameter needed"))
 
         if len(password) < 6:
-            raise exc.WrongArguments(_("Invalid password length at least 6 charaters needed"))
+            raise exc.WrongArguments(_("Invalid password length at least 6 characters needed"))
 
         if current_password and not request.user.check_password(current_password):
             raise exc.WrongArguments(_("Invalid current password"))

@@ -28,7 +28,7 @@ from taiga.base.api.permissions import IsSuperUser
 #######################################################
 
 class EpicCustomAttributePermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectAdmin()
@@ -40,7 +40,7 @@ class EpicCustomAttributePermission(TaigaResourcePermission):
 
 
 class UserStoryCustomAttributePermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectAdmin()
@@ -52,7 +52,7 @@ class UserStoryCustomAttributePermission(TaigaResourcePermission):
 
 
 class TaskCustomAttributePermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectAdmin()
@@ -64,7 +64,7 @@ class TaskCustomAttributePermission(TaigaResourcePermission):
 
 
 class IssueCustomAttributePermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_project')
     create_perms = IsProjectAdmin()
@@ -80,7 +80,7 @@ class IssueCustomAttributePermission(TaigaResourcePermission):
 #######################################################
 
 class EpicCustomAttributesValuesPermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_us')
     update_perms = HasProjectPerm('modify_us')
@@ -88,7 +88,7 @@ class EpicCustomAttributesValuesPermission(TaigaResourcePermission):
 
 
 class UserStoryCustomAttributesValuesPermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_us')
     update_perms = HasProjectPerm('modify_us')
@@ -96,7 +96,7 @@ class UserStoryCustomAttributesValuesPermission(TaigaResourcePermission):
 
 
 class TaskCustomAttributesValuesPermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_tasks')
     update_perms = HasProjectPerm('modify_task')
@@ -104,7 +104,7 @@ class TaskCustomAttributesValuesPermission(TaigaResourcePermission):
 
 
 class IssueCustomAttributesValuesPermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_issues')
     update_perms = HasProjectPerm('modify_issue')

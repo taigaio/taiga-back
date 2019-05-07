@@ -57,16 +57,16 @@ class GitLabViewSet(BaseWebhookApiViewSet):
 
         valid_origin_ips = gitlab_config.get("valid_origin_ips", settings.GITLAB_VALID_ORIGIN_IPS)
         origin_ip = get_ip(request)
-        mathching_origin_ip = True
+        matching_origin_ip = True
 
         if valid_origin_ips:
             try:
-                mathching_origin_ip = len(all_matching_cidrs(origin_ip,valid_origin_ips)) > 0
+                matching_origin_ip = len(all_matching_cidrs(origin_ip,valid_origin_ips)) > 0
 
             except (AddrFormatError, ValueError):
-                mathching_origin_ip = False
+                matching_origin_ip = False
 
-        if not mathching_origin_ip:
+        if not matching_origin_ip:
             return False
 
         return project_secret == secret_key

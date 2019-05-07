@@ -33,12 +33,12 @@ ERROR_MAX_PRIVATE_PROJECTS = 'max_private_projects'
 ERROR_PROJECT_WITHOUT_OWNER = 'project_without_owner'
 
 
-def check_if_project_privacity_can_be_changed(
+def check_if_project_privacy_can_be_changed(
         project,
         current_memberships=None,
         current_private_projects=None,
         current_public_projects=None):
-    """Return if the project privacity can be changed from private to public or viceversa.
+    """Return if the project privacy can be changed from private to public or viceversa.
 
     :param project: A project object.
     :param current_memberships: Project total memberships, If None it will be calculated.
@@ -86,7 +86,7 @@ def check_if_project_privacity_can_be_changed(
 
 
 def check_if_project_can_be_created_or_updated(project):
-    """Return if the project can be create or update (the privacity).
+    """Return if the project can be create or update (the privacy).
 
     :param project: A project object.
 

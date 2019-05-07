@@ -528,7 +528,7 @@ class ProjectDetailSerializer(ProjectSerializer):
                                                                   "owner_attr attribute")
         assert hasattr(obj, "public_projects_same_owner_attr"), ("instance must have a public_projects_same"
                                                                  "_owner_attr attribute")
-        return services.check_if_project_privacity_can_be_changed(
+        return services.check_if_project_privacy_can_be_changed(
             obj,
             current_memberships=self.get_total_memberships(obj),
             current_private_projects=obj.private_projects_same_owner_attr,

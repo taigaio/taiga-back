@@ -179,7 +179,7 @@ def to_tsquery(term):
         "'quoted string'"
         >>> tsquery_escape("multiple terms OR another")
         "'multiple':* & 'terms':* | 'another':*"
-        >>> tsquery_escape("'\"*|")
+        >>> tsquery_escape("'\"*|"")
         "'\"*|':*"
         >>> tsquery_escape('not foo and (bar or "baz")')
         "! 'foo':* & ( 'bar':* | 'baz' )"

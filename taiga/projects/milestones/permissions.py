@@ -22,7 +22,7 @@ from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
 
 
 class MilestonePermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_milestones')
     create_perms = HasProjectPerm('add_milestone')
@@ -40,7 +40,7 @@ class MilestonePermission(TaigaResourcePermission):
 
 
 class MilestoneWatchersPermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_milestones')
     list_perms = HasProjectPerm('view_milestones')

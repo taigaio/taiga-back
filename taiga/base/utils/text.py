@@ -19,14 +19,10 @@
 
 def strip_lines(text):
     """
-    Given text, try remove unnecesary spaces and
+    Given text, try remove unnecessary spaces and
     put text in one unique line.
     """
-    output = text.replace("\r\n", " ")
-    output = output.replace("\r", " ")
-    output = output.replace("\n", " ")
-
-    return output.strip()
+    return text.replace("\r\n", " ").replace("\r", " ").replace("\n", " ").strip()
 
 
 def split_in_lines(text):

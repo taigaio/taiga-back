@@ -33,7 +33,7 @@ class BaseWebhookApiViewSet(GenericViewSet):
     parser_classes = ()
 
     # This dict associates the event names we are listening for
-    # with their reponsible classes (extending event_hooks.BaseEventHook)
+    # with their responsible classes (extending event_hooks.BaseEventHook)
     event_hook_classes = {}
 
     def _validate_signature(self, project, request):

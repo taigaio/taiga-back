@@ -405,7 +405,7 @@ class BaseRelatedFieldsFilter(FilterBackend):
             self.param_name = param_name
 
         if exclude_param_name:
-            self.exclude_param_name
+            self.exclude_param_name = exclude_param_name
 
     def _prepare_filter_data(self, query_param_value):
         def _transform_value(value):

@@ -92,14 +92,14 @@ class ProjectPermission(TaigaResourcePermission):
 
 
 class ProjectFansPermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_project')
     list_perms = HasProjectPerm('view_project')
 
 
 class ProjectWatchersPermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_project')
     list_perms = HasProjectPerm('view_project')

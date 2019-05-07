@@ -23,7 +23,7 @@ from taiga.permissions.permissions import CommentAndOrUpdatePerm
 
 
 class UserStoryPermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_us')
     by_ref_perms = HasProjectPerm('view_us')
@@ -44,14 +44,14 @@ class UserStoryPermission(TaigaResourcePermission):
 
 
 class UserStoryVotersPermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_us')
     list_perms = HasProjectPerm('view_us')
 
 
 class UserStoryWatchersPermission(TaigaResourcePermission):
-    enought_perms = IsProjectAdmin() | IsSuperUser()
+    enough_perms = IsProjectAdmin() | IsSuperUser()
     global_perms = None
     retrieve_perms = HasProjectPerm('view_us')
     list_perms = HasProjectPerm('view_us')

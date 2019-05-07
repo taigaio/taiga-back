@@ -141,7 +141,7 @@ class APIView(View):
     permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES
     content_negotiation_class = api_settings.DEFAULT_CONTENT_NEGOTIATION_CLASS
 
-    # Allow dependancy injection of other settings to make testing easier.
+    # Allow dependency injection of other settings to make testing easier.
     settings = api_settings
 
     _throttle_instances = None

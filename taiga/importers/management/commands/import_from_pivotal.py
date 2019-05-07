@@ -19,7 +19,7 @@
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 
-from taiga.importers.pivotal import PivotalImporter
+from taiga.importers.pivotal.importer import PivotalImporter
 from taiga.users.models import User
 
 

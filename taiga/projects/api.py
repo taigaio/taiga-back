@@ -520,8 +520,8 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             obj.template = self.request.QUERY_PARAMS.get('template', None)
 
         if not obj.id or self.get_object().is_private != obj.is_private:
-            # Validate if the owner have enought slots to create the project
-            # or if you are changing the privacity
+            # Validate if the owner have enough slots to create the project
+            # or if you are changing the privacy
             (can_create_or_update, error_message) = services.check_if_project_can_be_created_or_updated(obj)
             if not can_create_or_update:
                 members = max(obj.memberships.count(), 1)
@@ -1141,4 +1141,4 @@ class InvitationViewSet(ModelListViewSet):
     permission_classes = (AllowAnyPermission,)
 
     def list(self, *args, **kwargs):
-        raise exc.PermissionDenied(_("You don't have permisions to see that."))
+        raise exc.PermissionDenied(_("You don't have permissions to see that."))

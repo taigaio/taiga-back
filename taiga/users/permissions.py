@@ -40,7 +40,7 @@ class CanRetrieveUser(PermissionComponent):
 
 
 class UserPermission(TaigaResourcePermission):
-    enought_perms = IsSuperUser()
+    enough_perms = IsSuperUser()
     global_perms = None
     retrieve_perms = CanRetrieveUser()
     by_username_perms = retrieve_perms

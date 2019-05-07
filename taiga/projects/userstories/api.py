@@ -131,7 +131,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
 
             epic_id = self.request.QUERY_PARAMS.get("epic", None)
             # We can be filtering by more than one epic so epic_id can consist
-            # of different ids separete by comma. In that situation we will use
+            # of different ids separated by comma. In that situation we will use
             # only the first
             if epic_id is not None:
                 epic_id = epic_id.split(",")[0]

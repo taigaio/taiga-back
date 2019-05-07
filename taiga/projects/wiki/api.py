@@ -126,7 +126,7 @@ class WikiLinkViewSet(BlockedByProjectMixin, ModelCrudViewSet):
                 defaults={"owner": self.request.user, "last_modifier": self.request.user})
 
             if created:
-                # Creaste the new history entre, sSet watcher for the new wiki page
+                # Create the new history entry, Set watcher for the new wiki page
                 # and send notifications about the new page created
                 history = take_snapshot(wiki_page, user=self.request.user)
                 analize_object_for_watchers(wiki_page, history.comment, history.owner)

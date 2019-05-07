@@ -22,7 +22,7 @@ def connect_userstories_signals():
     from taiga.projects.tagging import signals as tagging_handlers
     from . import signals as handlers
 
-    # When deleting user stories we must disable task signals while delating and
+    # When deleting user stories we must disable task signals while deleting and
     # enabling them in the end
     signals.pre_delete.connect(handlers.disable_task_signals,
                                sender=apps.get_model("userstories", "UserStory"),

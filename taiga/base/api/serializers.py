@@ -171,12 +171,11 @@ def _is_protected_type(obj):
     True if the object is a native datatype that does not need to
     be serialized further.
     """
-    return isinstance(obj, (
-        types.NoneType,
+    return obj is None or isinstance(obj, (
         int,
         datetime.datetime, datetime.date, datetime.time,
         float, Decimal,
-        basestring)
+        str)
     )
 
 

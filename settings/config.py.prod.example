@@ -172,7 +172,7 @@ DATABASES = {
 # Configuration for the GitHub importer
 # Remember to enable it in the front client too.
 #IMPORTERS["github"] = {
-#    "active": True, # Enable or disable the importer
+#    "active": True,
 #    "client_id": "XXXXXX_get_a_valid_client_id_from_github_XXXXXX",
 #    "client_secret": "XXXXXX_get_a_valid_client_secret_from_github_XXXXXX"
 #}

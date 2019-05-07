@@ -26,11 +26,11 @@ session authentication backend of restframework with
 csrf token disabled.
 
 And the second (token) implements own version of oauth2
-like authentiacation but with selfcontained tokens. Thats
-makes authentication totally stateles.
+like authentication but with selfcontained tokens. Thats
+makes authentication totally stateless.
 
 It uses django signing framework for create new
-selfcontained tokens. This trust tokes from external
+self-contained tokens. This trust tokes from external
 fraudulent modifications.
 """
 
@@ -67,8 +67,8 @@ class Session(BaseAuthentication):
 
 class Token(BaseAuthentication):
     """
-    Self-contained stateles authentication implementatrion
-    that work similar to oauth2.
+    Self-contained stateless authentication implementation
+    that works similar to oauth2.
     It uses django signing framework for trust data stored
     in the token.
     """

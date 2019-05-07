@@ -60,7 +60,7 @@ def apply_order_updates(base_orders: dict, new_orders: dict, *, remove_equal_ori
                 base_orders[id] += 1
                 updated_order_ids.add(id)
 
-    # Overwritting the orders specified
+    # Overwriting the orders specified
     for id, order in new_orders.items():
         if base_orders[id] != order:
             base_orders[id] = order

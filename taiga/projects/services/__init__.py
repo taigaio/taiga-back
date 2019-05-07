@@ -50,7 +50,7 @@ from .members import check_if_project_can_have_more_memberships
 
 from .modules_config import get_modules_config
 
-from .projects import check_if_project_privacity_can_be_changed
+from .projects import check_if_project_privacy_can_be_changed
 from .projects import check_if_project_can_be_created_or_updated
 from .projects import check_if_project_can_be_transfered
 from .projects import check_if_project_is_out_of_owner_limits

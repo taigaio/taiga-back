@@ -99,10 +99,10 @@ class TagsColorsResourceMixin:
 class TaggedResourceMixin:
     def pre_save(self, obj):
         if obj.tags:
-            self._pre_save_new_tags_in_project_tagss_colors(obj)
+            self._pre_save_new_tags_in_project_tags_colors(obj)
         super().pre_save(obj)
 
-    def _pre_save_new_tags_in_project_tagss_colors(self, obj):
+    def _pre_save_new_tags_in_project_tags_colors(self, obj):
         new_obj_tags = OrderedSet()
         new_tags_colors = {}
 

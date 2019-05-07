@@ -64,7 +64,7 @@ class UserRateThrottle(throttling.UserRateThrottle):
 
 
 class CommonThrottle(throttling.SimpleRateThrottle):
-    cache_format = "throtte_%(scope)s_%(rate)s_%(ident)s"
+    cache_format = "throttle_%(scope)s_%(rate)s_%(ident)s"
 
     def __init__(self):
         pass
