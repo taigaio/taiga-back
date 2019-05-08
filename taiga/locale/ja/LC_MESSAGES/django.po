@@ -10,14 +10,15 @@
 # Shun Yanaura <metroplexity@gmail.com>, 2016
 # Suguru Sato <usagi.vs.tanuki@gmail.com>, 2016
 # Tomonori Tanabe <tanb+github@me.com>, 2015
+# Toshiyuki Kawanishi <toshi.kawanishi@gmail.com>, 2019
 # MH35 <mh35jp@gmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-11 14:11+0200\n"
-"PO-Revision-Date: 2018-12-28 01:50+0000\n"
-"Last-Translator: MH35 <mh35jp@gmail.com>\n"
+"PO-Revision-Date: 2019-04-23 06:49+0000\n"
+"Last-Translator: Toshiyuki Kawanishi <toshi.kawanishi@gmail.com>\n"
 "Language-Team: Japanese (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ja/)\n"
 "MIME-Version: 1.0\n"
@@ -3879,7 +3880,7 @@ msgstr "プロダクトオーナー"
 #. Translators: User role
 #: taiga/projects/translations.py:182
 msgid "Stakeholder"
-msgstr ""
+msgstr "ステークホルダー"
 
 #: taiga/projects/userstories/api.py:137
 msgid "You don't have permissions to set this sprint to this user story."
@@ -4364,6 +4365,8 @@ msgstr ""
 msgid ""
 "Duplicate key value violates unique constraint. Key '{}' already exists."
 msgstr ""
+"重複したキーの値が一意性制約に違反しています。キー '{}' は既に存在していま"
+"す。"
 
 #: taiga/userstorage/models.py:32
 msgid "key"
@@ -4403,4 +4406,4 @@ msgstr "期限"
 
 #: taiga/webhooks/validators.py:42
 msgid "Not allowed IP Address"
-msgstr ""
+msgstr "許可されていないIPアドレス"

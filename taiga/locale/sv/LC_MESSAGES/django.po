@@ -5,7 +5,7 @@
 # Translators:
 # Translators:
 # Harald Indgul <harald.indgul@gmail.com>, 2015
-# Lord Cobol, 2017
+# 03992e16f8df6e39b9d1cc0ff635887e, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"

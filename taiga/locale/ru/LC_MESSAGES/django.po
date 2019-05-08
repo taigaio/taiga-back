@@ -4,6 +4,7 @@
 #
 # Translators:
 # Translators:
+# Alexander Berezin <alex@lmcx.ru>, 2019
 # Alibek Kaparov <alibekkaparov@gmail.com>, 2018
 # Artem Biryukov <impowski@protonmail.ch>, 2017
 # Denis Vadimov, 2018
@@ -25,8 +26,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-11 14:11+0200\n"
-"PO-Revision-Date: 2018-10-14 17:29+0000\n"
-"Last-Translator: Alejandro Hermida <alexhermida@gmail.com>\n"
+"PO-Revision-Date: 2019-04-22 08:41+0000\n"
+"Last-Translator: Alexander Berezin <alex@lmcx.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -44,6 +45,7 @@ msgstr "Публичная регистрация отключена."
 #: taiga/auth/api.py:93
 msgid "You must accept our terms of service and privacy policy"
 msgstr ""
+"Вы должны принять наши условия использования и политику конфиденциальности"
 
 #: taiga/auth/api.py:102
 msgid "invalid register type"
@@ -538,91 +540,91 @@ msgstr ""
 
 #: taiga/base/utils/urls.py:68
 msgid "Host access error"
-msgstr ""
+msgstr "Ошибка доступа хоста"
 
 #: taiga/base/utils/urls.py:74
 msgid "IP Address error"
-msgstr ""
+msgstr "Ошибка IP адреса"
 
 #: taiga/events/events.py:106
 msgid "User story created"
-msgstr ""
+msgstr "Пользовательская история создана"
 
 #: taiga/events/events.py:109
 msgid "User story changed"
-msgstr ""
+msgstr "Пользовательская история изменена"
 
 #: taiga/events/events.py:112
 msgid "User story deleted"
-msgstr ""
+msgstr "Пользовательская история удалена"
 
 #: taiga/events/events.py:114
 msgid "US #{} - {}"
-msgstr ""
+msgstr "ПИ #{} - {}"
 
 #: taiga/events/events.py:117
 msgid "Task created"
-msgstr ""
+msgstr "Задача создана"
 
 #: taiga/events/events.py:120
 msgid "Task changed"
-msgstr ""
+msgstr "Задача изменена"
 
 #: taiga/events/events.py:123
 msgid "Task deleted"
-msgstr ""
+msgstr "Задача удалена"
 
 #: taiga/events/events.py:125
 msgid "Task #{} - {}"
-msgstr ""
+msgstr "Задача #{} - {}"
 
 #: taiga/events/events.py:128
 msgid "Issue created"
-msgstr ""
+msgstr "Запрос создан"
 
 #: taiga/events/events.py:131
 msgid "Issue changed"
-msgstr ""
+msgstr "Запрос изменён"
 
 #: taiga/events/events.py:134
 msgid "Issue deleted"
-msgstr ""
+msgstr "Запрос удалён"
 
 #: taiga/events/events.py:136
 msgid "Issue: #{} - {}"
-msgstr ""
+msgstr "Запрос: #{} - {}"
 
 #: taiga/events/events.py:139
 msgid "Wiki Page created"
-msgstr ""
+msgstr "Wiki-Страница создана"
 
 #: taiga/events/events.py:142
 msgid "Wiki Page changed"
-msgstr ""
+msgstr "Wiki-Страница изменена"
 
 #: taiga/events/events.py:145
 msgid "Wiki Page deleted"
-msgstr ""
+msgstr "Wiki-Страница удалена"
 
 #: taiga/events/events.py:147
 msgid "Wiki Page: {}"
-msgstr ""
+msgstr "Wiki-Страница: {}"
 
 #: taiga/events/events.py:150
 msgid "Sprint created"
-msgstr ""
+msgstr "Спринт создан"
 
 #: taiga/events/events.py:153
 msgid "Sprint changed"
-msgstr ""
+msgstr "Спринт изменён"
 
 #: taiga/events/events.py:156
 msgid "Sprint deleted"
-msgstr ""
+msgstr "Спринт удалён"
 
 #: taiga/events/events.py:158
 msgid "Sprint: {}"
-msgstr ""
+msgstr "Спринт: {}"
 
 #: taiga/export_import/api.py:127
 msgid "We needed at least one role"
@@ -675,7 +677,7 @@ msgstr "ошибка импорта историй от пользователе
 
 #: taiga/export_import/services/store.py:795
 msgid "error importing epics"
-msgstr "ошибка импорта эпосов"
+msgstr "ошибка импорта эпиков"
 
 #: taiga/export_import/services/store.py:799
 msgid "error importing tasks"
@@ -1308,7 +1310,7 @@ msgstr "Неправильная настройка Jira-сервера."
 #: taiga/importers/jira/api.py:233 taiga/importers/pivotal/api.py:138
 #: taiga/importers/trello/api.py:143
 msgid "Invalid or expired auth token"
-msgstr "Неверныйили истекший token аутентификации "
+msgstr "Неверный или истекший token аутентификации "
 
 #: taiga/importers/jira/tasks.py:48 taiga/importers/jira/tasks.py:49
 msgid "Error importing Jira project"
@@ -1510,16 +1512,16 @@ msgid ""
 "The Taiga Team\n"
 msgstr ""
 "\n"
-"Hello %(user)s,\n"
+"Здравствуйте, %(user)s,\n"
 "\n"
-"Your Trello project has been correctly imported.\n"
+"Ваш Trello проект был успешно импортирован.\n"
 "\n"
-"You can see the project %(project)s here:\n"
+"Вы можете просмотреть проект %(project)s здесь:\n"
 "\n"
 "%(url)s\n"
 "\n"
 "---\n"
-"The Taiga Team\n"
+"Команда Taiga\n"
 
 #: taiga/importers/templates/emails/trello_import_success-subject.jinja:1
 #, python-format
@@ -1555,7 +1557,7 @@ msgstr "Просмотреть вехи"
 
 #: taiga/permissions/choices.py:25 taiga/permissions/choices.py:41
 msgid "View epic"
-msgstr "Посмотреть эпосы"
+msgstr "Посмотреть эпики"
 
 #: taiga/permissions/choices.py:26
 msgid "View user stories"
@@ -1591,19 +1593,19 @@ msgstr "Удалить веху"
 
 #: taiga/permissions/choices.py:42
 msgid "Add epic"
-msgstr "Добавить эпос"
+msgstr "Добавить эпик"
 
 #: taiga/permissions/choices.py:43
 msgid "Modify epic"
-msgstr "Изменить эпос"
+msgstr "Изменить эпик"
 
 #: taiga/permissions/choices.py:44
 msgid "Comment epic"
-msgstr "Комментировать эпос"
+msgstr "Комментировать эпик"
 
 #: taiga/permissions/choices.py:45
 msgid "Delete epic"
-msgstr "Удалить эпос"
+msgstr "Удалить эпик"
 
 #: taiga/permissions/choices.py:47
 msgid "View user story"
@@ -1795,7 +1797,7 @@ msgstr ""
 
 #: taiga/projects/api.py:658
 msgid "Project already have due dates"
-msgstr ""
+msgstr "Проект уже имеет дедлайны"
 
 #: taiga/projects/api.py:718
 msgid "You can't delete task due date by default"
@@ -2040,7 +2042,7 @@ msgstr "значения"
 
 #: taiga/projects/custom_attributes/models.py:105
 msgid "epic"
-msgstr "эпос"
+msgstr "эпик"
 
 #: taiga/projects/custom_attributes/models.py:121
 #: taiga/projects/tasks/models.py:36 taiga/projects/userstories/models.py:39
@@ -2061,15 +2063,15 @@ msgstr "Это имя уже используется."
 
 #: taiga/projects/due_dates/models.py:21
 msgid "due date"
-msgstr ""
+msgstr "дедлайн"
 
 #: taiga/projects/due_dates/models.py:24
 msgid "reason for the due date"
-msgstr ""
+msgstr "причина дедлайна"
 
 #: taiga/projects/epics/api.py:94
 msgid "You don't have permissions to set this status to this epic."
-msgstr "У вас нет разрешения для установки статуса этому эпосу"
+msgstr "У вас нет разрешения для установки статуса этому эпику"
 
 #: taiga/projects/epics/models.py:36 taiga/projects/issues/models.py:36
 #: taiga/projects/tasks/models.py:38 taiga/projects/userstories/models.py:63
@@ -2083,7 +2085,7 @@ msgstr "cтатус"
 
 #: taiga/projects/epics/models.py:46
 msgid "epics order"
-msgstr "порядок эпосов"
+msgstr "порядок эпиков"
 
 #: taiga/projects/epics/models.py:55 taiga/projects/issues/models.py:60
 #: taiga/projects/tasks/models.py:56 taiga/projects/userstories/models.py:95
@@ -2123,7 +2125,7 @@ msgstr "внешняя ссылка"
 
 #: taiga/projects/epics/validators.py:37
 msgid "There's no epic with that id"
-msgstr "Не существует эпоса с таким идентификатором"
+msgstr "Не существует эпика с таким идентификатором"
 
 #: taiga/projects/history/api.py:93
 msgid "comment is required"
@@ -2222,7 +2224,7 @@ msgstr "Не назначено"
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:164
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:175
 msgid "Not set"
-msgstr ""
+msgstr "Не установлено"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:286
 #: taiga/projects/history/templates/emails/includes/fields_diff-text.jinja:91
@@ -2417,7 +2419,7 @@ msgstr "Этот пользователем уже является участн
 
 #: taiga/projects/models.py:115
 msgid "default epic status"
-msgstr "удалить статус эпоса"
+msgstr "удалить статус эпика"
 
 #: taiga/projects/models.py:119
 msgid "default US status"
@@ -2469,7 +2471,7 @@ msgstr "активный контакт"
 
 #: taiga/projects/models.py:174 taiga/projects/models.py:827
 msgid "active epics panel"
-msgstr "активная панель эпосов"
+msgstr "активная панель эпиков"
 
 #: taiga/projects/models.py:176 taiga/projects/models.py:829
 msgid "active backlog panel"
@@ -2583,12 +2585,12 @@ msgstr "значение"
 #: taiga/projects/models.py:614 taiga/projects/models.py:671
 #: taiga/projects/models.py:789
 msgid "by default"
-msgstr ""
+msgstr "по умолчанию"
 
 #: taiga/projects/models.py:618 taiga/projects/models.py:675
 #: taiga/projects/models.py:793
 msgid "days to due"
-msgstr ""
+msgstr "дней до"
 
 #: taiga/projects/models.py:823
 msgid "default owner's role"
@@ -2600,7 +2602,7 @@ msgstr "параметры по умолчанию"
 
 #: taiga/projects/models.py:847
 msgid "epic statuses"
-msgstr "статусы эпоса"
+msgstr "статусы эпика"
 
 #: taiga/projects/models.py:848
 msgid "us statuses"
@@ -2608,7 +2610,7 @@ msgstr "статусы ПИ"
 
 #: taiga/projects/models.py:849
 msgid "us duedates"
-msgstr ""
+msgstr "дедлайны ПИ"
 
 #: taiga/projects/models.py:850 taiga/projects/userstories/models.py:45
 #: taiga/projects/userstories/models.py:78
@@ -2621,7 +2623,7 @@ msgstr "статусы задач"
 
 #: taiga/projects/models.py:852
 msgid "task duedates"
-msgstr ""
+msgstr "дедлайны задач"
 
 #: taiga/projects/models.py:853
 msgid "issue statuses"
@@ -2633,7 +2635,7 @@ msgstr "типы запросов"
 
 #: taiga/projects/models.py:855
 msgid "issue duedates"
-msgstr ""
+msgstr "дедлайны запросов"
 
 #: taiga/projects/models.py:856
 msgid "priorities"
@@ -2649,11 +2651,11 @@ msgstr "роли"
 
 #: taiga/projects/models.py:859
 msgid "epic custom attributes"
-msgstr ""
+msgstr "атрибуты эпика"
 
 #: taiga/projects/models.py:860
 msgid "us custom attributes"
-msgstr ""
+msgstr "атрибуты ПИ"
 
 #: taiga/projects/models.py:861
 msgid "task custom attributes"
@@ -2713,6 +2715,14 @@ msgid ""
 "%(subject)s in Taiga\">See epic</a>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Эпик обновлён</h1>\n"
+"    <p>Здравствуйте, %(user)s, <br> %(changer)s обновил эпик в %(project)s</"
+"p>\n"
+"    <p>Эпик #%(ref)s %(subject)s</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Просмотреть Эпик #%(ref)s: "
+"%(subject)s in Taiga\">Просмотреть Эпик</a>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/epics/epic-change-body-text.jinja:3
 #, python-format
@@ -2722,6 +2732,10 @@ msgid ""
 "Hello %(user)s, %(changer)s has updated a epic on %(project)s\n"
 "See epic #%(ref)s %(subject)s at %(url)s\n"
 msgstr ""
+"\n"
+"Эпик обновлён\n"
+"Здравствуйте, %(user)s, %(changer)s обновил эпик в %(project)s\n"
+"Просмотреть эпик #%(ref)s %(subject)s по ссылке %(url)s\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-change-subject.jinja:1
 #, python-format
@@ -2729,6 +2743,8 @@ msgid ""
 "\n"
 "[%(project)s] Updated the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Обновил эпик #%(ref)s \"%(subject)s\"\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-create-body-html.jinja:4
 #, python-format
@@ -2743,6 +2759,15 @@ msgid ""
 "    <p><small>The Taiga Team</small></p>\n"
 "    "
 msgstr ""
+"\n"
+"    <h1>Создан новы эпик</h1>\n"
+"    <p>Здравствуйте, %(user)s,<br />%(changer)s создал новый эпик в "
+"%(project)s</p>\n"
+"    <p>Эпик #%(ref)s %(subject)s</p>\n"
+"    <a class=\"button\" href=\"%(url)s\" title=\"Просмотреть Эпик #%(ref)s "
+"%(subject)s\">Просмотреть Эпик</a>\n"
+"    <p><small>Команда Taiga</small></p>\n"
+"    "
 
 #: taiga/projects/notifications/templates/emails/epics/epic-create-body-text.jinja:1
 #, python-format
@@ -2755,6 +2780,13 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Создан новый эпик\n"
+"Здравствуйте, %(user)s, %(changer)s создал новый эпик в %(project)s\n"
+"Просмотреть эпик #%(ref)s %(subject)s по ссылке %(url)s\n"
+"\n"
+"---\n"
+"Команда Taiga\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-create-subject.jinja:1
 #, python-format
@@ -2762,6 +2794,8 @@ msgid ""
 "\n"
 "[%(project)s] Created the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
+"\n"
+"[%(project)s] Создал эпик #%(ref)s \"%(subject)s\"\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-delete-body-html.jinja:4
 #, python-format
@@ -2775,9 +2809,9 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"<h1>Эпос удалён</h1> <p>Здравствуйте, %(user)s,<br />%(changer)s удалил эпос "
-"для %(project)s</p> <p>Эпос #%(ref)s %(subject)s</p> <p><small>The Taiga "
-"Team</small></p>"
+"<h1>Эпик удалён</h1> <p>Здравствуйте, %(user)s,<br />%(changer)s удалил эпик "
+"для %(project)s</p> <p>Эпик #%(ref)s %(subject)s</p> <p><small>Команда "
+"Taiga</small></p>"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-delete-body-text.jinja:1
 #, python-format
@@ -2790,6 +2824,13 @@ msgid ""
 "---\n"
 "The Taiga Team\n"
 msgstr ""
+"\n"
+"Эпик удалён\n"
+"Здравствуйте, %(user)s, %(changer)s удалил эпик в %(project)s\n"
+"Эпик #%(ref)s %(subject)s\n"
+"\n"
+"---\n"
+"Команда Taiga\n"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-delete-subject.jinja:1
 #, python-format
@@ -2798,7 +2839,7 @@ msgid ""
 "[%(project)s] Deleted the epic #%(ref)s \"%(subject)s\"\n"
 msgstr ""
 "\n"
-"[%(project)s] Удален эпос #%(ref)s \"%(subject)s\"\n"
+"[%(project)s] Удален эпик #%(ref)s \"%(subject)s\"\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-change-body-html.jinja:4
 #, python-format
@@ -2863,7 +2904,7 @@ msgstr ""
 "    <p>Запрос #%(ref)s %(subject)s</p>\n"
 "    <a class=\"button\" href=\"%(url)s\" title=\"Просмотреть запрос #%(ref)s "
 "%(subject)s\">Просмотреть запрос</a>\n"
-"    <p><small>Команда Тайги</small></p>\n"
+"    <p><small>Команда Taiga</small></p>\n"
 "    "
 
 #: taiga/projects/notifications/templates/emails/issues/issue-create-body-text.jinja:1
@@ -2883,7 +2924,7 @@ msgstr ""
 "Просмотреть запрос #%(ref)s %(subject)s можно по ссылке %(url)s\n"
 "\n"
 "---\n"
-"Команда Тайги\n"
+"Команда Taiga\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-create-subject.jinja:1
 #, python-format
@@ -2910,7 +2951,7 @@ msgstr ""
 "    <p>Привет %(user)s,<br />%(changer)s удалил(а) запрос из %(project)s</"
 "p>\n"
 "    <p>Запрос #%(ref)s %(subject)s</p>\n"
-"    <p><small>Команда Тайги</small></p>\n"
+"    <p><small>Команда Taiga</small></p>\n"
 "    "
 
 #: taiga/projects/notifications/templates/emails/issues/issue-delete-body-text.jinja:1
@@ -2930,7 +2971,7 @@ msgstr ""
 "Запрос #%(ref)s %(subject)s\n"
 "\n"
 "---\n"
-"Команда Тайги\n"
+"Команда Taiga\n"
 
 #: taiga/projects/notifications/templates/emails/issues/issue-delete-subject.jinja:1
 #, python-format
@@ -3004,7 +3045,7 @@ msgstr ""
 "    <p>Спринт %(name)s</p>\n"
 "    <a class=\"button\" href=\"%(url)s\" title=\"Просмотреть спринт %(name)s"
 "\">Просмотреть спринт</a>\n"
-"    <p><small>Команда Тайги</small></p>\n"
+"    <p><small>Команда Taiga</small></p>\n"
 "    "
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-create-body-text.jinja:1
@@ -3024,7 +3065,7 @@ msgstr ""
 "Просмотреть спринт %(name)s можно по ссылке %(url)s\n"
 "\n"
 "---\n"
-"Команда Тайги\n"
+"Команда Taiga\n"
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-create-subject.jinja:1
 #, python-format
@@ -3051,7 +3092,7 @@ msgstr ""
 "    <p>Привет %(user)s,<br />%(changer)s удалил(а) спринт из %(project)s</"
 "p>\n"
 "    <p>Спринт %(name)s</p>\n"
-"    <p><small>Команда Тайги</small></p>\n"
+"    <p><small>Команда Taiga</small></p>\n"
 "    "
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-delete-body-text.jinja:1
@@ -3071,7 +3112,7 @@ msgstr ""
 "Спринт %(name)s\n"
 "\n"
 "---\n"
-"Команда Тайги\n"
+"Команда Taiga\n"
 
 #: taiga/projects/notifications/templates/emails/milestones/milestone-delete-subject.jinja:1
 #, python-format
@@ -3754,7 +3795,7 @@ msgstr "Принять приглашение"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:25
 msgid "The Taiga Team"
-msgstr "Команда Тайги"
+msgstr "Команда Taiga"
 
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:6
 #, python-format
@@ -3802,7 +3843,7 @@ msgid ""
 msgstr ""
 "\n"
 "---\n"
-"Команда Тайги\n"
+"Команда Taiga\n"
 
 #: taiga/projects/templates/emails/membership_invitation-subject.jinja:1
 #, python-format
@@ -3924,7 +3965,7 @@ msgid ""
 "The Taiga Team\n"
 msgstr ""
 "\n"
-"The Taiga Team\n"
+"Команда Taiga\n"
 
 #: taiga/projects/templates/emails/transfer_accept-subject.jinja:1
 #, python-format
@@ -4431,7 +4472,7 @@ msgstr "Неверный идентификатор точки '{points_id}'"
 #: taiga/projects/userstories/api.py:257
 #, python-brace-format
 msgid "Generating the user story #{ref} - {subject}"
-msgstr "Генерируется пользовательская история #{ref} - {subject}"
+msgstr "Сконвертировано в пользовательскую историю #{ref} - {subject}"
 
 #: taiga/projects/userstories/models.py:42
 msgid "role"
@@ -4455,7 +4496,7 @@ msgstr "дата окончания"
 
 #: taiga/projects/userstories/models.py:102
 msgid "assigned users"
-msgstr ""
+msgstr "назначенные пользователи"
 
 #: taiga/projects/userstories/models.py:111
 msgid "generated from issue"
@@ -4712,11 +4753,11 @@ msgstr "когда присоединился"
 
 #: taiga/users/models.py:155
 msgid "accepted terms"
-msgstr ""
+msgstr "принятые условия"
 
 #: taiga/users/models.py:156
 msgid "new terms read"
-msgstr ""
+msgstr "новые условия прочитаны"
 
 #: taiga/users/models.py:158
 msgid "default language"
@@ -4810,7 +4851,7 @@ msgstr ""
 "Вы можете проигнорировать это сообщение, если не указывали этот email.\n"
 "\n"
 "---\n"
-"The Taiga Team\n"
+"Команда Taiga\n"
 
 #: taiga/users/templates/emails/change_email-subject.jinja:1
 msgid "[Taiga] Change email"
@@ -5012,4 +5053,4 @@ msgstr "длительность"
 
 #: taiga/webhooks/validators.py:42
 msgid "Not allowed IP Address"
-msgstr ""
+msgstr "Запрещённый IP адрес"
