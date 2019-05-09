@@ -292,6 +292,8 @@ def userstories_to_csv(project, queryset):
         row['total-points'] = us.get_total_points()
 
         for custom_attr in custom_attrs:
+            if not hasattr(us, "custom_attributes_values"):
+                continue
             value = us.custom_attributes_values.attributes_values.get(
                 str(custom_attr.id), None)
             row[custom_attr.name] = value

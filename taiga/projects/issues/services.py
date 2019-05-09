@@ -165,6 +165,8 @@ def issues_to_csv(project, queryset):
         }
 
         for custom_attr in custom_attrs:
+            if not hasattr(issue, "custom_attributes_values"):
+                continue
             value = issue.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
             issue_data[custom_attr.name] = value
 

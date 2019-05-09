@@ -213,6 +213,8 @@ def epics_to_csv(project, queryset):
         }
 
         for custom_attr in custom_attrs:
+            if not hasattr(epic, "custom_attributes_values"):
+                continue
             value = epic.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
             epic_data[custom_attr.name] = value
 
