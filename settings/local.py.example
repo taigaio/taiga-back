@@ -76,8 +76,8 @@ DATABASES = {
 #    "user-update": None,
 #}
 
-# This list should containt:
-#  - Tiga users IDs
+# This list should contain:
+#  - Taiga users IDs
 #  - Valid clients IP addresses (X-Forwarded-For header)
 #REST_FRAMEWORK["DEFAULT_THROTTLE_WHITELIST"] = []
 
