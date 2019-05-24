@@ -175,6 +175,9 @@ class UpdateModelMixin:
         if self.object is None:
             raise Http404
 
+        if hasattr(self, 'pre_validate'):
+            self.pre_validate()
+
         validator = self.get_validator(self.object, data=request.DATA,
                                        files=request.FILES, partial=partial)
 
