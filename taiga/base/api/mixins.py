@@ -190,13 +190,6 @@ class UpdateModelMixin:
             # so we have to handle eventual errors.
             return response.BadRequest(err.message_dict)
 
-        if self.object is None:
-            self.object = validator.save(force_insert=True)
-            self.post_save(self.object, created=True)
-            instance = self.get_queryset().get(id=self.object.id)
-            serializer = self.get_serializer(instance)
-            return response.Created(serializer.data)
-
         self.object = validator.save(force_update=True)
         self.post_save(self.object, created=False)
         instance = self.get_queryset().get(id=self.object.id)
