@@ -219,14 +219,9 @@ def tasks_to_csv(project, queryset):
             "due_date_reason": task.due_date_reason,
         }
         for custom_attr in custom_attrs:
-            try:
-                task_custom_attrs = task.custom_attributes_values
-            except ObjectDoesNotExist:
-                logger.error("Task without custom attributes. Task: {}".format(
-                    task.id
-                ))
+            if not hasattr(task, "custom_attributes_values"):
                 continue
-            value = task_custom_attrs.attributes_values.get(str(custom_attr.id), None)
+            value = task.custom_attributes_values.attributes_values.get(str(custom_attr.id), None)
             task_data[custom_attr.name] = value
         writer.writerow(task_data)
 
