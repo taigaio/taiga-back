@@ -73,6 +73,7 @@ def attach_extra_info(queryset, user=None):
 
     us_queryset = userstories_utils.attach_total_points(us_queryset)
     us_queryset = userstories_utils.attach_role_points(us_queryset)
+    us_queryset = userstories_utils.attach_epics(us_queryset)
 
     queryset = queryset.prefetch_related(Prefetch("user_stories", queryset=us_queryset))
 
