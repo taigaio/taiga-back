@@ -17,15 +17,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import base64
+import logging
 import os
+import sys
 import copy
 from collections import OrderedDict
 
-from taiga.base.api import serializers
 from taiga.base.fields import Field
 from taiga.users import models as users_models
 
 from .cache import cached_get_user_by_pk
+
+
+logger = logging.getLogger(__name__)
 
 
 class FileField(Field):
@@ -33,7 +37,14 @@ class FileField(Field):
         if not obj:
             return None
 
-        data = base64.b64encode(obj.read()).decode('utf-8')
+        try:
+            read_file = obj.read()
+        except UnicodeEncodeError:
+            logger.error("UnicodeEncodeError in %s", obj.name,
+                         exc_info=sys.exc_info())
+            data = ""
+        else:
+            data = base64.b64encode(read_file).decode('utf-8')
 
         return OrderedDict([
             ("data", data),
