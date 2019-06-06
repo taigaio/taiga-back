@@ -142,9 +142,12 @@ def get_timeline(obj, namespace=None):
     from .models import Timeline
 
     ct = ContentType.objects.get_for_model(obj.__class__)
-    timeline = Timeline.objects.filter(content_type=ct, object_id=obj.pk)
+    timeline = Timeline.objects.filter(content_type=ct)
+
     if namespace is not None:
         timeline = timeline.filter(namespace=namespace)
+    else:
+        timeline = timeline.filter(object_id=obj.pk)
 
     timeline = timeline.order_by("-created")
     return timeline
