@@ -11,7 +11,7 @@
 # Дмитрий Пугац <dvpugats@gmail.com>, 2015
 # Dmitriy Volkov <wldhx+reg+transifex@wldhx.me>, 2015
 # Dmitry Lobanov <cyborgandroid.kun@gmail.com>, 2015
-# Dmitry Vinokurov <gim6626@gmail.com>, 2015
+# Dmitriy Vinokurov <gim6626@gmail.com>, 2015
 # Egor Poderyagin <egor.poder@list.ru>, 2016
 # Igor Bezukladnikov <corrector@at.pstu.ru>, 2016
 # Ilya Rogov, 2016
