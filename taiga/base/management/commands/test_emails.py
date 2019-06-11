@@ -43,7 +43,7 @@ class Command(BaseCommand):
                             dest='locale',
                             help='Send emails in an specific language.')
         parser.add_argument('email',
-                            help='Emeil address to send sample emails.')
+                            help='Email address to send sample emails to.')
 
 
     def handle(self, *args, **options):
