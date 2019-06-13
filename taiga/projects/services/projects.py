@@ -229,6 +229,12 @@ def delete_project(project_id):
     project.delete()
 
 
+@app.task
+def delete_projects(projects):
+    for project in projects:
+        delete_project(project.id)
+
+
 def duplicate_project(project, **new_project_extra_args):
     owner = new_project_extra_args.get("owner")
     users = new_project_extra_args.pop("users")
