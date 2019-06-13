@@ -212,7 +212,9 @@ class UserStoryNestedSerializer(ProjectExtraInfoSerializerMixin,
     version = Field()
     is_blocked = Field()
     blocked_note = Field()
+    backlog_order = Field()
     sprint_order = Field()
+    kanban_order = Field()
 
     epics = MethodField()
     points = MethodField()
