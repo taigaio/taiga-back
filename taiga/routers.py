@@ -227,6 +227,13 @@ router.register(r"wiki-links", WikiLinkViewSet,
                 base_name="wiki-links")
 
 
+# Delete owned projects
+from taiga.projects.api import DeleteOwnProjectsViewSet
+
+router.register(r"delete-owned-projects", DeleteOwnProjectsViewSet,
+                base_name="delete-owned-projects")
+
+
 # History & Components
 from taiga.projects.history.api import EpicHistory
 from taiga.projects.history.api import UserStoryHistory

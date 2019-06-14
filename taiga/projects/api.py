@@ -35,6 +35,7 @@ from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin, BlockeableSaveMixin, BlockeableDeleteMixin
 from taiga.base.api.permissions import AllowAnyPermission
 from taiga.base.api.utils import get_object_or_404
+from taiga.base.api.viewsets import ViewSet
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
 from taiga.base.utils.slug import slugify_uniquely
@@ -543,6 +544,20 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             services.delete_project.delay(obj.id)
         else:
             services.delete_project(obj.id)
+
+        return response.NoContent()
+
+
+class DeleteOwnProjectsViewSet(ViewSet):
+    def create(self, request, *args, **kwargs):
+        projects = models.Project.objects.filter(owner=request.user, is_private=True)
+        for project in projects:
+            services.orphan_project(project)
+
+        if settings.CELERY_ENABLED:
+            services.delete_projects.delay(projects)
+        else:
+            services.delete_projects(projects)
 
         return response.NoContent()
 
