@@ -470,6 +470,8 @@ APP_EXTRA_EXPOSE_HEADERS = [
 ]
 
 DEFAULT_PROJECT_TEMPLATE = "scrum"
+# Setting DEFAULT_PROJECT_SLUG_PREFIX to false removes the username from project slug
+DEFAULT_PROJECT_SLUG_PREFIX = True
 PUBLIC_REGISTER_ENABLED = False
 # None or [] values in USER_EMAIL_ALLOWED_DOMAINS means allow any domain
 USER_EMAIL_ALLOWED_DOMAINS = None
