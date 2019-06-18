@@ -140,17 +140,6 @@ class FilterBackend(OrderByFilterMixin):
     pass
 
 
-class FilterModelAssignedUsers:
-    def get_assigned_users_filter(self, model, value):
-        assigned_users_ids = model.objects.order_by().filter(
-            assigned_users__in=value, id=OuterRef('pk')).values('pk')
-
-        assigned_user_filter = Q(pk__in=Subquery(assigned_users_ids))
-        assigned_to_filter = Q(assigned_to__in=value)
-
-        return Q(assigned_user_filter | assigned_to_filter)
-
-
 #####################################################################
 # Permissions filters
 #####################################################################
@@ -446,9 +435,22 @@ class AssignedToFilter(BaseRelatedFieldsFilter):
     exclude_param_name = 'exclude_assigned_to'
 
 
-class AssignedUsersFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
+class AssignedUsersFilter(BaseRelatedFieldsFilter):
     filter_name = 'assigned_users'
     exclude_param_name = 'exclude_assigned_users'
+
+    def filter_user_projects(self, request):
+        membership_model = apps.get_model('projects', 'Membership')
+        memberships_project_ids = membership_model.objects.filter(user=request.user).values(
+            'project_id')
+
+        return Subquery(memberships_project_ids)
+
+    def filter_queryset(self, request, queryset, view):
+        projects_ids_subquery = self.filter_user_projects(request)
+        queryset = queryset.filter(project_id__in=projects_ids_subquery)
+
+        return super().filter_queryset(request, queryset, view)
 
     def _get_queryparams(self, params, mode=''):
         param_name = self.exclude_param_name if mode == 'exclude' else self.param_name or self.filter_name
@@ -466,10 +468,10 @@ class AssignedUsersFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
                 assigned_user_filter_none = Q(pk__in=Subquery(assigned_users_ids))
                 assigned_to_filter_none = Q(assigned_to__isnull=True)
 
-                return (self.get_assigned_users_filter(UserStoryModel, value)
+                return (Q(assigned_users__in=value) | Q(assigned_to__in=value)
                         | Q(assigned_user_filter_none, assigned_to_filter_none))
             else:
-                return self.get_assigned_users_filter(UserStoryModel, value)
+                return Q(assigned_users__in=value) | Q(assigned_to__in=value)
 
         return None
 
@@ -698,7 +700,7 @@ class RoleFilter(BaseRelatedFieldsFilter):
         return FilterBackend.filter_queryset(self, request, queryset, view)
 
 
-class UserStoriesRoleFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
+class UserStoriesRoleFilter(BaseRelatedFieldsFilter):
     filter_name = "role_id"
     param_name = "role"
     exclude_param_name = 'exclude_role'
@@ -714,11 +716,11 @@ class UserStoriesRoleFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
         for mode, qs_method in operations.items():
             query = self._get_queryparams(request.QUERY_PARAMS, mode=mode)
             if query:
-                memberships = Membership.objects.filter(query).exclude(user__isnull=True).values_list("user_id", flat=True)
+                memberships = Membership.objects.filter(query).exclude(user__isnull=True).\
+                    values_list("user_id", flat=True)
                 if memberships:
-                    user_story_model = apps.get_model("userstories", "UserStory")
                     queryset = queryset.filter(
-                        qs_method(Q(self.get_assigned_users_filter(user_story_model, memberships)))
+                        qs_method(Q(assigned_users__in=memberships))
                     )
 
         return FilterBackend.filter_queryset(self, request, queryset, view)
