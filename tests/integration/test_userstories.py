@@ -762,18 +762,20 @@ def test_api_filter_by_finish_date(client):
 def test_api_filter_by_assigned_users(client):
     user = f.UserFactory(is_superuser=True)
     user2 = f.UserFactory(is_superuser=True)
+    project = f.ProjectFactory.create(owner=user)
 
-    userstory = f.create_userstory(owner=user, subject="test 2 users",
-                                   assigned_to=user,
-                                   assigned_users=[user.id, user2.id])
+    f.MembershipFactory.create(user=user, project=project)
+
+    f.create_userstory(owner=user, subject="test 2 users", assigned_to=user,
+                       assigned_users=[user.id, user2.id], project=project)
     f.create_userstory(
         owner=user, subject="test 1 user", assigned_to=user,
-        assigned_users=[user.id]
+        assigned_users=[user.id], project=project
     )
 
     url = reverse("userstories-list") + "?assigned_users=%s" % (user.id)
 
-    client.login(userstory.owner)
+    client.login(user)
     response = client.get(url)
     number_of_userstories = len(response.data)
 

@@ -179,8 +179,9 @@ class PermissionBasedFilterBackend(FilterBackend):
             memberships_qs = membership_model.objects.filter(user=request.user)
             if project_id:
                 memberships_qs = memberships_qs.filter(project_id=project_id)
-            memberships_qs = memberships_qs.filter(Q(role__permissions__contains=[self.permission]) |
-                                                   Q(is_admin=True))
+            memberships_qs = memberships_qs.filter(
+                Q(role__permissions__contains=[self.permission]) |
+                Q(is_admin=True))
 
             projects_list = [membership.project_id for membership in memberships_qs]
 
@@ -274,7 +275,7 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
                 project_id = int(request.QUERY_PARAMS["project"])
             except:
                 logger.error("Filtering project diferent value than an integer: {}".format(
-                             request.QUERY_PARAMS["project"]))
+                    request.QUERY_PARAMS["project"]))
                 raise exc.BadRequest(_("'project' must be an integer value."))
 
         if project_id:
@@ -288,8 +289,9 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
             memberships_qs = Membership.objects.filter(user=request.user)
             if project_id:
                 memberships_qs = memberships_qs.filter(project_id=project_id)
-            memberships_qs = memberships_qs.filter(Q(role__permissions__contains=[self.permission]) |
-                                                   Q(is_admin=True))
+            memberships_qs = memberships_qs.filter(
+                Q(role__permissions__contains=[self.permission]) |
+                Q(is_admin=True))
 
             projects_list = [membership.project_id for membership in memberships_qs]
 
@@ -450,8 +452,24 @@ class AssignedUsersFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
     filter_name = 'assigned_users'
     exclude_param_name = 'exclude_assigned_users'
 
+    def filter_user_projects(self, request):
+        membership_model = apps.get_model('projects', 'Membership')
+        memberships_project_ids = membership_model.objects.filter(user=request.user).values(
+            'project_id')
+
+        return Subquery(memberships_project_ids)
+
+    def filter_queryset(self, request, queryset, view):
+        if self.filter_name in request.QUERY_PARAMS or \
+                self.exclude_param_name in request.QUERY_PARAMS:
+            projects_ids_subquery = self.filter_user_projects(request)
+            queryset = queryset.filter(project_id__in=projects_ids_subquery)
+
+        return super().filter_queryset(request, queryset, view)
+
     def _get_queryparams(self, params, mode=''):
-        param_name = self.exclude_param_name if mode == 'exclude' else self.param_name or self.filter_name
+        param_name = self.exclude_param_name if mode == 'exclude' else self.param_name or \
+                                                                       self.filter_name
         raw_value = params.get(param_name, None)
         if raw_value:
             value = self._prepare_filter_data(raw_value)
@@ -567,7 +585,7 @@ class WatchersFilter(FilterBackend):
             try:
                 watched_ids = (WatchedModel.objects.filter(content_type=watched_type,
                                                            user__id__in=query_watchers)
-                                                   .values_list("object_id", flat=True))
+                               .values_list("object_id", flat=True))
                 queryset = queryset.filter(id__in=watched_ids)
             except ValueError:
                 raise exc.BadRequest(_("Error in filter params types."))
@@ -691,7 +709,8 @@ class RoleFilter(BaseRelatedFieldsFilter):
         for mode, qs_method in operations.items():
             query = self._get_queryparams(request.QUERY_PARAMS, mode=mode)
             if query:
-                memberships = Membership.objects.filter(query).exclude(user__isnull=True).values_list("user_id", flat=True)
+                memberships = Membership.objects.filter(query).exclude(
+                    user__isnull=True).values_list("user_id", flat=True)
                 if memberships:
                     queryset = queryset.filter(qs_method(Q(assigned_to__in=memberships)))
 
@@ -714,7 +733,8 @@ class UserStoriesRoleFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
         for mode, qs_method in operations.items():
             query = self._get_queryparams(request.QUERY_PARAMS, mode=mode)
             if query:
-                memberships = Membership.objects.filter(query).exclude(user__isnull=True).values_list("user_id", flat=True)
+                memberships = Membership.objects.filter(query).exclude(user__isnull=True). \
+                    values_list("user_id", flat=True)
                 if memberships:
                     user_story_model = apps.get_model("userstories", "UserStory")
                     queryset = queryset.filter(

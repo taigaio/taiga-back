@@ -335,6 +335,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
             "epics": self.filter_queryset(queryset, filter_backends=epics_filter_backends),
             "roles": self.filter_queryset(queryset, filter_backends=roles_filter_backends)
         }
+
         return response.Ok(services.get_userstories_filters_data(project, querysets))
 
     @list_route(methods=["GET"])
