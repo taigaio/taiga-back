@@ -294,7 +294,9 @@ class Project(ProjectDefaults, TaggedMixin, TagsColorsMixin, models.Model):
 
         if not self.slug:
             with advisory_lock("project-creation"):
-                base_slug = "{}-{}".format(self.owner.username, self.name)
+                base_slug = self.name
+                if settings.DEFAULT_PROJECT_SLUG_PREFIX:
+                    base_slug = "{}-{}".format(self.owner.username, self.name)
                 self.slug = slugify_uniquely(base_slug, self.__class__)
                 super().save(*args, **kwargs)
         else:
