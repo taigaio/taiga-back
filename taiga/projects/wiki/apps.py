@@ -13,4 +13,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-default_app_config = "taiga.projects.wiki.apps.WikiAppConfig"
+from django.apps import AppConfig
+
+
+class WikiAppConfig(AppConfig):
+    name = "taiga.projects.wiki"
+    verbose_name = "Wiki"
+    watched_types = ["wiki.wiki_page", ]

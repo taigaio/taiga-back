@@ -22,23 +22,14 @@ import collections
 from django.db import connection
 from django.utils.translation import ugettext_lazy as _
 
+from django.conf import settings
+
 from taiga.base.utils import json
 from taiga.base.utils.db import get_typename_for_model_instance
 from . import middleware as mw
 from . import backends
 from taiga.front.templatetags.functions import resolve
 from taiga.projects.history.choices import HistoryType
-
-
-# The complete list of content types
-# of allowed models for change events
-watched_types = set([
-    "userstories.userstory",
-    "issues.issue",
-    "tasks.task",
-    "wiki.wiki_page",
-    "milestones.milestone",
-])
 
 
 def emit_event(data:dict, routing_key:str, *,
@@ -81,6 +72,9 @@ def emit_event_for_model(obj, *, type:str="change", channel:str="events",
 
     app_name, model_name = content_type.split(".", 1)
     routing_key = "changes.project.{0}.{1}".format(projectid, app_name)
+
+    if app_name in settings.INSTALLED_APPS:
+        routing_key = "%s.%s" % (routing_key, model_name)
 
     data = {"type": type,
             "matches": content_type,
