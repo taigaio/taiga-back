@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 4.2.7 (2019-06-24)
+
+### Misc
+
+- Add default settings slug configuration.
+- Minor bug fixes.
+
 ## 4.2.6 (2019-06-12)
 
 ### Misc
