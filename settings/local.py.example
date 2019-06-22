@@ -153,7 +153,7 @@ DATABASES = {
 #########################################
 
 #STATS_ENABLED = False
-#FRONT_SITEMAP_CACHE_TIMEOUT = 60*60  # In second
+#STATS_CACHE_TIMEOUT = 60*60  # In second
 
 
 #########################################
