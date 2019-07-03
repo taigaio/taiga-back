@@ -40,11 +40,6 @@ def connect_userstories_signals():
                              sender=apps.get_model("userstories", "UserStory"),
                              dispatch_uid="cached_prev_us")
 
-    # Role Points
-    signals.post_save.connect(handlers.update_role_points_when_create_or_edit_us,
-                              sender=apps.get_model("userstories", "UserStory"),
-                              dispatch_uid="update_role_points_when_create_or_edit_us")
-
     # Tasks
     signals.post_save.connect(handlers.update_milestone_of_tasks_when_edit_us,
                               sender=apps.get_model("userstories", "UserStory"),

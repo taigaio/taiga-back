@@ -136,7 +136,7 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
         super().save(*args, **kwargs)
 
         if not self.role_points.all():
-            for role in self.project.roles.all():
+            for role in self.get_roles():
                 RolePoints.objects.create(role=role,
                                           points=self.project.default_points,
                                           user_story=self)
@@ -162,3 +162,6 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
             return None
 
         return sum(not_null_role_points)
+
+    def get_roles(self):
+        return self.project.roles.filter(computable=True).all()

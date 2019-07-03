@@ -696,8 +696,7 @@ def create_invitation(**kwargs):
 
 
 def create_userstory(**kwargs):
-    "Create an user story along with its dependencies"
-
+    """Create an user story along with its dependencies"""
     owner = kwargs.pop("owner", None)
     if not owner:
         owner = UserFactory.create()
@@ -705,6 +704,7 @@ def create_userstory(**kwargs):
     project = kwargs.pop("project", None)
     if project is None:
         project = ProjectFactory.create(owner=owner)
+    project.default_points = PointsFactory.create(project=project)
 
     defaults = {
         "project": project,
@@ -751,6 +751,7 @@ def create_project(**kwargs):
     project.default_us_status = UserStoryStatusFactory.create(project=project)
     project.default_task_status = TaskStatusFactory.create(project=project)
     project.default_epic_status = EpicStatusFactory.create(project=project)
+    project.default_points = PointsFactory.create(project=project)
 
     project.save()
 

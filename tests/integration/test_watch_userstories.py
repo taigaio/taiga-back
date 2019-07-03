@@ -128,10 +128,11 @@ def test_get_user_story_is_watcher(client):
 
 def test_remove_user_story_watcher(client):
     user = f.UserFactory.create()
-    project = f.ProjectFactory.create()
-    us = f.UserStoryFactory(project=project,
-                           status__project=project,
-                           milestone__project=project)
+    project = f.create_project()
+
+    us = f.create_userstory(project=project,
+                            status__project=project,
+                            milestone__project=project)
 
     us.add_watcher(user)
     role = f.RoleFactory.create(project=project, permissions=['modify_us', 'view_us'])
