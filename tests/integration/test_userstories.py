@@ -510,8 +510,8 @@ def test_update_userstory_points(client):
     points2 = f.PointsFactory.create(project=project, value=1)
     points3 = f.PointsFactory.create(project=project, value=2)
 
-    us = f.UserStoryFactory.create(project=project, owner=user1, status__project=project,
-                                   milestone__project=project)
+    us = f.create_userstory(project=project, owner=user1, status__project=project,
+                            milestone__project=project)
 
     url = reverse("userstories-detail", args=[us.pk])
 

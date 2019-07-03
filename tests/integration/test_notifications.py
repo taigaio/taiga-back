@@ -1298,9 +1298,8 @@ def test_us_updated_generates_web_notifications(client):
     member2 = f.MembershipFactory.create(project=project, role=role)
     member3 = f.MembershipFactory.create(project=project, role=role)
     member4 = f.MembershipFactory.create(project=project, role=role)
-    us = f.UserStoryFactory.create(project=project,
-                                   owner=member1.user,
-                                   milestone=None)
+
+    us = f.create_userstory(project=project, owner=member1.user, milestone=None)
 
     client.login(member1.user)
     mock_path = "taiga.projects.userstories.api.UserStoryViewSet." \
@@ -1351,9 +1350,8 @@ def test_comment_on_us_generates_web_notifications(client):
     )
     member1 = f.MembershipFactory.create(project=project, role=role)
     member2 = f.MembershipFactory.create(project=project, role=role)
-    us = f.UserStoryFactory.create(project=project,
-                                   owner=member1.user,
-                                   milestone=None)
+
+    us = f.create_userstory(project=project, owner=member1.user, milestone=None)
     us.add_watcher(member2.user)
 
     client.login(member1.user)
