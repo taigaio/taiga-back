@@ -496,6 +496,8 @@ class StatusesFilter(BaseRelatedFieldsFilter):
     filter_name = 'status'
     exclude_param_name = 'exclude_status'
 
+
+class UserStoryStatusesFilter(StatusesFilter):
     def filter_queryset(self, request, queryset, view):
         project_id = None
         if "project" in request.QUERY_PARAMS:
