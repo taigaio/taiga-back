@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 4.2.10 (2019-07-11)
+
+### Misc
+
+- Remove role points project signal from patch US's.
+- Improve US's statuses filter by project.
+
+
 ## 4.2.7 (2019-06-24)
 
 ### Misc
