@@ -1112,13 +1112,13 @@ def test_api_filters_data_roles_with_assigned_users(client):
     # | 2     |  user1 | user1       | user1          | role1        |
     # ----------------------------------------------------------------
 
-    us0 = f.UserStoryFactory.create(project=project, owner=user2,
+    us0 = f.UserStoryFactory.create(project=project, owner=user2, status__project=project,
                                     assigned_to=user2,
                                     assigned_users=[user2, user3],)
     f.RelatedUserStory.create(user_story=us0)
-    us1 = f.UserStoryFactory.create(project=project, owner=user1,
+    us1 = f.UserStoryFactory.create(project=project, owner=user1, status__project=project,
                                     assigned_to=None)
-    us2 = f.UserStoryFactory.create(project=project, owner=user1,
+    us2 = f.UserStoryFactory.create(project=project, owner=user1, status__project=project,
                                     assigned_to=user1,
                                     assigned_users=[user1],)
 

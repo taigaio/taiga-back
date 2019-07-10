@@ -497,6 +497,23 @@ class StatusesFilter(BaseRelatedFieldsFilter):
     exclude_param_name = 'exclude_status'
 
 
+class UserStoryStatusesFilter(StatusesFilter):
+    def filter_queryset(self, request, queryset, view):
+        project_id = None
+        if "project" in request.QUERY_PARAMS:
+            try:
+                project_id = int(request.QUERY_PARAMS["project"])
+            except ValueError:
+                logger.error("Filtering project different value tpphan an integer: {}".format(
+                    request.QUERY_PARAMS["project"]))
+                raise exc.BadRequest(_("'project' must be an integer value."))
+
+        if project_id:
+            queryset = queryset.filter(status__project_id=project_id)
+
+        return super().filter_queryset(request, queryset, view)
+
+
 class IssueTypesFilter(BaseRelatedFieldsFilter):
     filter_name = 'type'
     param_name = 'type'

@@ -69,7 +69,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
                        base_filters.OwnersFilter,
                        base_filters.AssignedToFilter,
                        base_filters.AssignedUsersFilter,
-                       base_filters.StatusesFilter,
+                       base_filters.UserStoryStatusesFilter,
                        base_filters.TagsFilter,
                        base_filters.WatchersFilter,
                        base_filters.QFilter,
@@ -317,7 +317,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         project = get_object_or_404(Project, id=project_id)
 
         filter_backends = self.get_filter_backends()
-        statuses_filter_backends = (f for f in filter_backends if f != base_filters.StatusesFilter)
+        statuses_filter_backends = (f for f in filter_backends if f != base_filters.UserStoryStatusesFilter)
         assigned_to_filter_backends = (f for f in filter_backends if f != base_filters.AssignedToFilter)
         assigned_users_filter_backends = (f for f in filter_backends if f != base_filters.AssignedUsersFilter)
         owners_filter_backends = (f for f in filter_backends if f != base_filters.OwnersFilter)
