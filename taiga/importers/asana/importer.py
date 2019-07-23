@@ -160,7 +160,7 @@ class AsanaImporter:
             is_private=options.get('is_private', False)
         )
 
-        import_service.create_memberships(options.get('users_bindings', {}), project, self._user, "asana")
+        import_service.create_memberships(users_bindings, taiga_project, self._user, "asana")
 
         UserStoryCustomAttribute.objects.create(
             name="Due date",
@@ -186,7 +186,7 @@ class AsanaImporter:
             project['id'],
             fields=["parent", "tags", "name", "notes", "tags.name",
                     "completed", "followers", "modified_at", "created_at",
-                    "project", "due_on"]
+                    "project", "due_on", "assignee"]
         )
         due_date_field = taiga_project.userstorycustomattributes.first()
 
@@ -198,7 +198,10 @@ class AsanaImporter:
             for tag in task['tags']:
                 tags.append(tag['name'].lower())
 
-            assigned_to = users_bindings.get(task.get('assignee', {}).get('id', None)) or None
+            assigned_to = None
+            assignee = task.get('assignee', {})
+            if assignee:
+                assigned_to = users_bindings.get(assignee.get('id', None))
 
             external_reference = None
             if options.get('keep_external_reference', False):
