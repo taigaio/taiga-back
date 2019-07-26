@@ -26,7 +26,7 @@ from taiga.base.utils.urls import get_absolute_url, is_absolute_url, build_url, 
     validate_private_url, IpAddresValueError, HostnameException
 from taiga.base.utils.db import save_in_bulk, update_in_bulk, to_tsquery
 
-pytestmark = pytest.mark.django_db
+pytestmark = pytest.mark.django_db(transaction=True)
 
 
 def test_is_absolute_url():

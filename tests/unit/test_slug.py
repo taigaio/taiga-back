@@ -23,7 +23,7 @@ from taiga.projects.models import Project
 from taiga.base.utils.slug import slugify
 
 import pytest
-pytestmark = pytest.mark.django_db
+pytestmark = pytest.mark.django_db(transaction=True)
 
 
 def test_slugify_1():

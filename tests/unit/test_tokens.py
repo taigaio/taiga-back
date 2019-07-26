@@ -25,7 +25,7 @@ from taiga.base import exceptions as exc
 from taiga.auth.tokens import get_token_for_user, get_user_for_token
 
 
-pytestmark = pytest.mark.django_db
+pytestmark = pytest.mark.django_db(transaction=True)
 
 
 def test_valid_token():

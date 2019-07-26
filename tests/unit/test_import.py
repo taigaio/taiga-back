@@ -23,7 +23,7 @@ from .. import factories as f
 from taiga.base.utils import json
 from taiga.export_import.services import render_project, store_project_from_dict
 
-pytestmark = pytest.mark.django_db
+pytestmark = pytest.mark.django_db(transaction=True)
 
 
 def test_import_epic_with_user_stories(client):

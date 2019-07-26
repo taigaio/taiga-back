@@ -46,7 +46,9 @@ import pytest
 
 from unittest import mock
 
+
 pytestmark = pytest.mark.django_db(transaction=True)
+
 
 class ExpiredSigner(signing.TimestampSigner):
     def __init__(self, *args, **kwargs):
@@ -279,7 +281,7 @@ def test_task_status_is_closed_changed_recalc_us_is_closed(client):
     us_status = f.UserStoryStatusFactory()
     user_story = f.UserStoryFactory.create(project=us_status.project, status=us_status)
     task_status = f.TaskStatusFactory.create(project=us_status.project, is_closed=False)
-    task = f.TaskFactory.create(project=us_status.project, status=task_status, user_story=user_story)
+    f.TaskFactory.create(project=us_status.project, status=task_status, user_story=user_story)
 
     assert user_story.is_closed is False
 
