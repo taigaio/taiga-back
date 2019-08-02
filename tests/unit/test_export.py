@@ -23,7 +23,7 @@ from .. import factories as f
 from taiga.base.utils import json
 from taiga.export_import.services import render_project
 
-pytestmark = pytest.mark.django_db
+pytestmark = pytest.mark.django_db(transaction=True)
 
 
 def test_export_issue_finish_date(client):

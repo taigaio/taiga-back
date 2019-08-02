@@ -27,7 +27,7 @@ from taiga.projects.models import Project
 
 import pytest
 
-pytestmark = pytest.mark.django_db
+pytestmark = pytest.mark.django_db(transaction=True)
 
 def test_push_to_timeline_many_objects():
     with patch("taiga.timeline.service._add_to_object_timeline") as mock:
