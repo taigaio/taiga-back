@@ -2,11 +2,20 @@
 
 ## Unreleased
 
+## 4.2.12 (2019-08-06)
+
+### Misc
+
+- Upgrade requirements
+- Events refactoring
+
 ## 4.2.11 (2019-07-24)
 
 ### Misc
 
 - Asana bug fix.
+
+## 4.2.10 (2019-07-11)
 
 ### Misc
 
