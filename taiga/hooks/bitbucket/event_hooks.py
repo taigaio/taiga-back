@@ -42,7 +42,7 @@ class IssuesEventHook(BaseBitBucketEventHook, BaseNewIssueEventHook):
             "subject": self.payload.get('issue', {}).get('title', None),
             "url": self.payload.get('issue', {}).get('links', {}).get('html', {}).get('href', None),
             "user_id": self.payload.get('actor', {}).get('uuid', None),
-            "user_name": self.payload.get('actor', {}).get('username', None),
+            "user_name": self.payload.get('actor', {}).get('nickname', None),
             "user_url": self.payload.get('actor', {}).get('links', {}).get('html', {}).get('href'),
             "description": self.replace_bitbucket_references(project_url, description),
         }
@@ -59,7 +59,7 @@ class IssueCommentEventHook(BaseBitBucketEventHook, BaseIssueCommentEventHook):
             "number": self.payload.get('issue', {}).get('id', None),
             'url': issue_url,
             'user_id': self.payload.get('actor', {}).get('uuid', None),
-            'user_name': self.payload.get('actor', {}).get('username', None),
+            'user_name': self.payload.get('actor', {}).get('nickname', None),
             'user_url': self.payload.get('actor', {}).get('links', {}).get('html', {}).get('href'),
             'comment_url': comment_url,
             'comment_message': self.replace_bitbucket_references(project_url, comment_message)
@@ -75,7 +75,7 @@ class PushEventHook(BaseBitBucketEventHook, BasePushEventHook):
                 message = commit.get("message")
                 result.append({
                     'user_id': commit.get('author', {}).get('user', {}).get('uuid', None),
-                    "user_name": commit.get('author', {}).get('user', {}).get('username', None),
+                    "user_name": commit.get('author', {}).get('user', {}).get('nickname', None),
                     "user_url": commit.get('author', {}).get('user', {}).get('links', {}).get('html', {}).get('href'),
                     "commit_id": commit.get("hash", None),
                     "commit_url": commit.get("links", {}).get('html', {}).get('href'),
