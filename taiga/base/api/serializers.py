@@ -173,7 +173,7 @@ def _is_protected_type(obj):
     """
     return isinstance(obj, (
         types.NoneType,
-        int, long,
+        int,
         datetime.datetime, datetime.date, datetime.time,
         float, Decimal,
         basestring)
