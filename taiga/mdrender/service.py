@@ -51,6 +51,7 @@ from .extensions.emojify import EmojifyExtension
 from .extensions.mentions import MentionsExtension
 from .extensions.references import TaigaReferencesExtension
 from .extensions.target_link import TargetBlankLinkExtension
+from .extensions.refresh_attachment import RefreshAttachmentExtension
 
 # Bleach configuration
 bleach.ALLOWED_TAGS += ["p", "table", "thead", "tbody", "th", "tr", "td", "h1",
@@ -75,6 +76,7 @@ def _make_extensions_list(project=None):
             MentionsExtension(),
             TaigaReferencesExtension(project),
             TargetBlankLinkExtension(),
+            RefreshAttachmentExtension(project=project),
             "markdown.extensions.extra",
             "markdown.extensions.codehilite",
             "markdown.extensions.sane_lists",
