@@ -13,9 +13,23 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.apps import apps
 from django.conf import settings
 
 from taiga.base.utils.thumbnails import get_thumbnail_url, get_thumbnail
+
+
+def get_attachment_by_id(project_id, attachment_id):
+    model_cls = apps.get_model("attachments", "Attachment")
+    try:
+        obj = model_cls.objects.select_related("content_type").get(id=attachment_id)
+    except model_cls.DoesNotExist:
+        return None
+
+    if not obj.content_object or obj.content_object.project_id != project_id:
+        return None
+
+    return obj
 
 
 def get_timeline_image_thumbnail_name(attachment):
