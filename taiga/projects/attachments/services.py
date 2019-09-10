@@ -49,3 +49,9 @@ def get_attachment_image_preview_url(attachment):
     if attachment.attached_file:
         return get_thumbnail_url(attachment.attached_file, settings.THN_ATTACHMENT_PREVIEW)
     return None
+
+
+def url_is_an_attachment(url: str, base=None) -> "Union[str, None]":
+    if not url:
+        return None
+    return url if url.startswith(base or settings.MEDIA_URL) else None

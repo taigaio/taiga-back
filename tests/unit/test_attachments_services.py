@@ -21,3 +21,13 @@ def test_get_attachment_by_id(django_assert_num_queries):
     # Attachment do belongs to the project
     with django_assert_num_queries(2):
         assert services.get_attachment_by_id(att.content_object.project_id, att.id) == att
+
+
+@pytest.mark.parametrize("url, expected", [
+    ("http://media.example.com/a/file.png", "http://media.example.com/a/file.png"),
+    ("http://media.example.com/a/file.png?token=x", "http://media.example.com/a/file.png?token=x"),
+    ("/a/file.png", None),
+    ("http://www.example.com/logo.png", None),
+])
+def test_url_is_an_attachment(url, expected):
+    assert services.url_is_an_attachment(url, base="http://media.example.com/a/") == expected
