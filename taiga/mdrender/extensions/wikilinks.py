@@ -76,7 +76,7 @@ class RelativeLinksTreeprocessor(Treeprocessor):
         super().__init__(md)
 
     def run(self, root):
-        links = root.getiterator("a")
+        links = root.iter("a")
         for a in links:
             href = a.get("href", "")
 
