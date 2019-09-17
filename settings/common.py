@@ -260,7 +260,7 @@ TEMPLATES = [
 
 
 MIDDLEWARE_CLASSES = [
-    "taiga.base.middleware.cors.CoorsMiddleware",
+    "taiga.base.middleware.cors.CorsMiddleware",
     "taiga.events.middleware.SessionIDMiddleware",
 
     # Common middlewares

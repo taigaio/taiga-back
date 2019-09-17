@@ -20,29 +20,29 @@ from django import http
 from django.conf import settings
 
 
-COORS_ALLOWED_ORIGINS = "*"
-COORS_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE", "PATCH", "HEAD"]
-COORS_ALLOWED_HEADERS = ["content-type", "x-requested-with",
+CORS_ALLOWED_ORIGINS = "*"
+CORS_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE", "PATCH", "HEAD"]
+CORS_ALLOWED_HEADERS = ["content-type", "x-requested-with",
                          "authorization", "accept-encoding",
                          "x-disable-pagination", "x-lazy-pagination",
                          "x-host", "x-session-id", "set-orders"]
-COORS_ALLOWED_CREDENTIALS = True
-COORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated", "x-paginated-by",
+CORS_ALLOWED_CREDENTIALS = True
+CORS_EXPOSE_HEADERS = ["x-pagination-count", "x-paginated", "x-paginated-by",
                         "x-pagination-current", "x-pagination-next", "x-pagination-prev",
                         "x-site-host", "x-site-register"]
 
-COORS_EXTRA_EXPOSE_HEADERS = getattr(settings, "APP_EXTRA_EXPOSE_HEADERS", [])
+CORS_EXTRA_EXPOSE_HEADERS = getattr(settings, "APP_EXTRA_EXPOSE_HEADERS", [])
 
 
-class CoorsMiddleware(object):
+class CorsMiddleware(object):
     def _populate_response(self, response):
-        response["Access-Control-Allow-Origin"] = COORS_ALLOWED_ORIGINS
-        response["Access-Control-Allow-Methods"] = ",".join(COORS_ALLOWED_METHODS)
-        response["Access-Control-Allow-Headers"] = ",".join(COORS_ALLOWED_HEADERS)
-        response["Access-Control-Expose-Headers"] = ",".join(COORS_EXPOSE_HEADERS + COORS_EXTRA_EXPOSE_HEADERS)
+        response["Access-Control-Allow-Origin"] = CORS_ALLOWED_ORIGINS
+        response["Access-Control-Allow-Methods"] = ",".join(CORS_ALLOWED_METHODS)
+        response["Access-Control-Allow-Headers"] = ",".join(CORS_ALLOWED_HEADERS)
+        response["Access-Control-Expose-Headers"] = ",".join(CORS_EXPOSE_HEADERS + CORS_EXTRA_EXPOSE_HEADERS)
         response["Access-Control-Max-Age"] = "3600"
 
-        if COORS_ALLOWED_CREDENTIALS:
+        if CORS_ALLOWED_CREDENTIALS:
             response["Access-Control-Allow-Credentials"] = "true"
 
     def process_request(self, request):
