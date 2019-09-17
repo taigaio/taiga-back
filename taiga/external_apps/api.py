@@ -69,7 +69,12 @@ class ApplicationToken(ModelCrudViewSet):
         if self.request.user.is_anonymous():
             raise exc.NotAuthenticated(_("Authentication required"))
 
-        return models.ApplicationToken.objects.filter(user=self.request.user)
+        queryset = models.ApplicationToken.objects.filter(user=self.request.user)
+
+        application_id = self.request.QUERY_PARAMS.get("application", None)
+        if application_id:
+            queryset = queryset.filter(application_id=application_id)
+        return queryset
 
     @list_route(methods=["POST"])
     def authorize(self, request, pk=None):
