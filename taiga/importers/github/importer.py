@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import datetime
 import requests
 from urllib.parse import parse_qsl
 from django.core.files.base import ContentFile
@@ -218,7 +219,7 @@ class GithubImporter:
                 owner=users_bindings.get(milestone.get('creator', {}).get('id', None), self._user),
                 project=project,
                 estimated_start=milestone['created_at'][:10],
-                estimated_finish=milestone['due_on'][:10],
+                estimated_finish=milestone['due_on'][:10] if milestone['due_on'] else datetime.date(datetime.MAXYEAR, 12, 31),
             )
             Milestone.objects.filter(id=taiga_milestone.id).update(
                 created_date=milestone['created_at'],
