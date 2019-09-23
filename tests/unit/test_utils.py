@@ -122,7 +122,7 @@ def test_to_tsquery():
     "ftp://192.168.1.100/",
     "http://[::ffff:c0a8:164]/",
     "scp://192.168.1.100/",
-    "http://www.192.168.1.100.xip.io/",
+    "http://www.192-168-1-100.sslip.io/",
 ])
 def test_validate_bad_destination_address(url):
     with pytest.raises(IpAddresValueError):
