@@ -1,7 +1,9 @@
 {% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject %}
-Issue deleted
-Hello {{ user }}, {{ changer }} has deleted an issue on {{ project }}
-Issue #{{ ref }} {{ subject }}
+Issue deleted on {{ project }}
+
+Hello {{ user }}, {{ changer }} has deleted an issue:
+
+#{{ ref }} {{ subject }}
 
 ---
 The Taiga Team

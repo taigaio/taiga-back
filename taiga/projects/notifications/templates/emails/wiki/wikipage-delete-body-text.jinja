@@ -1,9 +1,9 @@
 {% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, page=snapshot.slug %}
-Wiki page deleted
+Wiki page deleted on {{ project }}
 
-Hello {{ user }}, {{ changer }} has deleted a wiki page on {{ project }}
+Hello {{ user }}, {{ changer }} has deleted a wiki page:
 
-Wiki page {{ page }}
+{{ page }}
 
 ---
 The Taiga Team

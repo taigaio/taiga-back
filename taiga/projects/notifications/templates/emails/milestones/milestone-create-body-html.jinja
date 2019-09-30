@@ -2,9 +2,9 @@
 
 {% block body %}
     {% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, name=snapshot.name, url=resolve_front_url("taskboard", project.slug, snapshot.slug) %}
-    <h1>New sprint created</h1>
-    <p>Hello {{ user }},<br />{{ changer }} has created a new sprint on {{ project }}</p>
-    <p>Sprint {{ name }}</p>
+    <h1>New sprint created on {{ project }}</h1>
+    <p>Hello {{ user }},<br />{{ changer }} has created a new sprint</p>
+    <p><strong>{{ name }}</strong></p>
     <a class="button" href="{{ url }}" title="See Sprint {{ name }}">See sprint</a>
     <p><small>The Taiga Team</small></p>
     {% endtrans %}
