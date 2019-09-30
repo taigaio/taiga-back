@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 4.2.14 (2019-10-01)
+
+- Update requirements to support python3.7. This is a potentially BREAKING
+  CHANGE. Several libraries were updated to minor and patch releases.
+  Contributed modules should be tested thoroughly.
+
+- Minor bug fixes.
+
 ## 4.2.12 (2019-08-06)
 
 ### Misc
