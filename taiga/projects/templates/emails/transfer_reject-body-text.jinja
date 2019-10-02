@@ -15,7 +15,7 @@ If you want, you can still try to transfer the project ownership to a different 
 {% trans %}Request transfer to a different person:{% endtrans %}
 {{ resolve_front_url("project-admin", project.slug) }}
 
+{% trans signature=sr("signature") %}
 ---
-{% trans %}
-The Taiga Team
+{{ signature }}
 {% endtrans %}

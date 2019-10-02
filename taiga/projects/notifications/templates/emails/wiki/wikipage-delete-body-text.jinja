@@ -1,4 +1,4 @@
-{% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, page=snapshot.slug %}
+{% trans signature=sr("signature"), user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, page=snapshot.slug %}
 Wiki page deleted on {{ project }}
 
 Hello {{ user }}, {{ changer }} has deleted a wiki page:
@@ -6,5 +6,5 @@ Hello {{ user }}, {{ changer }} has deleted a wiki page:
 {{ page }}
 
 ---
-The Taiga Team
+{{ signature }}
 {% endtrans %}

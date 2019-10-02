@@ -1,4 +1,4 @@
-{% trans user=user.get_full_name(), project=project.name, url=url, deletion_date=deletion_date|date("SHORT_DATETIME_FORMAT") + deletion_date|date(" T") %}
+{% trans signature=sr("signature"), user=user.get_full_name(), project=project.name, url=url, deletion_date=deletion_date|date("SHORT_DATETIME_FORMAT") + deletion_date|date(" T") %}
 Hello {{ user }},
 
 Your dump from project {{ project }} has been correctly generated. You can download it here:
@@ -8,5 +8,5 @@ Your dump from project {{ project }} has been correctly generated. You can downl
 This file will be deleted on {{ deletion_date }}.
 
 ---
-The Taiga Team
+{{ signature }}
 {% endtrans %}

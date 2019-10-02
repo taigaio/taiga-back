@@ -1,10 +1,10 @@
 {% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-    {% trans url=resolve_front_url("project", membership.project.slug), full_name=membership.user.get_full_name(), project=membership.project %}
+    {% trans signature=sr("signature"), url=resolve_front_url("project", membership.project.slug), full_name=membership.user.get_full_name(), project=membership.project %}
     <h1>You have been added to a project</h1>
     <p>Hello {{ full_name }},<br />you have been added to the project {{ project }}</p>
     <a class="button" href="{{ url }}" title="Go to{{ project }}">Go to project</a>
-    <p><small>The Taiga Team</small></p>
+    <p><small>{{ signature }}</small></p>
     {% endtrans %}
 {% endblock %}

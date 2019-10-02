@@ -21,4 +21,8 @@
        title="{% trans %}Request transfer to a different person{% endtrans %}">
        {% trans %}Request transfer to a different person{% endtrans %}
     </a>
+
+    {% trans signature=sr("signature") %}
+    <p><small>{{ signature }}</small></p>
+    {% endtrans %}
 {% endblock %}

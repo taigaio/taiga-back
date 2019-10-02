@@ -1,13 +1,13 @@
 {% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-    {% trans user=user.get_full_name(), project=project.name, url=url, deletion_date=deletion_date|date("SHORT_DATETIME_FORMAT") + deletion_date|date(" T") %}
+    {% trans signature=sr("signature"), user=user.get_full_name(), project=project.name, url=url, deletion_date=deletion_date|date("SHORT_DATETIME_FORMAT") + deletion_date|date(" T") %}
     <h1>Project dump generated</h1>
     <p>Hello {{ user }},</p>
     <h3>Your dump from project {{ project }} has been correctly generated.</h3>
     <p>You can download it here:</p>
     <a class="button" href="{{ url }}" title="Download the dump file">Download the dump file</a>
     <p>This file will be deleted on {{ deletion_date }}.</p>
-    <p><small>The Taiga Team</small></p>
+    <p><small>{{ signature }}</small></p>
     {% endtrans %}
 {% endblock %}

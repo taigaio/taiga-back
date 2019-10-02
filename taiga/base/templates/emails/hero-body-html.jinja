@@ -294,8 +294,8 @@
                                                 <a href="{{ resolve_front_url("home") }}" title="Taiga">
                                                     <img src="{{ static("emails/logo.png") }}" id="headerImage" alt="Taiga" />
                                                 </a>
-                                                {% trans %}
-                                                <p>Welcome to Taiga, an Open Source, Agile Project Management Tool</p>
+                                                {% trans product_name=sr("product_name") %}
+                                                <p>Welcome to {{ product_name }}, an Open Source, Agile Project Management Tool</p>
                                                 {% endtrans %}
                                             </td>
                                         </tr>

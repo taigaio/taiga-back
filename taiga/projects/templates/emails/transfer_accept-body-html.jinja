@@ -14,4 +14,8 @@
     {% trans %}
         <p>From now on, your new status for this project will be "admin".</p>
     {% endtrans %}
+
+    {% trans signature=sr("signature") %}
+        <p><small>{{ signature }}</small></p>
+    {% endtrans %}
 {% endblock %}

@@ -1,4 +1,4 @@
-{% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject, url=resolve_front_url("issue", project.slug, snapshot.ref) %}
+{% trans signature=sr("signature"), user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject, url=resolve_front_url("issue", project.slug, snapshot.ref) %}
 New issue created on {{ project }}
 
 Hello {{ user }}, {{ changer }} has created a new issue:
@@ -8,5 +8,5 @@ Hello {{ user }}, {{ changer }} has created a new issue:
 See issue at {{ url }}
 
 ---
-The Taiga Team
+{{ signature }}
 {% endtrans %}

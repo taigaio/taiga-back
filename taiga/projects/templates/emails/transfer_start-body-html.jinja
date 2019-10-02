@@ -20,4 +20,8 @@
 
     <a class="button" href="{{ resolve_front_url("project-transfer", project.slug, project.transfer_token) }}"
        title="{{ _("Continue") }}">{{ _("Continue") }}</a>
+
+    {% trans signature=sr("signature") %}
+    <p><small>{{ signature }}</small></p>
+    {% endtrans %}
 {% endblock %}
