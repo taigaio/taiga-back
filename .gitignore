@@ -8,6 +8,7 @@ database.sqlite
 logs
 media
 static
+!taiga/base/static
 *.pyc
 *.mo
 .venv
