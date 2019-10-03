@@ -22,18 +22,42 @@ def create_us_context(project, owner):
     us = f.UserStoryFactory.create(project=project, owner=owner)
     key = make_key_from_model_object(us)
 
-    us_history_change = f.HistoryEntryFactory.create(
+    hc1 = f.HistoryEntryFactory.create(
         project=project,
         user={"pk": owner.id},
         comment="test:change",
         type=HistoryType.change,
         key=key,
         is_hidden=False,
-        diff=[],
+        values={"users": {}},
+        values={"users": {}},
+        diff={"description": "test:desc"},
+    )
+
+    hc2 = f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": owner.id},
+        comment="",
+        type=HistoryType.change,
+        key=key,
+        is_hidden=False,
+        values={"users": {}},
+        diff={"content": "test:content"},
+    )
+
+    hc2 = f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": owner.id},
+        comment="",
+        type=HistoryType.change,
+        key=key,
+        is_hidden=False,
+        values={"users": {"5": "Administrator", "11": "Angela Perez"}},
+        diff={"users": {"5": "Administrator", "11": "Angela Perez"}},
     )
 
     take_snapshot(us, user=us.owner)
-    return create_notification(project, key, owner, [us_history_change])
+    return create_notification(project, key, owner, [hc1, hc2])
 
 
 def create_task_context(project, owner):
@@ -58,18 +82,38 @@ def create_epic_context(project, owner):
     epic = f.EpicFactory.create(project=project, owner=owner)
     key = make_key_from_model_object(epic)
 
-    epic_history_change = f.HistoryEntryFactory.create(
+    hc1 = f.HistoryEntryFactory.create(
         project=project,
         user={"pk": owner.id},
-        comment="test:change",
+        comment="",
+        type=HistoryType.create,
+        key=key,
+        is_hidden=False,
+        diff={"description": "new description"},
+    )
+
+    hc2 = f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": owner.id},
+        comment="test: change",
         type=HistoryType.change,
         key=key,
         is_hidden=False,
-        diff=[],
+        diff={"content": "change content"},
+    )
+
+    hc3 = f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": owner.id},
+        comment="",
+        type=HistoryType.change,
+        key=key,
+        is_hidden=False,
+        diff={"blocked_note": "blocked note"},
     )
 
     take_snapshot(epic, user=epic.owner)
-    return create_notification(project, key, owner, [epic_history_change])
+    return create_notification(project, key, owner, [hc1, hc2, hc3])
 
 
 @pytest.mark.django_db
@@ -81,17 +125,17 @@ def test_sync_send_notifications():
     )
     member = f.MembershipFactory.create(project=project, role=role)
 
+    notification = create_epic_context(project, member.user)
+    sent, entries = services.send_sync_notifications(notification.id)
+    assert notification.id == sent
+    assert 2 == len(entries)
+
     notification = create_us_context(project, member.user)
     sent, entries = services.send_sync_notifications(notification.id)
     assert notification.id == sent
-    assert 1 == len(entries)
+    assert 2 == len(entries)
 
     notification = create_task_context(project, member.user)
     sent, entries = services.send_sync_notifications(notification.id)
     assert not sent
     assert not len(entries)
-
-    notification = create_epic_context(project, member.user)
-    sent, entries = services.send_sync_notifications(notification.id)
-    assert notification.id == sent
-    assert 1 == len(entries)

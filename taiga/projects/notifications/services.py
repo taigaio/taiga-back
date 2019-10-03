@@ -303,11 +303,22 @@ def send_sync_notifications(notification_id):
         return False, []
 
     # FolioVision Hardcode Filter
-    qs = notification.history_entries.all().order_by("created_at")
+    queries = [
+        ~Q(comment=""),
+        Q(key__startswith="epics.epic", type=HistoryType.create),
+        Q(key__startswith="userstories.userstory", values__users__isnull=False),
+        Q(key__startswith="issues.issue", values__users__isnull=False),
+    ]
+    query = queries.pop()
+    for item in queries:
+        query |= item
+
+    qs = notification.history_entries.filter(query).order_by("created_at")
+    for q in qs:
+        print(q.id)
 
     history_entries = tuple(qs)
     history_entries = list(squash_history_entries(history_entries))
-
     # If there are no effective modifications we can delete this notification
     # without further processing
     if notification.history_type == HistoryType.change and not history_entries:
