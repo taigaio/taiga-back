@@ -30,7 +30,6 @@ def create_us_context(project, owner):
         key=key,
         is_hidden=False,
         values={"users": {}},
-        values={"users": {}},
         diff={"description": "test:desc"},
     )
 

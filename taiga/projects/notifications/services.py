@@ -285,7 +285,7 @@ def send_sync_notifications(notification_id):
 
     notification = HistoryChangeNotification.objects.select_for_update().get(pk=notification_id)
 
-    # FolioVision Hardcode Filter
+    # Custom Hardcode Filter
     allowed_keys = [
         "userstories.userstory",
         "epics.epic",
@@ -302,7 +302,7 @@ def send_sync_notifications(notification_id):
     if time_diff.seconds < settings.CHANGE_NOTIFICATIONS_MIN_INTERVAL:
         return False, []
 
-    # FolioVision Hardcode Filter
+    # Custom Hardcode Filter
     queries = [
         ~Q(comment=""),
         Q(key__startswith="epics.epic", type=HistoryType.create),
