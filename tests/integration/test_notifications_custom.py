@@ -1,5 +1,7 @@
 import pytest
 
+from django.conf import settings
+
 from .. import factories as f
 
 from taiga.projects.history.choices import HistoryType
@@ -117,6 +119,7 @@ def create_epic_context(project, owner):
 
 @pytest.mark.django_db
 def test_sync_send_notifications():
+    settings.NOTIFICATIONS_CUSTOM_FILTER = True
     project = f.ProjectFactory.create()
     role = f.RoleFactory.create(
         project=project,
