@@ -339,7 +339,7 @@
                                         <tr>
                                             <td valign="top" class="headerContent">
                                                 <a href="{{ resolve_front_url("home") }}" class="brand" title="Taiga">
-                                                    <img src="{{ static("emails/logo-web.svg") }}" />
+                                                    <img src="{{ static("emails/logo-web.png") }}" />
                                                 </a>
                                             </td>
                                             <td width="100%"></td>
@@ -361,35 +361,7 @@
                             </tr>
                             <tr>
                                 <td align="center" valign="top">
-                                     <!-- BEGIN FOOTER // -->
-                                    <table border="0" cellpadding="0" cellspacing="0" class="footerContent"
-                                    width="100%" id="templateFooter">
-                                        <tr>
-                                            <td valign="top">
-                                                {% block footer %}
-                                                    {% trans unsubscribe_url=resolve_front_url("settings-mail-notifications"), support_url=sr("support.url"), support_email=sr("support.email") %}
-                                                    <a href="{{ unsubscribe_url }}">Configure email notifications or unsubscribe</a>
-                                                    &nbsp;&bull;&nbsp;
-                                                    <a href="{{ support_url }}">Taiga Support</a>
-                                                    &nbsp;&bull;&nbsp;
-                                                    <a href="mailto:{{ support_email }}" >Contact us</a>
-                                                    {% endtrans %}
-                                                {% endblock %}
-                                            </td>
-                                            {% block social %}
-                                                <td valign="top" class="social-links">
-                                                    <a href="{{ sr("social.twitter_url") }}" title="{{ _("Follow us on Twitter") }}"><img src="{{ static
-                                                    ("emails/logo-twitter.svg") }}" /></a>
-                                                    <a href="{{ sr("social.github_url") }}" title="{{ _("Get the code on GitHub") }}"><img src="{{ static
-                                                    ("emails/logo-github.svg") }}" /></a>
-                                                    <a href="{{ sr("taigaio_url") }}" title="{{ _
-                                                    ("Visit our website") }}"><img src="{{ static
-                                                    ("emails/logo-web.svg") }}" /></a>
-                                                </td>
-                                            {% endblock %}
-                                        </tr>
-                                    </table>
-                                    <!-- // END FOOTER -->
+                                    {% include "emails/includes/footer.jinja" %}
                                 </td>
                             </tr>
                         </table>
