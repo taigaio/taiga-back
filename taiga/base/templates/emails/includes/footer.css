@@ -19,7 +19,7 @@
     vertical-align: middle;
 }
 
-.footerContent a:link, .footerContent a:visited, /* Yahoo! Mail Override */ .footerContent a .yshortcuts, .footerContent a span /* Yahoo! Mail Override */{
+.footerContent a, .footerContent a:link, .footerContent a:visited, /* Yahoo! Mail Override */ .footerContent a .yshortcuts, .footerContent a span /* Yahoo! Mail Override */{
     /*@editable*/ color:#FFFFFF;
     /*@editable*/ font-weight:bold;
     /*@editable*/ text-decoration:underline;
