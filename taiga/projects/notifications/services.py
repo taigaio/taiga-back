@@ -286,15 +286,16 @@ def send_sync_notifications(notification_id):
     notification = HistoryChangeNotification.objects.select_for_update().get(pk=notification_id)
 
     # Custom Hardcode Filter
-    allowed_keys = [
-        "userstories.userstory",
-        "epics.epic",
-        "issues.issue",
-    ]
+    if settings.NOTIFICATIONS_CUSTOM_FILTER:
+        allowed_keys = [
+            "userstories.userstory",
+            "epics.epic",
+            "issues.issue",
+        ]
 
-    if not any([(notification.key.find(key) >= 0) for key in allowed_keys]):
-        notification.delete()
-        return False, []
+        if not any([(notification.key.find(key) >= 0) for key in allowed_keys]):
+            notification.delete()
+            return False, []
 
     # If the last modification is too recent we ignore it for the time being
     now = timezone.now()
@@ -308,7 +309,7 @@ def send_sync_notifications(notification_id):
         queries = [
             ~Q(comment=""),
             Q(key__startswith="epics.epic", type=HistoryType.create),
-            Q(key__startswith="userstories.userstory", values__users__isnull=False),
+            Q(Q(key__startswith="userstories.userstory"), ~Q(values__users={})),
             Q(key__startswith="issues.issue", values__users__isnull=False),
         ]
         query = queries.pop()

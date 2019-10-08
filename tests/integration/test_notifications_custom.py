@@ -35,6 +35,7 @@ def create_us_context(project, owner):
         diff={"description": "test:desc"},
     )
 
+    # not notifiable
     hc2 = f.HistoryEntryFactory.create(
         project=project,
         user={"pk": owner.id},
@@ -46,7 +47,7 @@ def create_us_context(project, owner):
         diff={"content": "test:content"},
     )
 
-    hc2 = f.HistoryEntryFactory.create(
+    hc3 = f.HistoryEntryFactory.create(
         project=project,
         user={"pk": owner.id},
         comment="",
@@ -57,8 +58,20 @@ def create_us_context(project, owner):
         diff={"users": {"5": "Administrator", "11": "Angela Perez"}},
     )
 
+    # not notifiable
+    hc4 = f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": owner.id},
+        comment="",
+        type=HistoryType.change,
+        key=key,
+        is_hidden=False,
+        values={"users": {}, "status": {"1": "New", "3": "In progress"}},
+        diff={"content": "test:content"},
+    )
+
     take_snapshot(us, user=us.owner)
-    return create_notification(project, key, owner, [hc1, hc2])
+    return create_notification(project, key, owner, [hc1, hc2, hc3, hc4])
 
 
 def create_task_context(project, owner):
