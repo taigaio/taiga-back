@@ -130,6 +130,60 @@ def create_epic_context(project, owner):
     return create_notification(project, key, owner, [hc1, hc2, hc3])
 
 
+def create_issue_context(project, owner):
+    issue = f.IssueFactory.create(project=project, owner=owner)
+    key = make_key_from_model_object(issue)
+
+    hc1 = f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": owner.id},
+        comment="test:change",
+        type=HistoryType.change,
+        key=key,
+        is_hidden=False,
+        values={"users": {}},
+        diff={"description": "test:desc"},
+    )
+
+    # not notifiable
+    hc2 = f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": owner.id},
+        comment="",
+        type=HistoryType.change,
+        key=key,
+        is_hidden=False,
+        values={"users": {}},
+        diff={"content": "test:content"},
+    )
+
+    hc3 = f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": owner.id},
+        comment="",
+        type=HistoryType.change,
+        key=key,
+        is_hidden=False,
+        values={"users": {"5": "Administrator", "11": "Angela Perez"}},
+        diff={"users": {"5": "Administrator", "11": "Angela Perez"}},
+    )
+
+    # not notifiable
+    hc4 = f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": owner.id},
+        comment="",
+        type=HistoryType.change,
+        key=key,
+        is_hidden=False,
+        values={"users": [], "status": {"1": "New", "3": "In progress"}},
+        diff={"content": "test:content"},
+    )
+
+    take_snapshot(issue, user=issue.owner)
+    return create_notification(project, key, owner, [hc1, hc2, hc3, hc4])
+
+
 @pytest.mark.django_db
 def test_sync_send_notifications():
     settings.NOTIFICATIONS_CUSTOM_FILTER = True
@@ -146,6 +200,11 @@ def test_sync_send_notifications():
     assert 2 == len(entries)
 
     notification = create_us_context(project, member.user)
+    sent, entries = services.send_sync_notifications(notification.id)
+    assert notification.id == sent
+    assert 2 == len(entries)
+
+    notification = create_issue_context(project, member.user)
     sent, entries = services.send_sync_notifications(notification.id)
     assert notification.id == sent
     assert 2 == len(entries)
