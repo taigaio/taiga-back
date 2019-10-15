@@ -66,7 +66,7 @@ def create_us_context(project, owner):
         type=HistoryType.change,
         key=key,
         is_hidden=False,
-        values={"users": {}, "status": {"1": "New", "3": "In progress"}},
+        values={"users": [], "status": {"1": "New", "3": "In progress"}},
         diff={"content": "test:content"},
     )
 

@@ -309,7 +309,7 @@ def send_sync_notifications(notification_id):
         queries = [
             ~Q(comment=""),
             Q(key__startswith="epics.epic", type=HistoryType.create),
-            Q(Q(key__startswith="userstories.userstory"), ~Q(values__users={})),
+            Q(Q(key__startswith="userstories.userstory"), ~Q(values__users={}), ~Q(values__users=[])),
             Q(key__startswith="issues.issue", values__users__isnull=False),
         ]
         query = queries.pop()
