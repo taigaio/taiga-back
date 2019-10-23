@@ -28,26 +28,27 @@ REFRESH_PARAM = "_taiga-refresh"
 
 def extract_refresh_id(url):
     if not url:
-        return False
+        return False, False
     _, frag = urldefrag(url)
     if not frag:
-        return False
+        return False, False
     qs = parse_qs(frag)
     if not qs:
-        return False
+        return False, False
     ref = qs.get(REFRESH_PARAM, False)
     if not ref:
-        return False
+        return False, False
+    type_, _, id_ = ref[0].partition(":")
     try:
-        return int(ref[0])
+        return type_, int(id_)
     except ValueError:
-        return False
+        return False, False
 
 
-def generate_refresh_fragment(attachment):
+def generate_refresh_fragment(attachment, type_=""):
     if not attachment:
         return ''
-    return "{}={}".format(REFRESH_PARAM, attachment.id)
+    return "{}={}:{}".format(REFRESH_PARAM, type_, attachment.id)
 
 
 class RefreshAttachmentExtension(markdown.Extension):
@@ -79,7 +80,7 @@ class RefreshAttachmentTreeprocessor(Treeprocessor):
                     # It's not an attachment
                     break
 
-                attachment_id = extract_refresh_id(url)
+                type_, attachment_id = extract_refresh_id(url)
                 if not attachment_id:
                     # There is no refresh parameter
                     break
@@ -90,6 +91,6 @@ class RefreshAttachmentTreeprocessor(Treeprocessor):
                     break
 
                 # Substitute url
-                frag = generate_refresh_fragment(attachment)
+                frag = generate_refresh_fragment(attachment, type_)
                 new_url = "{}#{}".format(attachment.attached_file.url, frag)
                 el.set(attr, new_url)
