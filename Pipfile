@@ -36,7 +36,7 @@ webcolors = "==1.9.1"
 CairoSVG = "==2.0.3"
 Django = ">=1.11.23,<2"
 Markdown = "==3.1.1"
-Pillow = "==4.3.0"
+Pillow = "*"
 Unidecode = "==0.4.20"
 Pygments = "==2.2.0"
 oauthlib = {extras = ["signedtoken"],version = "*"}
