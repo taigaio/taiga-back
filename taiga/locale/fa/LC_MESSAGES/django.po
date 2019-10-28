@@ -4,6 +4,7 @@
 #
 # Translators:
 # Translators:
+# Ali Tavallaie <a.tavallaie@gmail.com>, 2019
 # Amirhoshang Hoseinpour Dehkordi <amir.hoseinpour@gmail.com>, 2018
 # Vahid Dayyani <vahid.dayyani@ymail.com>, 2018-2019
 msgid ""
@@ -11,8 +12,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-27 14:23+0200\n"
-"PO-Revision-Date: 2019-09-27 12:27+0000\n"
-"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
+"PO-Revision-Date: 2019-10-21 15:31+0000\n"
+"Last-Translator: Ali Tavallaie <a.tavallaie@gmail.com>\n"
 "Language-Team: Persian (Iran) (http://www.transifex.com/taiga-agile-llc/"
 "taiga-back/language/fa_IR/)\n"
 "MIME-Version: 1.0\n"
@@ -126,7 +127,7 @@ msgstr "ساعت فرمت صحیحی ندارد. یکی از این فرمت‌�
 
 #: taiga/base/api/fields.py:880
 msgid "Enter a whole number."
-msgstr "عددی وارد کنید."
+msgstr "یک عدد وارد کنید."
 
 #: taiga/base/api/fields.py:881 taiga/base/api/fields.py:934
 #, python-format
@@ -1901,7 +1902,7 @@ msgstr "ترتیب"
 
 #: taiga/projects/choices.py:23
 msgid "Whereby.com"
-msgstr ""
+msgstr "Whereby.com"
 
 #: taiga/projects/choices.py:24
 msgid "Jitsi"
@@ -2022,15 +2023,15 @@ msgstr "لینک"
 
 #: taiga/projects/custom_attributes/choices.py:37
 msgid "Dropdown"
-msgstr ""
+msgstr "کشویی"
 
 #: taiga/projects/custom_attributes/choices.py:38
 msgid "Checkbox"
-msgstr ""
+msgstr "کادر انتخاب"
 
 #: taiga/projects/custom_attributes/choices.py:39
 msgid "Number"
-msgstr ""
+msgstr "عدد"
 
 #: taiga/projects/custom_attributes/models.py:40
 #: taiga/projects/issues/models.py:46
@@ -2329,7 +2330,7 @@ msgstr "مرحله‌ی پیشرفت برای پروژه معتبر نیست."
 
 #: taiga/projects/issues/validators.py:78
 msgid "All the issues must be from the same project"
-msgstr ""
+msgstr "تمامی مسائل باید از پروژه یکسان باشند"
 
 #: taiga/projects/likes/models.py:36
 msgid "Like"
@@ -2689,27 +2690,27 @@ msgstr "هیچ"
 
 #: taiga/projects/notifications/choices.py:46
 msgid "Assigned"
-msgstr ""
+msgstr "اختصاص داده شده"
 
 #: taiga/projects/notifications/choices.py:47
 msgid "Mentioned"
-msgstr ""
+msgstr "اشاره شده"
 
 #: taiga/projects/notifications/choices.py:48
 msgid "Added as watcher"
-msgstr ""
+msgstr "اضافه‌ شه ب عنوان مشاهده‌گر"
 
 #: taiga/projects/notifications/choices.py:49
 msgid "Added as member"
-msgstr ""
+msgstr "اضافه‌ شده به عنوان عضو"
 
 #: taiga/projects/notifications/choices.py:50
 msgid "Comment"
-msgstr ""
+msgstr "نظر"
 
 #: taiga/projects/notifications/choices.py:51
 msgid "Mentioned in comment"
-msgstr ""
+msgstr "اشاره شده در نظر"
 
 #: taiga/projects/notifications/models.py:67
 msgid "created date time"
@@ -3675,15 +3676,15 @@ msgstr "توکن منقضی شده است"
 
 #: taiga/projects/settings/choices.py:33
 msgid "Timeline"
-msgstr ""
+msgstr "خط زمان "
 
 #: taiga/projects/settings/choices.py:34
 msgid "Epics"
-msgstr ""
+msgstr "حماسه‌ها"
 
 #: taiga/projects/settings/choices.py:35
 msgid "Backlog"
-msgstr ""
+msgstr "بک‌لاگ"
 
 #. Translators: Name of kanban project template.
 #: taiga/projects/settings/choices.py:36 taiga/projects/translations.py:35
@@ -3692,15 +3693,15 @@ msgstr "کانبان"
 
 #: taiga/projects/settings/choices.py:37
 msgid "Issues"
-msgstr ""
+msgstr "مسائل"
 
 #: taiga/projects/settings/choices.py:38
 msgid "TeamWiki"
-msgstr ""
+msgstr "ویکی‌تیم"
 
 #: taiga/projects/settings/validators.py:36
 msgid "You don't have access to this section"
-msgstr ""
+msgstr "شما به این قسمت دسترسی ندارید"
 
 #: taiga/projects/tagging/fields.py:52
 #, python-brace-format
@@ -3806,7 +3807,7 @@ msgstr ""
 
 #: taiga/projects/tasks/validators.py:186
 msgid "All the tasks must be from the same project"
-msgstr ""
+msgstr "تمامی وظیفه‌ها باید از پروژه یکسان باشند"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:6
 #: taiga/projects/templates/emails/membership_invitation-body-text.jinja:4
@@ -4551,7 +4552,7 @@ msgstr "ایجاد شده از موضوع"
 
 #: taiga/projects/userstories/models.py:115
 msgid "generated from task"
-msgstr ""
+msgstr "ساخته‌شده بر اساس وظیفه"
 
 #: taiga/projects/userstories/validators.py:43
 msgid "There's no user story with that id"

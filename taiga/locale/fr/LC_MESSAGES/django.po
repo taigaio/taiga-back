@@ -28,13 +28,14 @@
 # Stéphane Mor <stephanemor@gmail.com>, 2015
 # Thierno Rignoux <t.rignoux@gmail.com>, 2016
 # William Godin <williamgodin@gmail.com>, 2015
+# Yoel Pepin <blackcrown971@gmail.com>, 2019
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-27 14:23+0200\n"
-"PO-Revision-Date: 2019-09-27 12:27+0000\n"
-"Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
+"PO-Revision-Date: 2019-10-02 12:53+0000\n"
+"Last-Translator: Yoel Pepin <blackcrown971@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -50,6 +51,8 @@ msgstr "L'inscription publique est désactivée."
 #: taiga/auth/api.py:93
 msgid "You must accept our terms of service and privacy policy"
 msgstr ""
+"Vous devez accepter nos Conditions générales d'utilisation et notre "
+"politique de confidentialité"
 
 #: taiga/auth/api.py:102
 msgid "invalid register type"
@@ -530,11 +533,11 @@ msgstr ""
 
 #: taiga/base/utils/urls.py:68
 msgid "Host access error"
-msgstr ""
+msgstr "Erreur d'accès à l'hôte"
 
 #: taiga/base/utils/urls.py:74
 msgid "IP Address error"
-msgstr ""
+msgstr "Erreur Adresse IP"
 
 #: taiga/events/events.py:116
 msgid "User story created"
@@ -554,19 +557,19 @@ msgstr ""
 
 #: taiga/events/events.py:127
 msgid "Task created"
-msgstr ""
+msgstr "Tâche crée"
 
 #: taiga/events/events.py:130
 msgid "Task changed"
-msgstr ""
+msgstr "Tâche modifiée"
 
 #: taiga/events/events.py:133
 msgid "Task deleted"
-msgstr ""
+msgstr "Tâche supprimée"
 
 #: taiga/events/events.py:135
 msgid "Task #{} - {}"
-msgstr ""
+msgstr "Tâche #{} - {}"
 
 #: taiga/events/events.py:138
 msgid "Issue created"
@@ -586,19 +589,19 @@ msgstr ""
 
 #: taiga/events/events.py:149
 msgid "Wiki Page created"
-msgstr ""
+msgstr "Page Wiki crée"
 
 #: taiga/events/events.py:152
 msgid "Wiki Page changed"
-msgstr ""
+msgstr "Page Wiki modifiée"
 
 #: taiga/events/events.py:155
 msgid "Wiki Page deleted"
-msgstr ""
+msgstr "Page Wiki supprimée"
 
 #: taiga/events/events.py:157
 msgid "Wiki Page: {}"
-msgstr ""
+msgstr "Page Wiki: {}"
 
 #: taiga/events/events.py:160
 msgid "Sprint created"
@@ -1974,11 +1977,11 @@ msgstr ""
 
 #: taiga/projects/custom_attributes/choices.py:38
 msgid "Checkbox"
-msgstr ""
+msgstr "Case à cocher"
 
 #: taiga/projects/custom_attributes/choices.py:39
 msgid "Number"
-msgstr ""
+msgstr "Nombre"
 
 #: taiga/projects/custom_attributes/models.py:40
 #: taiga/projects/issues/models.py:46
@@ -2012,7 +2015,7 @@ msgstr "Un élément de même nom existe déjà"
 
 #: taiga/projects/due_dates/models.py:21
 msgid "due date"
-msgstr ""
+msgstr "Date d'échéance"
 
 #: taiga/projects/due_dates/models.py:24
 msgid "reason for the due date"
@@ -2544,7 +2547,7 @@ msgstr "valeur"
 #: taiga/projects/models.py:616 taiga/projects/models.py:673
 #: taiga/projects/models.py:791
 msgid "by default"
-msgstr ""
+msgstr "Par défaut"
 
 #: taiga/projects/models.py:620 taiga/projects/models.py:677
 #: taiga/projects/models.py:795
@@ -2638,23 +2641,23 @@ msgstr "Aucun"
 
 #: taiga/projects/notifications/choices.py:46
 msgid "Assigned"
-msgstr ""
+msgstr "Assigné"
 
 #: taiga/projects/notifications/choices.py:47
 msgid "Mentioned"
-msgstr ""
+msgstr "Mentionné"
 
 #: taiga/projects/notifications/choices.py:48
 msgid "Added as watcher"
-msgstr ""
+msgstr "Ajouté en tant qu'observateur"
 
 #: taiga/projects/notifications/choices.py:49
 msgid "Added as member"
-msgstr ""
+msgstr "Ajouté en tant que membre"
 
 #: taiga/projects/notifications/choices.py:50
 msgid "Comment"
-msgstr ""
+msgstr "Commentaire"
 
 #: taiga/projects/notifications/choices.py:51
 msgid "Mentioned in comment"
