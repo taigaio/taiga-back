@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 5.0.0 (2019-11-13)
+
+- Refresh attachment URL on markdown fields to support protected backend.
+
+- Update requirements.
+
+- Update translations: Persian (Iran), French, Portuguese (Brazil).
+
 ## 4.2.14 (2019-10-01)
 
 - Update requirements to support python3.7. This is a potentially BREAKING
