@@ -37,7 +37,7 @@ class TargetBlankLinkExtension(markdown.Extension):
 class TargetBlankLinksTreeprocessor(Treeprocessor):
     def run(self, root):
         home_url = resolve("home")
-        links = root.getiterator("a")
+        links = root.iter("a")
         for a in links:
             href = a.get("href", "")
             url = a.get("href", "")
