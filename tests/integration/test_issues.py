@@ -30,7 +30,8 @@ from django.core.urlresolvers import reverse
 
 from taiga.base.utils import json
 from taiga.permissions.choices import MEMBERS_PERMISSIONS, ANON_PERMISSIONS
-from taiga.projects.issues import services, models
+from taiga.projects.issues import services
+from taiga.projects.userstories.models import UserStory
 from taiga.projects.occ import OCCResourceMixin
 
 from .. import factories as f
@@ -916,3 +917,47 @@ def test_get_issues_in_milestone(client):
     assert response.status_code == 200
     assert len(response.data) == 1
     assert response.data[0].get("milestone") == milestone.id
+
+
+def test_promote_issue_to_us(client):
+    user_1 = f.UserFactory.create()
+    user_2 = f.UserFactory.create()
+    watching_user = f.UserFactory()
+    project = f.ProjectFactory.create(owner=user_1)
+    f.MembershipFactory.create(project=project, user=user_1, is_admin=True)
+    f.MembershipFactory.create(project=project, user=user_2, is_admin=False)
+    issue = f.IssueFactory.create(project=project, owner=user_1, assigned_to=user_2)
+    issue.add_watcher(watching_user)
+
+    f.IssueAttachmentFactory(project=project, content_object=issue, owner=user_1)
+    f.IssueAttachmentFactory(project=project, content_object=issue, owner=user_1)
+
+    f.HistoryEntryFactory.create(
+        project=project,
+        user={"pk": user_1.id},
+        comment="Test comment",
+        key="issues.issue:{}".format(issue.id),
+        is_hidden=False,
+        diff=[]
+    )
+
+    client.login(user_1)
+
+    url = reverse('issues-promote-to-user-story', kwargs={"pk": issue.pk})
+    data = {"project_id": project.id}
+    promote_response = client.json.post(url, json.dumps(data))
+
+    us_ref = promote_response.data.pop()
+    us = UserStory.objects.get(ref=us_ref)
+    us_response = client.get(reverse("userstories-detail", args=[us.pk]),
+                             {"include_attachments": True})
+
+    assert promote_response.status_code == 200, promote_response.data
+    assert us_response.data["subject"] == issue.subject
+    assert us_response.data["description"] == issue.description
+    assert us_response.data["owner"] == issue.owner_id
+    assert us_response.data["generated_from_issue"] == issue.id
+    assert us_response.data["assigned_users"] == {user_2.id}
+    assert us_response.data["total_watchers"] == 1
+    assert us_response.data["total_attachments"] == 2
+    assert us_response.data["total_comments"] == 1

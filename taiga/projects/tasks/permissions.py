@@ -40,6 +40,7 @@ class TaskPermission(TaigaResourcePermission):
     downvote_perms = IsAuthenticated() & HasProjectPerm('view_tasks')
     watch_perms = IsAuthenticated() & HasProjectPerm('view_tasks')
     unwatch_perms = IsAuthenticated() & HasProjectPerm('view_tasks')
+    promote_to_us_perms = IsAuthenticated() & HasProjectPerm('view_tasks')
 
 
 class TaskVotersPermission(TaigaResourcePermission):

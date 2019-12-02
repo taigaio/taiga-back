@@ -1,6 +1,9 @@
 from django.utils.translation import ugettext as _
+
+from taiga.base.api import validators, serializers
 from taiga.base.exceptions import ValidationError
 from taiga.projects.models import Membership
+from taiga.projects.validators import ProjectExistsValidator
 
 
 class AssignedToValidator:
@@ -19,3 +22,7 @@ class AssignedToValidator:
                 raise ValidationError(_("The user must be a project member."))
 
         return attrs
+
+
+class PromoteToUserStoryValidator(ProjectExistsValidator, validators.Validator):
+    project_id = serializers.IntegerField()
