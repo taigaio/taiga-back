@@ -14,7 +14,7 @@
 # José Alejandro Díaz Carmona <reiterweg@gmail.com>, 2016
 # Kiko Fernandez-Reyes <kiko.fernandez@it.uu.se>, 2016
 # Luis Sebastian Urrutia Fuentes <luis.s.urrutia.f@gmail.com>, 2016
-# Miguel Gonzalez <migonzalvar@gmail.com>, 2018
+# Miguel Gonzalez <migonzalvar@gmail.com>, 2018-2019
 # Renelis Abreu Ramirez <renelisabreu@hotmail.com>, 2016
 # Taiga Dev Team <support@taiga.io>, 2015-2016
 # Xaviju <xaviju@gmail.com>, 2016
@@ -23,7 +23,7 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-27 14:23+0200\n"
-"PO-Revision-Date: 2019-09-27 12:27+0000\n"
+"PO-Revision-Date: 2019-12-04 09:25+0000\n"
 "Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/es/)\n"
@@ -40,6 +40,7 @@ msgstr "El registro público está deshabilitado."
 #: taiga/auth/api.py:93
 msgid "You must accept our terms of service and privacy policy"
 msgstr ""
+"Por favor, acepta nuestras condiciones de servicio y política de privacidad"
 
 #: taiga/auth/api.py:102
 msgid "invalid register type"
@@ -3992,7 +3993,7 @@ msgid ""
 msgstr ""
 "\n"
 "        <p>Hola %(old_owner_name)s,</p>\n"
-"        <p>%(new_owner_name)s acepto su oferta y sera el nuevo dueño del "
+"        <p>%(new_owner_name)s aceptó su oferta y será el nuevo dueño del "
 "proyecto \"%(project_name)s\".</p>\n"
 "    "
 
@@ -4069,7 +4070,7 @@ msgid ""
 msgstr ""
 "\n"
 "        <p>Hola %(owner_name)s,</p>\n"
-"        <p>%(rejecter_name)s declino su oferta y no sera el nuevo dueño del "
+"        <p>%(rejecter_name)s declinó su oferta y no será el nuevo dueño del "
 "proyecto \"%(project_name)s\".</p>\n"
 "    "
 
