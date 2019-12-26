@@ -30,7 +30,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         with advisory_lock("send-notifications-command", wait=False) as acquired:
             if acquired:
-                qs = HistoryChangeNotification.objects.all()
+                qs = HistoryChangeNotification.objects.all().order_by("-id")
                 for change_notification in iter_queryset(qs, itersize=100):
                     try:
                         send_sync_notifications(change_notification.pk)
