@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 5.0.5 (2020-01-08)
+
+### Feature
+
+- Promote task and issues to user story with watchers, attachments and comments.
+
+### Misc
+
+- Several minor bugfixes and translation updates.
+
 ## 5.0.0 (2019-11-13)
 
 - Refresh attachment URL on markdown fields to support protected backend.
