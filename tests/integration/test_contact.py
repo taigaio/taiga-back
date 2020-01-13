@@ -50,8 +50,8 @@ def test_member_create_comment_on_private_project(client):
     assert len(mail.outbox) == 0
     response = client.post(url, contact_data, content_type="application/json")
     assert response.status_code == 201
-    assert len(mail.outbox) == 1
-    assert set(mail.outbox[0].to[0].split(", ")) == set([project.owner.email, m2.user.email])
+    assert len(mail.outbox) == 2
+    assert set([to for out in mail.outbox for to in out.to]) == set([project.owner.email, m2.user.email])
 
 
 # Non members user cannot comment on a private project
@@ -95,8 +95,8 @@ def test_create_comment_on_public_project(client):
     assert len(mail.outbox) == 0
     response = client.post(url, contact_data, content_type="application/json")
     assert response.status_code == 201
-    assert len(mail.outbox) == 1
-    assert set(mail.outbox[0].to[0].split(", ")) == set([project.owner.email, m2.user.email])
+    assert len(mail.outbox) == 2
+    assert set([to for out in mail.outbox for to in out.to]) == set([project.owner.email, m2.user.email])
 
 
 # No user can comment on a project

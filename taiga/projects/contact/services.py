@@ -38,8 +38,8 @@ def send_contact_email(contact_entry_id):
         "user_profile_url": resolve_front_url("user", contact_entry.user.username),
         "project_settings_url": resolve_front_url("project-admin", contact_entry.project.slug),
     }
-    users = contact_entry.project.get_users(with_admin_privileges=True).exclude(id=contact_entry.user_id)
-    addresses = ", ".join([u.email for u in users])
-    email = mail_builder.contact_notification(addresses, ctx)
-    email.extra_headers["Reply-To"] = ", ".join([contact_entry.user.email])
-    email.send()
+    admins = contact_entry.project.get_users(with_admin_privileges=True).exclude(id=contact_entry.user_id)
+    for admin in admins:
+        email = mail_builder.contact_notification(admin.email, ctx)
+        email.extra_headers["Reply-To"] = contact_entry.user.email
+        email.send()
