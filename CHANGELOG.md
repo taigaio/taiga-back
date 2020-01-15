@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 5.0.6 (2020-01-15)
+
+### Misc
+
+- Minor fix on contact project team feature.
+
 ## 5.0.5 (2020-01-08)
 
 ### Feature
