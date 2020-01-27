@@ -118,7 +118,7 @@ LANGUAGES = [
     ("ko", "한국어"),  # Korean
     #("lb", "Lëtzebuergesch"),  # Luxembourgish
     #("lt", "Lietuvių"),  # Lithuanian
-    #("lv", "Latviešu"),  # Latvian
+    ("lv", "Latviešu"),  # Latvian
     #("mk", "Македонски"),  # Macedonian
     #("ml", "മലയാളം"),  # Malayalam
     #("mn", "Монгол"),  # Mongolian

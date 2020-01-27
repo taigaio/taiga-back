@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### i18n
+
+- Add Latvian translation.
+
 ## 5.0.6 (2020-01-15)
 
 ### Misc
