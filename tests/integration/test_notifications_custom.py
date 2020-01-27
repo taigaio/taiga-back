@@ -213,3 +213,6 @@ def test_sync_send_notifications():
     sent, entries = services.send_sync_notifications(notification.id)
     assert not sent
     assert not len(entries)
+
+    # restore settings
+    settings.NOTIFICATIONS_CUSTOM_FILTER = False
