@@ -3,7 +3,7 @@
 {% block body %}
     {% trans owner_name=project.owner.get_full_name(), requester_name=requester.get_full_name(), project_name=project.name %}
         <p>Hi {{owner_name}},</p>
-        <p>{{ requester_name }} has requested to become the project owner for "{{project_name}}".</p>
+        <p>{{ requester_name }} has requested to become the project owner of "{{project_name}}".</p>
     {% endtrans %}
 
     {% trans %}
