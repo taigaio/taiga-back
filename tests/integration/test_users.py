@@ -73,7 +73,8 @@ def test_users_create_through_standard_api(client):
 
 
 def test_sanitize_user_full_name(client):
-    name_too_long = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    name_too_long = """Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."""
     malicious_name = "an <script>evil()</script> example"
     right_name = "john"
 

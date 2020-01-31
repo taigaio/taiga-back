@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import bleach
 
 from django.core import validators as core_validators
 from django.utils.translation import ugettext as _
@@ -27,7 +28,7 @@ import re
 
 
 class BaseRegisterValidator(validators.Validator):
-    full_name = serializers.CharField(max_length=256)
+    full_name = serializers.CharField(max_length=36)
     email = serializers.EmailField(max_length=255)
     username = serializers.CharField(max_length=255)
     password = serializers.CharField(min_length=4)
@@ -41,6 +42,13 @@ class BaseRegisterValidator(validators.Validator):
         except ValidationError:
             raise ValidationError(_("Required. 255 characters or fewer. Letters, numbers "
                                     "and /./-/_ characters'"))
+        return attrs
+
+    def validate_full_name(self, attrs, source):
+        value = attrs[source]
+        if value != bleach.clean(value):
+            raise ValidationError(_("Invalid full name"))
+
         return attrs
 
 

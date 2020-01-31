@@ -273,3 +273,34 @@ def test_register_success_throttling(client, settings):
     assert response.status_code == 429
 
     settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["register-success"] = None
+
+
+def test_register_sanitize_user_full_name(client, settings):
+    settings.PUBLIC_REGISTER_ENABLED = True
+    name_too_long = """Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."""
+    malicious_name = "an <script>evil()</script> example"
+    right_name = "john"
+
+    form = {
+        "type": "public",
+        "username": "mmcfly",
+        "full_name": name_too_long,
+        "email": "mmcfly@bttf.com",
+        "password": "password",
+        "accepted_terms": True,
+    }
+
+    response = client.post(reverse("auth-register"), form)
+    assert response.status_code == 400
+
+    form["full_name"] = malicious_name
+    response = client.post(reverse("auth-register"), form)
+    assert response.status_code == 400
+
+    form["full_name"] = right_name
+    response = client.post(reverse("auth-register"), form)
+    assert response.status_code == 201
+
+
+
