@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import bleach
 
 from django.core import validators as core_validators
 from django.utils.translation import ugettext_lazy as _
@@ -34,6 +35,8 @@ import re
 ######################################################
 
 class UserValidator(validators.ModelValidator):
+    full_name = serializers.CharField(max_length=36)
+
     class Meta:
         model = User
         fields = ("username", "full_name", "color", "bio", "lang",
@@ -54,6 +57,13 @@ class UserValidator(validators.ModelValidator):
                 self.object.username != value and
                 User.objects.filter(username=value).exists()):
             raise ValidationError(_("Invalid username. Try with a different one."))
+
+        return attrs
+
+    def validate_full_name(self, attrs, source):
+        value = attrs[source]
+        if value != bleach.clean(value):
+            raise ValidationError(_("Invalid full name"))
 
         return attrs
 

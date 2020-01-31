@@ -68,6 +68,35 @@ def test_users_create_through_standard_api(client):
 
 
 ##############################
+## Test sanitize full name
+##############################
+
+
+def test_sanitize_user_full_name(client):
+    name_too_long = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    malicious_name = "an <script>evil()</script> example"
+    right_name = "john"
+
+    user = f.UserFactory.create(full_name="test_name")
+    url = reverse('users-detail', kwargs={"pk": user.pk})
+
+    client.login(user)
+
+    data = {"full_name": name_too_long}
+    response = client.patch(url, json.dumps(data), content_type="application/json")
+    assert response.status_code == 400
+
+    data = {"full_name": malicious_name}
+    response = client.patch(url, json.dumps(data), content_type="application/json")
+    assert response.status_code == 400
+
+    data = {"full_name": right_name}
+    client.login(user)
+    response = client.patch(url, json.dumps(data), content_type="application/json")
+    assert response.status_code == 200
+
+
+##############################
 ## Change email
 ##############################
 
