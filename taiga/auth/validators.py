@@ -49,6 +49,9 @@ class BaseRegisterValidator(validators.Validator):
         if value != bleach.clean(value):
             raise ValidationError(_("Invalid full name"))
 
+        if re.search(r"http[s]?:", value):
+            raise ValidationError(_("Invalid full name"))
+
         return attrs
 
 

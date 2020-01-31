@@ -275,32 +275,32 @@ def test_register_success_throttling(client, settings):
     settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["register-success"] = None
 
 
-def test_register_sanitize_user_full_name(client, settings):
+INVALID_NAMES = [
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod",
+    "an <script>evil()</script> example",
+    "http://testdomain.com",
+    "https://testdomain.com",
+    "Visit http://testdomain.com",
+]
+
+@pytest.mark.parametrize("full_name", INVALID_NAMES)
+def test_register_sanitize_invalid_user_full_name(client, settings, full_name, register_form):
     settings.PUBLIC_REGISTER_ENABLED = True
-    name_too_long = """Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."""
-    malicious_name = "an <script>evil()</script> example"
-    right_name = "john"
-
-    form = {
-        "type": "public",
-        "username": "mmcfly",
-        "full_name": name_too_long,
-        "email": "mmcfly@bttf.com",
-        "password": "password",
-        "accepted_terms": True,
-    }
-
-    response = client.post(reverse("auth-register"), form)
+    register_form["full_name"] = full_name
+    response = client.post(reverse("auth-register"), register_form)
     assert response.status_code == 400
 
-    form["full_name"] = malicious_name
-    response = client.post(reverse("auth-register"), form)
-    assert response.status_code == 400
+VALID_NAMES = [
+    "martin seamus mcfly"
+]
 
-    form["full_name"] = right_name
-    response = client.post(reverse("auth-register"), form)
+@pytest.mark.parametrize("full_name", VALID_NAMES)
+def test_register_sanitize_valid_user_full_name(client, settings, full_name, register_form):
+    settings.PUBLIC_REGISTER_ENABLED = True
+    register_form["full_name"] = full_name
+    response = client.post(reverse("auth-register"), register_form)
     assert response.status_code == 201
+
 
 
 
