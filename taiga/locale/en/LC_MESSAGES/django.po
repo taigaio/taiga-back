@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-27 14:23+0200\n"
+"POT-Creation-Date: 2020-02-03 15:58+0100\n"
 "PO-Revision-Date: 2019-09-27 14:22+0200\n"
 "Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
 "Language-Team: English (http://www.transifex.com/taiga-agile-llc/taiga-back/"
@@ -66,15 +66,20 @@ msgstr "Error on creating new user."
 msgid "Invalid token"
 msgstr "Invalid token"
 
-#: taiga/auth/validators.py:37 taiga/users/validators.py:44
+#: taiga/auth/validators.py:38 taiga/users/validators.py:47
 msgid "invalid username"
 msgstr "invalid username"
 
-#: taiga/auth/validators.py:42 taiga/users/validators.py:50
+#: taiga/auth/validators.py:43 taiga/users/validators.py:53
 msgid ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
 msgstr ""
 "Required. 255 characters or fewer. Letters, numbers and /./-/_ characters'"
+
+#: taiga/auth/validators.py:50 taiga/auth/validators.py:53
+#: taiga/users/validators.py:66 taiga/users/validators.py:69
+msgid "Invalid full name"
+msgstr "Invalid full name"
 
 #: taiga/base/api/fields.py:294
 msgid "This field is required."
@@ -195,9 +200,9 @@ msgstr ""
 #: taiga/base/api/mixins.py:281 taiga/base/exceptions.py:211
 #: taiga/hooks/api.py:69 taiga/projects/api.py:467 taiga/projects/api.py:500
 #: taiga/projects/api.py:990 taiga/projects/epics/api.py:200
-#: taiga/projects/epics/api.py:284 taiga/projects/issues/api.py:239
-#: taiga/projects/mixins/ordering.py:59 taiga/projects/tasks/api.py:264
-#: taiga/projects/tasks/api.py:306 taiga/projects/userstories/api.py:362
+#: taiga/projects/epics/api.py:284 taiga/projects/issues/api.py:237
+#: taiga/projects/mixins/ordering.py:59 taiga/projects/tasks/api.py:265
+#: taiga/projects/tasks/api.py:307 taiga/projects/userstories/api.py:362
 #: taiga/projects/userstories/api.py:414 taiga/webhooks/api.py:71
 msgid "Blocked element"
 msgstr "Blocked element"
@@ -1131,7 +1136,7 @@ msgid "The payload is not a valid json"
 msgstr "The payload is not a valid json"
 
 #: taiga/hooks/api.py:63 taiga/projects/epics/api.py:154
-#: taiga/projects/issues/api.py:147 taiga/projects/tasks/api.py:215
+#: taiga/projects/issues/api.py:145 taiga/projects/tasks/api.py:216
 #: taiga/projects/userstories/api.py:304
 msgid "The project doesn't exist"
 msgstr "The project doesn't exist"
@@ -2285,23 +2290,23 @@ msgstr "blocked note"
 msgid "sprint"
 msgstr "sprint"
 
-#: taiga/projects/issues/api.py:169
+#: taiga/projects/issues/api.py:167
 msgid "You don't have permissions to set this sprint to this issue."
 msgstr "You don't have permissions to set this sprint to this issue."
 
-#: taiga/projects/issues/api.py:173
+#: taiga/projects/issues/api.py:171
 msgid "You don't have permissions to set this status to this issue."
 msgstr "You don't have permissions to set this status to this issue."
 
-#: taiga/projects/issues/api.py:177
+#: taiga/projects/issues/api.py:175
 msgid "You don't have permissions to set this severity to this issue."
 msgstr "You don't have permissions to set this severity to this issue."
 
-#: taiga/projects/issues/api.py:181
+#: taiga/projects/issues/api.py:179
 msgid "You don't have permissions to set this priority to this issue."
 msgstr "You don't have permissions to set this priority to this issue."
 
-#: taiga/projects/issues/api.py:185
+#: taiga/projects/issues/api.py:183
 msgid "You don't have permissions to set this type to this issue."
 msgstr "You don't have permissions to set this type to this issue."
 
@@ -2322,13 +2327,13 @@ msgstr "milestone"
 msgid "finished date"
 msgstr "finished date"
 
-#: taiga/projects/issues/validators.py:68
+#: taiga/projects/issues/validators.py:66
 #: taiga/projects/tasks/validators.py:176
 #: taiga/projects/userstories/validators.py:158
 msgid "The milestone isn't valid for the project"
 msgstr "The milestone isn't valid for the project"
 
-#: taiga/projects/issues/validators.py:78
+#: taiga/projects/issues/validators.py:76
 msgid "All the issues must be from the same project"
 msgstr "All the issues must be from the same project"
 
@@ -2400,7 +2405,7 @@ msgstr "'{param}' parameter is mandatory"
 msgid "'project' parameter is mandatory"
 msgstr "'project' parameter is mandatory"
 
-#: taiga/projects/mixins/validators.py:19
+#: taiga/projects/mixins/validators.py:22
 msgid "The user must be a project member."
 msgstr "The user must be a project member."
 
@@ -2736,7 +2741,7 @@ msgstr "Watched"
 msgid "Notify exists for specified user and project"
 msgstr "Notify exists for specified user and project"
 
-#: taiga/projects/notifications/services.py:491
+#: taiga/projects/notifications/services.py:523
 msgid "Invalid value for notify level"
 msgstr "Invalid value for notify level"
 
@@ -3757,15 +3762,15 @@ msgstr "The color is not a valid HEX color."
 msgid "The tag doesn't exist."
 msgstr "The tag doesn't exist."
 
-#: taiga/projects/tasks/api.py:112 taiga/projects/tasks/api.py:121
+#: taiga/projects/tasks/api.py:113 taiga/projects/tasks/api.py:122
 msgid "You don't have permissions to set this sprint to this task."
 msgstr "You don't have permissions to set this sprint to this task."
 
-#: taiga/projects/tasks/api.py:115
+#: taiga/projects/tasks/api.py:116
 msgid "You don't have permissions to set this user story to this task."
 msgstr "You don't have permissions to set this user story to this task."
 
-#: taiga/projects/tasks/api.py:118
+#: taiga/projects/tasks/api.py:119
 msgid "You don't have permissions to set this status to this task."
 msgstr "You don't have permissions to set this status to this task."
 
@@ -5053,15 +5058,15 @@ msgstr ""
 msgid "You've been Taigatized!"
 msgstr "You've been Taigatized!"
 
-#: taiga/users/validators.py:45
+#: taiga/users/validators.py:48
 msgid "invalid"
 msgstr "invalid"
 
-#: taiga/users/validators.py:56
+#: taiga/users/validators.py:59
 msgid "Invalid username. Try with a different one."
 msgstr "Invalid username. Try with a different one."
 
-#: taiga/users/validators.py:73
+#: taiga/users/validators.py:86
 msgid "Read new terms has to be true'"
 msgstr ""
 
