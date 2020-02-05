@@ -65,7 +65,7 @@ class ApplicationToken(models.Model):
 
     class Meta:
         verbose_name = "application token"
-        verbose_name_plural = "application tolens"
+        verbose_name_plural = "application tokens"
         ordering = ["application", "user",]
         unique_together = ("application", "user",)
 
