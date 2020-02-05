@@ -78,6 +78,6 @@ class CommentAndOrUpdatePerm(PermissionComponent):
         just_a_comment = data_keys == {"comment"}
 
         if (just_a_comment and services.user_has_perm(request.user, self.comment_perm, project)):
-                return True
+            return True
 
         return services.user_has_perm(request.user, self.update_perm, project)
