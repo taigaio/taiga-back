@@ -180,7 +180,8 @@ def tasks_to_csv(project, queryset):
                                        "owner",
                                        "assigned_to",
                                        "status",
-                                       "project")
+                                       "project",
+                                       "user_story")
 
     queryset = attach_total_voters_to_queryset(queryset)
     queryset = attach_watchers_to_queryset(queryset)
