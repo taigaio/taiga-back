@@ -22,7 +22,7 @@ from django.db import transaction
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
-from taiga.permissions import permissions
+from taiga.permissions.choices import ANON_PERMISSIONS
 from taiga.projects.notifications.admin import NotifyPolicyInline
 from taiga.projects.likes.admin import LikeInline
 from taiga.users.admin import RoleInline
@@ -45,11 +45,11 @@ class MembershipAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name in ["user", "invited_by"] and getattr(self, 'obj', None):
             kwargs["queryset"] = db_field.related_model.objects.filter(
-                    memberships__project=self.obj.project)
+                memberships__project=self.obj.project)
 
         elif db_field.name in ["role"] and getattr(self, 'obj', None):
             kwargs["queryset"] = db_field.related_model.objects.filter(
-                                         project=self.obj.project)
+                project=self.obj.project)
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
@@ -66,11 +66,11 @@ class MembershipInline(admin.TabularInline):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if (db_field.name in ["user", "invited_by"]):
             kwargs["queryset"] = db_field.related_model.objects.filter(
-                                         memberships__project=self.parent_obj)
+                memberships__project=self.parent_obj)
 
         elif (db_field.name in ["role"]):
             kwargs["queryset"] = db_field.related_model.objects.filter(
-                                                      project=self.parent_obj)
+                project=self.parent_obj)
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
@@ -154,14 +154,13 @@ class ProjectAdmin(admin.ModelAdmin):
                               "default_issue_status", "default_issue_type"]):
             if getattr(self, 'obj', None):
                 kwargs["queryset"] = db_field.related_model.objects.filter(
-                                                          project=self.obj)
+                    project=self.obj)
             else:
                 kwargs["queryset"] = db_field.related_model.objects.none()
 
-        elif (db_field.name in ["owner"]
-                and getattr(self, 'obj', None)):
+        elif (db_field.name in ["owner"] and getattr(self, 'obj', None)):
             kwargs["queryset"] = db_field.related_model.objects.filter(
-                                         memberships__project=self.obj.project)
+                memberships__project=self.obj.project)
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
@@ -183,7 +182,7 @@ class ProjectAdmin(admin.ModelAdmin):
         for project in queryset.exclude(is_private=False):
             project.is_private = False
 
-            anon_permissions = list(map(lambda perm: perm[0], permissions.ANON_PERMISSIONS))
+            anon_permissions = list(map(lambda perm: perm[0], ANON_PERMISSIONS))
             project.anon_permissions = list(set((project.anon_permissions or []) + anon_permissions))
             project.public_permissions = list(set((project.public_permissions or []) + anon_permissions))
 
@@ -227,7 +226,7 @@ class ProjectAdmin(admin.ModelAdmin):
         disconnect_all_userstories_signals()
         disconnect_memberships_signals()
 
-        r =  admin.actions.delete_selected(self, request, queryset)
+        r = admin.actions.delete_selected(self, request, queryset)
 
         connect_events_signals()
         connect_all_issues_signals()
@@ -288,6 +287,7 @@ class IssueStatusAdmin(admin.ModelAdmin):
 
 class ProjectTemplateAdmin(admin.ModelAdmin):
     pass
+
 
 admin.site.register(models.IssueStatus, IssueStatusAdmin)
 admin.site.register(models.TaskStatus, TaskStatusAdmin)
