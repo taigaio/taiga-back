@@ -2,9 +2,21 @@
 
 ## Unreleased
 
+## 5.0.7 (2020-02-06)
+
+### Feature
+
+- Add reduce notifications configuration option.
+
+- Sanitize full name input.
+
 ### i18n
 
 - Add Latvian translation.
+
+### Misc
+
+- Several minor bugfixes.
 
 ## 5.0.6 (2020-01-15)
 
