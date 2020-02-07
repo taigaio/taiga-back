@@ -21,6 +21,7 @@ import logging
 from dateutil.parser import parse as parse_date
 
 from django.apps import apps
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q, OuterRef, Subquery
 from django.utils.translation import ugettext as _
@@ -454,8 +455,11 @@ class AssignedUsersFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
 
     def filter_user_projects(self, request):
         membership_model = apps.get_model('projects', 'Membership')
-        memberships_project_ids = membership_model.objects.filter(user=request.user).values(
-            'project_id')
+        if isinstance(request.user, AnonymousUser):
+            return None
+        else:
+            memberships_project_ids = membership_model.objects.filter(user=request.user).values(
+                'project_id')
 
         return Subquery(memberships_project_ids)
 
@@ -463,7 +467,8 @@ class AssignedUsersFilter(FilterModelAssignedUsers, BaseRelatedFieldsFilter):
         if self.filter_name in request.QUERY_PARAMS or \
                 self.exclude_param_name in request.QUERY_PARAMS:
             projects_ids_subquery = self.filter_user_projects(request)
-            queryset = queryset.filter(project_id__in=projects_ids_subquery)
+            if projects_ids_subquery:
+                queryset = queryset.filter(project_id__in=projects_ids_subquery)
 
         return super().filter_queryset(request, queryset, view)
 
