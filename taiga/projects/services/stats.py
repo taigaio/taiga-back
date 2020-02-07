@@ -225,7 +225,6 @@ def _get_milestones_stats_for_backlog(project, milestones):
 
 
 def get_stats_for_project(project):
-    print(">>>>>>>>>>>>>>>>> pasa por aqui!!")
     # Let's fetch all the estimations related to a project with all the necesary
     # related data
     RolePoints = apps.get_model('userstories', 'RolePoints')
