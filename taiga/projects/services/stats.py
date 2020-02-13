@@ -282,10 +282,18 @@ def get_stats_for_project(project):
     for role_point in role_points:
         role_id = role_point.role.id
         points_value = role_point.points.value
-        milestone = role_point.user_story.milestone
-        is_team_requirement = role_point.user_story.team_requirement
-        is_client_requirement = role_point.user_story.client_requirement
-        us_milestone = _find_milestone_for_userstory(role_point.user_story)
+        user_story = getattr(role_point, "user_story", None)
+
+        milestone = None
+        is_team_requirement = None
+        is_client_requirement = None
+        us_milestone = None
+
+        if user_story:
+            milestone = user_story.milestone
+            is_team_requirement = user_story.team_requirement
+            is_client_requirement = user_story.client_requirement
+            us_milestone = _find_milestone_for_userstory(user_story)
 
         # None estimations doesn't affect to project stats
         if points_value is None:
@@ -300,7 +308,7 @@ def get_stats_for_project(project):
         project._defined_points_per_role[role_id] = project._defined_points_for_role
 
         # Closed points
-        if role_point.user_story.is_closed:
+        if user_story and user_story.is_closed:
             project._closed_points += points_value
             closed_points_for_role = project._closed_points_per_role.get(role_id, 0)
             closed_points_for_role += points_value
@@ -313,7 +321,7 @@ def get_stats_for_project(project):
             project._closed_points_from_closed_milestones += points_value
 
         # Assigned to milestone points
-        if role_point.user_story.milestone is not None:
+        if user_story and user_story.milestone is not None:
             project._assigned_points += points_value
             assigned_points_for_role = project._assigned_points_per_role.get(role_id, 0)
             assigned_points_for_role += points_value
