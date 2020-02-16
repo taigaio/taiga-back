@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 5.0.8 (2020-02-17)
+
+### i18n
+
+- Update Basque translation and others.
+
+### Misc
+
+- Several minor bugfixes.
+
 ## 5.0.7 (2020-02-06)
 
 ### Feature
