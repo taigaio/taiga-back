@@ -41,6 +41,7 @@ Unidecode = "==0.4.20"
 Pygments = "==2.2.0"
 oauthlib = {extras = ["signedtoken"],version = "*"}
 html5lib = "*"
+zipp = "<2"
 
 [dev-packages]
 coverage = "*"
