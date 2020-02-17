@@ -1,6 +1,6 @@
 {% trans owner_name=project.owner.get_full_name(), rejecter_name=rejecter.get_full_name(), project_name=project.name %}
 Hi {{owner_name}},
-{{ rejecter_name}} has declined your offer and will not become the new project owner for "{{project_name}}".
+{{ rejecter_name}} has declined your offer and will not become the new project owner of "{{project_name}}".
 {% endtrans %}
 
 {% if reason %}
@@ -15,7 +15,7 @@ If you want, you can still try to transfer the project ownership to a different 
 {% trans %}Request transfer to a different person:{% endtrans %}
 {{ resolve_front_url("project-admin", project.slug) }}
 
+{% trans signature=sr("signature") %}
 ---
-{% trans %}
-The Taiga Team
+{{ signature }}
 {% endtrans %}

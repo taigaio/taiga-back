@@ -1,8 +1,12 @@
 {% extends "emails/updates-body-text.jinja" %}
 {% block head %}
 {% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name,ref=snapshot.ref, subject=snapshot.subject, url=resolve_front_url("userstory", project.slug, snapshot.ref) %}
-User story updated
-Hello {{ user }}, {{ changer }} has updated a user story on {{ project }}
-See user story #{{ ref }} {{ subject }} at {{ url }}
+User story updated on {{ project }}
+
+Hello {{ user }}, {{ changer }} has updated a user story:
+
+#{{ ref }} {{ subject }}
+
+See user story at {{ url }}
 {% endtrans %}
 {% endblock %}

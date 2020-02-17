@@ -3,13 +3,13 @@
 {% block body %}
 <table border="0" width="100%" cellpadding="0" cellspacing="0" class="table-body">
     <tr>
-        {% trans %}
+        {% trans signature=sr("signature"), product_name=sr("product_name") %}
         <td>
-            <h2>Thank you for registering in Taiga</h2>
+            <h2>Thank you for registering in {{ product_name }}</h2>
             <h3>We hope you enjoy it</h3>
             <p>We built Taiga because we wanted the project management tool that sits open on our computers all day long, to serve as a continued reminder of why we love to collaborate, code and design.</p>
             <p>We built it to be beautiful, elegant, simple to use and fun - without forsaking flexibility and power.</p>
-            <small>The taiga Team</small>
+            <p><small>{{ signature }}</small></p>
         </td>
         {% endtrans %}
     </tr>

@@ -1,0 +1,29 @@
+<!-- BEGIN FOOTER // -->
+<table border="0" cellpadding="0" cellspacing="0" class="footerContent"
+width="100%" id="templateFooter">
+    <tr>
+        <td valign="top">
+            {% block footer %}
+                {% trans unsubscribe_url=resolve_front_url("settings-mail-notifications"), support_url=sr("support.url"), support_email=sr("support.email") %}
+                <a href="{{ unsubscribe_url }}">Configure email notifications or unsubscribe</a>
+                &nbsp;&bull;&nbsp;
+                <a href="{{ support_url }}">Taiga Support</a>
+                &nbsp;&bull;&nbsp;
+                <a href="mailto:{{ support_email }}" >Contact us</a>
+                {% endtrans %}
+            {% endblock %}
+        </td>
+        {% block social %}
+            <td valign="top" class="social-links">
+                <a href="{{ sr("social.twitter_url") }}" title="{{ _("Follow us on Twitter") }}" style="color: #9dce0a"><img src="{{ static
+                ("emails/logo-twitter.png") }}" /></a>
+                <a href="{{ sr("social.github_url") }}" title="{{ _("Get the code on GitHub") }}" style="color: #9dce0a"><img src="{{ static
+                ("emails/logo-github.png") }}" /></a>
+                <a href="{{ sr("taigaio_url") }}" title="{{ _
+                ("Visit our website") }}"><img src="{{ static
+                ("emails/logo-web.png") }}" /></a>
+            </td>
+        {% endblock %}
+    </tr>
+</table>
+<!-- // END FOOTER -->

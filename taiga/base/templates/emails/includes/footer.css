@@ -1,0 +1,48 @@
+#templateFooter{
+    background-color:#555555;
+}
+
+.footerContent{
+    font-size:14px !important;
+    line-height:115% !important;
+}
+
+.footerContent td{
+    color:#f5f5f5;
+    font-family: 'Open Sans', Arial, Helvetica;
+    font-size:10px;
+    line-height:150%;
+    padding-top:15px;
+    padding-right:17px;
+    padding-bottom:15px;
+    padding-left:20px;
+    vertical-align: middle;
+}
+
+.footerContent a, .footerContent a:link, .footerContent a:visited, /* Yahoo! Mail Override */ .footerContent a .yshortcuts, .footerContent a span /* Yahoo! Mail Override */{
+    /*@editable*/ color:#FFFFFF;
+    /*@editable*/ font-weight:bold;
+    /*@editable*/ text-decoration:underline;
+}
+
+td.social-links {
+    text-align: right;
+}
+
+td.social-links a {
+    display: inline-block;
+    margin-left: .5rem;
+}
+td.social-links a img {
+    height: 20px;
+    width: auto;
+}
+
+@media only screen and (max-width: 480px) {
+    .footerContent{
+        font-size:14px !important;
+        line-height:115% !important;
+    }
+
+    .footerContent a{display:block !important;}
+}

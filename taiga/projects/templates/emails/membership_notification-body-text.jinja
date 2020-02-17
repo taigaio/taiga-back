@@ -1,6 +1,10 @@
-{% trans url=resolve_front_url("project", membership.project.slug), full_name=membership.user.get_full_name(), project=membership.project %}
+{% trans signature=sr("signature"),url=resolve_front_url("project", membership.project.slug), full_name=membership.user.get_full_name(), project=membership.project %}
 You have been added to a project
+
 Hello {{ full_name }},you have been added to the project {{ project }}
 
 See project at {{ url }}
+
+---
+{{ signature }}
 {% endtrans %}

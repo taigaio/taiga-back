@@ -1,10 +1,10 @@
 {% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-    {% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, page=snapshot.slug %}
-    <h1>Wiki page deleted</h1>
-    <p>Hello {{ user }},<br />{{ changer }} has deleted a wiki page on {{ project }}</p>
-    <p>Wiki page {{ page }}</p>
-    <p><small>The Taiga Team</small></p>
+    {% trans signature=sr("signature"), user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, page=snapshot.slug %}
+    <h1>Wiki page deleted on {{ project }}</h1>
+    <p>Hello {{ user }},<br />{{ changer }} has deleted a wiki page:</p>
+    <p>{{ page }}</p>
+    <p><small>{{ signature }}</small></p>
     {% endtrans %}
 {% endblock %}

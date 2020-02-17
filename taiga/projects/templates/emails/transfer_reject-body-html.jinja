@@ -3,7 +3,7 @@
 {% block body %}
     {% trans owner_name=project.owner.get_full_name(), rejecter_name=rejecter.get_full_name(), project_name=project.name %}
         <p>Hi {{ owner_name }},</p>
-        <p>{{ rejecter_name }} has declined your offer and will not become the new project owner for "{{project_name}}".</p>
+        <p>{{ rejecter_name }} has declined your offer and will not become the new project owner of "{{project_name}}".</p>
     {% endtrans %}
 
     {% if reason %}
@@ -21,4 +21,8 @@
        title="{% trans %}Request transfer to a different person{% endtrans %}">
        {% trans %}Request transfer to a different person{% endtrans %}
     </a>
+
+    {% trans signature=sr("signature") %}
+    <p><small>{{ signature }}</small></p>
+    {% endtrans %}
 {% endblock %}

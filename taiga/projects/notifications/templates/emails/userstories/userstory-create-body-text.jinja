@@ -1,8 +1,12 @@
-{% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject, url=resolve_front_url("userstory", project.slug, snapshot.ref) %}
-New user story created
-Hello {{ user }}, {{ changer }} has created a new user story on {{ project }}
-See user story #{{ ref }} {{ subject }} at {{ url }}
+{% trans signature=sr("signature"), user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject, url=resolve_front_url("userstory", project.slug, snapshot.ref) %}
+New user story created on {{ project }}
+
+Hello {{ user }}, {{ changer }} has created a new user story:
+
+#{{ ref }} {{ subject }}
+
+See user story at {{ url }}
 
 ---
-The Taiga Team
+{{ signature }}
 {% endtrans %}

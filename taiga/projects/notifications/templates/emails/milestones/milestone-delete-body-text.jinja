@@ -1,8 +1,10 @@
-{% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, name=snapshot.name %}
-Sprint deleted
-Hello {{ user }}, {{ changer }} has deleted an sprint on {{ project }}
-Sprint {{ name }}
+{% trans signature=sr("signature"), user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, name=snapshot.name %}
+Sprint deleted on {{ project }}
+
+Hello {{ user }}, {{ changer }} has deleted a sprint:
+
+{{ name }}
 
 ---
-The Taiga Team
+{{ signature }}
 {% endtrans %}

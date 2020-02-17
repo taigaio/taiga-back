@@ -1,11 +1,11 @@
 {% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-    {% trans full_name=user.get_full_name(), url=resolve_front_url("change-email", user.email_token) %}
+    {% trans signature=sr("signature"), full_name=user.get_full_name(), url=resolve_front_url("change-email", user.email_token) %}
     <h1>Change your email</h1>
     <p>Hello {{ full_name }},<br />please confirm your email</p>
     <a class="button" href="{{ url }}" title="Confirm email">Confirm email</a>
     <p>You can ignore this message if you did not request.</p>
-    <p><small>The Taiga Team</small></p>
+    <p><small>{{ signature }}</small></p>
     {% endtrans %}
 {% endblock %}

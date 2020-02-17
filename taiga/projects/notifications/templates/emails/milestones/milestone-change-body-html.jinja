@@ -2,9 +2,9 @@
 
 {% block head %}
     {% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, name=snapshot.name, url=resolve_front_url("taskboard", project.slug, snapshot.slug) %}
-    <h1>Sprint updated</h1>
-    <p>Hello {{ user }}, <br> {{ changer }} has updated an sprint on {{ project }}</p>
-    <p>Sprint {{ name }}</p>
-    <a class="button" href="{{ url }}" title="See Sprint: {{ name }} in Taiga">See sprint</a>
+    <h1>Sprint updated on {{ project }}</h1>
+    <p>Hello {{ user }}, <br> {{ changer }} has updated a sprint:</p>
+    <p><strong>{{ name }}</strong></p>
+    <a class="button" href="{{ url }}" title="See Sprint: {{ name }}">See sprint</a>
     {% endtrans %}
 {% endblock %}

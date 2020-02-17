@@ -2,9 +2,9 @@
 
 {% block head %}
     {% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject, url=resolve_front_url("userstory", project.slug, snapshot.ref) %}
-    <h1>User Story updated</h1>
-    <p>Hello {{ user }}, <br> {{ changer }} has updated a user story on {{ project }}</p>
-    <p>User Story #{{ ref }} {{ subject }}</p>
-    <a class="button" href="{{ url }}" title="See User Story #{{ ref }}: {{ subject }} in Taiga">See user story</a>
+    <h1>User Story updated on {{ project }}</h1>
+    <p>Hello {{ user }}, <br> {{ changer }} has updated a user story:</p>
+    <p><strong>#{{ ref }} {{ subject }}</strong></p>
+    <a class="button" href="{{ url }}" title="See User Story #{{ ref }}: {{ subject }}">See user story</a>
     {% endtrans %}
 {% endblock %}

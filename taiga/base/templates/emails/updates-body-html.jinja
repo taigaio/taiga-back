@@ -115,23 +115,23 @@
                 text-align:left;
             }
 
-
-
             /* ========== Header Styles ========== */
 
             .headerContent {
-                text-align: center;
-                color:#8D8D8D !important;
+                text-align: left;
+                color:#f0f0f0f0;
                 font-family: 'Open Sans', Arial, Helvetica;
-                font-size:14px;
-                margin-bottom:16px;
-                text-align:center;
+                font-size:12px;
+                vertical-align: middle;
             }
-
-            #headerImage{
-                height:auto;
-                width:80px;
-                margin: 20px auto;
+            a.brand {
+                display: block;
+                background: rgba(0,0,0,.1);
+                padding: .3rem;
+            }
+            a.brand img {
+                 height: 28px;
+                 width: auto;
             }
 
             /* ========== Body Styles ========== */
@@ -153,14 +153,9 @@
                 font-family: 'Open Sans', Arial, Helvetica;
                 font-size:16px;
                 line-height:150%;
-                padding-right:20px;
-                padding-bottom:20px;
-                padding-left:20px;
-                padding-top:20px;
-                text-align:center;
+                padding: 40px 20px;
+                text-align: center;
             }
-
-            /**
             * @section body link
             */
             .bodyContent a:link, .bodyContent a:visited, /* Yahoo! Mail Override */ .bodyContent a .yshortcuts /* Yahoo! Mail Override */{
@@ -179,7 +174,7 @@
                 width: 50%;
                 text-decoration: none;
                 text-align: center;
-                margin: 0 auto 16px;
+                margin: 16px auto 32px auto;
                 text-transform: uppercase;
                 padding: .8rem 3rem;
             }
@@ -192,6 +187,10 @@
                 display:inline;
                 height:auto;
                 max-width:560px;
+            }
+
+            .update-row {
+                margin-top: 60px;
             }
 
             .update-row h1,
@@ -224,57 +223,8 @@
                 border-bottom: 1px solid #f5f5f5;
             }
 
-            .social-links {
-                font-family: 'Open Sans', Arial, Helvetica;
-                font-size:13px;
-                padding-right:20px;
-                padding-bottom:20px;
-                padding-left:20px;
-                text-align:center;
-            }
-
-            .social-links a:link, .social-links a:visited{
-                color:#699b05;
-                font-weight:normal;
-                text-decoration:underline;
-                text-align: center;
-                margin: 0 5px;
-            }
-
             /* ========== Footer Styles ========== */
-
-            /**
-            * @section footer style
-            */
-            #templateFooter{
-                background-color:#555555;
-            }
-
-            /**
-            * @section footer text
-            */
-            .footerContent{
-                color:#f5f5f5;
-                font-family: 'Open Sans', Arial, Helvetica;
-                font-size:10px;
-                line-height:150%;
-                padding-top:20px;
-                padding-right:20px;
-                padding-bottom:20px;
-                padding-left:20px;
-                text-align:left;
-            }
-
-            /**
-            * @tab Footer
-            * @section footer link
-            * @tip Set the styling for your email's footer links. Choose a color that helps them stand out from your text.
-            */
-            .footerContent a:link, .footerContent a:visited, /* Yahoo! Mail Override */ .footerContent a .yshortcuts, .footerContent a span /* Yahoo! Mail Override */{
-                /*@editable*/ color:#699b05;
-                /*@editable*/ font-weight:normal;
-                /*@editable*/ text-decoration:underline;
-            }
+            {% include "emails/includes/footer.css" %}
 
             /* /\/\/\/\/\/\/\/\/ MOBILE STYLES /\/\/\/\/\/\/\/\/ */
 
@@ -365,17 +315,6 @@
                     width: auto;
                 }
 
-                /* ======== Footer Styles ======== */
-
-                /**
-                * @section footer text
-                */
-                .footerContent{
-                    font-size:14px !important;
-                    line-height:115% !important;
-                }
-
-                .footerContent a{display:block !important;} /* Place footer social and utility links on their own lines, for easier access */
             }
         </style>
     </head>
@@ -389,19 +328,20 @@
                             <tr>
                                 <td align="center" valign="top">
                                     <!-- BEGIN HEADER // -->
-                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateHeader">
-                                        <tr>
-                                            <td valign="top" class="headerContent">
-                                                <img src="{{ static("emails/top-bg-update.png") }}" />
-                                                <a href="{{ resolve_front_url("home") }}"
-                                                   title="Taiga">
-                                                    <img src="{{ static("emails/logo-color.png") }}" id="headerImage" alt="Taiga" />
-                                                </a>
-                                                {% block head %}
-                                                {% endblock %}
-                                            </td>
-                                        </tr>
-                                    </table>
+                                    <tr>
+                                        <td align="center" valign="top">
+                                            <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateHeader"  background="{{ static("emails/top-bg-update.png") }}">
+                                                <tr>
+                                                    <td valign="top" class="headerContent">
+                                                        <a href="{{ resolve_front_url("home") }}" class="brand" title="Taiga">
+                                                            <img src="{{ static("emails/logo-web.png") }}" />
+                                                        </a>
+                                                    </td>
+                                                    <td width="100%"></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
                                     <!-- // END HEADER -->
                                 </td>
                             </tr>
@@ -411,6 +351,8 @@
                                     <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateBody">
                                         <tr>
                                             <td valign="top" class="bodyContent">
+                                                {% block head %}
+                                                {% endblock %}
                                                 <table class="update-row" border="0" cellpadding="0" cellspacing="0" width="100%">
                                                     {% block body %}
                                                         <tr>
@@ -436,48 +378,13 @@
                                                 </table>
                                             </td>
                                         </tr>
-                                        {% block social %}
-                                        <tr>
-                                            <td valign="top" class="social-links">
-                                                <a href="{{ sr("social.twitter_url") }}" title="{{ _("Follow us on Twitter") }}" style="color: #9dce0a">{{ _("Twitter") }}</a>
-                                                <a href="{{ sr("social.github_url") }}" title="{{ _("Get the code on GitHub") }}" style="color: #9dce0a">{{ _("GitHub") }}</a>
-                                                <a href="{{ sr("taigaio_url") }}" title="{{ _("Visit our website") }}" style="color: #9dce0a">{{ _("Taiga.io") }}</a>
-                                            </td>
-                                        </tr>
-                                        {% endblock %}
                                     </table>
                                     <!-- // END BODY -->
                                 </td>
                             </tr>
                             <tr>
                                 <td align="center" valign="top">
-                                    <!-- BEGIN FOOTER // -->
-                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateFooter">
-                                        <tr>
-                                            <td valign="top" class="footerContent">
-                                                {% block footer %}
-                                                    {% trans unsubscribe_url=resolve_front_url("settings-mail-notifications"), support_url=sr("support.url"), support_email=sr("support.email"), mailing_list_url=sr("support.mailing_list") %}
-                                                    <strong>Configure email notifications or unsubscribe:</strong>
-                                                    <a href="{{ unsubscribe_url }}" title="Unsubscribe" style="color: #9dce0a">{{ unsubscribe_url}}</a>
-                                                    <br>
-                                                    <strong>Taiga Support:</strong>
-                                                    <a href="{{ support_url }}" title="Support page" style="color: #9dce0a">{{ support_url}}</a>
-                                                    <br>
-                                                    <strong>Contact us:</strong>
-                                                     <a href="mailto:{{ support_email }}" title="Support email" style="color: #9dce0a">
-                                                        {{ support_email }}
-                                                    </a>
-                                                    <br>
-                                                    <strong>Mailing list:</strong>
-                                                    <a href="{{ mailing_list_url }}" title="Mailing list" style="color: #9dce0a">
-                                                        {{ mailing_list_url }}
-                                                    </a>
-                                                    {% endtrans %}
-                                                {% endblock %}
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <!-- // END FOOTER -->
+                                    {% include "emails/includes/footer.jinja" %}
                                 </td>
                             </tr>
                         </table>

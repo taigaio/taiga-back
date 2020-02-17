@@ -1,10 +1,10 @@
 {% extends "emails/base-body-html.jinja" %}
 
 {% block body %}
-    {% trans user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject %}
-    <h1>Issue deleted</h1>
-    <p>Hello {{ user }},<br />{{ changer }} has deleted an issue on {{ project }}</p>
-    <p>Issue #{{ ref }} {{ subject }}</p>
-    <p><small>The Taiga Team</small></p>
+    {% trans signature=sr("signature"), user=user.get_full_name(), changer=changer.get_full_name(), project=project.name, ref=snapshot.ref, subject=snapshot.subject %}
+    <h1>Issue deleted on {{ project }}</h1>
+    <p>Hello {{ user }},<br />{{ changer }} has deleted an issue:</p>
+    <p><strong>#{{ ref }} {{ subject }}</strong></p>
+    <p><small>{{ signature }}</small></p>
     {% endtrans %}
 {% endblock %}

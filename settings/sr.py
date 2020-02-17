@@ -24,8 +24,9 @@ SR = {
         "github_url": "https://github.com/taigaio",
     },
     "support": {
-        "url": "https://tree.taiga.io/support",
-        "email": "support@taiga.io",
-        "mailing_list": "https://groups.google.com/forum/#!forum/taigaio",
-    }
+        "url": "https://tree.taiga.io/support/",
+        "email": "support@taiga.io"
+    },
+    "signature": "The Taiga Team",
+    "product_name": "Taiga",
 }

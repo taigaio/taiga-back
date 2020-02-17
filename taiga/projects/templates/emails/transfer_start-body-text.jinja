@@ -14,7 +14,7 @@ Please, go to the following link to either accept or reject this proposal.</p>
 
 {{ _("Accept or reject the project ownership transfer:") }} {{ resolve_front_url("project-transfer", project.slug, project.transfer_token) }}
 
+{% trans signature=sr("signature") %}
 ---
-{% trans %}
-The Taiga Team
+{{ signature }}
 {% endtrans %}

@@ -1,5 +1,5 @@
-{% trans %}
-Thank you for registering in Taiga
+{% trans signature=sr("signature"), product_name=sr("product_name") %}
+Thank you for registering in {{ product_name }}
 
 We hope you enjoy it
 
@@ -8,7 +8,7 @@ We built Taiga because we wanted the project management tool that sits open on o
 We built it to be beautiful, elegant, simple to use and fun - without forsaking flexibility and power.
 
 --
-The taiga Team
+{{ signature }}
 {% endtrans %}
 {% trans url=resolve_front_url('cancel-account', cancel_token) %}
 You may remove your account from this service: {{ url }}
