@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 14:22+0100\n"
+"POT-Creation-Date: 2020-02-21 11:26+0100\n"
 "PO-Revision-Date: 2019-09-27 14:22+0200\n"
 "Last-Translator: Miguel Gonzalez <migonzalvar@gmail.com>\n"
 "Language-Team: English (http://www.transifex.com/taiga-agile-llc/taiga-back/"
@@ -21,7 +21,9 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: taiga/auth/api.py:71
-msgid "Public register is disabled."
+#, fuzzy
+#| msgid "Public register is disabled."
+msgid "Public registration is disabled."
 msgstr "Public register is disabled."
 
 #: taiga/auth/api.py:93
@@ -29,7 +31,9 @@ msgid "You must accept our terms of service and privacy policy"
 msgstr ""
 
 #: taiga/auth/api.py:102
-msgid "invalid register type"
+#, fuzzy
+#| msgid "invalid register type"
+msgid "invalid registration type"
 msgstr "invalid register type"
 
 #: taiga/auth/api.py:118
@@ -45,7 +49,9 @@ msgid "Email is already in use."
 msgstr "Email is already in use."
 
 #: taiga/auth/services.py:95
-msgid "Token not matches any valid invitation."
+#, fuzzy
+#| msgid "Token not matches any valid invitation."
+msgid "Token does not match any valid invitation."
 msgstr "Token not matches any valid invitation."
 
 #: taiga/auth/services.py:124
@@ -57,7 +63,9 @@ msgid "This user is already a member of the project."
 msgstr "This user is already a member of the project."
 
 #: taiga/auth/services.py:165
-msgid "Error on creating new user."
+#, fuzzy
+#| msgid "Error on creating new user."
+msgid "Error while creating new user."
 msgstr "Error on creating new user."
 
 #: taiga/auth/tokens.py:49 taiga/auth/tokens.py:56
@@ -359,12 +367,12 @@ msgstr "Precondition error"
 msgid "No room left for more projects."
 msgstr "No room left for more projects."
 
-#: taiga/base/filters.py:105 taiga/base/filters.py:608
+#: taiga/base/filters.py:106 taiga/base/filters.py:613
 msgid "Error in filter params types."
 msgstr "Error in filter params types."
 
-#: taiga/base/filters.py:171 taiga/base/filters.py:279
-#: taiga/base/filters.py:509 taiga/projects/filters.py:65
+#: taiga/base/filters.py:172 taiga/base/filters.py:280
+#: taiga/base/filters.py:514 taiga/projects/filters.py:65
 msgid "'project' must be an integer value."
 msgstr "'project' must be an integer value."
 
@@ -573,7 +581,9 @@ msgid "error importing lists of project attributes"
 msgstr "error importing lists of project attributes"
 
 #: taiga/export_import/services/store.py:801
-msgid "error importing default project attributes values"
+#, fuzzy
+#| msgid "error importing default project attributes values"
+msgid "error importing default project attribute values"
 msgstr "error importing default project attributes values"
 
 #: taiga/export_import/services/store.py:812
@@ -1016,7 +1026,9 @@ msgstr "Invalid content. It must be {\"key\": \"value\",...}"
 
 #: taiga/export_import/validators/validators.py:183
 #: taiga/projects/custom_attributes/validators.py:124
-msgid "It contain invalid custom fields."
+#, fuzzy
+#| msgid "It contain invalid custom fields."
+msgid "It contains invalid custom fields."
 msgstr "It contain invalid custom fields."
 
 #: taiga/export_import/validators/validators.py:263
@@ -1192,7 +1204,9 @@ msgstr ""
 "[Taiga] Feedback from %(full_name)s <%(email)s>\n"
 
 #: taiga/hooks/api.py:54
-msgid "The payload is not a valid json"
+#, fuzzy
+#| msgid "The payload is not a valid json"
+msgid "The payload is not valid json"
 msgstr "The payload is not a valid json"
 
 #: taiga/hooks/api.py:63 taiga/projects/epics/api.py:154
@@ -1849,7 +1863,9 @@ msgid "Admin roles"
 msgstr "Admin roles"
 
 #: taiga/projects/admin.py:100
-msgid "Privacity"
+#, fuzzy
+#| msgid "Privacity"
+msgid "Privacy"
 msgstr "Privacity"
 
 #: taiga/projects/admin.py:111
@@ -1877,25 +1893,25 @@ msgstr "Fans"
 msgid "owner"
 msgstr "owner"
 
-#: taiga/projects/admin.py:193
+#: taiga/projects/admin.py:192
 #, python-brace-format
 msgid "{count} successfully made public."
 msgstr "{count} successfully made public."
 
-#: taiga/projects/admin.py:194
+#: taiga/projects/admin.py:193
 msgid "Make public"
 msgstr "Make public"
 
-#: taiga/projects/admin.py:208
+#: taiga/projects/admin.py:207
 #, python-brace-format
 msgid "{count} successfully made private."
 msgstr "{count} successfully made private."
 
-#: taiga/projects/admin.py:209
+#: taiga/projects/admin.py:208
 msgid "Make private"
 msgstr "Make private"
 
-#: taiga/projects/admin.py:239
+#: taiga/projects/admin.py:238
 #, python-format
 msgid "Delete selected %(verbose_name_plural)s"
 msgstr "Delete selected %(verbose_name_plural)s"
@@ -1909,11 +1925,15 @@ msgid "Invalid image format"
 msgstr "Invalid image format"
 
 #: taiga/projects/api.py:246
-msgid "Not valid template name"
+#, fuzzy
+#| msgid "Not valid template name"
+msgid "Invalid template name"
 msgstr "Not valid template name"
 
 #: taiga/projects/api.py:249
-msgid "Not valid template description"
+#, fuzzy
+#| msgid "Not valid template description"
+msgid "Invalid template description"
 msgstr "Not valid template description"
 
 #: taiga/projects/api.py:412 taiga/projects/api.py:1029
@@ -1925,37 +1945,45 @@ msgid "The user doesn't exist"
 msgstr "The user doesn't exist"
 
 #: taiga/projects/api.py:422
-msgid "The user must be already a project member"
+#, fuzzy
+#| msgid "The user must be already a project member"
+msgid "The user must already be a project member"
 msgstr "The user must be already a project member"
 
 #: taiga/projects/api.py:662
-msgid "You can't delete user story due date by default"
-msgstr ""
+#, fuzzy
+#| msgid "You don't have permissions to set this status to this user story."
+msgid "You can't delete the default due date status of a user story"
+msgstr "You don't have permissions to set this status to this user story."
 
 #: taiga/projects/api.py:678
-msgid "Project already have due dates"
+msgid "Project does already have due dates"
 msgstr ""
 
 #: taiga/projects/api.py:738
-msgid "You can't delete task due date by default"
+msgid "You can't delete the default due date status of a task"
 msgstr ""
 
 #: taiga/projects/api.py:754
-msgid "Project already have task due dates"
+msgid "Project does already have task due dates"
 msgstr ""
 
 #: taiga/projects/api.py:878
-msgid "You can't delete issue due date by default"
+msgid "You can't delete the default due date status of an issue"
 msgstr ""
 
 #: taiga/projects/api.py:894
-msgid "Project already have issue due dates"
+msgid "Project does already have issue due dates"
 msgstr ""
 
 #: taiga/projects/api.py:1047
+#, fuzzy
+#| msgid ""
+#| "This user can't be removed from the following projects, because would "
+#| "leave them without any active admin: {}."
 msgid ""
-"This user can't be removed from the following projects, because would leave "
-"them without any active admin: {}."
+"This user can't be removed from the following projects, because that would "
+"leave them without any active admin: {}."
 msgstr ""
 "This user can't be removed from the following projects, because would leave "
 "them without any active admin: {}."
@@ -1977,11 +2005,15 @@ msgid "Partial updates are not supported"
 msgstr "Partial updates are not supported"
 
 #: taiga/projects/attachments/api.py:69
-msgid "Object id issue isn't exists"
+#, fuzzy
+#| msgid "Object id issue isn't exists"
+msgid "Object id issue doesn't exist"
 msgstr "Object id issue isn't exists"
 
 #: taiga/projects/attachments/api.py:72
-msgid "Project ID not matches between object and project"
+#, fuzzy
+#| msgid "Project ID not matches between object and project"
+msgid "Project ID does not match between object and project"
 msgstr "Project ID not matches between object and project"
 
 #: taiga/projects/attachments/models.py:41 taiga/projects/contact/models.py:29
@@ -5254,7 +5286,9 @@ msgid "Duplicated email"
 msgstr "Duplicated email"
 
 #: taiga/users/api.py:134
-msgid "Not valid email"
+#, fuzzy
+#| msgid "Not valid email"
+msgid "Invalid email"
 msgstr "Not valid email"
 
 #: taiga/users/api.py:172
