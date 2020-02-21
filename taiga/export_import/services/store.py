@@ -798,7 +798,7 @@ def _populate_project_object(project, data):
 
     # Create default values for project attributes
     store_default_project_attributes_values(project, data)
-    check_if_there_is_some_error(_("error importing default project attributes values"), project)
+    check_if_there_is_some_error(_("error importing default project attribute values"), project)
 
     # Create custom attributes
     store_custom_attributes(project, data, "epiccustomattributes",

@@ -66,10 +66,10 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
             obj.name = path.basename(obj.attached_file.name)
 
         if obj.content_object is None:
-            raise exc.WrongArguments(_("Object id issue isn't exists"))
+            raise exc.WrongArguments(_("Object id issue doesn't exist"))
 
         if obj.project_id != obj.content_object.project_id:
-            raise exc.WrongArguments(_("Project ID not matches between object and project"))
+            raise exc.WrongArguments(_("Project ID does not match between object and project"))
 
         super().pre_save(obj)
 

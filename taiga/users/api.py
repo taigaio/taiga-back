@@ -131,7 +131,7 @@ class UsersViewSet(ModelCrudViewSet):
             if duplicated_email:
                 raise exc.WrongArguments(_("Duplicated email"))
             elif not valid_new_email:
-                raise exc.WrongArguments(_("Not valid email"))
+                raise exc.WrongArguments(_("Invalid email"))
 
             # We need to generate a token for the email
             request.user.email_token = str(uuid.uuid4())

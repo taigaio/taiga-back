@@ -92,7 +92,7 @@ def get_membership_by_token(token:str):
     membership_model = apps.get_model("projects", "Membership")
     qs = membership_model.objects.filter(token=token)
     if len(qs) == 0:
-        raise exc.NotFound(_("Token not matches any valid invitation."))
+        raise exc.NotFound(_("Token does not match any valid invitation."))
     return qs[0]
 
 
@@ -162,7 +162,7 @@ def private_register_for_new_user(token:str, username:str, email:str,
     try:
         user.save()
     except IntegrityError:
-        raise exc.WrongArguments(_("Error on creating new user."))
+        raise exc.WrongArguments(_("Error while creating new user."))
 
     membership = get_membership_by_token(token)
     membership.user = user

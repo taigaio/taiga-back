@@ -68,7 +68,7 @@ class AuthViewSet(viewsets.ViewSet):
 
     def _public_register(self, request):
         if not settings.PUBLIC_REGISTER_ENABLED:
-            raise exc.BadRequest(_("Public register is disabled."))
+            raise exc.BadRequest(_("Public registration is disabled."))
 
         try:
             data = parse_public_register_data(request.DATA)
@@ -99,7 +99,7 @@ class AuthViewSet(viewsets.ViewSet):
             return self._public_register(request)
         elif type == "private":
             return self._private_register(request)
-        raise exc.BadRequest(_("invalid register type"))
+        raise exc.BadRequest(_("invalid registration type"))
 
     # Login view: /api/v1/auth
     def create(self, request, **kwargs):

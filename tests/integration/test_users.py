@@ -148,7 +148,7 @@ def test_update_user_with_invalid_email(client):
     response = client.patch(url, json.dumps(data), content_type="application/json")
 
     assert response.status_code == 400
-    assert response.data['_error_message'] == 'Not valid email'
+    assert response.data['_error_message'] == 'Invalid email'
 
     user.refresh_from_db()
     assert user.email == "my@email.com"
@@ -164,7 +164,7 @@ def test_update_user_with_unallowed_domain_email(client, settings):
     response = client.patch(url, json.dumps(data), content_type="application/json")
 
     assert response.status_code == 400
-    assert response.data['_error_message'] == 'Not valid email'
+    assert response.data['_error_message'] == 'Invalid email'
 
     user.refresh_from_db()
     assert user.email == "my@email.com"

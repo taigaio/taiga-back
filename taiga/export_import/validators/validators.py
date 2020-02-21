@@ -180,7 +180,7 @@ class BaseCustomAttributesValuesExportValidator(validators.ModelValidator):
         qs = self._custom_attribute_model.objects.filter(project=project_id,
                                                          id__in=values_ids)
         if qs.count() != len(values_ids):
-            raise ValidationError(_("It contain invalid custom fields."))
+            raise ValidationError(_("It contains invalid custom fields."))
 
         return attrs
 

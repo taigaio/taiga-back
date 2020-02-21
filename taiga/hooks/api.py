@@ -51,7 +51,7 @@ class BaseWebhookApiViewSet(GenericViewSet):
         try:
             payload = json.loads(request.body.decode("utf-8"))
         except ValueError:
-            raise exc.BadRequest(_("The payload is not a valid json"))
+            raise exc.BadRequest(_("The payload is not valid json"))
         return payload
 
     def _get_event_name(self, request):
