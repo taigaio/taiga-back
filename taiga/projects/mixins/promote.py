@@ -39,5 +39,6 @@ class PromoteToUserStoryMixin:
 
         obj = self.get_object()
         ret = promote_to_us(obj)
+        self.persist_history_snapshot(obj=obj)
 
         return response.Ok(ret)

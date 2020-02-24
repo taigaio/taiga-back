@@ -416,6 +416,7 @@ class TaskSerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.L
     status = TaskStatusSerializer()
     user_story = UserStorySerializer()
     milestone = MilestoneSerializer()
+    promoted_to = MethodField()
 
     def get_permalink(self, obj):
         return resolve_front_url("task", obj.project.slug, obj.ref)
@@ -425,6 +426,9 @@ class TaskSerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.L
 
     def get_watchers(self, obj):
         return list(obj.get_watchers().values_list("id", flat=True))
+
+    def get_promoted_to(self, obj):
+        return list(obj.generated_user_stories.values_list("id", flat=True))
 
 
 ########################################################################
@@ -453,6 +457,7 @@ class IssueSerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.
     type = IssueTypeSerializer()
     priority = PrioritySerializer()
     severity = SeveritySerializer()
+    promoted_to = MethodField()
 
     def get_permalink(self, obj):
         return resolve_front_url("issue", obj.project.slug, obj.ref)
@@ -462,6 +467,9 @@ class IssueSerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.
 
     def get_watchers(self, obj):
         return list(obj.get_watchers().values_list("id", flat=True))
+
+    def get_promoted_to(self, obj):
+        return list(obj.generated_user_stories.values_list("id", flat=True))
 
 
 ########################################################################

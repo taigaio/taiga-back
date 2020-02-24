@@ -379,6 +379,8 @@ def userstory_freezer(us) -> dict:
 
 
 def issue_freezer(issue) -> dict:
+    promoted_to = list(issue.generated_user_stories.values_list("id", flat=True))
+
     snapshot = {
         "ref": issue.ref,
         "owner": issue.owner_id,
@@ -397,13 +399,16 @@ def issue_freezer(issue) -> dict:
         "blocked_note": issue.blocked_note,
         "blocked_note_html": mdrender(issue.project, issue.blocked_note),
         "custom_attributes": extract_issue_custom_attributes(issue),
-        "due_date": str(issue.due_date) if issue.due_date else None
+        "due_date": str(issue.due_date) if issue.due_date else None,
+        "promoted_to": promoted_to,
     }
 
     return snapshot
 
 
 def task_freezer(task) -> dict:
+    promoted_to = list(task.generated_user_stories.values_list("id", flat=True))
+
     snapshot = {
         "ref": task.ref,
         "owner": task.owner_id,
@@ -423,7 +428,8 @@ def task_freezer(task) -> dict:
         "blocked_note": task.blocked_note,
         "blocked_note_html": mdrender(task.project, task.blocked_note),
         "custom_attributes": extract_task_custom_attributes(task),
-        "due_date": str(task.due_date) if task.due_date else None
+        "due_date": str(task.due_date) if task.due_date else None,
+        "promoted_to": promoted_to,
     }
 
     return snapshot
