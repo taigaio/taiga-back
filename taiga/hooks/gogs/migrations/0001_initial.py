@@ -29,6 +29,7 @@ def create_gogs_system_user(apps, schema_editor):
         f = open("{}/logo.png".format(CUR_DIR), "rb")
         user.photo.save("logo.png", File(f))
         user.save()
+        f.close()
 
 
 class Migration(migrations.Migration):

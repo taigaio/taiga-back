@@ -17,6 +17,7 @@ def update_gitlab_system_user_photo_to_v2(apps, schema_editor):
         f = open("taiga/hooks/gitlab/migrations/logo-v2.png", "rb")
         user.photo.save("logo.png", File(f))
         user.save()
+        f.close()
     except User.DoesNotExist:
         pass
 
@@ -33,6 +34,7 @@ def update_gitlab_system_user_photo_to_v1(apps, schema_editor):
         f = open("taiga/hooks/gitlab/migrations/logo.png", "rb")
         user.photo.save("logo.png", File(f))
         user.save()
+        f.close()
     except User.DoesNotExist:
         pass
 

@@ -24,6 +24,7 @@ def create_github_system_user(apps, schema_editor):
     f = open("taiga/hooks/gitlab/migrations/logo.png", "rb")
     user.photo.save("logo.png", File(f))
     user.save()
+    f.close()
 
 
 class Migration(migrations.Migration):
