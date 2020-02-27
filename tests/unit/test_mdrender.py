@@ -32,6 +32,11 @@ dummy_project.id = 1
 dummy_project.slug = "test"
 
 
+dummy_object = MagicMock()
+del dummy_object.slug
+dummy_object.project = dummy_project
+
+
 def test_proccessor_valid_emoji():
     result = emojify.EmojifyPreprocessor().run(["**:smile:**"])
     assert result == ["**![smile](http://localhost:8000/static/img/emojis/smile.png)**"]
@@ -174,6 +179,16 @@ def test_render_wikilink_slug_to_wikipages():
 def test_render_wikilink_relative_to_absolute():
     expected_result = "<p><a href=\"http://localhost:9001/project/test/\">test project</a></p>"
     assert render(dummy_project, "[test project](/project/test/)") == expected_result
+
+
+def test_render_wikilink_obj_without_slug_absolute():
+    expected_result = "<p><a href=\"http://localhost:9001/project/test/\">test project</a></p>"
+    assert render(dummy_object, "[test project](/project/test/)") == expected_result
+
+
+def test_render_wikilink_obj_without_slug_relative():
+    expected_result = "<p><a class=\"reference wiki\" href=\"http://localhost:9001/project/test/wiki/wiki_page\">test project</a></p>"
+    assert render(dummy_object, "[test project](wiki_page)") == expected_result
 
 
 def test_render_reference_links():
