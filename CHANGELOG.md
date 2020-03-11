@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## 5.0.9 (2020-03-11)
+
+### Feature
+
+- Implemented new simplified email messages.
+
+### Misc
+
+- Fixed several minor bugs.
+
+- Updated requirements.
+
+### i18n
+
+- Updated lots of strings and updated their translations.
+
 ## 5.0.8 (2020-02-17)
 
 ### i18n
