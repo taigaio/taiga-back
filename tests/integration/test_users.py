@@ -976,11 +976,11 @@ def test_get_watched_list_permissions():
     assert len(get_watched_list(fav_user, viewer_unpriviliged_user)) == 0
 
     #If the project is private but the viewer user has permissions the votes should
-    # be accesible
+    # be accessible
     assert len(get_watched_list(fav_user, viewer_priviliged_user)) == 5
 
     #If the project is private but has the required anon permissions the votes should
-    # be accesible by any user too
+    # be accessible by any user too
     project.anon_permissions = ["view_project", "view_epic", "view_us", "view_tasks", "view_issues"]
     project.save()
     assert len(get_watched_list(fav_user, viewer_unpriviliged_user)) == 5
@@ -1002,11 +1002,11 @@ def test_get_liked_list_permissions():
     assert len(get_liked_list(fan_user, viewer_unpriviliged_user)) == 0
 
     #If the project is private but the viewer user has permissions the votes should
-    # be accesible
+    # be accessible
     assert len(get_liked_list(fan_user, viewer_priviliged_user)) == 1
 
     #If the project is private but has the required anon permissions the votes should
-    # be accesible by any user too
+    # be accessible by any user too
     project.anon_permissions = ["view_project", "view_us", "view_tasks", "view_issues"]
     project.save()
     assert len(get_liked_list(fan_user, viewer_unpriviliged_user)) == 1
@@ -1046,11 +1046,11 @@ def test_get_voted_list_permissions():
     assert len(get_voted_list(fav_user, viewer_unpriviliged_user)) == 0
 
     #If the project is private but the viewer user has permissions the votes should
-    # be accesible
+    # be accessible
     assert len(get_voted_list(fav_user, viewer_priviliged_user)) == 4
 
     #If the project is private but has the required anon permissions the votes should
-    # be accesible by any user too
+    # be accessible by any user too
     project.anon_permissions = ["view_project", "view_epic", "view_us", "view_tasks", "view_issues"]
     project.save()
     assert len(get_voted_list(fav_user, viewer_unpriviliged_user)) == 4
