@@ -1143,6 +1143,55 @@ def test_services_store_project_from_dict_with_issue_priorities_names_as_None(cl
     assert project.issues.first().priority.name == "None"
 
 
+def test_services_store_project_from_dict_project_values_due_dates(client):
+    user = f.UserFactory.create()
+    data = {
+        "name": "Imported project",
+        "description": "Imported project",
+        "us_duedates": [
+            {"name": "US Default", "order": 1, "by_default": True, "color": "#9dce0a", "days_to_due": None},
+            {"name": "US Due soon", "order": 2, "by_default": False, "color": "#ff9900", "days_to_due": 6},
+            {"name": "US Past due", "order": 3, "by_default": False, "color": "#ff8a84", "days_to_due": -3}
+        ],
+        "task_duedates": [
+            {"name": "Task Default", "order": 1, "by_default": True, "color": "#9dce0a", "days_to_due": None},
+            {"name": "Task Due soon", "order": 2, "by_default": False, "color": "#ff9900", "days_to_due": 5},
+            {"name": "Task Past due", "order": 3, "by_default": False, "color": "#ff8a84", "days_to_due": -2}
+        ],
+        "issue_duedates": [
+            {"name": "Issue Default", "order": 1, "by_default": True, "color": "#9dce0a", "days_to_due": None},
+            {"name": "Issue Due soon", "order": 2, "by_default": False, "color": "#ff9900", "days_to_due": 4},
+            {"name": "Issue Past due", "order": 3, "by_default": False, "color": "#ff8a84", "days_to_due": -1}
+        ],
+    }
+
+    project = services.store_project_from_dict(data, owner=user)
+
+    us_duedates = project.us_duedates.all()
+    assert us_duedates[0].name == "US Default"
+    assert us_duedates[0].days_to_due is None
+    assert us_duedates[1].name == "US Due soon"
+    assert us_duedates[1].days_to_due == 6
+    assert us_duedates[2].name == "US Past due"
+    assert us_duedates[2].days_to_due == -3
+
+    task_duedates = project.task_duedates.all()
+    assert task_duedates[0].name == "Task Default"
+    assert task_duedates[0].days_to_due is None
+    assert task_duedates[1].name == "Task Due soon"
+    assert task_duedates[1].days_to_due == 5
+    assert task_duedates[2].name == "Task Past due"
+    assert task_duedates[2].days_to_due == -2
+
+    issue_duedates = project.issue_duedates.all()
+    assert issue_duedates[0].name == "Issue Default"
+    assert issue_duedates[0].days_to_due is None
+    assert issue_duedates[1].name == "Issue Due soon"
+    assert issue_duedates[1].days_to_due == 4
+    assert issue_duedates[2].name == "Issue Past due"
+    assert issue_duedates[2].days_to_due == -1
+
+
 ##################################################################
 ## tes api/v1/importer/load-dummp
 ##################################################################
