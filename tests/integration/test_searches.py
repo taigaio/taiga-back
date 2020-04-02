@@ -120,46 +120,29 @@ def test_search_text_query_in_my_project(client, searches_initial_data):
     assert response.status_code == 200
     assert response.data["count"] == 12
     assert len(response.data["epics"]) == 3
-    assert response.data["epics"][0]["id"] == searches_initial_data.epic11.id
-    assert response.data["epics"][1]["id"] == searches_initial_data.epic12.id
-    assert response.data["epics"][2]["id"] == searches_initial_data.epic14.id
+    assert set([obj["id"] for obj in response.data["epics"]]) == set([searches_initial_data.epic11.id, searches_initial_data.epic12.id, searches_initial_data.epic14.id])
     assert len(response.data["userstories"]) == 3
-    assert response.data["userstories"][0]["id"] == searches_initial_data.us11.id
-    assert response.data["userstories"][1]["id"] == searches_initial_data.us13.id
-    assert response.data["userstories"][2]["id"] == searches_initial_data.us12.id
+    assert set([obj["id"] for obj in response.data["userstories"]]) == set([searches_initial_data.us11.id, searches_initial_data.us13.id, searches_initial_data.us12.id])
     assert len(response.data["tasks"]) == 3
-    assert response.data["tasks"][0]["id"] == searches_initial_data.task11.id
-    assert response.data["tasks"][1]["id"] == searches_initial_data.task12.id
-    assert response.data["tasks"][2]["id"] == searches_initial_data.task14.id
+    assert set([obj["id"] for obj in response.data["tasks"]]) == set([searches_initial_data.task11.id, searches_initial_data.task12.id, searches_initial_data.task14.id])
     assert len(response.data["issues"]) == 3
-    assert response.data["issues"][0]["id"] == searches_initial_data.issue14.id
-    assert response.data["issues"][1]["id"] == searches_initial_data.issue12.id
-    assert response.data["issues"][2]["id"] == searches_initial_data.issue11.id
+    assert set([obj["id"] for obj in response.data["issues"]]) == set([searches_initial_data.issue14.id, searches_initial_data.issue12.id, searches_initial_data.issue11.id])
     assert len(response.data["wikipages"]) == 0
 
     response = client.get(reverse("search-list"), {"project": data.project1.id, "text": "back"})
     assert response.status_code == 200
     assert response.data["count"] == 14
     assert len(response.data["epics"]) == 3
-    assert response.data["epics"][0]["id"] == searches_initial_data.epic11.id
-    assert response.data["epics"][1]["id"] == searches_initial_data.epic12.id
-    assert response.data["epics"][2]["id"] == searches_initial_data.epic14.id
+    assert set([obj["id"] for obj in response.data["epics"]]) == set([searches_initial_data.epic11.id, searches_initial_data.epic12.id, searches_initial_data.epic14.id])
     assert len(response.data["userstories"]) == 3
-    assert response.data["userstories"][0]["id"] == searches_initial_data.us11.id
-    assert response.data["userstories"][1]["id"] == searches_initial_data.us13.id
-    assert response.data["userstories"][2]["id"] == searches_initial_data.us12.id
+    assert set([obj["id"] for obj in response.data["userstories"]]) == set([searches_initial_data.us11.id, searches_initial_data.us13.id, searches_initial_data.us12.id])
     assert len(response.data["tasks"]) == 3
-    assert response.data["tasks"][0]["id"] == searches_initial_data.task11.id
-    assert response.data["tasks"][1]["id"] == searches_initial_data.task12.id
-    assert response.data["tasks"][2]["id"] == searches_initial_data.task14.id
+    assert set([obj["id"] for obj in response.data["tasks"]]) == set([searches_initial_data.task11.id, searches_initial_data.task12.id, searches_initial_data.task14.id])
     assert len(response.data["issues"]) == 3
-    assert response.data["issues"][0]["id"] == searches_initial_data.issue14.id
-    assert response.data["issues"][1]["id"] == searches_initial_data.issue12.id
-    assert response.data["issues"][2]["id"] == searches_initial_data.issue11.id
+    assert set([obj["id"] for obj in response.data["issues"]]) == set([searches_initial_data.issue14.id, searches_initial_data.issue12.id, searches_initial_data.issue11.id])
     # Back is a backend substring
     assert len(response.data["wikipages"]) == 2
-    assert response.data["wikipages"][0]["id"] == searches_initial_data.wikipage14.id
-    assert response.data["wikipages"][1]["id"] == searches_initial_data.wikipage13.id
+    assert set([obj["id"] for obj in response.data["wikipages"]]) == set([searches_initial_data.wikipage14.id, searches_initial_data.wikipage13.id])
 
 
 def test_search_text_query_with_an_invalid_project_id(client, searches_initial_data):
