@@ -408,29 +408,28 @@ class AssignedToSignalMixin:
 
 
 class AssignedUsersSignalMixin:
-    _old_assigned_users = None
-
     def update(self, request, *args, **kwargs):
+        if not request.DATA.get('assigned_users'):
+            return super().update(request, *args, **kwargs)
+
         if not self.object:
             self.object = self.get_object_or_none()
         obj = self.object
 
-        if hasattr(obj, "assigned_users") and obj.id:
-            self._old_assigned_users = [
-                user for user in obj.assigned_users.all()
-            ].copy()
+        old_assigned_users = [user for user in obj.assigned_users.all()].copy()
+        old_assigned_to = obj.assigned_to if obj.assigned_to else None
 
         result = super().update(request, *args, **kwargs)
 
-        if result and result.data.get('assigned_users'):
-            new_assigned_users = [
-                user_id for user_id in result.data.get('assigned_users')
-                if user_id not in self._old_assigned_users
-                and user_id != self.request.user
-            ]
+        new_assigned_users = [
+            user for user in result.data.get('assigned_users')
+            if user not in old_assigned_users
+            and user != old_assigned_to
+            and user != self.request.user
+        ]
+        if len(new_assigned_users):
             signal_assigned_users.send(sender=self.__class__,
                                        user=self.request.user,
                                        obj=obj,
                                        new_assigned_users=new_assigned_users)
-
         return result
