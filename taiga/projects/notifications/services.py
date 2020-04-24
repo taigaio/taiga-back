@@ -107,14 +107,13 @@ def analize_object_for_watchers(obj: object, comment: str, user: object):
     if not hasattr(obj, "add_watcher"):
         return
 
-    mentions = get_object_mentions(obj, comment)
-    if mentions:
-        for user in mentions:
-            obj.add_watcher(user)
-
     # Adding the person who edited the object to the watchers
     if comment and not user.is_system:
         obj.add_watcher(user)
+
+    mentions = get_object_mentions(obj, comment)
+    for mentioned in mentions:
+        obj.add_watcher(mentioned)
 
 
 def get_object_mentions(obj: object, comment: str):

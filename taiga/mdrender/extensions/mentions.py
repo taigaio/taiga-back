@@ -30,19 +30,33 @@ from markdown.util import etree, AtomicString
 
 
 class MentionsExtension(Extension):
+    project = None
+
+    def __init__(self, *args, **kwargs):
+        self.project = kwargs.pop("project", None)
+        super().__init__(*args, **kwargs)
+
     def extendMarkdown(self, md):
         MENTION_RE = r"(@)([\w.-]+)"
-        mentionsPattern = MentionsPattern(MENTION_RE)
+        mentionsPattern = MentionsPattern(MENTION_RE, project=self.project)
         mentionsPattern.md = md
         md.inlinePatterns.add("mentions", mentionsPattern, "_end")
 
 
 class MentionsPattern(Pattern):
+    project = None
+
+    def __init__(self, pattern, md=None, project=None):
+        self.project = project
+        super().__init__(pattern, md)
+
     def handleMatch(self, m):
         username = m.group(3)
-
+        kwargs = {"username": username}
+        if self.project is not None:
+            kwargs["memberships__project_id"]=self.project.id
         try:
-            user = get_user_model().objects.get(username=username)
+            user = get_user_model().objects.get(**kwargs)
         except get_user_model().DoesNotExist:
             return "@{}".format(username)
 

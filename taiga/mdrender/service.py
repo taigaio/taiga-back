@@ -73,7 +73,7 @@ def _make_extensions_list(project=None):
             StrikethroughExtension(),
             WikiLinkExtension(project),
             EmojifyExtension(),
-            MentionsExtension(),
+            MentionsExtension(project=project),
             TaigaReferencesExtension(project),
             TargetBlankLinkExtension(),
             RefreshAttachmentExtension(project=project),
