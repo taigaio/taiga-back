@@ -114,10 +114,9 @@ class WatchedResourceMixin:
 
             mention_fields = ['description', 'content']
             for field_name in mention_fields:
-                old_mentions = self._get_old_mentions_in_field(obj, field_name)
-                if not len(old_mentions):
+                if not hasattr(obj, field_name) or not hasattr(obj, "get_project"):
                     continue
-                self._old_mentions = old_mentions
+                self._old_mentions += services.get_mentions(obj.get_project(), getattr(obj, field_name))
 
         return super().update(request, *args, **kwargs)
 
@@ -189,30 +188,22 @@ class WatchedResourceMixin:
 
     def _get_submitted_mentions(self, obj):
         mention_fields = ['description', 'content']
+        new_mentions = []
         for field_name in mention_fields:
-            new_mentions = self._get_new_mentions_in_field(obj, field_name)
-            if len(new_mentions) > 0:
-                return new_mentions
+            if not hasattr(obj, field_name) or not hasattr(obj, "get_project"):
+                continue
+            value = self.request.DATA.get(field_name)
+            if not value:
+                continue
+            new_mentions += services.get_mentions(obj.get_project(), value)
 
-        return []
+        return new_mentions
 
     def _get_mentions_in_comment(self, obj):
         comment = self.request.DATA.get('comment')
-        if comment:
-            return services.get_mentions(obj, comment)
-        return []
-
-    def _get_old_mentions_in_field(self, obj, field_name):
-        if not hasattr(obj, field_name):
+        if not comment or not hasattr(obj, "get_project"):
             return []
-
-        return services.get_mentions(obj, getattr(obj, field_name))
-
-    def _get_new_mentions_in_field(self, obj, field_name):
-        value = self.request.DATA.get(field_name)
-        if not value:
-            return []
-        return services.get_mentions(obj, value)
+        return services.get_mentions(obj.get_project(), comment)
 
 
 class WatchedModelMixin(object):

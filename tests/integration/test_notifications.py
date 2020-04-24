@@ -94,17 +94,21 @@ def test_notify_policy_existence():
 def test_analize_object_for_watchers():
     user1 = f.UserFactory.create()
     user2 = f.UserFactory.create()
+    project = f.ProjectFactory.create()
 
-    issue = MagicMock()
-    issue.description = "Foo @{0} @{1} ".format(user1.username,
-                                                user2.username)
-    issue.content = ""
+    f.MembershipFactory(user=user1, project=project)
+
+    issue = f.IssueFactory(
+        project=project,
+        description="Foo @{0} @{1} ".format(user1.username, user2.username),
+    )
+    issue.add_watcher = MagicMock()
 
     history = MagicMock()
     history.comment = ""
 
     services.analize_object_for_watchers(issue, history.comment, history.owner)
-    assert issue.add_watcher.call_count == 2
+    assert issue.add_watcher.call_count == 1
 
 
 def test_analize_object_for_watchers_adding_owner_non_empty_comment():

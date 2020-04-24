@@ -55,7 +55,10 @@ def test_mentions_valid_username():
 
         result = render(dummy_project, "text @hermione text")
 
-        get_user_model_mock.return_value.objects.get.assert_called_with(username="hermione")
+        get_user_model_mock.return_value.objects.get.assert_called_with(
+            memberships__project_id=1,
+            username="hermione",
+        )
         assert result == ('<p>text <a class="mention" href="http://localhost:9001/profile/hermione" '
                           'title="Hermione Granger">@hermione</a> text</p>')
 
@@ -68,7 +71,10 @@ def test_mentions_valid_username_with_points():
 
         result = render(dummy_project, "text @luna.lovegood text")
 
-        get_user_model_mock.return_value.objects.get.assert_called_with(username="luna.lovegood")
+        get_user_model_mock.return_value.objects.get.assert_called_with(
+            memberships__project_id=1,
+            username="luna.lovegood",
+        )
         assert result == ('<p>text <a class="mention" href="http://localhost:9001/profile/luna.lovegood" '
                           'title="Luna Lovegood">@luna.lovegood</a> text</p>')
 
@@ -81,7 +87,10 @@ def test_mentions_valid_username_with_dash():
 
         result = render(dummy_project, "text @super-ginny text")
 
-        get_user_model_mock.return_value.objects.get.assert_called_with(username="super-ginny")
+        get_user_model_mock.return_value.objects.get.assert_called_with(
+            memberships__project_id=1,
+            username="super-ginny",
+        )
         assert result == ('<p>text <a class="mention" href="http://localhost:9001/profile/super-ginny" '
                           'title="Ginny Weasley">@super-ginny</a> text</p>')
 

@@ -111,7 +111,7 @@ def analize_object_for_watchers(obj: object, comment: str, user: object):
     if comment and not user.is_system:
         obj.add_watcher(user)
 
-    mentions = get_object_mentions(obj, comment)
+    mentions = get_object_mentions(obj, comment) or []
     for mentioned in mentions:
         obj.add_watcher(mentioned)
 
