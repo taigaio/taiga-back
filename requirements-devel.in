@@ -1,0 +1,6 @@
+-c requirements.txt
+coverage
+coveralls
+pytest
+pytest-django
+factory-boy
