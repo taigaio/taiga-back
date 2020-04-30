@@ -31,7 +31,7 @@ django-sr==0.0.4          # via -r requirements.in
 django==1.11.29           # via -r requirements.in, django-jinja, django-sampledatahelper, django-sites, django-sr, easy-thumbnails
 djmail==1.0.1             # via -r requirements.in
 docopt==0.6.2             # via psd-tools
-easy-thumbnails==2.4.1    # via -r requirements.in
+easy-thumbnails==2.7.0    # via -r requirements.in
 fn==0.4.3                 # via -r requirements.in
 gunicorn==19.9.0          # via -r requirements.in
 html5lib==1.0.1           # via -r requirements.in
