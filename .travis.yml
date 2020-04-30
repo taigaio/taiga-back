@@ -17,9 +17,8 @@ before_install:
   - sudo /etc/init.d/postgresql start 9.4
   - psql -c 'create database taiga;' -U postgres
 install:
-  - travis_retry pip install pipenv
-  - travis_retry pipenv sync --dev
+  - travis_retry pip install -r requirements.txt -r requirements-devel.txt
 script:
-  - pipenv run coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' -m pytest -v --tb=native --pythonwarnings=default
+  - coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' -m pytest -v --tb=native --pythonwarnings=default
 after_success:
   - coveralls
