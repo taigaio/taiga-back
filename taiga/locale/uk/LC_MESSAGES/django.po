@@ -4,14 +4,14 @@
 #
 # Translators:
 # Translators:
-# Boden <Bodenchuk@bigmir.net>, 2017-2019
+# Boden <Bodenchuk@bigmir.net>, 2017-2020
 msgid ""
 msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-21 11:26+0100\n"
-"PO-Revision-Date: 2020-02-21 10:46+0000\n"
-"Last-Translator: Libre Beats <carlos.letamendia@aitire.es>\n"
+"PO-Revision-Date: 2020-03-22 15:57+0000\n"
+"Last-Translator: Boden <Bodenchuk@bigmir.net>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/taiga-agile-llc/taiga-"
 "back/language/uk/)\n"
 "MIME-Version: 1.0\n"
@@ -32,11 +32,13 @@ msgstr ""
 #: taiga/auth/api.py:93
 msgid "You must accept our terms of service and privacy policy"
 msgstr ""
+"Ви повинні погодитись із нашими умовами обслуговування та політикою "
+"конфіденційності"
 
 #: taiga/auth/api.py:102
 #| msgid "invalid register type"
 msgid "invalid registration type"
-msgstr ""
+msgstr "не вірний тип реєстрації"
 
 #: taiga/auth/api.py:118
 msgid "invalid login type"
@@ -4474,7 +4476,7 @@ msgstr ""
 
 #: taiga/users/models.py:150
 msgid "biography"
-msgstr ""
+msgstr "біографія"
 
 #: taiga/users/models.py:153
 msgid "photo"
@@ -4494,19 +4496,19 @@ msgstr ""
 
 #: taiga/users/models.py:158
 msgid "default language"
-msgstr ""
+msgstr "типова мова"
 
 #: taiga/users/models.py:160
 msgid "default theme"
-msgstr ""
+msgstr "типова тема"
 
 #: taiga/users/models.py:162
 msgid "default timezone"
-msgstr ""
+msgstr "типова часова зона"
 
 #: taiga/users/models.py:164
 msgid "colorize tags"
-msgstr ""
+msgstr "розфарбувати мітки"
 
 #: taiga/users/models.py:169
 msgid "email token"
@@ -4514,7 +4516,7 @@ msgstr ""
 
 #: taiga/users/models.py:171
 msgid "new email address"
-msgstr ""
+msgstr "нова адреса електронної пошти"
 
 #: taiga/users/models.py:178
 msgid "max number of owned private projects"
@@ -4538,7 +4540,7 @@ msgstr ""
 
 #: taiga/users/services.py:58 taiga/users/services.py:75
 msgid "Username or password does not matches user."
-msgstr ""
+msgstr "Ім'я користувача або пароль не відповідають користувачеві."
 
 #: taiga/users/templates/emails/change_email-body-html.jinja:4
 #, python-format
@@ -4581,7 +4583,7 @@ msgstr ""
 
 #: taiga/users/templates/emails/change_email-subject.jinja:1
 msgid "[Taiga] Change email"
-msgstr ""
+msgstr "[Taiga] Зміна електронної пошти"
 
 #: taiga/users/templates/emails/password_recovery-body-html.jinja:4
 #, python-format
@@ -4624,7 +4626,7 @@ msgstr ""
 
 #: taiga/users/templates/emails/password_recovery-subject.jinja:1
 msgid "[Taiga] Password recovery"
-msgstr ""
+msgstr "[Taiga] Відновлення паролю"
 
 #: taiga/users/templates/emails/registered_user-body-html.jinja:6
 #, python-format

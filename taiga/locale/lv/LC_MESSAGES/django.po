@@ -4,7 +4,8 @@
 #
 # Translators:
 # Translators:
-# Oskars G <oskars@lu.lv>, 2020
+# Oskars G <oskars@alumni.lu.lv>, 2020
+# Oskars G <oskars@alumni.lu.lv>, 2020
 # Sergey Skibust <sergey@skyboost.lv>, 2017
 # vsv <vs@ktr.lv>, 2020
 msgid ""
@@ -12,8 +13,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-21 11:26+0100\n"
-"PO-Revision-Date: 2020-02-25 11:31+0000\n"
-"Last-Translator: vsv <vs@ktr.lv>\n"
+"PO-Revision-Date: 2020-03-19 02:21+0000\n"
+"Last-Translator: Oskars G <oskars@alumni.lu.lv>\n"
 "Language-Team: Latvian (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/lv/)\n"
 "MIME-Version: 1.0\n"
@@ -159,7 +160,7 @@ msgstr ""
 #: taiga/base/api/fields.py:912
 #, python-format
 msgid "\"%s\" value must be a float."
-msgstr "\"%s\"vērtībai jābūt mainīgai."
+msgstr "\"%s\"vērtībai jābūt ar cipariem aiz komata."
 
 #: taiga/base/api/fields.py:933
 msgid "Enter a number."
@@ -225,7 +226,7 @@ msgstr "Bloķēts elements"
 
 #: taiga/base/api/pagination.py:228
 msgid "Page is not 'last', nor can it be converted to an int."
-msgstr "Lapa nav \\ 'pēdējā \\', un to nevar arī pārveidot par ?veselu (int)."
+msgstr "Lapa nav 'pēdējā', un to nevar arī pārveidot par veselu skaitli (int)."
 
 #: taiga/base/api/pagination.py:232
 #, python-format
@@ -1948,19 +1949,19 @@ msgstr "Talky.io"
 
 #: taiga/projects/choices.py:35
 msgid "This project is blocked due to payment failure"
-msgstr ""
+msgstr "Šis projekts ir bloķēts nesaņemta maksājuma dēļ"
 
 #: taiga/projects/choices.py:36
 msgid "This project is blocked by admin staff"
-msgstr ""
+msgstr "Šo projektu bloķējis kāds no administrējošā personāla"
 
 #: taiga/projects/choices.py:37
 msgid "This project is blocked because the owner left"
-msgstr ""
+msgstr "Šis projekts ir bloķēts dēļ tā, ka vadītājs to pametis"
 
 #: taiga/projects/choices.py:38
 msgid "This project is blocked while it's deleted"
-msgstr ""
+msgstr "Šis projekts ir bloķēts kamēr tas ir dzēsts"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:10
 #, python-format
@@ -1971,6 +1972,11 @@ msgid ""
 "written to %(project_name)s\n"
 "    "
 msgstr ""
+"\n"
+"        <a style=\"font-weight: bold;text-decoration:none;color:#222;\" href="
+"\"%(user_profile_url)s\" title=\"%(full_name)s\">%(full_name)s</a> ir "
+"uzrakstījis %(project_name)s\n"
+"    "
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-html.jinja:20
 #, python-format
@@ -1984,6 +1990,12 @@ msgid ""
 "not be affected.\n"
 "    "
 msgstr ""
+"\n"
+"        Jūs saņemat šo ziņu, jo esat norādīts kā administrators projektam ar "
+"nosaukumu %(project_name)s. Ja nevēlaties, lai Taigas kopienas locekļi "
+"sazinātos ar jūsu projektu, lūdzu <a href=\"%(project_settings_url)s"
+"\">aktualizējiet projekta iestatījumus</a>, lai turpmāk novērstu šādus "
+"kontaktus. Projekta dalībnieku ikdienišķo saziņu tas neietekmēs."
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-text.jinja:1
 #, python-format
@@ -1991,6 +2003,8 @@ msgid ""
 "\n"
 "%(full_name)s has written to %(project_name)s\n"
 msgstr ""
+"\n"
+"%(full_name)s ir uzrakstījis %(project_name)s\n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-body-text.jinja:7
 #, python-format
@@ -2002,6 +2016,12 @@ msgid ""
 "%(project_settings_url)s to prevent such contacts. Regular communications "
 "amongst members of the project will not be affected.\n"
 msgstr ""
+"\n"
+"Jūs saņemat šo ziņu, jo esat norādīts kā administrators projektam ar "
+"nosaukumu %(project_name)s.Ja nevēlaties, lai Taigas kopienas locekļi "
+"sazinātos ar jūsu projektu, lūdzu aktualizējiet projekta iestatījumus iekš "
+"%(project_settings_url)s, lai turpmāk novērstu šādus kontaktus. Projekta "
+"dalībnieku ikdienišķo saziņu tas neietekmēs.\n"
 
 #: taiga/projects/contact/templates/emails/contact_notification-subject.jinja:1
 #, python-format
@@ -2009,6 +2029,8 @@ msgid ""
 "\n"
 "[Taiga] %(full_name)s has sent a message to the project %(project_name)s\n"
 msgstr ""
+"\n"
+"[Taiga] %(full_name)s ir atsūtījis ziņu projektam %(project_name)s\n"
 
 #: taiga/projects/custom_attributes/choices.py:32
 msgid "Text"
@@ -2020,7 +2042,7 @@ msgstr "Daudzrindu teksts"
 
 #: taiga/projects/custom_attributes/choices.py:34
 msgid "Rich text"
-msgstr "Bagātīgs (RTF) teksts"
+msgstr "Bagātīgi formatēts teksts (RTF)"
 
 #: taiga/projects/custom_attributes/choices.py:35
 msgid "Date"
@@ -2082,7 +2104,7 @@ msgstr "Pamatojums termiņam"
 
 #: taiga/projects/epics/api.py:94
 msgid "You don't have permissions to set this status to this epic."
-msgstr "Jums nav atļauju/tiesību iestatīt šo statusu šim eopsam"
+msgstr "Jums nav atļauju/tiesību iestatīt šo statusu šim eposam"
 
 #: taiga/projects/epics/models.py:36 taiga/projects/issues/models.py:36
 #: taiga/projects/tasks/models.py:38 taiga/projects/userstories/models.py:63
@@ -2194,15 +2216,15 @@ msgstr "no"
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:244
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:273
 msgid "to"
-msgstr "līdz"
+msgstr "uz"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:46
 msgid "Added new attachment"
-msgstr ""
+msgstr "Pievienots jauns pielikums"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:64
 msgid "Updated attachment"
-msgstr ""
+msgstr "Pielikums aktualizēts"
 
 #: taiga/projects/history/templates/emails/includes/fields_diff-html.jinja:70
 msgid "deprecated"
@@ -2296,23 +2318,23 @@ msgstr "sprints"
 
 #: taiga/projects/issues/api.py:167
 msgid "You don't have permissions to set this sprint to this issue."
-msgstr ""
+msgstr "Jums nav atļauju iestatīt šo sprintu šim izmaiņu pieprasījumam."
 
 #: taiga/projects/issues/api.py:171
 msgid "You don't have permissions to set this status to this issue."
-msgstr ""
+msgstr "Jums nav atļauju iestatīt šādu statusu šim izmaiņu pieprasījumam."
 
 #: taiga/projects/issues/api.py:175
 msgid "You don't have permissions to set this severity to this issue."
-msgstr ""
+msgstr "Jums nav atļauju iestatīt šādu nozīmīgumu šim izmaiņu pieprasījumam."
 
 #: taiga/projects/issues/api.py:179
 msgid "You don't have permissions to set this priority to this issue."
-msgstr ""
+msgstr "Jums nav atļauju iestatīt šādu prioritāti šim izmaiņu pieprasījumam."
 
 #: taiga/projects/issues/api.py:183
 msgid "You don't have permissions to set this type to this issue."
-msgstr ""
+msgstr "Jums nav atļauju iestatīt šādu tipu šim izmaiņu pieprasījumam."
 
 #: taiga/projects/issues/models.py:42
 msgid "severity"
@@ -2339,7 +2361,7 @@ msgstr "Šī robežzīme šim projektam neder"
 
 #: taiga/projects/issues/validators.py:76
 msgid "All the issues must be from the same project"
-msgstr ""
+msgstr "Visiem izmaiņu pieprasījumiem jābūt no viena un tā paša projekta"
 
 #: taiga/projects/likes/models.py:36
 msgid "Like"
@@ -2377,41 +2399,41 @@ msgstr "disponējamība"
 
 #: taiga/projects/milestones/models.py:79
 msgid "The estimated start must be previous to the estimated finish."
-msgstr ""
+msgstr "Paredzamajam sākumam jābūt pirms paredzētajām beigām."
 
 #: taiga/projects/milestones/validators.py:35
 msgid "There's no milestone with that id"
-msgstr ""
+msgstr "Nav atskaites punkta ar šādu id"
 
 #: taiga/projects/milestones/validators.py:66
 #: taiga/projects/userstories/validators.py:168
 msgid "All the user stories must be from the same project"
-msgstr ""
+msgstr "Visām vajadzībām jābūt no viena un tā paša projekta"
 
 #: taiga/projects/mixins/blocked.py:31
 msgid "is blocked"
-msgstr ""
+msgstr "ir bloķēts"
 
 #: taiga/projects/mixins/by_ref.py:32
 msgid "ref param is needed"
-msgstr ""
+msgstr "nepieciešams atsauces parametrs"
 
 #: taiga/projects/mixins/by_ref.py:35
 msgid "project or project__slug param is needed"
-msgstr ""
+msgstr "ir nepieciešams projekts vai projekta__slug parametrs"
 
 #: taiga/projects/mixins/ordering.py:49
 #, python-brace-format
 msgid "'{param}' parameter is mandatory"
-msgstr ""
+msgstr "'{param}' parametrs ir obligāts"
 
 #: taiga/projects/mixins/ordering.py:53
 msgid "'project' parameter is mandatory"
-msgstr ""
+msgstr "'project' parametrs ir obligāts"
 
 #: taiga/projects/mixins/validators.py:22
 msgid "The user must be a project member."
-msgstr ""
+msgstr "Lietotājam jābūt projekta dalībniekam."
 
 #: taiga/projects/models.py:79
 msgid "email"
@@ -2419,7 +2441,7 @@ msgstr "e-pasts"
 
 #: taiga/projects/models.py:81
 msgid "create at"
-msgstr ""
+msgstr "izveidot"
 
 #: taiga/projects/models.py:83 taiga/users/models.py:166
 msgid "token"
@@ -2427,47 +2449,47 @@ msgstr "tokens/žetons"
 
 #: taiga/projects/models.py:89
 msgid "invitation extra text"
-msgstr ""
+msgstr "ielūguma papildus teksts"
 
 #: taiga/projects/models.py:92 taiga/projects/models.py:817
 msgid "user order"
-msgstr ""
+msgstr "lietotāja pasūtījums"
 
 #: taiga/projects/models.py:108
 msgid "The user is already member of the project"
-msgstr ""
+msgstr "Šis lietotājs jau ir šī projekta dalībnieks"
 
 #: taiga/projects/models.py:115
 msgid "default epic status"
-msgstr ""
+msgstr "eposa statuss pēc noklusējuma"
 
 #: taiga/projects/models.py:119
 msgid "default US status"
-msgstr ""
+msgstr "vajadzības statuss pēc noklusējuma"
 
 #: taiga/projects/models.py:122
 msgid "default points"
-msgstr ""
+msgstr "punkti pēc noklusējuma"
 
 #: taiga/projects/models.py:126
 msgid "default task status"
-msgstr ""
+msgstr "uzdevuma statuss pēc noklusējuma"
 
 #: taiga/projects/models.py:129
 msgid "default priority"
-msgstr ""
+msgstr "prioritāte pēc noklusējuma"
 
 #: taiga/projects/models.py:132
 msgid "default severity"
-msgstr ""
+msgstr "nozīmīgums pēc noklusējuma"
 
 #: taiga/projects/models.py:136
 msgid "default issue status"
-msgstr ""
+msgstr "izmaiņas pieprasījuma statuss pēc noklusējuma"
 
 #: taiga/projects/models.py:140
 msgid "default issue type"
-msgstr ""
+msgstr "izmaiņas pieprasījuma tips pēc noklusējuma"
 
 #: taiga/projects/models.py:156
 msgid "logo"
@@ -2487,75 +2509,75 @@ msgstr "vajadzību punktu kopējais skaits"
 
 #: taiga/projects/models.py:172 taiga/projects/models.py:827
 msgid "active contact"
-msgstr ""
+msgstr "aktīvs kontakts"
 
 #: taiga/projects/models.py:174 taiga/projects/models.py:829
 msgid "active epics panel"
-msgstr ""
+msgstr "aktīvais eposa panelis"
 
 #: taiga/projects/models.py:176 taiga/projects/models.py:831
 msgid "active backlog panel"
-msgstr ""
+msgstr "aktīvais darāmo darbu (backlog) panelis"
 
 #: taiga/projects/models.py:178 taiga/projects/models.py:833
 msgid "active kanban panel"
-msgstr ""
+msgstr "aktīvais kanban panelis"
 
 #: taiga/projects/models.py:180 taiga/projects/models.py:835
 msgid "active wiki panel"
-msgstr ""
+msgstr "aktīvais wiki panelis"
 
 #: taiga/projects/models.py:182 taiga/projects/models.py:837
 msgid "active issues panel"
-msgstr ""
+msgstr "aktīvais izmaiņu pieprasījuma panelis"
 
 #: taiga/projects/models.py:185 taiga/projects/models.py:844
 msgid "videoconference system"
-msgstr ""
+msgstr "videokonferences sistēma"
 
 #: taiga/projects/models.py:187 taiga/projects/models.py:846
 msgid "videoconference extra data"
-msgstr ""
+msgstr "videokonferences papildus dati"
 
 #: taiga/projects/models.py:193
 msgid "creation template"
-msgstr ""
+msgstr "izveidošanas šablons"
 
 #: taiga/projects/models.py:196 taiga/users/admin.py:62
 msgid "is private"
-msgstr ""
+msgstr "ir privāts"
 
 #: taiga/projects/models.py:198
 msgid "anonymous permissions"
-msgstr ""
+msgstr "anonīmā lietotāja atļaujas"
 
 #: taiga/projects/models.py:200
 msgid "user permissions"
-msgstr ""
+msgstr "lietotāja atļaujas"
 
 #: taiga/projects/models.py:203
 msgid "is featured"
-msgstr ""
+msgstr "ir attēlots"
 
 #: taiga/projects/models.py:206 taiga/projects/models.py:839
 msgid "is looking for people"
-msgstr ""
+msgstr "vēlas piesaistīt cilvēkus"
 
 #: taiga/projects/models.py:208 taiga/projects/models.py:841
 msgid "looking for people note"
-msgstr ""
+msgstr "cilvēku piesaistes piezīme"
 
 #: taiga/projects/models.py:222
 msgid "project transfer token"
-msgstr ""
+msgstr "projekta nodošanas tokens/pilnvara"
 
 #: taiga/projects/models.py:226
 msgid "blocked code"
-msgstr ""
+msgstr "bloķēts kods"
 
 #: taiga/projects/models.py:229 taiga/projects/notifications/models.py:69
 msgid "updated date time"
-msgstr ""
+msgstr "aktualizēts datums laiks"
 
 #: taiga/projects/models.py:232 taiga/projects/models.py:244
 #: taiga/projects/votes/models.py:30
@@ -2564,39 +2586,39 @@ msgstr "skaits"
 
 #: taiga/projects/models.py:235
 msgid "fans last week"
-msgstr ""
+msgstr "fani pagājušajā nedēļā"
 
 #: taiga/projects/models.py:238
 msgid "fans last month"
-msgstr ""
+msgstr "fani pagājušajā mēnesī"
 
 #: taiga/projects/models.py:241
 msgid "fans last year"
-msgstr ""
+msgstr "fani pagājušajā gadā"
 
 #: taiga/projects/models.py:248
 msgid "activity last week"
-msgstr ""
+msgstr "darbības pagājušajā nedēļā"
 
 #: taiga/projects/models.py:252
 msgid "activity last month"
-msgstr ""
+msgstr "darbības pagājušajā mēnesī"
 
 #: taiga/projects/models.py:256
 msgid "activity last year"
-msgstr ""
+msgstr "darbības pagājušajā gadā"
 
 #: taiga/projects/models.py:512
 msgid "modules config"
-msgstr ""
+msgstr "moduļu konfigurācija"
 
 #: taiga/projects/models.py:564
 msgid "is archived"
-msgstr ""
+msgstr "ir arhivēts"
 
 #: taiga/projects/models.py:568
 msgid "work in progress limit"
-msgstr ""
+msgstr "nepabeigto darbu limits"
 
 #: taiga/projects/models.py:596 taiga/userstorage/models.py:33
 msgid "value"
@@ -2605,32 +2627,32 @@ msgstr "vērtība"
 #: taiga/projects/models.py:616 taiga/projects/models.py:673
 #: taiga/projects/models.py:791
 msgid "by default"
-msgstr ""
+msgstr "pēc noklusējuma"
 
 #: taiga/projects/models.py:620 taiga/projects/models.py:677
 #: taiga/projects/models.py:795
 msgid "days to due"
-msgstr ""
+msgstr "dienas līdz termiņa beigām"
 
 #: taiga/projects/models.py:825
 msgid "default owner's role"
-msgstr ""
+msgstr "vadītāja loma pēc noklusējuma"
 
 #: taiga/projects/models.py:848
 msgid "default options"
-msgstr ""
+msgstr "opcijas pēc noklusējuma"
 
 #: taiga/projects/models.py:849
 msgid "epic statuses"
-msgstr ""
+msgstr "eposa statusi"
 
 #: taiga/projects/models.py:850
 msgid "us statuses"
-msgstr ""
+msgstr "vajadzību statusi"
 
 #: taiga/projects/models.py:851
 msgid "us duedates"
-msgstr ""
+msgstr "vajadzību termiņi"
 
 #: taiga/projects/models.py:852 taiga/projects/userstories/models.py:45
 #: taiga/projects/userstories/models.py:78
@@ -2639,23 +2661,23 @@ msgstr "punkti"
 
 #: taiga/projects/models.py:853
 msgid "task statuses"
-msgstr ""
+msgstr "uzdevumu statusi"
 
 #: taiga/projects/models.py:854
 msgid "task duedates"
-msgstr ""
+msgstr "uzdevumu termiņi"
 
 #: taiga/projects/models.py:855
 msgid "issue statuses"
-msgstr ""
+msgstr "izmaiņu pieprasījumu statusi"
 
 #: taiga/projects/models.py:856
 msgid "issue types"
-msgstr ""
+msgstr "izmaiņu pieprasījumu tipi"
 
 #: taiga/projects/models.py:857
 msgid "issue duedates"
-msgstr ""
+msgstr "izmaiņu pieprasījumu termiņi"
 
 #: taiga/projects/models.py:858
 msgid "priorities"
@@ -2671,19 +2693,19 @@ msgstr "lomas"
 
 #: taiga/projects/models.py:861
 msgid "epic custom attributes"
-msgstr ""
+msgstr "eposa pielāgojamie atribūti"
 
 #: taiga/projects/models.py:862
 msgid "us custom attributes"
-msgstr ""
+msgstr "vajadzības pielāgojamie atribūti"
 
 #: taiga/projects/models.py:863
 msgid "task custom attributes"
-msgstr ""
+msgstr "uzdevuma pielāgojamie atribūti"
 
 #: taiga/projects/models.py:864
 msgid "issue custom attributes"
-msgstr ""
+msgstr "izmaiņas pieprasījuma pielāgojamie atribūti"
 
 #: taiga/projects/notifications/choices.py:30
 msgid "Involved"
@@ -2695,7 +2717,7 @@ msgstr "Visi"
 
 #: taiga/projects/notifications/choices.py:32
 msgid "None"
-msgstr "Nav"
+msgstr "Nav/Neviens"
 
 #: taiga/projects/notifications/choices.py:46
 msgid "Assigned"
@@ -2703,15 +2725,15 @@ msgstr "Piešķirts"
 
 #: taiga/projects/notifications/choices.py:47
 msgid "Mentioned"
-msgstr ""
+msgstr "Minēts"
 
 #: taiga/projects/notifications/choices.py:48
 msgid "Added as watcher"
-msgstr ""
+msgstr "Pievienots kā vērotājs"
 
 #: taiga/projects/notifications/choices.py:49
 msgid "Added as member"
-msgstr ""
+msgstr "Pievienots kā dalībnieks"
 
 #: taiga/projects/notifications/choices.py:50
 msgid "Comment"
@@ -2719,11 +2741,11 @@ msgstr "Komentārs"
 
 #: taiga/projects/notifications/choices.py:51
 msgid "Mentioned in comment"
-msgstr ""
+msgstr "Minēts komentārā"
 
 #: taiga/projects/notifications/models.py:67
 msgid "created date time"
-msgstr ""
+msgstr "izveidošanas datums laiks"
 
 #: taiga/projects/notifications/models.py:71
 msgid "history entries"
@@ -2731,7 +2753,7 @@ msgstr ""
 
 #: taiga/projects/notifications/models.py:74
 msgid "notify users"
-msgstr ""
+msgstr "paziņot lietotājiem"
 
 #: taiga/projects/notifications/models.py:96
 #: taiga/projects/notifications/models.py:97
@@ -2743,11 +2765,11 @@ msgstr "Vērots"
 #: taiga/projects/settings/services.py:49
 #: taiga/projects/settings/services.py:67
 msgid "Notify exists for specified user and project"
-msgstr ""
+msgstr "Paziņojums attiecas uz norādīto lietotāju un projektu"
 
 #: taiga/projects/notifications/services.py:523
 msgid "Invalid value for notify level"
-msgstr ""
+msgstr "Paziņojuma līmeņa vērtība nav derīga"
 
 #: taiga/projects/notifications/templates/emails/epics/epic-change-body-html.jinja:4
 #, python-format
@@ -3540,19 +3562,19 @@ msgstr ""
 
 #: taiga/projects/notifications/validators.py:48
 msgid "Watchers contains invalid users"
-msgstr ""
+msgstr "Vērotāju vidū ir nederīgi lietotāji"
 
 #: taiga/projects/occ/mixins.py:37
 msgid "The version must be an integer"
-msgstr ""
+msgstr "Versijai jābūt veselam skaitlim"
 
 #: taiga/projects/occ/mixins.py:60
 msgid "The version parameter is not valid"
-msgstr ""
+msgstr "Versijas parametrs nav derīgs"
 
 #: taiga/projects/occ/mixins.py:76
 msgid "The version doesn't match with the current one"
-msgstr ""
+msgstr "Versija nesakrīt ar pašreizējo"
 
 #: taiga/projects/occ/mixins.py:95
 msgid "version"
@@ -3562,6 +3584,8 @@ msgstr "versija"
 msgid ""
 "You can't leave the project if you are the owner or there are no more admins"
 msgstr ""
+"Jūs nevarat pamest projektu, ja esat tā vadītājs vai projektam nav citu "
+"administratoru"
 
 #: taiga/projects/services/members.py:133
 msgid "Project without owner"
@@ -3570,55 +3594,61 @@ msgstr "Projekts bez vadītāja"
 #: taiga/projects/services/members.py:138
 msgid "You have reached your current limit of memberships for private projects"
 msgstr ""
+"Jūs esat sasniedzis pašreizējo dalībnieku skaita limitu privātiem projektiem"
 
 #: taiga/projects/services/members.py:142
 msgid "You have reached your current limit of memberships for public projects"
 msgstr ""
+"Jūs esat sasniedzis pašreizējo dalībnieku skaita limitu publiskiem projektiem"
 
 #: taiga/projects/services/members.py:148
 msgid "You have reached the current limit of pending memberships"
-msgstr ""
+msgstr "Jūs esat sasniedzis izskatāmo potenciālo dalībnieku pašreizējo limitu"
 
 #: taiga/projects/services/projects.py:101
 #: taiga/projects/services/projects.py:141 taiga/users/services.py:600
 msgid "You can't have more private projects"
-msgstr ""
+msgstr "Jums nevar būt vairāk privātu projektu"
 
 #: taiga/projects/services/projects.py:105
 #: taiga/projects/services/projects.py:145 taiga/users/services.py:603
 msgid ""
 "This project reaches your current limit of memberships for private projects"
 msgstr ""
+"Šis projekts sasniedzis jūsu pašreizējo dalībnieku skaita limitu privātiem "
+"projektiem"
 
 #: taiga/projects/services/projects.py:109
 #: taiga/projects/services/projects.py:149 taiga/users/services.py:607
 msgid "You can't have more public projects"
-msgstr ""
+msgstr "Jums nevar būt vairāk publisku projektu"
 
 #: taiga/projects/services/projects.py:113
 #: taiga/projects/services/projects.py:153 taiga/users/services.py:610
 msgid ""
 "This project reaches your current limit of memberships for public projects"
 msgstr ""
+"Šis projekts sasniedzis jūsu pašreizējo dalībnieku skaita limitu publiskiem "
+"projektiem"
 
 #: taiga/projects/services/stats.py:197
 msgid "Future sprint"
-msgstr ""
+msgstr "Nākotnes sprints"
 
 #: taiga/projects/services/stats.py:217
 msgid "Project End"
-msgstr ""
+msgstr "Projekta beigas"
 
 #: taiga/projects/services/transfer.py:62
 #: taiga/projects/services/transfer.py:69
 #: taiga/projects/services/transfer.py:72 taiga/users/api.py:193
 #: taiga/users/api.py:198
 msgid "Token is invalid"
-msgstr ""
+msgstr "Nederīgs tokens"
 
 #: taiga/projects/services/transfer.py:67
 msgid "Token has expired"
-msgstr ""
+msgstr "Novecojis/izlietots tokens"
 
 #: taiga/projects/settings/choices.py:33
 msgid "Timeline"
@@ -3626,7 +3656,7 @@ msgstr ""
 
 #: taiga/projects/settings/choices.py:34
 msgid "Epics"
-msgstr ""
+msgstr "Eposi"
 
 #: taiga/projects/settings/choices.py:35
 msgid "Backlog"
@@ -3647,12 +3677,12 @@ msgstr "TeamWiki"
 
 #: taiga/projects/settings/validators.py:36
 msgid "You don't have access to this section"
-msgstr ""
+msgstr "Jums nav piekļuves šai sadaļai"
 
 #: taiga/projects/tagging/fields.py:52
 #, python-brace-format
 msgid "Invalid tag '{value}'. The color is not a valid HEX color or null."
-msgstr ""
+msgstr "Nederīga birka “{value}”. Krāsa nav derīga HEX krāsa vai ir nulle."
 
 #: taiga/projects/tagging/fields.py:55
 #, python-brace-format
@@ -3660,11 +3690,13 @@ msgid ""
 "Invalid tag '{value}'. it must be the name or a pair '[\"name\", \"hex color/"
 "\" | null]'."
 msgstr ""
+"Nederīga birka “{value}”. Tai jābūt vārdam vai pārim '[\"nosaukums\", \"HEX "
+"krāsa /\" | nulle]'."
 
 #: taiga/projects/tagging/fields.py:77
 #, python-brace-format
 msgid "Invalid tag '{value}'. It must be the tag name."
-msgstr ""
+msgstr "Nederīga birka “{value}”. Tam jābūt birkas nosaukumam."
 
 #: taiga/projects/tagging/models.py:27
 msgid "tags"
@@ -3693,19 +3725,19 @@ msgstr "Birka neeksistē."
 
 #: taiga/projects/tasks/api.py:113 taiga/projects/tasks/api.py:122
 msgid "You don't have permissions to set this sprint to this task."
-msgstr ""
+msgstr "Jums nav atļauju iestatīt šo sprintu šim uzdevumam."
 
 #: taiga/projects/tasks/api.py:116
 msgid "You don't have permissions to set this user story to this task."
-msgstr ""
+msgstr "Jums nav atļauju iestatīt šo vajadzību šim uzdevumam."
 
 #: taiga/projects/tasks/api.py:119
 msgid "You don't have permissions to set this status to this task."
-msgstr ""
+msgstr "Jums nav atļauju iestatīt šo statusu šim uzdevumam."
 
 #: taiga/projects/tasks/models.py:59
 msgid "us order"
-msgstr ""
+msgstr "vajadzības pasūtījums"
 
 #: taiga/projects/tasks/models.py:61
 msgid "taskboard order"
@@ -3717,19 +3749,21 @@ msgstr ""
 
 #: taiga/projects/tasks/validators.py:61
 msgid "Invalid milestone id."
-msgstr ""
+msgstr "Nederīgs starpposma id."
 
 #: taiga/projects/tasks/validators.py:72
 msgid "Invalid task status id."
-msgstr ""
+msgstr "Nederīgs uzdevuma statusa id."
 
 #: taiga/projects/tasks/validators.py:85
 msgid "Invalid user story id."
-msgstr ""
+msgstr "Nederīgs vajadzības id."
 
 #: taiga/projects/tasks/validators.py:109
 msgid "Invalid task status id. The status must belong to the same project."
 msgstr ""
+"Nederīgs uzdevuma statusa id. Statusam jāpieder vienam un tam pašam "
+"projektam."
 
 #: taiga/projects/tasks/validators.py:123
 msgid "Invalid user story id. The user story must belong to the same project."
@@ -3782,11 +3816,11 @@ msgstr ""
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:24
 msgid "Accept your invitation to Taiga"
-msgstr ""
+msgstr "Pieņemt uzaicinājumu uz Taigu"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:24
 msgid "Accept your invitation"
-msgstr ""
+msgstr "Pieņemt uzaicinājumu"
 
 #: taiga/projects/templates/emails/membership_invitation-body-html.jinja:25
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:25
@@ -3976,7 +4010,7 @@ msgstr ""
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:21
 #: taiga/projects/templates/emails/transfer_reject-body-html.jinja:22
 msgid "Request transfer to a different person"
-msgstr ""
+msgstr "Pieprasīt nodot citai personai"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:1
 #, python-format
@@ -4002,10 +4036,12 @@ msgid ""
 "If you want, you can still try to transfer the project ownership to a "
 "different person.\n"
 msgstr ""
+"\n"
+"Ja vēlaties, joprojām varat mēģināt nodot projekta vadību citai personai.\n"
 
 #: taiga/projects/templates/emails/transfer_reject-body-text.jinja:15
 msgid "Request transfer to a different person:"
-msgstr ""
+msgstr "Pieprasīt nodot citai personai:"
 
 #: taiga/projects/templates/emails/transfer_reject-subject.jinja:1
 #, python-format
@@ -4060,10 +4096,13 @@ msgid ""
 "Please, go to your project settings if you would like to start the project "
 "transfer from the administration panel.\n"
 msgstr ""
+"\n"
+"Ja vēlaties sākt projekta nodošanu no administrēšanas paneļa, lūdzu, "
+"dodieties uz sava projekta iestatījumiem.\n"
 
 #: taiga/projects/templates/emails/transfer_request-body-text.jinja:10
 msgid "Go to your project settings:"
-msgstr ""
+msgstr "Atveriet sava projekta iestatījumus:"
 
 #: taiga/projects/templates/emails/transfer_request-subject.jinja:1
 #, python-format
@@ -4121,7 +4160,7 @@ msgstr ""
 
 #: taiga/projects/templates/emails/transfer_start-body-text.jinja:15
 msgid "Accept or reject the project ownership transfer:"
-msgstr ""
+msgstr "Akceptēt vai noraidīt projekta vadības nodošanu:"
 
 #: taiga/projects/templates/emails/transfer_start-subject.jinja:1
 #, python-format
@@ -4145,6 +4184,12 @@ msgid ""
 "then allowed to grow and change as more is learned about the product and its "
 "customers"
 msgstr ""
+"Skram spējo produkta darbu klāsts  ir prioritarizēts funkcionalitāšu/iespēju "
+"saraksts, kurā ir īsi visu produktā/izstrādājumā vēlamo funkcionalitāšu "
+"apraksti. Izmantojot Skram, nav nepieciešams sākt projektu ar ilgstošām, "
+"sākotnējām pūlēm dokumentēt visas prasības. Pēc tam, kad vairāk tiek "
+"noskaidrots par produktu un tā klientiem, Skram darbu klāstam tiek ļauts "
+"augt un mainīties. "
 
 #. Translators: Description of kanban project template.
 #: taiga/projects/translations.py:37
@@ -4154,6 +4199,10 @@ msgid ""
 "process, from definition of a task to its delivery to the customer, is "
 "displayed for participants to see and team members pull work from a queue."
 msgstr ""
+"Kanban ir metode zināšanu darba vadīšanai, uzsvaru liekot uz piegādi tieši "
+"laikā, vienlaikus nepārslogojot komandas locekļus. Šajā pieejā dalībniekiem "
+"ir redzams process, sākot no uzdevuma definēšanas līdz tā rezultāta "
+"nogādāšanai klientam, un komandas locekļi \"paņem\" darbu no rindas."
 
 #. Translators: User story point value (value = undefined)
 #: taiga/projects/translations.py:45
@@ -4340,12 +4389,12 @@ msgstr "Dizains"
 #. Translators: User role
 #: taiga/projects/translations.py:176
 msgid "Front"
-msgstr "Priekšpusē"
+msgstr "Priekšiņas"
 
 #. Translators: User role
 #: taiga/projects/translations.py:178
 msgid "Back"
-msgstr "Atpakaļ"
+msgstr "Iepakaļas"
 
 #. Translators: User role
 #: taiga/projects/translations.py:180
@@ -4359,7 +4408,7 @@ msgstr "Ieinteresētā persona"
 
 #: taiga/projects/userstories/api.py:147
 msgid "You don't have permissions to set this sprint to this user story."
-msgstr ""
+msgstr "Jums nav atļauju iestatīt šo sprintu šai vajadzībai."
 
 #: taiga/projects/userstories/api.py:151
 msgid "You don't have permissions to set this status to this user story."
@@ -4386,7 +4435,7 @@ msgstr "loma"
 
 #: taiga/projects/userstories/models.py:81
 msgid "backlog order"
-msgstr "dara klāsta pasūtījums"
+msgstr "darba klāsta pasūtījums"
 
 #: taiga/projects/userstories/models.py:83
 msgid "sprint order"
@@ -4444,31 +4493,31 @@ msgstr "Nav neviena projekta ar šādu ID"
 
 #: taiga/projects/validators.py:164
 msgid "The user yet exists in the project"
-msgstr ""
+msgstr "Lietotājs projektā vēl/joprojām ir/pastāv"
 
 #: taiga/projects/validators.py:174
 msgid "Invalid role for the project"
-msgstr ""
+msgstr "Projektam šī loma nav derīga"
 
 #: taiga/projects/validators.py:189 taiga/projects/validators.py:244
 msgid "The user must be a valid contact"
-msgstr ""
+msgstr "Lietotājam jābūt derīgai kontaktpersonai"
 
 #: taiga/projects/validators.py:210
 msgid "The project owner must be admin."
-msgstr ""
+msgstr "Projekta vadītājam jābūt arī administratoram."
 
 #: taiga/projects/validators.py:214
 msgid "At least one user must be an active admin for this project."
-msgstr ""
+msgstr "Vismaz vienam lietotājam jābūt aktīvam šī projekta administratoram."
 
 #: taiga/projects/validators.py:259
 msgid "Invalid role ids. All roles must belong to the same project."
-msgstr ""
+msgstr "Nederīgi lomu id. Visām lomām jāpieder vienam un tam pašam projektam."
 
 #: taiga/projects/validators.py:283
 msgid "Default options"
-msgstr ""
+msgstr "Opcijas pēc noklusējuma"
 
 #: taiga/projects/validators.py:284
 msgid "User story's statuses"
@@ -4513,11 +4562,11 @@ msgstr "Balss"
 
 #: taiga/projects/wiki/api.py:77
 msgid "'content' parameter is mandatory"
-msgstr ""
+msgstr "“satura” parametrs ir obligāts"
 
 #: taiga/projects/wiki/api.py:80
 msgid "'project_id' parameter is mandatory"
-msgstr ""
+msgstr "parametrs 'project_id' ir obligāts"
 
 #: taiga/projects/wiki/models.py:42
 msgid "last modifier"
@@ -4529,15 +4578,15 @@ msgstr "href"
 
 #: taiga/timeline/signals.py:65
 msgid "Check the history API for the exact diff"
-msgstr ""
+msgstr "Pārbaudiet vēstures API, lai iegūtu precīzu atšķirību (diff)"
 
 #: taiga/users/admin.py:39
 msgid "Project Member"
-msgstr ""
+msgstr "Projekta dalībnieks"
 
 #: taiga/users/admin.py:40
 msgid "Project Members"
-msgstr ""
+msgstr "Projekta dalībnieki"
 
 #: taiga/users/admin.py:50
 msgid "id"
@@ -4545,15 +4594,15 @@ msgstr "id"
 
 #: taiga/users/admin.py:81
 msgid "Project Ownership"
-msgstr ""
+msgstr "Projekta vadītājs"
 
 #: taiga/users/admin.py:82
 msgid "Project Ownerships"
-msgstr ""
+msgstr "Projekta vadītāji"
 
 #: taiga/users/admin.py:119
 msgid "Personal info"
-msgstr ""
+msgstr "Personiskā informācija"
 
 #: taiga/users/admin.py:122
 msgid "Permissions"
@@ -4565,59 +4614,61 @@ msgstr "Ierobežojumi"
 
 #: taiga/users/admin.py:125
 msgid "Important dates"
-msgstr ""
+msgstr "Svarīgi datumi"
 
 #: taiga/users/api.py:132
 msgid "Duplicated email"
-msgstr ""
+msgstr "Dublēts e-pasts"
 
 #: taiga/users/api.py:134
 #| msgid "Not valid email"
 msgid "Invalid email"
-msgstr ""
+msgstr "Nederīgs e-pasts"
 
 #: taiga/users/api.py:172
 msgid "Invalid username or email"
-msgstr ""
+msgstr "Nederīgs lietotājvārds vai e-pasts"
 
 #: taiga/users/api.py:181
 msgid "Mail sended successful!"
-msgstr ""
+msgstr "Pasts nosūtīts sekmīgi!"
 
 #: taiga/users/api.py:219
 msgid "Current password parameter needed"
-msgstr ""
+msgstr "Nepieciešams pašreizējais paroles parametrs"
 
 #: taiga/users/api.py:222
 msgid "New password parameter needed"
-msgstr ""
+msgstr "Nepieciešams jauns paroles parametrs"
 
 #: taiga/users/api.py:225
 msgid "Invalid password length at least 6 charaters needed"
-msgstr ""
+msgstr "Nepieciešams vismaz 6 rakstzīmju paroles garums"
 
 #: taiga/users/api.py:228
 msgid "Invalid current password"
-msgstr ""
+msgstr "Nederīga pašreizējā parole"
 
 #: taiga/users/api.py:275 taiga/users/api.py:281
 msgid ""
 "Invalid, are you sure the token is correct and you didn't use it before?"
 msgstr ""
+"Nederīgs. Vai esat pārliecināts, ka tokens ir pareizs, un iepriekš nav "
+"izmantots?"
 
 #: taiga/users/api.py:317 taiga/users/api.py:325 taiga/users/api.py:328
 msgid "Invalid, are you sure the token is correct?"
-msgstr ""
+msgstr "Nederīgs. Vai esat pārliecināts, ka tokens ir pareizs?"
 
 #: taiga/users/models.py:99
 msgid "superuser status"
-msgstr ""
+msgstr "superlietotāja statuss"
 
 #: taiga/users/models.py:100
 msgid ""
 "Designates that this user has all permissions without explicitly assigning "
 "them."
-msgstr ""
+msgstr "Apzīmē, ka šim lietotājam ir visas atļaujas, tieši tās nepiešķirot."
 
 #: taiga/users/models.py:136
 msgid "username"
@@ -4626,7 +4677,7 @@ msgstr "lietotājvārds"
 #: taiga/users/models.py:137
 msgid ""
 "Required. 30 characters or fewer. Letters, numbers and /./-/_ characters"
-msgstr ""
+msgstr "Obligāti. 30 rakstzīmes vai mazāk. Burti, cipari un /./-/_ rakstzīmes"
 
 #: taiga/users/models.py:140
 msgid "Enter a valid username."
@@ -4641,6 +4692,8 @@ msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
 msgstr ""
+"Apzīmē, vai šis lietotājs jāuzskata par aktīvu. Kontu dzēšanas vietā "
+"noņemiet šo atzīmi."
 
 #: taiga/users/models.py:150
 msgid "biography"
@@ -4648,19 +4701,19 @@ msgstr "biogrāfija"
 
 #: taiga/users/models.py:153
 msgid "photo"
-msgstr "foto"
+msgstr "attēls/foto"
 
 #: taiga/users/models.py:154
 msgid "date joined"
-msgstr "Pievienošanās datums"
+msgstr "pievienošanās datums"
 
 #: taiga/users/models.py:155
 msgid "accepted terms"
-msgstr "Akceptētie noteikumi"
+msgstr "akceptētie noteikumi"
 
 #: taiga/users/models.py:156
 msgid "new terms read"
-msgstr ""
+msgstr "jaunie noteikumi izlasīti"
 
 #: taiga/users/models.py:158
 msgid "default language"
@@ -4688,19 +4741,19 @@ msgstr "jauna e-pasta adrese"
 
 #: taiga/users/models.py:178
 msgid "max number of owned private projects"
-msgstr ""
+msgstr "maksimālais vadīto privāto projektu skaits"
 
 #: taiga/users/models.py:181
 msgid "max number of owned public projects"
-msgstr ""
+msgstr "maksimālais vadīto publisko projektu skaits"
 
 #: taiga/users/models.py:184
 msgid "max number of memberships for each owned private project"
-msgstr ""
+msgstr "maksimālais dalībnieku skaits katrā vadītajā privātajā projektā"
 
 #: taiga/users/models.py:188
 msgid "max number of memberships for each owned public project"
-msgstr ""
+msgstr "maksimālais dalībnieku skaits katrā vadītajā publiskajā projektā"
 
 #: taiga/users/models.py:316
 msgid "permissions"
@@ -4708,7 +4761,7 @@ msgstr "atļaujas"
 
 #: taiga/users/services.py:58 taiga/users/services.py:75
 msgid "Username or password does not matches user."
-msgstr ""
+msgstr "Lietotājvārds vai parole neatbilst lietotājam."
 
 #: taiga/users/templates/emails/change_email-body-html.jinja:4
 #, python-format
@@ -4751,7 +4804,7 @@ msgstr ""
 
 #: taiga/users/templates/emails/change_email-subject.jinja:1
 msgid "[Taiga] Change email"
-msgstr ""
+msgstr "[Taiga] Nomainīt e-pastu"
 
 #: taiga/users/templates/emails/password_recovery-body-html.jinja:4
 #, python-format
@@ -4880,16 +4933,18 @@ msgstr "nederīgs"
 
 #: taiga/users/validators.py:59
 msgid "Invalid username. Try with a different one."
-msgstr ""
+msgstr "Nederīgs lietotājvārds. Mēģiniet citu."
 
 #: taiga/users/validators.py:86
 msgid "Read new terms has to be true'"
-msgstr ""
+msgstr "\"Izlasīti jaunie noteikumi\" jābūt atzīmētiem ar 'patiesība'"
 
 #: taiga/userstorage/api.py:53
 msgid ""
 "Duplicate key value violates unique constraint. Key '{}' already exists."
 msgstr ""
+"Duplicēta/atkartojošās atslēgas vērtība pārkāpj unikālo ierobežojumu. "
+"Atslēga '{}' jau pastāv."
 
 #: taiga/userstorage/models.py:32
 msgid "key"

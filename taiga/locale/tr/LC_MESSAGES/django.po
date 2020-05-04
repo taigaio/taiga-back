@@ -4,6 +4,7 @@
 #
 # Translators:
 # Translators:
+# abc Def <hdogan1974@gmail.com>, 2020
 # Can Aydin <ca@fluytsoftware.com>, 2015
 # catborise <muhammetalisag@gmail.com>, 2015-2016
 # Mert Torun <mert@merttorun.com>, 2016
@@ -12,8 +13,8 @@ msgstr ""
 "Project-Id-Version: taiga-back\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-21 11:26+0100\n"
-"PO-Revision-Date: 2020-02-21 10:46+0000\n"
-"Last-Translator: Libre Beats <carlos.letamendia@aitire.es>\n"
+"PO-Revision-Date: 2020-04-13 23:58+0000\n"
+"Last-Translator: abc Def <hdogan1974@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/taiga-agile-llc/taiga-back/"
 "language/tr/)\n"
 "MIME-Version: 1.0\n"
@@ -1423,35 +1424,35 @@ msgstr ""
 
 #: taiga/permissions/choices.py:23 taiga/permissions/choices.py:34
 msgid "View project"
-msgstr "Projeyi gör"
+msgstr "Projeyi görüntüle"
 
 #: taiga/permissions/choices.py:24 taiga/permissions/choices.py:36
 msgid "View milestones"
-msgstr "Aşamaları gör"
+msgstr "Aşamaları görüntüle"
 
 #: taiga/permissions/choices.py:25 taiga/permissions/choices.py:41
 msgid "View epic"
-msgstr ""
+msgstr "Destanları görüntüle"
 
 #: taiga/permissions/choices.py:26
 msgid "View user stories"
-msgstr "Kullanıcı hikayelerini gör"
+msgstr "Kullanıcı hikayelerini görüntüle"
 
 #: taiga/permissions/choices.py:27 taiga/permissions/choices.py:53
 msgid "View tasks"
-msgstr "Görevleri gör"
+msgstr "Görevleri görüntüle"
 
 #: taiga/permissions/choices.py:28 taiga/permissions/choices.py:59
 msgid "View issues"
-msgstr "Talepleri gör"
+msgstr "Talepleri görüntüle"
 
 #: taiga/permissions/choices.py:29 taiga/permissions/choices.py:65
 msgid "View wiki pages"
-msgstr "Wiki sayfalarını gör"
+msgstr "Wiki sayfalarını görüntüle"
 
 #: taiga/permissions/choices.py:30 taiga/permissions/choices.py:71
 msgid "View wiki links"
-msgstr "Wiki bağlantılarını gör"
+msgstr "Wiki bağlantılarını görüntüle"
 
 #: taiga/permissions/choices.py:37
 msgid "Add milestone"
@@ -1483,7 +1484,7 @@ msgstr ""
 
 #: taiga/permissions/choices.py:47
 msgid "View user story"
-msgstr "Kullanıcı hikayesini gör"
+msgstr "Kullanıcı hikayesini görüntüle"
 
 #: taiga/permissions/choices.py:48
 msgid "Add user story"
