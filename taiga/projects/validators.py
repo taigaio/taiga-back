@@ -163,6 +163,13 @@ class MembershipValidator(validators.ModelValidator):
         if qs.count() > 0:
             raise ValidationError(_("The user yet exists in the project"))
 
+    def validate_project(self, attrs, source):
+        # Create only
+        if self.object is not None and self.object.project != attrs.get("project"):
+            raise ValidationError(_("Invalid operation"))
+
+        return attrs
+
     def validate_role(self, attrs, source):
         project = attrs.get("project", None if self.object is None else self.object.project)
         if project is None:
