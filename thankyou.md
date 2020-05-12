@@ -11,3 +11,7 @@ big, to improve Taiga's overall security rating.
 ### 2019
 
 - Joshua Osabel
+
+### 2020
+
+- Faizan Ahmed
