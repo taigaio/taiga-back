@@ -15,3 +15,5 @@ big, to improve Taiga's overall security rating.
 ### 2020
 
 - Faizan Ahmed
+
+- Anton Perekopni
