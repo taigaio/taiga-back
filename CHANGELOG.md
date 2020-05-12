@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 4.2.15 (2020-05-12)
+
+### Security
+
+- Avoid change in membership attribute. We encourage all users of Taiga
+  to upgrade as soon as possible.
+
 ## 4.2.14 (2019-10-01)
 
 - Update requirements to support python3.7. This is a potentially BREAKING
