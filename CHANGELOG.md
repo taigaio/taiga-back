@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 5.0.12 (2020-05-12)
+
+### Security
+
+- Avoid change in membership attribute. We encourage all users of Taiga
+  to upgrade as soon as possible.
+
 ## 5.0.11 (2020-05-04)
 
 ### Misc
