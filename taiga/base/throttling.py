@@ -163,13 +163,13 @@ class CommonThrottle(throttling.SimpleRateThrottle):
         return (rate, num_requests, duration)
 
     def get_scope(self, request):
-        scope_prefix = "user" if request.user.is_authenticated() else "anon"
+        scope_prefix = "user" if request.user.is_authenticated else "anon"
         scope_sufix = "write" if request.method in ["POST", "PUT", "PATCH", "DELETE"] else "read"
         scope = "{}-{}".format(scope_prefix, scope_sufix)
         return scope
 
     def get_ident(self, request):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return request.user.id
         ident = get_ip(request)
         return ident
