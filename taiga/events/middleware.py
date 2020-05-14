@@ -48,6 +48,12 @@ class SessionIDMiddleware(object):
     current thread).
     """
 
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
+
     def process_request(self, request):
         global _local
         session_id = request.META.get("HTTP_X_SESSION_ID", None)
