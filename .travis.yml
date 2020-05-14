@@ -19,6 +19,6 @@ install:
   - travis_retry pip install pipenv
   - travis_retry pipenv sync --dev
 script:
-  - pipenv run coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' -m pytest -v --tb=native
+  - pipenv run coverage run --source=taiga --omit='*tests*,*commands*,*migrations*,*admin*,*.jinja,*dashboard*,*settings*,*wsgi*,*questions*,*documents*' -m pytest -v --tb=native --pythonwarnings=once
 after_success:
   - coveralls
