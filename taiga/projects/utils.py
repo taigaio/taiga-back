@@ -498,7 +498,7 @@ def attach_is_fan(queryset, user, as_field="is_fan_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    if user is None or user.is_anonymous():
+    if user is None or user.is_anonymous:
         sql = "SELECT false"
     else:
         sql = """
@@ -526,7 +526,7 @@ def attach_my_role_permissions(queryset, user, as_field="my_role_permissions_att
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    if user is None or user.is_anonymous():
+    if user is None or user.is_anonymous:
         sql = "SELECT '{}'"
     else:
         sql = """
@@ -552,7 +552,7 @@ def attach_private_projects_same_owner(queryset, user, as_field="private_project
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    if user is None or user.is_anonymous():
+    if user is None or user.is_anonymous:
         sql = "SELECT 0"
     else:
         sql = """
@@ -577,7 +577,7 @@ def attach_public_projects_same_owner(queryset, user, as_field="public_projects_
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    if user is None or user.is_anonymous():
+    if user is None or user.is_anonymous:
         sql = "SELECT 0"
     else:
         sql = """
@@ -602,7 +602,7 @@ def attach_my_homepage(queryset, user, as_field="my_homepage_attr"):
     :return: Queryset object with the additional `as_field` field.
     """
     model = queryset.model
-    if user is None or user.is_anonymous():
+    if user is None or user.is_anonymous:
         sql = "SELECT '{}'"
     else:
         sql = """

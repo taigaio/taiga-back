@@ -37,17 +37,17 @@ class StorageEntriesViewSet(ModelCrudViewSet):
     lookup_field = "key"
 
     def get_queryset(self):
-        if self.request.user.is_anonymous():
+        if self.request.user.is_anonymous:
             return self.model.objects.none()
         return self.request.user.storage_entries.all()
 
     def pre_save(self, obj):
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             obj.owner = self.request.user
 
     def create(self, *args, **kwargs):
         key = self.request.DATA.get("key", None)
-        if (key and self.request.user.is_authenticated() and
+        if (key and self.request.user.is_authenticated and
                 self.request.user.storage_entries.filter(key=key).exists()):
             raise exc.BadRequest(
                 _("Duplicate key value violates unique constraint. "

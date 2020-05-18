@@ -22,7 +22,7 @@ from taiga.base.api.permissions import TaigaResourcePermission
 
 class IsContactActivated(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
-        if not request.user.is_authenticated() or not obj.project.is_contact_activated:
+        if not request.user.is_authenticated or not obj.project.is_contact_activated:
             return False
 
         if obj.project.is_private:

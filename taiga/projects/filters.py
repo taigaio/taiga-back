@@ -109,7 +109,7 @@ class QFilterBackend(FilterBackend):
 
 class UserOrderFilterBackend(FilterBackend):
     def filter_queryset(self, request, queryset, view):
-        if request.user.is_anonymous():
+        if request.user.is_anonymous:
             return queryset
 
         raw_fieldname = request.QUERY_PARAMS.get(self.order_by_query_param, None)

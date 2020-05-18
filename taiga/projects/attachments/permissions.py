@@ -23,7 +23,7 @@ from taiga.base.api.permissions import (TaigaResourcePermission, HasProjectPerm,
 
 class IsAttachmentOwnerPerm(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
-        if obj and obj.owner and request.user.is_authenticated():
+        if obj and obj.owner and request.user.is_authenticated:
             return request.user == obj.owner
         return False
 
