@@ -96,7 +96,7 @@ def is_simple_callable(obj):
     if not (function or method):
         return False
 
-    args, _, _, defaults = inspect.getargspec(obj)
+    args, _, _, defaults = inspect.getfullargspec(obj)
     len_args = len(args) if function else len(args) - 1
     len_defaults = len(defaults) if defaults else 0
     return len_args <= len_defaults
@@ -519,7 +519,7 @@ class CharField(WritableField):
     def from_native(self, value):
         if value in validators.EMPTY_VALUES:
             return ""
-            
+
         return smart_text(value)
 
     def to_native(self, value):

@@ -758,7 +758,7 @@ class ModelSerializer((six.with_metaclass(SerializerMetaclass, BaseSerializer)))
         pk_field = opts.pk
         while pk_field.remote_field and pk_field.remote_field.parent_link:
             # If model is a child via multitable inheritance, use parent's pk
-            pk_field = pk_field.remote_field.to._meta.pk
+            pk_field = pk_field.remote_field.model._meta.pk
 
         field = self.get_pk_field(pk_field)
         if field:
@@ -774,13 +774,13 @@ class ModelSerializer((six.with_metaclass(SerializerMetaclass, BaseSerializer)))
             if model_field.remote_field:
                 to_many = isinstance(model_field,
                                      models.fields.related.ManyToManyField)
-                related_model = _resolve_model(model_field.remote_field.to)
+                related_model = _resolve_model(model_field.remote_field.model)
 
                 if to_many and not model_field.remote_field.through._meta.auto_created:
                     has_through_model = True
 
             if model_field.remote_field and nested:
-                if len(inspect.getargspec(self.get_nested_field).args) == 2:
+                if len(inspect.getfullargspec(self.get_nested_field).args) == 2:
                     warnings.warn(
                         "The `get_nested_field(model_field)` call signature "
                         "is due to be deprecated. "
@@ -792,7 +792,7 @@ class ModelSerializer((six.with_metaclass(SerializerMetaclass, BaseSerializer)))
                 else:
                     field = self.get_nested_field(model_field, related_model, to_many)
             elif model_field.remote_field:
-                if len(inspect.getargspec(self.get_nested_field).args) == 3:
+                if len(inspect.getfullargspec(self.get_nested_field).args) == 3:
                     warnings.warn(
                         "The `get_related_field(model_field, to_many)` call "
                         "signature is due to be deprecated. "
