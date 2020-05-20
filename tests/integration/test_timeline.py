@@ -507,7 +507,7 @@ def test_assigned_users_user_story_timeline():
     assert user_timeline[0].data["userstory"]["subject"] == "test us timeline"
 
     user_story.assigned_to = membership.user
-    user_story.assigned_users = (membership.user,)
+    user_story.assigned_users.set([membership.user])
     user_story.save()
 
     history_services.take_snapshot(user_story, user=user_story.owner)
