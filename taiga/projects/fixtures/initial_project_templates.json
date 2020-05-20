@@ -225,7 +225,7 @@
                 "color": "#ffcc00",
                 "name": "Ready for test",
                 "order": 3,
-                "is_closed": true
+                "is_closed": false
             },
             {
                 "slug": "closed",
@@ -285,7 +285,7 @@
                 "color": "#88A65E",
                 "name": "Ready for test",
                 "order": 3,
-                "is_closed": true
+                "is_closed": false
             },
             {
                 "slug": "closed",
@@ -866,7 +866,7 @@
                 "color": "#f57900",
                 "name": "Ready for test",
                 "order": 3,
-                "is_closed": true
+                "is_closed": false
             },
             {
                 "slug": "closed",
@@ -926,7 +926,7 @@
                 "color": "#f57900",
                 "name": "Ready for test",
                 "order": 3,
-                "is_closed": true
+                "is_closed": false
             },
             {
                 "slug": "closed",
