@@ -450,7 +450,7 @@ class ModelField(WritableField):
             self.validators.append(validators.MaxValueValidator(self.max_value))
 
     def from_native(self, value):
-        rel = getattr(self.model_field, "rel", None)
+        rel = getattr(self.model_field, "remote_field", None)
         if rel is not None:
             return rel.to._meta.get_field(rel.field_name).to_python(value)
         else:
