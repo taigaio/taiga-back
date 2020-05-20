@@ -1135,7 +1135,8 @@ class ModelSerializer((six.with_metaclass(SerializerMetaclass, BaseSerializer)))
 
         if getattr(obj, "_m2m_data", None):
             for accessor_name, object_list in obj._m2m_data.items():
-                setattr(obj, accessor_name, object_list)
+                field = getattr(obj, accessor_name)
+                field.set(object_list)
             del(obj._m2m_data)
 
         if getattr(obj, "_related_data", None):
