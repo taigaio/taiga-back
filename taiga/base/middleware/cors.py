@@ -39,7 +39,11 @@ class CorsMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        return self.get_response(request)
+        self.process_request(request)
+        response = self.get_response(request)
+        self.process_response(request, response)
+
+        return response
 
     def _populate_response(self, response):
         response["Access-Control-Allow-Origin"] = CORS_ALLOWED_ORIGINS
