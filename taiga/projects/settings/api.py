@@ -47,7 +47,7 @@ class UserProjectSettingsViewSet(ModelCrudViewSet):
                 project, self.request.user)
 
     def get_queryset(self):
-        if self.request.user.is_anonymous():
+        if self.request.user.is_anonymous:
             return models.UserProjectSettings.objects.none()
 
         self._build_user_project_settings()

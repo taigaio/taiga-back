@@ -65,7 +65,7 @@ def attach_is_voter_to_queryset(queryset, user, as_field="is_voter"):
     """
     model = queryset.model
     type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(model)
-    if user is None or user.is_anonymous():
+    if user is None or user.is_anonymous:
         sql = """SELECT false"""
     else:
         sql = ("""SELECT CASE WHEN (SELECT count(*)

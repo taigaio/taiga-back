@@ -35,6 +35,16 @@ CORS_EXTRA_EXPOSE_HEADERS = getattr(settings, "APP_EXTRA_EXPOSE_HEADERS", [])
 
 
 class CorsMiddleware(object):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        self.process_request(request)
+        response = self.get_response(request)
+        self.process_response(request, response)
+
+        return response
+
     def _populate_response(self, response):
         response["Access-Control-Allow-Origin"] = CORS_ALLOWED_ORIGINS
         response["Access-Control-Allow-Methods"] = ",".join(CORS_ALLOWED_METHODS)

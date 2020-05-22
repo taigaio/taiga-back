@@ -32,7 +32,7 @@ class AuxProjectModel(models.Model):
 
 class AuxModelWithNameAttribute(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
-    project = models.ForeignKey(AuxProjectModel, null=False, blank=False)
+    project = models.ForeignKey(AuxProjectModel, null=False, blank=False, on_delete=models.CASCADE)
 
 
 class AuxValidator(DuplicatedNameInProjectValidator, ModelValidator):

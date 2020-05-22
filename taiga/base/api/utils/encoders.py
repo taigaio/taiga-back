@@ -48,6 +48,7 @@ Helper classes for parsers.
 from django.db.models.query import QuerySet
 from django.utils.functional import Promise
 from django.utils import timezone
+from django.utils.deprecation import CallableBool
 from django.utils.encoding import force_text
 
 import datetime
@@ -66,6 +67,8 @@ class JSONEncoder(json.JSONEncoder):
         # http://ecma-international.org/ecma-262/5.1/#sec-15.9.1.15
         if isinstance(o, Promise):
             return force_text(o)
+        elif isinstance(o, CallableBool):
+            return bool(o)
         elif isinstance(o, datetime.datetime):
             r = o.isoformat()
             if o.microsecond:
@@ -97,6 +100,7 @@ class JSONEncoder(json.JSONEncoder):
                 pass
         elif hasattr(o, "__iter__"):
             return [i for i in o]
+
         return super(JSONEncoder, self).default(o)
 
 

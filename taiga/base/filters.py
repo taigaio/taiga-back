@@ -35,9 +35,9 @@ logger = logging.getLogger(__name__)
 
 def get_filter_expression_can_view_projects(user, project_id=None):
     # Filter by user permissions
-    if user.is_authenticated() and user.is_superuser:
+    if user.is_authenticated and user.is_superuser:
         return Q()
-    elif user.is_authenticated():
+    elif user.is_authenticated:
         # authenticated user & project member
         membership_model = apps.get_model("projects", "Membership")
         memberships_qs = membership_model.objects.filter(user=user)
@@ -173,9 +173,9 @@ class PermissionBasedFilterBackend(FilterBackend):
 
         qs = queryset
 
-        if request.user.is_authenticated() and request.user.is_superuser:
+        if request.user.is_authenticated and request.user.is_superuser:
             qs = qs
-        elif request.user.is_authenticated():
+        elif request.user.is_authenticated:
             membership_model = apps.get_model('projects', 'Membership')
             memberships_qs = membership_model.objects.filter(user=request.user)
             if project_id:
@@ -283,9 +283,9 @@ class MembersFilterBackend(PermissionBasedFilterBackend):
             Project = apps.get_model('projects', 'Project')
             project = get_object_or_404(Project, pk=project_id)
 
-        if request.user.is_authenticated() and request.user.is_superuser:
+        if request.user.is_authenticated and request.user.is_superuser:
             qs = qs
-        elif request.user.is_authenticated():
+        elif request.user.is_authenticated:
             Membership = apps.get_model('projects', 'Membership')
             memberships_qs = Membership.objects.filter(user=request.user)
             if project_id:
@@ -329,10 +329,10 @@ class BaseIsProjectAdminFilterBackend(object):
         if hasattr(view, "filter_fields") and "project" in view.filter_fields:
             project_id = request.QUERY_PARAMS.get("project", None)
 
-        if request.user.is_authenticated() and request.user.is_superuser:
+        if request.user.is_authenticated and request.user.is_superuser:
             return None
 
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return []
 
         membership_model = apps.get_model('projects', 'Membership')

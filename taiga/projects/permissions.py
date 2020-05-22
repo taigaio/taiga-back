@@ -36,7 +36,7 @@ from . import services
 
 class CanLeaveProject(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
-        if not obj or not request.user.is_authenticated():
+        if not obj or not request.user.is_authenticated:
             return False
 
         try:

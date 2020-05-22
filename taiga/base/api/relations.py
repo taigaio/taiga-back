@@ -118,7 +118,7 @@ class RelatedField(WritableField):
             if hasattr(manager, "related"):  # Forward
                 self.queryset = manager.related.model._default_manager.all()
             else:  # Reverse
-                self.queryset = manager.field.rel.to._default_manager.all()
+                self.queryset = manager.field.remote_field.model._default_manager.all()
 
     ### We need this stuff to make form choices work...
 

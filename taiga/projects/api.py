@@ -226,7 +226,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
 
     @list_route(methods=["POST"])
     def bulk_update_order(self, request, **kwargs):
-        if self.request.user.is_anonymous():
+        if self.request.user.is_anonymous:
             return response.Unauthorized()
 
         validator = validators.UpdateProjectOrderBulkValidator(data=request.DATA, many=True)

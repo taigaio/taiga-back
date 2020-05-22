@@ -46,7 +46,7 @@ class NotifyPolicyViewSet(ModelCrudViewSet):
             services.create_notify_policy_if_not_exists(project, self.request.user, NotifyLevel.all)
 
     def get_queryset(self):
-        if self.request.user.is_anonymous():
+        if self.request.user.is_anonymous:
             return models.NotifyPolicy.objects.none()
 
         self._build_needed_notify_policies()
@@ -61,11 +61,11 @@ class WebNotificationsViewSet(GenericViewSet):
     resource_model = models.WebNotification
 
     def check_permissions(self, request, obj=None):
-        return obj and request.user.is_authenticated() and \
+        return obj and request.user.is_authenticated and \
                request.user.pk == obj.user_id
 
     def list(self, request):
-        if self.request.user.is_anonymous():
+        if self.request.user.is_anonymous:
             return response.Ok({})
 
         queryset = models.WebNotification.objects\

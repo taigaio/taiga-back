@@ -27,7 +27,7 @@ from taiga.base.api.permissions import PermissionComponent
 
 class IsTheSameUser(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
-        return obj and request.user.is_authenticated() and request.user.pk == obj.pk
+        return obj and request.user.is_authenticated and request.user.pk == obj.pk
 
 
 class UserPermission(TaigaResourcePermission):

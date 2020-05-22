@@ -285,7 +285,7 @@ class WatchedResourceSerializer(serializers.LightSerializer):
         # The "is_watcher" attribute is attached in the get_queryset of the viewset.
         if "request" in self.context:
             user = self.context["request"].user
-            return user.is_authenticated() and getattr(obj, "is_watcher", False)
+            return user.is_authenticated and getattr(obj, "is_watcher", False)
 
         return False
 
@@ -334,7 +334,7 @@ class EditableWatchedResourceSerializer(serializers.ModelSerializer):
 
             request = self.context.get("request", None)
             user = request.user if request else None
-            if user and user.is_authenticated():
+            if user and user.is_authenticated:
                 obj.is_watcher = user.id in obj.watchers
 
         return super(WatchedResourceSerializer, self).to_native(obj)

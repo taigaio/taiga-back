@@ -163,12 +163,12 @@ class DenyAll(PermissionComponent):
 
 class IsAuthenticated(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
-        return request.user and request.user.is_authenticated()
+        return request.user and request.user.is_authenticated
 
 
 class IsSuperUser(PermissionComponent):
     def check_permissions(self, request, view, obj=None):
-        return request.user and request.user.is_authenticated() and request.user.is_superuser
+        return request.user and request.user.is_authenticated and request.user.is_superuser
 
 
 class HasProjectPerm(PermissionComponent):

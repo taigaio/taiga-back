@@ -185,7 +185,7 @@ def filter_timeline_for_user(timeline, user):
                    data_content_type=membership_content_type)
 
     # Filtering private projects where user is member
-    if not user.is_anonymous():
+    if not user.is_anonymous:
         for membership in user.cached_memberships:
             # Admin roles can see everything in a project
             if membership.is_admin:
