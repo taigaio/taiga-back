@@ -26,7 +26,7 @@ from .. import factories as f
 from taiga.projects.history.choices import HistoryType
 from taiga.projects.models import Project
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils import timezone
 
 pytestmark = pytest.mark.django_db

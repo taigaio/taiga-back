@@ -17,7 +17,7 @@
 
 import uuid
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from taiga.base.utils.urls import get_absolute_url
 

@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from .. import factories as f
 

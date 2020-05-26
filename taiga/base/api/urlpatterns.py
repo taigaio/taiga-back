@@ -43,7 +43,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from django.core.urlresolvers import RegexURLResolver
+from django.urls import URLResolver
 from django.conf.urls import url, include
 
 from .settings import api_settings
@@ -52,7 +52,7 @@ from .settings import api_settings
 def apply_suffix_patterns(urlpatterns, suffix_pattern, suffix_required):
     ret = []
     for urlpattern in urlpatterns:
-        if isinstance(urlpattern, RegexURLResolver):
+        if isinstance(urlpattern, URLResolver):
             # Set of included URL patterns
             regex = urlpattern.regex.pattern
             namespace = urlpattern.namespace

@@ -19,7 +19,7 @@
 
 import pytest
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from .. import factories
 
 from taiga.base.utils import json

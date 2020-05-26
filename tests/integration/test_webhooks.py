@@ -19,7 +19,7 @@
 
 import pytest
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from unittest.mock import patch
 from unittest.mock import Mock
 

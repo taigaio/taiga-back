@@ -19,7 +19,7 @@
 
 import pytest
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from taiga.users.models import Role
 from taiga.projects.models import Membership

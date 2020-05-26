@@ -21,7 +21,7 @@ import pytest
 
 from unittest.mock import patch
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils import timezone
 
 from .. import factories as f

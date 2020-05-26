@@ -3,7 +3,7 @@ import json
 import pytest
 
 from django.apps import apps
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from .. import factories as f
 

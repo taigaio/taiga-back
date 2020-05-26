@@ -19,7 +19,7 @@
 import uuid
 
 from django.contrib.auth import get_user_model
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf import settings
 
 from taiga.base.utils.urls import get_absolute_url

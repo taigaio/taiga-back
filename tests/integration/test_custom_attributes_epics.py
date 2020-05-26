@@ -18,7 +18,7 @@
 
 
 from django.db.transaction import atomic
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from taiga.base.utils import json
 
 from .. import factories as f
