@@ -8,7 +8,7 @@ django-jinja==2.3.1
 django-picklefield==0.3.2
 django-pglocks==1.0.2
 django-sampledatahelper==0.4.1
-django-sites==0.9
+django-sites==0.10
 django-sr==0.0.4
 djmail==1.0.1
 easy-thumbnails==2.7.0

@@ -26,7 +26,7 @@ django-jinja==2.3.1       # via -r requirements.in
 django-pglocks==1.0.2     # via -r requirements.in
 django-picklefield==0.3.2  # via -r requirements.in
 django-sampledatahelper==0.4.1  # via -r requirements.in
-django-sites==0.9         # via -r requirements.in
+django-sites==0.10        # via -r requirements.in
 django-sr==0.0.4          # via -r requirements.in
 django==2.0.13            # via -r requirements.in, django-jinja, django-sampledatahelper, django-sites, django-sr, easy-thumbnails
 djmail==1.0.1             # via -r requirements.in
