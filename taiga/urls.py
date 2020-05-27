@@ -19,6 +19,8 @@
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.urls import path
+
 
 from .routers import router
 
@@ -29,7 +31,7 @@ from .routers import router
 
 urlpatterns = [
     url(r'^api/v1/', include(router.urls)),
-    url(r'^admin/', include(admin.site.urls)),
+    path(r'^admin/', admin.site.urls),
 ]
 
 handler500 = "taiga.base.api.views.api_server_error"
