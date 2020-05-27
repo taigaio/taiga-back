@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
                 ('owner', models.ForeignKey(blank=True, null=True, verbose_name='owner', to=settings.AUTH_USER_MODEL, related_name='owned_user_stories', on_delete=models.CASCADE)),
                 ('points', models.ManyToManyField(through='userstories.RolePoints', related_name='userstories', to='projects.Points', verbose_name='points')),
                 ('project', models.ForeignKey(verbose_name='project', to='projects.Project', related_name='user_stories', on_delete=models.CASCADE)),
-                ('status', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, blank=True, null=True, verbose_name='status', to='projects.UserStoryStatus', related_name='user_stories', on_delete=models.SET_NULL)),
+                ('status', models.ForeignKey(blank=True, null=True, verbose_name='status', to='projects.UserStoryStatus', related_name='user_stories', on_delete=models.SET_NULL)),
                 ('watchers', models.ManyToManyField(to=settings.AUTH_USER_MODEL, related_name='userstories_userstory+', blank=True, null=True, verbose_name='watchers')),
             ],
             options={
