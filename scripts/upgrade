@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euxo pipefail
+cd "$(dirname "$0")/.."
+.venv/bin/python -m piptools compile --upgrade requirements.in
+.venv/bin/python -m piptools compile --upgrade requirements-devel.in
+.venv/bin/python -m piptools sync requirements.txt requirements-devel.txt
