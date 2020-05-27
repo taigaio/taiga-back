@@ -28,7 +28,7 @@ django-picklefield==0.3.2  # via -r requirements.in
 django-sampledatahelper==0.4.1  # via -r requirements.in
 django-sites==0.9         # via -r requirements.in
 django-sr==0.0.4          # via -r requirements.in
-django==1.11.29           # via -r requirements.in, django-jinja, django-sampledatahelper, django-sites, django-sr, easy-thumbnails
+django==2.0.13            # via -r requirements.in, django-jinja, django-sampledatahelper, django-sites, django-sr, easy-thumbnails
 djmail==1.0.1             # via -r requirements.in
 docopt==0.6.2             # via psd-tools
 easy-thumbnails==2.7.0    # via -r requirements.in

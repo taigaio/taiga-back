@@ -28,7 +28,7 @@ requests_oauthlib
 serpy==0.1.1
 webcolors==1.9.1
 CairoSVG==2.0.3
-Django>=1.11.23,<2
+Django>=2,<2.1
 Markdown==3.1.1
 Pillow
 Unidecode==0.4.20
