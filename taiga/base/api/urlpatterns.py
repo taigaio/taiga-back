@@ -54,7 +54,7 @@ def apply_suffix_patterns(urlpatterns, suffix_pattern, suffix_required):
     for urlpattern in urlpatterns:
         if isinstance(urlpattern, URLResolver):
             # Set of included URL patterns
-            regex = urlpattern.regex.pattern
+            regex = urlpattern.pattern.regex.pattern
             namespace = urlpattern.namespace
             app_name = urlpattern.app_name
             kwargs = urlpattern.default_kwargs
@@ -66,7 +66,7 @@ def apply_suffix_patterns(urlpatterns, suffix_pattern, suffix_required):
 
         else:
             # Regular URL pattern
-            regex = urlpattern.regex.pattern.rstrip("$") + suffix_pattern
+            regex = urlpattern.pattern.regex.pattern.rstrip("$") + suffix_pattern
             view = urlpattern.callback
             kwargs = urlpattern.default_args
             name = urlpattern.name
